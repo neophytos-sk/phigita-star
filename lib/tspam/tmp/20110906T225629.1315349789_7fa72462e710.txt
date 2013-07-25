@@ -1,0 +1,13 @@
+Received: from 203.72.19.228 by mail.global.frontbridge.com; Wed, 7 Sep 2011 06:56:37 +0800 
+Date: Wed, 7 Sep 2011 06:56:37 +0800 
+From: =?koi8-r?B?Iv7v8CI=?= <amphitheatersh5@touro.com> 
+X-Mailer: The Bat! (v3.71.04) Educational 
+Reply-To: amphitheatersh5@touro.com 
+X-Priority: 3 (Normal) 
+Message-ID: <223183080.14285381007857@touro.com> 
+To: webmaster@phigita.net 
+Subject: =?koi8-r?B?78jSwc7BIMTM0SDXwdvFx88g0M/TxczLwSDJzMkgxsnSzdkhIDItyCDL?=
+	=?koi8-r?B?0sHUzsHRINzLz87PzcnRIQ==?= 
+X-Antivirus: avast! (VPS 110906-0, 2011/09/06), Outbound message 
+X-Antivirus-Status: Clean 
+

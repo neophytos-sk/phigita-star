@@ -1,0 +1,47 @@
+Received: from alice.wu.wien.ac.at (localhost.localdomain [127.0.0.1])
+	by alice.wu-wien.ac.at (8.14.5/8.14.4) with ESMTP id pB142ewR011703
+	for <k2pts@phigita.net>; Thu, 1 Dec 2011 05:02:41 +0100 
+Subject: alice.wu-wien.ac.at mailing list memberships reminder 
+From: mailman-owner@alice.wu-wien.ac.at 
+To: k2pts@phigita.net 
+X-No-Archive: yes 
+Message-ID: <mailman.186.1322712002.10096.mailman@alice.wu-wien.ac.at> 
+Date: Thu, 01 Dec 2011 05:00:02 +0100 
+Precedence: bulk 
+X-BeenThere: mailman@alice.wu-wien.ac.at 
+X-Mailman-Version: 2.1.14 
+List-Id: Mailman site list <mailman.alice.wu-wien.ac.at> 
+X-List-Administrivia: yes 
+Errors-To: mailman-bounces@alice.wu-wien.ac.at 
+Sender: mailman-bounces@alice.wu-wien.ac.at 
+X-Spam-Status: No, score=-1.4 required=5.0 tests=ALL_TRUSTED,AWL,BAYES_00,
+	PYZOR_CHECK autolearn=no version=3.3.2 
+X-Spam-Checker-Version: SpamAssassin 3.3.2 (2011-06-06) on alice.wu-wien.ac.at 
+--------------------------------------
+This is a reminder, sent out once a month, about your
+alice.wu-wien.ac.at mailing list memberships.  It includes your
+subscription info and how to use it to change it or unsubscribe from a
+list.
+
+You can visit the URLs to change your membership status or
+configuration, including unsubscribing, setting digest-style delivery
+or disabling delivery altogether (e.g., for a vacation), and so on.
+
+In addition to the URL interfaces, you can also use email to make such
+changes.  For more info, send a message to the '-request' address of
+the list (for example, mailman-request@alice.wu-wien.ac.at) containing
+just the word 'help' in the message body, and an email message will be
+sent to you with instructions.
+
+If you have questions, problems, comments, etc, send them to
+mailman-owner@alice.wu-wien.ac.at.  Thanks!
+
+Passwords for k2pts@phigita.net:
+
+List                                     Password // URL
+----                                     --------  
+xotcl@alice.wu-wien.ac.at                obhoun    
+http://alice.wu-wien.ac.at/mailman/options/xotcl/k2pts%40phigita.net
+
+
+

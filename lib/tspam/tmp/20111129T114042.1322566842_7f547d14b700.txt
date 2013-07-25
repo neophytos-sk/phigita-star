@@ -1,0 +1,124 @@
+Return-Path: <DXKT35G-3VPFY-RG8DQ-9Q2JET-MOA5V-M-M2-20111129-fcc6cb5edec0fbd7e@emea.e.paypal.com> 
+DKIM-Signature: v=1; a=rsa-sha1; d=e.paypal.com; s=ED-DKIM; c=simple/simple;
+	q=dns/txt; i=@e.paypal.com; t=1322566831;
+	h=From;
+	bh=Rjr7gomxPPt4QMjIpdRCWSG2FmY=;
+	b=jXwJcvcCn339/HF4walDXyRp74C+9gYbI1lHcd7FYCAdYJE4nr5z7CQ0d0KhvifL
+	LsSYvDSGK76A61BnbVT7RUkZlC5Yt9VwsBoE3cHaiRVuAJ31+KOB9pgdZ+NRahVu; 
+DomainKey-Signature: q=dns; a=rsa-sha1; c=nofws;
+	s=ED2011-04; d=e.paypal.com;
+	h=Received:Date:Content-Type:Content-Transfer-Encoding:MIME-Version:From:Reply-To:To:Subject:Message-Id:X-Mail-From:X-Match:X-RCPT-To:X-Mailer;
+	b=Emn4w5EPaRYEv5r8rSm4HpmMMTlsQ1TyT1tmZgTcN5duwbA/VKal9Aq3plxVX5e7
+	xxdNpHPSvODWvd+pjPHWsDDbOhR9xQ08mYvZPuVuF7iiE4drudCtvmYf09ePBhCg 
+Received: from [127.0.0.1] ([127.0.0.1:59752])
+	by bm1-09.bo3.e-dialog.com (envelope-from <DXKT35G-3VPFY-RG8DQ-9Q2JET-MOA5V-M-M2-20111129-fcc6cb5edec0fbd7e@emea.e.paypal.com>)
+	(ecelerity 2.2.2.45 r(34222M)) with ECSTREAM
+	id 2F/0F-13582-FA4C4DE4; Tue, 29 Nov 2011 06:40:31 -0500 
+Date: Tue, 29 Nov 2011 06:40:31 -0500 
+From: "PayPal" <paypal@e.paypal.com> 
+Reply-To: "PayPal" <noreply@e.paypal.com> 
+To: neophytos@phigita.net 
+Subject: Neophytos Demetriou, buy Christmas gifts
+ for your friends and family in the US
+ and get a chance to win 100 EUR! 
+Message-Id: <25205-889-DXKT35G-3VPFY-RG8DQ-9Q2JET-MOA5V-M-M2-20111129-fcc6cb5edec0fbd7e@e-dialog.com> 
+X-Mail-From: DXKT35G-3VPFY-RG8DQ-9Q2JET-MOA5V-M-M2-20111129-fcc6cb5edec0fbd7e@emea.e.paypal.com 
+X-Match: emea.e.paypal.com 
+X-RCPT-To: neophytos@phigita.net 
+X-Mailer: EDMAIL R6.00.02 
+--------------------------------------
+*************
+PayPal
+https://email-edg.paypal.com/r/DXKT35G/RG8DQ/9Q2JET/MOA5V/I9RW4/GE/t
+*************
+
+*************
+Neophytos Demetriou, shop in the US for Christmas gifts with your HopShopGo US 
+shipping address and get a chance to win 100 EUR!
+https://email-edg.paypal.com/r/DXKT35G/RG8DQ/9Q2JET/MOA5V/5Z588/GE/t
+If this email is not displayed correctly, please click here. 
+https://email-edg.paypal.com/r/DXKT35G/RG8DQ/9Q2JET/MOA5V/MFPYI/GE/t?a=DXKT35G&b=3VPFY&c=Q3EYO1T&d=CJ7NSG&e=1
+Add paypal@e.paypal.com to your address book so our newsletters won't be categorized as spam.
+mailto:paypal@e.paypal.com
+*************
+
+*************
+BUY CHRISTMAS GIFTS FOR YOUR LOVED ONES IN THE US TO WIN 100EUR
+*************
+
+
+*************
+Dear Neophytos Demetriou,
+
+Are you looking for extraordinary Christmas gifts for your friends and family? Shop in the top US online stores with your HopShopGo US shipping address and get a chance to win a 100 EUR PayPal cash-back! 
+
+*************
+HOW TO GET THE 100 EUR CASH BACK
+1. Shop in the US with HopShopGo until December 16th, 2011 and get 20% off shipping fee.
+2. 50 buyers with the heaviest load accumulated at HopShopGo throughout the period will get 100 EUR credited to their PayPal accounts by December 23rd, 2011.
+
+START SHOPPING NOW!
+https://email-edg.paypal.com/r/DXKT35G/RG8DQ/9Q2JET/MOA5V/UH8F3/GE/t
+*************
+WHERE TO SHOP WITH HOPSHOPGO? https://email-edg.paypal.com/r/DXKT35G/RG8DQ/9Q2JET/MOA5V/2VZB8/GE/t
+*************
+
+*************
+WHAT IS HOPSHOPGO?
+HopShopGo is a service allowing you to shop securely at any online stores in the US even if the store does not accept a non-US issued payment method or does not ship overseas.  
+ 
+*************
+
+*************
+WHY IS IT WORTH USING HOPSHOPGO?
+1. You have access to deals and brands available only in the US.  
+2. You get a unique shipping address in the US via which you can ship home.  
+3. You can enjoy access to stores that only accept US credit cards.  
+
+*************
+
+*************  
+Find out more about how HopShopGo works https://email-edg.paypal.com/r/DXKT35G/RG8DQ/9Q2JET/MOA5V/1CAH8/GE/t 
+*************
+
+*************   
+How do I know this is not a fake email?
+*************
+An email really coming from PayPal will address you by your first and last names or your 
+business name. It will not ask you for sensitive information like your password, bank 
+account or credit card details. Most fake emails threaten that your account will be 
+in jeopardy if you do not take action immediately. An email that urgently requests you 
+to supply sensitive personal information is usually an attempt at fraud. Also, fake emails 
+often contain misspellings and grammatical errors or are written in a language which you 
+did not set as preferred for your PayPal account. Remember not to click any links in 
+suspicious looking emails. 
+Click here to learn how to defend yourself against phishing and spoofing.
+https://email-edg.paypal.com/r/DXKT35G/RG8DQ/9Q2JET/MOA5V/UH8N1/GE/t
+
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+Forgotten Password
+https://email-edg.paypal.com/r/DXKT35G/RG8DQ/9Q2JET/MOA5V/Y6C1G/GE/t
+
+Help
+https://email-edg.paypal.com/r/DXKT35G/RG8DQ/9Q2JET/MOA5V/MFPIR/GE/t
+
+Security Center
+https://email-edg.paypal.com/r/DXKT35G/RG8DQ/9Q2JET/MOA5V/HQJWQ/GE/t
+
+Contact us
+https://email-edg.paypal.com/r/DXKT35G/RG8DQ/9Q2JET/MOA5V/LR3YF/GE/t
+
+
+This email was sent to neophytos@phigita.net, 
+because your email preferences are set to receive 
+Partner/Third Party Promotions.  https://email-edg.paypal.com/r/DXKT35G/RG8DQ/9Q2JET/MOA5V/TTNX4/GE/t?a=2PS58698X51472800&b=SIU8W.4SDQ1UpjDNY11k4IOYoCU8LepY&c=PPP&d=10544&e=61680&f=PPP
+
+Copyright (C) 1999-2011 PayPal. All rights reserved. 
+PayPal (Europe) S.à r.l. et Cie, S.C.A., Société en Commandite par Actions. 
+Registered office: 22-24 Boulevard Royal, L-2449, Luxembourg, R.C.S. Luxembourg B 118 349.
+  
+___________________________________________________________
+
+[[DXKT35G-3VPFY-RG8DQ-9Q2JET-MOA5V-M-M2-20111129-fcc6cb5edec0fbd7e]]
+

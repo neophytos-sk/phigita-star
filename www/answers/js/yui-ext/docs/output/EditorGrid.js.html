@@ -1,0 +1,18 @@
+<html><head><title>EditorGrid.js</title><link rel="stylesheet" type="text/css" href="../resources/style.css" media="screen"/></head><body><h1>EditorGrid.js</h1><pre class="highlighted"><code><i>/**
+ * @class YAHOO.ext.grid.EditorGrid
+ * @extends YAHOO.ext.grid.Grid
+ * Shortcut class <b>for</b> creating and editable grid.
+ * @param {String/HTMLElement/YAHOO.ext.Element} container The element into which <b>this</b> grid will be rendered - 
+ * The container MUST have some type of size defined <b>for</b> the grid to fill. The container will be 
+ * automatically set to position relative <b>if</b> it isn't already.
+ * @param {Object} dataModel The data model to bind to
+ * @param {Object} colModel The column model <b>with</b> info about <b>this</b> grid's columns
+ */</i>
+YAHOO.ext.grid.EditorGrid = <b>function</b>(container, dataModel, colModel){
+    YAHOO.ext.grid.EditorGrid.superclass.constructor.call(<b>this</b>, container, dataModel, 
+                      colModel, <b>new</b> YAHOO.ext.grid.EditorSelectionModel());
+    <b>this</b>.container.addClass('yeditgrid');
+};
+YAHOO.extendX(YAHOO.ext.grid.EditorGrid, YAHOO.ext.grid.Grid);</code></pre><hr><div style="font-size:10px;text-align:center;color:gray;">yui-ext - Copyright &copy; 2006 Jack Slocum.  |
+    Yahoo! UI - Copyright &copy; 2006 Yahoo! Inc.<br />All rights reserved.</div>
+    </body></html>

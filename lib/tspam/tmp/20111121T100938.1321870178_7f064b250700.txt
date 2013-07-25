@@ -1,0 +1,16 @@
+Return-path: <webmaster@phigita.net> 
+Received: from [121.55.89.202] (port=6677 helo=mycom)
+	by smtp.secureserver.net with asmtp 
+	id 465C37-000836-03
+	for <webmaster@phigita.net>; Mon, 21 Nov 2011 19:09:25 +0900 
+Message-ID: <EF7AB5B37BEE4E63BE537D8521EE1CBA@mycom> 
+From: =?koi8-r?B?IuTPzcEg0yDHwdLBztTJxcoi?= <firingaq97@farb.com> 
+To: <webmaster@phigita.net> 
+Subject: =?koi8-r?B?5M/NwSDJ2iDC0tXTwQ==?= 
+Date: Mon, 21 Nov 2011 19:09:25 +0900 
+X-Priority: 3 
+X-MSMail-Priority: Normal 
+X-Mailer: Microsoft Windows Mail 6.0.6001.18000 
+X-MimeOLE: Produced By Microsoft MimeOLE V6.0.6001.18049 
+X-Spam: Not detected 
+X-Mras: Ok 

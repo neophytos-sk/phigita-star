@@ -1,0 +1,92 @@
+contract -require_registration "true" {
+    param -id "parent_id" -check "naturalnum notnull"
+}
+
+
+datastore \
+    -id postdata \
+    -singleton true \
+    -scope context_user \
+    -from_class ::Blog_Item \
+    -where [list "id = :parent_id" "shared_p='t'" "allow_comments_p='t'"] \
+    -extend {
+
+	set pretty_date [lc_time_fmt $entry_date %Q]
+	set pretty_time [lc_time_fmt $entry_date %r]
+
+	array set config [list \
+			      root [User set id]-[ad_conn ctx_uid] \
+			      container_object_id "X" \
+			      image_prefix "/~[ad_conn context_username]/media/preview/"]
+
+	set content_in_html ""
+	::xo::structured_text::stx_to_html config body content_in_html
+    }
+
+
+guard { return @{postdata:rowcount} }
+
+val -id title -with postdata { return [::util::coalesce @{title} "Entry \#@{id}"] }
+
+
+if {0} {
+    script -type "text/javascript" -src "/js/spell-checker/spell-checker.js"
+    
+    script -type "text/javascript" {
+	c {
+	    var SC = null;
+	    function initEditor() {
+		
+		SC = new SpellChecker();
+		return false;
+	    }
+	}
+    }
+}
+
+css {
+    #btnPostComment {font-variant:small-caps;}
+}
+
+master -title "Add a comment to '@{title}'" {
+
+    layout_row {
+	layout_col -class span2
+	layout_col -class span8 {
+	    h2 { i { t "Add New Comment" } }
+
+	    tpl -with postdata {
+		h3 { t @{title} }
+		p
+		t @{content_in_html:noquote}
+		p
+		small {
+		    t "posted at "
+		    t "@{pretty_date} @{pretty_time}"
+		}
+		p
+		form -action comment-add-2 -method post {
+		    input -type hidden -name parent_id -value "@{val.parent_id}"
+
+		    div -class "control-group" {
+			label -for comment_body { t "Enter your comment below: " }
+			div -class "controls" {
+			    textarea \
+				-id "comment_body" \
+				-class "input-block-level" \
+				-name "comment" \
+				-rows "5" \
+				-wrap "soft"
+			}
+		    }
+		    div -class "form-actions" {
+			button -id "btnPostComment" -type submit -class "btn btn-warning" {
+			    t "Post Comment"
+			}
+		    }
+		}
+	    }
+	}
+	layout_col -class span2
+    }
+}

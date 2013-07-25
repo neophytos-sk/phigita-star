@@ -1,0 +1,8 @@
+data/ChangeLog.i
+data/LICENSE.i
+data/Makefile.i
+data/README.i
+data/dns.c.i
+data/dns.h.i
+data/dns_procs.tcl.i
+data/nsdns.c.i

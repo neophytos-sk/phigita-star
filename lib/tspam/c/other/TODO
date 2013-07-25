@@ -1,0 +1,4 @@
+* Make extrema size configurable, and default to ~5% of tokens.
+* Teach lexer about multiline MIME headers and case (in)sensitivity.
+* Teach lexer about MIME quoted-printable and base64 encodings.
+* Make a pop3 proxy (?)

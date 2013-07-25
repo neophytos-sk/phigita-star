@@ -1,0 +1,58 @@
+Received: by web2.extjs.com (Postfix, from userid 33)
+	id E43B06C1E7; Mon, 21 Nov 2011 00:02:04 +0000 (UTC) 
+To: k2pts@phigita.net 
+Subject: "Ext: Open Discussion" update 
+X-PHP-Originating-Script: 1000:class_mail.php 
+From: "Sencha Forum" <admin@sencha.com> 
+Auto-Submitted: auto-generated 
+Message-ID: <20111121000204.921e35558e16@www.sencha.com> 
+X-Priority: 3 
+X-Mailer: vBulletin Mail via PHP 
+Date: Mon, 21 Nov 2011 00:02:04 +0000 (UTC) 
+--------------------------------------
+Dear k2pts,
+
+You are subscribed to the forum Ext: Open Discussion, there have been 3 new thread(s) and 1 updated thread(s).
+http://www.sencha.com/forum/forumdisplay.php?6-Ext-Open-Discussion
+
+The following threads are new:
+************
+Questions from a new Sencha developer
+http://www.sencha.com/forum/showthread.php?156325-Questions-from-a-new-Sencha-developer
+In forum: Ext: Open Discussion
+Started by: kevin0713
+Last post: 20 Nov 2011 2:12 PM
+************
+a question about the css
+http://www.sencha.com/forum/showthread.php?156306-a-question-about-the-css
+In forum: Ext: Open Discussion
+Started by: eatgrass
+Last post: 20 Nov 2011 3:45 PM
+************
+Ext.data.Model unary one2many associations?
+http://www.sencha.com/forum/showthread.php?156355-Ext.data.Model-unary-one2many-associations
+In forum: Ext: Open Discussion
+Started by: dpishchukhin
+Last post: 20 Nov 2011 9:19 PM
+
+
+The following threads have been updated:
+************
+What is the largest app which uses ExtJS as presentation layer
+http://www.sencha.com/forum/showthread.php?150345-What-is-the-largest-app-which-uses-ExtJS-as-presentation-layer
+In forum: Ext: Open Discussion
+Started by: jenkins
+Last post: 20 Nov 2011 8:47 PM
+
+
+All the best,
+Sencha Forum
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Unsubscription information:
+
+To unsubscribe from this forum, please visit this page:
+http://www.sencha.com/forum/subscription.php?do=removesubscription&type=forum&subscriptionid=63&auth=e23de5f6387a31c5573cf4993e28e47f
+
+
+

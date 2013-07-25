@@ -1,0 +1,9 @@
+#set id [string trim [lindex [split [ad_conn extra_url] /] end]]
+
+set id [ad_conn extra_url]
+if { ![string is integer -strict $id] } {
+    rp_returnnotfound
+} else {
+    rp_form_put id $id
+    rp_internal_redirect /packages/answers/tmpl-global/thread-one
+}

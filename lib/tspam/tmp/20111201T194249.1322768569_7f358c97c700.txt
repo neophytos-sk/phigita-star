@@ -1,0 +1,36 @@
+Received: from baum-mail-01.a2zmoonlighter.com (10.25.0.20) by mail.guru.com
+ (10.15.5.21) with Microsoft SMTP Server (TLS) id 8.1.436.0; Thu, 1 Dec 2011
+ 14:42:44 -0500 from GURU_EMS.a2zmoonlighter.com (10.25.0.173) by
+ baum-mail-01.a2zmoonlighter.com (10.25.0.21) with Microsoft SMTP Server id
+ 8.1.436.0; Thu, 1 Dec 2011 14:42:35 -0500 
+Date: Thu, 1 Dec 2011 14:42:27 -0500 
+X-Priority: 3 (Normal) 
+Subject: Guru.com: A New Way to Navigate Guru, Coming December 4 
+From: Guru.com <guru_enews@guru.com> 
+To: <k2pts@phigita.net> 
+X-TokenInfo-CID: 168 
+X-TokenInfo-UID: 727478 
+Message-ID: <B5C15E476995798AF5DE69BD34BA86ACF9EF0FCF@GURU_EMS.a2zmoonlighter.com> 
+Return-Path: bounce@guru.com 
+--------------------------------------
+Having trouble viewing this email? 
+
+Please visit http://answers.guru.com/pro/Announcements/A-New-Way-To-Navigate-Guru.aspx
+
+	
+A New Way To Navigate Guru.com, Coming December 4 
+
+Simplicity is the ultimate sophistication and your new navigation is just that. It’s the same Guru system you know and love but with simpler options.
+
+    My Account – This is your launching pad. Get anywhere you need to be in one click.
+    Leads – Look up the leads you have and make sure you're checking in to be first for new projects.
+    Proposals – Submit proposals for projects in just a few simple steps.
+    Projects – Manage the projects Employers have awarded you and keep your Employers up to date.
+    Payments – Send invoices and request SafePay fund releases here so you can get paid.
+    Search – Browse Guru.com’s project pool and submit proposals.
+    Messages – Quick access to your messages from any page so you’ll always be quick to respond.
+    Alerts - When the indicator is red, click it to see your newest project alerts.
+
+Along with the new navigation, we welcome a new design to our homepage. 
+
+We're making the navigation easier. On December 4, use it and let us know what you think.

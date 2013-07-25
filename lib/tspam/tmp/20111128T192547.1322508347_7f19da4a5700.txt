@@ -1,0 +1,117 @@
+DomainKey-Signature: s=rte02; d=amazon.com; c=nofws; q=dns;
+  h=Date:From:To:Message-ID:Subject:MIME-Version:
+   Content-Type:Content-Transfer-Encoding:Bounces-to:
+   X-AMAZON-MAIL-RELAY-TYPE:X-AMAZON-RTE-VERSION;
+  b=FJO5OS4Y1IzWluYNO8hZQ+tNucYZ5awHXpuC4NirQ7Lmc06EdwIyGl8V
+   QvywGw7pmIl0yPrRbIUxBT4ZccDMPg==; 
+Date: Mon, 28 Nov 2011 19:25:37 +0000 (UTC) 
+From: "auto-confirm@amazon.com" <auto-confirm@amazon.com> 
+To: "k2pts@phigita.net" <k2pts@phigita.net> 
+Message-ID: <urn.correios.msg.2011112819253768a5b8d251c044358f39971c32f17302@1322508337394.rte-svc-na-1006.vdc.amazon.com> 
+Subject: Your Order with Amazon.com 
+Bounces-to: 2011112819253768a5b8d251c044358f39971c32f17302@bounces.amazon.com 
+X-AMAZON-MAIL-RELAY-TYPE: notification 
+X-AMAZON-RTE-VERSION: 2.0 
+--------------------------------------
+Thanks for ordering from Amazon.com! Your purchase information appears below.
+
+Want to manage your order online?
+If you need to check the status of your order or make changes, please visit our home page at Amazon.com and click on Your Account at the top of any page.
+***********************************************************
+BILLING AND SHIPPING INFORMATION
+***********************************************************
+E-mail Address:	k2pts@phigita.net
+Billing Address:
+
+Neophytos Demetriou
+Skalion 6
+Apt 203
+Kissonerga, Paphos 8574
+Cyprus
+
+Order Grand Total: EUR 202,95
+
+Get the Amazon.com Rewards Visa Card and earn 3% rewards on your Amazon.com orders. Click http://www.amazon.com/InstantRewards for more information.
+
+***********************************************************
+	ORDER DETAILS
+***********************************************************
+
+Shipping Details 
+
+(order will arrive in 1 shipment)
+***********************************************************
+Order number:			103-5434867-1225866
+View your Order Summary online: https://www.amazon.com/gp/css/history/view.html
+
+Shipping Method:		Standard International Shipping
+Shipping Preference:		Group my items into as few shipments as possible
+
+Items:                        EUR 187,47
+Shipping & Handling:          EUR 15,48
+                              ---------
+Total Before Tax:             EUR 202,95
+Estimated Tax To Be Collected:USD 0.00
+                              ---------
+Order Total:                  EUR 202,95
+
+Shipping To
+
+Neophytos Demetriou
+Skalion 6
+Apt 203
+Kissonerga, Paphos 8574
+Cyprus
+
+Delivery estimate: Dec. 23, 2011 - Dec. 24, 2011
+
+1 "Probabilistic Robotics (Intelligent Robotics and Autonomous Agents series)"
+Thrun, Sebastian; Hardcover; $48.26
+In Stock
+Sold by: Amazon.com LLC
+
+1 "Machine Learning: An Algorithmic Perspective (Chapman & Hall/Crc Machine Learning & Pattern Recognition)"
+Marsland, Stephen; Hardcover; $56.84
+In Stock
+Sold by: Amazon.com LLC
+
+1 "Programming Collective Intelligence: Building Smart Web 2.0 Applications"
+Segaran, Toby; Paperback; $26.39
+In Stock
+Sold by: Amazon.com LLC
+
+1 "Speech and Language Processing (2nd Edition)"
+Jurafsky, Daniel; Hardcover; $110.12
+In Stock
+Sold by: Amazon.com LLC
+
+***********************************************************
+Need to give a gift? Not sure what to buy?
+Amazon.com gift certificates/cards are available in any dollar amount from $5 to $5,000.
+We'll deliver it via e-mail--it's the perfect last-minute gift.
+Learn more at http://www.amazon.com/gift-certificates
+***********************************************************
+Need to print an invoice?
+Visit www.amazon.com/your-account and click to view your orders. Click "View order" next to the appropriate order. You'll find a button to print an invoice on the next page
+***********************************************************
+Got questions? We've got answers. Visit our online Help department, available 24 hours a day: http://www.amazon.com/help
+
+IMPORTANT: To learn more about managing your orders in your local currency on Amazon.com, please visit http://www.amazon.com/gp/help/customer/display.html?ie=UTF8&nodeId=200197730
+
+Your shipment confirmation e-mail will display all costs in US dollars.  Visit Your Account to see the amount you paid in your local currency
+
+***********************************************************
+Please note: This e-mail message was sent from a notification-only address that cannot accept incoming e-mail. Please do not reply to this message.
+
+If you ever need to return an order, visit our Online Returns Center: www.amazon.com/returns
+
+Thanks again for shopping with us.
+------------------------------------------------------------- 
+Amazon.com
+Earth's Biggest Selection
+http://www.amazon.com
+-------------------------------------------------------------
+
+
+
+

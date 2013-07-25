@@ -1,0 +1,11 @@
+Received: from tnoigvqe (unknown [110.53.24.111])
+	by mail.hznews.com (CSmail PostOffice for UNIX(l)) with ESMTP
+	id AE679479D7; Fri, 14 Oct 2011 05:01:27 +0800 (CST) 
+Message-ID: <20111014051930100784@hznews.com> 
+From: "ccir" <xyj@hznews.com> 
+To:  
+Subject: =?gb2312?B?qG3Oqsqyw7TT0LXExvPStcuzt+fLs8uuo6zT0LXExvPStci0zqO7+g==?=
+	=?gb2312?B?y8S3/KO/dTY=?= 
+Date: Fri, 14 Oct 2011 05:19:25 +0800 
+X-mailer: Sikgurufp 9 
+Whoops!  What is a 'application/vnd.ms-excel'?

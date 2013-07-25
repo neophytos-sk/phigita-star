@@ -1,0 +1,11 @@
+Received: from blt (unknown [110.53.24.38])
+	by ns.vimgate.net (Postfix) with ESMTP
+	id B6B6B680CAD; Mon, 15 Aug 2011 15:10:39 +0800 (CST) 
+Message-ID: <20110815161329254347@laya.com.cn> 
+From: =?gb2312?B?0MLUo8q10rW8r83F?= <info@laya.com.cn> 
+To:  
+Subject: =?gb2312?B?dzk4IM6qyrLDtM/gzay1xLL6xrejrNK1zvHIy9SxtcTStbyo?=
+	=?gb2312?B?z+Cy7ry4yq6xtqO/IHE1Mg==?= 
+Date: Mon, 15 Aug 2011 16:13:20 +0800 
+X-mailer: Wfpc 6 
+Whoops!  What is a 'application/vnd.ms-excel'?

@@ -1,0 +1,7 @@
+*.:
++:ignored
+=:DH
+*+:.PD
+=local:My.Dom
+*.local:.My.Dom
+?:.DD

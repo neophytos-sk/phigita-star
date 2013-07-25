@@ -1,0 +1,148 @@
+Received: by qabg40 with SMTP id g40sf5128146qab.26
+        for <k2pts@phigita.net>; Sun, 27 Nov 2011 13:43:50 -0800 (PST) by 10.224.185.79 with SMTP id cn15mr7394965qab.5.1322430223690;
+        Sun, 27 Nov 2011 13:43:43 -0800 (PST) by 10.229.43.105 with SMTP id v41ls4579115qce.2.gmail; Sun, 27 Nov
+ 2011 13:43:30 -0800 (PST) by 10.224.192.10 with SMTP id do10mr21221409qab.6.1322430210753;
+        Sun, 27 Nov 2011 13:43:30 -0800 (PST) by 10.224.76.145 with SMTP id c17msqak;
+        Sun, 27 Nov 2011 11:54:13 -0800 (PST) by 10.224.116.69 with SMTP id l5mr21103171qaq.7.1322423652305;
+        Sun, 27 Nov 2011 11:54:12 -0800 (PST) by 10.224.116.69 with SMTP id l5mr21103170qaq.7.1322423652283;
+        Sun, 27 Nov 2011 11:54:12 -0800 (PST) from mail-qw0-f46.google.com (mail-qw0-f46.google.com [209.85.216.46])
+        by gmr-mx.google.com with ESMTPS id j29si14328490qcs.2.2011.11.27.11.54.12
+        (version=TLSv1/SSLv3 cipher=OTHER);
+        Sun, 27 Nov 2011 11:54:12 -0800 (PST) by qadc14 with SMTP id c14so873626qad.12
+        for <cloud-computing@googlegroups.com>; Sun, 27 Nov 2011 11:54:12 -0800 (PST) by 10.224.174.68 with SMTP id s4mr18343904qaz.4.1322423652002; Sun,
+ 27 Nov 2011 11:54:12 -0800 (PST) by 10.229.104.199 with HTTP; Sun, 27 Nov 2011 11:54:11 -0800 (PST) 
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlegroups.com; s=beta;
+        h=x-beenthere:received-spf:mime-version:in-reply-to:references:date
+         :message-id:subject:from:to:x-original-sender
+         :x-original-authentication-results:reply-to:precedence:mailing-list
+         :list-id:x-google-group-id:list-post:list-help:list-archive:sender
+         :list-unsubscribe:content-type;
+        bh=VVYnwFa0CxslqHkhmFBV/0RQXCb7fFcuG+4syqf4sQ4=;
+        b=hiDjDR2a7MOjsWpnEDlpFuNZaSWjqp7gKPAX2nmCRohdRqr5zNiRmhl8hukYYeY2kV
+         sxSJ5ufkc3lR64meeuaogVA5wiYdmE4sgkqcqzzAd/GA3rwdNsL7oI35exXATg3HYn3h
+         mNd3lWsztJ1FXNQixbzAjraSoGnOkNvRvkV1U= 
+X-BeenThere: cloud-computing@googlegroups.com 
+Received-SPF: pass (google.com: domain of paruchuriravikishore@gmail.com designates 209.85.216.46 as permitted sender) client-ip=209.85.216.46; 
+In-Reply-To: <1f3d3c83-8019-454a-8d1f-385fff0aa92e@s17g2000pra.googlegroups.com> 
+References: <1f3d3c83-8019-454a-8d1f-385fff0aa92e@s17g2000pra.googlegroups.com> 
+Date: Sun, 27 Nov 2011 20:54:11 +0100 
+Message-ID: <CAOdkx78_7nO8WaXPN046YSqqevjejEnFox5dFzobsS6qBPcreg@mail.gmail.com> 
+Subject: Re: [ Cloud Computing ] Best Cloud Bang for the Buck for Business 
+From: ravi paruchuri <paruchuriravikishore@gmail.com> 
+To: cloud-computing@googlegroups.com 
+X-Original-Sender: paruchuriravikishore@gmail.com 
+X-Original-Authentication-Results: gmr-mx.google.com; spf=pass (google.com:
+ domain of paruchuriravikishore@gmail.com designates 209.85.216.46 as
+ permitted sender) smtp.mail=paruchuriravikishore@gmail.com; dkim=pass (test
+ mode) header.i=@gmail.com 
+Reply-To: cloud-computing@googlegroups.com 
+Precedence: list 
+Mailing-list: list cloud-computing@googlegroups.com; contact cloud-computing+owners@googlegroups.com 
+List-ID: <cloud-computing.googlegroups.com> 
+X-Google-Group-Id: 555718547949 
+List-Post: <http://groups.google.com/group/cloud-computing/post?hl=en_CA>, <mailto:cloud-computing@googlegroups.com> 
+List-Help: <http://groups.google.com/support/?hl=en_CA>, <mailto:cloud-computing+help@googlegroups.com> 
+List-Archive: <http://groups.google.com/group/cloud-computing?hl=en_CA> 
+Sender: cloud-computing@googlegroups.com 
+List-Unsubscribe: <http://groups.google.com/group/cloud-computing/subscribe?hl=en_CA>,
+ <mailto:cloud-computing+unsubscribe@googlegroups.com> 
+--------------------------------------
+Hi all,
+I was also thinking from long time that solution like desktop recovery(
+with includes Business continuty and vertual desktop), having a cloud
+instance that can be restored if hardware fails and a payed solution to
+open that desktop from other clients. Business case would be to work remote
+option with a tablet or a desktop computer and can move without carrying
+4kg laptop bag.
+
+
+
+On Sun, Nov 27, 2011 at 6:30 PM, Desktop Anywhere <jeffkbennett@gmail.com>wrote:
+
+> Share your Top Three Cloud Solution category ideas for business?  I
+> know the answers will depend on circumstances a lot.
+>
+> However, I think that the growth of the cloud market, like most new
+> technology, depends a lot on people beyond the bleeding edge getting
+> comfortable with this kind of computing. People get comfortable pretty
+> fast when they actually experience the benefits for the themselves.
+> Often managers that were once afraid of turning some technology on
+> soon become fearful of having it turned off. Easy, safe and sure
+> solutions can be the most important entry points for opening the door
+> to the Cloud for more and more businesses.
+>
+> My Top Three Cloud Wins from successful experiences in terms of post
+> implementation benefits from the customer perspective are:
+>
+> 1) Virtual Desktops - There are so many versions of Virtual Desktop
+> Infrastructures now that there is one to fit almost every need.
+> Selecting the right one seems the bigger challenge now. It is rare for
+> me to find a device based desktop deployment that makes much sense
+> anymore.
+> 2) Business Continuity for Compliance (Duplicate Infrastructure for
+> Contingency Recovery) - Most CR systems get turned on to test and then
+> shut down forever. Cloud Resources have been a superb fit, especially
+> for compliance mandated situations. The cost/performance can't be
+> beat.
+> 3) Externalizing Resources for Prototyping and Development - Not
+> having to procure and manage hardware, being able to expand and
+> contract capacity at will, jump starting innovation cost effectively,
+> being able to validate ideas on the cheap, etc. are all good reasons
+> why this has been so successful.
+>
+> What would your three be?
+>
+> Jeff
+>
+> --
+> ~~~~~
+> Register to attend UP 2011 Cloud Conference
+> http://up-con.com/register-now
+>
+> Posting guidelines: http://bit.ly/bL3u3v
+> Follow us on Twitter @cloudcomp_group @cloudslam @up_con
+> Post Job/Resume at http://cloudjobs.net
+>
+> Download hundreds of recorded cloud sessions at
+> - http://cloudslam.org/register
+> - http://2010.up-con.com/register
+> - http://cloudslam09.com/content/registration-5.html
+> - http://cloudslam10.com/content/registration
+>
+> or get it on DVD at
+> http://www.amazon.com/gp/product/B002H07SEC,
+> http://www.amazon.com/gp/product/B004L1755W,
+> http://www.amazon.com/gp/product/B002H0IW1U
+>
+> ~~~~~
+> You received this message because you are subscribed to the Google Groups
+> "Cloud Computing" group.
+> To post to this group, send email to cloud-computing@googlegroups.com
+> To unsubscribe from this group, send email to
+> cloud-computing-unsubscribe@googlegroups.com
+>
+
+-- 
+~~~~~
+Register to attend UP 2011 Cloud Conference
+http://up-con.com/register-now
+
+Posting guidelines: http://bit.ly/bL3u3v
+Follow us on Twitter @cloudcomp_group @cloudslam @up_con
+Post Job/Resume at http://cloudjobs.net
+
+Download hundreds of recorded cloud sessions at 
+- http://cloudslam.org/register
+- http://2010.up-con.com/register 
+- http://cloudslam09.com/content/registration-5.html  
+- http://cloudslam10.com/content/registration
+
+or get it on DVD at 
+http://www.amazon.com/gp/product/B002H07SEC, http://www.amazon.com/gp/product/B004L1755W, http://www.amazon.com/gp/product/B002H0IW1U 
+
+~~~~~
+You received this message because you are subscribed to the Google Groups "Cloud Computing" group.
+To post to this group, send email to cloud-computing@googlegroups.com
+To unsubscribe from this group, send email to cloud-computing-unsubscribe@googlegroups.com
+

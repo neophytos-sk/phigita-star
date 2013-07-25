@@ -1,0 +1,512 @@
+<!doctype html public "-//W3C//DTD HTML 4.0 Frameset//EN""http://www.w3.org/TR/REC-html40/frameset.dtd">
+<html>
+<head>
+<title>
+ka-Map Overview
+</title>
+<link rel ="stylesheet" type="text/css" href="stylesheet.css" title="Style">
+<script>
+function asd() {
+	
+		parent.document.title="kaKeymap.js Overview";
+	
+}
+</script>
+</head>
+<body bgcolor="white" onload="asd();">
+
+<!-- ========== START OF NAVBAR ========== -->
+<a name="navbar_top"><!-- --></a>
+<table border="0" width="100%" cellpadding="1" cellspacing="0">
+<tr>
+<td colspan=2 bgcolor="#EEEEFF" class="NavBarCell1">
+<a name="navbar_top_firstrow"><!-- --></a>
+<table border="0" cellpadding="0" cellspacing="3">
+  <tr align="center" valign="top">
+  
+  
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-summary.html"><font class="NavBarFont1"><b>Overview</b></font></a>&nbsp;</td>
+  <td bgcolor="#FFFFFF" class="NavBarCell1Rev">	&nbsp;<font class="NavBarFont1Rev"><b>File</b></font>&nbsp;</td>
+  
+
+  <td bgcolor="#FFFFFF" class="NavBarCell1"> 	<font class="NavBarFont1">Class</font>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-tree.html"><font class="NavBarFont1"><b>Tree</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="index-all.html"--><font class="NavBarFont1"><b>Index</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="help-doc.html"><font class="NavBarFont1"><b>Help</b></font></a>&nbsp;</td>
+  </tr>
+</table>
+</td>
+<td bgcolor="#EEEEFF" align="right" valign="top">
+<em>
+<b>ka-Map</b></em>
+</td>
+</tr>
+
+<tr>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+&nbsp;PREV&nbsp;
+&nbsp;NEXT</font></td>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+  <a href="index.html" target="_top"><b>FRAMES</b></a>  &nbsp;
+&nbsp;<a href="overview-summary.html" target="_top"><b>NO FRAMES</b></a>
+&nbsp;&nbsp;
+<script>
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="allclasses-noframe.html" TARGET=""><B>All Classes</B></A>');
+  }
+  //-->
+</script>
+<noscript>
+<a href="allclasses-noframe.html" target=""><b>All Classes</b></a>
+</noscript>
+</font></td>
+</tr>
+</table>
+<!-- =========== END OF NAVBAR =========== -->
+
+<hr>
+<center>
+	
+	   <h2>kaKeymap.js</h2>
+	
+</center>
+
+	
+
+
+<h4>Summary</h4>
+<p>
+	
+		No overview generated for 'kaKeymap.js'<BR/><BR/>
+	
+</p>
+
+<hr>
+
+
+    <table border="1" cellpadding="3" cellspacing="0" width="100%">
+    <tr bgcolor="#CCCCFF" class="TableHeadingColor">
+    <td colspan=2><font size="+2">
+    
+        <b>Class Summary</b>
+    
+    </font></td>
+    </tr>
+    
+    <tr bgcolor="white" class="TableRowColor">
+    <td width="15%"><b><a href="kaKeymap.html">kaKeymap</a></b></td>
+    <td>&nbsp;</td>
+    </tr>
+    
+    </table>
+    <hr/> 
+
+
+<!-- ========== METHOD SUMMARY =========== -->
+
+<!-- ========== END METHOD SUMMARY =========== -->
+
+
+        <pre class="sourceview"><span class="comment">/**********************************************************************
+ *
+ * $Id: kaKeymap.js,v 1.21 2006/03/12 20:33:29 pspencer Exp $
+ *
+ * purpose: kaKeymap provides an overview or reference for navigational
+ *          aid to the user.
+ *
+ * It works by displaying an image and overlaying a rectangular box that
+ * indicates the current extents of the main kaMap view.  To accomplish this,
+ * the image is associated with a set of geographic extents that it represents.
+ * A keymap image is normally a small image that is representative of the full
+ * area of the application's data, but with reduced detail (typically just
+ * polygons and lines for countries and political boundaries).
+ *
+ * The default mode of operation uses MapServer only to get the reference
+ * object image and extents from the map file.  Tracking of extents is done
+ * purely on the client side.
+ *
+ * author: Paul Spencer (pspencer<span class="attrib">@dmsolutions</span>.ca)
+ *
+ * The original kaKeymap code was written by DM Solutions Group.  Lorenzo
+ * Becchi and Andrea Cappugi contributed the code to make the keymap clickable
+ * and draggable.
+ *
+ * TODO:
+ *
+ **********************************************************************
+ *
+ * Copyright (c) 2005, DM Solutions Group Inc.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
+ * DEALINGS IN THE SOFTWARE.
+ *
+ **********************************************************************/</span>
+
+<span class="comment">/******************************************************************************
+ * kaKeymap
+ *
+ * class to handle the keymap
+ *
+ * oKaMap - the ka-Map instance to draw the keymap for
+ * szID - string, the id of a div that will contain the keymap
+ *
+ *****************************************************************************/</span>
+<span class="reserved">function</span> kaKeymap(oKaMap, szID ) {
+    <span class="reserved">this</span>.kaMap = oKaMap;
+    <span class="reserved">this</span>.domObj = <span class="reserved">this</span>.kaMap.getRawObject(szID);
+    <span class="reserved">this</span>.domObj.kaKeymap=<span class="reserved">this</span>;
+    <span class="reserved">this</span>.width=getObjectWidth(szID)+<span class="literal">"px"</span>;
+    <span class="reserved">this</span>.height=getObjectHeight(szID)+<span class="literal">"px"</span>;
+    <span class="reserved">this</span>.pxExtent =null;
+    <span class="reserved">this</span>.domExtents = null;
+    <span class="reserved">this</span>.aExtents = null;
+    <span class="reserved">this</span>.domImg = null;
+    <span class="reserved">this</span>.imgSrc = null;
+    <span class="reserved">this</span>.imgWidth = null;
+    <span class="reserved">this</span>.imgHeight = null;
+
+    <span class="reserved">this</span>.cellWidth = null;
+    <span class="reserved">this</span>.cellHeight = null;
+    <span class="reserved">this</span>.initialExtents = null;
+
+    <span class="reserved">this</span>.domObj.ondblclick= <span class="reserved">this</span>.onclick;
+
+    <span class="reserved">if</span> ( <span class="reserved">this</span>.domObj.captureEvents) {
+        <span class="reserved">this</span>.domObj.captureEvents(Event.DBLCLICK);
+    }
+    
+    <span class="reserved">this</span>.kaMap.registerForEvent( KAMAP_EXTENTS_CHANGED, <span class="reserved">this</span>, <span class="reserved">this</span>.update );
+    <span class="reserved">this</span>.kaMap.registerForEvent( KAMAP_MAP_INITIALIZED, <span class="reserved">this</span>, <span class="reserved">this</span>.initialize );
+};
+
+kaKeymap.<span class="reserved">prototype</span>.initialize = <span class="reserved">function</span>(id) {
+    <span class="reserved">this</span>.pxExtent = null;
+    <span class="reserved">this</span>.initialExtents = <span class="reserved">this</span>.kaMap.getGeoExtents();
+    call(<span class="reserved">this</span>.kaMap.server+<span class="literal">'/keymap.php?map='</span>+<span class="reserved">this</span>.kaMap.currentMap,<span class="reserved">this</span>,<span class="reserved">this</span>.draw);
+};
+
+kaKeymap.<span class="reserved">prototype</span>.draw = <span class="reserved">function</span>( szResult ) {
+    eval( szResult );
+    <span class="reserved">this</span>.cellWidth = (<span class="reserved">this</span>.aExtents[2] - <span class="reserved">this</span>.aExtents[0]) / <span class="reserved">this</span>.imgWidth;
+    <span class="reserved">this</span>.cellHeight = (<span class="reserved">this</span>.aExtents[3] - <span class="reserved">this</span>.aExtents[1]) / <span class="reserved">this</span>.imgHeight;
+    <span class="comment">//clear old keymap</span>
+    <span class="reserved">for</span>(var i = <span class="reserved">this</span>.domObj.childNodes.length - 1; i &gt;= 0; i--)
+    <span class="reserved">this</span>.domObj.removeChild (<span class="reserved">this</span>.domObj.childNodes[i]);
+    
+    <span class="reserved">this</span>.domObj.style.width = <span class="reserved">this</span>.imgWidth + <span class="literal">"px"</span>;
+    <span class="reserved">this</span>.domObj.style.height = <span class="reserved">this</span>.imgHeight + <span class="literal">"px"</span>;
+    
+    <span class="comment">//create an image to hold the keymap</span>
+    <span class="reserved">this</span>.domImg = document.createElement( <span class="literal">'img'</span> );
+    <span class="reserved">this</span>.domImg.src = <span class="reserved">this</span>.imgSrc + <span class="literal">'&amp;map='</span>+<span class="reserved">this</span>.kaMap.currentMap;
+    <span class="reserved">this</span>.domImg.width = <span class="reserved">this</span>.imgWidth;
+    <span class="reserved">this</span>.domImg.height = <span class="reserved">this</span>.imgHeight;
+    <span class="reserved">this</span>.domObj.appendChild( <span class="reserved">this</span>.domImg );
+    
+	<span class="comment">//create a div to track the current extents</span>
+    <span class="reserved">this</span>.domExtents = document.createElement( <span class="literal">'div'</span> );
+	<span class="reserved">this</span>.domExtents.kaKeymap = <span class="reserved">this</span>;
+    <span class="reserved">this</span>.domExtents.id=<span class="literal">"keymapDomExtents"</span>;
+    <span class="reserved">this</span>.domExtents.style.position = <span class="literal">'absolute'</span>;
+    <span class="reserved">this</span>.domExtents.style.border = <span class="literal">'1px solid red'</span>;
+    <span class="reserved">this</span>.domExtents.style.top = <span class="literal">"1px"</span>;
+    <span class="reserved">this</span>.domExtents.style.left = <span class="literal">"1px"</span>;
+    <span class="reserved">this</span>.domExtents.style.width = <span class="literal">"1px"</span>;
+    <span class="reserved">this</span>.domExtents.style.height = <span class="literal">"1px"</span>;
+    <span class="reserved">this</span>.domExtents.style.backgroundColor = <span class="literal">'transparent'</span>;
+    <span class="reserved">this</span>.domExtents.style.visibility = <span class="literal">'visible'</span>;
+	<span class="reserved">this</span>.domObj.appendChild(<span class="reserved">this</span>.domExtents);
+
+    <span class="comment">//create a div to allow click/drag of extents for nav</span>
+    <span class="reserved">this</span>.domEvent = document.createElement( <span class="literal">'div'</span> );
+    <span class="reserved">this</span>.domEvent.kaKeymap=<span class="reserved">this</span>;
+
+    <span class="reserved">this</span>.domEvent.onmousedown= <span class="reserved">this</span>.mousedown;
+    <span class="reserved">this</span>.domEvent.onmouseup= <span class="reserved">this</span>.mouseup;
+    <span class="reserved">this</span>.domEvent.onmousemove= <span class="reserved">this</span>.mousemove;
+    <span class="reserved">this</span>.domEvent.onmouseout= <span class="reserved">this</span>.mouseup;
+    <span class="reserved">if</span> (<span class="reserved">this</span>.domEvent.captureEvents) {
+       <span class="reserved">this</span>.domEvent.captureEvents(Event.MOUSEDOWN);
+       <span class="reserved">this</span>.domEvent.captureEvents(Event.MOUSEUP);
+       <span class="reserved">this</span>.domEvent.captureEvents(Event.MOUSEMOVE);
+       <span class="reserved">this</span>.domEvent.captureEvents(Event.MOUSEOUT);
+    }
+
+    <span class="reserved">this</span>.domEvent.style.position = <span class="literal">'absolute'</span>;
+    <span class="reserved">this</span>.domEvent.id = <span class="literal">'keymapDomEvent'</span>;
+    <span class="reserved">this</span>.domEvent.style.border = <span class="literal">'1px solid red'</span>;
+    <span class="reserved">this</span>.domEvent.style.top = <span class="literal">"1px"</span>;
+    <span class="reserved">this</span>.domEvent.style.left = <span class="literal">"1px"</span>;
+    <span class="reserved">this</span>.domEvent.style.width = <span class="literal">"1px"</span>;
+    <span class="reserved">this</span>.domEvent.style.height = <span class="literal">"1px"</span>;
+    <span class="reserved">this</span>.domEvent.style.backgroundColor = <span class="literal">'white'</span>;
+    <span class="reserved">this</span>.domEvent.style.visibility = <span class="literal">'visible'</span>;
+    <span class="reserved">this</span>.domEvent.style.opacity=0.01;
+    <span class="reserved">this</span>.domEvent.style.mozOpacity=0.01;
+    <span class="reserved">this</span>.domEvent.style.filter = <span class="literal">"Alpha(opacity=0.01)"</span>;
+    <span class="reserved">this</span>.domObj.appendChild(<span class="reserved">this</span>.domEvent);
+
+    <span class="comment">//changed use an image insetd divs to drow the cross air</span>
+    var d = document.createElement( <span class="literal">'img'</span> );
+    d.id=<span class="literal">"keymapCrossImage"</span>;
+    d.src = <span class="reserved">this</span>.kaMap.server+<span class="literal">"images/cross.png"</span>;
+    d.style.position=<span class="literal">'absolute'</span>;
+	d.style.top = <span class="literal">'0px'</span>;
+	d.style.left = <span class="literal">'0px'</span>;
+    d.style.width = <span class="literal">"19px"</span>;
+    d.style.height = <span class="literal">"19px"</span>;
+    d.style.visibility = <span class="literal">'hidden'</span>;
+
+    <span class="reserved">this</span>.domExtents.appendChild(d);
+	<span class="reserved">this</span>.domCross = d;
+
+    <span class="reserved">if</span> (<span class="reserved">this</span>.initialExtents != null) {
+        <span class="reserved">this</span>.update( null, <span class="reserved">this</span>.initialExtents);
+    }
+};
+
+kaKeymap.<span class="reserved">prototype</span>.update = <span class="reserved">function</span>( eventID, extents ) {
+    <span class="reserved">if</span> (!<span class="reserved">this</span>.aExtents || !<span class="reserved">this</span>.domExtents) {
+        <span class="reserved">this</span>.initialExtents = extents;
+        <span class="reserved">return</span>;
+    }
+
+    var left = (extents[0] - <span class="reserved">this</span>.aExtents[0]) / <span class="reserved">this</span>.cellWidth;
+    var width = (extents[2] - extents[0]) / <span class="reserved">this</span>.cellWidth;
+    var top = -1 * (extents[3] - <span class="reserved">this</span>.aExtents[3]) / <span class="reserved">this</span>.cellHeight;
+    var height = (extents[3] - extents[1]) / <span class="reserved">this</span>.cellHeight;
+
+    <span class="reserved">this</span>.pxExtent = new Array(left,top,width,height);
+    <span class="reserved">this</span>.domExtents.style.top = parseInt(top+0.5)+<span class="literal">"px"</span>;
+    <span class="reserved">this</span>.domExtents.style.left = parseInt(left+0.5)+<span class="literal">"px"</span>;
+    <span class="reserved">this</span>.domEvent.style.top = parseInt(top+0.5)+<span class="literal">"px"</span>;
+    <span class="reserved">this</span>.domEvent.style.left = parseInt(left+0.5)+<span class="literal">"px"</span>;
+    
+    <span class="reserved">if</span> (parseInt(width+0.5) &lt; parseInt(<span class="reserved">this</span>.domCross.style.width) ||
+        parseInt(height+0.5) &lt; parseInt(<span class="reserved">this</span>.domCross.style.height) ) {
+        <span class="comment">//show crosshair and center on center of image</span>
+		var ix = parseInt(<span class="reserved">this</span>.domCross.style.width)/2;
+		var iy = parseInt(<span class="reserved">this</span>.domCross.style.height)/2;
+		
+		var ox = width/2;
+		var oy = height/2;
+        
+		<span class="reserved">this</span>.domExtents.style.width = <span class="reserved">this</span>.domCross.style.width;
+        <span class="reserved">this</span>.domExtents.style.height = <span class="reserved">this</span>.domCross.style.height;
+        <span class="reserved">this</span>.domEvent.style.width = <span class="reserved">this</span>.domCross.style.width;
+        <span class="reserved">this</span>.domEvent.style.height = <span class="reserved">this</span>.domCross.style.height;
+		<span class="reserved">this</span>.domExtents.style.top = (parseInt(<span class="reserved">this</span>.domExtents.style.top) -iy + oy) + <span class="literal">'px'</span>;
+		<span class="reserved">this</span>.domExtents.style.left = (parseInt(<span class="reserved">this</span>.domExtents.style.left) -ix  + ox) + <span class="literal">'px'</span>;
+        <span class="reserved">this</span>.domEvent.style.top = (parseInt(<span class="reserved">this</span>.domEvent.style.top) -iy + oy) + <span class="literal">'px'</span>;
+        <span class="reserved">this</span>.domEvent.style.left = (parseInt(<span class="reserved">this</span>.domEvent.style.left) -ix + ox) + <span class="literal">'px'</span>;
+        <span class="reserved">this</span>.domCross.style.visibility = <span class="literal">'visible'</span>;
+		<span class="reserved">this</span>.domExtents.style.border = <span class="literal">'1px solid white'</span>;
+        <span class="reserved">this</span>.domEvent.style.border = <span class="literal">'none'</span>;
+    } <span class="reserved">else</span> {
+    	<span class="reserved">this</span>.domExtents.style.width = parseInt(width+0.5) + <span class="literal">"px"</span>;
+	    <span class="reserved">this</span>.domExtents.style.height = parseInt(height+0.5) + <span class="literal">"px"</span>;
+        <span class="reserved">this</span>.domEvent.style.width = parseInt(width+0.5) + <span class="literal">"px"</span>;
+        <span class="reserved">this</span>.domEvent.style.height = parseInt(height+0.5) + <span class="literal">"px"</span>;
+        <span class="reserved">this</span>.domCross.style.visibility = <span class="literal">'hidden'</span>;
+		<span class="reserved">this</span>.domExtents.style.border = <span class="literal">'1px solid red'</span>;
+        <span class="reserved">this</span>.domEvent.style.border = <span class="literal">'1px solid red'</span>;
+		<span class="reserved">this</span>.domEvent.style.visibility = <span class="literal">'visible'</span>;
+        <span class="reserved">this</span>.domExtents.style.visibility = <span class="literal">'visible'</span>;
+     }
+};
+
+<span class="comment">/*click event on div kaKeymap*/</span>
+kaKeymap.<span class="reserved">prototype</span>.onclick = <span class="reserved">function</span>(e) {
+    e = (e)?e:((event)?event:null); 
+    <span class="reserved">this</span>.kaKeymap.centerMap(e);
+};
+
+<span class="comment">/*call aPixPos to calculate geografic position of click and recenter kamap map*/</span>
+kaKeymap.<span class="reserved">prototype</span>.centerMap = <span class="reserved">function</span>(e) {
+    var pos= <span class="reserved">this</span>.aPixPos( e.clientX, e.clientY );
+    <span class="reserved">this</span>.kaMap.zoomTo(pos[0],pos[1]);
+};
+
+<span class="comment">/**
+ * kaKeymap_aPixPos( x, y )
+ *
+ * try to calculate geoposition in kaKeymap
+ *
+ * x - int, the x page coord
+ * y - int, the y page coord
+ *
+ * returns an array with geo positions
+ */</span>
+kaKeymap.<span class="reserved">prototype</span>.aPixPos = <span class="reserved">function</span>( x, y ) {
+    var obj = <span class="reserved">this</span>.domObj;
+    var offsetLeft = 0;
+    var offsetTop = 0;
+    <span class="reserved">while</span> (obj) {
+        offsetLeft += parseFloat(obj.offsetLeft);
+        offsetTop += parseFloat(obj.offsetTop);
+        obj = obj.offsetParent;
+    }
+    var pX = x  - offsetLeft  ;
+    var pY = y  -  offsetTop  ;
+    pX = parseFloat(<span class="reserved">this</span>.aExtents[0] + (<span class="reserved">this</span>.cellWidth *pX)); 
+    pY = parseFloat(<span class="reserved">this</span>.aExtents[3] - (<span class="reserved">this</span>.cellHeight *pY));
+    <span class="reserved">return</span> [pX,pY];
+};
+
+kaKeymap.<span class="reserved">prototype</span>.mousedown = <span class="reserved">function</span>(e) {
+     e = (e)?e:((event)?event:null);
+     
+     <span class="reserved">this</span>.kaKeymap.domEvent.style.top= <span class="literal">"0px"</span>;
+     <span class="reserved">this</span>.kaKeymap.domEvent.style.left= <span class="literal">"0px"</span>;
+     <span class="reserved">this</span>.kaKeymap.domEvent.style.width =<span class="reserved">this</span>.kaKeymap.domObj.style.width;
+     <span class="reserved">this</span>.kaKeymap.domEvent.style.height = <span class="reserved">this</span>.kaKeymap.domObj.style.height;
+     <span class="reserved">this</span>.kaKeymap.domExtents.init=1;
+     <span class="reserved">this</span>.kaKeymap.domExtents.oX=e.clientX;
+     <span class="reserved">this</span>.kaKeymap.domExtents.oY=e.clientY;
+     var amount= 50;
+     <span class="reserved">this</span>.kaKeymap.domExtents.style.backgroundColor = <span class="literal">'pink'</span>;
+     <span class="reserved">this</span>.kaKeymap.domExtents.style.opacity=amount/100;
+
+<span class="comment">//     this.kaKeymap.domObj.style.mozOpacity = amount/100;</span>
+    <span class="comment">//Nasty IE effect (or bug?) when you apply a filter</span>
+    <span class="comment">//to a layer, it clips the layer and we rely on the</span>
+    <span class="comment">//contents being visible outside the layer bounds</span>
+    <span class="comment">//for 'railroading' the tiles</span>
+    <span class="reserved">if</span> (<span class="reserved">this</span>.kaKeymap.kaMap.isIE4) {
+        <span class="reserved">this</span>.kaKeymap.domExtents.style.filter = <span class="literal">"Alpha(opacity="</span>+amount+<span class="literal">")"</span>;        
+    }
+    e=null;
+};
+
+kaKeymap.<span class="reserved">prototype</span>.mouseup = <span class="reserved">function</span>(e) {
+    <span class="reserved">if</span>(<span class="reserved">this</span>.kaKeymap.domExtents.init) {
+        e = (e)?e:((event)?event:null); 
+        <span class="reserved">this</span>.kaKeymap.domExtents.style.backgroundColor = <span class="literal">'transparent'</span>;
+        <span class="reserved">this</span>.kaKeymap.domExtents.style.opacity=1;
+        <span class="reserved">if</span> (<span class="reserved">this</span>.kaKeymap.kaMap.isIE4) {
+            <span class="reserved">this</span>.kaKeymap.domExtents.style.filter = <span class="literal">"Alpha(opacity=100)"</span>;
+        } 
+        <span class="reserved">this</span>.kaKeymap.domExtents.init=0;
+        var cG=<span class="reserved">this</span>.kaKeymap.geoCentCoord();
+        <span class="reserved">this</span>.kaKeymap.kaMap.zoomTo(cG[0],cG[1]);
+    }
+};
+
+kaKeymap.<span class="reserved">prototype</span>.mousemove = <span class="reserved">function</span>(e) {
+    e = (e)?e:((event)?event:null); 
+    <span class="reserved">if</span>(<span class="reserved">this</span>.kaKeymap.domExtents.init) {
+        var xMov=(<span class="reserved">this</span>.kaKeymap.domExtents.oX-e.clientX);
+        var yMov=(<span class="reserved">this</span>.kaKeymap.domExtents.oY-e.clientY);
+
+        var oX=<span class="reserved">this</span>.kaKeymap.pxExtent[0];
+        var oY=<span class="reserved">this</span>.kaKeymap.pxExtent[1];
+        var nX = oX-xMov;
+        var nY = oY-yMov;
+        <span class="reserved">this</span>.kaKeymap.domExtents.oX= e.clientX;
+        <span class="reserved">this</span>.kaKeymap.domExtents.oY= e.clientY;
+        <span class="reserved">this</span>.kaKeymap.pxExtent[0] = nX;
+        <span class="reserved">this</span>.kaKeymap.pxExtent[1] = nY;
+        <span class="reserved">if</span>(<span class="reserved">this</span>.kaKeymap.domCross.style.visibility == <span class="literal">'visible'</span>) {
+            var ix = parseInt(<span class="reserved">this</span>.kaKeymap.domCross.style.width)/2;
+            var iy = parseInt(<span class="reserved">this</span>.kaKeymap.domCross.style.height)/2;
+            var ox =  <span class="reserved">this</span>.kaKeymap.pxExtent[2]/2;
+            var oy = <span class="reserved">this</span>.kaKeymap.pxExtent[3]/2;
+
+            <span class="reserved">this</span>.kaKeymap.domExtents.style.top = parseInt((nY+0.5)-iy+oy) + <span class="literal">"px"</span>;
+            <span class="reserved">this</span>.kaKeymap.domExtents.style.left = parseInt((nX+0.5)-ix+ox) + <span class="literal">"px"</span>;
+        } <span class="reserved">else</span> {
+            <span class="reserved">this</span>.kaKeymap.domExtents.style.top = parseInt(nY+0.5) + <span class="literal">"px"</span>;
+            <span class="reserved">this</span>.kaKeymap.domExtents.style.left = parseInt(nX+0.5) + <span class="literal">"px"</span>;
+        }
+    }
+};
+
+<span class="comment">/**
+ * calculate the geographic position of div's center
+ * Use pxExtent left top width height because the 
+ * div's top left width and heigth (casted to int)
+ * this avoid in calculation error due to ins casting
+ **/</span>
+kaKeymap.<span class="reserved">prototype</span>.geoCentCoord = <span class="reserved">function</span>() {
+       var cpX = <span class="reserved">this</span>.pxExtent[0] + <span class="reserved">this</span>.pxExtent[2]/2;
+       var cpY = <span class="reserved">this</span>.pxExtent[1] +  <span class="reserved">this</span>.pxExtent[3]/2;
+       var cX = <span class="reserved">this</span>.aExtents[0] + (<span class="reserved">this</span>.cellWidth *cpX);
+       var cY = <span class="reserved">this</span>.aExtents[3] - (<span class="reserved">this</span>.cellHeight *cpY); 
+      <span class="reserved">return</span> [cX,cY];
+};</pre>
+	<hr>
+
+
+
+<!-- ========== START OF NAVBAR ========== -->
+<a name="navbar_top"><!-- --></a>
+<table border="0" width="100%" cellpadding="1" cellspacing="0">
+<tr>
+<td colspan=2 bgcolor="#EEEEFF" class="NavBarCell1">
+<a name="navbar_top_firstrow"><!-- --></a>
+<table border="0" cellpadding="0" cellspacing="3">
+  <tr align="center" valign="top">
+  
+  
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-summary.html"><font class="NavBarFont1"><b>Overview</b></font></a>&nbsp;</td>
+  <td bgcolor="#FFFFFF" class="NavBarCell1Rev">	&nbsp;<font class="NavBarFont1Rev"><b>File</b></font>&nbsp;</td>
+  
+
+  <td bgcolor="#FFFFFF" class="NavBarCell1"> <font class="NavBarFont1">Class</font>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-tree.html"><font class="NavBarFont1"><b>Tree</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="index-all.html"--><font class="NavBarFont1"><b>Index</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="help-doc.html"><font class="NavBarFont1"><b>Help</b></font></a>&nbsp;</td>
+  </tr>
+</table>
+</td>
+<td bgcolor="#EEEEFF" align="right" valign="top"><em>
+<b>ka-Map</b></em>
+</td>
+</tr>
+
+<tr>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+&nbsp;PREV&nbsp;
+&nbsp;NEXT</font></td>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+  <a href="index.html" target="_top"><b>FRAMES</b></a>  &nbsp;
+&nbsp;<a href="overview-summary.html" target="_top"><b>NO FRAMES</b></a>
+&nbsp;&nbsp;
+<script>
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="allclasses-noframe.html" TARGET=""><B>All Classes</B></A>');
+  }
+  //-->
+</script>
+<noscript>
+<a href="allclasses-noframe.html" target=""><b>All Classes</b></a>
+</noscript>
+</font></td>
+</tr>
+</table>
+<!-- =========== END OF NAVBAR =========== -->
+
+<hr>
+<font size="-1">
+
+</font>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Mon Feb  5 08:25:15 2007</div>
+</body>
+</html>

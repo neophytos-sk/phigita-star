@@ -1,0 +1,4 @@
+gensize:=8;
+input vnbase;
+input ecss;
+bye.

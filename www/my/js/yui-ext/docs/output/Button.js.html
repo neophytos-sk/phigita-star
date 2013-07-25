@@ -1,0 +1,166 @@
+<html><head><title>Button.js</title><link rel="stylesheet" type="text/css" href="../resources/style.css" media="screen"/></head><body><h1>Button.js</h1><pre class="highlighted"><code><i>/**
+ * @class YAHOO.ext.Button
+ * @extends YAHOO.ext.util.Observable
+ * Simple Button class
+ * @cfg {String} text The button text
+ * @cfg {Function} handler A <b>function</b> called when the button is clicked (can be used instead of click event)
+ * @cfg {Object} scope The scope of the handler
+ * @cfg {Number} minWidth The minimum width <b>for</b> this button (used to give a set of buttons a common width)
+ * @constructor
+ * Create a <b>new</b> button
+ * @param {String/HTMLElement/Element} renderTo The element to append the button to
+ * @param {Object} config The config object
+ */</i>
+YAHOO.ext.Button = <b>function</b>(renderTo, config){
+    YAHOO.ext.util.Config.apply(<b>this</b>, config);
+    <b>this</b>.events = {
+        <i>/**
+	     * @event click
+	     * Fires when <b>this</b> button is clicked
+	     * @param {Button} <b>this</b>
+	     * @param {EventObject} e The click event
+	     */</i>
+	    'click' : true  
+    };
+    <b>if</b>(renderTo){
+        <b>this</b>.render(renderTo);
+    }
+};
+
+YAHOO.extendX(YAHOO.ext.Button, YAHOO.ext.util.Observable, {
+    render : <b>function</b>(renderTo){
+        <b>var</b> btn;
+        <b>if</b>(!<b>this</b>.dhconfig){
+            <b>if</b>(!YAHOO.ext.Button.buttonTemplate){
+                <i>// hideous table template</i>
+                YAHOO.ext.Button.buttonTemplate = <b>new</b> YAHOO.ext.DomHelper.Template('&lt;a href=&quot;#&quot; class=&quot;ybtn-focus&quot;&gt;&lt;table border=&quot;0&quot; cellpadding=&quot;0&quot; cellspacing=&quot;0&quot; class=&quot;ybtn-wrap&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class=&quot;ybtn-left&quot;&gt;&amp;#160;&lt;/td&gt;&lt;td class=&quot;ybtn-center&quot; unselectable=&quot;on&quot;&gt;{0}&lt;/td&gt;&lt;td class=&quot;ybtn-right&quot;&gt;&amp;#160;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/a&gt;');
+            }
+            btn = YAHOO.ext.Button.buttonTemplate.append(
+               getEl(renderTo).dom, [<b>this</b>.text], true);
+            <b>this</b>.tbl = getEl(btn.dom.firstChild, true);
+        }<b>else</b>{
+            btn = YAHOO.ext.DomHelper.append(<b>this</b>.footer.dom, <b>this</b>.dhconfig, true);
+        }
+        <b>this</b>.el = btn;
+        <b>this</b>.autoWidth();
+        btn.addClass('ybtn');
+        btn.mon('click', <b>this</b>.onClick, <b>this</b>, true);
+        btn.on('mouseover', <b>this</b>.onMouseOver, <b>this</b>, true);
+        btn.on('mouseout', <b>this</b>.onMouseOut, <b>this</b>, true);
+        btn.on('mousedown', <b>this</b>.onMouseDown, <b>this</b>, true);
+        btn.on('mouseup', <b>this</b>.onMouseUp, <b>this</b>, true);
+    },
+    <i>/**
+     * Returns the buttons element
+     * @<b>return</b> {YAHOO.ext.Element}
+     */</i>
+    getEl : <b>function</b>(){
+        <b>return</b> this.el;  
+    },
+    
+    autoWidth : <b>function</b>(){
+        <b>if</b>(this.tbl){
+            <b>this</b>.el.setWidth('auto');
+            <b>this</b>.tbl.setWidth('auto');
+            <b>if</b>(this.minWidth){
+                 <b>if</b>(this.tbl.getWidth() &lt; <b>this</b>.minWidth){
+                     <b>this</b>.tbl.setWidth(<b>this</b>.minWidth);
+                 }
+            }
+            <b>this</b>.el.setWidth(<b>this</b>.tbl.getWidth());
+        } 
+    },
+    <i>/**
+     * Sets <b>this</b> buttons click handler
+     * @param {Function} handler The <b>function</b> to call when the button is clicked
+     * @param {Object} scope (optional) Scope <b>for</b> the <b>function</b> passed above
+     */</i>
+    setHandler : <b>function</b>(handler, scope){
+        <b>this</b>.handler = handler;
+        <b>this</b>.scope = scope;  
+    },
+    
+    <i>/**
+     * Set <b>this</b> buttons text
+     * @param {String} text
+     */</i>
+    setText : <b>function</b>(text){
+        <b>this</b>.el.dom.firstChild.firstChild.firstChild.childNodes[1].innerHTML = text;
+        <b>this</b>.autoWidth();
+    },
+    
+    <i>/**
+     * Show <b>this</b> button
+     */</i>
+    show: <b>function</b>(){
+        <b>this</b>.el.setStyle('display', '');
+    },
+    
+    <i>/**
+     * Hide <b>this</b> button
+     */</i>
+    hide: <b>function</b>(){
+        <b>this</b>.el.setStyle('display', 'none'); 
+    },
+    
+    <i>/**
+     * Convenience <b>function</b> for boolean show/hide
+     * @param {Boolean} visible true to show/false to hide
+     */</i>
+    setVisible: <b>function</b>(visible){
+        <b>if</b>(visible) {
+            <b>this</b>.show();
+        }<b>else</b>{
+            <b>this</b>.hide();
+        }
+    },
+    
+    <i>/**
+     * Focus the button
+     */</i>
+    focus : <b>function</b>(){
+        <b>this</b>.el.focus();    
+    },
+    
+    <i>/**
+     * Disable <b>this</b> button
+     */</i>
+    disable : <b>function</b>(){
+        <b>this</b>.el.addClass('ybtn-disabled');
+        <b>this</b>.disabled = true;
+    },
+    
+    <i>/**
+     * Enable <b>this</b> button
+     */</i>
+    enable : <b>function</b>(){
+        <b>this</b>.el.removeClass('ybtn-disabled');
+        <b>this</b>.disabled = false;
+    },
+    
+    onClick : <b>function</b>(e){
+        e.preventDefault();
+        <b>if</b>(!<b>this</b>.disabled){
+            <b>this</b>.fireEvent('click', <b>this</b>, e);
+            <b>this</b>.handler.call(<b>this</b>.scope || window, <b>this</b>, e);
+        }
+    },
+    onMouseOver : <b>function</b>(e){
+        <b>if</b>(!<b>this</b>.disabled){
+            <b>this</b>.el.addClass('ybtn-over');
+        }
+    },
+    onMouseOut : <b>function</b>(e){
+        <b>this</b>.el.removeClass('ybtn-over');
+    },
+    onMouseDown : <b>function</b>(){
+        <b>if</b>(!<b>this</b>.disabled){
+            <b>this</b>.el.addClass('ybtn-click');
+        }
+    },
+    onMouseUp : <b>function</b>(){
+        <b>this</b>.el.removeClass('ybtn-click');
+    }    
+});</code></pre><hr><div style="font-size:10px;text-align:center;color:gray;">yui-ext - Copyright &copy; 2006 Jack Slocum.  |
+    Yahoo! UI - Copyright &copy; 2006 Yahoo! Inc.<br />All rights reserved.</div>
+    </body></html>

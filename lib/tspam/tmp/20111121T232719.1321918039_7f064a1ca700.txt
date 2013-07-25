@@ -1,0 +1,98 @@
+Received: from tori.wu-wien.ac.at (tori.wu-wien.ac.at [137.208.3.25])
+	by freddie.wu-wien.ac.at (Postfix) with ESMTP id 4DBDD27009
+	for <k2pts@phigita.net>; Tue, 22 Nov 2011 00:27:10 +0100 (CET) from milter2.wu-wien.ac.at (milter2.wu-wien.ac.at [137.208.3.132])
+	by tori.wu-wien.ac.at (Postfix) with ESMTP id 43DBE26F00
+	for <neophytos.demetriou@wu-wien.ac.at>; Tue, 22 Nov 2011 00:27:10 +0100 (CET) from tori.wu-wien.ac.at ([137.208.3.25])
+	by milter2.wu-wien.ac.at (milter2.wu-wien.ac.at [137.208.3.132]) (amavisd-new, port 10024)
+	with ESMTP id 8WNY6Bn+Lazs for <neophytos.demetriou@wu-wien.ac.at>;
+	Tue, 22 Nov 2011 00:27:08 +0100 (CET) from wilmottbulletin.com (static.88-198-65-67.clients.your-server.de [88.198.65.67])
+	by tori.wu-wien.ac.at (Postfix) with SMTP id A325826EFF
+	for <neophytos.demetriou@wu-wien.ac.at>; Tue, 22 Nov 2011 00:27:07 +0100 (CET) from Wilmott ([109.75.160.33])
+	by wilmottbulletin.com
+	; Tue, 22 Nov 2011 00:27:06 +0100 
+X-Virus-Scanned: Debian amavisd-new at milter2.wu.ac.at 
+X-Spam-Flag: NO 
+X-Spam-Score: 1.398 
+X-Spam-Level: * 
+X-Spam-Status: No, score=1.398 tagged_above=-999 required=6.31
+	tests=[BAYES_00=-1.9, EXCUSE_REMOVE=3.299, HTML_MESSAGE=0.001,
+	SPF_HELO_PASS=-0.001, SPF_PASS=-0.001] autolearn=no 
+X-policyd-weight: using cached result; rate: -7.1 
+Message-ID: <22297842.1321918033843.JavaMail.SYSTEM@Wilmott> 
+Date: Mon, 21 Nov 2011 23:27:13 +0000 (GMT) 
+From: mailinglist@wilmottbulletin.com 
+Reply-To: mailinglist@wilmottbulletin.com 
+To: neophytos.demetriou@wu-wien.ac.at 
+Subject: Certificate in Quantitative Finance (CQF) - Information Sessions - Upcoming Dates 
+X-Mailer: Admin Pro Tools Email List Manager 2.5 Enterprise 
+X-AntiVirus: checked by Avira MailGate (version: 3.2.1.26; AVE: 8.2.6.116; VDF: 7.11.17.250; host: milter2); id=2290-l8Q2kI 
+X-WU-spfcheck-wumi: pass (status=250 'sender SPF authorized' ip='88.198.65.67' envfrom='mailinglist@wilmottbulletin.com')  inserted by ethel 
+X-WU-wumi-status: ok ethel 
+--------------------------------------
+Certificate in Quantitative Finance (CQF)
+
+Upcoming Information Session
+Dates
+
+Register now:
+http://www.cqf.com/admissions/webinar-dates
+http://www.cqf.com/admissions/information-session-dates
+
+Tuesday 29th
+November - Asia Pacific Region Webinar
+10.00pm Australia; 8.00pm Japan;
+7.00pm Singapore and China; 4.30pm India
+Tuesday 29th November - Global
+Webinar
+1.30pm EST, 3.30pm Brazil,
+6.30pm London (GMT), France 7.30pm
+Switzerland 7.30pm
+
+Thursday 1st December - London
+4 Chiswell Street,
+London, EC1Y 4UP
+3rd Floor, Rooms 6, 7 and 8 from 6.30pm
+
+About the CQF
+World Class Quants Qualification
+• The CQF is a challenging
+qualification, career enhancing, well respected and internationally
+renowned
+
+Part-Time Flexible Learning
+• Six-month flexible part-time
+program delivered twice a year
+• All lectures are available streamed over
+the internet live and recorded.
+• Recorded lectures are available in
+perpetuity
+• Provides an in-depth coverage of practical quantitative
+methods for today's financial market
+
+Expert Teaching and Support
+• The
+CQF faculty, led by Dr Paul Wilmott, is a highly acclaimed team of
+instructors combining leading academics and practitioners specializing in
+the field of quantitative finance
+
+Lifelong Learning
+• CQF alumni
+benefit from a rapidly expanding continuing professional development
+program
+• Lifelong Learning consists of hundreds of lectures including
+C++ for financial programming and Certificate in Mathematical Methods
+•
+CQF alumni membership, all materials and books and access to recordings in
+perpetuity
+
+Contact Us
+Simply visit www.cqf.com or contact us at
+info@cqf.com should you have any questions. Please forward on to any
+friends or work colleagues that may find this course or quantitative
+finance in general to be of interest.
+
+We look forward to having you
+participate!
+
+The CQF Team
+

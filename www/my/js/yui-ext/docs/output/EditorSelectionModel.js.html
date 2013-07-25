@@ -1,0 +1,184 @@
+<html><head><title>EditorSelectionModel.js</title><link rel="stylesheet" type="text/css" href="../resources/style.css" media="screen"/></head><body><h1>EditorSelectionModel.js</h1><pre class="highlighted"><code>
+<i>/**
+ @class YAHOO.ext.grid.EditorSelectionModel
+ * Extends {@link YAHOO.ext.grid.DefaultSelectionModel} to enable cell navigation. &lt;br&gt;&lt;br&gt; 
+ @extends YAHOO.ext.grid.DefaultSelectionModel
+ @constructor
+ */</i>
+YAHOO.ext.grid.EditorSelectionModel = <b>function</b>(){
+    YAHOO.ext.grid.EditorSelectionModel.superclass.constructor.call(<b>this</b>);
+    <i>/** Number of clicks to activate a cell (<b>for</b> editing) - valid values are 1 or 2
+     * @type Number */</i>
+    <b>this</b>.clicksToActivateCell = 1;
+    <b>this</b>.events['cellactivate'] = <b>new</b> YAHOO.util.CustomEvent('cellactivate');
+};
+
+YAHOO.extendX(YAHOO.ext.grid.EditorSelectionModel, YAHOO.ext.grid.DefaultSelectionModel);
+
+YAHOO.ext.grid.EditorSelectionModel.prototype.disableArrowNavigation = false;
+YAHOO.ext.grid.EditorSelectionModel.prototype.controlForArrowNavigation = false;
+
+<i>/** @ignore */</i>
+YAHOO.ext.grid.EditorSelectionModel.prototype.initEvents = <b>function</b>(){
+    <b>this</b>.grid.addListener(&quot;cellclick&quot;, <b>this</b>.onCellClick, <b>this</b>, true);
+    <b>this</b>.grid.addListener(&quot;celldblclick&quot;, <b>this</b>.onCellDblClick, <b>this</b>, true);
+    <b>this</b>.grid.addListener(&quot;keydown&quot;, <b>this</b>.keyDown, <b>this</b>, true);
+};
+
+YAHOO.ext.grid.EditorSelectionModel.prototype.onCellClick = <b>function</b>(grid, rowIndex, colIndex){
+    <b>if</b>(this.clicksToActivateCell == 1){
+        <b>var</b> row = <b>this</b>.grid.getRow(rowIndex);
+        <b>var</b> cell = row.childNodes[colIndex];
+        <b>if</b>(cell){
+            <b>this</b>.activate(row, cell);
+        }
+    }
+};
+
+YAHOO.ext.grid.EditorSelectionModel.prototype.activate = <b>function</b>(row, cell){
+    <b>this</b>.fireEvent('cellactivate', <b>this</b>, row, cell);
+    <b>this</b>.grid.doEdit(row, cell);
+};
+
+YAHOO.ext.grid.EditorSelectionModel.prototype.onCellDblClick = <b>function</b>(grid, rowIndex, colIndex){
+    <b>if</b>(this.clicksToActivateCell == 2){
+        <b>var</b> row = <b>this</b>.grid.getRow(rowIndex);
+        <b>var</b> cell = row.childNodes[colIndex];
+        <b>if</b>(cell){
+            <b>this</b>.activate(row, cell);
+        }
+    }
+};
+
+<i>/** @ignore */</i>
+YAHOO.ext.grid.EditorSelectionModel.prototype.setRowState = <b>function</b>(row, selected){
+    YAHOO.ext.grid.EditorSelectionModel.superclass.setRowState.call(<b>this</b>, row, false, false);
+};
+<i>/** @ignore */</i>
+YAHOO.ext.grid.EditorSelectionModel.prototype.focusRow = <b>function</b>(row, selected){
+};
+
+YAHOO.ext.grid.EditorSelectionModel.prototype.getEditorCellAfter = <b>function</b>(cell, spanRows){
+    <b>var</b> g = <b>this</b>.grid;
+    <b>var</b> next = g.getCellAfter(cell);
+    <b>while</b>(next &amp;&amp; !g.colModel.isCellEditable(next.columnIndex)){
+        next = g.getCellAfter(next);
+    }
+    <b>if</b>(!next &amp;&amp; spanRows){
+        <b>var</b> row = g.getRowAfter(g.getRowFromChild(cell));
+        <b>if</b>(row){
+            next = g.getFirstCell(row);
+            <b>if</b>(!g.colModel.isCellEditable(next.columnIndex)){
+                next = <b>this</b>.getEditorCellAfter(next);
+            }
+        }
+    }
+    <b>return</b> next;
+};
+
+YAHOO.ext.grid.EditorSelectionModel.prototype.getEditorCellBefore = <b>function</b>(cell, spanRows){
+    <b>var</b> g = <b>this</b>.grid;
+    <b>var</b> prev = g.getCellBefore(cell);
+    <b>while</b>(prev &amp;&amp; !g.colModel.isCellEditable(prev.columnIndex)){
+        prev = g.getCellBefore(prev);
+    }
+    <b>if</b>(!prev &amp;&amp; spanRows){
+        <b>var</b> row = g.getRowBefore(g.getRowFromChild(cell));
+        <b>if</b>(row){
+            prev = g.getLastCell(row);
+            <b>if</b>(!g.colModel.isCellEditable(prev.columnIndex)){
+               prev = <b>this</b>.getEditorCellBefore(prev);
+            }
+        }
+    }
+    <b>return</b> prev;
+};
+
+YAHOO.ext.grid.EditorSelectionModel.prototype.allowArrowNav = <b>function</b>(e){
+    <b>return</b> (!<b>this</b>.disableArrowNavigation &amp;&amp; (!<b>this</b>.controlForArrowNavigation || e.ctrlKey));
+}
+<i>/** @ignore */</i>
+YAHOO.ext.grid.EditorSelectionModel.prototype.keyDown = <b>function</b>(e){
+    <b>var</b> g = <b>this</b>.grid, cm = g.colModel, cell = g.getEditingCell();
+    <b>if</b>(!cell) <b>return</b>;
+    <b>var</b> newCell;
+    <b>switch</b>(e.browserEvent.keyCode){
+         <b>case</b> e.TAB:
+             <b>if</b>(e.shiftKey){
+                 newCell = <b>this</b>.getEditorCellBefore(cell, true);
+             }<b>else</b>{
+                 newCell = <b>this</b>.getEditorCellAfter(cell, true);
+             }
+             e.preventDefault();
+         <b>break</b>;
+         <b>case</b> e.DOWN:
+             <b>if</b>(this.allowArrowNav(e)){
+                 <b>var</b> next = g.getRowAfter(g.getRowFromChild(cell));
+                 <b>if</b>(next){
+                     newCell = next.childNodes[cell.columnIndex];
+                 }
+             }
+         <b>break</b>;
+         <b>case</b> e.UP:
+             <b>if</b>(this.allowArrowNav(e)){
+                 <b>var</b> prev = g.getRowBefore(g.getRowFromChild(cell));
+                 <b>if</b>(prev){
+                     newCell = prev.childNodes[cell.columnIndex];
+                 }
+             }
+         <b>break</b>;
+         <b>case</b> e.RETURN:
+             <b>if</b>(e.shiftKey){
+                 <b>var</b> prev = g.getRowBefore(g.getRowFromChild(cell));
+                 <b>if</b>(prev){
+                     newCell = prev.childNodes[cell.columnIndex];
+                 }
+             }<b>else</b>{
+                 <b>var</b> next = g.getRowAfter(g.getRowFromChild(cell));
+                 <b>if</b>(next){
+                     newCell = next.childNodes[cell.columnIndex];
+                 }
+             }
+         <b>break</b>;
+         <b>case</b> e.RIGHT:
+             <b>if</b>(this.allowArrowNav(e)){
+                 newCell = <b>this</b>.getEditorCellAfter(cell);
+             }
+         <b>break</b>;
+         <b>case</b> e.LEFT:
+             <b>if</b>(this.allowArrowNav(e)){
+                 newCell = <b>this</b>.getEditorCellBefore(cell);
+             }
+         <b>break</b>;
+    };
+    <b>if</b>(newCell){
+        <b>this</b>.activate(g.getRowFromChild(newCell), newCell);
+        e.stopEvent();
+    }
+};
+
+<i>/**
+ * @class YAHOO.ext.grid.EditorAndSelectionModel
+ */</i>
+YAHOO.ext.grid.EditorAndSelectionModel = <b>function</b>(){
+    YAHOO.ext.grid.EditorAndSelectionModel.superclass.constructor.call(<b>this</b>);
+    <b>this</b>.events['cellactivate'] = <b>new</b> YAHOO.util.CustomEvent('cellactivate');
+};
+
+YAHOO.extendX(YAHOO.ext.grid.EditorAndSelectionModel, YAHOO.ext.grid.DefaultSelectionModel);
+
+YAHOO.ext.grid.EditorAndSelectionModel.prototype.initEvents = <b>function</b>(){
+    YAHOO.ext.grid.EditorAndSelectionModel.superclass.initEvents.call(<b>this</b>);
+    <b>this</b>.grid.addListener(&quot;celldblclick&quot;, <b>this</b>.onCellDblClick, <b>this</b>, true);
+};
+
+YAHOO.ext.grid.EditorAndSelectionModel.prototype.onCellDblClick = <b>function</b>(grid, rowIndex, colIndex){
+    <b>var</b> row = <b>this</b>.grid.getRow(rowIndex);
+    <b>var</b> cell = row.childNodes[colIndex];
+    <b>if</b>(cell){
+        <b>this</b>.fireEvent('cellactivate', <b>this</b>, row, cell);
+        <b>this</b>.grid.doEdit(row, cell);
+    }
+}; </code></pre><hr><div style="font-size:10px;text-align:center;color:gray;">yui-ext - Copyright &copy; 2006 Jack Slocum.  |
+    Yahoo! UI - Copyright &copy; 2006 Yahoo! Inc.<br />All rights reserved.</div>
+    </body></html>

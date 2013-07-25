@@ -1,0 +1,69 @@
+Received: by iadk27 with SMTP id k27so4708250iad.8
+        for <webmaster@phigita.net>; Fri, 02 Dec 2011 04:43:41 -0800 (PST) by 10.42.131.135 with SMTP id z7mr13126874ics.23.1322829820055; Fri,
+ 02 Dec 2011 04:43:40 -0800 (PST) by 10.50.222.161 with HTTP; Fri, 2 Dec 2011 04:43:39 -0800 (PST) 
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=mime-version:in-reply-to:references:date:message-id:subject:from:to
+         :content-type;
+        bh=8/2JKUmTvWvtnr2+elKvP80rLFNIRBmxaZ8ehNv/kEk=;
+        b=OlkCFJdtbrdgT4nLMcd/QFZMnaPu8v+7SsrP9D+eqzng1NGffWhqU+LeOh0fguOcar
+         jRKXio5ImgjHg2pQDoX6Y5tzwc3C/QtiWf38PJvHjd1D0VcG077qKB59/QslnJ68otVP
+         rbaqUe7QEtAJLlGz74AEeLAvuhw/MAJjxiaG0= 
+In-Reply-To: <CANr5WRsfqTjS58sYp0+4Ut_zz_pbKmJpUUBXsCs72YSFNF+43w@mail.gmail.com> 
+References: <CANr5WRsfqTjS58sYp0+4Ut_zz_pbKmJpUUBXsCs72YSFNF+43w@mail.gmail.com> 
+Date: Fri, 2 Dec 2011 14:43:39 +0200 
+Message-ID: <CANr5WRuB68HLVqdr=EooSF73jE5hNYKhx1cub8tjXbUKJSmS9w@mail.gmail.com> 
+Subject: =?ISO-8859-7?B?xMXL1MnPINTV0M/VX9ThINfx6fP07/3j5e3t?=
+	=?ISO-8859-7?B?3CD07/XyIMHr6+n+8g==?= 
+From: Thessaloniki Allios <thessalonikiallios@gmail.com> 
+To: Thessaloniki Allios <thessalonikiallios@gmail.com> 
+Bcc: webmaster@phigita.net 
+--------------------------------------
+"Τα Χριστούγεννά τους
+Αλλιώς"<http://www.parallaximag.gr/content/τα-χριστούγεννά-τους-αλλιώς>
+
+
+Η ομάδα της Parallaxi «Η Θεσσαλονίκη Αλλιώς» δίνει συνέχεια στις κοινωνικές
+δράσεις αλληλεγγύης του περασμένου χειμώνα («Γεύμα Αγάπης» & δράση για τους
+αστέγους), επιστρέφοντας παράλληλα στο Λιμάνι, στο πλαίσιο των εκδηλώσεων
+του ΟΛΘ με αφορμή την ολοκλήρωση της ήπιας ανάπλασης της Πρώτης Προβλήτας.
+
+
+Λίγες μέρες πριν τις γιορτές των Χριστουγέννων η «Θεσσαλονίκη Αλλιώς» κάνει
+στην Αποθήκη Δ μία προσπάθεια να γίνουν τα Χριστούγεννα των συνανθρώπων
+μας, που έχουν ανάγκη, αλλιώς.
+
+
+Συνημμένα μπορείτε να βρείτε το Δελτίο Τύπου και την αφίσα, καθώς και τις
+λίστες με τις ανάγκες των συνεργαζόμενων φορέων.
+
+Παρακαλούμε να μας βοηθήσετε στην προώθηση με τη δημοσίευση ή/και μετάδοση,
+ώστε να συγκεντρωθούν όσο το δυνατόν περισσότερα είδη πρώτης ανάγκης. Και η
+παραμικρή συνεισφορά είναι πολύτιμη.
+
+Φιλικά,
+
+-- 
+"Η Θεσσαλονίκη Αλλιώς"
+Ένα αστικό πείραμα σε εξέλιξη...
+Parallaxi
+Θεσσαλονίκη
+54655
+Δελφών 216 & Ν. Τύπα 12
+τηλ. 2310429050
+fax. 2310429051
+-------------------------------------------------
+"Thessaloniki in a different way"
+An ongoing urban experiment
+"Parallaxi" Magazine
+Thessaloniki, GR
+54655
+216 Delfon Str. & 12 N. Typa Str.
+tel. +30 2310 429050
+fax.+30 2310 429051
+--------------------------------------
+ content-type=image/jpeg part-token=::mime::45-2--------------------------------------
+ content-type=application/msword part-token=::mime::45-3--------------------------------------
+ content-type=application/msword part-token=::mime::45-4--------------------------------------
+ content-type=application/msword part-token=::mime::45-5--------------------------------------
+ content-type=application/msword part-token=::mime::45-6

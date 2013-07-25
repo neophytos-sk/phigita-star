@@ -1,0 +1,98 @@
+Received: by mo119.createsend.com (PowerMTA(TM) v3.5r15) id hqj9ia0vne0f for <k2pts@phigita.net>; Tue, 29 Nov 2011 23:41:26 +1100 (envelope-from <SophieCrass-tukdjdy1uddjgurh1r@cmail3.com>) from [194.77.7.70] by cmail3.com via HTTP; Tue, 29 Nov 2011
+ 11:41:18 +1100 
+From: "Sophie Crass" <sc@archiware.com> 
+To: "Neophytos Demetriou" <k2pts@phigita.net> 
+Reply-To: sc@archiware.com 
+Date: Tue, 29 Nov 2011 23:41:18 +1100 
+Subject: Archiware News November 2011 
+X-Mailer: cmail3.com 
+X-Complaints-To: abuse@cmail3.com 
+List-Unsubscribe: <http://unsub.cmail3.com/t/r/u/tukdjdy/uddjgurh/> 
+Message-ID: <cm.234118.tukdjdy.uddjgurh.r@cmail3.com> 
+--------------------------------------
+-----------------------------------------------------------------
+NEWS, November 2011         
+NEW Version PresSTORE 4.3
+-----------------------------------------------------------------
+
+More options to backup your workstations.
+
+Great licensing for virtual servers and new third party support.
+
+New Features
+-----------------------------------------------------------------
+We have successfully released PresSTORE 4.3. This new version
+holds several new features for Backup2Go as well as new licenses
+for virtual servers.
+
+Read more about the new  features of PresSTORE 4.3
+[http://www.archiware.com/new-features-presstore-4-3.154.1.html].
+
+Webinar Feature Flash 4.3
+-----------------------------------------------------------------
+In order to show you what the new features look like, we will be
+giving a short webinar. To cover all time zones, we are offering
+two webinars on December, 8th.
+
+First session: 9:00 a.m.
+[https://www3.gotomeeting.com/register/336550518] (CET) +
+Second session: 4:00 p.m.
+[https://www3.gotomeeting.com/register/713628646] (CET)
+
+Virtual Server Clients
+-----------------------------------------------------------------
+The new PresSTORE 4.3 price list includes a license for 10
+virtual server clients. The price is equivalent to one regular
+server client. All current prices will stay the same.
+
+New License Keys
+-----------------------------------------------------------------
+In order to upgrade to 4.3, you will need new license keys
+specific to the new version. Customers that are eligible for an
+upgrade can get new license keys through the Archiware portal:
+[http://www.archiware.com/portal].
+
+For more information about the update/upgrade to PresSTORE 4.3,
+please read the  Upgrade FAQ
+[http://http://www.archiware.com/upgrade-faq.132.1.html].
+
+Download PresSTORE 4.3
+-----------------------------------------------------------------
+Experience the new  PresSTORE 4.3
+[http://www.archiware.com/download.14.1.html] features for
+yourself and download the latest version.
+
+Upcoming Events
+-----------------------------------------------------------------
+Apple Thunderbolt Channel Event
+Zurich, Switzerland; 06th December, 2011
+
+Webinar Feature Flash 4.3
+
+First session: 9:00 a.m.
+[https://www3.gotomeeting.com/register/336550518] (CET)
+
+Second session: 4:00 p.m.
+[https://www3.gotomeeting.com/register/713628646] (CET)
+
+Four products, one goal: safeguard your data.
+
+P4 Synchronize
+
+Replicate data to ensure high-availability.
+
+P4 Backup
+
+Back up server data to disk and tape.     P4 Backup2Go
+
+Back up desktop and laptop data to disk.
+
+P4 Archive
+
+Move or migrate data offline to disk and tape.
+
+For more information check out our Company blog and follow us on
+Twitter. View this email  in your browser. http://archiware.cmail3.com/t/r/e/tukdjdy/uddjgurh/h/
+
+Unsubscribe instantly http://archiware.cmail3.com/t/r/u/tukdjdy/uddjgurh/k/
+

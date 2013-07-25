@@ -1,0 +1,200 @@
+Received: from p2-jbsched08.ad.prodcc.net (p2-pen6.ad.prodcc.net [10.252.0.106])
+	by p2-mail188.ccm134.constantcontact.com (Postfix) with ESMTP id 561FB10B3D82
+	for <neophytos@phigita.net>; Thu, 17 Nov 2011 17:03:27 -0500 (EST) 
+DKIM-Signature: v=1; q=dns/txt; a=rsa-sha256; c=relaxed/relaxed; s=105386; d=manning.ccsend.com; h=to:subject:mime-version:message-id:from:date:sender:list-unsubscribe:reply-to; bh=QPeocvHgwJRhyXWojiAWtawcXLiPCXlLG3sojCQQ3z0=; b=B8opZWoFmKnTGP3xaiGx4Hsge5T5ifCDN2Svz9flh0Cao0avluUJZoMma1s2UVpnQsqhs0Np1I9ATQyr/8WMq6qoQETdTeqt5IfHpUvj1mEpVlprXFWQqqRsSTXqsgPUWqLIqAkaK2ER3EMyroGhwF6c/8X4WGJw1P+1tS2exDg= 
+Message-ID: <1108651586504.1101335703814.281293.8.701635CA@scheduler> 
+Date: Thu, 17 Nov 2011 17:03:27 -0500 (EST) 
+From: Manning Publications <mkt@manning.com> 
+Reply-To: mkt@manning.com 
+Sender: Manning Publications <manning@manning.ccsend.com> 
+To: neophytos@phigita.net 
+Subject: Save 40% on Manning classics, old and new 
+X-Mailer: Roving Constant Contact 2009 (http://www.constantcontact.com) 
+List-Unsubscribe: http://visitor.constantcontact.com/do?p=un&mse=0018GC6MpVjY0QsVHXO2XbbSb_v5l8P9v_bapbCBCe8WWg%3D&t=001UKY7u13rWqq6PT6gucH2zA%3D%3D&llr=gimslwbab 
+X-Return-Path-Hint: ESC1108651586504_1101335703814_281293_r20@in.constantcontact.com 
+X-Roving-ID: 1101335703814.281293 
+X-Lumos-SenderID: 1101335703814 
+X-Roving-CampaignId: 1108651586504 
+X-Roving-StreamId: 0 
+--------------------------------------
+
+
+home [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7AcuFtZGLQqugcaGTxhlqUTRthkwpuYtEcaB5aOMh_guf-6IiOM2Imzj_39I4XgS3iUY1Lo8Q52BnpyHDOVsktfnJGb1M5YQw_7JEWCq_rwxg==]support
+[http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7D1biA2F-UZCl2PQl6u_hEc331XTthxzocfa--wwY5Wyw5BtUBfI2CZkSTBRXJzYWfAFNF-pudug_jLJhhScuWJzcw5vdkKfm7CovBUBYrfWe5EV1hFkny1MDyEtj80q6Q=]
+view in browser  [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7CKfjbpMudRxOzpH69xyev_KZ8-iAHELPZUPiLEyPbWaKgIHDyyv0o215FiX6O1gP8FG90c1x1is0Yi3KZ_rt0b-bDGn2DiCGxexY77B5F4pgOlC6igAYozaCNyJOGuwSXXmmJz7gEpIzkeM-nhrqSUzekBtnpQTYdDnfw8oZu1aN2llFvZbjJWA1Dqs_NQ2nM=]
+
+Manning classics old and new
+
+Whether we're talking about cars, movies, or computer books, we all appreciate the
+classics. Several Manning books have earned their place among our classics, and 
+a few more are on their way. Here's an opportunity to celebrate the classics by 
+saving 40% on these selected books.
+
+A classic deal
+
+Through November 22, save 40% on any of these Manning classics--eBook, pBook, or
+ MEAP. Enter n1740 in the Promotional Code box when you check out at  manning.com
+[http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7BTkF3d8vzm_RPxWIcT7zYB8VOoCq-VoXa6TCna_5kd2WTDOCEufNeSuYObfsjL_RohkuxKLmX4Uqsc960yatz8LzSPyk6XzR6la83-w8wYlQ==].
+
+Classics reborn
+
+Even a classic needs to be updated from time to time. These Manning classics are
+ now available in second, or third, editions.
+
+springinaction3e [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7DS-nERDWgi59j0hzdqgOREvuOgdxfE799yJmEL3xKmJZf5MWqksmEtaG3J1wsah6lReb36FdyTHfQ-oJQ_gFrZsH7c3qnZyTYwtVL5AMOsz51U9VEES16J]
+
+Spring in Action, Third Edition [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7DS-nERDWgi59j0hzdqgOREvuOgdxfE799yJmEL3xKmJZf5MWqksmEtaG3J1wsah6lReb36FdyTHfQ-oJQ_gFrZsH7c3qnZyTYwtVL5AMOsz51U9VEES16J]
+» A new edition of the best-selling Spring book ever.  [Read more [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7DS-nERDWgi59j0hzdqgOREvuOgdxfE799yJmEL3xKmJZf5MWqksmEtaG3J1wsah6lReb36FdyTHfQ-oJQ_gFrZsH7c3qnZyTYwtVL5AMOsz51U9VEES16J]]
+
+Windows PowerShell in Action, Second Edition [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7DDraOBN5gYNDLp77emcuM0HT311QSrowezFo99ZIITccDMfHhE3OyP47fHuj09OdkTzyBDBSJBd7t9-Nh38UypLYjSrILu2lVnmrhG8G0pbZ2ZncUYlexw]
+» The definitive guide to PowerShell by language designer Bruce Payette. [Read more
+[http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7DDraOBN5gYNDLp77emcuM0HT311QSrowezFo99ZIITccDMfHhE3OyP47fHuj09OdkTzyBDBSJBd7t9-Nh38UypLYjSrILu2lVnmrhG8G0pbZ2ZncUYlexw]]
+
+Groovy in Action, Second Edition [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7BXjdHX3FwhHzc2w28krAMo2qaXsVOLqAZbK1c-Tn4tvJ7tahdBc7Zs5GkQx-0XSsQFhdRvCrDyttiTpI2fg0WoZ6pKDyXLgvK2p107rqHvzlZzDbioWaDJ]
+» The book on Groovy written by the guys who wrote the Groovy language. [Read more
+[http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7BXjdHX3FwhHzc2w28krAMo2qaXsVOLqAZbK1c-Tn4tvJ7tahdBc7Zs5GkQx-0XSsQFhdRvCrDyttiTpI2fg0WoZ6pKDyXLgvK2p107rqHvzlZzDbioWaDJ]]
+
+GWT in Action, Second Edition [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7A68wwk9kH8n6e79_JhI1xjUZBMgQClKdDwxeuLnHzju9906X9q6ElvE4m2N1jmc7U5wTvmNK_F7bv8b-VToU2j_qqEg1s062EmejkZy7qtVg==]
+» A new edition of the first, deepest, and best book on Google Web Toolkit.  [Read
+more [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7A68wwk9kH8n6e79_JhI1xjUZBMgQClKdDwxeuLnHzju9906X9q6ElvE4m2N1jmc7U5wTvmNK_F7bv8b-VToU2j_qqEg1s062EmejkZy7qtVg==]]
+
+C# in Depth, Second Edition [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7BK2yER_HDX3URXeuzYWqkqPBV49AtDBb0qEGtpBiRpH29PqDFjVAmv3mK9q5i5Y1VNgZVrKSe6WHplXzQf5CVzFhFxHhZ7xzMCxgyn-xX9GZyLP8ArDY1r]
+» There's only one Jon Skeet, and this is his C# book. [Read more [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7BK2yER_HDX3URXeuzYWqkqPBV49AtDBb0qEGtpBiRpH29PqDFjVAmv3mK9q5i5Y1VNgZVrKSe6WHplXzQf5CVzFhFxHhZ7xzMCxgyn-xX9GZyLP8ArDY1r]]
+
+Lucene in Action, Second Edition [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7Dvc3U7R66gSWf863kJkVzn74mmgbcLz57qgHYFjI-Xny3vKXZvKMB1Cwp0dECDvxWqDZRcDbi0roQbPwaxvZvjEeV6OZALE69HAvlEoMW5IAucRzipPDzI]
+» A comprehensive guide to the Lucene search framework. [Read more [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7Dvc3U7R66gSWf863kJkVzn74mmgbcLz57qgHYFjI-Xny3vKXZvKMB1Cwp0dECDvxWqDZRcDbi0roQbPwaxvZvjEeV6OZALE69HAvlEoMW5IAucRzipPDzI]]
+
+AspectJ in Action, Second Edition [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7Ce6KUb3o3s6YscnQiln_LT_XV7S6XvRkIi82aiRTgf-luOxDClMfnC6Oq31yPbZ_H4mB2xr7AlEIbcNewLSYM5TrDIojmpyuHoDeqCBPLwn605l6Dl6isY]
+» The only up-to-date book on AspectJ and Aspect Oriented Programming. [Read more
+[http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7Ce6KUb3o3s6YscnQiln_LT_XV7S6XvRkIi82aiRTgf-luOxDClMfnC6Oq31yPbZ_H4mB2xr7AlEIbcNewLSYM5TrDIojmpyuHoDeqCBPLwn605l6Dl6isY]]
+
+iText in Action, Second Edition [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7DLSAWm77svU_eGdOg2S8KvhsLO5VR96GaKCN25uYgzhaL6etp0yVOJ9ZfOnMNrtbK-nrES0PddFk2Yn-wtcFwCbnLYYa_uXKsAh-4Rjq4lVCFeMyWEaGyT]
+» Written by iText creator Bruno Lowagie. [Read more [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7DLSAWm77svU_eGdOg2S8KvhsLO5VR96GaKCN25uYgzhaL6etp0yVOJ9ZfOnMNrtbK-nrES0PddFk2Yn-wtcFwCbnLYYa_uXKsAh-4Rjq4lVCFeMyWEaGyT]]
+
+New classics
+
+These books aren't very old, but they're already being called best in class.. See
+ why we think they're classics in the making.
+
+artofunittesting [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7AySGQCxr8JFTidbWpLtwJcvePW-wSJdASznoC9rQRmbOmCvGr6gpeCqcSOvzNGYsFImisw2lX5inPvaNPbK4NRzfa6m6nbDMIgZh8Um9Si4X2-RB2t_OJM]
+
+The Art of Unit Testing [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7AySGQCxr8JFTidbWpLtwJcvePW-wSJdASznoC9rQRmbOmCvGr6gpeCqcSOvzNGYsFImisw2lX5inPvaNPbK4NRzfa6m6nbDMIgZh8Um9Si4X2-RB2t_OJM]
+» A practical and readable guide to unit testing, with examples in C#. [Read more
+[http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7AySGQCxr8JFTidbWpLtwJcvePW-wSJdASznoC9rQRmbOmCvGr6gpeCqcSOvzNGYsFImisw2lX5inPvaNPbK4NRzfa6m6nbDMIgZh8Um9Si4X2-RB2t_OJM]]
+
+jQuery in Action, Second Edition [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7DOaZVgUdJiN3kYL49qs5Uyv8kKXug7zMrPJk2zCkOJdE0dTNrR2GjDAGykwMz98vT9wKB2CnAU2KuRrTlMnq9iGWbD3BlB_GVkeDaTWdzQZlLuarACUcOD]
+» The bestselling jQuery book by the incomparable Bear Bibeault and Yehuda Katz.
+  [Read more [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7DOaZVgUdJiN3kYL49qs5Uyv8kKXug7zMrPJk2zCkOJdE0dTNrR2GjDAGykwMz98vT9wKB2CnAU2KuRrTlMnq9iGWbD3BlB_GVkeDaTWdzQZlLuarACUcOD]]
+
+The Joy of Clojure [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7CtTE6H0PPDcvXvYa_k9nE7qx_6HiNasF268bmc30Jl9znBE2Okh6-tl6W1ln3WbyOp9tIspiGCba5kiJ8B1FmLUBWwLpxhLEiq3NrkEVq77mdj4ssK8zEo]
+» Learn the insights, idioms, and nuances that make Clojure special. [Read more 
+[http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7CtTE6H0PPDcvXvYa_k9nE7qx_6HiNasF268bmc30Jl9znBE2Okh6-tl6W1ln3WbyOp9tIspiGCba5kiJ8B1FmLUBWwLpxhLEiq3NrkEVq77mdj4ssK8zEo]]
+
+Specification by Example [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7CedBogHqVLRM0aN7M1VuodytO_CR6ZVq_PzSsKHsUtRHpn7YUxIsKlsNuRIdqk1lPgU5HNoSiT4PCreqSVV-5rh8DLoJIJaR_tRgB4r6kkT20tfigSWNy0]
+» Gojko Adzic shows you how to build the right software the right way. [Read more
+[http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7CedBogHqVLRM0aN7M1VuodytO_CR6ZVq_PzSsKHsUtRHpn7YUxIsKlsNuRIdqk1lPgU5HNoSiT4PCreqSVV-5rh8DLoJIJaR_tRgB4r6kkT20tfigSWNy0]]
+
+SQL Server MVP Deep Dives, Volume 2 [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7AzyNO4f3p2oVjXj-CCTwAO7Va8xLR2fokDCvdl-co4b827CqGJWNxDitxqYul28btAKAiVPw7nIgoijiFqrOMQi9ZA9MWK2ntWtsyYUdx5Lvfpr6wTo3qN]
+» Over 60 MVPs collaborated to create this idea-packed masterpiece. [Read more [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7AzyNO4f3p2oVjXj-CCTwAO7Va8xLR2fokDCvdl-co4b827CqGJWNxDitxqYul28btAKAiVPw7nIgoijiFqrOMQi9ZA9MWK2ntWtsyYUdx5Lvfpr6wTo3qN]]
+
+Secrets of the JavaScript Ninja [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7BP5vMq0YZX_uMlMdi8oKVRdkhi9_jeb-RSAVsCRxkrQ38cmxqE1rT9AYCTHLS5EW8YBldCgY7pf6RCFYUBuvcLofoRmMqGaFJJt2Ny4fy5aZISg6RVFUKp]
+» John Resig's JavaScript book. What else do you need to know?  [Read more [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7BP5vMq0YZX_uMlMdi8oKVRdkhi9_jeb-RSAVsCRxkrQ38cmxqE1rT9AYCTHLS5EW8YBldCgY7pf6RCFYUBuvcLofoRmMqGaFJJt2Ny4fy5aZISg6RVFUKp]]
+
+The originals
+
+These books set the standard by which all Manning books are judged. They're true
+ classics.
+
+objectorientedpearl [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7DNxwjc0MpLCIUZaO81Ue6yq8zdG2E-8Fa-yiq9nw4ZZjyQ9iJYMMzAzc0hjUNddo-Szs9U8EZ94cV7WDJKT20gBOggas0ojKNJhNk3oxvMNtMjflnaPIL1]
+
+Object Oriented Perl [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7DNxwjc0MpLCIUZaO81Ue6yq8zdG2E-8Fa-yiq9nw4ZZjyQ9iJYMMzAzc0hjUNddo-Szs9U8EZ94cV7WDJKT20gBOggas0ojKNJhNk3oxvMNtMjflnaPIL1]
+» Still the best book for learning the object-oriented approach to Perl. [Read more
+[http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7DNxwjc0MpLCIUZaO81Ue6yq8zdG2E-8Fa-yiq9nw4ZZjyQ9iJYMMzAzc0hjUNddo-Szs9U8EZ94cV7WDJKT20gBOggas0ojKNJhNk3oxvMNtMjflnaPIL1]]
+
+Java Persistence with Hibernate [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7B5phCe_xF4YOPXaNFojSqf6l9ezHg3afggGmtkCLeCphBkw1or84WcQQ9PDJLbLQqCyVesp97QacZ-tdb3f_6XPKipztR3ptRjVkzyhGroLMn1jqg04ELX]
+» The classic that introduced ORM and Hibernate to the Java world.  [Read more [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7B5phCe_xF4YOPXaNFojSqf6l9ezHg3afggGmtkCLeCphBkw1or84WcQQ9PDJLbLQqCyVesp97QacZ-tdb3f_6XPKipztR3ptRjVkzyhGroLMn1jqg04ELX]]
+
+Bitter Java [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7CjIAjXZ0SRny8aXYuGb43QSaqUxHdZe7GI_xQtMz0xUENHEGuhi5Tj7b2HIg8wM61T4uYrBWfsdGJlm5bfbt72om-AwFghDfJOb0vW8929Jw==]
+» The original book of Java anti-patterns. [Read more [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7CjIAjXZ0SRny8aXYuGb43QSaqUxHdZe7GI_xQtMz0xUENHEGuhi5Tj7b2HIg8wM61T4uYrBWfsdGJlm5bfbt72om-AwFghDfJOb0vW8929Jw==]]
+
+SQR in PeopleSoft and other Applications [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7DpFY8gbEuEd92-oABUZms6LaeC6TP_O3EINy_l3lREd31SyZL48IsAar5aKB2zTKyXr60LxpG6X-QX79BvV5ilog1jj8jMfmVdBoRooA3M8hYG31nC-Nfi]
+» The unofficial manual for SQR programmers and PeopleSoft developers. [Read more
+[http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7DpFY8gbEuEd92-oABUZms6LaeC6TP_O3EINy_l3lREd31SyZL48IsAar5aKB2zTKyXr60LxpG6X-QX79BvV5ilog1jj8jMfmVdBoRooA3M8hYG31nC-Nfi]]
+
+Swing, Second Edition [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7Dr_WOvRaSXXk6Q3afCVE7nwInbyH4tOQnRi78m8wwHQUpWCuE0dxVak67kCWklGtIKBggoyTFitLUjWXhd9i5un-GprPA26ERyiqYTAGDlqRIC3NbuAMf1]
+» There's no better collection of Swing sample code anywhere. [Read more [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7Dr_WOvRaSXXk6Q3afCVE7nwInbyH4tOQnRi78m8wwHQUpWCuE0dxVak67kCWklGtIKBggoyTFitLUjWXhd9i5un-GprPA26ERyiqYTAGDlqRIC3NbuAMf1]]
+
+Ajax in Action [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7C9y28nYrtKHRC4u4wXkSHgoMDgljDRPmnIPM015xOw44LzxwDURS8_Ehvps3uqVIsDiSDw1fYjEVTbUxKtVl6w_48eMDqaOzgbS020Y0SnTtHNXyRGDY1q]
+» The classic that taught Ajax to over 40,000 readers. [Read more [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7C9y28nYrtKHRC4u4wXkSHgoMDgljDRPmnIPM015xOw44LzxwDURS8_Ehvps3uqVIsDiSDw1fYjEVTbUxKtVl6w_48eMDqaOzgbS020Y0SnTtHNXyRGDY1q]]
+
+wxPython in Action [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7DdEJtROc-_mHfdVMR7O_uKzrWBwXxuqD1J1ASxFJzDV4vvdpJ6fEFHFG8R_aMxclPfiebClyLYdHhu3Jx0rtEPAI7l5i6jeszHP7gZNoqR8HHmVB2JC86t]
+» The book by the guys who wrote the framework. [Read more [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7DdEJtROc-_mHfdVMR7O_uKzrWBwXxuqD1J1ASxFJzDV4vvdpJ6fEFHFG8R_aMxclPfiebClyLYdHhu3Jx0rtEPAI7l5i6jeszHP7gZNoqR8HHmVB2JC86t]]
+
+Classic trivia
+
+This week marks the official 400th anniversary of the King James Bible, sometimes
+called the DNA of the English language. After selling over 6
+billion copies, it may well be the ultimate classic. Our favorite verse?
+
+Be admonished: of making many books there is no end.
+Ecclesiastes 12:12
+
+BESTSELLERS WEEK ENDING NOVEMBER 17, 2011
+
+MEAP
+
+1. Secrets of the JavaScript Ninja [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7BP5vMq0YZX_uMlMdi8oKVRdkhi9_jeb-RSAVsCRxkrQ38cmxqE1rT9AYCTHLS5EW8YBldCgY7pf6RCFYUBuvcLofoRmMqGaFJJt2Ny4fy5aZISg6RVFUKp]
+2. HTML5 in Action [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7BjDZSHG2yqYj04SnoxjXsHsIBLYgxYoehBLiiyijoZzQc-xnjqhGfId1hD6FoK_HDo8Daoca-3dYbvd97-8YQkmdbTzMPavNOUVbHjF7vLscKfUx_cpsAI]
+3. Machine Learning in Action [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7AMrUhpnY3ZNpiSgwTB18UkLAWkNY1WBYgpkmcHMyyDsRTz6Niqm7iulK_ZvvaRsCh3dmVBXex97Feg8CWBA_-7TyVsHLNyriVf2KNvDFHs6D5wLvHeFffh]
+4. MongoDB in Action [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7Awg3Td-C3QXF_Cz3lF85GYRHWMgkzeEmzSrbBRGOtkEp7E7AN_WjCMg3mdfw3RmbJjJvGjKl106bGChvEbj19wqiCYqjh_KbzKGR0MnjQYmLuoVnZb3CtT]
+5. Node.js in Action [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7DLNPu42YDLkiHmPjxmeCBuOIq1z9EjrolfwMC5jBYMfWhQKg7ncnb-zGEwyHSCRKXa8qetSLgNOvXfIKqpTOwoQ8rwIW2avHUUl390P1w-YsTI9C79WpcX]
+6. RabbitMQ in Action [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7D-_ukvrkIDdb_CQyLAnrI-SxKE04iCe4QoAU90R_aBc-t-Yy78pF0vP1tuCQLSAfuUKALOOXjsW2r32LNtgv0N6G0jgH-erdd86qzWKYncNaZo1H3OpaCy]
+7. Sencha Touch in Action [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7C7c8eYQ0hNK5iGd1xSpDgiqGvpqS-FNSuGcQupYN6O0RPOWpuzMB5TgQjCqxZHLnO8y5geA7rZWKWgbsC2iVYc1uV81GdllAOaTxTZyKo-t0i3lAi-0QJW]
+8. Sass and Compass in Action [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7BM0QK0cGLX8JRifBupmVXmXsH_zwiR1r-TftkbjBPor0efbiCAP7YIEEOUQdVcE_jjQlkbpv5EeFfgeyQkARCi4pEPLV3zGiVO1xdmDOHeKc8JpDCDG77S]
+9. Lift in Action [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7DKdl00DTvPsHTcTwdNwwOpQxpSdVh_t2s5JQMWa_fdBHVZlJTdZX6YefPigcOupp-qis4STBx3Qe3JcPB4XeJPrarr2U-JXNfJOQKvA6d0C-xcdrEzBdeZ]
+10. Groovy in Action, Second Edition [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7BXjdHX3FwhHzc2w28krAMo2qaXsVOLqAZbK1c-Tn4tvJ7tahdBc7Zs5GkQx-0XSsQFhdRvCrDyttiTpI2fg0WoZ6pKDyXLgvK2p107rqHvzlZzDbioWaDJ]
+
+pBook
+
+1. Spring in Action, Third Edition [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7DS-nERDWgi59j0hzdqgOREvuOgdxfE799yJmEL3xKmJZf5MWqksmEtaG3J1wsah6lReb36FdyTHfQ-oJQ_gFrZsH7c3qnZyTYwtVL5AMOsz51U9VEES16J]
+2. SQL Server MVP Deep Dives, [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7AzyNO4f3p2oVjXj-CCTwAO7Va8xLR2fokDCvdl-co4b827CqGJWNxDitxqYul28btAKAiVPw7nIgoijiFqrOMQi9ZA9MWK2ntWtsyYUdx5Lvfpr6wTo3qN]
+Volume 2 [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7AzyNO4f3p2oVjXj-CCTwAO7Va8xLR2fokDCvdl-co4b827CqGJWNxDitxqYul28btAKAiVPw7nIgoijiFqrOMQi9ZA9MWK2ntWtsyYUdx5Lvfpr6wTo3qN]
+3. Windows PowerShell in Action [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7AKMJAOtv9KaBwOhg242yaBrBVcWbpywyPFkVuzvPaECsuCKBysl-ZqbXipRjm4hlGdzwZj1QWyyoQOpyv2fB2-5Vce0MPv59l5a8-MIOcEV4a5GcXyMaBJ]
+4. Hello World! Computer Programming for Kids and Other Beginners [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7D6iw_1Qu_XIhJjmNy8mMInamQcZ82aTbzC480gw0Gw691PdCGPWF1Q3oFLfTbG-pL0viJmpuGtGr0SBiiWC7BK1Ev77ukf8q9y4b1UkrH4hHsA3er7OuHJ]
+5. PowerShell in a Month of Lunches [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7BN6pQgNuU5Jo6lEVNdv58gGDdd0XF3-O5eKkpjD-WNcu9FGhVHyeRHJsppan5yJi6sOAYmO7qlFdcuHn7ICuWNRARVH5oWLLI3kU2dkVvfWFru6DNs1hTW]
+6. jQuery in Action, Second Edition [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7DOaZVgUdJiN3kYL49qs5Uyv8kKXug7zMrPJk2zCkOJdE0dTNrR2GjDAGykwMz98vT9wKB2CnAU2KuRrTlMnq9iGWbD3BlB_GVkeDaTWdzQZlLuarACUcOD]
+7. Hadoop in Action [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7Cxx7i3uvr96bWqy3RqrVeO5pGYC1LUZXO46klcfjBclVfT-GWBKV-aXegrqvnwlVuUzZJ05Kx6vOD7-y1W9pDk2ztLlFLVLPTJsYSx4aKDvw==]
+8. The Art of Unit Testing [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7AySGQCxr8JFTidbWpLtwJcvePW-wSJdASznoC9rQRmbOmCvGr6gpeCqcSOvzNGYsFImisw2lX5inPvaNPbK4NRzfa6m6nbDMIgZh8Um9Si4X2-RB2t_OJM]
+9. Mahout in Action [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7D6iw_1Qu_XIqn41rUwEXMOxD4BerfbdxoJWE83jbSC6arkkBoNDD1E9FSSmrK90cPzc-QSlPCo4gYcwmRzjhEz499EKcQZ4SMgSVnNDfFAPw==]
+10. R in Action [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7CasmMlXz9iYRSNPs7y-FjpkIs0mCfF2xdv1DzDqAo1lq_t4SrwLel0hsjYiITUtfxO_8_6snQTNYyHdloNBitHWJUohT3X18gzleZJxISvV88SHLs6JXsU]
+
+Deal of the Day Email Alert [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7CIKVQ6k2A-iYs8qHxeOwTFihRb7PK4I-w1YKqx8VwoHrXbd8sLXJE-D2Khk_yw0Axq58nSKGSHq4eQZ2TavFZLS40-kDZhUY5mHA_hjfliuVrOPoSmnbYMoRPO4AivEcs=]
+| Test our new dashboard [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7Ay2K-IbR7fAwqZ38zhwQcse_tG1QW-mT0myF1-zonZpCfOxdD3fYx4rxvcx6NIGmB1OzWZVCLxJiRiGYQN82ZiOdOd7-T2vwwizr00ScLQp4TP_MGjSK0l]
+| Customer Support  [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108651586504&s=281293&e=0015Vw3D9EYH7D1biA2F-UZCl2PQl6u_hEc331XTthxzocfa--wwY5Wyw5BtUBfI2CZkSTBRXJzYWfAFNF-pudug_jLJhhScuWJzcw5vdkKfm7CovBUBYrfWe5EV1hFkny1MDyEtj80q6Q=]
+
+Copyright © 2011 Manning Publications. All rights reserved.
+
+follow us on Twitter
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Forward email
+http://ui.constantcontact.com/sa/fwtf.jsp?llr=gimslwbab&m=1101335703814&ea=neophytos@phigita.net&a=1108651586504
+
+
+This email was sent to neophytos@phigita.net by mkt@manning.com.
+
+Update Profile/Email Address
+http://visitor.constantcontact.com/do?p=oo&mse=0018GC6MpVjY0QsVHXO2XbbSb_v5l8P9v_bapbCBCe8WWg%3D&t=001UKY7u13rWqq6PT6gucH2zA%3D%3D&reason=001y5KaVlBn7_Y%3D&llr=gimslwbab
+
+
+Instant removal with SafeUnsubscribe(TM)
+http://visitor.constantcontact.com/do?p=un&mse=0018GC6MpVjY0QsVHXO2XbbSb_v5l8P9v_bapbCBCe8WWg%3D&t=001UKY7u13rWqq6PT6gucH2zA%3D%3D&reason=001y5KaVlBn7_Y%3D&llr=gimslwbab
+
+
+Privacy Policy:
+http://ui.constantcontact.com/roving/CCPrivacyPolicy.jsp
+
+
+
+
+Manning Publications Co. | Sound View Ct. #3B | Greenwich | CT | 06830

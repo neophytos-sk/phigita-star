@@ -1,0 +1,14 @@
+The ustring C++ Unicode library provides a set of class 
+(http://ustring.sourceforge.net)
+
+Description :
+
+ ustring targets the complete conformance of the Unicode 3.0
+standard. It gives an easy access to the properties of each of the
+10600 characters defined by the Unicode 3.0 standard (such as
+uppercase or lowercase mapping, category and subcategory, character
+name, bidirectional category, etc.). It provides an stl-compliant wide
+string class, which implements a full Unicode normalizer, uppercase or
+lowercase transformation, diacritical marks removing, etc. A Unicode
+level-1 Regular Expression class is also provided.
+

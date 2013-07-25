@@ -1,0 +1,10 @@
+Received: from 92.238.89.207 by mail.global.sprint.com; Fri, 11 Nov 2011 00:07:07 +0000 
+Date: Fri, 11 Nov 2011 00:07:07 +0000 
+From: =?koi8-r?B?IvfJ2tkg1NXUIg==?= <perlxuq82@mentorix.com> 
+X-Mailer: The Bat! (v3.80.03) Educational 
+Reply-To: perlxuq82@mentorix.com 
+X-Priority: 3 (Normal) 
+Message-ID: <341662240.75894556678363@mentorix.com> 
+To: webmaster@phigita.net 
+Subject: =?koi8-r?B?5+/k7/f55SD75e7n5e7z6+nlIO317Pj06S336fr5IA==?= 
+

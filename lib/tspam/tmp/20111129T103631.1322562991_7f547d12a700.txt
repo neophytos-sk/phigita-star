@@ -1,0 +1,67 @@
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed/relaxed; s=20080701; d=geml1.co.uk;
+ h=From:To:Reply-To:Date:Subject:MIME-Version:Content-Type:List-Unsubscribe:Message-ID; i=marketing@lme.geml1.co.uk;
+ bh=dYg1ZoPhcZfD2Pl5crwt/gcZX0I=;
+ b=Q+w99o2pFNGh6ubrKCdGgfjexDaixkUAKurTUy4DhR6RXpUlQ+cXqrpJQ0I4q7+PQp8Ny+HZbv9v
+   RHu1tJP0Fw== 
+DomainKey-Signature: a=rsa-sha1; c=nofws; q=dns; s=20080701; d=geml1.co.uk;
+ b=Vvr9zPwpcABeAnA2/7H+4V3yXQPCpCZOomNAkaLNinoRmvz8dz98RNp1Z7xq8PDqpFinWyt8V8Qt
+   EReXpnZCug==; 
+Received: by mail2.ctml1.com id hqiqmg15c6sn for <k2pts@phigita.net>; Tue, 29 Nov 2011 10:33:48 +0000 (envelope-from <londonmetalexchangelz.F.282695.235.0@lme.geml1.co.uk>) 
+From: "London Metal Exchange" <marketing@lme.geml1.co.uk> 
+To: "k2pts@phigita.net" <k2pts@phigita.net> 
+Reply-To: marketing@lme.com 
+Date: Tue, 29 Nov 2011 09:48:39 +0000 
+Subject: LMElive 2012 annual subscriptions for 2011 prices 
+X-Mailer: aspNetEmail ver 3.6.1.22 
+List-Unsubscribe: <http://lme.ctml2.com/londonmetalexchangelz//Preference.aspx?p1=05596282S532&p=1> 
+Bounce-Path: londonmetalexchangelz.T.282695.235.0@lme.geml1.co.uk 
+Message-ID: <CGATE-RC640276c6a20d0fe44227a175fec612e84f8e@CGATE-RC6402> 
+--------------------------------------
+
+Take advantage of 2011 prices before Jan 2012
+
+Subscribe to an LMElive  annual subscription before the end of December 2011 for 12 months access
+to real time or 30 minutes delayed non-ferrous, steel billet and minor metal prices.
+
+Other features include:
+
+* A detailed view of LME prices - bid/offer and trades 
+* Real time or 30 minute delayed data 
+* Advanced charting and technical analysis 
+* Daily warehouse stocks and all LME reports 
+* Internet delivered web browser navigation 
+* Latest spot FOREX 
+
+Sign up- 2012 annual subscription for 2011 prices
+http://lme.ctml2.com/londonmetalexchangelz//lz.aspx?p1=05596282S532&w=1664&cID=0&cValue=1
+
+You can also add LMElive anywhere moblie access to your annual subscription and take LME data on the road.
+http://lme.ctml2.com/londonmetalexchangelz//lz.aspx?p1=05596282S532&w=785&cID=0&cValue=1
+
+
+*Contact us* 
+Customer Service
+Toll Free Number
+UK: 0800 032 7759
+Outside the UK:
++44 800 032 7759E-mail:
+customersupport@lmelive.com
+
+
+
+© The London Metal Exchange Limited
+
+Registration number 2128666 | 56 Leadenhall Street, London, EC3A 2DX Tel +44 (0) 20 7264 5555 
+
+Contact Us
+http://lme.ctml2.com/londonmetalexchangelz//lz.aspx?p1=05596282S532&w=389&cID=0&cValue=1
+ 
+Terms Conditions
+http://lme.ctml2.com/londonmetalexchangelz//lz.aspx?p1=05596282S532&w=388&cID=0&cValue=1
+
+If this email doesn't display properly you can view it in your web browser
+http://lme.ctml2.com/londonmetalexchangelz//lz.aspx?p1=05596282S532&p=0&cID=0&cValue=1
+
+You have received this email because you have previously provided us with your email address and shown an interest in the London Metal Exchange. 
+If you do not want to receive future emails from us please follow this link http://lme.ctml2.com/londonmetalexchangelz//Preference.aspx?p1=05596282S532&p=1
+

@@ -1,0 +1,11 @@
+Received: from fammsibw ([110.53.30.60])
+	(authenticated bits=0)
+	by otcaix.iscas.ac.cn (8.13.1/8.13.1) with ESMTP id pATCgJBq031264;
+	Tue, 29 Nov 2011 20:42:20 +0800 
+Message-ID: <20111129204052802854@otcaix.iscas.ac.cn> 
+From: =?gb2312?B?yq7R377Dsv2/xry809DP3rmry74=?= <rockwang@otcaix.iscas.ac.cn> 
+To:  
+Subject: =?gb2312?B?0dC3osjL1LG1xL+8usvT67ykwPgtLS0t0Ny6xsfv?= 
+Date: Tue, 29 Nov 2011 20:40:43 +0800 
+X-mailer: Hipafmkztt 7 
+Whoops!  What is a 'application/vnd.ms-excel'?

@@ -1,0 +1,1953 @@
+<html><head><title>tabview.js</title><link rel="stylesheet" type="text/css" href="../resources/style.css" media="screen"/></head><body><h1>tabview.js</h1><pre class="highlighted"><code><i>/*
+Copyright (c) 2006, Yahoo! Inc. All rights reserved.
+Code licensed under the BSD License:
+http:<i>//developer.yahoo.net/yui/license.txt</i>
+version: 0.12.0
+*/</i>
+(<b>function</b>() {
+
+    YAHOO.util.Lang = {
+        isArray: <b>function</b>(val) { <i>// frames lose type, so test constructor string</i>
+            <b>if</b> (val.constructor &amp;&amp; val.constructor.toString().indexOf('Array') &gt; -1) {
+                <b>return</b> true;
+            } <b>else</b> {
+                <b>return</b> YAHOO.util.Lang.isObject(val) &amp;&amp; val.constructor == Array;
+            }
+        },
+
+        isBoolean: <b>function</b>(val) {
+            <b>return</b> typeof val == 'boolean';
+        },
+
+        isFunction: <b>function</b>(val) {
+            <b>return</b> typeof val == '<b>function</b>';
+        },
+
+        isNull: <b>function</b>(val) {
+            <b>return</b> val === null;
+        },
+
+        isNumber: <b>function</b>(val) {
+            <b>return</b> !isNaN(val);
+        },
+
+        isObject: <b>function</b>(val) {
+            <b>return</b> typeof val == 'object' || YAHOO.util.Lang.isFunction(val);
+        },
+
+        isString: <b>function</b>(val) {
+            <b>return</b> typeof val == 'string';
+        },
+
+        isUndefined: <b>function</b>(val) {
+            <b>return</b> typeof val == 'undefined';
+        }
+    };
+})();<i>/**
+ * Provides Attribute configurations.
+ * @namespace YAHOO.util
+ * @class Attribute
+ * @constructor
+ * @param hash {Object} The intial Attribute.
+ * @param {YAHOO.util.AttributeProvider} The owner of the Attribute instance.
+ */</i>
+
+YAHOO.util.Attribute = <b>function</b>(hash, owner) {
+    <b>if</b> (owner) {
+        <b>this</b>.owner = owner;
+        <b>this</b>.configure(hash, true);
+    }
+};
+
+YAHOO.util.Attribute.prototype = {
+	<i>/**
+     * The name of the attribute.
+	 * @property name
+	 * @type String
+	 */</i>
+    name: undefined,
+
+	<i>/**
+     * The value of the attribute.
+	 * @property value
+	 * @type String
+	 */</i>
+    value: null,
+
+	<i>/**
+     * The owner of the attribute.
+	 * @property owner
+	 * @type YAHOO.util.AttributeProvider
+	 */</i>
+    owner: null,
+
+	<i>/**
+     * Whether or not the attribute is read only.
+	 * @property readOnly
+	 * @type Boolean
+	 */</i>
+    readOnly: false,
+
+	<i>/**
+     * Whether or not the attribute can only be written once.
+	 * @property writeOnce
+	 * @type Boolean
+	 */</i>
+    writeOnce: false,
+
+	<i>/**
+     * The attribute's initial configuration.
+     * @private
+	 * @property _initialConfig
+	 * @type Object
+	 */</i>
+    _initialConfig: null,
+
+	<i>/**
+     * Whether or not the attribute's value has been set.
+     * @private
+	 * @property _written
+	 * @type Boolean
+	 */</i>
+    _written: false,
+
+	<i>/**
+     * The method to use when setting the attribute's value.
+     * The method recieves the <b>new</b> value as the only argument.
+	 * @property method
+	 * @type Function
+	 */</i>
+    method: null,
+
+	<i>/**
+     * The validator to use when setting the attribute's value.
+	 * @property validator
+	 * @type Function
+     * @<b>return</b> Boolean
+	 */</i>
+    validator: null,
+
+    <i>/**
+     * Retrieves the current value of the attribute.
+     * @method getValue
+     * @<b>return</b> {any} The current value of the attribute.
+     */</i>
+    getValue: <b>function</b>() {
+        <b>return</b> this.value;
+    },
+
+    <i>/**
+     * Sets the value of the attribute and fires beforeChange and change events.
+     * @method setValue
+     * @param {Any} value The value to apply to the attribute.
+     * @param {Boolean} silent If true the change events will not be fired.
+     * @<b>return</b> {Boolean} Whether or not the value was set.
+     */</i>
+    setValue: <b>function</b>(value, silent) {
+        <b>var</b> beforeRetVal;
+        <b>var</b> owner = <b>this</b>.owner;
+        <b>var</b> name = <b>this</b>.name;
+
+        <b>var</b> event = {
+            type: name,
+            prevValue: <b>this</b>.getValue(),
+            newValue: value
+        };
+
+        <b>if</b> (<b>this</b>.readOnly || ( <b>this</b>.writeOnce &amp;&amp; <b>this</b>._written) ) {
+            <b>return</b> false; <i>// write not allowed</i>
+        }
+
+        <b>if</b> (<b>this</b>.validator &amp;&amp; !<b>this</b>.validator.call(owner, value) ) {
+            <b>return</b> false; <i>// invalid value</i>
+        }
+
+        <b>if</b> (!silent) {
+            beforeRetVal = owner.fireBeforeChangeEvent(event);
+            <b>if</b> (beforeRetVal === false) {
+                YAHOO.log('setValue ' + name +
+                        'cancelled by beforeChange event', 'info', 'Attribute');
+                <b>return</b> false;
+            }
+        }
+
+        <b>if</b> (<b>this</b>.method) {
+            <b>this</b>.method.call(owner, value);
+        }
+
+        <b>this</b>.value = value;
+        <b>this</b>._written = true;
+
+        event.type = name;
+
+        <b>if</b> (!silent) {
+            <b>this</b>.owner.fireChangeEvent(event);
+        }
+
+        <b>return</b> true;
+    },
+
+    <i>/**
+     * Allows <b>for</b> configuring the Attribute's properties.
+     * @method configure
+     * @param {Object} map A key-value map of Attribute properties.
+     * @param {Boolean} init Whether or not <b>this</b> should become the initial config.
+     */</i>
+    configure: <b>function</b>(map, init) {
+        map = map || {};
+        <b>this</b>._written = false; <i>// reset writeOnce</i>
+        <b>this</b>._initialConfig = <b>this</b>._initialConfig || {};
+
+        <b>for</b> (<b>var</b> key <b>in</b> map) {
+            <b>if</b> ( key &amp;&amp; map.hasOwnProperty(key) ) {
+                <b>this</b>[key] = map[key];
+                <b>if</b> (init) {
+                    <b>this</b>._initialConfig[key] = map[key];
+                }
+            }
+        }
+    },
+
+    <i>/**
+     * Resets the value to the initial config value.
+     * @method resetValue
+     * @<b>return</b> {Boolean} Whether or not the value was set.
+     */</i>
+    resetValue: <b>function</b>() {
+        <b>return</b> this.setValue(<b>this</b>._initialConfig.value);
+    },
+
+    <i>/**
+     * Resets the attribute config to the initial config state.
+     * @method resetConfig
+     */</i>
+    resetConfig: <b>function</b>() {
+        <b>this</b>.configure(<b>this</b>._initialConfig);
+    },
+
+    <i>/**
+     * Resets the value to the current value.
+     * Useful when values may have gotten out of sync <b>with</b> actual properties.
+     * @method refresh
+     * @<b>return</b> {Boolean} Whether or not the value was set.
+     */</i>
+    refresh: <b>function</b>(silent) {
+        <b>this</b>.setValue(<b>this</b>.value, silent);
+    }
+};(<b>function</b>() {
+    <b>var</b> Lang = YAHOO.util.Lang;
+
+    <i>/*
+    Copyright (c) 2006, Yahoo! Inc. All rights reserved.
+    Code licensed under the BSD License:
+    http:<i>//developer.yahoo.net/yui/license.txt</i>
+    */</i>
+<i>// holder</i>
+<i>/**
+     * Provides and manages YAHOO.util.Attribute instances
+     * @namespace YAHOO.util
+     * @class AttributeProvider
+     * @uses YAHOO.util.EventProvider
+     */</i>
+    YAHOO.util.AttributeProvider = <b>function</b>() {};
+
+    YAHOO.util.AttributeProvider.prototype = {
+
+        <i>/**
+         * A key-value map of Attribute configurations
+         * @property _configs
+         * @protected (may be used by subclasses and augmentors)
+         * @private
+         * @type {Object}
+         */</i>
+        _configs: null,
+        <i>/**
+         * Returns the current value of the attribute.
+         * @method get
+         * @param {String} key The attribute whose value will be returned.
+         */</i>
+        get: <b>function</b>(key){
+            <b>var</b> configs = <b>this</b>._configs || {};
+            <b>var</b> config = configs[key];
+
+            <b>if</b> (!config) {
+                YAHOO.log(key + ' not found', 'error', 'AttributeProvider');
+                <b>return</b> undefined;
+            }
+
+            <b>return</b> config.value;
+        },
+
+        <i>/**
+         * Sets the value of a config.
+         * @method set
+         * @param {String} key The name of the attribute
+         * @param {Any} value The value to apply to the attribute
+         * @param {Boolean} silent Whether or not to suppress change events
+         * @<b>return</b> {Boolean} Whether or not the value was set.
+         */</i>
+        set: <b>function</b>(key, value, silent){
+            <b>var</b> configs = <b>this</b>._configs || {};
+            <b>var</b> config = configs[key];
+
+            <b>if</b> (!config) {
+                YAHOO.log('set failed: ' + key + ' not found',
+                        'error', 'AttributeProvider');
+                <b>return</b> false;
+            }
+
+            <b>return</b> config.setValue(value, silent);
+        },
+
+        <i>/**
+         * Returns an array of attribute names.
+         * @method getAttributeKeys
+         * @<b>return</b> {Array} An array of attribute names.
+         */</i>
+        getAttributeKeys: <b>function</b>(){
+            <b>var</b> configs = <b>this</b>._configs;
+            <b>var</b> keys = [];
+            <b>var</b> config;
+            <b>for</b> (<b>var</b> key <b>in</b> configs) {
+                config = configs[key];
+                <b>if</b> ( configs.hasOwnProperty(key) &amp;&amp;
+                        !Lang.isUndefined(config) ) {
+                    keys[keys.length] = key;
+                }
+            }
+
+            <b>return</b> keys;
+        },
+
+        <i>/**
+         * Sets multiple attribute values.
+         * @method setAttributes
+         * @param {Object} map  A key-value map of attributes
+         * @param {Boolean} silent Whether or not to suppress change events
+         */</i>
+        setAttributes: <b>function</b>(map, silent){
+            <b>for</b> (<b>var</b> key <b>in</b> map) {
+                <b>if</b> ( map.hasOwnProperty(key) ) {
+                    <b>this</b>.set(key, map[key], silent);
+                }
+            }
+        },
+
+        <i>/**
+         * Resets the specified attribute's value to its initial value.
+         * @method resetValue
+         * @param {String} key The name of the attribute
+         * @param {Boolean} silent Whether or not to suppress change events
+         * @<b>return</b> {Boolean} Whether or not the value was set
+         */</i>
+        resetValue: <b>function</b>(key, silent){
+            <b>var</b> configs = <b>this</b>._configs || {};
+            <b>if</b> (configs[key]) {
+                <b>this</b>.set(key, configs[key]._initialConfig.value, silent);
+                <b>return</b> true;
+            }
+            <b>return</b> false;
+        },
+
+        <i>/**
+         * Sets the attribute's value to its current value.
+         * @method refresh
+         * @param {String | Array} key The attribute(s) to refresh
+         * @param {Boolean} silent Whether or not to suppress change events
+         */</i>
+        refresh: <b>function</b>(key, silent){
+            <b>var</b> configs = <b>this</b>._configs;
+
+            key = ( ( Lang.isString(key) ) ? [key] : key ) ||
+                    <b>this</b>.getAttributeKeys();
+
+            <b>for</b> (<b>var</b> i = 0, len = key.length; i &lt; len; ++i) {
+                <b>if</b> ( <i>// only set <b>if</b> there is a value and not null</i>
+                    configs[key[i]] &amp;&amp;
+                    ! Lang.isUndefined(configs[key[i]].value) &amp;&amp;
+                    ! Lang.isNull(configs[key[i]].value) ) {
+                    configs[key[i]].refresh(silent);
+                }
+            }
+        },
+
+        <i>/**
+         * Adds an Attribute to the AttributeProvider instance.
+         * @method register
+         * @param {String} key The attribute's name
+         * @param {Object} map A key-value map containing the
+         * attribute's properties.
+         */</i>
+        register: <b>function</b>(key, map) {
+            <b>this</b>._configs = <b>this</b>._configs || {};
+
+            <b>if</b> (<b>this</b>._configs[key]) { <i>// dont override</i>
+                <b>return</b> false;
+            }
+
+            map.name = key;
+            <b>this</b>._configs[key] = <b>new</b> YAHOO.util.Attribute(map, <b>this</b>);
+            <b>return</b> true;
+        },
+
+        <i>/**
+         * Returns the attribute's properties.
+         * @method getAttributeConfig
+         * @param {String} key The attribute's name
+         * @private
+         * @<b>return</b> {object} A key-value map containing all of the
+         * attribute's properties.
+         */</i>
+        getAttributeConfig: <b>function</b>(key) {
+            <b>var</b> configs = <b>this</b>._configs || {};
+            <b>var</b> config = configs[key] || {};
+            <b>var</b> map = {}; <i>// returning a copy to prevent overrides</i>
+
+            <b>for</b> (key <b>in</b> config) {
+                <b>if</b> ( config.hasOwnProperty(key) ) {
+                    map[key] = config[key];
+                }
+            }
+
+            <b>return</b> map;
+        },
+
+        <i>/**
+         * Sets or updates an Attribute instance's properties.
+         * @method configureAttribute
+         * @param {String} key The attribute's name.
+         * @param {Object} map A key-value map of attribute properties
+         * @param {Boolean} init Whether or not <b>this</b> should become the intial config.
+         */</i>
+        configureAttribute: <b>function</b>(key, map, init) {
+            <b>var</b> configs = <b>this</b>._configs || {};
+
+            <b>if</b> (!configs[key]) {
+                YAHOO.log('unable to configure, ' + key + ' not found',
+                        'error', 'AttributeProvider');
+                <b>return</b> false;
+            }
+
+            configs[key].configure(map, init);
+        },
+
+        <i>/**
+         * Resets an attribute to its intial configuration.
+         * @method resetAttributeConfig
+         * @param {String} key The attribute's name.
+         * @private
+         */</i>
+        resetAttributeConfig: <b>function</b>(key){
+            <b>var</b> configs = <b>this</b>._configs || {};
+            configs[key].resetConfig();
+        },
+
+        <i>/**
+         * Fires the attribute's beforeChange event.
+         * @method fireBeforeChangeEvent
+         * @param {String} key The attribute's name.
+         * @param {Obj} e The event object to pass to handlers.
+         */</i>
+        fireBeforeChangeEvent: <b>function</b>(e) {
+            <b>var</b> type = 'before';
+            type += e.type.charAt(0).toUpperCase() + e.type.substr(1) + 'Change';
+            e.type = type;
+            <b>return</b> this.fireEvent(e.type, e);
+        },
+
+        <i>/**
+         * Fires the attribute's change event.
+         * @method fireChangeEvent
+         * @param {String} key The attribute's name.
+         * @param {Obj} e The event object to pass to the handlers.
+         */</i>
+        fireChangeEvent: <b>function</b>(e) {
+            e.type += 'Change';
+            <b>return</b> this.fireEvent(e.type, e);
+        }
+    };
+
+    YAHOO.augment(YAHOO.util.AttributeProvider, YAHOO.util.EventProvider);
+})();(<b>function</b>() {
+<i>// internal shorthand</i>
+<b>var</b> Dom = YAHOO.util.Dom,
+    Lang = YAHOO.util.Lang,
+    EventPublisher = YAHOO.util.EventPublisher,
+    AttributeProvider = YAHOO.util.AttributeProvider;
+
+<i>/**
+ * Element provides an interface to an HTMLElement's attributes and common
+ * methods.  Other commonly used attributes are added as well.
+ * @namespace YAHOO.util
+ * @class Element
+ * @uses YAHOO.util.AttributeProvider
+ * @constructor
+ * @param el {HTMLElement | String} The html element that
+ * represents the Element.
+ * @param {Object} map A key-value map of initial config names and values
+ */</i>
+YAHOO.util.Element = <b>function</b>(el, map) {
+    <b>if</b> (arguments.length) {
+        <b>this</b>.init(el, map);
+    }
+};
+
+YAHOO.util.Element.prototype = {
+	<i>/**
+     * Dom events supported by the Element instance.
+	 * @property DOM_EVENTS
+	 * @type Object
+	 */</i>
+    DOM_EVENTS: null,
+
+	<i>/**
+     * Wrapper <b>for</b> HTMLElement method.
+	 * @method appendChild
+	 * @param {Boolean} deep Whether or not to <b>do</b> a deep clone
+	 */</i>
+    appendChild: <b>function</b>(child) {
+        child = child.get ? child.get('element') : child;
+        <b>this</b>.get('element').appendChild(child);
+    },
+
+	<i>/**
+     * Wrapper <b>for</b> HTMLElement method.
+	 * @method getElementsByTagName
+	 * @param {String} tag The tagName to collect
+	 */</i>
+    getElementsByTagName: <b>function</b>(tag) {
+        <b>return</b> this.get('element').getElementsByTagName(tag);
+    },
+
+	<i>/**
+     * Wrapper <b>for</b> HTMLElement method.
+	 * @method hasChildNodes
+	 * @<b>return</b> {Boolean} Whether or not the element has childNodes
+	 */</i>
+    hasChildNodes: <b>function</b>() {
+        <b>return</b> this.get('element').hasChildNodes();
+    },
+
+	<i>/**
+     * Wrapper <b>for</b> HTMLElement method.
+	 * @method insertBefore
+	 * @param {HTMLElement} element The HTMLElement to insert
+	 * @param {HTMLElement} before The HTMLElement to insert
+     * the element before.
+	 */</i>
+    insertBefore: <b>function</b>(element, before) {
+        element = element.get ? element.get('element') : element;
+        before = (before &amp;&amp; before.get) ? before.get('element') : before;
+
+        <b>this</b>.get('element').insertBefore(element, before);
+    },
+
+	<i>/**
+     * Wrapper <b>for</b> HTMLElement method.
+	 * @method removeChild
+	 * @param {HTMLElement} child The HTMLElement to remove
+	 */</i>
+    removeChild: <b>function</b>(child) {
+        child = child.get ? child.get('element') : child;
+        <b>this</b>.get('element').removeChild(child);
+        <b>return</b> true;
+    },
+
+	<i>/**
+     * Wrapper <b>for</b> HTMLElement method.
+	 * @method replaceChild
+	 * @param {HTMLElement} newNode The HTMLElement to insert
+	 * @param {HTMLElement} oldNode The HTMLElement to replace
+	 */</i>
+    replaceChild: <b>function</b>(newNode, oldNode) {
+        newNode = newNode.get ? newNode.get('element') : newNode;
+        oldNode = oldNode.get ? oldNode.get('element') : oldNode;
+        <b>return</b> this.get('element').replaceChild(newNode, oldNode);
+    },
+
+
+    <i>/**
+     * Registers Element specific attributes.
+     * @method initAttributes
+     * @param {Object} map A key-value map of initial attribute configs
+     */</i>
+    initAttributes: <b>function</b>(map) {
+        map = map || {};
+        <b>var</b> element = Dom.get(map.element) || null;
+
+        <i>/**
+         * The HTMLElement the Element instance refers to.
+         * @config element
+         * @type HTMLElement
+         */</i>
+        <b>this</b>.register('element', {
+            value: element,
+            readOnly: true
+         });
+    },
+
+    <i>/**
+     * Adds a listener <b>for</b> the given event.  These may be DOM or
+     * customEvent listeners.  Any event that is fired via fireEvent
+     * can be listened <b>for</b>.  All handlers receive an event object.
+     * @method addListener
+     * @param {String} type The name of the event to listen <b>for</b>
+     * @param {Function} fn The handler to call when the event fires
+     * @param {Any} obj A variable to pass to the handler
+     * @param {Object} scope The object to use <b>for</b> the scope of the handler
+     */</i>
+    addListener: <b>function</b>(type, fn, obj, scope) {
+        <b>var</b> el = <b>this</b>.get('element');
+        <b>var</b> scope = scope || <b>this</b>;
+
+        el = <b>this</b>.get('id') || el;
+
+        <b>if</b> (!<b>this</b>._events[type]) { <i>// create on the fly</i>
+            <b>if</b> ( <b>this</b>.DOM_EVENTS[type] ) {
+                YAHOO.util.Event.addListener(el, type, <b>function</b>(e) {
+                    <b>if</b> (e.srcElement &amp;&amp; !e.target) { <i>// supplement IE <b>with</b> target</i>
+                        e.target = e.srcElement;
+                    }
+                    <b>this</b>.fireEvent(type, e);
+                }, obj, scope);
+            }
+
+            <b>this</b>.createEvent(type, <b>this</b>);
+            <b>this</b>._events[type] = true;
+        }
+
+        <b>this</b>.subscribe.apply(<b>this</b>, arguments); <i>// notify via customEvent</i>
+    },
+
+
+    <i>/**
+     * Alias <b>for</b> addListener
+     * @method on
+     * @param {String} type The name of the event to listen <b>for</b>
+     * @param {Function} fn The <b>function</b> call when the event fires
+     * @param {Any} obj A variable to pass to the handler
+     * @param {Object} scope The object to use <b>for</b> the scope of the handler
+     */</i>
+    on: <b>function</b>() { <b>this</b>.addListener.apply(<b>this</b>, arguments); },
+
+
+    <i>/**
+     * Remove an event listener
+     * @method removeListener
+     * @param {String} type The name of the event to listen <b>for</b>
+     * @param {Function} fn The <b>function</b> call when the event fires
+     */</i>
+    removeListener: <b>function</b>(type, fn) {
+        <b>this</b>.unsubscribe.apply(<b>this</b>, arguments);
+    },
+
+	<i>/**
+     * Wrapper <b>for</b> Dom method.
+	 * @method addClass
+	 * @param {String} className The className to add
+	 */</i>
+    addClass: <b>function</b>(className) {
+        Dom.addClass(<b>this</b>.get('element'), className);
+    },
+
+	<i>/**
+     * Wrapper <b>for</b> Dom method.
+	 * @method getElementsByClassName
+	 * @param {String} className The className to collect
+	 * @param {String} tag (optional) The tag to use <b>in</b>
+     * conjunction <b>with</b> class name
+     * @<b>return</b> {Array} Array of HTMLElements
+	 */</i>
+    getElementsByClassName: <b>function</b>(className, tag) {
+        <b>return</b> Dom.getElementsByClassName(className, tag,
+                <b>this</b>.get('element') );
+    },
+
+	<i>/**
+     * Wrapper <b>for</b> Dom method.
+	 * @method hasClass
+	 * @param {String} className The className to add
+     * @<b>return</b> {Boolean} Whether or not the element has the class name
+	 */</i>
+    hasClass: <b>function</b>(className) {
+        <b>return</b> Dom.hasClass(<b>this</b>.get('element'), className);
+    },
+
+	<i>/**
+     * Wrapper <b>for</b> Dom method.
+	 * @method removeClass
+	 * @param {String} className The className to remove
+	 */</i>
+    removeClass: <b>function</b>(className) {
+        <b>return</b> Dom.removeClass(<b>this</b>.get('element'), className);
+    },
+
+	<i>/**
+     * Wrapper <b>for</b> Dom method.
+	 * @method replaceClass
+	 * @param {String} oldClassName The className to replace
+	 * @param {String} newClassName The className to add
+	 */</i>
+    replaceClass: <b>function</b>(oldClassName, newClassName) {
+        <b>return</b> Dom.replaceClass(<b>this</b>.get('element'),
+                oldClassName, newClassName);
+    },
+
+	<i>/**
+     * Wrapper <b>for</b> Dom method.
+	 * @method setStyle
+	 * @param {String} property The style property to set
+	 * @param {String} value The value to apply to the style property
+	 */</i>
+    setStyle: <b>function</b>(property, value) {
+        <b>return</b> Dom.setStyle(<b>this</b>.get('element'),  property, value);
+    },
+
+	<i>/**
+     * Wrapper <b>for</b> Dom method.
+	 * @method getStyle
+	 * @param {String} property The style property to retrieve
+	 * @<b>return</b> {String} The current value of the property
+	 */</i>
+    getStyle: <b>function</b>(property) {
+        <b>return</b> Dom.getStyle(<b>this</b>.get('element'),  property);
+    },
+
+	<i>/**
+     * Apply any queued set calls.
+	 * @method fireQueue
+	 */</i>
+    fireQueue: <b>function</b>() {
+        <b>var</b> queue = <b>this</b>._queue;
+        <b>for</b> (<b>var</b> i = 0, len = queue.length; i &lt; len; ++i) {
+            <b>this</b>[queue[i][0]].apply(<b>this</b>, queue[i][1]);
+        }
+    },
+
+	<i>/**
+     * Appends the HTMLElement into either the supplied parentNode.
+	 * @method appendTo
+	 * @param {HTMLElement | Element} parentNode The node to append to
+	 * @param {HTMLElement | Element} before An optional node to insert before
+	 */</i>
+    appendTo: <b>function</b>(parent, before) {
+        parent = (parent.get) ?  parent.get('element') : Dom.get(parent);
+
+        before = (before &amp;&amp; before.get) ?
+                before.get('element') : Dom.get(before);
+        <b>var</b> element = <b>this</b>.get('element');
+
+        <b>var</b> newAddition =  !Dom.inDocument(element);
+
+        <b>if</b> (!element) {
+            YAHOO.log('appendTo failed: element not available',
+                    'error', 'Element');
+            <b>return</b> false;
+        }
+
+        <b>if</b> (!parent) {
+            YAHOO.log('appendTo failed: parent not available',
+                    'error', 'Element');
+            <b>return</b> false;
+        }
+
+        <b>if</b> (element.parent != parent) {
+            <b>if</b> (before) {
+                parent.insertBefore(element, before);
+            } <b>else</b> {
+                parent.appendChild(element);
+            }
+        }
+
+        YAHOO.log(element + 'appended to ' + parent);
+
+        <b>if</b> (!newAddition) {
+            <b>return</b> false; <i>// note <b>return</b>; no refresh <b>if</b> in document</i>
+        }
+
+        <i>// <b>if</b> a <b>new</b> addition, refresh HTMLElement any applied attributes</i>
+        <b>var</b> keys = <b>this</b>.getAttributeKeys();
+
+        <b>for</b> (<b>var</b> key <b>in</b> keys) { <i>// only refresh HTMLElement attributes</i>
+            <b>if</b> ( !Lang.isUndefined(element[key]) ) {
+                <b>this</b>.refresh(key);
+            }
+        }
+    },
+
+    get: <b>function</b>(key) {
+        <b>var</b> configs = <b>this</b>._configs || {};
+        <b>var</b> el = configs.element; <i>// avoid loop due to 'element'</i>
+        <b>if</b> (el &amp;&amp; !configs[key] &amp;&amp; !Lang.isUndefined(el.value[key]) ) {
+            <b>return</b> el.value[key];
+        }
+
+        <b>return</b> AttributeProvider.prototype.get.call(<b>this</b>, key);
+    },
+
+    set: <b>function</b>(key, value, silent) {
+        <b>var</b> el = <b>this</b>.get('element');
+        <b>if</b> (!el) {
+            <b>this</b>._queue[key] = ['set', arguments];
+            <b>return</b> false;
+        }
+
+        <i>// set it on the element <b>if</b> not a property</i>
+        <b>if</b> ( !<b>this</b>._configs[key] &amp;&amp; !Lang.isUndefined(el[key]) ) {
+            _registerHTMLAttr(<b>this</b>, key);
+        }
+
+        <b>return</b> AttributeProvider.prototype.set.apply(<b>this</b>, arguments);
+    },
+
+    register: <b>function</b>(key) { <i>// protect html attributes</i>
+        <b>var</b> configs = <b>this</b>._configs || {};
+        <b>var</b> element = <b>this</b>.get('element') || null;
+
+        <b>if</b> ( element &amp;&amp; !Lang.isUndefined(element[key]) ) {
+            YAHOO.log(key + ' is reserved <b>for</b> ' + element,
+                    'error', 'Element');
+            <b>return</b> false;
+        }
+
+        <b>return</b> AttributeProvider.prototype.register.apply(<b>this</b>, arguments);
+    },
+
+    configureAttribute: <b>function</b>(property, map, init) { <i>// protect html attributes</i>
+        <b>if</b> (!<b>this</b>._configs[property] &amp;&amp; <b>this</b>._configs.element &amp;&amp;
+                !Lang.isUndefined(<b>this</b>._configs.element[property]) ) {
+            _registerHTMLAttr(<b>this</b>, property, map);
+            <b>return</b> false;
+        }
+
+        <b>return</b> AttributeProvider.prototype.configure.apply(<b>this</b>, arguments);
+    },
+
+    getAttributeKeys: <b>function</b>() {
+        <b>var</b> el = <b>this</b>.get('element');
+        <b>var</b> keys = AttributeProvider.prototype.getAttributeKeys.call(<b>this</b>);
+
+        <i>//add any unconfigured element keys</i>
+        <b>for</b> (<b>var</b> key <b>in</b> el) {
+            <b>if</b> (!<b>this</b>._configs[key]) {
+                keys[key] = keys[key] || el[key];
+            }
+        }
+
+        <b>return</b> keys;
+    },
+
+    init: <b>function</b>(el, attr) {
+        <b>this</b>._queue = <b>this</b>._queue || [];
+        <b>this</b>._events = <b>this</b>._events || {};
+        <b>this</b>._configs = <b>this</b>._configs || {};
+        attr = attr || {};
+        attr.element = attr.element || el || null;
+
+        <b>this</b>.DOM_EVENTS = {
+            'click': true,
+            'keydown': true,
+            'keypress': true,
+            'keyup': true,
+            'mousedown': true,
+            'mousemove': true,
+            'mouseout': true,
+            'mouseover': true,
+            'mouseup': true
+        };
+
+        <b>var</b> readyHandler = <b>function</b>() {
+            <b>this</b>.initAttributes(attr);
+
+            <b>this</b>.setAttributes(attr, true);
+            <b>this</b>.fireQueue();
+            <b>this</b>.fireEvent('contentReady', {
+                type: 'contentReady',
+                target: attr.element
+            });
+        };
+
+        <b>if</b> ( Lang.isString(el) ) {
+            _registerHTMLAttr(<b>this</b>, 'id', { value: el });
+            YAHOO.util.Event.onAvailable(el, <b>function</b>() {
+                attr.element = Dom.get(el);
+                <b>this</b>.fireEvent('available', {
+                    type: 'available',
+                    target: attr.element
+                });
+            }, <b>this</b>, true);
+
+            YAHOO.util.Event.onContentReady(el, <b>function</b>() {
+                readyHandler.call(<b>this</b>);
+            }, <b>this</b>, true);
+        } <b>else</b> {
+            readyHandler.call(<b>this</b>);
+        }
+    }
+};
+
+<i>/**
+ * Sets the value of the property and fires beforeChange and change events.
+ * @private
+ * @method _registerHTMLAttr
+ * @param {YAHOO.util.Element} element The Element instance to
+ * register the config to.
+ * @param {String} key The name of the config to register
+ * @param {Object} map A key-value map of the config's params
+ */</i>
+<b>var</b> _registerHTMLAttr = <b>function</b>(self, key, map) {
+    <b>var</b> el = self.get('element');
+    map = map || {};
+    map.name = key;
+    map.method = map.method || <b>function</b>(value) {
+        el[key] = value;
+    };
+    map.value = map.value || el[key];
+    self._configs[key] = <b>new</b> YAHOO.util.Attribute(map, self);
+};
+
+<i>/**
+ * Fires when the Element's HTMLElement can be retrieved by Id.
+ * &lt;p&gt;See: &lt;a href=&quot;#addListener&quot;&gt;Element.addListener&lt;/a&gt;&lt;/p&gt;
+ * &lt;p&gt;&lt;strong&gt;Event fields:&lt;/strong&gt;&lt;br&gt;
+ * &lt;code&gt;&amp;lt;String&amp;gt; type&lt;/code&gt; available&lt;br&gt;
+ * &lt;code&gt;&amp;lt;HTMLElement&amp;gt;
+ * target&lt;/code&gt; the HTMLElement bound to <b>this</b> Element instance&lt;br&gt;
+ * &lt;p&gt;&lt;strong&gt;Usage:&lt;/strong&gt;&lt;br&gt;
+ * &lt;code&gt;<b>var</b> handler = <b>function</b>(e) {<b>var</b> target = e.target};&lt;br&gt;
+ * myTabs.addListener('available', handler);&lt;/code&gt;&lt;/p&gt;
+ * @event available
+ */</i>
+<i>// holder</i>
+<i>/**
+ * Fires when the Element's HTMLElement subtree is rendered.
+ * &lt;p&gt;See: &lt;a href=&quot;#addListener&quot;&gt;Element.addListener&lt;/a&gt;&lt;/p&gt;
+ * &lt;p&gt;&lt;strong&gt;Event fields:&lt;/strong&gt;&lt;br&gt;
+ * &lt;code&gt;&amp;lt;String&amp;gt; type&lt;/code&gt; contentReady&lt;br&gt;
+ * &lt;code&gt;&amp;lt;HTMLElement&amp;gt;
+ * target&lt;/code&gt; the HTMLElement bound to <b>this</b> Element instance&lt;br&gt;
+ * &lt;p&gt;&lt;strong&gt;Usage:&lt;/strong&gt;&lt;br&gt;
+ * &lt;code&gt;<b>var</b> handler = <b>function</b>(e) {<b>var</b> target = e.target};&lt;br&gt;
+ * myTabs.addListener('contentReady', handler);&lt;/code&gt;&lt;/p&gt;
+ * @event contentReady
+ */</i>
+
+YAHOO.augment(YAHOO.util.Element, AttributeProvider);
+})();(<b>function</b>() {
+    <b>var</b> Dom = YAHOO.util.Dom,
+        Event = YAHOO.util.Event,
+        Lang = YAHOO.util.Lang;
+
+    <i>/**
+     * A representation of a Tab's label and content.
+     * @namespace YAHOO.widget
+     * @class Tab
+     * @extends YAHOO.util.Element
+     * @constructor
+     * @param element {HTMLElement | String} (optional) The html element that
+     * represents the TabView. An element will be created <b>if</b> none provided.
+     * @param {Object} properties A key map of initial properties
+     */</i>
+    Tab = <b>function</b>(el, attr) {
+        attr = attr || {};
+        <b>if</b> (arguments.length == 1 &amp;&amp; !Lang.isString(el) &amp;&amp; !el.nodeName) {
+            attr = el;
+            el = attr.element;
+        }
+
+        <b>if</b> (!el &amp;&amp; !attr.element) {
+            el = _createTabElement.call(<b>this</b>, attr);
+        }
+
+        <b>this</b>.loadHandler =  {
+            success: <b>function</b>(o) {
+                <b>this</b>.set('content', o.responseText);
+            },
+            failure: <b>function</b>(o) {
+                YAHOO.log('loading failed: ' + o.statusText,
+                        'error', 'Tab');
+            }
+        };
+
+        Tab.superclass.constructor.call(<b>this</b>, el, attr);
+
+        <b>this</b>.DOM_EVENTS = {}; <i>// delegating to tabView</i>
+    };
+
+    YAHOO.extend(Tab, YAHOO.util.Element);
+    <b>var</b> proto = Tab.prototype;
+
+    <i>/**
+     * The <b>default</b> tag name <b>for</b> a Tab's inner element.
+     * @property LABEL_INNER_TAGNAME
+     * @type String
+     * @<b>default</b> &quot;em&quot;
+     */</i>
+    proto.LABEL_TAGNAME = 'em';
+
+    <i>/**
+     * The class name applied to active tabs.
+     * @property ACTIVE_CLASSNAME
+     * @type String
+     * @<b>default</b> &quot;on&quot;
+     */</i>
+    proto.ACTIVE_CLASSNAME = 'selected';
+
+    <i>/**
+     * The class name applied to disabled tabs.
+     * @property DISABLED_CLASSNAME
+     * @type String
+     * @<b>default</b> &quot;disabled&quot;
+     */</i>
+    proto.DISABLED_CLASSNAME = 'disabled';
+
+    <i>/**
+     * The class name applied to dynamic tabs <b>while</b> loading.
+     * @property LOADING_CLASSNAME
+     * @type String
+     * @<b>default</b> &quot;disabled&quot;
+     */</i>
+    proto.LOADING_CLASSNAME = 'loading';
+
+    <i>/**
+     * Provides a reference to the connection request object when data is
+     * loaded dynamically.
+     * @property dataConnection
+     * @type Object
+     */</i>
+    proto.dataConnection = null;
+
+    <i>/**
+     * Object containing success and failure callbacks <b>for</b> loading data.
+     * @property loadHandler
+     * @type object
+     */</i>
+    proto.loadHandler = null;
+
+    <i>/**
+     * Provides a readable name <b>for</b> the tab.
+     * @method toString
+     * @<b>return</b> String
+     */</i>
+    proto.toString = <b>function</b>() {
+        <b>var</b> el = <b>this</b>.get('element');
+        <b>var</b> id = el.id || el.tagName;
+        <b>return</b> &quot;Tab &quot; + id;
+    };
+
+    <i>/**
+     * Registers TabView specific properties.
+     * @method initAttributes
+     * @param {Object} attr Hash of initial attributes
+     */</i>
+    proto.initAttributes = <b>function</b>(attr) {
+        attr = attr || {};
+        Tab.superclass.initAttributes.call(<b>this</b>, attr);
+
+        <b>var</b> el = <b>this</b>.get('element');
+
+        <i>/**
+         * The event that triggers the tab's activation.
+         * @config activationEvent
+         * @type String
+         */</i>
+        <b>this</b>.register('activationEvent', {
+            value: attr.activationEvent || 'click'
+        });
+
+        <i>/**
+         * The element that contains the tab's label.
+         * @config labelEl
+         * @type HTMLElement
+         */</i>
+        <b>this</b>.register('labelEl', {
+            value: attr.labelEl || _getlabelEl.call(<b>this</b>),
+            method: <b>function</b>(value) {
+                <b>var</b> current = <b>this</b>.get('labelEl');
+
+                <b>if</b> (current) {
+                    <b>if</b> (current == value) {
+                        <b>return</b> false; <i>// already set</i>
+                    }
+
+                    <b>this</b>.replaceChild(value, current);
+                } <b>else</b> if (el.firstChild) { <i>// ensure label is firstChild by <b>default</b></i>
+                    <b>this</b>.insertBefore(value, el.firstChild);
+                } <b>else</b> {
+                    <b>this</b>.appendChild(value);
+                }
+            }
+        });
+
+        <i>/**
+         * The tab's label text (or innerHTML).
+         * @config label
+         * @type String
+         */</i>
+        <b>this</b>.register('label', {
+            value: attr.label || _getLabel.call(<b>this</b>),
+            method: <b>function</b>(value) {
+                <b>var</b> labelEl = <b>this</b>.get('labelEl');
+                <b>if</b> (!labelEl) { <i>// create <b>if</b> needed</i>
+                    <b>this</b>.set('labelEl', _createlabelEl.call(<b>this</b>));
+                }
+
+                _setLabel.call(<b>this</b>, value);
+            }
+        });
+
+        <i>/**
+         * The HTMLElement that contains the tab's content.
+         * @config contentEl
+         * @type HTMLElement
+         */</i>
+        <b>this</b>.register('contentEl', { <i>// TODO: apply className?</i>
+            value: attr.contentEl || document.createElement('div'),
+            method: <b>function</b>(value) {
+                <b>var</b> current = <b>this</b>.get('contentEl');
+
+                <b>if</b> (current) {
+                    <b>if</b> (current == value) {
+                        <b>return</b> false; <i>// already set</i>
+                    }
+                    <b>this</b>.replaceChild(value, current);
+                }
+            }
+        });
+
+        <i>/**
+         * The tab's content.
+         * @config content
+         * @type String
+         */</i>
+        <b>this</b>.register('content', {
+            value: attr.content, <i>// TODO: what about existing?</i>
+            method: <b>function</b>(value) {
+                <b>this</b>.get('contentEl').innerHTML = value;
+            }
+        });
+
+        <b>var</b> _dataLoaded = false;
+
+        <i>/**
+         * The tab's data source, used <b>for</b> loading content dynamically.
+         * @config dataSrc
+         * @type String
+         */</i>
+        <b>this</b>.register('dataSrc', {
+            value: attr.dataSrc
+        });
+
+        <i>/**
+         * Whether or not content should be reloaded <b>for</b> every view.
+         * @config cacheData
+         * @type Boolean
+         * @<b>default</b> false
+         */</i>
+        <b>this</b>.register('cacheData', {
+            value: attr.cacheData || false,
+            validator: Lang.isBoolean
+        });
+
+        <i>/**
+         * The method to use <b>for</b> the data request.
+         * @config loadMethod
+         * @type String
+         * @<b>default</b> &quot;GET&quot;
+         */</i>
+        <b>this</b>.register('loadMethod', {
+            value: attr.loadMethod || 'GET',
+            validator: Lang.isString
+        });
+
+        <i>/**
+         * Whether or not any data has been loaded from the server.
+         * @config dataLoaded
+         * @type Boolean
+         */</i>
+        <b>this</b>.register('dataLoaded', {
+            value: false,
+            validator: Lang.isBoolean,
+            writeOnce: true
+        });
+
+        <i>/**
+         * Number <b>if</b> milliseconds before aborting and calling failure handler.
+         * @config dataTimeout
+         * @type Number
+         * @<b>default</b> null
+         */</i>
+        <b>this</b>.register('dataTimeout', {
+            value: attr.dataTimeout || null,
+            validator: Lang.isNumber
+        });
+
+        <i>/**
+         * Whether or not the tab is currently active.
+         * If a dataSrc is set <b>for</b> the tab, the content will be loaded from
+         * the given source.
+         * @config active
+         * @type Boolean
+         */</i>
+        <b>this</b>.register('active', {
+            value: attr.active || <b>this</b>.hasClass(<b>this</b>.ACTIVE_CLASSNAME),
+            method: <b>function</b>(value) {
+                <b>if</b> (value === true) {
+                    <b>this</b>.addClass(<b>this</b>.ACTIVE_CLASSNAME);
+                    <b>this</b>.set('title', 'active');
+                } <b>else</b> {
+                    <b>this</b>.removeClass(<b>this</b>.ACTIVE_CLASSNAME);
+                    <b>this</b>.set('title', '');
+                }
+            },
+            validator: <b>function</b>(value) {
+                <b>return</b> Lang.isBoolean(value) &amp;&amp; !<b>this</b>.get('disabled') ;
+            }
+        });
+
+        <i>/**
+         * Whether or not the tab is disabled.
+         * @config disabled
+         * @type Boolean
+         */</i>
+        <b>this</b>.register('disabled', {
+            value: attr.disabled || <b>this</b>.hasClass(<b>this</b>.DISABLED_CLASSNAME),
+            method: <b>function</b>(value) {
+                <b>if</b> (value === true) {
+                    Dom.addClass(<b>this</b>.get('element'), <b>this</b>.DISABLED_CLASSNAME);
+                } <b>else</b> {
+                    Dom.removeClass(<b>this</b>.get('element'), <b>this</b>.DISABLED_CLASSNAME);
+                }
+            },
+            validator: Lang.isBoolean
+        });
+
+        <i>/**
+         * The href of the tab's anchor element.
+         * @config href
+         * @type String
+         * @<b>default</b> '#'
+         */</i>
+        <b>this</b>.register('href', {
+            value: attr.href || '#',
+            method: <b>function</b>(value) {
+                <b>this</b>.getElementsByTagName('a')[0].href = value;
+            },
+            validator: Lang.isString
+        });
+
+        <i>/**
+         * The Whether or not the tab's content is visible.
+         * @config contentVisible
+         * @type Boolean
+         * @<b>default</b> false
+         */</i>
+        <b>this</b>.register('contentVisible', {
+            value: attr.contentVisible,
+            method: <b>function</b>(value) {
+                <b>if</b> (value == true) {
+                    <b>this</b>.get('contentEl').style.display = 'block';
+
+                    <b>if</b> ( <b>this</b>.get('dataSrc') ) {
+                     <i>// load dynamic content unless already loaded and caching</i>
+                        <b>if</b> ( !<b>this</b>.get('dataLoaded') || !<b>this</b>.get('cacheData') ) {
+                            _dataConnect.call(<b>this</b>);
+                        }
+                    }
+                } <b>else</b> {
+                    <b>this</b>.get('contentEl').style.display = 'none';
+                }
+            },
+            validator: Lang.isBoolean
+        });
+    };
+
+    <b>var</b> _createTabElement = <b>function</b>(attr) {
+        <b>var</b> el = document.createElement('li');
+        <b>var</b> a = document.createElement('a');
+
+        a.href = attr.href || '#';
+
+        el.appendChild(a);
+
+        <b>var</b> label = attr.label || null;
+        <b>var</b> labelEl = attr.labelEl || null;
+
+        <b>if</b> (labelEl) { <i>// user supplied labelEl</i>
+            <b>if</b> (!label) { <i>// user supplied label</i>
+                label = _getLabel.call(<b>this</b>, labelEl);
+            }
+        } <b>else</b> {
+            labelEl = _createlabelEl.call(<b>this</b>);
+        }
+
+        a.appendChild(labelEl);
+
+        <b>return</b> el;
+    };
+
+    <b>var</b> _getlabelEl = <b>function</b>() {
+        <b>return</b> this.getElementsByTagName(<b>this</b>.LABEL_TAGNAME)[0];
+    };
+
+    <b>var</b> _createlabelEl = <b>function</b>() {
+        <b>var</b> el = document.createElement(<b>this</b>.LABEL_TAGNAME);
+        <b>return</b> el;
+    };
+
+    <b>var</b> _setLabel = <b>function</b>(label) {
+        <b>var</b> el = <b>this</b>.get('labelEl');
+        el.innerHTML = label;
+    };
+
+    <b>var</b> _getLabel = <b>function</b>() {
+        <b>var</b> label,
+            el = <b>this</b>.get('labelEl');
+
+            <b>if</b> (!el) {
+                <b>return</b> undefined;
+            }
+
+        <b>return</b> el.innerHTML;
+    };
+
+    <b>var</b> _dataConnect = <b>function</b>() {
+        <b>if</b> (!YAHOO.util.Connect) {
+            YAHOO.log('YAHOO.util.Connect dependency not met',
+                    'error', 'Tab');
+            <b>return</b> false;
+        }
+
+        Dom.addClass(<b>this</b>.get('contentEl').parentNode, <b>this</b>.LOADING_CLASSNAME);
+
+        <b>this</b>.dataConnection = YAHOO.util.Connect.asyncRequest(
+            <b>this</b>.get('loadMethod'),
+            <b>this</b>.get('dataSrc'),
+            {
+                success: <b>function</b>(o) {
+                    <b>this</b>.loadHandler.success.call(<b>this</b>, o);
+                    <b>this</b>.set('dataLoaded', true);
+                    <b>this</b>.dataConnection = null;
+                    Dom.removeClass(<b>this</b>.get('contentEl').parentNode,
+                            <b>this</b>.LOADING_CLASSNAME);
+                },
+                failure: <b>function</b>(o) {
+                    <b>this</b>.loadHandler.failure.call(<b>this</b>, o);
+                    <b>this</b>.dataConnection = null;
+                    Dom.removeClass(<b>this</b>.get('contentEl').parentNode,
+                            <b>this</b>.LOADING_CLASSNAME);
+                },
+                scope: <b>this</b>,
+                timeout: <b>this</b>.get('dataTimeout')
+            }
+        );
+    };
+
+    YAHOO.widget.Tab = Tab;
+
+    <i>/**
+     * Fires before the active state is changed.
+     * &lt;p&gt;See: &lt;a href=&quot;YAHOO.util.Element.html#addListener&quot;&gt;Element.addListener&lt;/a&gt;&lt;/p&gt;
+     * &lt;p&gt;If handler returns false, the change will be cancelled, and the value will not
+     * be set.&lt;/p&gt;
+     * &lt;p&gt;&lt;strong&gt;Event fields:&lt;/strong&gt;&lt;br&gt;
+     * &lt;code&gt;&amp;lt;String&amp;gt; type&lt;/code&gt; beforeActiveChange&lt;br&gt;
+     * &lt;code&gt;&amp;lt;Boolean&amp;gt;
+     * prevValue&lt;/code&gt; the current value&lt;br&gt;
+     * &lt;code&gt;&amp;lt;Boolean&amp;gt;
+     * newValue&lt;/code&gt; the <b>new</b> value&lt;/p&gt;
+     * &lt;p&gt;&lt;strong&gt;Usage:&lt;/strong&gt;&lt;br&gt;
+     * &lt;code&gt;<b>var</b> handler = <b>function</b>(e) {<b>var</b> previous = e.prevValue};&lt;br&gt;
+     * myTabs.addListener('beforeActiveChange', handler);&lt;/code&gt;&lt;/p&gt;
+     * @event beforeActiveChange
+     */</i>
+<i>// holder</i>
+<i>/**
+     * Fires after the active state is changed.
+     * &lt;p&gt;See: &lt;a href=&quot;YAHOO.util.Element.html#addListener&quot;&gt;Element.addListener&lt;/a&gt;&lt;/p&gt;
+     * &lt;p&gt;&lt;strong&gt;Event fields:&lt;/strong&gt;&lt;br&gt;
+     * &lt;code&gt;&amp;lt;String&amp;gt; type&lt;/code&gt; activeChange&lt;br&gt;
+     * &lt;code&gt;&amp;lt;Boolean&amp;gt;
+     * prevValue&lt;/code&gt; the previous value&lt;br&gt;
+     * &lt;code&gt;&amp;lt;Boolean&amp;gt;
+     * newValue&lt;/code&gt; the updated value&lt;/p&gt;
+     * &lt;p&gt;&lt;strong&gt;Usage:&lt;/strong&gt;&lt;br&gt;
+     * &lt;code&gt;<b>var</b> handler = <b>function</b>(e) {<b>var</b> previous = e.prevValue};&lt;br&gt;
+     * myTabs.addListener('activeChange', handler);&lt;/code&gt;&lt;/p&gt;
+     * @event activeChange
+     */</i>
+<i>// holder</i>
+<i>/**
+     * Fires before the tab label is changed.
+     * &lt;p&gt;See: &lt;a href=&quot;YAHOO.util.Element.html#addListener&quot;&gt;Element.addListener&lt;/a&gt;&lt;/p&gt;
+     * &lt;p&gt;If handler returns false, the change will be cancelled, and the value will not
+     * be set.&lt;/p&gt;
+     * &lt;p&gt;&lt;strong&gt;Event fields:&lt;/strong&gt;&lt;br&gt;
+     * &lt;code&gt;&amp;lt;String&amp;gt; type&lt;/code&gt; beforeLabelChange&lt;br&gt;
+     * &lt;code&gt;&amp;lt;String&amp;gt;
+     * prevValue&lt;/code&gt; the current value&lt;br&gt;
+     * &lt;code&gt;&amp;lt;String&amp;gt;
+     * newValue&lt;/code&gt; the <b>new</b> value&lt;/p&gt;
+     * &lt;p&gt;&lt;strong&gt;Usage:&lt;/strong&gt;&lt;br&gt;
+     * &lt;code&gt;<b>var</b> handler = <b>function</b>(e) {<b>var</b> previous = e.prevValue};&lt;br&gt;
+     * myTabs.addListener('beforeLabelChange', handler);&lt;/code&gt;&lt;/p&gt;
+     * @event beforeLabelChange
+     */</i>
+<i>// holder</i>
+<i>/**
+     * Fires after the tab label is changed.
+     * &lt;p&gt;See: &lt;a href=&quot;YAHOO.util.Element.html#addListener&quot;&gt;Element.addListener&lt;/a&gt;&lt;/p&gt;
+     * &lt;p&gt;&lt;strong&gt;Event fields:&lt;/strong&gt;&lt;br&gt;
+     * &lt;code&gt;&amp;lt;String&amp;gt; type&lt;/code&gt; labelChange&lt;br&gt;
+     * &lt;code&gt;&amp;lt;String&amp;gt;
+     * prevValue&lt;/code&gt; the previous value&lt;br&gt;
+     * &lt;code&gt;&amp;lt;String&amp;gt;
+     * newValue&lt;/code&gt; the updated value&lt;/p&gt;
+     * &lt;p&gt;&lt;strong&gt;Usage:&lt;/strong&gt;&lt;br&gt;
+     * &lt;code&gt;<b>var</b> handler = <b>function</b>(e) {<b>var</b> previous = e.prevValue};&lt;br&gt;
+     * myTabs.addListener('labelChange', handler);&lt;/code&gt;&lt;/p&gt;
+     * @event labelChange
+     */</i>
+<i>// holder</i>
+<i>/**
+     * Fires before the tab content is changed.
+     * &lt;p&gt;See: &lt;a href=&quot;YAHOO.util.Element.html#addListener&quot;&gt;Element.addListener&lt;/a&gt;&lt;/p&gt;
+     * &lt;p&gt;If handler returns false, the change will be cancelled, and the value will not
+     * be set.&lt;/p&gt;
+     * &lt;p&gt;&lt;strong&gt;Event fields:&lt;/strong&gt;&lt;br&gt;
+     * &lt;code&gt;&amp;lt;String&amp;gt; type&lt;/code&gt; beforeContentChange&lt;br&gt;
+     * &lt;code&gt;&amp;lt;String&amp;gt;
+     * prevValue&lt;/code&gt; the current value&lt;br&gt;
+     * &lt;code&gt;&amp;lt;String&amp;gt;
+     * newValue&lt;/code&gt; the <b>new</b> value&lt;/p&gt;
+     * &lt;p&gt;&lt;strong&gt;Usage:&lt;/strong&gt;&lt;br&gt;
+     * &lt;code&gt;<b>var</b> handler = <b>function</b>(e) {<b>var</b> previous = e.prevValue};&lt;br&gt;
+     * myTabs.addListener('beforeContentChange', handler);&lt;/code&gt;&lt;/p&gt;
+     * @event beforeContentChange
+     */</i>
+<i>// holder</i>
+<i>/**
+     * Fires after the tab content is changed.
+     * &lt;p&gt;See: &lt;a href=&quot;YAHOO.util.Element.html#addListener&quot;&gt;Element.addListener&lt;/a&gt;&lt;/p&gt;
+     * &lt;p&gt;&lt;strong&gt;Event fields:&lt;/strong&gt;&lt;br&gt;
+     * &lt;code&gt;&amp;lt;String&amp;gt; type&lt;/code&gt; contentChange&lt;br&gt;
+     * &lt;code&gt;&amp;lt;String&amp;gt;
+     * prevValue&lt;/code&gt; the previous value&lt;br&gt;
+     * &lt;code&gt;&amp;lt;Boolean&amp;gt;
+     * newValue&lt;/code&gt; the updated value&lt;/p&gt;
+     * &lt;p&gt;&lt;strong&gt;Usage:&lt;/strong&gt;&lt;br&gt;
+     * &lt;code&gt;<b>var</b> handler = <b>function</b>(e) {<b>var</b> previous = e.prevValue};&lt;br&gt;
+     * myTabs.addListener('contentChange', handler);&lt;/code&gt;&lt;/p&gt;
+     * @event contentChange
+     */</i>
+})();(<b>function</b>() {
+
+    <i>/**
+     * The tabview module provides a widget <b>for</b> managing content bound to tabs.
+     * @module tabview
+     *
+     */</i>
+<i>// holder</i>
+<i>/**
+     * A widget to control tabbed views.
+     * @namespace YAHOO.widget
+     * @class TabView
+     * @extends YAHOO.util.Element
+     * @constructor
+     * @param {HTMLElement | String | Object} el(optional) The html
+     * element that represents the TabView, or the attribute object to use.
+     * An element will be created <b>if</b> none provided.
+     * @param {Object} attr (optional) A key map of the tabView's
+     * initial attributes.  Ignored <b>if</b> first arg is attributes object.
+     */</i>
+    YAHOO.widget.TabView = <b>function</b>(el, attr) {
+        attr = attr || {};
+        <b>if</b> (arguments.length == 1 &amp;&amp; !Lang.isString(el) &amp;&amp; !el.nodeName) {
+            attr = el; <i>// treat first arg as attr object</i>
+            el = attr.element || null;
+        }
+
+        <b>if</b> (!el &amp;&amp; !attr.element) { <i>// create <b>if</b> we dont have one</i>
+            el = _createTabViewElement.call(<b>this</b>, attr);
+        }
+    	YAHOO.widget.TabView.superclass.constructor.call(<b>this</b>, el, attr);
+    };
+
+    YAHOO.extend(YAHOO.widget.TabView, YAHOO.util.Element);
+
+    <b>var</b> proto = YAHOO.widget.TabView.prototype;
+    <b>var</b> Dom = YAHOO.util.Dom;
+    <b>var</b> Lang = YAHOO.util.Lang;
+    <b>var</b> Event = YAHOO.util.Event;
+    <b>var</b> Tab = YAHOO.widget.Tab;
+
+
+    <i>/**
+     * The className to add when building from scratch.
+     * @property CLASSNAME
+     * @<b>default</b> &quot;navset&quot;
+     */</i>
+    proto.CLASSNAME = 'yui-navset';
+
+    <i>/**
+     * The className of the HTMLElement containing the TabView's tab elements
+     * to look <b>for</b> when building from existing markup, or to add when building
+     * from scratch.
+     * All childNodes of the tab container are treated as Tabs when building
+     * from existing markup.
+     * @property TAB_PARENT_CLASSNAME
+     * @<b>default</b> &quot;nav&quot;
+     */</i>
+    proto.TAB_PARENT_CLASSNAME = 'yui-nav';
+
+    <i>/**
+     * The className of the HTMLElement containing the TabView's label elements
+     * to look <b>for</b> when building from existing markup, or to add when building
+     * from scratch.
+     * All childNodes of the content container are treated as content elements when
+     * building from existing markup.
+     * @property CONTENT_PARENT_CLASSNAME
+     * @<b>default</b> &quot;nav-content&quot;
+     */</i>
+    proto.CONTENT_PARENT_CLASSNAME = 'yui-content';
+
+    proto._tabParent = null;
+    proto._contentParent = null;
+
+    <i>/**
+     * Adds a Tab to the TabView instance.
+     * If no index is specified, the tab is added to the end of the tab list.
+     * @method addTab
+     * @param {YAHOO.widget.Tab} tab A Tab instance to add.
+     * @param {Integer} index The position to add the tab.
+     * @<b>return</b> void
+     */</i>
+    proto.addTab = <b>function</b>(tab, index) {
+        <b>var</b> tabs = <b>this</b>.get('tabs');
+        <b>if</b> (!tabs) { <i>// not ready yet</i>
+            <b>this</b>._queue[<b>this</b>._queue.length] = ['addTab', arguments];
+            <b>return</b> false;
+        }
+
+        index = (index === undefined) ? tabs.length : index;
+
+        <b>var</b> before = <b>this</b>.getTab(index);
+
+        <b>var</b> self = <b>this</b>;
+        <b>var</b> el = <b>this</b>.get('element');
+        <b>var</b> tabParent = <b>this</b>._tabParent;
+        <b>var</b> contentParent = <b>this</b>._contentParent;
+
+        <b>var</b> tabElement = tab.get('element');
+        <b>var</b> contentEl = tab.get('contentEl');
+
+        <b>if</b> ( before ) {
+            tabParent.insertBefore(tabElement, before.get('element'));
+        } <b>else</b> {
+            tabParent.appendChild(tabElement);
+        }
+
+        <b>if</b> ( contentEl &amp;&amp; !Dom.isAncestor(contentParent, contentEl) ) {
+            contentParent.appendChild(contentEl);
+        }
+
+        <b>if</b> ( !tab.get('active') ) {
+            tab.set('contentVisible', false, true); <i>/* hide <b>if</b> not active */</i>
+        } <b>else</b> {
+            <b>this</b>.set('activeTab', tab, true);
+
+        }
+
+        <b>var</b> activate = <b>function</b>(e) {
+            YAHOO.util.Event.preventDefault(e);
+            self.set('activeTab', <b>this</b>);
+        };
+
+        tab.addListener( tab.get('activationEvent'), activate);
+
+        tab.addListener('activationEventChange', <b>function</b>(e) {
+            <b>if</b> (e.prevValue != e.newValue) {
+                tab.removeListener(e.prevValue, activate);
+                tab.addListener(e.newValue, activate);
+            }
+        });
+
+        tabs.splice(index, 0, tab);
+    };
+
+    <i>/**
+     * Routes childNode events.
+     * @method DOMEventHandler
+     * @param {event} e The Dom event that is being handled.
+     * @<b>return</b> void
+     */</i>
+    proto.DOMEventHandler = <b>function</b>(e) {
+        <b>var</b> el = <b>this</b>.get('element');
+        <b>var</b> target = YAHOO.util.Event.getTarget(e);
+        <b>var</b> tabParent = <b>this</b>._tabParent;
+
+        <b>if</b> (Dom.isAncestor(tabParent, target) ) {
+            <b>var</b> tabEl;
+            <b>var</b> tab = null;
+            <b>var</b> contentEl;
+            <b>var</b> tabs = <b>this</b>.get('tabs');
+
+            <b>for</b> (<b>var</b> i = 0, len = tabs.length; i &lt; len; i++) {
+                tabEl = tabs[i].get('element');
+                contentEl = tabs[i].get('contentEl');
+
+                <b>if</b> ( target == tabEl || Dom.isAncestor(tabEl, target) ) {
+                    tab = tabs[i];
+                    <b>break</b>; <i>// note <b>break</b></i>
+                }
+            }
+
+            <b>if</b> (tab) {
+                tab.fireEvent(e.type, e);
+            }
+        }
+    };
+
+    <i>/**
+     * Returns the Tab instance at the specified index.
+     * @method getTab
+     * @param {Integer} index The position of the Tab.
+     * @<b>return</b> YAHOO.widget.Tab
+     */</i>
+    proto.getTab = <b>function</b>(index) {
+    	<b>return</b> this.get('tabs')[index];
+    };
+
+    <i>/**
+     * Returns the index of given tab.
+     * @method getTabIndex
+     * @param {YAHOO.widget.Tab} tab The tab whose index will be returned.
+     * @<b>return</b> int
+     */</i>
+    proto.getTabIndex = <b>function</b>(tab) {
+        <b>var</b> index = null;
+        <b>var</b> tabs = <b>this</b>.get('tabs');
+    	<b>for</b> (<b>var</b> i = 0, len = tabs.length; i &lt; len; ++i) {
+            <b>if</b> (tab == tabs[i]) {
+                index = i;
+                <b>break</b>;
+            }
+        }
+
+        <b>return</b> index;
+    };
+
+    <i>/**
+     * Removes the specified Tab from the TabView.
+     * @method removeTab
+     * @param {YAHOO.widget.Tab} item The Tab instance to be removed.
+     * @<b>return</b> void
+     */</i>
+    proto.removeTab = <b>function</b>(tab) {
+        <b>var</b> tabCount = <b>this</b>.get('tabs').length;
+
+        <b>var</b> index = <b>this</b>.getTabIndex(tab);
+        <b>var</b> nextIndex = index + 1;
+        <b>if</b> ( tab == <b>this</b>.get('activeTab') ) { <i>// select next tab</i>
+            <b>if</b> (tabCount &gt; 1) {
+                <b>if</b> (index + 1 == tabCount) {
+                    <b>this</b>.set('activeIndex', index - 1);
+                } <b>else</b> {
+                    <b>this</b>.set('activeIndex', index + 1);
+                }
+            }
+        }
+
+        <b>this</b>._tabParent.removeChild( tab.get('element') );
+        <b>this</b>._contentParent.removeChild( tab.get('contentEl') );
+        <b>this</b>._configs.tabs.value.splice(index, 1);
+
+    };
+
+    <i>/**
+     * Provides a readable name <b>for</b> the TabView instance.
+     * @method toString
+     * @<b>return</b> String
+     */</i>
+    proto.toString = <b>function</b>() {
+        <b>var</b> name = <b>this</b>.get('id') || <b>this</b>.get('tagName');
+        <b>return</b> &quot;TabView &quot; + name;
+    };
+
+    <i>/**
+     * The transiton to use when switching between tabs.
+     * @method contentTransition
+     */</i>
+    proto.contentTransition = <b>function</b>(newTab, oldTab) {
+        newTab.set('contentVisible', true);
+        oldTab.set('contentVisible', false);
+    };
+
+    <i>/**
+     * Registers TabView specific properties.
+     * @method initAttributes
+     * @param {Object} attr Hash of initial attributes
+     */</i>
+    proto.initAttributes = <b>function</b>(attr) {
+        YAHOO.widget.TabView.superclass.initAttributes.call(<b>this</b>, attr);
+
+        <b>if</b> (!attr.orientation) {
+            attr.orientation = 'top';
+        }
+
+        <b>var</b> el = <b>this</b>.get('element');
+
+        <i>/**
+         * The Tabs belonging to the TabView instance.
+         * @config tabs
+         * @type Array
+         */</i>
+        <b>this</b>.register('tabs', {
+            value: [],
+            readOnly: true
+        });
+
+        <i>/**
+         * The container of the tabView's label elements.
+         * @property _tabParent
+         * @private
+         * @type HTMLElement
+         */</i>
+        <b>this</b>._tabParent =
+                <b>this</b>.getElementsByClassName(<b>this</b>.TAB_PARENT_CLASSNAME,
+                        'ul' )[0] || _createTabParent.call(<b>this</b>);
+
+        <i>/**
+         * The container of the tabView's content elements.
+         * @property _contentParent
+         * @type HTMLElement
+         * @private
+         */</i>
+        <b>this</b>._contentParent =
+                <b>this</b>.getElementsByClassName(<b>this</b>.CONTENT_PARENT_CLASSNAME,
+                        'div')[0] ||  _createContentParent.call(<b>this</b>);
+
+        <i>/**
+         * How the Tabs should be oriented relative to the TabView.
+         * @config orientation
+         * @type String
+         * @<b>default</b> &quot;top&quot;
+         */</i>
+        <b>this</b>.register('orientation', {
+            value: attr.orientation,
+            method: <b>function</b>(value) {
+                <b>var</b> current = <b>this</b>.get('orientation');
+                <b>this</b>.addClass('yui-navset-' + value);
+
+                <b>if</b> (current != value) {
+                    <b>this</b>.removeClass('yui-navset-' + current);
+                }
+
+                <b>switch</b>(value) {
+                    <b>case</b> 'bottom':
+                    <b>this</b>.appendChild(<b>this</b>._tabParent);
+                    <b>break</b>;
+                }
+            }
+        });
+
+        <i>/**
+         * The index of the tab currently active.
+         * @config activeIndex
+         * @type Int
+         */</i>
+        <b>this</b>.register('activeIndex', {
+            value: attr.activeIndex,
+            method: <b>function</b>(value) {
+                <b>this</b>.set('activeTab', <b>this</b>.getTab(value));
+            },
+            validator: <b>function</b>(value) {
+                <b>return</b> !<b>this</b>.getTab(value).get('disabled'); <i>// cannot activate <b>if</b> disabled</i>
+            }
+        });
+
+        <i>/**
+         * The tab currently active.
+         * @config activeTab
+         * @type YAHOO.widget.Tab
+         */</i>
+        <b>this</b>.register('activeTab', {
+            value: attr.activeTab,
+            method: <b>function</b>(tab) {
+                <b>var</b> activeTab = <b>this</b>.get('activeTab');
+
+                <b>if</b> (tab) {
+                    tab.set('active', true);
+                }
+
+                <b>if</b> (activeTab &amp;&amp; activeTab != tab) {
+                    activeTab.set('active', false);
+                }
+
+                <b>if</b> (activeTab &amp;&amp; tab != activeTab) { <i>// no transition <b>if</b> only 1</i>
+                    <b>this</b>.contentTransition(tab, activeTab);
+                } <b>else</b> if (tab) {
+                    tab.set('contentVisible', true);
+                }
+            },
+            validator: <b>function</b>(value) {
+                <b>return</b> !value.get('disabled'); <i>// cannot activate <b>if</b> disabled</i>
+            }
+        });
+
+        <b>if</b> ( <b>this</b>._tabParent ) {
+            _initTabs.call(<b>this</b>);
+        }
+
+        <b>for</b> (<b>var</b> type <b>in</b> this.DOM_EVENTS) {
+            <b>if</b> ( <b>this</b>.DOM_EVENTS.hasOwnProperty(type) ) {
+                <b>this</b>.addListener.call(<b>this</b>, type, <b>this</b>.DOMEventHandler);
+            }
+        }
+    };
+
+    <i>/**
+     * Creates Tab instances from a collection of HTMLElements.
+     * @method createTabs
+     * @private
+     * @param {Array|HTMLCollection} elements The elements to use <b>for</b> Tabs.
+     * @<b>return</b> void
+     */</i>
+    <b>var</b> _initTabs = <b>function</b>() {
+        <b>var</b> tab,
+            attr,
+            contentEl;
+
+        <b>var</b> el = <b>this</b>.get('element');
+        <b>var</b> tabs = _getChildNodes(<b>this</b>._tabParent);
+        <b>var</b> contentElements = _getChildNodes(<b>this</b>._contentParent);
+
+        <b>for</b> (<b>var</b> i = 0, len = tabs.length; i &lt; len; ++i) {
+            attr = {};
+
+            <b>if</b> (contentElements[i]) {
+                attr.contentEl = contentElements[i];
+            }
+
+            tab = <b>new</b> YAHOO.widget.Tab(tabs[i], attr);
+            <b>this</b>.addTab(tab);
+
+            <b>if</b> (tab.hasClass(tab.ACTIVE_CLASSNAME) ) {
+                <b>this</b>._configs.activeTab.value = tab; <i>// dont invoke method</i>
+            }
+        }
+    };
+
+    <b>var</b> _createTabViewElement = <b>function</b>(attr) {
+        <b>var</b> el = document.createElement('div');
+
+        <b>if</b> ( <b>this</b>.CLASSNAME ) {
+            el.className = <b>this</b>.CLASSNAME;
+        }
+
+        <b>return</b> el;
+    };
+
+    <b>var</b> _createTabParent = <b>function</b>(attr) {
+        <b>var</b> el = document.createElement('ul');
+
+        <b>if</b> ( <b>this</b>.TAB_PARENT_CLASSNAME ) {
+            el.className = <b>this</b>.TAB_PARENT_CLASSNAME;
+        }
+
+        <b>this</b>.get('element').appendChild(el);
+
+        <b>return</b> el;
+    };
+
+    <b>var</b> _createContentParent = <b>function</b>(attr) {
+        <b>var</b> el = document.createElement('div');
+
+        <b>if</b> ( <b>this</b>.CONTENT_PARENT_CLASSNAME ) {
+            el.className = <b>this</b>.CONTENT_PARENT_CLASSNAME;
+        }
+
+        <b>this</b>.get('element').appendChild(el);
+
+        <b>return</b> el;
+    };
+
+    <b>var</b> _getChildNodes = <b>function</b>(el) {
+        <b>var</b> nodes = [];
+        <b>var</b> childNodes = el.childNodes;
+
+        <b>for</b> (<b>var</b> i = 0, len = childNodes.length; i &lt; len; ++i) {
+            <b>if</b> (childNodes[i].nodeType == 1) {
+                nodes[nodes.length] = childNodes[i];
+            }
+        }
+
+        <b>return</b> nodes;
+    };
+
+<i>/**
+ * Fires before the activeTab is changed.
+ * &lt;p&gt;See: &lt;a href=&quot;YAHOO.util.Element.html#addListener&quot;&gt;Element.addListener&lt;/a&gt;&lt;/p&gt;
+ * &lt;p&gt;If handler returns false, the change will be cancelled, and the value will not
+ * be set.&lt;/p&gt;
+ * &lt;p&gt;&lt;strong&gt;Event fields:&lt;/strong&gt;&lt;br&gt;
+ * &lt;code&gt;&amp;lt;String&amp;gt; type&lt;/code&gt; beforeActiveTabChange&lt;br&gt;
+ * &lt;code&gt;&amp;lt;&lt;a href=&quot;YAHOO.widget.Tab.html&quot;&gt;YAHOO.widget.Tab&lt;/a&gt;&amp;gt;
+ * prevValue&lt;/code&gt; the currently active tab&lt;br&gt;
+ * &lt;code&gt;&amp;lt;&lt;a href=&quot;YAHOO.widget.Tab.html&quot;&gt;YAHOO.widget.Tab&lt;/a&gt;&amp;gt;
+ * newValue&lt;/code&gt; the tab to be made active&lt;/p&gt;
+ * &lt;p&gt;&lt;strong&gt;Usage:&lt;/strong&gt;&lt;br&gt;
+ * &lt;code&gt;<b>var</b> handler = <b>function</b>(e) {<b>var</b> previous = e.prevValue};&lt;br&gt;
+ * myTabs.addListener('beforeActiveTabChange', handler);&lt;/code&gt;&lt;/p&gt;
+ * @event beforeActiveTabChange
+ */</i>
+<i>// holder</i>
+<i>/**
+ * Fires after the activeTab is changed.
+ * &lt;p&gt;See: &lt;a href=&quot;YAHOO.util.Element.html#addListener&quot;&gt;Element.addListener&lt;/a&gt;&lt;/p&gt;
+ * &lt;p&gt;&lt;strong&gt;Event fields:&lt;/strong&gt;&lt;br&gt;
+ * &lt;code&gt;&amp;lt;String&amp;gt; type&lt;/code&gt; activeTabChange&lt;br&gt;
+ * &lt;code&gt;&amp;lt;&lt;a href=&quot;YAHOO.widget.Tab.html&quot;&gt;YAHOO.widget.Tab&lt;/a&gt;&amp;gt;
+ * prevValue&lt;/code&gt; the formerly active tab&lt;br&gt;
+ * &lt;code&gt;&amp;lt;&lt;a href=&quot;YAHOO.widget.Tab.html&quot;&gt;YAHOO.widget.Tab&lt;/a&gt;&amp;gt;
+ * newValue&lt;/code&gt; the <b>new</b> active tab&lt;/p&gt;
+ * &lt;p&gt;&lt;strong&gt;Usage:&lt;/strong&gt;&lt;br&gt;
+ * &lt;code&gt;<b>var</b> handler = <b>function</b>(e) {<b>var</b> previous = e.prevValue};&lt;br&gt;
+ * myTabs.addListener('activeTabChange', handler);&lt;/code&gt;&lt;/p&gt;
+ * @event activeTabChange
+ */</i>
+<i>// holder</i>
+<i>/**
+ * Fires before the orientation is changed.
+ * &lt;p&gt;See: &lt;a href=&quot;YAHOO.util.Element.html#addListener&quot;&gt;Element.addListener&lt;/a&gt;&lt;/p&gt;
+ * &lt;p&gt;If handler returns false, the change will be cancelled, and the value will not
+ * be set.&lt;/p&gt;
+ * &lt;p&gt;&lt;strong&gt;Event fields:&lt;/strong&gt;&lt;br&gt;
+ * &lt;code&gt;&amp;lt;String&amp;gt; type&lt;/code&gt; beforeOrientationChange&lt;br&gt;
+ * &lt;code&gt;&amp;lt;String&amp;gt;
+ * prevValue&lt;/code&gt; the current orientation&lt;br&gt;
+ * &lt;code&gt;&amp;lt;String&amp;gt;
+ * newValue&lt;/code&gt; the <b>new</b> orientation to be applied&lt;/p&gt;
+ * &lt;p&gt;&lt;strong&gt;Usage:&lt;/strong&gt;&lt;br&gt;
+ * &lt;code&gt;<b>var</b> handler = <b>function</b>(e) {<b>var</b> previous = e.prevValue};&lt;br&gt;
+ * myTabs.addListener('beforeOrientationChange', handler);&lt;/code&gt;&lt;/p&gt;
+ * @event beforeOrientationChange
+ */</i>
+<i>// holder</i>
+<i>/**
+ * Fires after the orientation is changed.
+ * &lt;p&gt;See: &lt;a href=&quot;YAHOO.util.Element.html#addListener&quot;&gt;Element.addListener&lt;/a&gt;&lt;/p&gt;
+ * &lt;p&gt;&lt;strong&gt;Event fields:&lt;/strong&gt;&lt;br&gt;
+ * &lt;code&gt;&amp;lt;String&amp;gt; type&lt;/code&gt; orientationChange&lt;br&gt;
+ * &lt;code&gt;&amp;lt;String&amp;gt;
+ * prevValue&lt;/code&gt; the former orientation&lt;br&gt;
+ * &lt;code&gt;&amp;lt;String&amp;gt;
+ * newValue&lt;/code&gt; the <b>new</b> orientation&lt;/p&gt;
+ * &lt;p&gt;&lt;strong&gt;Usage:&lt;/strong&gt;&lt;br&gt;
+ * &lt;code&gt;<b>var</b> handler = <b>function</b>(e) {<b>var</b> previous = e.prevValue};&lt;br&gt;
+ * myTabs.addListener('orientationChange', handler);&lt;/code&gt;&lt;/p&gt;
+ * @event orientationChange
+ */</i>
+})();</code></pre><hr><div style="font-size:10px;text-align:center;color:gray;">yui-ext - Copyright &copy; 2006 Jack Slocum.  |
+    Yahoo! UI - Copyright &copy; 2006 Yahoo! Inc.<br />All rights reserved.</div>
+    </body></html>

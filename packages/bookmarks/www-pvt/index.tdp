@@ -1,0 +1,64 @@
+contract -require_registration 1 -require_secure_conn 1 
+
+datastore \
+    -id ds_bookmarks \
+    -scope "user" \
+    -from_class ::bm::Bookmark \
+    -limit 100 \
+    -select {*} \
+    -order "creation_date desc"
+
+
+js {
+    window['check'] = function(msg) {
+	return confirm("Are you sure you want to " + msg + " this bookmark?");
+    }
+}
+
+val -id context_bar { return [::xo::kit::context_bar] }
+
+# keep css classes and tags used by context_bar
+::xo::tdp::excludeClassesFromRenaming {breadcrumb divider ul li active}
+
+
+master -title "Your Bookmarks - Private Area" {
+    layout_row {
+	layout_col -class span1 
+	layout_col -class span11 {
+	    nt @{context_bar:noquote}
+	    div -class "pull-right" {
+		a -class "btn btn-mini btn-info" -href "bookmark-howto" {
+		    t "How To Bookmark"
+		}
+	    }
+	    i -class clearfix
+	    p
+	}
+    }
+
+    layout_row {
+	layout_col -class span1
+	layout_col -class span11 {
+	    grid -store ds_bookmarks -use "fancy" {
+
+		column -text "Bookmark" -template {
+		    <a target="_blank" href="@{url}">@{title}</a><br><small>@{url}</small><blockquote>@{description}</blockquote>
+		}
+
+		column \
+		    -text "Date" \
+		    -renderer "format_date" \
+		    -format "%b %d" \
+		    -dataIndex "creation_date"
+
+		column \
+		    -text "Actions" \
+		    -template {
+			<a onclick="return check('delete')" href="one-delete?id=@{id}">Delete</a>
+		    }
+
+	    }
+	}
+    }
+
+}

@@ -1,0 +1,10 @@
+font_identifier "LINE"; font_size design_size * pt#;
+font_coding_scheme:="LATEX LINE";
+mode_setup;
+
+nominal_width = 1;	% use single-width lines
+input c-line;
+
+%arrow dimensions:
+arrowlen#=.4*qqw#; arrowht#=.15*qqw#; arrowcurve#=.1*arrowht#;
+input line;

@@ -1,0 +1,77 @@
+Received: from p2-jbsched08.ad.prodcc.net (p2-pen6.ad.prodcc.net [10.252.0.106])
+	by p2-mail177.ccm39.constantcontact.com (Postfix) with ESMTP id 3A41ED0CC98
+	for <neophytos@phigita.net>; Tue, 22 Nov 2011 00:17:50 -0500 (EST) 
+DKIM-Signature: v=1; q=dns/txt; a=rsa-sha256; c=relaxed/relaxed; s=105386; d=manning.ccsend.com; h=to:subject:mime-version:message-id:from:date:sender:list-unsubscribe:reply-to; bh=vGrdcXh5aKC9P/DPvcfUE+jiDBwVNu1zukhl2oYgpcs=; b=Pn/XRiwaPjN/pUweybGwBqBoVd66bcyv/1WzYUnQasqDbuGYPwgcvOj07aFIElyLMDwPOfqek1dPvZvJaPV1ymRWwKnqE8H6lTfr/5d1myXk8Znz12tJtXzPfx6y40m3ILaza4tkFt2Z85FvlE5TsO4s02djBQ0J+QRtJ4KfhEM= 
+Message-ID: <1108720010348.1101335703814.281293.8.170005CA@scheduler> 
+Date: Tue, 22 Nov 2011 00:17:50 -0500 (EST) 
+From: Manning Publications <mkt@manning.com> 
+Reply-To: mkt@manning.com 
+Sender: Manning Publications <manning@manning.ccsend.com> 
+To: neophytos@phigita.net 
+Subject: Green Tuesday at Manning--eBooks up to Half Off! 
+X-Mailer: Roving Constant Contact 2009 (http://www.constantcontact.com) 
+List-Unsubscribe: http://visitor.constantcontact.com/do?p=un&mse=0018GC6MpVjY0QsVHXO2XbbSb_v5l8P9v_bapbCBCe8WWg%3D&t=001aiCK_usRDj-eonkPJ57rSw%3D%3D&llr=gimslwbab 
+X-Return-Path-Hint: ESC1108720010348_1101335703814_281293_r20@in.constantcontact.com 
+X-Roving-ID: 1101335703814.281293 
+X-Lumos-SenderID: 1101335703814 
+X-Roving-CampaignId: 1108720010348 
+X-Roving-StreamId: 0 
+--------------------------------------
+Click here to
+view in your browser.
+http://campaign.r20.constantcontact.com/render?llr=gimslwbab&v=0012kO3uRH1XjBdFZAqvgzj3dD_uJKHRtFsoXS-IwAnvEVXRbWIAsbUB0zAHoLuEJFWfqgDkcxdpXxqyZRUvHK0w4SC-l6JHM-zFhxgJMPHNNueCTnAdWyrXoaNVGqNx8wqnZvCde2uhMsxmLzXweCQkQ%3D%3D
+
+
+home [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108720010348&s=281293&e=001I4oNy0wQ-UvUj3l2M84MkeVREU8jrSkuBuM9FC5kVWjjbgHI__S-qECaOHzo1Y9sneZoru9vjFRyMDWrEiFkj1tM14ZKBrKUxljtzGg8IdKmU50UlNG40Q==]support
+
+Our third annual Green Tuesday
+
+Black Friday, the day after Thanksgiving, is the busiest shopping day in the US.
+ Our alternative is Green Tuesday at manning.com [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108720010348&s=281293&e=001I4oNy0wQ-UvUj3l2M84MkeVREU8jrSkuBuM9FC5kVWjjbgHI__S-qECaOHzo1Y9sneZoru9vjFRyMDWrEiFkj1tM14ZKBrKUxljtzGg8IdKmU50UlNG40Q==].
+Today, and through the end of November, save up to 50% on earth-friendly eBooks.
+ You can avoid the crowds and still get some great deals. (Now that's a reason to
+give thanks!)
+
+40% off all eBook purchases under $50--Use code gt1140
+50% off all eBook purchases over $50--Use code gt1150
+
+Just enter the correct code in the Promotional Code box when you check out at manning.com
+[http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108720010348&s=281293&e=001I4oNy0wQ-UvUj3l2M84MkeVREU8jrSkuBuM9FC5kVWjjbgHI__S-qECaOHzo1Y9sneZoru9vjFRyMDWrEiFkj1tM14ZKBrKUxljtzGg8IdKmU50UlNG40Q==].
+This offer is good for all eBooks, including MEAPs.
+
+Join the Countdown to 2012!
+
+On December 1, we're launching the Countdown to 2012! Here's how it works:
+
+
+* Sign up for the Deal of the Day Email Alert [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108720010348&s=281293&e=001I4oNy0wQ-Us0brxFXbl6HL8HrC-ebzPJYeH1WqGRfdGI_S_3v7PBJmWg7o3zB5ekzgLBN_7yb8ZJQJyQNIZLCnkhSewiZMzv8ZDrXtjZ9JXiC6rd1r3Fm3yvhYo9ot5tzv3U_IG2-wQ=]
+* We'll send you a different special discount every day
+* There's a daily drawing for two Manning eBooks
+* One lucky winner gets a brand new 16GB Apple iPad!
+
+If you already get the Deal of the Day Email Alert [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108720010348&s=281293&e=001I4oNy0wQ-Us0brxFXbl6HL8HrC-ebzPJYeH1WqGRfdGI_S_3v7PBJmWg7o3zB5ekzgLBN_7yb8ZJQJyQNIZLCnkhSewiZMzv8ZDrXtjZ9JXiC6rd1r3Fm3yvhYo9ot5tzv3U_IG2-wQ=],
+you're already registered. We'll announce the eBook winners daily, and we'll let
+ you know who took home the iPad on January 5, 2012.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Forward email
+http://ui.constantcontact.com/sa/fwtf.jsp?llr=gimslwbab&m=1101335703814&ea=neophytos@phigita.net&a=1108720010348
+
+
+This email was sent to neophytos@phigita.net by mkt@manning.com.
+
+Update Profile/Email Address
+http://visitor.constantcontact.com/do?p=oo&mse=0018GC6MpVjY0QsVHXO2XbbSb_v5l8P9v_bapbCBCe8WWg%3D&t=001aiCK_usRDj-eonkPJ57rSw%3D%3D&reason=001y5KaVlBn7_Y%3D&llr=gimslwbab
+
+
+Instant removal with SafeUnsubscribe(TM)
+http://visitor.constantcontact.com/do?p=un&mse=0018GC6MpVjY0QsVHXO2XbbSb_v5l8P9v_bapbCBCe8WWg%3D&t=001aiCK_usRDj-eonkPJ57rSw%3D%3D&reason=001y5KaVlBn7_Y%3D&llr=gimslwbab
+
+
+Privacy Policy:
+http://ui.constantcontact.com/roving/CCPrivacyPolicy.jsp
+
+
+
+
+Manning Publications Co. | Sound View Ct. #3B | Greenwich | CT | 06830

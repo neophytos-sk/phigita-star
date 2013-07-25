@@ -1,0 +1,21 @@
+Return-path: <webmaster@phigita.net> 
+Received: from [115.241.126.196] (port=4313 helo=Lenovo)
+	by server24.appriver.com with asmtp 
+	id 5D3AA1-0003F3-82
+	for <webmaster@phigita.net>; Wed, 9 Nov 2011 08:57:17 -0800 
+Message-ID: <88442CBA36944C8891DA2931DDFC5B2A@Lenovo> 
+From: =?koi8-r?B?IvXM2cLOydPYIg==?= <appletond6@consumerfsi.com> 
+To: <webmaster@phigita.net> 
+Subject: =?koi8-r?B?4c7Fy8TP1CDEztE=?= 
+Date: Wed, 9 Nov 2011 08:57:17 -0800 
+X-Priority: 3 
+X-MSMail-Priority: Normal 
+X-Mailer: Microsoft Windows Mail 6.0.6001.18000 
+X-MimeOLE: Produced By Microsoft MimeOLE V6.0.6001.18049 
+X-Mras: Ok 
+--------------------------------------
+- ГЏГ Г¶Г Г­Г», Г±ГЇГ Г±Г Г©ГІГҐ! Г‘Г°Г®Г·Г­Г® Г­ГіГ¦Г­Г» Г¤ГҐГ­ГјГЈГЁ Г­Г  ГЇГ«Г Г±ГІГЁГ·ГҐГ±ГЄГіГѕ Г®ГЇГҐГ°Г Г¶ГЁГѕ!
+- СёГ¬Г , Г­Гі Г¬Г» Г¦ГҐ ГІГҐГЎГҐ ГЈГ®ГўГ®Г°ГЁГ«ГЁ, Г­ГҐ ГІГ®Г°Г®ГЇГЁГ±Гј Г¦ГҐГ­ГЁГІГјГ±Гї, ГЇГ°ГЁГ±Г¬Г®ГІГ°ГЁГ±Гј!
+
+
+

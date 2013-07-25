@@ -1,0 +1,14 @@
+ad_page_contract {
+    @author Neophytos Demetriou
+}
+
+set subject [string map {{_} { }} [lindex [split [ad_conn extra_url] /] end]]
+
+rp_form_put vuh_p t
+rp_form_put subject $subject
+if { 1 } {
+    rp_internal_redirect /packages/print/www-global/index
+} else {
+    rp_returnnotfound
+}
+

@@ -1,0 +1,17 @@
+Return-path: <webmaster@phigita.net> 
+Received: from [183.96.207.75] (port=5614 helo=SVN0824DNG)
+	by alt2.aspmx.l.google.com with asmtp 
+	id 5F83F2-000853-08
+	for <webmaster@phigita.net>; Thu, 17 Nov 2011 19:20:03 +0900 
+Message-ID: <A66930C3CCEF456E86A377F1695F5075@SVN0824DNG> 
+From: =?koi8-r?B?IuTPzcEg0yDHwdLBztTJxcoi?= <sexinessom002@indianaar.com> 
+To: <webmaster@phigita.net> 
+Subject: =?koi8-r?B?5M/NwSDJ2iDC0tXTwSDQzyDUydDP19nNIMkgyc7EydfJxNXBzNjO2c0g?=
+	=?koi8-r?B?0NLPxcvUwc0=?= 
+Date: Thu, 17 Nov 2011 19:20:03 +0900 
+X-Priority: 3 
+X-MSMail-Priority: Normal 
+X-Mailer: Microsoft Windows Mail 6.0.6001.18000 
+X-MimeOLE: Produced By Microsoft MimeOLE V6.0.6001.18049 
+X-Spam: Not detected 
+X-Mras: Ok 

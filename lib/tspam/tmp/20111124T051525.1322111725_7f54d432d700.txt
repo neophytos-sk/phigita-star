@@ -1,0 +1,16 @@
+Return-path: <webmaster@phigita.net> 
+Received: from [89.204.84.37] (port=8139 helo=sbb22238920dfb)
+	by mail.winsunx.com with asmtp 
+	id 4497A9-0007B1-24
+	for <webmaster@phigita.net>; Thu, 24 Nov 2011 10:15:09 +0500 
+Message-ID: <3F6FC3FD00C34A298FB3EA25B8E08B4E@sbb22238920dfb> 
+From: =?koi8-r?B?IvPSz97O2cog0sXNz87UIg==?= <attucksgj2@winsunx.com> 
+To: <webmaster@phigita.net> 
+Subject: =?koi8-r?B?+sHQ0sHXy8Egy8HS1NLJxNbFyiwg0sXNz87UIM/Sx9TFyM7Jy8k=?= 
+Date: Thu, 24 Nov 2011 10:15:09 +0500 
+X-Priority: 3 
+X-MSMail-Priority: Normal 
+X-Mailer: Microsoft Windows Mail 6.0.6001.18000 
+X-MimeOLE: Produced By Microsoft MimeOLE V6.0.6001.18049 
+X-Spam: Not detected 
+X-Mras: Ok 

@@ -1,0 +1,1759 @@
+if unknown cmbase: input cmbase fi
+
+font_identifier:="MTCMSY"; font_size 10pt#;
+
+u#:=20/36pt#;      % unit width
+width_adj#:=0pt#;    % width adjustment for certain characters
+serif_fit#:=0pt#;    % extra sidebar near lowercase serifs
+cap_serif_fit#:=5/36pt#;  % extra sidebar near uppercase serifs
+letter_fit#:=0pt#;    % extra space added to all sidebars
+
+body_height#:=270/36pt#;  % height of tallest characters
+asc_height#:=250/36pt#;    % height of lowercase ascenders
+cap_height#:=246/36pt#;    % height of caps
+fig_height#:=232/36pt#;    % height of numerals
+x_height#:=155/36pt#;    % height of lowercase without ascenders
+math_axis#:=90/36pt#;    % axis of symmetry for math symbols
+bar_height#:=87/36pt#;    % height of crossbar in lowercase e
+comma_depth#:=70/36pt#;    % depth of comma below baseline
+desc_depth#:=70/36pt#;    % depth of lowercase descenders
+
+crisp#:=8/36pt#;    % diameter of serif corners
+tiny#:=8/36pt#;      % diameter of rounded corners
+fine#:=7/36pt#;      % diameter of sharply rounded corners
+thin_join#:=7/36pt#;    % width of extrafine details
+hair#:=9/36pt#;      % lowercase hairline breadth
+stem#:=24/36pt#;    % lowercase stem breadth
+curve#:=29/36pt#;    % lowercase curve breadth
+ess#:=27/36pt#;      % breadth in middle of lowercase s
+flare#:=32/36pt#;    % diameter of bulbs or breadth of terminals
+dot_size#:=38/36pt#;    % diameter of dots
+cap_hair#:=11/36pt#;    % uppercase hairline breadth
+cap_stem#:=30/36pt#;    % uppercase stem breadth
+cap_curve#:=35/36pt#;    % uppercase curve breadth
+cap_ess#:=33/36pt#;    % breadth in middle of uppercase s
+rule_thickness#:=.4pt#;    % thickness of lines in math symbols
+
+dish#:=1/36pt#;      % amount erased at top or bottom of serifs
+bracket#:=20/36pt#;    % vertical distance from serif base to tangent
+jut#:=30/36pt#;      % protrusion of lowercase serifs
+cap_jut#:=37/36pt#;    % protrusion of uppercase serifs
+beak_jut#:=10/36pt#;    % horizontal protrusion of beak serifs
+beak#:=70/36pt#;    % vertical protrusion of beak serifs
+vair#:=8/36pt#;      % vertical diameter of hairlines
+notch_cut#:=10pt#;    % maximum breadth above or below notches
+bar#:=11/36pt#;      % lowercase bar thickness
+slab#:=11/36pt#;    % serif and arm thickness
+cap_bar#:=11/36pt#;    % uppercase bar thickness
+cap_band#:=11/36pt#;    % uppercase thickness above/below lobes
+cap_notch_cut#:=10pt#;    % max breadth above/below uppercase notches
+serif_drop#:=4/36pt#;    % vertical drop of sloped serifs
+stem_corr#:=1/36pt#;    % for small refinements of stem breadth
+vair_corr#:=1/36pt#;    % for small refinements of hairline height
+apex_corr#:=0pt#;    % extra width at diagonal junctions
+
+o#:=8/36pt#;      % amount of overshoot for curves
+apex_o#:=8/36pt#;    % amount of overshoot for diagonal junctions
+
+slant:=.25;      % tilt ratio $(\Delta x/\Delta y)$
+fudge:=1;      % factor applied to weights of heavy characters
+math_spread:=0;      % extra openness of math symbols
+superness:=1/sqrt2;    % parameter for superellipses
+superpull:=1/6;      % extra openness inside bowls
+beak_darkness:=11/30;    % fraction of triangle inside beak serifs
+ligs:=2;      % level of ligatures to be included
+
+square_dots:=false;    % should dots be square?
+hefty:=false;      % should we try hard not to be overweight?
+serifs:=true;      % should serifs and bulbs be attached?
+monospace:=false;    % should all characters have the same width?
+variant_g:=true;    % should an italic-style g be used?
+low_asterisk:=false;    % should the asterisk be centered at the axis?
+math_fitting:=true;    % should math-mode spacing be used?
+
+% the following font parameters are explained in {\sl The \TeX book}, Appendix G
+subs:=7/10;  % subscripts to 10pt will normally be in 7pt type
+rth#:=.4pt#;  % assume that rules will come from cmex10
+fontdimen 8:  % parameters $\sigma_8$ through $\sigma_{22}$ will now be listed
+ math_axis#+3.51rth#+54/36pt#+subs*desc_depth#,      % num1
+ math_axis#+1.51rth#+30/36pt#,          % num2
+ math_axis#+1.51rth#+48/36pt#,          % num3
+ -(math_axis#-3.51rth#-subs*fig_height#-124/36pt#),    % denom1
+ -(math_axis#-1.51rth#-subs*fig_height#-30/36pt#),    % denom2
+ 8.99pt#-subs*asc_height#,          % sup1
+ 8.49pt#-subs*asc_height#,          % sup2
+ 104/36pt#,              % sup3
+ 54/36pt#,              % sub1
+ -(8.49pt#-2subs*asc_height#-3.1rth#),        % sub2
+ subs*asc_height#-36/36pt#,          % sup\_drop
+ 18/36pt#,              % sub\_drop
+ 23.9pt#,              % delim1
+ 10.1pt#,              % delim2
+ math_axis#;              % axis\_height
+
+def center_on(expr x) = if not monospace: % change width for symmetric fit
+ r:=r+2x-w; w:=2x; fi enddef;
+
+%generate pmathsy      % switch to the driver file
+font_coding_scheme:="TeX math symbols";
+mode_setup; font_setup;
+
+%autorounding:=hair; %% uppercase cals not needed in ptmsy!!
+%%input calu;  % upper case calligraphic alphabet
+autorounding:=0;
+
+font_slant slant; font_x_height x_height#;
+font_quad 18u# if not monospace:+4letter_fit# fi;
+% (The spacing is zero so that \TeX\ will always add the italic correction.)
+% (The calling file should give the other math symbol font parameters.)
+
+slant:=mono_charic#:=0;  % the remaining characters will not be slanted
+currenttransform:=identity yscaled aspect_ratio scaled granularity;
+%input psymbol;  % the symbols
+minus=oct"000"; cdot=oct"001"; diamond=oct"005";
+plus_minus=oct"006"; o_plus=oct"010"; o_times=oct"012";
+eqv=oct"021"; leq=oct"024"; geq=oct"025";
+subset=oct"032"; superset=oct"033";
+left_arrow=oct"040"; right_arrow=oct"041";
+up_arrow=oct"042"; down_arrow=oct"043"; double_arrow=oct"044";
+infty=oct"061"; elt=oct"062";
+for_all=oct"070"; there_exists=oct"071"; false_that=oct"072";
+cup=oct"133"; cap=oct"134"; meet=oct"136"; join=oct"137";
+left_brace=oct"146"; right_brace=oct"147"; vertical=oct"152";
+backslash=oct"156"; integral=oct"163";
+
+%input pmtsym;  % symbols common to other fonts
+iff known minus: cmchar "Minus sign";
+beginarithchar(minus); pickup rule.nib;
+lft x1=hround 1.5u-eps; x2=w-x1; y1=y2=math_axis;
+draw z1--z2;  % bar
+labels(1,2); endchar;
+
+iff known plus_minus: cmchar "Plus-or-minus sign";
+beginarithchar(plus_minus); pickup rule.nib;
+numeric shiftup; shiftup=vround 1.5u;
+x1=x2=.5w; lft x3=lft x5=hround u-eps; x4=x6=w-x3;
+.5[y1,y2]=y3=y4=math_axis+shiftup; top y1=h+shiftup; y5=y6=y2;
+draw z1--z2;  % stem
+draw z3--z4;  % plus bar
+draw z5--z6;  % minus bar
+labels(1,2,3,4,5,6); endchar;
+
+iff known o_plus: cmchar "Circle-plus operator";
+beginarithchar(o_plus); pickup light_rule.nib; autorounded;
+lft x6=hround u; x2=w-x6; y2=math_axis; top y8=h;
+circle_points; draw_circle;  % circle
+draw z2--z6; draw z4--z8;  % bar and stem
+labels(1,2,3,4,5,6,7,8); endchar;
+
+iff known o_times: cmchar "Circle-times operator";
+beginarithchar(o_times); pickup light_rule.nib; autorounded;
+lft x6=hround u; x2=w-x6; y2=math_axis; top y8=h;
+circle_points; draw_circle;  % circle
+draw z1--z5; draw z3--z7;  % diagonals
+labels(1,2,3,4,5,6,7,8); endchar;
+
+iff known cup: cmchar "Set union sign";
+beginchar(cup,12u#,.8asc_height#,0);
+italcorr .8asc_height#*slant-.5u#;
+adjust_fit(0,0); pickup rule.nib; autorounded;
+lft x1=hround u; x2=x1; x3=w-x3; x4=x5=w-x1;
+y1=good.y h+o; bot y3=-o; y2=y4=2/3[y1,y3]; y5=y1;
+draw z1---z2...z3...z4---z5;  % stems and cup
+labels(1,2,3,4,5); endchar;
+
+iff known cap: cmchar "Set intersection sign";
+beginchar(cap,12u#,.8asc_height#,0);
+italcorr .8asc_height#*slant-.5u#;
+adjust_fit(0,0); pickup rule.nib; autorounded;
+lft x1=hround u; x2=x1; x3=w-x3; x4=x5=w-x1;
+y3=good.y h+o; bot y1=-o; y2=y4=2/3[y1,y3]; y5=y1;
+draw z1---z2...z3...z4---z5;  % stems and cap
+labels(1,2,3,4,5); endchar;
+
+iff known meet: cmchar "Lattice infimum (logical and) sign";
+beginchar(meet,12u#,.8asc_height#,0);
+italcorr .8asc_height#*slant-.5u#;
+adjust_fit(0,0); pickup rule.nib;
+lft x1=hround u-eps; x3=w-x3; x5=w-x1;
+y3=good.y h+o; bot y1=-o; y5=y1;
+draw z1--z3--z5;  % diagonals
+labels(1,3,5); endchar;
+
+iff known join: cmchar "Lattice supremum (logical or) sign";
+beginchar(join,12u#,.8asc_height#,0);
+italcorr .8asc_height#*slant-.5u#;
+adjust_fit(0,0); pickup rule.nib;
+lft x1=hround u-eps; x3=w-x3; x5=w-x1;
+y1=good.y h+o; bot y3=-o; y5=y1;
+draw z1--z3--z5;  % diagonals
+labels(1,3,5); endchar;
+
+iff known down_arrow: cmchar "Downward arrow";
+beginchar(down_arrow,9u#,asc_height#,asc_depth#);
+adjust_fit(0,0); pickup crisp.nib;
+pos1(rule_thickness,0); pos2(rule_thickness,0);
+pos3(bar,90); pos4(bar,90);
+lft x1l=hround(.5w-.5rule_thickness); y1+.5rule_thickness=h;
+x0=x1=x2; bot y0=-d; x0-x3=x4-x0=3u+eps;
+y3=y4=y0+.24asc_height+eps;
+pos5(bar,angle(z4-z0)); z5l=z0;
+pos6(bar,angle(z3-z0)); z6l=z0;
+z9=.381966[.5[z3,z4],z0];
+numeric t; path p; p=z4r{z9-z4}..z6r;
+t=xpart(p intersectiontimes((x2r,-d)--(x2r,h))); y2=ypart point t of p;
+filldraw z0..{z4-z9}z4l--subpath (0,t) of\\(z4r{z9-z4}..z6r)
+ --z2r---z1r..z1l---z2l--subpath (t,0) of\\(z3r{z9-z3}..z5r)
+ --z3l{z9-z3}..z0 & cycle;  % arrowhead and stem
+penlabels(0,1,2,3,4,5,6,9); endchar;
+
+iff known up_arrow: cmchar "Upward arrow";
+beginchar(up_arrow,9u#,asc_height#,asc_depth#);
+italcorr .76asc_height#*slant+.5crisp#-u#;
+adjust_fit(0,0); pickup crisp.nib;
+pos1(rule_thickness,0); pos2(rule_thickness,0);
+pos3(bar,90); pos4(bar,90);
+lft x1l=hround(.5w-.5rule_thickness); y1-.5rule_thickness=-d;
+x0=x1=x2; top y0=h; x0-x3=x4-x0=3u+eps;
+y3=y4=y0-.24asc_height-eps;
+pos5(bar,angle(z4-z0)); z5l=z0;
+pos6(bar,angle(z3-z0)); z6l=z0;
+z9=.381966[.5[z3,z4],z0];
+numeric t; path p; p=z4l{z9-z4}..z6r;
+t=xpart(p intersectiontimes((x2r,-d)--(x2r,h))); y2=ypart point t of p;
+filldraw z0..{z4-z9}z4r--subpath (0,t) of\\(z4l{z9-z4}..z6r)
+ --z2r---z1r..z1l---z2l--subpath (t,0) of\\(z3l{z9-z3}..z5r)
+ --z3r{z9-z3}..z0 & cycle;  % arrowhead and stem
+penlabels(0,1,2,3,4,5,6,9); endchar;
+
+iff known left_arrow: cmchar "Leftward arrow";
+compute_spread(.45x_height#,.55x_height#);
+beginchar(left_arrow,18u#,v_center(spread#+rule_thickness#));
+adjust_fit(0,0); pickup crisp.nib;
+pos1(rule_thickness,90); pos2(rule_thickness,90); pos3(bar,0); pos4(bar,0);
+y0=y1=y2=math_axis; x1+.5rule_thickness=hround(w-u); lft x0=hround u;
+y3-y0=y0-y4=.24asc_height+eps; x3=x4=x0+3u+eps;
+pos5(bar,angle(z4-z0)); z5l=z0; pos6(bar,angle(z3-z0)); z6l=z0;
+z9=.381966[.5[z3,z4],z0];
+numeric t; path p; p=z4r{z9-z4}..z6r;
+t=xpart(p intersectiontimes((0,y2l)--(w,y2l))); x2=xpart point t of p;
+filldraw z0..{z4-z9}z4l--subpath (0,t) of\\(z4r{z9-z4}..z6r)
+ --z2l---z1l..z1r---z2r--subpath (t,0) of\\(z3r{z9-z3}..z5r)
+ --z3l{z9-z3}..z0 & cycle;  % arrowhead and stem
+penlabels(0,1,2,3,4,5,6,9); endchar;
+
+iff known right_arrow: cmchar "Rightward arrow";
+compute_spread(.45x_height#,.55x_height#);
+beginchar(right_arrow,18u#,v_center(spread#+rule_thickness#));
+adjust_fit(0,0); pickup crisp.nib;
+pos1(rule_thickness,90); pos2(rule_thickness,90); pos3(bar,0); pos4(bar,0);
+y0=y1=y2=math_axis; x1-.5rule_thickness=hround u; rt x0=hround(w-u);
+y3-y0=y0-y4=.24asc_height+eps; x3=x4=x0-3u-eps;
+pos5(bar,angle(z4-z0)); z5l=z0; pos6(bar,angle(z3-z0)); z6l=z0;
+z9=.381966[.5[z3,z4],z0];
+numeric t; path p; p=z4l{z9-z4}..z6r;
+t=xpart(p intersectiontimes((0,y2l)--(w,y2l))); x2=xpart point t of p;
+filldraw z0..{z4-z9}z4r--subpath (0,t) of\\(z4l{z9-z4}..z6r)
+ --z2l---z1l..z1r---z2r--subpath (t,0) of\\(z3l{z9-z3}..z5r)
+ --z3r{z9-z3}..z0 & cycle;  % arrowhead and stem
+penlabels(0,1,2,3,4,5,6,9); endchar;
+
+iff known double_arrow: cmchar "Left-and-right arrow";
+compute_spread(.45x_height#,.55x_height#);
+beginchar(double_arrow,18u#,
+ v_center(if monospace:.6asc_height#+fi spread#+rule_thickness#));
+adjust_fit(0,0); pickup crisp.nib;
+pos1(rule_thickness,90); pos2(rule_thickness,90); pos3(bar,0); pos4(bar,0);
+y0=y1=y2=math_axis if monospace:+vround.3asc_height fi; lft x0=hround u;
+if monospace: x1+.5rule_thickness=hround(w-u) else: x1=.5w fi;
+y3-y0=y0-y4=.24asc_height+eps; x3=x4=x0+3u+eps;
+pos5(bar,angle(z4-z0)); z5l=z0; pos6(bar,angle(z3-z0)); z6l=z0;
+z9=.381966[.5[z3,z4],z0];
+numeric t; path p; p=z4r{z9-z4}..z6r;
+t=xpart(p intersectiontimes((0,y2l)--(w,y2l))); x2=xpart point t of p;
+filldraw z0..{z4-z9}z4l--subpath (0,t) of\\(z4r{z9-z4}..z6r)
+ --z2l---z1l..z1r---z2r--subpath (t,0) of\\(z3r{z9-z3}..z5r)
+ --z3l{z9-z3}..z0 & cycle;  % left arrowhead and stem
+pos11(rule_thickness,90); pos12(rule_thickness,90); pos13(bar,0); pos14(bar,0);
+y10=y11=y12=math_axis if monospace:-vround.3asc_height fi;
+rt x10=hround(w-u);
+if monospace: x11-.5rule_thickness=hround u else: x11=.5w fi;
+y13-y10=y10-y14=.24asc_height+eps; x13=x14=x10-3u-eps;
+pos15(bar,angle(z14-z10)); z15l=z10; pos16(bar,angle(z13-z10)); z16l=z10;
+z19=.381966[.5[z13,z14],z10];
+numeric t; path p; p=z14l{z19-z14}..z16r;
+t=xpart(p intersectiontimes((0,y12l)--(w,y12l))); x12=xpart point t of p;
+filldraw z10..{z14-z19}z14r--subpath (0,t) of\\(z14l{z19-z14}..z16r)
+ --z12l---z11l..z11r---z12r--subpath (t,0) of\\(z13l{z19-z13}..z15r)
+ --z13r{z19-z13}..z10 & cycle;  % right arrowhead and stem
+penlabels(0,1,2,3,4,5,6,9,10,11,12,13,14,15,16,19); endchar;
+
+iff known subset: cmchar "Proper subset sign";
+compute_spread(5/4x_height#,3/2x_height#);
+beginchar(subset,14u#,v_center(spread#+rule_thickness#));
+italcorr h#*slant-u#;
+adjust_fit(0,0); pickup rule.nib; autorounded;
+lft x2=hround 1.5u-eps; x1=x3=w-x2;
+y1-y3=spread; y2=.5[y1,y3]=math_axis;
+x4=x5=.5w; y4=y1; y5=y3;
+draw z1---z4...z2{down}...z5---z3;  % arc and bars
+labels(1,2,3,4,5); endchar;
+
+iff known superset: cmchar "Proper superset sign";
+compute_spread(5/4x_height#,3/2x_height#);
+beginchar(superset,14u#,v_center(spread#+rule_thickness#));
+italcorr h#*slant-u#;
+adjust_fit(0,0); pickup rule.nib; autorounded;
+lft x1=hround 1.5u-eps; x2=w-x1; x3=x1;
+y1-y3=spread; y2=.5[y1,y3]=math_axis;
+x4=x5=.5w; y4=y1; y5=y3;
+draw z1---z4...z2{down}...z5---z3;  % arc and bars
+labels(1,2,3,4,5); endchar;
+
+iff known elt: cmchar "Element sign";
+compute_spread(5/4x_height#,3/2x_height#);
+beginchar(elt,12u#,v_center(spread#+rule_thickness#));
+italcorr h#*slant-u#;
+adjust_fit(0,0); pickup rule.nib; autorounded;
+lft x2=hround 1.5u-eps; x1=x3=x6=w-x2;
+y1-y3=spread; y2=y6=.5[y1,y3]=math_axis;
+x4=x5=.5w+u; y4=y1; y5=y3;
+draw z1---z4...z2{down}...z5---z3;  % arc and bars
+draw z2--z6;  % middle bar
+labels(1,2,3,4,5,6); endchar;
+
+iff known for_all: cmchar "Universal quantifier";
+beginchar(for_all,10u#,asc_height#,0);
+italcorr asc_height#*slant;
+adjust_fit(0,0); pickup rule.nib;
+x2=good.x .5w; center_on(x2);
+lft x1=0; x3=w-x1;
+top y1=h; bot y2=-o; y3=y1; y4=y5=good.y x_height;
+z4=whatever[z1,z2]; z5=whatever[z2,z3];
+draw z1--z2--z3;  % diagonals
+draw z4--z5;  % bar
+labels(1,2,3,4,5); endchar;
+
+iff known there_exists: cmchar "Existential quantifier";
+beginchar(there_exists,10u#,asc_height#,0);
+italcorr asc_height#*slant;
+adjust_fit(0,0); pickup rule.nib;
+lft x1=hround u-eps; x2=x3=x5=w-x1; x4=x6-.25u=x1;
+top y1=h; bot y4=0; y2=y1; y5=y6=.5[y1,y3]; y3=y4;
+draw z1--z2--z3--z4;  % upper bar, stem, lower bar
+draw z5--z6;  % middle bar
+labels(1,2,3,4,5,6); endchar;
+
+iff known false_that: cmchar "Logical not sign";
+beginchar(false_that,12u#,x_height#,0);
+italcorr x_height#*slant-.5u#;
+adjust_fit(0,0); pickup rule.nib;
+lft x1=hround u-eps; x2=x3=w-x1;
+y1=y2=good.y .5[bar_height,h]; y2-y3=1.2(h-bar_height);
+draw z1--z2--z3;  % bar and stem
+labels(1,2,3); endchar;
+
+iff known less: cmchar "Less than sign";
+compute_spread(5/4x_height#,3/2x_height#);
+beginchar(less,14u#,v_center(spread#+rule_thickness#));
+italcorr h#*slant-u#;
+adjust_fit(0,0); pickup rule.nib;
+lft x2=hround 1.5u-eps; x1=x3=w-x2;
+y1-y3=spread; y2=.5[y1,y3]=math_axis;
+draw z1--z2--z3;  % diagonals
+labels(1,2,3); endchar;
+
+iff known greater: cmchar "Greater than sign";
+compute_spread(5/4x_height#,3/2x_height#);
+beginchar(greater,14u#,v_center(spread#+rule_thickness#));
+italcorr math_axis#*slant-u#;
+adjust_fit(0,0); pickup rule.nib;
+rt x2=hround(w-1.5u)+eps; x1=x3=w-x2;
+y1-y3=spread; y2=.5[y1,y3]=math_axis;
+draw z1--z2--z3;  % diagonals
+labels(1,2,3); endchar;
+
+iff known underbar: cmchar "Underbar suitable for < and >";
+compute_spread((5/8+.45)*x_height#,(3/4+.55)*x_height#);
+beginchar(underbar,14u#,0,spread#-math_axis#+.5rule_thickness#);
+adjust_fit(0,0); pickup rule.nib;
+lft x1=hround 1.5u-eps; x2=w-x1; bot y1=bot y2=-d;
+draw z1--z2;  % bar
+labels(1,2); endchar;
+
+iff known neq: cmchar "Unequals sign";
+compute_spread(.45x_height#,.55x_height#);
+beginchar(neq,14u#,v_center(4spread#+rule_thickness#));
+italcorr h#*slant-.5u#;
+adjust_fit(0,0); pickup rule.nib;
+lft x1=hround u-eps; x3=x1; x2=x4=w-x1;
+y1=y2; y3=y4; y1-y3=spread; .5[y1,y3]=math_axis;
+draw z1--z2; draw z3--z4;  % bars
+lft x6=hround 3.5u-eps; x5=w-x6; top y5=h+o; bot y6=-d-o;
+draw z5--z6;  % diagonal
+labels(1,2,3,4,5,6); endchar;
+
+iff known leq: cmchar "Less than or equal to sign";
+compute_spread(.45x_height#,.55x_height#);
+spread#':=spread#; spread':=spread; % the spread of `$=$'
+compute_spread(5/4x_height#,3/2x_height#);
+beginchar(leq,14u#,v_center(spread#'+spread#+rule_thickness#));
+italcorr h#*slant-u#;
+adjust_fit(0,0); pickup rule.nib;
+lft x2=hround 1.5u-eps; x1=x3=w-x2;
+y1-y3=spread; y2=.5[y1,y3]; top y1=h;
+draw z1--z2--z3;  % diagonals
+x8=x1; x9=x2; y8=y9; y3-y9=spread'; draw z8--z9;  % bar
+labels(1,2,3,8,9); endchar;
+
+iff known geq: cmchar "Greater than or equal to sign";
+compute_spread(.45x_height#,.55x_height#);
+spread#':=spread#; spread':=spread; % the spread of `$=$'
+compute_spread(5/4x_height#,3/2x_height#);
+beginchar(geq,14u#,v_center(spread#'+spread#+rule_thickness#));
+italcorr h#*slant-u#;
+adjust_fit(0,0); pickup rule.nib;
+lft x1=hround 1.5u-eps; x2=w-x1; x3=x1;
+y1-y3=spread; y2=.5[y1,y3]; top y1=h;
+draw z1--z2--z3;  % diagonals
+x8=x1; x9=x2; y8=y9; y3-y9=spread'; draw z8--z9;  % bar
+labels(1,2,3,8,9); endchar;
+
+iff known eqv: cmchar "Equivalence or congruence sign";
+compute_spread(.45x_height#,.55x_height#);
+beginchar(eqv,14u#,v_center(2spread#+rule_thickness#));
+italcorr h#*slant-.5u#;
+adjust_fit(0,0); pickup rule.nib;
+lft x1=hround u-eps; x3=x5=x1; x2=x4=x6=w-x1;
+y1=y2; y3=y4=math_axis; y5=y6; y1-y3=y3-y5=spread;
+draw z1--z2;  % upper bar
+draw z3--z4;  % middle bar
+draw z5--z6;  % lower bar
+labels(1,2,3,4,5,6); endchar;
+
+iff known backslash: cmchar "Reverse slash (backslash)";
+beginchar(backslash,9u#,body_height#,paren_depth#);
+adjust_fit(0,0); pickup rule.nib;
+lft x1=hround u-eps; top y1=h+eps;
+rt x2=hround(w-u)+eps; bot y2=-d-eps;
+draw z1--z2;  % diagonal
+labels(1,2); endchar;
+
+iff known vertical: cmchar "Vertical line";
+beginchar(vertical,5u#,body_height#,paren_depth#);
+italcorr body_height#*slant+.5rule_thickness#-2u#;
+adjust_fit(0,0); pickup rule.nib;
+x1=x2=good.x .5w; top y1=h+eps; bot y2=-d-eps;
+draw z1--z2;  % stem
+labels(1,2); endchar;
+
+iff known cdot: cmchar "Period raised to axis height";
+beginchar(cdot,5u#,v_center(7u#));
+adjust_fit(0,0); pickup fine.nib;
+numeric dot_diam#; dot_diam#=if monospace: 5/4 fi\\ dot_size#;
+define_whole_blacker_pixels(dot_diam);
+pos1(dot_diam,0); pos2(dot_diam,90);
+lft x1l=hround(.5w-.5dot_diam); y1+.5dot_diam=vround(math_axis+.5dot_diam);
+z1=z2; dot(1,2);  % dot
+penlabels(1,2); endchar;
+
+iff known diamond: cmchar "Diamond operator";
+beginchar(diamond,9u#,v_center(7u#));
+italcorr math_axis#*slant;
+adjust_fit(0,0); pickup rule.nib;
+numeric a; a=(lft 3.5u)*sqrt(3.14159/2); % an attempt to match circle area
+x4=x8=good.x .5w; center_on(x4); x2=w-x6=good.x(x4+a);
+y2=y6=.5[y4,y8]=math_axis; y8=good.y(y2+a);
+draw z2--z4--z6--z8--cycle;  % bowl
+labels(2,4,6,8); endchar;
+
+iff known left_brace: cmchar "Left curly brace";
+beginchar(left_brace,9u#,body_height#,paren_depth#);
+italcorr body_height#*slant+.5vair#-u#;
+adjust_fit(0,0); pickup fine.nib;
+forsuffixes $=1,1',4,4',7,7': pos$(vair,0); endfor
+forsuffixes $=2,3,5,6: pos$(stem,0); endfor
+x2=x3=x5=x6; x1=x1'=x7=x7'=w-x4=w-x4';
+lft x4l=hround(1.5u-.5vair); lft x2l=hround(.5w-.5stem);
+top y1=h; bot y7=-d; .5[y4,y4']=.5[y1,y7]=.5[y2,y6]=.5[y3,y5];
+y1-y2=y3-y4=(y1-y4)/4; y1-y1'=y4-y4'=y7'-y7=vair-fine;
+filldraw z1l{left}...z2l---z3l...{left}z4l
+ --z4'l{right}...z5l---z6l...{right}z7l
+ --z7r--z7'r{left}...z6r---z5r...{left}.5[z4r,z4'r]{right}
+ ...z3r---z2r...{right}z1'r--z1r--cycle;  % stroke
+penlabels(1,2,3,4,5,6,7); endchar;
+
+iff known right_brace: cmchar "Right curly brace";
+beginchar(right_brace,9u#,body_height#,paren_depth#);
+italcorr math_axis#*slant+.5vair#-u#;
+adjust_fit(0,0); pickup fine.nib;
+forsuffixes $=1,1',4,4',7,7': pos$(vair,0); endfor
+forsuffixes $=2,3,5,6: pos$(stem,0); endfor
+x2=x3=x5=x6; x1=x1'=x7=x7'=w-x4=w-x4';
+rt x4r=hround(w-1.5u+.5vair); rt x2r=hround(.5w+.5stem);
+top y1=h; bot y7=-d; .5[y4,y4']=.5[y1,y7]=.5[y2,y6]=.5[y3,y5];
+y1-y2=y3-y4=(y1-y4)/4; y1-y1'=y4-y4'=y7'-y7=vair-fine;
+filldraw z1r{right}...z2r---z3r...{right}z4r
+ --z4'r{left}...z5r---z6r...{left}z7r
+ --z7l--z7'l{right}...z6l---z5l...{right}.5[z4l,z4'l]{left}
+ ...z3l---z2l...{left}z1'l--z1l--cycle;  % stroke
+penlabels(1,2,3,4,5,6,7); endchar;
+
+iff known straight_quotes: cmchar "Straight double quotes";
+beginchar(straight_quotes,9u#,asc_height#,0);
+numeric top_width#,spread#; top_width#=if serifs: flare# else: stem# fi;
+spread#=max(3u#,top_width#+.5u#); define_pixels(spread);
+italcorr asc_height#*slant+.5top_width#+.5spread#-4u#;
+adjust_fit(0,0);
+x1=x2; x3=x4=w-x1; x3-x1=spread+2; y1=y3;
+y2=y4=max(.5[bar_height,x_height]+.5vair,h-x_height);
+if serifs: pickup crisp.nib; pos1(flare,0); pos2(vair,0);
+ pos3(flare,0); pos4(vair,0);
+ y1+.5stem=h; filldraw circ_stroke z1e--z2e;  % left stem and bulb
+ filldraw circ_stroke z3e--z4e;  % right stem and bulb
+else: pickup fine.nib; pos1(stem,0); pos2(vair,0);
+ pos3(stem,0); pos4(vair,0);
+ top y1=h; filldraw stroke z1e--z2e;  % left stem
+ filldraw stroke z3e--z4e; fi  % right stem
+penlabels(1,2,3,4); endchar;
+
+iff known infty: cmchar "Infinity";
+beginchar(infty,18u#,x_height#,0);
+italcorr .7x_height#*slant-.5u#;
+adjust_fit(0,0); pickup fine.nib;
+numeric theta,phi;
+if monospace: phi=-theta=90;
+else: phi=angle(4u,h); theta=angle(6u,-h); fi
+pos1(vair,180); pos2(.5[vair,curve],90+.5theta); pos3(curve,90+theta);
+pos4(curve,90+theta); pos5(.5[vair,curve],90+.5theta);
+pos6(vair,180); pos7(.2[vair,curve],270+.5phi);
+pos8(.3[vair,curve],270+phi); pos9(.2[vair,curve],270+.5phi);
+lft x1r=w-rt x6l=hround u; x2=x9=.4[x1,x8]; x5=x7=.6[x8,x6];
+if monospace: x2l:=x2r; x5r:=x5l; x7r:=x7l; x9l:=x9r; fi
+y1=y6=.5h; top y2r=top y7l=h+oo; bot y5l=bot y9r=-oo;
+x8=.5[x3,x4]=.5w; y8=.5[y3,y4]=.5h;
+y3-y4=h/3; z3-z4=whatever*dir theta;
+filldraw stroke z1e{up}...z2e{right}...z3e---z4e...z5e{right}
+ ...z6e{up}...z7e{left}...{-dir phi}z8e...{left}z9e...z1e{up}; % bowls
+penlabels(1,2,3,4,5,6,7,8,9); endchar;
+
+iff known integral: cmchar "Integral sign";
+beginchar(integral,5.25u#+max(1.25u#,stem#)+2max(1.5u#,curve#),
+ asc_height#,desc_depth#);
+italcorr asc_height#*slant-.5u#;
+adjust_fit(0,0); pickup fine.nib;
+pos1(curve,0); pos2(hair,0); pos3(vair,90); pos4(.6[hair,stem],180);
+pos5(stem,180); pos5'(stem,0); z5'=z5; pos6(.6[hair,stem],0);
+pos7(vair,-90); pos8(hair,-180); pos9(curve,-180);
+x7=w-x3=2.4u; rt x1r=max(rt x3+eps,hround(w-u)); x9=w-x1;
+x5=.5[x4,x6]; x4-x6=1.5u; lft x5r=hround(.5w-.5stem);
+y9-.5curve=vround(-.9d-o+vair); y3-y1=y9-y7;
+top y3r=h+o; bot y7r=-d-o; y5=.5[y3,y7]=.5[y4,y6]; y4-y6=2/3(y3-y7);
+bulb(3,2,1); bulb(7,8,9);  % bulbs
+filldraw stroke z3e{left}...z4e{(z5e-z4e)xscaled 1.1}
+ ..tension atleast 1 and atleast .8..{z5-z4}z5e;  % upper stem
+filldraw stroke z5'e{z6-z5}..tension atleast.8 and atleast 1
+ ..{(z6e-z5'e)xscaled 1.1}z6e...{left}z7e;  % lower stem
+math_fit(0,-2u#); penlabels(1,2,3,4,5,6,7,8,9); endchar;
+
+cmchar "Times operator";
+beginarithchar(oct"002"); pickup rule.nib;
+x1=good.x(1/sqrt2)[.5w,rt u]; y1=good.y(1/sqrt2)[math_axis,bot h];
+x2=x3=w-x1; x4=x1; .5[y1,y2]=.5[y3,y4]=math_axis; y2=y4;
+draw z1--z2; draw z3--z4;  % diagonals
+labels(1,2,3,4); endchar;
+
+cmchar "Asterisk at the axis";
+beginchar(oct"003",9u#,v_center(x_height#));
+adjust_fit(0,0);
+numeric ast_flare; ast_flare=hround .7[thin_join,stem];
+x0=.5w; y0=h-.5x_height;
+for d=-150 step 60 until 150: z[d]=z0+.5dir d xscaled 7.5u yscaled x_height;
+ numeric theta; theta=angle(z[d]-z0);
+ fill z0+.5(0,-thin_join)rotated theta
+  ---z[d]+.5(-ast_flare,-ast_flare)rotated theta
+  ..z[d]..z[d]+.5(-ast_flare,ast_flare)rotated theta
+  ---z0+.5(0,thin_join)rotated theta--cycle; endfor  % diagonal at angle |d|
+labels(0,[-150],[-90],[-30],30,90,150); endchar;
+
+cmchar "Elementary division operator";
+beginarithchar(oct"004"); pickup rule.nib;
+x3-.5dot_size=hround(.5w-.5dot_size); center_on(x3);
+y3+.5dot_size=vround(math_axis+math_spread[.5x_height,.6x_height]+.5dot_size);
+lft x1=hround u-eps; x2=w-x1; y1=y2=math_axis;
+draw z1--z2;  % bar
+pos3(dot_size,0); pos4(dot_size,90); z3=z4;
+pos5(dot_size,0); pos6(dot_size,90); z5=z6; x5=x3; .5[y3,y5]=math_axis;
+dot(3,4); dot(5,6);  % dots
+penlabels(1,2,3,4,5,6); endchar;
+
+cmchar "Minus-or-plus sign";
+beginarithchar(oct"007"); pickup rule.nib;
+numeric shiftup; shiftup=-vround 1.5u;
+x1=x2=.5w; lft x3=lft x5=hround u-eps; x4=x6=w-x3;
+.5[y1,y2]=y3=y4=math_axis+shiftup; top y1=h+shiftup; y5=y6=y1;
+draw z1--z2;  % stem
+draw z3--z4;  % plus bar
+draw z5--z6;  % minus bar
+labels(1,2,3,4,5,6); endchar;
+
+cmchar "Circle-minus operator";
+beginarithchar(oct"011"); pickup light_rule.nib; autorounded;
+lft x6=hround u; x2=w-x6; y2=math_axis; top y8=h;
+circle_points; draw_circle;  % circle
+draw z2--z6;  % bar
+labels(1,2,3,4,5,6,7,8); endchar;
+
+cmchar "Circle-divide operator";
+beginarithchar(oct"013"); pickup light_rule.nib; autorounded;
+lft x6=hround u; x2=w-x6; y2=math_axis; top y8=h;
+circle_points; draw_circle;  % circle
+draw z1--z5;  % diagonal
+labels(1,2,3,4,5,6,7,8); endchar;
+
+cmchar "Circle-dot operator";
+beginarithchar(oct"014"); pickup light_rule.nib; autorounded;
+lft x6=hround u; x2=w-x6; y2=math_axis; top y8=h;
+circle_points; draw_circle;  % circle
+fill fullcircle scaled(1.3dot_size+eps) shifted(.5[z4,z8]);  % dot
+labels(1,2,3,4,5,6,7,8); endchar;
+
+cmchar "Circle for copyright, etc.";
+beginchar(oct"015",18u#,asc_height#,desc_depth#); autorounded;
+adjust_fit(if monospace:-3u#,-3u# else: 0,0 fi); pickup rule.nib;
+lft x6=hround u; x2=w-x6; top y8=h+o; bot y4=-d-o;
+circle_points; draw_circle;  % circle
+labels(1,2,3,4,5,6,7,8); endchar;
+
+cmchar "Circle operator";
+beginchar(oct"016",9u#,v_center(7u#));
+adjust_fit(0,0); pickup rule.nib; autorounded;
+lft x6=hround u; x2=w-x6; top y8=h; y2=math_axis;
+circle_points; draw_circle;  % circle
+labels(1,2,3,4,5,6,7,8); endchar;
+
+cmchar "Bullet";
+beginchar(oct"017",9u#,v_center(7u#));
+adjust_fit(0,0); pickup rule.nib; autorounded;
+lft x6=hround u; x2=w-x6; top y8=h; y2=math_axis; circle_points;
+filldraw z8{right}...z1{z2-z8}...z2{down}...z3{z4-z2}...z4{left}
+  ...z5{z6-z4}...z6{up}...z7{z8-z6}...cycle;  % circle and interior
+labels(1,2,3,4,5,6,7,8); endchar;
+
+cmchar "Hardy's asymptotic equivalence sign";
+compute_spread(.45x_height#,.55x_height#);
+beginchar(oct"020",14u#,v_center(2spread#+rule_thickness#));
+adjust_fit(0,0); pickup rule.nib; autorounded;
+lft x1=hround u-eps; x3=x1; x2=x4=w-x1; x5=x6=.5w;
+y1=y2=good.y h; y3=y4; .5[y1,y3]=.5[y5,y6]=math_axis;
+y5=good.y .3[y1,y3];
+draw z1{x5-x1,2(y5-y1)}...z5{right}...z2{x2-x5,2(y2-y5)};  % upper bar
+draw z3{x6-x3,2(y6-y3)}...z6{right}...z4{x4-x6,2(y4-y6)};  % lower bar
+labels(1,2,3,4); endchar;
+
+cmchar "Subset or equal to sign";
+compute_spread(.45x_height#,.55x_height#);
+spread#':=spread#; spread':=spread; % the spread of `$=$'
+compute_spread(5/4x_height#,3/2x_height#);
+beginchar(oct"022",14u#,v_center(spread#'+spread#+rule_thickness#));
+adjust_fit(0,0); pickup rule.nib; autorounded;
+lft x2=hround 1.5u-eps; x1=x3=w-x2;
+y1-y3=spread; y2=.5[y1,y3]; top y1=h;
+x4=x5=.5w; y4=y1; y5=y3;
+draw z1---z4...z2{down}...z5---z3;  % arc and bars
+x8=x1; lft x9=x2; y8=y9; y3-y9=spread'; draw z8--z9;  % lower bar
+labels(1,2,3,4,5,8,9); endchar;
+
+cmchar "Superset or equal to sign";
+compute_spread(.45x_height#,.55x_height#);
+spread#':=spread#; spread':=spread; % the spread of `$=$'
+compute_spread(5/4x_height#,3/2x_height#);
+beginchar(oct"023",14u#,v_center(spread#'+spread#+rule_thickness#));
+adjust_fit(0,0); pickup rule.nib; autorounded;
+lft x1=hround 1.5u-eps; x2=w-x1; x3=x1;
+y1-y3=spread; y2=.5[y1,y3]; top y1=h;
+x4=x5=.5w; y4=y1; y5=y3;
+draw z1---z4...z2{down}...z5---z3;  % arc and bars
+x8=x1; rt x9=x2; y8=y9; y3-y9=spread'; draw z8--z9;  % lower bar
+labels(1,2,3,4,5,8,9); endchar;
+
+cmchar "Precedes or equals sign";
+compute_spread(.45x_height#,.55x_height#);
+spread#':=spread#; spread':=spread; % the spread of `$=$'
+compute_spread(5/4x_height#,3/2x_height#);
+beginchar(oct"026",14u#,v_center(spread#'+spread#+rule_thickness#));
+adjust_fit(0,0); pickup rule.nib; autorounded;
+lft x2=hround 1.5u-eps; x1=x3=w-x2;
+y1-y3=spread; y2=.5[y1,y3]; top y1=h;
+draw z1{-u,-spread}...{left}z2;  % upper diagonal
+draw z3{-u,spread}...{left}z2;  % lower diagonal
+x8=x1; x9=x2; y8=y9; y3-y9=spread'; draw z8--z9;  % bar
+labels(1,2,3,8,9); endchar;
+
+cmchar "Follows or equals sign";
+compute_spread(.45x_height#,.55x_height#);
+spread#':=spread#; spread':=spread; % the spread of `$=$'
+compute_spread(5/4x_height#,3/2x_height#);
+beginchar(oct"027",14u#,v_center(spread#'+spread#+rule_thickness#));
+adjust_fit(0,0); pickup rule.nib; autorounded;
+lft x1=hround 1.5u-eps; x2=w-x1; x3=x1;
+y1-y3=spread; y2=.5[y1,y3]; top y1=h;
+draw z1{u,-spread}...{right}z2;  % upper diagonal
+draw z3{u,spread}...{right}z2;  % lower diagonal
+x8=x1; x9=x2; y8=y9; y3-y9=spread'; draw z8--z9;  % bar
+labels(1,2,3,8,9); endchar;
+
+cmchar "Similarity sign";
+compute_spread(.45x_height#,.55x_height#);
+beginchar(oct"030",14u#,v_center(spread#+rule_thickness#));
+adjust_fit(0,0);
+pickup pencircle xscaled .7rule_thickness yscaled 1.4rule_thickness;
+if vair#>.8curve#: pickup rule.nib; autorounded; fi % monoline
+lft x1=hround u; x2=4u; x3=w-x2; x4=w-x1;
+bot y1=bot y3=-d; top y2=top y4=h;
+draw z1{up}...z2{right}..{right}z3...{up}z4;  % stroke
+labels(1,2,3,4); endchar;
+
+cmchar "Approximate equality sign";
+compute_spread(.45x_height#,.55x_height#);
+spread#':=spread#; spread':=spread; % the spread of `$=$'
+compute_spread(.54x_height#,.66x_height#);
+beginchar(oct"031",14u#,v_center(spread#'+spread#+rule_thickness#));
+adjust_fit(0,0);
+pickup pencircle xscaled .7rule_thickness yscaled 1.4rule_thickness;
+if vair#>.8curve#: pickup rule.nib; autorounded; fi % monoline
+lft x1=hround u; x2=4u; x3=w-x2; x4=w-x1;
+y1=y3; top y2=top y4=h; top y2-bot y1=spread';
+draw z1{up}...z2{right}..{right}z3...{up}z4;  % upper stroke
+z1-z5=z2-z6=z3-z7=z4-z8=(0,spread);
+draw z5{up}...z6{right}..{right}z7...{up}z8;  % lower stroke
+labels(1,2,3,4,5,6,7,8); endchar;
+
+cmchar "Much less sign";
+compute_spread(5/4x_height#,3/2x_height#);
+beginchar(oct"034",18u#,v_center(spread#+rule_thickness#));
+adjust_fit(if monospace:-u#,-u# else: 0,0 fi); pickup rule.nib;
+lft x2=hround u-epsilon; x1=x3=hround 12.5u-x2;
+y1-y3=ceiling 1.1spread; y2=.5[y1,y3]=math_axis;
+draw z1--z2--z3;  % left diagonals
+z4-z1=z5-z2=z6-z3; x4=w-x2; y4=y1;
+draw z4--z5--z6;  % right diagonals
+labels(1,2,3,4,5,6); endchar;
+
+cmchar "Much greater sign";
+compute_spread(5/4x_height#,3/2x_height#);
+beginchar(oct"035",18u#,v_center(spread#+rule_thickness#));
+adjust_fit(if monospace:-u#,-u# else: 0,0 fi); pickup rule.nib;
+lft x1=hround u-epsilon; x2=hround 12.5u-x1; x3=x1;
+y1-y3=ceiling 1.1spread; y2=.5[y1,y3]=math_axis;
+draw z1--z2--z3;  % left diagonals
+z4-z1=z5-z2=z6-z3; x4=w-x2; y4=y1;
+draw z4--z5--z6;  % right diagonals
+labels(1,2,3,4,5,6); endchar;
+
+cmchar "Precedes sign";
+compute_spread(5/4x_height#,3/2x_height#);
+beginchar(oct"036",14u#,v_center(spread#+rule_thickness#));
+adjust_fit(0,0); pickup rule.nib; autorounded;
+lft x2=hround 1.5u-epsilon; x1=x3=w-x2;
+y1-y3=spread; y2=.5[y1,y3]; top y1=h;
+draw z1{-u,-spread}...{left}z2;  % upper diagonal
+draw z3{-u,spread}...{left}z2;  % lower diagonal
+labels(1,2,3); endchar;
+
+cmchar "Follows sign";
+compute_spread(5/4x_height#,3/2x_height#);
+beginchar(oct"037",14u#,v_center(spread#+rule_thickness#));
+adjust_fit(0,0); pickup rule.nib; autorounded;
+lft x1=hround 1.5u-epsilon; x2=w-x1; x3=x1;
+y1-y3=spread; y2=.5[y1,y3]; top y1=h;
+draw z1{u,-spread}...{right}z2;  % upper diagonal
+draw z3{u,spread}...{right}z2;  % lower diagonal
+labels(1,2,3); endchar;
+
+cmchar "Northeast arrow";
+beginchar(oct"045",18u#,asc_height#,asc_depth#);
+adjust_fit(0,0); pickup crisp.nib;
+x1-.5rule_thickness=hround u; rt x0=hround(w-u);
+y1-.5rule_thickness=-d; top y0=h;
+numeric theta,delta; theta=angle(z0-z1); delta=3u++.24asc_height;
+if abs(theta-45)<2.5: theta:=45; y1:=y0+x1-x0; fi % near-45$^\circ$ angle
+pos1(rule_thickness,90+theta); pos2(rule_thickness,90+theta);
+pos3(bar,theta); pos4(bar,theta);
+y3=y0; x4=x0; x0-x3=y0-y4=delta+eps;
+pos5(bar,-90); z5l=z0; pos6(bar,-180); z6l=z0;
+z9=.381966[.5[z3,z4],z0];
+numeric t; path p; p=z4l{z9-z4}..z6r;
+t=xpart(p intersectiontimes (z1l--(z1l+2(z0-z1)))); z2l=point t of p;
+filldraw z0..{z4-z9}z4r--subpath (0,t) of\\(z4l{z9-z4}..z6r)
+ --z2l---z1l..z1r---z2r--subpath (t,0) of\\(z3l{z9-z3}..z5r)
+ --z3r{z9-z3}..z0 & cycle;  % arrowhead and stem
+penlabels(0,1,2,3,4,5,6,9); endchar;
+
+cmchar "Southeast arrow";
+beginchar(oct"046",18u#,asc_height#,asc_depth#);
+adjust_fit(0,0); pickup crisp.nib;
+x1-.5rule_thickness=hround u; rt x0=hround(w-u);
+y1+.5rule_thickness=h; bot y0=-d;
+numeric theta,delta; theta=angle(z0-z1); delta=3u++.24asc_height;
+if abs(theta+45)<2.5: theta:=-45; y1:=y0+x0-x1; fi % near-45$^\circ$ angle
+pos1(rule_thickness,90+theta); pos2(rule_thickness,90+theta);
+pos3(bar,theta); pos4(bar,theta);
+x3=x0; y4=y0; y3-y0=x0-x4=delta+eps;
+pos5(bar,180); z5l=z0; pos6(bar,90); z6l=z0;
+z9=.381966[.5[z3,z4],z0];
+numeric t; path p; p=z4l{z9-z4}..z6r;
+t=xpart(p intersectiontimes (z1l--(z1l+2(z0-z1)))); z2l=point t of p;
+filldraw z0..{z4-z9}z4r
+ --subpath (0,t) of\\(z4l{z9-z4}..z6r)
+ --z2l---z1l..z1r---z2r
+ --subpath (t,0) of\\(z3l{z9-z3}..z5r)
+ --z3r{z9-z3}..z0 & cycle;  % arrowhead and stem
+penlabels(0,1,2,3,4,5,6,9); endchar;
+
+cmchar "Similar or equal sign";
+compute_spread(.45x_height#,.55x_height#);
+beginchar(oct"047",14u#,v_center(2spread#+rule_thickness#));
+adjust_fit(0,0);
+pickup pencircle xscaled .7rule_thickness yscaled 1.4rule_thickness;
+if vair#>.8curve#: pickup rule.nib; autorounded; fi % monoline
+lft x1=hround u; x2=4u; x3=w-x2; x4=w-x1;
+bot y1=bot y3=floor math_axis; top y2=top y4=h;
+draw z1{up}...z2{right}..{right}z3...{up}z4;  % stroke
+pickup rule.nib; lft x5=hround u-eps; x6=w-x5; y5=y6=math_axis-spread;
+draw z5--z6;  % bar
+labels(1,2,3,4,5,6); endchar;
+
+cmchar "Double leftward arrow";
+compute_spread(.45x_height#,.55x_height#);
+beginchar(oct"050",18u#,v_center(spread#+rule_thickness#));
+adjust_fit(0,0); pickup rule.nib;
+lft x7=hround u-eps; x8=x7; x1=x2=w-x7;
+y1=y7; y2=y8; y1-y2=spread; .5[y1,y2]=math_axis;
+draw z1--z7; draw z2--z8;  % bars
+pickup crisp.nib; lft x0=hround u-eps; y0=good.y math_axis;
+pos3(rule_thickness,0); pos4(rule_thickness,0);
+y3-y1=y2-y4=.24asc_height+eps; x3=x4=x0+6u+eps;
+pos5(rule_thickness,angle(z4-z0)); z5l=z0;
+pos6(rule_thickness,angle(z3-z0)); z6l=z0;
+z9=.381966[.5[z3,z4],z0];
+erase filldraw z0..{z3-z9}z3--(0,y3)
+ --(0,y4)--z4{z9-z4}..z0 & cycle;  % erase excess
+numeric t; path p; p=z4r{z9-z4}..z6r;
+t=xpart(p intersectiontimes((0,y0)--(w,y0)));
+filldraw z0..{z4-z9}z4l--subpath (0,t) of\\(z4r{z9-z4}..z6r)
+ --subpath (t,0) of\\(z3r{z9-z3}..z5r)--z3l{z9-z3}..z0 & cycle;  % arrowhead
+penlabels(0,1,2,3,4,5,6,7,8,9); endchar;
+
+cmchar "Double rightward arrow";
+compute_spread(.45x_height#,.55x_height#);
+beginchar(oct"051",18u#,v_center(spread#+rule_thickness#));
+adjust_fit(0,0); pickup rule.nib;
+lft x1=hround u-eps; x2=x1; x7=x8=w-x1;
+y1=y7; y2=y8; y1-y2=spread; .5[y1,y2]=math_axis;
+draw z1--z7; draw z2--z8;  % bars
+pickup crisp.nib; rt x0=hround(w-u)+eps; y0=good.y math_axis;
+pos3(rule_thickness,0); pos4(rule_thickness,0);
+y3-y1=y2-y4=.24asc_height+eps; x3=x4=x0-6u-eps;
+pos5(rule_thickness,angle(z4-z0)); z5l=z0;
+pos6(rule_thickness,angle(z3-z0)); z6l=z0;
+z9=.381966[.5[z3,z4],z0];
+erase filldraw z0..{z3-z9}z3--(w,y3)
+ --(w,y4)--z4{z9-z4}..z0 & cycle;  % erase excess
+numeric t; path p; p=z4l{z9-z4}..z6r;
+t=xpart(p intersectiontimes((0,y0)--(w,y0)));
+filldraw z0..{z4-z9}z4r--subpath (0,t) of\\(z4l{z9-z4}..z6r)
+ --subpath (t,0) of\\(z3l{z9-z3}..z5r)--z3r{z9-z3}..z0 & cycle;  % arrowhead
+penlabels(0,1,2,3,4,5,6,7,8,9); endchar;
+
+cmchar "Double upward arrow";
+beginchar(oct"052",11u#,asc_height#,asc_depth#);
+adjust_fit(0,0); pickup rule.nib;
+compute_spread(.45x_height#,.55x_height#);
+bot y1=bot y2=-d-eps; top y7=h; y8=y7;
+x1=x7; x2=x8; x1-x2=spread; .5[x1,x2]=crisp.lft hround(crisp.rt .5w);
+draw z1--z7; draw z2--z8;  % bars
+pickup crisp.nib; top y0=h+eps; x0=good.x .5w;
+pos3(rule_thickness,90); pos4(rule_thickness,90);
+x2-x3=x4-x1=3u+eps; y3=y4=y0-.48asc_height-eps;
+pos5(rule_thickness,angle(z4-z0)); z5l=z0;
+pos6(rule_thickness,angle(z3-z0)); z6l=z0;
+z9=.381966[.5[z3,z4],z0];
+erase filldraw z0..{z3-z9}z3--(x3,h)
+ --(x4,h)--z4{z9-z4}..z0 & cycle;  % erase excess
+numeric t; path p; p=z4l{z9-z4}..z6r;
+t=xpart(p intersectiontimes((x0,-d)--(x0,h)));
+filldraw z0..{z4-z9}z4r--subpath (0,t) of\\(z4l{z9-z4}..z6r)
+ --subpath (t,0) of\\(z3l{z9-z3}..z5r)--z3r{z9-z3}..z0 & cycle;  % arrowhead
+penlabels(0,1,2,3,4,5,6,7,8,9); endchar;
+
+cmchar "Double downward arrow";
+beginchar(oct"053",11u#,asc_height#,asc_depth#);
+adjust_fit(0,0); pickup rule.nib;
+compute_spread(.45x_height#,.55x_height#);
+top y1=top y2=h+eps; bot y7=-d; y8=y7;
+x1=x7; x2=x8; x1-x2=spread; .5[x1,x2]=crisp.lft hround(crisp.rt .5w);
+draw z1--z7; draw z2--z8;  % bars
+pickup crisp.nib; bot y0=-d-eps; x0=good.x .5w;
+pos3(rule_thickness,90); pos4(rule_thickness,90);
+x2-x3=x4-x1=3u+eps; y3=y4=y0+.48asc_height-eps;
+pos5(rule_thickness,angle(z4-z0)); z5l=z0;
+pos6(rule_thickness,angle(z3-z0)); z6l=z0;
+z9=.381966[.5[z3,z4],z0];
+erase filldraw z0..{z3-z9}z3--(x3,-d)
+ --(x4,-d)--z4{z9-z4}..z0 & cycle;  % erase excess
+numeric t; path p; p=z4r{z9-z4}..z6r;
+t=xpart(p intersectiontimes((x0,-d)--(x0,h)));
+filldraw z0..{z4-z9}z4l--subpath (0,t) of\\(z4r{z9-z4}..z6r)
+ --subpath (t,0) of\\(z3r{z9-z3}..z5r)--z3l{z9-z3}..z0 & cycle;  % arrowhead
+penlabels(0,1,2,3,4,5,6,7,8,9); endchar;
+
+cmchar "Double left-and-right arrow";
+compute_spread(.45x_height#,.55x_height#);
+beginchar(oct"054",18u#,v_center(spread#+rule_thickness#));
+adjust_fit(if monospace: -u#,-u# else: 0,0 fi); pickup rule.nib;
+lft x7=hround u-eps; x8=x7; x1=x2=w-x7;
+y1=y7; y2=y8; y1-y2=spread; .5[y1,y2]=math_axis;
+draw z1--z7; draw z2--z8;  % bars
+pickup crisp.nib; lft x0=hround u-o; y0=good.y math_axis;
+pos3(rule_thickness,0); pos4(rule_thickness,0);
+y3-y1=y2-y4=.24asc_height+eps; x3=x4=x0+5u+eps;
+pos5(rule_thickness,angle(z4-z0)); z5l=z0;
+pos6(rule_thickness,angle(z3-z0)); z6l=z0;
+z9=.381966[.5[z3,z4],z0];
+erase filldraw z0..{z3-z9}z3--(0,y3)
+ --(0,y4)--z4{z9-z4}..z0 & cycle;  % erase excess at left
+numeric t; path p; p=z4r{z9-z4}..z6r;
+t=xpart(p intersectiontimes((0,y0)--(w,y0)));
+filldraw z0..{z4-z9}z4l--subpath (0,t) of\\(z4r{z9-z4}..z6r)
+ --subpath (t,0) of\\(z3r{z9-z3}..z5r)
+ --z3l{z9-z3}..z0 & cycle;  % left arrowhead
+rt x10=hround(w-u)+o; y10=good.y math_axis;
+pos13(rule_thickness,0); pos14(rule_thickness,0);
+y13=y3; y14=y4; x13=x14=x10-5u-eps;
+pos15(rule_thickness,angle(z14-z10)); z15l=z10;
+pos16(rule_thickness,angle(z13-z10)); z16l=z10;
+z19=.381966[.5[z13,z14],z10];
+erase filldraw z10..{z13-z19}z13--(w,y13)
+ --(w,y14)--z14{z19-z14}..z10 & cycle;  % erase excess at right
+numeric t; path p; p=z14l{z19-z14}..z16r;
+t=xpart(p intersectiontimes((0,y10)--(w,y10)));
+filldraw z10..{z14-z19}z14r--subpath (0,t) of\\(z14l{z19-z14}..z16r)
+ --subpath (t,0) of\\(z13l{z19-z13}..z15r)
+ --z13r{z19-z13}..z10 & cycle; % right arrowhead
+penlabels(0,1,2,3,4,5,6,7,8,9,10,13,14,15,16,19); endchar;
+
+cmchar "Northwest arrow";
+beginchar(oct"055",18u#,asc_height#,asc_depth#);
+adjust_fit(0,0); pickup crisp.nib;
+x1+.5rule_thickness=hround(w-u); lft x0=hround u;
+y1-.5rule_thickness=-d; top y0=h;
+numeric theta,delta; theta=angle(z1-z0); delta=3u++.24asc_height;
+if abs(theta+45)<2.5: theta:=-45; y1:=y0+x0-x1; fi % near-45$^\circ$ angle
+pos1(rule_thickness,-90+theta); pos2(rule_thickness,-90+theta);
+pos3(bar,-180+theta); pos4(bar,-180+theta);
+x3=x0; y4=y0; x4-x0=y0-y3=delta+eps;
+pos5(bar,0); z5l=z0; pos6(bar,-90); z6l=z0;
+z9=.381966[.5[z3,z4],z0];
+numeric t; path p; p=z4l{z9-z4}..z6r;
+t=xpart(p intersectiontimes (z1l--(z1l+2(z0-z1)))); z2l=point t of p;
+filldraw z0..{z4-z9}z4r--subpath (0,t) of\\(z4l{z9-z4}..z6r)
+ --z2l---z1l..z1r---z2r--subpath (t,0) of\\(z3l{z9-z3}..z5r)
+ --z3r{z9-z3}..z0 & cycle;  % arrowhead and stem
+penlabels(0,1,2,3,4,5,6,9); endchar;
+
+cmchar "Southwest arrow";
+beginchar(oct"056",18u#,asc_height#,asc_depth#);
+adjust_fit(0,0); pickup crisp.nib;
+x1+.5rule_thickness=hround(w-u); lft x0=hround u;
+y1+.5rule_thickness=h; bot y0=-d;
+numeric theta,delta; theta=angle(z1-z0); delta=3u++.24asc_height;
+if abs(theta-45)<2.5: theta:=45; y1:=y0+x1-x0; fi % near-45$^\circ$ angle
+pos1(rule_thickness,-90+theta); pos2(rule_thickness,-90+theta);
+pos3(bar,-180+theta); pos4(bar,-180+theta);
+y3=y0; x4=x0; x3-x0=y4-y0=delta+eps;
+pos5(bar,90); z5l=z0; pos6(bar,0); z6l=z0;
+z9=.381966[.5[z3,z4],z0];
+numeric t; path p; p=z4l{z9-z4}..z6r;
+t=xpart(p intersectiontimes (z1l--(z1l+2(z0-z1)))); z2l=point t of p;
+filldraw z0..{z4-z9}z4r
+ --subpath (0,t) of\\(z4l{z9-z4}..z6r)
+ --z2l---z1l..z1r---z2r
+ --subpath (t,0) of\\(z3l{z9-z3}..z5r)
+ --z3r{z9-z3}..z0 & cycle;  % arrowhead and stem
+penlabels(0,1,2,3,4,5,6,9); endchar;
+
+cmchar "Proportionality sign";
+beginchar(oct"057",16.5u#,x_height#,0);
+italcorr x_height#*slant-.5u#;
+adjust_fit(0,-2.5u#); pickup fine.nib;
+numeric theta,phi; phi=angle(3u,h); theta=angle(5u,-h);
+pos1(vair,180); pos2(.5[vair,stem],90+.5theta); pos3(stem,90+theta);
+pos4(stem,90+theta); pos5(.5[vair,stem],90+.5theta);
+pos6(vair,180); pos7(.2[vair,stem],270+.5phi);
+pos8(.3[vair,stem],270+phi); pos9(.2[vair,stem],270+.5phi);
+lft x1r=w-rt x6l=hround u; x2=x9=.4[x1,x8]; x5=x7=.6[x8,x6];
+if monospace: x2l:=x2r; x5r:=x5l; x7r:=x7l; x9l:=x9r; fi
+y1=y6=.5h; top y2r=top y7l=h+oo; bot y5l=bot y9r=-oo;
+x8=.5[x3,x4]=.5w; y8=.5[y3,y4]=.5h;
+y3-y4=h/3; z3-z4=whatever*dir theta;
+filldraw stroke z1e{up}...z2e{right}...z3e---z4e...z5e{right}...z6e{up}
+ ...z7e{left}...{-dir phi}z8e...{left}z9e...z1e{up}; % `infinity' bowls
+erase fill (w-3.5u,h+o)--(w,h+o)
+ --(w,-o)--(w-3.5u,-o)--cycle; % erase excess
+penlabels(1,2,3,4,5,6,7,8,9); endchar;
+
+cmchar "Prime symbol (intended as superscript only)";
+beginchar(oct"060",3u#+max(1.75u#,curve#+2(curve#-stem#)),
+ .8asc_height#,0);
+adjust_fit(0,0); pickup fine.nib;
+numeric light_stem,heavy_stem;
+light_stem=hround .5[vair,stem]; heavy_stem=hround(bold+2dw);
+x1+.5heavy_stem=hround(w-.25u); y1+.5heavy_stem=h;
+x2-.5light_stem=hround .5u; y2=1/12asc_height;
+numeric theta; theta=angle(z1-z2)-90;
+pos1(heavy_stem,theta); pos2(light_stem,theta);
+filldraw circ_stroke z1e--z2e;  % diagonal
+penlabels(1,2); endchar;
+
+cmchar "Ownership sign";
+compute_spread(5/4x_height#,3/2x_height#);
+beginchar(oct"063",12u#,v_center(spread#+rule_thickness#));
+adjust_fit(0,0); pickup rule.nib; autorounded;
+lft x1=hround 1.5u-eps; x1=x3=x6=w-x2;
+y1-y3=spread; y2=y6=.5[y1,y3]=math_axis;
+x4=x5=.5w-u; y4=y1; y5=y3;
+draw z1---z4...z2{down}...z5---z3;  % arc and bars
+draw z2--z6;  % middle bar
+labels(1,2,3,4,5,6); endchar;
+
+cmchar "Large triangle";
+beginchar(oct"064",16u#,asc_height#,desc_depth#);
+adjust_fit(0,0); pickup rule.nib;
+bot y1=0; y2=y1; top y3=h+o;
+.5[x1,x2]=x3=good.x .5w; center_on(x3); lft x1=hround(.5w-u*sqrt48);
+draw z1--z2--z3--cycle;  % stroke
+labels(1,2,3); endchar;
+
+cmchar "Large inverted triangle";
+beginchar(oct"065",16u#,asc_height#,desc_depth#);
+adjust_fit(0,0); pickup rule.nib;
+top y1=h-d; y2=y1; bot y3=-d-o;
+.5[x1,x2]=x3=good.x .5w; center_on(x3); lft x1=hround(.5w-u*sqrt48);
+draw z1--z2--z3--cycle;  % stroke
+labels(1,2,3); endchar;
+
+cmchar "Zero-width slash to negate a relation";
+beginchar(oct"066",14u#,asc_height#,asc_depth#);
+adjust_fit(0,0); pickup rule.nib;
+rt x5=hround(w-2.5u)-eps; lft x6=hround 2.5u+eps;
+top y5=h+o; .5[y5,y6]=math_axis;
+draw z5--z6;  % diagonal
+labels(5,6); zero_width; endchar;
+
+cmchar "Maps-to relation";
+compute_spread(.45x_height#,.55x_height#);
+beginchar(oct"067",14u#,v_center(spread#+rule_thickness#));
+% this character should be followed immediately by minus or rightarrow
+adjust_fit(0,0); pickup rule.nib;
+lft x1=hround u; x2=x1+.5u; x3=x4=x1;
+y1=y2=math_axis; y1-y3=y4-y1=.24asc_height+eps;
+draw z3--z4;  % stem
+draw z1--z2;  % bar stub
+labels(1,2,3,4); zero_width; endchar;
+
+cmchar "Empty set symbol";
+beginchar(oct"073",9u#,body_height#,body_height#-asc_height#);
+adjust_fit(0,0);
+penpos1(vair,90); penpos3(vair,-90); penpos2(stem,180); penpos4(stem,0);
+if not monospace: interim superness:=sqrt(more_super*hein_super); fi
+x2r=hround max(.7u,1.45u-.5stem);
+x4r=w-x2r; x1=x3=.5w; y1r=asc_height+o; y3r=-o;
+y2=y4=.5asc_height-vair_corr; y2l:=y4l:=.52asc_height;
+penstroke pulled_arc.e(1,2) & pulled_arc.e(2,3)
+ & pulled_arc.e(3,4) & pulled_arc.e(4,1) & cycle;  % bowl
+pickup rule.nib; lft x6=hround 2u-eps; x5=w-x6; top y5=h+o; bot y6=-d-o;
+draw z5--z6;  % diagonal
+penlabels(1,2,3,4,5,6); endchar;
+
+cmchar "Uppercase Fraktur R";
+beginchar(oct"074",13u#,asc_height#,0);
+adjust_fit(0,0); pickup fine.nib;
+pos1(hair,0); pos2(vair,90); pos3(1/6[hair,stem],190);
+pos4(1/4[hair,stem],210); pos5(1/8[hair,stem],190);
+pos6(vair,90); pos7(cap_stem,0); pos8(cap_stem,0);
+pos9(vair,-90); pos10(hair,-135); pos11(hair,-135);
+pos12(vair,135); pos13(vair,135);
+lft x1l=lft x5r=hround u; x2=.4[x1,x3]; rt x3l=hround 3.5u; x4=.6[x3,x5];
+x6=3u; lft x7=hround(6u-.5cap_stem); x8=x7;
+x9=3.5u; x10=5/3u; x11=4/3u; x12=u; x13=2u;
+y1=.47h; bot y2l=vround.35h; y3=1/3[y2,y6]; y5=3/4[y2,y6]; y4=.6[y3,y5];
+top y6r=h+oo; y7=.64h; y8=.57y7; bot y9r=-o;
+y10=1/6y7; y12=1/5y7; y13=1/4y7;
+z11-z10=whatever*(z13-z12) rotated 90;
+filldraw stroke z1e{down}...z2e{right}...z3e{up}..z4e..z5e{up}
+ ...pulled_arc.e(6,7)..pulled_arc.e(8,9)
+ ...z10e---z11e;  % flourish and left stem
+filldraw stroke z12e--z13e;  % cross
+pos20(cap_bar,180); pos21(cap_bar,90);
+x20=x7; y20=.75h; rt x21=hround(w-3.5u+.5cap_stem); top y21r=h+o;
+filldraw stroke z20e{up}...{right}z21e;  % top of bowl
+rt x22r=hround(w-.1u); y22r=good.y .64h;
+numeric theta; theta=angle(z21r-z22r);
+pos22(cap_stem,theta-90); pos23(cap_bar,theta); z22l=z23l;
+path p; p=z20{up}...(z21--(w,y21));
+z=p intersectionpoint(z22l--z22l+(h,0) rotated theta);
+filldraw z--z21r--z22r--z22l--cycle;  % diagonal of bowl
+pos24(cap_bar,90); pos25(cap_bar,90); x24=w-4u; x25=x7;
+y24=y25; top y24r=vround(.52h+.5cap_bar);
+filldraw stroke z23e{dir(theta+90)}...z24e---z25e;  % bottom of bowl
+pos26(cap_stem,0); pos27(cap_stem,0); pos28(cap_stem,0);
+x26=x24; x27=x26+.25u; x28l=w-2.5u; y26=y24r; y27=1/3y26; bot y28=-o;
+filldraw stroke z26e--z27e...{right}z28e;  % lower diagonal
+pos29(cap_bar,0); pos30(cap_bar,-30); z29l=z28l;
+x30r=good.x(w-.5u); y30r=good.y .09h;
+erase filldraw z29r--z28r--z30r--cycle;  % erase excess
+filldraw stroke z29e--z30e;  % serif of lower diagonal
+%% \begingroup\thinmuskip=3mu
+penlabels(1,2,3,4,5,6,7,8,9,10,11,12,13,20,21,22,23,24,25,26,27,28,29,30);
+%% \endgroup
+endchar;
+
+cmchar "Uppercase Fraktur I";
+beginchar(oct"075",13u#,asc_height#,0);
+adjust_fit(0,0); pickup fine.nib;
+pos1(vair,270); pos2(cap_hair,180); pos3(vair,90);
+pos4(cap_stem,0); pos5(vair,90); pos6(cap_hair,180);
+x1=5u; lft x2r=hround u; x3=.5[x2,x4l]; x4r=x5-.75u;
+x5=.5[x4l,x6l]; rt x6l=hround(w-.5u);
+top y1l=vround.5h; y2=.5[y1,y3]; top y3r=h+oo;
+y4=.2[y5,y3]; y6=.3[y5,y3]; bot y5l=ceiling(1/6[x_height,h]);
+filldraw stroke z1e{left}...z2e{up}...z3e{right}
+ ..z4e..z5e{right}...{up}z6e;  % upper stroke
+pos7(vair,90); pos8(cap_stem,0); pos9(cap_stem,0);
+lft x7=hround u; z7r=z8l; x9=.5w+u; y8=good.y .25h; bot y9=-oo;
+filldraw z8l---z8r..{right}z9r+(0,eps)
+ --z9r---z9l..{left}z7l--cycle;  % lower left stroke
+pos10(cap_stem,0); pos11(cap_stem,0); pos12(vair,-90); pos13(cap_hair,-180);
+x10=w-2.5u; x11r=x12-u; x12=x5; x13=x6;
+y10=1/3y12; y11=3/4y12; top y12l=x_height; y13=4/5y12;
+filldraw z9l+(0,eps){right}...{up}z10l
+ --z10r{down}...z9r---z9l--cycle;  % lower link
+filldraw stroke z10e{up}...z11e{up}
+ ...z12e{right}...{down}z13e;  % lower right stroke
+penlabels(1,2,3,4,5,6,7,8,9,10,11,12,13); endchar;
+
+cmchar "Lattice top";
+beginchar(oct"076",14u#,asc_height#,0);
+adjust_fit(0,0); pickup rule.nib;
+x1=x2=good.x .5w; center_on(x1); lft x3=hround u; x4=w-x3;
+bot y1=0; y2-y1=x4-x3;
+if top y2>h: y2:=bot h; fi
+y3=y4=y2;
+draw z1--z2;  % stem
+draw z3--z4;  % bar
+labels(1,2,3,4); endchar;
+
+cmchar "Perpendicular sign or lattice bottom";
+beginchar(oct"077",14u#,asc_height#,0);
+adjust_fit(0,0); pickup rule.nib;
+x1=x2=good.x .5w; center_on(x1); lft x3=hround u; x4=w-x3;
+bot y1=0; y2-y1=x4-x3;
+if top y2>h: y2:=bot h; fi
+y3=y4=y1;
+draw z1--z2;  % stem
+draw z3--z4;  % bar
+labels(1,2,3,4); endchar;
+
+cmchar "Hebrew letter aleph";
+beginchar(oct"100",11u#,asc_height#,0);
+adjust_fit(0,0); pickup fine.nib;
+pos1(cap_stem,75); pos2(cap_stem,90); pos3(cap_stem,90); pos4(cap_stem,75);
+lft x1l=hround u-eps; x2=2.5u=w-x3; rt x4r=hround(w-u)+eps;
+top y1r=h; bot y4l=0; z2=whatever[z1l,z4r]; z3=whatever[z1l,z4r];
+filldraw z1r{4(x1l-x1r),y1l-y1r}...{down}z1l...z2l
+ ---z3l...{down}z4l{4(x4r-x4l),y4r-y4l}...{up}z4r...z3r
+ ---z2r...{up}cycle; % long diagonal
+pos5(cap_stem,75); pos6(cap_stem,90); pos7(cap_stem,75);
+lft x5l=hround(w-4u)-eps; x6=.5[x5,x7]; x7=x4;
+y5=y1; bot y7l=x_height-o; z6=whatever[z5l,z7r];
+filldraw z5r{4(x5l-x5r),y5l-y5r}...{down}z5l
+ ...z6l{z7r-z5l}...{down}z7l{4(x7r-x7l),y7r-y7l}...{up}z7r
+ ...z6r{z5l-z7l}...{up}cycle; % short diagonal
+pos8(cap_hair,0); pos9(cap_hair,0); z8=z6; x9=x8-.75u; z9=whatever[z2,z3];
+filldraw stroke z8e{down}..{down}z9e;  % right stem
+pos10(cap_hair,-30); pos11(stem,0);
+pos12(cap_curve,0); pos13(cap_curve,0); pos14(vair,90);
+lft x11l=hround 1.5u; x10=x12=.4[x11,.5w]; z10=whatever[z2,z3];
+lft x13l=hround u; z13l=z14l; y11=.5y10; y12=.2[y14r,y11]; bot y13=0;
+filldraw stroke z10e{2(x11-x10),y11-y10}
+ ...z11e{down}..{down}z12e; % left stem
+filldraw z12r{down}...z13r---z13l--z14r{right}...{up}z12l--cycle; % flourish
+penlabels(1,2,3,4,5,6,7,8,9,10,11,12,13,14); endchar;
+
+cmchar "Multiset union sign";
+beginchar(oct"135",12u#,.8asc_height#,0); autorounded;
+adjust_fit(if monospace:-.5u#,-.5u# else: 0,0 fi); pickup rule.nib;
+lft x1=hround u; x2=x1; x3=w-x3; x4=x5=w-x1;
+y1=good.y h+o; bot y3=-o; y2=y4=2/3[y1,y3]; y5=y1;
+draw z1---z2...z3...z4---z5;  % stems and cup
+y8=y9=.47[y1,y3]; x8=w-x9=x1+2rule_thickness+eps;
+x6=x7=x3; .5[y6,y7]=y8; y7-y6=x9-x8;
+draw z8--z9; draw z6--z7;  % enclosed plus sign
+labels(1,2,3,4,5,6,7,8,9); endchar;
+
+cmchar "Left turnstile";
+beginchar(oct"140",11u#,asc_height#,0);
+adjust_fit(0,0); pickup rule.nib;
+.5[y1,y2]=y3=y4; x1=x2=x3;
+lft x3=hround u; x4=w-x3; top y1=h; bot y2=0;
+draw z1--z2;  % stem
+draw z3--z4;  % bar
+labels(1,2,3,4); endchar;
+
+cmchar "Right turnstile";
+beginchar(oct"141",11u#,asc_height#,0);
+adjust_fit(0,0); pickup rule.nib;
+.5[y1,y2]=y3=y4; x1=x2=x4;
+lft x3=hround u; x4=w-x3; top y1=h; bot y2=0;
+draw z1--z2;  % stem
+draw z3--z4;  % bar
+labels(1,2,3,4); endchar;
+
+cmchar "Left floor bracket";
+beginchar(oct"142",8u#,body_height#,paren_depth#);
+adjust_fit(0,0); pickup rule.nib;
+x1=x2=good.x 3.5u; x3=x1+3.75u+eps;
+top y1=h; .5[y1,y2]=math_axis; y3=y2;
+draw z1--z2--z3;  % stem and bar
+labels(1,2,3); endchar;
+
+cmchar "Right floor bracket";
+beginchar(oct"143",8u#,body_height#,paren_depth#);
+adjust_fit(0,0); pickup rule.nib;
+x1=x2=good.x(w-3.5u); x3=x1-3.75u-eps;
+top y1=h; .5[y1,y2]=math_axis; y3=y2;
+draw z1--z2--z3;  % stem and bar
+labels(1,2,3); endchar;
+
+cmchar "Left ceiling bracket";
+beginchar(oct"144",8u#,body_height#,paren_depth#);
+adjust_fit(0,0); pickup rule.nib;
+x1=x2=good.x 3.5u; x3=x1+3.75u+eps;
+top y1=h; .5[y1,y2]=math_axis; y3=y1;
+draw z3--z1--z2;  % stem and bar
+labels(1,2,3); endchar;
+
+cmchar "Right ceiling bracket";
+beginchar(oct"145",8u#,body_height#,paren_depth#);
+adjust_fit(0,0); pickup rule.nib;
+x1=x2=good.x(w-3.5u); x3=x1-3.75u-eps;
+top y1=h; .5[y1,y2]=math_axis; y3=y1;
+draw z3--z1--z2;  % stem and bar
+labels(1,2,3); endchar;
+
+cmchar "Left angle bracket";
+beginchar(oct"150",7u#,body_height#,paren_depth#);
+adjust_fit(0,0); pickup rule.nib;
+rt x1=hround(w-u)+eps; x1=x3; lft x2=hround 2u-1-eps;
+top y1=h+eps; .5[y1,y3]=y2=math_axis;
+draw z1--z2--z3;  % diagonals
+labels(1,2,3); endchar;
+
+cmchar "Right angle bracket";
+beginchar(oct"151",7u#,body_height#,paren_depth#);
+adjust_fit(0,0); pickup rule.nib;
+rt(w-x1)=hround(w-u)+eps; x1=x3; lft(w-x2)=hround 2u-1-eps;
+top y1=h+eps; .5[y1,y3]=y2=math_axis;
+draw z1--z2--z3;  % diagonals
+labels(1,2,3); endchar;
+
+cmchar "Double vertical line (norm or cardinality)";
+beginchar(oct"153",9u#,body_height#,paren_depth#);
+adjust_fit(0,0); pickup rule.nib;
+x1=x2; top y1=h; .5[y1,y2]=math_axis;
+x3=x4=w-x1; y3=y1; y4=y2;
+compute_spread(.45x_height#,.55x_height#); x3-x1=spread;
+draw z1--z2; draw z3--z4;  % stems
+labels(1,2,3,4); endchar;
+
+cmchar "Up-and-down arrow";
+beginchar(oct"154",9u#,body_height#,paren_depth#);
+adjust_fit(0,0); pickup crisp.nib;
+pos1(rule_thickness,0); pos2(rule_thickness,0);
+pos3(bar,90); pos4(bar,90);
+lft x1l=hround(.5w-.5rule_thickness); y1=.5[-d,h];
+x0=x1=x2; bot y0=-d-o; x0-x3=x4-x0=3u+eps;
+y3=y4=y0+.24asc_height+eps;
+pos5(bar,angle(z4-z0)); z5l=z0; pos6(bar,angle(z3-z0)); z6l=z0;
+z9=.381966[.5[z3,z4],z0];
+numeric t; path p; p=z4r{z9-z4}..z6r;
+t=xpart(p intersectiontimes((x2r,-d)--(x2r,h))); y2=ypart point t of p;
+filldraw z0..{z4-z9}z4l--subpath (0,t) of\\(z4r{z9-z4}..z6r)
+ --z2r---z1r..z1l---z2l--subpath (t,0) of\\(z3r{z9-z3}..z5r)
+ --z3l{z9-z3}..z0 & cycle;  % lower arrowhead and stem
+pos11(rule_thickness,0); pos12(rule_thickness,0); z11=z1;
+pos13(bar,90); pos14(bar,90);
+x10=x11=x12; top y10=h+o; x10-x13=x14-x10=3u+eps;
+y13=y14=y10-.24asc_height-eps;
+pos15(bar,angle(z14-z10)); z15l=z10; pos16(bar,angle(z13-z10)); z16l=z10;
+z19=.381966[.5[z13,z14],z10];
+numeric t; path p; p=z14l{z19-z14}..z16r;
+t=xpart(p intersectiontimes((x12r,-d)--(x12r,h))); y12=ypart point t of p;
+filldraw z10..{z14-z19}z14r--subpath (0,t) of\\(z14l{z19-z14}..z16r)
+ --z12r---z11r..z11l---z12l--subpath (t,0) of\\(z13l{z19-z13}..z15r)
+ --z13r{z19-z13}..z10 & cycle;  % upper arrowhead and stem
+penlabels(0,1,2,3,4,5,6,9,10,11,12,13,14,15,16,19); endchar;
+
+cmchar "Double up-and-down arrow";
+beginchar(oct"155",11u#,body_height#,paren_depth#);
+adjust_fit(0,0); pickup rule.nib;
+compute_spread(.45x_height#,.55x_height#);
+bot y1=bot y2=-d-eps; top y7=h; y8=y7;
+x1=x7; x2=x8; x1-x2=spread; .5[x1,x2]=crisp.lft hround(crisp.rt .5w);
+draw z1--z7; draw z2--z8;  % bars
+pickup crisp.nib; top y0=h+o; x0=good.x .5w;
+pos3(rule_thickness,90); pos4(rule_thickness,90);
+x2-x3=x4-x1=3u+eps; y3=y4=y0-.4asc_height-eps;
+pos5(rule_thickness,angle(z4-z0)); z5l=z0;
+pos6(rule_thickness,angle(z3-z0)); z6l=z0;
+z9=.381966[.5[z3,z4],z0];
+erase filldraw z0..{z3-z9}z3--(x3,h)
+ --(x4,h)--z4{z9-z4}..z0 & cycle;  % erase excess at top
+numeric t; path p; p=z4l{z9-z4}..z6r;
+t=xpart(p intersectiontimes((x0,-d)--(x0,h)));
+filldraw z0..{z4-z9}z4r--subpath (0,t) of\\(z4l{z9-z4}..z6r)
+ --subpath (t,0) of\\(z3l{z9-z3}..z5r)
+ --z3r{z9-z3}..z0 & cycle;  % top arrowhead
+bot y10=-d-o; x10=good.x .5w;
+pos13(rule_thickness,90); pos14(rule_thickness,90);
+x13=x3; x14=x4; y13=y14=y10+.4asc_height-eps;
+pos15(rule_thickness,angle(z14-z10)); z15l=z10;
+pos16(rule_thickness,angle(z13-z10)); z16l=z10;
+z19=.381966[.5[z13,z14],z10];
+erase filldraw z10..{z13-z19}z13--(x13,-d)
+ --(x14,-d)--z14{z19-z14}..z10 & cycle;  % erase excess at bottom
+numeric t; path p; p=z14r{z19-z14}..z16r;
+t=xpart(p intersectiontimes((x10,-d)--(x10,h)));
+filldraw z10..{z14-z19}z14l--subpath (0,t) of\\(z14r{z19-z14}..z16r)
+ --subpath (t,0) of\\(z13r{z19-z13}..z15r)
+ --z13l{z19-z13}..z10 & cycle;  % bottom arrowhead
+penlabels(0,1,2,3,4,5,6,7,8,9,13,14,15,16,19); endchar;
+
+cmchar "Wreath product";
+beginchar(oct"157",5u#,asc_height#,asc_depth#);
+adjust_fit(if monospace: u#,u# else: 0,0 fi);
+pickup pencircle yscaled .7rule_thickness xscaled 1.4rule_thickness;
+if vair#>.8curve#: pickup rule.nib; autorounded; fi % monoline
+lft x1=lft x3=hround u; x2=x4=w-x1;
+top y1=vround .75[math_axis,h];
+.5[y1,y4]=.5[y2,y3]=math_axis; y1-y2=1/4(y1-y4);
+draw z1{right}...z2{down}..{down}z3...{right}z4;  % stroke
+labels(1,2,3,4); endchar;
+
+cmchar "Radical sign";
+beginchar(oct"160",15u#,rule_thickness#,
+ body_height#+paren_depth#-rule_thickness#);
+big_sqrt; endchar;
+
+cmchar "Amalgamation symbol or coproduct symbol";
+beginchar(oct"161",13u#+width_adj#,cap_height#,0);
+italcorr cap_height#*slant-cap_serif_fit#+cap_jut#-2.5u#+min(.5cap_stem#,u#);
+adjust_fit(cap_serif_fit#,cap_serif_fit#);
+pickup tiny.nib; pos1(cap_stem,0); pos2(cap_stem,0);
+pos3(cap_stem,0); pos4(cap_stem,0);
+lft x1l=lft x2l=hround max(2u,3u-.5cap_stem); x3=x4=w-x1;
+top y1=top y3=h; bot y2=bot y4=0;
+filldraw stroke z1e--z2e; % left stem
+filldraw stroke z3e--z4e; % right stem
+penpos5(cap_bar,90); penpos6(cap_bar,90);
+x5=x1; x6=x3; y5=y6; y5l=0;
+fill stroke z5e--z6e;  % bar
+if serifs: numeric inner_jut;
+ if rt x1r+cap_jut+u+2<=lft x3l-cap_jut: inner_jut=cap_jut;
+ else: rt x1r+inner_jut+u+2=lft x3l-inner_jut; fi
+ dish_serif(1,2,a,1/3,cap_jut,b,1/3,inner_jut);  % upper left serif
+ nodish_serif(2,1,c,1/3,cap_jut,d,1/3,eps); % lower left serif
+ dish_serif(3,4,e,1/3,inner_jut,f,1/3,cap_jut);  % upper right serif
+ nodish_serif(4,3,g,1/3,eps,h,1/3,cap_jut); fi  % lower right serif
+math_fit(0,.5ic#); penlabels(1,2,3,4,5,6); endchar;
+
+cmchar "Nabla or backwards-difference operator";
+beginchar(oct"162",15u#,cap_height#,0);
+adjust_fit(0,0);
+numeric right_stem,alpha;
+right_stem=cap_hair if hefty: -3stem_corr fi;
+x1l=w-x4r=.75u; y1=y4=h;
+x2-x1=x4-x3; x3l=x2l+apex_corr; y2=y3=-apex_o-apex_oo;
+alpha=diag_ratio(2,right_stem,y1-y2,x4r-x1l-apex_corr);
+penpos1(alpha*cap_stem,0); penpos2(alpha*cap_stem,0);
+penpos3(alpha*right_stem,0); penpos4(alpha*right_stem,0);
+fill diag_end(2l,1l,1,1,4r,3r)--diag_end(4r,3r,1,1,2l,1l)--cycle;  % triangle
+z0=whatever[z1r,z2r]=whatever[z3l,z4l];
+y5=y6=h-cap_vstem; z5=whatever[z1r,z2r]; z6=whatever[z3l,z4l];
+if y0>cap_notch_cut: y0:=cap_notch_cut;
+ unfill z0+.5right{up}...{z4-z3}z6--z5{z2-z1}
+  ...{down}z0+.5left--cycle; % counter
+else: unfill z0--z5--z6--cycle; fi  % counter
+penlabels(0,1,2,3,4,5,6); endchar;
+
+cmchar "Square set union sign (Scott lub)";
+beginchar(oct"164",12u#,.8asc_height#,0);
+adjust_fit(0,0); pickup rule.nib;
+lft x1=hround 1.1u; x2=x1; x4=x5=w-x1;
+y1=good.y h+o; bot y2=0; y4=y2; y5=y1;
+draw z1---z2---z4---z5;  % stems and bar
+labels(1,2,4,5); endchar;
+
+cmchar "Square set intersection sign (Scott glb)";
+beginchar(oct"165",12u#,.8asc_height#,0);
+adjust_fit(0,0); pickup rule.nib;
+lft x1=hround 1.1u; x2=x1; x4=x5=w-x1;
+y2=good.y h+o; bot y1=0; y4=y2; y5=y1;
+draw z1---z2---z4---z5;  % stems and bar
+labels(1,2,4,5); endchar;
+
+cmchar "Square subset or equal to sign";
+compute_spread(.45x_height#,.55x_height#);
+spread#':=spread#; spread':=spread; % the spread of `$=$'
+compute_spread(5/4x_height#,3/2x_height#);
+beginchar(oct"166",14u#,v_center(spread#'+spread#+rule_thickness#));
+adjust_fit(0,0); pickup rule.nib;
+lft x2=hround(1.5u+oo); x1=x4=hround(w-1.5u)+eps; x3=x2;
+y1-y4=spread; y2=y1; y3=y4; top y1=h;
+draw z1--z2--z3--z4;  % bars and stem
+x8=x1; x9=x2-oo-eps; y8=y9; y4-y9=spread';
+draw z8--z9;  % lower bar
+labels(1,2,3,4,8,9); endchar;
+
+cmchar "Square superset or equal to sign";
+compute_spread(.45x_height#,.55x_height#);
+spread#':=spread#; spread':=spread; % the spread of `$=$'
+compute_spread(5/4x_height#,3/2x_height#);
+beginchar(oct"167",14u#,v_center(spread#'+spread#+rule_thickness#));
+adjust_fit(0,0); pickup rule.nib;
+x1=x4=hround 1.5u-eps; rt x2=hround(w-1.5u-oo); x3=x2;
+y1-y4=spread; y2=y1; y3=y4; top y1=h;
+draw z1--z2--z3--z4;  % bars and stem
+x8=x1; x9=x2+oo+eps; y8=y9; y4-y9=spread';
+draw z8--z9;  % lower bar
+labels(1,2,3,4,8,9); endchar;
+
+cmchar "Club suit";
+beginchar(oct"174",14u#,asc_height#,2/3desc_depth#);
+adjust_fit(0,0); pickup rule.nib; autorounded;
+x1=x4=x30=x33=good.x .5w; center_on(x1);
+x2=good.x(x1-.5u)-eps; lft x1-rt x10=hround .5pt; lft x12=hround .5u;
+x11=.6[x12,x10]; x13=.5[x12,x10]=x5; x32-x31=x1-.5u-x12;
+x2+x3=x5+x6=x10+x20=x11+x21=x12+x22=x13+x23=x31+x32=2x1;
+top y30=h+o+oo; bot y11=bot y21=-o; top y13=top y23=vround .53h;
+y30-y33=y13-y11; y31=y32=y4=.5[y30,y33]; y12=y22=.5[y11,y13];
+y1=y10=y20=good.y .1h; bot y5=bot y6=y1+.75; bot y2=bot y3=-d;
+filldraw z30{left}...z31{down}...z33{right}...z32{up}...cycle;  % top bowl
+filldraw z13{left}...z12{down}...z11{right}...z10{up}...cycle;  % left bowl
+filldraw z23{left}...z20{down}...z21{right}...z22{up}...cycle;  % right bowl
+filldraw z1{down}...{2(x2-x1),y2-y1}z2--z3{2(x1-x3),y1-y3}
+ ...{up}cycle;  % stem
+filldraw z4--z5--z6--cycle;  % filling
+labels(1,2,3,4,5,6,10,11,12,13,20,21,22,23,30,31,32,33); endchar;
+
+cmchar "Diamond suit";
+beginchar(oct"175",14u#,asc_height#,2/3desc_depth#);
+adjust_fit(0,0); pickup rule.nib; autorounded;
+x1=x4=good.x .5w; center_on(x1);
+lft x2=hround u; x3=w-x2;
+top y1=h+o+oo; bot y4=-d-o-oo; y2=y3=.5[y1,y4];
+draw z1{x3-x1,1.5(y3-y1)}...z3{1.5(x3-x1),y3-y1};  % upper right diagonal
+draw z1{x2-x1,1.5(y2-y1)}...z2{1.5(x2-x1),y2-y1};  % upper left diagonal
+draw z4{x2-x4,1.5(y2-y4)}...z2{1.5(x2-x4),y2-y4};  % lower left diagonal
+draw z4{x3-x4,1.5(y3-y4)}...z3{1.5(x3-x4),y3-y4};  % lower right diagonal
+labels(1,2,3,4); endchar;
+
+cmchar "Heart suit";
+beginchar(oct"176",14u#,asc_height#,2/3desc_depth#);
+adjust_fit(0,0); pickup rule.nib; autorounded;
+x1=x5=good.x .5w; center_on(x1);
+lft x7=hround u; x8=4u; x2+x8=x3+x7=x4+x6=w;
+y1=good.y .77h; top y2=h+o; y3=.7h; y4=.2h; bot y5=-o-oo;
+y2=y8; y3=y7; y4=y6; z4=whatever[z3,z5];
+x0=x9=w; y0=1.5h; y9=.6h;
+draw z1{x2-x1,8(y2-y1)}...z2{right}....z3{down}...{z4-z9}z4
+ ...{z5-z0}z5;  % right half bowl
+draw z1{x8-x1,8(y8-y1)}...z8{left}....z7{down}...{(z4-z9)xscaled-1}z6
+ ...{(z5-z0)xscaled-1}z5;  % left half bowl
+labels(0,1,2,3,4,5,6,7,8,9); endchar;
+
+cmchar "Spade suit";
+beginchar(oct"177",14u#,asc_height#,2/3desc_depth#);
+adjust_fit(0,0); pickup rule.nib; autorounded;
+x1=x10=good.x .5w; center_on(x1);
+x2=good.x(x1-.5u)-eps; lft x1-rt x6=hround .5pt; x5=x6;
+x7=.5[x8,x6]; lft x8=hround u;
+x2+x3=x5+x15=x6+x14=x7+x13=x8+x12=x9+x11=2x10;
+top y10=h+o+oo; y9=y11=.7h; y8=y12=.3h;
+y1=y6=y14=good.y .1h; bot y5=bot y15=y1+.75;
+bot y7=bot y13=-o; bot y2=bot y3=-d; z9=whatever[z8,z10];
+filldraw z10{-w,-3h}...z9{-w,-h}...z8{down}...z7{right}...z6---z5
+ --z15---z14...{right}z13...{up}z12...{-w,h}z11
+ ...{-w,3h}cycle;  % filled bowl
+filldraw z1{down}...{2(x2-x1),y2-y1}z2--z3{2(x1-x3),y1-y3}
+ ...{up}cycle;  % stem
+labels(1,2,3,5,6,10,11,12,13,14,15); endchar;
+
+%input moresym;  % more symbols
+cmchar "Tie accent";
+beginchar(oct"101",5u#,asc_height#,0);
+italcorr 4/9[x_height#,asc_height#]*slant+4.5u#+2letter_fit#+.5hair#;
+adjust_fit(if monospace:2u#,2u# else:serif_fit#,serif_fit# fi);
+pickup fine.nib; pos1(hair,180); pos2(vround 1/5[vair,stem],90); pos3(hair,0);
+lft x1r=hround(.5w-.5hair); x2=.5[x1,x3];
+rt x3r=hround(w+4u+2letter_fit+.5hair);
+y1=y3=4/9[x_height,asc_height]; top y2r=vround 8/9[x_height,asc_height];
+filldraw stroke super_arc.e(1,2) & super_arc.e(2,3);  % arc
+penlabels(1,2,3); endchar;
+
+cmchar "Circle operator"; % to be shrunk for \comp
+beginchar(oct"102",9u#,v_center(7u#));
+adjust_fit(0,0); pickup rule.nib; autorounded;
+lft x6=hround u; x2=w-x6; top y8=h; y2=math_axis;
+circle_points; draw_circle;  % circle
+labels(1,2,3,4,5,6,7,8); endchar;
+
+cmchar "Plus sign";
+beginarithchar(oct"103"); pickup rule.nib;
+x1=x2=good.x .5w; top y1=h+eps; .5[y1,y2]=math_axis;
+lft x3=hround u-eps; x4=w-x3; y3=y4=math_axis;
+draw z1--z2;  % stem
+draw z3--z4;  % crossbar
+labels(1,2,3,4); endchar;
+
+cmchar "Equals sign";
+compute_spread(.45x_height#,.55x_height#);
+beginchar(oct"104",14u#,v_center(spread#+rule_thickness#));
+italcorr h#*slant-.5u#;
+adjust_fit(0,0); pickup rule.nib;
+lft x1=hround u-eps; x3=x1; x2=x4=w-x1;
+y1=y2; y3=y4; y1-y3=spread; .5[y1,y3]=math_axis;
+draw z1--z2;  % upper bar
+draw z3--z4;  % lower bar
+labels(1,2,3,4); endchar;
+
+cmchar "Arrow (vector) accent";
+beginchar(oct"105",9u#,asc_height#+.5rule_thickness#,0);
+italcorr .7[x_height#,asc_height#]*slant;
+adjust_fit(0,0); pickup rule.nib;
+lft x1=hround .5u; x2=w-x1; y1=y2=good.x .7[x_height,asc_height];
+draw z1--z2;  % bar
+rt x3=rt x4=hround(x2-u);
+y3=y2+.3(asc_height-x_height); y4=y2-.3(asc_height-x_height);
+draw z3{x2-x3,2(y2-y3)}...{2(x2-x3),y2-y3}z2;  % upper point
+draw z4{x2-x4,2(y2-y4)}...{2(x2-x4),y2-y4}z2;  % lower point
+labels(1,2,3,4); endchar;
+
+cmchar "Triangle pointing right";
+beginchar(oct"106",9u#,v_center(x_height#));
+adjust_fit(0,0); pickup rule.nib;
+numeric a,b; a=sqrt(3.14159\\ /sqrt3); % triangle area $=$ circle area
+b=.5w-(rt hround u); .5[x1',x2']=.5w; x2'-x1'=a*b*sqrt3;
+x1=x3=good.x x1'; x2=good.x x2';
+y2=.5[y1,y3]=math_axis; y1=good.y(y2+a*b);
+draw z1--z2--z3--cycle;  % triangle
+labels(1,2,3); endchar;
+
+cmchar "Triangle pointing left";
+beginchar(oct"107",9u#,v_center(x_height#));
+adjust_fit(0,0); pickup rule.nib;
+numeric a,b; a=sqrt(3.14159\\ /sqrt3); % triangle area $=$ circle area
+b=.5w-(rt hround u); .5[x1',x2']=.5w; x1'-x2'=a*b*sqrt3;
+x1=x3=good.x x1'; x2=good.x x2';
+y2=.5[y1,y3]=math_axis; y1=good.y(y2+a*b);
+draw z1--z2--z3--cycle;  % triangle
+labels(1,2,3); endchar;
+
+cmchar "Equals sign"; % this to be used to make \Longrightarrow, etc.
+% currently, just a copy of = (see oct"104")
+compute_spread(.45x_height#,.55x_height#);
+beginchar(oct"110",14u#,v_center(spread#+rule_thickness#));
+italcorr h#*slant-.5u#;
+adjust_fit(0,0); pickup rule.nib;
+lft x1=hround u-eps; x3=x1; x2=x4=w-x1;
+y1=y2; y3=y4; y1-y3=spread; .5[y1,y3]=math_axis;
+draw z1--z2;  % upper bar
+draw z3--z4;  % lower bar
+labels(1,2,3,4); endchar;
+
+cmchar "Semicolon";
+numeric dot_diam#; dot_diam#=if monospace: 5/4 fi\\ dot_size#;
+define_whole_blacker_pixels(dot_diam);
+beginchar(oct"111",5u#,x_height#,comma_depth#);
+italcorr x_height#*slant+.5dot_diam#-2u#;
+adjust_fit(0,0); pickup fine.nib;
+pos1(dot_diam,0); pos2(dot_diam,90);
+lft x1l=hround(.5w-.5dot_diam); top y2r=h; z1=z2; dot(1,2);  % upper dot
+x3-.5dot_diam=hround(.5w-.5dot_diam); y3-.5dot_diam=0;
+comma(3,a,dot_diam,.05u,comma_depth);  % lower dot and tail
+penlabels(1,2,3); endchar;
+
+cmchar "Grave accent";
+beginchar(oct"112",9u#,min(asc_height#,2x_height#),0);
+adjust_fit(0,0);
+if serifs: pickup crisp.nib; x1-.5stem=hround 2u; x2=2/3[x1,w-x1];
+ y1+.5stem=h+eps; y2=max(2/3[h,x_height],x_height+o+hair);
+ numeric theta; theta=angle(z2-z1)+90;
+ pos1(stem,theta); pos2(hair,theta);
+ filldraw circ_stroke z1e--z2e;  % diagonal
+else: pickup fine.nib; pos1(stem,0); pos2(vair,0);
+ lft x1l=hround 1.5u; rt x2r=hround(.5w+.25u+.5vair);
+ top y1=h; bot y2=vround 2/3[h,x_height];
+ filldraw stroke z1e--z2e; fi  % diagonal
+penlabels(1,2); endchar;
+
+cmchar "Acute accent";
+beginchar(oct"113",9u#,min(asc_height#,2x_height#),0);
+italcorr h#*slant-if serifs: 1.5 fi u#;
+adjust_fit(0,0);
+if serifs: pickup crisp.nib; x1+.5stem=hround(w-2u); x2=2/3[x1,w-x1];
+ y1+.5stem=h+eps; y2=max(2/3[h,x_height],x_height+o+hair);
+ numeric theta; theta=angle(z2-z1)+90;
+ pos1(stem,theta); pos2(hair,theta);
+ filldraw circ_stroke z1e--z2e;  % diagonal
+else: pickup fine.nib; pos1(stem,0); pos2(vair,0);
+ rt x1r=hround(w-1.5u); lft x2l=hround(.5w-.25u-.5vair);
+ top y1=h; bot y2=vround 2/3[h,x_height];
+ filldraw stroke z1e--z2e; fi  % diagonal
+penlabels(1,2); endchar;
+
+cmchar "Hachek (check) accent";
+beginchar(oct"114",9u#,.75[x_height#,min(asc_height#,2x_height#)],0);
+h':=vround min(asc_height,2x_height); % height of circumflex being inverted
+if serifs: italcorr h#*slant+.5hair#-1.75u#;
+ adjust_fit(0,0);
+ pickup crisp.nib; pos2'(.5[vair,curve],90); top y2'r=h;
+ pos2(.5[vair,curve],90); x2=.5w;
+ x1=w-x3=good.x 2.25u; top y1=top y3=h; y1-y2=.5(y2'-x_height);
+ pos1(hair,angle(z2-z1)+90); pos3(hair,angle(z3-z2)+90);
+ filldraw stroke z1e--z2e--z3e;  % diagonals
+else: italcorr h#*slant-.5stem#+.5vair#-.75u#;
+ adjust_fit(0,0);
+ pickup fine.nib; pos1(vair,0); pos3(vair,0); x1=w-x3;
+ pos2(stem,0); bot y2=vround(1/12[x_height,h']+o); x2=.5w;
+ top y1=top y3=h+o; lft x1l=hround(rt x2r-3.25u-.5vair);
+ z0=whatever[z1r,z2r]=whatever[z2l,z3l];
+ y4l=y4r=y2; x4l=good.x .2[x2l,x2]; x4r=w-x4l;
+ filldraw z4l--z1l--z1r--z0--z3l--z3r--z4r--cycle; fi  % diagonals
+penlabels(0,1,2,3,4); endchar;
+
+cmchar "Breve accent";
+beginchar(oct"115",9u#,min(asc_height#,2x_height#),0);
+italcorr h#*slant+.5vair#-1.5u#;
+adjust_fit(0,0);
+pickup crisp.nib; pos1(vair,-180); pos3(vair,0);
+top y1=top y3=h; lft x1r=w-rt x3r=hround(2u-.5vair);
+numeric mid_thickness; mid_thickness=vround 1/3[vair,stem];
+pos2(mid_thickness,-90); x2=.5w;
+bot y2r=vround max(x_height+o+tiny,1/3[x_height,h]+o-.5mid_thickness);
+filldraw stroke z1e{down}...z2e{right}...{up}z3e;  % stroke
+penlabels(1,2,3); endchar;
+
+cmchar "Macron (bar) accent";
+numeric macron_breadth#; macron_breadth#=.2[vair#,stem#];
+beginchar(oct"116",9u#,.4[x_height#,asc_height#]+macron_breadth#,0);
+italcorr h#*slant-.75u#;
+adjust_fit(0,0);
+numeric macron_breadth; macron_breadth:=Vround .2[vair,stem];
+pickup if serifs: crisp.nib else: fine.nib fi;
+pos1(macron_breadth,90); pos2(macron_breadth,90);
+top y1r=top y2r=h+o; lft x1=w-rt x2=hround 1.25u;
+filldraw stroke z1e--z2e;  % bar
+penlabels(1,2); endchar;
+
+cmchar "Circumflex (hat) accent";
+beginchar(oct"117",9u#,min(asc_height#,2x_height#),0);
+if serifs: italcorr .5[x_height#,h#]*slant+.5hair#-1.75u#;
+ adjust_fit(0,0);
+ pickup crisp.nib; pos2(.5[vair,curve],90); top y2r=h; x2=.5w;
+ x1=w-x3=good.x 2.25u; y1=y3=.5[x_height,y2];
+ pos1(hair,angle(z2-z1)+90); pos3(hair,angle(z3-z2)+90);
+ filldraw stroke z1e--z2e--z3e;  % diagonals
+else: italcorr 2/3[x_height#,h#]*slant-.5stem#+.5vair#-.75u#;
+ adjust_fit(0,0);
+ pickup fine.nib; pos1(vair,0); pos3(vair,0); x1=w-x3;
+ pos2(stem,0); top y2=h; x2=.5w; bot y1=bot y3=vround 2/3[h,x_height]-eps;
+ lft x1l=hround(rt x2r-3.25u-.5vair); % same slope as in the acute accent
+ z0=whatever[z1r,z2r]=whatever[z2l,z3l];
+ y4l=y4r=y2; x4l=good.x .2[x2l,x2]; x4r=w-x4l;
+ filldraw z4l--z1l--z1r--z0--z3l--z3r--z4r--cycle; fi  % diagonals
+penlabels(0,1,2,3,4); endchar;
+
+iff ligs>0: cmchar "Dot accent";
+numeric dot_diam#; dot_diam#=max(dot_size#,cap_curve#);
+beginchar(oct"120",5u#,min(asc_height#,10/7x_height#+.5dot_diam#),0);
+define_whole_blacker_pixels(dot_diam);
+italcorr h#*slant+.5dot_diam#-2u#;
+adjust_fit(0,0);
+pickup tiny.nib; pos1(dot_diam,0); pos2(dot_diam,90);
+x1=x2=.5w; top y2r=h+1;
+if bot y2l<x_height+o+slab: y2l:=min(y2r-eps,x_height+o+slab+.5tiny); fi
+y1=.5[y2l,y2r]; dot(1,2);  % dot
+penlabels(1,2); endchar;
+
+cmchar "Tilde (squiggle) accent";
+beginchar(oct"121",9u#,min(asc_height#,10/7x_height#+.5dot_size#),0);
+italcorr h#*slant-u#;
+adjust_fit(0,0);
+if serifs: numeric theta; theta=angle(1/6(6u-vair),1/4(h-x_height));
+ pickup crisp.nib; numeric mid_width; mid_width=.4[vair,stem];
+ pos1(vair,theta+90); pos2(vair,theta+90);
+ pos3(vair,theta+90); pos4(vair,theta+90);
+ z2-z1=z4-z3=(mid_width-crisp)*dir theta;
+ lft x1r=w-rt x4l=hround 1.5u; top y4r=h;
+ bot y1l=vround(bot y1l+min(2/3[x_height,h],y3l-.25vair)-top y1r);
+ pair delta; ypart delta=3(y3l-y1l); delta=whatever*dir theta;
+ filldraw z1l..controls(z1l+delta)and(z3l-delta)..z3l..z4l
+  --z4r..controls(z4r-delta)and(z2r+delta)..z2r..z1r--cycle;  % stroke
+else: pickup fine.nib; pos1(vair,180); pos2(vair,90);
+ pos3(.5[vair,slab],90); pos4(vair,90); pos5(vair,180);
+ lft x1r=w-rt x5l=hround 1.5u; x2-x1=x3-x2=x4-x3=x5-x4;
+ bot y1=bot y4l=vround(.75[x_height,h]-vair);
+ top y2r=top y5=h; y3=.5[y2,y4];
+ filldraw stroke z1e{up}...z2e{right}..z3e..{right}z4e...{up}z5e; fi % stroke
+penlabels(1,2,3,4,5); endchar;
+
+cmchar "Umlaut (double dot) accent";
+numeric dot_diam#,dot_diam;
+dot_diam#=max(dot_size#,cap_curve#);
+beginchar(oct"122",9u#,min(asc_height#,10/7x_height#+.5dot_diam#),0);
+dot_diam=max(tiny.breadth,hround(max(dot_size,cap_curve)-2stem_corr));
+italcorr h#*slant+.5dot_diam#-2.25u#;
+adjust_fit(0,0);
+pickup tiny.nib; pos1(dot_diam,0); pos2(dot_diam,90);
+x1=x2=2.75u; top y2r=h+1;
+if bot y2l<x_height+o+slab: y2l:=min(y2r-eps,x_height+o+slab+.5tiny); fi
+y1=.5[y2l,y2r]; dot(1,2);  % left dot
+pos3(dot_diam,0); penpos4(y2r-y2l,90); y3=y4=y1; x3=x4=w-x1;
+dot(3,4);  % right dot
+penlabels(1,2,3,4); endchar;
+
+cmchar "Macron (bar) accent"; % another bar to mimic widebar
+numeric macron_breadth#; macron_breadth#=.2[vair#,stem#];
+beginchar(oct"123",9u#,.4[x_height#,asc_height#]+macron_breadth#,0);
+italcorr h#*slant-.75u#;
+adjust_fit(0,0);
+numeric macron_breadth; macron_breadth:=Vround .2[vair,stem];
+pickup if serifs: crisp.nib else: fine.nib fi;
+pos1(macron_breadth,90); pos2(macron_breadth,90);
+top y1r=top y2r=h+o; lft x1=w-rt x2=hround 1.25u;
+filldraw stroke z1e--z2e;  % bar
+penlabels(1,2); endchar;
+
+if not monospace:
+ skewchar=oct"060"; skew#=.5u#;
+ ligtable "I": "T": "V": skewchar kern skew#;
+ ligtable "K": skewchar kern 2skew#;
+ ligtable "D": "N": "P": "R": "U": "W": "Y": skewchar kern 3skew#;
+ ligtable "E": "F": "G": "H": "O": "Q": skewchar kern 4skew#;
+ ligtable "B": "C": "L": "M": "S": "X": "Z": skewchar kern 5skew#;
+ ligtable "J": skewchar kern 6skew#;
+ ligtable "A": skewchar kern 7skew#;
+fi;
+bye.

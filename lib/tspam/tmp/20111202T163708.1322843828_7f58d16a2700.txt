@@ -1,0 +1,113 @@
+Received: by yenm12 with SMTP id m12sf3486289yen.26
+        for <k2pts@phigita.net>; Fri, 02 Dec 2011 08:36:57 -0800 (PST) by 10.236.179.10 with SMTP id g10mr5611072yhm.8.1322843803858;
+        Fri, 02 Dec 2011 08:36:43 -0800 (PST) by 10.150.43.22 with SMTP id q22ls3654232ybq.7.gmail; Fri, 02 Dec
+ 2011 08:35:29 -0800 (PST) by 10.236.170.198 with SMTP id p46mr21005127yhl.8.1322843729444;
+        Fri, 02 Dec 2011 08:35:29 -0800 (PST) by 10.150.195.7 with SMTP id s7msybf;
+        Fri, 2 Dec 2011 08:33:24 -0800 (PST) by 10.68.15.41 with SMTP id u9mr9085235pbc.3.1322843604681;
+        Fri, 02 Dec 2011 08:33:24 -0800 (PST) by 10.68.15.41 with SMTP id u9mr9085231pbc.3.1322843604660;
+        Fri, 02 Dec 2011 08:33:24 -0800 (PST) from mail-pz0-f73.google.com (mail-pz0-f73.google.com [209.85.210.73])
+        by gmr-mx.google.com with ESMTPS id u7si12377925pbn.2.2011.12.02.08.33.24
+        (version=TLSv1/SSLv3 cipher=OTHER);
+        Fri, 02 Dec 2011 08:33:24 -0800 (PST) by dadi2 with SMTP id i2so306918dad.0
+        for <inside-adsense@googlegroups.com>; Fri, 02 Dec 2011 08:33:24 -0800 (PST) by 10.68.31.165 with SMTP id b5mr5250214pbi.1.1322843604456; Fri, 02
+ Dec 2011 08:33:24 -0800 (PST) 
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlegroups.com; s=beta;
+        h=x-beenthere:received-spf:mime-version:x-bloggermail:message-id:date
+         :subject:from:to:x-original-sender:x-original-authentication-results
+         :reply-to:precedence:mailing-list:list-id:x-google-group-id
+         :list-post:list-help:list-archive:sender:list-subscribe
+         :list-unsubscribe:content-type;
+        bh=NK6jYQqZVWppBv2Vx07GmO8Dc0K/nr96xnIQHCmzqSI=;
+        b=CAbiuR7tZk4bBXOLG9QJGf2g0i5MhzKCqj8hj59RhQLYd0Wx3bX2Dmte9ijG81DBx1
+         lgYnnz4yZGmMS0kBtyK+2qlqz+lLZqmKljwIki3w6rFQ9CX3MB2BvOn7K7OPfke7XA4R
+         MjrNjJSkrMjZcXBedXOs1llIhqxyat8T7/LYQ= 
+X-BeenThere: inside-adsense@googlegroups.com 
+Received-SPF: pass (google.com: domain of 31P3YTg4KAK8XchXST-PShTchTVddVaT.Rdb@blogger.bounces.google.com designates 209.85.210.73 as permitted sender) client-ip=209.85.210.73; 
+X-BloggerMail: 8d2a8e8ca87dc2060d077dc8ff65ec509446c7d7 
+Message-ID: <bcaec51f93d923187804b31e8796@google.com> 
+Date: Fri, 02 Dec 2011 16:33:24 +0000 
+Subject: [Inside AdSense] Create a mobile-friendly website 
+From: Inside AdSense Team <inside-adsense@google.com> 
+To: inside-adsense@googlegroups.com 
+X-Original-Sender: inside-adsense@google.com 
+X-Original-Authentication-Results: gmr-mx.google.com; spf=pass (google.com:
+ domain of 31P3YTg4KAK8XchXST-PShTchTVddVaT.Rdb@blogger.bounces.google.com
+ designates 209.85.210.73 as permitted sender) smtp.mail=31P3YTg4KAK8XchXST-PShTchTVddVaT.Rdb@blogger.bounces.google.com;
+ dkim=pass header.i=@google.com 
+Reply-To: inside-adsense+owners@googlegroups.com 
+Precedence: list 
+Mailing-list: list inside-adsense@googlegroups.com; contact inside-adsense+owners@googlegroups.com 
+List-ID: <inside-adsense.googlegroups.com> 
+X-Google-Group-Id: 933049293311 
+List-Post: <http://groups.google.com/group/inside-adsense/post?hl=en_US>, <mailto:inside-adsense@googlegroups.com> 
+List-Help: <http://groups.google.com/support/?hl=en_US>, <mailto:inside-adsense+help@googlegroups.com> 
+List-Archive: <http://groups.google.com/group/inside-adsense?hl=en_US> 
+Sender: inside-adsense@googlegroups.com 
+List-Subscribe: <http://groups.google.com/group/inside-adsense/subscribe?hl=en_US>,
+ <mailto:inside-adsense+subscribe@googlegroups.com> 
+List-Unsubscribe: <http://groups.google.com/group/inside-adsense/subscribe?hl=en_US>,
+ <mailto:inside-adsense+unsubscribe@googlegroups.com> 
+--------------------------------------
+Did you know that there will be a mobile device for every person on earth  
+by 2015, and that mobile searches have grown by 4x since 2010 1 ? That  
+means that every day more and more of your users are looking for your  
+content…on mobile devices. What's their experience like? Can they easily  
+read what's on the screen without pinching and zooming? Do you have links  
+that are difficult to click instead of user-friendly navigation buttons?
+
+61% of users are unlikely to return to a site that isn't mobile friendly  
+2 . It's important to remember that even if users can see a website on a  
+smartphone, it doesn't necessarily mean that the site is mobile-friendly  
+and easy to navigate. Your users are going mobile as we speak, and so the  
+most important thing you can do to grow your business using the mobile web  
+is to create a mobile-friendly website.
+
+Here are ten tips to help you design a mobile-friendly site:
+
+
+Keep it quick - Design your site to load fast and make copy easy to scan
+Simplify navigation - Create clear navigation and search functionalities
+Be thumb-friendly - Design your site so any size hand can easily interact  
+with it
+Design for visibility - Make it easy for your customers to read
+Make it accessible - Mobile sites should work across all mobile devices
+Make it easy to convert - Create clear ways for your users to make  
+purchases or contact you
+Make it local - Consumers look for local info on their phones all the time
+Make it seamless - Convert as much of the functionality of your desktop  
+site to mobile
+Use mobile site redirects - Ensure that visitors who visit your website  
+from a mobile device are redirected to your mobile-friendly site
+Listen, learn and iterate - Make testing and optimization an ongoing process
+
+To review a detailed set of these best practices, download a copy of the 10  
+Mobile Site Best Practices. Visit howtogomo.com to explore actual mobile  
+site examples of each best practice and use the GoMoMeter to see how your  
+site is faring on mobile*.
+
+http://youtu.be/Ja7abx3OPOQ
+
+
+Finally, take a look at Google Sites for Mobile Landing Pages*, a free and  
+easy-to-use tool that enables you to build mobile pages.
+
+1 Gartner, 2010; Google Internal Data, 2011; Cisco, 2011
+2 Compuware and Brand Anywhere and Luth Research
+*Note: These resources are currently only available in English, but will be  
+available in other languages shortly.
+
+Posted by Dairine Kennedy, AdSense Mobile Specialist
+
+
+
+--
+Posted By Inside AdSense Team to Inside AdSense at 12/02/2011 08:30:00 AM
+
+-- 
+Unable to view the links or images in the message above? Want to comment on this post? Visit http://adsense.blogspot.com/ .
+
+You received this message because you are subscribed to the Google Groups "Inside AdSense" group.
+To unsubscribe from this group, send email to Inside-AdSense+unsubscribe@googlegroups.com
+For more options, visit this group at http://groups.google.com/group/Inside-AdSense
+

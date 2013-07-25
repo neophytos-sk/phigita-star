@@ -1,0 +1,10 @@
+Received: from 213.228.88.239 by asp-4.reflexion.net; Fri, 29 Jul 2011 02:10:12 +0600 
+Date: Fri, 29 Jul 2011 02:10:12 +0600 
+From: =?koi8-r?B?IvPPwtPU18XOzsnLIg==?= <dregsgx1@asgi.com> 
+X-Mailer: The Bat! (v3.51.10) Educational 
+Reply-To: dregsgx1@asgi.com 
+X-Priority: 3 (Normal) 
+Message-ID: <124005829.98240998094078@asgi.com> 
+To: webmaster@phigita.net 
+Subject: =?koi8-r?B?4dLFzsTBLiDvxsnTztnKIMPFztTSIC0g7cHS2MnOwSDyz93BIQ==?= 
+

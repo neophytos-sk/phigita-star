@@ -1,0 +1,11 @@
+Received: from xdahkcq (unknown [222.246.94.69])
+	by zm.zeenetwork.com (Postfix) with ESMTP id A9D791A5168;
+	Thu, 20 Oct 2011 10:48:32 +0530 (IST) 
+Message-ID: <20111020131857412324@zeenetwork.com> 
+From: =?gb2312?B?0c6zx7S0tve8sb7I08PGt8q10rXT0M/euavLvg==?= <zeemalaysia@zeenetwork.com> 
+To:  
+Subject: =?gb2312?B?aHhmvbW1zWCyybm6YLPJsb5gvLBguanTpsnMYMy4xdA=?=
+	=?gb2312?B?YLy8x8kxMzoxODozMQ==?= 
+Date: Thu, 20 Oct 2011 13:18:43 +0800 
+X-mailer: Rzse 7 
+Whoops!  What is a 'application/vnd.ms-excel'?

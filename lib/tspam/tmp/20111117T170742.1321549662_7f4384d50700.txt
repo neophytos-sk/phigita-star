@@ -1,0 +1,114 @@
+Received: by vcbfk1 with SMTP id fk1sf166676vcb.26
+        for <k2pts@phigita.net>; Thu, 17 Nov 2011 09:07:34 -0800 (PST) by 10.52.27.240 with SMTP id w16mr6066420vdg.20.1321549641965;
+        Thu, 17 Nov 2011 09:07:21 -0800 (PST) by 10.151.10.15 with SMTP id n15ls3958143ybi.0.gmail; Thu, 17 Nov
+ 2011 09:05:22 -0800 (PST) by 10.236.170.198 with SMTP id p46mr10597642yhl.8.1321549522643;
+        Thu, 17 Nov 2011 09:05:22 -0800 (PST) by 10.150.243.2 with SMTP id q2msybh;
+        Thu, 17 Nov 2011 09:00:03 -0800 (PST) by 10.101.175.36 with SMTP id c36mr9303998anp.5.1321549203122;
+        Thu, 17 Nov 2011 09:00:03 -0800 (PST) by 10.101.175.36 with SMTP id c36mr9303996anp.5.1321549203087;
+        Thu, 17 Nov 2011 09:00:03 -0800 (PST) from mail-yx0-f201.google.com (mail-yx0-f201.google.com [209.85.213.201])
+        by gmr-mx.google.com with ESMTPS id e44si1622549yhk.0.2011.11.17.09.00.03
+        (version=TLSv1/SSLv3 cipher=OTHER);
+        Thu, 17 Nov 2011 09:00:03 -0800 (PST) by yenl8 with SMTP id l8so209300yen.4
+        for <inside-adsense@googlegroups.com>; Thu, 17 Nov 2011 09:00:03 -0800 (PST) by 10.101.132.29 with SMTP id j29mr9738155ann.31.1321549202942; Thu,
+ 17 Nov 2011 09:00:02 -0800 (PST) 
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlegroups.com; s=beta;
+        h=x-beenthere:received-spf:mime-version:x-bloggermail:message-id:date
+         :subject:from:to:x-original-sender:x-original-authentication-results
+         :reply-to:precedence:mailing-list:list-id:x-google-group-id
+         :list-post:list-help:list-archive:sender:list-subscribe
+         :list-unsubscribe:content-type;
+        bh=EPk7GHXTOfxMFwWfTY32lLihGaEt3m63aWw+L8cgH0k=;
+        b=CAXuhc2ndX3vNV/YIo1cbxxlh1sdxDKtJrSuOtd/WmW2UCW/CU08syiVNt0gTXQPgL
+         pAFBTEfgggcEky/LHBhFU4g/ZjJX6uuv16Uqft6bhVNBFSxe+o9ARzbjoTMXwS2R8olB
+         7B65LbOVTYqf1hzo+F1Cg9Gmri5vp9lZ9+6AQ= 
+X-BeenThere: inside-adsense@googlegroups.com 
+Received-SPF: pass (google.com: domain of 3kj3FTg4KAJ0FKPFAB-7APBKPBDLLDIB.9LJ@blogger.bounces.google.com designates 209.85.213.201 as permitted sender) client-ip=209.85.213.201; 
+X-BloggerMail: 8d2a8e8ca87dc2060d077dc8ff65ec509446c7d7 
+Message-ID: <0016e684c2fccb718a04b1f12610@google.com> 
+Date: Thu, 17 Nov 2011 17:00:02 +0000 
+Subject: [Inside AdSense] AdSense crawler errors: Check your robots.txt file
+ for improved ad targeting and relevancy 
+From: Inside AdSense Team <inside-adsense@google.com> 
+To: inside-adsense@googlegroups.com 
+X-Original-Sender: inside-adsense@google.com 
+X-Original-Authentication-Results: gmr-mx.google.com; spf=pass (google.com:
+ domain of 3kj3FTg4KAJ0FKPFAB-7APBKPBDLLDIB.9LJ@blogger.bounces.google.com
+ designates 209.85.213.201 as permitted sender) smtp.mail=3kj3FTg4KAJ0FKPFAB-7APBKPBDLLDIB.9LJ@blogger.bounces.google.com;
+ dkim=pass header.i=@google.com 
+Reply-To: inside-adsense+owners@googlegroups.com 
+Precedence: list 
+Mailing-list: list inside-adsense@googlegroups.com; contact inside-adsense+owners@googlegroups.com 
+List-ID: <inside-adsense.googlegroups.com> 
+X-Google-Group-Id: 933049293311 
+List-Post: <http://groups.google.com/group/inside-adsense/post?hl=en_US>, <mailto:inside-adsense@googlegroups.com> 
+List-Help: <http://groups.google.com/support/?hl=en_US>, <mailto:inside-adsense+help@googlegroups.com> 
+List-Archive: <http://groups.google.com/group/inside-adsense?hl=en_US> 
+Sender: inside-adsense@googlegroups.com 
+List-Subscribe: <http://groups.google.com/group/inside-adsense/subscribe?hl=en_US>,
+ <mailto:inside-adsense+subscribe@googlegroups.com> 
+List-Unsubscribe: <http://groups.google.com/group/inside-adsense/subscribe?hl=en_US>,
+ <mailto:inside-adsense+unsubscribe@googlegroups.com> 
+--------------------------------------
+This is the first post in our two-part AdSense Crawler Errors series.
+
+There are many ways that publishers can go about optimizing their site for  
+AdSense; opting-in to text/image ads, upgrading to our preferred ad  
+formats, and increasing ad coverage across a site are just a few of the  
+more well-known ones. But did you know that there's another straightforward  
+optimization tip that many publishers often overlook?
+
+A bit of context
+Your site's robots.txt file essentially acts as a gatekeeper that  
+determines which web crawlers, web robots, and search engines have access  
+to your site and which do not. Those that are granted permission can do  
+things like view your pages and index your site. Those that don't have  
+permission are not able to view or index specific sections of your site,  
+depending on what you've specified.
+
+AdSense ads are displayed through the use of an AdSense web crawler. That  
+crawler scans your page's content and determines which ads to display,  
+according to specific keywords. If our AdSense crawler is being blocked by  
+your robots.txt file, we're going to have a difficult time displaying  
+relevant ads on your site. As a result, your users may see less relevant  
+ads, which can lead to a lower CTR.
+
+How you can help yourself
+View the contents of your robots.txt file by going to  
+[yourdomain.com]/robots.txt. (If you have a subdomain, it likely has a  
+robots.txt file as well, located at [sub.yourdomain.com]/robots.txt.) Be  
+sure that the file is configured to allow our AdSense ad crawler to view  
+your site. You can do that by simply adding the following two lines to the  
+very top of the file:
+
+User-agent: Mediapartners-Google
+Disallow:
+This will ensure that our AdSense ad crawler can access your site and will  
+help display more relevant ads. As a result, you can potentially benefit  
+from increased ad revenue. Please note that making this change will not  
+impact your Google search rankings. Adding these two lines to your  
+robots.txt file will only help to deliver better, more relevant ads to  
+pages with AdSense code already on them. Pages that don't have AdSense ad  
+code will not be affected.
+
+If you have URLs with any errors, you can see what they are by logging into  
+your AdSense account and clicking on 'Account Settings' from the home page.  
+ From there, click on 'View errors' under 'Access and Authorization.'
+
+
+Stay tuned for the second post in our AdSense Crawler Errors series, where  
+we'll cover crawler login issues and how you can solve them.
+
+Posted by Andrew Boni - Inside AdSense Team
+
+
+--
+Posted By Inside AdSense Team to Inside AdSense at 11/17/2011 09:00:00 AM
+
+-- 
+Unable to view the links or images in the message above? Want to comment on this post? Visit http://adsense.blogspot.com/ .
+
+You received this message because you are subscribed to the Google Groups "Inside AdSense" group.
+To unsubscribe from this group, send email to Inside-AdSense+unsubscribe@googlegroups.com
+For more options, visit this group at http://groups.google.com/group/Inside-AdSense
+

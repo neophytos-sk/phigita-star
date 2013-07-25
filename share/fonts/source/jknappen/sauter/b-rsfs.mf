@@ -1,0 +1,119 @@
+% Ralph Smith's Formal Script Math Symbols
+%
+% font v 1.0 September 1991, sauterised v 1.0 14/11/1995
+%
+% Author :        Ralph A. Smith
+% sauterisation : Hubert HOLIN
+
+if unknown cmbase: input cmbase fi
+
+font_identifier:="RSFS"; font_size design_size * pt#;
+
+input c-cmmi;
+
+
+cap_stem#:=        % uppercase stem breadth (we restore the cmr setting)
+    (if design_size <  9: ((design_size*25)+65)
+ elseif design_size < 10: ((design_size*30)+20)
+ elseif design_size < 12: ((design_size*15)+170)
+ elseif design_size < 30: ((-0.4995004995*design_size*design_size) +
+                           (25.989010989*design_size) +
+                           (110.059940059))
+                    else: (440.179820179)fi)/360pt#;
+
+cap_height#:=      % height of caps
+    (if design_size < 10: (design_size*252)
+                    else: (-(0.0228937728937*design_size*design_size) +
+                           (252.457875457875*design_size) +
+                           (1.83150183150))fi)/360pt#;
+
+tiny#:=            % diameter of rounded corners
+    (if design_size <  6: ((design_size*10)+10)
+                    else: (70)fi)/360pt#;      
+
+fine#:=            % diameter of sharply rounded corners
+    (if design_size <  6: (design_size*10)
+                    else: (60)fi)/360pt#;      
+
+thin_join#:=       % width of extrafine details
+    (if design_size <  6: (design_size*10)
+ elseif design_size < 10: (60)
+                    else: ((0.046828171828*design_size*design_size) +
+                           (1.4697802197*design_size) +
+                           (40.619380621))fi)/360pt#;
+
+flare#:=           % diameter of bulbs or breadth of terminals
+    (if design_size <  7: ((design_size*25)+60)
+ elseif design_size < 10: (((design_size*95)+40)/3)
+                    else: ((0.280969030969*design_size*design_size) +
+                           (8.8186813186*design_size) +
+                           (213.71628317))fi)/360pt#;    
+
+dot_size#:=        % diameter of dots
+    (if design_size <  6: ((design_size*40)+20)
+ elseif design_size <  7: ((design_size*30)+80)
+ elseif design_size < 10: (((design_size*10)+800)/3)
+                    else: ((design_size*17.0454545454)+215.45454546)fi)/360pt#;
+
+cap_hair#:=        % uppercase hairline breadth
+    (if design_size <  7: ((design_size*5)+55)
+ elseif design_size < 10: (((design_size*10)+200)/3)
+                    else: ((0.046828171828*design_size*design_size) +
+                           (1.4697802197*design_size) +
+                           (80.629380621))fi)/360pt#;
+
+cap_curve#:=       % uppercase curve breadth
+    (if design_size <  7: ((design_size*15)+45)
+ elseif design_size < 10: (((design_size*50)+10)/3)
+                    else: ((design_size*15)+50)fi)/360pt#;
+
+cap_ess#:=         % breadth in middle of uppercase s
+    (if design_size <  6: ((design_size*50)-115)
+ elseif design_size <  7: ((design_size*40)-55)
+ elseif design_size <  8: ((design_size*35)-20)
+ elseif design_size <  9: ((design_size*40)-60)
+ elseif design_size < 10: ((design_size*10)+210)
+                    else: (-(design_size*5)+360)fi)/360pt#;
+
+cap_jut#:=         % protrusion of uppercase serifs
+    (if design_size <  8: ((design_size*30)+50)
+ elseif design_size < 10: ((design_size*25)+90)
+                    else: ((design_size*17.0454545454)+169.545454545)fi)/360pt#;
+
+beak_jut#:=        % horizontal protrusion of beak serifs
+    (if design_size <  7: ((design_size*8)+20)
+ elseif design_size < 10: (((design_size*14)+130)/3)
+                    else: (-(0.024975024975*design_size*design_size) +
+                           (7.5494505494*design_size) +
+                           (17.092997003))fi)/360pt#;
+
+cap_bar#:=         % uppercase bar thickness
+    (if design_size <  7: ((design_size*5)+55)
+ elseif design_size < 10: (90)
+                    else: ((design_size*6.6287878787)+23.5363636363)fi)/360pt#;
+
+o#:=               % amount of overshoot for curves
+    (if design_size <  7: ((design_size*5)+15)
+ elseif design_size < 10: (((design_size+8)*10)/3)
+ elseif design_size < 12: ((design_size*10)-40)
+                    else: ((design_size*1.8939393939)+59.0606060606)fi)/360pt#;
+
+apex_o#:=          % amount of overshoot for diagonal junctions
+    (if design_size <  7: ((design_size*5)+15)
+ elseif design_size < 10: (((design_size+8)*10)/3)
+ elseif design_size < 12: ((design_size*10)-40)
+                    else: ((design_size*1.8939393939)+56.0606060606)fi)/360pt#;
+
+slant:=            % tilt ratio $(\Delta x/\Delta y)$
+                           0.707;
+
+% Since lowercase letters do not exist in this font, but were evidently under
+% developpement, the value of the following parameters is uncertain:
+%
+% asc_height#, x_height#, bar_height#, desc_depth#, hair#, stem#, curve#, bar#.
+%
+% This should have no inpact on the generation or apperance of the font.
+
+
+generate script      % switch to the driver file
+

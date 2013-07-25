@@ -1,0 +1,11 @@
+Received: from  (192.168.1.128) by nacha.org (77.253.230.209) with Microsoft SMTP Server id 8.0.685.24; Fri, 18 Nov 2011 09:07:40 +0100 
+Message-ID: <4EC60D56.206050@nacha.org> 
+Date: Fri, 18 Nov 2011 09:07:40 +0100 
+From: "The Electronic Payments Association" <payment@nacha.org> 
+User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.2.12) Gecko/20101027 Thunderbird/3.1.6 
+To: <k2pts@phigita.net> 
+Subject: ACH Transfer canceled 
+--------------------------------------
+
+--------------------------------------
+ content-type=application/octet-stream part-token=::mime::1224-2-1

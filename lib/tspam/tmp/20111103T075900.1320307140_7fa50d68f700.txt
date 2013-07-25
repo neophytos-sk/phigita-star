@@ -1,0 +1,13 @@
+Received: from kvn ([110.53.26.16])
+	(envelope-sender <jwa01@shyp.gov.cn>)
+	by 10.216.251.233 with ESMTP
+	for <zsjkmy@163.com>; Thu, 03 Nov 2011 15:57:47 +0800 
+Message-ID: <20111103160055778882@shyp.gov.cn> 
+From: =?gb2312?B?sPzNt73wuqO6z73w09DP3tTwyM65q8u+?= <jwa01@shyp.gov.cn> 
+To:  
+Subject: =?gb2312?B?NDnDv8zsvfiyvdK7teO146Osvs3Kx7PJuaa1xL+qyrwgd3g=?=
+	=?gb2312?B?eXM=?= 
+Date: Thu, 3 Nov 2011 16:00:44 +0800 
+X-mailer: Ttsmuxlpos 5 
+--------------------------------------
+ content-type=application/msword part-token=::mime::1823-2

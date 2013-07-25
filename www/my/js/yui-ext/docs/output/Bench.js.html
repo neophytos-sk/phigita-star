@@ -1,0 +1,40 @@
+<html><head><title>Bench.js</title><link rel="stylesheet" type="text/css" href="../resources/style.css" media="screen"/></head><body><h1>Bench.js</h1><pre class="highlighted"><code>YAHOO.ext.util.Bench = <b>function</b>(){
+   <b>this</b>.timers = {};
+   <b>this</b>.lastKey = null;
+};
+YAHOO.ext.util.Bench.prototype = {
+   start : <b>function</b>(key){
+       <b>this</b>.lastKey = key;
+       <b>this</b>.timers[key] = {};
+       <b>this</b>.timers[key].startTime = <b>new</b> Date().getTime(); 
+   },
+   
+   stop : <b>function</b>(key){
+       key = key || <b>this</b>.lastKey;
+       <b>this</b>.timers[key].endTime = <b>new</b> Date().getTime(); 
+   },
+   
+   getElapsed : <b>function</b>(key){
+       key = key || <b>this</b>.lastKey;
+       <b>return</b> this.timers[key].endTime - <b>this</b>.timers[key].startTime;
+   },
+   
+   toString : <b>function</b>(html){
+       <b>var</b> results = &quot;&quot;;
+       <b>for</b>(var key <b>in</b> this.timers){
+           <b>if</b>(typeof <b>this</b>.timers[key] != '<b>function</b>'){
+               results += key + &quot;:\t&quot; + (<b>this</b>.getElapsed(key) / 1000) + &quot; seconds\n&quot;;
+           }
+       }
+       <b>if</b>(html){
+           results = results.replace(&quot;\n&quot;, '&lt;br&gt;');
+       }
+       <b>return</b> results;
+   },
+   
+   show : <b>function</b>(){
+       alert(<b>this</b>.toString());
+   }
+};</code></pre><hr><div style="font-size:10px;text-align:center;color:gray;">yui-ext - Copyright &copy; 2006 Jack Slocum.  |
+    Yahoo! UI - Copyright &copy; 2006 Yahoo! Inc.<br />All rights reserved.</div>
+    </body></html>

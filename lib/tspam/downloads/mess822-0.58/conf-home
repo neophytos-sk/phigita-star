@@ -1,0 +1,5 @@
+/usr/local
+
+This is the mess822 home directory. Programs will be installed in
+.../bin; the mess822 library will be installed in .../lib; man pages
+will be installed in subdirectories of .../man.

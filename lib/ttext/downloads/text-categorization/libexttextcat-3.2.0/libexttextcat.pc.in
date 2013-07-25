@@ -1,0 +1,15 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+datarootdir=@datarootdir@
+datadir=@datadir@
+pkgdatadir=${datarootdir}/libexttextcat
+
+Name: libexttextcat
+Description: Library implementing N-gram-based text categorization
+Version: @VERSION@
+Requires:
+Libs: -L${libdir} -lexttextcat
+Cflags: -I${includedir}/libextextcat/
+

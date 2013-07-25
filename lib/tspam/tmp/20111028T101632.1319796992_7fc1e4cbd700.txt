@@ -1,0 +1,10 @@
+Received: from xwso (unknown [110.52.6.33])
+	by shzb.gov.cn (WorldPost) with ESMTP id A6B2C1E9DA6;
+	Fri, 28 Oct 2011 18:18:50 +0800 (CST) 
+Message-ID: <20111028181537552726@shzb.gov.cn> 
+From: =?gb2312?B?t+u6rbXP?= <xjkjb@shzb.gov.cn> 
+To:  
+Subject: =?gb2312?B?tNN8fLy8yvV8fNffz/J8fLncwO0tLS0tt+u6rbXP?= 
+Date: Fri, 28 Oct 2011 18:15:26 +0800 
+X-mailer: Ebk 0 
+Whoops!  What is a 'application/vnd.ms-excel'?

@@ -1,0 +1,149 @@
+ad_page_contract {
+    Displays last requests of a user
+
+    @author Gustaf Neumann 
+
+    @cvs-id $id: whos-online.tcl,v 1.1.1.1 2004/03/16 16:11:51 nsadmin exp $
+} -query {
+    {all:optional 0}
+    {orderby:optional "totaltime,desc"}
+} -properties {
+    title:onevalue
+    context:onevalue
+    user_string:onevalue
+}
+
+set title "Url Statistics"
+set context [list "Url Statistics"]
+set hide_patterns [parameter::get -parameter hide-requests -default {*.css}]
+
+set stat [throttle report_url_stats]
+set total 0.0
+set cnt 0
+set full_stat [list]
+
+foreach l $stat {
+  set total [expr {$total+[lindex $l 1]}]
+  set cnt   [expr {$cnt  +[lindex $l 2]}]
+  lappend full_stat [lappend l [expr {[lindex $l 1]/[lindex $l 2]}]]
+}
+set total_avg [expr {$cnt>0 ? $total/($cnt*1000.0) : "0" }]
+
+set label(0) "Show filtered"
+set tooltip(0) "Show filtered values"
+set label(1) "Show all"
+set tooltip(1) "Show all values"
+set all [expr {!$all}]
+set url [export_vars -base [ad_conn url] {all}]
+
+template::list::create \
+    -name stat_details \
+    -actions [list $label($all) $url $tooltip($all) \
+		 "Delete Statistics" flush-url-statistics "Delete URL Statistics"] \
+    -elements { 
+      url {
+        label "Request"
+	orderby url
+      }
+      totaltime {
+        label "Total Time"
+	html { align right }
+	aggregate sum
+	orderby totaltime
+      }
+      cnt {
+        label "Count"
+	html { align right }
+	aggregate sum
+	orderby cnt
+      }
+      avg {
+        label "Ms"
+	html { align right }
+	orderby avg
+      }
+      total {
+        label "Total"
+	html { align right }
+      }
+    }
+set all [expr {!$all}]
+
+multirow create stat_details url totaltime cnt avg total
+set hidden 0
+
+switch -glob $orderby {
+  *,desc {set order -decreasing}
+  *,asc  {set order -increasing}
+} 
+switch -glob $orderby {
+  url,*       {set index 0; set type -dictionary}
+  totaltime,* {set index 1; set type -integer}
+  cnt,*       {set index 2; set type -integer}
+  avg,*       {set index 3; set type -integer}
+}
+
+foreach l [lsort $type $order -index $index $full_stat] {
+  set avg [expr {[lindex $l 1]/[lindex $l 2]}]
+  set rel [expr {($avg/1000.0)/$total_avg}]
+
+  set url [lindex $l 0]
+  if {!$all} {
+    set exclude 0
+    foreach pattern $hide_patterns {
+      if {[string match $pattern $url]} {
+	set exclude 1
+	incr hidden
+	break
+      }
+    }
+    if {$exclude} continue
+  }
+  multirow append stat_details \
+      [string_truncate_middle -len 100 $url] [lindex $l 1] [lindex $l 2] \
+      $avg [format %.2f%% [expr {[lindex $l 1]*100.0/$total}]] 
+}
+
+#array set color {
+#   red {<div style='color: red'>}
+#   orange {<div style='color: purple'>}
+#   yellow {<div style='color: maroon'>}
+#   green {<div style='color: green'>}
+#   ok {}
+#}
+
+#set fmt  "%-75s|%14d|%7d|%10.0f|%8.2f%%\n"
+#set fmtn "%-75s|%14s|%7s|%10s|%9s<br>"
+set report "<font size='-2'><pre>"
+#append report [format $fmtn "" total cnt avg percent]
+
+#foreach l [lsort -real -decreasing -index 1 $stat] {
+#  set avg [expr {[lindex $l 1]/[lindex $l 2]}]
+#  set rel [expr {($avg/1000.0)/$total_avg}]
+#  if {$rel > 3} {set code red} \
+#  elseif {$rel > 2} {set code orange} \
+#  elseif {$rel > 1} {set code yellow} \
+#  elseif {$rel < 0.5} {set code green} \
+#  else {set code ok}
+#  if {[string compare $color($code) ""]} {
+#    set endtag </div>
+#  } else {
+#    set endtag ""
+#  }
+#  append report $color($code) [format $fmt \
+#		   [lindex $l 0] [lindex $l 1] [lindex $l 2] \
+#		   $avg \
+#		   [expr {[lindex $l 1]*100.0/$total}] \
+#                ] $endtag 
+#}
+append user_string "<b>Grand Total Avg Response time: </b>" \
+	[format %6.2f $total_avg] " seconds/call " \
+	"(base: $cnt requests)<br>"
+
+append user_string "$hidden requests hidden."
+if {$hidden>0} {
+  append user_string " (Patterns: $hide_patterns)"
+}
+
+
+

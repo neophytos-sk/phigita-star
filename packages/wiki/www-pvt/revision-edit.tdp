@@ -1,0 +1,92 @@
+contract {
+    param -id "id" -check "naturalnum notnull"
+}
+
+datastore \
+    -id revisiondata \
+    -singleton true \
+    -scope {user} \
+    -from_class ::wiki::Page_Revision \
+    -where [list "id = :id"] \
+    -limit 1
+
+guard { return @{revisiondata:rowcount} }
+
+
+val -id context_bar { return [::xo::kit::context_bar "Edit Revision"] }
+
+# keep css classes and tags used by context_bar
+::xo::tdp::excludeClassesFromRenaming {breadcrumb divider ul li active}
+
+
+
+# -------------------------------------------------------------------------------------------
+
+
+
+css {
+    #publishPost {font-variant:small-caps;}
+    #saveDraft {font-variant:small-caps;}
+}
+
+master -title "Edit Revision" {
+    layout_row {
+	layout_col -class span1
+	layout_col -class span11 {
+	    nt @{context_bar:noquote}
+	}
+    }
+
+    layout_row {
+	layout_col -class span2
+	layout_col -class span8 {
+
+	    h2 { i { t "Edit Revision" } }
+
+	    tpl -with "revisiondata" {
+		form -action revision-edit-2 -method post {
+		    input -type hidden -name id -value @{id}
+
+		    div -class "control-group" {
+			label -for "subject" { t "Title" }
+			div -class "controls" {
+			    input \
+				-id "subject" \
+				-class "input-block-level" \
+				-type "text" \
+				-name "title" \
+				-value "@{title}" \
+				-placeholder "Enter title here" \
+				-onkeypress "return event.keyCode!=13;"
+			}
+		    }
+		    div -class "control-group" {
+			label -for "body" { t "Body" }
+			div -class "controls" {
+			    textarea \
+				-id "body" \
+				-class "input-block-level" \
+				-name "content" \
+				-rows "15" \
+				-wrap "soft" {
+
+				    t @{content}
+				}
+			}
+		    }
+		    div -class "form-actions" {
+			input \
+			    -class "btn btn-info" \
+			    -value "Save Revision" \
+			    -type "submit"
+
+		    }
+		}
+	    }
+	    layout_col -class span2
+	}
+    }
+}
+
+
+

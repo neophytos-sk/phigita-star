@@ -1,0 +1,8 @@
+#!/bin/sh 
+
+sleep 10
+
+exec /opt/naviserver/bin/nsd-postgres -z -i -t /web/service-sat-0/etc/config-sat-9050.tcl -u service-sat-0 -g web
+
+# For AOLserver 4 using privileged ports (usually < 1024), add the flag
+# -b youraddress:yourport

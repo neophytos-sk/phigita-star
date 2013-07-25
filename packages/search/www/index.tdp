@@ -1,0 +1,229 @@
+contract {
+    param -id "q"
+}
+
+
+val -id directive_and_subquery {
+
+    set q [string trim @{q}]
+
+    set directive ""
+    set subQuery ""
+    set firstindex [string first {:} ${q}]
+    if { $firstindex != -1 } {
+	set directive [string tolower [string range ${q} 0 ${firstindex}]]
+	set subQuery [string trimleft [string range ${q} ${firstindex} end] { :}]
+    } else {
+	set firstchar [string index ${q} 0]
+	if { $firstchar eq {=} } {
+	    set directive {calc:}
+	    set subQuery [string range ${q} 1 end]
+	} else {
+	    set directive ""
+	    set subQuery ${q}
+	}
+    }
+
+    if { [string index ${directive} end] ne {:} } {
+	set directive [lrange [string tolower [string trim ${q}]] 0 1]
+    }
+
+
+    return [list $directive $subQuery]
+
+}
+
+guard -id redirect_search {
+
+    set directive_and_subquery @{directive_and_subquery}
+    lassign ${directive_and_subquery} directive subQuery
+
+    if {${directive} eq {trn:} || ${directive} eq {translate:} } {
+
+	set langclass [::ttext::langclass $subQuery]
+	if { $langclass eq {UNKNOWN} } {
+	    set langclass ""
+	} else {
+	    set langclass [join [string trim [string map {"\[" " " "\]" " " {--} {.}} $langclass]] { }]
+	}
+
+	if { -1 != [lsearch $langclass el.utf8] } {
+	    set targetlang en
+	} else {
+	    set targetlang el
+	}
+
+	ad_returnredirect "http://translate.google.com/#auto|${targetlang}|[ns_urlencode ${subQuery}]"
+	return 0
+    } elseif {${directive} eq {spell:}} {
+	ad_returnredirect "/spell-check/word-suggest?q=[ns_urlencode [string trim ${subQuery} {\"}]]"
+	return 0
+    } elseif {${directive} eq {news:}} {
+	ad_returnredirect "http://news.phigita.net/?q=[ns_urlencode [string trim ${subQuery} {\"}]]"
+	return 0
+    } elseif {${directive} eq {buzz:}} {
+	ad_returnredirect "http://buzz.phigita.net/?q=[ns_urlencode [string trim ${subQuery} {\"}]]"
+	return 0
+    } elseif {${directive} eq {whois:}} {
+	ad_returnredirect "http://whois.domaintools.com/[ns_urlencode [string trim ${subQuery} {\"}]]"
+	return 0
+    } elseif {${directive} eq {isbn:} } {
+	if { [isbn::valid_checksum_p $subQuery] } {
+	    ad_returnredirect "http://books.phigita.net/isbn/[ns_urlencode [string trim [isbn::convert_to_ean13 ${subQuery}] {\"}]]"
+	    return 0
+	} elseif { [::isbn::valid_ean13_p $subQuery] } {
+	    ad_returnredirect "http://books.phigita.net/isbn/[ns_urlencode [string map {- {}} [string trim ${subQuery} {\"}]]]"
+	    return 0
+	}
+    } elseif {${directive} eq {agenda:}} {
+	ad_returnredirect "http://agenda.phigita.net/?q=[ns_urlencode [string trim ${subQuery} {\"}]]"
+	return 0
+    } elseif {${directive} eq {books:}} {
+	ad_returnredirect "http://books.phigita.net/?q=[ns_urlencode [string trim ${subQuery} {\"}]]"
+	return 0
+    } elseif { ${directive} eq {imdb:}} {
+	ad_returnredirect "http://www.imdb.com/find?s=all&q=[ns_urlencode [string trim ${subQuery} {\"}]]"
+	return 0
+    } elseif { ${directive} eq {youtube:}} {
+	ad_returnredirect "https://www.youtube.com/results?search_query=[ns_urlencode [string trim ${subQuery} {\"}]]"
+	return 0
+    } elseif { ${directive} eq {amazon:}} {
+	ad_returnredirect "http://www.amazon.com/s/ref=nb_ss_gw/?url=search-alias%3Daps&field-keywords=[ns_urlencode [string trim ${subQuery} {\"}]]"
+	return 0
+    } elseif { ${directive} eq {wikipedia:}} {
+	ad_returnredirect "http://en.wikipedia.org/wiki/Special:Search?search=[ns_urlencode [string trim ${subQuery} {\"}]]"
+	return 0
+    } elseif { ${directive} eq {google:}} {
+	ad_returnredirect "https://www.google.com/search?ie=utf-8&oe=utf-8&q=[ns_urlencode [string trim ${subQuery} {\"}]]"
+	return 0
+    } elseif { ${directive} eq {calc:} } {
+	return 1   ;# continue processing we show the page ourselves
+    } elseif { ${directive} eq {reddit:}} {
+	set reddits {
+	    aiclass 
+	    mlclass 
+	    pgmclass 
+	    algoclass
+	    nlpclass
+	    cryptoclass
+	    gametheoryclass
+	    hciclass
+	    securityclass
+	}
+	if { -1 != [lsearch $subQuery $reddits] } {
+	    ad_returnredirect "http://www.reddit.com/r/${subQuery}"
+	    return 0
+	} else {
+	    ad_returnredirect "http://www.reddit.com/r/search?q=${subQuery}"
+	    return 0
+	}
+    } elseif { ${directive} eq {c++:} || ${directive} eq {cpp:} } {
+	ad_returnredirect "http://www.cplusplus.com/search.do?q=${subQuery}"
+	return 0
+    } elseif { ${directive} eq {wolfram:} } {
+	ad_returnredirect "http://www.wolframalpha.com/input/i?=${subQuery}"
+	return 0
+    }
+
+
+    if { [regexp -- {([0-9]*)(\.[0-9]+)?\s*([a-zA-z]{3})\s*in\s*([a-zA-z]{3})} ${q} __matchVar__ amount decimalpart fromCurrency toCurrency] } {
+	set fromCurrency [string toupper $fromCurrency]
+	set toCurrency [string toupper $toCurrency]
+	array set currencyToCountry {
+	    EUR Euro
+	    USD {United States}
+	    GBP {United Kingdom}
+	    CYP Cyprus
+	    CAD Canada
+	    AUD {Australian Dollar}
+	    JPY {Japanese Yen}
+	    INR India
+	    NZD {New Zealand}    
+	    CHF Switzerland
+	    ZAR {South Africa}
+	    SGD {Singapore}
+	    PLN {Poland}
+	    LEI {Romania}
+	    BGN {Bulgaria}
+	    MDL {Moldovan Leu}
+	    HUF {Hungarian Forint}
+	    SEK {Swedish Krona}
+	    BRL {Brazilian Real}
+	    NOK {Norwegian Krone}
+	    DKK {Danish Krone}
+	    RUB {Russian Ruble}
+	    RON {Romanian New Leu}
+	    KRW {South Korean Won}
+	    UAH {Ukrainian Hryvna}
+	    CZK {Czech Koruna}
+	    CNY {Chinese Yuan Renmimbi}
+	}
+	if { [info exists currencyToCountry($fromCurrency)] && [info exists currencyToCountry($toCurrency)] } {
+	    ad_returnredirect "http://www.xe.com/ucc/convert.cgi?Amount=${amount}${decimalpart}&From=${fromCurrency}&To=${toCurrency}"
+	    return 0
+	}
+    }
+
+ns_log notice "directive=$directive"
+
+    if { ${directive} eq {time in} } {
+	return 1 ;# continue processing - we show the page ourselves
+    }
+
+    ad_returnredirect "http://www.bing.com/search?q=[ns_urlencode ${q}]"
+    return 0
+
+
+}
+
+
+
+
+val -id directive { return [lindex @{directive_and_subquery} 0] }
+val -id subQuery { return [lindex @{directive_and_subquery} 1] }
+
+
+dataview {
+    tpl -if { @{directive} eq {calc:} } {
+	val -id title_for_calculator -name title {
+	    return "Calculator: @{subQuery}"
+	}
+	val -id html_for_calculator -name html {
+	    return "@{subQuery} = [::tcalc::eval @{subQuery}]"
+	}
+    }
+    tpl -if { @{directive} eq {time in} } {
+	val -id place { return [string tolower [lrange @{q} 2 end]] }
+
+	datastore \
+	    -id locationdata \
+	    -distinct true \
+	    -select "country region city" \
+	    -from_class Location \
+	    -where [list "lower(city)=:place"]
+
+	val -id html_for_time -name html {
+
+	    set html ""
+	    foreach tz @{locationdata} {
+		set country [$tz set country]
+		set region [$tz set region]
+		set time [ClockMgr getTimeIn -format "%l:%M%P (%Z)" -regionCodeVar regionCode $country $region]
+		if { ${time} ne {} && ![info exists __seen($time)] } {
+		    set __seen($time) {}
+		    set pretty_tz "[$tz set city], $regionCode"
+		    append html "${time} - <b>Time</b> in <b>${pretty_tz}</b>" "<br />"
+		}
+	    }
+
+	    return $html
+
+	}
+    }
+}
+
+
+master -title @{title} -search_query @{q} {
+
+    nt @{html:noquote}
+}

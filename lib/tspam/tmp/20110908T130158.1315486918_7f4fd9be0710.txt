@@ -1,0 +1,12 @@
+Received: from 196.20.160.206 by mail.columbusbrick.com; Sun, 16 May 2021 08:59:57 +0400 
+Date: Sun, 16 May 2021 08:59:57 +0400 
+From: =?koi8-r?B?Ivfp+vkhIg==?= <verily7@columbusbrick.com> 
+X-Mailer: The Bat! (v3.62.14) Professional 
+Reply-To: verily7@columbusbrick.com 
+X-Priority: 3 (Normal) 
+Message-ID: <331875689.68741415607166@columbusbrick.com> 
+To: webmaster@phigita.net 
+Subject: =?koi8-r?B?7+bv8u3s5e7p5SD36fr5IC0gNCDk7vEgKOLl+iD64fDp8+kpIA==?= 
+X-Antivirus: avast! (VPS 110224-0, 02/24/2011), Outbound message 
+X-Antivirus-Status: Clean 
+

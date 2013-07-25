@@ -1,0 +1,60 @@
+ad_maybe_redirect_for_registration
+
+set path_info_parts [split [ad_conn path_info] "/"]
+set id [lindex $path_info_parts 0]
+
+if { [string is integer -strict ${id}] } {
+    rp_form_put id $id
+    ad_conn_set path_info [join [lrange $path_info_parts 1 end] /]
+} else {
+    rp_returnnotfound
+    return
+}
+
+ad_page_contract {
+    @author Neophytos Demetriou
+} {
+    id:integer,notnull
+}
+
+
+
+set pathexp [list "User [ad_conn ctx_uid]"]
+set data [::db::Set new \
+	      -pathexp $pathexp \
+	      -select "1" \
+	      -type ::Content_Item \
+	      -where [list shared_p id=[ns_dbquotevalue ${id}]] \
+	      -limit 1]
+
+# ONLY IF ON DEVELOPMENT-SERVER
+#$data where id=[ns_dbquotevalue $id]
+
+$data load
+
+
+if { [$data emptyset_p] } {
+    rp_returnnotfound
+    return
+}
+
+set list ""
+foreach item $pathexp {
+    foreach {className instance_id} $item break
+    lappend list [$className set id]-${instance_id}
+}
+
+set directory /web/data/storage/
+append directory [join $list .]/
+append directory $id
+
+namespace path {::xo::ui}
+
+
+Page new -appendFromScript {
+
+#	HtmlText new -inline_p yes -html_text { Not Yet Implemented }
+
+       SourceFile new -source_file [acs_root_dir]/packages/xo-drive/lib/app-reader.tcl
+
+}

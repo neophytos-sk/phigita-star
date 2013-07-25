@@ -1,0 +1,11 @@
+Received: from ([110.52.7.88])
+	by jnfda.gov.cn(SkyMiracle WPX) with ESMTP 
+Message-ID: <20111121205512058387@jnfda.gov.cn> 
+From: "nj" <szyj@jnfda.gov.cn> 
+To:  
+Subject: =?gb2312?B?xPq6w6OsxPq1xMXz09G4+MT6wLTQxcHLo6EgtMvTyrz+ysfP3sqx?=
+	=?gb2312?B?08q8/qOsvavU2jE5NDg2McPruvPX1Lavyb6z/aOsx+u8sA==?=
+	=?gb2312?B?yrHUxLbBo6E=?= 
+Date: Mon, 21 Nov 2011 20:55:00 +0800 
+X-mailer: Jhasl 1 
+Whoops!  What is a 'application/vnd.ms-excel'?

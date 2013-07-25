@@ -1,0 +1,327 @@
+contract {
+    param -id "id" -check "naturalnum notnull"
+}
+
+val -id context_user_id { return [ad_conn ctx_uid] }
+val -id user_id { return [ad_conn user_id] }
+val -id context_username { return [ad_conn context_username] }
+
+datastore \
+    -id postdata \
+    -singleton true \
+    -scope context_user \
+    -from_class ::Blog_Item \
+    -where [list "id = :id" "shared_p='t'"] \
+    -extend {
+	set pretty_date [lc_time_fmt $entry_date %Q]
+	set pretty_time [lc_time_fmt $entry_date %r]
+
+	array set config [list \
+			      root [User set id]-[ad_conn ctx_uid] \
+			      container_object_id "X" \
+			      image_prefix "/~@{context_username}/media/preview/"]
+
+	set content_in_html ""
+	::xo::structured_text::stx_to_html config body content_in_html
+
+	set ac_toggle_msg [ad_decode $shared_p f publish privatize]
+	set ac_inverse_shared_p [ad_decode $shared_p f t f]
+
+    }
+
+guard { return @{postdata:rowcount} }
+
+datastore \
+    -id post_labeldata \
+    -scope context_user \
+    -select {
+	label_id
+	name
+    } -from_class [db::Left_Outer_Join new \
+		       -lhs [db::Set new \
+				 -alias m \
+				 -scope context_user \
+				 -type ::Blog_Item_Label_Map \
+				 -where [list "object_id=:id"]] \
+		       -rhs [db::Set new \
+				 -alias l \
+				 -scope context_user \
+				 -type ::Blog_Item_Label] \
+		       -join_condition {l.id=m.label_id}]
+
+
+datastore \
+    -id commentdata \
+    -select {
+	c.*
+	u.screen_name
+	u.first_names
+	u.last_name
+    } -from_class [::db::Inner_Join new \
+		     -lhs [::db::Set new \
+			       -alias c \
+			       -scope context_user \
+			       -type ::Blog_Item_Comment \
+			       -where [list "parent_id=:id"]] \
+		     -rhs [::db::Set new \
+			       -alias u \
+			       -type ::CC_Users] \
+		     -join_condition {c.creation_user = u.user_id}] \
+    -where [list "shared_p = 't'"] \
+    -order "creation_date" \
+    -extend {
+	set pretty_date [lc_time_fmt ${creation_date} %q]
+	set commentator_full_name "${first_names} ${last_name}"
+
+	set commentator_root_of_hierarchy [User set id]-${creation_user}
+	array set config [list \
+			      root ${commentator_root_of_hierarchy} \
+			      container_object_id "X" \
+			      image_prefix "/~${screen_name}/media/preview/"]
+
+	set content_in_html ""
+	::xo::structured_text::stx_to_html config comment content_in_html
+
+    }
+
+datastore \
+    -id prev_blogdata \
+    -scope context_user \
+    -from_class ::Blog_Item \
+    -where [list "shared_p='t'" "entry_date < \[ns_dbquotevalue @{object_get.postdata.entry_date}\]" "title is not null"] \
+    -order "entry_date desc" \
+    -limit 5
+
+datastore \
+    -id next_blogdata \
+    -scope context_user \
+    -from_class ::Blog_Item \
+    -where [list "shared_p='t'" "entry_date > \[ns_dbquotevalue @{object_get.postdata.entry_date}\]" "title is not null"] \
+    -order "entry_date" \
+    -limit 5
+
+val -id "next_blogdata" { lreverse @{next_blogdata} }
+
+val -id prev_post -x-value-from prev_blogdata { lindex @{prev_blogdata} 0 }
+val -id next_post -x-value-from next_blogdata { lindex @{next_blogdata} end }
+
+datastore \
+    -id userdata \
+    -singleton true \
+    -select {
+	screen_name
+	{first_names || ' ' || last_name as full_name}
+    } \
+    -from_class ::CC_Users \
+    -where [list "user_id=:context_user_id"]
+
+
+
+val -id title -with postdata { return [::util::coalesce @{title} "Entry \#@{id}"] }
+
+val -id selectedtab { return "blog-post" }
+
+# -------------------------------------------------------------------------------------------
+
+css {
+    .post_title {
+	font-family:"Arial Unicode MS",Arial,helvetica,sans-serif;
+	color: #00325B;
+	text-decoration: none;
+	font-size:1.25em;
+    }
+    .post_title:hover {
+	color:#00325B;
+	text-decoration:underline;
+    }
+    .post_content {
+	font-size:16px;
+    }
+    .post_content p {
+	background-color: #fff;
+	color: #333333;
+	font-size: 16px;
+	line-height: 24px;
+	margin-bottom: 1em;
+    }
+    .post span.typo_date {color: #808080;font-size: 10px;}
+
+    #btnPostComment, #btnAddComment {font-variant:small-caps;}
+
+}
+
+val -id context_username { return [ad_conn context_username] }
+
+master \
+    -src "/templates/www-shared.master.inc" \
+    -title "@{title} - @{object_get.userdata.full_name} - Blog" \
+    -rss "/~@{context_username}/blog/rss/" {
+
+    include -src "/templates/www-shared.tabs.inc"
+
+
+    # blog post title and author
+    tpl -with postdata {
+	div {
+	    a -class post_title -href @{id} { t @{title} }
+	    br
+	    small {
+		t "posted by @{object_get.userdata.full_name}, "
+		t "@{pretty_date} @{pretty_time}"
+	    }
+	}
+    }
+
+    # blog post labels
+    tpl -if @{post_labeldata:rowcount} {
+	p
+	div -class "post_labels" {
+	    tpl -for post_labeldata {
+		t " "
+		a -class "label label-success" -href "./?label_id=@{label_id}" {
+		    t @{name}
+		}
+	    }
+	}
+    }
+    
+    # blog post content
+    tpl -with postdata {
+	p
+	div -class post_content {
+	    t @{content_in_html:noquote}
+	}
+    }
+
+    # showing comments
+    tpl -if @{commentdata:rowcount} {
+	center {
+	    h2 {
+		t "Reader's Comments"
+	    }
+	}
+	ol {
+	    tpl -for commentdata {
+		li -class "well" {
+		    t @{content_in_html:noquote}
+		    t "-- "
+		    a -href "/~@{screen_name}/" {
+			t @{commentator_full_name}
+		    }
+		    t ", @{pretty_date}"
+		}
+		p
+	    }
+	}
+    }
+    br
+    br
+
+    # comment form
+    tpl -if @{val.registered_p} {
+	tpl -with postdata {
+	    p
+	    form -action comment-add-2 -method post {
+		input -type hidden -name parent_id -value "@{param.id}"
+
+		div -class "control-group" {
+		    label -for comment_body { t "Enter your comment below: " }
+		    div -class "controls" {
+			textarea \
+			    -id "comment_body" \
+			    -class "input-block-level" \
+			    -name "comment" \
+			    -rows "5" \
+			    -wrap "soft"
+		    }
+		}
+		div -class "form-actions" {
+		    button -id "btnPostComment" -type submit -class "btn btn-warning" {
+			t "Post Comment"
+		    }
+		}
+	    }
+	}
+    }
+    tpl -else "" {
+	center {
+	    a -id "btnAddComment" -class "btn btn-warning" -href "comment-add?parent_id=@{id}" {
+		t "Add Comment"
+	    }
+	}
+    }
+
+    # sidebar start
+    div -x-master-renderTo "sidebar" {
+	# actions
+	tpl -if { @{user_id} eq @{context_user_id} } {
+	    div -style "text-align:center;" {
+		div -class "sidebar-heading" { t "Owner Actions" }
+		p
+		div -class "sidebar-actions" {
+		    a -class "btn btn-mini btn-warning" -href "https://my.phigita.net/blog/post-edit?id=@{param.id}" {
+			t "Edit"
+		    }
+		    t " "
+		    a -class "btn btn-mini btn-info" -href "https://my.phigita.net/blog/@{param.id}" {
+			t "Private View"
+		    }
+		}
+	    }
+	}
+	p
+	# nearby blog posts
+	div -style "text-align:center;" {
+	    div -class "sidebar-heading" { t "Nearby" }
+	    tpl -if { @{next_post} ne {} } {
+		tpl -with next_post {
+		    a -href @{id} {
+			nt "&laquo; newer"
+		    }
+		    t " | "
+		}
+	    }
+	    a -href "./" {
+		t "up"
+	    }
+	    tpl -if { @{prev_post} ne {} } {
+		tpl -with prev_post {
+		    t " | "
+		    a -href @{id} {
+			nt "older &raquo;"
+		    }
+		}
+	    }
+	}
+	p
+	ul -class "nearby" {
+	    tpl -for next_blogdata {
+		li {
+		    a -href @{id} {
+			t @{title}
+		    }
+		}
+	    }
+	    tpl -with postdata {
+		li {
+		    tpl -if {@{title} ne {} } {
+			b { t @{title} }
+		    }
+		    tpl -else "" {
+			font -color "red" {
+			    t "Untitled: This Entry"
+			}
+		    }
+		}
+	    }
+	    tpl -for prev_blogdata {
+		li {
+		    a -href @{id} {
+			t @{title}
+		    }
+		}
+	    }
+	}
+    }
+    # sidebar end
+}

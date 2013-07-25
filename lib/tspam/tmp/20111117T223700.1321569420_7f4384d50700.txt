@@ -1,0 +1,91 @@
+Received: from localhost ([127.0.0.1] helo=sfs-ml-3.v29.ch3.sourceforge.com)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <quickfix-developers-bounces@lists.sourceforge.net>)
+	id 1RRAZV-0004nK-Op; Thu, 17 Nov 2011 22:36:41 +0000 from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <mstjacques@decisionplus.com>) id 1RRAZV-0004nF-3N
+	for Quickfix-developers@lists.sourceforge.net;
+	Thu, 17 Nov 2011 22:36:41 +0000 from smtp145.iad.emailsrvr.com ([207.97.245.145])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1RRAZU-0008K1-Ar
+	for Quickfix-developers@lists.sourceforge.net;
+	Thu, 17 Nov 2011 22:36:41 +0000 from smtp54.relay.iad1a.emailsrvr.com (localhost.localdomain
+	[127.0.0.1])
+	by smtp54.relay.iad1a.emailsrvr.com (SMTP Server) with ESMTP id
+	0AFCD2B0FF8 for <Quickfix-developers@lists.sourceforge.net>;
+	Thu, 17 Nov 2011 17:20:07 -0500 (EST) from localhost (localhost.localdomain [127.0.0.1])
+	by smtp54.relay.iad1a.emailsrvr.com (SMTP Server) with ESMTP id
+	079872B0FD6 for <Quickfix-developers@lists.sourceforge.net>;
+	Thu, 17 Nov 2011 17:20:07 -0500 (EST) by smtp54.relay.iad1a.emailsrvr.com (Authenticated sender:
+	mstjacques-AT-decisionplus.com) with ESMTPSA id D42E22B0FE2
+	for <Quickfix-developers@lists.sourceforge.net>;
+	Thu, 17 Nov 2011 17:20:06 -0500 (EST) 
+X-ACL-Warn:  
+X-SMTPDoctor-Processed: csmtpprox 2.7.4 
+X-Virus-Scanned: OK 
+Message-ID: <4EC5888A.8000707@decisionplus.com> 
+Date: Thu, 17 Nov 2011 17:19:54 -0500 
+From: Marc St-Jacques <mstjacques@decisionplus.com> 
+User-Agent: Mozilla/5.0 (Windows NT 6.0; rv:8.0) Gecko/20111105 Thunderbird/8.0 
+To: Quickfix-developers@lists.sourceforge.net 
+X-Spam-Score: 0.0 (/) 
+X-Spam-Report: Spam Filtering performed by mx.sourceforge.net.
+	See http://spamassassin.org/tag/ for more details. 
+X-Headers-End: 1RRAZU-0008K1-Ar 
+Subject: [Quickfix-developers] FileLogPath required when MySQL is used 
+X-BeenThere: quickfix-developers@lists.sourceforge.net 
+X-Mailman-Version: 2.1.9 
+Precedence: list 
+List-Id: <quickfix-developers.lists.sourceforge.net> 
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/quickfix-developers>,
+	<mailto:quickfix-developers-request@lists.sourceforge.net?subject=unsubscribe> 
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=quickfix-developers> 
+List-Post: <mailto:quickfix-developers@lists.sourceforge.net> 
+List-Help: <mailto:quickfix-developers-request@lists.sourceforge.net?subject=help> 
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/quickfix-developers>,
+	<mailto:quickfix-developers-request@lists.sourceforge.net?subject=subscribe> 
+Errors-To: quickfix-developers-bounces@lists.sourceforge.net 
+--------------------------------------
+QuickFIX Documentation: http://www.quickfixengine.org/quickfix/doc/html/index.html
+QuickFIX Support: http://www.quickfixengine.org/services.html
+
+I'm sure this is a FAQ, I see numerous requests on the Net on various 
+forums without a clear answer.
+
+I'm using VC++ 2003.
+I would have thought that rebuilding QuickFix with MySQL support 
+(#define HAVE_MYSQL 1) was sufficient for enable MySQL logging.
+
+The rebuild was successful.
+
+After completing all the mandatory MySQLLog... and MySQLStore... entries 
+in the configuration file (and put them in either [DEFAULT] or [SESSION] 
+in case I'm doing this wrong), the program still asks for a valid 
+FileLogPath.
+
+Any hint ?
+
+Regards.
+
+Marc St-Jacques.
+
+
+
+
+
+
+
+------------------------------------------------------------------------------
+All the data continuously generated in your IT infrastructure 
+contains a definitive record of customers, application performance, 
+security threats, fraudulent activity, and more. Splunk takes this 
+data and makes sense of it. IT sense. And common sense.
+http://p.sf.net/sfu/splunk-novd2d
+_______________________________________________
+Quickfix-developers mailing list
+Quickfix-developers@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/quickfix-developers
+
+
+

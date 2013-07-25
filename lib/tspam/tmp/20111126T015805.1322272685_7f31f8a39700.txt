@@ -1,0 +1,39 @@
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws;
+	s=new; d=advertise-bz.cn;
+	h=Message-ID:Date:Reply-To:From:User-Agent:MIME-Version:To:Subject:Content-Type;
+	b=jgrbSVi3tBkP7lzdmv4ThKXsAS7/JXsE8vWg0wQaImUju6uwCnia5ToRLJrCdL9nRtAWw1r1CwFLmWmVaSAsEwsBIaIXvA5gKsAXym4IaJj/NS17ft+Qzxwa9vR7+ahAI9Y5nNcZ2VRQalyw0jJkSfTrAtd97kG6yioDWq1s4i4=; 
+Message-ID: <4F853C8E.676322D1@advertise-bz.cn> 
+Date: Fri, 25 Nov 2011 17:57:51 -0800 
+Reply-To: "Blog Marketing" <admin@advertise-bz.cn> 
+From: "Blog Marketing" <admin@advertise-bz.cn> 
+User-Agent: Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US; rv:1.8.1.12) Gecko/20080213 Thunderbird/2.0.0.12 
+To: <k2pts@phigita.net> 
+Subject: How would you like 2 Million Sites linking to your ad ? 
+--------------------------------------
+We have developed a software that automatically
+places your ad on millions of blogs.
+
+You will receive thousands of targeted hits to 
+your website as Blog Blaster places your ad on 
+blogs that match your ad's category. 
+
+This method has never been released to the public 
+before. Very few, if anyone has implemented this.
+
+For Full Details please read the attached .html file
+
+
+
+
+
+
+
+
+
+
+
+To Unsubscribe please read the attached Unsubscribe.txt file
+
+--------------------------------------
+ content-type=application/octet-stream part-token=::mime::599-2--------------------------------------
+ content-type=application/octet-stream part-token=::mime::599-3

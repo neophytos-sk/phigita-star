@@ -1,0 +1,89 @@
+#source [acs_root_dir]/packages/kernel/tcl/20-templating/00-renderingvisitor-procs.tcl
+#source [acs_root_dir]/packages/kernel/tcl/20-templating/10-ui-procs.tcl
+#source [acs_root_dir]/packages/kernel/tcl/20-templating/29-hypertext-procs.tcl
+#source [acs_root_dir]/packages/kernel/tcl/20-templating/37-flv-procs.tcl
+#source [acs_root_dir]/packages/kernel/tcl/20-templating/40-panel-procs.tcl
+#source /web/service-phgt-0/packages/kernel/tcl/20-templating/YY-module-procs.tcl
+
+#####ad_conn_set user_id 814
+
+#####
+namespace path {::xo::ui ::}
+
+
+set path_info_parts [split [ad_conn path_info] {/}]
+set id [lindex [ad_conn urlv] end]
+if { ![string is integer $id] } {
+    set id [lindex [ad_conn urlv] end-1]
+    rp_form_put id $id
+    ad_conn_set path_info [join [lrange $path_info_parts 1 end-2] /]
+} else {
+    rp_form_put id $id
+    ad_conn_set path_info [join [lrange $path_info_parts 1 end-1] /]
+}
+
+
+ad_page_contract {
+    @author Neophytos Demetriou
+} {
+    id:integer
+    {size:integer 500}
+    {p:integer 1}
+    {q ""}
+}
+
+
+if { -1 == [lsearch -exact "120 240 500 800" $size] } {
+    set size 800
+}
+
+
+set pathexp [list "User [ad_conn user_id]"]
+set data [::db::Set new \
+	      -pathexp $pathexp \
+	      -select [list id title {extra->'XO.File.Type' as filetype} {extra->'XO.Info.page_size' as page_size} {extra->'MP3.Info.Title' as mp3_title} {extra->'MP3.Info.Artist' as mp3_artist}] \
+	      -type ::Content_Item \
+	      -noinit]
+
+$data lappend where "[::xo::db::qualifier id = $id]"
+
+$data load
+
+if { [$data emptyset_p] } {
+    global ad_conn
+    ns_log notice "one-view id=$id \n\nad_conn=[array get ad_conn]\n\n[::xo::ns::printset [::xo::ns::getform]]"
+    rp_returnnotfound
+    return
+}
+
+global o
+set o [$data head]
+
+
+
+
+Page new -appendFromScript {
+    global o
+
+    switch -exact -- [$o set filetype] {
+	{image} {
+	    ModuleFile new -module_file [acs_root_dir]/packages/xo-drive/lib/app-image-viewer.tcl
+	}
+	{audio} {
+
+	    rp_form_put mp3_title [$o set mp3_title]
+	    rp_form_put mp3_artist [$o set mp3_artist]
+
+	    ModuleFile new -module_file [acs_root_dir]/packages/xo-drive/lib/app-mp3-player.tcl
+	}
+	{video} {
+	    ModuleFile new -module_file [acs_root_dir]/packages/xo-drive/lib/app-player.tcl
+	}
+	{presentation} -
+	{spreadsheet}  -
+	{document} {
+	    SourceFile new -source_file [acs_root_dir]/packages/xo-drive/lib/app-reader.tcl
+	}
+    }
+}
+

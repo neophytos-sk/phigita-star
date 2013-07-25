@@ -1,0 +1,10 @@
+Received: from 113.165.222.45 by smtp1.kaba.com; Wed, 17 Aug 2011 08:35:01 +0700 
+Date: Wed, 17 Aug 2011 08:35:01 +0700 
+From: =?koi8-r?B?IvPPwtPU18XOzsnLIg==?= <lightheartednessrq95@iberkaba.com> 
+X-Mailer: The Bat! (v3.5) Educational 
+Reply-To: lightheartednessrq95@iberkaba.com 
+X-Priority: 3 (Normal) 
+Message-ID: <056449265.24579568469640@iberkaba.com> 
+To: webmaster@phigita.net 
+Subject: =?koi8-r?B?8NLRzcHRIMHSxc7EwSDPxsnTz9chIO3F1NLPIC0g7cHS2MnOwSDyz93B?= 
+

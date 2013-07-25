@@ -1,0 +1,255 @@
+<html><head><title>LayoutRegionLite.js</title><link rel="stylesheet" type="text/css" href="../resources/style.css" media="screen"/></head><body><h1>LayoutRegionLite.js</h1><pre class="highlighted"><code><i>/**
+ * @extends YAHOO.ext.util.Observable
+ * This class represents a lightweight region <b>in</b> a layout manager.
+ */</i>
+YAHOO.ext.LayoutRegionLite = <b>function</b>(mgr, config, pos){
+    <b>this</b>.mgr = mgr;
+    <b>this</b>.position  = pos;
+    <b>this</b>.events = {
+        <i>/**
+         * @event beforeremove
+         * Fires before a panel is removed (or closed). To cancel the removal set &quot;e.cancel = true&quot; on the event argument.
+         * @param {YAHOO.ext.LayoutRegion} <b>this</b>
+         * @param {YAHOO.ext.ContentPanel} panel The panel
+         * @param {Object} e The cancel event object
+         */</i>
+        'beforeremove' : <b>new</b> YAHOO.util.CustomEvent('beforeremove'),
+        <i>/**
+         * @event invalidated
+         * Fires when the layout <b>for</b> this region is changed.
+         * @param {YAHOO.ext.LayoutRegion} <b>this</b>
+         */</i>
+        'invalidated' : <b>new</b> YAHOO.util.CustomEvent('invalidated'),
+        <i>/**
+         * @event visibilitychange
+         * Fires when <b>this</b> region is shown or hidden 
+         * @param {YAHOO.ext.LayoutRegion} <b>this</b>
+         * @param {Boolean} visibility true or false
+         */</i>
+        'visibilitychange' : <b>new</b> YAHOO.util.CustomEvent('visibilitychange'),
+        <i>/**
+         * @event paneladded
+         * Fires when a panel is added. 
+         * @param {YAHOO.ext.LayoutRegion} <b>this</b>
+         * @param {YAHOO.ext.ContentPanel} panel The panel
+         */</i>
+        'paneladded' : <b>new</b> YAHOO.util.CustomEvent('paneladded'),
+        <i>/**
+         * @event panelremoved
+         * Fires when a panel is removed. 
+         * @param {YAHOO.ext.LayoutRegion} <b>this</b>
+         * @param {YAHOO.ext.ContentPanel} panel The panel
+         */</i>
+        'panelremoved' : <b>new</b> YAHOO.util.CustomEvent('panelremoved'),
+        <i>/**
+         * @event collapsed
+         * Fires when <b>this</b> region is collapsed. 
+         * @param {YAHOO.ext.LayoutRegion} <b>this</b>
+         */</i>
+        'collapsed' : <b>new</b> YAHOO.util.CustomEvent('collapsed'),
+        <i>/**
+         * @event expanded
+         * Fires when <b>this</b> region is expanded. 
+         * @param {YAHOO.ext.LayoutRegion} <b>this</b>
+         */</i>
+        'expanded' : <b>new</b> YAHOO.util.CustomEvent('expanded'),
+        <i>/**
+         * @event panelactivated
+         * Fires when a panel is activated. 
+         * @param {YAHOO.ext.LayoutRegion} <b>this</b>
+         * @param {YAHOO.ext.ContentPanel} panel The activated panel
+         */</i>
+        'panelactivated' : <b>new</b> YAHOO.util.CustomEvent('panelactivated'),
+        <i>/**
+         * @event resized
+         * Fires when the user resizes <b>this</b> region. 
+         * @param {YAHOO.ext.LayoutRegion} <b>this</b>
+         * @param {Number} newSize The <b>new</b> size (width <b>for</b> east/west, height <b>for</b> north/south)
+         */</i>
+        'resized' : <b>new</b> YAHOO.util.CustomEvent('resized')
+    };
+    <i>/** A collection of panels <b>in</b> this region. @type YAHOO.ext.util.MixedCollection */</i>
+    <b>this</b>.panels = <b>new</b> YAHOO.ext.util.MixedCollection();
+    <b>this</b>.panels.getKey = <b>this</b>.getPanelId.createDelegate(<b>this</b>);
+    <b>this</b>.box = null;
+    <b>this</b>.activePanel = null;
+    
+    <b>this</b>.applyConfig(config);
+};
+
+YAHOO.extendX(YAHOO.ext.LayoutRegionLite, YAHOO.ext.util.Observable, {
+    getPanelId : <b>function</b>(p){
+        <b>return</b> p.getId();
+    },
+    
+    applyConfig : <b>function</b>(config){
+        <b>this</b>.margins = config.margins || <b>this</b>.margins || {top: 0, left: 0, right:0, bottom: 0};
+        <b>this</b>.config = config;
+    },
+    
+    <i>/**
+     * Resizes the region to the specified size. For vertical regions (west, east) <b>this</b> adjusts 
+     * the width, <b>for</b> horizontal (north, south) the height.
+     * @param {Number} newSize The <b>new</b> width or height
+     */</i>
+    resizeTo : <b>function</b>(newSize){
+        <b>switch</b>(this.position){
+            <b>case</b> 'east':
+            <b>case</b> 'west':
+                <b>this</b>.el.setWidth(newSize);
+                <b>this</b>.fireEvent('resized', <b>this</b>, newSize);
+            <b>break</b>;
+            <b>case</b> 'north':
+            <b>case</b> 'south':
+                <b>this</b>.el.setHeight(newSize);
+                <b>this</b>.fireEvent('resized', <b>this</b>, newSize);
+            <b>break</b>;                
+        }
+    },
+    
+    getBox : <b>function</b>(){
+        <b>var</b> b = <b>this</b>.activePanel.getBox(false, true);
+        <b>return</b> b;
+    },
+    
+    getMargins : <b>function</b>(){
+        <b>return</b> this.collapsed ? <b>this</b>.cmargins : <b>this</b>.margins;
+    },
+    
+    updateBox : <b>function</b>(box){
+        <b>this</b>.box = box;
+        <b>this</b>.activePanel.getEl().dom.style.left = box.x + 'px';
+        <b>this</b>.activePanel.getEl().dom.style.top = box.y + 'px';
+        <b>this</b>.activePanel.getEl().setSize(box.width, box.height);
+    },
+    
+    <i>/**
+     * Returns the container element <b>for</b> this region.
+     * @<b>return</b> {YAHOO.ext.Element}
+     */</i>
+    getEl : <b>function</b>(){
+        <b>return</b> this.activePanel;
+    },
+    
+    <i>/**
+     * Returns true <b>if</b> this region is currently visible.
+     * @<b>return</b> {Boolean}
+     */</i>
+    isVisible : <b>function</b>(){
+        <b>return</b> this.visible;
+    },
+    
+    setActivePanel : <b>function</b>(panel){
+        panel = <b>this</b>.getPanel(panel);
+        <b>if</b>(this.activePanel &amp;&amp; <b>this</b>.activePanel != panel){
+            <b>this</b>.activePanel.setActiveState(false);
+            <b>this</b>.activePanel.getEl().setStyle({left:-10000,right:-10000});
+        }
+        <b>this</b>.activePanel = panel;
+        panel.setActiveState(true);
+        <b>if</b>(this.panelSize){
+            panel.setSize(<b>this</b>.panelSize.width, <b>this</b>.panelSize.height);
+        }
+        <b>this</b>.fireEvent('panelactivated', <b>this</b>, panel);
+        <b>this</b>.fireEvent('invalidated');
+    },
+    
+    <i>/**
+     * Show the specified panel.
+     * @param {Number/String/ContentPanel} panelId The panels index, id or the panel itself
+     * @<b>return</b> {YAHOO.ext.ContentPanel} The shown panel or null
+     */</i>
+    showPanel : <b>function</b>(panel){
+        <b>if</b>(panel = <b>this</b>.getPanel(panel)){
+            <b>this</b>.setActivePanel(panel);
+        }
+        <b>return</b> panel;
+    },
+    
+    <i>/**
+     * Get the active panel <b>for</b> this region.
+     * @<b>return</b> {YAHOO.ext.ContentPanel} The active panel or null
+     */</i>
+    getActivePanel : <b>function</b>(){
+        <b>return</b> this.activePanel;
+    },
+    
+    <i>/**
+     * Add the passed ContentPanel(s)
+     * @param {ContentPanel...} panel The ContentPanel(s) to add (you can pass more than one)
+     * @<b>return</b> {YAHOO.ext.ContentPanel} The panel added (<b>if</b> only one was added)
+     */</i>
+    add : <b>function</b>(panel){
+        <b>if</b>(arguments.length &gt; 1){
+            <b>for</b>(var i = 0, len = arguments.length; i &lt; len; i++) {
+            	<b>this</b>.add(arguments[i]);
+            }
+            <b>return</b> null;
+        }
+        <b>if</b>(this.hasPanel(panel)){
+            <b>this</b>.showPanel(panel);
+            <b>return</b> panel;
+        }
+        panel.setRegion(<b>this</b>);
+        <b>this</b>.panels.add(panel);
+        panel.getEl().setStyle('position', 'absolute');
+        <b>this</b>.setActivePanel(panel);
+        <b>this</b>.fireEvent('paneladded', <b>this</b>, panel);
+        <b>return</b> panel;
+    },
+    
+    <i>/**
+     * Returns true <b>if</b> the panel is <b>in</b> this region.
+     * @param {Number/String/ContentPanel} panel The panels index, id or the panel itself
+     * @<b>return</b> {Boolean}
+     */</i>
+    hasPanel : <b>function</b>(panel){
+        <b>if</b>(typeof panel == 'object'){ <i>// must be panel obj</i>
+            panel = panel.getId();
+        }
+        <b>return</b> this.getPanel(panel) ? true : false;
+    },
+    
+    <i>/**
+     * Removes the specified panel. If preservePanel is not true (either here or <b>in</b> the config), the panel is destroyed.
+     * @param {Number/String/ContentPanel} panel The panels index, id or the panel itself
+     * @param {Boolean} preservePanel Overrides the config preservePanel option
+     * @<b>return</b> {YAHOO.ext.ContentPanel} The panel that was removed
+     */</i>
+    remove : <b>function</b>(panel, preservePanel){
+        panel = <b>this</b>.getPanel(panel);
+        <b>if</b>(!panel){
+            <b>return</b> null;
+        }
+        <b>var</b> e = {};
+        <b>this</b>.fireEvent('beforeremove', <b>this</b>, panel, e);
+        <b>if</b>(e.cancel === true){
+            <b>return</b> null;
+        }
+        <b>var</b> panelId = panel.getId();
+        <b>this</b>.panels.removeKey(panelId);
+        <b>return</b> panel;
+    },
+    
+    <i>/**
+     * Returns the panel specified or null <b>if</b> it's not <b>in</b> this region.
+     * @param {Number/String/ContentPanel} panel The panels index, id or the panel itself
+     * @<b>return</b> {YAHOO.ext.ContentPanel}
+     */</i>
+    getPanel : <b>function</b>(id){
+        <b>if</b>(typeof id == 'object'){ <i>// must be panel obj</i>
+            <b>return</b> id;
+        }
+        <b>return</b> this.panels.get(id);
+    },
+    
+    <i>/**
+     * Returns <b>this</b> regions position (north/south/east/west/center).
+     * @<b>return</b> {String} 
+     */</i>
+    getPosition: <b>function</b>(){
+        <b>return</b> this.position;    
+    }
+});</code></pre><hr><div style="font-size:10px;text-align:center;color:gray;">yui-ext - Copyright &copy; 2006 Jack Slocum.  |
+    Yahoo! UI - Copyright &copy; 2006 Yahoo! Inc.<br />All rights reserved.</div>
+    </body></html>

@@ -1,0 +1,14 @@
+% Computer Modern Roman Sperrsatz
+% EXPERIMENTAL!
+
+if unknown cmbase: input cmbase fi
+
+font_identifier:="CMRS"; font_size design_size*pt#;
+
+input c-cmr;   % compute size parameters for CMR family
+
+letter_fit#:=letter_fit# + u#;      % Wider sidebearings for all glyphs
+ligs:=1;                            % No f-ligatures in Sperrsatz
+
+generate roman      % switch to the driver file
+

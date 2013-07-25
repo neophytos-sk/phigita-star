@@ -1,0 +1,15 @@
+prefix=/opt/naviserver
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+datarootdir=${prefix}/share
+datadir=${datarootdir}
+pkgdatadir=${datarootdir}/libexttextcat
+
+Name: libexttextcat
+Description: Library implementing N-gram-based text categorization
+Version: 3.2.0
+Requires:
+Libs: -L${libdir} -lexttextcat
+Cflags: -I${includedir}/libextextcat/
+

@@ -1,0 +1,131 @@
+Received: from localhost ([127.0.0.1] helo=sfs-ml-4.v29.ch3.sourceforge.com)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <quickfix-developers-bounces@lists.sourceforge.net>)
+	id 1RR6Z3-00060a-6g; Thu, 17 Nov 2011 18:19:57 +0000 from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+	helo=mx.sourceforge.net)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <rashiedwaraich@gmail.com>) id 1RR6Z1-00060T-MB
+	for quickfix-developers@lists.sourceforge.net;
+	Thu, 17 Nov 2011 18:19:55 +0000 from mail-vx0-f175.google.com ([209.85.220.175])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1RR6Yx-00006G-N0
+	for quickfix-developers@lists.sourceforge.net;
+	Thu, 17 Nov 2011 18:19:55 +0000 by vcbfl11 with SMTP id fl11so2792440vcb.34
+	for <quickfix-developers@lists.sourceforge.net>;
+	Thu, 17 Nov 2011 10:19:46 -0800 (PST) by 10.52.98.227 with SMTP id el3mr56802787vdb.8.1321553986154; Thu,
+	17 Nov 2011 10:19:46 -0800 (PST) by 10.52.183.1 with HTTP; Thu, 17 Nov 2011 10:19:46 -0800 (PST) 
+Received-SPF: pass (sog-mx-1.v43.ch3.sourceforge.com: domain of gmail.com
+	designates 209.85.220.175 as permitted sender)
+	client-ip=209.85.220.175; envelope-from=rashiedwaraich@gmail.com;
+	helo=mail-vx0-f175.google.com; 
+In-Reply-To: <CACxisXQ1zoBGJ6Wi0KaURyNyP8rCZQ6DF=tspxKZgMH5wW+8kA@mail.gmail.com> 
+References: <CA+bcenW-jX34_zQgMsD4nY4SzOjYif_krc49qAEjUjhA35ydjg@mail.gmail.com>
+	<CACxisXQ1zoBGJ6Wi0KaURyNyP8rCZQ6DF=tspxKZgMH5wW+8kA@mail.gmail.com> 
+Date: Thu, 17 Nov 2011 19:19:46 +0100 
+Message-ID: <CA+bcenXiiDnT3dBDs22zqSKEBKuLxrEkKE7ggZzdK9aBHiYfiA@mail.gmail.com> 
+From: Rasheed Waraich <rashiedwaraich@gmail.com> 
+To: Kenny Stone <kstone@connamara.com> 
+X-Spam-Score: -0.6 (/) 
+X-Spam-Report: Spam Filtering performed by mx.sourceforge.net.
+	See http://spamassassin.org/tag/ for more details.
+	-1.5 SPF_CHECK_PASS SPF reports sender host as permitted sender for
+	sender-domain
+	0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail provider
+	(rashiedwaraich[at]gmail.com)
+	-0.0 SPF_PASS               SPF: sender matches SPF record
+	1.0 HTML_MESSAGE           BODY: HTML included in message
+	-0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
+	author's domain
+	0.1 DKIM_SIGNED            Message has a DKIM or DK signature,
+	not necessarily valid
+	-0.1 DKIM_VALID Message has at least one valid DKIM or DK signature 
+X-Headers-End: 1RR6Yx-00006G-N0 
+Cc: Taimoor Choudhary <taimoorchoudhary@yahoo.com>,
+	quickfix-developers@lists.sourceforge.net 
+Subject: Re: [Quickfix-developers] ValidateIncomingMessage in QuickFIX/NET? 
+X-BeenThere: quickfix-developers@lists.sourceforge.net 
+X-Mailman-Version: 2.1.9 
+Precedence: list 
+List-Id: <quickfix-developers.lists.sourceforge.net> 
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/quickfix-developers>,
+	<mailto:quickfix-developers-request@lists.sourceforge.net?subject=unsubscribe> 
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=quickfix-developers> 
+List-Post: <mailto:quickfix-developers@lists.sourceforge.net> 
+List-Help: <mailto:quickfix-developers-request@lists.sourceforge.net?subject=help> 
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/quickfix-developers>,
+	<mailto:quickfix-developers-request@lists.sourceforge.net?subject=subscribe> 
+Errors-To: quickfix-developers-bounces@lists.sourceforge.net 
+--------------------------------------
+QuickFIX Documentation: http://www.quickfixengine.org/quickfix/doc/html/index.html
+QuickFIX Support: http://www.quickfixengine.org/services.html
+
+--------------------------------------
+Thanks Kenny. Nice suggestion...
+
+Is it the EASIEST or the ONLY solution?
+
+On Thu, Nov 17, 2011 at 7:15 PM, Kenny Stone <kstone@connamara.com> wrote:
+
+> The easiest thing would probably be to set that field as a STRING in your
+> data dictionary.
+>
+> --
+> Kenny Stone
+> Connamara Systems, LLC
+>
+>
+> On Thu, Nov 17, 2011 at 12:06 PM, Rasheed Waraich <
+> rashiedwaraich@gmail.com> wrote:
+>
+>> QuickFIX Documentation:
+>> http://www.quickfixengine.org/quickfix/doc/html/index.html
+>> QuickFIX Support: http://www.quickfixengine.org/services.html
+>>
+>>
+>>
+>> Hello Experts,
+>>
+>> The QuickFIX/J supports "ValidateIncomingMessage" which be turned on/off
+>> as required.
+>>
+>> Is it possible to achieve similar thing in QuickFIX/NET?
+>>
+>> I want to turn off the validation of Tag 62 in Quote message... The
+>> broker is sending us back relative value dates like "00000000-00:02:00.000"
+>>
+>> Any guidance will be highly appreciated...
+>>
+>> --
+>> //Regards
+>> Rasheed
+>>
+>>
+>> ------------------------------------------------------------------------------
+>> All the data continuously generated in your IT infrastructure
+>> contains a definitive record of customers, application performance,
+>> security threats, fraudulent activity, and more. Splunk takes this
+>> data and makes sense of it. IT sense. And common sense.
+>> http://p.sf.net/sfu/splunk-novd2d
+>> _______________________________________________
+>> Quickfix-developers mailing list
+>> Quickfix-developers@lists.sourceforge.net
+>> https://lists.sourceforge.net/lists/listinfo/quickfix-developers
+>>
+>
+>
+
+
+-- 
+//Regards
+Rasheed
+--------------------------------------
+------------------------------------------------------------------------------
+All the data continuously generated in your IT infrastructure 
+contains a definitive record of customers, application performance, 
+security threats, fraudulent activity, and more. Splunk takes this 
+data and makes sense of it. IT sense. And common sense.
+http://p.sf.net/sfu/splunk-novd2d--------------------------------------
+_______________________________________________
+Quickfix-developers mailing list
+Quickfix-developers@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/quickfix-developers

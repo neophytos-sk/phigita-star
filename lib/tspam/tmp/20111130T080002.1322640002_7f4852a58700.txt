@@ -1,0 +1,22 @@
+Received: from m13.sztelecom.com (wm_smtp02 [127.0.0.1])
+	by m13.sztelecom.com (Postfix) with ESMTP id DAB9C784015;
+	Wed, 30 Nov 2011 15:59:35 +0800 (CST) from xmyoq (wm_smtp02 [127.0.0.1])
+	by m13.sztelecom.com (Postfix) with ESMTP id 926F02E0;
+	Wed, 30 Nov 2011 15:58:25 +0800 (CST) from xmyoq (unknown [172.16.0.250])
+	by m13.sztelecom.com (Postfix) whith ESMTP id 15955VS7PWR;
+	Wed, 30 Nov 2011 15:58:25 +0800 (CST) 
+X-KSVirus-check: 0 
+X-SKE-CHECKED: 1 
+X-ABS-CHECKED: 1 
+X-SENDER-IP: 172.16.0.250 
+X-LOGIN-NAME: yanfei@sztelecom.com 
+X-ATTACHMENT-NUM: 1 
+X-SENDER: yanfei@sztelecom.com 
+Message-ID: <20111130155948848233@sztelecom.com> 
+From: =?gb2312?B?0MfAy7Oxv8bDs9PQz965q8u+?= <yanfei@sztelecom.com> 
+To:  
+Subject: =?gb2312?B?uastv6otv84ttPMtuNmjrL2r1No4NzY0w+u689fUtq8=?=
+	=?gb2312?B?yb6z/aOsx+uy6dTEo6E=?= 
+Date: Wed, 30 Nov 2011 15:59:39 +0800 
+X-mailer: Ktgjtl 8 
+Whoops!  What is a 'application/vnd.ms-excel'?

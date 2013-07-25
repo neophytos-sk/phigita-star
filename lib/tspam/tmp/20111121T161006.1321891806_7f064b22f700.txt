@@ -1,0 +1,11 @@
+Received: from 113.190.186.34 by mail.kojima-kyousei.com; Mon, 21 Nov 2011 23:08:17 +0700 
+Date: Mon, 21 Nov 2011 23:08:17 +0700 
+From: =?koi8-r?B?8sHEwSD3ycvUz9LP187B?= <eyeglasses85@kojima-kyousei.com> 
+X-Mailer: The Bat! (v3.5.30) Educational 
+Reply-To: eyeglasses85@kojima-kyousei.com 
+X-Priority: 3 (Normal) 
+Message-ID: <592745569.30624057580592@kojima-kyousei.com> 
+To: webmaster@phigita.net 
+Subject: =?koi8-r?B?69LP18HUySDJ2iDOwdTV0sHM2M7PyiDLz9bJ?= 
+--------------------------------------
+ content-type=image/jpeg part-token=::mime::807-2

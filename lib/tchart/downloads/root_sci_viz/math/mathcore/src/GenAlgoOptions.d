@@ -1,0 +1,1 @@
+  math/mathcore/src/GenAlgoOptions.o math/mathcore/src/GenAlgoOptions.d: $(wildcard include/Math/GenAlgoOptions.h include/Math/IOptions.h include/Math/Error.h include/TError.h include/Rtypes.h include/RConfig.h include/RVersion.h include/DllImport.h include/Rtypeinfo.h include/snprintf.h include/strlcpy.h include/TGenericClassInfo.h include/TSchemaHelper.h include/Math/Util.h)

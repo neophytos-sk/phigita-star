@@ -1,0 +1,12 @@
+Received: from [110.52.6.8] (helo=gajslzi)
+	by dedic6.cmspanel.ru with esmtpa (Exim 4.72 (FreeBSD))
+	(envelope-from <post@artru.ru>)
+	id 1RT2Rj-000G88-Fl; Wed, 23 Nov 2011 05:20:29 +0300 
+Message-ID: <20111123101901110007@artru.ru> 
+From: =?gb2312?B?1PjH7dz3?= <post@artru.ru> 
+To:  
+Subject: =?gb2312?B?vvYuyqQu1tAusuMt1se72yC08tTsILjf0KcgzcW20y0=?=
+	=?gb2312?B?LS0t1PjH7dz3?= 
+Date: Wed, 23 Nov 2011 10:18:56 +0800 
+X-mailer: Mdvelik 8 
+Whoops!  What is a 'application/vnd.ms-excel'?

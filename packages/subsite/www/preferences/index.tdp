@@ -1,0 +1,88 @@
+contract {
+    param -id return_url -default "" -optional 1
+}
+
+val -id user_locale { return [ad_conn locale] }
+
+datastore \
+    -id localedata \
+    -from_class Locale \
+    -select "locale {label as name}" \
+    -order "label"
+
+
+if {0} {
+    set langOptions ""
+    foreach o [$langList set result] {
+	$o set name [_ language_[$o set code] [$o set name] [$o set code]]
+	if {[$o set code] eq ${user_locale}} {
+	    append langOptions "<option value=[$o set code] selected=\"\">[$o set name]</option>"
+	} else {
+	    append langOptions "<option value=[$o set code]>[$o set name]</option>"
+	}
+    }
+}
+
+val -id context_bar { return [::xo::kit::context_bar "Preferences"] }
+# keep css classes and tags used by context_bar
+::xo::tdp::excludeClassesFromRenaming {breadcrumb divider ul li active}
+
+
+master -title "Preferences" {
+
+    nt @{context_bar:noquote}
+
+    script {
+	nt {
+	    function saving() {alert("Your preferences have been saved");}
+	}
+    }
+
+
+    form -name "pref-form" -method "GET" -action "pref-set" {
+	input -type "hidden" -name "return_url" -value @{return_url}
+
+	table -width "100%" -border "0" -cellspacing "0" -cellpadding "2" {
+	    tr -bgcolor "#cbdced" {
+		td {
+		    font -face "arial,sans-serif" -size "-1" {
+			t "Save your preferences when finished and return back."
+		    }
+		}
+		td -align "right" {
+		    input -class "btn" -type "submit" -onclick "saving()" -value "Save Preferences" -name "cmd"
+		}
+	    }
+	}
+	#p
+	#b { t "Global Preferences" } 
+	#t " (changes apply to all services)"
+	p
+	table -width "100%" -cellpadding "0" -cellspacing "0" -border "0" {
+	    tr {
+		td -width "175" -valign "top" -nowrap "" {
+		    b { t "Interface Language" }
+		}
+		td -colspan "2" {
+		    t "Display tips and messages in: "
+		    select -name "hl" {
+			tpl -for "localedata" {
+			    option \
+				-value @{locale} \
+				-x-bind {
+				    checked "@{val.user_locale} eq @{locale}"
+				} { 
+				    t @{name} 
+				}
+			}
+		    }
+		}
+	    }
+	}
+    }
+}
+
+
+
+
+

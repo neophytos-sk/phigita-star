@@ -1,0 +1,35 @@
+Received: from apache by uky.edu with local (Exim 4.63)
+	(envelope-from <punsv84@lsinter.net>)
+	id 02J9KK-8AQTRP-65
+	for <k2pts@phigita.net>; Wed, 30 Nov 2011 09:50:27 +0100 
+To: <k2pts@phigita.net> 
+Subject: Rejected Federal Tax transfer 
+Date: Wed, 30 Nov 2011 09:50:27 +0100 
+From: <Elsa_Kirkland@irs.gov> 
+Message-ID: <7C42306467DC1D6643891DD8B9911A00@qcqfqfighicci.uky.edu> 
+X-Priority: 3 
+X-Mailer: PHPMailer 5.1 (phpmailer.sourceforge.net) 
+--------------------------------------
+Internal Revenue Service United States Department of the Treasury
+
+
+Your    Tax  payment (ID: 40290018991459), recently sent from your  checking account was returned by the  your financial institution. 
+
+Canceled Tax  transaction
+Tax Transaction ID: 40290018991459
+ Reason for rejection : See details in the report below
+
+  Tax Transaction Report:
+http://cioucokici.pochtamt.ru/ymepede.html
+
+
+You can avoid unnecessary penalties and interest by paying your taxes in full and on time. This application will allow you or your authorized representative (Power of Attorney) to apply for an installment agreement if you cannot pay your taxes in full.
+
+
+
+ Internal Revenue Service, 
+ Metro Plex 1, 
+ 8401 Corporate Drive, Suite 300, 
+ Landover, MD  20785
+
+

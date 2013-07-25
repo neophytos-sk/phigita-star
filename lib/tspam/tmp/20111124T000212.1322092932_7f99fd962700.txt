@@ -1,0 +1,46 @@
+Received: by web1.extjs.com (Postfix, from userid 33)
+	id 9EFA26C1FE; Thu, 24 Nov 2011 00:02:03 +0000 (UTC) 
+To: k2pts@phigita.net 
+Subject: "Ext: Open Discussion" update 
+X-PHP-Originating-Script: 1000:class_mail.php 
+From: "Sencha Forum" <admin@sencha.com> 
+Auto-Submitted: auto-generated 
+Message-ID: <20111124000203.3101c7413552@www.sencha.com> 
+X-Priority: 3 
+X-Mailer: vBulletin Mail via PHP 
+Date: Thu, 24 Nov 2011 00:02:03 +0000 (UTC) 
+--------------------------------------
+Dear k2pts,
+
+You are subscribed to the forum Ext: Open Discussion, there have been 2 new thread(s) and 0 updated thread(s).
+http://www.sencha.com/forum/forumdisplay.php?6-Ext-Open-Discussion
+
+The following threads are new:
+************
+Microsoft Date in from REST, but no Microsoft Date out to REST
+http://www.sencha.com/forum/showthread.php?156727-Microsoft-Date-in-from-REST-but-no-Microsoft-Date-out-to-REST
+In forum: Ext: Open Discussion
+Started by: CrazyEnigma
+Last post: 23 Nov 2011 3:05 PM
+************
+what technique can be used for a screen like this?
+http://www.sencha.com/forum/showthread.php?156854-what-technique-can-be-used-for-a-screen-like-this
+In forum: Ext: Open Discussion
+Started by: v0nni
+Last post: 23 Nov 2011 5:25 PM
+
+
+The following threads have been updated:
+
+
+All the best,
+Sencha Forum
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Unsubscription information:
+
+To unsubscribe from this forum, please visit this page:
+http://www.sencha.com/forum/subscription.php?do=removesubscription&type=forum&subscriptionid=63&auth=e23de5f6387a31c5573cf4993e28e47f
+
+
+

@@ -1,0 +1,753 @@
+<!doctype html public "-//W3C//DTD HTML 4.0 Frameset//EN""http://www.w3.org/TR/REC-html40/frameset.dtd">
+<html>
+<head>
+<title>
+ka-Map Overview
+</title>
+<link rel ="stylesheet" type="text/css" href="stylesheet.css" title="Style">
+<script>
+function asd() {
+	
+		parent.document.title="kaTool.js Overview";
+	
+}
+</script>
+</head>
+<body bgcolor="white" onload="asd();">
+
+<!-- ========== START OF NAVBAR ========== -->
+<a name="navbar_top"><!-- --></a>
+<table border="0" width="100%" cellpadding="1" cellspacing="0">
+<tr>
+<td colspan=2 bgcolor="#EEEEFF" class="NavBarCell1">
+<a name="navbar_top_firstrow"><!-- --></a>
+<table border="0" cellpadding="0" cellspacing="3">
+  <tr align="center" valign="top">
+  
+  
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-summary.html"><font class="NavBarFont1"><b>Overview</b></font></a>&nbsp;</td>
+  <td bgcolor="#FFFFFF" class="NavBarCell1Rev">	&nbsp;<font class="NavBarFont1Rev"><b>File</b></font>&nbsp;</td>
+  
+
+  <td bgcolor="#FFFFFF" class="NavBarCell1"> 	<font class="NavBarFont1">Class</font>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-tree.html"><font class="NavBarFont1"><b>Tree</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="index-all.html"--><font class="NavBarFont1"><b>Index</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="help-doc.html"><font class="NavBarFont1"><b>Help</b></font></a>&nbsp;</td>
+  </tr>
+</table>
+</td>
+<td bgcolor="#EEEEFF" align="right" valign="top">
+<em>
+<b>ka-Map</b></em>
+</td>
+</tr>
+
+<tr>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+&nbsp;PREV&nbsp;
+&nbsp;NEXT</font></td>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+  <a href="index.html" target="_top"><b>FRAMES</b></a>  &nbsp;
+&nbsp;<a href="overview-summary.html" target="_top"><b>NO FRAMES</b></a>
+&nbsp;&nbsp;
+<script>
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="allclasses-noframe.html" TARGET=""><B>All Classes</B></A>');
+  }
+  //-->
+</script>
+<noscript>
+<a href="allclasses-noframe.html" target=""><b>All Classes</b></a>
+</noscript>
+</font></td>
+</tr>
+</table>
+<!-- =========== END OF NAVBAR =========== -->
+
+<hr>
+<center>
+	
+	   <h2>kaTool.js</h2>
+	
+</center>
+
+	
+
+
+<h4>Summary</h4>
+<p>
+	
+		No overview generated for 'kaTool.js'<BR/><BR/>
+	
+</p>
+
+<hr>
+
+
+    <table border="1" cellpadding="3" cellspacing="0" width="100%">
+    <tr bgcolor="#CCCCFF" class="TableHeadingColor">
+    <td colspan=2><font size="+2">
+    
+        <b>Class Summary</b>
+    
+    </font></td>
+    </tr>
+    
+    <tr bgcolor="white" class="TableRowColor">
+    <td width="15%"><b><a href="kaNavigator.html">kaNavigator</a></b></td>
+    <td>kaNavigator is a general purpose navigation tool for kaMap instances.</td>
+    </tr>
+    
+    <tr bgcolor="white" class="TableRowColor">
+    <td width="15%"><b><a href="kaTool.html">kaTool</a></b></td>
+    <td>kaTool API.<br>
+ An API for building tools that work with kaMap.</td>
+    </tr>
+    
+    </table>
+    <hr/> 
+
+
+<!-- ========== METHOD SUMMARY =========== -->
+
+	<a name="method_summary"><!-- --></a>
+	<table border="1" cellpadding="3" cellspacing="0" width="100%">
+		<tr bgcolor="#CCCCFF" class="TableHeadingColor">
+			<td colspan=2>
+				<font size="+2">
+					<b>Method Summary</b>
+				</font>
+			</td>
+		</tr>
+	
+		
+		   <tr bgcolor="white" class="TableRowColor">
+		      <td align="right" valign="top" width="1%">
+			 <font size="-1">
+			    <code>static&nbsp;Object</code>
+			 </font>
+		      </td>
+		      <td>
+			 <code>
+			    <b>
+			       <a href="GLOBALS.html#!s!bind">bind</a></b>(m,o)
+			 </code>
+			 <br>
+			 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			 
+		      </td>
+		   </tr>
+		
+		   <tr bgcolor="white" class="TableRowColor">
+		      <td align="right" valign="top" width="1%">
+			 <font size="-1">
+			    <code>static&nbsp;void</code>
+			 </font>
+		      </td>
+		      <td>
+			 <code>
+			    <b>
+			       <a href="GLOBALS.html#!s!kaTool_redirect_onkeypress">kaTool_redirect_onkeypress</a></b>(e)
+			 </code>
+			 <br>
+			 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			 
+		      </td>
+		   </tr>
+		
+	
+	</table>
+    <p>
+
+<!-- ========== END METHOD SUMMARY =========== -->
+
+
+        <pre class="sourceview"><span class="comment">/**********************************************************************
+ *
+ * $Id: kaTool.js,v 1.34 2006/10/19 02:36:28 pspencer Exp $
+ *
+ * purpose: an API for kaMap tools with a default navigation tool provided
+ *
+ * author: Paul Spencer (pspencer<span class="attrib">@dmsolutions</span>.ca)
+ *
+ * The original kaTool code was written by DM Solutions Group.
+ *
+ * TODO:
+ * 
+ **********************************************************************
+ *
+ * Copyright (c) 2005, DM Solutions Group Inc.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
+ * DEALINGS IN THE SOFTWARE.
+ *
+ **********************************************************************/</span>
+
+<span class="comment">/*
+ * includes code inspired by code in WindowManager.js
+ * Copyright 2005 MetaCarta, Inc., released under the BSD License
+ */</span>
+
+<span class="comment">//globally </span>
+var kaCurrentTool = null;
+
+<span class="comment">/**
+ * <span class="attrib">@class</span>
+ * kaTool API.&lt;br&gt;
+ * An API for building tools that work with kaMap.
+ * To create a new tool, you need to have included this file first.  Next
+ * create a function to instantiate your new tool.  All object construction
+ * functions must include a parameter that references the kaMap object on which
+ * they operate.&lt;br&gt;
+ * The object construction function must call the kaTool constructor using the
+ * following syntax:&lt;br&gt;&lt;br&gt;
+ * kaTool.apply( this, [oKaMap] );&lt;br&gt;&lt;br&gt;
+ * where oKaMap is the name of the parameter to the constructor function.
+ * You should then set the tool's name (this.name) and overload any functions
+ * for mouse handling etc.
+ *
+ * <span class="attrib">@constructor</span> kaTool
+ * kaTool is the base class for tools which operate on an instance of kaMap.
+ * <span class="attrib">@param</span> {Object} oKaMap the instance of kaMap on which this tool should operate
+ */</span>
+<span class="reserved">function</span> kaTool( oKaMap ) {
+    <span class="comment">/** the instance of kaMap on which this tool operates */</span>
+    <span class="reserved">this</span>.kaMap = oKaMap;
+    <span class="comment">/** the name of this tool */</span>
+    <span class="reserved">this</span>.name = <span class="literal">'kaTool'</span>;
+    <span class="comment">/** info tools get all events all the time */</span>
+    <span class="reserved">this</span>.bInfoTool = false;
+    
+    <span class="comment">// Default for mouse wheel: zoom in or out. (Mod D Badke)</span>
+    <span class="reserved">this</span>.wheelPlus = new Array(oKaMap, oKaMap.zoomOut, null);
+    <span class="reserved">this</span>.wheelMinus = new Array(oKaMap, oKaMap.zoomIn, null);
+    
+    <span class="reserved">this</span>.kaMap.registerTool( <span class="reserved">this</span> );
+};
+
+<span class="comment">/**
+ * is this an info tool or a regular tool?
+ */</span>
+kaTool.<span class="reserved">prototype</span>.isInfoTool = <span class="reserved">function</span>() {
+    <span class="reserved">return</span> <span class="reserved">this</span>.bInfoTool;
+};
+
+<span class="comment">/**
+ * activate this tool.  Activating the tool causes any existing tools to be
+ * deactivated.
+ */</span>
+kaTool.<span class="reserved">prototype</span>.activate = <span class="reserved">function</span>() {
+    <span class="reserved">this</span>.kaMap.activateTool( <span class="reserved">this</span> );
+    document.kaCurrentTool = <span class="reserved">this</span>;
+};
+
+<span class="comment">/**
+ * deactivate this tool.  
+ */</span>
+kaTool.<span class="reserved">prototype</span>.deactivate = <span class="reserved">function</span>() {
+    <span class="reserved">this</span>.kaMap.deactivateTool( <span class="reserved">this</span> );
+    document.kaCurrentTool = null;
+};
+
+<span class="comment">/**
+ * handle mouse movement over the viewport of the kaMap.  This
+  * method does nothing and should be overloaded by subclasses.
+ * <span class="attrib">@param</span> {Event} e the mouse event object
+ */</span>
+kaTool.<span class="reserved">prototype</span>.onmousemove = <span class="reserved">function</span>(e) {
+    <span class="reserved">return</span> false;
+};
+
+<span class="comment">/**
+ * handle mouse down events on the viewport of the kaMap.  This
+  * method does nothing and should be overloaded by subclasses.
+ * <span class="attrib">@param</span> {Event} e the mouse event object
+ */</span>
+kaTool.<span class="reserved">prototype</span>.onmousedown = <span class="reserved">function</span>(e) {
+    <span class="reserved">return</span> false;
+};
+
+<span class="comment">/**
+ * handle mouse up events on the viewport of the kaMap.  This
+  * method does nothing and should be overloaded by subclasses.
+ * <span class="attrib">@param</span> {Event} e the mouse event object
+ */</span>
+kaTool.<span class="reserved">prototype</span>.onmouseup = <span class="reserved">function</span>(e) {
+    <span class="reserved">return</span> false;
+};
+
+<span class="comment">/**
+ * handle mouse doubleclicks on the viewport of the kaMap.  This
+ * method does nothing and should be overloaded by subclasses.
+ * <span class="attrib">@param</span> {Event} e the mouse event object
+ */</span>
+kaTool.<span class="reserved">prototype</span>.ondblclick = <span class="reserved">function</span>(e) {
+    <span class="reserved">return</span> false;
+};
+
+<span class="comment">/**
+ * Set the object and function to call when the mouse wheel
+ * event triggers. The parameters are saved in the tool object
+ * this is called for, and only affect that tool.
+ * 
+ * <span class="attrib">@param</span> {array} plusSet  - parameters for positive wheel scroll
+ * <span class="attrib">@param</span> {array} minusSet - parameters for negative wheel scroll
+ * 
+ * plusSet and minusSet are arrays of structure:
+ *   [0] - object to apply function for or null
+ *   [1] - function to apply
+ *   [2] - function arguments or null for no arguments
+ * 
+ * Set minusSet and/or plusSet to null to disable that scroll direction.
+ * 
+ * eg: --disable mouse wheel for navigator tool:
+ * 				 myKaNavigator.setMouseWheel(null, null);
+ * 
+ *     --set navigator tool to zoom (same as default action):
+ *         myKaNavigator.setMouseWheel([myKaMap, myKaMap.zoomIn, null],
+ * 					 											     [myKaMap, myKaMap.zoomOut, null]);
+ * 
+ * (New D Badke)
+ */</span>
+kaTool.<span class="reserved">prototype</span>.setMouseWheel = <span class="reserved">function</span>(minusSet, plusSet) {
+	<span class="reserved">this</span>.wheelMinus = minusSet;
+	<span class="reserved">this</span>.wheelPlus = plusSet;
+};
+
+<span class="comment">/**
+ * Handle mouse wheel events over the viewport of the kaMap.  This
+ * applies a function set by the setMouseWheel function. If the function
+ * is null, do nothing. (Mod D Badke)
+ * 
+ * <span class="attrib">@param</span> {Event} e the mouse event object
+ */</span>
+kaTool.<span class="reserved">prototype</span>.onmousewheel = <span class="reserved">function</span>(e) {
+    e = (e)?e:((event)?event:null);
+    var wheelDelta = e.wheelDelta ? e.wheelDelta : e.detail*-1;
+    var wheelSet = null;
+    <span class="reserved">if</span> (wheelDelta &gt; 0) 
+    	wheelSet = <span class="reserved">this</span>.wheelMinus;
+    <span class="reserved">else</span>
+    	wheelSet = <span class="reserved">this</span>.wheelPlus;
+    
+  	<span class="reserved">if</span> (wheelSet) {
+  		obj = (wheelSet[0]) ? wheelSet[0] : null;
+  		func = (wheelSet[1]) ? wheelSet[1] : null;
+  		args = (wheelSet[2]) ? wheelSet[2] : null;
+  		<span class="reserved">if</span> (func) {
+			<span class="reserved">if</span> (args) {
+				func.apply(obj, args);
+			} <span class="reserved">else</span>{
+			    func.apply(obj);
+			}
+  		}
+    }
+};
+
+<span class="comment">/**
+ * adjust a page-relative pixel position into a kaMap relative
+ * pixel position
+ *
+ * <span class="attrib">@param</span> {Integer} x the x page coordinate to convert
+ * <span class="attrib">@param</span> {Integer} y the y page coordinate to convert
+ * <span class="attrib">@return</span> {Array} return an array containing the converted coordinates
+ */</span>
+kaTool.<span class="reserved">prototype</span>.adjustPixPosition = <span class="reserved">function</span>( x, y ) {
+    var obj = <span class="reserved">this</span>.kaMap.domObj;
+    var offsetLeft = 0;
+    var offsetTop = 0;
+    <span class="reserved">while</span> (obj) {
+        offsetLeft += parseInt(obj.offsetLeft);
+        offsetTop += parseInt(obj.offsetTop);
+        obj = obj.offsetParent;
+    }
+    
+    var pX = parseInt(<span class="reserved">this</span>.kaMap.theInsideLayer.style.left) + 
+             offsetLeft - <span class="reserved">this</span>.kaMap.xOrigin - x;
+    var pY = parseInt(<span class="reserved">this</span>.kaMap.theInsideLayer.style.top) + 
+             offsetTop - <span class="reserved">this</span>.kaMap.yOrigin - y;
+             
+    <span class="reserved">return</span> [pX,pY];
+};
+
+<span class="comment">/*
+ * key press events are directed to the HTMLDocument rather than the
+ * div on which we really wanted them to happen.  So we set the document
+ * keypress handler to this function and redirect it to the kaMap core
+ * keypress handler, which will eventually reach the onkeypress handler
+ * of our current tool ... which by default is the keyboard navigation.
+ *
+ * To get the keyboard events in the first place, add the following when you
+ * want the keypress events to be captured
+ *
+ * if (isIE4) document.onkeydown = kaTool_redirect_onkeypress;
+ * document.onkeypress = kaTool_redirect_onkeypress;
+ */</span>
+<span class="reserved">function</span> kaTool_redirect_onkeypress(e) {
+    <span class="reserved">if</span> (document.kaCurrentTool) {
+        document.kaCurrentTool.onkeypress(e);
+    }
+};
+
+<span class="comment">/**
+ * handle keypress events.  Keypress events are normally dispatched
+ * here rather than in a sub-class.
+ * <span class="attrib">@param</span> {Event} e the keypress event object
+ */</span>
+kaTool.<span class="reserved">prototype</span>.onkeypress = <span class="reserved">function</span>(e) {
+    e = (e)?e:((event)?event:null);
+    <span class="reserved">if</span> (e) {
+        var charCode=(e.charCode)?e.charCode:e.keyCode;
+        var b=true;
+        var nStep = 16;
+        switch(charCode) {
+          case 38:<span class="comment">//up</span>
+            <span class="reserved">this</span>.kaMap.moveBy(0,nStep);
+            <span class="reserved">this</span>.kaMap.triggerEvent( KAMAP_EXTENTS_CHANGED, <span class="reserved">this</span>.kaMap.getGeoExtents() );
+            break;
+          case 40:
+            <span class="reserved">this</span>.kaMap.moveBy(0,-nStep);
+            <span class="reserved">this</span>.kaMap.triggerEvent( KAMAP_EXTENTS_CHANGED, <span class="reserved">this</span>.kaMap.getGeoExtents() );
+            break;
+          case 37:
+            <span class="reserved">this</span>.kaMap.moveBy(nStep,0);
+            <span class="reserved">this</span>.kaMap.triggerEvent( KAMAP_EXTENTS_CHANGED, <span class="reserved">this</span>.kaMap.getGeoExtents() );
+            break;
+          case 39:
+            <span class="reserved">this</span>.kaMap.moveBy(-nStep,0);
+            <span class="reserved">this</span>.kaMap.triggerEvent( KAMAP_EXTENTS_CHANGED, <span class="reserved">this</span>.kaMap.getGeoExtents() );
+            break;
+          case 33:
+            <span class="reserved">this</span>.kaMap.slideBy(0, <span class="reserved">this</span>.kaMap.viewportHeight/2);
+            break;
+          case 34:
+            <span class="reserved">this</span>.kaMap.slideBy(0,-<span class="reserved">this</span>.kaMap.viewportHeight/2);
+            break;
+          case 36:
+            <span class="reserved">this</span>.kaMap.slideBy(<span class="reserved">this</span>.kaMap.viewportWidth/2,0);
+            break;
+          case 35:
+            <span class="reserved">this</span>.kaMap.slideBy(-<span class="reserved">this</span>.kaMap.viewportWidth/2,0);
+            break;
+          case 43: <span class="comment">//ascii +</span>
+          case 61: <span class="comment">//ascii =</span>
+            <span class="reserved">this</span>.kaMap.zoomIn();
+            break;
+         case 45:
+            <span class="reserved">this</span>.kaMap.zoomOut();
+            break;
+          default:
+            b=false;
+        }
+        <span class="reserved">if</span> (b) {
+            <span class="reserved">return</span> <span class="reserved">this</span>.cancelEvent(e);
+        }
+        <span class="reserved">return</span> true;
+    }
+};
+
+<span class="comment">/**
+ * handle the mouse moving over the kaMap viewport.  This is a method does
+ * nothing and should be overloaded in a subclass
+ * <span class="attrib">@param</span> {Event} e the mouse event
+ */</span>
+kaTool.<span class="reserved">prototype</span>.onmouseover = <span class="reserved">function</span>(e) {
+    <span class="reserved">return</span> false;
+};
+
+<span class="comment">/**
+ * handle the mouse leaving the kaMap viewport.  This is a method
+ * releases the keypress handler and should be called from any
+ * sub class that overloads this method.
+ * <span class="attrib">@param</span> {Event} e the mouse event
+ */</span>
+kaTool.<span class="reserved">prototype</span>.onmouseout = <span class="reserved">function</span>(e) {
+    <span class="reserved">if</span> (<span class="reserved">this</span>.kaMap.isIE4) {
+        document.onkeydown = null;
+    }
+    document.onkeypress = null;
+    <span class="reserved">return</span> false;
+};
+
+<span class="comment">/**
+ * provide a cross-platform method of cancelling events, including
+ * stopping of event bubbling and propagation.
+ * <span class="attrib">@param</span> {Event} e the event to cancel
+ */</span>
+kaTool.<span class="reserved">prototype</span>.cancelEvent = <span class="reserved">function</span>(e) {
+    e = (e)?e:((event)?event:null);
+    e.cancelBubble = true;
+    e.returnValue = false;
+    <span class="reserved">if</span> (e.stopPropogation) {
+        e.stopPropogation();
+    }
+    <span class="reserved">if</span> (e.preventDefault) {
+        e.preventDefault();
+    }
+    <span class="reserved">return</span> false;
+};
+
+<span class="comment">/**
+ * Construct a new kaNavigator instance on a given kaMap instance
+ *
+ * <span class="attrib">@class</span>
+ * kaNavigator is a general purpose navigation tool for kaMap instances.
+ * It provides panning through click-and-drag, and various keyboard
+ * navigation.
+ *
+ * <span class="attrib">@base</span> kaTool
+ * <span class="attrib">@constructor</span>
+ * <span class="attrib">@param</span> {Object} oKaMap the kaMap instance to provide navigation for
+ * <span class="attrib">@author</span> Paul Spencer
+ */</span>
+<span class="reserved">function</span> kaNavigator( oKaMap ) {
+    kaTool.apply( <span class="reserved">this</span>, [oKaMap] );
+    <span class="comment">/** the name of this tool */</span>
+    <span class="reserved">this</span>.name = <span class="literal">'kaNavigator'</span>;
+    <span class="comment">/** the cursor to use when the map is not being dragged */</span>
+	<span class="reserved">this</span>.cursorNormal = [<span class="literal">"url('images/grab.cur'),move"</span>, <span class="literal">'-moz-grab'</span>, <span class="literal">'grab'</span>, <span class="literal">'move'</span>];
+	<span class="comment">/** the cursor to use when the map is being dragged */</span>
+	<span class="reserved">this</span>.cursorDrag = [<span class="literal">"url('images/grabbing.cur'),move"</span>, <span class="literal">'-moz-grabbing'</span>, <span class="literal">'grabbing'</span>, <span class="literal">'move'</span>];
+	<span class="comment">/** the cursor to use over the map (by default) */</span>
+    <span class="reserved">this</span>.cursor = <span class="reserved">this</span>.cursorNormal;
+
+    <span class="comment">/** the image to use for this tool when it is active on the map */</span>
+    <span class="reserved">this</span>.activeImage = <span class="reserved">this</span>.kaMap.server + <span class="literal">'images/button_pan_3.png'</span>;
+
+    <span class="comment">/** the image to use for this tool when it is disabled */</span>
+    <span class="reserved">this</span>.disabledImage = <span class="reserved">this</span>.kaMap.server + <span class="literal">'images/button_pan_2.png'</span>;
+    
+    <span class="comment">/** track the last x position of the mouse for panning */</span>
+    <span class="reserved">this</span>.lastx = null;
+    <span class="comment">/** track the last y position of the mouse for panning */</span>
+    <span class="reserved">this</span>.lasty = null;
+    <span class="comment">/** track whether the mouse is down or up for panning support */</span>
+    <span class="reserved">this</span>.bMouseDown = false;
+    
+    <span class="reserved">for</span> (var p in kaTool.<span class="reserved">prototype</span>) {
+        <span class="reserved">if</span> (!kaNavigator.<span class="reserved">prototype</span>[p])
+            kaNavigator.<span class="reserved">prototype</span>[p]= kaTool.<span class="reserved">prototype</span>[p];
+    }
+};
+
+<span class="comment">/**
+ * handle the mouse leaving the viewport.  If the mouse is down, stop
+ * dragging.
+ * <span class="attrib">@param</span> {Event} e the mouse event object
+ */</span>
+kaNavigator.<span class="reserved">prototype</span>.onmouseout = <span class="reserved">function</span>(e) {
+	e = (e)?e:((event)?event:null);
+    <span class="reserved">if</span> (!e.target) e.target = e.srcElement;
+    <span class="reserved">if</span> (e.target.id == <span class="reserved">this</span>.kaMap.domObj.id) {
+        <span class="reserved">this</span>.bMouseDown = false;
+        <span class="reserved">return</span> kaTool.<span class="reserved">prototype</span>.onmouseout.apply(<span class="reserved">this</span>, [e]);
+    }
+};
+
+<span class="comment">/**
+ * handle the mouse moving inside viewport.  If the mouse is down, move
+ * the map.
+ * <span class="attrib">@param</span> {Event} e the mouse event object
+ */</span>
+kaNavigator.<span class="reserved">prototype</span>.onmousemove = <span class="reserved">function</span>(e) {
+    e = (e)?e:((event)?event:null);
+    
+    <span class="reserved">if</span> (!<span class="reserved">this</span>.bMouseDown) {
+        <span class="reserved">return</span> false;
+    }
+    
+    <span class="reserved">if</span> (!<span class="reserved">this</span>.kaMap.layersHidden) {
+        <span class="reserved">this</span>.kaMap.hideLayers();
+    }
+    var newTop = safeParseInt(<span class="reserved">this</span>.kaMap.theInsideLayer.style.top);
+    var newLeft = safeParseInt(<span class="reserved">this</span>.kaMap.theInsideLayer.style.left);
+
+    var x = e.pageX || (e.clientX +
+          (document.documentElement.scrollLeft || document.body.scrollLeft));
+    var y = e.pageY || (e.clientY +
+                (document.documentElement.scrollTop || document.body.scrollTop));
+    newTop = newTop - <span class="reserved">this</span>.lasty + y;
+    newLeft = newLeft - <span class="reserved">this</span>.lastx + x;
+
+    <span class="reserved">this</span>.kaMap.theInsideLayer.style.top=newTop + <span class="literal">'px'</span>;
+    <span class="reserved">this</span>.kaMap.theInsideLayer.style.left=newLeft + <span class="literal">'px'</span>;
+
+    <span class="reserved">this</span>.kaMap.checkWrap.apply(<span class="reserved">this</span>.kaMap, []);
+
+    <span class="reserved">this</span>.lastx=x;
+    <span class="reserved">this</span>.lasty=y;
+    <span class="reserved">return</span> false;
+};
+
+<span class="comment">/**
+ * handle mouse down events.  Start tracking mouse movement for panning.
+ * <span class="attrib">@param</span> {Event} e the mouse event object
+ */</span>
+kaNavigator.<span class="reserved">prototype</span>.onmousedown = <span class="reserved">function</span>(e) {
+    e = (e)?e:((event)?event:null);
+    <span class="reserved">if</span> (e.button==2) {
+        <span class="reserved">return</span> <span class="reserved">this</span>.cancelEvent(e);
+    } <span class="reserved">else</span> {
+		<span class="reserved">this</span>.cursor = <span class="reserved">this</span>.cursorDrag;
+    	<span class="reserved">this</span>.kaMap.setCursor(<span class="reserved">this</span>.cursorDrag);
+        <span class="reserved">if</span> (<span class="reserved">this</span>.kaMap.isIE4) {
+            document.onkeydown = kaTool_redirect_onkeypress;
+        }
+        document.onkeypress = kaTool_redirect_onkeypress;
+        
+        <span class="reserved">this</span>.bMouseDown=true;
+        var x = e.pageX || (e.clientX +
+             (document.documentElement.scrollLeft || document.body.scrollLeft));
+        var y = e.pageY || (e.clientY +
+             (document.documentElement.scrollTop || document.body.scrollTop));
+        <span class="reserved">this</span>.lastx=x;
+        <span class="reserved">this</span>.lasty=y;
+        <span class="reserved">this</span>.startx = <span class="reserved">this</span>.lastx;
+        <span class="reserved">this</span>.starty = <span class="reserved">this</span>.lasty;
+        
+        e.cancelBubble = true;
+        e.returnValue = false;
+        <span class="reserved">if</span> (e.stopPropogation) e.stopPropogation();
+        <span class="reserved">if</span> (e.preventDefault) e.preventDefault();
+        <span class="reserved">return</span> false;
+    }
+};
+
+var gDblClickTimer = null;
+<span class="comment">/**
+ * handle the mouse up events.  Stop tracking mouse movement.
+ * <span class="attrib">@param</span> {Event} e the mouse event object
+ */</span>
+kaNavigator.<span class="reserved">prototype</span>.onmouseup = <span class="reserved">function</span>(e) {
+	<span class="reserved">this</span>.cursor = <span class="reserved">this</span>.cursorNormal;
+    <span class="reserved">this</span>.kaMap.setCursor(<span class="reserved">this</span>.cursorNormal);
+	
+    e = (e)?e:((event)?event:null);
+    <span class="reserved">this</span>.bMouseDown=false;
+    var x = e.pageX || (e.clientX +
+        (document.documentElement.scrollLeft || document.body.scrollLeft));
+    var y = e.pageY || (e.clientY +
+        (document.documentElement.scrollTop || document.body.scrollTop));
+    <span class="reserved">if</span> (Math.abs(x-<span class="reserved">this</span>.startx) &lt; 2 &amp;&amp;
+        Math.abs(y-<span class="reserved">this</span>.starty) &lt; 2) {
+        <span class="reserved">if</span> (!gDblClickTimer) {
+            gDblClickTimer = window.setTimeout(bind(<span class="reserved">this</span>.dispatchMapClicked, <span class="reserved">this</span>, x, y), 250);
+        }
+    } <span class="reserved">else</span> {
+        gDblClickTimer = null;
+        <span class="reserved">this</span>.kaMap.showLayers();
+        <span class="reserved">this</span>.kaMap.triggerEvent(KAMAP_EXTENTS_CHANGED, <span class="reserved">this</span>.kaMap.getGeoExtents());        
+    }
+    <span class="reserved">return</span> false;
+};
+
+kaNavigator.<span class="reserved">prototype</span>.dispatchMapClicked = <span class="reserved">function</span>(px,py) {
+    var a = <span class="reserved">this</span>.adjustPixPosition( px,py );
+    var p = <span class="reserved">this</span>.kaMap.pixToGeo( a[0],a[1] );
+    gDblClickTimer=null;
+    <span class="reserved">this</span>.kaMap.triggerEvent(KAMAP_MAP_CLICKED, p);
+};
+
+<span class="comment">/**
+ * handle a double-click event by sliding the map to the point that was clicked.
+ * <span class="attrib">@param</span> {Event} e the mouse event object
+ */</span>
+kaNavigator.<span class="reserved">prototype</span>.ondblclick = <span class="reserved">function</span>(e) {
+    <span class="reserved">if</span> (gDblClickTimer) {
+        window.clearTimeout(gDblClickTimer);
+        gDblClickTimer = null;
+    }
+    e = (e)?e:((event)?event:null);
+    var x = e.pageX || (e.clientX +
+        (document.documentElement.scrollLeft || document.body.scrollLeft));
+    var y = e.pageY || (e.clientY +
+        (document.documentElement.scrollTop || document.body.scrollTop));
+    var a = <span class="reserved">this</span>.adjustPixPosition( x,y );
+    var p = <span class="reserved">this</span>.kaMap.pixToGeo( a[0], a[1] );
+    <span class="reserved">this</span>.kaMap.zoomTo(p[0],p[1]);
+};
+
+<span class="comment">//TODO: this is a temporary patch until we add prototype/scriptaculous support.</span>
+<span class="reserved">function</span> bind(m,o) {
+    var __method = arguments[0];
+    var __object = arguments[1];
+    var args = [];
+    <span class="reserved">for</span> (var i=2; i&lt;arguments.length; i++) { args.push(arguments[i]) }
+    <span class="reserved">return</span> <span class="reserved">function</span>() { <span class="reserved">return</span> __method.apply(__object, args); }
+}</pre>
+	<hr>
+
+
+
+<!-- ========== START OF NAVBAR ========== -->
+<a name="navbar_top"><!-- --></a>
+<table border="0" width="100%" cellpadding="1" cellspacing="0">
+<tr>
+<td colspan=2 bgcolor="#EEEEFF" class="NavBarCell1">
+<a name="navbar_top_firstrow"><!-- --></a>
+<table border="0" cellpadding="0" cellspacing="3">
+  <tr align="center" valign="top">
+  
+  
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-summary.html"><font class="NavBarFont1"><b>Overview</b></font></a>&nbsp;</td>
+  <td bgcolor="#FFFFFF" class="NavBarCell1Rev">	&nbsp;<font class="NavBarFont1Rev"><b>File</b></font>&nbsp;</td>
+  
+
+  <td bgcolor="#FFFFFF" class="NavBarCell1"> <font class="NavBarFont1">Class</font>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-tree.html"><font class="NavBarFont1"><b>Tree</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="index-all.html"--><font class="NavBarFont1"><b>Index</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="help-doc.html"><font class="NavBarFont1"><b>Help</b></font></a>&nbsp;</td>
+  </tr>
+</table>
+</td>
+<td bgcolor="#EEEEFF" align="right" valign="top"><em>
+<b>ka-Map</b></em>
+</td>
+</tr>
+
+<tr>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+&nbsp;PREV&nbsp;
+&nbsp;NEXT</font></td>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+  <a href="index.html" target="_top"><b>FRAMES</b></a>  &nbsp;
+&nbsp;<a href="overview-summary.html" target="_top"><b>NO FRAMES</b></a>
+&nbsp;&nbsp;
+<script>
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="allclasses-noframe.html" TARGET=""><B>All Classes</B></A>');
+  }
+  //-->
+</script>
+<noscript>
+<a href="allclasses-noframe.html" target=""><b>All Classes</b></a>
+</noscript>
+</font></td>
+</tr>
+</table>
+<!-- =========== END OF NAVBAR =========== -->
+
+<hr>
+<font size="-1">
+
+</font>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Mon Feb  5 08:25:15 2007</div>
+</body>
+</html>

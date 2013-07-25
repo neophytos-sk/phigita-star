@@ -1,0 +1,17 @@
+Return-path: <webmaster@phigita.net> 
+Received: from [117.207.40.54] (port=6375 helo=homef2f38bfe29)
+	by mail.global.sprint.com with asmtp 
+	id 8317C3-000428-63
+	for <webmaster@phigita.net>; Tue, 22 Nov 2011 17:16:51 +0530 
+Message-ID: <95572178364E487E95FCB841C492A95B@homef2f38bfe29> 
+From: =?koi8-r?B?IuLPztPByiDHwczF0sXRIg==?= <tenanti4@triconex.com> 
+To: <webmaster@phigita.net> 
+Subject: =?koi8-r?B?8sHT0NLPxMHWwSDR0M/O08vJyCDCz87TwcouIPDPxMHSz8sgzsEgxM/M?=
+	=?koi8-r?B?x8nFIMfPxNk=?= 
+Date: Tue, 22 Nov 2011 17:16:51 +0530 
+X-Priority: 3 
+X-MSMail-Priority: Normal 
+X-Mailer: Microsoft Windows Mail 6.0.6001.18000 
+X-MimeOLE: Produced By Microsoft MimeOLE V6.0.6001.18049 
+X-Spam: Not detected 
+X-Mras: Ok 

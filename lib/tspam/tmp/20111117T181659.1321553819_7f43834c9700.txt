@@ -1,0 +1,104 @@
+Received: from localhost ([127.0.0.1] helo=sfs-ml-4.v29.ch3.sourceforge.com)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <quickfix-developers-bounces@lists.sourceforge.net>)
+	id 1RR6Vq-0005l9-FO; Thu, 17 Nov 2011 18:16:38 +0000 from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <kstone@connamara.com>) id 1RR6Vm-0005kh-N0
+	for quickfix-developers@lists.sourceforge.net;
+	Thu, 17 Nov 2011 18:16:34 +0000 from mail-iy0-f175.google.com ([209.85.210.175])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1RR6Vl-0004y1-Rc
+	for quickfix-developers@lists.sourceforge.net;
+	Thu, 17 Nov 2011 18:16:34 +0000 by iahk25 with SMTP id k25so3284936iah.34
+	for <quickfix-developers@lists.sourceforge.net>;
+	Thu, 17 Nov 2011 10:16:28 -0800 (PST) by 10.42.202.17 with SMTP id fc17mr43728557icb.15.1321553788067;
+	Thu, 17 Nov 2011 10:16:28 -0800 (PST) by 10.50.222.168 with HTTP; Thu, 17 Nov 2011 10:15:47 -0800 (PST) 
+X-ACL-Warn:  
+In-Reply-To: <CA+bcenW-jX34_zQgMsD4nY4SzOjYif_krc49qAEjUjhA35ydjg@mail.gmail.com> 
+References: <CA+bcenW-jX34_zQgMsD4nY4SzOjYif_krc49qAEjUjhA35ydjg@mail.gmail.com> 
+From: Kenny Stone <kstone@connamara.com> 
+Date: Thu, 17 Nov 2011 12:15:47 -0600 
+Message-ID: <CACxisXQ1zoBGJ6Wi0KaURyNyP8rCZQ6DF=tspxKZgMH5wW+8kA@mail.gmail.com> 
+To: Rasheed Waraich <rashiedwaraich@gmail.com> 
+X-Spam-Score: 1.7 (+) 
+X-Spam-Report: Spam Filtering performed by mx.sourceforge.net.
+	See http://spamassassin.org/tag/ for more details.
+	1.0 HTML_MESSAGE           BODY: HTML included in message
+	0.7 AWL AWL: From: address is in the auto white-list 
+X-Headers-End: 1RR6Vl-0004y1-Rc 
+Cc: Taimoor Choudhary <taimoorchoudhary@yahoo.com>,
+	quickfix-developers@lists.sourceforge.net 
+Subject: Re: [Quickfix-developers] ValidateIncomingMessage in QuickFIX/NET? 
+X-BeenThere: quickfix-developers@lists.sourceforge.net 
+X-Mailman-Version: 2.1.9 
+Precedence: list 
+List-Id: <quickfix-developers.lists.sourceforge.net> 
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/quickfix-developers>,
+	<mailto:quickfix-developers-request@lists.sourceforge.net?subject=unsubscribe> 
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=quickfix-developers> 
+List-Post: <mailto:quickfix-developers@lists.sourceforge.net> 
+List-Help: <mailto:quickfix-developers-request@lists.sourceforge.net?subject=help> 
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/quickfix-developers>,
+	<mailto:quickfix-developers-request@lists.sourceforge.net?subject=subscribe> 
+Errors-To: quickfix-developers-bounces@lists.sourceforge.net 
+--------------------------------------
+QuickFIX Documentation: http://www.quickfixengine.org/quickfix/doc/html/index.html
+QuickFIX Support: http://www.quickfixengine.org/services.html
+
+--------------------------------------
+The easiest thing would probably be to set that field as a STRING in your
+data dictionary.
+
+--
+Kenny Stone
+Connamara Systems, LLC
+
+
+On Thu, Nov 17, 2011 at 12:06 PM, Rasheed Waraich
+<rashiedwaraich@gmail.com>wrote:
+
+> QuickFIX Documentation:
+> http://www.quickfixengine.org/quickfix/doc/html/index.html
+> QuickFIX Support: http://www.quickfixengine.org/services.html
+>
+>
+> Hello Experts,
+>
+> The QuickFIX/J supports "ValidateIncomingMessage" which be turned on/off
+> as required.
+>
+> Is it possible to achieve similar thing in QuickFIX/NET?
+>
+> I want to turn off the validation of Tag 62 in Quote message... The broker
+> is sending us back relative value dates like "00000000-00:02:00.000"
+>
+> Any guidance will be highly appreciated...
+>
+> --
+> //Regards
+> Rasheed
+>
+>
+> ------------------------------------------------------------------------------
+> All the data continuously generated in your IT infrastructure
+> contains a definitive record of customers, application performance,
+> security threats, fraudulent activity, and more. Splunk takes this
+> data and makes sense of it. IT sense. And common sense.
+> http://p.sf.net/sfu/splunk-novd2d
+> _______________________________________________
+> Quickfix-developers mailing list
+> Quickfix-developers@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/quickfix-developers
+>
+--------------------------------------
+------------------------------------------------------------------------------
+All the data continuously generated in your IT infrastructure 
+contains a definitive record of customers, application performance, 
+security threats, fraudulent activity, and more. Splunk takes this 
+data and makes sense of it. IT sense. And common sense.
+http://p.sf.net/sfu/splunk-novd2d--------------------------------------
+_______________________________________________
+Quickfix-developers mailing list
+Quickfix-developers@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/quickfix-developers

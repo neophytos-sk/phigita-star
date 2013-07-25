@@ -1,0 +1,122 @@
+<html><head><title>Anims.js</title><link rel="stylesheet" type="text/css" href="../resources/style.css" media="screen"/></head><body><h1>Anims.js</h1><pre class="highlighted"><code>
+YAHOO.ext.StyleAnim = <b>function</b>(css){
+    <b>var</b> o = css;
+    <b>if</b>(typeof css == 'string'){
+         o = {};
+        <b>var</b> re = YAHOO.ext.StyleAnim.styleRE;
+        <b>var</b> m;
+        <b>while</b> ((m = re.exec(css)) != null){
+            o[m[1]] = m[2];
+        }
+    }
+    <b>this</b>.styles = o;
+    <b>if</b>(!YAHOO.ext.StyleAnim.measureEl){
+        <b>var</b> el = document.createElement('div');
+        el.style.position = 'absolute';
+        el.style.top = '-500px';
+        el.style.left = '-500px';
+        el.style.width = '0px';
+        el.style.visibility = 'hidden';
+        document.body.appendChild(el);
+        YAHOO.ext.StyleAnim.measureEl = getEl(el);
+    }
+};
+YAHOO.ext.StyleAnim.styleRE = /\s?([a-z\-]*)\:([^;]*);?/gi;
+
+YAHOO.ext.StyleAnim.measurables = [
+       'border',
+       'border-width',
+       'border-left',
+       'border-right',
+       'border-top',
+       'border-bottom',
+       'border-left-width',
+       'border-right-width',
+       'border-top-width',
+       'border-bottom-width',
+       'padding-left',
+       'padding-right',
+       'padding-top',
+       'padding-bottom'
+];
+YAHOO.ext.StyleAnim.copyStyles = [
+       'border-left-width',
+       'border-right-width',
+       'border-top-width',
+       'border-bottom-width',
+       'padding-left',
+       'padding-right',
+       'padding-top',
+       'padding-bottom'
+];
+YAHOO.ext.StyleAnim.prototype = {
+    apply : <b>function</b>(el, callback){
+        <b>var</b> o = <b>this</b>.styles;
+        <b>var</b> el = getEl(el);
+        <b>var</b> adjAttr = ['width','height'];
+        <b>if</b>(el.autoBoxAdjust &amp;&amp; !el.isBorderBox()){
+            <b>var</b> up = YAHOO.ext.Element.unitPattern;
+            <b>var</b> adj;
+            <b>for</b>(var i = 0, len = adjAttr.length; i &lt; len; i++) {
+            	<b>var</b> attr = adjAttr[i];
+            	<b>if</b>(o[attr] != undefined){
+                     <b>var</b> m = String(o[attr]).match(up);
+                     <b>if</b>(!m || m[1] == 'px'){
+                         <b>if</b>(!adj){
+                             adj = <b>this</b>.getAdjustments(el, o);
+                         }
+                         <b>var</b> v = Math.max(0, (parseInt(o[attr], 10) || 0) - adj[0]);
+                         o[attr] = v;
+                     }
+                }
+            }            
+        }<b>else</b>{
+            <b>for</b>(var i = 0, len = adjAttr.length; i &lt; len; i++) {
+            	<b>var</b> attr = adjAttr[i];
+            	<b>if</b>(o[attr] != undefined){
+                    o[attr] = Math.max(0, parseInt(o[attr], 10) || 0);
+                }
+            }
+        }
+        <b>var</b> attr = {};
+        <b>for</b>(var k <b>in</b> o){
+            <b>if</b>(typeof o[k] != '<b>function</b>'){
+                attr[k] = {to: o[k]};
+            }
+        }
+        alert(YAHOO.ext.util.JSON.encode(attr))
+        <b>new</b> YAHOO.util.Anim(el.dom, attr, .5).animate();
+        <b>return</b> this;
+    },
+    
+    getAdjustments : <b>function</b>(el, o){
+        <b>var</b> mel = YAHOO.ext.StyleAnim.measureEl;
+        <b>var</b> ms = YAHOO.ext.StyleAnim.measurables;
+        mel.copyStyles(el, YAHOO.ext.StyleAnim.copyStyles);
+        <i>// apply measurable styles</i>
+        <b>for</b>(var i = 0, len = ms.length; i &lt; len; i++) {
+        	<b>var</b> s = ms[i];
+        	<b>if</b>(o[s]){
+        	    mel.setStyle(s, o[s]);
+        	}
+        }
+        <b>return</b> [mel.getBorderWidth('lr')+mel.getPadding('lr'), 
+                mel.getBorderWidth('tb')+mel.getPadding('tb')];        
+    }
+}
+
+YAHOO.ext.ClassAnim = <b>function</b>(selector){
+     <b>var</b> rule = YAHOO.ext.util.CSS.getRule(selector);
+     <b>var</b> s = rule.style;
+     <b>var</b> attrs = {};
+	 <b>for</b>(var key <b>in</b> s){
+	    <b>if</b>(s[key] &amp;&amp; <b>typeof</b> s[key] != '<b>function</b>' &amp;&amp; String(s[key]).indexOf(':') &lt; 0 &amp;&amp; s[key] != 'false'){
+			attrs[key] = s[key];
+	    }
+	 }
+	 YAHOO.ext.ClassAnim.superclass.constructor.call(<b>this</b>, attrs);
+};
+
+YAHOO.extendX(YAHOO.ext.ClassAnim, YAHOO.ext.StyleAnim);</code></pre><hr><div style="font-size:10px;text-align:center;color:gray;">yui-ext - Copyright &copy; 2006 Jack Slocum.  |
+    Yahoo! UI - Copyright &copy; 2006 Yahoo! Inc.<br />All rights reserved.</div>
+    </body></html>

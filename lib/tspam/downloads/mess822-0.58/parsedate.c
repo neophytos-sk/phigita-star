@@ -1,0 +1,65 @@
+#include "substdio.h"
+#include "strerr.h"
+#include "subfd.h"
+#include "getln.h"
+#include "mess822.h"
+#include "leapsecs.h"
+#include "caltime.h"
+#include "tai.h"
+
+#define FATAL "parsedate: fatal: "
+
+void nomem()
+{
+  strerr_die2x(111,FATAL,"out of memory");
+}
+
+stralloc line = {0};
+int match;
+
+mess822_time t;
+struct tai sec;
+
+void main()
+{
+  int i;
+  int j;
+
+  if (leapsecs_init() == -1)
+    strerr_die2sys(111,FATAL,"unable to init leapsecs: ");
+
+  for (;;) {
+    if (getln(subfdinsmall,&line,&match,'\n') == -1)
+      strerr_die2sys(111,FATAL,"unable to read input: ");
+    if (!line.len) break;
+    if (match) --line.len;
+
+    for (i = 0;i < line.len;++i)
+      if (line.s[i] == 0)
+	line.s[i] = '\n';
+    if (!stralloc_0(&line)) nomem();
+
+    t.known = 0;
+    if (!mess822_when(&t,line.s)) nomem();
+
+    if (t.known) {
+      if (!stralloc_ready(&line,caltime_fmt((char *) 0,&t.ct))) nomem();
+      substdio_put(subfdoutsmall,line.s,caltime_fmt(line.s,&t.ct));
+      if (t.known == 1)
+        substdio_put(subfdoutsmall,"?",1);
+      substdio_put(subfdoutsmall,"\t",1);
+    
+      caltime_tai(&t.ct,&sec);
+    
+      caltime_utc(&t.ct,&sec,(int *) 0,(int *) 0);
+      if (!stralloc_ready(&line,caltime_fmt((char *) 0,&t.ct))) nomem();
+      substdio_put(subfdoutsmall,line.s,caltime_fmt(line.s,&t.ct));
+    }
+
+    substdio_puts(subfdoutsmall,"\n");
+    if (!match) break;
+  }
+
+  substdio_flush(subfdoutsmall);
+  _exit(0);
+}

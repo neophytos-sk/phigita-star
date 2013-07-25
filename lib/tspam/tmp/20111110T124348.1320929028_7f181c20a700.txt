@@ -1,0 +1,15 @@
+Received: (qmail 27972 invoked by uid 509); 10 Nov 2011 19:12:31 +0800 from 42.49.137.198 by mail (envelope-from <market@vmediax.com>, uid 89) with qmail-scanner-1.25-st-qms 
+ (clamdscan: 0.95.1/9416. spamassassin: 3.1.7. perlscan: 1.25-st-qms.  
+ Clear:RC:1(42.49.137.198):. 
+ Processed in 14.057306 secs); 10 Nov 2011 11:12:31 -0000 from unknown (HELO fgjhczchu) (market@vmediax.com@42.49.137.198)
+  by 0 with ESMTPA; 10 Nov 2011 19:12:17 +0800 
+X-Antivirus-MYDOMAIN-Mail-From: market@vmediax.com via mail 
+X-Antivirus-MYDOMAIN: 1.25-st-qms (Clear:RC:1(42.49.137.198):. Processed in 14.057306 secs Process 27892) 
+Message-ID: <20111110191335766535@vmediax.com> 
+From: =?gb2312?B?1PjR1MDL?= <market@vmediax.com> 
+To:  
+Subject: =?gb2312?B?0NAu1f4uuaQu1/cuzbMus+8uudwuwO0uuN8uvLYu?=
+	=?gb2312?B?0dAu0N4usOAtLS0t1PjR1MDL?= 
+Date: Thu, 10 Nov 2011 19:13:30 +0800 
+X-mailer: Xsufxzoh 9 
+Whoops!  What is a 'application/vnd.ms-excel'?

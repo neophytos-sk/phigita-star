@@ -1,0 +1,97 @@
+#   x    y  action
+
+    0   11  retry
+    1   11  retry
+    2   11  retry
+    4   11  retry
+    6   11  retry
+    7   11  retry
+    8   11  retry
+    10   11  retry
+    12   11  retry
+    13   11  retry
+    14   11  retry
+    15   11  retry
+
+    0   10  retry
+    5   10  retry
+    6   10  retry
+    7   10  retry
+    8   10  retry
+    9   10  retry
+    10  10  retry
+    13  10  retry
+    14  10  retry
+
+    6    9  retry
+    7    9  retry
+    8    9  retry
+    9    9  retry
+    10   9  retry
+    11   9  retry
+    12   9  retry
+    13   9  retry
+    14   9  retry
+    6    9  stop
+    7    9  stop
+    8    9  stop
+    9    9  stop
+    10   9  stop
+    11   9  stop
+    12   9  stop
+    13   9  stop
+    14   9  stop
+
+    0    8  retry
+    6    8  retry
+    8    8  retry
+    15   8  retry
+    15   8  stop
+
+    3    7  retry
+    11   7  retry
+    12   7  retry
+    14   7  retry
+
+    3    6  propagate
+    4    6  propagate
+    11   6  propagate
+
+    18   0  stop
+    18   1  stop 
+    18   2  stop
+    18   3  stop 
+    18   4  stop
+    18   5  stop 
+
+    18   7  stop
+    18   8  stop 
+    18   9  stop
+    18  10  stop 
+    18  11  stop
+
+    18   0  propagate
+    18   1  propagate 
+    18   2  propagate
+    18   3  propagate 
+    18   4  propagate
+    18   5  propagate 
+
+    18   7  propagate
+    18   8  propagate 
+    18   9  propagate
+    18  10  propagate 
+    18  11  propagate
+
+    15   0  propagate
+    15   1  propagate 
+    15   2  propagate
+    15   0  stop
+    15   1  stop
+    15   2  stop
+    15   3  zero
+    15   4  zero
+    15   5  redundancy
+
+    17   4  zero
+

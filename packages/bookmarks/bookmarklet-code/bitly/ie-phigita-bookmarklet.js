@@ -1,0 +1,1 @@
+javascript:(function(){var%20s=document.createElement('script');s.setAttribute('src','http://www.phigita.net/js/mark-this.js');s.setAttribute('type','text/javascript');document.getElementsByTagName('head')[0].appendChild(s);})();

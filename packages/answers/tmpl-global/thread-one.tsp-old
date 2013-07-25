@@ -1,0 +1,64 @@
+### ::xo::lib::require structured_text
+
+::xo::structured_text::init_css
+
+ad_page_contract {
+
+    @author Neophytos Demetriou
+
+} {
+    id:integer,notnull   
+}
+
+### TEMP - remove
+#ad_conn_set subsite_id 808
+set pathexp [list "Subsite [ad_conn subsite_id]"]
+set questiondata [::db::Set new \
+		      -type [::db::Inner_Join new \
+				 -lhs [::db::Set new \
+					   -pathexp $pathexp \
+					   -alias q \
+					   -type ::Question \
+					   -where [list [::xo::db::qualifier id eq $id]]] \
+				 -rhs [::db::Set new \
+					   -alias u \
+					   -select {screen_name user_id first_names last_name} \
+					   -type ::CC_Users] \
+				 -join_condition {q.creation_user = u.user_id}]]
+
+$questiondata load
+
+
+if { [$questiondata emptyset_p] } {
+    rp_returnnotfound
+    return
+} else {
+    set qo [$questiondata head]
+}
+
+set answerdata [::db::Set new \
+		    -type [::db::Inner_Join new \
+			       -lhs [::db::Set new \
+					 -pathexp $pathexp \
+					 -alias q \
+					 -type ::Answer \
+					 -where [list [::xo::db::qualifier parent_id eq $id]]] \
+			       -rhs [::db::Set new \
+					 -alias u \
+					 -select {screen_name user_id first_names last_name} \
+					 -type ::CC_Users] \
+			       -join_condition {q.creation_user = u.user_id}] \
+		    -order "creation_date"]
+
+$answerdata load
+#ns_log notice [$answerdata set sql]
+set answers [$answerdata set result]
+
+set cssList [list]
+
+set dir [acs_root_dir]/packages/answers/tmpl-global/
+if { [$qo set kind] == 0 } {
+    ::xo::ns::source [file join $dir thread-one-question.tsp]
+} else {
+    ::xo::ns::source [file join $dir thread-one-vox-pop.tsp]
+}

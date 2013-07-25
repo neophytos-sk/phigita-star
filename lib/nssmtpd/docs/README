@@ -1,0 +1,91 @@
+SMTPD server/proxy for NaviServer
+Release 1.0
+vlad@crystalballinc.com
+
+    SMTPD proxy/server for Naniserver
+
+This is Naviserver module that implements SMTP protocol 
+and acts as SMTP proxy with anti-spam and anti-virus capabilities. 
+
+To support anti-SPAM feature one of the following should be installed:
+
+    * SpamAssasin <http://www.spamassassin.org/>
+    * DSPAM <http://www.nuclearelephant.com/projects/dspam/>: patched
+      version <http://www.crystalballinc.com/vlad/dspam-3.1.0-vlad-src.tar.gz>. 
+
+To support anti-virus feature one of the following should be installed:
+
+    * ClamAV <http://www.clamav.net/>
+    * Sophos: SAVI <http://sophos.com> 
+
+*Configuring*
+
+Add the following configuration directives to the nsd.tcl file, modules
+section should already exist, so just add nssmtpd line there:
+
+ns_section      "ns/server/${server}/modules"
+ns_param        nssmtpd            ${home}/bin/nssmtpd.so
+
+ns_section      "ns/server/${server}/module/nssmtpd"
+ns_param        port                    2525
+ns_param        address                 127.0.0.1
+ns_param        relay                   localhost:25
+ns_param        spamd                   localhost
+ns_param        initproc                smtpd::init
+ns_param        rcptproc                smtpd::rcpt
+ns_param        dataproc                smtpd::data
+ns_param        errorproc               smtpd::error
+ns_param	relaydomains		"localhost domain.com"
+ns_param	localdomains		"localhost domain.com"
+
+Once enabled, smtpd acts as SMTP server forwarding all messaged to
+configured real smtp server via relay parameter. for each SMTP command
+it calles configured Tcl handler which performs actual processing.
+
+*Usage*
+
+There is ns_smtpd command available in called Tcl handlers
+
+ns_smtpd usage:
+
+  nssmtpd flag
+  nssmtpd send
+  nssmtpd relay
+  nssmtpd local
+  nssmtpd encode
+  nssmtpd decode
+  nssmtpd checkemail - parses email and returns as name@domain if valid
+  nssmtpd checkdomain
+  nssmtpd virusversion - returns version of anti-virus tool used
+  nssmtpd spamversion - returns version of anti-spam tool used
+  nssmtpd checkspam
+  nssmtpd trainspam
+  nssmtpd checkvirus
+  nssmtpd sessions
+  nssmtpd gethdr
+  nssmtpd gethdrs
+  nssmtpd getbody
+  nssmtpd getfrom
+  nssmtpd getfromdata
+  nssmtpd setfrom
+  nssmtpd setfromdata
+  nssmtpd getrcpt
+  nssmtpd getrcptdata
+  nssmtpd addrcpt
+  nssmtpd setrcptdata
+  nssmtpd delrcpt
+  nssmtpd setflag
+  nssmtpd unsetflag
+  nssmtpd getflag
+  nssmtpd setreply
+  nssmtpd getline
+  nssmtpd dump
+
+*Licensing*
+
+Maverix is covered by Mozilla license.
+
+*Authors*
+
+Vlad Seryakov vlad@crystalballinc.com
+

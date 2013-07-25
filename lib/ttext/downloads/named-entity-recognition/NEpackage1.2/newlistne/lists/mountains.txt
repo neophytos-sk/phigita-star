@@ -1,0 +1,361 @@
+Range
+Ranges
+Mountains
+mountains
+mountain
+peaks
+Peak
+Hills
+Hill
+hill
+hills
+Aberdare Range
+Adirondacks
+Ahaggar Mountains
+Alaska Range
+Aleutian Range
+Alps
+Altai Mountains
+Andes
+Annamese Cordillera
+Antarctic Peninsula
+Apennines
+Appalachians
+Appalachian mountain chain
+Appalachian mountain
+Appalachian Mountains
+Atlas Mountains
+Austrian Alps
+Baffin Island
+Bernese Oberland
+Bernina Alps
+Bhutan
+Black Hills
+Borneo
+Brazilian Highlands
+British Columbian Coast Range
+Brooks Range
+Carpathian Mountains
+Cascade Range
+Catskill Mountains
+Caucasus
+Coast Ranges of Alaska / B.C.
+Coast Ranges of California
+Canadian Rockies
+Cantabrian Mountains
+Chugach Mountains
+Coast Ranges of North America
+Colorado Rockies
+Cottian Alps
+Cherskiy Range
+Altai Mountains
+Bogda Mountains
+Kinghan Range
+Kunlun Shan
+Tian Shan
+Himalaya
+Mount Everest
+Sierra Madre del Sur
+Tajumulco
+Tacana
+Alto Cuchumantanes
+Acatenango
+Fuego
+Santa Maria
+Agua
+Atitlan
+Zunil
+Cerro Quemado
+Toliman
+Santa Ana
+San Vincente
+San Miguel
+Sierra de Celaque
+Cerro Las Minas
+Sierra de Agalta
+Volcan San Cristobal
+Cerro Saslaya
+Cerro Negro
+Cerro Chirripo
+Pico Blanco
+Cerro KÃ¡muk
+Cerro Buena Vista
+Cerra la Muerte
+IrazÃº
+Turrialba
+Volcan Baru
+Cerro Santiago
+Cerro Chorcha
+Cerro Tacarcuna
+Dauphine
+Dinaric Alps
+Dolomites
+Drakensberg
+Elburz Mountains
+Ellesmere Island
+Ellsworth Mountains
+Ethiopian Highlands
+Fairweather Range
+Garhwal
+Ghats
+Graian Alps
+Great Dividing Range
+Jugal
+Julian Alps
+Fuji-san
+Kita Dake
+Mount Fuji
+Mauna Kea
+Mauna Loa
+Guiana Highlands
+Kamchatka
+Karakoram
+Kenai Mountains
+Kinghan Range
+Scafell Pike
+Scafell
+Helvellyn
+Skiddaw
+Great Gable
+Langtang Himal
+Lepontines
+MacKenzie Mountains
+Madagascar
+Saint Elias Range
+Sayan Mountains
+Marie Byrd Land
+Maritime Alps
+Mont Blanc
+Mount Katahdin
+Stanovoi Range
+Sumatra
+Olympic Mountains
+Olympus Mons
+Ortler Alps
+Otztal Alps
+Mount Ossa
+Tierra del Fuego
+Transantarctic Mountains
+Ozarks
+Pamirs
+Patagonia
+Taurus Mountains
+Tetons
+Cross Fell
+Ural Mountains
+Virunga Mountains
+Wind River Range
+Milburn Forest
+Wrangell Mountains
+Yablonovyy Range
+Zagros Mountains
+Mickle Fell
+The Cheviot
+Tian Shan
+Tibesti Mountains
+Pennine Alps
+Pennines
+Sierra Madre del Sur
+Sierra Madre Occidental
+Sierra Madre Oriental
+Sierra Nevada
+Sikhote-Alin Range
+Sikkim
+Snowdonia
+Spitsbergen
+Springer Mountain
+Pontic Mountains
+Punjab
+Pyrenees
+Queen Maud Mountains
+Reunion Island
+Rocky Mountains
+Ruwenzori
+Mount Everest
+K2
+Kangchenjunga
+Lhotse
+Makalu
+Cho Oyu
+Dhaulagiri
+Manaslu
+Nanga Parbat
+Annapurna
+Gasherbrum I
+Broad Peak
+Gasherbrum II
+Shisha Pangma
+Aconcagua
+Mount McKinley
+Mount Kilimanjaro
+Mount Elbrus
+Puncak Jaya
+Vinson Massif
+Mount Elbert
+Mount Massive
+Mount Harvard
+Mt. Waialeale
+Mount Waialeale
+Blanca Peak
+La Plata Peak
+Uncompahgre Peak
+Crestone Peak
+Mount Lincoln
+Grays Peak
+Mount Antero
+Torreys Peak
+Castle Peak
+Quandary Peak
+Mount Evans
+Longs Peak
+Mount Wilson
+Mount Shavano
+Mount Princeton
+Mount Belford
+Crestone Needle
+Mount Yale
+Mount Bross
+Kit Carson Peak
+El Diente Peak
+Maroon Peak
+Tabeguache Mountain
+Mount Oxford
+Mount Sneffels
+Mount Democrat
+Capitol Peak
+Pikes Peak
+Snowmass Mountain
+Mount Eolus
+Windom Peak
+Mount Columbia
+Missouri Mountain
+Humboldt Peak
+Mount Bierstadt
+Sunlight Peak
+Handies Peak
+Culebra Peak
+Mount Lindsey
+Ellingwood Peak
+Little Bear Peak
+Mount Sherman
+Redcloud Peak
+Pyramid Peak
+Wilson Peak
+Wetterhorn Peak
+North Maroon Peak
+San Luis Peak
+Mount of the Holy Cross
+Huron Peak
+Sunshine Peak
+Mount Whitney
+Mount Williamson
+White Mountain
+North Palisade
+Polemonium Peak
+Starlight Peak
+Mount Shasta
+Mount Sill
+Mount Russell
+Split Mountain
+Middle Palisade
+Mount Langley
+Mount Tyndall
+Mount Muir
+Thunderbolt Peak
+Dufourspitze
+Nordend
+Zumsteinspitze
+Signalkuppe
+Dom
+Liskamm
+Weisshorn
+TÃ¤schhorn
+Matterhorn
+Mont Maudit
+Parrotspitze
+Dent Blanche
+Nadelhorn
+Schwarzhorn
+Grand Combin
+LudwigshÃ¶he
+Lenzspitze
+Finsteraarhorn
+Mont Blanc du Tacul
+Stecknadelhorn
+Castor
+Zinalrothorn
+Hohberghorn
+Vincent Piramide
+Grand Jorasses
+Alphubel
+Rimpfischhorn
+Aletschhorn
+Strahlhorn
+Dent d'HÃ©rens
+Balmenhorn
+Breithorn
+Bishorn
+Jungfrau
+Aiguille Verte
+Aiguille Blanche
+Grande Rocheuse
+Barre des Ãcrins
+MÃ¶nch
+Pollux
+Schreckhorn
+Obergabelhorn
+Gran Paradiso
+Mont Brouillard
+Aiguille de Bionassay
+Piz Bernina
+Gross-Fiescherhorn
+Gross-GrÃ¼nhorn
+Lauteraarhorn
+Aiguille de Jardin
+DÃ¼rrenhorn
+Allalinhorn
+Hinter-Fiescherhorn
+Weissmies
+DÃ´me de Rochefort
+Dent du GÃ©ant
+Punta Baretti
+Lagginhorn
+Aiguille de Rochefort
+Les Droites
+San Pedro
+Aracar
+Guallatiri
+Tupungatito
+Sabancaya
+Cotopaxi
+Putana
+Tutupaca
+Ubinas
+Popocatepetl
+Nevado del Ruiz
+Maipo
+Sangay
+Tolima
+Usluga
+Tungurahua
+Klyuchevsakya Sopka
+Guagua Pichincha
+Purace
+Mount Wrangell
+Galeras
+Mauna Loa
+Colima
+Cameroon Mountain
+Mont PelÃ©e
+Nevado del Ruiz
+Kelut
+Lamington
+El Chichon
+Lake Nyos
+Gunung Merapi
+Taal
+Slopes
+Slope
+Summit
+summits
+summit

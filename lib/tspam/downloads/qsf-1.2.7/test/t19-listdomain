@@ -1,0 +1,10 @@
+#!/bin/sh
+#
+# TEST: Listing of domains:             
+
+$PROG -d $BACKEND:$TESTDB -aMe @Test2.com
+(echo From: test@test2.com; echo; echo test) | $PROG -d $BACKEND:$TESTDB -at >/dev/null
+(echo From: blah@test3.com; echo; echo test) | $PROG -d $BACKEND:$TESTDB -yM >/dev/null
+$PROG -d $BACKEND:$TESTDB -ymme @Test3.com
+(echo From: test@test3.com; echo; echo test) | $PROG -d $BACKEND:$TESTDB -ayt >/dev/null || exit 0
+exit 1

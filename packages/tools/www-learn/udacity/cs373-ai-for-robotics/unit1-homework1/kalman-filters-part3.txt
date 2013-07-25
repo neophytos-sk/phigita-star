@@ -1,0 +1,21 @@
+In two other posts, I wrote about the matrices in the Kalman filters:
+
+What are all those matrices for the Kalman filter? Part I
+
+What are all these Kalman matrices Part II
+
+In this post I'll just say a few things about how the filter works and when it doesn't. With a Kalman filter, we have a bunch of state variables (in the class example they were position and velocity) and some sensors that give us information about the variables (in the class, one location sensor). Crucially, the bunch of variables have to be unimodal, which means that we have one belief, although perhaps an uncertain one, about the values of the variables. Our sensor inputs are unimodal too
+
+That is, we can represent the notion that the car is over there, about 12 meters away but maybe as close as 9 meters or as far away as 15 meters. But we can't represent the belief that the car might be over there to the left, around 12 meters away, or else maybe I was looking in a mirror and it was actually over there to the right, around 12 meters away. Think back to the last class, where the robot saw a door and was pretty sure it was either in front of door #1, or door #2, or door #3. The Kalman filter can't handle that at all. The particle filter that we're about to learn about does wonderfully with that sort of belief, but the Kalman filter does not.
+
+Both the sensor input and the belief about the state variables have to be not only unimodal, but gaussian. The Kalman filter update is, essentially, multiplying two gaussians just like we did in class, but since they are multivariate (more than one variable) gaussians it has to get smart about doing the right thing with correlations. (If you have two sensors that both tend to be wrong in the same direction, you shouldn't take the second one as strong confirmation of the first one, and the linear algebra in the Kalman equations handles that.) The Kalman equations do operations that are only valid if the sensors and state are gaussian-- otherwise, the filter is just doing meaningless mathematical operations that might or might not come up with plausible numbers.
+
+Here's the non-intuitive result: the P matrix shows the variances of your state variables in its diagonals. Small numbers there represent more certainty that the state variables are close to their true values. Those numbers are going to get smaller and smaller as you do more cycles independent of your sensor measurements! That is, whatever your sensor sees, you'll get more and more certain that your state variables are correct in exactly the same way.
+
+So, bottom line, for a Kalman filter model to work, you need
+
+    some state variables where your belief about them forms a gaussian (though you can cheat and start with such a wide gaussian that it's rather like a uniform distribution)
+    some linear equations in your state variables that transform your state variables into new state variables with no uncertainty
+    some sensor outputs which are gaussian
+    the variances and covariances of your sensor outputs
+

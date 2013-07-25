@@ -1,0 +1,10 @@
+Received: from unknown (helo owg)(unknown@125.44.243.27)
+	by test with SMTP; Sat, 03 Dec 2011 03:04:37 +0000 
+X-Lasthop: 125.44.243.27 
+Message-ID: <20111203105852006675@371.net> 
+From: =?gb2312?B?us7d5taq?= <zhangyujian@371.net> 
+To:  
+Subject: =?gb2312?B?x+uy6dTEbmF6?= 
+Date: Sat, 3 Dec 2011 10:58:42 +0800 
+X-mailer: Kutzyfveq 9 
+Whoops!  What is a 'application/vnd.ms-excel'?

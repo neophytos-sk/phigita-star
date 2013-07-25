@@ -1,0 +1,21 @@
+help
+Main
+Main()
+run-main
+  def isOpen(char: Char): Boolean = if (char=='(') true else false;
+  def isClose(char: Char): Boolean = if (char==')') true else false;
+  def isBalanced(chars: List[Char], stack: List[Char]): Boolean =
+      if (chars.isEmpty)
+       stack.isEmpty
+      else if isOpen(chars.head)
+       isBalanced(chars.tail, chars.head :: stack)
+      else if isClose(chars.head)
+         !stack.isEmpty && isOpen(stack.head) && isBalanced(chars.tail,stack.tail)
+      else
+         isBalanced(chars.tail,stack);
+      
+  def balance(chars: List[Char]): Boolean = isBalanced(chars,Nil);
+  def isOpen(char: Char): Boolean = if (char=='(') true else false;
+  def isOpen(char: Char): Boolean = if (char=="(") true else false;
+submit
+submit neophytos@gmail.com tqC3SruUZd

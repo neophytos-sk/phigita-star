@@ -1,0 +1,16 @@
+Return-path: <webmaster@phigita.net> 
+Received: from [78.5.238.218] (port=6923 helo=acergiama)
+	by elyss-mail.elysshorizon.com with asmtp 
+	id 2952D8-0002E8-83
+	for <webmaster@phigita.net>; Mon, 21 Nov 2011 11:58:29 +0100 
+Message-ID: <C81FA0C0C8764B33912B824D32097EED@acergiama> 
+From: =?koi8-r?B?IuTPzcEg0yDHwdLBztTJxcoi?= <mitigationge54@elysshorizon.com> 
+To: <webmaster@phigita.net> 
+Subject: =?koi8-r?B?5M/NwSDJ2iDC0tXTwQ==?= 
+Date: Mon, 21 Nov 2011 11:58:29 +0100 
+X-Priority: 3 
+X-MSMail-Priority: Normal 
+X-Mailer: Microsoft Windows Mail 6.0.6001.18000 
+X-MimeOLE: Produced By Microsoft MimeOLE V6.0.6001.18049 
+X-Spam: Not detected 
+X-Mras: Ok 

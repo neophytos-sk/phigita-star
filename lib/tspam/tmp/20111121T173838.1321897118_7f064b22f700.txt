@@ -1,0 +1,76 @@
+DomainKey-Signature: q=dns; a=rsa-sha1; c=nofws;
+	s=prod; d=linkedin.com;
+	h=DKIM-Signature:Sender:Date:From:To:Message-ID:Subject:MIME-Version:Content-Type:X-LinkedIn-Class:X-LinkedIn-Template:X-LinkedIn-fbl;
+	b=Y6sV5EVLZ9zCzh21jy1pI59mbJuAOK5bOT47bVsMZOmpfyb2zkHuEqNh4WihM6tL
+	hldrMf5gBpZSCOoF8j9kCFH3fqbjUk62YOBvF5+oDV5ZU5pYA15hCKkxpou35fSu 
+DKIM-Signature: v=1; a=rsa-sha1; d=linkedin.com; s=proddkim; c=relaxed/relaxed;
+	q=dns/txt; i=@linkedin.com; t=1321897109;
+	h=From:Subject:Date:To:MIME-Version:Content-Type:X-LinkedIn-Class:X-LinkedIn-fbl:
+	X-LinkedIn-Template;
+	bh=FxWk3KQUc+rqSZ3j357lEEARvrQ=;
+	b=dC2XBtKD+/WfiN7OM/tW9eSmoiCuO+Z69x3gemMQYR6nMT7kBdPC5RsXvdmke8gE
+	NKTOn87SMI4EZZoJOyOT+rIep0sX2mBGDbLTtLhvodxdTXxNg6c0d+cIKK4ocSp9; 
+Sender: messages-noreply@bounce.linkedin.com 
+Date: Mon, 21 Nov 2011 17:38:29 +0000 (UTC) 
+From: Cloud Computing <groups-noreply@linkedin.com> 
+To: Neophytos Demetriou <k2pts@phigita.net> 
+Message-ID: <638673753.44707955.1321897109084.JavaMail.app@ela4-bed79.prod> 
+Subject: Forget Silver Lining, See Which Cloud Sparkles the Most at UP 2011 
+X-LinkedIn-Class: GROUP-DISC-THREAD 
+X-LinkedIn-Template: group_announcement_message 
+X-LinkedIn-fbl: m-q630Go92jkOaC0-wBwJYuuRpVtzGmN-9-dWP7X-tKfk3FKN97-uXre 
+--------------------------------------
+LinkedIn
+------------Group: Cloud Computing
+
+Subject: Forget Silver Lining, See Which Cloud Sparkles the Most at UP 2011 
+
+Happy Monday Cloud Computing Group Members!
+ 
+We are fast approaching the home straight in the race to UP 2011 (December 5-9, 2011 in Mountain View, CA and online). Visit this link to take advantage of your membership discount: http://up11.eventbrite.com/?discount=LI15 
+
+Tune in to world class and exclusive speaker line up, suitable for everyone; whether you are a  beginner, intermediate and advanced level of cloud user. Hear expert keynotes and panel discussions from leading lights of cloud, giving solutions  that you or your company can use right away. 
+
+UP2011 speakers feature:
+Mike Hill,  VP of Enterprise Initiatives at IBM
+Jeff Nick, – Senior VP & CTO
+Steven Martin, - GM, Windows Azure Business Strategy of Microsoft
+Dave McClure, Associate Administrator of Citizen Services at U.S. GSA
+Angel Luis Diaz, VP, IBM Software Standards & Cloud
+Mark Forman, Former US Federal CIO
+Cara Beston - Partner at PwC
+Robert Mahowald, Research VP, SaaS & Cloud Services of IDC  
+Maria Azua, VP of Advanced Cloud Solutions and Innovation at IBM
+Karl Mayrhofer - MD at Fabasoft
+Jinesh Varia, Evangelist of Amazon Web Services
+Yuchun Lee, VP at IBM (CEO at Unica)
+Marc Silvester, EMEA VP, CTO of CSC
+Craig Sowell, VP of IBMSmartCloud and Managed Solutions at IBM
+Expert Panel lead by Mike Karp, Analyst at Ptak/Noel
+Expert Panel lead by James Staten Analyst at Forrester Research
+Amongst many other exclusive sessions.
+ 
+UP-START 2011 CLOUD AWARDS:
+Don’t miss this years coveted annual cloud awards (supported by PwC) where the 12 finalists in 4 nominations will meet head-on competing for 4  awards. (who needs American Idol, when you have Cloud Idol).
+
+Regular Hybrid tickets are sold out, a few VIP Hybrid tickets remain.
+Act now using your exclusive 15% group member discount to secure your spot at this not to be missed event: http://bit.ly/thgwiD 
+
+We look forward to seeing you in Mountain View and in the Cloud!
+
+Warmest regards,
+
+Group Management
+
+P.S
+Bagged your UP2011 ticket already? Lucky You! RSVP at http://linkd.in/sLVNVW
+Follow @UP_Con and @CloudSlam to stay current and connected
+Tweet us at hash-tag #UP2011
+
+Posted By Khazret Sapenov
+
+Go to the complete announcement http://www.linkedin.com/e/-1ht5d5-gv9rep96-m/vaq/81482526/61513/-1/eml-anet_ancmt-b-0/?hs=false&tok=1F0gAXiBY2bl01
+
+Don't want to hear from the manager: http://www.linkedin.com/e/-1ht5d5-gv9rep96-m/vgs/61513/?hs=false&tok=0tDaBaPqA2bl01
+
+

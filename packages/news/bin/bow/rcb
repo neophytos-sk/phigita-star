@@ -1,0 +1,5 @@
+echo "Start indexing: `date`" >> crossbow.log
+echo "  option: -S --replace-stoplist-file=merged_stopwords.txt ~/tingabs_lb1" >> crossbow.log
+./crossbow -i -S --replace-stoplist-file=merged_stopwords.txt ~/tingabs_lb1
+#./crossbow -i --lex-white ~/corpus/absout
+echo "End indexing: `date`\n" >> crossbow.log

@@ -1,0 +1,354 @@
+#!/bin/sh
+
+echo ""
+
+# defaults
+DEBUG=no
+with_libdb=test
+with_mysql=test
+
+# parse options
+# --with/--without parsing copied from autoconf's output
+while [ $# -gt 0 ]; do
+  case $1 in
+    --with-*)
+      ac_option=$1
+      ac_optarg=`expr "x$ac_option" : 'x[^=]*=\(.*\)'`
+      ac_package=`expr "x$ac_option" : 'x-*with-\([^=]*\)'`
+      # Reject names that are not valid shell variable names.
+      expr "x$ac_package" : ".*[^A-Za-z0-9_-]" >/dev/null &&
+        { echo "error: invalid package name: $ac_package"; exit 1; }
+      ac_package=`echo $ac_package | sed 's/-/_/g'`
+      case $ac_option in
+        *=*)
+          ac_optarg=`echo "$ac_optarg" | sed "s/'/'\\\\\\\\''/g"`
+          ;;
+        *)
+          ac_optarg=yes
+          ;;
+      esac
+      eval "with_$ac_package='$ac_optarg'"
+      ;;
+    --without-*)
+      ac_option=$1
+      ac_optarg=`expr "x$ac_option" : 'x[^=]*=\(.*\)'`
+      ac_package=`expr "x$ac_option" : 'x-*without-\([^=]*\)'`
+      # Reject names that are not valid shell variable names.
+      expr "x$ac_package" : ".*[^A-Za-z0-9_-]" >/dev/null &&
+        { echo "error: invalid package name: $ac_package"; exit 1; }
+      ac_package=`echo $ac_package | sed 's/-/_/g'`
+      eval "with_$ac_package=no"
+      ;;
+    --debug=yes|--debug|-d)
+      echo "Debug mode enabled."
+      with_debug=yes
+      ;;
+    --debug=no)
+      echo "Debug mode disabled."
+      with_debug=no
+      ;;
+    --help|-help|-h)
+      echo "usage: $0 [ options ]"
+      echo "available options:"
+      echo "  --debug=yes (or -d)     Enable debugging support."
+      echo "  --debug=no              Disable debugging support."
+      echo "  --with-package          Enable support for package in default location."
+      echo "  --with-package=path     Enable support for package installed in path."
+      echo "  --without-package       Disable support for package."
+      echo "  --help (or -h)          Show this message."
+      echo ""
+      echo "relevant packages:"
+      echo "  libdb = BerkeleyDB"
+      echo "  mysql = MySQL database"
+      exit 1
+      ;;
+    *)
+      echo "Unknown option '$1', try -h for help"
+      exit 1
+      ;;
+  esac
+  shift
+done
+
+echo "Examining system setup..."
+
+# Some known configs:
+#
+# uname -s   uname -r      uname -m   uname -p
+# ========   ===========   ========   ========
+# SunOS      5.6           sun4u      sparc
+# Linux      2.2.17        i686       unknown
+# FreeBSD    4.1-RELEASE   i386       i386
+
+UNAME_S=`uname -s`
+UNAME_R=`uname -r`
+
+case "$UNAME_S" in
+  Linux)
+    if [ "$with_debug" = "yes" ]; then
+      CCDBG="-g"
+      LDDBG="-g"
+    else
+      CCDBG="-DNDEBUG"
+      LDDBG=""
+    fi
+    CC=gcc
+    CFLAGS="$CCDBG -D_UNIX -D_LINUX -Wall"
+    CXX=g++
+    CXXFLAGS=${CFLAGS}
+    AR=ar
+    ARFLAGS="-rc"
+    LD=gcc
+    LDFLAGS="$LDDBG"
+    SYSLIBS=""
+    LIBDB_LIB="-ldb"
+    MYSQL_LIB="-lmysqlclient"
+    ;;
+  FreeBSD)
+    case "$UNAME_R" in
+      2.*)
+        OSVER=20
+        ;;
+      3.*)
+        OSVER=30
+        ;;
+      4.*)
+        OSVER=40
+        ;;
+      *)
+        # Assume 5.0 +
+        OSVER=50
+        ;;
+    esac
+    if [ "$with_debug" = "yes" ]; then
+      CCDBG="-g"
+      LDDBG="-g"
+    else
+      CCDBG="-DNDEBUG"
+      LDDBG=""
+    fi
+    CC=gcc
+    CFLAGS="$CCDBG -D_UNIX -D_BSD=$OSVER -Wall"
+    CXX=g++
+    CXXFLAGS=${CFLAGS}
+    AR=ar
+    ARFLAGS="-rc"
+    LD=gcc
+    LDFLAGS="$LDDBG"
+    SYSLIBS=""
+    LIBDB_LIB=""
+    MYSQL_LIB="-lmysqlclient"
+    ;;
+  OpenBSD)
+    # I'm guessing OpenBSD looks mostly like FreeBSD 4.x
+    OSVER=40
+    if [ "$with_debug" = "yes" ]; then
+      CCDBG="-g"
+      LDDBG="-g"
+    else
+      CCDBG="-DNDEBUG"
+      LDDBG=""
+    fi
+    CC=gcc
+    CFLAGS="$CCDBG -D_UNIX -D_BSD=$OSVER -Wall"
+    CXX=g++
+    CXXFLAGS=${CFLAGS}
+    AR=ar
+    ARFLAGS="-rc"
+    LD=gcc
+    LDFLAGS="$LDDBG"
+    SYSLIBS=""
+    LIBDB_LIB=""
+    MYSQL_LIB="-lmysqlclient"
+    ;;
+  Darwin)
+    # I'm guessing Darwin looks mostly like FreeBSD 4.x
+    OSVER=40
+    if [ "$with_debug" = "yes" ]; then
+      CCDBG="-g"
+      LDDBG="-g"
+    else
+      CCDBG="-DNDEBUG"
+      LDDBG=""
+    fi
+    CC=cc
+    CFLAGS="$CCDBG -D_UNIX -D_BSD=$OSVER -DNOLOCK -Wall"
+    CXX=c++
+    CXXFLAGS=${CFLAGS}
+    AR=ar
+    ARFLAGS="-rc"
+    LD=cc
+    LDFLAGS="$LDDBG"
+    SYSLIBS=""
+    LIBDB_LIB=""
+    MYSQL_LIB="-lmysqlclient"
+    ;;
+  SunOS)
+    case "$UNAME_R" in
+      5.6)
+        OSVER=56
+        ;;
+      5.7)
+        OSVER=57
+        ;;
+      5.8)
+        OSVER=58
+        ;;
+      *)
+        # Assume 9.0+
+        OSVER=59
+        ;;
+    esac
+    # Prefer gcc to the native cc here because I haven't tested with the
+    # native compiler yet.
+    type gcc >/dev/null 2>&1
+    if [ $? -eq 0 ]; then
+      if [ "$with_debug" = "yes" ]; then
+        CCDBG="-g"
+        LDDBG="-g"
+      else
+        CCDBG="-DNDEBUG"
+        LDDBG=""
+      fi
+      CC=gcc
+      CFLAGS="$CCDBG -D_UNIX -D_SOLARIS=$OSVER -Wall"
+      CXX=g++
+      CXXFLAGS=${CFLAGS}
+      LD=gcc
+      LDFLAGS="$LDDBG"
+    else
+      if [ "$with_debug" = "yes" ]; then
+        CCDBG="-g"
+        LDDBG="-g"
+      else
+        CCDBG="-DNDEBUG"
+        LDDBG=""
+      fi
+      CC=cc
+      CFLAGS="-DNDEBUG -D_UNIX -D_SOLARIS=$OSVER"
+      CXX=c++
+      CXXFLAGS=${CFLAGS}
+      LD=ld
+      LDFLAGS=""
+    fi
+    AR=ar
+    ARFLAGS="-rc"
+    SYSLIBS=""
+    LIBDB_LIB="-ldb"
+    MYSQL_LIB="-lmysqlclient"
+    ;;
+  OSF1)
+    if [ "$with_debug" = "yes" ]; then
+      CCDBG="-g2"
+      LDDBG="-g2"
+    else
+      CCDBG="-DNDEBUG"
+      LDDBG=""
+    fi
+    CC=cc
+    CFLAGS="$CCDBG -D_UNIX -D_OSF"
+    CXX=cxx
+    CXXFLAGS="-noexceptions ${CFLAGS}"
+    AR=ar
+    ARFLAGS="-rc"
+    LD=ld
+    LDFLAGS=""
+    SYSLIBS="-lm"
+    LIBDB_LIB="-ldb"
+    MYSQL_LIB="-lmysqlclient"
+    ;;
+  *)
+    if [ "$with_debug" = "yes" ]; then
+      CCDBG="-g"
+      LDDBG="-g"
+    else
+      CCDBG="-DNDEBUG"
+      LDDBG=""
+    fi
+    CC=cc
+    CFLAGS="$CCDBG -DNDEBUG -D_UNIX"
+    CXX=c++
+    CXXFLAGS=${CFLAGS}
+    AR=ar
+    ARFLAGS="-rc"
+    LD=ld
+    LDFLAGS="$LDDBG"
+    SYSLIBS=""
+    LIBDB_LIB="-ldb"
+    MYSQL_LIB="-lmysqlclient"
+    ;;
+esac
+
+echo -n "Looking for compiler... "
+type $CC >/dev/null 2>&1
+if [ $? -ne 0 ]; then
+  echo "compiler '$CC' not found!"
+  exit 1
+else
+  echo "$CC is executable."
+fi
+
+echo -n "Checking for BerkeleyDB... "
+if [ "$with_libdb" = "test" ]; then
+  if [ -e /usr/local/BerkeleyDB.4.1/include/db.h ]; then
+    with_libdb=/usr/local/BerkeleyDB.4.1
+    LIBDB_LIB="-ldb"
+  elif [ -e /usr/include/db.h -o \
+       -e /usr/local/include/db.h ]; then
+    with_libdb=yes
+  else
+    with_libdb=no
+  fi
+fi
+if [ "$with_libdb" = "no" ]; then
+  echo "disabled."
+else
+  if [ "$with_libdb" != "yes" ]; then
+    CFLAGS="$CFLAGS -I$with_libdb/include"
+    LDFLAGS="$LDFLAGS -L$with_libdb/lib"
+  fi
+  CFLAGS="$CFLAGS -DHAVE_LIBDB"
+  LDFLAGS="$LDFLAGS $LIBDB_LIB"
+  echo "enabled."
+fi
+
+echo -n "Checking for MySQL... "
+if [ "$with_mysql" = "test" ]; then
+  type mysql_config >/dev/null 2>&1
+  if [ $? -eq 0 ]; then
+    with_mysql=yes
+    CFLAGS="$CFLAGS `mysql_config --cflags`"
+    LDFLAGS="$LDFLAGS `mysql_config --libs`"
+    # mysql_config will add -lmysqlclient, don't add it twice
+    MYSQL_LIB=""
+  else
+    with_mysql=no
+  fi
+fi
+if [ "$with_mysql" = "no" ]; then
+  echo "disabled."
+else
+  if [ "$with_mysql" != "yes" ]; then
+    CFLAGS="$CFLAGS -I$with_mysql/include"
+    LDFLAGS="$LDFLAGS -L$with_mysql/lib"
+  fi
+  CFLAGS="$CFLAGS -DHAVE_MYSQL"
+  LDFLAGS="$LDFLAGS $MYSQL_LIB"
+  echo "enabled."
+fi
+
+for D in .; do
+  cat $D/Makefile.in | sed "s%@CC@%${CC}%g
+	s%@CXX@%${CXX}%g
+	s%@AR@%${AR}%g
+	s%@LD@%${LD}%g
+	s%@CFLAGS@%${CFLAGS}%g
+	s%@CXXFLAGS@%${CXXFLAGS}%g
+	s%@ARFLAGS@%${ARFLAGS}%g
+	s%@LDFLAGS@%${LDFLAGS}%g
+	s%@SYSLIBS@%${SYSLIBS}%" > $D/Makefile || exit 1
+done
+
+echo "Configuration successful."
+echo "Now run 'make all' and 'make install'."
+echo ""

@@ -1,0 +1,58 @@
+Received: by web1.extjs.com (Postfix, from userid 33)
+	id 07CDF6C1CA; Fri,  2 Dec 2011 00:02:09 +0000 (UTC) 
+To: k2pts@phigita.net 
+Subject: "Ext: Open Discussion" update 
+X-PHP-Originating-Script: 1000:class_mail.php 
+From: "Sencha Forum" <admin@sencha.com> 
+Auto-Submitted: auto-generated 
+Message-ID: <20111202000208.f8e91abea116@www.sencha.com> 
+X-Priority: 3 
+X-Mailer: vBulletin Mail via PHP 
+Date: Fri,  2 Dec 2011 00:02:09 +0000 (UTC) 
+--------------------------------------
+Dear k2pts,
+
+You are subscribed to the forum Ext: Open Discussion, there have been 1 new thread(s) and 3 updated thread(s).
+http://www.sencha.com/forum/forumdisplay.php?6-Ext-Open-Discussion
+
+The following threads are new:
+************
+ExtJs Certification
+http://www.sencha.com/forum/showthread.php?158420-ExtJs-Certification
+In forum: Ext: Open Discussion
+Started by: poojagarg89
+Last post: 1 Dec 2011 3:44 PM
+
+
+The following threads have been updated:
+************
+JSDuck - the tool for documenting your Ext JS apps
+http://www.sencha.com/forum/showthread.php?151739-JSDuck-the-tool-for-documenting-your-Ext-JS-apps
+In forum: Ext: Open Discussion
+Started by: renku
+Last post: 1 Dec 2011 10:21 AM
+************
+Help needed to deploy app on Blackberry device
+http://www.sencha.com/forum/showthread.php?157092-Help-needed-to-deploy-app-on-Blackberry-device
+In forum: Ext: Open Discussion
+Started by: pranj1488
+Last post: 1 Dec 2011 7:30 PM
+************
+[Security] XSS attacks for Extjs Applications - critical warning
+http://www.sencha.com/forum/showthread.php?13913-Security-XSS-attacks-for-Extjs-Applications-critical-warning
+In forum: Ext: Open Discussion
+Started by: Alan Knowles
+Last post: 1 Dec 2011 8:46 PM
+
+
+All the best,
+Sencha Forum
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Unsubscription information:
+
+To unsubscribe from this forum, please visit this page:
+http://www.sencha.com/forum/subscription.php?do=removesubscription&type=forum&subscriptionid=63&auth=e23de5f6387a31c5573cf4993e28e47f
+
+
+

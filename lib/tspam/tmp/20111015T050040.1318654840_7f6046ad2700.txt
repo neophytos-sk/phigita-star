@@ -1,0 +1,9 @@
+Received: from 42.49.132.151 (HELO MCQZBAOGZ); Sat, 15 Oct 2011 12:58:51 +0800 
+Message-ID: <20111015130153705200@cnsensor.net> 
+From: =?gb2312?B?y++zsw==?= <www@cnsensor.net> 
+To:  
+Subject: =?gb2312?B?qIogyscgyrIgw7Qg07Agz+wgwcsg064gwPsg0+sg?=
+	=?gb2312?B?wKkg1cUgo78tLW01cndleWFwcA==?= 
+Date: Sat, 15 Oct 2011 13:01:48 +0800 
+X-mailer: Bxvpqpfu 6 
+Whoops!  What is a 'application/vnd.ms-excel'?

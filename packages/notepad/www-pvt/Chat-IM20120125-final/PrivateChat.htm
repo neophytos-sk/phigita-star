@@ -1,0 +1,104 @@
+<html>
+<head>
+    <title>Private Chat</title>
+    <link href="ChatStyleSheet.css" type="text/css" rel="Stylesheet" />
+
+    <script type="text/javascript" src="core-v2.js"></script>
+
+    <script type="text/javascript" src="jschat.js"></script>
+
+    <script type="text/javascript">
+  
+
+ Server = {};
+        Server.baseURL = "http://api.phigita.net/simplex/test?";
+        Server.load_resource = function(query, callback) {
+            var script = xo.DomHelper.createDom({ "tag": "script", "type": "text/javascript" }, document.getElementsByTagName("head")[0]);
+            script.src = Server.baseURL + query + "&callback=" + callback;
+        };
+      function quickMessageSend(event) {
+
+            if (event.keyCode == 13) {
+            
+                Chat.SendMessage();
+                
+            }
+
+        }
+  
+  
+  
+  Chat.RefreshInterval = 10*1000;
+  window.setInterval(Chat.GetMessages, Chat.RefreshInterval);
+  
+         window.onload = function() {
+         
+         
+         //Dummy LoggedInUser
+            
+            
+            //Initialize qsParm with the query parameters
+            qs();
+            //Get the chat partner from query string
+           //Usernames are case insensitive - therefore turn them both to lowercase      
+           var chatPartner1 =  qsParm["User"].toLowerCase();
+           var chatPartner2 =  qsParm["LUser"].toLowerCase();// Chat.LoggedInUser.toLowerCase();
+           Chat.LoggedInUser = chatPartner2;
+Chat.ChatPartner = chatPartner1;
+           
+           //Chat Text above conversation
+       	var chatWith = xo.getDom(divChatWithText);    
+           
+           chatWith.innerHTML=" Chat with " + chatPartner1 + ":";
+           
+//Each conversation will have a prefix username1_username2
+//To ensure that the prefix is the same for both chaters, the prefix is 
+//built based on the alphabetical order of the two usernames
+var conversationPrefix = "";
+if(chatPartner1 < chatPartner2)
+{
+conversationPrefix = chatPartner1 + "_" + chatPartner2;
+}
+else
+{
+conversationPrefix = chatPartner2 + "_" + chatPartner1;
+}
+
+
+//Because this page handles the private chat, 
+//the prefix has CHAT.pmessage as prefix + the conversationPrefix
+  Chat.Prefix = "CHAT.pmessage" + conversationPrefix;
+
+  
+    
+     xo.Event.on('chat_message', 'keyup', quickMessageSend);
+
+  Chat.GetMessages();
+
+        };
+  
+  
+  
+    </script>
+
+</head>
+<body  leftmargin="0" topmargin=0" rightmargin="0" bottommargin="0" marginwidth="0" marginheight=0" >
+    <table style="width: 100%; height: 130px;">
+   <tr><td>
+   <div style="visibility:hidden" id="divChatWithText"></div>
+   
+   </td></tr>
+        <tr>
+            <td class="chattd">
+                <div id="div_chatarea" class="chatarea">
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input id="chat_message" type="text" size="100" style="width: 100%" />
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

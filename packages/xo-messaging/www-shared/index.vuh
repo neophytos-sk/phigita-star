@@ -1,0 +1,3 @@
+rp_form_put id [ad_conn extra_url]
+
+rp_internal_redirect /packages/xo-messaging/tmpl-shared/message-one

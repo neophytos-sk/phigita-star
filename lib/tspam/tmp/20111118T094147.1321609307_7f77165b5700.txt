@@ -1,0 +1,17 @@
+Return-path: <webmaster@phigita.net> 
+Received: from [87.109.179.129] (port=3422 helo=abumadaxpsp3)
+	by mx1.emailsrvr.com with asmtp 
+	id 2F39D6-000314-11
+	for <webmaster@phigita.net>; Fri, 18 Nov 2011 12:40:36 +0300 
+Message-ID: <528C1D12E42B4A1AA1736B5AB3E68288@abumadaxpsp3> 
+From: =?koi8-r?B?IuLPztPByiDHwczF0sXRIg==?= <hurdled@southshorewebs.com> 
+To: <webmaster@phigita.net> 
+Subject: =?koi8-r?B?8sHT0NLPxMHWwSDR0M/O08vJyCDCz87TwcouIPDPxMHSz8sgzsEgxM/M?=
+	=?koi8-r?B?x8nFIMfPxNk=?= 
+Date: Fri, 18 Nov 2011 12:40:36 +0300 
+X-Priority: 3 
+X-MSMail-Priority: Normal 
+X-Mailer: Microsoft Windows Mail 6.0.6001.18000 
+X-MimeOLE: Produced By Microsoft MimeOLE V6.0.6001.18049 
+X-Spam: Not detected 
+X-Mras: Ok 

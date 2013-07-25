@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>JavaScript Diagram Builder - The Line object</title>
+<link rel=stylesheet type="text/css" href="diagram.css" />
+<SCRIPT Language="JavaScript">if ((document.layers)&&(history.length==1)) location.href=location.href+"#";</SCRIPT>
+<SCRIPT Language="JavaScript" src="diagram.js"></SCRIPT>
+</head>
+<body>
+<DIV STYLE="position:absolute; top:0px"></DIV>
+
+<SCRIPT Language="JavaScript">
+var n=1000, i, x=new Array(n), y=new Array(n);
+x[0]=Math.random()*1000-1000;
+y[0]=Math.random()*100-100;
+for (i=1; i<n; i++) x[i]=x[i-1]+Math.random()+1; 
+for (i=1; i<n; i++) y[i]=y[i-1]+2*Math.random()-1; 
+var imin=0, imax=n-1, ymin, ymax;
+GetYMinMax(imin, imax); 
+document.open();
+var D=new Diagram();
+D.SetFrame(80, 60, 520, 360);
+D.SetBorder(x[imin], x[imax], ymin, ymax);
+D.SetGridColor("#dddddd", "#eeeeee");
+D.SetText("X","Y","");
+D.Draw("", "#000000", true);
+new Box(D.left, D.top-20, D.left+40, D.top, "#dddddd", "<-", "#000000", 1, "#000000", "Shift left", "Shift(-1)");
+new Box((D.left+D.right)/2-20, D.top-20, (D.left+D.right)/2+20, D.top, "#dddddd", "(-)", "#000000", 1, "#000000", "Zoom out", "Zoom(-1)");
+new Box(D.right-40, D.top-20, D.right, D.top, "#dddddd", "->", "#000000", 1, "#000000", "Shift right", "Shift(1)");
+var L=new Array();
+for (i=0; i<(D.right-D.left)/2; i++)
+{ L[i]=new Line(0, 0, 0, 0, "#0000ff", 2, "Zoom in", "Zoom("+i+")");
+  L[i].SetVisibility(false);
+}  
+MsgWait=new Box((D.left+D.right)/2-36, (D.top+D.bottom)/2-18, (D.left+D.right)/2+36, (D.top+D.bottom)/2+18, "#dddddd", "Please<br>wait!", "#000000", 1, "#000000");
+document.close();
+setTimeout("RefreshGraph()",100);
+function Zoom(jj)
+{ if ((jj>=0)&&((imax-imin)<8)) { alert("No more zoom in possible."); return; }
+  if ((jj<0)&&(imin==0)&&(imax==n-1)) { alert("No more zoom out possible."); return; }
+  var dd=Math.round((imax-imin)/4);
+  var ii=Math.round((imax-imin)*(jj+0.5)/L.length)+imin;
+  if (jj<0) { imin-=dd; imax+=dd; }
+  else { imin=ii-dd; imax=ii+dd; }
+  if (imin<0) { imax-=imin; imin=0; }
+  if (imax>(n-1)) { imin-=imax-(n-1); imax=n-1; }
+  if (imin<0) imin=0;
+  MsgWait.SetVisibility(true);
+  setTimeout("RefreshGraph()",100);
+}
+function Shift(jj)
+{ if ((jj<0)&&(imin==0)) { alert("No more shift left possible."); return; }
+  if ((jj>0)&&(imax==n-1)) { alert("No more shift right possible."); return; }
+  var dd=jj*Math.round((imax-imin)/4);
+  imin+=dd;
+  imax+=dd;
+  if (imin<0) { imax-=imin; imin=0; }
+  if (imax>(n-1)) { imin-=imax-(n-1); imax=n-1; }
+  MsgWait.SetVisibility(true);
+  setTimeout("RefreshGraph()",100);
+}
+function GetYMinMax(iimin, iimax)
+{ ymin=y[iimin]; ymax=y[iimin];
+  for (var dd=iimin+1; dd<=iimax; dd++)
+  { if (ymin>y[dd]) ymin=y[dd];
+    if (ymax<y[dd]) ymax=y[dd];
+  }
+}
+function RefreshGraph()
+{ GetYMinMax(imin, imax); //you can remove this, to have a constant y scale
+  D.SetBorder(x[imin], x[imax], ymin, ymax);
+  D.Draw("", "#000000", true);
+  var ii_new, ii_old=imin; 
+  for (dd=0; dd<L.length; dd++)
+  { ii_new=Math.round((imax-imin)*(dd+1)/L.length)+imin;
+    if (ii_new>ii_old)
+    { L[dd].ResizeTo(D.ScreenX(x[ii_old]),D.ScreenY(y[ii_old]),D.ScreenX(x[ii_new]),D.ScreenY(y[ii_new]));
+      L[dd].SetVisibility(true);
+      ii_old=ii_new;
+    }
+    else L[dd].SetVisibility(false);
+  }
+  MsgWait.SetVisibility(false);
+}
+</SCRIPT>
+</body>
+</html>

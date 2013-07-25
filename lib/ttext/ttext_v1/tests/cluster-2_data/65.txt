@@ -1,0 +1,247 @@
+Global economic inequality 
+
+More or less equal?
+
+Mar 11th 2004 
+From The Economist print edition
+
+
+Panos 
+ 
+ 
+
+ 
+
+Is economic inequality around the world getting better or worse?
+
+CRITICS of capitalism are convinced that the gap between rich and poor
+is widening across the world. For them, the claim amounts almost to an
+article of faith: worsening inequality is a sure sign of the moral
+bankruptcy o f. Whether rising inequality should in fact be seen as
+condemning capitalism in this way is a question worth addressing in
+its own right. There are reasons to doubt it. But it would also be
+interesting to know the answer to the narrow factual question. Is the
+familiar claim that capitalism makes global inequality worse actually
+true?
+
+Unfortunately, this apparently straightforward question turns out to
+be harder to answer than one might suppose. There are three broad
+areas of difficulty. The first is measuring what people, especially
+the poorest people in developing countries, consume. The second is
+valuing consumption in a way that allows useful comparisons to be made
+across countries and over time. And the third, in effect, is settling
+on an appropriate basis of comparison. Which matters more, for
+instance: whether inequality is widening among nations, or whether
+inequality is widening among all the people of the world, regardless
+of which country they happen to live in? Judging any claim about
+global inequality is impossible without a clear understanding of how
+the researchers concerned have dealt with all three questions.
+
+
+The third deserves to be emphasised at the outset. A
+thought-experiment reveals how easy it is to get muddled. Suppose it
+is true that inequality measured across countries is widening. (In
+other words, the gap between average incomes in the richest countries
+and average incomes in the poorest countries, measured without regard
+to changes in population, is growing.) Also suppose that inequality is
+worsening within every individual country. Given that cross-country
+inequality is widening, and that within-country inequality is getting
+worse as well, it would have to follow that global inequality,
+measured across all the world's individuals, is rising too, would it
+not? Actually, no. Even if those first two assumptions were true,
+global inequality measured across all the world's individuals might
+well be falling.
+
+How so? Simply add a third assumption: namely, that a group of poor
+countries accounting for a big share of all the poor people in the
+world was growing very rapidly. Suppose, for instance, that average
+incomes in India and China were growing much faster than average
+incomes in the rich industrial economies. Then it could be true that
+inequality was widening within every country, including within China
+and India themselves; and also that the gap between the very poorest
+countries (of sub-Saharan Africa) and the richest (Europe and the
+United States) was widening; and yet, at the same time, that
+inequality measured across all the individuals in the world was
+falling fast, because average incomes in the two most populous poor
+countries were rapidly going up.
+
+It so happens that average incomes in India and China are going up
+extremely rapidly. Without knowing anything else, one should therefore
+be sceptical about all the claims that are so confidently made about
+risin g.
+
+
+
+Poor visibility
+Attentive readers of The Economist will remember seeing before the
+panel of charts shown below. (They first appeared in a presentation
+given at the beginning of 2003 by Stanley Fischer, former deputy chief
+of the International Monetary Fund, to the American Economic
+Association. We wrote about them in this article of August 23rd last
+year.) We make no apologies for showing them to readers again: at a
+stroke, they cut through much of the statistical fog surrounding this
+subject.
+
+In both charts, the horizontal axis shows the average level of GDP per
+head in 1980, and the vertical axis shows the rate of growth in
+inflation-adjusted GDP per head between 1980 and 2000. For the moment,
+concentrate on chart 1, which shows each country as a single point.
+
+ 
+ 
+ 
+
+ 
+
+
+If it were true, on average, that incomes in poor countries grew
+faster between 1980 and 2000 than incomes in rich countries, then the
+points in chart 1 would tend to lie on a downward-sloping line. In
+that case, one would say that the poor countries were on average
+catching up up. A line of best fit drawn through the points actually
+slopes upwards, implying that the poor are falling behind, and that
+cross-country inequality is getting worse.
+
+But now look at chart 2. This plots the same countries as circles with
+areas drawn in proportion to population. India and China stand out,
+both by virtue of their vast populations and also because their growth
+record in the 1980s and 1990s was so much better than the poor-country
+average. A population-weighted line of best fit drawn through this
+second chart would indeed slope downwards, implying both catch-up and
+narrowing inequality.
+
+In short, once you take account of the fact that China and India have
+performed so well since 1980, and especially since 1990, together with
+the fact that these two countries account for such a big share of all
+the world's poor, it is difficult to stay as pessimistic about global
+trends in poverty and inequality as the critics of global capitalism
+wish to be. In effect, these critics must blind themselves to the
+extra information in the second chart.
+
+Unfortunately, however, Mr Fischer's admirable diagrams say nothing
+about poverty as such: they contain no information about how many of
+China's people, or America's or any other country's, are poor. And
+they say nothing about whether growth in any particular country is
+good for poor people living there (of course, growth raises incomes on
+average by definition). To look more carefully at these questions one
+must peer through a cloud of statistical and econometric chaff.
+
+
+
+Measuring matters
+Much of the frequently acrimonious debate among economists about
+global poverty and inequality turns out to revolve around a single
+technical issue: is it better to measure consumption (and hence living
+standards) using data drawn from national accounts or data drawn from
+household surveys? The two sources ought to marry up. In fact they
+differ systematically, and by a wide margin. Worse, growth in
+consumption, not merely levels of consumption, differs persistently
+according to which source is used. National-accounts data tend nearly
+always to give a much more optimistic view of trends in poverty than
+do household-survey data.
+
+Accordingly, in a recent review of the literature* by Angus Deaton of
+Princeton University (Mr Deaton is perhaps the only economist at work
+in this area who is acknowledged by all sides both as authoritative
+and as having no ideological axe to grind) two sets of studies are
+contrasted. The first draws mainly on national-accounts data, the
+second on household surveys. Their results are at odds.
+
+Work by Surjit Bhalla, by Xavier Sala-i-Martin, and by Francis
+Bourguignon and Christian Morrisson shows rapidrds, the number of
+people in poverty has been falling not only as a share of the world's
+population but also, remarkably, in absolute terms.
+
+Mr Sala-i-Martin's calculations, for instance, show that the
+proportion of the world's people living in acute poverty (on less than
+a dollar a day) fell from 17% in 1970 to 7% in 1998; the proportion
+living on less than $2 a day fell from 41% to 19%. The absolute
+headcount of global $1-a-day poverty fell, according to the same
+estimates, by 200m (see chart 3); and the count of $2-a-day poverty
+fell by 350m. Mr Bhalla, who finds the sharpest drop in poverty of
+these authors, wryly states that in 2000 when the United Nations (UN)
+announced its Millennium Development Goal on povertysing direct
+surveys of households, carry the official imprimatur of the UN, which
+uses them in monitoring progress towards its Millennium Development
+Goal on poverty. And they seem to show relatively little reduction in
+poverty over recent decades.
+
+A paper by Shaohua Chen and Martin Ravallion of the Bank lays out the
+thinking behind the Bank's estimates. The authors put the proportion
+of people living on less than a dollar a day at 28% in 1987erty line
+from one level to another, is apt to have a large effect on the
+figures. This underlines the importance of not regarding any of these
+numbers as holy writ.
+
+Still, the question remains, why are the differences so big? Several
+factors are at work. The World Bank attempts to measur e, as opposed
+t o. To the extent that poor people manage to save, their consumption
+will be less than their income, and so there will be more poor people
+on the Bank's definition. Also, the Bank expresses its poverty ratios
+as proportions of population in the developing countries; Mr
+Sala-i-Martin, for instance, uses global population; the effect is to
+make Mr Sala-i-Martin's estimates, other things equal, smaller than
+the Bank's. Country samples also vary from study to study. And on top
+of all this comes the effect of basing estimates on national accounts
+rather than on household surveys.
+
+It is revealing to consider why, according to the Chen-Ravallion
+study, poverty fell relatively slowly on their household-survey
+measure. It was not because of an increase in within-country
+inequalityas been less growth in the world in the 1990s than we are
+used to thinkin.g
+
+It would be a mistake to presume that either source of data is better
+in principle. Surveys are famously prone to error because of bad or
+fluctuating design, discrepancies in samples and poor execution. But
+national accounts have drawbacks as well, especially in poor
+countries. For instance, they fail to capture some sorts of non-market
+income and consumption. This makes them prone to understate the
+consumption of the poor, but also to overstate the growth of
+consumption of the poor as incomes rise and as more activities fall
+within the scope of market transactions.
+
+
+
+Take your pick
+Still, most of the discrepancy between the survey estimates and the
+national-accounts estimatens t o is usually found to fall. Consistent
+with this, the ratio of the two measures is highest in the poorest
+countries. 
+
+Mr Deaton argues that both sources ought to be used, though combining
+them properly raises a host of difficult technical issues. Meanwhile,
+the truth about global poverty and inequality presumably lies
+somewhere between the extremes suggested by the two methodologies.
+
+One can at least conclude that the official World Bank data, used by
+the UN and other agencies, are too pessimistic: poverty has most
+likely fallen faster than these widely cited figures suggest, and
+possibly fast enough to reduce the global headcount of those living on
+less than a dollar a day, even as population rises. More accurate
+answers will require more work to be done. In the meantime, however,
+the official position on global poverty ought to start, at a minimum,
+to acknowledge the uncertainty surrounding the figures and, further,
+to concede that the truth is likely to be better than the official
+figures say.
+
+
+
+Beside the point?
+But what of the fear that global capitalism is making progress at the
+expense of the poor? The true figures would probably be quite
+reassuring on thisd, to a large extent, the policies of their own and
+other governments. Sub-Saharan Africa plainly suffers not from
+globalisation, but from lack of it. The focus of attention should be
+on how to extend the benefits of international economic linkages to
+the region. Removing every rich-country barrier to trade with these
+countries would be an excellent place to start.
+
+By contrast, India and China are showing how great the benefits of
+international economic integration can be. Neither country is an
+exemplar of free-market capitalismsists. Would any such worsening of
+inequality entitle one to conclude that India and China had taken a
+wrong turn these past 20 years? Of course not. Look at Africa to
+understand that there are worse things than inequality.
+
+

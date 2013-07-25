@@ -1,0 +1,11 @@
+#lassign [split [ad_conn extra_url] "/"] __dummy__ tag
+
+set tag [ad_conn path_info]
+
+if { $tag ne {} } {
+	rp_form_put tag $tag
+	rp_internal_redirect /packages/calendar/www-global/index
+} else {
+	rp_returnnotfound
+	return
+}

@@ -1,0 +1,17 @@
+Return-path: <webmaster@phigita.net> 
+Received: from [183.83.105.251] (port=9266 helo=balu8)
+	by aristotle.mx25.net with asmtp 
+	id 0D2A53-0003D9-42
+	for <webmaster@phigita.net>; Thu, 17 Nov 2011 18:27:59 +0530 
+Message-ID: <B5C6F8518AA4491D9CE394DBFC7235DB@balu8> 
+From: =?koi8-r?B?IuvXwdLUwczYztnFIMvBzMXOxMHSySI=?= <flinchedi5@kdm-communications.com> 
+To: <webmaster@phigita.net> 
+Subject: =?koi8-r?B?8M/EwdLP3s7ZxSDL18HS1MHM2M7ZxSDLwczFzsTB0skgOTkg0tXCzMXK?=
+	=?koi8-r?B?INrBINvU1cvV?= 
+Date: Thu, 17 Nov 2011 18:27:59 +0530 
+X-Priority: 3 
+X-MSMail-Priority: Normal 
+X-Mailer: Microsoft Windows Mail 6.0.6001.18000 
+X-MimeOLE: Produced By Microsoft MimeOLE V6.0.6001.18049 
+X-Spam: Not detected 
+X-Mras: Ok 

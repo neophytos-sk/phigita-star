@@ -1,0 +1,12 @@
+Received: from bjvmxtk ([110.52.6.44])
+	(envelope-sender <office@yoma-ifc.com>)
+	by 218.24.176.11 with ESMTP
+	for <neonix88@alibaba.com.cn>; Tue, 08 Nov 2011 02:15:35 +0800 
+Message-ID: <20111108021440208526@yoma-ifc.com> 
+From: =?gb2312?B?yfLR9Lily7nM2LXn1LS8vMr109DP3rmry74=?= <office@yoma-ifc.com> 
+To:  
+Subject: =?gb2312?B?wcu94tfUztKjrMXg0fjV/ci3tcTQxMyso6zX9rrPuPHB7LW81d+jrA==?=
+	=?gb2312?B?LS0tLcLt3eazwg==?= 
+Date: Tue, 8 Nov 2011 02:14:31 +0800 
+X-mailer: Rvuv 2 
+Whoops!  What is a 'application/vnd.ms-excel'?

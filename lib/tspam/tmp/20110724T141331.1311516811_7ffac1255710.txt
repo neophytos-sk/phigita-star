@@ -1,0 +1,13 @@
+Received: from js ([110.53.24.198])
+	(authenticated bits=0)
+	by dns.nerkh.gov.tw (8.14.2/8.14.2) with ESMTP id p6OBHcWq022313;
+	Sun, 24 Jul 2011 19:17:40 +0800 
+Message-ID: <20110724192712458886@nerkh.gov.tw> 
+From: =?gb2312?B?1tzQy9O+?= <ebskh5@nerkh.gov.tw> 
+To:  
+Subject: =?gb2312?B?Ymog1tAguN8gsuMgudwgwO0gyMsg1LEgyKsgw+Y=?=
+	=?gb2312?B?ILy8IMTcIMzhIMn9IHlsZXlhODBnag==?= 
+Date: Sun, 24 Jul 2011 19:27:02 +0800 
+X-Priority: 1 
+X-mailer: Ksvxqkkjmp 7 
+Whoops!  What is a 'application/vnd.ms-excel'?

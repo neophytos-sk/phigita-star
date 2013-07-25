@@ -1,0 +1,24 @@
+% define uppercase accents
+
+vnchar casename "grave accent";
+define_vnaccent(135, grave_);
+
+vnchar casename "acute accent";
+define_vnaccent(136, acute_);
+
+vnchar casename "circumflex accent";
+define_vnaccent(137, circumflex_);
+
+vnchar casename "tilde accent";
+define_vnaccent(138, tilde_);
+
+vnchar casename "dot accent";
+define_vnaccent(139, dot_);
+
+vnchar casename "breve accent";
+define_vnaccent(140, breve_);
+
+vnchar casename "hook accent";
+define_vnaccent(141, hook_);
+
+endinput;

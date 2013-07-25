@@ -1,0 +1,6 @@
+From somebody@nowhere.com
+Subject: This is a test
+ of a multi-line subject
+
+This is a test
+

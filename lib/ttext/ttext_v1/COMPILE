@@ -1,0 +1,1 @@
+../configure --enable-threads --prefix=/opt/aolserver --with-tcl=/usr/lib/     

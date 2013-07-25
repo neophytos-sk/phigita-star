@@ -1,0 +1,11 @@
+Received: from bzrs (unknown [42.49.138.145])
+	by mail.extmail.org (Postfix - by extmail.org) with ESMTPA id 7591A11189F0;
+	Thu, 27 Oct 2011 17:58:58 +0800 (CST) 
+Message-ID: <20111027203448674804@gzdtjl.com> 
+From: =?gb2312?B?s8zM7JZM?= <wuxuewen@gzdtjl.com> 
+To:  
+Subject: =?gb2312?B?z/ouytsu1vcuudwuMi7M7C4xLtK5Lse/LruvLg==?=
+	=?gb2312?B?0bUuwbcu06otLS0ts8zM7JZM?= 
+Date: Thu, 27 Oct 2011 20:34:35 +0800 
+X-mailer: Ofawdxl 5 
+Whoops!  What is a 'application/vnd.ms-excel'?

@@ -1,0 +1,26 @@
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail2.dgzq.com.cn (tmailer) with ESMTP id C51D4955B0C;
+	Mon, 17 Oct 2011 07:28:03 +0800 (CST) from mail2.dgzq.com.cn ([127.0.0.1])
+	by localhost (mail2.dgzq.com.cn [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id nvcTcDZXQrMR; Mon, 17 Oct 2011 07:27:58 +0800 (CST) from cw (unknown [115.63.12.126])
+	by mail2.dgzq.com.cn (tmailer) with ESMTP id 5526CC254B0;
+	Mon, 17 Oct 2011 07:27:31 +0800 (CST) 
+X-Virus-Scanned: amavisd-new at 
+X-Spam-Flag: YES 
+X-Spam-Score: 33.136 
+X-Spam-Level: ********************************* 
+X-Spam-Status: Yes, score=33.136 tagged_above=-10 required=20
+	tests=[AWL=0.726, BAYES_99=12, CN_BODY_2=0.001, CN_FROM_002=4,
+	CN_FROM_003=2, CN_FROM_013=1.5, CN_SUBJECT_44=0.5,
+	DNS_FROM_OPENWHOIS=3.13, DNS_FROM_RFC_BOGUSMX=1.482,
+	HTML_MESSAGE=0.001, HTML_OBFUSCATE_30_40=1.362,
+	MIME_BASE64_TEXT=1.753, MIME_HTML_ONLY=1.457, RCVD_IN_PBL=0.905,
+	RDNS_NONE=0.1, TVD_SPACE_RATIO=2.219] 
+Message-ID: <20111017072758238633@hlqh.com> 
+From: =?gb2312?B?0PHI1dDFz6LT0M/euavLvg==?= <zjl@hlqh.com> 
+To:  
+Subject: =?gb2312?B?czV5cNDQLtX+LrmkLtf3Ls2zLrPvLrncLsDtLQ==?=
+	=?gb2312?B?LdDxyNXQxc+i09DP3rmry74=?= 
+Date: Mon, 17 Oct 2011 07:27:52 +0800 
+X-mailer: Sxkl 8 
+Whoops!  What is a 'application/vnd.ms-excel'?

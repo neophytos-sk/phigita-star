@@ -1,0 +1,15 @@
+Begin3
+Title:		@PACKAGE@
+Version:	@VERSION@
+Entered-date:	28AUG07
+Description:	Quick spam filter - marks email as spam depending on its
+		content using a database built up through training.
+Keywords:	spam filter, antispam, UCE
+Author:		Andrew Wood <andrew.wood@ivarch.com>
+Maintained-by:	Andrew Wood <andrew.wood@ivarch.com>
+Primary-site:	http://www.ivarch.com/programs/@PACKAGE@/
+Alternate-site:	
+Original-site:
+Platforms:	
+Copying-policy:	Artistic 2.0
+End

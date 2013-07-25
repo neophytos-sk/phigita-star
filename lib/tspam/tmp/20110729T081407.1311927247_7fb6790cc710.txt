@@ -1,0 +1,10 @@
+Received: from 202.130.120.118 by smtp.elcocorp.com; Fri, 29 Jul 2011 16:13:11 +0800 
+Date: Fri, 29 Jul 2011 16:13:11 +0800 
+From: =?koi8-r?B?IufMwdfNz9PQz97UwSI=?= <irritatinglyy6@elcocorp.com> 
+X-Mailer: The Bat! (v3.0.1.33) Educational 
+Reply-To: irritatinglyy6@elcocorp.com 
+X-Priority: 3 (Normal) 
+Message-ID: <659298673.68621152819243@elcocorp.com> 
+To: webmaster@phigita.net 
+Subject: =?koi8-r?B?8sXLzMHNwSDEz9PU1dDOwdEgy8HWxM/N1S4=?= 
+

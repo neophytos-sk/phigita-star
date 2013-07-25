@@ -1,0 +1,276 @@
+<html><head><title>XMLDataModel.js</title><link rel="stylesheet" type="text/css" href="../resources/style.css" media="screen"/></head><body><h1>XMLDataModel.js</h1><pre class="highlighted"><code><i>/**
+ * @class YAHOO.ext.grid.XMLDataModel
+ * This is an implementation of a DataModel used by the Grid. It works 
+ * <b>with</b> XML data. 
+ * &lt;br&gt;Example schema from Amazon search:
+ * &lt;pre&gt;&lt;code&gt;
+ * <b>var</b> schema = {
+ *     tagName: 'Item',
+ *     id: 'ASIN',
+ *     fields: ['Author', 'Title', 'Manufacturer', 'ProductGroup']
+ * };
+ * &lt;/code&gt;&lt;/pre&gt;
+ * @extends YAHOO.ext.grid.LoadableDataModel
+ * @constructor
+ * @param {Object} schema The schema to use
+ * @param {XMLDocument} xml An XML document to load immediately
+*/</i>
+YAHOO.ext.grid.XMLDataModel = <b>function</b>(schema, xml){
+    YAHOO.ext.grid.XMLDataModel.superclass.constructor.call(<b>this</b>, YAHOO.ext.grid.LoadableDataModel.XML);
+    <i>/**@private*/</i>
+    <b>this</b>.schema = schema;
+    <b>this</b>.xml = xml;
+    <b>if</b>(xml){
+        <b>this</b>.loadData(xml);
+    }
+    <b>this</b>.idSeed = 0;
+};
+YAHOO.extendX(YAHOO.ext.grid.XMLDataModel, YAHOO.ext.grid.LoadableDataModel, {
+    
+    getDocument: <b>function</b>(){
+       <b>return</b> this.xml;    
+    },
+    
+    <i>/**
+     * Overrides loadData <b>in</b> LoadableDataModel to process XML
+     * @param {XMLDocument} doc The document to load
+     * @param {&lt;i&gt;Function&lt;/i&gt;} callback (optional) callback to call when loading is complete
+     * @param {&lt;i&gt;Boolean&lt;/i&gt;} keepExisting (optional) true to keep existing data
+     * @param {&lt;i&gt;Number&lt;/i&gt;} insertIndex (optional) <b>if</b> present, loaded data is inserted at the specified index instead of overwriting existing data
+     */</i>
+    loadData: <b>function</b>(doc, callback, keepExisting, insertIndex){
+    	<b>this</b>.xml = doc;
+    	<b>var</b> idField = <b>this</b>.schema.id;
+    	<b>var</b> fields = <b>this</b>.schema.fields;
+    	<b>if</b>(this.schema.totalTag){
+    	    <b>this</b>.totalCount = null;
+    	    <b>var</b> totalNode = doc.getElementsByTagName(<b>this</b>.schema.totalTag);
+    	    <b>if</b>(totalNode &amp;&amp; totalNode.item(0) &amp;&amp; totalNode.item(0).firstChild) {
+                <b>var</b> v = parseInt(totalNode.item(0).firstChild.nodeValue, 10);
+                <b>if</b>(!isNaN(v)){
+                    <b>this</b>.totalCount = v;
+                }
+        	}
+    	}
+    	<b>var</b> rowData = [];
+    	<b>var</b> nodes = doc.getElementsByTagName(<b>this</b>.schema.tagName);
+        <b>if</b>(nodes &amp;&amp; nodes.length &gt; 0) {
+    	    <b>for</b>(var i = 0; i &lt; nodes.length; i++) {
+    	        <b>var</b> node = nodes.item(i);
+    	        <b>var</b> colData = [];
+    	        colData.node = node;
+    	        colData.id = <b>this</b>.getNamedValue(node, idField, String(++<b>this</b>.idSeed));
+    	        <b>for</b>(var j = 0; j &lt; fields.length; j++) {
+    	            <b>var</b> val = <b>this</b>.getNamedValue(node, fields[j], &quot;&quot;);
+    	            <b>if</b>(this.preprocessors[j]){
+    	                val = <b>this</b>.preprocessors[j](val);
+    	            }
+    	            colData.push(val);
+    	        }
+    	        rowData.push(colData);
+    	    }
+        }
+        <b>if</b>(keepExisting !== true){
+           YAHOO.ext.grid.XMLDataModel.superclass.removeAll.call(<b>this</b>);
+    	}
+    	<b>if</b>(typeof insertIndex != 'number'){
+    	    insertIndex = <b>this</b>.getRowCount();
+    	}
+        YAHOO.ext.grid.XMLDataModel.superclass.insertRows.call(<b>this</b>, insertIndex, rowData);
+        <b>if</b>(typeof callback == '<b>function</b>'){
+        	callback(<b>this</b>, true);
+        }
+        <b>this</b>.fireLoadEvent();
+    },
+    
+    <i>/**
+     * Adds a row to <b>this</b> DataModel and syncs the XML document
+     * @param {String} id The id of the row, <b>if</b> null the next row index is used
+     * @param {Array} cellValues The cell values <b>for</b> this row
+     * @<b>return</b> {Number} The index of the <b>new</b> row (<b>if</b> the model is sorted <b>this</b> index may not be accurate)
+     */</i>
+    addRow: <b>function</b>(id, cellValues){
+        <b>var</b> node = <b>this</b>.createNode(<b>this</b>.xml, id, cellValues);
+        cellValues.id = id || ++<b>this</b>.idSeed;
+        cellValues.node = node;
+        <b>return</b> YAHOO.ext.grid.XMLDataModel.superclass.addRow.call(<b>this</b>, cellValues);
+    },
+    
+    <i>/**
+     * Inserts a row into <b>this</b> DataModel and syncs the XML document
+     * @param {Number} index The index to insert the row
+     * @param {String} id The id of the row, <b>if</b> null the next row index is used
+     * @param {Array} cellValues The cell values <b>for</b> this row
+     * @<b>return</b> {Number} The index of the <b>new</b> row (<b>if</b> the model is sorted <b>this</b> index may not be accurate)
+     */</i>
+    insertRow: <b>function</b>(index, id, cellValues){
+        <b>var</b> node = <b>this</b>.createNode(<b>this</b>.xml, id, cellValues);
+        cellValues.id = id || ++<b>this</b>.idSeed;
+        cellValues.node = node;
+        <b>return</b> YAHOO.ext.grid.XMLDataModel.superclass.insertRow.call(<b>this</b>, index, cellValues);
+    },
+    
+    <i>/**
+     * Removes the row from DataModel and syncs the XML document
+     * @param {Number} index The index of the row to remove
+     */</i>
+    removeRow: <b>function</b>(index){
+        <b>var</b> node = <b>this</b>.data[index].node;
+        node.parentNode.removeChild(node);
+        YAHOO.ext.grid.XMLDataModel.superclass.removeRow.call(<b>this</b>, index, index);
+    },
+    
+    getNode: <b>function</b>(rowIndex){
+        <b>return</b> this.data[rowIndex].node;
+    },
+    
+    <i>/**
+     * Override <b>this</b> method to define your own node creation routine <b>for</b> when <b>new</b> rows are added.
+     * By <b>default</b> this method clones the first node and sets the column values <b>in</b> the newly cloned node.
+     * In many instances <b>this</b> will not work and you will have to create the node manually.
+     * @param {XMLDocument} xmlDoc The xml document being used by <b>this</b> model
+     * @param {String/Number} id The row id
+     * @param {Array} colData The column data <b>for</b> the <b>new</b> node
+     * @<b>return</b> {XMLNode} The created node
+     */</i>
+    createNode: <b>function</b>(xmlDoc, id, colData){
+        <b>var</b> template = <b>this</b>.data[0].node;
+        <b>var</b> newNode = template.cloneNode(true);
+        <b>var</b> fields = <b>this</b>.schema.fields;
+        <b>for</b>(var i = 0, len = fields.length; i &lt; len; i++){
+            <b>var</b> nodeValue = colData[i];
+            <b>if</b>(this.postprocessors[i]){
+                nodeValue = <b>this</b>.postprocessors[i](nodeValue);
+            }
+            <b>this</b>.setNamedValue(newNode, fields[i], nodeValue);
+        }
+        <b>if</b>(id){
+            <b>this</b>.setNamedValue(newNode, <b>this</b>.schema.idField, id);
+        }
+        template.parentNode.appendChild(newNode);
+        <b>return</b> newNode;
+    },
+    
+    <i>/**
+     * @private
+     * Convenience <b>function</b> looks <b>for</b> value <b>in</b> attributes, then <b>in</b> children tags - also 
+     * normalizes namespace matches (ie matches ns:tag, FireFox matches tag and not ns:tag).
+     */</i>
+    getNamedValue: <b>function</b>(node, name, defaultValue){
+    	<b>if</b>(!node || !name){
+    		<b>return</b> defaultValue;
+    	}
+    	<b>var</b> nodeValue = defaultValue;
+        <b>var</b> attrNode = node.attributes.getNamedItem(name);
+        <b>if</b>(attrNode) {
+        	nodeValue = attrNode.value;
+        } <b>else</b> {
+            <b>var</b> childNode = node.getElementsByTagName(name);
+            <b>if</b>(childNode &amp;&amp; childNode.item(0) &amp;&amp; childNode.item(0).firstChild) {
+                nodeValue = childNode.item(0).firstChild.nodeValue;
+        	}<b>else</b>{
+        	    <i>// try to strip namespace <b>for</b> FireFox</i>
+        	    <b>var</b> index = name.indexOf(':');
+        	    <b>if</b>(index &gt; 0){
+        	        <b>return</b> this.getNamedValue(node, name.substr(index+1), defaultValue);
+        	    }
+        	}
+        }
+        <b>return</b> nodeValue;
+    },
+    
+    <i>/**
+     * @private
+     * Convenience <b>function</b> set a value <b>in</b> the underlying xml node.
+     */</i>
+    setNamedValue: <b>function</b>(node, name, value){
+    	<b>if</b>(!node || !name){
+    		<b>return</b>;
+    	}
+    	<b>var</b> attrNode = node.attributes.getNamedItem(name);
+        <b>if</b>(attrNode) {
+        	attrNode.value = value;
+        	<b>return</b>;
+        }
+        <b>var</b> childNode = node.getElementsByTagName(name);
+        <b>if</b>(childNode &amp;&amp; childNode.item(0) &amp;&amp; childNode.item(0).firstChild) {
+            childNode.item(0).firstChild.nodeValue = value;
+        }<b>else</b>{
+    	    <i>// try to strip namespace <b>for</b> FireFox</i>
+    	    <b>var</b> index = name.indexOf(':');
+    	    <b>if</b>(index &gt; 0){
+    	        <b>this</b>.setNamedValue(node, name.substr(index+1), value);
+    	    }
+    	}
+    },
+    
+    <i>/**
+     * Overrides DefaultDataModel.setValueAt to update the underlying XML Document
+     * @param {Object} value The <b>new</b> value
+     * @param {Number} rowIndex
+     * @param {Number} colIndex
+     */</i>
+    setValueAt: <b>function</b>(value, rowIndex, colIndex){
+        <b>var</b> node = <b>this</b>.data[rowIndex].node;
+        <b>if</b>(node){
+            <b>var</b> nodeValue = value;
+            <b>if</b>(this.postprocessors[colIndex]){
+                nodeValue = <b>this</b>.postprocessors[colIndex](value);
+            }
+            <b>this</b>.setNamedValue(node, <b>this</b>.schema.fields[colIndex], nodeValue);
+        }
+        YAHOO.ext.grid.XMLDataModel.superclass.setValueAt.call(<b>this</b>, value, rowIndex, colIndex);
+    },
+    
+    <i>/**
+     * Overrides getRowId <b>in</b> DefaultDataModel to <b>return</b> the ID value of the specified node. 
+     * @param {Number} rowIndex
+     * @<b>return</b> {Number}
+     */</i>
+    getRowId: <b>function</b>(rowIndex){
+        <b>return</b> this.data[rowIndex].id;
+    },
+    
+    addRows : <b>function</b>(rowData){   
+        <b>for</b>(var j = 0, len = rowData.length; j &lt; len; j++){
+           <b>var</b> cellValues = rowData[j];
+           <b>var</b> id = ++<b>this</b>.idSeed; 
+           <b>var</b> node = <b>this</b>.createNode(<b>this</b>.xml, id, cellValues);       
+           cellValues.node=node;
+           cellValues.id = cellValues.id || id;
+           YAHOO.ext.grid.XMLDataModel.superclass.addRow.call(<b>this</b>,cellValues);
+        }
+    },   
+
+   insertRows : <b>function</b>(index, rowData){
+       <i>// copy original array so it is not reversed </i>
+       rowData = rowData.slice(0).reverse();
+       <b>for</b>(var j = 0, len = rowData.length; j &lt; len; j++){
+          <b>var</b> cellValues = rowData[j];
+          <b>var</b> id = ++<b>this</b>.idSeed; 
+          <b>var</b> node = <b>this</b>.createNode(<b>this</b>.xml, id, cellValues);
+          cellValues.id = cellValues.id || id;
+          cellValues.node = node;
+          YAHOO.ext.grid.XMLDataModel.superclass.insertRow.call(<b>this</b>, index, cellValues);
+       }
+   }
+});
+
+YAHOO.ext.grid.XMLQueryDataModel = <b>function</b>(){
+   YAHOO.ext.grid.XMLQueryDataModel.superclass.constructor.apply(<b>this</b>, arguments);
+};
+YAHOO.extendX(YAHOO.ext.grid.XMLQueryDataModel, YAHOO.ext.grid.XMLDataModel, {
+    getNamedValue: <b>function</b>(node, name, defaultValue){
+    	<b>if</b>(!node || !name){
+    		<b>return</b> defaultValue;
+    	}
+    	<b>var</b> nodeValue = defaultValue;
+    	<b>var</b> childNode = cssQuery(name, node);
+    	<b>if</b>(childNode &amp;&amp; childNode[0]) {
+            nodeValue = childNode[0].firstChild.nodeValue;
+    	}
+        <b>return</b> nodeValue;
+    }
+});</code></pre><hr><div style="font-size:10px;text-align:center;color:gray;">yui-ext - Copyright &copy; 2006 Jack Slocum.  |
+    Yahoo! UI - Copyright &copy; 2006 Yahoo! Inc.<br />All rights reserved.</div>
+    </body></html>

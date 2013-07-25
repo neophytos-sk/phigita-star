@@ -1,0 +1,476 @@
+
+ 
+
+
+ 
+ 
+ <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+ <link rel="icon" type="image/vnd.microsoft.icon" href="http://www.gstatic.com/codesite/ph/images/phosting.ico">
+ 
+ <script type="text/javascript">
+ 
+ 
+ 
+ var codesite_token = null;
+ 
+ 
+ var logged_in_user_email = null;
+ 
+ 
+ var relative_base_url = "";
+ 
+ </script>
+ 
+ 
+ <title>Interface - 
+ dawgdic -
+ 
+ This document provides class interfaces. - Project Hosting on Google Code</title>
+ <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" >
+ 
+ <meta name="ROBOTS" content="NOARCHIVE">
+ 
+ <link type="text/css" rel="stylesheet" href="http://www.gstatic.com/codesite/ph/3526988999065534654/css/ph_core.css">
+ 
+ <link type="text/css" rel="stylesheet" href="http://www.gstatic.com/codesite/ph/3526988999065534654/css/ph_detail.css" >
+ 
+ 
+ 
+ <link type="application/atom+xml" rel="alternate" href="/feeds/p/dawgdic/svnchanges/basic?path=/wiki/Interface.wiki">
+ 
+ 
+<!--[if IE]>
+ <link type="text/css" rel="stylesheet" href="http://www.gstatic.com/codesite/ph/3526988999065534654/css/d_ie.css" >
+<![endif]-->
+ <style type="text/css">
+ .menuIcon.off { background: no-repeat url(http://www.gstatic.com/codesite/ph/images/dropdown_sprite.gif) 0 -42px }
+ .menuIcon.on { background: no-repeat url(http://www.gstatic.com/codesite/ph/images/dropdown_sprite.gif) 0 -28px }
+ .menuIcon.down { background: no-repeat url(http://www.gstatic.com/codesite/ph/images/dropdown_sprite.gif) 0 0; }
+ </style>
+</head>
+<body class="t6">
+ <script type="text/javascript">
+ var _gaq = _gaq || [];
+ _gaq.push(
+ ['siteTracker._setAccount', 'UA-18071-1'],
+ ['siteTracker._trackPageview']);
+ 
+ (function() {
+ var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+ (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ga);
+ })();
+ </script>
+ <div id="gaia">
+ 
+ <span>
+ 
+ <a href="#" id="projects-dropdown" onclick="return false;"><u>My favorites</u> <small>&#9660;</small></a>
+ | <a href="https://www.google.com/accounts/ServiceLogin?service=code&amp;ltmpl=phosting&amp;continue=http%3A%2F%2Fcode.google.com%2Fp%2Fdawgdic%2Fwiki%2FInterface&amp;followup=http%3A%2F%2Fcode.google.com%2Fp%2Fdawgdic%2Fwiki%2FInterface" onclick="_CS_click('/gb/ph/signin');"><u>Sign in</u></a>
+ 
+ </span>
+
+ </div>
+ <div class="gbh" style="left: 0pt;"></div>
+ <div class="gbh" style="right: 0pt;"></div>
+ 
+ 
+ <div style="height: 1px"></div>
+<!--[if IE 6]>
+<div style="text-align:center;">
+Support browsers that contribute to open source, try <a href="http://www.firefox.com">Firefox</a> or <a href="http://www.google.com/chrome">Google Chrome</a>.
+</div>
+<![endif]-->
+
+
+
+
+ <table style="padding:0px; margin: 20px 0px 0px 0px; width:100%" cellpadding="0" cellspacing="0">
+ <tr style="height: 58px;">
+ 
+ <td style="width: 55px; text-align:center;">
+ <a href="/p/dawgdic/">
+ 
+ <img src="http://www.gstatic.com/codesite/ph/images/defaultlogo.png" alt="Logo">
+ 
+ </a>
+ </td>
+ 
+ <td style="padding-left: 0.5em">
+ 
+ <div id="pname" style="margin: 0px 0px -3px 0px">
+ <a href="/p/dawgdic/" style="text-decoration:none; color:#000">dawgdic</a>
+ 
+ </div>
+ <div id="psum">
+ <i><a id="project_summary_link" href="/p/dawgdic/" style="text-decoration:none; color:#000">C++ Header Library for DAWG Dictionaries</a></i>
+ </div>
+ 
+ </td>
+ <td style="white-space:nowrap;text-align:right">
+ 
+ <form action="/hosting/search">
+ <input size="30" name="q" value="">
+ <input type="submit" name="projectsearch" value="Search projects" >
+ </form>
+ 
+ </tr>
+ </table>
+
+
+ 
+<table id="mt" cellspacing="0" cellpadding="0" width="100%" border="0">
+ <tr>
+ <th onclick="if (!cancelBubble) _go('/p/dawgdic/');">
+ <div class="tab inactive">
+ <div class="round4"></div>
+ <div class="round2"></div>
+ <div class="round1"></div>
+ <div class="box-inner">
+ <a onclick="cancelBubble=true;" href="/p/dawgdic/">Project&nbsp;Home</a>
+ </div>
+ </div>
+ </th><td>&nbsp;&nbsp;</td>
+ 
+ 
+ 
+ 
+ <th onclick="if (!cancelBubble) _go('/p/dawgdic/downloads/list');">
+ <div class="tab inactive">
+ <div class="round4"></div>
+ <div class="round2"></div>
+ <div class="round1"></div>
+ <div class="box-inner">
+ <a onclick="cancelBubble=true;" href="/p/dawgdic/downloads/list">Downloads</a>
+ </div>
+ </div>
+ </th><td>&nbsp;&nbsp;</td>
+ 
+ 
+ 
+ 
+ 
+ <th onclick="if (!cancelBubble) _go('/p/dawgdic/w/list');">
+ <div class="tab active">
+ <div class="round4"></div>
+ <div class="round2"></div>
+ <div class="round1"></div>
+ <div class="box-inner">
+ <a onclick="cancelBubble=true;" href="/p/dawgdic/w/list">Wiki</a>
+ </div>
+ </div>
+ </th><td>&nbsp;&nbsp;</td>
+ 
+ 
+ 
+ 
+ 
+ <th onclick="if (!cancelBubble) _go('/p/dawgdic/issues/list');">
+ <div class="tab inactive">
+ <div class="round4"></div>
+ <div class="round2"></div>
+ <div class="round1"></div>
+ <div class="box-inner">
+ <a onclick="cancelBubble=true;" href="/p/dawgdic/issues/list">Issues</a>
+ </div>
+ </div>
+ </th><td>&nbsp;&nbsp;</td>
+ 
+ 
+ 
+ 
+ 
+ <th onclick="if (!cancelBubble) _go('/p/dawgdic/source/checkout');">
+ <div class="tab inactive">
+ <div class="round4"></div>
+ <div class="round2"></div>
+ <div class="round1"></div>
+ <div class="box-inner">
+ <a onclick="cancelBubble=true;" href="/p/dawgdic/source/checkout">Source</a>
+ </div>
+ </div>
+ </th><td>&nbsp;&nbsp;</td>
+ 
+ 
+ <td width="100%">&nbsp;</td>
+ </tr>
+</table>
+<table cellspacing="0" cellpadding="0" width="100%" align="center" border="0" class="st">
+ <tr>
+ 
+ 
+ 
+ <td>
+ <div class="issueDetail">
+<div class="isf">
+ 
+ <span class="inIssueList"> 
+ <span>Search</span>
+ <form action="/p/dawgdic/w/list" method="GET" style="display:inline">
+ <select id="can" name="can" style="font-size:92%">
+ <option disabled="disabled">Search within:</option>
+ 
+ <option value="1" >&nbsp;All wiki pages</option>
+ <option value="3" >&nbsp;Featured pages</option>
+ <option value="2" selected="selected">&nbsp;Current pages</option>
+ 
+ 
+ <option value="4" >&nbsp;Deprecated pages</option>
+ 
+ </select>
+ <span>for</span>
+ <span id="qq"><input type="text" size="38" id="searchq" name="q" value=""
+ autocomplete="off" style="font-size:92%" ></span>
+ 
+ 
+ <input type="submit" value="Search" style="font-size:92%" >
+ </form>
+ </span>
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+</div>
+</div>
+
+ </td>
+ 
+ 
+ 
+ 
+ 
+ 
+ <td height="4" align="right" valign="top" class="bevel-right">
+ <div class="round4"></div>
+ <div class="round2"></div>
+ <div class="round1"></div>
+ </td>
+ </tr>
+</table>
+<script type="text/javascript">
+ var cancelBubble = false;
+ function _go(url) { document.location = url; }
+</script>
+
+
+<div id="maincol"
+ 
+>
+
+ 
+<!-- IE -->
+
+
+
+
+
+
+
+ <style type="text/css">
+ .artifactcomment {
+ margin: .5em 0 0 0;
+ padding: .3em 0 .3em .3em;
+ border-top: 3px solid #c3d9ff;
+ }
+ #commentlist {
+ border-bottom: 3px solid #c3d9ff;
+ }
+ #commentform { padding-top: 1em; }
+ .delcom { background: #e8e8e8 }
+ .commentcontent { margin: 1em 0;}
+ </style>
+
+
+ <div id="wikicontent">
+ <table width="100%" border="0" cellspacing="0" cellpadding="0">
+ <tr>
+ 
+ <td class="vt" id="wikimaincol" width="100%">
+ 
+ <div style="float:right; width:18em" id="wikimeta">
+ <div class="pmeta_bubble_bg">
+ <div class="round4"></div>
+ <div class="round2"></div>
+ <div class="round1"></div>
+ <div class="box-inner">
+ <table style="padding: 5px">
+ <tr><td colspan="2" style="padding-bottom:5px">Updated <span title="Sat Aug 29 19:43:21 2009">Aug 29, 2009</span>
+ 
+ by <a style="white-space: nowrap" href="/u/susumu.yata/">susumu.yata</a>
+ </td></tr>
+ 
+ 
+ <tr><th class="vt">Locales:</th>
+ <td>
+ 
+ 
+ 
+ <b>en</b>, 
+ 
+ 
+ 
+ <a href="/p/dawgdic/wiki/Interface?wl=ja" title="ja">ja</a>
+ 
+ 
+ </td>
+ </tr>
+ 
+ </table>
+ </div>
+ <div class="round1"></div>
+ <div class="round2"></div>
+ <div class="round4"></div>
+ </div>
+ </div>
+ 
+ <div id="wikiheader" style="margin-bottom:1em">
+ 
+ &nbsp;
+ <span style="font-size:120%;font-weight:bold">Interface</span>
+ &nbsp;
+ 
+ 
+ <div style="font-style:italic; margin-top: 3px">This document provides class interfaces.</div>
+ 
+ </div>
+ <h1><a name="Interfaces_of_DAWG_Dictionary_Library"></a>Interfaces of DAWG Dictionary Library<a href="#Interfaces_of_DAWG_Dictionary_Library" class="section_anchor">&para;</a></h1><h2><a name="Main_Interfaces"></a>Main Interfaces<a href="#Main_Interfaces" class="section_anchor">&para;</a></h2><p>The following table shows the main classes of the library <strong>dawgdic</strong>. </p><p><table><tr><td style="border: 1px solid #aaa; padding: 5px;"> <strong>Header</strong> </td><td style="border: 1px solid #aaa; padding: 5px;"> <strong>Namespace</strong> </td><td style="border: 1px solid #aaa; padding: 5px;"> <strong>Class</strong> </td></tr> <tr><td style="border: 1px solid #aaa; padding: 5px;"> dawgdic/dawg.h </td><td style="border: 1px solid #aaa; padding: 5px;"> dawgdic </td><td style="border: 1px solid #aaa; padding: 5px;"> Dawg </td></tr> <tr><td style="border: 1px solid #aaa; padding: 5px;"> dawgdic/dawg-builder.h </td><td style="border: 1px solid #aaa; padding: 5px;"> dawgdic </td><td style="border: 1px solid #aaa; padding: 5px;"> DawgBuilder </td></tr> <tr><td style="border: 1px solid #aaa; padding: 5px;"> dawgdic/dictionary.h </td><td style="border: 1px solid #aaa; padding: 5px;"> dawgdic </td><td style="border: 1px solid #aaa; padding: 5px;"> Dictionary </td></tr> <tr><td style="border: 1px solid #aaa; padding: 5px;"> dawgdic/dictionary-builder.h </td><td style="border: 1px solid #aaa; padding: 5px;"> dawgdic </td><td style="border: 1px solid #aaa; padding: 5px;"> DictionaryBuilder </td></tr> <tr><td style="border: 1px solid #aaa; padding: 5px;"> dawgdic/guide.h </td><td style="border: 1px solid #aaa; padding: 5px;"> dawgdic </td><td style="border: 1px solid #aaa; padding: 5px;"> Guide </td></tr> <tr><td style="border: 1px solid #aaa; padding: 5px;"> dawgdic/guide-builder.h </td><td style="border: 1px solid #aaa; padding: 5px;"> dawgdic </td><td style="border: 1px solid #aaa; padding: 5px;"> GuideBuilder </td></tr> <tr><td style="border: 1px solid #aaa; padding: 5px;"> dawgdic/completer.h </td><td style="border: 1px solid #aaa; padding: 5px;"> dawgdic </td><td style="border: 1px solid #aaa; padding: 5px;"> Completer </td></tr> <tr><td style="border: 1px solid #aaa; padding: 5px;"> dawgdic/ranked-guide.h </td><td style="border: 1px solid #aaa; padding: 5px;"> dawgdic </td><td style="border: 1px solid #aaa; padding: 5px;"> RankedGuide </td></tr> <tr><td style="border: 1px solid #aaa; padding: 5px;"> dawgdic/ranked-guide-builder.h </td><td style="border: 1px solid #aaa; padding: 5px;"> dawgdic </td><td style="border: 1px solid #aaa; padding: 5px;"> RankedGuideBuilder </td></tr> <tr><td style="border: 1px solid #aaa; padding: 5px;"> dawgdic/ranked-completer.h </td><td style="border: 1px solid #aaa; padding: 5px;"> dawgdic </td><td style="border: 1px solid #aaa; padding: 5px;"> RankedCompleter </td></tr> </table></p><hr/><h2><a name="Dawg"></a>Dawg<a href="#Dawg" class="section_anchor">&para;</a></h2><p><table><tr><td style="border: 1px solid #aaa; padding: 5px;"> <strong>Header</strong> </td><td style="border: 1px solid #aaa; padding: 5px;"> dawgdic/dawg.h </td></tr> <tr><td style="border: 1px solid #aaa; padding: 5px;"> <strong>Namespace</strong> </td><td style="border: 1px solid #aaa; padding: 5px;"> dawgdic </td></tr> </table></p><pre class="prettyprint">// Returns the number of allocated units.
+SizeType size() const;</pre><p>In fact, each unit is associated with each transition of a dawg, and the number of allocated units is almost same as the number of transitions. </p><pre class="prettyprint">// Returns the number of transitions.
+SizeType num_of_transitions() const;
+// Returns the number of states.
+SizeType num_of_states() const;</pre><pre class="prettyprint">// Returns the number of transitions merged in dawg construction.
+SizeType num_of_merged_transitions() const;
+// Returns the number of states merged in dawg construction.
+SizeType num_of_merged_states() const;</pre><hr/><h2><a name="DawgBuilder"></a>DawgBuilder<a href="#DawgBuilder" class="section_anchor">&para;</a></h2><p><table><tr><td style="border: 1px solid #aaa; padding: 5px;"> <strong>Header</strong> </td><td style="border: 1px solid #aaa; padding: 5px;"> dawgdic/dawg-builder.h </td></tr> <tr><td style="border: 1px solid #aaa; padding: 5px;"> <strong>Namespace</strong> </td><td style="border: 1px solid #aaa; padding: 5px;"> dawgdic </td></tr> </table></p><pre class="prettyprint">// Work same as the functions of dawgdic::Dawg.
+SizeType size() const;
+SizeType num_of_transitions() const;
+SizeType num_of_states() const;
+SizeType num_of_merged_transitions() const;
+SizeType num_of_merged_states() const;</pre><pre class="prettyprint">// Inserts a key into a dawg.
+bool Insert(const CharType *key, ValueType value = 0);
+bool Insert(const CharType *key, SizeType length, ValueType value);</pre><p>Keys must be inserted in dictionary order. If the order is incorrect, these functions return false. Also, if the <strong>length</strong> of key is unspecified, the function uses the number of bytes until a null character instead of <strong>length</strong>. A record <strong>value</strong> must be 0 or a positive integer. </p><pre class="prettyprint">// Finishes building a dawg and initializes this object.
+bool Finish(Dawg *dawg);</pre><p>This function must be called after inserting all the keys. In this function, <strong>this</strong> object passes own managed member objects to a given <strong>dawg</strong>. Therefore, this function also initializes <strong>this</strong> object to avoid unexpected errors. </p><hr/><h2><a name="Dictionary"></a>Dictionary<a href="#Dictionary" class="section_anchor">&para;</a></h2><p><table><tr><td style="border: 1px solid #aaa; padding: 5px;"> <strong>Header</strong> </td><td style="border: 1px solid #aaa; padding: 5px;"> dawgdic/dictionary.h </td></tr> <tr><td style="border: 1px solid #aaa; padding: 5px;"> <strong>Namespace</strong> </td><td style="border: 1px solid #aaa; padding: 5px;"> dawgdic </td></tr> </table></p><pre class="prettyprint">// Returns the start address of the core array.
+const DictionaryUnit *units() const;</pre><p>Actually, a dictionary is represented by just one array. This means that a dictionary is restored from the array returned by this function. The functions <strong>Map()</strong> are provided for this purpose. </p><pre class="prettyprint">// Returns the number of units in the core array.
+SizeType size() const;
+// Returns the required number of bytes for the core array.
+SizeType total_size() const;
+// Returns the number of bytes written to a stream.
+SizeType file_size() const;</pre><pre class="prettyprint">// Reads a dictionary from an input stream.
+bool Read(std::istream *input);
+// Writes a dictionary into an output stream.
+bool Write(std::ostream *output) const;</pre><pre class="prettyprint">// Check whether a key exists in dictionary or not.
+bool Contains(const CharType *key) const;
+bool Contains(const CharType *key, SizeType length) const;</pre><pre class="prettyprint">// Check whether a key exists in dictionary ot not, and if so,
+// return its associated record.
+ValueType Find(const CharType *key) const;
+ValueType Find(const CharType *key, SizeType length) const;
+bool Find(const CharType *key, ValueType *value) const;
+bool Find(const CharType *key, SizeType length, ValueType *value) const;</pre><p>If a given keys does not exist in dictionary, these function return -1 as a record <strong>value</strong>. </p><pre class="prettyprint">// Returns the index of the initial state.
+BaseType root() const;
+// Returns whether a given state corresponds to the end of a key.
+bool has_value(BaseType index) const;
+// Returns a record associated with a given state.
+ValueType value(BaseType index) const;
+// Follows transitions and modifies a given index.
+bool Follow(CharType label, BaseType *index) const;
+bool Follow(const CharType *s, BaseType *index);
+bool Follow(const CharType *s, BaseType *index, SizeType *count);
+bool Follow(const CharType *s, SizeType length, BaseType *index);
+bool Follow(const CharType *s, SizeType length, BaseType *index, SizeType *count);</pre><p>These functions are provided for prefix matching. First, an index must be initialized by using the function <strong>root()</strong>. Then, the functions <strong>Follow()</strong> follow transitions with a given <strong>label</strong> or labels in a given string <strong>s</strong>. After that, the function <strong>has_value()</strong> returns whether the current state corresponds to the end of a key. And if the function <strong>has_value()</strong> returns true, the function <strong>value()</strong> returns a record associated with that key. </p><pre class="prettyprint">// Uses arbitrary memory space as the core array.
+void Map(const void *address);
+void Map(const void *address, SizeType size);</pre><p>If the 2nd argument <strong>size</strong> is omitted, the first 4 bytes of given space are used as the buffer size. </p><hr/><h2><a name="DictionaryBuilder"></a>DictionaryBuilder<a href="#DictionaryBuilder" class="section_anchor">&para;</a></h2><p><table><tr><td style="border: 1px solid #aaa; padding: 5px;"> <strong>Header</strong> </td><td style="border: 1px solid #aaa; padding: 5px;"> dawgdic/dictionary-builder.h </td></tr> <tr><td style="border: 1px solid #aaa; padding: 5px;"> <strong>Namespace</strong> </td><td style="border: 1px solid #aaa; padding: 5px;"> dawgdic </td></tr> </table></p><pre class="prettyprint">// Builds a dictionary from a dawg.
+static bool Build(const Dawg &amp;dawg, Dictionary *dic, BaseType *num_of_unused_units = NULL);</pre><p>This function builds a dictionary from a <strong>dawg</strong> and updates <strong>dic</strong>. If the 3rd argument <strong>num_of_unused_units</strong> is not NULL, this function assigns the number of empty elements in the double-array to this argument <strong>num_of_unused_units</strong>. </p><hr/><h2><a name="Guide"></a>Guide<a href="#Guide" class="section_anchor">&para;</a></h2><p><table><tr><td style="border: 1px solid #aaa; padding: 5px;"> <strong>Header</strong> </td><td style="border: 1px solid #aaa; padding: 5px;"> dawgdic/guide.h </td></tr> <tr><td style="border: 1px solid #aaa; padding: 5px;"> <strong>Namespace</strong> </td><td style="border: 1px solid #aaa; padding: 5px;"> dawgdic </td></tr> </table></p><pre class="prettyprint">// Reads a completion dictionary from an input stream.
+bool Read(std::istream *input);
+// Writes a dictionry into an output stream.
+bool Write(std::ostream *output) const;</pre><hr/><h2><a name="GuideBuilder"></a>GuideBuilder<a href="#GuideBuilder" class="section_anchor">&para;</a></h2><p><table><tr><td style="border: 1px solid #aaa; padding: 5px;"> <strong>Header</strong> </td><td style="border: 1px solid #aaa; padding: 5px;"> dawgdic/guide-builder.h </td></tr> <tr><td style="border: 1px solid #aaa; padding: 5px;"> <strong>Namespace</strong> </td><td style="border: 1px solid #aaa; padding: 5px;"> dawgdic </td></tr> </table></p><pre class="prettyprint">// Builds a completion dictionary from a dawg and a dictionary.
+static bool Build(const Dawg &amp;dawg, const Dictionary &amp;dic, Guide *guide);</pre><p>This function builds a completion dictionary from a pair of <strong>dawg</strong> and <strong>dic</strong>, and then updates <strong>guide</strong>. </p><hr/><h2><a name="Completer"></a>Completer<a href="#Completer" class="section_anchor">&para;</a></h2><p><table><tr><td style="border: 1px solid #aaa; padding: 5px;"> <strong>Header</strong> </td><td style="border: 1px solid #aaa; padding: 5px;"> dawgdic/completer.h </td></tr> <tr><td style="border: 1px solid #aaa; padding: 5px;"> <strong>Namespace</strong> </td><td style="border: 1px solid #aaa; padding: 5px;"> dawgdic </td></tr> </table></p><pre class="prettyprint">// Initializes an object.
+Completer();
+// Initializes an object and sets required dictionaries.
+Completer(const Dictionary &amp;dic, const Guide &amp;guide);</pre><pre class="prettyprint">// Sets a base dictionary.
+void set_dic(const Dictionary &amp;dic);
+// Sets a completion dictionary.
+void set_guide(const Guide &amp;guide);</pre><pre class="prettyprint">// Gets a reference to base dictionary.
+const Dictionary &amp;dic() const;
+// Gets a reference to completion dictionary.
+const Guide &amp;guide() const;</pre><pre class="prettyprint">// Prepares for key completion.
+void Start(BaseType index, const char *prefix = &quot;&quot;);
+void Start(BaseType index, const char *prefix, SizeType length);</pre><p>These functions prepare for completing keys from the given start position <strong>index</strong>. The 2nd argument <strong>prefix</strong> does not affect the start position, and it is just attached to completed keys as the shared prefix. By passing the sequence of character from the root to the start position, The following function <strong>Next()</strong> builds perfect keys. </p><pre class="prettyprint">// Completes the next key.
+bool Next();
+// Returns the completed key as a zero terminated string.
+const char *key() const;
+// Returns the length of the completed key.
+SizeType length() const;
+// Returns the record associated with the completed key.
+ValueType value() const;</pre><hr/><h2><a name="RankedGuide"></a>RankedGuide<a href="#RankedGuide" class="section_anchor">&para;</a></h2><p><table><tr><td style="border: 1px solid #aaa; padding: 5px;"> <strong>Header</strong> </td><td style="border: 1px solid #aaa; padding: 5px;"> dawgdic/ranked-guide.h </td></tr> <tr><td style="border: 1px solid #aaa; padding: 5px;"> <strong>Namespace</strong> </td><td style="border: 1px solid #aaa; padding: 5px;"> dawgdic </td></tr> </table></p><p>See <strong>Guide</strong>. </p><hr/><h2><a name="RankedGuideBuilder"></a>RankedGuideBuilder<a href="#RankedGuideBuilder" class="section_anchor">&para;</a></h2><p><table><tr><td style="border: 1px solid #aaa; padding: 5px;"> <strong>Header</strong> </td><td style="border: 1px solid #aaa; padding: 5px;"> dawgdic/ranked-guide-builder.h </td></tr> <tr><td style="border: 1px solid #aaa; padding: 5px;"> <strong>Namespace</strong> </td><td style="border: 1px solid #aaa; padding: 5px;"> dawgdic </td></tr> </table></p><p>See <strong>GuideBuilder</strong>. </p><hr/><h2><a name="RankedCompleter"></a>RankedCompleter<a href="#RankedCompleter" class="section_anchor">&para;</a></h2><p><table><tr><td style="border: 1px solid #aaa; padding: 5px;"> <strong>Header</strong> </td><td style="border: 1px solid #aaa; padding: 5px;"> dawgdic/ranked-completer.h </td></tr> <tr><td style="border: 1px solid #aaa; padding: 5px;"> <strong>Namespace</strong> </td><td style="border: 1px solid #aaa; padding: 5px;"> dawgdic </td></tr> </table></p><p>See <strong>Completer</strong>. </p>
+ </td> 
+ </tr>
+ </table>
+ </div>
+
+
+ 
+ 
+ 
+ 
+ <br>
+ <div class="artifactcomment">
+ <span class="indicator">&#9658;</span> <a href="https://www.google.com/accounts/ServiceLogin?service=code&amp;ltmpl=phosting&amp;continue=http%3A%2F%2Fcode.google.com%2Fp%2Fdawgdic%2Fwiki%2FInterface&amp;followup=http%3A%2F%2Fcode.google.com%2Fp%2Fdawgdic%2Fwiki%2FInterface"
+ >Sign in</a> to add a comment
+ </div>
+ 
+ 
+
+<form name="delcom" action="../w/delComment.do" method="POST">
+ <input type="hidden" name="sequence_num" value="" >
+ <input type="hidden" name="create_time" value="" >
+ <input type="hidden" name="mode" value="" >
+ <input type="hidden" name="pagename" value="Interface" >
+ <input type="hidden" name="token" value="" >
+</form>
+
+
+
+ <script src="http://www.gstatic.com/codesite/ph/3526988999065534654/js/prettify/prettify.js"></script>
+ <script type="text/javascript">
+ prettyPrint();
+ </script>
+
+<script type="text/javascript" src="http://www.gstatic.com/codesite/ph/3526988999065534654/js/dit_scripts.js"></script>
+
+
+
+  
+ 
+ <script type="text/javascript" src="http://www.gstatic.com/codesite/ph/3526988999065534654/js/core_scripts_20081103.js"></script>
+ <script type="text/javascript" src="/js/codesite_product_dictionary_ph.pack.04102009.js"></script>
+ </div>
+<div id="footer" dir="ltr">
+ 
+ <div class="text">
+ 
+ &copy;2010 Google -
+ <a href="/projecthosting/terms.html">Terms</a> -
+ <a href="http://www.google.com/privacy.html">Privacy</a> -
+ <a href="/p/support/">Project Hosting Help</a>
+ 
+ </div>
+</div>
+
+ <div class="hostedBy" style="margin-top: -20px;">
+ <span style="vertical-align: top;">Powered by <a href="http://code.google.com/projecthosting/">Google Project Hosting</a></span>
+ </div>
+ 
+ 
+
+
+ 
+ </body>
+</html>
+
+

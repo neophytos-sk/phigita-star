@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE magicmap [
+  <!ELEMENT magicmap (magic+)>
+  <!ELEMENT magic (#PCDATA)>
+  <!ATTLIST magic name CDATA #REQUIRED>
+  <!ATTLIST magic offset CDATA "0">
+  <!ATTLIST magic target CDATA #REQUIRED>
+]>
+<magicmap>
+  <magic name="RIFF" offset="0" target="RIFF" />
+  <magic name="8BIMWTEXT" offset="0" target="8\000B\000I\000M\000#" />
+  <magic name="8BIMTEXT" offset="0" target="8BIM#" />
+  <magic name="8BIM" offset="0" target="8BIM" />
+  <magic name="BMP" offset="0" target="BA" />
+  <magic name="BMP" offset="0" target="BM" />
+  <magic name="BMP" offset="0" target="CI" />
+  <magic name="BMP" offset="0" target="CP" />
+  <magic name="BMP" offset="0" target="IC" />
+  <magic name="BMP" offset="0" target="PI" />
+  <magic name="CGM" offset="0" target="BEGMF" />
+  <magic name="CIN" offset="0" target="\200\052\137\327" />
+  <magic name="DCM" offset="128" target="DICM" />
+  <magic name="DCX" offset="0" target="\261\150\336\72" />
+  <magic name="DIB" offset="0" target="\050\000" />
+  <magic name="DOT" offset="0" target="digraph" />
+  <magic name="DPX" offset="0" target="SDPX" />
+  <magic name="DPX" offset="0" target="XPDS" />
+  <magic name="EMF" offset="40" target="\040\105\115\106\000\000\001\000" />
+  <magic name="EPT" offset="0" target="\305\320\323\306" />
+  <magic name="EXR" offset="0" target="\166\057\061\001" />
+  <magic name="FAX" offset="0" target="DFAX" />
+  <magic name="FIG" offset="0" target="#FIG" />
+  <magic name="FITS" offset="0" target="IT0" />
+  <magic name="FITS" offset="0" target="SIMPLE" />
+  <magic name="FPX" extensions=".fpx" offset="0" description="KODAK FlashPix Bitmap" target="\xD0\xCF\x11\xE0\xA1\xB1\x1A\xE1\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x3E\x00\x03\x00\xFE\xFF\x09\x00\x06\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00" />
+  <magic name="GIF" offset="0" target="GIF8" />
+  <magic name="GPLT" offset="0" target="#!/usr/local/bin/gnuplot" />
+  <magic name="HDF" offset="1" target="HDF" />
+  <magic name="HPGL" offset="0" target="IN;" />
+  <magic name="HTML" offset="1" target="HTML" />
+  <magic name="HTML" offset="1" target="html" />
+  <magic name="ILBM" offset="8" target="ILBM" />
+  <magic name="IPTCWTEXT" offset="0" target="\062\000#\000\060\000=\000\042\000&amp;\000#\000\060\000;\000&amp;\000#\000\062\000;\000\042\000" />
+  <magic name="IPTCTEXT" offset="0" target="2#0=\042&amp;#0;&amp;#2;\042" />
+  <magic name="IPTC" offset="0" target="\034\002" />
+  <magic name="JNG" offset="0" target="\213JNG\r\n\032\n" />
+  <magic name="JNG" offset="0" target="\213JNG\n\032\n" />
+  <magic name="JPEG" extensions=".jpeg .jpg" offset="0" target="\377\330\377" />
+  <magic name="JPC" offset="0" target="\377\117" />
+  <magic name="JP2" offset="4" target="\152\120\040\040\015" />
+  <magic name="MIFF" offset="0" target="Id=ImageMagick" />
+  <magic name="MIFF" offset="0" target="id=ImageMagick" />
+  <magic name="MNG" offset="0" target="\212MNG\r\n\032\n" />
+  <magic name="MNG" offset="0" target="\212MNG\n\032\n" />
+  <magic name="MPC" offset="0" target="id=MagickCache" />
+  <magic name="MPEG" offset="0" target="\000\000\001\263" />
+  <magic name="PCD" offset="2048" target="PCD_" />
+  <magic name="PCL" offset="0" target="\033E\033" />
+  <magic name="PCX" offset="0" target="\012\002" />
+  <magic name="PCX" offset="0" target="\012\005" />
+  <magic name="PDB" offset="60" target="vIMGView" />
+  <magic name="PDF" offset="0" target="%PDF-" />
+  <magic name="PFA" offset="0" target="%!PS-AdobeFont-1.0" />
+  <magic name="PFB" offset="6" target="%!PS-AdobeFont-1.0" />
+  <magic name="PGX" offset="0" target="\050\107\020\115\046" />
+  <magic name="PICT" offset="522" target="\000\021\002\377\014\000" />
+  <magic name="PNG" offset="0" target="\211PNG\r\n\032\n" />
+  <magic name="PNG" offset="0" target="\211PNG\n\032\n" />
+  <magic name="PNM" offset="0" target="P1" />
+  <magic name="PNM" offset="0" target="P2" />
+  <magic name="PNM" offset="0" target="P3" />
+  <magic name="PNM" offset="0" target="P4" />
+  <magic name="PNM" offset="0" target="P5" />
+  <magic name="PNM" offset="0" target="P6" />
+  <magic name="PNM" offset="0" target="P7" />
+  <magic name="PNM" offset="0" target="PF" />
+  <magic name="PNM" offset="0" target="Pf" />
+  <magic name="PS" offset="0" target="%!" />
+  <magic name="PS" offset="0" target="\004%!" />
+  <magic name="PS" offset="0" target="\305\320\323\306" />
+  <magic name="PSD" offset="0" target="8BPS" />
+  <magic name="PWP" offset="0" target="SFW95" />
+  <magic name="RAD" offset="0" target="#?RADIANCE" />
+  <magic name="RAD" offset="0" target="VIEW= " />
+  <magic name="RLE" offset="0" target="\122\314" />
+  <magic name="SCT" offset="0" target="CT" />
+  <magic name="SFW" offset="0" target="SFW94" />
+  <magic name="SGI" offset="0" target="\001\332" />
+  <magic name="SUN" offset="0" target="\131\246\152\225" />
+  <magic name="SVG" offset="1" target="?XML" />
+  <magic name="SVG" offset="1" target="?xml" />
+  <magic name="TXT" offset="0" target="# ImageMagick pixel enumeration:" />
+  <magic name="TIFF" offset="0" target="\115\115\000\052" />
+  <magic name="TIFF" offset="0" target="\111\111\052\000" />
+  <magic name="VICAR" offset="0" target="LBLSIZE" />
+  <magic name="VICAR" offset="0" target="NJPL1I" />
+  <magic name="VIFF" offset="0" target="\253\001" />
+  <magic name="WMF" offset="0" target="\327\315\306\232" />
+  <magic name="WMF" offset="0" target="\001\000\011\000" />
+  <magic name="WPG" offset="0" target="\377WPC" />
+  <magic name="XBM" offset="0" target="#define" />
+  <magic name="XCF" offset="0" target="gimp xcf" />
+  <magic name="XPM" offset="1" target="* XPM *" />
+  <magic name="XWD" offset="4" target="\007\000\000" />
+  <magic name="XWD" offset="5" target="\000\000\007" />
+
+
+  <magic name="SXC" extensions=".sxc" description="OpenOffice Spreadsheet (SXC)" offset="0" target="\x50\x4B\x03\x04" />
+  <magic name="SXD" extensions=".sxd" description="OpenOffice Drawing (SXD)" offset="0" target="\x50\x4B\x03\x04" />
+  <magic name="SXI" extensions=".sxi" description="OpenOffice Spreadsheet (SXI)" offset="0" target="\x50\x4B\x03\x04" />
+  <magic name="SXW" extensions=".sxw" description="OpenOffice Spreadsheet (SXW)" offset="0" target="\x50\x4B\x03\x04" />
+
+  <magic name="ODC" extensions=".odc" description="OpenOffice Spreadsheet (ODC)" offset="0" target="\x50\x4B\x03\x04" />
+  <magic name="ODG" extensions=".odg" description="OpenOffice Drawing (ODG)" offset="0" target="\x50\x4B\x03\x04" />
+  <magic name="ODI" extensions=".odi" description="OpenOffice Impress (ODI)" offset="0" target="\x50\x4B\x03\x04" />
+  <magic name="ODW" extensions=".odw" description="OpenOffice Writer (ODW)" offset="0" target="\x50\x4B\x03\x04" />
+  <magic name="ODB" extensions=".odb" description="OpenOffice Writer (ODB)" offset="0" target="\x50\x4B\x03\x04" />
+  <magic name="ODT" extensions=".odt" description="OpenOffice Template (ODT)" offset="0" target="\x50\x4B\x03\x04" />
+
+
+
+  <magic name="DOC" extensions=".doc" description="Microsoft Office Document (Word)" offset="0" target="\xD0\xCF\x11\xE0\xA1\xB1\x1A\xE1" />
+  <magic name="XLS" extensions=".xls" description="Microsoft Office Document (Excel)" offset="0" target="\xD0\xCF\x11\xE0\xA1\xB1\x1A\xE1" />
+  <magic name="PPT" extensions=".ppt" description="Microsoft Office Document (Powerpoint)" offset="0" target="\xD0\xCF\x11\xE0\xA1\xB1\x1A\xE1" />
+  <magic name="MDB" extensions=".mdb" description="Microsoft Office Document (Access)" offset="0" target="\xD0\xCF\x11\xE0\xA1\xB1\x1A\xE1" />
+
+
+  <magic name="DOC" offset="512" target="\xEC\xA5\xC1\x00" />
+  <magic name="DOC" offset="2108" target="MSWordDoc" />
+
+  <magic name="XLS" offset="512" target="\x09\x08\x10\x00\x00\x06\x05\x00" />
+  <magic name="XLS" offset="512" target="\xFD\xFF\xFF\xFF\x10\x02" />
+  <magic name="XLS" offset="512" target="\xFD\xFF\xFF\xFF\x22\x02" />
+  <magic name="XLS" offset="512" target="\xFD\xFF\xFF\xFF\x23\x02" />
+  <magic name="XLS" offset="512" target="\xFD\xFF\xFF\xFF\x28\x02" />
+  <magic name="XLS" offset="512" target="\xFD\xFF\xFF\xFF\x29\x02" />
+
+  <magic name="PPT" offset="512" target="\x00\x6E\x1E\xF0" />
+  <magic name="PPT" offset="512" target="\x0F\x00\xE8\x03" />
+  <magic name="PPT" offset="512" target="\xA0\x46\x1D\xF0" />
+  <magic name="MDB" offset="0" description="Miscrosoft Access file" target="\x00\x01\x00\x00\x53\x74\x61\x6E\x64\x61\x72\x64\x20\x4A\x65\x74\x20\x44\x42" />
+  <magic name="WBA" offset="0" description="Outlook address file" target="\x9C\xCB\xCB\x8D\x13\x75\xD2\x11\x91\x58\x00\xC0\x4F\x79\x56\xA4" />
+
+  <magic name="MNY" offset="0" description="Microsoft Money file" target="\x00\x01\x00\x00\x4D\x53\x49\x53\x41\x4D\x20\x44\x61\x74\x61\x62\x61\x73\x65" />
+  <magic name="SAV" offset="0" description="SPSS Data file" target="\x24\x46\x4C\x32\x40\x28\x23\x29\x20\x53\x50\x53\x53\x20\x44\x41\x54\x41\x20\x46\x49\x4C\x45" />
+  <magic name="QDF" offset="0" description="Quicken Data File" target="\xAC\x9E\xBD\x8F" />
+
+  <magic name="ICO" offset="0" target="\x00\x00\x01\x00" />
+
+  <magic name="MP3" offset="0" description="MPEG/MP3 audio file" target="\x49\x44\x33" />
+  <magic name="MP3" offset="0" description="MPEG ADTS, layer III, v1" length="2" script="( 0x[convert.string.to.hex %s] &amp; 0xFFFE )" target="0xFFFA" />
+  <magic name="MP3" offset="0" description="MPEG ADTS, layer III, v2" length="2" script="( 0x[convert.string.to.hex %s] &amp; 0xFFFE )" target="0xFFF2" />
+  <magic name="MP3" offset="0" description="MPEG ADTS, layer III,  v2.5" length="2" script="( 0x[convert.string.to.hex %s] &amp; 0xFFFE )" target="0xFFE2" />
+
+  <magic name="MP2" offset="0" description="MPEG ADTS, layer II, v1" length="2" script="( 0x[convert.string.to.hex %s] &amp; 0xFFFE )" target="0xFFFC" />
+  <magic name="MP2" offset="0" description="MPEG ADTS, layer II, v2" length="2" script="( 0x[convert.string.to.hex %s] &amp; 0xFFFE )" target="0xFFF4" />
+
+  <magic name="MIDI" offset="0" description="Musical Instrument Digital Interface (MIDI) sound file" target="\x4D\x54\x68\x64" />
+  <magic name="AMR" offset="0" target="\x23\x21\x41\x4D\x52" />
+  <magic name="RM" offset="0" target="\x2E\x52\x4D\x46" />
+
+  <magic name="3GPP" offset="0" description="3rd Generation Partnership Project (3GPP)" target="\x00\x00\x00\x14\x66\x74\x79\x70" />
+  <magic name="3GPP2" offset="0" description="3rd Generation Partnership Project (3GPP2)" target="\x00\x00\x00\x20\x66\x74\x79\x70" />
+
+  <magic name="PST" offset="0" description="Microsoft Outlook Personal Folder file" target="\x21\x42\x44\x4E" />
+
+  <magic name="MOV" offset="4" description="QuickTime movie file" target="moov" />
+  <magic name="MOV" offset="4" description="QuickTime movie file" target="free" />
+  <magic name="MOV" offset="4" description="QuickTime movie file" target="mdat" />
+  <magic name="MOV" offset="4" description="QuickTime movie file" target="wide" />
+  <magic name="MOV" offset="4" description="QuickTime movie file" target="pnot" />
+  <magic name="MOV" offset="4" description="QuickTime movie file" target="skip" />
+
+  <magic name="WMV" offset="0" description="Microsoft ASF" target="\x30\x26\xb2\x75" />
+
+
+  <magic name="FLV" offset="0" description="Flash Video" target="\x46\x4C\x56" />
+  <magic name="AVI" offset="8" description=" RIFF - Windows Audio Video Interleave file" target="\x41\x56\x49\x20\x4C\x49\x53\x54" />
+  <magic name="ANI" offset="8" description="RIFF - Animated Cursor file" target="\x41\x43\x4F\x4E" />
+  <magic name="CDA" offset="8" description="RIFF - Compact Disc Digital Audio (CD-DA) file" target="\x43\x44\x44\x41\x66\x6D\x74\x20" />
+  <magic name="QCP" offset="8" description="RIFF - Qualcomm PureVoice" target="\x51\x4C\x43\x4D\x66\x6D\x74\x20" />
+  <magic name="RMI" offset="8" description="RIFF -  Windows Musical Instrument Digital Interface file" target="\x52\x4D\x49\x44\x64\x61\x74\x61" />
+  <magic name="WAV" offset="8" description="RIFF -   Audio for Windows file" target="\x57\x41\x56\x45\x66\x6D\x74\x20" />
+
+  <magic name="CWS" offset="0" target="\x43\x57\x53" />
+  <magic name="FWS" offset="0" target="\x46\x57\x53" />
+  <magic name="MSCF" offset="0" target="\x4D\x53\x43\x46" />
+  <magic name="RPM" offset="0" description="RedHat Package Manager" target="\xED\xAB\xEE\xDB" />
+
+
+  <magic name="ZIP" extensions=".zip" offset="0" description="PKZIP archive file" target="\x50\x4B\x03\x04" />
+  <magic name="ZIP" extensions=".zip" offset="30" description="PKLITE compressed ZIP archive" target="\x50\x4B\x4C\x49\x54\x45" />
+  <magic name="ZIP" extensions=".zip" offset="526" description="PKSFX self-extracting executable compressed file" target="\x50\x4B\x53\x70\x58" />
+  <magic name="ZIP" extensions=".zip" offset="29152" description="WinZip compressed archive" target="\x57\x69\x6E\x5A\x69\x70" />
+
+  <magic name="DOCX" extensions=".docx" offset="0" description="" target="\x50\x4B\x03\x04" />
+  <magic name="XLSX" extensions=".xlsx" offset="0" description="" target="\x50\x4B\x03\x04" />
+  <magic name="PPTX" extensions=".pptx" offset="0" description="" target="\x50\x4B\x03\x04" />
+
+  <magic name="BZ2" offset="0" target="\x42\x5A" />
+  <magic name="GZ" offset="0" target="\x1F\x8B\x08" />
+  <magic name="RAR" offset="0" descriptin="WinRAR compressed archive file" target="\x52\x61\x72\x21\x1A\x07\x00" />
+  <magic name="TAR.Z" offset="0" target="\x1F\x9D\x90" />
+  <magic name="7Z" offset="0" description="7-Zip compressed file" target="\x37\x7A\xBC\xAF\x27\x1C" />
+
+  <magic name="DJVU" extensions=".djvu" offset="0" description="DjVu image / document" target="\x41\x54\x26\x54" />
+
+
+</magicmap>

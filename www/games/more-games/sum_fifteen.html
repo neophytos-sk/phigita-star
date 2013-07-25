@@ -1,0 +1,228 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<title>The sum is fifteen</title>
+	<meta name="Author" content="Alf Magne Kalleland (post@dhtmlgoodies.com)">
+<META NAME="Generator" CONTENT="Alf Magne Kalleland (www.dhtmlgoodies.com)">
+<meta name="KeyWords" content="DHTML, HTML, Dynamic HTML,CSS, Menu, Menus,Drag and drop, Drag, Drop, Cross-browser, Cross browser, Examples, Javascript, Free, Javascripts, Cascading Style Sheet, Crossbrowser,Alf Magne Kalleland, Batalf, minesweeper">
+<meta name="Description" content="A library of nice looking DHTML(dynamic HTML) scripts for your website. (CSS + Javascript + HTML = DHTML = true)">
+<meta name="country" content="Norway">
+<meta name="organization-Email" content="post@dhtmlgoodies.com">
+<meta name="copyright" content="copyright 2005 - Alf Magne Kalleland">
+<meta name="coverage" content="Worldwide">
+<meta name="revisit_after" content="30days">
+<meta name="title" content="A library of nice looking DHTML(dynamic HTML) scripts - DHTMLgoodies.com">
+<meta name="identifier" content="http://www.dhtmlgoodies.com/">
+<meta name="language" content="English">
+<meta name="robots" content="follow">
+<meta name="googlebot" content="index, follow">
+
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+</script>
+<script type="text/javascript">
+_uacct = "UA-85864-2";
+urchinTracker();
+</script>	
+	<style type="text/css">
+	body{
+		font-family: Trebuchet MS, Lucida Sans Unicode, Arial, sans-serif;
+		margin-top:0px;
+		background-image:url('../../images/heading3.gif');
+		background-repeat:no-repeat;
+		padding-top:100px;
+	}
+	.sumSquare,.smallSquare,.inactiveSquare,.activeSquare{
+		font-weight:bold;
+		float:left;		
+		text-align:center;
+		font-size:38px;
+		color: #317082;
+		font-family: "Franklin Gothic Demi",Arial;		
+	}
+	.sumSquare,.smallSquare,.inactiveSquare{
+		width:48px;
+		height:48px;
+		line-height:48px;
+		border:1px solid #000000;	
+	
+	}
+	.sumSquare{
+		background-color: #CCCCCC;
+	}
+	.inactiveSquare{
+		background-color: #000000;
+	}
+	.smallSquare{		
+		cursor:pointer;
+
+	}
+	
+	#sumNine_container{
+		width:200px;
+		height:250px;
+		border:2px solid #000000;
+		margin:0 auto;
+	}
+	
+	.activeSquare{
+		background-color: #E2EBED;
+		border:2px solid #317082;
+		height:46px;
+		width:46px;
+		line-height:46px;
+	}
+	</style>
+	
+	<script type="text/javascript">
+	var activeItem = false;
+	var activeNumbers = new Array();
+	var messageSent = false;
+	function setActiveItem(inputEvent,inputItem)
+	{
+		if(!inputItem)inputItem = this;
+		if(activeItem){
+			activeItem.className='smallSquare';
+			
+		}
+		inputItem.className='activeSquare';
+		activeItem = inputItem;	
+	}
+	
+	function calculateSum()
+	{
+		var sumRows = new Array();
+		var sumCols = new Array();
+		for(var no=0;no<3;no++){
+			if(!sumRows[no])sumRows[no]=0;
+			
+			for(var no2=0;no2<3;no2++){
+				if(!sumCols[no2])sumCols[no2]=0;
+				if(document.getElementById('square_' + no + '_' + no2).innerHTML.length>0)sumRows[no] = sumRows[no]/1 + document.getElementById('square_' + no + '_' + no2).innerHTML/1;
+				if(document.getElementById('square_' + no + '_' + no2).innerHTML.length>0)sumCols[no2] = sumCols[no2]/1 + document.getElementById('square_' + no + '_' + no2).innerHTML/1;
+			}
+			document.getElementById('sum_'+(no+1)+'_4').innerHTML = sumRows[no];
+		}
+		
+		document.getElementById('sum_4_1').innerHTML = sumCols[0];
+		document.getElementById('sum_4_2').innerHTML = sumCols[1];
+		document.getElementById('sum_4_3').innerHTML = sumCols[2];
+		
+		var sumDiag1 = 0;
+		if(document.getElementById('square_0_0').innerHTML.length>0)sumDiag1 = sumDiag1/1 + document.getElementById('square_0_0').innerHTML/1;
+		if(document.getElementById('square_1_1').innerHTML.length>0)sumDiag1 = sumDiag1/1 + document.getElementById('square_1_1').innerHTML/1;
+		if(document.getElementById('square_2_2').innerHTML.length>0)sumDiag1 = sumDiag1/1 + document.getElementById('square_2_2').innerHTML/1;
+		document.getElementById('sum_4_4').innerHTML = sumDiag1;
+		
+		var sumDiag2 = 0;
+		if(document.getElementById('square_0_2').innerHTML.length>0)sumDiag2 = sumDiag2/1 + document.getElementById('square_0_2').innerHTML/1;
+		if(document.getElementById('square_1_1').innerHTML.length>0)sumDiag2 = sumDiag2/1 + document.getElementById('square_1_1').innerHTML/1;
+		if(document.getElementById('square_2_0').innerHTML.length>0)sumDiag2 = sumDiag2/1 + document.getElementById('square_2_0').innerHTML/1;
+		document.getElementById('sum_0_4').innerHTML = sumDiag2;
+		
+		var startValue = sumDiag1;
+		var diffFound = false;
+		if(sumDiag2!=sumDiag1)diffFound=false;
+		for(var no=0;no<3;no++){
+			if(sumCols[no]!=startValue)diffFound=true;	
+			if(sumRows[no]!=startValue)diffFound=true;
+		}
+		if(startValue==15 && !diffFound && !messageSent){
+			setTimeout("congratulate()",500);
+			messageSent=true;
+		}
+	}
+	
+	function congratulate(){
+		alert("That's it\nYou figured it out")
+		
+	}
+	
+	function writeNumber(e)
+	{
+		if(!activeItem)return;
+		if(document.all)e = event;
+		if (e.keyCode) code = e.keyCode; else if (e.which) code = e.which;
+		var numbers = activeItem.id.split('_');
+		var row = numbers[1];
+		var col = numbers[2];	
+		if(code==39){ // Right arrow
+			if(col<2){
+				setActiveItem(false,document.getElementById('square_'+row+'_'+(col/1+1)));
+				return;
+			}
+		}
+		if(code==37){ // Right arrow
+			if(col>0){
+				setActiveItem(false,document.getElementById('square_'+row+'_'+(col-1)));
+				return;
+			}
+		}
+		if(code==38){
+			if(row>0){
+				setActiveItem(false,document.getElementById('square_'+(row-1)+'_'+col));
+				return;
+			}
+		}		
+		if(code==40){
+			if(row<2){
+				setActiveItem(false,document.getElementById('square_'+(row/1+1)+'_'+col));
+				return;
+			}
+		}
+		if(code==46 || code==8){
+			activeNumbers[activeItem.innerHTML] = false;
+			activeItem.innerHTML = '';
+			if(code==8)return false;
+		}
+		if(code>96 && code<=105)code-=48;
+		if(code>48 && code<=57){				
+			var theChar = String.fromCharCode(code);
+			if(activeNumbers[theChar])return;
+			activeNumbers[activeItem.innerHTML] = false;			
+			activeItem.innerHTML = theChar;	
+			activeNumbers[theChar] = true;
+		}
+		calculateSum();
+	}
+	
+	function initGame()
+	{
+		var el = document.getElementById('sumNine_container');
+		var subs = el.getElementsByTagName('DIV');
+		for(var no=0;no<subs.length;no++){
+			if(subs[no].className=='smallSquare')subs[no].onclick = setActiveItem;	
+		}	
+		document.body.onkeydown = writeNumber;
+		if(!document.all)document.documentElement.onkeydown = writeNumber;
+		calculateSum();
+	}
+	window.onload = initGame;
+	</script>
+</head>
+
+<body>
+<h1>"The number is fifteen"</h1>
+<p>Fill in the numbers 1-9 in the nine white squares. The goal is to get the sum of the numbers horizontally, vertically and diagonally to be 15. Remember that each number could only be used once.</p>
+<div id="sumNine_container">
+
+<div class="inactiveSquare" id="sum_0_1"></div>
+
+<div class="inactiveSquare" id="sum_0_2"></div>
+
+<div class="inactiveSquare" id="sum_0_3"></div>
+
+<div class="sumSquare" id="sum_0_4"></div>
+<div class="smallSquare" id="square_0_0"></div><div class="smallSquare" id="square_0_1"></div><div class="smallSquare" id="square_0_2"></div><div class="sumSquare" id="sum_1_4"></div>
+<div class="smallSquare" id="square_1_0"></div><div class="smallSquare" id="square_1_1"></div><div class="smallSquare" id="square_1_2"></div><div class="sumSquare" id="sum_2_4"></div>
+<div class="smallSquare" id="square_2_0"></div><div class="smallSquare" id="square_2_1"></div><div class="smallSquare" id="square_2_2"></div><div class="sumSquare" id="sum_3_4"></div>
+<div class="sumSquare" id="sum_4_1"></div><div class="sumSquare" id="sum_4_2"></div><div class="sumSquare" id="sum_4_3"></div><div class="sumSquare" id="sum_4_4"></div></div>
+<!-- Kontera ContentLink™  -->
+<SCRIPT LANGUAGE="JavaScript">
+var dc_UnitID = 14;
+var dc_PublisherID = 3695;
+var dc_AdLinkColor = 'blue';
+var dc_adprod='ADL';
+</SCRIPT>
+<SCRIPT LANGUAGE="JavaScript" SRC="http://kona.kontera.com/javascript/lib/KonaLibInline.js"></SCRIPT>
+<!-- Kontera ContentLink™  --></body>
+</html>

@@ -1,0 +1,93 @@
+contract {
+    param -id id -check "integer notnull"
+}
+
+
+datastore \
+    -id bbdata \
+    -singleton true \
+    -select {
+	* 
+	{t.hstore->'color' as color}
+	{t.hstore->'background' as background}
+    } \
+    -from_class [::db::Left_Outer_Join new \
+		     -lhs [::db::Set new \
+			       -alias m \
+			       -type ::bboard::Message \
+			       -where [list "id=:id" "live_p"]] \
+		     -rhs [::db::Set new \
+			       -alias t \
+			       -type ::bboard::Message_Type] \
+		     -join_condition {m.type_id=t.id}] \
+    -extend {
+
+	set pretty_date [lc_time_fmt $creation_date %q]
+	set color [::util::coalesce $color "#000000"]
+	set background [::util::coalesce $background "#ffeeaa"]
+
+	array set config [list]
+	set content_in_html ""
+	::xo::structured_text::stx_to_html config content content_in_html
+
+    }
+
+
+
+guard { return @{bbdata:rowcount} }
+
+
+val -id context_bar { return [::xo::kit::context_bar "One Message"] }
+
+# keep css classes and tags used by context_bar
+::xo::tdp::excludeClassesFromRenaming {breadcrumb divider ul li active}
+
+css {
+    .date {
+	margin:10px;
+	font-weight:bold;
+	font-size:12px;
+    }
+    .message {
+	background:#f0f0f0;
+	padding:10px;
+    }
+    .msg_type {
+	margin-top:5px;
+	font-size:large;
+	padding:3px;
+    }
+    .title {
+	font-size:x-large;
+	background:#fcfcfc;
+    }
+}
+
+val -id "advertisement" { return [::xo::google::adsense::get_slot_html 9599763736 234 60] }
+
+master -title "@{bbdata.title} - BBoard" {
+
+    nt @{context_bar:noquote}
+
+    tpl -with bbdata {
+	p
+	div -class "msg_type" -style "background:@{background};color:@{color};" { t @{name} }
+	t " "
+	div -class title {
+	    t @{title}
+	}
+
+	div -class message {
+	    div -class date {
+		t @{pretty_date}
+	    }
+	    div -class content {
+		nt @{content_in_html:noquote}
+	    }
+	}
+    }
+
+
+    nt @{advertisement:noquote}
+
+}

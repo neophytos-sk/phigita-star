@@ -1,0 +1,79 @@
+SNoW - Sparse Network of Winnows
+Version 3.1.4
+For questions or bug reports about the SNoW software, contact Nick Rizzolo
+(rizzolo@cs.uiuc.edu)
+
+University of Illinois at Urbana-Champaign
+Department of Computer Science
+Dr. Dan Roth - Cognitive Computation Group
+danr@cs.uiuc.edu
+
+The makefile included with this distribution most probably requires GNU make.
+In general, just type 'gmake' to compile the system, and 'gmake clean' to
+remove all object files and binaries.  If you want to include SNoW's server
+functionality in your build, use 'gmake SERVER=1'.  But do take a look at the
+Makefile - you may find useful options or platform specific compilation
+instructions.  (Just commenting or uncommenting a line or two.)  
+
+The SNoW User's Guide is no longer included in the software distribution.  You
+can download it separately from the webpage.  As of 1/6/04, the User's Guide
+is completely current with respect to version  3.1.0.  The revision history
+can also be a useful source of information about SNoW's new features.
+
+
+Packing list:
+
+0README                         : This file
+revisions.txt                   : SNoW's revision history
+
+booleanexample/booleantest.snow       : See SNoW in action, learning a simple
+booleanexample/one_target.arch        :  boolean concept with these files.  Run
+booleanexample/one_target_train.snow  :  "run.bat" if your platform is WIN32, or
+booleanexample/run.bat                :  "run.sh" on UNIX.
+booleanexample/run.sh*                :
+booleanexample/two_targets.arch       :
+booleanexample/two_targets_train.snow :
+
+booleanexample/conjunction_generator.pl* : Scripts for enumerating all the
+booleanexample/disjunction_generator.pl* :  examples in simple boolean concepts.
+
+tutorial/example_client.pl*     : An example client for SNoW's server mode
+tutorial/archfile               : More useful example files.
+tutorial/testdata.feat          :
+tutorial/traindata.feat         :
+tutorial/tutorial.bat           :
+tutorial/tutorial.sh*           :
+tutorial/Getopt/Declare.pm      :
+
+Makefile                        : Used to compile the software
+
+Cloud.h
+Example.h
+GlobalParams.h
+LearningAlgorithm.h
+MinimalFeature.h
+NaiveBayes.h
+Network.h
+Perceptron.h
+SendReceive.h
+SnowParam.h
+SnowTypes.h
+Target.h
+TargetIdSet.h
+TargetRank.h
+Usage.h
+Winnow.h
+
+Cloud.cpp
+Example.cpp
+NaiveBayes.cpp
+Network.cpp
+Perceptron.cpp
+Snow.cpp
+SnowParam.cpp
+Target.cpp
+TargetIdSet.cpp
+TargetRank.cpp
+Winnow.cpp
+getopt.c
+

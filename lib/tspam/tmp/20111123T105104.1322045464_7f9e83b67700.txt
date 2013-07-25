@@ -1,0 +1,20 @@
+Received: from apache by pcrugcqrcedcqkfrwijpe.kleo.com.ru with local (Exim 4.67)
+	(envelope-from <grousingpo13@blomnet.com>)
+	id 654QQ8-ID58HU-10
+	for <k2pts@phigita.net>; Wed, 23 Nov 2011 10:50:55 +0000 
+To: <k2pts@phigita.net> 
+Subject: ACH transaction canceled 
+X-PHP-Script: pcrugcqrcedcqkfrwijpe.gagarinclub.ru/sendmail.php for 82.13.66.13 
+From: "The Electronic Payments Association" <transactions@nacha.org> 
+X-Sender: "The Electronic Payments Association" <transactions@nacha.org> 
+X-Mailer: PHP 
+X-Priority: 1 
+Message-Id: <UD3T6N-AVC6RU-E6@pcrugcqrcedcqkfrwijpe.wonderware.com> 
+Date: Wed, 23 Nov 2011 10:50:55 +0000 
+--------------------------------------
+The ACH  transaction (ID: 131967759093), recently  initiated from your  checking account (by you or any other person), was  canceled by the  Electronic Payments Association.        Rejected transaction  
+      Transaction ID:     131967759093  
+       Reason for rejection    See details in the report below   
+      Transaction Report     report_131967759093.doc (Microsoft Word Document)   
+  13450 Sunrise Valley Drive, Suite 100Herndon, VA 201712011 NACHA - The Electronic Payments Association
+Whoops!  What is a 'image/gif'?

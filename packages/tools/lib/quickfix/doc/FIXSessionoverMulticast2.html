@@ -1,0 +1,102 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252">
+<META NAME="Generator" CONTENT="Microsoft Word 97">
+<TITLE>FIX Session over Publish/Subscribe and Multicast Session Layers</TITLE>
+</HEAD>
+<BODY>
+
+<FONT SIZE=2>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+</FONT><B><U><FONT SIZE=4><P ALIGN="CENTER">FIX Application Note</P>
+</B></U></FONT><FONT SIZE=2><P ALIGN="CENTER"></P>
+</FONT><B><U><P ALIGN="CENTER">FIX Session Using a Multicast Transport</P>
+<P ALIGN="CENTER"></P>
+<FONT SIZE=2><P ALIGN="CENTER">Last Updated:  November 18, 1999</P>
+</FONT><P ALIGN="CENTER"></P>
+<FONT SIZE=2><P>Authors:</P>
+
+<UL>
+</B></U><LI>John Armstrong, Morgan Stanley Dean Witter Discover</LI>
+<LI>Scott Atwell, American Century</LI></UL>
+
+</FONT><B><U>
+<P>&nbsp;</P>
+<P>Justification</P>
+</B></U><DIR>
+<DIR>
+
+<P>The FIX Protocol is made up of a session layer, an application layer and a field reference (data dictionary). The latter two have usefulness independent of the FIX session. Furthermore, because the FIX session is meant for point-to-point communication, it does not lend itself to publish/subscribe models well (e.g. providing market data to numerous receivers). This application note defines how a FIX messages can be distributed over aMulticast transport (e.g. IP Multicast). This note does not go into details of a particular multicast technology, but rather discusses how a modified FIX session can be implemented over it.</P>
+</DIR>
+</DIR>
+
+<B><U><P>Overview of Session Layer</P>
+</B></U><DIR>
+<DIR>
+
+<P>To ensure proper detection of gaps in messages in a multicast environment, except as noted below there should only be one publisher of a particular subject. For the purpose of this document, &quot;subject&quot; refers to how or what a receiver listens for and publisher sends information on (e.g. a subject name, a TCP listen port, etc). The characteristics and features of a particular multicast technology as well as the implementation (e.g. the primary publisher using one subject to accept resend requests from mulitple primary receivers publishing the request) will control whether or not messages sent by a particular publisher can be expected to be delivered in order.  There can be any number of subscribers or receivers of a particular subject.</P>
+
+<P>In order for a message gap detecting session layer to exist, the sequence number that is placed on each message should be assigned on a per subject basis. The consequence of not assigning on a per subject basis is that the receivers (who might not subscribe for all subjects) would end up detecting gaps where gaps really do not exist for that subject. Thus, receivers must maintain expected sequence numbers on a per subject basis.</P>
+
+<P>Unlike the standard FIX session layer (in FIX 4.0 and above), all of the administrative messages will not consume a sequence number (as was the case in FIX 3.0). The type of data transmitted in a multicast environment is one-way (from publisher to subscriber) and thus race conditions that are possible in a standard two-way FIX 3.0 session are not applicable here. As such the requirement for administrative messages consuming a sequence number (FIX.4.0 and greater) can be relaxed.  In this case administrative messages should contain the MsgSeqNum of the &quot;next&quot; message to be sent but not &quot;consume&quot; or increment this number (this is consistent with FIX 3.0).  Any business-level message which is sent should increment the next outbound sequence number to allow receivers to detect gaps and perform gap processing.</P>
+
+<P>The TargetCompID on all messages should be set to some predefined value (assigned by the publisher) such as the subject the message is being published out under. The SenderCompID on all messages should be set to some predefined, static value assigned by the publisher which identifies the publisher.</P>
+</DIR>
+</DIR>
+
+<B><U><P>Logon</P><DIR>
+<DIR>
+
+</B></U><P>Different from the normal FIX session two-way logon, the logon in a pub/sub or multicast environment should be one-way from the publisher to the subscribers. It is used to notify subscribers that the publisher’s session has begun. </P>
+</DIR>
+</DIR>
+
+<B><U><P>Heartbeats</P>
+<DIR>
+<DIR>
+
+</B></U><P>Heartbeats are used as keep-alive packets in periods of application message inactivity. These messages should only be transmitted by the publisher.</P>
+</DIR>
+</DIR>
+
+<B><U><P>Resend Requests</P>
+<DIR>
+<DIR>
+
+</B></U><P>If a receiver detects a sequence gap inthe messages being sent by the publisher, it can transmit a Resend Request on a separate well defined Resend Request subject. Upon receiving a Resend Request, the publisher can choose to respond immediately, to schedule responses or to not satisfy the request at all. Since Rejects messages are not used in a multicast environment, the publisher should ignore invalid resend requests (e.g. seq num too high or duplicates).  If  when responding to a Resend Request, the publisher wishes to skip over one or more messages, it should transmit a SequenceReset/GapFill message to indicate that the gap should be artificially filled. Because the publisher may not respond immediately, care should be taken on the receiving application to decide if the need for ordered delivery should delay processing of subsequent messages.</P>
+
+<P>If mutiple application subjects are being published, either an individual Resend Request subject should be defined for each application subject or Resend Requests should somehow identify the desired application subject via the TargetSubID field  in order for the application subject publisher to identify which subject the request is for. In addition, it is also possible to establish a separate subject for receivers to listen for responses to Resend Requests on rather than the primary message subject.</P>
+
+<P>Some multicast technologies (e.g. IP Multicast) may not allow for the ability of a publisher to respond to a specific subscriber’s resend request without also providing that same response to <B>all</B> subscribers via the &quot;primary&quot; subject distribution channel.  Subscribers must be capable of disgarding messages which contain lower than expected sequence numbers.</P>
+
+<P>&nbsp;</P></DIR>
+</DIR>
+
+<B><U><P>Rejects</P>
+</B></U><DIR>
+<DIR>
+
+<P>Session level rejects messages are not applicable or used in this model.</P>
+</DIR>
+</DIR>
+
+<B><U><P>Logout</P>
+</B></U><FONT SIZE=2><DIR>
+<DIR>
+
+</FONT><P>Different from the FIX session two-way logout, the logout in a multicast environment should be one-way from the publisher to the subscribers. It is used to notify subscribers that the session has ended. </P>
+<FONT SIZE=2>
+<P>&nbsp;</P></DIR>
+</DIR>
+
+</FONT><B><U><P>Additional Implementation Details</P>
+</B></U><FONT SIZE=2><DIR>
+<DIR>
+
+</FONT><P>Additional implementation details concerning an actual business implementation of a multicast environment should be documented and agreed to by the parties involved.</P>
+</DIR>
+</DIR>
+</BODY>
+</HTML>

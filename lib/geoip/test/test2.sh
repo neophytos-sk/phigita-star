@@ -1,0 +1,1 @@
+time tclsh ip_lookup_geoip_from_file.tcl

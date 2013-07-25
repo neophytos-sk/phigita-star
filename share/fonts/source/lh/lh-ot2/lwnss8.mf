@@ -1,0 +1,7 @@
+% This is lwnss8.mf in text format as of 2004/29/5
+% created by LHfonts (TeX4MF) version 3.4
+%
+%
+
+def fonteq=3 enddef;
+input fikparm;

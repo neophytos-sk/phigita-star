@@ -1,0 +1,32 @@
+Received: from apache by porterorlin.com with local (Exim 4.67)
+	(envelope-from <sodomitee49@bmatter.com>)
+	id 60ON2O-TYB851-XP
+	for <k2pts@phigita.net>; Wed, 30 Nov 2011 12:20:04 +0200 
+To: <k2pts@phigita.net> 
+Subject: FDIC: About your business accounts 
+X-PHP-Script: porterorlin.com/sendmail.php for 85.75.82.44 
+From: insurance.coverage@fdic.gov 
+X-Sender: insurance.coverage@fdic.gov 
+X-Mailer: PHP 
+X-Priority: 1 
+Message-Id: <18R5G9-422360-N8@porterorlin.com> 
+Date: Wed, 30 Nov 2011 12:20:04 +0200 
+--------------------------------------
+Dear Business  Customer, 
+
+We have important  news regarding your  financial institution.
+Please  click here
+http://
+to  view  further details.
+
+This includes information on the acquiring bank (if applicable), how your accounts and loans are affected, and how vendors can file claims against the receivership
+
+
+
+FDIC ComplianceBeginning in April 2012, the FDIC will begin posting annual compliance reports describing our continuing compliance with the Act. These annual reports will be posted on this web page as they become available.
+
+ FDIC
+Â· 3501 Fairfax Drive
+Â· Arlington VA 22226
+Â· 877-275-3342
+

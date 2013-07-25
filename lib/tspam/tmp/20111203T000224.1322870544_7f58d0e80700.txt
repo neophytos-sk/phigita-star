@@ -1,0 +1,58 @@
+Received: by web1.extjs.com (Postfix, from userid 33)
+	id 1AF0A6C1F4; Sat,  3 Dec 2011 00:02:14 +0000 (UTC) 
+To: k2pts@phigita.net 
+Subject: "Ext: Open Discussion" update 
+X-PHP-Originating-Script: 1000:class_mail.php 
+From: "Sencha Forum" <admin@sencha.com> 
+Auto-Submitted: auto-generated 
+Message-ID: <20111203000214.b80d3afcefaf@www.sencha.com> 
+X-Priority: 3 
+X-Mailer: vBulletin Mail via PHP 
+Date: Sat,  3 Dec 2011 00:02:14 +0000 (UTC) 
+--------------------------------------
+Dear k2pts,
+
+You are subscribed to the forum Ext: Open Discussion, there have been 2 new thread(s) and 2 updated thread(s).
+http://www.sencha.com/forum/forumdisplay.php?6-Ext-Open-Discussion
+
+The following threads are new:
+************
+I want add the background colour to the textbox content
+http://www.sencha.com/forum/showthread.php?158949-I-want-add-the-background-colour-to-the-textbox-content
+In forum: Ext: Open Discussion
+Started by: sidhu.c
+Last post: 2 Dec 2011 7:23 PM
+************
+Cache problem with Ext.ux.maximgb.tg.GridPanel
+http://www.sencha.com/forum/showthread.php?158841-Cache-problem-with-Ext.ux.maximgb.tg.GridPanel
+In forum: Ext: Open Discussion
+Started by: bailey
+Last post: 2 Dec 2011 8:23 PM
+
+
+The following threads have been updated:
+************
+Netbeans plugin
+http://www.sencha.com/forum/showthread.php?15623-Netbeans-plugin
+In forum: Ext: Open Discussion
+Started by: zipito
+Last post: 2 Dec 2011 2:50 AM
+************
+ExtJs Certification
+http://www.sencha.com/forum/showthread.php?158420-ExtJs-Certification
+In forum: Ext: Open Discussion
+Started by: poojagarg89
+Last post: 2 Dec 2011 9:59 AM
+
+
+All the best,
+Sencha Forum
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Unsubscription information:
+
+To unsubscribe from this forum, please visit this page:
+http://www.sencha.com/forum/subscription.php?do=removesubscription&type=forum&subscriptionid=63&auth=e23de5f6387a31c5573cf4993e28e47f
+
+
+

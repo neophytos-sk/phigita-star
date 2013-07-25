@@ -1,0 +1,23 @@
+Received: from localhost (mail.comeinfo.com [127.0.0.1])
+	by mail.comeinfo.com (EMOS V1.5 (Postfix)) with ESMTP id 3EE47436319;
+	Thu, 10 Nov 2011 18:19:50 +0800 (CST) from mail.comeinfo.com ([127.0.0.1])
+	by localhost (mail.comeinfo.com [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id hV4UMz2WWS4o; Thu, 10 Nov 2011 18:19:49 +0800 (CST) from ubg (unknown [115.58.135.67])
+	by mail.comeinfo.com (EMOS V1.5 (Postfix)) with ESMTPA id 11E804362B2;
+	Thu, 10 Nov 2011 18:19:48 +0800 (CST) 
+X-Virus-Scanned: amavisd-new at comeinfo.com 
+X-Spam-Flag: NO 
+X-Spam-Score: 2.144 
+X-Spam-Level: ** 
+X-Spam-Status: No, score=2.144 tagged_above=-10 required=5
+	tests=[ALL_TRUSTED=-1.44, DSPAM_ERROR=0.1, FH_DATE_PAST_20XX=3.384,
+	TVD_SPACE_RATIO=0.1] autolearn=no 
+Message-ID: <20111110182125384210@comeinfo.com> 
+From: "dskhgxrl" <lzy@comeinfo.com> 
+To:  
+Subject: =?gb2312?B?OTExuPi529bateNjb2xvciBzZWUgc2Vl?=
+	=?gb2312?B?o6zR1cmrtcTTptPD0qq14w==?= 
+Date: Thu, 10 Nov 2011 18:21:19 +0800 
+X-mailer: Bwx 8 
+--------------------------------------
+ content-type=application/msword part-token=::mime::1498-2

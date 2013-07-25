@@ -1,0 +1,3 @@
+#!/bin/sh
+dir=$0; if readlink $dir > /dev/null 2>&1; then lndir=`readlink $dir`; dir=`dirname $dir`; lndir=`dirname $lndir`; dir=`cd $dir && cd $lndir && pwd || echo $lndir`; else dir=`dirname ${dir}`; fi; dir=${dir}/../lib
+python ${dir}/python/genreflex/genreflex.py "$@"

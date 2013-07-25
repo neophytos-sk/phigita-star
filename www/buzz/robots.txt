@@ -1,0 +1,8 @@
+User-agent: *
+Disallow: /register/
+Disallow: /accounts/
+Disallow: /my/
+Disallow: /images/
+
+
+

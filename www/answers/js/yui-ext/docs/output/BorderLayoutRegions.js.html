@@ -1,0 +1,210 @@
+<html><head><title>BorderLayoutRegions.js</title><link rel="stylesheet" type="text/css" href="../resources/style.css" media="screen"/></head><body><h1>BorderLayoutRegions.js</h1><pre class="highlighted"><code><i>/*
+ * These classes are private internal classes
+ */</i>
+YAHOO.ext.CenterLayoutRegion = <b>function</b>(mgr, config){
+    YAHOO.ext.CenterLayoutRegion.superclass.constructor.call(<b>this</b>, mgr, config, 'center');
+    <b>this</b>.visible = true;
+    <b>this</b>.minWidth = config.minWidth || 20;
+    <b>this</b>.minHeight = config.minHeight || 20;
+};
+
+YAHOO.extendX(YAHOO.ext.CenterLayoutRegion, YAHOO.ext.LayoutRegion, {
+    hide : <b>function</b>(){
+        <i>// center panel can't be hidden</i>
+    },
+    
+    show : <b>function</b>(){
+        <i>// center panel can't be hidden</i>
+    },
+    
+    getMinWidth: <b>function</b>(){
+        <b>return</b> this.minWidth;
+    },
+    
+    getMinHeight: <b>function</b>(){
+        <b>return</b> this.minHeight;
+    }
+});
+
+
+YAHOO.ext.NorthLayoutRegion = <b>function</b>(mgr, config){
+    YAHOO.ext.NorthLayoutRegion.superclass.constructor.call(<b>this</b>, mgr, config, 'north', 'n-resize');
+    <b>if</b>(this.split){
+        <b>this</b>.split.placement = YAHOO.ext.SplitBar.TOP;
+        <b>this</b>.split.orientation = YAHOO.ext.SplitBar.VERTICAL;
+        <b>this</b>.split.el.addClass('ylayout-split-v');
+    }
+    <b>if</b>(typeof config.initialSize != 'undefined'){
+        <b>this</b>.el.setHeight(config.initialSize);
+    }
+};
+YAHOO.extendX(YAHOO.ext.NorthLayoutRegion, YAHOO.ext.SplitLayoutRegion, {
+    getBox : <b>function</b>(){
+        <b>if</b>(this.collapsed){
+            <b>return</b> this.collapsedEl.getBox();
+        }
+        <b>var</b> box = <b>this</b>.el.getBox();
+        <b>if</b>(this.split){
+            box.height += <b>this</b>.split.el.getHeight();
+        }
+        <b>return</b> box;
+    },
+    
+    updateBox : <b>function</b>(box){
+        <b>if</b>(this.split &amp;&amp; !<b>this</b>.collapsed){
+            box.height -= <b>this</b>.split.el.getHeight();
+            <b>this</b>.split.el.setLeft(box.x);
+            <b>this</b>.split.el.setTop(box.y+box.height);
+            <b>this</b>.split.el.setWidth(box.width);
+        }
+        <b>if</b>(this.collapsed){
+            <b>this</b>.el.setWidth(box.width);
+            <b>var</b> bodyWidth = box.width - <b>this</b>.el.getBorderWidth('rl');
+            <b>this</b>.bodyEl.setWidth(bodyWidth);
+            <b>if</b>(this.activePanel &amp;&amp; <b>this</b>.panelSize){
+                <b>this</b>.activePanel.setSize(bodyWidth, <b>this</b>.panelSize.height);
+            }
+        }
+        YAHOO.ext.NorthLayoutRegion.superclass.updateBox.call(<b>this</b>, box);
+    }
+});
+
+YAHOO.ext.SouthLayoutRegion = <b>function</b>(mgr, config){
+    YAHOO.ext.SouthLayoutRegion.superclass.constructor.call(<b>this</b>, mgr, config, 'south', 's-resize');
+    <b>if</b>(this.split){
+        <b>this</b>.split.placement = YAHOO.ext.SplitBar.BOTTOM;
+        <b>this</b>.split.orientation = YAHOO.ext.SplitBar.VERTICAL;
+        <b>this</b>.split.el.addClass('ylayout-split-v');
+    }
+    <b>if</b>(typeof config.initialSize != 'undefined'){
+        <b>this</b>.el.setHeight(config.initialSize);
+    }
+};
+YAHOO.extendX(YAHOO.ext.SouthLayoutRegion, YAHOO.ext.SplitLayoutRegion, {
+    getBox : <b>function</b>(){
+        <b>if</b>(this.collapsed){
+            <b>return</b> this.collapsedEl.getBox();
+        }
+        <b>var</b> box = <b>this</b>.el.getBox();
+        <b>if</b>(this.split){
+            <b>var</b> sh = <b>this</b>.split.el.getHeight();
+            box.height += sh;
+            box.y -= sh;
+        }
+        <b>return</b> box;
+    },
+    
+    updateBox : <b>function</b>(box){
+        <b>if</b>(this.split &amp;&amp; !<b>this</b>.collapsed){
+            <b>var</b> sh = <b>this</b>.split.el.getHeight();
+            box.height -= sh;
+            box.y += sh;
+            <b>this</b>.split.el.setLeft(box.x);
+            <b>this</b>.split.el.setTop(box.y-sh);
+            <b>this</b>.split.el.setWidth(box.width);
+        }
+        <b>if</b>(this.collapsed){
+            <b>this</b>.el.setWidth(box.width);
+            <b>var</b> bodyWidth = box.width - <b>this</b>.el.getBorderWidth('rl');
+            <b>this</b>.bodyEl.setWidth(bodyWidth);
+            <b>if</b>(this.activePanel &amp;&amp; <b>this</b>.panelSize){
+                <b>this</b>.activePanel.setSize(bodyWidth, <b>this</b>.panelSize.height);
+            }
+        }
+        YAHOO.ext.SouthLayoutRegion.superclass.updateBox.call(<b>this</b>, box);
+    }
+});
+
+YAHOO.ext.EastLayoutRegion = <b>function</b>(mgr, config){
+    YAHOO.ext.EastLayoutRegion.superclass.constructor.call(<b>this</b>, mgr, config, 'east', 'e-resize');
+    <b>if</b>(this.split){
+        <b>this</b>.split.placement = YAHOO.ext.SplitBar.RIGHT;
+        <b>this</b>.split.orientation = YAHOO.ext.SplitBar.HORIZONTAL;
+        <b>this</b>.split.el.addClass('ylayout-split-h');
+    }
+    <b>if</b>(typeof config.initialSize != 'undefined'){
+        <b>this</b>.el.setWidth(config.initialSize);
+    }
+};
+YAHOO.extendX(YAHOO.ext.EastLayoutRegion, YAHOO.ext.SplitLayoutRegion, {
+    getBox : <b>function</b>(){
+        <b>if</b>(this.collapsed){
+            <b>return</b> this.collapsedEl.getBox();
+        }
+        <b>var</b> box = <b>this</b>.el.getBox();
+        <b>if</b>(this.split){
+            <b>var</b> sw = <b>this</b>.split.el.getWidth();
+            box.width += sw;
+            box.x -= sw;
+        }
+        <b>return</b> box;
+    },
+    
+    updateBox : <b>function</b>(box){
+        <b>if</b>(this.split &amp;&amp; !<b>this</b>.collapsed){
+            <b>var</b> sw = <b>this</b>.split.el.getWidth();
+            box.width -= sw;
+            <b>this</b>.split.el.setLeft(box.x);
+            <b>this</b>.split.el.setTop(box.y);
+            <b>this</b>.split.el.setHeight(box.height);
+            box.x += sw;
+        }
+        <b>if</b>(this.collapsed){
+            <b>this</b>.el.setHeight(box.height);
+            <b>var</b> bodyHeight = <b>this</b>.config.titlebar ? box.height - (<b>this</b>.titleEl.getHeight()||0) : box.height;
+            bodyHeight -= <b>this</b>.el.getBorderWidth('tb');
+            <b>this</b>.bodyEl.setHeight(bodyHeight);
+            <b>if</b>(this.activePanel &amp;&amp; <b>this</b>.panelSize){
+                <b>this</b>.activePanel.setSize(<b>this</b>.panelSize.width, bodyHeight);
+            }
+        }
+        YAHOO.ext.EastLayoutRegion.superclass.updateBox.call(<b>this</b>, box);
+    }
+});
+
+YAHOO.ext.WestLayoutRegion = <b>function</b>(mgr, config){
+    YAHOO.ext.WestLayoutRegion.superclass.constructor.call(<b>this</b>, mgr, config, 'west', 'w-resize');
+    <b>if</b>(this.split){
+        <b>this</b>.split.placement = YAHOO.ext.SplitBar.LEFT;
+        <b>this</b>.split.orientation = YAHOO.ext.SplitBar.HORIZONTAL;
+        <b>this</b>.split.el.addClass('ylayout-split-h');
+    }
+    <b>if</b>(typeof config.initialSize != 'undefined'){
+        <b>this</b>.el.setWidth(config.initialSize);
+    }
+};
+YAHOO.extendX(YAHOO.ext.WestLayoutRegion, YAHOO.ext.SplitLayoutRegion, {
+    getBox : <b>function</b>(){
+        <b>if</b>(this.collapsed){
+            <b>return</b> this.collapsedEl.getBox();
+        }
+        <b>var</b> box = <b>this</b>.el.getBox();
+        <b>if</b>(this.split){
+            box.width += <b>this</b>.split.el.getWidth();
+        }
+        <b>return</b> box;
+    },
+    
+    updateBox : <b>function</b>(box){
+        <b>if</b>(this.split &amp;&amp; !<b>this</b>.collapsed){
+            <b>var</b> sw = <b>this</b>.split.el.getWidth();
+            box.width -= sw;
+            <b>this</b>.split.el.setLeft(box.x+box.width);
+            <b>this</b>.split.el.setTop(box.y);
+            <b>this</b>.split.el.setHeight(box.height);
+        }
+        <b>if</b>(this.collapsed){
+            <b>this</b>.el.setHeight(box.height);
+            <b>var</b> bodyHeight = <b>this</b>.config.titlebar ? box.height - (<b>this</b>.titleEl.getHeight()||0) : box.height;
+            bodyHeight -= <b>this</b>.el.getBorderWidth('tb');
+            <b>this</b>.bodyEl.setHeight(bodyHeight);
+            <b>if</b>(this.activePanel &amp;&amp; <b>this</b>.panelSize){
+                <b>this</b>.activePanel.setSize(<b>this</b>.panelSize.width, bodyHeight);
+            }
+        }
+        YAHOO.ext.WestLayoutRegion.superclass.updateBox.call(<b>this</b>, box);
+    }
+});
+</code></pre><hr><div style="font-size:10px;text-align:center;color:gray;">yui-ext - Copyright &copy; 2006 Jack Slocum.  |
+    Yahoo! UI - Copyright &copy; 2006 Yahoo! Inc.<br />All rights reserved.</div>
+    </body></html>

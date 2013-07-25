@@ -1,0 +1,17 @@
+Return-path: <webmaster@phigita.net> 
+Received: from [59.94.108.141] (port=9889 helo=admina762ea5ac)
+	by hercules.ipeuropa.com with asmtp 
+	id 7D8F0E-000179-81
+	for <webmaster@phigita.net>; Thu, 24 Nov 2011 15:56:15 +0530 
+Message-ID: <D0241E3CC1944D399E3C449E427382E5@admina762ea5ac> 
+From: =?koi8-r?B?IlNFTy4gSXBob25lINcg0M/EwdLPyyI=?= <zigzaggingig8@ipeuropa.com> 
+To: <webmaster@phigita.net> 
+Subject: =?koi8-r?B?8sHa0sHCz9TLwSDJINDPydPLz9fPxSDQ0s/E18nWxc7JxSDTwcrUz9cu?=
+	=?koi8-r?B?IPPl8vjl+u755SDz6+nk6+kgyczJIGlQaG9uZSA0INcg0M/EwdLPyw==?= 
+Date: Thu, 24 Nov 2011 15:56:15 +0530 
+X-Priority: 3 
+X-MSMail-Priority: Normal 
+X-Mailer: Microsoft Windows Mail 6.0.6001.18000 
+X-MimeOLE: Produced By Microsoft MimeOLE V6.0.6001.18049 
+X-Spam: Not detected 
+X-Mras: Ok 

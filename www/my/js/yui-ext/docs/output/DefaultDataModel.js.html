@@ -1,0 +1,341 @@
+<html><head><title>DefaultDataModel.js</title><link rel="stylesheet" type="text/css" href="../resources/style.css" media="screen"/></head><body><h1>DefaultDataModel.js</h1><pre class="highlighted"><code>
+<i>/**
+ * @class YAHOO.ext.grid.DefaultDataModel
+ * This is the <b>default</b> implementation of a DataModel used by the Grid. It works 
+ * <b>with</b> multi-dimensional array based data. Using the event system <b>in</b> the base class 
+ * {@link YAHOO.ext.grid.AbstractDataModel}, all updates to <b>this</b> DataModel are automatically
+ * reflected <b>in</b> the user interface.
+ * &lt;br&gt;Usage:&lt;br&gt;
+ * &lt;pre&gt;&lt;code&gt;
+ * <b>var</b> myData = [
+	[&quot;MSFT&quot;,&quot;Microsoft Corporation&quot;, &quot;314,571.156&quot;, &quot;32,187.000&quot;, &quot;55000&quot;],
+	[&quot;ORCL&quot;, &quot;Oracle Corporation&quot;, &quot;62,615.266&quot;, &quot;9,519.000&quot;, &quot;40650&quot;]
+ * ];
+ * <b>var</b> dataModel = <b>new</b> YAHOO.ext.grid.DefaultDataModel(myData);
+ * &lt;/code&gt;&lt;/pre&gt;
+ * @extends YAHOO.ext.grid.AbstractDataModel
+ * @constructor
+ * @param {Array} data 
+*/</i>
+YAHOO.ext.grid.DefaultDataModel = <b>function</b>(data){
+    YAHOO.ext.grid.DefaultDataModel.superclass.constructor.call(<b>this</b>);
+    <i>/**@private*/</i>
+    <b>this</b>.data = data;
+};
+YAHOO.extendX(YAHOO.ext.grid.DefaultDataModel, YAHOO.ext.grid.AbstractDataModel, {
+    <i>/**
+     * Returns the number of rows <b>in</b> the dataset
+     * @<b>return</b> {Number}
+     */</i>
+    getRowCount : <b>function</b>(){
+        <b>return</b> this.data.length;
+    },
+        
+    <i>/**
+     * Returns the ID of the specified row. By <b>default</b> it <b>return</b> the value of the first column. 
+     * Override to provide more advanced ID handling. 
+     * @<b>return</b> {Number}
+     */</i>
+    getRowId : <b>function</b>(rowIndex){
+        <b>return</b> this.data[rowIndex][0];
+    },
+    
+    <i>/**
+     * Returns the column data <b>for</b> the specified row. 
+     * @<b>return</b> {Array}
+     */</i>
+    getRow : <b>function</b>(rowIndex){
+        <b>return</b> this.data[rowIndex];
+    },
+    
+    <i>/**
+     * Returns the column data <b>for</b> the specified rows as a 
+     * multi-dimensional array: rows[3][0] would give you the value of row 4, column 0. 
+     * @param {Array} indexes The row indexes to fetch
+     * @<b>return</b> {Array}
+     */</i>
+    getRows : <b>function</b>(indexes){
+        <b>var</b> data = <b>this</b>.data;
+        <b>var</b> r = [];
+        <b>for</b>(var i = 0; i &lt; indexes.length; i++){
+           r.push(data[indexes[i]]);
+        }
+        <b>return</b> r;
+    },
+    
+    <i>/**
+     * Returns the value at the specified data position
+     * @param {Number} rowIndex
+     * @param {Number} colIndex
+     * @<b>return</b> {Object}
+     */</i>
+    getValueAt : <b>function</b>(rowIndex, colIndex){
+    	<b>return</b> this.data[rowIndex][colIndex];
+    },
+    
+    <i>/**
+     * Sets the specified value at the specified data position
+     * @param {Object} value The <b>new</b> value
+     * @param {Number} rowIndex
+     * @param {Number} colIndex
+     */</i>
+    setValueAt: <b>function</b>(value, rowIndex, colIndex){
+        <b>this</b>.data[rowIndex][colIndex] = value;
+        <b>this</b>.fireCellUpdated(rowIndex, colIndex);
+    },
+    
+    <i>/**
+     * @private
+     * Removes the specified range of rows.
+     * @param {Number} startIndex
+     * @param {&lt;i&gt;Number&lt;/i&gt;} endIndex (optional) Defaults to startIndex
+     */</i>
+    removeRows: <b>function</b>(startIndex, endIndex){
+        endIndex = endIndex || startIndex;
+        <b>this</b>.data.splice(startIndex, endIndex-startIndex+1);
+        <b>this</b>.fireRowsDeleted(startIndex, endIndex);
+    },
+    
+    <i>/**
+     * Remove a row.
+     * @param {Number} index
+     */</i>
+    removeRow: <b>function</b>(index){
+        <b>this</b>.data.splice(index, 1);
+        <b>this</b>.fireRowsDeleted(index, index);
+    },
+    
+    <i>/**
+     * @private
+     * Removes all rows.
+     */</i>
+    removeAll: <b>function</b>(){
+    	<b>var</b> count = <b>this</b>.getRowCount();
+    	<b>if</b>(count &gt; 0){
+        	<b>this</b>.removeRows(0, count-1);
+    	}
+    },
+    
+    <i>/**
+     * Query the DataModel rows by the filters defined <b>in</b> spec, <b>for</b> example...
+     * &lt;pre&gt;&lt;code&gt;
+     * <i>// column 1 starts <b>with</b> Jack, column 2 filtered by myFcn, column 3 equals 'Fred'</i>
+     * dataModel.filter({1: /^Jack.+/i}, 2: myFcn, 3: 'Fred'});
+     * &lt;/code&gt;&lt;/pre&gt; 
+     * @param {Object} spec The spec is generally an object literal consisting of
+     * column index and filter type. The filter type can be a string/number (exact match),
+     * a regular expression to test using String.search() or a <b>function</b> to call. If it's a <b>function</b>, 
+     * it will be called <b>with</b> the value <b>for</b> the specified column and an array of the all column 
+     * values <b>for</b> that row: yourFcn(value, columnData). If it returns anything other than true, 
+     * the row is not a match. If you have modified Object.prototype <b>this</b> method may fail.
+     * @param {Boolean} returnUnmatched True to <b>return</b> rows which &lt;b&gt;don't&lt;/b&gt; match the query instead
+     * of rows that <b>do</b> match
+     * @<b>return</b> {Array} An array of row indexes that match
+     */</i>
+    query: <b>function</b>(spec, returnUnmatched){
+        <b>var</b> d = <b>this</b>.data;
+        <b>var</b> r = [];
+        <b>for</b>(var i = 0; i &lt; d.length; i++){
+            <b>var</b> row = d[i];
+            <b>var</b> isMatch = true;
+            <b>for</b>(var col <b>in</b> spec){
+                <i>//<b>if</b>(typeof spec[col] != '<b>function</b>'){</i>
+                    <b>if</b>(!isMatch) <b>continue</b>;
+                    <b>var</b> filter = spec[col];
+                    <b>switch</b>(typeof filter){
+                        <b>case</b> 'string':
+                        <b>case</b> 'number':
+                        <b>case</b> 'boolean':
+                          <b>if</b>(row[col] != filter){
+                              isMatch = false;
+                          }
+                        <b>break</b>;
+                        <b>case</b> '<b>function</b>':
+                          <b>if</b>(!filter(row[col], row)){
+                              isMatch = false;
+                          }
+                        <b>break</b>;
+                        <b>case</b> 'object':
+                           <b>if</b>(filter instanceof RegExp){
+                               <b>if</b>(String(row[col]).search(filter) === -1){
+                                   isMatch = false;
+                               }
+                           }
+                        <b>break</b>;
+                    }
+                <i>//}</i>
+            }
+            <b>if</b>(isMatch &amp;&amp; !returnUnmatched){
+                r.push(i);
+            }<b>else</b> if(!isMatch &amp;&amp; returnUnmatched){
+                r.push(i);
+            }
+        }
+        <b>return</b> r;
+    },
+    
+    <i>/**
+     * Filter the DataModel rows by the query defined <b>in</b> spec, see {@link #query} <b>for</b> more details 
+     * on the query spec.
+     * @param {Object} query The query spec {@link #query}
+     * @<b>return</b> {Number} The number of rows removed
+     */</i>
+    filter: <b>function</b>(query){
+        <b>var</b> matches = <b>this</b>.query(query, true);
+        <b>var</b> data = <b>this</b>.data;
+        <i>// go thru the data setting matches to deleted</i>
+        <i>// <b>while</b> not disturbing row indexes</i>
+        <b>for</b>(var i = 0; i &lt; matches.length; i++){ 
+            data[matches[i]]._deleted = true;
+        }
+        <b>for</b>(var i = 0; i &lt; data.length; i++){
+            <b>while</b>(data[i] &amp;&amp; data[i]._deleted === true){
+                <b>this</b>.removeRow(i);
+            }
+        }
+        <b>return</b> matches.length;
+    },
+    
+    <i>/**
+     * Adds a row to the dataset.
+     * @param {Array} cellValues The array of values <b>for</b> the <b>new</b> row
+     * @<b>return</b> {Number} The index of the added row
+     */</i>
+    addRow: <b>function</b>(cellValues){
+        <b>this</b>.data.push(cellValues);
+        <b>var</b> newIndex = <b>this</b>.data.length-1;
+        <b>this</b>.fireRowsInserted(newIndex, newIndex);
+        <b>this</b>.applySort();
+        <b>return</b> newIndex;
+    },
+    
+    <i>/**
+     * @private
+     * Adds a set of rows.
+     * @param {Array} rowData This should be an array of arrays like the constructor takes
+     */</i>
+    addRows: <b>function</b>(rowData){
+        <b>this</b>.data = <b>this</b>.data.concat(rowData);
+        <b>var</b> firstIndex = <b>this</b>.data.length-rowData.length;
+        <b>this</b>.fireRowsInserted(firstIndex, firstIndex+rowData.length-1);
+        <b>this</b>.applySort();
+    },
+    
+    <i>/**
+     * Inserts a row a the specified location <b>in</b> the dataset.
+     * @param {Number} index The index where the row should be inserted
+     * @param {Array} cellValues The array of values <b>for</b> the <b>new</b> row
+     * @<b>return</b> {Number} The index the row was inserted <b>in</b>
+     */</i>
+    insertRow: <b>function</b>(index, cellValues){
+        <b>this</b>.data.splice(index, 0, cellValues);
+        <b>this</b>.fireRowsInserted(index, index);
+        <b>this</b>.applySort();
+        <b>return</b> index;
+    },
+    
+    <i>/**
+     * @private
+     * Inserts a set of rows.
+     * @param {Number} index The index where the rows should be inserted
+     * @param {Array} rowData This should be an array of arrays like the constructor takes
+     */</i>
+    insertRows: <b>function</b>(index, rowData){
+        <i>/*
+        <b>if</b>(index == <b>this</b>.data.length){ <i>// try these two first since they are faster</i>
+            <b>this</b>.data = <b>this</b>.data.concat(rowData);
+        }<b>else</b> if(index == 0){
+            <b>this</b>.data = rowData.concat(<b>this</b>.data);
+        }<b>else</b>{
+            <b>var</b> newData = <b>this</b>.data.slice(0, index);
+            newData.concat(rowData);
+            newData.concat(<b>this</b>.data.slice(index));
+            <b>this</b>.data = newData;
+        }*/</i>
+        <b>var</b> args = rowData.concat();
+        args.splice(0, 0, index, 0);
+        <b>this</b>.data.splice.apply(<b>this</b>.data, args);
+        <b>this</b>.fireRowsInserted(index, index+rowData.length-1);
+        <b>this</b>.applySort();
+    },
+    
+    <i>/**
+     * Applies the last used sort to the current data.
+     */</i>
+    applySort: <b>function</b>(suppressEvent){
+    	<b>if</b>(typeof <b>this</b>.sortColumn != 'undefined'){
+    		<b>this</b>.sort(<b>this</b>.sortInfo, <b>this</b>.sortColumn, <b>this</b>.sortDir, suppressEvent);
+    	}
+    },
+    
+    <i>/**
+     * Sets the <b>default</b> sort info. Note: <b>this</b> function does not actually apply the sort.
+     * @param {Function/Object} sortInfo A sort comparison <b>function</b> or null to use the <b>default</b> or A object that has a method getSortType(index) that returns a <b>function</b> like 
+     *                                               a grid column model. 
+     * @param {Number} columnIndex The column index to sort by
+     * @param {String} direction The direction of the sort ('DESC' or 'ASC')
+     */</i>
+    setDefaultSort: <b>function</b>(sortInfo, columnIndex, direction){
+        <b>this</b>.sortInfo = sortInfo;
+        <b>this</b>.sortColumn = columnIndex;
+        <b>this</b>.sortDir = direction;
+    },
+    <i>/**
+     * Sorts the data by the specified column - Uses the sortType specified <b>for</b> the column <b>in</b> the passed columnModel.
+     * @param {Function/Object} sortInfo A sort comparison <b>function</b> or null to use the <b>default</b> or A object that has a method getSortType(index) that returns a <b>function</b> like 
+     *                                               a grid column model. 
+     * @param {Number} columnIndex The column index to sort by
+     * @param {String} direction The direction of the sort ('DESC' or 'ASC')
+     */</i>
+    sort: <b>function</b>(sortInfo, columnIndex, direction, suppressEvent){
+        <i>// store these so we can maintain sorting when we load <b>new</b> data</i>
+        <b>this</b>.sortInfo = sortInfo;
+        <b>this</b>.sortColumn = columnIndex;
+        <b>this</b>.sortDir = direction;
+        
+        <b>var</b> dsc = (direction &amp;&amp; direction.toUpperCase() == 'DESC');
+        <b>var</b> sortType = null;
+        <b>if</b>(sortInfo != null){
+            <b>if</b>(typeof sortInfo == '<b>function</b>'){
+                sortType = sortInfo;
+            }<b>else</b> if(<b>typeof</b> sortInfo == 'object'){
+                sortType = sortInfo.getSortType(columnIndex);;
+            }
+        }
+        <b>var</b> fn = <b>function</b>(cells, cells2){
+            <b>var</b> v1 = sortType ? sortType(cells[columnIndex], cells) : cells[columnIndex];
+            <b>var</b> v2 = sortType ? sortType(cells2[columnIndex], cells2) : cells2[columnIndex];
+            <b>if</b>(v1 &lt; v2)
+    			<b>return</b> dsc ? +1 : -1;
+    		<b>if</b>(v1 &gt; v2)
+    			<b>return</b> dsc ? -1 : +1;
+    	    <b>return</b> 0;
+        };
+        <b>this</b>.data.sort(fn);
+        <b>if</b>(!suppressEvent){
+           <b>this</b>.fireRowsSorted(columnIndex, direction);
+        }
+    },
+    
+    <i>/**
+     * Calls passed <b>function</b> with each rows data - <b>if</b> the <b>function</b> returns false it stops.
+     * @param {Function} fn
+     * @param {Object} scope (optional)
+     */</i> 
+    each: <b>function</b>(fn, scope){
+        <b>var</b> d = <b>this</b>.data;
+        <b>for</b>(var i = 0, len = d.length; i &lt; len; i++){
+            <b>if</b>(fn.call(scope || window, d[i], i) === false) <b>break</b>;
+        }
+    }
+});
+
+<i>/**
+ * Alias to YAHOO.ext.grid.DefaultColumnModel.sortTypes
+ * @static
+ */</i>
+<b>if</b>(YAHOO.ext.grid.DefaultColumnModel){
+    YAHOO.ext.grid.DefaultDataModel.sortTypes = YAHOO.ext.grid.DefaultColumnModel.sortTypes;
+}</code></pre><hr><div style="font-size:10px;text-align:center;color:gray;">yui-ext - Copyright &copy; 2006 Jack Slocum.  |
+    Yahoo! UI - Copyright &copy; 2006 Yahoo! Inc.<br />All rights reserved.</div>
+    </body></html>

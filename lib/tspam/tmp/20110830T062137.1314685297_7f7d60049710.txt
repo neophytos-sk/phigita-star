@@ -1,0 +1,10 @@
+Received: from 123.16.11.74 by smtp.e-sam.com; Tue, 30 Aug 2011 13:21:42 +0700 
+Date: Tue, 30 Aug 2011 13:21:42 +0700 
+From: =?koi8-r?B?Ivfp+vkg9/Pl7SI=?= <footfalls@e-sam.com> 
+X-Mailer: The Bat! (v3.62.03) Home 
+Reply-To: footfalls@e-sam.com 
+X-Priority: 3 (Normal) 
+Message-ID: <254152523.91305164446362@e-sam.com> 
+To: webmaster@phigita.net 
+Subject: =?koi8-r?B?7+bv8u3s5e7p5SD36fr5IC0gNCDk7vEgKOLl+iD64fDp8+kp?= 
+

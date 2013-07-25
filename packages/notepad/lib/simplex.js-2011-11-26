@@ -1,0 +1,1990 @@
+//Simplex
+//Phigita
+$ = xo.getDom;
+DQ = xo.DomQuery;
+DH = xo.DomHelper;
+
+var Simplex = Simplex || {};
+
+
+
+Simplex.messitup = function(){
+	for (var i=0; i < 4000; i++)
+		Simplex.item_add(undefined, (Math.random() * 94550), {"parent":Simplex.ui_zoom_where},undefined);
+	
+};
+
+//=============================================Server=============================================
+var Server = Server || {};
+Server.queue = [];
+Server.queueRunning = [];
+Server.baseURL = "http://api.phigita.net/simplex/test?";
+
+Server.userPrefix = "SIMPLEX.";
+Server.rootId;
+
+Server.connected = true;
+
+Server.queueContains = function(query){
+	for(var i=0; i < Server.queue.length; i++)
+		if(Server.queue[i] == query)
+			return true;
+	for(var i=0; i < Server.queueRunning.length; i++)
+		if(Server.queueRunning[i] == query)
+			return true;	
+	return false;
+}
+
+Server.queueRunningRemove = function(query){
+    for(var i=0; i < Server.queueRunning.length; i++)
+	if(Server.queueRunning[i].indexOf(query) == 0){
+	    Server.queueRunning.splice(i, 1);
+	    return;
+	}
+}
+
+Server.load_userprefix = function(){
+	var query = "cmd=whoami&argv=&callback=Server.cb_userprefix";
+	if(!Server.queueContains(query)){
+		Server.queue.push(query);
+		Server.runNext();
+	}
+}
+
+Server.load_resource = function(query){
+	var script = DH.createDom({"tag":"script","type":"text/javascript"}, document.getElementsByTagName("head")[0]);	
+	script.src = Server.baseURL + query;
+};
+
+Server.setItem = function(key){
+	if(!xo.isDef(Storage.nodes[key]))return;
+	//alert(Storage.nodes[key]);
+	//alert(encodeURIComponent(xo.encode(Storage.nodes[key])));
+	var query = "cmd=update&argv=" + key + "+" + encodeURIComponent(xo.encode(Storage.nodes[key])) + "&callback=Server.cb_setItem";
+	if(!Server.queueContains(query)){
+		Server.queue.push(query);
+		Server.runNext();
+	}
+}
+
+Server.deleteItem = function(key){
+	var query = "cmd=delete&argv="+key+"&callback=Server.cb_deleteItem";	
+	if(!Server.queueContains(query)){
+		Server.queue.push(query);
+		Server.runNext();
+	}	
+}
+
+Server.loadItemCompare = function(key){
+	if(!xo.isDef(key)) return;	
+	var query = "cmd=get_item&argv="+key+"&callback=Server.cb_loadItemCompare";
+	if(!Server.queueContains(query)){
+		Server.queue.push(query);
+		Server.runNext();
+	}
+}
+
+Server.cb_userprefix= function(json){
+	Server.connected = true;
+	if(json["user_id"]=="0"){
+		alert("User not logged in. Unable to sync!(Implement it)");
+		Server.connected = false;
+		return;		
+	}
+	
+	Server.queueRunningRemove("cmd=whoami&argv=&callback=Server.cb_userprefix");
+	Server.userPrefix+= json["user_id"] + "_";
+	Server.rootId = Server.userPrefix + "rootid";
+	
+	Server.loadItemCompare(Server.rootId);	
+}
+
+Server.cb_loadItemCompare = function(json){
+	Server.connected = true;
+	if(json["found_p"]=="1"){//If found		
+		Server.queueRunningRemove("cmd=get_item&argv="+json["id"]+"&callback=Server.cb_loadItemCompare");
+		var key = json["id"];
+		var data = xo.decode("{"+decodeURIComponent(json["data"])+"}");
+		
+		if(!xo.isDef(Storage.nodes[key]) || Storage.nodes[key]["version"] < data["version"]){//Update Client
+			Storage.nodes[key] = data;
+			
+			if(key == Server.rootId)
+				Server.loadItemCompare(data["rootid"]);
+			else{
+				Storage.loadItem(key, data);//Load item received
+				if(xo.isDef(data["next"]))//Load next item, if exists
+					Server.loadItemCompare(data["next"]);
+			}
+		}
+		else if(Storage.nodes[key]["version"] > data["version"]){ //Update server if client version newer
+			Server.setItem(key);
+		}		
+	}
+	Server.runNext();	
+}
+
+Server.cb_setItem = function(json){
+	Server.connected = true;
+	Server.queueRunningRemove("cmd=update&argv=" + json["id"]);
+	//xo.log("The following item has been set:");
+	xo.log(json);
+	Server.runNext();
+}
+
+Server.cb_deleteItem = function(json){
+	Server.connected = true;
+	Server.queueRunningRemove("cmd=delete&argv="+json["id"]);
+	//xo.log("The following deletion has been made:");
+	//xo.log(json);
+	Server.runNext();
+}
+
+Server.runNext = function(){	
+	if(Server.queue.length && Server.connected){
+		var first = Server.queue.shift();
+		Server.load_resource(first);
+		Server.queueRunning.push(first);
+	}
+	
+	if(Server.queueRunning.length > 10 || !Server.connected){ //10 items pending - maybe no connection		
+		//Move them back to the original queue after 10 seconds
+		Server.setConnectionStatus("No server connection...");
+		setTimeout("Server.resetConnection();", 10000);
+		Server.connected = false;
+		return;
+	}
+	Server.setConnectionStatus("");
+}
+
+Server.resetConnection = function(){
+	Server.setConnectionStatus("Trying to establish server connection...");
+	if(queueRunning.length)
+		Server.load_resources(Server.queueRunning[0]);	
+	setTimeout("Server.runNext()", 3000);
+}
+
+Server.setConnectionStatus = function(msg){
+	var o = $("connectionstatus");
+	o.innerHTML = msg;
+	if(msg.length)
+		DH.addClass(o, "connectionstatusvisible");
+	else
+		DH.removeClass(o, "connectionstatusvisible");
+	
+}
+
+
+
+xo.exportSymbol("Server", Server);
+xo.exportProperty(Server, "cb_userprefix", Server.cb_userprefix);
+xo.exportProperty(Server, "cb_loadItemCompare", Server.cb_loadItemCompare);
+xo.exportProperty(Server, "cb_deleteItem", Server.cb_deleteItem);
+xo.exportProperty(Server, "cb_setItem", Server.cb_setItem);
+xo.exportProperty(Server, "resetConnection", Server.resetConnection);
+xo.exportProperty(Server, "runNext", Server.runNext);
+
+
+
+
+//=============================================STORAGE=============================================
+var Storage = Storage || {};
+
+Storage.nodes = Storage.nodes || {};
+
+Storage.save = function(key, noadj, blurred){
+	if(!$(key) || !xo.isDef($(key))) return;	
+	var el = $(key);
+	
+	//Check whether an item
+	if(!Simplex.util_isItem(el)){
+		el = el.parentNode;
+		key = el.id;
+	}
+	if(!Simplex.util_isItem(el))return;
+	
+	var action = "update";	
+	if(xo.isDef(blurred) && !xo.isDef(Storage.nodes[key])) //Delete command, so return
+		return;
+	
+	if(!Storage.nodes[key] || !xo.isDef(Storage.nodes[key])){
+		action = "create";
+		Storage.nodes[key] = {};
+	}	
+	
+	var newobj = {};
+	
+	//Create/update object
+	//newobj["id"] = key;
+	newobj["title"] = Simplex.item_getText(el);
+	newobj["note"] = Simplex.item_getNote(el);
+	newobj["completed"] = (Simplex.item_isCompleted(el)) ? '1' : '0';
+	newobj["collapsed"] = (Simplex.item_isCollapsed(el)) ? '1' : '0';		
+	newobj["parent"] = (el.parentNode != Simplex.ui_container) ? el.parentNode.id : undefined;	
+
+	var text = Simplex.item_getNodeText(el);
+	var prev = Simplex.util_adjacent(-1, text, true);
+	var next = Simplex.util_adjacent(+1, text, true);
+		
+	if(prev == el)
+	    prev = undefined;
+	if(next == el)
+	    next = undefined;
+	
+	prev = newobj["prev"] = (xo.isDef(prev) ? prev.parentNode.id : undefined); 
+	next = newobj["next"] = (xo.isDef(next) ? next.parentNode.id : undefined);
+	
+	if(!xo.isDef(noadj)){//Update OLD adjacent (check if nescessary)
+		if(Storage.nodes[key]["prev"])
+			Storage.save(Storage.nodes[key]["prev"],true);
+		if(Storage.nodes[key]["next"])
+			Storage.save(Storage.nodes[key]["next"],true);
+	}
+	
+	//Check whether update is needed!
+	var changed = false;
+	if(action == "create") changed = true;
+	for(var prop in Storage.nodes[key]){
+		if(Storage.nodes[key][prop] != newobj[prop] && prop != "version")
+			changed = true;
+	}
+	for(var prop in newobj){
+		if(Storage.nodes[key][prop] != newobj[prop] && prop != "version")
+			changed = true;
+	}	
+	
+	if(changed){//Update only if changed
+		newobj["version"] = (xo.isDef(Storage.nodes[key]) && xo.isDef(Storage.nodes[key]["version"]) ? parseInt(Storage.nodes[key]["version"])+1 : 0);//Increment version ONLY if changed
+		Storage.nodes[key] = newobj;
+		Storage.setKey(key, action);
+	}	
+	
+	//Update rootid, if nescessary!
+	Storage.updateRoot();	
+	
+	if(!xo.isDef(noadj)){//Update NEW adjacent (check if nescessary)		
+		if(prev)
+			Storage.save(prev, true); //Update prev
+		if(next)
+			Storage.save(next, true); //Update next
+	}
+};
+
+Storage.deleteItem = function(key, noChildDelete){
+	if(!xo.isDef(noChildDelete)){
+		var prev = Storage.nodes[key]["prev"], next = Storage.nodes[key]["next"];
+		
+		var el = $(key);
+		while(next && xo.isDef(next) && Simplex.util_isXancestorOfY(el, $(next)))
+			next = Storage.nodes[next]["next"];
+		
+		if(prev){
+			Storage.nodes[prev]["next"] = next;
+			Storage.setKey(prev, "update");
+		}
+		if(next){			
+			Storage.nodes[next]["prev"] = prev;
+			Storage.setKey(next, "update");
+		}
+
+		Storage.deleteItemChildren(key);
+	}
+	Storage.nodes[key] = undefined;	Storage.setKey(key, "delete");
+};
+Storage.deleteItemChildren = function(key){
+	var el = $(key);
+	var children = DQ.byClassName(el.childNodes, null, "simplex-node");
+	for(var i=0; i < children.length; i++){
+		Storage.deleteItem(children[i].id, true);
+		Storage.deleteItemChildren(children[i].id);
+	}	
+};
+Storage.setKey = function(key, action){
+	//xo.log("Setting key " + key + "(" + xo.encode(Storage.nodes[key]) +")");	
+	window.localStorage.setItem(key, xo.encode(Storage.nodes[key]));
+	
+	if(action == "delete")
+		Server.deleteItem(key);
+	else
+		Server.setItem(key);
+};
+Storage.getKey = function(key){
+	if(!xo.isDef(key)) return;	
+	return xo.decode(window.localStorage.getItem(key));
+};
+Storage.updateRoot = function(){
+	var rootkey = Server.rootId;
+	
+	var n = DQ.byClassName(Simplex.ui_container.childNodes, null, "simplex-node");	
+	n = (n.length ? n[0].id : undefined);
+	var newroot = {};
+	newroot["rootid"] = n;	
+
+	if(!xo.isDef(Storage.nodes[rootkey]) || Storage.nodes[rootkey]["rootid"] != newroot["rootid"]){//If root changed, update on server
+		newroot["version"] = (xo.isDef(Storage.nodes[rootkey]) && xo.isDef(Storage.nodes[rootkey]["version"]) ? parseInt(Storage.nodes[rootkey]["version"])+1 : 0);//Increment version ONLY if changed 
+		Storage.nodes[rootkey] = newroot;
+		Storage.setKey(rootkey);
+	}
+	
+};
+
+Storage.load = function(){
+    Storage.nodes = {}; //Clear old Storage.nodes array
+    Server.load_userprefix();        
+};
+
+Storage.loadItem = function(id, data){
+    if(!id || !xo.isDef(id)) return;	
+    if(!data || !xo.isDef(data)) return;
+	
+    //Build item
+    var insertAt = {"parent": $(data["parent"])};
+    if(xo.isDef(data["next"]) && $(data["next"]) && Storage.nodes[data["next"]]["parent"] == data["parent"])
+    	insertAt = {"before": $(o["next"])};
+    
+    Simplex.item_add(id, data["title"], insertAt, data["note"], {"completed": data["completed"], "collapsed": data["collapsed"], "save":"false"});	
+};
+
+xo.exportSymbol("Storage",Storage);
+xo.exportProperty(Storage, "save", Storage.save);
+
+//=============================================UI & MENU=============================================
+var Menu = Menu || {};
+Menu.element = undefined;
+Menu.elExpandCollapse = undefined;
+Menu.elementNote = undefined;
+Menu.elementComplete = undefined;
+Menu.elementsHotArea = undefined;
+
+Menu.elBullet = undefined;
+Menu.overElement = undefined;
+Menu.moveHandle = undefined;
+Menu.moveHandleLocked = undefined;
+Menu.moveHandleSource = undefined;
+
+Menu.isVisible = function(){
+	return (DH.hasClass(Menu.element, "visible"));
+};
+
+Menu.keypressed = function(e, target, options) {
+    if(!Menu.isVisible == true ) return;
+    if(!(e.keyCode == xo.Event.UP || e.keyCode == xo.Event.DOWN || e.keyCode == xo.Event.LEFT || e.keyCode == xo.Event.RIGHT || e.keyCode == xo.Event.Enter))
+	return;
+
+    //xo.log(target);
+    // var targetEl = e.srcElement;
+    var targetEl = $("controlbox-buttons"); // HERE - MH: MAKE SURE THIS IS RIGHT
+    xo.log(targetEl);
+    //var children = DQ.byClassName(targetEl.parentNode.parentNode.childNodes, null, "controlbox-btnli");
+    var children = DQ.byClassName(targetEl.childNodes,null,"controlbox-btnli");
+    xo.log(children);
+	
+    var curind = 0;
+    for(var i=0; i < children.length; i++){
+	if(children[i] == targetEl.parentNode){
+	    curind = i;
+	    break;
+	}
+    }
+    var dir = (e.keyCode == xo.Event.UP || e.keyCode == xo.Event.LEFT) ? -1: 1;
+    var gotoa = curind+dir;
+    if(gotoa >= children.length)
+	gotoa = 0;
+    else if(gotoa < 0)
+	gotoa = children.length-1;
+	    
+    var btn = DQ.byClassName(children[gotoa].childNodes, null, "controlbox-btn");
+    if(btn.length)
+	btn[0].focus();
+    
+};
+
+Menu.setCollapsed = function(collapsed){
+	var sign = "&#45;"; //-
+	if(collapsed)
+	    sign = "&#43;"; //+
+	Menu.elExpandCollapse.innerHTML = sign;
+};
+
+Menu.moveTo = function(item, onlyBullet){
+	Menu.hide();
+	
+	//Move the "controlbox" to the item under the cursor	
+	if((!Simplex.util_isItem(item) && (Menu.moveHandleLocked && !Simplex.util_isSentinel(item))) || Simplex.ui_zoom_where == item) return;	
+	if(!Simplex.util_isItem(item)){
+		while(item = item.parentNode){
+			if(Simplex.util_isItem(item)) break;
+		}
+		
+		if(Simplex.ui_zoom_where == item) return;
+	}
+	//Check if item SENTINEL visible!
+	if(Simplex.util_isSentinel(item) || (xo.isDef(Simplex.ui_zoom_where) && !Simplex.util_isXancestorOfY(Simplex.ui_zoom_where, item))) return;
+	
+	DH.removeClass(Menu.overElement, "movehighlight");
+	Menu.overElement = item;
+	
+	if(!Menu.moveHandleLocked && Simplex.util_isItem(item)){
+		Menu.element.style.top = item.offsetTop + 4 + "px";
+		Menu.element.style.left = item.offsetLeft	- 110 + "px";
+		
+		Menu.moveHandle.style.top = item.offsetTop + 1 + "px";
+		DH.addClass(Menu.moveHandle, "visible");
+		
+		if(Simplex.item_isCollapsed(item))
+			Menu.setCollapsed(true);
+		else
+			Menu.setCollapsed(false);
+		
+		DH.addClass(Menu.element, "visiblebullet");	
+		
+		if(!xo.isDef(onlyBullet))
+			DH.addClass(Menu.element, "visible");
+		
+		//Button customization
+		var noteText = (xo.isDef(Menu.overElement) && Simplex.item_hasNote(Menu.overElement)) ? Menu.elementNote.getAttribute("textedit") : Menu.elementNote.getAttribute("textadd");	
+		Menu.elementNote.innerHTML = noteText;
+	
+		if(xo.isDef(Menu.overElement) && Simplex.item_isCompleted(Menu.overElement))
+			DH.addClass(Menu.elementComplete,"linethrough");
+		else
+			DH.removeClass(Menu.elementComplete,"linethrough");
+	}else if(Menu.moveHandleLocked){
+		if(Simplex.util_isXancestorOfY(Menu.moveHandleSource, Menu.overElement)) return;
+		
+		DH.addClass(Menu.overElement, "movehighlight");
+	}
+	
+	$("controlbox-buttons-note").focus();
+};
+
+Menu.hide = function(hideBulletAndHandle){
+	DH.removeClass(Menu.element, "visible");
+	if(xo.isDef(hideBulletAndHandle)){
+		DH.removeClass(Menu.element, "visiblebullet");
+		DH.removeClass(Menu.moveHandle, "visible");
+	}
+};
+
+//Mouseover MENU Hot Area
+Menu.event_mouseover_menuhot = function(e, target, options){
+	xo.Event.stopEvent(e);
+	if(!Menu.isVisible())
+		Menu.moveTo(Menu.overElement);
+};
+
+//Mouseout MENU area
+Menu.event_mouseout = function(e, target, options){
+	xo.Event.stopEvent(e);
+	if(Simplex.util_isXancestorOfY(Menu.element, e.target)) return;
+	if(Menu.isVisible())
+		Menu.hide();
+}
+
+Menu.event_click_bullet = function(e){
+	xo.Event.stopEvent(e);
+	Menu.hide(true);
+	Simplex.item_zoomTo(Menu.overElement);	
+};
+
+Menu.event_click_expandcollapse = function(e){
+	xo.Event.stopEvent(e);
+	Simplex.item_collapse(Menu.overElement);
+};
+
+//Move Handle mousedown
+Menu.event_movehandle_mousedown = function(e, target, options){
+	xo.Event.stopEvent(e);
+	Menu.moveHandleLocked = true;
+	Menu.moveHandleSource = Menu.overElement;
+	DH.addClass(Menu.moveHandleSource, "tomove");
+};
+
+//Move Handle mouseup
+Menu.event_movehandle_mouseup = function(e, target, options){
+	xo.Event.stopEvent(e);
+	if(xo.isDef(Menu.moveHandleSource) && Menu.moveHandleLocked == true && Menu.moveHandleSource != Menu.overElement){
+		Simplex.util_moveBefore(Menu.overElement, Menu.moveHandleSource);
+		
+		DH.removeClass(Menu.moveHandleSource, "tomove");
+		DH.removeClass(Menu.overElement, "movehighlight");		
+		
+		var targ = Menu.overElement;
+		if(!Simplex.util_isItem(targ))targ = targ.parentNode;
+		
+		Storage.save(Menu.moveHandleSource.id);
+		Storage.save(targ.id);
+		if(Simplex.item_hasChildren(Menu.moveHandleSource))
+			Storage.save(Simplex.item_getNodeChildItem(Menu.moveHandleSource, -1).id);
+		
+		Menu.moveHandleLocked = false;
+		Menu.moveHandleSource = undefined;
+		Menu.overElement = undefined;
+	}
+};
+
+Menu.redraw = function(){
+	if(!xo.isDef(this.overElement)) return;
+	
+	var onlybullet = undefined;
+	if(!this.isVisible()) onlybullet = true;
+	Menu.moveTo(Menu.overElement, onlybullet);
+	
+	/*var noteText = (xo.isDef(Menu.overElement) && Simplex.item_hasNote(Menu.overElement)) ? Menu.elementNote.getAttribute("textedit") : Menu.elementNote.getAttribute("textadd");	
+	Menu.elementNote.innerHTML = noteText;
+
+	if(xo.isDef(Menu.overElement) && Simplex.item_isCompleted(Menu.overElement))
+		DH.addClass(Menu.elementComplete,"linethrough");
+	else
+		DH.removeClass(Menu.elementComplete,"linethrough");
+	*/
+};
+
+//=============================================TEXTAREA FUNCTIONS=============================================
+Simplex.textPri;
+Simplex.textPriDiv;
+Simplex.textSec;
+Simplex.textSecDiv;
+
+Simplex.textarea_swapRoles = function(){
+	xo.log("Swapping roles!");
+	Simplex.textarea_save();
+	
+	if(!xo.isDef(Simplex.textPriDiv))
+		setTimeout("Simplex.textarea_autosave();",5000);
+	
+	//Swap primary/secondary
+	var tmp = Simplex.textPri;
+	Simplex.textPri = Simplex.textSec;
+	Simplex.textSec = tmp;
+	
+	tmp = Simplex.textPriDiv;
+	Simplex.textPriDiv = Simplex.textSecDiv;
+	Simplex.textSecDiv = tmp;
+		
+	//TODO NOW - DEBUGGING
+	DH.removeClass(Simplex.textSec,"textactive");	
+	DH.removeClass(Simplex.textPri,"textactive");
+	DH.removeClass(Simplex.textSec,"texthelper");	
+	DH.removeClass(Simplex.textPri,"texthelper");
+	
+	DH.addClass(Simplex.textPri, "textactive");
+	DH.addClass(Simplex.textSec, "texthelper");
+	
+	Simplex.textarea_fit(Simplex.textPri);
+	Simplex.textarea_fit(Simplex.textSec);
+	
+};
+
+Simplex.hideEl = function(el) {
+    // DH.addClass("hidden");
+    el.style.display = 'none';
+};
+
+Simplex.showEl = function(el) {
+    // DH.removeClass("hidden");
+    el.style.display = 'inline-block';
+};
+
+Simplex.textarea_moveTo = function(el){
+    if(!Simplex.util_isItemText(el) && !Simplex.util_isNote(el))return;
+
+    if(el == Simplex.textSecDiv || el == Simplex.textPriDiv) return; //Textarea already there
+
+    if(xo.isDef(Simplex.textSecDiv))
+	DH.removeClass(Simplex.textSecDiv, "editable");	
+    DH.removeClass(Simplex.textSec, "itemtext");
+    DH.removeClass(Simplex.textSec, "note");
+    DH.removeClass(Simplex.textSec, "completed");
+	
+    var ta = Simplex.textSec;
+    Simplex.hideEl(ta);
+    ta.value = "";
+    //TODO Clear undo stack!
+    Simplex.textSecDiv = el;
+    Simplex.util_moveBefore(el, ta);
+    ta.value = Simplex.util_unescape(el.innerHTML);
+    ta.style.width = (window.innerWidth - el.offsetLeft - 18) + "px";
+    Simplex.showEl(ta);
+
+    if(Simplex.util_isItemText(el))//Item text
+	DH.addClass(ta, "itemtext");
+    else //Note Text		
+	DH.addClass(ta, "note");	
+	
+    if(DH.hasClass(el, "completed"))//Copy completed class
+	DH.addClass(ta, "completed");
+	
+    // Simplex.show(ta);
+    DH.addClass(el, "editable");
+	
+    this.textarea_fit(this.textSec);
+	
+    Menu.moveTo(el.parentNode, true);
+};
+
+Simplex.textarea_redraw = function(){	
+	var tas = [Simplex.textPri, Simplex.textSec];
+	var tasd = [Simplex.textPriDiv, Simplex.textSecDiv];
+	for(var i = 0; i < tas.length; i++){
+		if(xo.isDef(tas[i]) && xo.isDef(tasd[i]))
+			tas[i].style.width = (window.innerWidth - tasd[i].offsetLeft - 18) + "px";
+	}
+}
+
+Simplex.textarea_edit = function(el){
+    xo.log("textarea edit" + xo.encode(el));
+
+    Simplex.textarea_save();
+    Simplex.textarea_moveTo(el);	
+    Simplex.textarea_swapRoles();
+    if(Simplex.textPriDiv != el)
+	Simplex.textarea_swapRoles();
+    
+    Simplex.textPri.focus();
+    
+    Menu.moveTo(el.parentNode, true);
+};
+
+Simplex.event_textarea_click = function(e){
+	if(e.target == Simplex.textSec)
+		Simplex.textarea_swapRoles();
+};
+
+Simplex.textarea_save = function(){
+	if(!xo.isDef(Simplex.textPriDiv)) return;	
+	xo.log("Saving main textarea to actual div");
+	
+	Simplex.item_setText(Simplex.textPriDiv, Simplex.textPri.value);
+	Storage.save(Simplex.textPriDiv.parentNode.id);
+};
+
+Simplex.textarea_autosave = function(){
+	if(!xo.isDef(Simplex.textPriDiv)) return;	
+	xo.log("Auto-Saving main textarea to actual div");
+	
+	Simplex.item_setText(Simplex.textPriDiv, Simplex.textPri.value);
+	Storage.save(Simplex.textPriDiv.parentNode.id);
+	setTimeout("Simplex.textarea_autosave();", "5000");
+}
+
+Simplex.textarea_fit = function(ta){
+	if(!ta || !ta.tagName == "TEXTAREA")return;
+	var reldiv = Simplex.textPriDiv;
+	if(ta == Simplex.textSec)
+		reldiv = Simplex.textSecDiv;
+
+	var lineheight = 20; //One line: 20px
+	ta.style.height = lineheight + "px";
+	if(xo.isDef(reldiv))
+		reldiv.style.height = lineheight + "px";
+	
+	//if note and not focused, dont resize!
+	if(DH.hasClass(ta, "note") && ta != Simplex.textPri) return;
+		
+	if(ta.scrollHeight > lineheight){
+		ta.style.height = ta.scrollHeight + "px";
+		if(xo.isDef(reldiv))
+			reldiv.style.height = ta.scrollHeight + "px";
+	}	
+};
+
+//=============================================EVENT FUNCTIONS=============================================
+
+//Mouseover Container
+Simplex.event_mouseover_container = function(e, target, options){
+	xo.Event.stopEvent(e);
+	
+	var overitem = e.target ? e.target : document.elementFromPoint(e.clientX, e.clientY);
+	
+	if(Simplex.util_isItem(overitem) || Simplex.util_isSentinel(overitem))Menu.moveTo(overitem, true);
+	else if(Simplex.util_isItem(overitem.parentNode))Menu.moveTo(overitem.parentNode, true);
+	
+	if(Simplex.util_isItem(overitem))overitem = Simplex.item_getNodeText(overitem);	
+	if(!Simplex.util_isItemText(overitem) && !Simplex.util_isNote(overitem)) return;
+	
+	Simplex.textarea_moveTo(overitem);
+}
+
+//Create new item when clicking on the "Create new item" button
+Simplex.event_click_createnew = function(e){
+	var item = Simplex.item_add(undefined, undefined, {"parent":Simplex.ui_zoom_where}, undefined, {"focus":"true"});	
+};
+
+//Handle key presses
+Simplex.event_keypressed = function(e, target, options) {
+	var targetEl = Simplex.textPriDiv;// different than target!
+	if(!targetEl)return; //Textarea not associated with any item text/note!	
+	
+	if((e.keyCode == xo.Event.UP || e.keyCode == xo.Event.DOWN || e.keyCode == xo.Event.Enter) && Menu.isVisible == true){
+		return;
+	}
+	Menu.hide();
+	Simplex.textarea_fit(Simplex.textPri);	
+	Simplex.event_keypressed_item(e, targetEl, options);	
+};
+
+//Handle key presses for actual items
+Simplex.event_keypressed_item = function(e, target, options){	
+	var textarea = e.target;
+	var itemtext = target;
+	var item = target.parentNode;
+	var isNote = Simplex.util_isNote(itemtext);
+	
+	switch(e.keyCode){
+		case xo.Event.ENTER:
+			if(!isNote)
+				xo.Event.stopEvent(e);
+			if(e.shiftKey){//Shift+Enter: Add note
+				xo.Event.stopEvent(e);
+				if(!isNote)
+					Simplex.note_add(itemtext);
+				else
+					Simplex.textarea_edit(Simplex.item_getNodeText(item));
+				break;
+			}else if (e.ctrlKey && !isNote){//Control+Enter: Switch Completed sate
+				this.item_switchcompleted(itemtext);				
+				break;
+			}
+			if(isNote) return;
+			
+			//Add new item, moving text like using enter to create a new paragraph in a text editor
+			var pos = Simplex.util_textarea_getCaret(textarea);
+			var len = textarea.value.length;
+			var content = textarea.value.substr(pos);
+			textarea.value = textarea.value.substr(0, pos);
+			Simplex.item_setText(itemtext, textarea.value);
+			var insertAt = {"after": item};
+			var options = {"focus":"true"};
+			if(Simplex.item_hasChildren(item) && !Simplex.item_isCollapsed(item))
+				insertAt = {"before": Simplex.item_getNodeChildItem(item,0)};
+			
+			if(Simplex.item_isCollapsed(item) && Simplex.item_hasChildren(item) && pos < len) //Copy "collapsed" state
+				options["collapsed"] = "true";
+			
+			if(Simplex.ui_zoom_where == item){ //Zoomed in text cannot be moved, and all new items must be children of the zoom point
+				xo.log("zoomed - add as child!");
+				insertAt = {"parent": item};
+				textarea.value = textarea.value+content;
+				content ="";				
+			}
+			
+			var n = Simplex.item_add(undefined, content, insertAt, undefined, options);
+			
+			if(insertAt["after"] && pos < len){ //If inserting AFTER current node AND CARET < LENGTH move children as children to the new node				
+				//Move children
+				var ch = DQ.byClassName(item.childNodes, null, "simplex-node");
+
+				for(var i=0; i < ch.length; i++)
+					DH.moveLast(n, ch[i]);
+				
+				Storage.save(n.id); //Save current node + adjacent(prev+next) if needed
+				if(ch.length)
+					Storage.save(ch[ch.length-1].id); //If children, update last child+ adjacent too!
+				
+				//If item was collapsed, expand it as all its children have been moved 
+				if(Simplex.item_isCollapsed(item)){
+					Simplex.item_collapse(item, undefined, true);
+				}
+			}
+			
+			break;
+			
+		case xo.Event.TAB:
+			xo.Event.stopEvent(e);
+			if(e.shiftKey) //Shift+Tab: Outdent
+				Simplex.item_outdent(item);
+			else//Tab: Indent
+				Simplex.item_indent(item);
+
+			//Simplex.textarea_edit(itemtext);
+			Simplex.textPri.focus();
+
+			break;
+		
+		case xo.Event.BACKSPACE:
+			if(e.ctrlKey && e.shiftKey){//Control+Backspace: Delete note/item(and children)
+				xo.Event.stopEvent(e);
+				if(isNote){
+					Simplex.textarea_edit(Simplex.item_getNodeText(item));
+					Simplex.item_setNote(itemtext,"");
+					Simplex.textSec.value="";
+				}
+				else				
+					Simplex.item_delete(item);
+				return;
+			}
+			if(isNote) return;
+			
+			var s = this.util_adjacent_cached(-1, itemtext);
+			if (!xo.isDef(s))return;
+			if (this.util_textarea_getCaret(textarea) == 0	&& !Simplex.item_hasNote(s.parentNode)) {
+				// If caret at the beggining AND adjacent above does not have a
+				// note, MERGE
+				xo.Event.stopEvent(e);
+				if (this.item_getLevel(item) == this.item_getLevel(s.parentNode)) {
+					var t = Simplex.item_getText(s);
+					var p = t.length;
+					Simplex.item_setText(s, t + textarea.value);
+
+					if(Simplex.item_isCollapsed(item))//Copy "collapsed" state!
+						DH.addClass(s.parentNode, "collapsed");
+					else
+						DH.removeClass(s.parentNode, "collapsed");
+					
+					//move children too
+					var lastchild;
+					for ( var i = 0; i < item.children.length; i++)
+						if (Simplex.util_isItem(item.children[i]) || Simplex.util_isNote(item.children[i])) {
+							lastchild = item.children[i];
+							DH.moveLast(s.parentNode,	lastchild);
+					Storage.save(lastchild.id);
+							i--;
+						}
+					
+			Storage.deleteItem(item.id, true);
+					DH.remove(item);
+					if(lastchild)
+				Storage.save(lastchild.id);
+					Simplex.textarea_edit(s);
+					this.util_textarea_setCaret(Simplex.textPri, p);
+				}
+			}
+			break;
+			
+		case xo.Event.DELETE:
+			var s = Simplex.util_adjacent_cached(+1, itemtext);
+			if (!xo.isDef(s))
+				return;
+			if (this.util_textarea_getCaret(textarea) == textarea.value.length
+					&& !Simplex.item_hasNote(item)) {
+				// If caret at the end AND current does not have a note, MERGE
+				xo.Event.stopEvent(e);
+				if (this.item_getLevel(item) == this.item_getLevel(s.parentNode)) {
+					var p = textarea.value.length;
+					textarea.value += Simplex.item_getText(s);
+					
+					if(Simplex.item_isCollapsed(s.parentNode))//Copy "collapsed" state!
+						DH.addClass(item.parentNode, "collapsed");
+					else
+						DH.removeClass(item.parentNode, "collapsed");
+					// move children too
+					var lastchild;
+					for ( var i = 0; i < s.parentNode.children.length; i++)
+						if (Simplex.util_isItem(s.parentNode.children[i]) || Simplex.util_isNote(s.parentNode.children[i])) {
+							lastchild = s.parentNode.children[i];
+							DH.moveLast(item,lastchild);
+					Storage.save(lastchild.id);
+							i--;
+						}
+			Storage.deleteItem(s.parentNode.id, true);
+					DH.remove(s.parentNode);
+					if(lastchild)
+				Storage.save(lastchild.id);
+					this.util_textarea_setCaret(Simplex.textPri, p);
+				}
+			}
+			break;
+	
+		case xo.Event.SPACE:
+			if (e.ctrlKey) {
+				xo.Event.stopEvent(e);
+				this.item_collapse(item);
+			}
+			break;
+	
+		case xo.Event.UP:
+		case xo.Event.LEFT:
+		case xo.Event.DOWN:
+		case xo.Event.RIGHT:
+	
+		    var rel = 1;
+		    if (e.keyCode == xo.Event.UP || e.keyCode == xo.Event.LEFT) {
+			rel = -1;
+		    }
+	
+		    if (e.keyCode == xo.Event.RIGHT || e.keyCode == xo.Event.LEFT) {
+			if (e.altKey) { //Alt+Left/Right : Zoom 
+			    xo.Event.stopEvent(e);
+			    xo.log("zooming " + rel);
+			    this.item_zoom(item, rel);
+			    return;
+			}
+		    } else if((e.keyCode == xo.Event.UP || e.keyCode == xo.Event.DOWN) && e.altKey && e.shiftKey){//may be move up/down command
+			xo.Event.stopEvent(e);
+					
+			var cur = item;
+			if(rel == -1){ //Move "upwards"
+			    var prev = Simplex.util_adjacent_cached(-1, itemtext);
+			    if(prev == item)
+				prev = undefined;
+			    prev = (xo.isDef(prev) ? prev.parentNode : undefined);
+			    
+			    if(!xo.isDef(prev)) return;
+			    
+			    if(xo.isDef(Simplex.ui_zoom_where) && !Simplex.util_isXancestorOfY(Simplex.ui_zoom_where, prev)) return;
+			    
+			    if(Simplex.item_getLevel(prev) > Simplex.item_getLevel(cur))
+				DH.moveAfter(prev, cur);
+			    else
+				Simplex.util_moveBefore(prev, cur);
+			    Simplex.textarea_edit(itemtext);
+			    Storage.save(prev.id);
+			} else { //Move "downwards"
+			    var next = Simplex.util_adjacent_cached(+1, itemtext);
+			    if(next == item) next = undefined;
+						
+			    var updateChildren = false;
+			    var nextprev = item;
+			    while(next && xo.isDef(next) && Simplex.util_isXancestorOfY(cur, next)){
+				if(nextprev == next)return;
+				nextprev = next;
+				next = Simplex.util_adjacent_cached(+1, next);
+				updateChildren = true;							
+			    }
+			    
+			    next = (xo.isDef(next) ? next.parentNode : undefined);
+			    
+			    if(!next || !xo.isDef(next)) return;
+			    if(xo.isDef(Simplex.ui_zoom_where) && !Simplex.util_isXancestorOfY(Simplex.ui_zoom_where, next)) return;
+			    
+			    if(Simplex.item_hasChildren(next) && !Simplex.item_isCollapsed(next))
+				Simplex.util_moveBefore(Simplex.item_getNodeChildItem(next, 0), cur)
+				else if(Simplex.item_getLevel(next) < Simplex.item_getLevel(cur))
+				    Simplex.util_moveBefore(next, cur);
+				else
+				    DH.moveAfter(next, cur);
+			    
+			    if(updateChildren) Storage.save(Simplex.item_getNodeChildItem(cur, -1).id);
+			    Simplex.textarea_edit(itemtext);
+			    Storage.save(next.id);
+			}
+			
+			Simplex.textarea_edit(itemtext);
+			Storage.save(cur.id);
+			break;
+		    } else if(e.ctrlKey) //May be ctrl+up/down command (expand/collapse)
+			{
+			    if(rel == 1)
+				Simplex.item_collapse(item, undefined, true);
+			    else
+				Simplex.item_collapse(item, undefined, false);
+			    break;
+			}
+		    
+		    // Move between list items
+		    var curpos = this.util_textarea_getCaret(textarea);
+		    if (e.keyCode == xo.Event.UP || (curpos == 0 && rel < 0)) {
+			xo.Event.stopEvent(e);
+			var adj = this.util_adjacent_cached(rel, item);
+			if (!adj || !xo.isDef(adj))return;
+			if(xo.isDef(Simplex.ui_zoom_where) && !Simplex.util_isXancestorOfY(Simplex.ui_zoom_where, adj)) return;
+			this.textarea_edit(adj);
+			this.util_textarea_setCaret(Simplex.textPri, Simplex.textPri.value.length);				
+		    } else if (e.keyCode == xo.Event.DOWN
+			       || (curpos == textarea.value.length && rel > 0)) {
+			xo.Event.stopEvent(e);
+			var adj = this.util_adjacent_cached(rel, item);
+			if (!adj || !xo.isDef(adj))	return;
+			if(xo.isDef(Simplex.ui_zoom_where) && !Simplex.util_isXancestorOfY(Simplex.ui_zoom_where, adj)) return;
+			this.textarea_edit(adj);
+			this.util_textarea_setCaret(Simplex.textPri, 0);
+		    }
+		    break;
+			
+	case xo.Event.M:
+			if(e.ctrlKey){
+				xo.Event.stopEvent(e);
+				if(Menu.isVisible() && Menu.overElement == item)
+					Menu.hide();
+				else
+					Menu.moveTo(item);
+			}
+		break;
+		
+		case xo.Event.PAGE_UP: case xo.Event.PAGE_DOWN:
+			xo.Event.stopEvent(e);
+			var rel = ((e.keyCode == xo.Event.PAGE_UP) ? -1 : + 1);
+			var scroll = 25;
+			var scrollTo = itemtext, adj = scrollTo;
+			
+			while(adj && --scroll > 0){
+				adj = Simplex.util_adjacent_cached(rel, scrollTo);				
+				if(adj && xo.isDef(adj)){
+					if(xo.isDef(Simplex.ui_zoom_where) && !Simplex.util_isXancestorOfY(Simplex.ui_zoom_where,adj)) break;
+					scrollTo = adj;
+				}
+			}
+			Simplex.textarea_edit(scrollTo);			
+		break;
+	}
+};
+
+/*
+Simplex.event_mousedown_handle = function(e) {
+	xo.Event.stopEvent(e);
+	Simplex.ui_move_handle_locked = true;
+	Simplex.ui_item_move = Simplex.ui_item_mouseover;
+}*/
+
+
+/*Simplex.event_mouseover_handle = function(e) {
+	if (Simplex.ui_move_handle_locked == true)
+		return;
+
+	DH.addClass(Simplex.ui_item_mouseover, "tomove");
+}*/
+
+/*
+Simplex.event_mouseup_handle = function(e) {
+	if (Simplex.ui_move_handle_locked == false)
+		return;
+
+	if (xo.isDef(Simplex.ui_item_mouseover)) {
+		DH.removeClass(Simplex.ui_item_mouseover, "movehighlight");
+		var target = Simplex.ui_item_mouseover.previousSibling;
+		while (target.previousSibling != null && target.nodeType != 1)
+			target = target.previousSibling;
+
+		DH.moveAfter(target, Simplex.ui_item_move);
+		
+Storage.save(Simplex.ui_item_move.id);
+		
+		Simplex.util_sentinel_addChildrenOf();
+		Simplex.ui_controlbox_hide();
+	}
+	
+	Simplex.ui_move_handle_locked = false;
+	DH.removeClass(Simplex.ui_item_move, "tomove");
+	Simplex.ui_item_move = undefined;
+}*/
+
+//=============================================ITEM FUNCTIONS=============================================
+
+//Add new item
+//@id: New node ID - optional
+//@content: Content - optional
+//@insertAt: Array containing either {"parent":el} or {"before":el} or {"after":el} -- optional - if undefined inserted as last child to topcontainer
+//@note: note - optional
+//@options: array which may include {"completed":"true"}, {"collapsed":"true"}, {"focus":"true"}, {"save":"false"} -- optional
+Simplex.item_add = function(id, content, insertAt, note, options) {
+	if (!xo.isDef(insertAt))
+		insertAt = {"parent":Simplex.ui_container};
+	if(!xo.isDef(id))
+		id = Simplex.util_name_new_childOf(parent);
+	if(!xo.isDef(content))
+		content = "";
+	
+	var classes = "simplex-node";
+	if(xo.isDef(options) && (options["collapsed"] == "true" || options["collapsed"] == 1))
+		classes += " collapsed";
+	else
+		classes += " expanded";
+	
+	
+	var n;
+	var nodeOptions = {
+			"tag" : "div",
+			"id" : id,
+			"class" : classes
+		};
+	
+	if(insertAt["before"])
+		n = DH.insertBefore(insertAt["before"], nodeOptions);
+	else if(insertAt["after"])
+		n = DH.insertAfter(insertAt["after"], nodeOptions)
+	else
+	{
+		if(!insertAt["parent"])
+			insertAt["parent"] = Simplex.ui_container;
+		n = DH.createDom(nodeOptions, insertAt["parent"]);
+		
+		//Move parent's sentinel after current node!
+		var s = $(insertAt["parent"].id + "_sentinel");
+		DH.moveAfter(n, s);
+	}
+	
+	
+	if(xo.isDef(Simplex.ui_zoom_where)){
+		if(n.parentNode == Simplex.ui_zoom_where)
+			DH.addClass(n, "directzoomchild");
+		else
+			DH.addClass(n, "zoomchild");
+	}
+	
+	var chind = DH.createDom({
+		"tag" : "span",
+		"id" : id+"_exp",
+		"class" : "expandcollapse",
+		"html" : "&#43;"
+	}, n);
+	if (xo.isDef(options) && (options["collapsed"] == "true" || options["collapsed"] == 1))
+		DH.addClass(chind, "visible");
+	
+	DH.createDom({
+		"tag" : "span",
+		"id" : id+"_bull",
+		"class" : "bullet",
+		"html" : "&bull;"
+	}, n);
+	
+	var textclasses = "itemtext ";
+	if (xo.isDef(options) && (options["completed"] == "true" || options["completed"] == 1)){
+		textclasses += " completed";
+		DH.addClass(n, "node-completed");
+	}
+	
+	var text = DH.createDom({
+		"tag" : "div",
+		"id" : id+"_text",
+		"class" : textclasses,
+		"html" : Simplex.util_escape(content)
+	}, n);
+	
+	if (xo.isDef(note) && note.length > 0){
+		var nel = DH.createDom({
+			"tag" : "div",
+			"id" : id+"_note",
+			"class" : "note",
+			"html" : Simplex.util_escape(note)
+		}, n);
+	}
+	
+	DH.createDom({
+		"tag" : "div",
+		"id" : id+"_sentinel",
+		"class" : "sentinel"
+	}, n);	
+	
+	if(xo.isDef(options)) //focus to text area if such option is requested
+	{
+		if(options["focus"])
+			Simplex.textarea_edit(text);
+	}
+	
+	if(!xo.isDef(options) || (xo.isDef(options) && !xo.isDef(options["save"]))){
+		Storage.save(id); //Save
+	}
+	xo.log(n);
+	return n;
+};
+
+Simplex.item_delete = function(el) {
+	if (!xo.isDef(el))
+		el = Menu.overElement;
+	if (!el || !Simplex.util_isItem(el))return;
+	
+	var s = this.util_adjacent_cached(-1, Simplex.item_getNodeText(el));	Storage.deleteItem(el.id); //Delete from storage!	
+	
+	DH.remove(el);
+	
+	if (s){
+		var len = Simplex.item_getText(s).length;
+		Simplex.textarea_edit(s);		
+		Simplex.util_textarea_setCaret(s, len);
+	}
+	
+	Menu.redraw();
+};
+
+Simplex.item_getItem = function(el){
+	if(el && (Simplex.util_isItemText(el) || Simplex.util_isNote(el)))
+			el = el.parentNode;
+	if(Simplex.util_isItem(el))
+		return el;
+};
+
+Simplex.item_getLevel = function(el) {
+	if (!el || !xo.isDef(el))
+		return 0;
+	var l = 0;
+	while (el != null && el != Simplex.ui_container) {
+		el = el.parentNode;
+		l++;
+	}
+	return l;
+};
+
+Simplex.item_setText = function(el, text) {	
+	var i = el;
+	if(Simplex.util_isItem(el))
+		i = Simplex.item_getNodeText(el);
+	
+	if(!i) return;
+
+	i.innerHTML = Simplex.util_escape(text);
+	xo.log("InnerHTML OF " + i.id + " = " + text);
+	Storage.save(i.parentNode.id);
+};
+
+Simplex.item_getText = function(el) {
+	if(!el) return;
+	var t = el;
+	if(Simplex.util_isItem(el)){
+		var n = DQ.byClassName(el.childNodes, null, "itemtext");
+		n = DQ.byTag(n, "DIV");
+		if(!n.length) return;
+		t = n[0];
+	}
+	if(!Simplex.util_isItemText(t)) return;
+	
+	return  (t ? Simplex.util_unescape(t.innerHTML) : "");
+};
+
+Simplex.item_getChildrenIndicator = function(el){
+	if(!el) return;
+
+	var t = el;
+	if(Simplex.util_isItem(el)){
+		var n = DQ.byClassName(el.childNodes, null, "expandcollapse");
+		if(!n.length) return;
+		return n[0];
+	}	
+}
+
+Simplex.item_getNodeText = function(el){
+	if(!el) return;
+	
+	var t = el;
+	if(Simplex.util_isItem(el)){
+		var n = DQ.byClassName(el.childNodes, null, "itemtext");
+		n = DQ.byTag(n, "DIV");
+		if(!n.length) return;
+		t = n[0];
+	}
+	if(!Simplex.util_isItemText(t)) return;
+	
+	return t;
+};
+
+Simplex.item_getNodeChildItem = function(el, index){
+	if(!el || !Simplex.util_isItem(el)) return;
+	if(!xo.isDef(index))index=0;	
+	var i;
+	var n = DQ.byClassName(el.childNodes, null, "simplex-node");
+	n = DQ.byTag(n, "DIV");
+	if(!n.length || n.length <= Math.abs(index)) return;
+	if(index>-1)
+		return n[index];
+	else
+		return n[n.length+index];
+};
+
+Simplex.item_setNote = function(el, text) {
+	var i = el;
+	
+	if(Simplex.util_isItem(el))
+		i = Simplex.item_getNodeNote(el);
+	
+	if(!i) return;	
+	i.innerHTML = Simplex.util_escape(text)+'';
+	Storage.save(i.parentNode.id);
+};
+
+Simplex.item_getNote = function(el) {
+if(!el) return;
+	
+	var t = el;
+	if(Simplex.util_isItem(el)){
+		var n = DQ.byClassName(el.childNodes, null, "note");
+		n = DQ.byTag(n, "DIV");
+		if(!n.length) return;
+		t = n[0];
+	}
+	if(!Simplex.util_isNote(t)) return;
+	
+	return  (t ? Simplex.util_unescape(t.innerHTML) : "");
+};
+
+Simplex.item_getNodeNote = function(el){
+	if(!el) return;
+	
+	var t = el;
+	if(Simplex.util_isItem(el)){
+		var n = DQ.byClassName(el.childNodes, null, "note");
+		n = DQ.byTag(n, "DIV");
+		if(!n.length) return;
+		t = n[0];
+	}
+	if(!Simplex.util_isNote(t)) return;
+	
+	return t;
+};
+
+Simplex.item_indent = function(el) {
+	if(!el || !Simplex.util_isItem(el)) return;
+	
+	var toMove = el;
+	var prevSibling = toMove.previousSibling;
+	while (prevSibling != null && prevSibling.nodeType != 1)
+		prevSibling = prevSibling.previousSibling;
+	if (!prevSibling || !Simplex.util_isItem(prevSibling))
+		return;
+
+	DH.moveAfter(prevSibling.lastChild, toMove);	Storage.save(toMove.id);
+	Menu.redraw();
+	Simplex.textarea_redraw();
+	
+	if(DH.hasClass(toMove, "directzoomchild")){
+		DH.removeClass(toMove, "directzoomchild");
+		DH.addClass(toMove, "zoomchild");
+	}
+};
+
+Simplex.item_isCollapsed = function(el){
+	if(!Simplex.util_isItem(el))return;
+	
+	return (DH.hasClass(el, "collapsed"));	
+};
+
+Simplex.item_isCompleted = function(el){
+	if(el && !Simplex.util_isItem(el))
+		el = el.parentNode;
+	if(!el || !Simplex.util_isItem(el))return;
+	
+	return (DH.hasClass(el, "node-completed"));
+};
+
+Simplex.item_isVisible = function(el){
+	if(!Simplex.util_isItem(el)) return;	
+	//Item is hidden only if
+	//COMPLETED HIDDEN && (Completed | Completed parent)
+	//Parent(s) collapsed AND NOT ZOOMED IN a parent!
+	
+	if(!Simplex.ui_completedVisible()){
+		var par = el;
+		if(!Simplex.item_isCompleted(el))
+			while(par && !Simplex.item_isCompleted(par))
+				par = par.parentNode;
+		if(par && Simplex.item_isCompleted(par)) return false;
+	}	
+	
+	var par = el.parentNode;
+	while(par && par != Simplex.ui_container && !Simplex.item_isCollapsed(par))
+		par = par.parentNode;
+	if(par && par != Simplex.ui_container && Simplex.item_isCollapsed(par)){
+		if(!xo.isDef(Simplex.ui_zoom_where))
+			return false;
+		
+		if(Simplex.ui_zoom_where == par)
+			return true;
+		else
+			return false;
+	}
+
+	return true;
+};
+
+Simplex.item_hasChildren = function(el){
+	if(!el || !Simplex.util_isItem(el)) return;
+	
+	var n = DQ.byClassName(el.childNodes, null, "simplex-node");
+	if(n.length)
+		return true;
+	return false;
+};
+
+Simplex.item_hasNote = function(el){
+	if(!el || !Simplex.util_isItem(el))return;
+	
+	var n = DQ.byClassName(el.childNodes, null, "note");
+	if(n.length)
+		return true;
+	return false;
+};
+
+Simplex.item_switchcompleted = function(el) {
+	if (!xo.isDef(el)) el = Menu.overElement;
+	if(el && Simplex.util_isItem(el))
+		el = Simplex.item_getNodeText(el);
+	if(!el || !Simplex.util_isItemText(el)) return;
+	
+	var item = el.parentNode;
+	
+	var isfocused = false;
+	var relta;
+	if(Simplex.textPriDiv == el || Simplex.textSecDiv == el) isfocused = true;
+	if(isfocused == true){
+		if(Simplex.textPriDiv == el)
+			relta = Simplex.textPri;
+		else
+			relta = Simplex.textSec;
+	}
+	
+	if (!Simplex.item_isCompleted(el)){
+		DH.addClass(el, "completed");
+		DH.addClass(item, "node-completed");
+		if(isfocused == true)
+			DH.addClass(relta, "completed");
+	}
+	else{
+		DH.removeClass(el, "completed");
+		DH.removeClass(item, "node-completed");
+		if(isfocused == true)
+			DH.removeClass(relta, "completed");
+	}
+		Storage.save(item.id, true);
+	Menu.redraw();
+};
+
+Simplex.item_switchcompleted_visibility = function() {
+	if (!DH.hasClass(Simplex.ui_container, "hidecompleted")){
+		DH.addClass(Simplex.ui_container, "hidecompleted");
+		Simplex.ui_completedvisibility.innerHTML = Simplex.ui_completedvisibility.getAttribute("hiddentext");		
+	}
+	else{
+		DH.removeClass(Simplex.ui_container, "hidecompleted");
+		Simplex.ui_completedvisibility.innerHTML = Simplex.ui_completedvisibility.getAttribute("visibletext");
+	}
+
+	if (xo.isDef(Simplex.ui_zoom_where)	&& Simplex.item_isCompleted(Simplex.ui_zoom_where)) {
+		var el = Simplex.ui_zoom_where.parentNode;
+		while (el != null && Simplex.item_isCompleted(el)
+				&& el != this.ui_container)
+			el = el.parentNode;
+		this.item_zoomTo((el != null && el != this.ui_container) ? el: undefined);
+	}
+	Menu.hide(true);
+};
+
+Simplex.item_collapse = function(el, noSave, setExpand) {
+	if (!el || !Simplex.util_isItem(el)) return;
+	
+	var childrenindicator = Simplex.item_getChildrenIndicator(el); 
+	DH.removeClass(childrenindicator, "visible")
+	
+	if ((!xo.isDef(setExpand) && !Simplex.item_isCollapsed(el)) || (xo.isDef(setExpand) && !setExpand)){
+		DH.addClass(el, "collapsed");
+		DH.removeClass(el, "expanded");
+		if(Simplex.item_hasChildren(el))
+			DH.addClass(childrenindicator, "visible");
+	}
+	else if(!xo.isDef(setExpand) || (xo.isDef(setExpand) && setExpand == true)){
+		DH.removeClass(el, "collapsed");
+		DH.addClass(el, "expanded");
+	}
+
+	if(!xo.isDef(noSave))Storage.save(el.id, true);
+	
+	if(Menu.overElement == el)
+		Menu.moveTo(el, true);
+}
+
+Simplex.item_zoom = function(el, rel) {
+	if (rel > 0)
+		this.item_zoomTo(el);
+	else if (xo.isDef(Simplex.ui_zoom_where))
+		this.item_zoomTo(Simplex.ui_zoom_where.parentNode);
+};
+
+Simplex.item_zoomTo = function(el) {
+	if (xo.isDef(el) && !xo.isDef(el.nodeType))	el = $(el); // ID Passed
+	if(!xo.isDef(el)) el = Simplex.ui_container;
+	if(el && (Simplex.util_isItemText(el) || Simplex.util_isNote(el)))
+		el = el.parentNode;
+	
+	if(!el || (!Simplex.util_isItem(el) && el != Simplex.ui_container)) return;
+	
+	Menu.hide(true);
+	
+	this.util_zoom_clear(); // Clear previous zoom state
+	this.ui_zoom_path.innerHTML = "";
+	this.ui_zoom_where = undefined;
+
+	if (el == this.ui_container){
+		//Fit textareas!
+		Simplex.textarea_fit(Simplex.textPri);
+		Simplex.textarea_fit(Simplex.textSec);
+		return;
+	}
+
+	this.ui_zoom_where = el;
+	DH.addClass(el, "zoomed");
+	this.util_zoom_traverseSet();
+	this.ui_zoom_path.innerHTML = this.util_zoom_getLinks(el);
+
+	var c = Simplex.item_getNodeText(
+				Simplex.item_getNodeChildItem(this.ui_zoom_where, 0)
+			,0);
+	
+	if (xo.isDef(c))
+		Simplex.textarea_edit(c);
+	else
+		Simplex.textarea_edit(Simplex.item_getNodeText(Simplex.ui_zoom_where));
+	
+	//Fit textareas!
+	Simplex.textarea_fit(Simplex.textPri);
+	Simplex.textarea_fit(Simplex.textSec);
+	
+	//Scroll to top!
+	window.scrollTo(0,0);
+};
+
+Simplex.item_outdent = function(el) {
+	if(!el || !Simplex.util_isItem(el)) return;
+	var toMove = el;
+	var prevSibling = toMove.parentNode;
+	if (prevSibling == null || !Simplex.util_isItem(prevSibling)
+			|| prevSibling == Simplex.ui_container || (xo.isDef(Simplex.ui_zoom_where)
+			&& !Simplex.util_isXancestorOfY(Simplex.ui_zoom_where, prevSibling)))
+		return;
+
+	DH.moveAfter(prevSibling, toMove);	Storage.save(toMove.id);
+	Menu.redraw();
+	Simplex.textarea_redraw();
+	
+	if(DH.hasClass(toMove, "zoomchild")){
+		if(toMove.parentNode == Simplex.ui_zoom_where){
+			DH.removeClass(toMove, "zoomchild");
+			DH.addClass(toMove, "directzoomchild");
+		}
+	}
+};
+
+//=============================================NOTE FUNCTIONS=============================================
+
+Simplex.note_add = function(el) {
+	if (!xo.isDef(el))
+		el = Menu.overElement;
+	if(el && Simplex.util_isNote(el)) return;
+	else if (el && !Simplex.util_isItem(el))
+		el = el.parentNode;
+
+	if (!Simplex.util_isItem(el))return;
+	
+	// check if note already exists
+	var n = Simplex.item_getNodeNote(el);
+	if (!n || !xo.isDef(n) || !Simplex.util_isNote(n)) {
+		n = DH.insertAfter($(el.id+"_text"), {
+			"tag" : "DIV",
+			"id" : el.id + "_note",
+			"class" : "note"
+		});	
+	}
+	Simplex.textarea_edit(n);
+	Menu.redraw();
+	return n;
+};
+
+//=============================================UI FUNCTIONS/VARIABLES=============================================
+Simplex.ui_container = undefined;
+Simplex.ui_completedvisibility = undefined;
+Simplex.ui_childrenindicators = undefined;
+Simplex.ui_item_mouseover = undefined;
+Simplex.ui_item_move = undefined;
+Simplex.ui_move_handle = undefined;
+Simplex.ui_zoom_path = undefined;
+Simplex.ui_zoom_where = undefined;
+
+Simplex.ui_move_handle_locked = false;
+
+Simplex.ui_load = function() {
+	Simplex.ui_container = $("editorcontainer");	
+	Simplex.ui_completedvisibility = $("button-completevisible")
+	
+	xo.Event.on(Simplex.ui_container, "mouseover", Simplex.event_mouseover_container);
+	
+	Simplex.ui_childrenindicators = $("childrenindicators");
+	
+	Simplex.textPri = $("text1");
+	Simplex.textSec = $("text2");	
+	xo.Event.on(Simplex.textPri, "click", Simplex.event_textarea_click);
+	xo.Event.on(Simplex.textSec, "click", Simplex.event_textarea_click);
+	xo.Event.on(Simplex.textPri, "keydown", Simplex.event_keypressed);
+	xo.Event.on(Simplex.textSec, "keydown", Simplex.event_keypressed);
+	
+	//TODO NOW -DEBUGGING
+	//DH.addClass(Simplex.textPri, "textactive");
+	//DH.addClass(Simplex.textSec, "texthelper");
+		
+	Menu.element = $("controlbox");
+	Menu.elementNote = $("controlbox-buttons-note");
+	Menu.elementComplete = $("controlbox-buttons-complete");
+	Menu.elementsHotArea = $("controlbox-alwaysvisible");
+	Menu.elExpandCollapse = $("controlbox-expandcollapse");
+	Menu.elBullet = $("controlbox-bullet");
+	xo.Event.on(Menu.element, "keydown", Menu.keypressed);
+	
+	xo.Event.on(Menu.elBullet, "click", Menu.event_click_bullet);
+	xo.Event.on(Menu.elExpandCollapse, "click", Menu.event_click_expandcollapse);
+	xo.Event.on(Menu.elementsHotArea, "mouseover", Menu.event_mouseover_menuhot);
+	xo.Event.on(Menu.element, "mouseover", Menu.event_mouseout);
+
+	Menu.moveHandle = $("movehandle");
+	xo.Event.on(Menu.moveHandle, "mousedown", Menu.event_movehandle_mousedown);
+	xo.Event.on(Menu.moveHandle, "mouseup", Menu.event_movehandle_mouseup);
+	xo.Event.on(Simplex.ui_container, "mouseup", Menu.event_movehandle_mouseup);
+	Storage.load();
+	
+	Simplex.ui_zoom_path = $("zoompath");
+}
+
+Simplex.ui_resize = function(e){	
+	Menu.redraw();
+	Simplex.textarea_redraw();	
+}
+
+Simplex.event_unload = function(e){
+	Simplex.textarea_save();
+};
+
+Simplex.ui_completedVisible = function(){
+	return (DH.hasClass(Simplex.ui_container, "hidecompleted") ? false : true);
+};
+//=============================================UTILITY FUNCTIONS=============================================
+
+Simplex.util_adjacent = function(rel, el, showall) {
+	if (rel == 0)
+		return el;
+	if(!xo.isDef(el)) return;
+	var divEl;
+	if (rel == -1) {
+		divEl = Simplex.util_prevItem(el, showall);
+	} else if (rel == 1) {
+		divEl = Simplex.util_nextItem(el, showall);
+	}
+		
+	return divEl ? Simplex.util_children_nthOfType(divEl, "", 1, Simplex.util_isItemText) : el;
+}
+
+Simplex.util_adjacent_cached = function(rel, el, showall){
+	//Returns prev/next element, based on the Object "Storage.nodes"! (faster)
+	if(rel == 0)
+		return el;
+	
+	var originalEl = el;
+	
+	if(Simplex.util_isItemText(el) || Simplex.util_isNote(el)) el = el.parentNode;
+	if(!Simplex.util_isItem(el)) return;
+	
+	var divEl = null, idEl = undefined;
+	if(rel == -1){
+		var idEl = el.id;
+		do{
+			idEl = Storage.nodes[idEl]["prev"];		
+		}while(idEl && xo.isDef($(idEl)) && !xo.isDef(showall) && !Simplex.item_isVisible($(idEl)));
+	}
+	else if(rel == +1){
+		var idEl = el.id;
+		do{
+			idEl = Storage.nodes[idEl]["next"];
+		}while(idEl && xo.isDef($(idEl)) && !xo.isDef(showall) && !Simplex.item_isVisible($(idEl)));		
+	}	
+	if(xo.isDef(idEl))
+		divEl = $(idEl);
+	
+	return divEl ? Simplex.item_getNodeText(divEl): originalEl;	
+};
+
+Simplex.util_children_nthOfType = function(p, t, n, ev) {
+	if (!xo.isDef(p))
+		return;
+	if (!xo.isDef(n))
+		n = 1;
+
+	var direction = (n > 0 ? +1 : -1);
+	if (xo.isDef(t))
+		t = t.toUpperCase();
+	n -= direction;
+	var c = -1; // count of items
+	var o;
+
+	for ( var i = (direction == +1 ? 0 : p.childNodes.length - 1); p.childNodes && i < p.childNodes.length
+			&& (c < Math.abs(n) && xo.isDef(p.childNodes[i])); i += direction) {
+		if (xo.isDef(p.childNodes[i])
+				&& (xo.isDef(ev) && ev(p.childNodes[i]) || p.childNodes[i].tagName == t)) {
+			o = p.childNodes[i];
+			c++;
+		}
+	}
+	if (c < n)
+		return undefined;
+	return o;
+}
+
+Simplex.util_collapsed_clear = function(el){
+	if (!xo.isDef(el)){
+		el = this.ui_container;
+		var ch = Simplex.ui_childrenindicators.children;
+		while(ch.length)
+			DH.remove(ch[0]);
+	}
+	for ( var i = 0; i < el.children.length; i++) {
+		DH.removeClass(el.children[i], "collapsedchildren");
+		this.util_collapsed_clear(el.children[i]);
+	}
+}
+
+Simplex.util_completed_clear = function(el){
+	if (!xo.isDef(el))
+		el = this.ui_container;
+	for ( var i = 0; i < el.children.length; i++) {
+		DH.removeClass(el.children[i], "completedchild");
+		this.util_completed_clear(el.children[i]);
+	}
+}
+
+Simplex.util_completed_traverseSet = function(el, isChild) {
+	if (!xo.isDef(el)){
+		Simplex.util_completed_clear();
+		el = this.ui_container;
+	}
+
+	for (var i = 0; i < el.children.length; i++) {
+		if(xo.isDef(isChild) && isChild && !DH.hasClass(el.children[i], "completed"))
+			DH.addClass(el.children[i], "completedchild");
+		else if(DH.hasClass(el.children[i],"completed"))
+			this.util_completed_traverseSet(el.children[i], true);
+		else
+			this.util_completed_traverseSet(el.children[i]);
+	}
+}
+
+Simplex.util_isItem = function(el)
+{
+	if(!el) return;
+	return DH.hasClass(el, "simplex-node")
+}
+
+Simplex.util_isSentinel = function(el)
+{
+	if(!el) return;
+	return DH.hasClass(el, "sentinel")
+}
+
+Simplex.util_isItemText = function(el) {
+	if(!el)return;
+	return (DH.hasClass(el,"itemtext") && el.tagName != "TEXTAREA");
+}
+
+Simplex.util_isChildrenIndicator = function(el) {
+	if(!el)return;
+	return (DH.hasClass(el,"expandcollapse"));
+}
+
+Simplex.util_isNote = function(el)
+{
+	if(!el) return;
+	return (DH.hasClass(el, "note") && el.tagName != "TEXTAREA");
+}
+
+Simplex.util_isXancestorOfY = function(x, y) {
+	if (!xo.isDef(x) || !xo.isDef(y) || !x || !y)
+		return false;
+	var n = y.parentNode;
+	while (n != null) {
+		if (n == x)
+			return true;
+		n = n.parentNode;
+	}
+	return false;
+}
+
+Simplex.util_name_new_childOf = function(el) {
+	if (!el || !xo.isDef(el))
+		return;
+	var idchild = Server.userPrefix + "li_" + Math.floor(Math.random() * 94550);
+	while ($(idchild) != null && $(idchild).nodeType)
+		idchild = Server.userPrefix + "li_" + Math.floor(Math.random() * 94550);
+	return idchild;
+}
+
+Simplex.util_nextItem = function(el, showall) {
+	// check children only if parent not collapsed AND NOT ZOOMED IN
+	var rn = DH.hasClass(el.parentNode, 'collapsed') && !xo.isDef(Simplex.ui_zoom_where) && !xo.isDef(showall) ? []
+			: DQ.byClassName(el.parentNode.childNodes, null,
+					'simplex-node');
+
+	if (rn.length) {
+		divEl = rn[0];
+	} else {
+		// we know that the nextSibling of a div.simplex-node is always a
+		// div.simplex-node (or null)
+		var found = false;
+		var tmp = el;
+		while (!found && tmp.parentNode) {
+			divEl = DQ.next(tmp.parentNode);
+			if (divEl &&DH.hasClass(divEl, 'simplex-node') && (!DH.hasClass(divEl, 'zoomhide') || xo.isDef(showall))) {
+				found = true;
+			} else {
+				tmp = tmp.parentNode;
+				if (DH.hasClass(tmp, 'editorcontainer')
+						|| DH.hasClass(tmp, 'zoomparent')) {
+					return el;
+				}
+			}
+		}
+	}
+	return divEl;
+}
+
+Simplex.util_prevItem = function(el, showAll) {
+	// el is a textarea so it is surely inside a div.simplex-node
+	// if it is not top level then its parent is also wrapped inside a
+	// div.simplex-node
+	// and thus el.parentNode.parentNode is defined
+
+	var nodes = DQ.byClassName(el.parentNode.parentNode.childNodes,
+			null, 'simplex-node');
+
+	var prev;
+	if (nodes[0] != el.parentNode) {
+		var divEl;
+		// if we are not the first div.simplex-node then find previous sibling
+		for (i = 1; i < nodes.length; i++) {
+			if (nodes[i] == el.parentNode) {
+				divEl = nodes[i - 1];
+				break;
+			}
+		}
+
+		// now traverse down the tree
+		while ((nodes = DQ.byClassName(divEl.childNodes, null,
+				'simplex-node')).length) {
+			divEl = nodes[nodes.length - 1];
+		}
+		prev = divEl;
+
+	} else {
+		// if we are the first div.simplex-node then previous sibling is the
+		// textarea of our parent div.simplex-node
+		prev = el.parentNode.parentNode;
+	}
+	
+	if((!xo.isDef(showAll)) &&xo.isDef(Simplex.ui_zoom_where) && Simplex.ui_zoom_where != prev && !Simplex.util_isXancestorOfY(Simplex.ui_zoom_where, prev)) //Previous is not the zoom point or a descendant of it - that means that it is not visible!
+		prev = el;
+	else if((!xo.isDef(showAll)) && !xo.isDef(Simplex.ui_zoom_where)){ //Handle collapsed items - THIS DOES NOT HOLD IF ZOOMED IN!
+		  //If a parent of the "prev" is collapsed,
+		  //it means that THE PARENT is the PREVIOUS VISIBLE element
+		  //so return that
+		  
+		  var tmpEl = prev;
+		  while(tmpEl.parentNode && tmpEl.parentNode != Simplex.ui_container) {
+			  tmpEl = tmpEl.parentNode;
+			  if(DH.hasClass(tmpEl, "collapsed")) {
+				  prev = tmpEl;
+				  break;
+			  }
+		  }	
+	}
+	
+	return prev;
+}
+
+Simplex.util_textarea_getCaret = function(el) {
+	var pos = 0;
+	if (document.selection) {
+		el.focus();
+		var sel = document.selection.createRange();
+		sel.moveStart('character', -el.value.length);
+		pos = sel.text.length;
+	} else if (el.selectionStart || el.selectionStart == '0')
+		pos = el.selectionStart;
+
+	return pos;
+}
+
+Simplex.util_textarea_setCaret = function(el, pos) {
+	if (!xo.isDef(el))
+		return;
+	if (el.setSelectionRange) {
+		el.focus();
+		el.setSelectionRange(pos, pos);
+	} else if (el.createTextRange) {
+		el.focus();
+		var range = el.createTextRange();
+		range.collapse(true);
+		range.moveEnd('character', pos);
+		range.moveStart('character', pos);
+		range.select();
+	}
+}
+
+//=============================================ZOOM FUNCTIONS=============================================
+
+Simplex.util_zoom_clear = function(el) {
+	if (!xo.isDef(el))
+		el = this.ui_container;
+	for ( var i = 0; i < el.children.length; i++) {
+		DH.removeClass(el.children[i], "zoomparent");
+		DH.removeClass(el.children[i], "zoomhide");
+		DH.removeClass(el.children[i], "zoomed");
+		DH.removeClass(el.children[i], "directzoomchild");
+		DH.removeClass(el.children[i], "zoomchild");		
+		this.util_zoom_clear(el.children[i]);
+	}
+}
+
+Simplex.util_zoom_getLinks = function(el) {
+	var outhtml = "</div>";
+	el = el.parentNode;
+	while (el != null && el != Simplex.ui_container) {
+		outhtml = " &gt; <a href='#' onclick='Simplex.item_zoomTo(\"" + el.id
+				+ "\");'>"
+				+ this.item_getText(el)
+				+ "</a>" + outhtml;
+		el = el.parentNode;
+
+	}
+	outhtml = "<div><a href='#' onclick='Simplex.item_zoomTo();'>Home</a>"
+			+ outhtml;
+
+	return outhtml;
+}
+
+Simplex.util_zoom_traverseSet = function(el) {
+	if (!xo.isDef(el))
+		el = this.ui_container;
+	if(!el.children)return;
+	for ( var i = 0; i < el.children.length; i++) {
+		if(Simplex.util_isItem(el.children[i])){
+			if (Simplex.util_isXancestorOfY(el.children[i], this.ui_zoom_where))
+				DH.addClass(el.children[i], "zoomparent");
+			else if (this.ui_zoom_where==el.children[i].parentNode)
+				DH.addClass(el.children[i], "directzoomchild");
+			else if (Simplex.util_isXancestorOfY(this.ui_zoom_where,el.children[i]))
+				DH.addClass(el.children[i], "zoomchild");
+			else if (el.children[i] != this.ui_zoom_where)
+				DH.addClass(el.children[i], "zoomhide");
+			this.util_zoom_traverseSet(el.children[i]);
+		}
+	}
+}
+
+Simplex.util_moveBefore = function(el,o) {
+    el.parentNode.insertBefore(o,el);
+    return o;
+};
+
+Simplex.util_escape = function(str){
+	return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+Simplex.util_unescape = function(str){
+	return str.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace('/&quot;/g','"');
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+window.onload = function() {
+	//xo.Event.on('editorcontainer', 'keydown', Simplex.event_keypressed);
+	xo.Event.on('createnew', 'click', Simplex.event_click_createnew);
+};
+
+window.addEventListener('DOMContentLoaded', Simplex.ui_load, false);
+window.addEventListener('mouseup', Simplex.event_mouseup_handle, false);
+window.addEventListener('resize', Simplex.ui_resize, false);
+window.addEventListener('unload', Simplex.event_unload, false);
+/**
+ * Assigning namespace to window object,
+ */
+
+xo.exportSymbol("Simplex", Simplex);
+xo.exportProperty(Simplex, "item_switchcompleted_visibility",Simplex.item_switchcompleted_visibility);
+xo.exportProperty(Simplex, "item_collapse",Simplex.item_collapse);
+xo.exportProperty(Simplex, "note_add", Simplex.note_add);
+xo.exportProperty(Simplex, "item_switchcompleted", Simplex.item_switchcompleted);
+xo.exportProperty(Simplex, "item_delete", Simplex.item_delete);
+xo.exportProperty(Simplex, "item_zoomTo", Simplex.item_zoomTo);
+xo.exportProperty(Simplex, "textarea_autosave", Simplex.textarea_autosave);
+

@@ -1,0 +1,17 @@
+Return-path: <webmaster@phigita.net> 
+Received: from [46.252.33.222] (port=4798 helo=ncs)
+	by cpsdistributors.com.inbound15.mxlogic.net with asmtp 
+	id 584538-000697-21
+	for <webmaster@phigita.net>; Thu, 24 Nov 2011 11:19:41 +0100 
+Message-ID: <AD993465898E450F870A9C51E115DF6A@ncs> 
+From: =?koi8-r?B?Iu/v7yD3wc0t8MnT2M3PIC0gZS1tYWlsIM3B0svF1MnOxyI=?= <ablest@cpsdistributors.com> 
+To: <webmaster@phigita.net> 
+Subject: =?koi8-r?B?NSDSwdPT2czPyyDawSAxMCAwMDAg0tXCzMXKICsgyM/T1MnOxyDOwSDN?=
+	=?koi8-r?B?xdPRwyDXIPDv5OHy7+sgyczJIDbRINLB09nMy8E=?= 
+Date: Thu, 24 Nov 2011 11:19:41 +0100 
+X-Priority: 3 
+X-MSMail-Priority: Normal 
+X-Mailer: Microsoft Windows Mail 6.0.6001.18000 
+X-MimeOLE: Produced By Microsoft MimeOLE V6.0.6001.18049 
+X-Spam: Not detected 
+X-Mras: Ok 

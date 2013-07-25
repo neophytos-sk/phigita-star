@@ -1,0 +1,76 @@
+Received: from localhost ([127.0.0.1] helo=sfs-ml-1.v29.ch3.sourceforge.com)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <quickfix-developers-bounces@lists.sourceforge.net>)
+	id 1RWTq1-0004IE-AS; Fri, 02 Dec 2011 14:11:41 +0000 from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <ryugan.mizuta@gmail.com>) id 1RWTq0-0004I6-9V
+	for quickfix-developers@lists.sourceforge.net;
+	Fri, 02 Dec 2011 14:11:40 +0000 from mail-ww0-f53.google.com ([74.125.82.53])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1RWTpz-0002pP-EM
+	for quickfix-developers@lists.sourceforge.net;
+	Fri, 02 Dec 2011 14:11:40 +0000 by wgbds1 with SMTP id ds1so1136934wgb.10
+	for <quickfix-developers@lists.sourceforge.net>;
+	Fri, 02 Dec 2011 06:11:32 -0800 (PST) by 10.227.197.10 with SMTP id ei10mr3503040wbb.11.1322835091994;
+	Fri, 02 Dec 2011 06:11:31 -0800 (PST) by 10.180.98.193 with HTTP; Fri, 2 Dec 2011 06:11:31 -0800 (PST) 
+Received-SPF: pass (sog-mx-2.v43.ch3.sourceforge.com: domain of gmail.com
+	designates 74.125.82.53 as permitted sender)
+	client-ip=74.125.82.53; envelope-from=ryugan.mizuta@gmail.com;
+	helo=mail-ww0-f53.google.com; 
+Date: Fri, 2 Dec 2011 08:11:31 -0600 
+Message-ID: <CAHS2eBcKbz17V_3qiZg7Jnu+fhaf0DJjQ4tQ7Zsg8CrN4wAc6w@mail.gmail.com> 
+From: Ryugan Mizuta <ryugan.mizuta@gmail.com> 
+To: quickfix-developers@lists.sourceforge.net 
+X-Spam-Score: -0.6 (/) 
+X-Spam-Report: Spam Filtering performed by mx.sourceforge.net.
+	See http://spamassassin.org/tag/ for more details.
+	-1.5 SPF_CHECK_PASS SPF reports sender host as permitted sender for
+	sender-domain
+	0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail provider
+	(ryugan.mizuta[at]gmail.com)
+	-0.0 SPF_PASS               SPF: sender matches SPF record
+	1.0 HTML_MESSAGE           BODY: HTML included in message
+	-0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
+	author's domain
+	0.1 DKIM_SIGNED            Message has a DKIM or DK signature,
+	not necessarily valid
+	-0.1 DKIM_VALID Message has at least one valid DKIM or DK signature 
+X-Headers-End: 1RWTpz-0002pP-EM 
+Subject: [Quickfix-developers] Building QuickFIX with icc compiler 
+X-BeenThere: quickfix-developers@lists.sourceforge.net 
+X-Mailman-Version: 2.1.9 
+Precedence: list 
+List-Id: <quickfix-developers.lists.sourceforge.net> 
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/quickfix-developers>,
+	<mailto:quickfix-developers-request@lists.sourceforge.net?subject=unsubscribe> 
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=quickfix-developers> 
+List-Post: <mailto:quickfix-developers@lists.sourceforge.net> 
+List-Help: <mailto:quickfix-developers-request@lists.sourceforge.net?subject=help> 
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/quickfix-developers>,
+	<mailto:quickfix-developers-request@lists.sourceforge.net?subject=subscribe> 
+Errors-To: quickfix-developers-bounces@lists.sourceforge.net 
+--------------------------------------
+QuickFIX Documentation: http://www.quickfixengine.org/quickfix/doc/html/index.html
+QuickFIX Support: http://www.quickfixengine.org/services.html
+
+--------------------------------------
+Hi,
+
+I would like to build QuickFIX with icc compiler on linux. Is there a
+tutorial on how I could build it?
+
+Thanks.
+
+Kousuke Saimoto
+--------------------------------------
+------------------------------------------------------------------------------
+All the data continuously generated in your IT infrastructure 
+contains a definitive record of customers, application performance, 
+security threats, fraudulent activity, and more. Splunk takes this 
+data and makes sense of it. IT sense. And common sense.
+http://p.sf.net/sfu/splunk-novd2d--------------------------------------
+_______________________________________________
+Quickfix-developers mailing list
+Quickfix-developers@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/quickfix-developers

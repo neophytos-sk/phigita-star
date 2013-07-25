@@ -1,0 +1,2 @@
+canvas.beginPath();canvas.arc(28*8,36*8,30,0,2*pi,false); canvas.fillStyle='#000';canvas.fill()
+map.beginPath();map.arc(3*8,5*8,3,0,2*pi,true);map.fillStyle='#f93';map.fill();

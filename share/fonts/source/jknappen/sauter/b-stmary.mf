@@ -1,0 +1,7 @@
+% b-stmary.mf
+% Use parameter settings from cmsy
+if unknown cmbase: input cmbase fi
+def generate suffix t= enddef;
+input b-cmsy;
+input stmaryrd;
+end.

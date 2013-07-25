@@ -1,0 +1,142 @@
+DNS Module for NaviServer 4.x
+Release 0.7.7
+vlad@crystalballinc.com
+
+This is NaviServer module that implements DNS server/proxy.
+It can serve from it own database or perform forwarding to
+another DNS server and cache results. The server doesn't
+support any database directly, instead it provides commands similar
+route add|del to add/remove DNS records to memory cache.
+
+/*--------------------------------------------------------------------*/
+
+Compiling and Installing
+
+To compile this driver, just type make
+
+dns.tcl file may go to /usr/local/ns/modules/tcl directory
+to be loaded on startup. It loads /etc/hosts records into DNS cache as A
+records and will act as primary DNS server for these hosts.
+
+Configuring
+
+Here is an nsd.tcl excerpt for configuring the DNS module:
+
+ns_section      ns/server/${server}/module/nsdns
+ns_param	port		2525
+ns_param	address		localhost
+ns_param	ttl		86400
+ns_param	negativettl	3600
+ns_param	cachettl	0
+ns_param	readtimeout	30
+ns_param	writetimeout	30
+ns_param	proxytimeout	3
+ns_param	proxyretries	2
+ns_param	proxyhost	localhost
+ns_param	proxyport	53
+ns_param	defaulthost	""
+ns_param        debug           0
+
+- port - local UDP/TCP ports to listen
+- address - local addres to bind
+- ttl - default ttl for the records
+- cachettl - TTL to be used for cached records
+- nagativettl - TTL to be used for negative responses
+- readtimeout - timeout for reading
+- proxyhost - remote DNS server where to proxy requests
+- proxyport - port of the remote proxy server
+- proxyretries - how many times to re-send UDP request to proxy server
+- proxytimeout - how long to wait for proxy reply before timeout
+- debug - debug level, higher level more information is written in the log
+- defaulthost - if no proxyhost set and query host not found reply with default host
+
+Usage
+
+    ns_dns usage:
+
+      ns_add name type value... ?ttl?
+
+        adds DNS record to the cache.
+        name is record domain name like www.cisco.com
+          wildcard names are supported:
+             ns_dns add *.domain.com A 1.1.1.1
+             all requests for host.domain.com which are
+             not in local cache will be replied with 1.1.1.1
+             record.
+        type is one of A,NS,PTR,NS,CNAME,MX
+        value depends on record type:
+         A - IP address
+         MX - preference cname
+         NS,PTR,CNAME - domain name
+         NAPTR - naming authority (ENUM)
+
+       Example:
+          ns_dns add www.mydomain.com A 192.168.1.1
+          ns_dns add ns.mydomain.com A 192.168.1.1
+          ns_dns add ftp.mydomain.com CNAME www.mydomain.com
+          ns_dns add mydomain.com NS ns.mydomain.com
+          ns_dns add mydomain.com MX 1 ns.mydomain.com
+          ns_dns add 1.2.3.4.5.6.e164.arpa NAPTR 1 100 u E2U+sip {!^.*$!sip:123456@sipproxy.net:5060!}
+
+     ns_dns del name type ?value?
+
+        delete DNS record(s) from memory cache
+
+      Example:
+          ns_dns del www.mydomain.com A
+
+     ns_dns list
+
+        returns list with all DNS records from the cache including
+        cached from remote proxy
+
+      Example:
+         {ns.mydomain.com A 192.168.1.1 86400}
+         {www.mydomain.com A 192.168.1.1 86400}
+         {mydomain.com MX ns.mydomain.com 1 86400}
+         {mydomain.com NS ns.mydomain.com 86400}
+         {ftp.mydomain.com CNAME www.mydomain.com 86400}
+
+     ns_dns flush
+
+        flushes all DNS records from memory cache
+
+     ns_dns queue
+
+        returns list with pending requests waiting reply from
+        the remote proxy
+
+Testing
+
+Below is output from dig utility about the configuration
+provided in the above example.
+
+# dig @localhost -p 5353 -t any mydomain.com +tries=1
+
+; <<>> DiG 9.2.1 <<>> @localhost -p 5353 -t any mydomain.com +tries=1
+;; global options:  printcmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 59400
+;; flags: qr aa rd; QUERY: 1, ANSWER: 1, AUTHORITY: 1, ADDITIONAL: 1
+
+;; QUESTION SECTION:
+;mydomain.com.                  IN      ANY
+
+;; ANSWER SECTION:
+mydomain.com.           86400   IN      MX      1 ns.mydomain.com.
+
+;; AUTHORITY SECTION:
+mydomain.com.           86400   IN      NS      ns.mydomain.com.
+
+;; ADDITIONAL SECTION:
+ns.mydomain.com.        86400   IN      A       192.168.1.1
+
+;; Query time: 26 msec
+;; SERVER: 127.0.0.1#5353(localhost)
+;; WHEN: Wed Mar  5 22:57:54 2003
+;; MSG SIZE  rcvd: 121
+
+Authors
+
+     Vlad Seryakov vlad@crystalballinc.com
+

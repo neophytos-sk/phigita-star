@@ -1,0 +1,57 @@
+DomainKey-Signature: q=dns; a=rsa-sha1; c=nofws;
+	s=prod; d=linkedin.com;
+	h=DKIM-Signature:Sender:Date:From:To:Message-ID:Subject:MIME-Version:Content-Type:X-LinkedIn-Class:X-LinkedIn-Template:X-LinkedIn-fbl;
+	b=myn2HQ1aCOX33qKoqTU7wNsv2P8NHj8jvgyUQXa7ZyGpwGCdcIGxAHZrXYJXmWKq
+	bR74/vGgy/mcx8Ze5w7nJbrOAT7pr+8WwNZ4de1ZAOP6Kax6Oi3vswGb9jz832FZ 
+DKIM-Signature: v=1; a=rsa-sha1; d=linkedin.com; s=proddkim; c=relaxed/relaxed;
+	q=dns/txt; i=@linkedin.com; t=1321563398;
+	h=From:Subject:Date:To:MIME-Version:Content-Type:X-LinkedIn-Class:X-LinkedIn-fbl:
+	X-LinkedIn-Template;
+	bh=QGXUlM8CYNRtfJQIVIU2zNftddU=;
+	b=fhHnMuyYwJB21khkf5Zh1bpJnndmyjSNlQDQ2YJGFgChbvP+f3W+Q4T4kvHrG4v0
+	+A4pa0tg5ou9mzzaHH6VVIqZC8nSFLGm8BuMYrw/2G9tofq7oaFuLjSXFuf3aLw3; 
+Sender: messages-noreply@bounce.linkedin.com 
+Date: Thu, 17 Nov 2011 20:56:38 +0000 (UTC) 
+From: "The Greater IBM Connection: IBM's business and social network for past and present IBM employees" <groups-noreply@linkedin.com> 
+To: Neophytos Demetriou <k2pts@phigita.net> 
+Message-ID: <1798125073.34423431.1321563398173.JavaMail.app@ela4-bed82.prod> 
+Subject: Your Brand New Site Is Here - Read All About It! 
+X-LinkedIn-Class: GROUP-DISC-THREAD 
+X-LinkedIn-Template: group_announcement_message 
+X-LinkedIn-fbl: m-AMbespu5jPcDtqP6A4_K4QoSJU4s2pl6S_40sjrjj0U4jVEtShw7dNc 
+--------------------------------------
+LinkedIn
+------------Group: The Greater IBM Connection: IBM's business and social network for past and present IBM employees
+
+Subject: Your Brand New Site Is Here - Read All About It! 
+
+We've recently made exciting upgrades to The Greater IBM Connection! Now it’s easier to stay connected to your former colleagues and to access news, groups, resources, and more.
+Please log in to check out these new features:
+
+Homepage Facelift
+
+Our homepage has been redesigned, with a more streamlined look and easier navigation to help you get to the things you care about most. Accessing News, Events, Groups, Jobs, and Resources is now easier than ever. Don't miss the new slideshow!
+
+https://www.ibmconnection.com/network/home
+
+LinkedIn Profile Import
+
+You can now securely import your profile picture, work history, and education information from your LinkedIn account with the “Import LinkedIn Profile” button in your profile key. With one click, you can now safely transfer your LinkedIn information into your network profile!	
+
+Improved Personal Profile Pages
+
+Clicking on your name in the upper right hand corner will take you to the redesigned personal profile page, where you can modify your profile and where the Network Feed shows you what your connections are doing. Whether you import your information from LinkedIn or complete the information yourself, remember: having a more complete profile makes it easier for other Greater IBMers to connect with you!	
+
+Intelligent Design
+
+You'll notice other improvements around the site that make it easier for you to engage with The Greater IBM Connection and your fellow members. For example, messaging members from within the Directory Search has been simplified; news and event listings now show key information at a glance; and you can now add your Comment with a single click. Log in today to explore all of the new features on The Greater IBM Connection!
+
+http://www.ibm.com/ibm/greateribm/
+
+Posted By Regan Kelly
+
+Go to the complete announcement http://www.linkedin.com/e/-1ht5d5-gv48q49n-12/vaq/81018191/1712/-1/eml-anet_ancmt-b-0/?hs=false&tok=39bl1Qw9185R01
+
+Don't want to hear from the manager: http://www.linkedin.com/e/-1ht5d5-gv48q49n-12/vgs/1712/?hs=false&tok=2llIvcUU985R01
+
+

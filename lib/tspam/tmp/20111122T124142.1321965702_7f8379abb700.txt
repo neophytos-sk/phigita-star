@@ -1,0 +1,21 @@
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=secondmarket.com; h=date
+	:from:to:message-id:subject:mime-version:content-type
+	:list-unsubscribe; s=smtpapi; bh=IAfhFZYkS9j1cn3o622Z/f94d6o=; b=
+	mIFHhnT5cep/1a+L8BQvh/H2weE0w7x82Oaly2f9rZ9jExQeWd9sxViWRMvmdQhv
+	Va3qEP9kMdhHqYLLCvSnIKhP6Xy2sirl27FiQi4/w17s54fz+VBP6sA9xNrJM7TI
+	BNUa0uYBr5APrSce8A2jXi1VFSFmxI3zhzz7+AJKp58= 
+Received: by 10.8.40.15 with SMTP id mf12.5159.4ECB98779
+        Tue, 22 Nov 2011 06:41:27 -0600 (CST) from svc1.prod.prv (unknown [10.9.180.5])
+	by mi10 (SG) with ESMTP id 4ecb9877.e7f.2c395b5
+	for <neophytos@phigita.net>; Tue, 22 Nov 2011 06:41:27 -0600 (CST) from svc1.prod.prv (localhost.localdomain [127.0.0.1])
+	by svc1.prod.prv (Postfix) with ESMTP id ED34584337
+	for <neophytos@phigita.net>; Tue, 22 Nov 2011 07:41:26 -0500 (EST) 
+Date: Tue, 22 Nov 2011 07:41:26 -0500 (EST) 
+From: SecondMarket <support@secondmarket.com> 
+To: Neophytos Demetriou <neophytos@phigita.net> 
+Message-ID: <629291872.1198071321965686965.JavaMail.j2ee-notifications@svc1.prod.prv> 
+Subject: SecondMarket Updates for November 15 - November 22 
+X-Sendgrid-EID: OAbvmKrp8ciAVKjCp7wJ42DLRvbG3KmAkUsR8DDLGcOF7ESHaLrR3ykyGUY3HSg80uS7+WAkaV70Vr4gdOn68SO69sUf/0qT1Pdv94TKwv056fiqqNvAN4AlfovqKGcNPjgUcUXPCUfyiy4E8FywxjXBJJaDyiPFosseVgq/0UI= 
+X-Sendgrid-ID: ClrjRroCCuOCVRAgkrPYH6hRfytO5Sibj6fRpZrxThg= 
+list-unsubscribe: <http://e.secondmarket.com/wf/unsubscribe?rp=wa5cjzdG7lo1qkzb%2Fr93RGWy0Amu0E9wL9%2FRNWE42GwbVzsAxQ6Xt0DqwWJwFn6P2yOZyMm58j7LtNBLtDs1SUhE13r4xnbgHm0At%2BTiYfI%3D&up=ClrjRroCCuOCVRAgkrPYH6hRfytO5Sibj6fRpZrxThg%3D&u=w_yM3ah4STKf3N2jUxOMoA%2Fum>, <mailto:unsubscribe@e.secondmarket.com?subject=http://e.secondmarket.com/wf/unsubscribe?rp=wa5cjzdG7lo1qkzb%2Fr93RGWy0Amu0E9wL9%2FRNWE42GwbVzsAxQ6Xt0DqwWJwFn6P2yOZyMm58j7LtNBLtDs1SUhE13r4xnbgHm0At%2BTiYfI%3D&up=ClrjRroCCuOCVRAgkrPYH6hRfytO5Sibj6fRpZrxThg%3D&u=w_yM3ah4STKf3N2jUxOMoA%2Fum> 
+

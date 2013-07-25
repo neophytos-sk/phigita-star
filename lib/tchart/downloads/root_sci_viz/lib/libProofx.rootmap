@@ -1,0 +1,7 @@
+Library.TXHandler:                          libProofx.so libNet.so libProof.so libThread.so
+Library.TXProofMgr:                         libProofx.so libNet.so libProof.so libThread.so
+Library.TXSlave:                            libProofx.so libNet.so libProof.so libThread.so
+Library.TXSocket:                           libProofx.so libNet.so libProof.so libThread.so
+Library.TXSocketHandler:                    libProofx.so libNet.so libProof.so libThread.so
+Library.TXProofServ:                        libProofx.so libNet.so libProof.so libThread.so
+Library.TXUnixSocket:                       libProofx.so libNet.so libProof.so libThread.so

@@ -1,0 +1,12 @@
+Received: from epnvcsd ([110.53.26.134]) by yifengholding.yifengholdings.com with Microsoft SMTPSVC(6.0.3790.3959);
+	 Mon, 17 Oct 2011 02:43:40 +0800 
+Message-ID: <20111017023021720261@yifengholdings.com> 
+From: =?gb2312?B?uqvRqbaw?= <yifeng@yifengholdings.com> 
+To:  
+Subject: =?gb2312?B?p7jW0Ln6zqjSu9fduuGhsLLGzvGhosjLwabXytS0oaK53MDtobHI/Q==?=
+	=?gb2312?B?tPPB7NPytcShsMj9xtyhscq11b2yxs7x16i80tb3vbJvZGJy?= 
+Date: Mon, 17 Oct 2011 02:30:07 +0800 
+X-mailer: Yxe 5 
+Return-Path: yifeng@yifengholdings.com 
+X-OriginalArrivalTime: 16 Oct 2011 18:43:40.0390 (UTC) FILETIME=[85DBD860:01CC8C33] 
+Whoops!  What is a 'application/vnd.ms-excel'?

@@ -1,0 +1,9 @@
+The map files
+  ptm8y.map phv8y.map pcr8y.map
+are just included for completeness. They are tuned just for dvips,
+so they should not be added to the updmap configuration.
+
+The relevant entries are included in a more flexible way in some
+"internal" configuration file of teTeX's updmap. 
+
+Thomas Esser, Jan. 2003

@@ -1,0 +1,27 @@
+Received: from localhost (mail.pickedpoint.cn [127.0.0.1])
+	by mail.pickedpoint.cn (EMOS V1.5 (Postfix)) with ESMTP id B82B74E387B5;
+	Mon, 31 Oct 2011 07:32:17 +0800 (CST) from mail.pickedpoint.cn ([127.0.0.1])
+	by localhost (mail.pickedpoint.cn [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id bZXT9VLIYRWy; Mon, 31 Oct 2011 07:32:17 +0800 (CST) from vje (unknown [110.53.25.223])
+	by mail.pickedpoint.cn (EMOS V1.5 (Postfix)) with ESMTPA id 39A614E387B4;
+	Mon, 31 Oct 2011 07:32:10 +0800 (CST) 
+X-DSPAM-Result: Innocent 
+X-DSPAM-Processed: Mon Oct 31 07:32:17 2011 
+X-DSPAM-Confidence: 0.9977 
+X-DSPAM-Probability: 0.0000 
+X-DSPAM-Signature: 1,4eadde8126951940693464 
+X-Virus-Scanned: amavisd-new at pickedpoint.cn 
+X-Spam-Flag: NO 
+X-Spam-Score: -2.286 
+X-Spam-Level:  
+X-Spam-Status: No, score=-2.286 tagged_above=-10 required=5
+	tests=[DSPAM:Innocent=-1.000, ALL_TRUSTED=-1.44, DSPAM_HAM_99=-3.23,
+	FH_DATE_PAST_20XX=3.384] autolearn=no 
+Message-ID: <20111031081818765452@ipni.ac.cn> 
+From: "bmgoomj" <sxzheng@ipni.ac.cn> 
+To:  
+Subject: =?gb2312?B?a3phobDD2Mrpw8WhscrCvP4tLc2sIMnPIMu+IM/gIA==?=
+	=?gb2312?B?tKYgtcQg0MQgzKwgODoxODoxMg==?= 
+Date: Mon, 31 Oct 2011 08:18:13 +0800 
+X-mailer: Uymi 0 
+Whoops!  What is a 'application/vnd.ms-excel'?

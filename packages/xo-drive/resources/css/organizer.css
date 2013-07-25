@@ -1,0 +1,386 @@
+.z-itm-wrap {
+float:left;
+padding-top:2px;
+padding-right:5px;
+}
+
+
+.z-itm b b b {
+border-width:0pt;
+margin:0pt;
+padding:1px 5px;
+}
+.z-itm b b {
+background:transparent none repeat scroll 0%;
+border-width:0pt 1px;
+margin:0pt -1px;
+padding:0pt;
+}
+
+.z-itm b {
+border-color:-moz-use-text-color;
+border-style:solid;
+border-width:1px 0pt;
+float:left;
+font-weight:normal;
+margin:0pt 1px;
+padding:0pt;
+}
+
+.z-color-palette {
+    width: 120px;
+    height: 69px;
+    cursor: pointer;
+}
+
+.z-color-palette a {
+    border: 1px solid #fff;
+    float: left;
+    padding: 2px;
+    text-decoration: none;
+    -moz-outline: 0 none;
+    outline: 0 none;
+    cursor: pointer;
+}
+
+.z-color-palette a:hover, .z-color-palette a.z-color-palette-sel {
+    border: 1px solid #8BB8F3;
+    background: #deecfd;
+}
+
+.z-color-palette em {
+    display: block;
+    border: 1px solid #ACA899;
+    text-align:center;
+}
+
+.z-color-palette em span {
+    cursor: pointer;
+    display: block;
+    height: 12px;
+    line-height: 12px;
+    width: 12px;
+    font-size:10px;
+    padding:0;
+}
+
+.x-menu .z-color-palette, .x-menu .x-date-picker{
+    margin-left: 26px;
+         margin-right:4px;
+}
+.x-menu-plain .z-color-palette, .x-menu-plain .x-date-picker{
+         margin: 0;
+         border: 0 none;
+}
+
+
+	    select{
+		font-size:11px;
+	    }
+	    .image-tip{
+		padding:4px;
+		height:98px;
+		white-space:nowrap;
+	    }
+	    .image-tip img {
+		margin-right:10px;
+		border:2px solid #083772;
+	    }
+	    .image-tip b{
+		color: #083772;
+		display: block;
+		margin-bottom: 4px;
+	    }
+	    .image-tip span{
+		display: block;
+		margin-bottom: 5px;
+		margin-left: 5px;
+	    }
+	    #images{
+	    background: #fff url(  http://www.phigita.net/lib/ext-2.0-beta1/examples/tree/center-bg.gif ) repeat-x top left;
+	    font: 11px Arial, Helvetica, sans-serif;
+	}
+
+        .thumb-inner {
+	    background:#ffffff;
+	    border: 1px solid #e0e0e0;
+	    width:128px;
+	    height:78px;
+	    position:relative;
+	    text-align:center;
+	    vertical-align:middle;
+	}
+
+.search-results {margin:5px;}
+.search-results .page {font-size:10px;padding:2px;}
+
+.s240-wrap{
+width:240px;
+margin:3px;
+}
+
+
+        .item-inner {
+	    background:#ffffff;
+	    border: 1px solid #e0e0e0;
+	    margin:0px;
+	    width:218px;
+	    height:190px;
+	    position:relative;
+	    text-align:center;
+	    vertical-align:middle;
+	}
+	.thumb{
+		width:130px;
+		height:130px;
+		padding:5px;
+        }
+
+
+
+
+.z-permanent-delete-menu {background-image:url(http://www.phigita.net/lib/xo-1.0.0/resources/images/menu/menu-icons-sprite.gif) !important;background-position:0pt -208px !important;}
+.z-upload-menu {background:url(http://www.phigita.net/lib/xo-1.0.0/resources/images/menu/tool_upload.gif) no-repeat top left;}
+.z-delete-menu {background:url(http://www.phigita.net/lib/xo-1.0.0/resources/images/menu/tool_trash.gif) no-repeat top left;}
+.z-undelete-menu {background:url(http://www.phigita.net/lib/xo-1.0.0/resources/images/menu/tool_untrash.gif) no-repeat top left;}
+.z-download-menu {background:url(http://www.phigita.net/lib/xo-1.0.0/resources/images/menu/download.gif) no-repeat top left;}
+.z-publish-menu {background:url(http://www.phigita.net/lib/xo-1.0.0/resources/icons/world_add.png) no-repeat top left;}
+.z-unpublish-menu {background:url(http://www.phigita.net/lib/xo-1.0.0/resources/icons/world_delete.png) no-repeat top left;}
+.z-tag-edit-menu {background:url(http://www.phigita.net/lib/xo-1.0.0/resources/icons/tag_blue_edit) no-repeat top left;}
+.z-star-menu {background:url(http://www.phigita.net/lib/xo-1.0.0/resources/images/menu/star_on_selected.gif) no-repeat top left;}
+.z-unstar-menu {background:url(http://www.phigita.net/lib/xo-1.0.0/resources/images/menu/star_off_selected.gif) no-repeat top left;}
+.z-hide-menu {background:url(http://www.phigita.net/lib/xo-1.0.0/resources/images/menu/tool_hide.gif) no-repeat top left;}
+.z-unhide-menu {background:url(http://www.phigita.net/lib/xo-1.0.0/resources/images/menu/tool_unhide.gif) no-repeat top left;}
+
+.z-menu-rename {background:url(http://www.phigita.net/lib/xo-1.0.0/resources/images/menu/menu_rename.gif) no-repeat top left;}
+
+.z-folder-remove {background:url(http://www.phigita.net/lib/xo-1.0.0/resources/images/menu/tool_removefolder_blue.gif) no-repeat top left;}
+
+
+
+
+.x-btn-text-icon .xo-upload-btn { background:url(http://www.phigita.net/lib/xo-1.0.0/resources/images/menu/tool_upload.gif) no-repeat top left; font-weight:bold;color:#ffffff;}
+
+.z-views-thumb { background:url(http://www.phigita.net/lib/xo-1.0.0/resources/images/views/views-thumb.gif) no-repeat !important; }
+.z-views-tile { background:url(http://www.phigita.net/lib/xo-1.0.0/resources/images/views/views-tile.gif) no-repeat !important; }
+.z-views-icon { background:url(http://www.phigita.net/lib/xo-1.0.0/resources/images/views/views-icon.gif) no-repeat !important; }
+.z-views-detail { background:url(http://www.phigita.net/lib/xo-1.0.0/resources/images/views/views-detail.gif) no-repeat !important; }
+
+.z-tool-new-item {background:#ffffff;}
+.z-tool-new  .x-btn-menu-arrow-el {background:url(http://www.phigita.net/lib/xo-1.0.0/resources/images/menu/tool_arrow_dark.gif) no-repeat left !important;}
+.z-tool-new .z-tool-new-btn {background:url(http://www.phigita.net/lib/xo-1.0.0/resources/images/menu/tool_new.gif) no-repeat left;font-weight:bold;color:#ffffff;}
+
+
+.z-tool-new-folder {background:url(http://www.phigita.net/lib/xo-1.0.0/resources/images/menu/icon_2_folder.gif) no-repeat !important;}
+
+
+.x-menu-item .z-views-thumb { background:url(http://www.phigita.net/lib/xo-1.0.0/resources/images/views/views-thumb.gif) no-repeat top left; }
+.x-menu-item .z-views-tile { background:url(http://www.phigita.net/lib/xo-1.0.0/resources/images/views/views-tile.gif) no-repeat top left; }
+.x-menu-item .z-views-icon { background:url(http://www.phigita.net/lib/xo-1.0.0/resources/images/views/views-icon.gif) no-repeat top left; }
+.x-menu-item .z-views-detail { background:url(http://www.phigita.net/lib/xo-1.0.0/resources/images/views/views-detail.gif) no-repeat top left; }
+
+
+.x-magic-pdf { background:url(http://www.phigita.net/lib/xo-1.0.0/resources/icons/page_white_acrobat) no-repeat top left; }
+.x-magic-doc { background:url(http://www.phigita.net/lib/xo-1.0.0/resources/icons/page_white_word) no-repeat top left; }
+.x-magic-xls { background:url(http://www.phigita.net/lib/xo-1.0.0/resources/icons/page_white_excel) no-repeat top left; }
+.x-magic-mdb { background:url(http://www.phigita.net/lib/xo-1.0.0/resources/icons/page_white_database) no-repeat top left; }
+.x-magic-ppt { background:url(http://www.phigita.net/lib/xo-1.0.0/resources/icons/page_white_powerpoint) no-repeat top left; }
+.x-magic-txt { background:url(http://www.phigita.net/lib/xo-1.0.0/resources/icons/page_white_text) no-repeat top left; }
+
+.x-magic-sxc { background:url(http://www.phigita.net/lib/xo-1.0.0/resources/ooo-icons/ooo-calc-doc-5) no-repeat top left; }
+.x-magic-sxd { background:url(http://www.phigita.net/lib/xo-1.0.0/resources/ooo-icons/ooo-draw-doc-5) no-repeat top left; }
+.x-magic-sxi { background:url(http://www.phigita.net/lib/xo-1.0.0/resources/ooo-icons/ooo-impress-doc-5) no-repeat top left; }
+.x-magic-sxw { background:url(http://www.phigita.net/lib/xo-1.0.0/resources/ooo-icons/ooo-writer-doc-5) no-repeat top left; }
+
+.x-magic-odc { background:url(http://www.phigita.net/lib/xo-1.0.0/resources/ooo-icons/ooo-calc-doc-5) no-repeat top left; }
+.x-magic-odg { background:url(http://www.phigita.net/lib/xo-1.0.0/resources/ooo-icons/ooo-draw-doc-5) no-repeat top left; }
+.x-magic-odi { background:url(http://www.phigita.net/lib/xo-1.0.0/resources/ooo-icons/ooo-impress-doc-5) no-repeat top left; }
+.x-magic-odw { background:url(http://www.phigita.net/lib/xo-1.0.0/resources/ooo-icons/ooo-writer-doc-5) no-repeat top left; }
+.x-magic-odt { background:url(http://www.phigita.net/lib/xo-1.0.0/resources/ooo-icons/ooo-writer-tem-5) no-repeat top left; }
+.x-magic-odb { background:url(http://www.phigita.net/lib/xo-1.0.0/resources/ooo-icons/ooo-base-doc-5) no-repeat top left; }
+
+.x-magic-jpeg { background:url(http://www.phigita.net/lib/xo-1.0.0/resources/icons/picture) no-repeat top left; }
+.x-magic-mov { background:url(http://www.phigita.net/graphics/icon_video) no-repeat top left; }
+.x-magic-mp3 { background:url(http://www.phigita.net/lib/xo-1.0.0/resources/icons/music) no-repeat top left; }
+
+
+
+
+
+    .thumb-inner img{
+        height:70px;
+	max-width:120px;
+	width: expression(this.width > 120 ? 120: true);
+    }
+
+	.thumb-img {
+	margin-left:auto;
+	margin-right:auto;
+		margin-top: 4px;
+	}
+
+    .item-inner img{
+	height:170px;
+	max-width:230px;
+	width: expression(this.width > 230 ? 230: true);
+    }
+
+.s240-wrap .item-img {
+	margin-top:4px;
+}
+
+.s240-title {
+	text-align:center;
+	font-weight:bold;
+}
+
+.s240-tags {text-align:center;font-size:10px;padding-top:4px;color:green;}
+.s240-folder {color:#cc6600;}
+
+
+.thumb-wrap{
+float:left;
+width:140px;
+height:140px;
+margin:5px;
+overflow:hidden;
+}
+
+
+.x-view-over .thumb{
+	background:#FFFFFF url(http://www.phigita.net/lib/xo-1.0.0/resources/images/views/vw-tmb-140x280.gif) no-repeat scroll left top;
+}
+.x-view-selected .thumb{
+	background:#FFFFFF url(http://www.phigita.net/lib/xo-1.0.0/resources/images/views/vw-tmb-140x280.gif) no-repeat scroll left bottom;
+}
+.x-view-selected .thumb-inner{
+	border: 1px solid #AACCF6;
+}
+
+.loading-indicator {
+font-size:8pt;
+background-image:url(http://www.phigita.net/lib/ext-2.0-beta1/resources/images/default/grid/loading.gif);
+background-repeat: no-repeat;
+background-position: left;
+padding-left:20px;
+margin:10px;
+}
+.x-dd-drag-proxy .multi-proxy .thumb-img{
+    height: 20px;
+    width: 30px;
+    margin:1px;
+}
+.x-dd-drag-proxy .thumb-img{
+    height: 60px;
+    width: 80px;
+}
+.image-node .x-tree-node-icon{
+    margin-bottom:1px;
+    height:15px;
+}
+.album-node .x-tree-node-icon, .album-btn{
+    background-image:url( http://www.phigita.net/lib/ext-2.0-beta1/examples/tree/album.gif ) !important;
+}
+#folders{
+position:relative;
+}
+
+
+.thumb-details .z-item-icon {width:16px;height:16px;float:left;}
+
+.z-ft-all { background:url(http://www.phigita.net/lib/xo-1.0.0/resources/icons/images.png) no-repeat  !important; }
+.z-ft-document {background:url(http://www.phigita.net/lib/xo-1.0.0/resources/images/menu/icon_2_doc.gif) no-repeat !important;}
+.z-ft-spreadsheet {background:url(http://www.phigita.net/lib/xo-1.0.0/resources/images/menu/icon_2_spread.gif) no-repeat !important;}
+.z-ft-presentation {background:url(http://www.phigita.net/lib/xo-1.0.0/resources/images/menu/icon_2_pres.gif) no-repeat !important;}
+.z-ft-video { background:url(http://www.phigita.net/graphics/icon_video.gif) no-repeat  !important; }
+.z-ft-photo { background:url(http://www.phigita.net/lib/xo-1.0.0/resources/icons/photo.gif) no-repeat  !important; }
+.z-ft-image { background:url(http://www.phigita.net/lib/xo-1.0.0/resources/images/image.gif) no-repeat  !important;}
+.z-ft-audio { background:url(http://www.phigita.net/lib/xo-1.0.0/resources/icons/ipod.png) no-repeat  !important; }
+.z-ft-database { background:url(http://www.phigita.net/lib/xo-1.0.0/resources/icons/database.gif) no-repeat  !important; }
+
+.z-published {background:url(http://www.phigita.net/lib/xo-1.0.0/resources/icons/world) no-repeat !important;}
+.z-starred {background:url(http://www.phigita.net/lib/xo-1.0.0/resources/images/menu/star_on_unselected.gif) no-repeat !important;}
+.z-hidden {background:url(http://www.phigita.net/lib/xo-1.0.0/resources/images/menu/hidden.gif) no-repeat !important;}
+.z-deleted {background:url(http://www.phigita.net/lib/xo-1.0.0/resources/images/menu/trash.gif) no-repeat !important;}
+.z-all-items {background:url(http://www.phigita.net/lib/xo-1.0.0/resources/images/menu/icon_views.gif) no-repeat !important;}
+.z-itemsnotinfolders {background:url(http://www.phigita.net/lib/xo-1.0.0/resources/images/menu/icon_itemsnotinfolders.gif) no-repeat !important;}
+
+
+
+
+
+
+
+
+//.z-star-f {background:url(http://www.phigita.net/lib/xo-1.0.0/resources/images/menu/star_off_unselected.gif) no-repeat;}
+//.z-star-t {background:url(http://www.phigita.net/graphics/stars/misc/star_on_small.gif) no-repeat;}
+
+.z-star-t {background:url(http://www.phigita.net/lib/xo-1.0.0/resources/images/menu/star_on_unselected.gif) no-repeat !important;}
+.z-star-f {background:url(http://www.phigita.net/graphics/star_off.gif) no-repeat;}
+
+//.x-view-selected .z-star-t {background:url(http://www.phigita.net/lib/xo-1.0.0/resources/images/menu/star_on_selected.gif) no-repeat;}
+//.x-view-selected .z-star-f {background:url(http://www.phigita.net/lib/xo-1.0.0/resources/images/menu/star_off_selected.gif) no-repeat;}
+
+
+
+.thumb-details {
+	margin:1px;
+	position:relative;
+}
+.thumb-details .sn {
+	display:inline;
+	margin-left:36px;
+	font-size:10px;
+	font-weight:bold;
+	vertical-align:middle;
+}
+
+
+.z-shared-t {background-color:#66aa66;}
+.z-shared-f {background-color:#aa6666;}
+
+
+
+.thumb-inner .z-thumb-icon {position:absolute;z-index:1;overflow:hidden;margin:0;padding:0;}
+
+.thumb-details .z-thumb-icon {position:absolute;z-index:1;width:16px;height:16px;overflow:hidden;margin:0;padding:0;}
+
+
+.thumb-inner .first {top:-2px;left:82px;border-bottom:0px;border-right:0px;width:16px;height:3px;}
+.thumb-inner .second {top:2px;left:100px;border-bottom:0px;border-left:0px;width:16px;height:16px;background-color:#ffffff;}
+.thumb-inner .se {top:72px;left:102px;border-top:0px;border-left:0px;}
+
+.thumb-details .first {top:0px;left:0px;}
+.thumb-details .second {top:0px;left:18px;}
+.thumb-details .third {top:36px;left:0px;}
+
+.thumb-tags {font-size:10px;padding-top:4px;color:green;}
+.thumb-folder {color:#cc6600;}
+
+.z-folder {padding:3px;}
+.z-folder a {padding-left:5px;}
+.z-folder a span {
+    font-family:verdana,arial,tahoma,sans-serif;
+    font-size:11px;
+}
+
+.z-folder .x-tree-node-icon {background:url(http://www.phigita.net/lib/xo-1.0.0/resources/images/menu/icon_2_folder.gif) no-repeat !important;}
+
+
+
+
+.z-static-folder {padding:3px;}
+.z-static-folder a {padding:5px;}
+.z-static-folder a span {
+    font-family:verdana,arial,tahoma,sans-serif;
+    font-size:11px;
+}
+
+.cls {padding:3px;}
+.cls a {padding-left:5px;}
+.cls a span {
+    font-family:verdana,arial,tahoma,sans-serif;
+    font-size:11px;
+}
+
+

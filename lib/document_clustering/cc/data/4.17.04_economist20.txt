@@ -1,0 +1,55 @@
+General relativity 
+
+Turn, turn, turn
+
+Apr 15th 2004 
+From The Economist print edition
+
+
+A new satellite will test Einstein's magnum opus
+
+IT WAS the moment that catapulted Albert Einstein to world fame. In
+1919, two teams of British astronomers led by Sir Arthur Eddington
+journeyed to the southern hemisphere to observe a solar
+eclipse. Einstein's general theory of relativity, an explanation of
+how gravity works, predicts that the sun bends light that passes close
+to its surface a few degrees off-course. That will cause stars in the
+same part of the sky as the sun to look out of place. Because of the
+sun's overpowering brightness, such a deviation cannot normally be
+observed. But with the sun's disc obliterated by the eclipsing moon,
+Eddington's colleagues were able to confirm the deviation was as
+Einstein said it should be, and that Newton's model of gravity, then
+two centuries old, was wrong.
+
+A triumph. But experimental tests of general relativity since then
+have been few and far between. So the launch of Gravity Probe B, a
+spacecraft that is scheduled to lift off from Vandenberg Air Force
+Base in California at 10.01am on April 17th, has a particular
+significance for physicists. 
+
+Using a near-perfect set of gyroscopes, Gravity Probe B will test two
+predictions made by general relativity. One, the geodetic effect, has
+been measured before by bouncing lasers off the moon, but the new
+measurements will be 20 times more precise. The other, frame-dragging,
+has never been measured before.
+
+The geodetic effect is caused by a distortion that the Earth's mass
+makes in the fabric of space. This distortion should cause the
+gyroscopes to wobble on their axes massive bodies rotate. (In essence,
+such bodies drag space round with them.) Frame-dragging is predicted
+to cause an additional precession of one hundred-thousandth of a
+degree, perpendicular to that caused by the geodetic effect.
+
+To measure that, the four gyroscopes in Gravity Probe B are made of
+fused quartz spheres, which will not expand or contract as the
+temperature changes. These spheres have been polished so perfectly
+that, if they were magnified to be the size of the Earth, the
+blemishes on their surfaces would be less than five metres high. 
+
+These perfect spheres are coated with niobium, a metal which, when
+kept close to absolute zero, is a superconductor. A spinning
+superconductor creates a magnetic field whose direction indicates its
+axis of rotation it all, the rocket that will put Gravity Probe B into
+orbit has to be launched within  a a mere one second long if it is to
+deliver its payload into the correct orbit. If it misses this window,
+further opportunities occur at intervals of 23 hours and 56 minutes

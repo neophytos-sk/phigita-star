@@ -1,0 +1,16 @@
+Received: from [110.52.7.78] (port=4161 helo=scpvidy)
+	by host.arabsgate35.com with esmtpa (Exim 4.69)
+	(envelope-from <farooq@rae.com.sa>)
+	id 1RGcO4-0007mP-GI; Wed, 19 Oct 2011 23:05:18 +0300 
+Message-ID: <20111020040810637424@rae.com.sa> 
+From: =?gb2312?B?wsC++M3B?= <farooq@rae.com.sa> 
+To:  
+Subject: =?gb2312?B?a2t0YbjfLtCnLtXQLsa4LtPrLsPmLsrULry8Lg==?=
+	=?gb2312?B?x8kuNDowODowNg==?= 
+Date: Thu, 20 Oct 2011 04:07:57 +0800 
+X-mailer: Gsdst 6 
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report Primary Hostname - host.arabsgate35.com Original Domain - phigita.net Originator/Caller UID/GID - [47 12] / [47 12] Sender Address Domain - rae.com.sa 
+X-Source:  
+X-Source-Args:  
+X-Source-Dir:  
+Whoops!  What is a 'application/vnd.ms-excel'?

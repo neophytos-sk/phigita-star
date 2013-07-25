@@ -1,0 +1,645 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html><head><title>Calendar</title>
+
+
+    
+    <link rel="stylesheet" type="text/css" href="cal-item-new_files/dotlrn-master.css" media="all">
+    <link rel="stylesheet" type="text/css" href="cal-item-new_files/dotlrn-toolbar.css" media="all">
+    <link rel="stylesheet" type="text/css" href="cal-item-new_files/calendar.css" media="all">
+    
+  <link href="cal-item-new_files/calendar.css" rel="stylesheet" type="text/css">
+
+          <script language="JavaScript">
+            function acs_focus( form_name, element_name ){
+                if (document.forms == null) return;
+                if (document.forms[form_name] == null) return;
+                if (document.forms[form_name].elements[element_name] == null) return;
+                if (document.forms[form_name].elements[element_name].type == 'hidden') return;
+
+                document.forms[form_name].elements[element_name].focus();
+            }
+          </script>
+        
+    
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+
+
+
+.page-body {
+    FONT-SIZE: medium;
+    COLOR: black;
+    FONT-FAMILY: Arial, Helvetica, sans-serif;
+}
+
+</style>
+
+
+  
+    <link rel="stylesheet" type="text/css" href="cal-item-new_files/site-master.css" media="all">
+  
+
+  <link rel="stylesheet" type="text/css" href="cal-item-new_files/lists.css" media="all">
+
+  <link rel="stylesheet" type="text/css" href="cal-item-new_files/forms.css" media="all">
+
+  <link rel="stylesheet" type="text/css" href="cal-item-new_files/default-master.css" media="all">
+
+<script type="text/javascript" src="cal-item-new_files/core.js" language="javascript"></script></head>
+
+<body bgcolor="white" text="black">
+
+    
+  <input name="search_type" value="All+matches" type="hidden">
+        <input value="5" name="name_weight" type="hidden">
+        <input value="3" name="param_weight" type="hidden">
+        <input value="2" name="doc_weight" type="hidden">
+
+        <table id="developer-toolbar" border="0" cellpadding="0" cellspacing="0" width="100%">
+    <tbody><tr>
+      <td>
+        <a href="https://dotlrn.uni-mannheim.de/ds/">Developer Support</a>
+      </td>
+
+      <td class="action-list">
+        <ul>
+          <li><a href="https://dotlrn.uni-mannheim.de/ds/set-user-switching-enabled?return%5furl=%2fdotlrn%2fcalendar%2fcal%2ditem%2dnew%3fdate%3d2006%252d10%252d17%26start%255ftime%3d8&amp;enabled%5fp=1" class="off" title="User switching">USR</a></li>
+          <li><a href="https://dotlrn.uni-mannheim.de/ds/set-database-enabled?return%5furl=%2fdotlrn%2fcalendar%2fcal%2ditem%2dnew%3fdate%3d2006%252d10%252d17%26start%255ftime%3d8&amp;enabled%5fp=1" class="off" title="Database statistics">DB</a></li>
+          <li><a href="https://dotlrn.uni-mannheim.de/acs-lang/admin/translator-mode-toggle?return%5furl=%2fdotlrn%2fcalendar%2fcal%2ditem%2dnew%3fdate%3d2006%252d10%252d17%26start%255ftime%3d8" class="off" title="Translator mode">TRN</a></li>
+        </ul>
+      </td>
+
+      <td class="action-list" align="center">
+        <ul>
+          <li><a href="https://dotlrn.uni-mannheim.de/ds/request-info?request=32244" title="View request information">295 ms</a>
+          <span style="color: rgb(204, 204, 204);">|</span></li>
+          <li><a href="https://dotlrn.uni-mannheim.de/admin" title="Administration Cockpit">Cockpit</a>
+          <span style="color: rgb(204, 204, 204);">|</span></li>
+          <li><a href="https://dotlrn.uni-mannheim.de/ds/shell" title="Execute commands and see the result">Shell</a>
+          <span style="color: rgb(204, 204, 204);">|</span></li>
+          <li><a href="https://dotlrn.uni-mannheim.de/acs-admin/apm/" title="Modify/reload packages">APM</a>
+          <span style="color: rgb(204, 204, 204);">|</span></li>
+          <li><a href="https://dotlrn.uni-mannheim.de/admin/site-map/" title="Manage your package instances">Site Map</a>
+          <span style="color: rgb(204, 204, 204);">|</span></li>
+          <li><a href="https://dotlrn.uni-mannheim.de/acs-admin/apm/?reload_links_p=1" title="Scan for changed library files">Changed</a>
+          <span style="color: rgb(204, 204, 204);">|</span></li>
+          <li><a href="https://dotlrn.uni-mannheim.de/acs-admin/cache/flush-cache?suffix=util%5fmemoize&amp;return%5furl=%2fdotlrn%2fcalendar%2fcal%2ditem%2dnew%3fdate%3d2006%252d10%252d17%26start%255ftime%3d8" title="Flush entire util_memoize cache">Flush</a>
+          <span style="color: rgb(204, 204, 204);">|</span></li>
+          <li><a href="" title="Automated Testing Home">Test</a>
+          <span style="color: rgb(204, 204, 204);">|</span></li>
+          <li><a href="https://dotlrn.uni-mannheim.de/acs-admin/users/" title="Add/edit/become users">Users</a>
+          <span style="color: rgb(204, 204, 204);">|</span></li>
+          <li><a href="https://dotlrn.uni-mannheim.de/acs-lang/admin/" title="Add/edit message keys">I18n</a>
+          <span style="color: rgb(204, 204, 204);">|</span></li>
+          <li><a href="https://dotlrn.uni-mannheim.de/doc/" title="View system documentation">Docs</a>
+          <span style="color: rgb(204, 204, 204);">|</span></li>
+          <li><a href="https://dotlrn.uni-mannheim.de/api-doc/" title="View/search OpenACS Tcl API documentation">API doc</a></li>
+        </ul>
+      </td>
+
+      <form action="/api-doc/proc-search"></form>
+        <td style="padding-right: 4px;" id="search" align="right">
+          <input name="query_string" onfocus="if(this.value=='Search API')this.value='';" onblur="if(this.value=='')this.value='Search API';" value="Search API">
+          <input value="Go" type="submit">
+        </td>
+      
+    </tr>
+  </tbody></table>
+
+
+<!-- script src="/dotlrn/design/scripts/zufallscript.js" type="text/javascript" language="javascript"></script --> 
+
+<!-- Header -->
+<!-- unima-nm BEGIN -->
+                                        <!-- ################### Header Begin ############################ -->
+                                        <table cellpadding="0" cellspacing="0" width="100%">
+                                                <tbody><tr>
+                                                        <td class="header-blank"><a href="https://dotlrn.uni-mannheim.de/dotlrn/?"><img src="cal-item-new_files/logoUniMannheim.gif" alt="Header Logo" border="0" height="92" width="280"></a> </td>
+                                                        <td class="header-quadrat"><img src="cal-item-new_files/spacer.html" alt="" border="0" height="1" width="96"></td>
+                                                        <td class="header-zufall">
+                                                                <!-- hier das zufaellig ausgewaehlte bild -->
+                                                                <!-- script language = "JavaScript">
+                                                                        zufallsBildzeigen()
+                                                                </script -->
+	                                                        <img src="cal-item-new_files/010.jpg">
+                                                        </td>
+							<td class="header-text" align="center">
+							 <!-- font color="black" face="Arial, Helvetica, sans-serif"></font -->
+							</td>
+                                                        <td class="header-text" align="right">
+                                                                
+                                                                <span style="position: relative; top: 10px;">
+								      Nima Mazloumi
+								</span>
+                                                        </td>
+                                                </tr>
+                                        </tbody></table>
+                                        <!-- ####################### Header End ########################## -->
+<!-- unima-nm END -->
+
+<table class="subsite-header" border="0" cellpadding="0" cellspacing="0" width="100%">
+  <tbody><tr class="subsite-header">
+    <td class="system-name">
+      <a href="https://dotlrn.uni-mannheim.de/" class="system-name">dotLRN</a>
+    </td>
+    <td class="subsite-header" style="padding-right: 8px;" align="right">
+      
+        &nbsp;
+        <a href="https://dotlrn.uni-mannheim.de/pvt/home" title="Change password, email, portrait" class="button">Your Account</a>
+      
+        &nbsp;
+        <a class="button" href="https://dotlrn.uni-mannheim.de/dotlrn/help">Help</a>
+      
+        &nbsp;
+        <a href="https://dotlrn.uni-mannheim.de/register/logout" title="Logout from dotLRN" class="button">Logout</a>
+      
+    </td>
+  </tr>
+</tbody></table>
+
+
+
+<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">
+		<tbody><tr>
+			<td>
+				<div id="head-area" style="position: relative;">                                        
+					<!-- ####################### Navbar Begin ########################## -->
+					
+					  <div id="main-navigation"><ul><li><a href="https://dotlrn.uni-mannheim.de/dotlrn/?page_num=0">My Space</a> </li><li><a href="https://dotlrn.uni-mannheim.de/dotlrn/?page_num=1">My Calendar</a> </li><li><a href="https://dotlrn.uni-mannheim.de/dotlrn/?page_num=2">My Files</a> </li><li><a href="https://dotlrn.uni-mannheim.de/dotlrn/control-panel">Control Panel</a></li></ul></div><table class="navbar-tabelle" cellpadding="0" cellspacing="0" width="100%"><tbody><tr></tr></tbody></table><br>
+					  <small></small><p class="context-bar" width="100%"></p></div></td></tr><tr><td><small></small>
+  					
+					<!-- ####################### Navbar End ########################## -->
+				
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+
+			<div id="inhalt" style="position: relative; width: 100%;">
+			<!-- #################### hier der eigentliche Inhalt ############################ -->
+
+				<!-- alle inhalte innerhalb dieser tabelle einfuegen -->
+				<table style="background-color: rgb(255, 255, 255);" border="0" cellpadding="0" cellspacing="0" width="100%">
+					<tbody><tr valign="top">
+						<td>
+						
+							<img src="cal-item-new_files/spacer.html" alt="" align="left" border="0" height="450" width="1">
+							
+							<gatekeeper>
+							<wrapper>
+  							
+
+
+<script language="JavaScript">
+    function TimePChanged(elm) {
+      var form_name = "cal_item";
+
+      if (elm == null) return;
+      if (document.forms == null) return;
+      if (document.forms[form_name] == null) return;
+
+      if (elm.value == 0) {
+          
+            document.forms[form_name].elements["start_time.short_hours"].disabled = true;
+            document.forms[form_name].elements["end_time.short_hours"].disabled = true;
+          
+            document.forms[form_name].elements["start_time.minutes"].disabled = true;
+            document.forms[form_name].elements["end_time.minutes"].disabled = true;
+          
+            document.forms[form_name].elements["start_time.ampm"].disabled = true;
+            document.forms[form_name].elements["end_time.ampm"].disabled = true;
+          
+      } else {
+          
+            document.forms[form_name].elements["start_time.short_hours"].disabled = false;
+            document.forms[form_name].elements["end_time.short_hours"].disabled = false;
+          
+            document.forms[form_name].elements["start_time.minutes"].disabled = false;
+            document.forms[form_name].elements["end_time.minutes"].disabled = false;
+          
+            document.forms[form_name].elements["start_time.ampm"].disabled = false;
+            document.forms[form_name].elements["end_time.ampm"].disabled = false;
+          
+      }
+  }
+</script>
+
+  </wrapper></gatekeeper><div id="viewadp-mini-calendar">
+    <table class="mini-calendar" cellpadding="0" cellspacing="0">
+  <tbody><tr class="view-list">
+    
+        <td>
+          <a href="https://dotlrn.uni-mannheim.de/dotlrn/calendar/view?date=2006%2d10%2d17&amp;view=list">List</a>
+        </td>
+      
+        <td>
+          <a href="https://dotlrn.uni-mannheim.de/dotlrn/calendar/view?date=2006%2d10%2d17&amp;view=day">Day</a>
+        </td>
+      
+        <td>
+          <a href="https://dotlrn.uni-mannheim.de/dotlrn/calendar/view?date=2006%2d10%2d17&amp;view=week">Week</a>
+        </td>
+      
+        <td class="selected">
+          <a href="https://dotlrn.uni-mannheim.de/dotlrn/calendar/view?date=2006%2d10%2d17&amp;view=month">Month</a>
+        </td>
+      
+  </tr>
+  
+  <tr>
+    <td colspan="4">
+      <table class="header" cellpadding="0" cellspacing="0">
+        <tbody><tr>
+          
+            <td class="back">
+              <a href="https://dotlrn.uni-mannheim.de/dotlrn/calendar/view?view=month&amp;date=2005-10-17"><img src="cal-item-new_files/left.gif" border="0"></a>
+            </td>
+            <td class="current_view" colspan="2">2006</td>
+            <td class="forward">
+              <a href="https://dotlrn.uni-mannheim.de/dotlrn/calendar/view?view=month&amp;date=2007-10-17"><img src="cal-item-new_files/right.gif" border="0"></a>
+            </td>
+          
+        </tr>
+      </tbody></table>
+    </td>
+  </tr>
+    
+  
+  <tr>
+    <td colspan="4">
+      <table id="at-a-glance" cellpadding="0" cellspacing="0">
+
+        
+              <tbody><tr><td class="months"><a href="https://dotlrn.uni-mannheim.de/dotlrn/calendar/view?date=2006%2d01%2d17&amp;view=month">January</a></td>
+            
+              <td class="months"><a href="https://dotlrn.uni-mannheim.de/dotlrn/calendar/view?date=2006%2d02%2d17&amp;view=month">February</a></td>
+            
+              <td class="months"><a href="https://dotlrn.uni-mannheim.de/dotlrn/calendar/view?date=2006%2d03%2d17&amp;view=month">March</a></td>
+            
+              </tr><tr>
+            
+              <td class="months"><a href="https://dotlrn.uni-mannheim.de/dotlrn/calendar/view?date=2006%2d04%2d17&amp;view=month">April</a></td>
+            
+              <td class="months"><a href="https://dotlrn.uni-mannheim.de/dotlrn/calendar/view?date=2006%2d05%2d17&amp;view=month">May</a></td>
+            
+              <td class="months"><a href="https://dotlrn.uni-mannheim.de/dotlrn/calendar/view?date=2006%2d06%2d17&amp;view=month">June</a></td>
+            
+              </tr><tr>
+            
+              <td class="months"><a href="https://dotlrn.uni-mannheim.de/dotlrn/calendar/view?date=2006%2d07%2d17&amp;view=month">July</a></td>
+            
+              <td class="months"><a href="https://dotlrn.uni-mannheim.de/dotlrn/calendar/view?date=2006%2d08%2d17&amp;view=month">August</a></td>
+            
+              <td class="months"><a href="https://dotlrn.uni-mannheim.de/dotlrn/calendar/view?date=2006%2d09%2d17&amp;view=month">September</a></td>
+            
+              </tr><tr>
+            
+              <td class="months selected"><a href="https://dotlrn.uni-mannheim.de/dotlrn/calendar/view?date=2006%2d10%2d17&amp;view=month">October</a></td>
+            
+              <td class="months"><a href="https://dotlrn.uni-mannheim.de/dotlrn/calendar/view?date=2006%2d11%2d17&amp;view=month">November</a></td>
+            
+              <td class="months"><a href="https://dotlrn.uni-mannheim.de/dotlrn/calendar/view?date=2006%2d12%2d17&amp;view=month">December</a></td>
+            
+ 
+      </tr></tbody></table>
+  
+    </td>
+  </tr>
+  <tr id="jump">
+    <td colspan="4">
+      <p>  
+      
+        <a href="https://dotlrn.uni-mannheim.de/dotlrn/calendar/view?view=day&amp;date=2006-10-17">Today</a> 
+       
+  
+      is 10/17/06
+      </p>  
+
+      <form method="get" action="view">
+        <input name="date" size="10" type="text"> 
+        <input name="submit" value="submit" src="cal-item-new_files/go_de_DE.gif" alt="submit" type="image">
+
+        <br>Date as YYYYMMDD
+        <input name="view" value="day" type="hidden">
+        
+        
+      </form>
+    </td>
+  </tr>
+</tbody></table>
+
+  </div>
+
+  <div id="events">   
+    <form name="cal_item" method="post" action="/dotlrn/calendar/cal-item-new"><input name="form:mode" value="edit" type="hidden">
+<input name="form:id" value="cal_item" type="hidden">
+<input name="__confirmed_p" value="0" type="hidden"><input value="0" name="__refreshing_p" type="hidden"><input value="94 0 B1EAB11BE117B237233FEB6F76F2AC3DFCD41238" name="__key_signature" type="hidden"><input value="1" name="__new_p" type="hidden"><input value="3876835" name="cal_item_id" type="hidden">
+          <table border="0" cellpadding="2" cellspacing="2">
+  <tbody><tr class="form-element">
+
+            
+                
+                  <td class="form-label">
+                
+              
+                Title
+                <span class="form-required-mark">*</span>
+               </td>
+            
+                
+                  <td class="form-widget">
+                <input name="title" size="60" type="text">
+              
+
+            </td>
+          </tr>
+
+        
+          <tr class="form-element">
+
+            
+                
+                  <td class="form-label">
+                
+              
+                Date
+                <span class="form-required-mark">*</span>
+               </td>
+            
+                
+                  <td class="form-widget">
+                <input name="date" value="2006-10-17" id="sel1" type="text"> <input value=" ... " onclick="return showCalendar('sel1', 'y-m-d');" type="reset"> [y m d]
+              
+
+            </td>
+          </tr>
+
+        
+          <tr class="form-element">
+
+            
+                
+                  <td class="form-label">
+                
+              
+                &nbsp;
+                <span class="form-required-mark">*</span>
+               </td>
+            
+                
+                  <td class="form-widget">
+                
+              
+                  <table class="formgroup">
+                    
+                      <tbody><tr>
+                        <td> <input name="time_p" value="0" id="cal_item:elements:time_p:0" onclick="javascript:TimePChanged(this);" type="radio"> </td>
+                        <td class="form-widget">
+                          <label for="cal_item:elements:time_p:0">
+                            All Day Event
+                          </label>
+                        </td>
+                      </tr>
+                    
+                      <tr>
+                        <td> <input name="time_p" value="1" id="cal_item:elements:time_p:1" checked="checked" onclick="javascript:TimePChanged(this);" type="radio"> </td>
+                        <td class="form-widget">
+                          <label for="cal_item:elements:time_p:1">
+                            Use Hours Below:
+                          </label>
+                        </td>
+                      </tr>
+                    
+                  </tbody></table>
+                
+                
+              
+
+            </td>
+          </tr>
+
+        
+          <tr class="form-element">
+
+            
+                
+                  <td class="form-label">
+                
+              
+                Start Time
+                
+               </td>
+            
+                
+                  <td class="form-widget">
+                <!-- date start_time begin -->
+<input name="start_time.format" value="HH12:MI AM" type="hidden">
+<table border="0" cellpadding="0" cellspacing="2">
+<tbody><tr><td nowrap="nowrap"><select style="visibility: visible;" name="start_time.short_hours"><option value="">--</option><option value="1">01</option><option value="2">02</option><option value="3">03</option><option value="4">04</option><option value="5">05</option><option value="6">06</option><option value="7">07</option><option value="8" selected="selected">08</option><option value="9">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option></select>:</td>
+<td nowrap="nowrap"><select style="visibility: visible;" name="start_time.minutes"><option value="">--</option><option value="0" selected="selected">00</option><option value="5">05</option><option value="10">10</option><option value="15">15</option><option value="20">20</option><option value="25">25</option><option value="30">30</option><option value="35">35</option><option value="40">40</option><option value="45">45</option><option value="50">50</option><option value="55">55</option></select>&nbsp;</td>
+<td nowrap="nowrap"><select style="visibility: visible;" name="start_time.ampm"><option value="am" selected="selected">A.M.</option><option value="pm">P.M.</option></select></td>
+</tr>
+</tbody></table>
+<!-- date start_time end -->
+              
+
+            </td>
+          </tr>
+
+        
+          <tr class="form-element">
+
+            
+                
+                  <td class="form-label">
+                
+              
+                End Time
+                
+               </td>
+            
+                
+                  <td class="form-widget">
+                <!-- date end_time begin -->
+<input name="end_time.format" value="HH12:MI AM" type="hidden">
+<table border="0" cellpadding="0" cellspacing="2">
+<tbody><tr><td nowrap="nowrap"><select style="visibility: visible;" name="end_time.short_hours"><option value="">--</option><option value="1">01</option><option value="2">02</option><option value="3">03</option><option value="4">04</option><option value="5">05</option><option value="6">06</option><option value="7">07</option><option value="8">08</option><option value="9" selected="selected">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option></select>:</td>
+<td nowrap="nowrap"><select style="visibility: visible;" name="end_time.minutes"><option value="">--</option><option value="0" selected="selected">00</option><option value="5">05</option><option value="10">10</option><option value="15">15</option><option value="20">20</option><option value="25">25</option><option value="30">30</option><option value="35">35</option><option value="40">40</option><option value="45">45</option><option value="50">50</option><option value="55">55</option></select>&nbsp;</td>
+<td nowrap="nowrap"><select style="visibility: visible;" name="end_time.ampm"><option value="am" selected="selected">A.M.</option><option value="pm">P.M.</option></select></td>
+</tr>
+</tbody></table>
+<!-- date end_time end -->
+              
+
+            </td>
+          </tr>
+
+        
+          <tr class="form-element">
+
+            
+                
+                  <td class="form-label">
+                
+              
+                Description
+                
+               </td>
+            
+                
+                  <td class="form-widget">
+                <textarea name="description" cols="60" wrap="soft" rows="3"></textarea><br>Spellcheck: 
+<select style="visibility: visible;" name="description.spellcheck"><option value=":nospell:" selected="selected">No</option><option value="en">Yes</option></select>
+              
+
+            </td>
+          </tr>
+
+        
+          <tr class="form-element">
+
+            
+                
+                  <td class="form-label">
+                
+              
+                Sharing
+                <span class="form-required-mark">*</span>
+               </td>
+            
+                
+                  <td class="form-widget">
+                
+              
+                  <table class="formgroup">
+                    
+                      <tbody><tr>
+                        <td> <input name="calendar_id" value="1297696" id="cal_item:elements:calendar_id:1297696" checked="checked" type="radio"> </td>
+                        <td class="form-widget">
+                          <label for="cal_item:elements:calendar_id:1297696">
+                            Personal
+                          </label>
+                        </td>
+                      </tr>
+                    
+                  </tbody></table>
+                
+                
+              
+
+            </td>
+          </tr>
+
+        
+          <tr class="form-element">
+
+            
+                
+                  <td class="form-label">
+                
+              
+                Repeat?
+                <span class="form-required-mark">*</span>
+               </td>
+            
+                
+                  <td class="form-widget">
+                
+              
+                  <table class="formgroup">
+                    
+                      <tbody><tr>
+                        <td> <input name="repeat_p" value="1" id="cal_item:elements:repeat_p:1" type="radio"> </td>
+                        <td class="form-widget">
+                          <label for="cal_item:elements:repeat_p:1">
+                            Yes
+                          </label>
+                        </td>
+                      </tr>
+                    
+                      <tr>
+                        <td> <input name="repeat_p" value="0" id="cal_item:elements:repeat_p:0" checked="checked" type="radio"> </td>
+                        <td class="form-widget">
+                          <label for="cal_item:elements:repeat_p:0">
+                            No
+                          </label>
+                        </td>
+                      </tr>
+                    
+                  </tbody></table>
+                
+                
+              
+
+            </td>
+          </tr>
+
+        
+          <tr class="form-element">
+            <td colspan="2" align="left">
+              <input name="formbutton:ok" value="       OK       " type="submit">
+            </td>
+          </tr>
+        
+
+</tbody></table>
+
+
+       <span class="form-required-mark">*</span> required </form>
+  </div>
+
+
+<script language="JavaScript">
+  TimePChanged();
+</script>
+
+
+						</td>
+					</tr>
+				</tbody></table>
+
+			<!-- #################### ENDE eigentliche Inhalt ############################ -->
+			</div>
+
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<!-- ####################### Footer Begin: dotLRN info links ############################-->
+				<div id="footer-area" style="position: relative;">
+					<!-- ####################### Navbar Begin ########################## -->
+										
+										<table class="navbar-tabelle" cellpadding="0" cellspacing="0" width="100%">
+											<tbody><tr>
+												<!-- navbar;noquote -->
+												
+											</tr>
+										</tbody></table>
+					  					
+					<!-- ####################### Navbar End ########################## -->
+
+					<div class="footer">
+						  <!-- a href="/support">dotLRN Support</a> | 
+						  <a href="/dotlrn/control-panel">Help</a> | 
+					      <a href="/installations">Nutzerkreis</a> | 
+					      <a href="http://www.dotlrn.org">dotLRN Home</a> | 
+					      <a href="http://www.openacs.org/projects/dotlrn">dotLRN Project Central</a> |--> 
+					      <a href="https://dotlrn.uni-mannheim.de/acs-lang/?package%5fid=1444" style="border-right: medium none; padding-right: 0pt;">Change Locale</a>
+					</div>
+				</div>
+				<div class="footer"><div class="developer-support"><a href="https://dotlrn.uni-mannheim.de/ds/">Developer Support Home</a> - <a href="https://dotlrn.uni-mannheim.de/ds/request-info?request=32244">Request Information</a><br>Page served in 231 ms<br>
+Comments: <b>On</b> | <a href="https://dotlrn.uni-mannheim.de/ds/comments-toggle?return%5furl=%2fdotlrn%2fcalendar%2fcal%2ditem%2dnew%3fdate%3d2006%252d10%252d17%26start%255ftime%3d8">Off</a><br></div>
+				<p>
+					
+ 	 			</p>
+				<!-- ###################### Footer End ########################### -->
+			</div></td>
+		</tr>
+	</tbody></table>
+
+<!-- page-body -->
+<p>
+
+</p><div style="position: absolute; left: 324px; top: 184px; display: none;" class="calendar"><table cellpadding="0" cellspacing="0"><thead><tr><td class="button" colspan="1">-</td><td style="cursor: move;" class="title" colspan="6">October, 2006</td><td class="button" colspan="1">×</td></tr><tr class="headrow"><td class="button" colspan="1">«</td><td class="button" colspan="1">‹</td><td class="button" colspan="4">Today</td><td class="button" colspan="1">›</td><td class="button" colspan="1">»</td></tr><tr class="daynames"><td class="name wn">wk</td><td class="day name">Mon</td><td class="day name">Tue</td><td class="day name">Wed</td><td class="day name">Thu</td><td class="day name">Fri</td><td class="name day weekend">Sat</td><td class="name day weekend">Sun</td></tr></thead><tbody><tr class="daysrow"><td class="day wn">39</td><td class="day">&nbsp;</td><td class="day">&nbsp;</td><td class="day">&nbsp;</td><td class="day">&nbsp;</td><td class="day">&nbsp;</td><td class="day">&nbsp;</td><td class="day weekend">1</td></tr><tr class="daysrow"><td class="day wn">40</td><td class="day">2</td><td class="day">3</td><td class="day">4</td><td class="day">5</td><td class="day">6</td><td class="day weekend">7</td><td class="day weekend">8</td></tr><tr class="daysrow"><td class="day wn">41</td><td class="day">9</td><td class="day">10</td><td class="day">11</td><td class="day">12</td><td class="selected day">13</td><td class="day weekend">14</td><td class="day weekend">15</td></tr><tr class="daysrow"><td class="day wn">42</td><td class="day">16</td><td class="today day">17</td><td class="day">18</td><td class="day">19</td><td class="day">20</td><td class="day weekend">21</td><td class="day weekend">22</td></tr><tr class="daysrow"><td class="day wn">43</td><td class="day">23</td><td class="day">24</td><td class="day">25</td><td class="day">26</td><td class="day">27</td><td class="day weekend">28</td><td class="day weekend">29</td></tr><tr class="daysrow"><td class="day wn">44</td><td class="day">30</td><td class="day">31</td><td class="day">&nbsp;</td><td class="day">&nbsp;</td><td class="day">&nbsp;</td><td class="day">&nbsp;</td><td class="day">&nbsp;</td></tr></tbody><tfoot><tr class="footrow"><td style="cursor: move;" class="ttip" colspan="8">Close</td></tr></tfoot></table><div style="display: none;" class="combo"><div class="label">Jan</div><div class="label">Feb</div><div class="label">Mar</div><div class="label">Apr</div><div class="label">May</div><div class="label">Jun</div><div class="label">Jul</div><div class="label">Aug</div><div class="label">Sep</div><div class="label">Oct</div><div class="label">Nov</div><div class="label">Dec</div></div><div style="display: none;" class="combo"><div class="label"></div><div class="label"></div><div class="label"></div><div class="label"></div><div class="label"></div><div class="label"></div><div class="label"></div><div class="label"></div><div class="label"></div><div class="label"></div><div class="label"></div><div class="label"></div></div></div></body></html>

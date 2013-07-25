@@ -1,0 +1,1 @@
+  graf3d/ftgl/src/FTGLBitmapFont.o graf3d/ftgl/src/FTGLBitmapFont.d: $(wildcard include/FTGLBitmapFont.h include/FTFont.h include/FTFace.h include/FTGL.h include/FTPoint.h include/FTSize.h include/FTBitmapGlyph.h include/FTGlyph.h include/FTBBox.h)

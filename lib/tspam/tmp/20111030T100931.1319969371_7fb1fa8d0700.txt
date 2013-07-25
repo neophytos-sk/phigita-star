@@ -1,0 +1,13 @@
+Received: from alcom-group.com (localhost [127.0.0.1])
+	by alcom-group.com (Postfix) with ESMTP id 717A96D4697;
+	Sun, 30 Oct 2011 11:08:41 +0100 (CET) from ysdicfde (unknown [42.49.133.232])
+	by alcom-group.com (Postfix) with ESMTP id AC6D56D4617;
+	Sun, 30 Oct 2011 11:08:34 +0100 (CET) 
+Message-ID: <20111030180844787343@alcom-consulting.com> 
+From: =?gb2312?B?y87RqcDy?= <test@alcom-consulting.com> 
+To:  
+Subject: =?gb2312?B?vKgg0Kcgv7wgusstLS0ty87RqcDy?= 
+Date: Sun, 30 Oct 2011 18:08:34 +0800 
+X-mailer: Lzs 9 
+X-Virus-Scanned: ClamAV using ClamSMTP 
+Whoops!  What is a 'application/vnd.ms-excel'?

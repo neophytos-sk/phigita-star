@@ -1,0 +1,30 @@
+X-ASG-Debug-ID: 1318946629-02dff77f431e5cf0001-ppWF3W 
+Received: from mgxtdbp (hn.kd.ny.adsl [115.63.8.184]) by barracuda.wnd.gov.cn with ESMTP id 3zOtpTpSbGvGqi94; Tue, 18 Oct 2011 22:03:51 +0800 (CST) 
+X-Barracuda-Envelope-From: zxf@wnd.gov.cn 
+X-Barracuda-AUTH-User: zxf 
+X-Barracuda-Apparent-Source-IP: 115.63.8.184 
+Message-ID: <20111018220402327746@wnd.gov.cn> 
+From: "bop" <zxf@wnd.gov.cn> 
+To:  
+Subject: =?gb2312?B?YWEgus8guPEgtcQgudwgwO0g1d8gIDIyOjA=?=
+	=?gb2312?B?Mzo1Mw==?= 
+Date: Tue, 18 Oct 2011 22:03:55 +0800 
+X-ASG-Orig-Subj: =?gb2312?B?YWEgus8guPEgtcQgudwgwO0g1d8gIDIyOjA=?=
+	=?gb2312?B?Mzo1Mw==?= 
+X-mailer: Vjwbv 6 
+X-Barracuda-Connect: hn.kd.ny.adsl[115.63.8.184] 
+X-Barracuda-Start-Time: 1318946629 
+X-Barracuda-URL: http://192.168.80.52:8000/cgi-mod/mark.cgi 
+X-Virus-Scanned: by bsmtpd at wnd.gov.cn 
+X-Barracuda-Spam-Score: 0.53 
+X-Barracuda-Spam-Status: No, SCORE=0.53 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=5.0 tests=BSF_SC0_TG035a, HTML_MESSAGE, MIME_BASE64_TEXT, MIME_HTML_ONLY, TO_CC_NONE 
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.2.63495
+	Rule breakdown below
+	 pts rule name              description
+	---- ---------------------- --------------------------------------------------
+	0.00 MIME_HTML_ONLY         BODY: Message only has text/html MIME parts
+	0.00 HTML_MESSAGE           BODY: HTML included in message
+	0.52 MIME_BASE64_TEXT       RAW: Message text disguised using base64 encoding
+	0.00 BSF_SC0_TG035a         Message contains invalid style definition
+	0.00 TO_CC_NONE             No To: or Cc: header 
+Whoops!  What is a 'application/vnd.ms-excel'?

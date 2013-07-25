@@ -1,0 +1,3286 @@
+/* desktop.default.css */
+
+
+body{
+    padding:0;
+    margin:0;
+    color: #333;
+    background: #f9f9fa;
+}
+
+#backgroundImage{
+    
+    width:100%;
+    height:100%;
+    position:fixed;
+    top:0;
+    left:0;
+    opacity: 1;
+}
+
+
+
+
+.project, .children{
+    display:none;
+}
+
+.parent, .selected .project, .selected, .selected .open > .children, .parent > .children, .selected > .children{
+    display:block;
+}
+
+.project.done{
+    display:none;
+}
+
+.showCompleted .selected .project.done, .parent.done, .selected.done{
+    display:block;
+}
+
+body.searching .selected .project,
+body.searching .selected .project.done
+{
+    display:none;
+}
+
+body.searching .selected .project.matches,
+body.searching .selected .project.uncompletedDescendantMatches,
+body.searching .selected .project.terminalMatch .project
+{
+    display:block;
+}
+
+body.searching .selected .project.matches.done,
+body.searching .selected .project.uncompletedDescendantMatches.done,
+body.searching .selected .project.terminalMatch .project.done
+{
+    display:none;
+}
+
+body.searching.showCompleted .selected .project.matches.done,
+body.searching.showCompleted .selected .project.uncompletedDescendantMatches.done,
+body.searching.showCompleted .selected .project.completedDescendantMatches,
+body.searching.showCompleted .selected .project.terminalMatch .project.done
+{
+    display:block;
+}
+
+body.searching #addButton {
+    display: none;
+}
+
+.editor{
+    position:absolute;
+    padding:0px;
+    z-index:2;
+}
+
+.editor.hovered{
+    z-index:3;
+}
+
+.editor.fixed{
+    z-index:1;
+}
+
+.editor > textarea {
+    display:block;
+    background:transparent;
+    resize:none;
+    outline:0;
+    border:0;
+    padding:0;
+    margin:0;
+    width:100%;
+    height:100%;
+    font-family:inherit;
+    font-size:inherit;
+    font-weight:inherit;
+    line-height:inherit;
+    letter-spacing:inherit;
+    color: inherit;
+    overflow:hidden;
+    position:relative;
+    word-wrap:break-word;
+}
+
+.mozilla .editor > textarea{
+    /* Firefox adds 1 extra pixel to the left and right of textareas. */
+    left:-1px;
+}
+
+#visible{
+    position:relative;
+    width:700px;
+    background: #fff;
+    opacity: 1;
+
+    padding:0 60px 10px;
+    
+    margin-top:20px;
+    /* These margins get overridden by the JS because they can get set 
+       to fractional values, which messes up textarea positioning. */
+    margin-left:auto;
+    margin-right:auto;
+    
+    min-height:900px;
+
+    padding-top:20px;
+    padding-top:30px;
+    z-index:1;
+}
+
+/* BEGIN -- The gradient and corners for the page */
+
+/* Positions */
+.edge, .corner{
+    position:absolute;
+    opacity:1;
+    background-color: #ccf;
+
+    background-repeat:no-repeat;
+    background-color: #f9f9fa;
+
+}
+
+.left, .right{
+    width:18px;
+}
+
+.top, .bottom{
+    height:18px;
+}
+
+.left{
+    left:-10px;
+}
+
+.right{
+    right:-10px;
+}
+
+.top{
+    top:-10px;
+}
+
+.bottom{
+    bottom:-10px;
+}
+
+.top.edge, .bottom.edge{
+    left:8px;
+    right:8px;
+}
+
+.right.edge, .left.edge{
+    top:8px;
+    bottom:8px;
+}
+
+/* Backgrounds */
+.corner{
+    background-image: url(/graphics/simplex/corners_optimized.png);
+    background-repeat:no-repeat;
+    background-color: #f9f9fa;
+}
+
+.corner.top.left{
+    background-position:0px 0px;
+}
+
+.corner.top.right{
+    background-position:-18px 0px;
+}
+
+.corner.bottom.right{
+    background-position:-18px -18px;
+}
+
+.corner.bottom.left{
+    background-position:0px -18px;
+}
+
+.top.edge, .bottom.edge{
+    background-image:url(/graphics/simplex/horizontal-edges.png);
+    background-repeat:repeat-x;
+    height:11px;
+}
+
+.left.edge, .right.edge{
+    background-image:url(/graphics/simplex/vertical-edges.png);
+    background-repeat:repeat-y;
+    width:11px;
+}
+
+.left.edge{
+    background-position:0 0;
+}
+
+.right.edge{
+    background-position: -25px 0;
+}
+
+.top.edge{
+    background-position:0 0px;
+}
+
+.bottom.edge{
+    background-position:0 -25px;
+}
+
+
+
+/* END -- The gradient and corners for the page */
+
+#header{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    min-width:800px;
+    padding:0;
+    border-bottom: 1px solid #111;
+    height:29px;
+    background:#444;
+    z-index:2;
+
+    background: -webkit-gradient(
+	linear,
+	left bottom,
+	left top,
+	color-stop(1, #444),
+	color-stop(0, #333)
+    );
+
+    background: -moz-linear-gradient(
+		center top,
+		#444,
+		#333
+    );
+
+    
+    
+}
+
+    /* Prevents selecting text by dragging and double-clicking. */
+    .notSelectable {
+	/* I have no idea why, but we need to use '-moz-none' for FF to allow
+	   this to be overridden when we make children .selectable. See:
+	   http://stackoverflow.com/questions/7741367/impossible-to-override-user-select-on-child-nodes
+	   */
+	-moz-user-select: -moz-none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-o-user-select: none;
+	/* What's the equivalent for IE?  */
+	user-select: none;
+    }
+    /* Used for overriding .notSelectable */
+    .selectable{
+	-moz-user-select: text;
+	-webkit-user-select: text;
+	-khtml-user-select: text;
+	-o-user-select: text;
+	/* What's the equivalent for IE?  */
+	user-select: text;
+    }
+
+    #logo{
+	position:relative;
+
+        height: 18px;
+	width: 80px;
+	
+        clear:both;
+        display:block;
+	margin:2px 0 0;
+	padding:2px 20px;
+
+	color:#aaa;
+	
+	opacity:.9;
+    }
+
+    #logo > img{
+	width:80px;
+	height:21px;
+    }
+
+    
+    .video{
+	text-align:center;
+    }
+
+    #video_player{
+	width:480px;
+	height:300px;
+	border:1px solid #666;
+	/* glow */
+	-webkit-box-shadow:0px 3px 40px #113;
+	-moz-box-shadow: 0 3px 40px #113;
+	box-shadow:0 3px 40px #113;
+	margin-left:115px;
+    }
+
+    .startPrompt{
+	padding: 15px 0;
+	background: #ccc;
+	border: 1px solid #aaa;
+	margin: 20px 0 0;
+	color: #333;
+    }
+
+    .startPrompt a.startLink{
+	color:#222;
+	text-decoration:underline;
+    }
+    
+    #helpWindow{
+	text-align:center;
+	display:none;
+    }
+    
+    #helpWindow .pane{
+	margin-top:20px;
+    }
+    
+    #howTo table{
+	margin:0 20px 10px 20px;
+    }
+
+    #howTo table td.commandName{
+	width:20%;
+	font-weight:bold;
+	text-align:right;
+	background-color:#fcfcfc;
+    }
+    
+    #howTo table td.commandDescription{
+	width:70%;
+	text-align:left;
+    }
+
+    .darkPaddedContainer{
+	padding:10px 20px;
+	margin:20px;
+	background:#eee;
+	border:1px solid #ccc;
+	
+        -moz-border-radius:5px;
+        -webkit-border-radius:5px;
+        -khtml-border-radius:5px;
+	border-radius:5px;
+    }
+    
+    #howTo td{
+	padding:10px 20px;
+	border:1px solid #ddd;
+	font-size:14px
+    }
+    
+    td.first, td.second, td.third{
+	border-left:none;
+	border-right:none;
+	border-top:none;
+	border-bottom:1px solid #ddd;
+    }
+    
+    .expandCollapseShortcutMozilla{
+	display:none;
+    }
+    body.mozilla .expandCollapseShortcutMozilla{
+	display:inline-block;
+    }
+    body.mozilla #howTo .expandCollapseShortcut{
+	display:none;
+    }
+
+    #helpWindow h1.header{
+	 font-size:25px;
+	 margin-bottom:20px;
+    }
+    
+    .helpEmail{
+	text-align:center;
+    }
+
+
+    .helpEmail a{
+	color:#005;
+	text-decoration:underline;
+	
+    }
+    
+    .ui-dialog.noClose .ui-dialog-titlebar-close{
+	display:none;
+    }
+
+    .videoContainer{
+	position:relative;
+    }
+    
+    .videoContainer .playButton{
+	position:absolute;
+	top:50%;
+	left:50%;
+	margin-top:-144px;
+	margin-left:-176px;
+    }
+    
+    #loginPopup .loginForm .loginFormErrorMessage{
+	display:none;
+	color:red;
+	font-size:14px;
+	text-align:center;
+	margin-bottom:15px;
+    }
+
+    #loginPopup .loginForm .loginFormLabel{
+	color:#555;
+	font-size:14px;
+    }
+
+    #loginPopup .loginForm .loginFormPasswordInput{
+	margin-top:5px;
+	font-size:20px;
+	width:200px;
+    }
+
+    #loginPopup .loginFormForgotPasswordLink{
+	display:block;
+	color:#005;
+	font-size:14px;
+	margin-top:10px;
+	text-decoration:underline;
+	text-align:right;
+    }
+
+    #sharePopup{
+	font-size:15px;
+	line-height:20px;
+	padding-top:20px;
+	overflow:hidden;
+    }
+    
+    #sharePopup .section.options div{
+	display:inline-block;
+    }
+
+    #sharePopup .shared_settings{
+	display:none;
+    }
+
+    #sharePopup.shared .shared_settings{
+	display:block;
+    }
+
+    #sharePopup.shared .share_prompt{
+	display:none;
+    }
+
+
+    #sharePopup .share_waiting{
+	display:none;
+    }
+    
+    #sharePopup.waiting .share_waiting{
+	display:block;
+	margin-top:20px;
+    }
+    
+    #sharePopup.waiting .share_prompt, #sharePopup.waiting .shared_settings{
+	display:none;
+    }
+
+    #sharePopup input.shareLink{
+	display:block;
+	padding:5px;
+	font-size:18px;
+	width:95%;
+    }
+
+    .is_editable.buttonset .buttons{
+	margin-right:5px;
+    }
+
+    .is_editable.buttonset{
+	margin-top:10px;
+    }
+    
+    #exportPopup form{
+	text-align: center;
+	background:#EEE;
+	border-bottom:1px solid #CCC;
+	border-left:1px solid #CCC;
+	border-right:1px solid #CCC;
+	font-size: 12pt;
+	padding: 5px 0px;
+    }
+
+    #exportPopup .instructions{
+	color:#666;
+	font-size:12pt;
+	margin-top:10px;
+	text-align:center;
+    }
+
+    #exportPopup .previewWindow{
+	border:1px solid #aaa;
+	height:200px;
+	overflow:scroll;
+	padding:10px;
+	/* Use Times in export popup for now because all the font sizes (which
+	   are smaller than normal were selected for this font. */
+	font-family: Times;
+    }
+
+    /* formatted container */
+    #exportPopup .previewWindow > div{
+	font-size: 12pt;
+	white-space: pre-wrap;
+    }
+
+    /* plain text container */
+    #exportPopup .previewWindow > pre{
+	word-wrap:normal;
+	font-size:10pt;
+    }
+
+    #exportPopup .previewWindow ul{
+	list-style:disc;
+    }
+
+    #exportPopup .previewWindow li{
+	margin:4px 0 4px 20px;
+    }
+    
+    #exportPopup .previewWindow > div > .name{
+	display:block;
+	font-size:16pt;
+	margin-bottom:10px;
+    }
+
+    #exportPopup .previewWindow > div > .note{
+	font-size:12pt;
+	margin-bottom:10px;
+    }
+
+    #exportPopup .previewWindow .name.done, .nameEditor.doneEditor textarea{
+	text-decoration:line-through;
+	color:#666;
+    }
+    
+    #exportPopup .previewWindow .note{
+	margin-top:2px;
+	font-size:9pt;
+	color:#666;
+    }
+
+    #exportPopup .previewWindow .tagline{
+	margin-top:15px;
+	color:#666;
+	font-size:10pt;
+	font-style:italic;
+    }
+
+    #exportPopup .previewWindow .tagline a{
+	text-decoration:underline;
+    }
+
+    #footer{
+        border-top:1px solid #eee;
+        padding:10px 0 30px;
+        margin:40px 0 0;
+        position:relative;
+	text-align:center;
+    }
+    
+    #footer a{
+        color:#666;
+    }
+
+    #bottomLinks{
+	text-align:center;
+	margin-top:10px;
+	padding-bottom:20px;
+    }
+
+    #bottomLinks a{
+	color:#666;
+    }
+
+    #siteSlogan{
+        font-size: 12px;
+        color:#888;
+        font-style: none;
+        font-weight:normal;
+	position:absolute;
+	left:0;
+    }
+    
+    .selected{
+        border-top:1px solid #eee;
+    }
+    
+    .selected.project > .name{
+        padding:10px 0;
+        border-color:#aaa;
+        margin-left:-100px;
+        padding-left:100px;
+    }
+
+    
+    .saveButton, .showCompletedButton, #buttonBar{
+	display:block;
+
+	margin-left:-1px;
+	padding:8px 0px;
+
+	font-size:13px;
+	text-align:center;
+
+	float:right;
+
+	border-left: 1px solid #111;
+	border-right: 1px solid #111;
+
+	background-color: #555;
+
+	position:relative;
+	
+    }
+
+    #logo, #searchForm{
+    float:left;
+    }
+
+
+    /* Clickable and hover for clickable states */
+    .saveButton.saveNow, .showCompletedButton, #buttonBar{
+	color: #fff;
+    }
+    
+    #buttonBar{
+	margin-right:20px;
+	overflow:visible;
+	position:relative;
+	padding:0;
+    }
+
+    .menu-button{
+	padding:13px 10px 12px;
+    }
+    
+    .menu-options{
+	display:none;
+	text-indent:0px;
+	padding:10px 0;
+	position:absolute;
+	top:100%;
+	right:-1px;
+	color: #fff;
+	background: #666;
+	border: 1px solid #111;
+	border-top:none;
+	min-width:150px;
+	text-align:left;
+	/* Needed to overlap dropdown messages. */
+	z-index: 100;
+
+	-webkit-border-bottom-right-radius:5px;
+	-webkit-border-bottom-left-radius:5px;
+	-moz-border-bottom-right-radius:5px;
+	-moz-border-bottom-left-radius:5px;
+	border-bottom-right-radius:5px;
+	border-bottom-left-radius:5px;
+
+    }
+
+    .menu-options > #userEmail{
+	display:block;
+	padding:5px 20px;
+	font-size:11px;
+	color:#aaa;
+	overflow:hidden;
+    }
+
+    #buttonBar.open > .menu-options{
+	display:block;
+    }
+
+    #buttonBar.open{
+	background: #666;
+    }
+
+    .menu-options > .button{
+	padding:5px 20px;
+    }
+    
+    .showCompletedButton{
+	padding:8px 10px;
+	width:118px;
+    }
+
+    /* Non-clickable and hover for these */
+
+    .saveButton{
+	width:75px;
+	color:#aaa;
+    }
+
+    .saveButton_saveNow, .saveButton_saving, .saveButton_saved{
+	display:none;
+    }
+    .saveButton.saveNow .saveButton_saveNow{
+	display:block;
+    } 
+
+    .saveButton.saving .saveButton_saving, .saveButton.saved .saveButton_saved{
+	display:block;
+    }
+
+    .saveButton.saving .saveButton_saving{
+	font-style:italic;
+    }
+
+    #searchForm{
+	position:relative;
+	top:3px;
+    }
+    
+    #searchBox{
+	position:relative;
+	color: #000;
+	background-color: #fff;
+	border: 1px solid #888;
+	width: 200px;
+	padding: 3px 4px;
+	font-size: 13px;
+	opacity:.9;
+	/* We need to zero out the margin for Chrome, which has a default. */
+	margin:0;
+
+        -moz-border-radius:5px;
+        -khtml-border-radius:5px;
+        -webkit-border-radius:5px;
+	border-radius:5px;
+    }
+
+    #searchForm.clearPrompt #searchBox{
+	opacity:1;
+    }
+
+    #searchPrompt{
+	position: absolute;
+	bottom: 5px;
+	left: 6px;
+	font-size: 13px;
+	/* Line height needed to get proper alignment in FF. */
+	line-height: 14px;
+	opacity:1;
+	color: #999;
+	z-index:1;
+    }
+
+    #searchForm.clearPrompt #searchPrompt{
+	display:none;
+    }
+
+    #searchCancel{
+	position:absolute;
+	top:0px;
+	right:0px;
+	font-family: Arial;
+	font-size:13px;
+	height:20px;
+	color:#AAA;
+	line-height:22px;
+	padding:0px 9px;
+	display:none;
+    }
+
+    body.searching #searchCancel{
+	display:block;
+    }
+
+    a.smallLink{
+        color:#aaa;
+        font-size: 12px;;
+        font-style:italic;
+    }
+
+    .link{
+	color:#336;
+	text-decoration:underline;
+    }
+    
+    #addButton{
+	display:inline-block;
+	position:relative;
+	left:3px;
+
+        margin:5px 0;
+        color:#666;
+        margin-bottom:-1px;
+	z-index:7;   
+    }
+
+    #addButton > .plus{
+	font-family: Arial;
+	font-size: 24px;
+	position: relative;
+	top: 3px;
+    }
+
+    #addButton > .text{
+	font-size: 13px;
+	margin-left: 8px;
+	font-style: italic;
+    }
+
+    #addButton.selectedTreeIsReadOnly {
+	display: none;
+    }
+
+    .content .contentLink {
+	/* Need to set position for z-index to work. */
+	position:relative;
+	z-index:7;
+    }
+    .content .contentLink, .nameAnimated .contentLink {
+        text-decoration:underline;
+    }
+
+    .content.editing .contentLink{
+	/* Hide links when content is being edited so they can be clicked into
+	   to edit. */
+	visibility:hidden;
+    }
+
+    .content .contentTag, .nameAnimated .contentTag {
+	position:relative;
+	color: #999;
+    }
+
+    /* Make tags transparent like the rest of content when editing. */
+    .content.editing .contentTag{
+	color:transparent;
+    }
+
+    .content .contentTagText, .nameAnimated .contentTagText {
+	text-decoration:underline;
+    }
+
+    .content .contentTagClickable{
+	/* Need to set position for z-index to work. */
+	position:absolute;
+	z-index:7;
+
+	/* Overlay clickable area on tag text. */
+	top:0;
+	left:0;
+	width:100%;
+	height:100%;
+
+	padding:0 1px;
+	margin:0 -1px;
+        -moz-border-radius:3px;
+        -webkit-border-radius:3px;
+        -khtml-border-radius:3px;
+	border-radius:3px;
+
+	background-color: #000;
+	opacity:0;
+	filter: alpha(opacity=0);
+	*filter: alpha(opacity=0);
+	
+    }
+
+    .content.editing .contentTagClickable{
+	/* Hide tags when content is being edited so they can be clicked into
+	   to edit. */
+	visibility:hidden;
+    }
+    
+    .content .contentMatch{
+	background-color: #ff9;
+	text-decoration:inherit;
+    }
+
+    .content .contentCaret {
+	display: inline-block;
+	height: 100%;
+	width: 0;
+    }
+
+    /* Need this to ensure that caret and char that comes after stay
+       together. */
+    .content .contentCaretContainer {
+	white-space: nowrap;
+    }
+
+    .noted > .notes > .content{
+	white-space:pre-wrap;
+	height:17px;
+	min-height:17px;
+	overflow:hidden;
+	line-height:17px;
+        color: #666;
+	background-color:#ffc;
+    }
+
+    .noteEditor > textarea{
+	line-height:17px !important;
+        color: #666;
+    }
+
+    .notes{
+        display:none;
+        position:relative;
+    }
+
+    /* Expand notes that are clicked into, selected, or match the current
+       search. */
+    .noted > .notes > .content.editing, .selected > .notes, body.searching .notes.matches > .content{
+	height:auto;
+	overflow:visible;
+    }
+
+    .open > .notes{
+        max-height:none;
+    }
+    
+    .noted > .notes{
+        display:block;
+        margin:0px 0px 0px 25px;
+    }
+
+.content{
+    display:block;
+    word-wrap:break-word;
+    position:relative;
+    z-index:6;
+}
+
+.content.editing{
+    color:transparent !important;
+    /* Set z-index:inherit rather than z-index:0 because we need links
+       under content to have no "z-index frame", which allows us to
+       position them above anything on the page, namely editors. */
+    z-index:inherit;
+}
+
+.content.hovered{
+    z-index:inherit;
+}
+
+    
+    .selected > .notes{
+	margin:5px 0 10px 0;
+	padding-top:4px;
+    }
+
+    .selected > .notes > .content, .selected > .notes > .content.editing{
+	height:auto !important;
+    }
+
+    .noted.parent > .notes{
+        display:none;
+    }
+
+    .editor{
+	opacity:0;
+	filter: alpha(opacity=0);
+	*filter: alpha(opacity=0);
+    }
+
+    .editor.fixed{
+	opacity:1;
+	filter:none;
+	*filter: none;
+    }
+    
+    .small{
+        font-size:.8em;
+        color:#666;
+    }
+    
+    .selected > .children > .project .project{
+        margin-left:10px;
+    }
+
+    #simplex{
+	min-height:900px;
+    }
+    
+    #sortDrop{
+	position:relative;;
+        margin:-1px 0 0 20px;
+        height:1px;
+	overflow:visible;
+    }
+
+    #sortDrop div{
+	position:absolute;
+	top:2px;
+	left:0px;
+	background:#666;
+	height:2px;
+	width:100%;
+    }
+   
+    a.archive{
+        display:none;
+    }
+    
+    .childrenEnd{
+	display:none;
+        height:10px;
+	margin-left:-300px;
+	margin-top:-5px;
+    }
+
+    .selected .childrenEnd{
+	display:block;
+    }
+    
+    .parent > .children{
+        padding:0;
+    }
+    
+    .children{
+        margin-left:10px;
+        padding-left:15px;
+	border-left:1px solid #eee;
+    }
+    
+    .selected.project > .children, .parent.project > .children{
+        border-left:none;
+        margin-left:0px;
+        padding:0px;
+    }
+
+    body > #controls{
+	display:none;
+    }
+    
+    #controls a{
+        z-index:1;
+        position:relative;
+        display:inline-block;
+        width:20px;
+        height:20px;
+        cursor:pointer; 
+    }
+
+    #controlsLeft, #controlsRight, #controlsBottom{
+        position:absolute;
+        top:0;
+	z-index:8;
+    }
+
+    .name.hovered .bullet{
+	z-index:9;
+    }
+
+    #controlsLeft{
+        left:-59px;
+	top:0;
+
+	background: #ddd;
+	border:1px solid #bbb;
+	width: 80px;
+	padding:10px 0 5px 15px;
+	margin-bottom:10px;
+
+	border-top-left-radius:15px;
+	-moz-border-radius-topleft:15px;
+	border-bottom-left-radius:15px;
+	-moz-border-radius-bottomleft:15px;
+	border-bottom-right-radius:15px;
+	-moz-border-radius-bottomright:15px;
+
+	display:none;
+
+    }
+
+    #controlsLeft.hovered{
+	display:block;
+    }
+    
+    #controlsLeft a{
+	color: #555;
+	margin-bottom:5px;
+	font-size:12px;
+	display:block;
+	margin-right:10px;
+	width:auto;
+	height:auto;
+    }
+
+    .selected > .name > #controls > #controlsLeft{
+	left:-20px;
+    }
+
+    .selected > .name > #controls > #controlsLeft, .selected > .name > #controls > #controlsRight{
+        top:15px;
+    }
+    
+    .selected > .name > #controls #expandButton{
+	display:none;
+    }
+    
+    #simplex > .name > #controls > #controlsRight{
+        display:none;
+    }
+    
+    #simplex.selected > .name{
+        display:none;
+    }
+
+    body.shared #simplex.selected > .name{
+	display:block;
+    }
+    
+    #simplex.selected{
+        margin-top:15px;
+	border-top:none;
+    }
+
+    body.shared #simplex.selected{
+	margin-top:0px;
+    }
+    
+    #controls #note{
+        background:transparent url(/graphics/simplex/icons_color.gif);
+        text-indent:-9999px;
+        background-position:-36px -36px;
+    }
+
+    .selected > .name > #controls #move{
+	display:none;
+    }
+    
+    #controls #move{
+        background: url(/graphics/simplex/move_icon_black.png) no-repeat;
+	opacity:.6;
+	z-index:8;
+	top: 3px;
+    }
+
+    #controls.readOnly #move{
+	display:none;
+    }
+
+    #controls #delete{
+        background:transparent url(/graphics/simplex/icons_color.gif);
+        text-indent:-9999px;
+        background-position:-36px 2px;
+    }
+    
+    body.shared #controls .share{
+	display:none;
+    }
+
+    /* Don't truncate notes on read-only shared documents. */
+    body.read_only_main_tree .notes > .content {
+	height:auto;
+    }
+    
+    #controls .share span{
+	display:none;
+    }
+
+    /* Say "Shared" instead of "Share" if item is shard. */
+    .project.shared > .name > #controls .share span{
+	display:inline;
+    }
+
+    /* Highlight "Shared" in blue. */
+    .project.shared > .name #controlsLeft a.share{
+	font-weight:bold;
+	text-shadow:#99F 1px 1px 2px;
+    }
+    
+    /* Don't show control tray for read-only items (might want to show
+       Export in the future).*/
+    #controls.readOnly #controlsLeft{
+	display:none;
+    }
+
+    #controlsLeft .more{
+	height:10px;
+	width:20px;
+	margin-left:25px;
+    }
+
+    #controlsLeft #moreControls a.export, #controlsLeft #moreControls a.delete{
+	display:none;
+    }
+
+    #controlsLeft > .handle{
+	position:absolute;
+	top:-1px;
+	left:100%;
+	width:32px;
+	height:18px;
+	background: #ddd;
+	border-bottom:1px solid #bbb;
+	border-top:1px solid #bbb;
+	border-right:1px solid #bbb;
+	border-bottom-right-radius:15px;
+	-moz-border-radius-bottomright:15px;
+	border-top-right-radius:15px;
+	-moz-border-radius-topright:15px;
+	display:block;
+    }
+
+    /* .invisible-mouse-helper only appears on the web version. It allows
+    the mouse to travel at a diagonal between the bullet and the
+    controls menu, without triggering the mouseout event, which hides
+    the controls. */
+    #controlsLeft > .invisible-mouse-helper{
+    position:absolute; top:0; left:100%;
+
+	width:15px;
+	height:100px;
+	
+	z-index:-1;
+    }
+
+    #controlsLeft > .invisible-mouse-helper > div{
+	position:absolute;
+	top:0;
+	left:100%;
+
+	width:18px;
+	height:25px;
+
+    }    
+
+    .selected > .name > #controls > #controlsLeft > .handle{
+	display:none;
+    }
+
+    .selected > .name #controlsLeft{
+	left:2px;
+    }
+
+
+    .done > .name #controlsLeft a.complete{
+	text-decoration:line-through;
+    }
+
+
+    /* Toggle note button text according to .noted status */
+    #controlsLeft a.note span{
+	display:none;
+    }
+
+    #controlsLeft a.note span.addNote{
+	display:inline;
+    }
+
+    .noted > .name #controlsLeft a.note span.editNote{
+	display:inline;
+    }
+
+    .noted > .name #controlsLeft a.note span.addNote{
+	display:none;
+    }
+
+    #controlsLeft hr{
+	margin:5px 0;
+	border:none;
+	border-top:1px solid #bbb;
+    }
+
+    .dropTarget{
+	width:100%;
+	height:10px;
+	position:absolute;
+	left:20px;
+	top:0;
+	}
+    
+    .highlight{
+	height: 100%;
+	left: -5px;
+	padding: 2px 5px 1px;
+	position: absolute;
+	top: 2px;
+	width: 100%;
+        -moz-border-radius:5px;
+        -webkit-border-radius:5px;
+        -khtml-border-radius:5px;
+	border-radius:5px;
+    }
+
+    .moving > .highlight, .highlighted > .highlight{
+	background: #fafafa;
+    }
+    
+    .moving > .highlight, .highlighted.moveHovered > .highlight{
+	background: #eee;
+    }
+
+    .project > .name #controls #expandButton .expandMinus{
+	font-size:15px;
+	position:relative;
+	top:-6px;
+	display:none;
+    }
+    .project > .name #controls #expandButton .expandPlus{
+	display:inline-block;
+    }
+    .project.open > .name #controls #expandButton .expandMinus{
+	display:inline-block;
+    }
+    .project.open > .name #controls #expandButton .expandPlus{
+	display:none;
+    }
+
+    .task > .name #controls #expandButton{
+	display:none;
+    }
+
+    /* this exists only to overlap the +/- so that we can handle
+       double-click events properly */
+    .project > .name #controls #expandButton .overlappingElement{
+	position:absolute;
+	top:0;
+	left:0;
+	height:100%;
+	width:100%;
+    }
+    
+    #controls #expandButton{
+	position:absolute;
+	top: 0;
+	left:30px;
+	text-align:center;
+	vertical-align:middle;
+	font-size:18px;
+	line-height:18px;
+	/* Use the old font (Times) for the expand button so it's always
+	   properly aligned. */
+	font-family:Times;
+	height:20px;
+	width:20px;
+	z-index:9;
+    }
+
+    #controls #add{
+        background:transparent url(/graphics/simplex/icons_color.gif);
+        text-indent:-9999px;
+        background-position:-72px 0;
+    }
+    
+    
+    
+    #controls #complete{
+        background:transparent url(/graphics/simplex/icons_color.gif);
+        text-indent:-9999px;
+        width:26px;
+    }
+    
+    #controlsRight{
+        right:0;
+        color:#ddd;
+    }
+    
+    #controlsBottom{
+        top:100%;
+        margin-top:-1px;
+        padding:2px .4em;
+        font-size:14px;
+        left:5em;
+    }
+
+    #dropdownMessages{
+	position:absolute;
+	top:100%;
+	left:0;
+	width:100%;
+	font-size:13px;
+    }
+    
+    #message{
+        display:none;
+        background-color:#ddd;
+        border:1px solid #aaa;
+        padding:10px 20px;
+        color:#333;
+	position:relative;
+	top:1px;
+    }
+
+    #message.errorMessage{
+	background-color:#ffa;
+    }
+
+    #demo_text{
+        display:block;
+    }
+    
+    #message > .messageContent a{
+        color:#000;
+        text-decoration:underline;
+        cursor:pointer;
+    }
+    
+     #message > .close{
+        color:#666;
+    }
+    
+    .overDrop{
+        background:#eee;
+    }
+    
+    .controls > a{
+        margin-left:10px;
+    }
+    
+    .parent > .controls{
+        display:none;
+    }
+
+    .name > .content{
+        text-decoration:none;
+	white-space:pre-wrap;
+    }
+
+    .parent > .name{
+        float:left;
+        margin:5px 0;
+        position:relative;
+        z-index:1;
+    }
+
+    .parent > .progress{
+        display:none;
+    }
+    
+    .selected .project > .name{
+        margin-left:-50px;
+        padding: 0 0 0 75px;
+    }
+
+    .noted.project > .name{
+        padding-bottom:0;
+    }
+    
+    .project > .name{
+        position:relative;
+    }
+    
+    .project{
+        position:relative;
+    }
+
+    .project.parent{
+        border-top:none;
+    }
+    
+    #hidden{
+        display:none;
+    }
+
+    .hidden{
+        display:none;
+    }
+    
+    .addForm{
+        display:none;
+    }
+
+    .bullet{
+        display:none;
+	margin-top: 1px;
+	margin-left:1px;
+        height: 18px;
+        width:18px;
+        color: #666;
+	background: #e0e0e0;
+        left:50px;
+	text-indent:5px;
+	font-size:24px;
+	font-family: Arial;
+	line-height:19px;
+        position:absolute;
+        z-index:6;
+
+        -moz-border-radius:12px;
+        -webkit-border-radius:12px;
+        -khtml-border-radius:12px;
+	border-radius:12px;
+    }
+    
+    .selected .project .bullet{
+        display:inline-block;
+    }
+
+    .project.task > .name > .bullet, .project.open > .name > .bullet{
+	background-color:transparent;
+    }
+
+    /* Always show a blue aura around shared projects. */
+    .project.shared > .name > .bullet{
+	background-color: #ccf;
+    }
+
+    .project.done > .name{
+	/* Assign color to name rather than name > content so that the
+	   content's color can be changed to transparent. */
+        color:#666;
+    }
+    
+    .project.done > .name > .content {
+	/* Need to apply text-decoration directly to content for some reason -
+        otherwise it doesn't copy properly to textareas. */
+        text-decoration:line-through;
+    }
+    
+    a{
+        text-decoration:none;
+        color:inherit;
+    }
+    
+    #simplex > .children > .project{
+        margin-left:0px;
+    }
+    
+    .selected.project{
+        clear:both;
+	padding-top:5px;
+    }
+    
+    #demo_text .logo{
+        text-decoration:none;
+        color:#003364;
+        border:none;
+        height:82px;
+        width:461px;
+        text-indent:-9999px;
+        display:inline-block;
+        background:url(i/logo_workflowy_large.png) no-repeat scroll top left;
+        margin:10px 0px 0px 30px;
+    }
+    
+    div#clickToStart{
+        margin:20px 0px 10px;
+    }
+
+    a.register{
+        background:#0056A7;
+        color: white;
+        display: inline-block;
+        padding: 10px 30px;
+        text-decoration: none;
+        -moz-border-radius:30px; 
+        -webkit-border-radius:30px; 
+        -khtml-border-radius:30px;
+        border-radius:30px;
+
+    }
+    
+.name > .content{
+    position:relative;
+    display:block;
+    letter-spacing:inherit;
+}
+
+.parent > .name > .content{
+    display:inline;
+    color:#666;
+}
+
+.content{
+    word-wrap:break-word;
+}
+
+div.spacer{
+    display:inline-block;
+    color:#fff;
+    opacity:0;
+    width:0; /* Spacer can't have width or it may cause unwanted line-wrapping. */
+}
+
+#share_buttons{
+    left: 10px;
+    opacity: 0.5;
+    position: absolute;
+    top: 50px;
+    z-index: 0;
+}
+
+#facebook_share{
+    margin-bottom:5px;
+}
+
+#tweet_button{
+    background: transparent url(/graphics/simplex/tweet.png) no-repeat;
+    width:55px;
+    height:20px;
+    display:block;
+    text-indent:-9999px;
+}
+
+#leftGradient{
+    background: white url(media/i/page_background.png) repeat-y scroll 0px 0px;
+    height: 100%;
+    left: -11px;
+    position: absolute;
+    width: 12px;
+}
+
+#rightGradient{
+    background: white url(media/i/page_background.png) repeat-y scroll -948px 0px;
+    height: 100%;
+    right: -11px;
+    position: absolute;
+    width: 12px;
+}
+
+.clear{
+    clear:both;
+}
+
+#printingSiteName{
+    display:none;
+}
+
+#shared_notice{
+    position:fixed;
+    left:auto;
+    top:100%;
+    right:10px;
+    width:200px;
+    color:#777;
+    text-align:right;
+    font-size:11px;
+    background: #F0F0F0;
+    padding: 10px;
+    margin-top: -50px;
+    text-align: center;
+    border: 1px solid #ccc;
+    
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -khtml-border-radius: 5px;
+    border-radius: 5px;
+}
+
+#site_message a{
+    text-decoration:underline;
+}
+
+
+
+/* THE INTRODUCTORY TUTORIAL */
+
+#game_tooltip{
+    max-width:400px;
+    position:absolute;
+    padding:20px 20px 15px;
+    background:#fff;
+    z-index:101;
+    border:1px solid #aaa;
+    color:#444;
+    font-size:18px;
+    text-align:center;
+    line-height:15px;
+    display:inline-block;
+
+    background: -webkit-gradient(
+		linear,
+		left bottom,
+		left top,
+		color-stop(1, rgb(255,255,255)),
+		color-stop(0, rgb(235,235,235))
+	);
+    background: -moz-linear-gradient(
+		center top,
+		rgb(255,255,255),
+		rgb(235,235,235)
+	);
+
+    -moz-border-radius: 8px; -webkit-border-radius: 8px; border-radius: 8px;	
+    -moz-box-shadow: 0px 2px 5px rgba(0,0,0,0.5);
+    -webkit-box-shadow: 0px 2px 5px rgba(0,0,0,0.5);
+
+}
+
+#game_tooltip.hasButton{
+    text-align:left;
+}
+
+#game_tooltip.noPointer{
+    position:fixed;
+    top: 120px;
+    width:300px;
+    left:50%;
+    margin-left:-150px;
+}
+
+#game_tooltip .closeButton{
+    display:none;
+    font-size:15px;
+    position:absolute;
+    top:5px;
+    right:5px;
+    color:#ccc;
+}
+
+#game_tooltip .button{
+    float:right;
+    padding:10px 15px;
+    margin-left:10px;
+    font-size:18px;
+}
+
+#tooltip_pointer{
+    position:absolute;
+    top:-12px;
+    left:50px;
+    width:24px;
+    height:14px;
+
+}
+
+#game_tooltip.noPointer #tooltip_pointer{
+    display:none;
+}
+
+#tooltip_subtitle{
+    font-size:13px;
+    color:#666;
+    margin-top:5px;
+}
+
+p {
+    font-size:16px;
+    line-height:18px;
+    margin:10px 0;
+}
+
+.ui-dialog{
+    font-size:16px;
+}
+
+.ui-dialog a{
+    text-decoration:underline;
+    color:#336;
+}
+
+#tutorialFirstUse .slide{
+    display:none;
+}
+
+#tutorialFirstUse .slide.current{
+    display:block;
+}
+
+#tutorialFirstUse .tutorial .videoContainer{
+    width:auto;
+}
+
+.tutorial .videoContainer{
+    border:1px solid #ccc;
+    width:470px;
+}
+
+.tutorial .videoContainer.small{
+    height:200px;
+    overflow:hidden;
+}
+
+.tutorial .videoImage{
+    width:470px;
+}
+
+.tutorial h1{
+    font-size:25px;
+    line-height:28px;
+    margin-bottom:10px;
+}
+
+#tutorial_dialog, #tutorialFirstUse{
+    padding:20px 40px;
+}
+
+#tutorial_dialog #tutorialFirstUse{
+    padding:0;
+}
+
+.tutorial .button, .fancyButton{
+    display:inline-block;
+    border-radius:3px;
+    border:1px solid #aaa;
+    padding:5px 10px;
+    font-size:1em;
+    text-decoration:none;
+    font-style:normal;
+    color:#4f4f4f;
+    background: #ddd;
+    background: -webkit-gradient( linear, left bottom, left top, color-stop(1, #EDEDED), color-stop(0, #C4C4C4) );
+    background: -moz-linear-gradient( center top, #EDEDED, #C4C4C4 );
+    -webkit-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset;
+    -moz-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset;
+}
+
+.tutorial textarea {
+    display:block;
+    width:500px;
+    margin: 10px 0;
+    padding:10px;
+    white-space:normal;
+}
+
+.progressbar{
+    margin:10px 0;
+    height:40px;
+    background:#ccc;
+    border:1px solid #aaa;
+    overflow:hidden;
+    position:relative;
+
+    -moz-border-radius: 8px;
+    -webkit-border-radius: 8px;
+    border-radius: 8px;
+
+}
+
+.progressbar div{
+    height:100%;
+    background:#346;
+    width:20px;
+    position:absolute;
+    top:0;
+    left:0;
+
+    -moz-border-radius: 7px;
+    -webkit-border-radius: 7px;
+    border-radius: 7px;
+
+}
+
+/* Messages at the top of the site */
+#site_message{
+    padding:10px 20px;
+    background:#3F91D1;
+    color:#fff;
+    border:1px solid #1d6eb1;
+    position:relative;
+    font-size:13px;
+}
+
+#site_message .closeButton, #message .close {
+    position: absolute;
+    top: 2px;
+    left: 100%;
+    margin-left: -38px;
+    opacity: .7;
+    width: 35px;
+    height: 30px;
+    line-height: 30px;
+}
+
+#site_message .message{
+    display:none;
+}
+
+.nameAnimated div{
+    /* Have to convert tag divs to inline. */
+    display:inline;
+}
+
+.popup{
+    display:none;
+}
+
+.popup h1{
+    margin-bottom:10px;
+}
+
+.popup{
+    font-size:15px;
+    text-align:center;
+}
+
+.popup .sectionFooter{
+    margin:10px 0;
+}
+
+.popup{
+    text-align:left;
+}
+
+.popup ul.normal{
+    list-style:disc;
+    margin:10px 0 10px 20px;
+}
+
+.popup ul.normal li{
+    margin:20px;
+}
+
+.popup .sectionFooter a{
+    color:blue;
+    text-decoration:underline;
+}
+
+.border{
+    border:1px solid #ccc;
+}
+
+/* --- START SETTINGS POPUP --- */
+
+#settingsPopup {
+    padding: 1em 1em 0.5em 1em;
+}
+
+#settingsPopup .setting {
+    padding: 10px;
+    border-bottom:1px solid #eee;
+}
+
+#settingsPopup .setting.last {
+    border-bottom:none;
+}
+
+#accountInfo{
+    background:#efefef;
+    padding:10px;
+    border:1px solid #ddd;
+    color:#333;
+}
+
+#accountInfo form{
+    border:1px solid #ddd;
+    background:#fff;
+    padding:1px 10px 10px;
+    margin-top:10px;
+    width:170px;
+}
+
+#accountInfo form .errors{
+    font-size:11px;
+    color:#c00;
+}
+
+#accountInfo form > div{
+    margin:5px 0;
+}
+
+#accountInfo form label{
+    font-size:11px;
+}
+
+#accountInfo form input{
+    margin-left:0;
+}
+
+#accountInfo form .submit{
+    padding:5px 10px;
+}
+
+#accountInfo form input {
+    width: 163px;
+}
+#accountInfo form input.submit {
+    width: auto;
+}
+
+.smallSettingsButton > .cancel{
+    display:none;
+}
+
+.smallSettingsButton.cancel > .cancel{
+    display:inline;
+}
+
+.smallSettingsButton.cancel > .text{
+    text-transform: lowercase;
+}
+
+.setting p{
+    font-size:14px;
+    line-height:16px;
+}
+
+#settingsRight{
+   float:right;
+   width:220px;
+   border-left: 1px solid #eee;
+   padding-left: 17px;
+}
+
+#proSettingsBox {
+    background: #f8f8ff;
+    border: 3px solid #eee;
+    padding: 15px;
+
+    -moz-border-radius:5px;
+    -webkit-border-radius:5px;
+    -khtml-border-radius:5px;
+    border-radius:5px;
+}
+
+#proSettingsBox h2 {
+    font-size: 14px;
+    text-decoration: underline;
+}
+
+#proSettingsBox p{
+    font-size:13px;
+}
+
+#proSettingsBox > ul{
+    list-style:disc;
+    margin:10px 0px 10px 20px;
+    font-size:13px;
+}
+
+#proSettingsBox > ul > li{
+    margin:5px 0;
+}
+
+#proSettingsBox > ul > li > small{
+    font-size:11px;
+    color:#666;
+}
+
+#settings{
+    float:left;
+    width:385px;
+}
+
+/* --- END SETTINGS POPUP --- */
+
+/* --- PROGRESS BARS --- */
+
+.progressBarContainer{
+    position:relative;
+    text-align:center;
+    padding:5px;
+    margin-bottom:10px;
+}
+
+.quotaDetailedInformation{
+    display:none;
+
+    position:absolute;
+    top:100%;
+    left:0;
+    background:#efefef;
+    border:1px solid #ccc;
+    font-size:11px;
+    padding:5px 2px;
+
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+
+}
+
+
+.overQuotaDialog{
+    padding:10px 20px 20px;
+    text-align:center;
+    font-size:14px;
+}
+
+.overQuotaDialog > p{
+    font-size:14px;
+}
+
+#sharedOverQuotaDialog > p{
+    text-align:left;
+}
+
+.overQuotaDialog > .fancyButton{
+    padding:10px 20px;
+    font-size:20px;
+    margin-bottom:10px;
+}
+
+#headerQuotaProgress{
+    display:none;
+    
+    position:absolute;
+    top:100%;
+    margin-top:5px;
+    right:25px;
+    width:100px;
+}
+
+#headerQuotaProgress > .quotaDetailedInformation{
+    padding:5px;
+}
+
+#headerQuotaProgress > .monthlyUsage{
+    font-size:11px;
+    text-align:center;
+    margin-top:5px;
+}
+
+.progressBarContainer:hover > .quotaDetailedInformation{
+    display:block;
+    cursor:default;
+}
+
+.progressBar{
+    position:relative;
+    height:8px;
+    width:100%;
+    margin-top:5px;
+    border:1px solid #999;
+    border-bottom: 1px solid #666;
+    border-right: 1px solid #666;
+    background:#ccc;
+
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+
+    background: -webkit-gradient(
+		linear,
+		left bottom,
+		left top,
+		color-stop(1, #ddd),
+		color-stop(0, #aaa)
+	);
+    background: -moz-linear-gradient(
+		center top,
+		#ddd,
+		#aaa
+	);
+
+
+}
+
+.currentProgress{
+    height:100%;
+    min-width:10%;
+    max-width:100%;
+    width:10%;
+    background:#666;
+
+    background: -webkit-gradient(
+		linear,
+		left bottom,
+		left top,
+		color-stop(1, #888),
+		color-stop(0, #222)
+	);
+    background: -moz-linear-gradient(
+		center top,
+		#888,
+		#222
+	);
+}
+
+/* --- END PROGRESS BARS --- */
+
+
+/* --- START FRIEND RECOMMENDATION DIALOG --- */
+
+#ratingDialog{
+    text-align:center;
+    background:#fff;
+}
+
+#rateWithStars .rating{
+    display:inline-block;
+}
+
+#rateWithStars .star{
+    display:inline-block;
+    position:relative;
+    
+    margin:5px;
+    height:100px;
+    width:100px;
+
+    background-image:url(/graphics/simplex/star_rating.jpg);
+    background-position:0 0;
+    background-repeat:no-repeat;
+
+}
+
+#rateWithStars .star p{
+    color:#666;
+
+    position:absolute;
+    top:90px;
+    left:0;
+    font-size:14px;
+    width:100%;
+    text-align:center;
+}
+
+#promptText{
+    font-size:16px;
+    font-weight:bold;
+    position:relative;
+    top:10px;
+    margin-bottom:20px;
+}
+
+#promptContext{
+    font-size:14px;
+    margin-top:30px;
+    background:#eee;
+    padding:10px;
+    color:#111;
+    border:1px solid #ccc;
+}
+
+/* --- END FRIEND RECOMMENDATION DIALOG --- */
+
+/* --- KEYBOARD SHORTCUT HELPER --- */
+
+#keyboardShortcutHelper {
+    position:fixed;
+    bottom:-2px;
+    left:10px;
+    background:#fff;
+    border:1px solid #aaa;
+    z-index:12;
+    color:#333;
+    border-radius:3px;
+    width:180px;
+    
+    display:none;
+}
+
+#keyboardShortcutHelper.visible{
+    display:block;
+}
+
+#keyboardShortcutHelper .title{
+    padding:10px;
+    font-size:14px;
+}
+
+#keyboardShortcutHelper.closed table{
+    display:none;
+}
+
+#keyboardShortcutHelper .expand{
+    float:right;
+    margin-top:-2px;
+}
+
+#keyboardShortcutHelper .expand .up{
+    display:none;
+}
+
+#keyboardShortcutHelper.closed .expand .down{
+    display:none;
+}
+
+#keyboardShortcutHelper.closed .expand .up{
+    display:block;
+}
+
+#keyboardShortcutHelper td{
+    padding:10px;
+    verticle-align:middle;
+    border-bottom:1px solid #aaa;
+    font-size:12px;
+}
+
+#keyboardShortcutHelper td.commandName{
+    max-width:70px;
+    background:#efefef;
+}
+
+#keyboardShortcutHelper td.commandDescription{
+    max-width:100px;
+}
+
+/* --- END KEYBOARD SHORTCUT HELPER --- */
+
+.icon{
+    background: url(/graphics/simplex/icons.png);
+}
+
+.menu-icon{
+    background-position:-1px -76px;
+    width:8px;
+    height:4px;
+    background-repeat:no-repeat;
+}
+
+.undo-icon{
+    background-position:0 0;
+    width:15px;
+    height:7px;
+}
+
+.undo-button, .redo-button{
+    float:right;
+    padding:11px 5px;
+    opacity:.2;
+}
+
+.undo-button.enabled, .redo-button.enabled{
+    opacity:.5;
+}
+
+.redo-button{
+    margin-right:10px;
+}
+
+.redo-icon{
+    background-position:0 -8px;
+    width:15px;
+    height:7px;
+}
+
+#logout{
+    display:block;
+}
+
+/* FAQ */
+
+#faq{
+    text-align:left;
+    margin: 10px 20px;
+    padding: 0px 20px;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+}
+
+#faq p, #faq ul{
+    font-size:14px;
+}
+
+#faq h1{
+    font-size:30px;
+    margin:20px 0 10px;
+}
+
+.faqQuestion{
+    padding-top:10px;
+    border-bottom:1px solid #ddd;
+}
+
+.faqQuestion > ul{
+    margin:10px 0 10px 30px;
+    list-style:disc;
+}
+
+.faqQuestion > ul > li{
+    margin:5px 0;
+}
+
+/* END FAQ */
+
+/* --- START AUTOCOMPLETE BOX --- */
+
+#autocompleteBox {
+    position: absolute;
+    z-index: 100; /* on top of everything */
+    max-width: 200px;
+
+    background: #ddd;
+    color: #555;
+    font-size: 14px;
+    padding: 4px 4px;
+    border: 1px solid #bbb;
+
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -khtml-border-radius: 5px;
+    border-radius: 5px;
+
+    -moz-box-shadow: 1px 1px 3px #ccc;
+    -webkit-box-shadow: 1px 1px 3px #ccc; 
+    box-shadow:1px 1px 3px #ccc;
+}
+
+#autocompleteBox.attachedToSearchBox {
+    /* Don't want autocompleter to move with scrolling if it's attached to
+       the search box. */
+    position: fixed;
+    /* Need these or positioning gets messed up in Chrome if autocomplete
+       box is first added to search box. */
+    top: 0;
+    left: 0;
+}
+
+#autocompleteBox .autocompleteTag {
+    padding: 2px 2px;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    -khtml-border-radius: 2px;
+    border-radius: 2px;
+
+
+    
+    /* These 3 rules are needed to show ellipses on tags that are too long
+       for the box. */
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+#autocompleteBox .autocompleteTag.selectedAutocompleteTag{
+    background: #888;
+    color: #fff;
+}
+
+
+/* --- END AUTOCOMPLETE BOX --- */
+
+
+/* --- START PREMIUM STUFF --- */
+
+#premium-prompt-button{
+    position:fixed;
+    bottom:10px;
+    right:10px;
+
+    padding:5px 10px;
+    border:1px solid #001;
+    background:#347;
+    color:#fff;
+    font-size:15px;
+    border-radius:5px;
+}
+
+#premium-features-more-button, .smallSettingsButton{
+    text-decoration:underline;
+    color:#335;
+    font-size:11px;
+    position:relative;
+    display:inline-block;
+    margin-right:5px;
+}
+
+#premium-cancel-button{
+    font-size:10px;
+    color: #666;
+    text-decoration:underline;
+    text-align:right;
+    display:block;
+}
+
+#premium-cancelled-message{
+    font-size:13px;
+    line-height:13px;
+    font-style:italic;
+    color:#933;
+}
+
+#premium-features-more-button.expanded{
+    text-decoration:none;
+}
+
+#premium-features-description ol .upgrade-button{
+    list-style:none;
+}
+
+/* --- END PREMIUM STUFF --- */
+
+
+/* --- THEME GALLERY --- */
+
+#theme-gallery .option-thumb{
+    width:194px;
+    height:107px;
+    background: #ddd;
+    border:1px solid #ccc;
+    margin-bottom:10px;
+    box-shadow: 0 0 10px #aaa;
+    overflow:hidden;
+}
+
+.option-thumb{
+    position:relative;
+}
+
+.option-thumb > img{
+    z-index:1;
+}
+
+.galleryShowButton{
+    min-width:75px;
+    padding:5px 10px;
+    text-align:center;
+}
+
+.option-thumb:first-child{
+    margin-top:10px;
+}
+
+
+#theme-gallery .option-thumb > .option-pretty-name{
+    position:absolute;
+    display:inline-block;
+    top:100%;
+    left:0;
+    height:12px;
+    margin-top:-35px;
+    padding:9px 13px;
+    font-size:12px;
+    color:#fff;
+    background:#000;
+    opacity:.6;
+    border-top-right-radius:5px;
+    -moz-border-radius-topright:5px;
+    -webkit-border-top-right-radius:5px;
+
+    border-bottom-right-radius:5px;
+    -moz-border-radius-bottomright:5px;
+    -webkit-border-bottom-right-radius:5px;
+}
+
+
+#theme-gallery .option-thumb.current{
+    border:1px solid #333;
+    z-index:2;
+    box-shadow: 0 0 10px #666;
+}
+
+#theme-gallery .option-thumb.current .option-pretty-name{
+    opacity:.8;
+}
+
+.closeMeButton{
+    display: block;
+    margin: 1px;
+    background: url(/media/css/aristo/images/icon_sprite.png) 0 -16px no-repeat;
+    width:16px;
+    height:16px;
+}
+
+.gallery > .closeMeButton{
+    position:absolute;
+    top: 10px;
+    right: 5px;
+}
+
+.galleryProNotice{
+    display:none;
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:#fff;
+    opacity:.8;
+    z-index:2;
+    color:#333;
+    border:1px solid #fff;
+}
+
+.galleryProNotice > p{
+    font-size:12px;
+}
+
+#fontChooser .galleryProNotice > p{
+    padding-left:10px;
+    margin:0;
+}
+
+#themeChooser .galleryProNotice > p{
+    margin:20px;
+}
+
+.option-thumb .galleryProNotice{
+    display:block;
+}
+
+.moreInfo{
+    font-size:12px;
+    margin:10px 0 5px;
+    padding:5px 0;
+    border-radius:5px;
+    -webkit-border-radius:5px;
+    -moz-border-radius:5px;
+}
+
+#fontChooser .moreInfo{
+    font-style:italic;
+    color:#999;
+    padding-left:10px;
+}
+
+.gallerySelector{
+    position:relative;
+    display:inline-block;
+    margin-right:10px;
+}
+
+.gallery{
+    display:none;
+    position: absolute;
+    z-index: 1000;
+}
+
+#theme-gallery{
+    background: url(/graphics/simplex/theme_picker_bubble.png) no-repeat;
+    width: 225px;
+    height: 392px;
+    top: -103px;
+    left: 138px;
+    padding: 17px 15px 15px 24px;
+}
+
+#font-gallery{
+    top:100%;
+    border:1px solid #ccc;
+    background:#fff;
+    left:36px;
+    /* So that font names with spaces/hyphens don't wrap. */
+    white-space: nowrap;
+}
+
+#font-gallery .option-thumb{
+    padding:5px 20px;
+    margin:5px 0;
+}
+
+#font-gallery .option-thumb.current{
+    background:#ddd;
+}
+
+#theme-gallery .galleryScroller{
+    overflow-y:scroll;
+    overflow-x:hidden;
+    height:100%;
+    padding: 0 15px;
+}
+
+
+.gallery > .title{
+    margin-bottom:5px;
+}
+
+.currentMark{
+    font-weight:bold;
+}
+
+.waiting, .spinner{
+    width:32px;
+    height:32px;
+    
+    background: url(/graphics/simplex/ajax-loader.gif);
+    
+    position:absolute;
+    top:50%;
+    left:50%;
+    margin-top:-16px;
+    margin-left:-16px;
+
+    z-index:4;
+}
+
+.spinnerWrapper{
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:#fff;
+    opacity:.8;
+}
+
+/* --- END THEME GALLERY --- */
+
+.ui-widget-overlay{
+    background:#fff;
+    opacity:.6;
+}
+
+/* --- PRO PROMPT & PAYMENT --- */
+
+#plan-upgrade-dialog{
+    font-size:13px;
+}
+
+#plan-upgrade-dialog .globalerror{
+    display: block;
+    font-size: 13px;
+    border: 1px solid #CAA;
+    padding: 10px;
+    background: #FEE;
+}
+
+#payment-wrapper{
+    width:675px;
+    margin:0 auto;
+}
+
+#pro-thank-you-paragraph{
+    font-size:20px;
+    line-height:24px;
+    color:#888;
+    padding:20px 70px;
+    text-align:center;
+    border:2px solid #ddd;
+    margin-bottom:10px;
+    border-radius:5px;
+}
+
+#about-wf-pro, #purchase-info{
+    float:left;
+}
+
+#about-wf-pro{
+    width:300px;
+    margin-right:20px;
+}
+
+#plan-upgrade-dialog h3{
+    margin:10px 0 5px 10px;
+    color:#333;
+    font-size:15px;
+}
+
+#choose-your-plan{
+    border:1px solid #ddd;
+    margin-bottom:10px;
+    padding:20px;
+
+    -moz-border-radius:5px;
+    -webkit-border-radius:5px;
+    border-radius: 5px;
+
+}
+
+table label{
+    display:block;
+    text-align:right;
+    color:#666;
+    margin-top:5px;
+}
+
+label.error{
+    text-align:left;
+    color:#d33;
+    border-bottom:1px solid #fcc;
+    padding-bottom:5px;
+}
+
+#cards-accepted{
+    width:200px;
+    height:auto;
+    position:relative;
+}
+
+input.text{
+    width:180px;
+    padding:3px 5px;
+}
+
+#plan-upgrade-dialog td{
+    padding:2px 4px;
+    vertical-align:top;
+}
+
+.card-cvc{
+    width:40px;
+}
+
+img.padlock{
+    height:20px;
+    width:auto;
+    position:relative;
+    top:-2px;
+    opacity:.5;
+}
+
+.expiry-wrapper{
+    padding:2px 0;
+}
+
+.payment-form{
+    display:inline-block;
+    border:1px solid #ccc;
+    padding:10px;
+
+    background:#f5f5f5;
+    
+    -moz-border-radius:5px;
+    -webkit-border-radius:5px;
+    border-radius: 5px;
+
+    -webkit-box-shadow: 0px 0px 10px #ccc;	  
+    -moz-box-shadow: 0px 0px 10px #ccc;	  
+    box-shadow: 0px 0px 10px #ccc;
+
+}
+
+.payment-form input[type='text']:focus{
+    outline:1px solid #cdf;
+    -webkit-box-shadow: 0px 0px 10px #8af;	  
+    -moz-box-shadow: 0px 0px 10px #8af;	  
+    box-shadow: 0px 0px 10px #8af;
+}
+
+.submit-row td{
+    vertical-align:middle;
+}
+
+#payment-succeeded{
+    padding:30px;
+    font-size:20px;
+    text-align:center;
+}
+
+#payment-succeeded h1{
+    font-size:20px;
+}
+
+#payment-succeeded .fancyButton{
+    padding:10px 20px;
+}
+
+/* The description and prompt */
+
+#premium-features-description{
+    border:1px solid #ddd;
+    padding:5px 20px 20px;
+    margin-bottom:20px;
+    background:#eef;
+    
+    -webkit-border-radius:5px;
+    -moz-border-radius:5px;
+    border-radius:5px;
+}
+
+#premium-features-description ol{
+    list-style:decimal;
+    padding-left:20px;
+}
+
+#premium-features-description li{
+    font-weight:bold;
+    margin-top:10px;
+}
+
+#premium-features-description small{
+    font-weight:normal;
+    display:block;
+    font-size:11px;
+    line-height:13px;
+}
+
+#purchase-info{
+    width:355px;
+}
+
+/* --- END PRO PROMPT & PAYMENT --- */
+
+
+
+
+
+#logo{
+    background: url(/graphics/simplex/workflowy_logo.png);
+    background-repeat:no-repeat;
+    background-position:21px 3px;
+}
+
+.closeMeButton:hover{
+    background-position: -16px -16px;
+}
+
+/* PARENT ARROW STYLES */
+.parentArrow{
+    opacity:0;
+    filter: alpha(opacity=0);
+
+    color:#aaa;
+    margin:0 5px;
+}
+
+.parent > .name > .parentArrow{
+    opacity:1;
+    filter: alpha(opacity=1);
+    padding: 0 2px 0 3px;
+    display:inline-block;
+}
+
+.selected .parentArrow{
+    position:absolute;
+    display:block;
+    right:-55px;
+    top:0;
+    width:800px;
+    height:100%;
+}
+
+.parentArrow:before{
+    content:">";
+}
+
+/* HOVER STYLES */
+#howTo > em:hover{
+    cursor:pointer;
+    cursor:hand;
+    color:#333;
+}
+
+#logo:hover{
+    cursor:pointer;
+}
+
+.saveButton.saveNow:hover, .showCompletedButton:hover, #buttonBar:hover {
+    background-color: #666;
+    text-decoration:none;
+    cursor:pointer;
+}
+
+.menu-options > div:hover, .menu-options > div > a:hover {
+    background: #333;
+    text-decoration:none;
+    cursor:pointer;
+}
+
+.menu-options > .userEmail:hover{
+    background:transparent;
+    text-decoration:none;
+    cursor:default;
+}
+
+.saveButton.saving:hover, .saveButton.saved:hover{
+    cursor:default;
+} 
+
+#searchForm:hover {
+    cursor:text;
+}
+
+#searchBox:hover, #searchForm:hover #searchPrompt {
+    opacity:1;
+}
+
+#searchCancel:hover{
+    cursor:pointer;
+    color:#666;
+}
+
+a.smallLink:hover{
+    text-decoration:underline;
+    color:#666;
+    cursor:pointer;
+}
+
+.add:hover *, .add a.smallLink:hover{
+    color:#333;
+    text-decoration:none;
+    cursor:pointer;
+    cursor:hand;
+}
+
+.content .contentLink:hover{
+    cursor:pointer;
+}
+
+.content .contentTagClickable:hover{
+    cursor:pointer;
+    opacity:0.05;
+}
+
+#controlsLeft #moreControls:hover a.export, #controlsLeft #moreControls:hover a.delete{    
+    display:block;
+}
+
+#controlsLeft #moreControls:hover a.more{
+    display:none;
+}
+
+.moving #controls ui-draggable-dragging:hover {
+    cursor:move;
+}
+
+#expandButton:hover, #add:hover, #note:hover, #delete:hover, #complete:hover{
+    opacity:1;
+    filter: alpha(opacity=100);
+    *filter: alpha(opacity=100);
+    text-decoration:none;
+
+}
+
+#message > .close:hover{
+    cursor:pointer !important;
+}
+
+.bullet:hover{
+    cursor:pointer;
+    /* Turn off underlines because bullets are anchor tags. */
+    text-decoration:none;
+}
+.bullet:hover, .project.task > .name > .bullet:hover, .project.open > .name > .bullet:hover{
+    background-color: #aaa;
+}
+.project.shared > .name > .bullet:hover{
+    background-color: #ccf;	
+}
+
+.name .content:hover{
+    cursor:text;
+    text-decoration:none;
+}
+
+.parent > .name .content:hover{
+    cursor:pointer;
+    text-decoration:underline;
+}
+
+a:hover{
+    text-decoration:underline;
+    cursor:pointer;
+}
+
+a.register:hover{
+    background:#004596;
+}
+
+#share_buttons:hover{
+    opacity:1;
+    z-index:10;
+}
+
+#shared_notice:hover {
+    cursor: pointer;
+    background: #ddd;
+}
+
+#game_tooltip:hover .closeButton{
+    display:block;
+}
+
+#game_tooltip .closeButton:hover{
+    pointer:hand;
+    cursor:pointer;
+    color:#999;
+}
+
+#site_message .closeButton:hover{
+    cursor:hand;
+    cursor:pointer;
+    opacity:1;
+}
+
+#rateWithStars .star:hover{
+    pointer:hand;
+    cursor:pointer;
+}
+
+#rateWithStars .star:hover p{
+    color:#333;
+}
+
+#rateWithStars .rating:hover > .star{
+    background-position:0 -102px;
+}
+
+#keyboardShortcutHelper .title:hover{
+    pointer:hand;
+    cursor:pointer;
+}
+
+.undo-button.enabled:hover, .redo-button.enabled:hover{
+    opacity:.8;
+    cursor:pointer;
+    background:#444;
+}
+
+#autocompleteBox .autocompleteTag:hover {
+    cursor: pointer;
+}
+
+#premium-prompt-button:hover{
+    pointer:hand;
+    cursor:pointer;
+    background:#236;
+}
+
+#premium-cancel-button:hover, .smallSettingsButton:hover{
+    cursor:pointer;
+}
+    
+#premium-features-more-button:hover{
+    pointer:hand;
+    cursor:pointer;
+}
+
+#addButton:hover{
+    cursor: pointer;
+}
+
+#addButton:hover > .plus {
+    color: #333;
+}
+
+.fancyButton:hover{
+    cursor:pointer;
+    border:1px solid #333;
+    -moz-box-shadow: 0 0 8px rgba(0, 0, 0, 0.15), 0 1px 0 rgba(255,255,255,0.8) inset;
+    -webkit-box-shadow: 0 0 8px rgba(0, 0, 0, 0.15), 0 1px 0 rgba(255,255,255,0.8) inset;
+}
+
+.option-thumb:hover, .galleryShowButton:hover, .closeMeButton:hover{
+    cursor:pointer;
+}
+
+#theme-gallery .option-thumb:hover{
+    box-shadow: 0 0 10px #999;
+    border:1px solid #aaa;
+}
+
+#theme-gallery .option-thumb:hover .option-pretty-name{
+    opacity:.8;
+}
+
+#font-gallery .option-thumb:not(.current):hover{
+    background:#eee;
+}
+
+#theme-gallery .option-thumb.current:hover{
+    box-shadow: 0 0 10px #666;
+    border:1px solid #333;
+    cursor:default;
+}
+
+
+
+
+
+/* default.css */
+
+
+body{
+    font-family: 'Helvetica Neue', Arial, Sans-serif;
+    font-size: 16px;
+    font-weight: normal;
+}
+
+/*
+#fontChooser .galleryShowButton{
+    font-family: 'Helvetica Neue', Arial, Sans-serif;
+}
+*/
+
+.selected > .children > .project > .children > .project, .twoLevelsDownEditor.nameEditor{
+    font-size: 15px;
+}
+
+.selected > .children > .project {
+    padding-top: 4px;
+}
+.selected > .children > .project > .children .project {
+    padding-top: 3px;
+}
+
+#helpWindow h1.header{
+    font-family: 'Helvetica Neue', Arial, Sans-serif;
+}
+
+h1, h2, h3, h4, h5{
+    font-family: 'Helvetica Neue', Arial, Sans-serif;
+}
+
+.selected.project > .name{
+    font-size: 26px;
+}
+
+.selectedEditor > textarea{
+    font-size: 26px;
+}
+
+.saveButton, .showCompletedButton, #buttonBar{
+    font-family: 'Helvetica Neue', Arial, Sans-serif;
+}
+
+#searchBox{
+    font-family: 'Helvetica Neue', Arial, Sans-serif;
+}
+
+#searchPrompt{
+    font-family: 'Helvetica Neue', Arial, Sans-serif;
+}
+
+#addButton > .text{
+    font-family: 'Helvetica Neue', Arial, Sans-serif;
+}
+
+.noted > .notes > .content{
+    font-size: 13px;
+}
+
+.noteEditor > textarea{
+    font-size: 13px;
+}
+
+.selected > .notes > .content, .selected > .notes > .content.editing{
+    font-size: 16px;
+    line-height: 20px;
+}
+
+.selectedEditor.noteEditor > textarea{
+    font-size: 16px;
+    line-height: 20px !important;
+}
+
+#controlsLeft{
+    font-family: 'Helvetica Neue', Arial, Sans-serif;
+}
+
+.name > .content{
+    min-height: 20px;
+}
+
+.selected .project > .name > .content, .nameEditor > textarea{
+    line-height: 20px;
+}
+
+.selected > .name > .content, .selectedEditor.nameEditor > textarea{
+    line-height: 34px;
+}
+
+#shared_notice{
+    font-family: 'Helvetica Neue', Arial, Sans-serif;
+}
+
+#game_tooltip{
+    font-family: 'Helvetica Neue', Arial, Sans-serif;
+}
+
+#ratingDialog{
+    font-family: 'Helvetica Neue', Arial, Sans-serif;
+}
+
+#keyboardShortcutHelper {
+    font-family: 'Helvetica Neue', Arial, Sans-serif;
+}
+
+.ui-dialog {
+    /* font-family: ; */
+    font-weight: normal;
+}
+
+
+.ui-icon-triangle-1-s {
+    background-position: -64px -16px;
+}
+
+.ui-icon {
+    background-image: url("/graphics/simplex/ui-icons_222222_256x240.png");
+    height: 16px;
+    width: 16px;
+}
+
+/* TO BE REMOVED */
+
+.nameEditor {
+    background: #ccffff;
+}
+

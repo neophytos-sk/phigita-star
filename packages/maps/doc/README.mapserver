@@ -1,0 +1,37 @@
+wget http://cvs.gis.umn.edu/dist/mapserver-4.8.3.tar.gz
+
+-OR-
+
+wget http://ftp.debian.org/debian/pool/main/m/mapserver/mapserver_4.8.3.orig.tar.gz
+
+emerge gd
+emerge gdal
+emerge pdflib
+USE="tcltk -X" emerge swig
+
+
+### mapserver
+
+tar -xzvf mapserver-4.8.3.tar.gz
+cd mapserver-4.8.3
+./configure --with-proj=/usr/ --with-ogr=/usr/bin/gdal-config --with-gdal=/usr/bin/gdal-config --with-threads
+make
+
+
+### mapscript
+
+cd mapscript/tcl
+emacs configure
+# replace perlvars with mapscriptvars
+# replace all "head -X" with "head -n X" where X is a number from 1 to 4
+# replace all "tail -1" with "tail -n 1"
+./configure --with-tcl=/usr/ --prefix=/opt/aolserver/ --exec-prefix=/opt/aolserver/
+emacs makefile
+# remove duplicate "long"
+cp ${PHGT_PKG_DIR}/maps/conf/tclmodule.i ${MAPSERVER_DIR}/mapscript/tcl/
+make TCL_EXEC_PREFIX=/opt/aolserver/
+make TCL_EXEC_PREFIX=/opt/aolserver/ install 
+make TCL_EXEC_PREFIX=/opt/naviserver/
+make TCL_EXEC_PREFIX=/opt/naviserver/ install 
+
+

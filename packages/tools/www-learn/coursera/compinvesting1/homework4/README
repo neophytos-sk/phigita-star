@@ -1,0 +1,26 @@
+
+
+In the HW4 instructions, it says that for a $5 event, starting with $50,000, you should get a total return of "around
+9%".
+
+If you use actual_close to generate the orders, but adjusted close for the simulator, you should get around 9.6% (which
+is closer to 10% than 9%).
+
+That approach won't help you with the quiz. When taking the quiz, both the order generator and the simulator should use
+actual_close. With that regime, the total return becomes 6.228% for the $5 event/$50,000 scenario.
+
+Using actual_close for both the order generator and simulator, and starting with $100,000, here are total returns for
+different trigger events:
+
+$6 : 7.303%
+
+$8 : 16.22%
+
+$9 : 16.394%
+
+$11 : 16.944%
+
+
+python backtest-event-study.py > orders.csv
+python ../homework3/marketsim.py 100000 orders.csv values.csv
+python ../homework3/analyze.py values.csv \$SPX

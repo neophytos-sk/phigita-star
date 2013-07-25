@@ -1,0 +1,10 @@
+Received: (qmail 31003 invoked by alias); 30 Oct 2011 21:07:28 -0000 from unknown (HELO dchtu) (115.63.11.194)
+  by -o with SMTP; 30 Oct 2011 21:07:28 -0000 
+Message-ID: <20111030210314753254@fk.gov.cn> 
+From: =?gb2312?B?0czMqNX9u6rBuNPNyrPGt9PQz965q8u+?= <sjj@fk.gov.cn> 
+To:  
+Subject: =?gb2312?B?qHbT0MO709DSu9bWu/rWxr/J0tTTw9SxuaTX1Ly6tcTHrrykwPjUsQ==?=
+	=?gb2312?B?uaSjv213?= 
+Date: Sun, 30 Oct 2011 21:03:02 +0800 
+X-mailer: Jxyrkhxcoq 6 
+Whoops!  What is a 'application/vnd.ms-excel'?

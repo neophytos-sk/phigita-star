@@ -1,0 +1,21 @@
+# tcl
+
+# load some libraries
+source zdraw.tcl
+
+# first, describe the drawing surface
+PsCanvas 
+
+# now, load some data
+TableLoad -file "points.data" -table "data"
+
+# a very simple set of Axes
+Axis 
+
+# now, plot the data
+PlotPoints -table "data" 
+
+# call Render to finish up
+PsRender
+
+

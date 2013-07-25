@@ -1,0 +1,27 @@
+# @(#)root/mathcore:$Id: test_Makefile.am 19826 2007-09-19 19:56:11Z rdm $
+# Author: L. Moneta    2005  
+#
+## Process this file with automake to produce Makefile.in .
+#
+
+check_PROGRAMS =  testSMatrix testKalman testOperations
+
+testSMatrix_SOURCES =  testSMatrix.cxx
+
+#ROOTSYS=/Users/moneta/root/HEAD/rootNew
+
+INCLUDES = -I$(top_srcdir)/inc -I$(ROOTSYS)/include
+# -I$(CLHEPBASE)/include -DHAVE_CLHEP
+
+
+testKalman_SOURCES = testKalman.cxx matrix_util.h TestTimer.h
+
+testOperations_SOURCES = testOperations.cxx matrix_op.h 
+
+testKalman_LDADD = -L$(ROOTSYS)/lib -lCore -lCint -lMatrix -ldl
+#-L$(CLHEPBASE)/lib -lCLHEP
+
+testOperations_LDADD = -L$(ROOTSYS)/lib -lCore -lCint -lMatrix
+# -L$(CLHEPBASE)/lib -lCLHEP
+
+

@@ -1,0 +1,28 @@
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.ccabot.com (EMOS V1.5 (Postfix)) with ESMTP id 3DF7C890B6D;
+	Sun, 30 Oct 2011 15:29:17 +0800 (CST) from mail.ccabot.com ([127.0.0.1])
+	by localhost (mail.ccabot.com [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id 5tGy7Kn5ru+q; Sun, 30 Oct 2011 15:29:16 +0800 (CST) from hiny (unknown [110.53.27.188])
+	by mail.ccabot.com (EMOS V1.5 (Postfix)) with ESMTPA id 3BE77890B5A;
+	Sun, 30 Oct 2011 15:29:11 +0800 (CST) 
+X-DSPAM-Result: Spam 
+X-DSPAM-Processed: Sun Oct 30 15:29:17 2011 
+X-DSPAM-Confidence: 0.9792 
+X-DSPAM-Probability: 1.0000 
+X-DSPAM-Signature: 1,4eacfccd17374808014277 
+X-Virus-Scanned: amavisd-new at ccabot.com 
+X-Spam-Flag: YES 
+X-Spam-Score: 17.878 
+X-Spam-Level: ***************** 
+X-Spam-Status: Yes, score=17.878 tagged_above=-10 required=5
+	tests=[DSPAM:Spam=10.000, ALL_TRUSTED=-1.44, DATE_IN_PAST_06_12=1.854,
+	DSPAM_SPAM_99=3.98, FH_DATE_PAST_20XX=3.384, TVD_SPACE_RATIO=0.1]
+	autolearn=no 
+Message-ID: <20111030073028710544@ccabot.com> 
+From: =?gb2312?B?z+m7+bf+ys7T0M/euavLvg==?= <marketing@ccabot.com> 
+To:  
+Subject: =?gb2312?B?NWF5NMjnus7NqLn91dDNtrHqvfjQ0NPQ0Ke1xKGwv7O826Gx?=
+	=?gb2312?B?o78gNzozMDoyMw==?= 
+Date: Sun, 30 Oct 2011 07:30:17 +0800 
+X-mailer: Uwn 8 
+Whoops!  What is a 'application/vnd.ms-excel'?

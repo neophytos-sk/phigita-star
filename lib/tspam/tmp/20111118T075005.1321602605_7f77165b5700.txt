@@ -1,0 +1,17 @@
+Return-path: <webmaster@phigita.net> 
+Received: from [217.118.241.53] (port=7257 helo=Eric)
+	by eforwardct.name-services.com with asmtp 
+	id 50465F-000318-21
+	for <webmaster@phigita.net>; Fri, 18 Nov 2011 10:49:03 +0300 
+Message-ID: <A2108CE9996341A28586C08E154E8C52@Eric> 
+From: =?koi8-r?B?IuLPztPByiDHwczF0sXRIg==?= <funniestcq8@caendryl.com> 
+To: <webmaster@phigita.net> 
+Subject: =?koi8-r?B?8sHT0NLPxMHWwSDR0M/O08vJyCDCz87TwcouIPDPxMHSz8sgzsEgxM/M?=
+	=?koi8-r?B?x8nFIMfPxNk=?= 
+Date: Fri, 18 Nov 2011 10:49:03 +0300 
+X-Priority: 3 
+X-MSMail-Priority: Normal 
+X-Mailer: Microsoft Windows Mail 6.0.6001.18000 
+X-MimeOLE: Produced By Microsoft MimeOLE V6.0.6001.18049 
+X-Spam: Not detected 
+X-Mras: Ok 

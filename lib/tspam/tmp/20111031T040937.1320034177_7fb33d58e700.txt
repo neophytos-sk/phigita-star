@@ -1,0 +1,11 @@
+Received: from alfxrncf ([110.52.7.46])
+	by mail.lonex.com.tw ([192.168.1.250]);
+	Mon, 31 Oct 2011 12:08:56 +0800 
+Message-ID: <20111031120647503557@lonex.com.tw> 
+From: "ckbgcvnl" <cjpen@lonex.com.tw> 
+To:  
+Subject: =?gb2312?B?aDSx8CDEwyC05SCzpCCyuyC1sSC4ySCyv2x2ZQ==?=
+	=?gb2312?B?YXBnNDM=?= 
+Date: Mon, 31 Oct 2011 12:06:40 +0800 
+X-mailer: Gitjmdony 9 
+Whoops!  What is a 'application/vnd.ms-excel'?

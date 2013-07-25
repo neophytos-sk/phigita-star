@@ -1,0 +1,14 @@
+Received: from  (192.168.1.76) by nacha.org (88.101.18.193) with Microsoft SMTP Server id 8.0.685.24; Tue, 29 Nov 2011 09:54:31 +0100 
+Message-ID: <4ED49D1F.205070@nacha.org> 
+Date: Tue, 29 Nov 2011 09:54:31 +0100 
+From: "The Electronic Payments Association" <info@nacha.org> 
+User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.2.12) Gecko/20101103 Thunderbird/3.1.6 
+To: <k2pts@phigita.net> 
+Subject: ACH payment rejected 
+--------------------------------------
+The ACH  transaction (ID: 6095057300276), recently  initiated from your  checking account (by you or any other person), was  canceled by the  other financial institution.       Canceled transaction  
+      Transaction ID:     6095057300276  
+       Reason for rejection    See details in the report below   
+      Transaction Report     report_6095057300276.doc (Microsoft Word Document)   
+  13450 Sunrise Valley Drive, Suite 100Herndon, VA 201712011 NACHA - The Electronic Payments Association
+Whoops!  What is a 'image/gif'?

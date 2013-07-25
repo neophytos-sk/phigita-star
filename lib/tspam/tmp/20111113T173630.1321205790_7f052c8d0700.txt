@@ -1,0 +1,12 @@
+Received: from xngixapey ([110.52.6.57])
+        by mail.lansum.com (Merak 7.5.2) with ASMTP id L0U86348;
+        Mon, 14 Nov 2011 01:36:08 +0800 
+Message-ID: <20111114012857162025@zytjobschina.com> 
+From: "" <annachen@zytjobschina.com> 
+To:  
+Subject: =?gb2312?B?emw4M9bQILLjILjJILK/ILXEILijINL0MToy?=
+	=?gb2312?B?ODo1MQ==?= 
+Date: Mon, 14 Nov 2011 01:28:46 +0800 
+X-mailer: Korbeg 9 
+--------------------------------------
+ content-type=application/octet-stream part-token=::mime::1318-2Whoops!  What is a 'application/vnd.ms-excel'?

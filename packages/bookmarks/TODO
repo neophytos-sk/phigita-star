@@ -1,0 +1,39 @@
+* Linklog -- public/private links
+
+* Marked Links -- starred/favorite links
+
+* Labels
+
+* Bookmarklet -- open popup window and get the page from the server. This 
+		 allows us to upgrade the url-add page without any hussle.
+		 Furthermore, it permits us to perform clustering during
+		 the first hit in order to provide some default labeling for
+		 the link. Finally, it avoids any trouble with url length
+		 restrictions on some browsers (has not been checked).
+
+* Social Bookmarks -- A good place to add Google ads, since users are visiting
+		      the social bookmarks page in order to find some external
+		      links.
+		 
+
+==OLD==
+
+- "Move To..."
+
+- Editing Folders -- Make sure that children are moved together with the folder.
+
+- Deleting Folders -- Make sure that children are deleted as well.
+
+- Improve public view.
+
+- Exported folders cannot be imported into Mozilla (the one that ships with Redhat 8.0)
+
+- Recent Folders -- Top 10 Folders with recently hit bookmarks. Display a quick folder selection portlet in the add bookmark page, and a report in the history page. Here's what I'm thinking:
+
+	* Recently used folders (visited bookmarks from these folders)
+	
+	* Recently added/modified folders 
+
+- Move "Recently Used Folders" and "Frequently Used Folders" portlets to "Jump To Folder" page.
+
+- When a folder is created while bookmarking a page, then set it as the default after returning to the "Add Bookmark" page. 

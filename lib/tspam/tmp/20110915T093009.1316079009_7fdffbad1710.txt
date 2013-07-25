@@ -1,0 +1,17 @@
+Return-path: <webmaster@phigita.net> 
+Received: from [85.108.187.19] (port=3358 helo=fsm)
+	by mail2.fila-usa.com with asmtp 
+	id 11938F-000963-64
+	for <webmaster@phigita.net>; Thu, 15 Sep 2011 14:30:08 +0200 
+Message-ID: <17C17444A60146E2B80E9CECB47DDEEB@fsm> 
+From: "778-74-34" <nonchalanceu5@fila-usa.com> 
+To: <webmaster@phigita.net> 
+Subject: =?koi8-r?B?8M/J08vP18HRIM/Q1MnNydrBw8nRIMkg0sXLzMHNwSDXIMnO1MXSzsXU?=
+	=?koi8-r?B?xQ==?= 
+Date: Thu, 15 Sep 2011 14:30:08 +0200 
+X-Priority: 3 
+X-MSMail-Priority: Normal 
+X-Mailer: Microsoft Windows Mail 6.0.6001.18000 
+X-MimeOLE: Produced By Microsoft MimeOLE V6.0.6001.18049 
+X-Spam: Not detected 
+X-Mras: Ok 

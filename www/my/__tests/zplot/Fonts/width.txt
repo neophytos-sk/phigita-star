@@ -1,0 +1,18 @@
+0.26 i l 
+0.28 j f t . | ! ;
+0.30 [ ] \ /
+0.34 r - { } I 
+0.50 c k s x y z ^
+0.52 v J
+0.56 a b d e g h n o p q u $
+0.58 + _ = < > L
+0.62 F T Z
+0.68 & A B E K P S V X Y
+0.72 w C D H N R U
+0.78 G O Q 
+0.84 m M
+0.92 % 
+0.94 W
+1.00 @
+
+* ? ( ) 

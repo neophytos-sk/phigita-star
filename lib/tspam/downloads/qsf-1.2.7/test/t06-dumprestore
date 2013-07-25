@@ -1,0 +1,11 @@
+#!/bin/sh
+#
+# TEST: Dump and restore:               
+
+$PROG -d $BACKEND:$TESTDB -D > .testdump-a
+$PROG -d $BACKEND:$TESTDB -D | sed 1,2d | sort > .testdump-b
+rm -f $TESTDB
+$PROG -d $BACKEND:$TESTDB -R < .testdump-a
+$PROG -d $BACKEND:$TESTDB -D | sed 1,2d | sort > .testdump-c
+cmp .testdump-b .testdump-c
+rm -f .testdump-a .testdump-b .testdump-c

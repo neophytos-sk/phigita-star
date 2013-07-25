@@ -1,0 +1,280 @@
+dnl Process this file with autoconf to produce a configure script.
+dnl
+
+AC_INIT(src/main/version.c)
+
+dnl We're using C.
+dnl
+AC_LANG_C
+
+dnl Output a header file.
+dnl
+AC_CONFIG_HEADER(src/include/config.h:autoconf/header.in)
+
+dnl Set directory to check for Configure scripts in.
+dnl
+AC_CONFIG_AUX_DIR(autoconf/scripts)
+
+dnl Read in package details.
+dnl
+PACKAGE=`cat $srcdir/doc/PACKAGE`
+VERSION=`cat $srcdir/doc/VERSION`
+UCPACKAGE=`tr a-z A-Z < $srcdir/doc/PACKAGE`
+AC_SUBST(PACKAGE)
+AC_SUBST(VERSION)
+AC_SUBST(UCPACKAGE)
+AC_DEFINE_UNQUOTED(PACKAGE, "$PACKAGE")
+AC_DEFINE_UNQUOTED(PROGRAM_NAME, "$PACKAGE")
+AC_DEFINE_UNQUOTED(VERSION, "$VERSION")
+
+dnl Database backends we can use.
+dnl
+canuse_obtree="yes"
+canuse_btree="yes"
+canuse_list="yes"
+canuse_gdbm="yes"
+canuse_mysql="yes"
+canuse_sqlite="yes"
+
+dnl Check for compile-time options.
+dnl
+AC_ARG_ENABLE(debugging,
+  [  --enable-debugging      compile with debugging symbols],
+  if test "$enable_debugging" = "yes"; then
+  	CFLAGS="-g -Wall"
+  fi
+)
+AC_ARG_ENABLE(profiling,
+  [  --enable-profiling      compile with profiling support],
+  if test "$enable_profiling" = "yes"; then
+  	CFLAGS="-pg $CFLAGS"
+  fi
+)
+AC_ARG_ENABLE(static,
+  [  --enable-static         enable static linking],
+)
+AC_ARG_WITH(obtree,
+  [  --without-obtree        omit old binary tree backend support],
+  canuse_obtree="$with_obtree"
+)
+AC_ARG_WITH(btree,
+  [  --without-btree         omit binary tree backend support],
+  canuse_btree="$with_btree"
+)
+AC_ARG_WITH(list,
+  [  --without-list          omit list backend support],
+  canuse_list="$with_list"
+)
+AC_ARG_WITH(gdbm,
+  [  --without-gdbm          omit GDBM backend support],
+  canuse_gdbm="$with_gdbm"
+)
+AC_ARG_WITH(mysql,
+  [  --without-mysql         omit MySQL backend support],
+  canuse_mysql="$with_mysql"
+)
+AC_ARG_WITH(sqlite,
+  [  --without-sqlite        omit SQLite v2.x backend support],
+  canuse_sqlite="$with_sqlite"
+)
+
+dnl Check for various programs.
+dnl
+CFLAGS=${CFLAGS-"-O2 -Wall -s"}
+AC_PROG_CC
+AC_PROG_CPP
+AC_CHECK_TOOL(LD, ld, libtool --mode=link gcc)
+AC_SUBST(LD)
+AC_PROG_INSTALL
+AC_PROG_MAKE_SET
+AC_CHECK_PROG(DO_GZIP, gzip, gzip -f9, touch)
+
+dnl Check for the maths library.
+dnl
+AC_SEARCH_LIBS(pow, m, , [AC_ERROR(maths library not found)])
+
+dnl Check for various header files and set various other macros.
+dnl
+AC_DEFINE(HAVE_CONFIG_H)
+AC_HEADER_STDC
+AC_C_BIGENDIAN([AC_DEFINE(IS_BIG_ENDIAN)])
+AC_CHECK_FUNCS(memcpy, , [AC_ERROR(the memcpy() function is required)])
+AC_CHECK_FUNCS(fcntl getopt getopt_long mkstemp snprintf vsnprintf utime)
+AC_CHECK_HEADERS(fcntl.h getopt.h limits.h sys/resource.h mcheck.h)
+AC_FUNC_MMAP
+
+dnl Check for backend databases and choose one.
+dnl
+PREVCFLAGS="$CFLAGS"
+PREVCPPFLAGS="$CPPFLAGS"
+PREVLIBS="$LIBS"
+if test "x$canuse_mysql" = "xyes"; then
+	dnl
+	dnl First we try linking without the mysql_config libs, because on
+	dnl some systems that'll give us a dynamic library - the
+	dnl mysql_config libs often point us to static libraries.
+	dnl
+	dnl If static linking is enabled, we ONLY try the mysql_config libs.
+	dnl
+	CFLAGS=`mysql_config --cflags 2>/dev/null`
+	CPPFLAGS=`mysql_config --include 2>/dev/null` || CPPFLAGS="$CFLAGS"
+	LIBS=""
+	if test "x$enable_static" != "xyes"; then
+		AC_CHECK_HEADERS(mysql.h, [
+		  AC_SEARCH_LIBS(mysql_real_connect, mysqlclient, [
+		    AC_SEARCH_LIBS(mysql_real_escape_string, mysqlclient,  , canuse_mysql="no")
+		  ], canuse_mysql="no")
+		], canuse_mysql="no")
+	fi
+	if test "x$canuse_mysql" = "xno"; then
+		canuse_mysql=yes
+		LIBS=`mysql_config --libs 2>/dev/null`
+		AC_CHECK_HEADERS(mysql.h, [
+		  AC_SEARCH_LIBS(mysql_real_escape_string, mysqlclient,  , canuse_mysql="no")
+		], canuse_mysql="no")
+	fi
+	if test "x$enable_static" = "xyes"; then
+		LIBS=`mysql_config --libs 2>/dev/null`
+		AC_CHECK_HEADERS(mysql.h, [
+		  AC_SEARCH_LIBS(mysql_real_query, mysqlclient,  , canuse_mysql="no")
+		], canuse_mysql="no")
+	fi
+	if test "x$canuse_mysql" = "xyes"; then
+		AC_CHECK_FUNCS(mysql_autocommit)
+	fi
+	MYSQLCFLAGS="$CFLAGS"
+	MYSQLLIBS="$LIBS"
+	CFLAGS="$PREVCFLAGS"
+	CPPFLAGS="$PREVCPPFLAGS"
+	LIBS="$PREVLIBS"
+fi
+if test "x$canuse_gdbm" = "xyes"; then
+	PREVLIBS="$LIBS"
+	LIBS=""
+	AC_CHECK_HEADERS(gdbm.h, [
+	  AC_SEARCH_LIBS(gdbm_open, gdbm, [
+	    AC_CHECK_FUNCS(gdbm_fdesc)
+	  ], canuse_gdbm="no")
+	], canuse_gdbm="no")
+
+	dnl
+	dnl This is a hideous hack to try and find ".a" (static)
+	dnl library replacements if --enable-static is given.
+	dnl
+
+	if test "x$enable_static" = "xyes"; then
+		LIBDIR=`echo "$LIBS" | tr ' ' '\n' | sed -n 's/^-L//p'`
+		test -z "$LIBDIR" && LIBDIR=/usr/lib
+		LIBLIST=`echo "$LIBS" | tr ' ' '\n' | sed -n "s,^-l,$LIBDIR/lib,p" | sed -e 's,$,.a,'`
+		NEWLIBS=""
+		for i in $LIBLIST; do
+			test -e "$i" && NEWLIBS="$NEWLIBS $i"
+		done
+		test -n "$NEWLIBS" && LIBS="$NEWLIBS"
+	fi
+
+	GDBMLIBS="$LIBS"
+	LIBS="$PREVLIBS"
+fi
+if test "x$canuse_sqlite" = "xyes"; then
+	LIBS=""
+	AC_CHECK_HEADERS(sqlite.h, [
+	  AC_SEARCH_LIBS(sqlite_open, sqlite, , canuse_sqlite="no")
+	], canuse_sqlite="no")
+
+	dnl Hideous hack as above.
+
+	if test "x$enable_static" = "xyes"; then
+		LIBDIR=`echo "$LIBS" | tr ' ' '\n' | sed -n 's/^-L//p'`
+		test -z "$LIBDIR" && LIBDIR=/usr/lib
+		LIBLIST=`echo "$LIBS" | tr ' ' '\n' | sed -n "s,^-l,$LIBDIR/lib,p" | sed -e 's,$,.a,'`
+		NEWLIBS=""
+		for i in $LIBLIST; do
+			test -e "$i" && NEWLIBS="$NEWLIBS $i"
+		done
+		test -n "$NEWLIBS" && LIBS="$NEWLIBS"
+	fi
+
+	SQLITELIBS="$LIBS"
+	LIBS="$PREVLIBS"
+fi
+if test "x$canuse_list" = "xyes"; then
+	AC_CHECK_HEADERS(search.h, [
+	  AC_CHECK_FUNCS(bsearch qsort, [], canuse_list="no")
+	], canuse_list="no")
+fi
+
+AC_MSG_CHECKING(which backend databases are available)
+BACKENDS=""
+
+if test "x$canuse_obtree" = "xyes"; then
+	AC_DEFINE(USING_OBTREE)
+	BACKENDS="$BACKENDS obtree"
+fi
+if test "x$canuse_btree" = "xyes"; then
+	AC_DEFINE(USING_BTREE)
+	BACKENDS="$BACKENDS btree"
+fi
+if test "x$canuse_list" = "xyes"; then
+	AC_DEFINE(USING_LIST)
+	BACKENDS="$BACKENDS list"
+fi
+if test "x$canuse_gdbm" = "xyes"; then
+	AC_DEFINE(USING_GDBM)
+	EXTRALIBS="$EXTRALIBS $GDBMLIBS"
+	BACKENDS="$BACKENDS GDBM"
+fi
+if test "x$canuse_mysql" = "xyes"; then
+	AC_DEFINE(USING_MYSQL)
+	EXTRALIBS="$EXTRALIBS $MYSQLLIBS"
+	CFLAGS="$CFLAGS $MYSQLCFLAGS"
+	BACKENDS="$BACKENDS MySQL"
+fi
+if test "x$canuse_sqlite" = "xyes"; then
+	AC_DEFINE(USING_SQLITE)
+	EXTRALIBS="$EXTRALIBS $SQLITELIBS"
+	CFLAGS="$CFLAGS $SQLITECFLAGS"
+	BACKENDS="$BACKENDS SQLite2"
+fi
+if test "x$BACKENDS" = "x"; then
+	AC_MSG_RESULT(none)
+	AC_MSG_ERROR(no usable database libraries found)
+else
+	AC_MSG_RESULT($BACKENDS)
+fi
+LIBS="$LIBS $EXTRALIBS"
+
+AC_DEFINE_UNQUOTED(BACKENDS, "$BACKENDS")
+AC_SUBST(BACKENDS)
+
+test -z "$INSTALL_DATA" && INSTALL_DATA='${INSTALL} -m 644'
+AC_SUBST(INSTALL_DATA)
+
+dnl Fudging for separate build directories.
+dnl
+subdirs=""
+for i in `find $srcdir/src -type d -print | sed s,$srcdir/,,`; do
+  subdirs="$subdirs $i"
+done
+
+dnl Stitch together the Makefile fragments.
+dnl
+mk_segments="autoconf/Makefile.in"
+for i in vars.mk package.mk filelist.mk unreal.mk modules.mk \
+         rules.mk link.mk depend.mk; do
+	mk_segments="$mk_segments:autoconf/make/$i"
+done
+
+dnl Output files (and create build directory structure too).
+dnl
+AC_OUTPUT(Makefile:$mk_segments doc/lsm:doc/lsm.in
+          doc/quickref.1:doc/quickref.1.in
+          doc/$PACKAGE.spec:doc/spec.in
+          src/.dummy:doc/NEWS,
+  rm -f src/.dummy
+  for i in $subdirs; do
+  	test -d $i || mkdir $i
+  done
+, subdirs="$subdirs")
+
+dnl EOF

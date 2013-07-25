@@ -1,0 +1,10 @@
+Received: from 59.148.39.78 by mail.ccccorp.com; Wed, 5 Oct 2011 16:03:46 +0800 
+Date: Wed, 5 Oct 2011 16:03:46 +0800 
+From: =?koi8-r?B?IvPPwtPF1NfFzs7Jyywg7c/Ty9fBIg==?= <shtick3@ccccorp.com> 
+X-Mailer: The Bat! (v3.81.14 Beta) Home 
+Reply-To: shtick3@ccccorp.com 
+X-Priority: 3 (Normal) 
+Message-ID: <660563730.83528000838520@ccccorp.com> 
+To: webmaster@phigita.net 
+Subject: =?koi8-r?B?8NLRzcEgwdLFzsTBIM/GydPP1yAtw8XO1NIsIMTF28XXzyE=?= 
+

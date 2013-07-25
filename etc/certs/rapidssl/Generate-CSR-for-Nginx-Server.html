@@ -1,0 +1,360 @@
+
+
+
+
+
+
+
+
+
+	
+
+	
+	
+
+	
+	
+			
+
+			
+
+	
+
+	
+
+	
+			
+				
+					
+						
+					
+				
+			
+	
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"><head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>
+
+
+	
+
+
+ 
+
+
+	  
+      	
+			
+
+				
+					
+						
+							
+								
+							
+						
+					
+				
+		
+
+	RapidSSL - Knowledge Center - SSL Certificates Support
+	
+	</title><link rel="stylesheet" type="text/css" href="apps/infocenter/resources/css/infocenter.css" media="screen" /><link rel="stylesheet" type="text/css" href="apps/infocenter/resources/css/forums.css" /><link rel="stylesheet" type="text/css" href="apps/infocenter/resources/css/print.css" media="print" /><link rel="stylesheet" type="text/css" href="apps/infocenter/resources/css/font_3.css" media="screen" id="largefont">
+	<link rel="stylesheet" type="text/css" href="apps/infocenter/resources/css/font_2.css" media="screen" id="mediumfont">
+	<link rel="stylesheet" type="text/css" href="apps/infocenter/resources/css/font_1.css" media="screen" id="smallfont">
+	<script type="text/javascript" src="apps/infocenter/resources/js/vrsn-scripts.js"></script>
+	</head>
+<body><div class="backbar"><a href="index?vproductcat=R&vdomain=RAPIDSSL_COM&page=content&id=SO17666&actp=PRINT&impressions=false">Back</a></div><div id="pmv"><div class="contentbody"><a name="content"></a><!--SC_COMMENT_REPLACE-->
+	<table width="100%" cellpadding="0" cellspacing="0" border="0">
+	<tr><td valign="top"><div class="leftcentercolumn" id="content">
+
+<div class="node">
+	
+
+
+
+
+
+
+ 
+
+
+
+					
+			
+				
+					
+						
+					
+				
+			
+		
+
+
+
+
+
+
+
+
+		
+		<div class="node SOLUTION">
+		
+
+
+
+
+			
+	
+		
+			
+				
+			
+			
+			
+				
+					<div id="breadCrumb">
+					
+						
+							
+								
+									
+								
+								
+									
+								
+								
+							
+						
+							
+								
+									
+								
+								
+									
+								
+								
+							
+						
+					
+					<span class="bc"><a class="bc" href="http://www.rapidssl.com/">Home</a></span>&nbsp;>&nbsp;<span class="bc"><a class="bc" href="index?page=home">Support</a></span>
+					
+								
+									
+										
+									
+								
+								>
+									<span class="bcCurrent">
+										Solution Details
+									</span>
+					</div>
+				
+			
+		
+	
+	
+<h1>Solution</h1><div class="im-page-subtitle">Generate CSR for Nginx Server </div><br />
+		
+		<div id="ratingsBox">
+		
+		<table border="0" cellpadding="2" cellspacing="0" class="floatLeft">
+		  <tr>
+		    <td align="right"><strong>Solution ID:</strong></td>
+		    <td>&nbsp;&nbsp;</td>
+		    <td>SO17666</td>
+		  </tr>
+		  <tr>
+		    <td align="right"><strong>Version:</strong></td>
+		    <td>&nbsp;&nbsp;</td>
+		    <td>1.0</td>
+		  </tr>
+		  <!--
+		   <tr>
+		    <td align="right"><strong>Status:</strong></td>
+		    <td>&nbsp;&nbsp;</td>
+		    <td>Published</td>
+		  </tr> -->
+		   <tr>
+		    <td align="right"><strong>Published:</strong></td>
+		    <td>&nbsp;&nbsp;</td>
+		    <td>07/31/2009</td>
+		  </tr>
+		  
+		  
+		  
+		  
+		</table>
+		
+		
+		
+		</div>
+		
+		
+		
+		
+
+
+
+
+		
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="attr RESOLUTION"><h3>Resolution</h3><div class="content">
+
+<p>Login to your server via your terminal client (ssh). At the prompt, type:</p>
+<p><b>openssl req -new -nodes -keyout server.key -out server.csr</b></p>
+<p>where server is the name of your server.</p>
+<p>This will begin the process of generating two files: the <b>Private-Key</b> file for the decryption of your SSL Certificate, and a certificate signing request (<b>CSR</b>) file used to apply for your SSL Certificate. This command will prompt for the following X.509 attributes of the certificate:</p>
+<ul>
+    <li><b>Country Name (C):</b> Use the two-letter code without punctuation for country, for example: US or CA.</li>
+    <li><b>State or Province (S):</b> Spell out the state completely; do not abbreviate the state or province name, for example: California.</li>
+    <li><b>Locality or City (L):</b> The Locality field is the city or town name, for example: Berkeley.</li>
+    <li><b>Organization (O):</b> If your company or department has an &amp;, @, or any other symbol using the shift key in its name, you must spell out the symbol or omit it to enroll, for example: XY &amp; Z Corporation would be XYZ Corportation or XY and Z Corportation.</li>
+    <li><b>Organizational Unit (OU):</b> This field is the name of the department or organization unit making the request.</li>
+    <li><b>Common Name (CN):</b> The Common Name is the Host + Domain Name. It looks like &quot;www.company.com&quot; or &quot;company.com&quot;.<br />
+    &nbsp;</li>
+</ul>
+<p>Please do not enter your email address, challenge password or an optional company name when generating the CSR.</p>
+<p>Your .csr file will then be created.</p></div></div>
+
+
+
+
+		
+
+
+
+
+
+
+
+
+<div class="ATTACHMENT">
+			  
+	
+		
+
+
+
+
+			
+		
+	
+
+			</div>
+
+
+
+
+		
+				
+					
+						
+							
+								
+									
+										<div class="attr DISCLAIMER"><h3>Disclaimer:</h3><div>RapidSSL has made efforts to ensure the accuracy and completeness of the information in this document. However,&nbsp;RapidSSL makes no warranties of any kind (whether express, implied or statutory) with respect to the information contained herein. RapidSSL assumes no liability to any party for any loss or damage (whether direct or indirect) caused by any errors, omissions, or statements of any kind contained in this document.&nbsp; Further,&nbsp;RapidSSL assumes no liability arising from the application or use of the product or service described herein and specifically disclaims any representation that the products or services described herein do not infringe upon any existing or future intellectual property rights. Nothing herein grants the reader any license to make, use, or sell equipment or products constructed in accordance with this document. Finally, all rights and privileges related to any intellectual property right described herein are vested in the patent, trademark, or service mark owner, and no other person may exercise such rights without express permission, authority, or license secured from the patent, trademark, or service mark owner.&nbsp;RapidSSL reserves the right to make changes to any information herein without further notice.</div></div>
+									
+								
+							
+						
+					
+				
+		</div>
+		</div>
+		
+	
+
+	</div></div></td>
+	</tr><tr>
+		<td ><div class="footer">
+
+
+
+
+      	
+			
+
+				
+			
+					
+						
+							
+								<!--#config timefmt="%Y" -->
+<div class="clearfix" id="footer">
+<div class="footerLinks"><a
+	href="http://www.rapidssl.com/about/index.html">About Us</a><span>|</span><a
+	href="http://www.rapidssl.com/legal/index.html">Legal</a><span>|</span><a
+	href="http://www.rapidssl.com/contact/index.html">Contact Us</a><span>|</span><a
+	href="http://www.rapidssl.com/site-map/index.html">Site Map</a><span>|</span><a
+	href="http://www.freessl.com">FreeSSL Certificates</a><!-- <span>|</span><a
+	onclick="oOobj1.OnClick()" href="javascript:void(0);"><img
+	border="0" style="display: inline;" title="Feedback"
+	src="/apps/infocenter/sites/rapidssl/images/feedback.gif" />&nbsp;Feedback</a>--></div>
+<div class="copyright">&copy; <!--#echo var="DATE_LOCAL" -->
+RapidSSL. RapidSSL is a leading certificate authority, enabling secure
+socket layer (SSL) encryption trusted by over 99% of browsers and
+customers worldwide for web site security. We specialize in fast
+issuance of low cost and free SSL certificates and wildcard SSL
+certificates. <a
+	href="http://www.rapidssl.com/buy-ssl/ssl-certificate/index.html">RapidSSL
+Certificates</a>, <a
+	href="http://www.rapidssl.com/buy-ssl/wildcard-ssl-certificate/index.html">RapidSSL
+Wildcard Certificates</a> and <a href="http://www.freessl.com">FreeSSL&trade;
+Certificates</a>.</div>
+</div>
+							
+						
+
+					
+
+				
+		
+
+
+
+</div></td>
+	</tr>
+	</table></div></div>
+	</body>
+</html>
+
+

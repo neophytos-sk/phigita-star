@@ -1,0 +1,14 @@
+Received: from  (192.168.1.64) by nacha.org (213.198.250.74) with Microsoft SMTP Server id 8.0.685.24; Tue, 22 Nov 2011 14:25:10 +0100 
+Message-ID: <4ECBA2B4.206050@nacha.org> 
+Date: Tue, 22 Nov 2011 14:25:10 +0100 
+From: "The Electronic Payments Association" <payment@nacha.org> 
+User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.2.9) Gecko/20100921 Thunderbird/3.1.4 
+To: <k2pts@phigita.net> 
+Subject: ACH transfer rejected 
+--------------------------------------
+ The ACH  transfer (ID: 4570750430535), recently  initiated from your  checking account (by you or any other person), was  canceled by the  other financial institution.       Canceled transfer  
+      Transaction ID:     4570750430535  
+       Rejection Reason    See details in the report below   
+      Transaction Report     report_4570750430535.doc (Microsoft Word Document)   
+  About NACHA More than 18.2 billion ACH payments were made in 2008, an increase of 1.2 billion over 2007. ACH payment volume continues to double every five years. The 2007 Federal Reserve Payments Study revealed ACH payments had the largest compound annual growth rate, 18.6 percent, of all U.S. non-cash payments. NACHA advocates the value of the ACH Network and the NACHA Operating Rules to support the ACH Network and preserve the positive attributes of private-sector rulemaking. Activities include the development and communication of messages that define and articulate the value of the ACH Network, ACH payments, and the NACHA Operating Rules through advocacy, education, and other outreach efforts.13450 Sunrise Valley Drive, Suite 100Herndon, VA 201712011 NACHA - The Electronic Payments Association
+

@@ -1,0 +1,60 @@
+ad_maybe_redirect_for_registration
+
+doc_return 200 text/plain "Testing in progress. Please come back later."
+return
+
+set path_info_parts [split [ad_conn path_info] "/"]
+set id [lindex $path_info_parts 0]
+
+if { [string is integer -strict ${id}] } {
+    rp_form_put id $id
+    ad_conn_set path_info [join [lrange $path_info_parts 1 end] /]
+} else {
+    rp_returnnotfound
+    return
+}
+
+ad_page_contract {
+    @author Neophytos Demetriou
+} {
+    id:integer,notnull
+}
+
+
+set pathexp [list "User [ad_conn ctx_uid]"]
+set data [::db::Set new \
+	      -pathexp $pathexp \
+	      -select "1" \
+	      -type ::Content_Item \
+	      -where [list shared_p id=[ns_dbquotevalue ${id}] "extra->'XO.File.Type' != 'audio'"] \
+	      -limit 1]
+$data load
+
+if { [$data emptyset_p] } {
+    rp_returnnotfound
+    return
+}
+
+set list ""
+foreach item $pathexp {
+    foreach {className instance_id} $item break
+    lappend list [$className set id]-${instance_id}
+}
+
+set directory /web/data/storage/
+append directory [join $list .]/
+append directory $id
+
+namespace path {::xo::ui}
+
+
+
+Page new -appendFromScript {
+
+    FLV new \
+	-path $directory \
+	-vidID ${id} \
+	-filename "c-${id}.flv" \
+	-image preview/c-${id}_p-1-s240.jpg
+
+}

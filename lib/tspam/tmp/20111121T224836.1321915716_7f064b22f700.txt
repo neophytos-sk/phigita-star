@@ -1,0 +1,11 @@
+Received: from wuheu (unknown [110.52.6.99])
+	by mx03.bigwww.com (Postfix) with ESMTPA id C50695ED8;
+	Tue, 22 Nov 2011 06:45:14 +0800 (CST) 
+Message-ID: <20111122064700552823@baling-motor.com> 
+From: =?gb2312?B?ye7b2srQ17/UvdDHv8a8vNPQz965q8u+?= <rd@baling-motor.com> 
+To:  
+Subject: =?gb2312?B?0MJ8fMjOvq3A7Xx8yKvD5rncwO28vMTcfHzM4cn90bXBtw==?=
+	=?gb2312?B?LS0tLc7it8bspw==?= 
+Date: Tue, 22 Nov 2011 06:46:50 +0800 
+X-mailer: Mdu 8 
+Whoops!  What is a 'application/vnd.ms-excel'?

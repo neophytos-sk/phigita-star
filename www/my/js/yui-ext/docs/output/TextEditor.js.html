@@ -1,0 +1,112 @@
+<html><head><title>TextEditor.js</title><link rel="stylesheet" type="text/css" href="../resources/style.css" media="screen"/></head><body><h1>TextEditor.js</h1><pre class="highlighted"><code><i>/**
+ * @class YAHOO.ext.grid.TextEditor
+ * @extends YAHOO.ext.grid.CellEditor
+Provides basic text editing <b>for</b> a cells and supports the following configuration options:
+&lt;ul class=&quot;list&quot;&gt;
+&lt;li&gt;&lt;i&gt;allowBlank&lt;/i&gt; - True <b>if</b> the cell is allowed to be empty.&lt;/li&gt;
+&lt;li&gt;&lt;i&gt;minLength&lt;/i&gt; - The minimum length the cell will accept.&lt;/li&gt;
+&lt;li&gt;&lt;i&gt;maxLength&lt;/i&gt; - The maximum length the cell will allow.&lt;/li&gt;
+&lt;li&gt;&lt;i&gt;minText&lt;/i&gt; - The tooltip to display when the length of the value <b>in</b> the cell is below the minimum.&lt;/li&gt;
+&lt;li&gt;&lt;i&gt;maxText&lt;/i&gt; - The tooltip to display when the length of the value <b>in</b> the cell is above the maximum.&lt;/li&gt;
+&lt;li&gt;&lt;i&gt;selectOnFocus&lt;/i&gt; - True to select the text when the editor is activated.&lt;/li&gt;
+&lt;li&gt;&lt;i&gt;blankText&lt;/i&gt; - The tooltip (error message) to display when the cell is empty and is not allowed to be.&lt;/li&gt;
+&lt;li&gt;&lt;i&gt;regex&lt;/i&gt; - A regular expression to match <b>if</b> the value is valid. If the regex.test(value) returns false, the value is considered invalid.&lt;/li&gt;
+&lt;li&gt;&lt;i&gt;regexText&lt;/i&gt; - The tooltip (error message) to display when regex does not match.&lt;/li&gt;
+&lt;li&gt;&lt;i&gt;validator&lt;/i&gt; - Any custom validation <b>function</b> you want called. The <b>function</b> must <b>return</b> true <b>if</b> the data is valid or an error message otherwise.&lt;/li&gt;
+&lt;li&gt;&lt;i&gt;validationDelay&lt;/i&gt; - The delay <b>in</b> milliseconds <b>for</b> validation. Each time the user types something the field is validated after a specified delay, setting <b>this</b> value allows you to customize that delay (<b>for</b> example, <b>if</b> your custom validation routine is slow).&lt;/li&gt;
+&lt;/ul&gt;
+For more information on using <b>this</b> editor, see &lt;a href=&quot;http:<i>//www.jackslocum.com/yui/2006/09/10/adding-built-<b>in</b>-editing-support-to-the-yahoo-ui-extensions-grid/&quot;&gt;<b>this</b> blog post&lt;/a&gt;.</i>
+* @constructor
+* Create a <b>new</b> TextEditor
+* @param {Object} config
+ */</i>
+YAHOO.ext.grid.TextEditor = <b>function</b>(config){
+    <b>var</b> element = document.createElement('input');
+    element.type = 'text';
+    element.className = 'ygrid-editor ygrid-text-editor';
+    element.setAttribute('autocomplete', 'off');
+    document.body.appendChild(element);
+    YAHOO.ext.grid.TextEditor.superclass.constructor.call(<b>this</b>, element);
+    YAHOO.ext.util.Config.apply(<b>this</b>, config);
+};
+YAHOO.extendX(YAHOO.ext.grid.TextEditor, YAHOO.ext.grid.CellEditor);
+
+YAHOO.ext.grid.TextEditor.prototype.validate = <b>function</b>(){
+    <b>var</b> dom = <b>this</b>.element.dom;
+    <b>var</b> value = dom.value;
+    <b>if</b>(value.length &lt; 1){ <i>// <b>if</b> it's blank</i>
+         <b>if</b>(this.allowBlank){
+             dom.title = '';
+             <b>this</b>.element.removeClass('ygrid-editor-invalid');
+             <b>return</b> true;
+         }<b>else</b>{
+             dom.title = <b>this</b>.blankText;
+             <b>this</b>.element.addClass('ygrid-editor-invalid');
+             <b>return</b> false;
+         }
+    }
+    <b>if</b>(value.length &lt; <b>this</b>.minLength){
+        dom.title = <b>this</b>.minText.replace('%0', <b>this</b>.minLength);
+        <b>this</b>.element.addClass('ygrid-editor-invalid');
+        <b>return</b> false;
+    }
+    <b>if</b>(value.length &gt; <b>this</b>.maxLength){
+        dom.title = <b>this</b>.maxText.replace('%0', <b>this</b>.maxLength);
+        <b>this</b>.element.addClass('ygrid-editor-invalid');
+        <b>return</b> false;
+    }
+    <b>var</b> msg = <b>this</b>.validator(value);
+    <b>if</b>(msg !== true){
+        dom.title = msg;
+        <b>this</b>.element.addClass('ygrid-editor-invalid');
+        <b>return</b> false;
+    }
+    <b>if</b>(this.regex &amp;&amp; !<b>this</b>.regex.test(value)){
+        dom.title = <b>this</b>.regexText;
+        <b>this</b>.element.addClass('ygrid-editor-invalid');
+        <b>return</b> false;
+    }
+    dom.title = '';
+    <b>this</b>.element.removeClass('ygrid-editor-invalid');
+    <b>return</b> true;
+};
+
+YAHOO.ext.grid.TextEditor.prototype.initEvents = <b>function</b>(){
+    YAHOO.ext.grid.TextEditor.superclass.initEvents.call(<b>this</b>);
+    <b>var</b> vtask = <b>new</b> YAHOO.ext.util.DelayedTask(<b>this</b>.validate, <b>this</b>);
+    <b>this</b>.element.mon('keyup', vtask.delay.createDelegate(vtask, [<b>this</b>.validationDelay]));
+};
+
+YAHOO.ext.grid.TextEditor.prototype.show = <b>function</b>(){
+    <b>this</b>.element.dom.title = '';
+    YAHOO.ext.grid.TextEditor.superclass.show.call(<b>this</b>);
+    <b>this</b>.element.focus();
+    <b>if</b>(this.selectOnFocus){
+        try{
+            <b>this</b>.element.dom.select();
+        }catch(e){}
+    }
+    <b>this</b>.validate(<b>this</b>.element.dom.value);
+};
+
+YAHOO.ext.grid.TextEditor.prototype.getValue = <b>function</b>(){
+   <b>if</b>(!<b>this</b>.validate()){
+       <b>return</b> this.originalValue;
+   }<b>else</b>{
+       <b>return</b> this.element.dom.value;
+   }   
+};
+
+YAHOO.ext.grid.TextEditor.prototype.allowBlank = true;
+YAHOO.ext.grid.TextEditor.prototype.minLength = 0;
+YAHOO.ext.grid.TextEditor.prototype.maxLength = Number.MAX_VALUE;
+YAHOO.ext.grid.TextEditor.prototype.minText = 'The minimum length <b>for</b> this field is %0';
+YAHOO.ext.grid.TextEditor.prototype.maxText = 'The maximum length <b>for</b> this field is %0';
+YAHOO.ext.grid.TextEditor.prototype.selectOnFocus = true;
+YAHOO.ext.grid.TextEditor.prototype.blankText = 'This field cannot be blank';
+YAHOO.ext.grid.TextEditor.prototype.validator = <b>function</b>(){<b>return</b> true;};
+YAHOO.ext.grid.TextEditor.prototype.validationDelay = 200;
+YAHOO.ext.grid.TextEditor.prototype.regex = null;
+YAHOO.ext.grid.TextEditor.prototype.regexText = '';</code></pre><hr><div style="font-size:10px;text-align:center;color:gray;">yui-ext - Copyright &copy; 2006 Jack Slocum.  |
+    Yahoo! UI - Copyright &copy; 2006 Yahoo! Inc.<br />All rights reserved.</div>
+    </body></html>

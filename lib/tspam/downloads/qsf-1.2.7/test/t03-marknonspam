@@ -1,0 +1,21 @@
+#!/bin/sh
+#
+# TEST: Non-spam mark readback:         
+
+./mboxsplit 1 < .test-non-spam | $PROG -d $BACKEND:$TESTDB -M -w 2
+ISSPAM=0
+./mboxsplit 1 < .test-non-spam | $PROG -d $BACKEND:$TESTDB -t || ISSPAM=1
+test $ISSPAM -eq 0
+
+test $BACKEND = MySQL && exit 0
+test $BACKEND = mysql && exit 0
+
+if test "$BACKEND" != "obtree"; then
+	UPDATECOUNT1=`$PROG -d $BACKEND:$TESTDB -D | sed -n 's/^COUNT-UPDATES //p'`
+	for NUM in 1 2 3 4 5 6 7 8 9 10; do
+		./mboxsplit $NUM < .test-spam | $PROG -d $BACKEND:$TESTDB -M
+	done
+	UPDATECOUNT2=`$PROG -d $BACKEND:$TESTDB -D | sed -n 's/^COUNT-UPDATES //p'`
+	DIFFERENCE=`expr $UPDATECOUNT2 - $UPDATECOUNT1`
+	test $DIFFERENCE -eq 10
+fi

@@ -1,0 +1,11 @@
+Received: from usrfufhn ([110.52.6.13])
+ by mail.shmzj.gov.cn (iPlanet Messaging Server 5.2 HotFix 1.25 (built Mar  6
+ 2004)) with ESMTPA id <OXJD08VQKQHS5603IO@mail.shmzj.gov.cn> for
+ neophytos@phigita.net; Sat, 05 Nov 2011 01:48:13 +0800 
+Date: Sat, 05 Nov 2011 01:48:17 +0800 
+From: odummdb <jcc@shmzj.gov.cn> 
+Subject: =?gb2312?B?dW1xdGLH67DRxPq1xNPF0OO0q7j4z8LK9GNydml4?=	=?gb2312?B?bg==?= 
+To:  
+Message-id: <20111105014830377755@shmzj.gov.cn> 
+X-Mailer: Mksr 5 
+Whoops!  What is a 'application/vnd.ms-excel'?

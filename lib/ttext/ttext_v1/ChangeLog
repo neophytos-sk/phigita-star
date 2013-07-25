@@ -1,0 +1,68 @@
+2005-10-21 Neophytos Demetriou <k2pts@phigita.net>
+	* Fixed body text extraction algorithm
+	* Added aolserver support
+	* Removed global variables and Moved procs into ttext::Worker
+	* Moved tag values/cost into a hardcoded tcl array
+
+2005-10-09 Avgoustinos Kadis <avgoustinos@gmail.com>
+	* Added ttext namespace in bte.tcl
+	* Moved bte under src/generic directory
+	* Changed tidy.cpp to return the result with Tcl_AppendResult rather than to stdout
+	* Removed bte (C++ first version)
+	* Changed to return TCL_OK and TCL_ERROR (tidy.cpp)
+	* Changed to report an error rather than reading from stdin in case of no arguments (tidy.cpp)
+	* Changed to parse from string (tidy.cpp)
+	* Changed ttext::tidy to work with the newer version
+	* Added newer version of tidy (file src/tidy/tidy.cpp)
+	* Updated Makefile.in
+	* Removed tcltidy
+	* Updated Configure.in to move to version 0.3
+
+2005-10-03 Avgoustinos Kadis <avgoustinos@gmail.com>
+	* Removed unnecessary files from src/tidy/
+	* Tidy added to ttext. The Command is ttext::tidy
+	* Problem with using the Tidy Command. Removed the static option before Tidy definition in tcltidy.cpp/.h
+
+2005-05-16 Neophytos Demetriou <k2pts@phigita.net>
+	* Simplified API, kept one command (input of which is always tcl lists)
+	* Debugged segmentation faults
+	* Generalized registration of tcl commands.
+	* Added CheckArgs macro
+	* Updated Makefile.in and Configure.in to reflect the file changes
+	* Unnecessary files were removed, e.g. "run"
+	* Renamed all commands in ttext.cpp using the prefix "Ttext_"
+	* Moved functionality from nc.cpp and mainnc.cpp to ttext.cpp.
+	
+2005-05-12 Avgoustinos Kadis <avgoustinos@gmail.com>
+	* Created a subcommand to be used in tcl script : "clustering cluster" in nc.cpp
+
+2005-04-13 Avgoustinos Kadis <avgoustinos@gmail.com>
+	* Changed the parceArticle function in DataPoint
+	* Created the function getTokens (common.cpp)
+
+2005-03-06 Avgoustinos Kadis <avgoustinos@gmail.com>
+	* Changed the implementation of cluster so it can store also the topic and the article (we had problems using directly datapoint pointer outside the mainnews class
+	* New Function getClusters (in nc.cpp) that returns the result as a Tcl List Object
+	
+
+2005-03-03 Avgoustinos Kadis <avgoustinos@gmail.com>
+	* Checked for memleaks (pointer d in mainnews.cpp)
+
+2005-03-02 Avgoustinos Kadis <avgoustinos@gmail.com>
+	* Replaced functions clearString,replaceAll,toLower to be unicode compatible (problem with the greek 'o' letter)
+	* Created the shared library nc.so
+
+2005-02-20 Avgoustinos Kadis <avgoustinos@gmail.com>
+	* Created README file
+	* Created src/run script (look .src/run --help)
+	* Changed the parameter of functions that use DataPoint to pointers. Noticed good improvement in runtime
+	* Modified Makefile
+	* Created TODO
+	* Created this file
+
+2005-02-19 Neophytos Demetriou <k2pts@phigita.net>
+	* Made use of hash_set instead of a simple set
+	* Changed the random-number's initialization function (srand) to be initialized by the computer's time so it won't produce always the same results.
+	
+2005-02-19 Neophytos Demetriou <k2pts@phigita.net>
+	* Made use of hash_map instead of map

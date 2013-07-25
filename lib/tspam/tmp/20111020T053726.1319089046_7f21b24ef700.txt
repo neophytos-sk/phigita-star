@@ -1,0 +1,15 @@
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mta2.hc360.org (Postfix) with ESMTP id BB7871F4A73;
+	Thu, 20 Oct 2011 11:48:56 +0800 (CST) from mta2.hc360.org ([127.0.0.1])
+	by localhost (mta2.hc360.org [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id YZW0wWOPBRrM; Thu, 20 Oct 2011 11:48:49 +0800 (CST) from fp (unknown [110.53.26.133])
+	by mta2.hc360.org (Postfix) with ESMTP id 53617BF530;
+	Thu, 20 Oct 2011 05:49:56 +0800 (CST) 
+Message-ID: <20111020055230273755@hc360.com.cn> 
+From: "hydtdnxbs" <xbyx@hc360.com.cn> 
+To:  
+Subject: =?gb2312?B?OW15178u1L0uyMsuwaYu18ou1LQuudwuwO0uyMs=?=
+	=?gb2312?B?LrLFZGg=?= 
+Date: Thu, 20 Oct 2011 05:52:25 +0800 
+X-mailer: Ymrwmidmmx 9 
+Whoops!  What is a 'application/vnd.ms-excel'?

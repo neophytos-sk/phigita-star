@@ -1,0 +1,73 @@
+
+Class ::xo::io::BufferedRandomAccessFile
+
+
+::xo::io::BufferedRandomAccessFile instproc getFD {} {
+    return [my set __fd]
+}
+::xo::io::BufferedRandomAccessFile instproc getFilePointer {} {
+    return [tell [my getFD]]
+}
+::xo::io::BufferedRandomAccessFile instproc seek {{-origin ""} offset}	{
+    seek [my getFD] ${offset} {*}${origin}
+}
+
+::xo::io::BufferedRandomAccessFile instproc init {fileName accessMode {bufferSize ""}} {
+    my instvar __fd
+    set __fd [open $fileName $accessMode]
+    fconfigure $__fd -buffering full -buffersize $bufferSize
+}
+
+::xo::io::BufferedRandomAccessFile instproc readInt {} {
+    return [::xo::io::readInt [my getFD]]
+}
+::xo::io::BufferedRandomAccessFile instproc readVarText {} {
+    return [::xo::io::readVarText [my getFD]]
+}
+::xo::io::BufferedRandomAccessFile instproc readJavaUTF {} {
+    return [::xo::io::readJavaUTF [my getFD]]
+}
+::xo::io::BufferedRandomAccessFile instproc isEOF {} {
+    return [eof [my getFD]]
+}
+
+::xo::io::BufferedRandomAccessFile instproc length {} {
+    set fd [my getFD]
+    # Save current file pointer
+    set fp [tell $fd]
+    # Seek to eof
+    seek $fd 0 end
+    # Store file pointer
+    set end [tell $fd]
+    # Restore current file pointer
+    seek $fd $fp
+    return $end
+}
+
+return
+
+
+Class ::xo::io::DataInput
+Class ::xo::io::DataOutput
+
+Class ::xo::io::RandomAccessFile -superclass {
+    ::xo::io::File
+    ::xo::io::DataInput
+    ::xo::io::DataOutput
+}
+
+::xo::io::RandomAccessFile instproc getFD {} {
+    return [my set __fd]
+}
+::xo::io::RandomAccessFile instproc getFilePointer {} {
+    return [tell [my getFD]]
+}
+::xo::io::RandomAccessFile instproc seek {{-origin ""} offset} {
+    seek [my getFD] ${offset} {*}${origin}
+}
+
+Class ::xo::io::BufferedRandomAccessFile -parameter {
+    Attribute fileName
+    Attribute theFile -domain ::xo::io::RandomAccessFile
+}
+

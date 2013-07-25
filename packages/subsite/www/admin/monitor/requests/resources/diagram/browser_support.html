@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
+<meta http-equiv="content-language" content="en" />
+<title>JavaScript Diagram Builder - Browser support</title>
+<link rel=stylesheet type="text/css" href="diagram.css" />
+<SCRIPT Language="JavaScript">if ((document.layers)&&(history.length==1)) location.href=location.href+"#";</SCRIPT>
+<SCRIPT Language="JavaScript" src="diagram.js"></SCRIPT>
+</head>
+<body>
+<DIV STYLE="position:absolute; top:0px"></DIV>
+<TABLE NOBORDER CELLPADDING=2 CELLSPACING=2 WIDTH=720><TR><TD>
+<H3>JavaScript Diagram Builder - Browser support</H3>
+</TD></TR><TR><TD>
+The JavaScript Diagram Builder works with Microsoft Internet Explorer 4.x, Netscape 4.x, Netscape 6.x and Opera 5.x
+under Windows and with Netscape 6.x, Opera 5.x and Konqueror 3.x under Linux. Most of the methods, which dynamically change
+the properties of the objects, will only work correctly with IE 5, Netscape 6, Opera 7 and Konqueror 3 or higher.
+Here you can test the methods for the single objects.
+</TD></TR></TABLE>
+<SCRIPT Language="JavaScript">
+document.open();
+var D=new Diagram();
+D.SetFrame(80, 150, 740, 350);
+D.SetBorder(0, 9, 0, 3);
+D.SetText("","", "");
+var i, j, y, n=0, del="";
+D.Draw("#FFFF80", "#004080", false, "Click!", "Click(\"Diagram\")");
+D.SetGridColor("#004080");
+var aBar=new Bar(D.ScreenX(1)-10, D.ScreenY(1), D.ScreenX(1)+10, D.ScreenY(0), "#FF0000", 0, "#000000", "Click!", "Click(\"Bar\")");
+var aBox=new Box(D.ScreenX(2)-10, D.ScreenY(1), D.ScreenX(2)+10, D.ScreenY(0), "#FF0000", 0, "#000000", 1, "#000000", "Click!", "Click(\"Box\")");
+var aDot=new Dot(D.ScreenX(3), D.ScreenY(1), 12, 0, "#00C000", "Click!", "Click(\"Dot\")"); 
+var aPix=new Pixel(D.ScreenX(4), D.ScreenY(1), "#008000"); 
+var aLine=new Line(D.ScreenX(4.5), D.ScreenY(1), D.ScreenX(5.5), D.ScreenY(2), "#0000ff", 5, "Click!", "Click(\"Line\")");
+var aArea=new Area(D.ScreenX(5.5), D.ScreenY(1), D.ScreenX(6.5), D.ScreenY(2), "0000ff", D.ScreenY(0), "Click!", "Click(\"Area\")");
+var aArrow=new Arrow(D.ScreenX(7), D.ScreenY(1), D.ScreenX(7.5), D.ScreenY(1.5), "#00cc00", 2, "Click!", "Click(\"Arrow\")");
+var aPie=new Pie(D.ScreenX(8), D.ScreenY(2), 0, 32, 0, 360, "#ff00ff", "Click!", "Click(\"Pie\")");
+document.close();
+function Click(o)
+{ alert("You clicked on "+o);
+}
+function Test(aMethod, aObject)
+{ n++;
+  if (del.search(aObject.ID)>=0)
+  { alert("This object has already been deleted.");
+    return;
+  }
+  if (aMethod==0)
+  { if (aObject==D)
+    { if (n%2==0) aObject.Draw("#C0FFC0", "#004080", false, "Click!", "Click(\"Diagram\")");
+      else aObject.Draw("#C0FFFF", "#004080", false, "Click!", "Click(\"Diagram\")");
+    }
+    else
+    { if (aObject==aArea)
+      { if (n%2==0) aObject.SetColor("ff0000");
+        else aObject.SetColor("0000ff");
+      }
+      else
+      { if (n%2==0) aObject.SetColor("#ff0000");
+        else aObject.SetColor("#0000ff");
+      }
+    }
+  }
+  if (aMethod==1)
+  { if (n%2==0) aObject.SetVisibility(true);
+    else aObject.SetVisibility(false);
+  }
+  if (aMethod==2)
+  { if (n%2==0) aObject.SetText(2);
+    else aObject.SetText(1);
+  }
+  if (aMethod==3)
+  { if (n%2==0) aObject.SetTitle("Click here !");
+    else aObject.SetTitle("Click on me !");
+  }
+  if (aMethod==4)
+  { if (n%2==0) aObject.MoveTo("", D.ScreenY(2));
+    else aObject.MoveTo("", D.ScreenY(3));
+  }
+  if (aMethod==5)
+  { if ((aObject==aBar)||(aObject==aBox))
+    { if (n%2==0) aObject.ResizeTo("", D.ScreenY(2), "", D.ScreenY(1)-D.ScreenY(2));
+      else aObject.ResizeTo("", D.ScreenY(3), "", D.ScreenY(1)-D.ScreenY(3));
+    }
+    else if (aObject==aPie)
+    { if (n%2==0) aObject.ResizeTo("", "", "", "", 45, 315);
+      else aObject.ResizeTo("", "", "", "", 315, 45);
+    }
+    else
+    { if (n%2==0) aObject.ResizeTo("", D.ScreenY(2), "", "");
+      else aObject.ResizeTo("", D.ScreenY(1), "", "");
+    }
+  }
+  if (aMethod==6)
+  { aObject.Delete();
+    del=del+aObject.ID;
+  }
+}
+</SCRIPT>
+
+<DIV STYLE="position:absolute; top:390px">
+<form>
+<TABLE BORDER CELLPADDING=1 CELLSPACING=0 WIDTH=720>
+<TR height=40>
+    <TD align=center><SUB>Method</SUB>\<SUP>Object</SUP></TD>
+    <TD align=center bgcolor=#DDDDDD width=80>Diagram</TD>
+    <TD align=center bgcolor=#DDDDDD width=80>Bar</TD>
+    <TD align=center bgcolor=#DDDDDD width=80>Box</TD>
+    <TD align=center bgcolor=#DDDDDD width=80>Dot</TD>
+    <TD align=center bgcolor=#DDDDDD width=80>Pixel</TD>
+    <TD align=center bgcolor=#DDDDDD width=80>Line</TD>
+    <TD align=center bgcolor=#DDDDDD width=80>Area</TD>
+    <TD align=center bgcolor=#DDDDDD width=80>Arrow</TD>
+    <TD align=center bgcolor=#DDDDDD width=80>Pie</TD>
+</TR>
+<TR><TD align=center bgcolor=#DDDDDD>Draw/SetColor</TD>
+    <TD align=center><input type=button value="Test it !" onClick="Test(0,D)"></TD>
+    <TD align=center><input type=button value="Test it !" onClick="Test(0,aBar)"></TD>
+    <TD align=center><input type=button value="Test it !" onClick="Test(0,aBox)"></TD>
+    <TD align=center><input type=button value="Test it !" onClick="Test(0,aDot)"></TD>
+    <TD align=center><input type=button value="Test it !" onClick="Test(0,aPix)"></TD>
+    <TD align=center><input type=button value="Test it !" onClick="Test(0,aLine)"></TD>
+    <TD align=center><input type=button value="Test it !" onClick="Test(0,aArea)"></TD>
+    <TD align=center><input type=button value="Test it !" onClick="Test(0,aArrow)"></TD>
+    <TD align=center><input type=button value="Test it !" onClick="Test(0,aPie)"></TD>
+</TR>
+<TR><TD align=center bgcolor=#DDDDDD>SetVisibility</TD>
+    <TD align=center><input type=button value="Test it !" onClick="Test(1,D)"></TD>
+    <TD align=center><input type=button value="Test it !" onClick="Test(1,aBar)"></TD>
+    <TD align=center><input type=button value="Test it !" onClick="Test(1,aBox)"></TD>
+    <TD align=center><input type=button value="Test it !" onClick="Test(1,aDot)"></TD>
+    <TD align=center><input type=button value="Test it !" onClick="Test(1,aPix)"></TD>
+    <TD align=center><input type=button value="Test it !" onClick="Test(1,aLine)"></TD>
+    <TD align=center><input type=button value="Test it !" onClick="Test(1,aArea)"></TD>
+    <TD align=center><input type=button value="Test it !" onClick="Test(1,aArrow)"></TD>
+    <TD align=center><input type=button value="Test it !" onClick="Test(1,aPie)"></TD>
+</TR>
+<TR><TD align=center bgcolor=#DDDDDD>SetText</TD>
+    <TD align=center>&nbsp;</TD>
+    <TD align=center><input type=button value="Test it !" onClick="Test(2,aBar)"></TD>
+    <TD align=center><input type=button value="Test it !" onClick="Test(2,aBox)"></TD>
+    <TD align=center>&nbsp;</TD>
+    <TD align=center>&nbsp;</TD>
+    <TD align=center>&nbsp;</TD>
+    <TD align=center>&nbsp;</TD>
+    <TD align=center>&nbsp;</TD>
+</TR>
+<TR><TD align=center bgcolor=#DDDDDD>SetTitle</TD>
+    <TD align=center><input type=button value="Test it !" onClick="Test(3,D)"></TD>
+    <TD align=center><input type=button value="Test it !" onClick="Test(3,aBar)"></TD>
+    <TD align=center><input type=button value="Test it !" onClick="Test(3,aBox)"></TD>
+    <TD align=center><input type=button value="Test it !" onClick="Test(3,aDot)"></TD>
+    <TD align=center>&nbsp;</TD>
+    <TD align=center><input type=button value="Test it !" onClick="Test(3,aLine)"></TD>
+    <TD align=center><input type=button value="Test it !" onClick="Test(3,aArea)"></TD>
+    <TD align=center><input type=button value="Test it !" onClick="Test(3,aArrow)"></TD>
+    <TD align=center><input type=button value="Test it !" onClick="Test(3,aPie)"></TD>
+</TR>
+<TR><TD align=center bgcolor=#DDDDDD>MoveTo</TD>
+    <TD align=center>&nbsp;</TD>
+    <TD align=center><input type=button value="Test it !" onClick="Test(4,aBar)"></TD>
+    <TD align=center><input type=button value="Test it !" onClick="Test(4,aBox)"></TD>
+    <TD align=center><input type=button value="Test it !" onClick="Test(4,aDot)"></TD>
+    <TD align=center><input type=button value="Test it !" onClick="Test(4,aPix)"></TD>
+    <TD align=center><input type=button value="Test it !" onClick="Test(4,aLine)"></TD>
+    <TD align=center><input type=button value="Test it !" onClick="Test(4,aArea)"></TD>
+    <TD align=center><input type=button value="Test it !" onClick="Test(4,aArrow)"></TD>
+    <TD align=center><input type=button value="Test it !" onClick="Test(4,aPie)"></TD>
+</TR>
+<TR><TD align=center bgcolor=#DDDDDD>ResizeTo</TD>
+    <TD align=center>&nbsp;</TD>
+    <TD align=center><input type=button value="Test it !" onClick="Test(5,aBar)"></TD>
+    <TD align=center><input type=button value="Test it !" onClick="Test(5,aBox)"></TD>
+    <TD align=center>&nbsp;</TD>
+    <TD align=center>&nbsp;</TD>
+    <TD align=center><input type=button value="Test it !" onClick="Test(5,aLine)"></TD>
+    <TD align=center><input type=button value="Test it !" onClick="Test(5,aArea)"></TD>
+    <TD align=center><input type=button value="Test it !" onClick="Test(5,aArrow)"></TD>
+    <TD align=center><input type=button value="Test it !" onClick="Test(5,aPie)"></TD>
+</TR>
+<TR><TD align=center bgcolor=#DDDDDD>Delete</TD>
+    <TD align=center><input type=button value="Test it !" onClick="Test(6,D)"></TD>
+    <TD align=center><input type=button value="Test it !" onClick="Test(6,aBar)"></TD>
+    <TD align=center><input type=button value="Test it !" onClick="Test(6,aBox)"></TD>
+    <TD align=center><input type=button value="Test it !" onClick="Test(6,aDot)"></TD>
+    <TD align=center><input type=button value="Test it !" onClick="Test(6,aPix)"></TD>
+    <TD align=center><input type=button value="Test it !" onClick="Test(6,aLine)"></TD>
+    <TD align=center><input type=button value="Test it !" onClick="Test(6,aArea)"></TD>
+    <TD align=center><input type=button value="Test it !" onClick="Test(6,aArrow)"></TD>
+    <TD align=center><input type=button value="Test it !" onClick="Test(6,aPie)"></TD>
+</TR>
+</TABLE>
+</form>
+<BR />
+<TABLE NOBORDER CELLPADDING=2 CELLSPACING=2 WIDTH=720><TR><TD>
+Because of a bug in Netscape 4.x (N4) you should add the following code in the web page<BR />
+<B>before using the diagram objects:</B><BR />
+<B>&lt;DIV STYLE="position:absolute; top:0px"&gt;&lt;/DIV&gt;</B><BR />
+Also for N4 the file <B>transparent.gif</B> must be in the directory of the web page.<BR />
+Furthermore, N4 has trouble when opening a page with a diagram in a new window, because the extern script will not be
+included. In order to work around this bug, you must reload the page, it also can be done automatically with<BR /><B>
+&lt;SCRIPT Language="JavaScript"&gt;if ((document.layers)&&(history.length==1)) location.href=location.href+"#";&lt;/SCRIPT&gt;
+</B></BR>which must be written in the head before including the extern script.<BR />
+Tooltiptext will not work at all with N4. Click on a Bar or Box works only with N4, if you click on the text.<BR />
+<BR />
+In order to print all objects correctly, you must <B>specify in your browser settings to print also the background</B>.
+For instance in Internet Explorer, use the menu View->Internet Options->Advanced and enable "Print backgrounds colors and images".<BR />
+<BR />
+Since version 2.8 the formerly script file diagram.js is splitted into the 3 files diagram.js (13 kB - browser independent code),
+diagram_nav.js (98 kb - code for Netscape 4) and diagram_dom.js (89 kB - code for browsers which are DOM conform).
+In this way the total file size for the download decreases, because the new file diagram.js automatically loads - depending on the detected browser
+- only one of the files diagram_nav.js or diagram_dom.js. This makes also the execution of the script a bit faster, because
+browser dependent overhead within the methods of the objects is no longer required.<BR />
+If you do not use Line, Area, Arrow or Pie objects, then you can significantly reduce the file size by deleting the appropriate code from the script file.<BR />
+If the script files diagram*.js are not in the same directory as the html page which uses the script, then you must edit
+the file diagram.js and set the correct relative or absolute path in the variable <B>_PathToScript</B>.<BR />
+<BR />
+The last remark is about <B>names of variables, functions and IDs</B>: The Diagram Builder uses some global variables and functions,
+all of them start with the letter "_" (for instance "_Draw()"). In order to prevent bugs caused by duplicate names of 
+variables or functions, you should not use names which begin with the letter "_" in your script. Additionally, there are
+IDs for the objects, which start with "Dia", "Bar", "Box", "Dot", "Pix", "Line", "Area", "Arrow" or "Pie". Don't use ID's in your HTML page,
+which start with this letters (for instance don't use &lt;div id='Dia1'&gt;...&lt;/div&gt;).
+</TD></TR></TABLE>
+<BR />
+<TABLE NOBORDER CELLPADDING=2 CELLSPACING=2 WIDTH=720><TR>
+<TD ALIGN=LEFT><A HREF="logarithmic_scale.html">&#171; Logarithmic Scale Example</A></TD>
+<TD ALIGN=RIGHT><A HREF="php_and_asp.html">PHP & ASP &#187;</A></TD>
+</TR></TABLE>
+</DIV>
+</body>
+</html>

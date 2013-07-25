@@ -1,0 +1,1300 @@
+<HTML>
+
+<HEAD>
+	<TITLE>Directed Acyclic Word Graph or DAWG</TITLE>
+	<STYLE> body {font-size: 21px;} </STYLE>
+	<STYLE TYPE="text/css">
+	<!--
+	TD{font-family: Arial; font-size: 21px;}
+	--->
+	</STYLE>
+	<style>
+	.keyword{color:rgb(0,0,255);}
+	.comment{color:rgb(0,128,0);}
+	.pp{color:rgb(0,0,255);}
+	</style>
+	<STYLE TYPE="text/css">
+	<!--
+	caption{font-family: courier; font-size: 30px; font-weight: bold; color: #008000;}
+	--->
+	</STYLE>
+
+</HEAD>
+
+<BODY>
+
+<A NAME="top"></A>
+
+<FONT COLOR="#008000">
+<H1 ALIGN="CENTER"> Directed Acyclic Word Graph or DAWG </H1> 
+</FONT>
+<HR WIDTH="90%">
+
+<H4 ALIGN="CENTER">
+|&nbsp;<A HREF="dawg.html#introduction">Introduction</A>&nbsp;|
+|&nbsp;<A HREF="dawg.html#structure">The&nbsp;DAWG&nbsp;Structure</A>&nbsp;|
+|&nbsp;<A HREF="dawg.html#creation">How&nbsp;to&nbsp;Create&nbsp;an&nbsp;Optimal&nbsp;DAWG</A>&nbsp;|
+|&nbsp;<A HREF="dawg.html#implement">C&nbsp;Implementation</A>&nbsp;|
+|&nbsp;<A HREF="http://www.pathcom.com/~vadco/deep.html">Dense&nbsp;Boggle&nbsp;Board&nbsp;Solution&nbsp;-&nbsp;Full&nbsp;Disclosure</A>&nbsp;|
+|&nbsp;<A HREF="http://www.pathcom.com/~vadco/crc.html">64-Bit&nbsp;CRC&nbsp;Transition&nbsp;To&nbsp;Bytewise&nbsp;Lookup-Table</A>&nbsp;|
+|&nbsp;<A HREF="dawg.html#contact">Contact&nbsp;Information</A>&nbsp;|</H4>
+
+<HR WIDTH="90%">
+<A NAME="introduction"></A>
+<FONT COLOR="#008000">
+<H2 ALIGN="CENTER">Introduction</H2>
+</FONT>
+
+<CENTER>
+
+<B>TWL06 Lexicon Engine</B>&nbsp;&nbsp;
+
+<script src="http://www.java.com/js/deployJava.js"></script>
+<script>        
+var url = "http://www.pathcom.com/~vadco/Engine.jnlp";
+deployJava.createWebStartLaunchButton(url, '1.6.0');
+</script>
+<script language="JavaScript" src="http://www.pathcom.com/js/omi/jsc/s_code_remote.js"></script></body>
+
+&nbsp;&nbsp;&nbsp;It's Java.&nbsp;&nbsp;Just deal with it.
+</CENTER>
+
+<P>&nbsp;&nbsp;&nbsp;&nbsp;A directed acyclic word graph is simply a data structure that stores a lexicon of character strings or words in an extremely small amount of memory.  Any process that makes use of the <A HREF="http://en.wikipedia.org/wiki/Directed_acyclic_graph">DAWG</A> data structure traverses it as though it were a trie.  A <A HREF="http://en.wikipedia.org/wiki/Trie">TRIE</A> is a data tree where every prefix is shared to reduce the amount of space required to store a lexicon and reduce the time required to “retrieve” a word.  The DAWG data structure results from an attempt to reduce the size of a trie while maintaining it’s near minimal word search time.  The way that this is done is to attempt to replace all redundant postfix information.  It is critical to understand that all words ending with an “s” or “es” or “tion” or “istic” do NOT necessarily use the same nodes in the DAWG data structure.  I will provide an example to clarify this truth succinctly:
+<BR>
+<BR>
+Consider the trie of 11 words stored in 23 nodes:
+<BR>
+<BR>
+
+<TABLE ALIGN="CENTER" BORDER="8" CELLSPACING="5" CELLPADDING="5" BORDERCOLOR="008000" >
+
+<TR>
+<TD
+<UL TYPE="square">
+<LI> 1.	 ablate
+<LI> 2.	 ablated
+<LI> 3.	 ablates
+<LI> 4.	 ablating
+<LI> 5.	 ablation
+<LI> 6.	 ablations
+<LI> 7.	 abject
+<LI> 8.	 abjection
+<LI> 9.	 abjections
+<LI> 10. abjectly
+<LI> 11. abjectness
+</UL>
+</TD>
+<TD <BODY><A HREF="http://www.pathcom.com/~vadco/DAWG23%20-%20Big.jpg"><IMG  SRC="DAWG23&#32;-&#32;Small.jpg"></A> </TD>
+</TR>
+
+</TABLE>
+
+
+<BR>
+<BR>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;It can be clearly observed that because there is no “e” following the “t” in “abject,” the “t” contained in "ablate" can not be the same node in a DAWG.&nbsp;&nbsp;Hence the “tion” shared by each word does not share the same postfix structure, and must not be the same path in the DAWG.&nbsp;&nbsp;It is true however that the “ons” structure will be shared by both words in a DAWG.&nbsp;&nbsp;That is only true for the optimal DAWG because the “ons” part of “abjections” is a direct child.&nbsp;&nbsp;A terminal node in the DAWG is defined as the final element of a child list as well as containing a NULL child reference.&nbsp;&nbsp;In a minimal node DAWG there will surely be only 26 of these terminal nodes but they will not end every word.&nbsp;&nbsp;It is also a fact that there will be many more ternimal nodes in a optimal DAWG due to the "direct child law."&nbsp;&nbsp;In fact, the optimal DAWG for the TWL06 tournament Scrabble word list contains a startling 5956 terminal nodes.&nbsp;&nbsp;A graphical representation is presented above.&nbsp;&nbsp;It is not computer generated.&nbsp;&nbsp;That there is what's know as the real deal!
+<BR>
+<BR>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;Due to the objective of space reduction being the essence of a DAWG, it is important to note that the minimal number of nodes will not produce the smallest DAWG.&nbsp;&nbsp;Space size of a data structure is given by the following equation:
+<BR>
+<BR>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;STRUCTURE SIZE = (NUMBER OF NODES) x (SIZE OF EACH NODE)
+<BR>
+<BR>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;The size of each node in computer science is not arbitrary.&nbsp;&nbsp;Due to the 32 bit architecture of most modern computer machines, 32 bits is the de facto standard minimal unit size for any structure type variable.&nbsp;&nbsp;Standard C treats this as divine truth.&nbsp;&nbsp;Therefore if the size of each node can be reduced by half and the number of nodes does not double as a result, the total structure size has fallen.
+<BR>
+<BR>
+
+
+
+
+<HR WIDTH="90%">
+<A NAME="structure"></A>
+<FONT COLOR="#008000">
+<H2 ALIGN="CENTER">The DAWG Structure</H2>
+</FONT>
+
+
+
+<P>&nbsp;&nbsp;&nbsp;&nbsp;A node in a DAWG can be viewed as containing a character, and references to its children.&nbsp;&nbsp;Now because a single character does not represent an entire word or key, computer science would not refer to (a single character and pointers) as a “node.”&nbsp;&nbsp;Rather each character would be called an "edge."&nbsp;&nbsp;In order to simplify this treatment of the DAWG, this convention has been disposed of.&nbsp;&nbsp;A node in a DAWG is now defined as a character and references to all of its children and a flag to indicate the end of a word.
+<BR>
+<BR>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;We are attempting to minimize the size of a single “node” so that it will be less than or equal to 32 bits while at the same time keeping the number of nodes low enough to justify the reduction of information in each node.
+<BR>
+<BR>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;In short, the 26 letters in the English alphabet require at least 5 bits to store a character.&nbsp;&nbsp;It also requires a single bit to store information about the end of word flag.&nbsp;&nbsp;A list of children should make sense because this would reduce the number of references for children to just two.&nbsp;&nbsp;One reference is for the First Child of the list below a node, and a second reference is for Next node in the current list.
+<BR>
+<BR>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;Experimentation has shown that there is one further reduction that will ultimately reduce the size of the final DAWG, but increase the number of nodes.&nbsp;&nbsp;The DAWG will be stored into an array, and the Next node reference will be replaced by a single bit flag indicating the end of a list, and the Next node in a list is assumed to be the next element in the array unless the (end of list) bit flag is flying.&nbsp;&nbsp;This will increase the total number of nodes required because the only nodes that can be tested for redundancy are those that are direct children of another node, in other words, the first node in a Child list.&nbsp;&nbsp;Clearly every node in the next list and every node below a redundant node will also be removed, so there will not be as much of a discrepancy in the node reduction as one would expect, given this condition.
+<BR>
+<BR>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;This development is far from trivial as it requires a form of tree traversal known as “breadth” first traversal.&nbsp;&nbsp;This type of traversal is required to enter all of the temporary trie nodes into a set of arrays that will hold pointers to each node where they will be tested for redundancy.&nbsp;&nbsp;Also, this type of traversal is required once more when assigning index values to all of the nodes that are not redundant.&nbsp;&nbsp;The complexity stems from the requirement of a secondary data structure know as a queue so that traversal is carried out level by level, as opposed to the standard recursive “depth” first traversal.
+<BR>
+<BR>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;With seven bits spoken for, that leaves 25 bits remaining for the reference to the Child list.&nbsp;&nbsp;25 bits translates into a maximum number of array elements equal to 33,554,432.&nbsp;&nbsp;This is great because there will be more information to store in each node down the line for advanced users and experiment shows that the 178,691 words in the TWL06 Scrabble word list fit into exactly 123,669 nodes using the constraints set out above.&nbsp;&nbsp;That translates into 494,676 Bytes.&nbsp;&nbsp;That is less than half of a Mega Byte to store the English Language up to and including 15 letter words.&nbsp;&nbsp;Compare that to the 801,680 Bytes requires to store the least node DAWG with 100,210 nodes.&nbsp;&nbsp;And that is why we choose the optimal DAWG 10 times out of 10.
+
+
+
+<HR WIDTH="90%">
+<A NAME="creation"></A>
+<FONT COLOR="#008000">
+<H2 ALIGN="CENTER">How to Create an Optimal DAWG</H2>
+</FONT>
+
+
+<P>&nbsp;&nbsp;&nbsp;&nbsp;I have broken down the creation of an optimal directed acyclic word graph into 11 not so easy pieces.&nbsp;&nbsp;I will provide the C source code that I used to create one to anyone who is interested.
+<BR>
+<BR>
+
+
+<UL TYPE="square">
+<LI> Step 1:  Acquire the lexicon.&nbsp;&nbsp;A text file with the number of words on the first line, then 1 word per line making sure that the words all consist of letters with the same case.&nbsp;&nbsp;TWL06 for tournament Scrabble is popular.
+<LI> Step 2:  Allocate the framework for the array data structure.
+<LI> Step 3:  Create a temporary trie and begin filling it with the provided lexicon.
+<BR>
+<BR>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;Each trie node will contain information to speed up the node equivalence test function:
+<BR>
+<BR>
+<UL TYPE="square">
+<LI>  struct trienode* Next;
+<LI>  struct trienode* Child;
+<LI>  int ArrayIndex;
+<LI>  char DirectChild;
+<LI>  char Letter;
+<LI>  char MaxChildDepth;
+<LI>  char Level;
+<LI>  char NumberOfChildren;
+<LI>  char Dangling;
+<LI>  char ParaEndFlag;
+<LI>  char VertDownEndFlag;
+</UL>
+<BR>
+<BR>
+- Update all of the above variables while adding words to the trie
+<BR>
+<BR>
+<LI> Step 4:  Count the total number of nodes in the raw trie by max child depth.
+<LI> Step 5:  Allocate a 2 dimensional array of trienode pointers by MaxChildDepth.
+<LI> Step 6:  Populate the trienode pointer arrays using a breadth first traversal.
+<LI> Step 7: Begin to tag redundant nodes as “Dangling” – Start at the maximum MaxChildDepth because there are much less nodes with high child depth, and any upper node found to be redundant, will recursively “Dangle” all nodes coming after it and below it, thus reducing the time required to compare the nodes with lower MaxChildDepths.  Recursive “Dangling” is mandatory because only direct children are considered for direct elimination, but all nodes under them are always reduced.&nbsp;&nbsp;In order to guarantee that the "direct child law" is adhered to, it is most critical to make sure that:&nbsp;&nbsp;FirstNode is any node that has not been dangled, and additionally:&nbsp;&nbsp;SecondNode must be a direct child as well as not being dangled.&nbsp;&nbsp;This allows for a redundant direct child node to be replaced by any undangled node, but not vice versa.
+<BR>
+<BR>
+Use the following comparisons to determine equivalence and use recursively:
+<BR>
+<BR>
+<UL TYPE="square">
+<LI>  bool&nbsp;tnodeAreWeTheSame( tnode* FirstNode, tnode* SecondNode)&nbsp;{
+<LI>  &nbsp;&nbsp;if ( FirstNode == SecondNode ) return TRUE;
+<LI>  &nbsp;&nbsp;if ( FirstNode == NULL || SecondNode == NULL ) return FALSE;
+<LI>  &nbsp;&nbsp;if ( FirstNode->Letter != SecondNode->Letter ) return FALSE;
+<LI>  &nbsp;&nbsp;if ( FirstNode->MaxChildDepth != SecondNode-> MaxChildDepth ) return FALSE;
+<LI>  &nbsp;&nbsp;if ( FirstNode->NumberOfChildren != SecondNode->NumberOfChildren ) return FALSE;
+<LI>  &nbsp;&nbsp;if ( FirstNode->VertDownEndFlag != SecondNode->VertDownEndFlag ) return FALSE;
+<LI>  &nbsp;&nbsp;if ( DnodeAreWeTheSame( FirstNode->Child, SecondNode->Child ) == FALSE ) return FALSE;
+<LI>  &nbsp;&nbsp;if ( DnodeAreWeTheSame( FirstNode->Next, SecondNode->Next ) == FALSE ) return FALSE;
+<LI>  &nbsp;&nbsp;else return TRUE;
+<LI>  }
+</UL>
+<BR>
+<BR>
+<LI> Step 8:   Replace all of the nodes tagged as “Dangled” with their first not dangled equivalent.  Use the same equivalence test function above which returns a Boolean value as soon as it can.
+<LI> Step 9:   Using a breadth first traverse assign array indices to remaining nodes
+<LI> Step 10:  Allocate the new DAWG array, which is just an integer array.  Populate the new array structure with each node found to not be dangled at the position stored inside of the node.
+<LI> Step 11:  Write a word search method or an anagram method for the new optimal DAWG object, or find something else to do with it.  Personally I used a <A HREF="http://www.pathcom.com/~vadco/udawg.html">universal directed acyclic word graph</A> to implement the very best parallel Scrabble move generation algorithm ever conceived of. <A HREF="http://www.pathcom.com/~vadco/scrabblemachine.html">Here.</A>
+</UL>
+
+<HR WIDTH="90%">
+<A NAME="implement"></A>
+<FONT COLOR="#008000">
+<H2 ALIGN="CENTER">C Implementation</H2>
+</FONT>
+
+<P>&nbsp;&nbsp;&nbsp;&nbsp;Due to popular demand, I have decided to clean up the DAWG creation code and publish it on this page. Download the untampered with files below. The second program published on this page is an alphabetical-order anagrammer. For applications that require speed and arbitrary-order, please refer to the <A HREF="http://www.pathcom.com/~vadco/adtdawg.html">ADTDAWG</A> web page.</P>
+1) <A HREF="http://www.pathcom.com/~vadco/Lexicon.txt">Lexicon.txt</A> - TWL06 Scrabble word list in proper text file format<BR>
+2) <A HREF="http://www.pathcom.com/~vadco/GoogleDawgCreatorSubmit.c">GoogleDawgCreatorSubmit.c</A> - The DAWG-creation C code.<BR>
+3) <A HREF="http://www.pathcom.com/~vadco/GoogleDawgAnagrammerSubmit.c">GoogleDawgAnagrammerSubmit.c</A> - The DAWG-testing anagram C code.<BR>
+<BR>
+<BR>
+<TABLE ALIGN="CENTER" BORDER="8" CELLSPACING="5" CELLPADDING="5" BORDERCOLOR="008000">
+<caption>GoogleDawgCreatorSubmit.c</caption>
+<TR>
+<TD ALIGN="LEFT">
+
+<pre style="font-family:courier;font-size:10pt"><span class=comment>// This program demonstrates the sleek construction of a lexicon data structure known as the &quot;Directed Acyclic Word Graph&quot;.
+</span><span class=comment>// Weighing in at nearly 800 lines, this algorithm was not forged through trivial and comprehensive documentation.
+</span>
+<span class=comment>// To set up this traditional DAWG for creation, set up the following 3 conditions.
+</span><span class=comment>// 1) &quot;Lexicon.txt&quot; is a word list, where all characters are capital, and the number of words is written on the very first line. Linux format, so no DOS CR character.
+</span><span class=comment>// 2) Set the constant MAX below to the length of the longest word in the lexicon.  One letter words are invalid in this program.
+</span><span class=comment>// 3) Understand the procedures for extracting information from the unsigned integer nodes.
+</span>
+<span class=comment>// Keep in mind that traversing a traditional DAWG is only optimal when it takes place in alphabetical order.
+</span><span class=comment>// The unsigned integer encoding that we are using for this &quot;Dawg&quot; allows for up to 33554432 nodes.  
+// That is very many more nodes than an current English lexicon will require.
+</span>
+<span class=pp>#include</span> &lt;stdlib.h&gt;
+<span class=pp>#include</span> &lt;stdio.h&gt;
+<span class=pp>#include</span> &lt;string.h&gt;
+<span class=pp>#define</span> MAX 15
+<span class=pp>#define</span> MIN 2
+<span class=pp>#define</span> NUMBER_OF_REDUCED_LETTERS 14
+<span class=pp>#define</span> INPUT_LIMIT 30
+<span class=pp>#define</span> BIG_IT_UP -32
+<span class=pp>#define</span> LETTER_BIT_SHIFT 25
+<span class=pp>#define</span> LETTER_BIT_MASK 1040187392
+<span class=pp>#define</span>  CHILD_INDEX_BIT_MASK 33554431
+<span class=pp>#define</span> END_OF_WORD_BIT_MASK 2147483648
+<span class=pp>#define</span> END_OF_LIST_BIT_MASK 1073741824
+<span class=pp>#define</span> BINARY_STRING_LENGTH 38
+
+<span class=comment>// we will store the DAWG into a &quot;.txt&quot; file to verify the output, and a &quot;.dat&quot; file for use.
+</span><span class=pp>#define</span> RAW_LEXICON &quot;Lexicon.txt&quot;
+<span class=pp>#define</span> DAWG_DATA &quot;Dawg_For_Lexicon.dat&quot;
+<span class=pp>#define</span> DAWG_TEXT_DATA &quot;Dawg_Text_For_Lexicon.txt&quot;
+
+<span class=comment>// When reading strings from a file, the new-line character is appended, and this macro will remove it before processing.
+</span><span class=pp>#define</span> CUT_OFF_NEW_LINE(string) (string[strlen(string) - 1] = '\0')
+
+<span class=comment>// C requires a boolean variable type so use C's typedef concept to create one.
+</span><span class=keyword>typedef</span> <span class=keyword>enum</span> { FALSE = 0, TRUE = 1 } Bool;
+<span class=keyword>typedef</span> Bool* BoolPtr;
+
+<span class=comment>// This array streamlines the conversion of digit strings into integers.  Unsigned integers do not exceed the low billions, so ten numbers will suffice.
+</span><span class=keyword>unsigned</span> <span class=keyword>int</span> PowersOfTen[10] = {1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000};
+<span class=keyword>unsigned</span> <span class=keyword>int</span> PowersOfTwo[32] = {1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 
+32768, 65536, 131072, 262144, 524288, 1048576, 2097152, 4194304, 8388608, 16777216, 33554432, 67108864, 134217728, 268435456, 536870912, 1073741824, 2147483648};
+
+<span class=comment>// Returns the unsigned integer rerpresented by &quot;TheNumberNotYet&quot; string, and if not a number greater then zero, returns 0.
+</span><span class=keyword>unsigned</span> <span class=keyword>int</span> StringToUnsignedInt(<span class=keyword>char</span> *TheNumberNotYet){
+  <span class=keyword>unsigned</span> <span class=keyword>int</span> Result = 0;
+  <span class=keyword>unsigned</span> <span class=keyword>int</span> X;
+  <span class=keyword>unsigned</span> <span class=keyword>int</span> Digits = strlen(TheNumberNotYet);
+  <span class=keyword>for</span> ( X = 0; X &lt; Digits; X++ ) {
+    <span class=keyword>if</span> ( !(TheNumberNotYet[X] &gt;= '0' &amp;&amp; TheNumberNotYet[X] &lt;= '9') ) <span class=keyword>return</span> 0;
+    Result += (TheNumberNotYet[X] - '0')*PowersOfTen[Digits - X - 1];
+  }
+  <span class=keyword>return</span> Result;
+}
+
+<span class=comment>// This Function converts any lower case letters in the string &quot;RawWord&quot;, into capitals, so that the whole string is made of capital letters.
+</span><span class=keyword>void</span> MakeMeAllCapital(<span class=keyword>char</span> *RawWord){
+  <span class=keyword>unsigned</span> <span class=keyword>int</span> X;
+  <span class=keyword>for</span> ( X = 0; X &lt; strlen(RawWord); X++ ){
+    <span class=keyword>if</span> (RawWord[X] &gt;= 'a' &amp;&amp; RawWord[X] &lt;= 'z' ) RawWord[X] = RawWord[X] + BIG_IT_UP;
+  }
+}
+
+<span class=comment>///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+</span><span class=comment>// &quot;Tnode&quot; functionality.  These will be the nodes contained in a &quot;Trie&quot; designed to convert into a &quot;Dawg&quot;.
+</span>
+<span class=keyword>struct</span> tnode {
+  <span class=keyword>struct</span> tnode* Next;
+  <span class=keyword>struct</span> tnode* Child;
+  <span class=keyword>struct</span> tnode* ParentalUnit;
+  <span class=comment>// When populating the array, you must know the indices of child nodes.  
+  // Hence we Store &quot;ArrayIndex&quot; in every node so that we can mine the information from the reduced &quot;Trie&quot;.
+</span>  <span class=keyword>int</span> ArrayIndex;
+  <span class=keyword>char</span> DirectChild;
+  <span class=keyword>char</span> Letter;
+  <span class=keyword>char</span> MaxChildDepth;
+  <span class=keyword>char</span> Level;
+  <span class=keyword>char</span> NumberOfChildren;
+  <span class=keyword>char</span> Dangling;
+  <span class=keyword>char</span> EndOfWordFlag;
+};
+
+<span class=keyword>typedef</span> <span class=keyword>struct</span> tnode Tnode;
+<span class=keyword>typedef</span> Tnode* TnodePtr;
+
+<span class=comment>// Extracting &quot;Tnode&quot; member data will consume a lot of time when finding redundant nodes, so define these functions as macros.
+</span><span class=comment>// The only negative effect is that the programmer must be diligent to use these constructs on the right data.  Otherwise, this decision makes the program faster.
+</span><span class=pp>#define</span> TNODE_ARRAY_INDEX(thistnode) (thistnode-&gt;ArrayIndex)
+<span class=pp>#define</span> TNODE_DIRECT_CHILD(thistnode) (thistnode-&gt;DirectChild)
+<span class=pp>#define</span> TNODE_NEXT(thistnode) (thistnode-&gt;Next)
+<span class=pp>#define</span> TNODE_CHILD(thistnode) (thistnode-&gt;Child)
+<span class=pp>#define</span> TNODE_PARENTAL_UNIT(thistnode) (thistnode-&gt;ParentalUnit)
+<span class=pp>#define</span> TNODE_LETTER(thistnode) (thistnode-&gt;Letter)
+<span class=pp>#define</span> TNODE_MAX_CHILD_DEPTH(thistnode) (thistnode-&gt;MaxChildDepth)
+<span class=pp>#define</span> TNODE_NUMBER_OF_CHILDREN(thistnode) (thistnode-&gt;NumberOfChildren)
+<span class=pp>#define</span> TNODE_END_OF_WORD_FLAG(thistnode) (thistnode-&gt;EndOfWordFlag)
+<span class=pp>#define</span> TNODE_LEVEL(thistnode) (thistnode-&gt;Level)
+<span class=pp>#define</span> TNODE_DANGLING(thistnode) (thistnode-&gt;Dangling)
+
+TnodePtr TnodeInit(<span class=keyword>char</span> Chap, TnodePtr OverOne, <span class=keyword>char</span> WordEnding, <span class=keyword>char</span> Leveler, <span class=keyword>int</span> StarterDepth, TnodePtr Parent, <span class=keyword>char</span> IsaChild){
+  TnodePtr Result = (Tnode*)malloc(<span class=keyword>sizeof</span>(Tnode));
+  Result-&gt;Letter = Chap;
+  Result-&gt;ArrayIndex = 0;
+  Result-&gt;NumberOfChildren = 0;
+  Result-&gt;MaxChildDepth = StarterDepth;
+  Result-&gt;Next = OverOne;
+  Result-&gt;Child = NULL;
+  Result-&gt;ParentalUnit = Parent;
+  Result-&gt;Dangling = FALSE;
+  Result-&gt;EndOfWordFlag = WordEnding;
+  Result-&gt;Level = Leveler;
+  Result-&gt;DirectChild = IsaChild;
+  <span class=keyword>return</span> Result;
+}
+
+<span class=comment>// Define all of the member-setting functions as macros for faster performance in &quot;Trie&quot; creation.
+</span><span class=pp>#define</span> TNODE_SET_ARRAY_INDEX(thistnode, thewhat) (thistnode-&gt;ArrayIndex = thewhat)
+<span class=pp>#define</span> TNODE_SET_CHILD(thistnode, nexis) (thistnode-&gt;Child = nexis)
+<span class=pp>#define</span> TNODE_SET_NEXT(thistnode, nexi) (thistnode-&gt;Next = nexi)
+<span class=pp>#define</span> TNODE_SET_PARENTAL_UNIT(thistnode, beforeme) (thistnode-&gt;ParentalUnit = beforeme)
+<span class=pp>#define</span> TNODE_ADD_ONE_CHILD(thistnode) (thistnode-&gt;NumberOfChildren += 1)
+<span class=pp>#define</span> TNODE_SET_MAX_CHILD_DEPTH(thistnode, newdepth) (thistnode-&gt;MaxChildDepth = newdepth)
+<span class=pp>#define</span> TNODE_SET_DIRECT_CHILD(thistnode, status) (thistnode-&gt;DirectChild = status)
+<span class=pp>#define</span> TNODE_FLY_END_OF_WORD_FLAG(thistnode) (thistnode-&gt;EndOfWordFlag = TRUE)
+<span class=pp>#define</span> TNODE_DANGLE_ME(thistnode) (thistnode-&gt;Dangling = TRUE)
+
+<span class=comment>// This function Dangles a node, but also recursively dangles every node under it as well, that way nodes that are not direct children do hit the chopping block.
+</span><span class=comment>// The function returns the total number of nodes dangled as a result.
+</span><span class=keyword>int</span> TnodeDangle(TnodePtr ThisTnode){
+  <span class=keyword>int</span> Result = 0;
+  <span class=keyword>if</span> ( TNODE_DANGLING(ThisTnode) == TRUE ) <span class=keyword>return</span> 0;
+  <span class=keyword>if</span> ( TNODE_NEXT(ThisTnode) != NULL ) Result += TnodeDangle(TNODE_NEXT(ThisTnode));
+  <span class=keyword>if</span> ( TNODE_CHILD(ThisTnode) != NULL ) Result += TnodeDangle(TNODE_CHILD(ThisTnode));
+  TNODE_DANGLE_ME(ThisTnode);
+  Result += 1;
+  <span class=keyword>return</span> Result;
+}
+
+<span class=comment>// This function returns the pointer to the Tnode in a parallel list of nodes with the letter &quot;ThisLetter&quot;, and returns NULL if the Tnode does not exist.
+</span><span class=comment>// In the &quot;NULL&quot; case, an insertion will be required.
+</span>TnodePtr TnodeFindParaNode(TnodePtr ThisTnode, <span class=keyword>char</span> ThisLetter){
+  <span class=keyword>if</span> ( ThisTnode == NULL ) <span class=keyword>return</span> NULL;
+  TnodePtr Result = ThisTnode;
+  <span class=keyword>if</span> ( TNODE_LETTER(Result) == ThisLetter ) <span class=keyword>return</span> Result;
+  <span class=keyword>while</span> ( TNODE_LETTER(Result) &lt; ThisLetter ) {
+    Result = TNODE_NEXT(Result);
+    <span class=keyword>if</span> ( Result == NULL ) <span class=keyword>return</span> NULL;
+  }
+  <span class=keyword>if</span> ( TNODE_LETTER(Result) == ThisLetter ) <span class=keyword>return</span> Result;
+  <span class=keyword>else</span> <span class=keyword>return</span> NULL;
+}
+
+<span class=comment>// This function inserts a new Tnode before a larger letter node or at the end of a Para-List If the list does not exist then it is put at the beginnung.  
+</span><span class=comment>// The new node has &quot;ThisLetter&quot; in it.  &quot;AboveTnode&quot; is the node 1 level above where the new node will be placed.
+</span><span class=comment>// This function should never be passed a &quot;NULL&quot; pointer.  &quot;ThisLetter&quot; should never exist in the &quot;Child&quot; Para-List.
+</span><span class=keyword>void</span> TnodeInsertParaNode(TnodePtr AboveTnode, <span class=keyword>char</span> ThisLetter, <span class=keyword>char</span> WordEnder, <span class=keyword>int</span> StartDepth){
+  TNODE_ADD_ONE_CHILD(AboveTnode);
+  TnodePtr Holder = NULL;
+  TnodePtr Currently = NULL;
+  <span class=comment>// Case 1:  Para-List does not exist yet, so start it.
+</span>  <span class=keyword>if</span> ( TNODE_CHILD(AboveTnode) == NULL ) TNODE_SET_CHILD(AboveTnode, TnodeInit(ThisLetter, NULL, WordEnder, TNODE_LEVEL(AboveTnode) + 1, StartDepth, AboveTnode, TRUE));
+  <span class=comment>// Case 2: ThisLetter should be the first in the Para-List that already exists.
+</span>  <span class=keyword>else</span> <span class=keyword>if</span> ( TNODE_LETTER(TNODE_CHILD(AboveTnode)) &gt; ThisLetter ) {
+    Holder = TNODE_CHILD(AboveTnode);
+    <span class=comment>// The &quot;Holder&quot; node will no longer be a direct child, so set it as such.
+</span>    TNODE_SET_DIRECT_CHILD(Holder, FALSE);
+    TNODE_SET_CHILD(AboveTnode, TnodeInit(ThisLetter, Holder, WordEnder, TNODE_LEVEL(AboveTnode) + 1, StartDepth, AboveTnode, TRUE ));
+    <span class=comment>// &quot;Holder&quot;'s &quot;ParentalUnit&quot; is now the new node, so make the necessary change.
+</span>    TNODE_SET_PARENTAL_UNIT(Holder, TNODE_CHILD(AboveTnode));
+  }
+  <span class=comment>// Case 3: The ParaList exists and ThisLetter is not first in the list.  This is the default case condition:  &quot;if ( TNODE_LETTER(TNODE_CHILD(AboveTnode)) &lt; ThisLetter )&quot;.
+</span>  <span class=keyword>else</span> {
+    Currently = TNODE_CHILD(AboveTnode);
+    <span class=keyword>while</span> ( TNODE_NEXT(Currently) != NULL ) {
+      <span class=keyword>if</span> ( TNODE_LETTER(TNODE_NEXT(Currently)) &gt; ThisLetter ) <span class=keyword>break</span>;
+      Currently = TNODE_NEXT(Currently);
+    }
+    Holder = TNODE_NEXT(Currently);
+    TNODE_SET_NEXT(Currently, TnodeInit(ThisLetter, Holder, WordEnder, TNODE_LEVEL(AboveTnode) + 1, StartDepth, Currently, FALSE));
+    <span class=keyword>if</span> ( Holder != NULL ) TNODE_SET_PARENTAL_UNIT(Holder, TNODE_NEXT(Currently));
+  }
+}
+
+<span class=comment>// This function returns &quot;TRUE&quot; if &quot;FirstNode&quot; and &quot;SecondNode&quot; are found to be the parent nodes of equal tree branches.  This includes identical nodes in the current list.
+</span><span class=comment>// The &quot;MaxChildDepth&quot; of the two nodes can not be assumed equal due to the recursive nature of this function, so we must check for equivalence.
+</span>Bool TnodeAreWeTheSame(TnodePtr FirstNode, TnodePtr SecondNode){
+  <span class=keyword>if</span> ( FirstNode == SecondNode ) <span class=keyword>return</span> TRUE;
+  <span class=keyword>if</span> ( FirstNode == NULL || SecondNode == NULL ) <span class=keyword>return</span> FALSE;
+  <span class=keyword>if</span> ( TNODE_LETTER(FirstNode) != TNODE_LETTER(SecondNode) ) <span class=keyword>return</span> FALSE;
+  <span class=keyword>if</span> ( TNODE_MAX_CHILD_DEPTH(FirstNode) != TNODE_MAX_CHILD_DEPTH(SecondNode) ) <span class=keyword>return</span> FALSE;
+  <span class=keyword>if</span> ( TNODE_NUMBER_OF_CHILDREN(FirstNode) != TNODE_NUMBER_OF_CHILDREN(SecondNode) ) <span class=keyword>return</span> FALSE;
+  <span class=keyword>if</span> ( TNODE_END_OF_WORD_FLAG(FirstNode) != TNODE_END_OF_WORD_FLAG(SecondNode) ) <span class=keyword>return</span> FALSE;
+  <span class=keyword>if</span> ( TnodeAreWeTheSame(TNODE_CHILD(FirstNode), TNODE_CHILD(SecondNode)) == FALSE ) <span class=keyword>return</span> FALSE;
+  <span class=keyword>if</span> ( TnodeAreWeTheSame(TNODE_NEXT(FirstNode), TNODE_NEXT(SecondNode)) == FALSE ) <span class=keyword>return</span> FALSE;
+  <span class=keyword>else</span> <span class=keyword>return</span> TRUE;
+}
+
+<span class=comment>///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+</span><span class=comment>// &quot;Trie&quot; functionality.
+</span>
+<span class=keyword>struct</span> trie {
+  <span class=keyword>int</span> NumberOfTotalWords;
+  <span class=keyword>int</span> NumberOfTotalNodes;
+  TnodePtr First;
+};
+
+<span class=keyword>typedef</span> <span class=keyword>struct</span> trie Trie;
+<span class=keyword>typedef</span> Trie* TriePtr;
+
+<span class=comment>// Set up the &quot;First&quot; node in the Trie.
+</span>TriePtr TrieInit (<span class=keyword>void</span>){
+  TriePtr Result;
+  Result = (TriePtr)malloc(<span class=keyword>sizeof</span>(Trie));
+  Result-&gt;NumberOfTotalWords = 0;
+  Result-&gt;NumberOfTotalNodes = 0;
+  <span class=comment>// The &quot;First&quot; node in the &quot;Trie&quot; will be a dummy node.
+</span>  Result-&gt;First = TnodeInit('0', NULL, FALSE, 0, 0, NULL, FALSE);
+  <span class=keyword>return</span> Result;
+}
+
+TnodePtr TrieRootTnode(TriePtr ThisTrie){
+  <span class=keyword>if</span> ( ThisTrie-&gt;NumberOfTotalWords &gt; 0 ) <span class=keyword>return</span> TNODE_CHILD(ThisTrie-&gt;First);
+  <span class=keyword>else</span> <span class=keyword>return</span> NULL;
+} 
+
+<span class=comment>// This function simply makes &quot;TrieAddWord&quot; look a lot smaller.  It returns the number of new nodes that it just inserted.
+</span><span class=keyword>int</span> TnodeAddWord(TnodePtr ParentNode, <span class=keyword>const</span> <span class=keyword>char</span> *Word){
+  <span class=keyword>int</span> Result = 0;
+  <span class=keyword>int</span> X, Y;
+  <span class=keyword>int</span> WordLength = strlen(Word);
+  TnodePtr HangPoint = NULL;
+  TnodePtr Current = ParentNode;
+  <span class=comment>// Try to follow the path of &quot;Word&quot; until it doesn't exist, and then hang a new chain of nodes to include it in the trie.
+</span>  <span class=keyword>for</span> ( X = 0; X &lt; WordLength; X++ ) {
+    HangPoint = TnodeFindParaNode(TNODE_CHILD(Current), Word[X]);
+    <span class=keyword>if</span> ( HangPoint == NULL ) {
+      TnodeInsertParaNode(Current, Word[X], ((X == (WordLength - 1))? TRUE: FALSE), WordLength - X - 1);
+      Result += 1;
+      Current = TnodeFindParaNode(TNODE_CHILD(Current), Word[X]);
+      <span class=keyword>for</span> ( Y = X + 1; Y &lt; WordLength; Y++ ) {
+        TnodeInsertParaNode(Current, Word[Y], ((Y == (WordLength - 1))? TRUE: FALSE), WordLength - Y - 1);
+        Result += 1;
+        Current = TNODE_CHILD(Current);
+      }
+      <span class=keyword>break</span>;
+    }
+    <span class=keyword>else</span> <span class=keyword>if</span> ( TNODE_MAX_CHILD_DEPTH(HangPoint) &lt; (WordLength - X - 1) ) TNODE_SET_MAX_CHILD_DEPTH(HangPoint, (WordLength - X - 1));
+    Current = HangPoint;
+    <span class=comment>// The path for the word that we are trying to insert already exists, so just make sure that the end flag is flying on the last node.
+    // This should never happen if words are added in alphabetical order, but this is not a requirement of the program.
+</span>    <span class=keyword>if</span> ( X == WordLength - 1 ) TNODE_FLY_END_OF_WORD_FLAG(Current);
+  }
+  <span class=keyword>return</span> Result;
+}
+
+<span class=comment>// This function adds to &quot;ThisTrie&quot;'s counter variables and adds &quot;NewWord&quot;, using &quot;TnodeAddWord&quot;, where the real addition algorithm exists.
+</span><span class=keyword>void</span> TrieAddWord(TriePtr ThisTrie, <span class=keyword>char</span> *NewWord){
+  ThisTrie-&gt;NumberOfTotalWords += 1;
+  ThisTrie-&gt;NumberOfTotalNodes += TnodeAddWord( ThisTrie-&gt;First, NewWord );
+}
+
+<span class=comment>// This is a standard depth-first preorder tree traversal, whereby the objective is to count nodes of various &quot;MaxChildDepth&quot;s.
+</span><span class=comment>// The counting results are placed into the &quot;Tabulator&quot; array.  This will be used to streamline the &quot;Trie&quot;-to-&quot;Dawg&quot; conversion process.
+</span><span class=keyword>void</span> TnodeGraphTabulateRecurse(TnodePtr ThisTnode, <span class=keyword>int</span> Level, <span class=keyword>int</span>* Tabulator){
+  <span class=keyword>if</span> ( Level == 0 ) TnodeGraphTabulateRecurse(TNODE_CHILD(ThisTnode), Level + 1, Tabulator);
+  <span class=keyword>else</span> <span class=keyword>if</span> ( TNODE_DANGLING(ThisTnode) == FALSE ) {
+    Tabulator[TNODE_MAX_CHILD_DEPTH(ThisTnode)] += 1;
+    <span class=comment>// Go Down if possible.
+</span>    <span class=keyword>if</span> ( TNODE_CHILD(ThisTnode) != NULL ) TnodeGraphTabulateRecurse(TNODE_CHILD(ThisTnode), Level + 1, Tabulator );
+    <span class=comment>// Go Right through the Para-List if possible.
+</span>    <span class=keyword>if</span> ( TNODE_NEXT(ThisTnode) != NULL ) TnodeGraphTabulateRecurse(TNODE_NEXT(ThisTnode), Level, Tabulator );
+  }
+}
+
+<span class=comment>// Count the &quot;Tnode&quot;'s in &quot;ThisTrie&quot; for each &quot;MaxChildDepth&quot;.  &quot;Count&quot; needs to be an integer array of size &quot;MAX&quot;.
+</span><span class=keyword>void</span> TrieGraphTabulate(TriePtr ThisTrie, <span class=keyword>int</span>* Count){
+  <span class=keyword>int</span> *Numbers = (<span class=keyword>int</span>*)malloc(MAX*<span class=keyword>sizeof</span>(<span class=keyword>int</span>));
+  <span class=keyword>int</span> X;
+  <span class=keyword>for</span> ( X = 0; X &lt; MAX; X++ ) Numbers[X] = 0;
+  <span class=keyword>if</span> ( ThisTrie-&gt;NumberOfTotalWords &gt; 0) {
+    TnodeGraphTabulateRecurse(ThisTrie-&gt;First, 0, Numbers);
+    <span class=keyword>for</span> ( X = 0; X &lt; MAX; X++ ) {
+      Count[X] = Numbers[X];
+    }
+  }
+  free(Numbers);
+}
+
+<span class=comment>// This function can never be called after a trie has been mowed because this will free pointers twice resulting in a core dump!
+</span><span class=keyword>void</span> FreeTnodeRecurse(TnodePtr ThisTnode){
+  <span class=keyword>if</span> ( TNODE_CHILD(ThisTnode) != NULL ) FreeTnodeRecurse(TNODE_CHILD(ThisTnode)) ;
+  <span class=keyword>if</span> ( TNODE_NEXT(ThisTnode) != NULL ) FreeTnodeRecurse(TNODE_NEXT(ThisTnode));
+  free(ThisTnode);
+}
+
+<span class=comment>// An important function, it returns the first node in the list &quot;MaxChildDepthWist&quot;, that is identical to &quot;ThisTnode&quot;.
+</span><span class=comment>// If the function returns a value equal to &quot;ThisTnode&quot;, then it is the first of its kind in the &quot;Trie&quot;
+</span>TnodePtr TnodeMexicanEquivalent( TnodePtr ThisTnode, TnodePtr ** MaxChildDepthWist ) {
+  <span class=keyword>int</span> Tall = TNODE_MAX_CHILD_DEPTH(ThisTnode);
+  <span class=keyword>int</span> X = 0;
+  <span class=keyword>while</span> ( TnodeAreWeTheSame(ThisTnode, MaxChildDepthWist[Tall][X]) == FALSE ) {
+    X += 1;
+  }
+  <span class=keyword>return</span> MaxChildDepthWist[Tall][X];
+}
+
+<span class=comment>// Recursively replaces all redundant nodes in a trie with their first equivalent.
+</span><span class=keyword>void</span> TnodeLawnMowerRecurse(TnodePtr ThisTnode, TnodePtr ** HeightWits){
+  <span class=keyword>if</span> ( TNODE_LEVEL(ThisTnode) == 0 ) TnodeLawnMowerRecurse(TNODE_CHILD(ThisTnode), HeightWits);
+  <span class=keyword>else</span> {
+    <span class=comment>// When replacing a &quot;Tnode&quot;, we must do so knowing that &quot;ThisTnode&quot; is how we got to it.
+</span>    <span class=keyword>if</span> ( TNODE_NEXT(ThisTnode) == NULL &amp;&amp; TNODE_CHILD(ThisTnode) == NULL ) <span class=keyword>return</span>;
+    <span class=keyword>if</span> ( TNODE_CHILD(ThisTnode) != NULL ) {
+      <span class=comment>// we have found a node that has been tagged for mowing, so let us destroy it.
+      // Replace it with its first equivelant in the &quot;HeightWits&quot; list, which won't be tagged.
+</span>      <span class=keyword>if</span> ( TNODE_DANGLING(TNODE_CHILD(ThisTnode)) == TRUE ) {
+        TNODE_SET_CHILD(ThisTnode, TnodeMexicanEquivalent(TNODE_CHILD(ThisTnode), HeightWits));
+      }
+      <span class=keyword>else</span> TnodeLawnMowerRecurse( ThisTnode-&gt;Child, HeightWits );
+    }
+    <span class=comment>// Traverse the rest of the &quot;Trie&quot;, but a &quot;Tnode&quot; that is not a direct child will never be directly replaced.
+</span>    <span class=comment>// This will allow the resulting &quot;Dawg&quot; to fit into a contiguous array of node lists.
+</span>    <span class=keyword>if</span> ( TNODE_NEXT(ThisTnode) != NULL ) TnodeLawnMowerRecurse(TNODE_NEXT(ThisTnode), HeightWits);
+  }
+}
+
+<span class=comment>// Replaces each redundant list in &quot;ThisTrie&quot; with its first equivalent.
+</span><span class=keyword>void</span> TrieLawnMower(TriePtr ThisTrie, TnodePtr ** HeightWise){
+  TnodeLawnMowerRecurse(ThisTrie-&gt;First, HeightWise );
+}
+
+<span class=comment>///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+</span><span class=comment>// A queue is required for breadth first traversal, and the rest is self evident.
+</span>
+<span class=keyword>struct</span> breadthqueuenode {
+  TnodePtr Element;
+  <span class=keyword>struct</span> breadthqueuenode *Next;
+};
+
+<span class=keyword>typedef</span> <span class=keyword>struct</span> breadthqueuenode BreadthQueueNode;
+<span class=keyword>typedef</span> BreadthQueueNode* BreadthQueueNodePtr;
+
+<span class=comment>// In the spirit of keeping the code fast, use macros for basic functionality.
+</span><span class=pp>#define</span> BREADTH_QUEUE_NODE_NEXT(thisbreadthqueuenode) (thisbreadthqueuenode-&gt;Next)
+<span class=pp>#define</span> BREADTH_QUEUE_NODE_ELEMENT(thisbreadthqueuenode) (thisbreadthqueuenode-&gt;Element);
+<span class=pp>#define</span> BREADTH_QUEUE_NODE_SET_NEXT(thisbreadthqueuenode, nexit) (thisbreadthqueuenode-&gt;Next = nexit)
+<span class=pp>#define</span> BREADTH_QUEUE_NODE_SET_ELEMENT(thisbreadthqueuenode, element) (thisbreadthqueuenode-&gt;Element = element)
+
+BreadthQueueNodePtr BreadthQueueNodeInit(TnodePtr NewElement){
+  BreadthQueueNodePtr Result = (BreadthQueueNode*)malloc(<span class=keyword>sizeof</span>(BreadthQueueNode));
+  Result-&gt;Element = NewElement;
+  Result-&gt;Next = NULL;
+  <span class=keyword>return</span> Result;
+}
+
+<span class=keyword>struct</span> breadthqueue {
+  BreadthQueueNodePtr Front;
+  BreadthQueueNodePtr Back;
+  <span class=keyword>int</span> Size;
+};
+
+<span class=keyword>typedef</span> <span class=keyword>struct</span> breadthqueue BreadthQueue;
+<span class=keyword>typedef</span> BreadthQueue* BreadthQueuePtr;
+
+BreadthQueuePtr BreadthQueueInit( <span class=keyword>void</span> ) {
+  BreadthQueuePtr Result = (BreadthQueue*)malloc(<span class=keyword>sizeof</span>(BreadthQueue));
+  Result-&gt;Front = NULL;
+  Result-&gt;Back = NULL;
+  Result-&gt;Size = 0;
+}
+
+<span class=keyword>void</span> BreadthQueuePush(BreadthQueuePtr ThisBreadthQueue, TnodePtr NewElemental){
+  BreadthQueueNodePtr Noob = BreadthQueueNodeInit(NewElemental);
+  <span class=keyword>if</span> ( (ThisBreadthQueue-&gt;Back) != NULL ) BREADTH_QUEUE_NODE_SET_NEXT(ThisBreadthQueue-&gt;Back, Noob);
+  <span class=keyword>else</span> ThisBreadthQueue-&gt;Front = Noob;
+  ThisBreadthQueue-&gt;Back = Noob;
+  ThisBreadthQueue-&gt;Size += 1;
+}
+
+TnodePtr BreadthQueuePop(BreadthQueuePtr ThisBreadthQueue){
+  TnodePtr Result;
+  <span class=keyword>if</span> ( ThisBreadthQueue-&gt;Size == 0 ) <span class=keyword>return</span> NULL;
+  <span class=keyword>if</span> ( ThisBreadthQueue-&gt;Size == 1 ) {
+    ThisBreadthQueue-&gt;Back = NULL;
+    ThisBreadthQueue-&gt;Size = 0;
+    Result = BREADTH_QUEUE_NODE_ELEMENT(ThisBreadthQueue-&gt;Front);
+    free(ThisBreadthQueue-&gt;Front);
+    ThisBreadthQueue-&gt;Front = NULL;
+    <span class=keyword>return</span> Result;
+  }
+  Result = BREADTH_QUEUE_NODE_ELEMENT(ThisBreadthQueue-&gt;Front);
+  BreadthQueueNodePtr Holder = ThisBreadthQueue-&gt;Front;
+  ThisBreadthQueue-&gt;Front = BREADTH_QUEUE_NODE_NEXT(ThisBreadthQueue-&gt;Front);
+  free(Holder);
+  ThisBreadthQueue-&gt;Size -= 1;
+  <span class=keyword>return</span> Result;
+}
+
+<span class=keyword>void</span> BreadthQueuePopulateReductionArray(BreadthQueuePtr ThisBreadthQueue, TnodePtr Root, TnodePtr **Holder){
+  printf( &quot;Inside external BreadthQueuePopulateReductionArray function.\n&quot; );
+  <span class=keyword>int</span> Taker[MAX];
+  <span class=keyword>int</span> X = 0;
+  <span class=keyword>int</span> PopCount = 0;
+  <span class=keyword>int</span> CurrentMaxChildDepth = 0;
+  TnodePtr Current = Root;
+  <span class=keyword>for</span> ( X = 0; X &lt; MAX; X++ ) Taker[X] = 0;
+  <span class=comment>// Push the first row onto the queue.
+</span>  <span class=keyword>while</span> ( Current != NULL ) {
+    BreadthQueuePush(ThisBreadthQueue, Current);
+    Current = TNODE_NEXT(Current);
+  }
+  <span class=comment>// Initiate the pop-followed-by-push-all-children loop.
+</span>  <span class=keyword>while</span> ( (ThisBreadthQueue-&gt;Size) != 0 ) {
+    Current = BreadthQueuePop(ThisBreadthQueue);
+    PopCount += 1;
+    CurrentMaxChildDepth = TNODE_MAX_CHILD_DEPTH(Current);
+    Holder[CurrentMaxChildDepth][Taker[CurrentMaxChildDepth]] = Current;
+    Taker[CurrentMaxChildDepth] += 1;
+    Current = TNODE_CHILD(Current);
+    <span class=keyword>while</span> ( Current != NULL ) {
+      BreadthQueuePush(ThisBreadthQueue, Current);
+      Current = TNODE_NEXT(Current);
+    }
+  }
+  printf( &quot;Completed Populating The Reduction Array.\n&quot; );
+}
+
+<span class=comment>// This function will label all of the remaining nodes in the Trie-Turned-Dawg so that they will fit contiguously into an unsigned integer array.
+</span><span class=comment>// The return value is the final index number handed out to the &quot;Tnode&quot;'s, and hence one less than the size of the array that they need to fit into.
+</span><span class=keyword>int</span> BreadthQueueUseToIndex(BreadthQueuePtr ThisBreadthQueue, TnodePtr Root){
+  <span class=comment>// The first index to be given out will be &quot;1&quot; because &quot;0&quot; denotes &quot;NULL&quot;. 
+</span>  <span class=keyword>int</span> IndexNow = 0;
+  TnodePtr Current = Root;
+  <span class=comment>// Push the first Para-List onto the queue.
+</span>  <span class=keyword>while</span> ( Current != NULL ) {
+    BreadthQueuePush(ThisBreadthQueue, Current);
+    Current = TNODE_NEXT(Current);
+  }
+  <span class=comment>// Pop each element off of the queue and only push its children if has not been dangled yet.
+</span>  <span class=comment>// Assign an index to the node, if one has not been given to it yet. Nodes will be placed on the queue many times.
+</span>  <span class=keyword>while</span> ( (ThisBreadthQueue-&gt;Size) != 0 ) {
+    Current = BreadthQueuePop(ThisBreadthQueue);
+    <span class=comment>// If the &quot;Current&quot; node already has an index, don't give it a new one.
+</span>    <span class=keyword>if</span> ( TNODE_ARRAY_INDEX(Current) == 0 ) {
+      IndexNow += 1;
+      TNODE_SET_ARRAY_INDEX(Current, IndexNow);
+      Current = TNODE_CHILD(Current);
+      <span class=keyword>while</span> ( Current != NULL ) {
+        BreadthQueuePush(ThisBreadthQueue, Current);
+        Current = TNODE_NEXT(Current);
+      }
+    }
+  }
+  printf( &quot;Completed Assigning Indices To Living Nodes.\n&quot; );
+  <span class=keyword>return</span> IndexNow;
+}
+
+<span class=comment>///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+</span><span class=comment>// This section contains code related to the format of unsigned integers that represent &quot;Dawg&quot; nodes.
+</span>
+<span class=comment>// The &quot;BinaryNode&quot; string must be at least 32 + 5 + 1 bytes in length.  Space for the bits, the seperation pipes, and the end of string char.
+</span><span class=keyword>void</span> ConvertUnsignedIntNodeToBinaryString(<span class=keyword>unsigned</span> <span class=keyword>int</span> TheNode, <span class=keyword>char</span>* BinaryNode){
+  <span class=keyword>int</span> X;
+  <span class=keyword>int</span> Bit;
+  BinaryNode[0] = '|';
+  <span class=comment>// Bit 31, the leftmost bit, represents the &quot;EndOfWordFlag&quot;.
+</span>  BinaryNode[1] = (TheNode &amp; PowersOfTwo[31])?'1':'0';
+  BinaryNode[2] = '|';
+  <span class=comment>// Bit 30 represents the &quot;EndOfListFlag&quot;.
+</span>  BinaryNode[3] = (TheNode &amp; PowersOfTwo[30])?'1':'0';
+  BinaryNode[4] = '|';
+  <span class=comment>// Bit 29 to bit 25 are the &quot;Letter&quot; bits.
+</span>  BinaryNode[5] = (TheNode &amp; PowersOfTwo[29])?'1':'0';
+  BinaryNode[6] = (TheNode &amp; PowersOfTwo[28])?'1':'0';
+  BinaryNode[7] = (TheNode &amp; PowersOfTwo[27])?'1':'0';
+  BinaryNode[8] = (TheNode &amp; PowersOfTwo[26])?'1':'0';
+  BinaryNode[9] = (TheNode &amp; PowersOfTwo[25])?'1':'0';
+  BinaryNode[10] = '|';
+  <span class=comment>// Bit 24 to bit 0, are space of the first child index.
+</span>  Bit = 24;
+  <span class=keyword>for</span> ( X = 11; X &lt;= 35; X++ ) {
+    BinaryNode[X] = (TheNode &amp; PowersOfTwo[Bit])? '1': '0';
+    Bit -= 1;
+  }
+  BinaryNode[36] = '|';
+  BinaryNode[37] = '\0';
+}
+
+<span class=comment>///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+</span>
+<span class=comment>// This function is the core of the &quot;Dawg&quot; creation procedure.  Pay close attention to the order of the steps involved.
+</span>
+<span class=keyword>unsigned</span> <span class=keyword>int</span> *DawgInit(<span class=keyword>char</span> **Dictionary, <span class=keyword>int</span> *SegmentLenghts, <span class=keyword>int</span> MaxStringLength, <span class=keyword>int</span> MinStringLength){
+  <span class=keyword>unsigned</span> <span class=keyword>int</span> *Result;
+  <span class=keyword>int</span> X = 0;
+  <span class=keyword>int</span> Y;
+  <span class=keyword>int</span> *ChildCount;
+  <span class=keyword>char</span> *ChildStrings;
+  TriePtr TemporaryTrie;
+  <span class=keyword>int</span> *NodeNumberCounter;
+  <span class=keyword>int</span> *NodeNumberCounterInit;
+  <span class=keyword>int</span> TotalNodeSum = 0;
+  TnodePtr ** HolderOfAllTnodePointers;
+  BreadthQueuePtr Populator;
+  <span class=keyword>int</span> NumberDangled;
+  <span class=keyword>int</span> TotalDangled = 0;
+  <span class=keyword>int</span> W;
+  <span class=keyword>int</span> DangleCount[MaxStringLength];
+  <span class=keyword>int</span> NumberOfLivingNodes;
+  <span class=keyword>int</span> TotalDangledCheck = 0;
+  BreadthQueuePtr OrderMatters;
+  <span class=keyword>int</span> IndexCount;
+  <span class=keyword>int</span> IndexFollow;
+  <span class=keyword>int</span> IndexFollower = 0;
+  <span class=keyword>unsigned</span> <span class=keyword>int</span> UnsignedEncodingValue;
+  FILE *Text;
+  FILE *Data;
+  <span class=keyword>char</span> TheNodeInBinary[BINARY_STRING_LENGTH];
+  
+  printf(&quot;\nStep 0 - Get ready to watch the Dawg creation procedure.\n&quot;);
+  
+  <span class=keyword>while</span> ( SegmentLenghts[X] == 0 ) X += 1;
+
+  printf(&quot;\nStep 1 - Create the intermediate Trie and begin filling it with the provided lexicon.\n&quot;);
+  <span class=comment>// Create a Temp Trie structure and then feed in the given lexicon.
+</span>  TemporaryTrie = TrieInit();
+  <span class=keyword>for</span> ( X = MinStringLength; X &lt;= MaxStringLength; X++ ) {
+    <span class=keyword>for</span> ( Y = 0; Y &lt; SegmentLenghts[X]; Y++ ) {
+      TrieAddWord(TemporaryTrie, &amp;(Dictionary[X][(X + 1)*Y]));
+    }
+  }
+
+  printf(&quot;\nStep 2 - Finished adding words to the temporary Trie, so set up the space to sort the Tnodes by MaxChildDepth.\n&quot;);
+  printf(&quot;\nStep 2 - Finished adding words to the temporary Trie, so set up the space to sort the Tnodes by MaxChildDepth.\n&quot;);
+  <span class=comment>// Create the associated pointer array with all the nodes inside it.
+</span>  NodeNumberCounter = (<span class=keyword>int</span>*)malloc(MaxStringLength*<span class=keyword>sizeof</span>(<span class=keyword>int</span>) );
+  <span class=keyword>for</span> ( X = 0; X &lt; MaxStringLength; X++ ) NodeNumberCounter[X] = 0;
+  NodeNumberCounterInit = (<span class=keyword>int</span>*)malloc(MaxStringLength*<span class=keyword>sizeof</span>(<span class=keyword>int</span>));
+
+  printf(&quot;\nStep 3 - Count the total number of nodes in the raw Trie by MaxChildDepth.\n&quot;);
+  TrieGraphTabulate(TemporaryTrie, NodeNumberCounter);
+  
+  printf(&quot;\nStep 4 - Initial counting of Trie nodes complete, so display the results.\n\n&quot;);
+  
+  <span class=keyword>for</span> ( X = 0; X &lt; MaxStringLength; X++ ) {
+    NodeNumberCounterInit[X] = NodeNumberCounter[X];
+    TotalNodeSum += NodeNumberCounter[X];
+  }
+  <span class=keyword>for</span> ( X = 0; X &lt; MaxStringLength; X++ ) {
+    printf(&quot;Initial Count For MaxChildDepth |%2d| is |%6d| nodes\n&quot;, X, NodeNumberCounterInit[X]);
+  }
+  printf(&quot;\nThe Total Number Of Nodes In The Trie = |%d| \n&quot;, TotalNodeSum);
+  <span class=comment>// We will have exactly enough space for all of the Tnode pointers.
+</span>
+  printf(&quot;\nStep 5 - Allocate a 2 dimensional array of Tnode pointers to minimize the trie into a Dawg.\n&quot;);
+  HolderOfAllTnodePointers = (TnodePtr **)malloc(MaxStringLength*<span class=keyword>sizeof</span>(TnodePtr*));
+  <span class=keyword>for</span> ( X = 0; X &lt; MAX; X++ ) HolderOfAllTnodePointers[X] = (TnodePtr *)malloc(NodeNumberCounterInit[X]*<span class=keyword>sizeof</span>(TnodePtr));
+  
+  <span class=comment>// When populating the &quot;HolderOfAllTnodePointers&quot;, we are going to do so in a breadth first manner to ensure that the next &quot;Tnode&quot; in a list located at the next array index. 
+</span>  printf(&quot;\nStep 6 - Populate the 2 dimensional array of Trie node pointers.\n&quot;);
+  Populator = BreadthQueueInit();
+  BreadthQueuePopulateReductionArray(Populator, TrieRootTnode(TemporaryTrie), HolderOfAllTnodePointers );
+
+  printf(&quot;\nStep 7 - Population complete.\n&quot;);
+  <span class=comment>// Flag all of the reduntant nodes.
+</span>  <span class=comment>// Flagging requires the node comparison function that will take a very long time for a big dictionary.
+</span>  <span class=comment>// This is especially true when comparing the nodes with small &quot;MaxChildDepth&quot;'s because there are so many of them. 
+</span>  <span class=comment>// It is faster to start with nodes of the largest &quot;MaxChildDepth&quot; to recursively reduce as many lower nodes as possible. 
+</span>
+  printf(&quot;\nStep 8 - Begin to tag redundant nodes as dangled - Use recursion because only direct children are considered for elimination to keep the remaining lists in tact.\n&quot;);
+  <span class=comment>// Start at the largest &quot;MaxChildDepth&quot; and work down from there for recursive reduction to take place early on to reduce the work load for the shallow nodes.
+</span>  <span class=keyword>for</span> ( Y = (MaxStringLength - 1); Y &gt;= 0 ; Y--) {
+    NumberDangled = 0;
+    <span class=comment>// Move through the holder array from the beginning, looking for any nodes that have not been dangled, these will be the surviving nodes.
+</span>    <span class=keyword>for</span> ( W = 0; W &lt; (NodeNumberCounterInit[Y] - 1); W++ ) {
+      <span class=comment>// The Node is already Dangling.  Note that this node need not be the first in a child list, it could have been dangled recursively.
+</span>      <span class=comment>// In order to eliminate the need for the &quot;Next&quot; index, the nodes at the root of elimination must be the first in a list, in other words, a &quot;DirectChild&quot;.
+</span>      <span class=comment>// The node that we replace the &quot;DirectChild&quot; node with can be located at any position.
+</span>      <span class=keyword>if</span> ( TNODE_DANGLING(HolderOfAllTnodePointers[Y][W]) == TRUE ) <span class=keyword>continue</span>;
+      <span class=comment>// Traverse the rest of the array looking for equivalent nodes that are both not dangled and are tagged as direct children.
+</span>      <span class=comment>// When we have found an identical list structure further on in the array, dangle it, and all the nodes coming after, and below it.
+</span>      <span class=keyword>for</span> ( X = W + 1; X &lt; NodeNumberCounterInit[Y]; X++ ) {
+        <span class=keyword>if</span> ( TNODE_DANGLING(HolderOfAllTnodePointers[Y][X]) == FALSE &amp;&amp; TNODE_DIRECT_CHILD(HolderOfAllTnodePointers[Y][X]) == TRUE ) {
+          <span class=keyword>if</span> ( TnodeAreWeTheSame(HolderOfAllTnodePointers[Y][W], HolderOfAllTnodePointers[Y][X]) == TRUE ) {
+            NumberDangled += TnodeDangle(HolderOfAllTnodePointers[Y][X]);
+          }
+        }
+      }
+    }
+    printf(&quot;Dangled |%5d| Nodes In all, through recursion, for MaxChildDepth of |%2d|\n&quot;, NumberDangled, Y);
+    DangleCount[Y] = NumberDangled;
+    TotalDangled += NumberDangled;
+  }
+  printf(&quot;\nTotal Number Of Dangled Nodes |%d|\n&quot;, TotalDangled);
+  NumberOfLivingNodes = TotalNodeSum - TotalDangled;
+  printf(&quot;\nTotal Number Of Living Nodes |%d|\n&quot;, NumberOfLivingNodes);
+
+  printf(&quot;\nStep 9 - Count the number of living nodes in the trie before replacement so that we check our numbers.\n&quot;);
+  <span class=comment>// By running the graph tabulation function on a different array, and before we replace the nodes, we can determine if our numbers are correctish.
+</span>  TrieGraphTabulate(TemporaryTrie, NodeNumberCounter);
+  <span class=keyword>for</span> ( X = 0; X &lt; MaxStringLength; X++ ) {
+    printf( &quot;Count for living nodes of MaxChildDepth |%2d| is |%5d|. It used to be |%6d| and so the number dangled is |%6d| \n&quot;, X, NodeNumberCounter[X],
+    NodeNumberCounterInit[X], NodeNumberCounterInit[X] - NodeNumberCounter[X] );
+  }
+  <span class=keyword>for</span> ( X = 0; X &lt; MAX; X++ ) {
+    TotalDangledCheck += (NodeNumberCounterInit[X] - NodeNumberCounter[X]);
+  }
+  <span class=keyword>if</span> ( TotalDangled == TotalDangledCheck ) printf(&quot;The total number of nodes dangled adds up.\n&quot;);
+  <span class=keyword>else</span> printf(&quot;Something went terribly wrong, so fix it.\n&quot;);
+
+  printf(&quot;\nStep 10 - Dangling is complete, so replace all dangled nodes with their first mexican equivelant in the Trie to make a compressed Dawg.\n&quot;);
+  <span class=comment>// Node replacement has to take place before indices are set up so nothing points to redundant nodes. - This step is absolutely critical.  Mow The Lawn so to speak!  Then assign indicies.
+</span>  TrieLawnMower( TemporaryTrie, HolderOfAllTnodePointers );
+
+  printf(&quot;\nStep 11.1 - Mowing of the lawn is now complete, so start to assign array indices to all living nodes.\n&quot;);
+  printf(&quot;Step 11.2 - The use of a breadth first queue during this step ensures that lists of contiguous nodes in the array will eliminate the need for a Next pointer.\n\n&quot;);
+  OrderMatters = BreadthQueueInit();
+  <span class=comment>// Try to find out if the nodes we are setting are unique before we set them.
+</span>  IndexCount = BreadthQueueUseToIndex( OrderMatters, HolderOfAllTnodePointers[MAX - 1][0] );
+  printf(&quot;Finished indexing.\n&quot;);
+  printf(&quot;NumberOfLivingNodes from after the dangling process|%d|\n&quot;, NumberOfLivingNodes);
+  printf(&quot;IndexCount from the index-handing-out breadth first traversal |%d|\n&quot;, IndexCount);
+  <span class=keyword>if</span> ( NumberOfLivingNodes == IndexCount ) printf(&quot;The numbers add up properly once again.\n&quot;);
+  <span class=keyword>else</span> {
+    printf(&quot;The Numbers got Scrooged, so you still have some problems to iron out.\n&quot;);
+    <span class=keyword>return</span> NULL;
+  }
+
+  <span class=comment>// Allocate the space needed to store the &quot;Dawg&quot; inside of an array.
+</span>  Result = (<span class=keyword>unsigned</span> <span class=keyword>int</span>*)calloc((NumberOfLivingNodes + 1), <span class=keyword>sizeof</span>(<span class=keyword>unsigned</span> <span class=keyword>int</span>));
+  
+  <span class=comment>// Roll through the pointer arrays and use the correct &quot;BIT_SHIFT&quot; values to encode the proper unsigned ints.
+</span>  <span class=comment>// Set the &quot;NULL&quot; entry at the beginning of the array.
+</span>  Result[0] = 0;
+
+  printf(&quot;\nStep 12 - Populate the unsigned integer array with a bitwise encoding.\n&quot;);
+  <span class=comment>// Traverse the entire 2D pointer array and search for undangled nodes.  When an undangled node is found, encode it, and place it at position &quot;ArrayIndex&quot;.
+</span>  <span class=keyword>for</span> ( X = (MaxStringLength - 1); X &gt;= 0; X-- ) {
+    <span class=keyword>for</span> (W = 0; W &lt; NodeNumberCounterInit[X]; W++ ){
+      <span class=keyword>if</span> ( TNODE_DANGLING(HolderOfAllTnodePointers[X][W]) == FALSE ) {
+        UnsignedEncodingValue = TNODE_LETTER(HolderOfAllTnodePointers[X][W]) - 'A';
+        UnsignedEncodingValue &lt;&lt;= LETTER_BIT_SHIFT;
+        UnsignedEncodingValue += (TNODE_END_OF_WORD_FLAG(HolderOfAllTnodePointers[X][W]) == FALSE)? 0: END_OF_WORD_BIT_MASK;
+        UnsignedEncodingValue += (TNODE_NEXT(HolderOfAllTnodePointers[X][W]) == NULL)? END_OF_LIST_BIT_MASK: 0;
+        UnsignedEncodingValue += (TNODE_CHILD(HolderOfAllTnodePointers[X][W]) == NULL)? 0: TNODE_ARRAY_INDEX(TNODE_CHILD(HolderOfAllTnodePointers[X][W]));
+        IndexFollow = TNODE_ARRAY_INDEX(HolderOfAllTnodePointers[X][W]);
+        <span class=keyword>if</span> ( IndexFollow &gt; IndexFollower ) IndexFollower = IndexFollow;
+        Result[IndexFollow] = UnsignedEncodingValue;
+      }
+    }
+  }
+  printf( &quot;IndexFollower, which is the largest index assigned in the array = |%d|\n&quot;, IndexFollower );
+  printf( &quot;NumberOfLivingNodes|%d|, assert that these two are equal because they must be.\n&quot;, NumberOfLivingNodes );
+  <span class=keyword>if</span> ( IndexFollower == NumberOfLivingNodes ) printf(&quot;The numbers add up again, excellent!\n&quot;);
+  <span class=keyword>else</span> {
+    printf(&quot;Don't jump!  You are very close to getting this program working.\n&quot;);
+    <span class=keyword>return</span> NULL;
+  }
+  
+  <span class=comment>// Do Garbage cleanup and free the whole Trie, which is no longer needed.  Free all nodes from the holding array.
+</span>  <span class=keyword>for</span> ( X = 0; X &lt; MaxStringLength; X++ ) <span class=keyword>for</span> ( W = 0; W &lt; NodeNumberCounterInit[X]; W++ ) free(HolderOfAllTnodePointers[X][W]);
+  free(TemporaryTrie);
+  free(NodeNumberCounter);
+  free(NodeNumberCounterInit);
+  <span class=keyword>for</span> ( X = 0; X &lt; MaxStringLength; X++ ) <span class=keyword>if</span> (HolderOfAllTnodePointers[X]!= NULL) free(HolderOfAllTnodePointers[X]);
+  free(HolderOfAllTnodePointers);
+  
+  printf(&quot;\nStep 13 - Creation of traditional Dawg is complete, so store it into a text file for verification and a 32-bit binary file for use.\n&quot;);
+  <span class=comment>// We now need to include the &quot;NULL&quot; node at position &quot;0&quot; in the living node collection.
+</span>  NumberOfLivingNodes += 1;
+  
+  Text = fopen(DAWG_TEXT_DATA,&quot;w&quot;);
+  
+  fprintf(Text, &quot;Total number of Dawg nodes = |%d|, including \&quot;0 = NULL\&quot;.\n\n&quot;, NumberOfLivingNodes);
+  
+  <span class=keyword>for</span> ( X = 1; X &lt; NumberOfLivingNodes; X++ ) {
+    ConvertUnsignedIntNodeToBinaryString(Result[X], TheNodeInBinary);
+    fprintf(Text, &quot;Node|%6d|-Letter|%c|-EOW|%3s|-EOL|%3s|-Child|%6d| - Binary%s\n&quot;, X, ((Result[X]&amp;LETTER_BIT_MASK)&gt;&gt;LETTER_BIT_SHIFT) + 'A',
+    (Result[X]&amp;END_OF_WORD_BIT_MASK)? &quot;yes&quot;: &quot;no&quot;, (Result[X]&amp;END_OF_LIST_BIT_MASK)? &quot;yes&quot;: &quot;no&quot;, Result[X]&amp;CHILD_INDEX_BIT_MASK, TheNodeInBinary);
+  }
+  <span class=comment>//printf(&quot;Beep\n&quot;);
+</span>  fclose(Text);
+  printf(&quot;Out of 32 bit traditional text output to file clean.\n&quot;);
+  
+  Data = fopen(DAWG_DATA,&quot;wb&quot;);
+  <span class=comment>// It is critical, especially in a binary file, that the first integer written to the file be the number of nodes stored in the file.
+</span>  <span class=comment>// Simply write the entire unsigned integer array &quot;Result&quot; into the data file.
+</span>  fwrite(&amp;NumberOfLivingNodes, <span class=keyword>sizeof</span>(<span class=keyword>int</span>), 1, Data);
+  fwrite(Result, <span class=keyword>sizeof</span>(<span class=keyword>unsigned</span> <span class=keyword>int</span>), NumberOfLivingNodes, Data);
+  fclose(Data);
+  printf(&quot;Out of 32 bit traditional data output to file clean.\n&quot;);
+  <span class=keyword>return</span> Result;
+}
+
+<span class=comment>////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+</span><span class=comment>// The &quot;Main()&quot; function just runs the show.
+</span><span class=keyword>int</span> main() {
+  <span class=keyword>int</span> X = 0;
+  <span class=comment>// All of the words of similar length will be stored sequentially in the same array so that there will be (MAX + 1)  arrays in total.  The Smallest length of a string is assumed to be 2.
+</span>  <span class=keyword>char</span> *AllWordsInEnglish[MAX + 1];
+  FILE *Input;
+  <span class=keyword>char</span> ThisLine[INPUT_LIMIT];
+  <span class=keyword>unsigned</span> <span class=keyword>int</span> FirstLineIsSize;
+  <span class=keyword>int</span> LineLength;
+  <span class=keyword>int</span> KeepTracker[MAX + 1];
+  <span class=keyword>int</span> CurrentTracker[MAX + 1];
+  <span class=keyword>int</span> DictionarySizeIndex[MAX + 1];
+  <span class=keyword>int</span> CurrentLength = 0;
+  <span class=keyword>unsigned</span> <span class=keyword>int</span> *TheLexiconDawg;
+  <span class=keyword>unsigned</span> <span class=keyword>int</span> Testing;
+  <span class=keyword>char</span> BinaryStringTester[BINARY_STRING_LENGTH];
+  
+  printf(&quot;The main function lives\n&quot;);
+  
+  <span class=keyword>for</span> ( X = 0; X &lt;= MAX; X++ ) AllWordsInEnglish[X] = NULL;
+  Input = fopen(RAW_LEXICON,&quot;r&quot;);
+  fgets(ThisLine, INPUT_LIMIT, Input);
+  
+  <span class=comment>// Correction is needed to get rid of the new line character that &quot;fgets()&quot; appends to the string.
+</span>  CUT_OFF_NEW_LINE(ThisLine);
+  LineLength = strlen(ThisLine);
+  FirstLineIsSize = StringToUnsignedInt(ThisLine);
+  printf(&quot;FirstLineIsSize is |%u|\n&quot;, FirstLineIsSize);
+  
+  <span class=comment>// Read the memory straight into ram using dynamically allocated space to count the words of each length.
+</span>  <span class=keyword>for</span> ( X = 0; X &lt;= MAX; X++ ) KeepTracker[X] = 0;
+  <span class=keyword>char</span> **LexiconInRam = (<span class=keyword>char</span>**)malloc(FirstLineIsSize*<span class=keyword>sizeof</span>(<span class=keyword>char</span>*)); 
+  
+  <span class=comment>// The first line gives us the number of words so read in all of them into ram temporarily.
+</span>  <span class=keyword>for</span> ( X = 0; X &lt; FirstLineIsSize; X++ ) {
+    fgets(ThisLine, INPUT_LIMIT, Input);
+    CUT_OFF_NEW_LINE(ThisLine);
+    MakeMeAllCapital(ThisLine);
+    LineLength = strlen( ThisLine );
+    <span class=keyword>if</span> ( LineLength &lt;= MAX ) KeepTracker[LineLength] += 1;
+    LexiconInRam[X] = (<span class=keyword>char</span>*)malloc((LineLength + 1)*<span class=keyword>sizeof</span>(<span class=keyword>char</span>));
+    strcpy(LexiconInRam[X], ThisLine);
+  }
+  printf(&quot;Lexicon.txt read is now complete\n\n&quot;);
+  <span class=keyword>for</span> ( X = 0; X &lt;= MAX; X++ ) printf(&quot;There are |%5d| words of length |%2d|\n&quot;, KeepTracker[X], X);
+  <span class=comment>// Allocate enough space to hold all of the words in strings so that we can add them to the trie by length.
+</span>  <span class=keyword>for</span> ( X = MIN; X &lt;= MAX; X++ ) AllWordsInEnglish[X] = (<span class=keyword>char</span>*)malloc((X + 1)*KeepTracker[X]*<span class=keyword>sizeof</span>(<span class=keyword>char</span>));
+  printf(&quot;\nInitial malloc() complete\n&quot;);
+  
+  <span class=keyword>for</span> ( X = 0; X &lt;= MAX; X++ ) CurrentTracker[X] = 0;
+  <span class=comment>// Copy all of the strings into &quot;AllWordsInEnglish&quot;.
+</span>  <span class=keyword>for</span> ( X = 0; X &lt; FirstLineIsSize; X++ ) {
+    CurrentLength = strlen(LexiconInRam[X]);
+    <span class=comment>// As convoluted as this command may appear, it simply copies a string from its temporary ram location to the array of length equivelant strings for adding to the intermediate &quot;Trie&quot;.
+</span>    <span class=keyword>if</span> ( CurrentLength &lt;= MAX ) strcpy(&amp;((AllWordsInEnglish[CurrentLength])[(CurrentTracker[CurrentLength]*(CurrentLength + 1))]), LexiconInRam[X]);
+    CurrentTracker[CurrentLength] += 1;
+  }
+  printf(&quot;The words have now been sorted by length\n&quot;);
+  
+  <span class=comment>// Make sure that the counting has resulted in all of the strings being placed correctly.
+</span>  <span class=keyword>for</span> ( X = 0; X &lt; (MAX + 1); X++ ) {
+    <span class=keyword>if</span> ( KeepTracker[X] != CurrentTracker[X] ) {
+      printf(&quot;The number of words is not adding up properly, so fix it.\n&quot;);
+      <span class=keyword>return</span> 0;
+    }
+  }
+  
+  <span class=comment>// Free the initial ram read space
+</span>  <span class=keyword>for</span> ( X = 0; X &lt; FirstLineIsSize; X++ ) free(LexiconInRam[X]);
+  free(LexiconInRam);
+  
+  <span class=keyword>for</span> ( X = 0; X &lt;= MAX; X++ ) DictionarySizeIndex[X] = KeepTracker[X];
+  printf( &quot;The Dawg init function will now be run, so be patient, it will take some time to complete.\n&quot; );
+  TheLexiconDawg = DawgInit(AllWordsInEnglish, DictionarySizeIndex, MAX, MIN);
+  
+  <span class=comment>// Free up the array that holds the uncompressed English language.
+</span>  <span class=keyword>for</span> ( X = 0; X &lt;= MAX; X++ ) <span class=keyword>if</span> ( AllWordsInEnglish[X] != NULL ) free(AllWordsInEnglish[X]);
+  
+  <span class=keyword>return</span> 0;
+}
+</pre>
+
+
+</TD>
+</TR>
+</TABLE>
+<BR>
+<BR>
+
+
+
+<TABLE ALIGN="CENTER" BORDER="8" CELLSPACING="5" CELLPADDING="5" BORDERCOLOR="008000">
+<caption>GoogleDawgAnagrammerSubmit.c</caption>
+<TR>
+<TD ALIGN="LEFT">
+
+<pre style="font-family:courier;font-size:10pt"><span class=comment>// This program demonstrates the use of a traditional DAWG as applied to in-order anagramming, where the data structure really shines.
+</span>
+<span class=pp>#include</span> &lt;stdlib.h&gt;
+<span class=pp>#include</span> &lt;stdio.h&gt;
+<span class=pp>#include</span> &lt;string.h&gt;
+
+<span class=pp>#define</span> MAX 15
+<span class=pp>#define</span> MAX_INPUT 120
+<span class=pp>#define</span> BIG_IT_UP -32
+<span class=pp>#define</span> DAWG_DATA &quot;Dawg_For_Lexicon.dat&quot;
+<span class=pp>#define</span> WORD_LIST_OUTPUT &quot;Dawg_Word_List.txt&quot;
+
+<span class=comment>// These values define the format of the &quot;Dawg&quot; node encoding.
+</span><span class=pp>#define</span> LETTER_BIT_SHIFT 25
+<span class=pp>#define</span> LETTER_BIT_MASK 1040187392
+<span class=pp>#define</span> CHILD_INDEX_BIT_MASK 33554431
+<span class=pp>#define</span> END_OF_WORD_BIT_MASK 2147483648
+<span class=pp>#define</span> END_OF_LIST_BIT_MASK 1073741824
+
+<span class=comment>// Define the boolean type as an enumeration.
+</span><span class=keyword>typedef</span> <span class=keyword>enum</span> {FALSE = 0, TRUE = 1} Bool;
+<span class=keyword>typedef</span> Bool* BoolPtr;
+
+<span class=comment>// When reading strings from a file, the new-line character is appended, and this macro will remove it before processing.
+</span><span class=pp>#define</span> CUT_OFF_NEW_LINE(string) (string[strlen(string) - 1] = '\0')
+
+<span class=comment>// For speed, define these two simple functions as macros.  They modify the &quot;LettersToWorkWith&quot; string in the recursive anagrammer.
+</span><span class=pp>#define</span> REMOVE_CHAR_FROM_STRING(thestring, theposition, shiftsize) ( memmove(thestring + theposition, thestring + theposition + 1, shiftsize) )
+<span class=pp>#define</span> INSERT_CHAR_IN_STRING(thestring, theposition, thechar, shiftsize) 
+( (memmove(thestring + theposition + 1, thestring + theposition, shiftsize)), (thestring[theposition] = thechar) )
+
+<span class=comment>// This function converts any lower case letters in the string &quot;RawWord&quot;, into capitals, so that the whole string is made of capital letters.
+</span><span class=keyword>void</span> MakeMeAllCapital(<span class=keyword>char</span> *RawWord){
+  <span class=keyword>unsigned</span> <span class=keyword>int</span> X;
+  <span class=keyword>for</span> ( X = 0; X &lt; strlen(RawWord); X++ ){
+    <span class=keyword>if</span> ( RawWord[X] &gt;= 'a' &amp;&amp; RawWord[X] &lt;= 'z' ) RawWord[X] = RawWord[X] + BIG_IT_UP;
+  }
+}
+
+<span class=comment>// This function removes all non-letter chars from &quot;ThisString&quot;.
+</span><span class=keyword>void</span> RemoveIllegalChars(<span class=keyword>char</span> *ThisString){
+  <span class=keyword>unsigned</span> <span class=keyword>int</span> X;
+  <span class=keyword>for</span> ( X = 0; X &lt; strlen(ThisString); X++ ) {
+    <span class=keyword>if</span> ( !(ThisString[X] &gt;= 'A' &amp;&amp; ThisString[X] &lt;= 'Z') &amp;&amp; !(ThisString[X] &gt;= 'a' &amp;&amp; ThisString[X] &lt;= 'z') ) {
+      memmove(ThisString + X, ThisString + X + 1, strlen(ThisString) - X);
+      X -= 1;
+    }
+  }
+}
+
+<span class=comment>// This is a simple Bubble Sort.  There is no need for a an optimal algorithm here, because the user input of this program will be very short.
+</span><span class=keyword>void</span> Alphabetize(<span class=keyword>char</span>* Word){
+  <span class=keyword>int</span> X;
+  <span class=keyword>int</span> Y;
+  <span class=keyword>char</span> WorkingChar;
+  <span class=keyword>int</span> WordSize = strlen(Word);
+  <span class=comment>/* This nested &quot;for&quot; loop structure ensures that the highest letter filters to the back of the string each time that we  increment X in the outer loop. */</span>
+  <span class=keyword>for</span>( X = 1; X &lt; WordSize; X++ ) {
+    <span class=keyword>for</span>( Y = 0; Y &lt;= (WordSize - X - 1); Y++ ) {
+      <span class=keyword>if</span> (Word[Y] &gt; Word[Y + 1]){
+        WorkingChar = Word[Y + 1];
+        Word[Y + 1] = Word[Y];
+        Word[Y] = WorkingChar;
+      }
+    }
+  }
+}
+
+<span class=comment>// Define the &quot;Dawg&quot; functionality as macros for speed.
+</span><span class=pp>#define</span> DAWG_LETTER(thearray, theindex) (((thearray[theindex]&amp;LETTER_BIT_MASK)&gt;&gt;LETTER_BIT_SHIFT) + 'A')
+<span class=pp>#define</span> DAWG_END_OF_WORD(thearray, theindex) ((thearray[theindex]&amp;END_OF_WORD_BIT_MASK)? TRUE: FALSE)
+<span class=pp>#define</span> DAWG_NEXT(thearray, theindex) ((thearray[theindex]&amp;END_OF_LIST_BIT_MASK)? 0: (theindex + 1))
+<span class=pp>#define</span> DAWG_CHILD(thearray, theindex) (thearray[theindex]&amp;CHILD_INDEX_BIT_MASK)
+
+<span class=comment>// A recursive depth first traversal of &quot;TheDawg&quot; lexicon to produce a readable wordlist in &quot;TheStream&quot;.
+</span><span class=keyword>void</span> DawgTraverseLexiconRecurse(<span class=keyword>unsigned</span> <span class=keyword>int</span> *TheDawg, <span class=keyword>int</span> CurrentIndex, <span class=keyword>int</span> FillThisPosition, <span class=keyword>char</span> *WorkingString, <span class=keyword>int</span> *TheCount, FILE *TheStream){
+  <span class=keyword>int</span> PassOffIndex;
+  WorkingString[FillThisPosition] = DAWG_LETTER(TheDawg, CurrentIndex);
+  <span class=keyword>if</span> ( DAWG_END_OF_WORD(TheDawg, CurrentIndex) ) {
+    *TheCount += 1;
+    WorkingString[FillThisPosition + 1] = '\0';
+    <span class=comment>// Include the Windows Carriage Return char.
+</span>    fprintf(TheStream, &quot;|%6d|-|%-15s|\r\n&quot;, *TheCount, WorkingString);
+  }
+  <span class=keyword>if</span> ( PassOffIndex = DAWG_CHILD(TheDawg, CurrentIndex) ) DawgTraverseLexiconRecurse(TheDawg, PassOffIndex, FillThisPosition + 1, WorkingString, TheCount, TheStream);
+  <span class=keyword>if</span> ( PassOffIndex = DAWG_NEXT(TheDawg, CurrentIndex) ) DawgTraverseLexiconRecurse(TheDawg, PassOffIndex, FillThisPosition, WorkingString, TheCount, TheStream);
+}
+
+<span class=comment>// Move through the entire &quot;ThisDawg&quot; lexicon, and print the words into &quot;ThisStream&quot;.
+</span><span class=keyword>void</span> DawgTraverseLexicon(<span class=keyword>unsigned</span> <span class=keyword>int</span> *ThisDawg, FILE *ThisStream){
+  <span class=keyword>char</span> *BufferWord = (<span class=keyword>char</span>*)malloc((MAX + 1)*<span class=keyword>sizeof</span>(<span class=keyword>char</span>));
+  <span class=keyword>int</span> *WordCounter = (<span class=keyword>int</span>*)malloc(<span class=keyword>sizeof</span>(<span class=keyword>int</span>));
+  *WordCounter = 0;
+  <span class=comment>// Include the Windows Carriage Return char.
+</span>  fprintf(ThisStream, &quot;This is the lexicon contained in the file |%s|.\r\n\r\n&quot;, DAWG_DATA);
+  DawgTraverseLexiconRecurse(ThisDawg, 1, 0, BufferWord, WordCounter, ThisStream);
+  free(BufferWord);
+  free(WordCounter);
+}
+
+<span class=comment>// This function is the core component of this program.  It requires that &quot;UnusedChars&quot; be in alphabetical order because the tradition Dawg is a list based structure.
+</span><span class=keyword>void</span> DawgAnagrammerRecurse(<span class=keyword>unsigned</span> <span class=keyword>int</span> *DawgOfWar, <span class=keyword>int</span> CurrentIndex, <span class=keyword>char</span> *ToyWithMe, <span class=keyword>int</span> FillThisPosition, <span class=keyword>char</span> *UnusedChars, <span class=keyword>int</span> SizeOfBank, <span class=keyword>int</span> *ForTheCounter){
+  <span class=keyword>int</span> X;
+  <span class=keyword>char</span> PreviousChar = '\0';
+  <span class=keyword>char</span> CurrentChar;
+  <span class=keyword>int</span> TempIndex = DAWG_CHILD(DawgOfWar, CurrentIndex);
+  
+  ToyWithMe[FillThisPosition] = DAWG_LETTER(DawgOfWar, CurrentIndex);
+  <span class=comment>//ToyWithMe[FillThisPosition + 1] = '\0';
+</span>  <span class=comment>//printf(&quot;UnusedChars|%s|\n&quot;, UnusedChars);
+</span>  <span class=keyword>if</span> ( DAWG_END_OF_WORD(DawgOfWar, CurrentIndex) ) {
+    *ForTheCounter += 1;
+    ToyWithMe[FillThisPosition + 1] = '\0';
+    printf(&quot;|%4d| - |%-15s|\n&quot;, *ForTheCounter, ToyWithMe);
+  }
+  <span class=keyword>if</span> ( (SizeOfBank &gt; 0) &amp;&amp; (TempIndex != 0) ) {
+    <span class=keyword>for</span> ( X = 0; X &lt; SizeOfBank; X++ ) {
+      CurrentChar = UnusedChars[X];
+      <span class=comment>//printf(&quot;Looking For |%c|\n&quot;, CurrentChar);
+</span>      <span class=keyword>if</span> ( CurrentChar == PreviousChar ) <span class=keyword>continue</span>;
+      <span class=keyword>do</span> {
+        <span class=comment>//printf(&quot;Compare -|%c| with ^|%c|-|%d|\n&quot;, CurrentChar, DAWG_LETTER(DawgOfWar, TempIndex), TempIndex);
+</span>        <span class=keyword>if</span> ( CurrentChar == DAWG_LETTER(DawgOfWar, TempIndex) ) {
+          <span class=comment>//printf(&quot;Bingo\n&quot;);
+</span>          REMOVE_CHAR_FROM_STRING(UnusedChars, X, SizeOfBank - X);
+          DawgAnagrammerRecurse(DawgOfWar, TempIndex, ToyWithMe, FillThisPosition + 1, UnusedChars, SizeOfBank - 1, ForTheCounter);
+          <span class=comment>//printf(&quot;Back|%d|\n&quot;, FillThisPosition);
+</span>          INSERT_CHAR_IN_STRING(UnusedChars, X, CurrentChar, SizeOfBank - X);
+          TempIndex = DAWG_NEXT(DawgOfWar, TempIndex);
+          <span class=keyword>break</span>;
+        }
+        <span class=keyword>else</span> <span class=keyword>if</span> ( CurrentChar &lt; DAWG_LETTER(DawgOfWar, TempIndex) ) <span class=keyword>break</span>;
+      } <span class=keyword>while</span> ( TempIndex = DAWG_NEXT(DawgOfWar, TempIndex) );
+      <span class=keyword>if</span> ( TempIndex == 0 ) <span class=keyword>break</span>;
+      PreviousChar = CurrentChar;
+    }
+  }
+}
+
+<span class=comment>// This function uses &quot;MasterDawg&quot; to determine the all of the words that can be made from the letters in &quot;CharBank&quot;.
+</span><span class=comment>// The return value is the total number of words found.
+</span><span class=keyword>int</span> DawgAnagrammer(<span class=keyword>unsigned</span> <span class=keyword>int</span> *MasterDawg, <span class=keyword>char</span> * CharBank){
+  <span class=keyword>int</span> X;
+  <span class=keyword>int</span> Result;
+  <span class=keyword>int</span> BankSize = strlen(CharBank);
+  <span class=keyword>int</span> *ForTheCount = (<span class=keyword>int</span>*)malloc(<span class=keyword>sizeof</span>(<span class=keyword>int</span>));
+  <span class=keyword>char</span> *TheWordSoFar = (<span class=keyword>char</span>*)malloc((MAX + 1)*<span class=keyword>sizeof</span>(<span class=keyword>char</span>));
+  <span class=keyword>char</span> *LettersToWorkWith = (<span class=keyword>char</span>*)malloc((MAX_INPUT)*<span class=keyword>sizeof</span>(<span class=keyword>char</span>));
+  <span class=keyword>char</span> PreviousChar = '\0';
+  <span class=keyword>char</span> CurrentChar;
+  <span class=keyword>int</span> NumberOfLetters;
+  strcpy(LettersToWorkWith, CharBank);
+  NumberOfLetters = strlen(LettersToWorkWith);
+  
+  *ForTheCount = 0;
+  <span class=keyword>for</span> ( X = 0; X &lt; BankSize; X++ ) {
+    CurrentChar = CharBank[X];
+    <span class=comment>// Move to the next letter if we have already processed the &quot;CurrentChar&quot;.
+</span>    <span class=keyword>if</span> ( CurrentChar == PreviousChar ) <span class=keyword>continue</span>;
+    <span class=comment>// We can assume that every letter in the lexicon exists on the first row, so don't bother looking for them.  Just remove the one we are using and plug away.
+</span>    REMOVE_CHAR_FROM_STRING(LettersToWorkWith, X, NumberOfLetters - X);
+    DawgAnagrammerRecurse(MasterDawg, CurrentChar - '@', TheWordSoFar, 0, LettersToWorkWith, NumberOfLetters - 1, ForTheCount);
+    INSERT_CHAR_IN_STRING(LettersToWorkWith, X, CurrentChar, NumberOfLetters - X);
+    PreviousChar = CurrentChar;
+  }
+  Result = *ForTheCount;
+  free(ForTheCount);
+  free(TheWordSoFar);
+  free(LettersToWorkWith);
+  <span class=keyword>return</span> Result;
+}
+
+<span class=keyword>int</span> main() {
+  <span class=keyword>int</span> NumberOfNodes;
+  <span class=keyword>unsigned</span> <span class=keyword>int</span> *TheDawgArray;
+  FILE *Lexicon;
+  FILE *WordList;
+  <span class=keyword>char</span> *DecisionInput;
+  Bool FetchData = TRUE;
+  <span class=keyword>char</span> FirstChar;
+  <span class=keyword>int</span> InputSize;
+  
+  DecisionInput = (<span class=keyword>char</span>*)malloc(MAX_INPUT*<span class=keyword>sizeof</span>(<span class=keyword>char</span>));
+  Lexicon = fopen(DAWG_DATA, &quot;rb&quot;);
+  fread(&amp;NumberOfNodes, <span class=keyword>sizeof</span>(<span class=keyword>int</span>), 1, Lexicon);
+  printf(&quot;The lexicon DAWG contains |%d| nodes.\n&quot;, NumberOfNodes);
+  TheDawgArray = (<span class=keyword>unsigned</span> <span class=keyword>int</span>*)malloc(NumberOfNodes*<span class=keyword>sizeof</span>(<span class=keyword>unsigned</span> <span class=keyword>int</span>));
+  fread(TheDawgArray, <span class=keyword>sizeof</span>(<span class=keyword>unsigned</span> <span class=keyword>int</span>), NumberOfNodes, Lexicon);
+  fclose(Lexicon);
+  printf(&quot;\nLexicon data file TWL06 has been read into memory.\n\n&quot;);
+  
+  <span class=comment>// This program relies on a compressed lexicon data file, so allow the user to see a readable word list in an output file.
+</span>  <span class=keyword>while</span> ( FetchData == TRUE ) {
+    printf(&quot;\nWould you like to print the Dawg word list into a file?(Y/N):  &quot;);
+    fgets(DecisionInput, MAX_INPUT, stdin);
+    FirstChar = DecisionInput[0];
+    <span class=keyword>if</span> ( FirstChar == 'Y' || FirstChar == 'y' ) {
+      WordList = fopen(WORD_LIST_OUTPUT, &quot;w&quot;);
+      DawgTraverseLexicon(TheDawgArray, WordList);
+      fclose(WordList);
+      FetchData = FALSE;
+    }
+    <span class=keyword>else</span> <span class=keyword>if</span> ( FirstChar == 'N' || FirstChar == 'n' ) FetchData = FALSE;
+  }
+  FetchData = TRUE;
+  
+  <span class=comment>// Now the user can enter strings of letters for anagramming, to see the words that can be made from them.
+</span>  <span class=keyword>while</span> ( FetchData == TRUE ) {
+    printf(&quot;\nEnter the string of letters that you want to anagram(2 or more letters):  &quot;);
+    fgets(DecisionInput, MAX_INPUT, stdin);
+    CUT_OFF_NEW_LINE(DecisionInput);
+    RemoveIllegalChars(DecisionInput);
+    MakeMeAllCapital(DecisionInput);
+    Alphabetize(DecisionInput);
+    InputSize = strlen(DecisionInput);
+    <span class=keyword>if</span> ( InputSize &gt;= 2 ) {
+      printf(&quot;\nThis is the set of letters that you just input |%s|.\n\n&quot;, DecisionInput);
+      printf(&quot;\n|%d| Words were found in the lexicon Dawg.\n&quot;, DawgAnagrammer(TheDawgArray, DecisionInput));
+    }
+    <span class=keyword>else</span> FetchData = FALSE;
+  }
+  printf(&quot;\nThank you for playing the GoogleDawgAnagrammer.  GAME OVER.\n\n&quot;);
+  <span class=keyword>return</span> 0;
+}
+</pre>
+
+
+</TD>
+</TR>
+</TABLE>
+<BR>
+<BR>
+
+
+
+<HR WIDTH="90%">
+<A NAME="contact"></A>
+<FONT COLOR="#008000">
+<H2 ALIGN="CENTER">Contact Information</H2>
+</FONT>
+<BR>
+<BR>
+
+Contact: JohnPaul Adamovsky – ( logarithm69@hotmail.com ) - Please feel free to ask me questions.
+<BR>
+<BR>
+<BR>
+Phone: (416) 231-7577
+<BR>
+<BR>
+<BR>
+This is the mark of my trade...
+<BR>
+<BR>
+<BR>
+<B>All The Very Best,</B>
+<BR>
+<BR>
+JohnPaul Adamovsky
+
+<img src="Trademark.jpg" width="700" height="178" align="CENTER"/>
+
+<P ALIGN="CENTER">
+<a href="http://www.digits.com" target="_blank">
+<img src="http://counter.digits.com/?counter={6c450f4b-5317-3574-e568-7f380a66e4b2}&template=simple" 
+alt="Hit Counter by Digits" border="0" />
+</a> 
+</P>
+
+<CENTER>
+<A HREF="http://www.isc.ro"><B>Internet Scrabble Club</B></A> 
+- The best place to play scrabble online
+</CENTER>    
+
+<BR>
+<HR WIDTH="90%">
+<P ALIGN="CENTER">
+|&nbsp;<A HREF="dawg.html#top">Go&nbsp;Back&nbsp;to&nbsp;the&nbsp;Top</A>&nbsp;|
+</P>
+
+<P ALIGN="CENTER">
+<a href="http://www.digits.com/"><img src="wc.gif" width="157" height="43" border="1" vspace="2" hspace="2" /></a>
+</P>
+</BODY>
+</HTML>

@@ -1,0 +1,4 @@
+echo "Start clustering: `date`" >> crossbow.log
+echo "  option: -c --hem-maximum-depth=5" >> crossbow.log
+./crossbow -c --hem-maximum-depth=4
+echo "End clustering: `date`\n" >> crossbow.log

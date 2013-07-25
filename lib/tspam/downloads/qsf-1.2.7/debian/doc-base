@@ -1,0 +1,12 @@
+Document: qsf
+Title: Quick Spam Filter Documentation Index
+Author: Andrew Wood
+Abstract: Quick Spam Filter (QSF) is an Open Source email classification filter, designed to be small, fast, and accurate, which works to classify incoming email as either spam or non-spam.
+Section: Applications/Net
+
+Format: text
+Files: /usr/share/doc/qsf/quickref.txt.gz
+
+Format: HTML
+Index: /usr/share/doc/qsf/index.html
+Files: /usr/share/doc/qsf/*.html

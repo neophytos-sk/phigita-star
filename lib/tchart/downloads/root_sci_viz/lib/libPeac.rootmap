@@ -1,0 +1,2 @@
+Library.TPEAC:                              libPeac.so libProof.so libClarens.so
+Library.TProofPEAC:                         libPeac.so libProof.so libClarens.so

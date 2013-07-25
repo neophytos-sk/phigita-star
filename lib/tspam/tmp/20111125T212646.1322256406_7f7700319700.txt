@@ -1,0 +1,10 @@
+Received: from [110.53.25.82] (envelope-sender <jqx@bgyfhc.net>)
+	by [192.168.41.188] with ESMTP
+	for <neophytos@phigita.net>; Sat, 26 Nov 2011 05:26:31 +0800 
+Message-ID: <20111126052214010662@bgyfhc.net> 
+From: "iw" <jqx@bgyfhc.net> 
+To:  
+Subject: =?gb2312?B?0MLTyrz+?= 
+Date: Sat, 26 Nov 2011 05:22:01 +0800 
+X-mailer: Ayzgueascf 1 
+Whoops!  What is a 'application/vnd.ms-excel'?

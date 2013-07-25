@@ -1,0 +1,11 @@
+Received: from ng (unknown [110.52.6.102])
+	by websmtp.sohu.com (Postfix) with ESMTPA id 7F2D23A5CBED;
+	Sun, 13 Nov 2011 04:26:48 +0800 (CST) 
+Message-ID: <20111113042547578613@sohu.com> 
+From: =?gb2312?B?x9jS4Lqs?= <shidongh5k@sohu.com> 
+To:  
+Subject: =?gb2312?B?vKgg0Kcgv7wgusstLS0tx9jS4Lqs?= 
+Date: Sun, 13 Nov 2011 04:25:36 +0800 
+X-mailer: Sxqp 1 
+X-SOHU-Antispam-Bayes: 0 
+Whoops!  What is a 'application/vnd.ms-excel'?

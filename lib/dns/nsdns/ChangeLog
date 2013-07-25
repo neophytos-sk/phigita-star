@@ -1,0 +1,83 @@
+2007-03-30 Vlad Seryakov vlad@crystalballinc.com
+
+	* improved CNAME recursive lookups
+        * added new config command
+
+2007-03-29 Vlad Seryakov vlad@crystalballinc.com
+
+        * added cachettl for cached records
+
+2006-05-28 Vlad Seryakov vlad@crystalballinc.com
+
+	* fixed segv in DNS receive code
+
+2006-01-17 Vlad Seryakov vlad@crystalballinc.com
+
+	* fixed segv in caching routine, changes logging level
+
+2005-08-01 Vlad Seryakov vlad@crystalballinc.com
+
+	* removed all compat functions
+
+2005-06-26 Vlad Seryakov vlad@crystalballinc.com
+
+	* updated packet parsing to work on Sparc
+
+2005-06-22 Vlad Seryakov vlad@crystalballinc.com
+
+	* statistics and NAPTR searching
+
+2005-06-20 Vlad Seryakov vlad@crystalballinc.com
+
+	* re-strcutured for multiple clients
+
+2005-06-16 Vlad Seryakov vlad@crystalballinc.com
+
+	* NAPTR record support
+
+2005-06-13 Vlad Seryakov vlad@crystalballinc.com
+
+	* restructured for more performance of udp requests
+
+2004-03-23 Vlad Seryakov vlad@crystalballinc.com
+
+	* full name compression implemented
+
+2004-03-22 Vlad Seryakov vlad@crystalballinc.com
+
+	* dnsResolved FD_ISSET bug fixed
+
+2003-11-18 Vlad Seryakov vlad@crystalballinc.com
+
+	* default host and wildcards for domains added
+
+2003-06-13 Vlad Seryakov vlad@crystalballinc.com
+
+	* another caching bug fixed
+
+2003-05-29 Vlad Seryakov vlad@crystalballinc.com
+
+	* caching bug fixed
+
+2003-05-28 Vlad Seryakov vlad@crystalballinc.com
+
+	* added round-robin rotation for multiple RRs
+
+2003-05-16 Vlad Seryakov vlad@crystalballinc.com
+
+	* another memory overflow fixed
+
+2003-04-20 Vlad Seryakov vlad@crystalballinc.com
+
+        * Aolserver 4 support.
+
+2003-03-14 Vlad Seryakov vlad@crystalballinc.com
+
+	* nasty bug with dynamic buffer reallocation caused
+          DNS packets corruption
+
+2003-03-06 Vlad Seryakov vlad@crystalballinc.com
+
+	* changed debugging output, added negative cache
+	* fixed bug with SOA records
+	* dns.tcl module added which loads /etc/hosts file

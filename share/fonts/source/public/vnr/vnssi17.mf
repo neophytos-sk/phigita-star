@@ -1,0 +1,4 @@
+gensize:=17;
+input vnbase;
+input ecsi;
+bye.

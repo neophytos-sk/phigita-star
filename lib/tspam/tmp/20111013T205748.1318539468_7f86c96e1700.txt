@@ -1,0 +1,12 @@
+Received: from farr ([110.53.24.220])
+	(envelope-sender <zm@mail.ptec.gov.cn>)
+	by 61.153.215.199 with ESMTP
+	for <service@fz2003.com>; Fri, 14 Oct 2011 04:57:29 +0800 
+Message-ID: <20111014045006026538@mail.ptec.gov.cn> 
+From: "fqkxqff" <zm@mail.ptec.gov.cn> 
+To:  
+Subject: =?gb2312?B?aHF21rAgxNwgsr8gw8UguMMgIMjnILrOIL+8IA==?=
+	=?gb2312?B?ussg0+sgxsAgvNsgPyBrY2xj?= 
+Date: Fri, 14 Oct 2011 04:49:53 +0800 
+X-mailer: Minkhu 6 
+Whoops!  What is a 'application/vnd.ms-excel'?

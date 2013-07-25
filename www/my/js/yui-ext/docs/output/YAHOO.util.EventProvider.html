@@ -1,0 +1,190 @@
+<!doctype html public "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <title>YAHOO.util.EventProvider</title>
+        <link rel="stylesheet" type="text/css" href="../resources/reset.css"/>
+        <link rel="stylesheet" type="text/css" href="../resources/style.css" media="screen"/>
+        <link rel="stylesheet" type="text/css" href="../resources/print.css" media="print">
+    </head>
+    <body>
+        <div class="body-wrap">
+        <div class="top-tools"><img src="../resources/print.gif" width="16" height="16" align="absmiddle">&nbsp;<a href="YAHOO.util.EventProvider.html" target="_blank">Print Friendly</a></div>
+        <h1>Class YAHOO.util.EventProvider</h1>
+        <table cellspacing="0">
+            <tr><td class="label">Package:</td><td>YAHOO.util</td></tr>
+            <tr><td class="label">Class:</td><td>EventProvider</td></tr>
+                        <tr><td class="label">Extends:</td><td>Object</td></tr>
+                                    <tr><td class="label">Defined In:</td><td><a href="event.js.html">event.js</a></td></tr>
+        </table>
+        <div class="description">
+            EventProvider is designed to be used with YAHOO.augment to wrap 
+CustomEvents in an interface that allows events to be subscribed to 
+and fired by name.  This makes it possible for implementing code to
+subscribe to an event that either has not been created yet, or will
+not be created at all.        </div>
+        <hr />
+                <a name="properties"></a>
+        <h2>Public Properties</h2>
+        <div class="no-members">This class has no public properties.</div>        <a name="methods"></a>
+        <h2>Public Methods</h2>
+                <table cellspacing="0" class="member-table">
+            <tr>
+                <th class="sig-header" colspan="2">Method</th>
+                <th class="msource-header">Defined By</th>
+            </tr>
+                <tr>
+        <td class="micon" rowspan="2">&nbsp;</td>
+        <td class="sig"><a class="mlink" href="#createEvent">createEvent</a>(<code>p_type {string}</code>, <code>p_config {object}</code>) : CustomEvent</td>
+        <td class="msource" rowspan="2">EventProvider</td>
+    </tr>
+    <tr>
+        <td class="mdesc">Creates a new custom event of the specified type.  If a custom event
+by that name already exists, it will not be re-c...</td>
+    </tr>
+        <tr class="alt">
+        <td class="micon" rowspan="2">&nbsp;</td>
+        <td class="sig"><a class="mlink" href="#fireEvent">fireEvent</a>(<code>p_type {string}</code>, <code>arguments {Object*}</code>) : boolean</td>
+        <td class="msource" rowspan="2">EventProvider</td>
+    </tr>
+    <tr class="alt">
+        <td class="mdesc">Fire a custom event by name.  The callback functions will be executed
+from the scope specified when the event was cre...</td>
+    </tr>
+        <tr>
+        <td class="micon" rowspan="2">&nbsp;</td>
+        <td class="sig"><a class="mlink" href="#hasEvent">hasEvent</a>(<code>type {string}</code>) : void</td>
+        <td class="msource" rowspan="2">EventProvider</td>
+    </tr>
+    <tr>
+        <td class="mdesc">Returns true if the custom event of the provided type has been created
+with createEvent.</td>
+    </tr>
+        <tr class="alt">
+        <td class="micon" rowspan="2">&nbsp;</td>
+        <td class="sig"><a class="mlink" href="#subscribe">subscribe</a>(<code>p_type {string}</code>, <code>p_fn {function}</code>, <code>p_obj </code>, <code>p_obj {Object}</code>, <code>p_override {boolean}</code>) : void</td>
+        <td class="msource" rowspan="2">EventProvider</td>
+    </tr>
+    <tr class="alt">
+        <td class="mdesc">Subscribe to a CustomEvent by event type</td>
+    </tr>
+        <tr>
+        <td class="micon" rowspan="2">&nbsp;</td>
+        <td class="sig"><a class="mlink" href="#unsubscribe">unsubscribe</a>(<code>p_type {string}</code>, <code>p_fn {Function}</code>, <span class="optional" title="Optional">[<code>p_obj {Object}</code>]</span>) : boolean</td>
+        <td class="msource" rowspan="2">EventProvider</td>
+    </tr>
+    <tr>
+        <td class="mdesc">Unsubscribes the from the specified event</td>
+    </tr>
+            </table>
+                <a name="events"></a>
+        <h2>Public Events</h2>
+        <div class="no-members">This class has no public events.</div>                
+                
+                 
+                    <h2 class="mdetail-head">Method Details</h2>
+            <div class="detail-wrap">
+                            <a name="createEvent"></a>
+                <div class="mdetail">
+                <h3>createEvent</i></h3>
+                <code>public function createEvent(<code>p_type {string}</code>, <code>p_config {object}</code>)</code>
+                <div class="mdetail-desc">
+                    Creates a new custom event of the specified type.  If a custom event
+by that name already exists, it will not be re-created.  In either
+case the custom event is returned.                
+                <div class="mdetail-params">
+                    <strong>Parameters:</strong>
+                    <ul><li><code>{string}</code> : p_type<div class="sub-desc">the type, or name of the event</div></li><li><code>{object}</code> : p_config<div class="sub-desc">optional config params. Valid properties are: <ul> <li> scope: defines the default execution scope. If not defined the default scope will be this instance. </li> <li> silent: if true, the custom event will not generate log messages. This is false by default. </li> <li> onSubscribeCallback: specifies a callback to execute when the event has a new subscriber. This will fire immediately for each queued subscriber if any exist prior to the creation of the event. </li> </ul></div></li>                    </ul>
+                    <strong>Returns:</strong>
+                    <ul>
+                        <li><code>CustomEvent</code><div class="sub-desc">the custom event</div></li>
+                    </ul>
+                </div>
+                </div>
+                <div class="mdetail-def">This method is defined by EventProvider.</div>
+                </div>
+                            <a name="fireEvent"></a>
+                <div class="mdetail alt">
+                <h3>fireEvent</i></h3>
+                <code>public function fireEvent(<code>p_type {string}</code>, <code>arguments {Object*}</code>)</code>
+                <div class="mdetail-desc">
+                    Fire a custom event by name.  The callback functions will be executed
+from the scope specified when the event was created, and with the 
+following parameters:
+<ul>
+<li>The first argument fire() was executed with</li>
+<li>The custom object (if any) that was passed into the subscribe() 
+method</li>
+</ul>                
+                <div class="mdetail-params">
+                    <strong>Parameters:</strong>
+                    <ul><li><code>{string}</code> : p_type<div class="sub-desc">the type, or name of the event</div></li><li><code>{Object*}</code> : arguments<div class="sub-desc">an arbitrary set of parameters to pass to the handler.</div></li>                    </ul>
+                    <strong>Returns:</strong>
+                    <ul>
+                        <li><code>boolean</code><div class="sub-desc">the return value from CustomEvent.fire, or null if the custom event does not exist.</div></li>
+                    </ul>
+                </div>
+                </div>
+                <div class="mdetail-def">This method is defined by EventProvider.</div>
+                </div>
+                            <a name="hasEvent"></a>
+                <div class="mdetail">
+                <h3>hasEvent</i></h3>
+                <code>public function hasEvent(<code>type {string}</code>)</code>
+                <div class="mdetail-desc">
+                    Returns true if the custom event of the provided type has been created
+with createEvent.                
+                <div class="mdetail-params">
+                    <strong>Parameters:</strong>
+                    <ul><li><code>{string}</code> : type<div class="sub-desc">the type, or name of the event</div></li>                    </ul>
+                    <strong>Returns:</strong>
+                    <ul>
+                        <li><code>void</code></li>
+                    </ul>
+                </div>
+                </div>
+                <div class="mdetail-def">This method is defined by EventProvider.</div>
+                </div>
+                            <a name="subscribe"></a>
+                <div class="mdetail alt">
+                <h3>subscribe</i></h3>
+                <code>public function subscribe(<code>p_type {string}</code>, <code>p_fn {function}</code>, <code>p_obj </code>, <code>p_obj {Object}</code>, <code>p_override {boolean}</code>)</code>
+                <div class="mdetail-desc">
+                    Subscribe to a CustomEvent by event type                
+                <div class="mdetail-params">
+                    <strong>Parameters:</strong>
+                    <ul><li><code>{string}</code> : p_type<div class="sub-desc">the type, or name of the event</div></li><li><code>{function}</code> : p_fn<div class="sub-desc">the function to exectute when the event fires</div></li><li><code></code> : p_obj<div class="sub-desc"></div></li><li><code>{Object}</code> : p_obj<div class="sub-desc">An object to be passed along when the event fires</div></li><li><code>{boolean}</code> : p_override<div class="sub-desc">If true, the obj passed in becomes the execution scope of the listener</div></li>                    </ul>
+                    <strong>Returns:</strong>
+                    <ul>
+                        <li><code>void</code></li>
+                    </ul>
+                </div>
+                </div>
+                <div class="mdetail-def">This method is defined by EventProvider.</div>
+                </div>
+                            <a name="unsubscribe"></a>
+                <div class="mdetail">
+                <h3>unsubscribe</i></h3>
+                <code>public function unsubscribe(<code>p_type {string}</code>, <code>p_fn {Function}</code>, <span class="optional" title="Optional">[<code>p_obj {Object}</code>]</span>)</code>
+                <div class="mdetail-desc">
+                    Unsubscribes the from the specified event                
+                <div class="mdetail-params">
+                    <strong>Parameters:</strong>
+                    <ul><li><code>{string}</code> : p_type<div class="sub-desc">The type, or name of the event</div></li><li><code>{Function}</code> : p_fn<div class="sub-desc">The function to execute</div></li><li><code>{Object}</code> : p_obj<div class="sub-desc">The custom object passed to subscribe (optional)</div></li>                    </ul>
+                    <strong>Returns:</strong>
+                    <ul>
+                        <li><code>boolean</code><div class="sub-desc">true if the subscriber was found and detached.</div></li>
+                    </ul>
+                </div>
+                </div>
+                <div class="mdetail-def">This method is defined by EventProvider.</div>
+                </div>
+                        </div>
+                    
+                </div>
+    <hr>
+    <div style="font-size:10px;text-align:center;color:gray;">yui-ext - Copyright &copy; 2006 Jack Slocum.  |
+    Yahoo! UI - Copyright &copy; 2006 Yahoo! Inc.<br />All rights reserved.</div>
+    
+    </body>
+</html>
+    

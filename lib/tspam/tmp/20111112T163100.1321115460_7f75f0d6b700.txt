@@ -1,0 +1,9 @@
+Received: (qmail 25591 invoked by uid 89); 4 Nov 2011 20:21:59 -0000 from unknown (HELO msz) (sc@110.52.7.89)
+  by 0 with SMTP; 4 Nov 2011 20:21:59 -0000 
+Message-ID: <20111105040148245213@jlol.com.cn> 
+From: =?gb2312?B?wc7Iu7nw?= <sc@jlol.com.cn> 
+To:  
+Subject: =?gb2312?B?vKgg0Kcgv7wgusstLS0twc7Iu7nw?= 
+Date: Sat, 5 Nov 2011 04:01:43 +0800 
+X-mailer: Nrbfigj 3 
+Whoops!  What is a 'application/vnd.ms-excel'?

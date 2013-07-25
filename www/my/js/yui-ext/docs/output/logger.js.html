@@ -1,0 +1,1570 @@
+<html><head><title>logger.js</title><link rel="stylesheet" type="text/css" href="../resources/style.css" media="screen"/></head><body><h1>logger.js</h1><pre class="highlighted"><code><i>/*
+Copyright (c) 2006, Yahoo! Inc. All rights reserved.
+Code licensed under the BSD License:
+http:<i>//developer.yahoo.com/yui/license.txt</i>
+version: 0.12.0
+*/</i>
+<i>// holder</i>
+<i>/****************************************************************************/</i>
+<i>// holder</i>
+<i>/****************************************************************************/</i>
+<i>// holder</i>
+<i>/****************************************************************************/</i>
+<i>// holder</i>
+<i>/**
+ * The LogMsg class defines a single log message.
+ *
+ * @class YAHOO.widget.LogMsg
+ * @constructor
+ * @param oConfigs {Object} Object literal of configuration params.
+ */</i>
+ YAHOO.widget.LogMsg = <b>function</b>(oConfigs) {
+    <i>// Parse configs</i>
+    <b>if</b> (<b>typeof</b> oConfigs == &quot;object&quot;) {
+        <b>for</b>(var param <b>in</b> oConfigs) {
+            <b>this</b>[param] = oConfigs[param];
+        }
+    }
+ };
+ 
+<i>/////////////////////////////////////////////////////////////////////////////</i>
+<i>//</i>
+<i>// Public member variables</i>
+<i>//</i>
+<i>/////////////////////////////////////////////////////////////////////////////</i>
+
+<i>/**
+ * Log message.
+ *
+ * @property msg
+ * @type String
+ */</i>
+YAHOO.widget.LogMsg.prototype.msg = null;
+ 
+<i>/**
+ * Log timestamp.
+ *
+ * @property time
+ * @type Date
+ */</i>
+YAHOO.widget.LogMsg.prototype.time = null;
+
+<i>/**
+ * Log category.
+ *
+ * @property category
+ * @type String
+ */</i>
+YAHOO.widget.LogMsg.prototype.category = null;
+
+<i>/**
+ * Log source. The first word passed <b>in</b> as the source argument.
+ *
+ * @property source
+ * @type String
+ */</i>
+YAHOO.widget.LogMsg.prototype.source = null;
+
+<i>/**
+ * Log source detail. The remainder of the string passed <b>in</b> as the source argument, not
+ * including the first word (<b>if</b> any).
+ *
+ * @property sourceDetail
+ * @type String
+ */</i>
+YAHOO.widget.LogMsg.prototype.sourceDetail = null;
+
+<i>/****************************************************************************/</i>
+<i>// holder</i>
+<i>/****************************************************************************/</i>
+<i>// holder</i>
+<i>/****************************************************************************/</i>
+<i>// holder</i>
+<i>/**
+ * The LogWriter class provides a mechanism to log messages through
+ * YAHOO.widget.Logger from a named source.
+ *
+ * @class YAHOO.widget.LogWriter
+ * @constructor
+ * @param sSource {String} Source of LogWriter instance.
+ */</i>
+YAHOO.widget.LogWriter = <b>function</b>(sSource) {
+    <b>if</b>(!sSource) {
+        YAHOO.log(&quot;Could not instantiate LogWriter due to invalid source.&quot;,
+            &quot;error&quot;, &quot;LogWriter&quot;);
+        <b>return</b>;
+    }
+    <b>this</b>._source = sSource;
+ };
+
+<i>/////////////////////////////////////////////////////////////////////////////</i>
+<i>//</i>
+<i>// Public methods</i>
+<i>//</i>
+<i>/////////////////////////////////////////////////////////////////////////////</i>
+
+ <i>/**
+ * Public accessor to the unique name of the LogWriter instance.
+ *
+ * @method toString
+ * @<b>return</b> {String} Unique name of the LogWriter instance.
+ */</i>
+YAHOO.widget.LogWriter.prototype.toString = <b>function</b>() {
+    <b>return</b> &quot;LogWriter &quot; + <b>this</b>._sSource;
+};
+
+<i>/**
+ * Logs a message attached to the source of the LogWriter.
+ *
+ * @method log
+ * @param sMsg {String} The log message.
+ * @param sCategory {String} Category name.
+ */</i>
+YAHOO.widget.LogWriter.prototype.log = <b>function</b>(sMsg, sCategory) {
+    YAHOO.widget.Logger.log(sMsg, sCategory, <b>this</b>._source);
+};
+
+<i>/**
+ * Public accessor to get the source name.
+ *
+ * @method getSource
+ * @<b>return</b> {String} The LogWriter source.
+ */</i>
+YAHOO.widget.LogWriter.prototype.getSource = <b>function</b>() {
+    <b>return</b> this._sSource;
+};
+
+<i>/**
+ * Public accessor to set the source name.
+ *
+ * @method setSource
+ * @param sSource {String} Source of LogWriter instance.
+ */</i>
+YAHOO.widget.LogWriter.prototype.setSource = <b>function</b>(sSource) {
+    <b>if</b>(!sSource) {
+        YAHOO.log(&quot;Could not set source due to invalid source.&quot;, &quot;error&quot;, <b>this</b>.toString());
+        <b>return</b>;
+    }
+    <b>else</b> {
+        <b>this</b>._sSource = sSource;
+    }
+};
+
+<i>/////////////////////////////////////////////////////////////////////////////</i>
+<i>//</i>
+<i>// Private member variables</i>
+<i>//</i>
+<i>/////////////////////////////////////////////////////////////////////////////</i>
+
+<i>/**
+ * Source of the LogWriter instance.
+ *
+ * @property _source
+ * @type String
+ * @private
+ */</i>
+YAHOO.widget.LogWriter.prototype._source = null;
+
+
+
+<i>/****************************************************************************/</i>
+<i>// holder</i>
+<i>/****************************************************************************/</i>
+<i>// holder</i>
+<i>/****************************************************************************/</i>
+<i>// holder</i>
+<i>/**
+ * The LogReader class provides UI to read messages logged to YAHOO.widget.Logger.
+ *
+ * @class YAHOO.widget.LogReader
+ * @constructor
+ * @param elContainer {HTMLElement} (optional) DOM element reference of an existing DIV.
+ * @param elContainer {String} (optional) String ID of an existing DIV.
+ * @param oConfigs {Object} (optional) Object literal of configuration params.
+ */</i>
+YAHOO.widget.LogReader = <b>function</b>(elContainer, oConfigs) {
+    <b>var</b> oSelf = <b>this</b>;
+    <b>this</b>._sName = YAHOO.widget.LogReader._index;
+    YAHOO.widget.LogReader._index++;
+
+    <i>// Parse config vars here</i>
+    <b>if</b> (<b>typeof</b> oConfigs == &quot;object&quot;) {
+        <b>for</b>(var param <b>in</b> oConfigs) {
+            <b>this</b>[param] = oConfigs[param];
+        }
+    }
+
+    <i>// Attach container...</i>
+    <b>if</b>(elContainer) {
+        <b>if</b>(typeof elContainer == &quot;string&quot;) {
+            <b>this</b>._elContainer = document.getElementById(elContainer);
+        }
+        <b>else</b> if(elContainer.tagName) {
+            <b>this</b>._elContainer = elContainer;
+        }
+        <b>this</b>._elContainer.className = &quot;yui-log&quot;;
+    }
+    <i>// ...or create container from scratch</i>
+    <b>if</b>(!<b>this</b>._elContainer) {
+        <b>if</b>(YAHOO.widget.LogReader._elDefaultContainer) {
+            <b>this</b>._elContainer =  YAHOO.widget.LogReader._elDefaultContainer;
+        }
+        <b>else</b> {
+            <b>this</b>._elContainer = document.body.appendChild(document.createElement(&quot;div&quot;));
+            <b>this</b>._elContainer.id = &quot;yui-log&quot;;
+            <b>this</b>._elContainer.className = &quot;yui-log&quot;;
+
+            YAHOO.widget.LogReader._elDefaultContainer = <b>this</b>._elContainer;
+        }
+
+        <i>// If implementer has provided container values, trust and set those</i>
+        <b>var</b> containerStyle = <b>this</b>._elContainer.style;
+        <b>if</b>(this.width) {
+            containerStyle.width = <b>this</b>.width;
+        }
+        <b>if</b>(this.left) {
+            containerStyle.left = <b>this</b>.left;
+        }
+        <b>if</b>(this.right) {
+            containerStyle.right = <b>this</b>.right;
+        }
+        <b>if</b>(this.bottom) {
+            containerStyle.bottom = <b>this</b>.bottom;
+        }
+        <b>if</b>(this.top) {
+            containerStyle.top = <b>this</b>.top;
+        }
+        <b>if</b>(this.fontSize) {
+            containerStyle.fontSize = <b>this</b>.fontSize;
+        }
+    }
+
+    <b>if</b>(this._elContainer) {
+        <i>// Create header</i>
+        <b>if</b>(!<b>this</b>._elHd) {
+            <b>this</b>._elHd = <b>this</b>._elContainer.appendChild(document.createElement(&quot;div&quot;));
+            <b>this</b>._elHd.id = &quot;yui-log-hd&quot; + <b>this</b>._sName;
+            <b>this</b>._elHd.className = &quot;yui-log-hd&quot;;
+
+            <b>this</b>._elCollapse = <b>this</b>._elHd.appendChild(document.createElement(&quot;div&quot;));
+            <b>this</b>._elCollapse.className = &quot;yui-log-btns&quot;;
+
+            <b>this</b>._btnCollapse = document.createElement(&quot;input&quot;);
+            <b>this</b>._btnCollapse.type = &quot;button&quot;;
+            <b>this</b>._btnCollapse.style.fontSize =
+                YAHOO.util.Dom.getStyle(<b>this</b>._elContainer,&quot;fontSize&quot;);
+            <b>this</b>._btnCollapse.className = &quot;yui-log-button&quot;;
+            <b>this</b>._btnCollapse.value = &quot;Collapse&quot;;
+            <b>this</b>._btnCollapse = <b>this</b>._elCollapse.appendChild(<b>this</b>._btnCollapse);
+            YAHOO.util.Event.addListener(
+                oSelf._btnCollapse,'click',oSelf._onClickCollapseBtn,oSelf);
+
+            <b>this</b>._title = <b>this</b>._elHd.appendChild(document.createElement(&quot;h4&quot;));
+            <b>this</b>._title.innerHTML = &quot;Logger Console&quot;;
+
+            <i>// If Drag and Drop utility is available...</i>
+            <i>// ...and <b>this</b> container was created from scratch...</i>
+            <i>// ...then make the header draggable</i>
+            <b>if</b>(YAHOO.util.DD &amp;&amp;
+            (YAHOO.widget.LogReader._elDefaultContainer == <b>this</b>._elContainer)) {
+                <b>var</b> ylog_dd = <b>new</b> YAHOO.util.DD(<b>this</b>._elContainer.id);
+                ylog_dd.setHandleElId(<b>this</b>._elHd.id);
+                <b>this</b>._elHd.style.cursor = &quot;move&quot;;
+            }
+        }
+        <i>// Ceate console</i>
+        <b>if</b>(!<b>this</b>._elConsole) {
+            <b>this</b>._elConsole =
+                <b>this</b>._elContainer.appendChild(document.createElement(&quot;div&quot;));
+            <b>this</b>._elConsole.className = &quot;yui-log-bd&quot;;
+
+            <i>// If implementer has provided console, trust and set those</i>
+            <b>if</b>(this.height) {
+                <b>this</b>._elConsole.style.height = <b>this</b>.height;
+            }
+        }
+        <i>// Don't create footer <b>if</b> disabled</i>
+        <b>if</b>(!<b>this</b>._elFt &amp;&amp; <b>this</b>.footerEnabled) {
+            <b>this</b>._elFt = <b>this</b>._elContainer.appendChild(document.createElement(&quot;div&quot;));
+            <b>this</b>._elFt.className = &quot;yui-log-ft&quot;;
+
+            <b>this</b>._elBtns = <b>this</b>._elFt.appendChild(document.createElement(&quot;div&quot;));
+            <b>this</b>._elBtns.className = &quot;yui-log-btns&quot;;
+
+            <b>this</b>._btnPause = document.createElement(&quot;input&quot;);
+            <b>this</b>._btnPause.type = &quot;button&quot;;
+            <b>this</b>._btnPause.style.fontSize =
+                YAHOO.util.Dom.getStyle(<b>this</b>._elContainer,&quot;fontSize&quot;);
+            <b>this</b>._btnPause.className = &quot;yui-log-button&quot;;
+            <b>this</b>._btnPause.value = &quot;Pause&quot;;
+            <b>this</b>._btnPause = <b>this</b>._elBtns.appendChild(<b>this</b>._btnPause);
+            YAHOO.util.Event.addListener(
+                oSelf._btnPause,'click',oSelf._onClickPauseBtn,oSelf);
+
+            <b>this</b>._btnClear = document.createElement(&quot;input&quot;);
+            <b>this</b>._btnClear.type = &quot;button&quot;;
+            <b>this</b>._btnClear.style.fontSize =
+                YAHOO.util.Dom.getStyle(<b>this</b>._elContainer,&quot;fontSize&quot;);
+            <b>this</b>._btnClear.className = &quot;yui-log-button&quot;;
+            <b>this</b>._btnClear.value = &quot;Clear&quot;;
+            <b>this</b>._btnClear = <b>this</b>._elBtns.appendChild(<b>this</b>._btnClear);
+            YAHOO.util.Event.addListener(
+                oSelf._btnClear,'click',oSelf._onClickClearBtn,oSelf);
+
+            <b>this</b>._elCategoryFilters = <b>this</b>._elFt.appendChild(document.createElement(&quot;div&quot;));
+            <b>this</b>._elCategoryFilters.className = &quot;yui-log-categoryfilters&quot;;
+            <b>this</b>._elSourceFilters = <b>this</b>._elFt.appendChild(document.createElement(&quot;div&quot;));
+            <b>this</b>._elSourceFilters.className = &quot;yui-log-sourcefilters&quot;;
+        }
+    }
+
+    <i>// Initialize internal vars</i>
+    <b>if</b>(!<b>this</b>._buffer) {
+        <b>this</b>._buffer = []; <i>// output buffer</i>
+    }
+    <i>// Timestamp of last log message to console</i>
+    <b>this</b>._lastTime = YAHOO.widget.Logger.getStartTime(); 
+    
+    <i>// Subscribe to Logger custom events</i>
+    YAHOO.widget.Logger.newLogEvent.subscribe(<b>this</b>._onNewLog, <b>this</b>);
+    YAHOO.widget.Logger.logResetEvent.subscribe(<b>this</b>._onReset, <b>this</b>);
+
+    <i>// Initialize category filters</i>
+    <b>this</b>._categoryFilters = [];
+    <b>var</b> catsLen = YAHOO.widget.Logger.categories.length;
+    <b>if</b>(this._elCategoryFilters) {
+        <b>for</b>(var i=0; i &lt; catsLen; i++) {
+            <b>this</b>._createCategoryCheckbox(YAHOO.widget.Logger.categories[i]);
+        }
+    }
+    <i>// Initialize source filters</i>
+    <b>this</b>._sourceFilters = [];
+    <b>var</b> sourcesLen = YAHOO.widget.Logger.sources.length;
+    <b>if</b>(this._elSourceFilters) {
+        <b>for</b>(var j=0; j &lt; sourcesLen; j++) {
+            <b>this</b>._createSourceCheckbox(YAHOO.widget.Logger.sources[j]);
+        }
+    }
+    YAHOO.widget.Logger.categoryCreateEvent.subscribe(<b>this</b>._onCategoryCreate, <b>this</b>);
+    YAHOO.widget.Logger.sourceCreateEvent.subscribe(<b>this</b>._onSourceCreate, <b>this</b>);
+
+    <b>this</b>._filterLogs();
+    YAHOO.log(&quot;LogReader initialized&quot;, null, <b>this</b>.toString());
+};
+
+<i>/////////////////////////////////////////////////////////////////////////////</i>
+<i>//</i>
+<i>// Public member variables</i>
+<i>//</i>
+<i>/////////////////////////////////////////////////////////////////////////////</i>
+
+<i>/**
+ * Whether or not the log reader is enabled to output log messages.
+ *
+ * @property logReaderEnabled
+ * @type Boolean
+ * @<b>default</b> true
+ */</i>
+YAHOO.widget.LogReader.prototype.logReaderEnabled = true;
+
+<i>/**
+ * Public member to access CSS width of the log reader container.
+ *
+ * @property width
+ * @type String
+ */</i>
+YAHOO.widget.LogReader.prototype.width = null;
+
+<i>/**
+ * Public member to access CSS height of the log reader container.
+ *
+ * @property height
+ * @type String
+ */</i>
+YAHOO.widget.LogReader.prototype.height = null;
+
+<i>/**
+ * Public member to access CSS top position of the log reader container.
+ *
+ * @property top
+ * @type String
+ */</i>
+YAHOO.widget.LogReader.prototype.top = null;
+
+<i>/**
+ * Public member to access CSS left position of the log reader container.
+ *
+ * @property left
+ * @type String
+ */</i>
+YAHOO.widget.LogReader.prototype.left = null;
+
+<i>/**
+ * Public member to access CSS right position of the log reader container.
+ *
+ * @property right
+ * @type String
+ */</i>
+YAHOO.widget.LogReader.prototype.right = null;
+
+<i>/**
+ * Public member to access CSS bottom position of the log reader container.
+ *
+ * @property bottom
+ * @type String
+ */</i>
+YAHOO.widget.LogReader.prototype.bottom = null;
+
+<i>/**
+ * Public member to access CSS font size of the log reader container.
+ *
+ * @property fontSize
+ * @type String
+ */</i>
+YAHOO.widget.LogReader.prototype.fontSize = null;
+
+<i>/**
+ * Whether or not the footer UI is enabled <b>for</b> the log reader.
+ *
+ * @property footerEnabled
+ * @type Boolean
+ * @<b>default</b> true
+ */</i>
+YAHOO.widget.LogReader.prototype.footerEnabled = true;
+
+<i>/**
+ * Whether or not output is verbose (more readable). Setting to true will make
+ * output more compact (less readable).
+ *
+ * @property verboseOutput
+ * @type Boolean
+ * @<b>default</b> true
+ */</i>
+YAHOO.widget.LogReader.prototype.verboseOutput = true;
+
+<i>/**
+ * Whether or not newest message is printed on top.
+ *
+ * @property newestOnTop
+ * @type Boolean
+ */</i>
+YAHOO.widget.LogReader.prototype.newestOnTop = true;
+
+<i>/**
+ * Maximum number of messages a LogReader console will display.
+ *
+ * @property thresholdMax
+ * @type Number
+ * @<b>default</b> 500
+ */</i>
+YAHOO.widget.LogReader.prototype.thresholdMax = 500;
+
+<i>/**
+ * When a LogReader console reaches its thresholdMax, it will clear out messages
+ * and print out the latest thresholdMin number of messages.
+ *
+ * @property thresholdMin
+ * @type Number
+ * @<b>default</b> 100
+ */</i>
+YAHOO.widget.LogReader.prototype.thresholdMin = 100;
+
+<i>/////////////////////////////////////////////////////////////////////////////</i>
+<i>//</i>
+<i>// Public methods</i>
+<i>//</i>
+<i>/////////////////////////////////////////////////////////////////////////////</i>
+
+ <i>/**
+ * Public accessor to the unique name of the LogReader instance.
+ *
+ * @method toString
+ * @<b>return</b> {String} Unique name of the LogReader instance.
+ */</i>
+YAHOO.widget.LogReader.prototype.toString = <b>function</b>() {
+    <b>return</b> &quot;LogReader instance&quot; + <b>this</b>._sName;
+};
+<i>/**
+ * Pauses output of log messages. While paused, log messages are not lost, but
+ * get saved to a buffer and then output upon resume of log reader.
+ *
+ * @method pause
+ */</i>
+YAHOO.widget.LogReader.prototype.pause = <b>function</b>() {
+    <b>this</b>._timeout = null;
+    <b>this</b>.logReaderEnabled = false;
+};
+
+<i>/**
+ * Resumes output of log messages, including outputting any log messages that
+ * have been saved to buffer <b>while</b> paused.
+ *
+ * @method resume
+ */</i>
+YAHOO.widget.LogReader.prototype.resume = <b>function</b>() {
+    <b>this</b>.logReaderEnabled = true;
+    <b>this</b>._printBuffer();
+};
+
+<i>/**
+ * Hides UI of log reader. Logging functionality is not disrupted.
+ *
+ * @method hide
+ */</i>
+YAHOO.widget.LogReader.prototype.hide = <b>function</b>() {
+    <b>this</b>._elContainer.style.display = &quot;none&quot;;
+};
+
+<i>/**
+ * Shows UI of log reader. Logging functionality is not disrupted.
+ *
+ * @method show
+ */</i>
+YAHOO.widget.LogReader.prototype.show = <b>function</b>() {
+    <b>this</b>._elContainer.style.display = &quot;block&quot;;
+};
+
+<i>/**
+ * Updates title to given string.
+ *
+ * @method setTitle
+ * @param sTitle {String} New title.
+ */</i>
+YAHOO.widget.LogReader.prototype.setTitle = <b>function</b>(sTitle) {
+    <b>this</b>._title.innerHTML = <b>this</b>.html2Text(sTitle);
+};
+
+<i>/**
+ * Gets timestamp of the last log.
+ *
+ * @method getLastTime
+ * @<b>return</b> {Date} Timestamp of the last log.
+ */</i>
+YAHOO.widget.LogReader.prototype.getLastTime = <b>function</b>() {
+    <b>return</b> this._lastTime;
+};
+
+<i>/**
+ * Formats message string to HTML <b>for</b> output to console.
+ *
+ * @method formatMsg
+ * @param oLogMsg {Object} Log message object.
+ * @<b>return</b> {String} HTML-formatted message <b>for</b> output to console.
+ */</i>
+YAHOO.widget.LogReader.prototype.formatMsg = <b>function</b>(oLogMsg) {
+    <b>var</b> category = oLogMsg.category;
+    
+    <i>// Label <b>for</b> color-coded display</i>
+    <b>var</b> label = category.substring(0,4).toUpperCase();
+
+    <i>// Calculate the elapsed time to be from the last item that passed through the filter,</i>
+    <i>// not the absolute previous item <b>in</b> the stack</i>
+
+    <b>var</b> time = oLogMsg.time;
+    <b>if</b> (time.toLocaleTimeString) {
+        <b>var</b> localTime  = time.toLocaleTimeString();
+    }
+    <b>else</b> {
+        localTime = time.toString();
+    }
+
+    <b>var</b> msecs = time.getTime();
+    <b>var</b> startTime = YAHOO.widget.Logger.getStartTime();
+    <b>var</b> totalTime = msecs - startTime;
+    <b>var</b> elapsedTime = msecs - <b>this</b>.getLastTime();
+
+    <b>var</b> source = oLogMsg.source;
+    <b>var</b> sourceDetail = oLogMsg.sourceDetail;
+    <b>var</b> sourceAndDetail = (sourceDetail) ?
+        source + &quot; &quot; + sourceDetail : source;
+        
+    <i>// Escape HTML entities <b>in</b> the log message itself <b>for</b> output to console</i>
+    <b>var</b> msg = <b>this</b>.html2Text(oLogMsg.msg);
+
+    <i>// Verbose output includes extra line breaks</i>
+    <b>var</b> output =  (<b>this</b>.verboseOutput) ?
+        [&quot;&lt;p&gt;&lt;span class='&quot;, category, &quot;'&gt;&quot;, label, &quot;&lt;/span&gt; &quot;,
+        totalTime, &quot;ms (+&quot;, elapsedTime, &quot;) &quot;,
+        localTime, &quot;: &quot;,
+        &quot;&lt;/p&gt;&lt;p&gt;&quot;,
+        sourceAndDetail,
+        &quot;: &lt;/p&gt;&lt;p&gt;&quot;,
+        msg,
+        &quot;&lt;/p&gt;&quot;] :
+
+        [&quot;&lt;p&gt;&lt;span class='&quot;, category, &quot;'&gt;&quot;, label, &quot;&lt;/span&gt; &quot;,
+        totalTime, &quot;ms (+&quot;, elapsedTime, &quot;) &quot;,
+        localTime, &quot;: &quot;,
+        sourceAndDetail, &quot;: &quot;,
+        msg,&quot;&lt;/p&gt;&quot;];
+
+    <b>return</b> output.join(&quot;&quot;);
+};
+
+<i>/**
+ * Converts input chars &quot;&lt;&quot;, &quot;&gt;&quot;, and &quot;&amp;&quot; to HTML entities.
+ *
+ * @method html2Text
+ * @param sHtml {String} String to convert.
+ * @private
+ */</i>
+YAHOO.widget.LogReader.prototype.html2Text = <b>function</b>(sHtml) {
+    <b>if</b>(sHtml) {
+        sHtml += &quot;&quot;;
+        <b>return</b> sHtml.replace(/&amp;/g, &quot;&amp;#38;&quot;).replace(/&lt;/g, &quot;&amp;#60;&quot;).replace(/&gt;/g, &quot;&amp;#62;&quot;);
+    }
+    <b>return</b> &quot;&quot;;
+};
+
+<i>/////////////////////////////////////////////////////////////////////////////</i>
+<i>//</i>
+<i>// Private member variables</i>
+<i>//</i>
+<i>/////////////////////////////////////////////////////////////////////////////</i>
+
+<i>/**
+ * Internal class member to index multiple log reader instances.
+ *
+ * @property _memberName
+ * @static
+ * @type Number
+ * @<b>default</b> 0
+ * @private
+ */</i>
+YAHOO.widget.LogReader._index = 0;
+
+<i>/**
+ * Name of LogReader instance.
+ *
+ * @property _sName
+ * @type String
+ * @private
+ */</i>
+YAHOO.widget.LogReader.prototype._sName = null;
+
+<i>/**
+ * A class member shared by all log readers <b>if</b> a container needs to be
+ * created during instantiation. Will be null <b>if</b> a container element never needs to
+ * be created on the fly, such as when the implementer passes <b>in</b> their own element.
+ *
+ * @property _elDefaultContainer
+ * @type HTMLElement
+ * @private
+ */</i>
+YAHOO.widget.LogReader._elDefaultContainer = null;
+
+<i>/**
+ * Buffer of log message objects <b>for</b> batch output.
+ *
+ * @property _buffer
+ * @type Object[]
+ * @private
+ */</i>
+YAHOO.widget.LogReader.prototype._buffer = null;
+
+<i>/**
+ * Number of log messages output to console.
+ *
+ * @property _consoleMsgCount
+ * @type Number
+ * @<b>default</b> 0
+ * @private
+ */</i>
+YAHOO.widget.LogReader.prototype._consoleMsgCount = 0;
+
+<i>/**
+ * Date of last output log message.
+ *
+ * @property _lastTime
+ * @type Date
+ * @private
+ */</i>
+YAHOO.widget.LogReader.prototype._lastTime = null;
+
+<i>/**
+ * Batched output timeout ID.
+ *
+ * @property _timeout
+ * @type Number
+ * @private
+ */</i>
+YAHOO.widget.LogReader.prototype._timeout = null;
+
+<i>/**
+ * Array of filters <b>for</b> log message categories.
+ *
+ * @property _categoryFilters
+ * @type String[]
+ * @private
+ */</i>
+YAHOO.widget.LogReader.prototype._categoryFilters = null;
+
+<i>/**
+ * Array of filters <b>for</b> log message sources.
+ *
+ * @property _sourceFilters
+ * @type String[]
+ * @private
+ */</i>
+YAHOO.widget.LogReader.prototype._sourceFilters = null;
+
+<i>/**
+ * Log reader container element.
+ *
+ * @property _elContainer
+ * @type HTMLElement
+ * @private
+ */</i>
+YAHOO.widget.LogReader.prototype._elContainer = null;
+
+<i>/**
+ * Log reader header element.
+ *
+ * @property _elHd
+ * @type HTMLElement
+ * @private
+ */</i>
+YAHOO.widget.LogReader.prototype._elHd = null;
+
+<i>/**
+ * Log reader collapse element.
+ *
+ * @property _elCollapse
+ * @type HTMLElement
+ * @private
+ */</i>
+YAHOO.widget.LogReader.prototype._elCollapse = null;
+
+<i>/**
+ * Log reader collapse button element.
+ *
+ * @property _btnCollapse
+ * @type HTMLElement
+ * @private
+ */</i>
+YAHOO.widget.LogReader.prototype._btnCollapse = null;
+
+<i>/**
+ * Log reader title header element.
+ *
+ * @property _title
+ * @type HTMLElement
+ * @private
+ */</i>
+YAHOO.widget.LogReader.prototype._title = null;
+
+<i>/**
+ * Log reader console element.
+ *
+ * @property _elConsole
+ * @type HTMLElement
+ * @private
+ */</i>
+YAHOO.widget.LogReader.prototype._elConsole = null;
+
+<i>/**
+ * Log reader footer element.
+ *
+ * @property _elFt
+ * @type HTMLElement
+ * @private
+ */</i>
+YAHOO.widget.LogReader.prototype._elFt = null;
+
+<i>/**
+ * Log reader buttons container element.
+ *
+ * @property _elBtns
+ * @type HTMLElement
+ * @private
+ */</i>
+YAHOO.widget.LogReader.prototype._elBtns = null;
+
+<i>/**
+ * Container element <b>for</b> log reader category filter checkboxes.
+ *
+ * @property _elCategoryFilters
+ * @type HTMLElement
+ * @private
+ */</i>
+YAHOO.widget.LogReader.prototype._elCategoryFilters = null;
+
+<i>/**
+ * Container element <b>for</b> log reader source filter checkboxes.
+ *
+ * @property _elSourceFilters
+ * @type HTMLElement
+ * @private
+ */</i>
+YAHOO.widget.LogReader.prototype._elSourceFilters = null;
+
+<i>/**
+ * Log reader pause button element.
+ *
+ * @property _btnPause
+ * @type HTMLElement
+ * @private
+ */</i>
+YAHOO.widget.LogReader.prototype._btnPause = null;
+
+<i>/**
+ * Clear button element.
+ *
+ * @property _btnClear
+ * @type HTMLElement
+ * @private
+ */</i>
+YAHOO.widget.LogReader.prototype._btnClear = null;
+
+<i>/////////////////////////////////////////////////////////////////////////////</i>
+<i>//</i>
+<i>// Private methods</i>
+<i>//</i>
+<i>/////////////////////////////////////////////////////////////////////////////</i>
+
+<i>/**
+ * Creates the UI <b>for</b> a category filter <b>in</b> the log reader footer element.
+ *
+ * @method _createCategoryCheckbox
+ * @param sCategory {String} Category name.
+ * @private
+ */</i>
+YAHOO.widget.LogReader.prototype._createCategoryCheckbox = <b>function</b>(sCategory) {
+    <b>var</b> oSelf = <b>this</b>;
+
+    <b>if</b>(this._elFt) {
+        <b>var</b> elParent = <b>this</b>._elCategoryFilters;
+        <b>var</b> filters = <b>this</b>._categoryFilters;
+
+        <b>var</b> elFilter = elParent.appendChild(document.createElement(&quot;span&quot;));
+        elFilter.className = &quot;yui-log-filtergrp&quot;;
+            <i>// Append el at the end so IE 5.5 can set &quot;type&quot; attribute</i>
+            <i>// and THEN set checked property</i>
+            <b>var</b> chkCategory = document.createElement(&quot;input&quot;);
+            chkCategory.id = &quot;yui-log-filter-&quot; + sCategory + <b>this</b>._sName;
+            chkCategory.className = &quot;yui-log-filter-&quot; + sCategory;
+            chkCategory.type = &quot;checkbox&quot;;
+            chkCategory.category = sCategory;
+            chkCategory = elFilter.appendChild(chkCategory);
+            chkCategory.checked = true;
+
+            <i>// Add <b>this</b> checked filter to the internal array of filters</i>
+            filters.push(sCategory);
+            <i>// Subscribe to the click event</i>
+            YAHOO.util.Event.addListener(chkCategory,'click',oSelf._onCheckCategory,oSelf);
+
+            <i>// Create and class the text label</i>
+            <b>var</b> lblCategory = elFilter.appendChild(document.createElement(&quot;label&quot;));
+            lblCategory.htmlFor = chkCategory.id;
+            lblCategory.className = sCategory;
+            lblCategory.innerHTML = sCategory;
+    }
+};
+
+<i>/**
+ * Creates a checkbox <b>in</b> the log reader footer element to filter by source.
+ *
+ * @method _createSourceCheckbox
+ * @param sSource {String} Source name.
+ * @private
+ */</i>
+YAHOO.widget.LogReader.prototype._createSourceCheckbox = <b>function</b>(sSource) {
+    <b>var</b> oSelf = <b>this</b>;
+
+    <b>if</b>(this._elFt) {
+        <b>var</b> elParent = <b>this</b>._elSourceFilters;
+        <b>var</b> filters = <b>this</b>._sourceFilters;
+
+        <b>var</b> elFilter = elParent.appendChild(document.createElement(&quot;span&quot;));
+        elFilter.className = &quot;yui-log-filtergrp&quot;;
+
+        <i>// Append el at the end so IE 5.5 can set &quot;type&quot; attribute</i>
+        <i>// and THEN set checked property</i>
+        <b>var</b> chkSource = document.createElement(&quot;input&quot;);
+        chkSource.id = &quot;yui-log-filter&quot; + sSource + <b>this</b>._sName;
+        chkSource.className = &quot;yui-log-filter&quot; + sSource;
+        chkSource.type = &quot;checkbox&quot;;
+        chkSource.source = sSource;
+        chkSource = elFilter.appendChild(chkSource);
+        chkSource.checked = true;
+
+        <i>// Add <b>this</b> checked filter to the internal array of filters</i>
+        filters.push(sSource);
+        <i>// Subscribe to the click event</i>
+        YAHOO.util.Event.addListener(chkSource,'click',oSelf._onCheckSource,oSelf);
+
+        <i>// Create and class the text label</i>
+        <b>var</b> lblSource = elFilter.appendChild(document.createElement(&quot;label&quot;));
+        lblSource.htmlFor = chkSource.id;
+        lblSource.className = sSource;
+        lblSource.innerHTML = sSource;
+    }
+};
+
+<i>/**
+ * Reprints all log messages <b>in</b> the stack through filters.
+ *
+ * @method _filterLogs
+ * @private
+ */</i>
+YAHOO.widget.LogReader.prototype._filterLogs = <b>function</b>() {
+    <i>// Reprint stack <b>with</b> new filters</i>
+    <b>if</b> (<b>this</b>._elConsole !== null) {
+        <b>this</b>._clearConsole();
+        <b>this</b>._printToConsole(YAHOO.widget.Logger.getStack());
+    }
+};
+
+<i>/**
+ * Clears all outputted log messages from the console and resets the time of the
+ * last output log message.
+ *
+ * @method _clearConsole
+ * @private
+ */</i>
+YAHOO.widget.LogReader.prototype._clearConsole = <b>function</b>() {
+    <i>// Clear the buffer of any pending messages</i>
+    <b>this</b>._timeout = null;
+    <b>this</b>._buffer = [];
+    <b>this</b>._consoleMsgCount = 0;
+
+    <i>// Reset the rolling timer</i>
+    <b>this</b>._lastTime = YAHOO.widget.Logger.getStartTime();
+
+    <b>var</b> elConsole = <b>this</b>._elConsole;
+    <b>while</b>(elConsole.hasChildNodes()) {
+        elConsole.removeChild(elConsole.firstChild);
+    }
+};
+
+<i>/**
+ * Sends buffer of log messages to output and clears buffer.
+ *
+ * @method _printBuffer
+ * @private
+ */</i>
+YAHOO.widget.LogReader.prototype._printBuffer = <b>function</b>() {
+    <b>this</b>._timeout = null;
+
+    <b>if</b>(this._elConsole !== null) {
+        <b>var</b> thresholdMax = <b>this</b>.thresholdMax;
+        thresholdMax = (thresholdMax &amp;&amp; !isNaN(thresholdMax)) ? thresholdMax : 500;
+        <b>if</b>(this._consoleMsgCount &lt; thresholdMax) {
+            <b>var</b> entries = [];
+            <b>for</b> (<b>var</b> i=0; i&lt;<b>this</b>._buffer.length; i++) {
+                entries[i] = <b>this</b>._buffer[i];
+            }
+            <b>this</b>._buffer = [];
+            <b>this</b>._printToConsole(entries);
+        }
+        <b>else</b> {
+            <b>this</b>._filterLogs();
+        }
+        
+        <b>if</b>(!<b>this</b>.newestOnTop) {
+            <b>this</b>._elConsole.scrollTop = <b>this</b>._elConsole.scrollHeight;
+        }
+    }
+};
+
+<i>/**
+ * Cycles through an array of log messages, and outputs each one to the console
+ * <b>if</b> its category has not been filtered out.
+ *
+ * @method _printToConsole
+ * @param aEntries {Object[]} Array of LogMsg objects to output to console.
+ * @private
+ */</i>
+YAHOO.widget.LogReader.prototype._printToConsole = <b>function</b>(aEntries) {
+    <i>// Manage the number of messages displayed <b>in</b> the console</i>
+    <b>var</b> entriesLen = aEntries.length;
+    <b>var</b> thresholdMin = <b>this</b>.thresholdMin;
+    <b>if</b>(isNaN(thresholdMin) || (thresholdMin &gt; <b>this</b>.thresholdMax)) {
+        thresholdMin = 0;
+    }
+    <b>var</b> entriesStartIndex = (entriesLen &gt; thresholdMin) ? (entriesLen - thresholdMin) : 0;
+    
+    <i>// Iterate through all log entries </i>
+    <b>var</b> sourceFiltersLen = <b>this</b>._sourceFilters.length;
+    <b>var</b> categoryFiltersLen = <b>this</b>._categoryFilters.length;
+    <b>for</b>(var i=entriesStartIndex; i&lt;entriesLen; i++) {
+        <i>// Print only the ones that filter through</i>
+        <b>var</b> okToPrint = false;
+        <b>var</b> okToFilterCats = false;
+
+        <i>// Get log message details</i>
+        <b>var</b> entry = aEntries[i];
+        <b>var</b> source = entry.source;
+        <b>var</b> category = entry.category;
+
+        <b>for</b>(var j=0; j&lt;sourceFiltersLen; j++) {
+            <b>if</b>(source == <b>this</b>._sourceFilters[j]) {
+                okToFilterCats = true;
+                <b>break</b>;
+            }
+        }
+        <b>if</b>(okToFilterCats) {
+            <b>for</b>(var k=0; k&lt;categoryFiltersLen; k++) {
+                <b>if</b>(category == <b>this</b>._categoryFilters[k]) {
+                    okToPrint = true;
+                    <b>break</b>;
+                }
+            }
+        }
+        <b>if</b>(okToPrint) {
+            <b>var</b> output = <b>this</b>.formatMsg(entry);
+
+            <i>// Verbose output uses &lt;code&gt; tag instead of &lt;pre&gt; tag (<b>for</b> wrapping)</i>
+            <b>var</b> container = (<b>this</b>.verboseOutput) ? &quot;CODE&quot; : &quot;PRE&quot;;
+            <b>var</b> oNewElement = (<b>this</b>.newestOnTop) ?
+                <b>this</b>._elConsole.insertBefore(
+                    document.createElement(container),<b>this</b>._elConsole.firstChild):
+                <b>this</b>._elConsole.appendChild(document.createElement(container));
+
+            oNewElement.innerHTML = output;
+            <b>this</b>._consoleMsgCount++;
+            <b>this</b>._lastTime = entry.time.getTime();
+        }
+    }
+};
+
+<i>/////////////////////////////////////////////////////////////////////////////</i>
+<i>//</i>
+<i>// Private event handlers</i>
+<i>//</i>
+<i>/////////////////////////////////////////////////////////////////////////////</i>
+
+<i>/**
+ * Handles Logger's categoryCreateEvent.
+ *
+ * @method _onCategoryCreate
+ * @param sType {String} The event.
+ * @param aArgs {Object[]} Data passed from event firer.
+ * @param oSelf {Object} The LogReader instance.
+ * @private
+ */</i>
+YAHOO.widget.LogReader.prototype._onCategoryCreate = <b>function</b>(sType, aArgs, oSelf) {
+    <b>var</b> category = aArgs[0];
+    <b>if</b>(oSelf._elFt) {
+        oSelf._createCategoryCheckbox(category);
+    }
+};
+
+<i>/**
+ * Handles Logger's sourceCreateEvent.
+ *
+ * @method _onSourceCreate
+ * @param sType {String} The event.
+ * @param aArgs {Object[]} Data passed from event firer.
+ * @param oSelf {Object} The LogReader instance.
+ * @private
+ */</i>
+YAHOO.widget.LogReader.prototype._onSourceCreate = <b>function</b>(sType, aArgs, oSelf) {
+    <b>var</b> source = aArgs[0];
+    <b>if</b>(oSelf._elFt) {
+        oSelf._createSourceCheckbox(source);
+    }
+};
+
+<i>/**
+ * Handles check events on the category filter checkboxes.
+ *
+ * @method _onCheckCategory
+ * @param v {HTMLEvent} The click event.
+ * @param oSelf {Object} The LogReader instance.
+ * @private
+ */</i>
+YAHOO.widget.LogReader.prototype._onCheckCategory = <b>function</b>(v, oSelf) {
+    <b>var</b> newFilter = <b>this</b>.category;
+    <b>var</b> filtersArray = oSelf._categoryFilters;
+
+    <b>if</b>(!<b>this</b>.checked) { <i>// Remove category from filters</i>
+        <b>for</b>(var i=0; i&lt;filtersArray.length; i++) {
+            <b>if</b>(newFilter == filtersArray[i]) {
+                filtersArray.splice(i, 1);
+                <b>break</b>;
+            }
+        }
+    }
+    <b>else</b> { <i>// Add category to filters</i>
+        filtersArray.push(newFilter);
+    }
+    oSelf._filterLogs();
+};
+
+<i>/**
+ * Handles check events on the category filter checkboxes.
+ *
+ * @method _onCheckSource
+ * @param v {HTMLEvent} The click event.
+ * @param oSelf {Object} The log reader instance.
+ * @private
+ */</i>
+YAHOO.widget.LogReader.prototype._onCheckSource = <b>function</b>(v, oSelf) {
+    <b>var</b> newFilter = <b>this</b>.source;
+    <b>var</b> filtersArray = oSelf._sourceFilters;
+
+    <b>if</b>(!<b>this</b>.checked) { <i>// Remove category from filters</i>
+        <b>for</b>(var i=0; i&lt;filtersArray.length; i++) {
+            <b>if</b>(newFilter == filtersArray[i]) {
+                filtersArray.splice(i, 1);
+                <b>break</b>;
+            }
+        }
+    }
+    <b>else</b> { <i>// Add category to filters</i>
+        filtersArray.push(newFilter);
+    }
+    oSelf._filterLogs();
+};
+
+<i>/**
+ * Handles click events on the collapse button.
+ *
+ * @method _onClickCollapseBtn
+ * @param v {HTMLEvent} The click event.
+ * @param oSelf {Object} The LogReader instance
+ * @private
+ */</i>
+YAHOO.widget.LogReader.prototype._onClickCollapseBtn = <b>function</b>(v, oSelf) {
+    <b>var</b> btn = oSelf._btnCollapse;
+    <b>if</b>(btn.value == &quot;Expand&quot;) {
+        oSelf._elConsole.style.display = &quot;block&quot;;
+        <b>if</b>(oSelf._elFt) {
+            oSelf._elFt.style.display = &quot;block&quot;;
+        }
+        btn.value = &quot;Collapse&quot;;
+    }
+    <b>else</b> {
+        oSelf._elConsole.style.display = &quot;none&quot;;
+        <b>if</b>(oSelf._elFt) {
+            oSelf._elFt.style.display = &quot;none&quot;;
+        }
+        btn.value = &quot;Expand&quot;;
+    }
+};
+
+<i>/**
+ * Handles click events on the pause button.
+ *
+ * @method _onClickPauseBtn
+ * @param v {HTMLEvent} The click event.
+ * @param oSelf {Object} The LogReader instance.
+ * @private
+ */</i>
+YAHOO.widget.LogReader.prototype._onClickPauseBtn = <b>function</b>(v, oSelf) {
+    <b>var</b> btn = oSelf._btnPause;
+    <b>if</b>(btn.value == &quot;Resume&quot;) {
+        oSelf.resume();
+        btn.value = &quot;Pause&quot;;
+    }
+    <b>else</b> {
+        oSelf.pause();
+        btn.value = &quot;Resume&quot;;
+    }
+};
+
+<i>/**
+ * Handles click events on the clear button.
+ *
+ * @method _onClickClearBtn
+ * @param v {HTMLEvent} The click event.
+ * @param oSelf {Object} The LogReader instance.
+ * @private
+ */</i>
+YAHOO.widget.LogReader.prototype._onClickClearBtn = <b>function</b>(v, oSelf) {
+    oSelf._clearConsole();
+};
+
+<i>/**
+ * Handles Logger's newLogEvent.
+ *
+ * @method _onNewLog
+ * @param sType {String} The event.
+ * @param aArgs {Object[]} Data passed from event firer.
+ * @param oSelf {Object} The LogReader instance.
+ * @private
+ */</i>
+YAHOO.widget.LogReader.prototype._onNewLog = <b>function</b>(sType, aArgs, oSelf) {
+    <b>var</b> logEntry = aArgs[0];
+    oSelf._buffer.push(logEntry);
+
+    <b>if</b> (oSelf.logReaderEnabled === true &amp;&amp; oSelf._timeout === null) {
+        oSelf._timeout = setTimeout(<b>function</b>(){oSelf._printBuffer();}, 100);
+    }
+};
+
+<i>/**
+ * Handles Logger's resetEvent.
+ *
+ * @method _onReset
+ * @param sType {String} The event.
+ * @param aArgs {Object[]} Data passed from event firer.
+ * @param oSelf {Object} The LogReader instance.
+ * @private
+ */</i>
+YAHOO.widget.LogReader.prototype._onReset = <b>function</b>(sType, aArgs, oSelf) {
+    oSelf._filterLogs();
+};
+ <i>/**
+ * The Logger widget provides a simple way to read or write log messages <b>in</b>
+ * JavaScript code. Integration <b>with</b> the YUI Library's debug builds allow
+ * implementers to access under-the-hood events, errors, and debugging messages.
+ * Output may be read through a LogReader console and/or output to a browser
+ * console.
+ *
+ * @module logger
+ * @requires yahoo, event, dom
+ * @optional dragdrop
+ * @namespace YAHOO.widget
+ * @title Logger Widget
+ */</i>
+<i>// holder</i>
+<i>/****************************************************************************/</i>
+<i>// holder</i>
+<i>/****************************************************************************/</i>
+<i>// holder</i>
+<i>/****************************************************************************/</i>
+<i>// holder</i>
+<i>/**
+ * The singleton Logger class provides core log management functionality. Saves
+ * logs written through the global YAHOO.log <b>function</b> or written by a LogWriter
+ * instance. Provides access to logs <b>for</b> reading by a LogReader instance or
+ * native browser console such as the Firebug extension to Firefox or Safari's
+ * JavaScript console through integration <b>with</b> the console.log() method.
+ *
+ * @class YAHOO.widget.Logger
+ * @static
+ */</i>
+YAHOO.widget.Logger = {
+    <i>// Initialize members</i>
+    loggerEnabled: true,
+    _browserConsoleEnabled: false,
+    categories: [&quot;info&quot;,&quot;warn&quot;,&quot;error&quot;,&quot;time&quot;,&quot;window&quot;],
+    sources: [&quot;global&quot;],
+    _stack: [], <i>// holds all log msgs</i>
+    maxStackEntries: 2500,
+    _startTime: <b>new</b> Date().getTime(), <i>// static start timestamp</i>
+    _lastTime: null <i>// timestamp of last logged message</i>
+};
+
+<i>/////////////////////////////////////////////////////////////////////////////</i>
+<i>//</i>
+<i>// Public methods</i>
+<i>//</i>
+<i>/////////////////////////////////////////////////////////////////////////////</i>
+<i>/**
+ * Saves a log message to the stack and fires newLogEvent. If the log message is
+ * assigned to an unknown category, creates a <b>new</b> category. If the log message is
+ * from an unknown source, creates a <b>new</b> source.  If browser console is enabled,
+ * outputs the log message to browser console.
+ *
+ * @method log
+ * @param sMsg {String} The log message.
+ * @param sCategory {String} Category of log message, or null.
+ * @param sSource {String} Source of LogWriter, or null <b>if</b> global.
+ */</i>
+YAHOO.widget.Logger.log = <b>function</b>(sMsg, sCategory, sSource) {
+    <b>if</b>(this.loggerEnabled) {
+        <b>if</b>(!sCategory) {
+            sCategory = &quot;info&quot;; <i>// <b>default</b> category</i>
+        }
+        <b>else</b> {
+            sCategory = sCategory.toLocaleLowerCase();
+            <b>if</b>(this._isNewCategory(sCategory)) {
+                <b>this</b>._createNewCategory(sCategory);
+            }
+        }
+        <b>var</b> sClass = &quot;global&quot;; <i>// <b>default</b> source</i>
+        <b>var</b> sDetail = null;
+        <b>if</b>(sSource) {
+            <b>var</b> spaceIndex = sSource.indexOf(&quot; &quot;);
+            <b>if</b>(spaceIndex &gt; 0) {
+                <i>// Substring until first space</i>
+                sClass = sSource.substring(0,spaceIndex);
+                <i>// The rest of the source</i>
+                sDetail = sSource.substring(spaceIndex,sSource.length);
+            }
+            <b>else</b> {
+                sClass = sSource;
+            }
+            <b>if</b>(this._isNewSource(sClass)) {
+                <b>this</b>._createNewSource(sClass);
+            }
+        }
+
+        <b>var</b> timestamp = <b>new</b> Date();
+        <b>var</b> logEntry = <b>new</b> YAHOO.widget.LogMsg({
+            msg: sMsg,
+            time: timestamp,
+            category: sCategory,
+            source: sClass,
+            sourceDetail: sDetail
+        });
+
+        <b>var</b> stack = <b>this</b>._stack;
+        <b>var</b> maxStackEntries = <b>this</b>.maxStackEntries;
+        <b>if</b>(maxStackEntries &amp;&amp; !isNaN(maxStackEntries) &amp;&amp;
+            (stack.length &gt;= maxStackEntries)) {
+            stack.shift();
+        }
+        stack.push(logEntry);
+        <b>this</b>.newLogEvent.fire(logEntry);
+
+        <b>if</b>(this._browserConsoleEnabled) {
+            <b>this</b>._printToBrowserConsole(logEntry);
+        }
+        <b>return</b> true;
+    }
+    <b>else</b> {
+        <b>return</b> false;
+    }
+};
+
+<i>/**
+ * Resets internal stack and startTime, enables Logger, and fires logResetEvent.
+ *
+ * @method reset
+ */</i>
+YAHOO.widget.Logger.reset = <b>function</b>() {
+    <b>this</b>._stack = [];
+    <b>this</b>._startTime = <b>new</b> Date().getTime();
+    <b>this</b>.loggerEnabled = true;
+    <b>this</b>.log(&quot;Logger reset&quot;);
+    <b>this</b>.logResetEvent.fire();
+};
+
+<i>/**
+ * Public accessor to internal stack of log message objects.
+ *
+ * @method getStack
+ * @<b>return</b> {Object[]} Array of log message objects.
+ */</i>
+YAHOO.widget.Logger.getStack = <b>function</b>() {
+    <b>return</b> this._stack;
+};
+
+<i>/**
+ * Public accessor to internal start time.
+ *
+ * @method getStartTime
+ * @<b>return</b> {Date} Internal date of when Logger singleton was initialized.
+ */</i>
+YAHOO.widget.Logger.getStartTime = <b>function</b>() {
+    <b>return</b> this._startTime;
+};
+
+<i>/**
+ * Disables output to the browser's global console.log() <b>function</b>, which is used
+ * by the Firebug extension to Firefox as well as Safari.
+ *
+ * @method disableBrowserConsole
+ */</i>
+YAHOO.widget.Logger.disableBrowserConsole = <b>function</b>() {
+    YAHOO.log(&quot;Logger output to the <b>function</b> console.log() has been disabled.&quot;);
+    <b>this</b>._browserConsoleEnabled = false;
+};
+
+<i>/**
+ * Enables output to the browser's global console.log() <b>function</b>, which is used
+ * by the Firebug extension to Firefox as well as Safari.
+ *
+ * @method enableBrowserConsole
+ */</i>
+YAHOO.widget.Logger.enableBrowserConsole = <b>function</b>() {
+    <b>this</b>._browserConsoleEnabled = true;
+    YAHOO.log(&quot;Logger output to the <b>function</b> console.log() has been enabled.&quot;);
+};
+
+<i>/////////////////////////////////////////////////////////////////////////////</i>
+<i>//</i>
+<i>// Public events</i>
+<i>//</i>
+<i>/////////////////////////////////////////////////////////////////////////////</i>
+
+ <i>/**
+ * Fired when a <b>new</b> category has been created.
+ *
+ * @event categoryCreateEvent
+ * @param sCategory {String} Category name.
+ */</i>
+YAHOO.widget.Logger.categoryCreateEvent =
+    <b>new</b> YAHOO.util.CustomEvent(&quot;categoryCreate&quot;, <b>this</b>, true);
+
+ <i>/**
+ * Fired when a <b>new</b> source has been named.
+ *
+ * @event sourceCreateEvent
+ * @param sSource {String} Source name.
+ */</i>
+YAHOO.widget.Logger.sourceCreateEvent =
+    <b>new</b> YAHOO.util.CustomEvent(&quot;sourceCreate&quot;, <b>this</b>, true);
+
+ <i>/**
+ * Fired when a <b>new</b> log message has been created.
+ *
+ * @event newLogEvent
+ * @param sMsg {String} Log message.
+ */</i>
+YAHOO.widget.Logger.newLogEvent = <b>new</b> YAHOO.util.CustomEvent(&quot;newLog&quot;, <b>this</b>, true);
+
+<i>/**
+ * Fired when the Logger has been reset has been created.
+ *
+ * @event logResetEvent
+ */</i>
+YAHOO.widget.Logger.logResetEvent = <b>new</b> YAHOO.util.CustomEvent(&quot;logReset&quot;, <b>this</b>, true);
+
+<i>/////////////////////////////////////////////////////////////////////////////</i>
+<i>//</i>
+<i>// Private methods</i>
+<i>//</i>
+<i>/////////////////////////////////////////////////////////////////////////////</i>
+
+<i>/**
+ * Creates a <b>new</b> category of log messages and fires categoryCreateEvent.
+ *
+ * @method _createNewCategory
+ * @param sCategory {String} Category name.
+ * @private
+ */</i>
+YAHOO.widget.Logger._createNewCategory = <b>function</b>(sCategory) {
+    <b>this</b>.categories.push(sCategory);
+    <b>this</b>.categoryCreateEvent.fire(sCategory);
+};
+
+<i>/**
+ * Checks to see <b>if</b> a category has already been created.
+ *
+ * @method _isNewCategory
+ * @param sCategory {String} Category name.
+ * @<b>return</b> {Boolean} Returns true <b>if</b> category is unknown, <b>else</b> returns false.
+ * @private
+ */</i>
+YAHOO.widget.Logger._isNewCategory = <b>function</b>(sCategory) {
+    <b>for</b>(var i=0; i &lt; <b>this</b>.categories.length; i++) {
+        <b>if</b>(sCategory == <b>this</b>.categories[i]) {
+            <b>return</b> false;
+        }
+    }
+    <b>return</b> true;
+};
+
+<i>/**
+ * Creates a <b>new</b> source of log messages and fires sourceCreateEvent.
+ *
+ * @method _createNewSource
+ * @param sSource {String} Source name.
+ * @private
+ */</i>
+YAHOO.widget.Logger._createNewSource = <b>function</b>(sSource) {
+    <b>this</b>.sources.push(sSource);
+    <b>this</b>.sourceCreateEvent.fire(sSource);
+};
+
+<i>/**
+ * Checks to see <b>if</b> a source already exists.
+ *
+ * @method _isNewSource
+ * @param sSource {String} Source name.
+ * @<b>return</b> {Boolean} Returns true <b>if</b> source is unknown, <b>else</b> returns false.
+ * @private
+ */</i>
+YAHOO.widget.Logger._isNewSource = <b>function</b>(sSource) {
+    <b>if</b>(sSource) {
+        <b>for</b>(var i=0; i &lt; <b>this</b>.sources.length; i++) {
+            <b>if</b>(sSource == <b>this</b>.sources[i]) {
+                <b>return</b> false;
+            }
+        }
+        <b>return</b> true;
+    }
+};
+
+<i>/**
+ * Outputs a log message to global console.log() <b>function</b>.
+ *
+ * @method _printToBrowserConsole
+ * @param oEntry {Object} Log entry object.
+ * @private
+ */</i>
+YAHOO.widget.Logger._printToBrowserConsole = <b>function</b>(oEntry) {
+    <b>if</b>(window.console &amp;&amp; console.log) {
+        <b>var</b> category = oEntry.category;
+        <b>var</b> label = oEntry.category.substring(0,4).toUpperCase();
+
+        <b>var</b> time = oEntry.time;
+        <b>if</b> (time.toLocaleTimeString) {
+            <b>var</b> localTime  = time.toLocaleTimeString();
+        }
+        <b>else</b> {
+            localTime = time.toString();
+        }
+
+        <b>var</b> msecs = time.getTime();
+        <b>var</b> elapsedTime = (YAHOO.widget.Logger._lastTime) ?
+            (msecs - YAHOO.widget.Logger._lastTime) : 0;
+        YAHOO.widget.Logger._lastTime = msecs;
+
+        <b>var</b> output =
+            localTime + &quot; (&quot; +
+            elapsedTime + &quot;ms): &quot; +
+            oEntry.source + &quot;: &quot; +
+            oEntry.msg;
+
+        console.log(output);
+    }
+};
+
+<i>/////////////////////////////////////////////////////////////////////////////</i>
+<i>//</i>
+<i>// Private event handlers</i>
+<i>//</i>
+<i>/////////////////////////////////////////////////////////////////////////////</i>
+
+<i>/**
+ * Handles logging of messages due to window error events.
+ *
+ * @method _onWindowError
+ * @param sMsg {String} The error message.
+ * @param sUrl {String} URL of the error.
+ * @param sLine {String} Line number of the error.
+ * @private
+ */</i>
+YAHOO.widget.Logger._onWindowError = <b>function</b>(sMsg,sUrl,sLine) {
+    <i>// Logger is not <b>in</b> scope of <b>this</b> event handler</i>
+    try {
+        YAHOO.widget.Logger.log(sMsg+' ('+sUrl+', line '+sLine+')', &quot;window&quot;);
+        <b>if</b>(YAHOO.widget.Logger._origOnWindowError) {
+            YAHOO.widget.Logger._origOnWindowError();
+        }
+    }
+    catch(e) {
+        <b>return</b> false;
+    }
+};
+
+<i>/////////////////////////////////////////////////////////////////////////////</i>
+<i>//</i>
+<i>// Enable handling of native JavaScript errors</i>
+<i>// NB: Not all browsers support the window.onerror event</i>
+<i>//</i>
+<i>/////////////////////////////////////////////////////////////////////////////</i>
+
+<b>if</b>(window.onerror) {
+    <i>// Save any previously defined handler to call</i>
+    YAHOO.widget.Logger._origOnWindowError = window.onerror;
+}
+window.onerror = YAHOO.widget.Logger._onWindowError;
+
+<i>/////////////////////////////////////////////////////////////////////////////</i>
+<i>//</i>
+<i>// First log</i>
+<i>//</i>
+<i>/////////////////////////////////////////////////////////////////////////////</i>
+
+YAHOO.widget.Logger.log(&quot;Logger initialized&quot;);
+
+</code></pre><hr><div style="font-size:10px;text-align:center;color:gray;">yui-ext - Copyright &copy; 2006 Jack Slocum.  |
+    Yahoo! UI - Copyright &copy; 2006 Yahoo! Inc.<br />All rights reserved.</div>
+    </body></html>

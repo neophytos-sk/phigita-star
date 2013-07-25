@@ -1,0 +1,157 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
+            "http://www.w3.org/TR/REC-html40/loose.dtd">
+<head>
+  <title>xmllint:  A validator for XML files</title>
+  <link rel="stylesheet" href="http://www.nmt.edu/tcc/style.css">
+  <link rel="shortcut icon" href="/tcc/images/favicon.ico">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head>
+<body>
+
+  Next
+
+ /
+
+  Previous
+
+ / <a href="http://www.nmt.edu/tcc/help/i/index.html">Index</a>
+ / <a href="http://www.nmt.edu/tcc/help/">TCC Help System</a>
+ / <a href="http://www.nmt.edu/tcc/help/pubs/index/">Publications</a>
+ / <a href="http://www.nmt.edu/tcc/help/sitemap.cgi" >Site map</a>
+ / <a href="http://www.nmt.edu/">NM Tech homepage</a>
+<br>
+
+<table width="100%">
+  <tr valign="top">
+    <td align="left"><h1>xmllint:  A validator for XML files</h1>
+    <td align="right">
+      <a href="http://www.nmt.edu/"><img src="/tcc/images/logo.png"
+           alt="Tech Computer Center logo"></a>
+  </tr>
+</table>
+
+
+  
+  
+
+
+<p>The <tt>xmllint</tt> program validates an XML file against
+its DTD (Document Type Definition) and reports on any differences.
+For a full list of options, see the
+<a href="/tcc/cgi/manweb.cgi?p=xmllint"><tt>man</tt> page
+for <tt>xmllint</tt></a>.
+
+<ul>
+  <li><a href="#doctype">Validating using the <tt>DOCTYPE</tt></a>
+  <li><a href="#dtd">Validating against a specific DTD</a>
+  <li><a href="#rng">Validating against a Relax NG schema</a>
+  <li><a href="#xsd">Validating against XSchema</a>
+</ul>
+
+<hr>
+<h3><a name="doctype">Validating using the <tt>DOCTYPE</tt></a></h3>
+
+<p>The XML file should have a valid <tt>&lt;!DOCTYPE...&gt;</tt>
+declaration that refers to the DTD.  To run the program on a Linux
+system at the
+<a href="http://www.nmt.edu/tcc">TCC</a>, type:<pre>
+    xmllint --valid --noout <i>file</i>.xml</pre>
+
+<p>For example, suppose you want to check whether file
+<tt>granite.xml</tt> is valid according to a DTD contained
+in file <tt>rocks.dtd</tt> in the same directory, and suppose
+the root element of that document type is <tt>&lt;mineral&gt;</tt>.
+You'd need a <tt>DOCTYPE</tt> declaration like this:
+<pre>    &lt;!DOCTYPE mineral SYSTEM "rocks.dtd"&gt;
+</pre>
+
+<p>To validate this file you'd use this command:
+<pre>    xmllint --noout --valid granite.xml
+</pre>
+
+<hr>
+<h3><a name="dtd">Validating against a specific DTD</a></h3>
+
+<p>If your XML file does not use a <tt>DOCTYPE</tt> declaration,
+you can still validate it against a specific DTD schema.  Use
+this form:
+<pre>    xmllint --noout --dtdvalid <i>URL</i> <i>file</i>.xml
+</pre>
+where <i>URL</i> is the URL of the DTD schema.
+
+<hr>
+<h3><a name="rng">Validating against a Relax NG schema</a></h3>
+
+<p>Relax NG is a more modern, improved schema language.
+Relax NG schemas can be expressed in either of two formats:
+RNG, an XML-based schema whose name ends in <tt>.rng</tt>;
+or RNC, a &#x201c;compact format&#x201d; file whose name ends
+in <tt>.rnc</tt>.
+
+<p>To validate a file against a schema in Relax NG format:
+<pre>    xmllint --noout --relaxng <i>schema</i>.rng <i>file</i>.xml
+</pre>
+
+<p>If your schema is in Compact Format, you can use the <tt>trang</tt>
+program to convert it to RNG format:
+<pre>    trang <i>file</i>.rnc <i>file</i>.rng
+</pre>
+
+<p>For example, suppose your schema is <tt>airport.rnc</tt>, and
+you have an XML file named <tt>sfo.xml</tt> to validate against it.
+This command would translate the schema to RNG format:
+<pre>    trang airport.rnc airport.rng
+</pre>
+and this command would validate the file:
+<pre>    xmllint --noout --relaxng airport.rng sfo.xml
+</pre>
+
+<hr>
+<h3><a name="xsd">Validating against XSchema</a></h3>
+
+<p>If your schema file is in XSchema, use a command of this form:
+<pre>    xmllint --noout --schema <i>schema</i>.xsd <i>file</i>.xml
+</pre>
+
+
+<hr>
+
+
+
+  <b>See also:</b> <A HREF="standards.html">XML and SGML standards and useful links</A><br>
+
+
+<a href="http://www.nmt.edu/tcc/help/sitemap.cgi">Site map</a>
+<br>
+<b>Index:</b>
+<a href="http://www.nmt.edu/tcc/help/i/index.html">Keyword index
+  to help pages</a>
+<br>
+<b>Help:</b>
+  <a href="http://www.nmt.edu/tcc/help/">
+    New Mexico Tech Computer Center: Help System</a><br>
+<b><a href="http://www.nmt.edu/tcc/help/pubs/index/"
+  >TCC Publications</a></b><br>
+To report a problem: <b><a href="https://ticket.nmt.edu/">File a ticket</a
+  ></b><br>
+<a href="mailto:uc@nmt.edu">Send mail to the <b>User consultant
+        on duty</b></a> or call them at 575-835-5437</br>
+<b>Home:</b>
+  <a href="http://www.nmt.edu/">About New Mexico Tech</a><br>
+
+<hr>
+<table>
+  <tr valign="top">
+    <td align="left">
+      <address>John Shipman, <tt>john@nmt.edu</tt></address>
+     Last updated: 2007/06/07 01:18:01 UT<br>
+     URL: http://www.nmt.edu/tcc/help/xml/lint.html
+    </td>
+    <td>
+      <a href='http://en.wikipedia.org/wiki/QR_code'>
+        <img src='/tcc/qrcode.png' alt='QR two-dimensional bar code'>
+      </a>
+    </td>
+  </tr>
+</table>
+</body>

@@ -1,0 +1,144 @@
+DomainKey-Signature: q=dns; a=rsa-sha1; c=nofws;
+	s=prod; d=linkedin.com;
+	h=DKIM-Signature:Sender:Date:From:To:Message-ID:Subject:MIME-Version:Content-Type:X-LinkedIn-Template:X-LinkedIn-Class:X-LinkedIn-fbl;
+	b=MrXc7qJDnC2YxsehuvthcfPSU3naPuceGY9VH4RY611vgfcH5JPHNGkF45c0Dksi
+	4FEAYLqnsSVufqJ/pHDeVldATYwYDquPLsJnFm/cB5pFciIf681Jz3+0MW2a71mK 
+DKIM-Signature: v=1; a=rsa-sha1; d=linkedin.com; s=proddkim; c=relaxed/relaxed;
+	q=dns/txt; i=@linkedin.com; t=1322712335;
+	h=From:Subject:Date:To:MIME-Version:Content-Type:X-LinkedIn-Class:X-LinkedIn-fbl:
+	X-LinkedIn-Template;
+	bh=jXGZ8PeqGkpYwNVJdswqi1rDZfU=;
+	b=vXtOgjguxpSH5y+95INgYK+FBorcd1BorzoyDMqtLOYR/J3r3IehMdBnNdrHi+um
+	HVzAkVAH7k6yDwjSSuz1K133cCHR+6UEj7Kivs+hJWdZMNK0KptR5Sj3PQXZhkDA; 
+Sender: messages-noreply@bounce.linkedin.com 
+Date: Thu, 1 Dec 2011 04:05:35 +0000 (UTC) 
+From: "Global Quants (Quant Analysts, Developers, Risk - Systematic, Electronic, Algo Trading) Group Members" <group-digests@linkedin.com> 
+To: Neophytos Demetriou <k2pts@phigita.net> 
+Message-ID: <1621121193.29401634.1322712335558.JavaMail.app@ela4-app0104.prod> 
+Subject: [13] new discussions, [4] new comments and [4] new jobs on LinkedIn 
+X-LinkedIn-Template: anet_digest_type 
+X-LinkedIn-Class: GROUPDIGEST 
+X-LinkedIn-fbl: m-qjoQbCEXll41077Zz3H-D7jOasfLld7YH0uQMTSXP6xJ9thYSf935J 
+--------------------------------------
+Global Quants (Quant Analysts, Developers, Risk - Systematic, Electronic, Algo Trading)
+  Latest discussions from Global Quants (Quant Analysts, Developers, Risk - Systematic, Electronic, Algo Trading) group members.  Change the frequency of this digest:
+  http://www.linkedin.com/e/-1ht5d5-gvn8rtza-7/ahs/1615777/EMLt_anet_settings/?hs=false&tok=1MLmDg3KgloB01
+
+
+
+
+Send me an email for each new discussion &#187; http://www.linkedin.com/e/-1ht5d5-gvn8rtza-7/snp/1615777/true/grp_email_subscribe_new_posts/?hs=false&tok=1swLOWz9cloB01
+
+
+Active Discussion of the week
+
+ * AlgoTrading  India started a discussion on a news article:
+  Order Book Based HFT Trading for NSE India. (2)
+
+  > Yes from 2009 onwards SEBI give permission to start HFT under Indian
+  > Exchanges - Now Algos/DMA/Co LOcation/SOR....all technology advancement
+  > are here.. Add Me - Skype -Lokesh.Madan3
+
+
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvn8rtza-7/vai/1615777/81743941/member/EMLt_anet_act_disc/?hs=false&tok=0XIAHhrn8loB01
+
+
+ * Elton  Sbruzzi started a discussion on a news article:
+  Financial engineering as a career (2)
+
+  > Following the link -> Archives -> July ->
+  > [http://blogs.reuters.com/emanuelderman/2011/07/07/financial-engineering-as-a-career-part-2/|leo://plh/http%3A*3*3blogs%2Ereuters%2Ecom*3emanuelderman*32011*307*307*3financial-engineering-as-a-career-part-2*3/fGEv?_t=tracking_disc]
+  > 
+  > Not rocket science.
+
+
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvn8rtza-7/vai/1615777/61411666/member/EMLt_anet_act_disc/?hs=false&tok=1ECer6qZIloB01
+
+
+
+Discussions
+ * Tom  McDonald Functional Programming Expert – Senior Role – Equities HFT
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvn8rtza-7/ava/82890656/1615777/EMLt_anet_qa_ttle/?hs=false&tok=0rpVmwCMsloB01
+
+
+ * Eugene  Agrant Too-Big-to-Fail: Banks Get Bigger After Dodd-Frank
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvn8rtza-7/ava/82842645/1615777/EMLt_anet_qa_ttle/?hs=false&tok=0k4wN_SikloB01
+
+
+ * Eugene  Agrant Top 5 HR Compliance Concerns for Small Business
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvn8rtza-7/ava/82783073/1615777/EMLt_anet_qa_ttle/?hs=false&tok=3aB9NThAkloB01
+
+
+ * phil  w The Dodd-Frank Act, Financial Regulations: Impact On Derivatives Technology Infrastructure
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvn8rtza-7/ava/82573100/1615777/EMLt_anet_qa_ttle/?hs=false&tok=3V05K_ciwloB01
+
+
+ * Eugene  Agrant Nimble Data Architecture: What Getting Data Integration Right Can Do for Your f
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvn8rtza-7/ava/82554238/1615777/EMLt_anet_qa_ttle/?hs=false&tok=1twA1oKlsloB01
+
+
+ * Tom  McDonald ***C++ Software Engineer*** - - NYC - - Hedge Fund - - Equities - - Automated Trading
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvn8rtza-7/ava/82402358/1615777/EMLt_anet_qa_ttle/?hs=false&tok=2OjG8bKCkloB01
+
+
+ * Matthew  Bednarsky This is a really good article by James Norman from QS Investors on macro outperformance consistency in global equity- it is definitely worth a read for quants.
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvn8rtza-7/ava/82391958/1615777/EMLt_anet_qa_ttle/?hs=false&tok=1ufmuB8WsloB01
+
+
+ * Mikhail  Munenzon, CFA, CAIA, PRM, MIA Portfolio management and the European Crisis.  Practical guidelines. 
+Download at 
+http://papers.ssrn.com/sol3/cf_dev/AbsByAuth.cfm?per_id=1460480
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvn8rtza-7/ava/82389257/1615777/EMLt_anet_qa_ttle/?hs=false&tok=1rsVf4D4cloB01
+
+
+ * Eugene  Agrant Top 5 HR Compliance Concerns for Small Business
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvn8rtza-7/ava/82374905/1615777/EMLt_anet_qa_ttle/?hs=false&tok=3J9LltKGEloB01
+
+
+ * Eugene  Agrant Too-Big-to-Fail: Banks Get Bigger After Dodd-Frank
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvn8rtza-7/ava/82348059/1615777/EMLt_anet_qa_ttle/?hs=false&tok=3qbQkqUVUloB01
+
+
+ * Param  Jeet PhD Mathematics from IIT madras, 4 years of experience in developing Equity based  Low to High frequency Quantitative trading strategies like statistical arbitrage i.e. pairs trading strategy.
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvn8rtza-7/ava/82294619/1615777/EMLt_anet_qa_ttle/?hs=false&tok=1FBUtrx4kloB01
+
+
+ * Boris  Agranovich Subscribe to these Free Trade Magazine Subscriptions & Technical Document Downloads
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvn8rtza-7/ava/82245834/1615777/EMLt_anet_qa_ttle/?hs=false&tok=0IwOQhN8IloB01
+
+
+ * Eugene  Agrant Top 5 HR Compliance Concerns for Small Business
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvn8rtza-7/ava/82111898/1615777/EMLt_anet_qa_ttle/?hs=false&tok=36f4TG2iYloB01
+
+
+Weekly Job Postings * Brunie  Portalatin: ALERT! … ALERT! … AN AVALANCHE OF JAVA AND J2EE OPPORTUNITIES in NYC
+From Jr. to Sr. Developers and Lead Developers WITH 3 to 8+ Years of Experience
+  ALERT! … ALERT! … AN AVALANCHE OF JAVA AND J2EE OPPORTUNITIES in NYC
+From Jr. to Sr. Developers and Lead Developers WITH 3 to 8+ Years of Experience (0)
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvn8rtza-7/ava/82407762/1615777/EMLt_anet_qa_ttle/?hs=false&tok=04HymErugloB01
+
+ * Manindra  Kumar: Sr. Model Validation Quant Analyst
+  Sr. Model Validation Quant Analyst (2)
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvn8rtza-7/ava/82210940/1615777/EMLt_anet_qa_ttle/?hs=false&tok=12ocwIhzgloB01
+
+ * Manindra  Kumar: Sr. Model Validation - Quant Analyst (Mumbai)
+  Sr. Model Validation - Quant Analyst (Mumbai) (0)
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvn8rtza-7/ava/82073288/1615777/EMLt_anet_qa_ttle/?hs=false&tok=3e4ALzaAMloB01
+
+
+

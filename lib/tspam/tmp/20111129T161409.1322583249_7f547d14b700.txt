@@ -1,0 +1,72 @@
+Received: from [98.139.91.68] by nm14.bullet.mail.sp2.yahoo.com with NNFMP; 29 Nov 2011 16:13:58 -0000 from [98.139.91.18] by tm8.bullet.mail.sp2.yahoo.com with NNFMP; 29 Nov 2011 16:13:58 -0000 from [127.0.0.1] by omp1018.mail.sp2.yahoo.com with NNFMP; 29 Nov 2011 16:13:58 -0000 (qmail 77842 invoked by uid 60001); 29 Nov 2011 16:13:58 -0000 from [190.125.206.75] by web45015.mail.sp1.yahoo.com via HTTP; Tue, 29 Nov 2011 08:13:57 PST 
+X-Yahoo-Newman-Property: ymail-5 
+X-Yahoo-Newman-Id: 439756.4009.bm@omp1018.mail.sp2.yahoo.com 
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s1024; t=1322583238; bh=ej+c191mpCvGAU6ZixfKwlpuvWePAmnbDpqXvyz9ijo=; h=X-YMail-OSG:Received:X-Mailer:Message-ID:Date:From:Subject:To:MIME-Version:Content-Type; b=uIiDS7jqjfIhB4co9wAKZjx2RMUethETTctGbAgiU4BcJ/1mgDPxBlf5hzJqxBrh7HCne/Ah2StyzXNfNHf+BvtsmOSRAuYqNgG+lQlMLLLNa4K6m81EC9BAb8OYRxRF88mcxJfeMptgKcvnh10K0h7IvJGw9CbAbcRsrm3bfew= 
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws;
+  s=s1024; d=yahoo.com;
+  h=X-YMail-OSG:Received:X-Mailer:Message-ID:Date:From:Subject:To:MIME-Version:Content-Type;
+  b=VWNXpQqttLFSk/HpFyV/69QIOuHehQDhK1HK4T8SD1XK8dIPnNsFD0pZMobZW8q8i4Hj4r8SYiyt2U6n/ktE8Hh71AokQA+qcbKr41tqegmQ1/VQitnpA54CskAQOSmlyZlGOBzmCj48C9YL2mDHDlJ94t/dtnhVyU4P0I/kywI=; 
+X-YMail-OSG: 9PQLs.oVM1lyhmopD2W1Mwdg88KDzhAluHb9UDFQ58f8dCm
+ sVebS0soSXaFOYyD8KmQwFZbni7G3leUzQJq7bqXoPLwXU_qV7fRDrp8dpS3
+ EDV7mAVqYTDhRFor7KrRqQMgpzKSwNmQv3Rt0ulAkfqQfPm9ZghTgl_Raeu8
+ fcl5CZZOI.CA_jnoJSyv6emQ9GbOBi2b5iwChBzkW5OXeUiLqoPbEsxbn77j
+ 1NUMOn6EpQLgKOLeSBij139yOWeV5dRPz1Z2ooC4rKCDcaDi8mhD9qxE.8pt
+ 9KdC_zPlkWtuXKZ3OoU1y0Yb6awDaY7Bq2n6XAuZpqFSP985KUOg4kWKi6nZ
+ 3h1w6aoF2ogSSYQ8NEUGyUXeRKbfHAq7vYUN7Dgw0wqMCfZH2Yhzy.TvRtR_
+ C.D4.qQTy5Cd5KATZwm3V 
+X-Mailer: YahooMailWebService/0.8.115.325013 
+Message-ID: <1322583237.76328.yint-ygo-j2me@web45015.mail.sp1.yahoo.com> 
+Date: Tue, 29 Nov 2011 08:13:57 -0800 (PST) 
+From: Salman S <salman_s80@yahoo.com> 
+Subject: Rated Outperform 
+To: k2plstet@epix.net 
+--------------------------------------
+Israeli biotech nears commercial breakthrough in blood stem cells!
+
+Symbol- RCLL
+Price- .02
+Target- .55+
+Rating- 10 of 10
+
+
+A Rare Opportunity to Own a Little-Known Biotech Company that's Making Medical History...
+
+Imagine having just a tiny position in a company that has PIONEERED stem cell research and is already generating profits from the technology. Our Research leads me to believe that we have FOUND that company, RegenoCELL Therapeutics, Inc. (OTCBB: RCLL).
+
+REVEALED: The FULL Power and Promise of Science's Next Decade
+
+According to Wikipedia, medical researchers anticipate that adult and embryonic stem cells will soon be able to treat: Cancer, Type 1 diabetes mellitus, Parkinson`s disease, Huntington`s disease, Celiac Disease, cardiac failure, muscle damage and neurological disorders. 
+
+These diseases and conditions affect so many people creating an EXPLOSIVE market for what RCLL is involved with. RCLL is utilizing adult stem cells, those derived from the patient`s own blood. This is significant because with so much controversy over stem cell research, more people need to know that it is embryonic stem cells causing the ethical debate.
+
+
+
+Adult stem cells do not require the destruction of an embryo thus eliminating the controversy in their research and therapy! RCLL plans to obtain regulatory approval in the United States and the European Community to market its stem cell treatments. Through its wholly owned foreign subsidiaries, the company is marketing its stem cell treatments for transplantation in countries where autologous therapy is permitted, including Thailand, Greece, the Dominican Republic, and Panama.
+
+RCLL's primary asset is Regenocell Laboratories, Ltd., a wholly owned Israeli corporation, which is manufacturing the stem cell therapy product used to treat congestive heart failure and peripheral artery disease.
+
+Clinical Results Could Change Lives and Fortunes Forever...
+
+Since 2005, the company's stem cell therapy has successfully treated over 500 patients. Over 5 years later patents initially treated are leading active and fulfilling lives! Over 25,000 people are on the transplant lists but fewer than 2,500 receive one. The mean life expectancy of a heart transplant recipient is 8 years. 
+
+RCLL has a new therapeutic approach to treat this disease!! 
+
+Currently congestive heart failure patients cleared for treatment have one-half liter of blood drawn which is sent to the Company's cell processing facility in Israel. After the adult stem cells in the patient's blood have been extracted and grown into large numbers of angiogenic precursor cells, they are sent for infusion into the patient in a minimally invasive procedure. 
+
+One easy move you could make NOW to turn science's next decade into your own cash making Green Machine. Do your research now on RCLL. The company released exciting news Black Friday after the market closed which could take this $1.6 million dollar Market Cap stock to $100 million by Christmas!  
+
+In the near-term, we expect to see the RCLL share price go ballistic. Trading at only 0.02 per share, RCLL could see possible gains of 100%, 500%, or even 1000%! This is the time to get on board and lock down a nice position. You do not want to miss this one! 
+
+
+
+
+
+
+Quote of The Day
+
+she wouldn't suit you though all is saying that she'll wed you now.
+
+is fat and amorous, about forty-five.] It will doubtless please your friends to know that you are well,
+
+
+

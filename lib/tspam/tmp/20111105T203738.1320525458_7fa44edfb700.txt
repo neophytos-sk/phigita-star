@@ -1,0 +1,22 @@
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.goldenvista.cn (EMOS V1.5 (Postfix)) with ESMTP id C2C565C8918;
+	Sun,  6 Nov 2011 04:34:28 +0800 (CST) from mail.goldenvista.cn ([127.0.0.1])
+	by localhost (mail.goldenvista.cn [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id xNKgY1H8X8Oe; Sun,  6 Nov 2011 04:34:28 +0800 (CST) from korpth (unknown [110.52.6.163])
+	by mail.goldenvista.cn (EMOS V1.5 (Postfix)) with ESMTPA id 4A8FA5C8903;
+	Sun,  6 Nov 2011 04:34:27 +0800 (CST) 
+X-Virus-Scanned: amavisd-new at goldenvista.cn 
+X-Spam-Flag: NO 
+X-Spam-Score: 2.145 
+X-Spam-Level: ** 
+X-Spam-Status: No, score=2.145 tagged_above=-10 required=5
+	tests=[ALL_TRUSTED=-1.44, CN_BODY_2=0.001, DSPAM_ERROR=0.1,
+	FH_DATE_PAST_20XX=3.384, TVD_SPACE_RATIO=0.1] autolearn=no 
+Message-ID: <20111106043838783802@gotohui.com> 
+From: =?gb2312?B?varLvMGi?= <shenfangxin@gotohui.com> 
+To:  
+Subject: =?gb2312?B?uN8u0KcustYutKIuudwuwO0u0+suuaQus6cuzu8u?=
+	=?gb2312?B?wc8uxeQuy80tLS0tvarLvMGi?= 
+Date: Sun, 6 Nov 2011 04:38:27 +0800 
+X-mailer: Yfzzpqvur 8 
+Whoops!  What is a 'application/vnd.ms-excel'?

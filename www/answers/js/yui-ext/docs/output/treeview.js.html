@@ -1,0 +1,2185 @@
+<html><head><title>treeview.js</title><link rel="stylesheet" type="text/css" href="../resources/style.css" media="screen"/></head><body><h1>treeview.js</h1><pre class="highlighted"><code><i>/*                                                                                                                                                      
+Copyright (c) 2006, Yahoo! Inc. All rights reserved.
+Code licensed under the BSD License:
+http:<i>//developer.yahoo.net/yui/license.txt</i>
+version: 0.12.0
+*/</i>
+<i>// holder</i>
+<i>/**
+ * The treeview widget is a generic tree building tool.
+ * @module treeview
+ * @title TreeView Widget
+ * @requires yahoo
+ * @optional animation
+ * @namespace YAHOO.widget
+ */</i>
+<i>// holder</i>
+<i>/**
+ * Contains the tree view state data and the root node.
+ *
+ * @class TreeView
+ * @constructor
+ * @param {string|HTMLElement} id The id of the element, or the element
+ * itself that the tree will be inserted into.
+ */</i>
+YAHOO.widget.TreeView = <b>function</b>(id) {
+    <b>if</b> (id) { <b>this</b>.init(id); }
+};
+
+YAHOO.widget.TreeView.prototype = {
+
+    <i>/**
+     * The id of tree container element
+     * @property id
+     * @type String
+     */</i>
+    id: null,
+
+    <i>/**
+     * The host element <b>for</b> this tree
+     * @property _el
+     * @private
+     */</i>
+    _el: null,
+
+     <i>/**
+     * Flat collection of all nodes <b>in</b> this tree
+     * @property _nodes
+     * @type Node[]
+     * @private
+     */</i>
+    _nodes: null,
+
+    <i>/**
+     * We lock the tree control <b>while</b> waiting <b>for</b> the dynamic loader to <b>return</b>
+     * @property locked
+     * @type boolean
+     */</i>
+    locked: false,
+
+    <i>/**
+     * The animation to use <b>for</b> expanding children, <b>if</b> any
+     * @property _expandAnim
+     * @type string
+     * @private
+     */</i>
+    _expandAnim: null,
+
+    <i>/**
+     * The animation to use <b>for</b> collapsing children, <b>if</b> any
+     * @property _collapseAnim
+     * @type string
+     * @private
+     */</i>
+    _collapseAnim: null,
+
+    <i>/**
+     * The current number of animations that are executing
+     * @property _animCount
+     * @type int
+     * @private
+     */</i>
+    _animCount: 0,
+
+    <i>/**
+     * The maximum number of animations to run at one time.
+     * @property maxAnim
+     * @type int
+     */</i>
+    maxAnim: 2,
+
+    <i>/**
+     * Sets up the animation <b>for</b> expanding children
+     * @method setExpandAnim
+     * @param {string} type the type of animation (acceptable values defined 
+     * <b>in</b> YAHOO.widget.TVAnim)
+     */</i>
+    setExpandAnim: <b>function</b>(type) {
+        <b>if</b> (YAHOO.widget.TVAnim.isValid(type)) {
+            <b>this</b>._expandAnim = type;
+        }
+    },
+
+    <i>/**
+     * Sets up the animation <b>for</b> collapsing children
+     * @method setCollapseAnim
+     * @param {string} the type of animation (acceptable values defined <b>in</b> 
+     * YAHOO.widget.TVAnim)
+     */</i>
+    setCollapseAnim: <b>function</b>(type) {
+        <b>if</b> (YAHOO.widget.TVAnim.isValid(type)) {
+            <b>this</b>._collapseAnim = type;
+        }
+    },
+
+    <i>/**
+     * Perform the expand animation <b>if</b> configured, or just show the
+     * element <b>if</b> not configured or too many animations are <b>in</b> progress
+     * @method animateExpand
+     * @param el {HTMLElement} the element to animate
+     * @param node {YAHOO.util.Node} the node that was expanded
+     * @<b>return</b> {boolean} true <b>if</b> animation could be invoked, false otherwise
+     */</i>
+    animateExpand: <b>function</b>(el, node) {
+
+        <b>if</b> (<b>this</b>._expandAnim &amp;&amp; <b>this</b>._animCount &lt; <b>this</b>.maxAnim) {
+            <i>// <b>this</b>.locked = true;</i>
+            <b>var</b> tree = <b>this</b>;
+            <b>var</b> a = YAHOO.widget.TVAnim.getAnim(<b>this</b>._expandAnim, el, 
+                            <b>function</b>() { tree.expandComplete(node); });
+            <b>if</b> (a) { 
+                ++<b>this</b>._animCount;
+                <b>this</b>.fireEvent(&quot;animStart&quot;, {
+                        &quot;node&quot;: node, 
+                        &quot;type&quot;: &quot;expand&quot;
+                    });
+                a.animate();
+            }
+
+            <b>return</b> true;
+        }
+
+        <b>return</b> false;
+    },
+
+    <i>/**
+     * Perform the collapse animation <b>if</b> configured, or just show the
+     * element <b>if</b> not configured or too many animations are <b>in</b> progress
+     * @method animateCollapse
+     * @param el {HTMLElement} the element to animate
+     * @param node {YAHOO.util.Node} the node that was expanded
+     * @<b>return</b> {boolean} true <b>if</b> animation could be invoked, false otherwise
+     */</i>
+    animateCollapse: <b>function</b>(el, node) {
+
+        <b>if</b> (<b>this</b>._collapseAnim &amp;&amp; <b>this</b>._animCount &lt; <b>this</b>.maxAnim) {
+            <i>// <b>this</b>.locked = true;</i>
+            <b>var</b> tree = <b>this</b>;
+            <b>var</b> a = YAHOO.widget.TVAnim.getAnim(<b>this</b>._collapseAnim, el, 
+                            <b>function</b>() { tree.collapseComplete(node); });
+            <b>if</b> (a) { 
+                ++<b>this</b>._animCount;
+                <b>this</b>.fireEvent(&quot;animStart&quot;, {
+                        &quot;node&quot;: node, 
+                        &quot;type&quot;: &quot;collapse&quot;
+                    });
+                a.animate();
+            }
+
+            <b>return</b> true;
+        }
+
+        <b>return</b> false;
+    },
+
+    <i>/**
+     * Function executed when the expand animation completes
+     * @method expandComplete
+     */</i>
+    expandComplete: <b>function</b>(node) {
+        --<b>this</b>._animCount;
+        <b>this</b>.fireEvent(&quot;animComplete&quot;, {
+                &quot;node&quot;: node, 
+                &quot;type&quot;: &quot;expand&quot;
+            });
+        <i>// <b>this</b>.locked = false;</i>
+    },
+
+    <i>/**
+     * Function executed when the collapse animation completes
+     * @method collapseComplete
+     */</i>
+    collapseComplete: <b>function</b>(node) {
+        --<b>this</b>._animCount;
+        <b>this</b>.fireEvent(&quot;animComplete&quot;, {
+                &quot;node&quot;: node, 
+                &quot;type&quot;: &quot;collapse&quot;
+            });
+        <i>// <b>this</b>.locked = false;</i>
+    },
+
+    <i>/**
+     * Initializes the tree
+     * @method init
+     * @parm {string|HTMLElement} id the id of the element that will hold the tree
+     * @private
+     */</i>
+    init: <b>function</b>(id) {
+
+        <b>this</b>.id = id;
+
+        <b>if</b> (&quot;string&quot; !== <b>typeof</b> id) {
+            <b>this</b>._el = id;
+            <b>this</b>.id = <b>this</b>.generateId(id);
+        }
+
+        <i>/**
+         * When animation is enabled, <b>this</b> event fires when the animation
+         * starts
+         * @event animStart
+         * @type CustomEvent
+         * @param {YAHOO.widget.Node} node the node that is expanding/collapsing
+         * @parm {String} type the type of animation (&quot;expand&quot; or &quot;collapse&quot;)
+         */</i>
+        <b>this</b>.createEvent(&quot;animStart&quot;, <b>this</b>);
+
+        <i>/**
+         * When animation is enabled, <b>this</b> event fires when the animation
+         * completes
+         * @event animComplete
+         * @type CustomEvent
+         * @param {YAHOO.widget.Node} node the node that is expanding/collapsing
+         * @parm {String} type the type of animation (&quot;expand&quot; or &quot;collapse&quot;)
+         */</i>
+        <b>this</b>.createEvent(&quot;animComplete&quot;, <b>this</b>);
+
+        <i>/**
+         * Fires when a node is going to be expanded.  Return false to stop
+         * the expand.
+         * @event collapse
+         * @type CustomEvent
+         * @param {YAHOO.widget.Node} node the node that is expanding/collapsing
+         */</i>
+        <b>this</b>.createEvent(&quot;collapse&quot;, <b>this</b>);
+
+        <i>/**
+         * Fires when a node is going to be collapsed.  Return false to stop
+         * the collapse.
+         * @event expand
+         * @type CustomEvent
+         * @param {YAHOO.widget.Node} node the node that is expanding/collapsing
+         */</i>
+        <b>this</b>.createEvent(&quot;expand&quot;, <b>this</b>);
+
+        <b>this</b>._nodes = [];
+
+        <i>// store a global reference</i>
+        YAHOO.widget.TreeView.trees[<b>this</b>.id] = <b>this</b>;
+
+        <i>// Set up the root node</i>
+        <b>this</b>.root = <b>new</b> YAHOO.widget.RootNode(<b>this</b>);
+
+
+    },
+
+    <i>/**
+     * Renders the tree boilerplate and visible nodes
+     * @method draw
+     */</i>
+    draw: <b>function</b>() {
+        <b>var</b> html = <b>this</b>.root.getHtml();
+        <b>this</b>.getEl().innerHTML = html;
+        <b>this</b>.firstDraw = false;
+    },
+
+    <i>/**
+     * Returns the tree's host element
+     * @method getEl
+     * @<b>return</b> {HTMLElement} the host element
+     */</i>
+    getEl: <b>function</b>() {
+        <b>if</b> (! <b>this</b>._el) {
+            <b>this</b>._el = document.getElementById(<b>this</b>.id);
+        }
+        <b>return</b> this._el;
+    },
+
+    <i>/**
+     * Nodes register themselves <b>with</b> the tree instance when they are created.
+     * @method regNode
+     * @param node {Node} the node to register
+     * @private
+     */</i>
+    regNode: <b>function</b>(node) {
+        <b>this</b>._nodes[node.index] = node;
+    },
+
+    <i>/**
+     * Returns the root node of <b>this</b> tree
+     * @method getRoot
+     * @<b>return</b> {Node} the root node
+     */</i>
+    getRoot: <b>function</b>() {
+        <b>return</b> this.root;
+    },
+
+    <i>/**
+     * Configures <b>this</b> tree to dynamically load all child data
+     * @method setDynamicLoad
+     * @param {<b>function</b>} fnDataLoader the <b>function</b> that will be called to get the data
+     * @param iconMode {int} configures the icon that is displayed when a dynamic
+     * load node is expanded the first time without children.  By <b>default</b>, the 
+     * &quot;collapse&quot; icon will be used.  If set to 1, the leaf node icon will be
+     * displayed.
+     */</i>
+    setDynamicLoad: <b>function</b>(fnDataLoader, iconMode) { 
+        <b>this</b>.root.setDynamicLoad(fnDataLoader, iconMode);
+    },
+
+    <i>/**
+     * Expands all child nodes.  Note: <b>this</b> conflicts <b>with</b> the &quot;multiExpand&quot;
+     * node property.  If expand all is called <b>in</b> a tree <b>with</b> nodes that
+     * <b>do</b> not allow multiple siblings to be displayed, only the last sibling
+     * will be expanded.
+     * @method expandAll
+     */</i>
+    expandAll: <b>function</b>() { 
+        <b>if</b> (!<b>this</b>.locked) {
+            <b>this</b>.root.expandAll(); 
+        }
+    },
+
+    <i>/**
+     * Collapses all expanded child nodes <b>in</b> the entire tree.
+     * @method collapseAll
+     */</i>
+    collapseAll: <b>function</b>() { 
+        <b>if</b> (!<b>this</b>.locked) {
+            <b>this</b>.root.collapseAll(); 
+        }
+    },
+
+    <i>/**
+     * Returns a node <b>in</b> the tree that has the specified index (<b>this</b> index
+     * is created internally, so <b>this</b> function probably will only be used
+     * <b>in</b> html generated <b>for</b> a given node.)
+     * @method getNodeByIndex
+     * @param {int} nodeIndex the index of the node wanted
+     * @<b>return</b> {Node} the node <b>with</b> index=nodeIndex, null <b>if</b> no match
+     */</i>
+    getNodeByIndex: <b>function</b>(nodeIndex) {
+        <b>var</b> n = <b>this</b>._nodes[nodeIndex];
+        <b>return</b> (n) ? n : null;
+    },
+
+    <i>/**
+     * Returns a node that has a matching property and value <b>in</b> the data
+     * object that was passed into its constructor.
+     * @method getNodeByProperty
+     * @param {object} property the property to search (usually a string)
+     * @param {object} value the value we want to find (usuall an int or string)
+     * @<b>return</b> {Node} the matching node, null <b>if</b> no match
+     */</i>
+    getNodeByProperty: <b>function</b>(property, value) {
+        <b>for</b> (<b>var</b> i <b>in</b> this._nodes) {
+            <b>var</b> n = <b>this</b>._nodes[i];
+            <b>if</b> (n.data &amp;&amp; value == n.data[property]) {
+                <b>return</b> n;
+            }
+        }
+
+        <b>return</b> null;
+    },
+
+    <i>/**
+     * Returns a collection of nodes that have a matching property 
+     * and value <b>in</b> the data object that was passed into its constructor.  
+     * @method getNodesByProperty
+     * @param {object} property the property to search (usually a string)
+     * @param {object} value the value we want to find (usuall an int or string)
+     * @<b>return</b> {Array} the matching collection of nodes, null <b>if</b> no match
+     */</i>
+    getNodesByProperty: <b>function</b>(property, value) {
+        <b>var</b> values = [];
+        <b>for</b> (<b>var</b> i <b>in</b> this._nodes) {
+            <b>var</b> n = <b>this</b>._nodes[i];
+            <b>if</b> (n.data &amp;&amp; value == n.data[property]) {
+                values.push(n);
+            }
+        }
+
+        <b>return</b> (values.length) ? values : null;
+    },
+
+    <i>/**
+     * Removes the node and its children, and optionally refreshes the 
+     * branch of the tree that was affected.
+     * @method removeNode
+     * @param {Node} The node to remove
+     * @param {boolean} autoRefresh automatically refreshes branch <b>if</b> true
+     * @<b>return</b> {boolean} False is there was a problem, true otherwise.
+     */</i>
+    removeNode: <b>function</b>(node, autoRefresh) { 
+
+        <i>// Don't <b>delete</b> the root node</i>
+        <b>if</b> (node.isRoot()) {
+            <b>return</b> false;
+        }
+
+        <i>// Get the branch that we may need to refresh</i>
+        <b>var</b> p = node.parent;
+        <b>if</b> (p.parent) {
+            p = p.parent;
+        }
+
+        <i>// Delete the node and its children</i>
+        <b>this</b>._deleteNode(node);
+
+        <i>// Refresh the parent of the parent</i>
+        <b>if</b> (autoRefresh &amp;&amp; p &amp;&amp; p.childrenRendered) {
+            p.refresh();
+        }
+
+        <b>return</b> true;
+    },
+
+    <i>/**
+     * Deletes <b>this</b> nodes child collection, recursively.  Also collapses
+     * the node, and resets the dynamic load flag.  The primary use <b>for</b>
+     * <b>this</b> method is to purge a node and allow it to fetch its data
+     * dynamically again.
+     * @method removeChildren
+     * @param {Node} node the node to purge
+     */</i>
+    removeChildren: <b>function</b>(node) { 
+        <b>while</b> (node.children.length) {
+             <b>this</b>._deleteNode(node.children[0]);
+        }
+
+        node.childrenRendered = false;
+        node.dynamicLoadComplete = false;
+        <b>if</b> (node.expanded) {
+            node.collapse();
+        } <b>else</b> {
+            node.updateIcon();
+        }
+    },
+
+    <i>/**
+     * Deletes the node and recurses children
+     * @method _deleteNode
+     * @private
+     */</i>
+    _deleteNode: <b>function</b>(node) { 
+        <i>// Remove all the child nodes first</i>
+        <b>this</b>.removeChildren(node);
+
+        <i>// Remove the node from the tree</i>
+        <b>this</b>.popNode(node);
+    },
+
+    <i>/**
+     * Removes the node from the tree, preserving the child collection 
+     * to make it possible to insert the branch into another part of the 
+     * tree, or another tree.
+     * @method popNode
+     * @param {Node} the node to remove
+     */</i>
+    popNode: <b>function</b>(node) { 
+        <b>var</b> p = node.parent;
+
+        <i>// Update the parent's collection of children</i>
+        <b>var</b> a = [];
+
+        <b>for</b> (<b>var</b> i=0, len=p.children.length;i&lt;len;++i) {
+            <b>if</b> (p.children[i] != node) {
+                a[a.length] = p.children[i];
+            }
+        }
+
+        p.children = a;
+
+        <i>// reset the childrenRendered flag <b>for</b> the parent</i>
+        p.childrenRendered = false;
+
+         <i>// Update the sibling relationship</i>
+        <b>if</b> (node.previousSibling) {
+            node.previousSibling.nextSibling = node.nextSibling;
+        }
+
+        <b>if</b> (node.nextSibling) {
+            node.nextSibling.previousSibling = node.previousSibling;
+        }
+
+        node.parent = null;
+        node.previousSibling = null;
+        node.nextSibling = null;
+        node.tree = null;
+
+        <i>// Update the tree's node collection </i>
+        <b>delete</b> this._nodes[node.index];
+    },
+
+    <i>/**
+     * TreeView instance toString
+     * @method toString
+     * @<b>return</b> {string} string representation of the tree
+     */</i>
+    toString: <b>function</b>() {
+        <b>return</b> &quot;TreeView &quot; + <b>this</b>.id;
+    },
+
+    <i>/**
+     * Generates an unique id <b>for</b> an element <b>if</b> it doesn't yet have one
+     * @method generateId
+     * @private
+     */</i>
+    generateId: <b>function</b>(el) {
+        <b>var</b> id = el.id;
+
+        <b>if</b> (!id) {
+            id = &quot;yui-tv-auto-id-&quot; + YAHOO.widget.TreeView.counter;
+            ++YAHOO.widget.TreeView.counter;
+        }
+
+        <b>return</b> id;
+    },
+
+    <i>/**
+     * Abstract method that is executed when a node is expanded
+     * @method onExpand
+     * @param node {Node} the node that was expanded
+     * @deprecated use treeobj.subscribe(&quot;expand&quot;) instead
+     */</i>
+    onExpand: <b>function</b>(node) { },
+
+    <i>/**
+     * Abstract method that is executed when a node is collapsed.
+     * @method onCollapse
+     * @param node {Node} the node that was collapsed.
+     * @deprecated use treeobj.subscribe(&quot;collapse&quot;) instead
+     */</i>
+    onCollapse: <b>function</b>(node) { }
+
+};
+
+YAHOO.augment(YAHOO.widget.TreeView, YAHOO.util.EventProvider);
+
+<i>/**
+ * Count of all nodes <b>in</b> all trees
+ * @property YAHOO.widget.TreeView.nodeCount
+ * @type int
+ * @static
+ */</i>
+YAHOO.widget.TreeView.nodeCount = 0;
+
+<i>/**
+ * Global cache of tree instances
+ * @property YAHOO.widget.TreeView.trees
+ * @type Array
+ * @static
+ * @private
+ */</i>
+YAHOO.widget.TreeView.trees = [];
+
+<i>/**
+ * Counter <b>for</b> generating a <b>new</b> unique element id
+ * @property YAHOO.widget.TreeView.counter
+ * @static
+ * @private
+ */</i>
+YAHOO.widget.TreeView.counter = 0;
+
+<i>/**
+ * Global method <b>for</b> getting a tree by its id.  Used <b>in</b> the generated
+ * tree html.
+ * @method YAHOO.widget.TreeView.getTree
+ * @param treeId {String} the id of the tree instance
+ * @<b>return</b> {TreeView} the tree instance requested, null <b>if</b> not found.
+ * @static
+ */</i>
+YAHOO.widget.TreeView.getTree = <b>function</b>(treeId) {
+    <b>var</b> t = YAHOO.widget.TreeView.trees[treeId];
+    <b>return</b> (t) ? t : null;
+};
+
+<i>/**
+ * Global method <b>for</b> getting a node by its id.  Used <b>in</b> the generated
+ * tree html.
+ * @method YAHOO.widget.TreeView.getNode
+ * @param treeId {String} the id of the tree instance
+ * @param nodeIndex {String} the index of the node to <b>return</b>
+ * @<b>return</b> {Node} the node instance requested, null <b>if</b> not found
+ * @static
+ */</i>
+YAHOO.widget.TreeView.getNode = <b>function</b>(treeId, nodeIndex) {
+    <b>var</b> t = YAHOO.widget.TreeView.getTree(treeId);
+    <b>return</b> (t) ? t.getNodeByIndex(nodeIndex) : null;
+};
+
+<i>/**
+ * Add a DOM event
+ * @method YAHOO.widget.TreeView.addHandler
+ * @param el the elment to bind the handler to
+ * @param {string} sType the type of event handler
+ * @param {<b>function</b>} fn the callback to invoke
+ * @static
+ */</i>
+YAHOO.widget.TreeView.addHandler = <b>function</b> (el, sType, fn) {
+    <b>if</b> (el.addEventListener) {
+        el.addEventListener(sType, fn, false);
+    } <b>else</b> if (el.attachEvent) {
+        el.attachEvent(&quot;on&quot; + sType, fn);
+    }
+};
+
+<i>/**
+ * Remove a DOM event
+ * @method YAHOO.widget.TreeView.removeHandler
+ * @param el the elment to bind the handler to
+ * @param {string} sType the type of event handler
+ * @param {<b>function</b>} fn the callback to invoke
+ * @static
+ */</i>
+
+YAHOO.widget.TreeView.removeHandler = <b>function</b> (el, sType, fn) {
+    <b>if</b> (el.removeEventListener) {
+        el.removeEventListener(sType, fn, false);
+    } <b>else</b> if (el.detachEvent) {
+        el.detachEvent(&quot;on&quot; + sType, fn);
+    }
+};
+
+<i>/**
+ * Attempts to preload the images defined <b>in</b> the styles used to draw the tree by
+ * rendering off-screen elements that use the styles.
+ * @method YAHOO.widget.TreeView.preload
+ * @param {string} prefix the prefix to use to generate the names of the
+ * images to preload, <b>default</b> is ygtv
+ * @static
+ */</i>
+YAHOO.widget.TreeView.preload = <b>function</b>(prefix) {
+    prefix = prefix || &quot;ygtv&quot;;
+    <b>var</b> styles = [&quot;tn&quot;,&quot;tm&quot;,&quot;tmh&quot;,&quot;tp&quot;,&quot;tph&quot;,&quot;ln&quot;,&quot;lm&quot;,&quot;lmh&quot;,&quot;lp&quot;,&quot;lph&quot;,&quot;loading&quot;];
+
+    <b>var</b> sb = [];
+    
+    <b>for</b> (<b>var</b> i = 0; i &lt; styles.length; ++i) { 
+        sb[sb.length] = '&lt;span class=&quot;' + prefix + styles[i] + '&quot;&gt;&amp;#160;&lt;/span&gt;';
+    }
+
+    <b>var</b> f = document.createElement(&quot;div&quot;);
+    <b>var</b> s = f.style;
+    s.position = &quot;absolute&quot;;
+    s.top = &quot;-1000px&quot;;
+    s.left = &quot;-1000px&quot;;
+    f.innerHTML = sb.join(&quot;&quot;);
+
+    document.body.appendChild(f);
+
+    YAHOO.widget.TreeView.removeHandler(window, 
+                &quot;load&quot;, YAHOO.widget.TreeView.preload);
+
+};
+
+YAHOO.widget.TreeView.addHandler(window, 
+                &quot;load&quot;, YAHOO.widget.TreeView.preload);
+
+<i>/**
+ * The base class <b>for</b> all tree nodes.  The node's presentation and behavior <b>in</b>
+ * response to mouse events is handled <b>in</b> Node subclasses.
+ * @namespace YAHOO.widget
+ * @class Node
+ * @param oData {object} a string or object containing the data that will
+ * be used to render <b>this</b> node
+ * @param oParent {Node} <b>this</b> node's parent node
+ * @param expanded {boolean} the initial expanded/collapsed state
+ * @constructor
+ */</i>
+YAHOO.widget.Node = <b>function</b>(oData, oParent, expanded) {
+    <b>if</b> (oData) { <b>this</b>.init(oData, oParent, expanded); }
+};
+
+YAHOO.widget.Node.prototype = {
+
+    <i>/**
+     * The index <b>for</b> this instance obtained from global counter <b>in</b> YAHOO.widget.TreeView.
+     * @property index
+     * @type int
+     */</i>
+    index: 0,
+
+    <i>/**
+     * This node's child node collection.
+     * @property children
+     * @type Node[] 
+     */</i>
+    children: null,
+
+    <i>/**
+     * Tree instance <b>this</b> node is part of
+     * @property tree
+     * @type TreeView
+     */</i>
+    tree: null,
+
+    <i>/**
+     * The data linked to <b>this</b> node.  This can be any object or primitive
+     * value, and the data can be used <b>in</b> getNodeHtml().
+     * @property data
+     * @type object
+     */</i>
+    data: null,
+
+    <i>/**
+     * Parent node
+     * @property parent
+     * @type Node
+     */</i>
+    parent: null,
+
+    <i>/**
+     * The depth of <b>this</b> node.  We start at -1 <b>for</b> the root node.
+     * @property depth
+     * @type int
+     */</i>
+    depth: -1,
+
+    <i>/**
+     * The href <b>for</b> the node's label.  If one is not specified, the href will
+     * be set so that it toggles the node.
+     * @property href
+     * @type string
+     */</i>
+    href: null,
+
+    <i>/**
+     * The label href target, defaults to current window
+     * @property target
+     * @type string
+     */</i>
+    target: &quot;_self&quot;,
+
+    <i>/**
+     * The node's expanded/collapsed state
+     * @property expanded
+     * @type boolean
+     */</i>
+    expanded: false,
+
+    <i>/**
+     * Can multiple children be expanded at once?
+     * @property multiExpand
+     * @type boolean
+     */</i>
+    multiExpand: true,
+
+    <i>/**
+     * Should we render children <b>for</b> a collapsed node?  It is possible that the
+     * implementer will want to render the hidden data...  @todo verify that we 
+     * need <b>this</b>, and implement it <b>if</b> we <b>do</b>.
+     * @property renderHidden
+     * @type boolean
+     */</i>
+    renderHidden: false,
+
+    <i>/**
+     * This flag is set to true when the html is generated <b>for</b> this node's
+     * children, and set to false when <b>new</b> children are added.
+     * @property childrenRendered
+     * @type boolean
+     */</i>
+    childrenRendered: false,
+
+    <i>/**
+     * Dynamically loaded nodes only fetch the data the first time they are
+     * expanded.  This flag is set to true once the data has been fetched.
+     * @property dynamicLoadComplete
+     * @type boolean
+     */</i>
+    dynamicLoadComplete: false,
+
+    <i>/**
+     * This node's previous sibling
+     * @property previousSibling
+     * @type Node
+     */</i>
+    previousSibling: null,
+
+    <i>/**
+     * This node's next sibling
+     * @property nextSibling
+     * @type Node
+     */</i>
+    nextSibling: null,
+
+    <i>/**
+     * We can set the node up to call an external method to get the child
+     * data dynamically.
+     * @property _dynLoad
+     * @type boolean
+     * @private
+     */</i>
+    _dynLoad: false,
+
+    <i>/**
+     * Function to execute when we need to get <b>this</b> node's child data.
+     * @property dataLoader
+     * @type <b>function</b>
+     */</i>
+    dataLoader: null,
+
+    <i>/**
+     * This is true <b>for</b> dynamically loading nodes <b>while</b> waiting <b>for</b> the
+     * callback to <b>return</b>.
+     * @property isLoading
+     * @type boolean
+     */</i>
+    isLoading: false,
+
+    <i>/**
+     * The toggle/branch icon will not show <b>if</b> this is set to false.  This
+     * could be useful <b>if</b> the implementer wants to have the child contain
+     * extra info about the parent, rather than an actual node.
+     * @property hasIcon
+     * @type boolean
+     */</i>
+    hasIcon: true,
+
+    <i>/**
+     * Used to configure what happens when a dynamic load node is expanded
+     * and we discover that it does not have children.  By <b>default</b>, it is
+     * treated as <b>if</b> it still could have children (plus/minus icon).  Set
+     * iconMode to have it display like a leaf node instead.
+     * @property iconMode
+     * @type int
+     */</i>
+    iconMode: 0,
+
+    <i>/**
+     * The node type
+     * @property _type
+     * @private
+     */</i>
+    _type: &quot;Node&quot;,
+
+    <i>/*
+    spacerPath: &quot;http:<i>//us.i1.yimg.com/us.yimg.com/i/space.gif&quot;,</i>
+    expandedText: &quot;Expanded&quot;,
+    collapsedText: &quot;Collapsed&quot;,
+    loadingText: &quot;Loading&quot;,
+    */</i>
+<i>// holder</i>
+<i>/**
+     * Initializes <b>this</b> node, gets some of the properties from the parent
+     * @method init
+     * @param oData {object} a string or object containing the data that will
+     * be used to render <b>this</b> node
+     * @param oParent {Node} <b>this</b> node's parent node
+     * @param expanded {boolean} the initial expanded/collapsed state
+     */</i>
+    init: <b>function</b>(oData, oParent, expanded) {
+
+        <b>this</b>.data       = oData;
+        <b>this</b>.children   = [];
+        <b>this</b>.index      = YAHOO.widget.TreeView.nodeCount;
+        ++YAHOO.widget.TreeView.nodeCount;
+        <b>this</b>.expanded   = expanded;
+
+        <i>/**
+         * The parentChange event is fired when a parent element is applied
+         * to the node.  This is useful <b>if</b> you need to apply tree-level
+         * properties to a tree that need to happen <b>if</b> a node is moved from
+         * one tre to another.
+         *
+         * @event parentChange
+         * @type CustomEvent
+         */</i>
+        <b>this</b>.createEvent(&quot;parentChange&quot;, <b>this</b>);
+
+        <i>// oParent should never be null except when we create the root node.</i>
+        <b>if</b> (oParent) {
+            oParent.appendChild(<b>this</b>);
+        }
+    },
+
+    <i>/**
+     * Certain properties <b>for</b> the node cannot be set until the parent
+     * is known. This is called after the node is inserted into a tree.
+     * the parent is also applied to <b>this</b> node's children <b>in</b> order to
+     * make it possible to move a branch from one tree to another.
+     * @method applyParent
+     * @param {Node} parentNode <b>this</b> node's parent node
+     * @<b>return</b> {boolean} true <b>if</b> the application was successful
+     */</i>
+    applyParent: <b>function</b>(parentNode) {
+        <b>if</b> (!parentNode) {
+            <b>return</b> false;
+        }
+
+        <b>this</b>.tree   = parentNode.tree;
+        <b>this</b>.parent = parentNode;
+        <b>this</b>.depth  = parentNode.depth + 1;
+
+        <b>if</b> (!<b>this</b>.href) {
+            <b>this</b>.href = &quot;javascript:&quot; + <b>this</b>.getToggleLink();
+        }
+
+        <b>if</b> (! <b>this</b>.multiExpand) {
+            <b>this</b>.multiExpand = parentNode.multiExpand;
+        }
+
+        <b>this</b>.tree.regNode(<b>this</b>);
+        parentNode.childrenRendered = false;
+
+        <i>// cascade update existing children</i>
+        <b>for</b> (<b>var</b> i=0, len=<b>this</b>.children.length;i&lt;len;++i) {
+            <b>this</b>.children[i].applyParent(<b>this</b>);
+        }
+
+        <b>this</b>.fireEvent(&quot;parentChange&quot;);
+
+        <b>return</b> true;
+    },
+
+    <i>/**
+     * Appends a node to the child collection.
+     * @method appendChild
+     * @param childNode {Node} the <b>new</b> node
+     * @<b>return</b> {Node} the child node
+     * @private
+     */</i>
+    appendChild: <b>function</b>(childNode) {
+        <b>if</b> (<b>this</b>.hasChildren()) {
+            <b>var</b> sib = <b>this</b>.children[<b>this</b>.children.length - 1];
+            sib.nextSibling = childNode;
+            childNode.previousSibling = sib;
+        }
+        <b>this</b>.children[<b>this</b>.children.length] = childNode;
+        childNode.applyParent(<b>this</b>);
+
+        <b>return</b> childNode;
+    },
+
+    <i>/**
+     * Appends <b>this</b> node to the supplied node's child collection
+     * @method appendTo
+     * @param parentNode {Node} the node to append to.
+     * @<b>return</b> {Node} The appended node
+     */</i>
+    appendTo: <b>function</b>(parentNode) {
+        <b>return</b> parentNode.appendChild(<b>this</b>);
+    },
+
+    <i>/**
+    * Inserts <b>this</b> node before <b>this</b> supplied node
+    * @method insertBefore
+    * @param node {Node} the node to insert <b>this</b> node before
+    * @<b>return</b> {Node} the inserted node
+    */</i>
+    insertBefore: <b>function</b>(node) {
+        <b>var</b> p = node.parent;
+        <b>if</b> (p) {
+
+            <b>if</b> (<b>this</b>.tree) {
+                <b>this</b>.tree.popNode(<b>this</b>);
+            }
+
+            <b>var</b> refIndex = node.isChildOf(p);
+            p.children.splice(refIndex, 0, <b>this</b>);
+            <b>if</b> (node.previousSibling) {
+                node.previousSibling.nextSibling = <b>this</b>;
+            }
+            <b>this</b>.previousSibling = node.previousSibling;
+            <b>this</b>.nextSibling = node;
+            node.previousSibling = <b>this</b>;
+
+            <b>this</b>.applyParent(p);
+        }
+
+        <b>return</b> this;
+    },
+ 
+    <i>/**
+    * Inserts <b>this</b> node after the supplied node
+    * @method insertAfter
+    * @param node {Node} the node to insert after
+    * @<b>return</b> {Node} the inserted node
+    */</i>
+    insertAfter: <b>function</b>(node) {
+        <b>var</b> p = node.parent;
+        <b>if</b> (p) {
+
+            <b>if</b> (<b>this</b>.tree) {
+                <b>this</b>.tree.popNode(<b>this</b>);
+            }
+
+            <b>var</b> refIndex = node.isChildOf(p);
+
+            <b>if</b> (!node.nextSibling) {
+                <b>return</b> this.appendTo(p);
+            }
+
+            p.children.splice(refIndex + 1, 0, <b>this</b>);
+
+            node.nextSibling.previousSibling = <b>this</b>;
+            <b>this</b>.previousSibling = node;
+            <b>this</b>.nextSibling = node.nextSibling;
+            node.nextSibling = <b>this</b>;
+
+            <b>this</b>.applyParent(p);
+        }
+
+        <b>return</b> this;
+    },
+
+    <i>/**
+    * Returns true <b>if</b> the Node is a child of supplied Node
+    * @method isChildOf
+    * @param parentNode {Node} the Node to check
+    * @<b>return</b> {boolean} The node index <b>if</b> this Node is a child of 
+    *                   supplied Node, <b>else</b> -1.
+    * @private
+    */</i>
+    isChildOf: <b>function</b>(parentNode) {
+        <b>if</b> (parentNode &amp;&amp; parentNode.children) {
+            <b>for</b> (<b>var</b> i=0, len=parentNode.children.length; i&lt;len ; ++i) {
+                <b>if</b> (parentNode.children[i] === <b>this</b>) {
+                    <b>return</b> i;
+                }
+            }
+        }
+
+        <b>return</b> -1;
+    },
+
+    <i>/**
+     * Returns a node array of <b>this</b> node's siblings, null <b>if</b> none.
+     * @method getSiblings
+     * @<b>return</b> Node[]
+     */</i>
+    getSiblings: <b>function</b>() {
+        <b>return</b> this.parent.children;
+    },
+
+    <i>/**
+     * Shows <b>this</b> node's children
+     * @method showChildren
+     */</i>
+    showChildren: <b>function</b>() {
+        <b>if</b> (!<b>this</b>.tree.animateExpand(<b>this</b>.getChildrenEl(), <b>this</b>)) {
+            <b>if</b> (<b>this</b>.hasChildren()) {
+                <b>this</b>.getChildrenEl().style.display = &quot;&quot;;
+            }
+        }
+    },
+
+    <i>/**
+     * Hides <b>this</b> node's children
+     * @method hideChildren
+     */</i>
+    hideChildren: <b>function</b>() {
+
+        <b>if</b> (!<b>this</b>.tree.animateCollapse(<b>this</b>.getChildrenEl(), <b>this</b>)) {
+            <b>this</b>.getChildrenEl().style.display = &quot;none&quot;;
+        }
+    },
+
+    <i>/**
+     * Returns the id <b>for</b> this node's container div
+     * @method getElId
+     * @<b>return</b> {string} the element id
+     */</i>
+    getElId: <b>function</b>() {
+        <b>return</b> &quot;ygtv&quot; + <b>this</b>.index;
+    },
+
+    <i>/**
+     * Returns the id <b>for</b> this node's children div
+     * @method getChildrenElId
+     * @<b>return</b> {string} the element id <b>for</b> this node's children div
+     */</i>
+    getChildrenElId: <b>function</b>() {
+        <b>return</b> &quot;ygtvc&quot; + <b>this</b>.index;
+    },
+
+    <i>/**
+     * Returns the id <b>for</b> this node's toggle element
+     * @method getToggleElId
+     * @<b>return</b> {string} the toggel element id
+     */</i>
+    getToggleElId: <b>function</b>() {
+        <b>return</b> &quot;ygtvt&quot; + <b>this</b>.index;
+    },
+
+    <i>/*
+     * Returns the id <b>for</b> this node's spacer image.  The spacer is positioned
+     * over the toggle and provides feedback <b>for</b> screen readers.
+     * @method getSpacerId
+     * @<b>return</b> {string} the id <b>for</b> the spacer image
+     */</i>
+    <i>/*
+    getSpacerId: <b>function</b>() {
+        <b>return</b> &quot;ygtvspacer&quot; + <b>this</b>.index;
+    }, 
+    */</i>
+<i>// holder</i>
+<i>/**
+     * Returns <b>this</b> node's container html element
+     * @method getEl
+     * @<b>return</b> {HTMLElement} the container html element
+     */</i>
+    getEl: <b>function</b>() {
+        <b>return</b> document.getElementById(<b>this</b>.getElId());
+    },
+
+    <i>/**
+     * Returns the div that was generated <b>for</b> this node's children
+     * @method getChildrenEl
+     * @<b>return</b> {HTMLElement} <b>this</b> node's children div
+     */</i>
+    getChildrenEl: <b>function</b>() {
+        <b>return</b> document.getElementById(<b>this</b>.getChildrenElId());
+    },
+
+    <i>/**
+     * Returns the element that is being used <b>for</b> this node's toggle.
+     * @method getToggleEl
+     * @<b>return</b> {HTMLElement} <b>this</b> node's toggle html element
+     */</i>
+    getToggleEl: <b>function</b>() {
+        <b>return</b> document.getElementById(<b>this</b>.getToggleElId());
+    },
+
+    <i>/*
+     * Returns the element that is being used <b>for</b> this node's spacer.
+     * @method getSpacer
+     * @<b>return</b> {HTMLElement} <b>this</b> node's spacer html element
+     */</i>
+    <i>/*
+    getSpacer: <b>function</b>() {
+        <b>return</b> document.getElementById( <b>this</b>.getSpacerId() ) || {};
+    },
+    */</i>
+
+    <i>/*
+    getStateText: <b>function</b>() {
+        <b>if</b> (<b>this</b>.isLoading) {
+            <b>return</b> this.loadingText;
+        } <b>else</b> if (<b>this</b>.hasChildren(true)) {
+            <b>if</b> (<b>this</b>.expanded) {
+                <b>return</b> this.expandedText;
+            } <b>else</b> {
+                <b>return</b> this.collapsedText;
+            }
+        } <b>else</b> {
+            <b>return</b> &quot;&quot;;
+        }
+    },
+    */</i>
+<i>// holder</i>
+<i>/**
+     * Generates the link that will invoke <b>this</b> node's toggle method
+     * @method getToggleLink
+     * @<b>return</b> {string} the javascript url <b>for</b> toggling <b>this</b> node
+     */</i>
+    getToggleLink: <b>function</b>() {
+        <b>return</b> &quot;YAHOO.widget.TreeView.getNode(\'&quot; + <b>this</b>.tree.id + &quot;\',&quot; + 
+            <b>this</b>.index + &quot;).toggle()&quot;;
+    },
+
+    <i>/**
+     * Hides <b>this</b> nodes children (creating them <b>if</b> necessary), changes the
+     * @method collapse
+     * toggle style.
+     */</i>
+    collapse: <b>function</b>() {
+        <i>// Only collapse <b>if</b> currently expanded</i>
+        <b>if</b> (!<b>this</b>.expanded) { <b>return</b>; }
+
+        <i>// fire the collapse event handler</i>
+        <b>var</b> ret = <b>this</b>.tree.onCollapse(<b>this</b>);
+
+        <b>if</b> (false === ret) {
+            <b>return</b>;
+        }
+
+        ret = <b>this</b>.tree.fireEvent(&quot;collapse&quot;, <b>this</b>);
+
+        <b>if</b> (false === ret) {
+            <b>return</b>;
+        }
+
+        <b>if</b> (!<b>this</b>.getEl()) {
+            <b>this</b>.expanded = false;
+            <b>return</b>;
+        }
+
+        <i>// hide the child div</i>
+        <b>this</b>.hideChildren();
+        <b>this</b>.expanded = false;
+
+        <b>this</b>.updateIcon();
+
+        <i>// <b>this</b>.getSpacer().title = <b>this</b>.getStateText();</i>
+
+    },
+
+    <i>/**
+     * Shows <b>this</b> nodes children (creating them <b>if</b> necessary), changes the
+     * toggle style, and collapses its siblings <b>if</b> multiExpand is not set.
+     * @method expand
+     */</i>
+    expand: <b>function</b>() {
+        <i>// Only expand <b>if</b> currently collapsed.</i>
+        <b>if</b> (<b>this</b>.expanded) { <b>return</b>; }
+
+        <i>// fire the expand event handler</i>
+        <b>var</b> ret = <b>this</b>.tree.onExpand(<b>this</b>);
+
+        <b>if</b> (false === ret) {
+            <b>return</b>;
+        }
+        
+        ret = <b>this</b>.tree.fireEvent(&quot;expand&quot;, <b>this</b>);
+
+        <b>if</b> (false === ret) {
+            <b>return</b>;
+        }
+
+        <b>if</b> (!<b>this</b>.getEl()) {
+            <b>this</b>.expanded = true;
+            <b>return</b>;
+        }
+
+        <b>if</b> (! <b>this</b>.childrenRendered) {
+            <b>this</b>.getChildrenEl().innerHTML = <b>this</b>.renderChildren();
+        } <b>else</b> {
+        }
+
+        <b>this</b>.expanded = true;
+
+        <b>this</b>.updateIcon();
+
+        <i>// <b>this</b>.getSpacer().title = <b>this</b>.getStateText();</i>
+
+        <i>// We <b>do</b> an extra check <b>for</b> children here because the lazy</i>
+        <i>// load feature can expose nodes that have no children.</i>
+
+        <i>// <b>if</b> (!<b>this</b>.hasChildren()) {</i>
+        <b>if</b> (<b>this</b>.isLoading) {
+            <b>this</b>.expanded = false;
+            <b>return</b>;
+        }
+
+        <b>if</b> (! <b>this</b>.multiExpand) {
+            <b>var</b> sibs = <b>this</b>.getSiblings();
+            <b>for</b> (<b>var</b> i=0; i&lt;sibs.length; ++i) {
+                <b>if</b> (sibs[i] != <b>this</b> &amp;&amp; sibs[i].expanded) { 
+                    sibs[i].collapse(); 
+                }
+            }
+        }
+
+        <b>this</b>.showChildren();
+    },
+
+    updateIcon: <b>function</b>() {
+        <b>if</b> (<b>this</b>.hasIcon) {
+            <b>var</b> el = <b>this</b>.getToggleEl();
+            <b>if</b> (el) {
+                el.className = <b>this</b>.getStyle();
+            }
+        }
+    },
+
+    <i>/**
+     * Returns the css style name <b>for</b> the toggle
+     * @method getStyle
+     * @<b>return</b> {string} the css class <b>for</b> this node's toggle
+     */</i>
+    getStyle: <b>function</b>() {
+        <b>if</b> (<b>this</b>.isLoading) {
+            <b>return</b> &quot;ygtvloading&quot;;
+        } <b>else</b> {
+            <i>// location top or bottom, middle nodes also get the top style</i>
+            <b>var</b> loc = (<b>this</b>.nextSibling) ? &quot;t&quot; : &quot;l&quot;;
+
+            <i>// type p=plus(expand), m=minus(collapase), n=none(no children)</i>
+            <b>var</b> type = &quot;n&quot;;
+            <b>if</b> (<b>this</b>.hasChildren(true) || (<b>this</b>.isDynamic() &amp;&amp; !<b>this</b>.getIconMode())) {
+            <i>// <b>if</b> (<b>this</b>.hasChildren(true)) {</i>
+                type = (<b>this</b>.expanded) ? &quot;m&quot; : &quot;p&quot;;
+            }
+
+            <b>return</b> &quot;ygtv&quot; + loc + type;
+        }
+    },
+
+    <i>/**
+     * Returns the hover style <b>for</b> the icon
+     * @<b>return</b> {string} the css class hover state
+     * @method getHoverStyle
+     */</i>
+    getHoverStyle: <b>function</b>() { 
+        <b>var</b> s = <b>this</b>.getStyle();
+        <b>if</b> (<b>this</b>.hasChildren(true) &amp;&amp; !<b>this</b>.isLoading) { 
+            s += &quot;h&quot;; 
+        }
+        <b>return</b> s;
+    },
+
+    <i>/**
+     * Recursively expands all of <b>this</b> node's children.
+     * @method expandAll
+     */</i>
+    expandAll: <b>function</b>() { 
+        <b>for</b> (<b>var</b> i=0;i&lt;<b>this</b>.children.length;++i) {
+            <b>var</b> c = <b>this</b>.children[i];
+            <b>if</b> (c.isDynamic()) {
+                alert(&quot;Not supported (lazy load + expand all)&quot;);
+                <b>break</b>;
+            } <b>else</b> if (! c.multiExpand) {
+                alert(&quot;Not supported (no multi-expand + expand all)&quot;);
+                <b>break</b>;
+            } <b>else</b> {
+                c.expand();
+                c.expandAll();
+            }
+        }
+    },
+
+    <i>/**
+     * Recursively collapses all of <b>this</b> node's children.
+     * @method collapseAll
+     */</i>
+    collapseAll: <b>function</b>() { 
+        <b>for</b> (<b>var</b> i=0;i&lt;<b>this</b>.children.length;++i) {
+            <b>this</b>.children[i].collapse();
+            <b>this</b>.children[i].collapseAll();
+        }
+    },
+
+    <i>/**
+     * Configures <b>this</b> node <b>for</b> dynamically obtaining the child data
+     * when the node is first expanded.  Calling it without the callback
+     * will turn off dynamic load <b>for</b> the node.
+     * @method setDynamicLoad
+     * @param fmDataLoader {<b>function</b>} the <b>function</b> that will be used to get the data.
+     * @param iconMode {int} configures the icon that is displayed when a dynamic
+     * load node is expanded the first time without children.  By <b>default</b>, the 
+     * &quot;collapse&quot; icon will be used.  If set to 1, the leaf node icon will be
+     * displayed.
+     */</i>
+    setDynamicLoad: <b>function</b>(fnDataLoader, iconMode) { 
+        <b>if</b> (fnDataLoader) {
+            <b>this</b>.dataLoader = fnDataLoader;
+            <b>this</b>._dynLoad = true;
+        } <b>else</b> {
+            <b>this</b>.dataLoader = null;
+            <b>this</b>._dynLoad = false;
+        }
+
+        <b>if</b> (iconMode) {
+            <b>this</b>.iconMode = iconMode;
+        }
+    },
+
+    <i>/**
+     * Evaluates <b>if</b> this node is the root node of the tree
+     * @method isRoot
+     * @<b>return</b> {boolean} true <b>if</b> this is the root node
+     */</i>
+    isRoot: <b>function</b>() { 
+        <b>return</b> (<b>this</b> == <b>this</b>.tree.root);
+    },
+
+    <i>/**
+     * Evaluates <b>if</b> this node's children should be loaded dynamically.  Looks <b>for</b>
+     * the property both <b>in</b> this instance and the root node.  If the tree is
+     * defined to load all children dynamically, the data callback <b>function</b> is
+     * defined <b>in</b> the root node
+     * @method isDynamic
+     * @<b>return</b> {boolean} true <b>if</b> this node's children are to be loaded dynamically
+     */</i>
+    isDynamic: <b>function</b>() { 
+        <b>var</b> lazy = (!<b>this</b>.isRoot() &amp;&amp; (<b>this</b>._dynLoad || <b>this</b>.tree.root._dynLoad));
+        <b>return</b> lazy;
+    },
+
+    <i>/**
+     * Returns the current icon mode.  This refers to the way childless dynamic
+     * load nodes appear.
+     * @method getIconMode
+     * @<b>return</b> {int} 0 <b>for</b> collapse style, 1 <b>for</b> leaf node style
+     */</i>
+    getIconMode: <b>function</b>() {
+        <b>return</b> (<b>this</b>.iconMode || <b>this</b>.tree.root.iconMode);
+    },
+
+    <i>/**
+     * Checks <b>if</b> this node has children.  If <b>this</b> node is lazy-loading and the
+     * children have not been rendered, we <b>do</b> not know whether or not there
+     * are actual children.  In most cases, we need to assume that there are
+     * children (<b>for</b> instance, the toggle needs to show the expandable 
+     * presentation state).  In other times we want to know <b>if</b> there are rendered
+     * children.  For the latter, &quot;checkForLazyLoad&quot; should be false.
+     * @method hasChildren
+     * @param checkForLazyLoad {boolean} should we check <b>for</b> unloaded children?
+     * @<b>return</b> {boolean} true <b>if</b> this has children or <b>if</b> it might and we are
+     * checking <b>for</b> this condition.
+     */</i>
+    hasChildren: <b>function</b>(checkForLazyLoad) { 
+        <b>return</b> ( <b>this</b>.children.length &gt; 0 || 
+                (checkForLazyLoad &amp;&amp; <b>this</b>.isDynamic() &amp;&amp; !<b>this</b>.dynamicLoadComplete) );
+    },
+
+    <i>/**
+     * Expands <b>if</b> node is collapsed, collapses otherwise.
+     * @method toggle
+     */</i>
+    toggle: <b>function</b>() {
+        <b>if</b> (!<b>this</b>.tree.locked &amp;&amp; ( <b>this</b>.hasChildren(true) || <b>this</b>.isDynamic()) ) {
+            <b>if</b> (<b>this</b>.expanded) { <b>this</b>.collapse(); } <b>else</b> { <b>this</b>.expand(); }
+        }
+    },
+
+    <i>/**
+     * Returns the markup <b>for</b> this node and its children.
+     * @method getHtml
+     * @<b>return</b> {string} the markup <b>for</b> this node and its expanded children.
+     */</i>
+    getHtml: <b>function</b>() {
+
+        <b>this</b>.childrenRendered = false;
+
+        <b>var</b> sb = [];
+        sb[sb.length] = '&lt;div class=&quot;ygtvitem&quot; id=&quot;' + <b>this</b>.getElId() + '&quot;&gt;';
+        sb[sb.length] = <b>this</b>.getNodeHtml();
+        sb[sb.length] = <b>this</b>.getChildrenHtml();
+        sb[sb.length] = '&lt;/div&gt;';
+        <b>return</b> sb.join(&quot;&quot;);
+    },
+
+    <i>/**
+     * Called when first rendering the tree.  We always build the div that will
+     * contain <b>this</b> nodes children, but we don't render the children themselves
+     * unless <b>this</b> node is expanded.
+     * @method getChildrenHtml
+     * @<b>return</b> {string} the children container div html and any expanded children
+     * @private
+     */</i>
+    getChildrenHtml: <b>function</b>() {
+
+        <b>var</b> sb = [];
+        sb[sb.length] = '&lt;div class=&quot;ygtvchildren&quot;';
+        sb[sb.length] = ' id=&quot;' + <b>this</b>.getChildrenElId() + '&quot;';
+        <b>if</b> (!<b>this</b>.expanded) {
+            sb[sb.length] = ' style=&quot;display:none;&quot;';
+        }
+        sb[sb.length] = '&gt;';
+
+        <i>// Don't render the actual child node HTML unless <b>this</b> node is expanded.</i>
+        <b>if</b> ( (<b>this</b>.hasChildren(true) &amp;&amp; <b>this</b>.expanded) ||
+                (<b>this</b>.renderHidden &amp;&amp; !<b>this</b>.isDynamic()) ) {
+            sb[sb.length] = <b>this</b>.renderChildren();
+        }
+
+        sb[sb.length] = '&lt;/div&gt;';
+
+        <b>return</b> sb.join(&quot;&quot;);
+    },
+
+    <i>/**
+     * Generates the markup <b>for</b> the child nodes.  This is not done until the node
+     * is expanded.
+     * @method renderChildren
+     * @<b>return</b> {string} the html <b>for</b> this node's children
+     * @private
+     */</i>
+    renderChildren: <b>function</b>() {
+
+
+        <b>var</b> node = <b>this</b>;
+
+        <b>if</b> (<b>this</b>.isDynamic() &amp;&amp; !<b>this</b>.dynamicLoadComplete) {
+            <b>this</b>.isLoading = true;
+            <b>this</b>.tree.locked = true;
+
+            <b>if</b> (<b>this</b>.dataLoader) {
+
+                setTimeout( 
+                    <b>function</b>() {
+                        node.dataLoader(node, 
+                            <b>function</b>() { 
+                                node.loadComplete(); 
+                            });
+                    }, 10);
+                
+            } <b>else</b> if (<b>this</b>.tree.root.dataLoader) {
+
+                setTimeout( 
+                    <b>function</b>() {
+                        node.tree.root.dataLoader(node, 
+                            <b>function</b>() { 
+                                node.loadComplete(); 
+                            });
+                    }, 10);
+
+            } <b>else</b> {
+                <b>return</b> &quot;Error: data loader not found or not specified.&quot;;
+            }
+
+            <b>return</b> &quot;&quot;;
+
+        } <b>else</b> {
+            <b>return</b> this.completeRender();
+        }
+    },
+
+    <i>/**
+     * Called when we know we have all the child data.
+     * @method completeRender
+     * @<b>return</b> {string} children html
+     */</i>
+    completeRender: <b>function</b>() {
+        <b>var</b> sb = [];
+
+        <b>for</b> (<b>var</b> i=0; i &lt; <b>this</b>.children.length; ++i) {
+            <i>// <b>this</b>.children[i].childrenRendered = false;</i>
+            sb[sb.length] = <b>this</b>.children[i].getHtml();
+        }
+        
+        <b>this</b>.childrenRendered = true;
+
+        <b>return</b> sb.join(&quot;&quot;);
+    },
+
+    <i>/**
+     * Load complete is the callback <b>function</b> we pass to the data provider
+     * <b>in</b> dynamic load situations.
+     * @method loadComplete
+     */</i>
+    loadComplete: <b>function</b>() {
+        <b>this</b>.getChildrenEl().innerHTML = <b>this</b>.completeRender();
+        <b>this</b>.dynamicLoadComplete = true;
+        <b>this</b>.isLoading = false;
+        <b>this</b>.expand();
+        <b>this</b>.tree.locked = false;
+    },
+
+    <i>/**
+     * Returns <b>this</b> node's ancestor at the specified depth.
+     * @method getAncestor
+     * @param {int} depth the depth of the ancestor.
+     * @<b>return</b> {Node} the ancestor
+     */</i>
+    getAncestor: <b>function</b>(depth) {
+        <b>if</b> (depth &gt;= <b>this</b>.depth || depth &lt; 0)  {
+            <b>return</b> null;
+        }
+
+        <b>var</b> p = <b>this</b>.parent;
+        
+        <b>while</b> (p.depth &gt; depth) {
+            p = p.parent;
+        }
+
+        <b>return</b> p;
+    },
+
+    <i>/**
+     * Returns the css class <b>for</b> the spacer at the specified depth <b>for</b>
+     * <b>this</b> node.  If <b>this</b> node's ancestor at the specified depth
+     * has a next sibling the presentation is different than <b>if</b> it
+     * does not have a next sibling
+     * @method getDepthStyle
+     * @param {int} depth the depth of the ancestor.
+     * @<b>return</b> {string} the css class <b>for</b> the spacer
+     */</i>
+    getDepthStyle: <b>function</b>(depth) {
+        <b>return</b> (<b>this</b>.getAncestor(depth).nextSibling) ? 
+            &quot;ygtvdepthcell&quot; : &quot;ygtvblankdepthcell&quot;;
+    },
+
+    <i>/**
+     * Get the markup <b>for</b> the node.  This is designed to be overrided so that we can
+     * support different types of nodes.
+     * @method getNodeHtml
+     * @<b>return</b> {string} The HTML that will render <b>this</b> node.
+     */</i>
+    getNodeHtml: <b>function</b>() { 
+        <b>return</b> &quot;&quot;; 
+    },
+
+    <i>/**
+     * Regenerates the html <b>for</b> this node and its children.  To be used when the
+     * node is expanded and <b>new</b> children have been added.
+     * @method refresh
+     */</i>
+    refresh: <b>function</b>() {
+        <i>// <b>this</b>.loadComplete();</i>
+        <b>this</b>.getChildrenEl().innerHTML = <b>this</b>.completeRender();
+
+        <b>if</b> (<b>this</b>.hasIcon) {
+            <b>var</b> el = <b>this</b>.getToggleEl();
+            <b>if</b> (el) {
+                el.className = <b>this</b>.getStyle();
+            }
+        }
+    },
+
+    <i>/**
+     * Node toString
+     * @method toString
+     * @<b>return</b> {string} string representation of the node
+     */</i>
+    toString: <b>function</b>() {
+        <b>return</b> &quot;Node (&quot; + <b>this</b>.index + &quot;)&quot;;
+    }
+
+};
+
+YAHOO.augment(YAHOO.widget.Node, YAHOO.util.EventProvider);
+
+<i>/**
+ * A custom YAHOO.widget.Node that handles the unique nature of 
+ * the virtual, presentationless root node.
+ * @namespace YAHOO.widget
+ * @class RootNode
+ * @extends YAHOO.widget.Node
+ * @param oTree {YAHOO.widget.TreeView} The tree instance <b>this</b> node belongs to
+ * @constructor
+ */</i>
+YAHOO.widget.RootNode = <b>function</b>(oTree) {
+	<i>// Initialize the node <b>with</b> null params.  The root node is a</i>
+	<i>// special <b>case</b> where the node has no presentation.  So we have</i>
+	<i>// to alter the standard properties a bit.</i>
+	<b>this</b>.init(null, null, true);
+	
+	<i>/*
+	 * For the root node, we get the tree reference from as a param
+	 * to the constructor instead of from the parent element.
+	 */</i>
+	<b>this</b>.tree = oTree;
+};
+
+YAHOO.extend(YAHOO.widget.RootNode, YAHOO.widget.Node, {
+    
+    <i>// overrides YAHOO.widget.Node</i>
+    getNodeHtml: <b>function</b>() { 
+        <b>return</b> &quot;&quot;; 
+    },
+
+    toString: <b>function</b>() { 
+        <b>return</b> &quot;RootNode&quot;;
+    },
+
+    loadComplete: <b>function</b>() { 
+        <b>this</b>.tree.draw();
+    }
+
+});
+<i>/**
+ * The <b>default</b> node presentation.  The first parameter should be
+ * either a string that will be used as the node's label, or an object
+ * that has a string propery called label.  By <b>default</b>, the clicking the
+ * label will toggle the expanded/collapsed state of the node.  By
+ * changing the href property of the instance, <b>this</b> behavior can be
+ * changed so that the label will go to the specified href.
+ * @namespace YAHOO.widget
+ * @class TextNode
+ * @extends YAHOO.widget.Node
+ * @constructor
+ * @param oData {object} a string or object containing the data that will
+ * be used to render <b>this</b> node
+ * @param oParent {YAHOO.widget.Node} <b>this</b> node's parent node
+ * @param expanded {boolean} the initial expanded/collapsed state
+ */</i>
+YAHOO.widget.TextNode = <b>function</b>(oData, oParent, expanded) {
+
+    <b>if</b> (oData) { 
+        <b>this</b>.init(oData, oParent, expanded);
+        <b>this</b>.setUpLabel(oData);
+    }
+
+};
+
+YAHOO.extend(YAHOO.widget.TextNode, YAHOO.widget.Node, {
+    
+    <i>/**
+     * The CSS class <b>for</b> the label href.  Defaults to ygtvlabel, but can be
+     * overridden to provide a custom presentation <b>for</b> a specific node.
+     * @property labelStyle
+     * @type string
+     */</i>
+    labelStyle: &quot;ygtvlabel&quot;,
+
+    <i>/**
+     * The derived element id of the label <b>for</b> this node
+     * @property labelElId
+     * @type string
+     */</i>
+    labelElId: null,
+
+    <i>/**
+     * The text <b>for</b> the label.  It is assumed that the oData parameter will
+     * either be a string that will be used as the label, or an object that
+     * has a property called &quot;label&quot; that we will use.
+     * @property label
+     * @type string
+     */</i>
+    label: null,
+
+    textNodeParentChange: <b>function</b>() {
+ 
+        <i>/**
+         * Custom event that is fired when the text node label is clicked.  The
+         * custom event is defined on the tree instance, so there is a single
+         * event that handles all nodes <b>in</b> the tree.  The node clicked is 
+         * provided as an argument
+         *
+         * @event labelClick
+         * @<b>for</b> YAHOO.widget.TreeView
+         * @param {YAHOO.widget.Node} node the node clicked
+         */</i>
+        <b>if</b> (<b>this</b>.tree &amp;&amp; !<b>this</b>.tree.hasEvent(&quot;labelClick&quot;)) {
+            <b>this</b>.tree.createEvent(&quot;labelClick&quot;, <b>this</b>.tree);
+        }
+       
+    },
+
+    <i>/**
+     * Sets up the node label
+     * @method setUpLabel
+     * @param oData string containing the label, or an object <b>with</b> a label property
+     */</i>
+    setUpLabel: <b>function</b>(oData) { 
+        
+        <i>// set up the custom event on the tree</i>
+        <b>this</b>.textNodeParentChange();
+        <b>this</b>.subscribe(&quot;parentChange&quot;, <b>this</b>.textNodeParentChange);
+
+        <b>if</b> (<b>typeof</b> oData == &quot;string&quot;) {
+            oData = { label: oData };
+        }
+        <b>this</b>.label = oData.label;
+        
+        <i>// update the link</i>
+        <b>if</b> (oData.href) {
+            <b>this</b>.href = oData.href;
+        }
+
+        <i>// set the target</i>
+        <b>if</b> (oData.target) {
+            <b>this</b>.target = oData.target;
+        }
+
+        <b>if</b> (oData.style) {
+            <b>this</b>.labelStyle = oData.style;
+        }
+
+        <b>this</b>.labelElId = &quot;ygtvlabelel&quot; + <b>this</b>.index;
+    },
+
+    <i>/**
+     * Returns the label element
+     * @<b>for</b> YAHOO.widget.TextNode
+     * @method getLabelEl
+     * @<b>return</b> {object} the element
+     */</i>
+    getLabelEl: <b>function</b>() { 
+        <b>return</b> document.getElementById(<b>this</b>.labelElId);
+    },
+
+    <i>// overrides YAHOO.widget.Node</i>
+    getNodeHtml: <b>function</b>() { 
+        <b>var</b> sb = [];
+
+        sb[sb.length] = '&lt;table border=&quot;0&quot; cellpadding=&quot;0&quot; cellspacing=&quot;0&quot;&gt;';
+        sb[sb.length] = '&lt;tr&gt;';
+        
+        <b>for</b> (<b>var</b> i=0;i&lt;<b>this</b>.depth;++i) {
+            <i>// sb[sb.length] = '&lt;td class=&quot;ygtvdepthcell&quot;&gt;&amp;#160;&lt;/td&gt;';</i>
+            sb[sb.length] = '&lt;td class=&quot;' + <b>this</b>.getDepthStyle(i) + '&quot;&gt;&amp;#160;&lt;/td&gt;';
+        }
+
+        <b>var</b> getNode = 'YAHOO.widget.TreeView.getNode(\'' +
+                        <b>this</b>.tree.id + '\',' + <b>this</b>.index + ')';
+
+        sb[sb.length] = '&lt;td';
+        <i>// sb[sb.length] = ' onselectstart=&quot;<b>return</b> false&quot;';</i>
+        sb[sb.length] = ' id=&quot;' + <b>this</b>.getToggleElId() + '&quot;';
+        sb[sb.length] = ' class=&quot;' + <b>this</b>.getStyle() + '&quot;';
+        <b>if</b> (<b>this</b>.hasChildren(true)) {
+            sb[sb.length] = ' onmouseover=&quot;<b>this</b>.className=';
+            sb[sb.length] = getNode + '.getHoverStyle()&quot;';
+            sb[sb.length] = ' onmouseout=&quot;<b>this</b>.className=';
+            sb[sb.length] = getNode + '.getStyle()&quot;';
+        }
+        sb[sb.length] = ' onclick=&quot;javascript:' + <b>this</b>.getToggleLink() + '&quot;&gt;';
+
+        <i>/*
+        sb[sb.length] = '&lt;img id=&quot;' + <b>this</b>.getSpacerId() + '&quot;';
+        sb[sb.length] = ' alt=&quot;&quot;';
+        sb[sb.length] = ' tabindex=0';
+        sb[sb.length] = ' src=&quot;' + <b>this</b>.spacerPath + '&quot;';
+        sb[sb.length] = ' title=&quot;' + <b>this</b>.getStateText() + '&quot;';
+        sb[sb.length] = ' class=&quot;ygtvspacer&quot;';
+        <i>// sb[sb.length] = ' onkeypress=&quot;<b>return</b> ' + getNode + '&quot;.onKeyPress()&quot;';</i>
+        sb[sb.length] = ' /&gt;';
+        */</i>
+
+        sb[sb.length] = '&amp;#160;';
+
+        sb[sb.length] = '&lt;/td&gt;';
+        sb[sb.length] = '&lt;td&gt;';
+        sb[sb.length] = '&lt;a';
+        sb[sb.length] = ' id=&quot;' + <b>this</b>.labelElId + '&quot;';
+        sb[sb.length] = ' class=&quot;' + <b>this</b>.labelStyle + '&quot;';
+        sb[sb.length] = ' href=&quot;' + <b>this</b>.href + '&quot;';
+        sb[sb.length] = ' target=&quot;' + <b>this</b>.target + '&quot;';
+        sb[sb.length] = ' onclick=&quot;<b>return</b> ' + getNode + '.onLabelClick(' + getNode +')&quot;';
+        <b>if</b> (<b>this</b>.hasChildren(true)) {
+            sb[sb.length] = ' onmouseover=&quot;document.getElementById(\'';
+            sb[sb.length] = <b>this</b>.getToggleElId() + '\').className=';
+            sb[sb.length] = getNode + '.getHoverStyle()&quot;';
+            sb[sb.length] = ' onmouseout=&quot;document.getElementById(\'';
+            sb[sb.length] = <b>this</b>.getToggleElId() + '\').className=';
+            sb[sb.length] = getNode + '.getStyle()&quot;';
+        }
+        sb[sb.length] = ' &gt;';
+        sb[sb.length] = <b>this</b>.label;
+        sb[sb.length] = '&lt;/a&gt;';
+        sb[sb.length] = '&lt;/td&gt;';
+        sb[sb.length] = '&lt;/tr&gt;';
+        sb[sb.length] = '&lt;/table&gt;';
+
+        <b>return</b> sb.join(&quot;&quot;);
+    },
+
+    <i>/**
+     * Executed when the label is clicked.  Fires the labelClick custom event.
+     * @method onLabelClick
+     * @param me {Node} <b>this</b> node
+     * @scope the anchor tag clicked
+     * @<b>return</b> false to cancel the anchor click
+     */</i>
+    onLabelClick: <b>function</b>(me) { 
+        <b>return</b> me.tree.fireEvent(&quot;labelClick&quot;, me);
+        <i>//<b>return</b> true;</i>
+    },
+
+    toString: <b>function</b>() { 
+        <b>return</b> &quot;TextNode (&quot; + <b>this</b>.index + &quot;) &quot; + <b>this</b>.label;
+    }
+
+});
+<i>/**
+ * A menu-specific implementation that differs from TextNode <b>in</b> that only 
+ * one sibling can be expanded at a time.
+ * @namespace YAHOO.widget
+ * @class MenuNode
+ * @extends YAHOO.widget.TextNode
+ * @param oData {object} a string or object containing the data that will
+ * be used to render <b>this</b> node
+ * @param oParent {YAHOO.widget.Node} <b>this</b> node's parent node
+ * @param expanded {boolean} the initial expanded/collapsed state
+ * @constructor
+ */</i>
+YAHOO.widget.MenuNode = <b>function</b>(oData, oParent, expanded) {
+	<b>if</b> (oData) { 
+		<b>this</b>.init(oData, oParent, expanded);
+		<b>this</b>.setUpLabel(oData);
+	}
+
+    <i>/*
+     * Menus usually allow only one branch to be open at a time.
+     */</i>
+	<b>this</b>.multiExpand = false;
+
+
+};
+
+YAHOO.extend(YAHOO.widget.MenuNode, YAHOO.widget.TextNode, {
+
+    toString: <b>function</b>() { 
+        <b>return</b> &quot;MenuNode (&quot; + <b>this</b>.index + &quot;) &quot; + <b>this</b>.label;
+    }
+
+});
+<i>/**
+ * This implementation takes either a string or object <b>for</b> the
+ * oData argument.  If is it a string, we will use it <b>for</b> the display
+ * of <b>this</b> node (and it can contain any html code).  If the parameter
+ * is an object, we look <b>for</b> a parameter called &quot;html&quot; that will be
+ * used <b>for</b> this node's display.
+ * @namespace YAHOO.widget
+ * @class HTMLNode
+ * @extends YAHOO.widget.Node
+ * @constructor
+ * @param oData {object} a string or object containing the data that will
+ * be used to render <b>this</b> node
+ * @param oParent {YAHOO.widget.Node} <b>this</b> node's parent node
+ * @param expanded {boolean} the initial expanded/collapsed state
+ * @param hasIcon {boolean} specifies whether or not leaf nodes should
+ * have an icon
+ */</i>
+YAHOO.widget.HTMLNode = <b>function</b>(oData, oParent, expanded, hasIcon) {
+    <b>if</b> (oData) { 
+        <b>this</b>.init(oData, oParent, expanded);
+        <b>this</b>.initContent(oData, hasIcon);
+    }
+};
+
+YAHOO.extend(YAHOO.widget.HTMLNode, YAHOO.widget.Node, {
+
+    <i>/**
+     * The CSS class <b>for</b> the html content container.  Defaults to ygtvhtml, but 
+     * can be overridden to provide a custom presentation <b>for</b> a specific node.
+     * @property contentStyle
+     * @type string
+     */</i>
+    contentStyle: &quot;ygtvhtml&quot;,
+
+    <i>/**
+     * The generated id that will contain the data passed <b>in</b> by the implementer.
+     * @property contentElId
+     * @type string
+     */</i>
+    contentElId: null,
+
+    <i>/**
+     * The HTML content to use <b>for</b> this node's display
+     * @property content
+     * @type string
+     */</i>
+    content: null,
+
+    <i>/**
+     * Sets up the node label
+     * @property initContent
+     * @param {object} An html string or object containing an html property
+     * @param {boolean} hasIcon determines <b>if</b> the node will be rendered <b>with</b> an
+     * icon or not
+     */</i>
+    initContent: <b>function</b>(oData, hasIcon) { 
+        <b>if</b> (<b>typeof</b> oData == &quot;string&quot;) {
+            oData = { html: oData };
+        }
+
+        <b>this</b>.html = oData.html;
+        <b>this</b>.contentElId = &quot;ygtvcontentel&quot; + <b>this</b>.index;
+        <b>this</b>.hasIcon = hasIcon;
+
+    },
+
+    <i>/**
+     * Returns the outer html element <b>for</b> this node's content
+     * @method getContentEl
+     * @<b>return</b> {HTMLElement} the element
+     */</i>
+    getContentEl: <b>function</b>() { 
+        <b>return</b> document.getElementById(<b>this</b>.contentElId);
+    },
+
+    <i>// overrides YAHOO.widget.Node</i>
+    getNodeHtml: <b>function</b>() { 
+        <b>var</b> sb = [];
+
+        sb[sb.length] = '&lt;table border=&quot;0&quot; cellpadding=&quot;0&quot; cellspacing=&quot;0&quot;&gt;';
+        sb[sb.length] = '&lt;tr&gt;';
+        
+        <b>for</b> (<b>var</b> i=0;i&lt;<b>this</b>.depth;++i) {
+            sb[sb.length] = '&lt;td class=&quot;' + <b>this</b>.getDepthStyle(i) + '&quot;&gt;&amp;#160;&lt;/td&gt;';
+        }
+
+        <b>if</b> (<b>this</b>.hasIcon) {
+            sb[sb.length] = '&lt;td';
+            sb[sb.length] = ' id=&quot;' + <b>this</b>.getToggleElId() + '&quot;';
+            sb[sb.length] = ' class=&quot;' + <b>this</b>.getStyle() + '&quot;';
+            sb[sb.length] = ' onclick=&quot;javascript:' + <b>this</b>.getToggleLink() + '&quot;';
+            <b>if</b> (<b>this</b>.hasChildren(true)) {
+                sb[sb.length] = ' onmouseover=&quot;<b>this</b>.className=';
+                sb[sb.length] = 'YAHOO.widget.TreeView.getNode(\'';
+                sb[sb.length] = <b>this</b>.tree.id + '\',' + <b>this</b>.index +  ').getHoverStyle()&quot;';
+                sb[sb.length] = ' onmouseout=&quot;<b>this</b>.className=';
+                sb[sb.length] = 'YAHOO.widget.TreeView.getNode(\'';
+                sb[sb.length] = <b>this</b>.tree.id + '\',' + <b>this</b>.index +  ').getStyle()&quot;';
+            }
+            sb[sb.length] = '&gt;&amp;#160;&lt;/td&gt;';
+        }
+
+        sb[sb.length] = '&lt;td';
+        sb[sb.length] = ' id=&quot;' + <b>this</b>.contentElId + '&quot;';
+        sb[sb.length] = ' class=&quot;' + <b>this</b>.contentStyle + '&quot;';
+        sb[sb.length] = ' &gt;';
+        sb[sb.length] = <b>this</b>.html;
+        sb[sb.length] = '&lt;/td&gt;';
+        sb[sb.length] = '&lt;/tr&gt;';
+        sb[sb.length] = '&lt;/table&gt;';
+
+        <b>return</b> sb.join(&quot;&quot;);
+    },
+
+    toString: <b>function</b>() { 
+        <b>return</b> &quot;HTMLNode (&quot; + <b>this</b>.index + &quot;)&quot;;
+    }
+
+});
+<i>/**
+ * A static factory class <b>for</b> tree view expand/collapse animations
+ * @class TVAnim
+ * @static
+ */</i>
+YAHOO.widget.TVAnim = <b>function</b>() {
+    <b>return</b> {
+        <i>/**
+         * Constant <b>for</b> the fade <b>in</b> animation
+         * @property FADE_IN
+         * @type string
+         * @static
+         */</i>
+        FADE_IN: &quot;TVFadeIn&quot;,
+
+        <i>/**
+         * Constant <b>for</b> the fade out animation
+         * @property FADE_OUT
+         * @type string
+         * @static
+         */</i>
+        FADE_OUT: &quot;TVFadeOut&quot;,
+
+        <i>/**
+         * Returns a ygAnim instance of the given type
+         * @method getAnim
+         * @param type {string} the type of animation
+         * @param el {HTMLElement} the element to element (probably the children div)
+         * @param callback {<b>function</b>} <b>function</b> to invoke when the animation is done.
+         * @<b>return</b> {YAHOO.util.Animation} the animation instance
+         * @static
+         */</i>
+        getAnim: <b>function</b>(type, el, callback) {
+            <b>if</b> (YAHOO.widget[type]) {
+                <b>return</b> new YAHOO.widget[type](el, callback);
+            } <b>else</b> {
+                <b>return</b> null;
+            }
+        },
+
+        <i>/**
+         * Returns true <b>if</b> the specified animation class is available
+         * @method isValid
+         * @param type {string} the type of animation
+         * @<b>return</b> {boolean} true <b>if</b> valid, false <b>if</b> not
+         * @static
+         */</i>
+        isValid: <b>function</b>(type) {
+            <b>return</b> (YAHOO.widget[type]);
+        }
+    };
+} ();
+
+<i>/**
+ * A 1/2 second fade-<b>in</b> animation.
+ * @class TVFadeIn
+ * @constructor
+ * @param el {HTMLElement} the element to animate
+ * @param callback {<b>function</b>} <b>function</b> to invoke when the animation is finished
+ */</i>
+YAHOO.widget.TVFadeIn = <b>function</b>(el, callback) {
+    <i>/**
+     * The element to animate
+     * @property el
+     * @type HTMLElement
+     */</i>
+    <b>this</b>.el = el;
+
+    <i>/**
+     * the callback to invoke when the animation is complete
+     * @property callback
+     * @type <b>function</b>
+     */</i>
+    <b>this</b>.callback = callback;
+
+};
+
+YAHOO.widget.TVFadeIn.prototype = {
+    <i>/**
+     * Performs the animation
+     * @method animate
+     */</i>
+    animate: <b>function</b>() {
+        <b>var</b> tvanim = <b>this</b>;
+
+        <b>var</b> s = <b>this</b>.el.style;
+        s.opacity = 0.1;
+        s.filter = &quot;alpha(opacity=10)&quot;;
+        s.display = &quot;&quot;;
+
+        <b>var</b> dur = 0.4; 
+        <b>var</b> a = <b>new</b> YAHOO.util.Anim(<b>this</b>.el, {opacity: {from: 0.1, to: 1, unit:&quot;&quot;}}, dur);
+        a.onComplete.subscribe( <b>function</b>() { tvanim.onComplete(); } );
+        a.animate();
+    },
+
+    <i>/**
+     * Clean up and invoke callback
+     * @method onComplete
+     */</i>
+    onComplete: <b>function</b>() {
+        <b>this</b>.callback();
+    },
+
+    <i>/**
+     * toString
+     * @method toString
+     * @<b>return</b> {string} the string representation of the instance
+     */</i>
+    toString: <b>function</b>() {
+        <b>return</b> &quot;TVFadeIn&quot;;
+    }
+};
+
+<i>/**
+ * A 1/2 second fade out animation.
+ * @class TVFadeOut
+ * @constructor
+ * @param el {HTMLElement} the element to animate
+ * @param callback {Function} <b>function</b> to invoke when the animation is finished
+ */</i>
+YAHOO.widget.TVFadeOut = <b>function</b>(el, callback) {
+    <i>/**
+     * The element to animate
+     * @property el
+     * @type HTMLElement
+     */</i>
+    <b>this</b>.el = el;
+
+    <i>/**
+     * the callback to invoke when the animation is complete
+     * @property callback
+     * @type <b>function</b>
+     */</i>
+    <b>this</b>.callback = callback;
+
+};
+
+YAHOO.widget.TVFadeOut.prototype = {
+    <i>/**
+     * Performs the animation
+     * @method animate
+     */</i>
+    animate: <b>function</b>() {
+        <b>var</b> tvanim = <b>this</b>;
+        <b>var</b> dur = 0.4;
+        <b>var</b> a = <b>new</b> YAHOO.util.Anim(<b>this</b>.el, {opacity: {from: 1, to: 0.1, unit:&quot;&quot;}}, dur);
+        a.onComplete.subscribe( <b>function</b>() { tvanim.onComplete(); } );
+        a.animate();
+    },
+
+    <i>/**
+     * Clean up and invoke callback
+     * @method onComplete
+     */</i>
+    onComplete: <b>function</b>() {
+        <b>var</b> s = <b>this</b>.el.style;
+        s.display = &quot;none&quot;;
+        <i>// s.opacity = 1;</i>
+        s.filter = &quot;alpha(opacity=100)&quot;;
+        <b>this</b>.callback();
+    },
+
+    <i>/**
+     * toString
+     * @method toString
+     * @<b>return</b> {string} the string representation of the instance
+     */</i>
+    toString: <b>function</b>() {
+        <b>return</b> &quot;TVFadeOut&quot;;
+    }
+};
+
+</code></pre><hr><div style="font-size:10px;text-align:center;color:gray;">yui-ext - Copyright &copy; 2006 Jack Slocum.  |
+    Yahoo! UI - Copyright &copy; 2006 Yahoo! Inc.<br />All rights reserved.</div>
+    </body></html>

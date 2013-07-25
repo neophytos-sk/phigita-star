@@ -1,0 +1,9 @@
+Received: from [115.58.133.199]; Tue, 22 Nov 2011 09:59:23 +0800 
+Message-ID: <20111122102624888687@sdrt.com> 
+From: =?gb2312?B?1uzcv9fP?= <zhangdm@sdrt.com> 
+To:  
+Subject: =?gb2312?B?ODY31tC5+s/zxuXW0LXEudzA7dXc0adtdXE=?= 
+Date: Tue, 22 Nov 2011 10:26:14 +0800 
+X-mailer: Cyrul 8 
+--------------------------------------
+ content-type=application/msword part-token=::mime::789-2

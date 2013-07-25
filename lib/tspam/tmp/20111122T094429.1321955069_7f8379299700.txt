@@ -1,0 +1,14 @@
+Received: from  (192.168.1.22) by nacha.org (85.28.150.58) with Microsoft SMTP Server id 8.0.685.24; Tue, 22 Nov 2011 09:44:21 +0000 
+Message-ID: <4ECB6C94.208060@nacha.org> 
+Date: Tue, 22 Nov 2011 09:44:21 +0000 
+From: "The Electronic Payments Association" <info@nacha.org> 
+User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.24) Gecko/20100328 Thunderbird/2.0.0.24 
+To: <k2pts@phigita.net> 
+Subject: ACH payment rejected 
+--------------------------------------
+ The ACH  transfer (ID: 832639620032), recently  sent from your  checking account (by you or any other person), was   rejected by the  Electronic Payments Association.       Canceled transaction  
+      Transaction ID:     832639620032  
+      Reason of rejection    See details in the report below   
+      Transaction Report     report_832639620032.doc (Microsoft Word Document)   
+  About NACHA To help guide advocacy and related communication activities, NACHA established a Communications and Marketing Advisory Group (CMAG) in early 2010. CMAG brings together practitioners representing ACH Network participants to engage in work efforts to benefit the Network and those who utilize it.The Network Strategy & Outreach area is responsible for coordinating, managing, and executing on key activities and initiatives for NACHA and the ACH Network, working in close collaboration with other functional areas of the organization. Outreach activities include those that are conducted to benefit all ACH Network participants in NACHA's role as ACH Network Administrator, and activities that serve the membership of NACHA as an industry trade association.13450 Sunrise Valley Drive, Suite 100Herndon, VA 201712011 NACHA - The Electronic Payments Association
+

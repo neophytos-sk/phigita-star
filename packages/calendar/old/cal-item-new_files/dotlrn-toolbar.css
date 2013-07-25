@@ -1,0 +1,96 @@
+
+/**********************************************************************
+/* dotlrn toolbar
+/**********************************************************************/
+
+#dotlrn-toolbar {
+  background-color: #1958B7;
+  color: white;
+  font-family: tahoma, verdana;
+  font-size: 75%;
+  padding-left: 4px;
+  padding-right: 8px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  width: 100%;
+}
+
+#dotlrn-toolbar td a { 
+  border: solid 1px #616093;
+  text-align: center; 
+  color: white;
+  text-decoration: none;
+}
+
+#dotlrn-toolbar td a:hover { 
+  text-decoration: none;
+  background-color: #999999;
+  border: solid 1px #cccccc;
+}
+
+#dotlrn-toolbar #search {
+  background-color:#90BADE;
+  font: 80% tahoma;
+  color: white;
+  text-align: center;
+  white-space:nowrap;
+}
+
+#dotlrn-toolbar #search input {
+  font: 100% tahoma;
+}
+
+#dotlrn-toolbar #search select {
+  font: 100% tahoma;
+}
+
+#dotlrn-toolbar .dt-action-list { 
+  text-align:center;
+  width: auto;
+  font-size: 85%;
+}
+
+#dotlrn-toolbar .dt-action-list a { 
+  border: solid 0px #313063;
+  color: white;
+  text-decoration: none;
+}
+
+#dotlrn-toolbar .dt-action-list a:hover { 
+  text-decoration: none;
+  background-color: #666666;
+  border: solid 1px #999999;
+}
+#dotlrn-toolbar td a.on {
+  background-color: #888888;
+  border: solid 1px #cccccc;
+}
+#dotlrn-toolbar td a:hover.on {
+  background-color: #666666;
+  border: solid 1px #999999;
+}
+
+#dotlrn-toolbar #title { 
+  font-weight: bold;
+  text-align: center; 
+  color: white;
+  text-decoration: none;
+  font-size: 100% tahoma;
+  width: auto;
+}
+
+#dotlrn-toolbar .general-info { 
+  text-align:center;
+  font: 100% tahoma;
+}
+
+#dotlrn-toolbar .general-info ul { 
+  display: inline;
+  border: none;
+}
+                
+#dotlrn-toolbar .general-info ul li {
+  border: solid 0px #90BADE;
+  list-style: none;
+  display: inline;
+}

@@ -1,0 +1,17 @@
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by ks34956.kimsufi.com (Postfix) with ESMTP id E347C1507F9;
+	Mon, 21 Nov 2011 03:22:22 +0100 (CET) from ks34956.kimsufi.com ([127.0.0.1])
+	by localhost (ks34956.kimsufi.com [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id 9nSB-eHKwYEL; Mon, 21 Nov 2011 03:22:22 +0100 (CET) from pmobaay (unknown [110.52.6.228])
+	(Authenticated sender: postmaster@madinmusik.fr)
+	by ks34956.kimsufi.com (Postfix) with ESMTPA id C23A41507F8;
+	Mon, 21 Nov 2011 03:22:14 +0100 (CET) 
+X-Virus-Scanned: Debian amavisd-new at ks34956.kimsufi.com 
+Message-ID: <20111121102158280203@madinmusik.fr> 
+From: =?gb2312?B?yfLR9MrQzsW+2cS+0rXWxtTs09DP3rmry74=?= <postmaster@madinmusik.fr> 
+To:  
+Subject: =?gb2312?B?uN+8tsPYyumhotb6wO26zdDQ1f7Iy9SxvLzE3MzhuN/RtcG306ot?=
+	=?gb2312?B?LS0tydvDztOz?= 
+Date: Mon, 21 Nov 2011 10:21:50 +0800 
+X-mailer: Hdezdg 0 
+Whoops!  What is a 'application/vnd.ms-excel'?

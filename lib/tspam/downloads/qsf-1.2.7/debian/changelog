@@ -1,0 +1,255 @@
+qsf (1.2.7-1) unstable; urgency=low
+
+  * New upstream version:
+    - Updated license from Artistic License to Artistic License 2.0
+
+ -- Nelson A. de Oliveira <naoliv@debian.org>  Tue, 28 Aug 2007 09:35:41 -0300
+
+qsf (1.2.6-1) unstable; urgency=medium
+
+  * New upstream version;
+  * Medium urgency since it fix a bug that might cause undelivered mail.
+
+ -- Nelson A. de Oliveira <naoliv@debian.org>  Mon,  5 Feb 2007 09:20:24 -0200
+
+qsf (1.2.5-2) unstable; urgency=low
+
+  * Adding a Build-Depends on bsdmainutils and man-db, so quickref.txt gets
+    correctly generated.
+
+ -- Nelson A. de Oliveira <naoliv@debian.org>  Sun, 21 Jan 2007 22:02:57 -0200
+
+qsf (1.2.5-1) unstable; urgency=medium
+
+  * New upstream version;
+  * New maintainer address.
+
+ -- Nelson A. de Oliveira <naoliv@debian.org>  Sun, 21 Jan 2007 15:14:49 -0200
+
+qsf (1.2.1-1) unstable; urgency=low
+
+  * New upstream version.
+
+ -- Nelson A. de Oliveira <naoliv@gmail.com>  Wed, 25 Oct 2006 12:21:30 -0300
+
+qsf (1.2.0-1) unstable; urgency=low
+
+  * New upstream version;
+  * Added tags on debian/control.
+
+ -- Nelson A. de Oliveira <naoliv@gmail.com>  Sun,  1 Oct 2006 20:22:09 -0300
+
+qsf (1.1.13-1) unstable; urgency=low
+
+  * New upstream version;
+  * Bumped Standards-Version to 3.7.2 (no changes needed).
+
+ -- Nelson A. de Oliveira <naoliv@gmail.com>  Mon, 14 Aug 2006 20:51:00 -0300
+
+qsf (1.1.7-1) unstable; urgency=low
+
+  * New upstream version.
+
+ -- Nelson A. de Oliveira <naoliv@gmail.com>  Sat,  8 Apr 2006 15:02:59 -0300
+
+qsf (1.1.6-1) unstable; urgency=low
+
+  * New upstream version.
+
+ -- Nelson A. de Oliveira <naoliv@gmail.com>  Thu,  2 Feb 2006 16:20:29 -0200
+
+qsf (1.1.2-3) unstable; urgency=low
+
+  * Updated to debhelper compatibility level 5:
+    - debian/compat updated;
+    - debian/control: build-depends debhelper (>= 5).
+  * libmysqlclient transition:
+    - debian/control: changed from libmysqlclient14-dev to
+      libmysqlclient15-dev on build-depends. (Closes: #343801)
+  * Updated watch file;
+  * Added a Lintian override to fix a warning about a line too long on qsf's
+    manual:
+    - added debian/lintian-override;
+    - updated debian/rules to install the override.
+
+ -- Nelson A. de Oliveira <naoliv@gmail.com>  Sat, 17 Dec 2005 21:30:19 -0200
+
+qsf (1.1.2-2) unstable; urgency=low
+
+  * Fixed section of QSF - mail, instead of net. (Closes: #317267).
+    Thank to Laurent Fousse.
+
+ -- Nelson A. de Oliveira <naoliv@gmail.com>  Fri, 08 Jul 2005 01:04:39 -0300
+
+qsf (1.1.2-1) unstable; urgency=low
+
+  * New upstream version.
+
+ -- Nelson A. de Oliveira <naoliv@gmail.com>  Wed, 06 Jul 2005 13:49:14 -0300
+
+qsf (1.1.0-2) unstable; urgency=low
+
+  * Fix small typo in description (Closes: #317042).
+    Thanks to Laurent Fousse for pointing this.
+
+ -- Nelson A. de Oliveira <naoliv@gmail.com>  Wed, 06 Jul 2005 02:22:08 -0300
+
+qsf (1.1.0-1) unstable; urgency=low
+
+  * New maintainer;
+  * First official Debian release (Closes: #273937);
+  * Using CDBS now.
+
+ -- Nelson A. de Oliveira <naoliv@gmail.com>  Wed, 11 May 2005 16:05:48 -0300
+
+qsf (1.0.35-1) unstable; urgency=low
+
+  * New version (not released).
+
+ -- Andrew Wood <andrew.wood@ivarch.com>  Thu, 21 Apr 2005 12:32:16 +0100
+
+qsf (1.0.31-1) unstable; urgency=low
+
+  * Updated to newest release.
+
+ -- Andrew Wood <andrew.wood@ivarch.com>  Fri, 04 Mar 2005 19:09:01 +0000
+
+qsf (1.0.22-1) unstable; urgency=low
+
+  * Updated to newest release.
+
+ -- Andrew Wood <andrew.wood@ivarch.com>  Mon, 28 Feb 2005 19:50:04 +0000
+
+qsf (1.0.18-1) unstable; urgency=low
+
+  * Updated to newest release.
+
+ -- Andrew Wood <andrew.wood@ivarch.com>  Sat, 19 Feb 2005 12:04:22 +0000
+
+qsf (1.0.15-1) unstable; urgency=low
+
+  * Updated to newest release.
+
+ -- Andrew Wood <andrew.wood@ivarch.com>  Sat,  5 Feb 2005 18:29:08 +0000
+
+qsf (1.0.14-1) unstable; urgency=low
+
+  * Updated to newest release.
+
+ -- Andrew Wood <andrew.wood@ivarch.com>  Sun, 26 Sep 2004 15:01:30 +0100
+
+qsf (1.0.2-1) unstable; urgency=low
+
+  * Updated to newest release.
+
+ -- Andrew Wood <andrew.wood@ivarch.com>  Wed, 28 Apr 2004 22:08:38 +0100
+
+qsf (1.0.1-1) unstable; urgency=low
+
+  * Updated to newest release.
+
+ -- Andrew Wood <andrew.wood@ivarch.com>  Sun, 14 Mar 2004 23:45:50 +0000
+
+qsf (0.9.25-1) unstable; urgency=low
+
+  * Updated to newest release.
+
+ -- Andrew Wood <andrew.wood@ivarch.com>  Fri, 16 Jan 2004 00:03:06 +0000
+
+qsf (0.9.18-1) unstable; urgency=low
+
+  * Updated to newest release.
+
+ -- Andrew Wood <andrew.wood@ivarch.com>  Mon,  5 Jan 2004 20:08:58 +0000
+
+qsf (0.9.12-1) unstable; urgency=low
+
+  * Updated to newest release.
+
+ -- Andrew Wood <andrew.wood@ivarch.com>  Thu,  1 Jan 2004 13:35:55 +0000
+
+qsf (0.9.9-1) unstable; urgency=low
+
+  * Updated to newest release.
+
+ -- Andrew Wood <andrew.wood@ivarch.com>  Sat, 29 Nov 2003 22:41:14 +0000
+
+qsf (0.9.6-1) unstable; urgency=low
+
+  * Updated to newest release.
+
+ -- Andrew Wood <andrew.wood@ivarch.com>  Sat, 15 Nov 2003 01:00:58 +0000
+
+qsf (0.9.4-1) unstable; urgency=low
+
+  * Updated to newest release.
+
+ -- Andrew Wood <andrew.wood@ivarch.com>  Tue, 21 Oct 2003 21:43:37 +0100
+
+qsf (0.9.0-1) unstable; urgency=low
+
+  * Updated to newest release.
+
+ -- Andrew Wood <andrew.wood@ivarch.com>  Fri, 29 Aug 2003 01:36:23 +0100
+
+qsf (0.8.1-1) unstable; urgency=low
+
+  * Updated to newest release.
+
+ -- Andrew Wood <andrew.wood@ivarch.com>  Thu, 21 Aug 2003 08:37:45 +0100
+
+qsf (0.7.8-1) unstable; urgency=low
+
+  * Updated to newest release.
+
+ -- Andrew Wood <andrew.wood@ivarch.com>  Mon, 18 Aug 2003 21:26:22 +0100
+
+qsf (0.7.7-1) unstable; urgency=low
+
+  * Updated to newest release.
+
+ -- Andrew Wood <andrew.wood@ivarch.com>  Thu, 31 Jul 2003 00:16:43 +0100
+
+qsf (0.7.6-1) unstable; urgency=low
+
+  * Updated to newest release.
+
+ -- Andrew Wood <andrew.wood@ivarch.com>  Wed, 23 Jul 2003 09:58:44 +0100
+
+qsf (0.7.4-1) unstable; urgency=low
+
+  * Updated to newest release.
+
+ -- Andrew Wood <andrew.wood@ivarch.com>  Tue,  8 Jul 2003 19:57:59 +0100
+
+qsf (0.7.0-1) unstable; urgency=low
+
+  * Updated to newest release.
+
+ -- Andrew Wood <andrew.wood@ivarch.com>  Sat, 28 Jun 2003 16:48:39 +0100
+
+qsf (0.5.4-1) unstable; urgency=low
+
+  * Updated to newest release.
+
+ -- Andrew Wood <andrew.wood@ivarch.com>  Wed,  4 Jun 2003 12:44:25 +0100
+
+qsf (0.5.0-1) unstable; urgency=low
+
+  * Updated to newest release.
+
+ -- Andrew Wood <andrew.wood@ivarch.com>  Sat, 10 May 2003 04:22:15 +0100
+
+qsf (0.3.4-1) unstable; urgency=low
+
+  * Reformatted, minor changes to get "make deb" working under Debian 2.2.
+
+ -- Andrew Wood <andrew.wood@ivarch.com>  Wed, 29 Jan 2003 23:12:23 +0000
+
+qsf (0.3.1-1) unstable; urgency=low
+
+  * Initial Release.
+  * My first debian package.
+
+ -- Tom Parker <palfrey@bits.bris.ac.uk>  Wed, 22 Jan 2003 15:36:15 +0000
+

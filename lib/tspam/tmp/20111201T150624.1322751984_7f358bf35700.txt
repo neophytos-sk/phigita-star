@@ -1,0 +1,108 @@
+Received: from localhost ([127.0.0.1] helo=sfs-ml-2.v29.ch3.sourceforge.com)
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <quickfix-developers-bounces@lists.sourceforge.net>)
+	id 1RW8Cz-0004BI-1v; Thu, 01 Dec 2011 15:05:57 +0000 from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+	helo=mx.sourceforge.net)
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <kfrank29.c@gmail.com>) id 1RW8Cx-0004B8-JE
+	for quickfix-developers@lists.sourceforge.net;
+	Thu, 01 Dec 2011 15:05:55 +0000 from mail-fx0-f47.google.com ([209.85.161.47])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1RW8Cs-0004Vv-7a
+	for quickfix-developers@lists.sourceforge.net;
+	Thu, 01 Dec 2011 15:05:55 +0000 by faaa19 with SMTP id a19so1706168faa.34
+	for <quickfix-developers@lists.sourceforge.net>;
+	Thu, 01 Dec 2011 07:05:44 -0800 (PST) by 10.180.103.131 with SMTP id fw3mr5059346wib.57.1322751943925;
+	Thu, 01 Dec 2011 07:05:43 -0800 (PST) by 10.216.122.207 with HTTP; Thu, 1 Dec 2011 07:05:43 -0800 (PST) 
+Received-SPF: pass (sog-mx-3.v43.ch3.sourceforge.com: domain of gmail.com
+	designates 209.85.161.47 as permitted sender)
+	client-ip=209.85.161.47; envelope-from=kfrank29.c@gmail.com;
+	helo=mail-fx0-f47.google.com; 
+In-Reply-To: <OFA4BF08A4.EBD2508B-ONC1257959.00474E93-C1257959.0047EEB1@die-software.com> 
+References: <OFA4BF08A4.EBD2508B-ONC1257959.00474E93-C1257959.0047EEB1@die-software.com> 
+Date: Thu, 1 Dec 2011 10:05:43 -0500 
+Message-ID: <CAKEnbTPbAOKZUQgW60OU2QDTtg-LpR7W02YCdE1-tUjEb1+=dg@mail.gmail.com> 
+From: "K. Frank" <kfrank29.c@gmail.com> 
+To: quickfix-developers@lists.sourceforge.net 
+X-Spam-Score: -1.6 (-) 
+X-Spam-Report: Spam Filtering performed by mx.sourceforge.net.
+	See http://spamassassin.org/tag/ for more details.
+	-1.5 SPF_CHECK_PASS SPF reports sender host as permitted sender for
+	sender-domain
+	0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail provider
+	(kfrank29.c[at]gmail.com)
+	-0.0 SPF_PASS               SPF: sender matches SPF record
+	-0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
+	author's domain
+	0.1 DKIM_SIGNED            Message has a DKIM or DK signature,
+	not necessarily valid
+	-0.1 DKIM_VALID Message has at least one valid DKIM or DK signature 
+X-Headers-End: 1RW8Cs-0004Vv-7a 
+Subject: Re: [Quickfix-developers] threaded C++ FIX-application 
+X-BeenThere: quickfix-developers@lists.sourceforge.net 
+X-Mailman-Version: 2.1.9 
+Precedence: list 
+List-Id: <quickfix-developers.lists.sourceforge.net> 
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/quickfix-developers>,
+	<mailto:quickfix-developers-request@lists.sourceforge.net?subject=unsubscribe> 
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=quickfix-developers> 
+List-Post: <mailto:quickfix-developers@lists.sourceforge.net> 
+List-Help: <mailto:quickfix-developers-request@lists.sourceforge.net?subject=help> 
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/quickfix-developers>,
+	<mailto:quickfix-developers-request@lists.sourceforge.net?subject=subscribe> 
+Errors-To: quickfix-developers-bounces@lists.sourceforge.net 
+--------------------------------------
+QuickFIX Documentation: http://www.quickfixengine.org/quickfix/doc/html/index.html
+QuickFIX Support: http://www.quickfixengine.org/services.html
+
+Hello Hannes!
+
+On Thu, Dec 1, 2011 at 8:05 AM,  <Johannes.Grimm@die-software.com> wrote:
+> ...
+> Hi QuickFix-developers,
+>
+> has anybody ever coded a threaded FIX-application in C++, i.e. one thread per FIX-Session.
+> I am wondering whether to use the thread_spawn, etc..... methods or to use the boost-library?
+
+Disclaimer:  I have not built a multi-threaded QuickFix-based FIX engine.
+I do not know whether QuickFix is architected in a way that would be
+consistent with multi-threading.
+
+Assuming that it's possible on the QuickFix side, you might consider
+using the the std::thread threading facilities provided by the new c++11
+standard.  There are versions of g++ (gcc's c++ compiler) that support
+std::thread on both linux and windows.  (I don't happen to know whether
+msvc supports std::thread.)  (There are also commercial third-party
+std::thread libraries, so that might be an option for your particular
+platform.)
+
+If I were going to start a new multi-threaded c++ project today, I would
+definitely use std::thread over boost::thread.  std::thread has become
+real over the last little while, and is now part of the standard.
+
+> Any example code-snippets would be highly appreciated.
+
+Sorry, I have no (FIX-related) code snippets.
+
+> Thanks,
+> Hannes
+
+
+Good luck!
+
+
+K. Frank
+
+------------------------------------------------------------------------------
+All the data continuously generated in your IT infrastructure 
+contains a definitive record of customers, application performance, 
+security threats, fraudulent activity, and more. Splunk takes this 
+data and makes sense of it. IT sense. And common sense.
+http://p.sf.net/sfu/splunk-novd2d
+_______________________________________________
+Quickfix-developers mailing list
+Quickfix-developers@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/quickfix-developers
+
+
+

@@ -1,0 +1,327 @@
+<html><head><title>DefaultColumnModel.js</title><link rel="stylesheet" type="text/css" href="../resources/style.css" media="screen"/></head><body><h1>DefaultColumnModel.js</h1><pre class="highlighted"><code><i>/**
+ * @class YAHOO.ext.grid.DefaultColumnModel
+ * @extends YAHOO.ext.grid.AbstractColumnModel
+ * This is the <b>default</b> implementation of a ColumnModel used by the Grid. It defines
+ * the columns <b>in</b> the grid.
+ * &lt;br&gt;Usage:&lt;br&gt;
+ &lt;pre&gt;&lt;code&gt;
+ <b>var</b> sort = YAHOO.ext.grid.DefaultColumnModel.sortTypes;
+ <b>var</b> myColumns = [
+	{header: &quot;Ticker&quot;, width: 60, sortable: true, sortType: sort.asUCString}, 
+	{header: &quot;Company Name&quot;, width: 150, sortable: true, sortType: sort.asUCString}, 
+	{header: &quot;Market Cap.&quot;, width: 100, sortable: true, sortType: sort.asFloat}, 
+	{header: &quot;$ Sales&quot;, width: 100, sortable: true, sortType: sort.asFloat, renderer: money}, 
+	{header: &quot;Employees&quot;, width: 100, sortable: true, sortType: sort.asFloat}
+ ];
+ <b>var</b> colModel = <b>new</b> YAHOO.ext.grid.DefaultColumnModel(myColumns);
+ &lt;/code&gt;&lt;/pre&gt;
+ * @constructor
+ * @param {Object} config The config object
+*/</i>
+YAHOO.ext.grid.DefaultColumnModel = <b>function</b>(config){
+	YAHOO.ext.grid.DefaultColumnModel.superclass.constructor.call(<b>this</b>);
+    <i>/**
+     * The config passed into the constructor
+     */</i>
+    <b>this</b>.config = config;
+    
+    <i>/**
+     * The width of columns which have no width specified (defaults to 100)
+     * @type Number
+     */</i>
+    <b>this</b>.defaultWidth = 100;
+    <i>/**
+     * Default sortable of columns which have no sortable specified (defaults to false)
+     * @type Boolean
+     */</i>
+    <b>this</b>.defaultSortable = false;
+};
+YAHOO.extendX(YAHOO.ext.grid.DefaultColumnModel, YAHOO.ext.grid.AbstractColumnModel, {
+    
+    <i>/**
+     * Returns the number of columns.
+     * @<b>return</b> {Number}
+     */</i>
+    getColumnCount : <b>function</b>(){
+        <b>return</b> this.config.length;
+    },
+        
+    <i>/**
+     * Returns true <b>if</b> the specified column is sortable.
+     * @param {Number} col The column index
+     * @<b>return</b> {Boolean}
+     */</i>
+    isSortable : <b>function</b>(col){
+        <b>if</b>(typeof <b>this</b>.config[col].sortable == 'undefined'){
+            <b>return</b> this.defaultSortable;
+        }
+        <b>return</b> this.config[col].sortable;
+    },
+        
+    <i>/**
+     * Returns the sorting comparison <b>function</b> defined <b>for</b> the column (defaults to sortTypes.none).
+     * @param {Number} col The column index
+     * @<b>return</b> {Function}
+     */</i>
+    getSortType : <b>function</b>(col){
+        <b>if</b>(!<b>this</b>.dataMap){
+            <i>// build a lookup so we don't search every time</i>
+            <b>var</b> map = [];
+            <b>for</b>(var i = 0, len = <b>this</b>.config.length; i &lt; len; i++){
+                map[<b>this</b>.getDataIndex(i)] = i;
+            }
+            <b>this</b>.dataMap = map;
+        }
+        col = <b>this</b>.dataMap[col];
+        <b>if</b>(!<b>this</b>.config[col].sortType){
+            <b>return</b> YAHOO.ext.grid.DefaultColumnModel.sortTypes.none;
+        }
+        <b>return</b> this.config[col].sortType;
+    },
+        
+    <i>/**
+     * Sets the sorting comparison <b>function</b> for a column.
+     * @param {Number} col The column index
+     * @param {Function} fn
+     */</i>
+    setSortType : <b>function</b>(col, fn){
+        <b>this</b>.config[col].sortType = fn;
+    },
+        
+    
+    <i>/**
+     * Returns the rendering (formatting) <b>function</b> defined <b>for</b> the column.
+     * @param {Number} col The column index
+     * @<b>return</b> {Function}
+     */</i>
+    getRenderer : <b>function</b>(col){
+        <b>if</b>(!<b>this</b>.config[col].renderer){
+            <b>return</b> YAHOO.ext.grid.DefaultColumnModel.defaultRenderer;
+        }
+        <b>return</b> this.config[col].renderer;
+    },
+        
+    <i>/**
+     * Sets the rendering (formatting) <b>function</b> for a column.
+     * @param {Number} col The column index
+     * @param {Function} fn
+     */</i>
+    setRenderer : <b>function</b>(col, fn){
+        <b>this</b>.config[col].renderer = fn;
+    },
+        
+    <i>/**
+     * Returns the width <b>for</b> the specified column.
+     * @param {Number} col The column index
+     * @<b>return</b> {Number}
+     */</i>
+    getColumnWidth : <b>function</b>(col){
+        <b>return</b> this.config[col].width || <b>this</b>.defaultWidth;
+    },
+        
+    <i>/**
+     * Sets the width <b>for</b> a column.
+     * @param {Number} col The column index
+     * @param {Number} width The <b>new</b> width
+     */</i>
+    setColumnWidth : <b>function</b>(col, width, suppressEvent){
+        <b>this</b>.config[col].width = width;
+        <b>this</b>.totalWidth = null;
+        <b>if</b>(!suppressEvent){
+             <b>this</b>.onWidthChange.fireDirect(<b>this</b>, col, width);
+        }
+    },
+        
+    <i>/**
+     * Returns the total width of all columns.
+     * @param {Boolean} includeHidden True to include hidden column widths
+     * @<b>return</b> {Number}
+     */</i>
+    getTotalWidth : <b>function</b>(includeHidden){
+        <b>if</b>(!<b>this</b>.totalWidth){
+            <b>this</b>.totalWidth = 0;
+            <b>for</b>(var i = 0; i &lt; <b>this</b>.config.length; i++){
+                <b>if</b>(includeHidden || !<b>this</b>.isHidden(i)){
+                    <b>this</b>.totalWidth += <b>this</b>.getColumnWidth(i);
+                }
+            }
+        }
+        <b>return</b> this.totalWidth;
+    },
+        
+    <i>/**
+     * Returns the header <b>for</b> the specified column.
+     * @param {Number} col The column index
+     * @<b>return</b> {String}
+     */</i>
+    getColumnHeader : <b>function</b>(col){
+        <b>return</b> this.config[col].header;
+    },
+         
+    <i>/**
+     * Sets the header <b>for</b> a column.
+     * @param {Number} col The column index
+     * @param {String} header The <b>new</b> header
+     */</i>
+    setColumnHeader : <b>function</b>(col, header){
+        <b>this</b>.config[col].header = header;
+        <b>this</b>.onHeaderChange.fireDirect(<b>this</b>, col, header);
+    },
+    
+    <i>/**
+     * Returns the tooltip <b>for</b> the specified column.
+     * @param {Number} col The column index
+     * @<b>return</b> {String}
+     */</i>
+    getColumnTooltip : <b>function</b>(col){
+            <b>return</b> this.config[col].tooltip;
+    },
+    <i>/**
+     * Sets the tooltip <b>for</b> a column.
+     * @param {Number} col The column index
+     * @param {String} tooltip The <b>new</b> tooltip
+     */</i>
+    setColumnTooltip : <b>function</b>(col, header){
+            <b>this</b>.config[col].tooltip = tooltip;
+    },
+        
+    <i>/**
+     * Returns the dataIndex <b>for</b> the specified column.
+     * @param {Number} col The column index
+     * @<b>return</b> {Number}
+     */</i>
+    getDataIndex : <b>function</b>(col){
+        <b>if</b>(typeof <b>this</b>.config[col].dataIndex != 'number'){
+            <b>return</b> col;
+        }
+        <b>return</b> this.config[col].dataIndex;
+    },
+         
+    <i>/**
+     * Sets the dataIndex <b>for</b> a column.
+     * @param {Number} col The column index
+     * @param {Number} dataIndex The <b>new</b> dataIndex
+     */</i>
+    setDataIndex : <b>function</b>(col, dataIndex){
+        <b>this</b>.config[col].dataIndex = dataIndex;
+    },
+    <i>/**
+     * Returns true <b>if</b> the cell is editable.
+     * @param {Number} colIndex The column index
+     * @param {Number} rowIndex The row index
+     * @<b>return</b> {Boolean}
+     */</i>
+    isCellEditable : <b>function</b>(colIndex, rowIndex){
+        <b>return</b> this.config[colIndex].editable || (<b>typeof</b> this.config[colIndex].editable == 'undefined' &amp;&amp; <b>this</b>.config[colIndex].editor);
+    },
+    
+    <i>/**
+     * Returns the editor defined <b>for</b> the cell/column.
+     * @param {Number} colIndex The column index
+     * @param {Number} rowIndex The row index
+     * @<b>return</b> {Object}
+     */</i>
+    getCellEditor : <b>function</b>(colIndex, rowIndex){
+        <b>return</b> this.config[colIndex].editor;
+    },
+       
+    <i>/**
+     * Sets <b>if</b> a column is editable.
+     * @param {Number} col The column index
+     * @param {Boolean} editable True <b>if</b> the column is editable
+     */</i>
+    setEditable : <b>function</b>(col, editable){
+        <b>this</b>.config[col].editable = editable;
+    },
+    
+    
+    <i>/**
+     * Returns true <b>if</b> the column is hidden.
+     * @param {Number} colIndex The column index
+     * @<b>return</b> {Boolean}
+     */</i>
+    isHidden : <b>function</b>(colIndex){
+        <b>return</b> this.config[colIndex].hidden;
+    },
+    
+    
+    <i>/**
+     * Returns true <b>if</b> the column width cannot be changed
+     */</i>
+    isFixed : <b>function</b>(colIndex){
+        <b>return</b> this.config[colIndex].fixed;
+    },
+    
+    <i>/**
+     * Returns true <b>if</b> the column cannot be resized
+     * @<b>return</b> {Boolean}
+     */</i>
+    isResizable : <b>function</b>(colIndex){
+        <b>return</b> this.config[colIndex].resizable !== false;
+    },
+    <i>/**
+     * Sets <b>if</b> a column is hidden.
+     * @param {Number} colIndex The column index
+     */</i>
+    setHidden : <b>function</b>(colIndex, hidden){
+        <b>this</b>.config[colIndex].hidden = hidden;
+        <b>this</b>.totalWidth = null;
+        <b>this</b>.fireHiddenChange(colIndex, hidden);
+    },
+    
+    <i>/**
+     * Sets the editor <b>for</b> a column.
+     * @param {Number} col The column index
+     * @param {Object} editor The editor object
+     */</i>
+    setEditor : <b>function</b>(col, editor){
+        <b>this</b>.config[col].editor = editor;
+    }
+});
+
+<i>/**
+ * Defines the <b>default</b> sorting (casting?) comparison functions used when sorting data:
+ * &lt;br&gt;&amp;nbsp;&amp;nbsp;sortTypes.none - sorts data as it is without casting or parsing (the <b>default</b>)
+ * &lt;br&gt;&amp;nbsp;&amp;nbsp;sortTypes.asUCString - <b>case</b> insensitive string
+ * &lt;br&gt;&amp;nbsp;&amp;nbsp;sortTypes.asDate - attempts to parse data as a date
+ * &lt;br&gt;&amp;nbsp;&amp;nbsp;sortTypes.asFloat
+ * &lt;br&gt;&amp;nbsp;&amp;nbsp;sortTypes.asInt
+ * @static
+ */</i>
+YAHOO.ext.grid.DefaultColumnModel.sortTypes = {
+    none : <b>function</b>(s) {
+    	<b>return</b> s;
+    },
+
+    asUCString : <b>function</b>(s) {
+    	<b>return</b> String(s).toUpperCase();
+    },
+    
+    asDate : <b>function</b>(s) {
+        <b>if</b>(s instanceof Date){
+            <b>return</b> s.getTime();
+        }
+    	<b>return</b> Date.parse(String(s));
+    },
+    
+    asFloat : <b>function</b>(s) {
+    	<b>var</b> val = parseFloat(String(s).replace(/,/g, ''));
+        <b>if</b>(isNaN(val)) val = 0;
+    	<b>return</b> val;
+    },
+    
+    asInt : <b>function</b>(s) {
+        <b>var</b> val = parseInt(String(s).replace(/,/g, ''));
+        <b>if</b>(isNaN(val)) val = 0;
+    	<b>return</b> val;
+    }
+};
+
+YAHOO.ext.grid.DefaultColumnModel.defaultRenderer = <b>function</b>(value){
+	<b>if</b>(typeof value == 'string' &amp;&amp; value.length &lt; 1){
+	    <b>return</b> '&amp;#160;';
+	}
+	<b>return</b> value;
+}</code></pre><hr><div style="font-size:10px;text-align:center;color:gray;">yui-ext - Copyright &copy; 2006 Jack Slocum.  |
+    Yahoo! UI - Copyright &copy; 2006 Yahoo! Inc.<br />All rights reserved.</div>
+    </body></html>

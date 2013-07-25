@@ -1,0 +1,94 @@
+
+lassign [split [ad_conn extra_url] /] dummy_view filetype id_and_size
+
+
+###ns_return 200 text/plain "$__dummy__ $id $size"
+
+###foreach {__dummy__ id} [split [ad_conn extra_url] /] break
+
+if { $filetype eq {image} } {
+    lassign [split $id_and_size -] id size
+    rp_form_put id $id
+    rp_form_put size $size
+} else {
+    rp_returnnotfound
+    return
+}
+
+ad_page_contract {
+    @author Neophytos Demetriou
+} {
+    id:integer,notnull
+    size:trim,notnull
+    {p:integer,notnull 1}
+}
+
+if { -1 == [lsearch {s120 s240 s500 s800} $size] } {
+	rp_returnnotfound
+	return
+}
+
+
+
+set pathexp [list "User [ad_conn ctx_uid]"]
+
+
+set data [::db::Set new \
+	      -pathexp $pathexp \
+	      -select "1" \
+	      -type ::Content_Item \
+	      -where [list shared_p id=[ns_dbquotevalue ${id}] "extra->'XO.File.Type' != 'audio'"] \
+	      -limit 1]
+$data load
+
+if { [$data emptyset_p] } {
+    ad_returnfile_background 200 image/gif [acs_root_dir]/www/graphics//noimage.gif
+    return
+}
+
+set object_id $id
+set list ""
+foreach item $pathexp {
+    foreach {className instance_id} $item break
+    lappend list [$className set id]-${instance_id}
+}
+
+set directory /web/data/storage/
+append directory [join $list .]/
+append directory $object_id
+set previewdir ${directory}/preview/
+
+
+set targetFile [file normalize ${previewdir}/c-${id}_p-${p}-${size}.jpg]
+
+if { ![file exists $targetFile] } {
+
+    set GS /usr/bin/gs
+    set dpi 120
+    exec -- /bin/sh -c "${GS} -q -dQUIET -dSAFER -dPARANOIDSAFE -dBATCH -dNOPAUSE -dNOPROMPT -dAlignToPixels=0 -dGridFitTT=0 \"-sDEVICE=png16m\" -dTextAlphaBits=4 -dGraphicsAlphaBits=4 -r${dpi} -dFirstPage=${p} -dLastPage=${p} \"-sOutputFile=${previewdir}/c-${object_id}_p-${p}.png\" \"${directory}/c-${object_id}.pdf\" || exit 0" 2> /dev/null
+
+
+
+    foreach border_size {1 1 1 1} max_image_size {120 240 500 800} pointsize {4 5 6 7} {
+
+	set image_size [expr {$max_image_size -2*$border_size}]
+	set geometry ${image_size}x${image_size}
+	set border_geometry ${border_size}x${border_size}
+
+	set input_file ${previewdir}/c-${object_id}_p-${p}.png
+	set target_file ${previewdir}/c-${object_id}_p-${p}-s${max_image_size}.jpg
+	exec -- /bin/sh -c "/usr/bin/convert -quiet -strip -scale $geometry -bordercolor black -border ${border_geometry} png:${input_file} jpg:$target_file || exit 0" 2> /dev/null
+
+    }
+}
+
+#ns_log notice "targetFile=$targetFile"
+
+# Expire images after a year
+set seconds 31536000 ;# 60*60*24*365
+set outputheaders [ns_conn outputheaders]
+ns_set put $outputheaders Cache-Control public
+ns_set put $outputheaders Expires [ns_httptime [ns_time incr [ns_time] $seconds]]
+ns_returnfile 200 image/jpeg $targetFile
+
+

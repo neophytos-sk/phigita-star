@@ -1,0 +1,20 @@
+Subject: Some multipart stuff
+Content-type: multipart/alternative; boundary=12345
+
+This is an epilogue
+
+--12345
+Subject: This is an ebedded part
+Content-type: multipart/alternative;
+ 		boundary=54321; charset=us-ascii
+
+--54321
+Subject: An embedded part
+Content-type: text/plain
+
+This is a really embedded body
+
+--12345--
+
+This is a prologue documenting that we truncated that inner MIME part.
+

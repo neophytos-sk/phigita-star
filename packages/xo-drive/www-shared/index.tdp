@@ -1,0 +1,153 @@
+set limit 20
+set limit_plus_one [expr {1+${limit}}]
+
+contract {
+    param -id "tag" -check "notnull" -optional "1"
+    param -id "offset" -check "naturalnum" -default "0" -optional "1"
+}
+
+val -id context_user_id { return [ad_conn ctx_uid] }
+val -id limit "return ${limit}"
+
+datastore \
+    -id userdata \
+    -singleton true \
+    -select {
+	screen_name
+	{first_names || ' ' || last_name as full_name}
+    } \
+    -from_class ::CC_Users \
+    -where [list "user_id=:context_user_id"] \
+    -limit 1
+
+if {0} {
+    datastore \
+	-id labeldata \
+	-scope context_user \
+	-select {
+	    {trim(xo__concatenate_aggregate('{' || label.name || '} {' || coalesce((extra->'bgcolor'),'') || '} {' || coalesce((extra->'fontcolor'),'') ||'} ' ),' ') as name_bgcolor_fontcolor}
+	} \
+	-from_class [::db::Inner_Join new \
+			 -lhs [::db::Set new \
+				   -alias label \
+				   -scope context_user \
+				   -type ::Content_Item_Label] \
+			 -rhs [::db::Set new \
+				   -alias tag_id \
+				   -from int_array_enum(tags_ia)] \
+			 -join_condition "label.id=tag_id.int_array_enum"]
+}
+
+val -id media_base_url { 
+    set context_username [ad_conn context_username]
+    return "http://www.phigita.net/~${context_username}/media" 
+}
+
+datastore \
+    -id mediadata \
+    -scope context_user \
+    -select {
+	tags_ia
+	id 
+	title 
+	{extra->'XO.File.Size' as file_size} 
+	{lower(extra->'XO.File.Magic') as file_magic} 
+	{lower(extra->'XO.File.Type') as filetype} 
+	shared_p 
+	deleted_p 
+	hidden_p 
+	starred_p 
+    } -from_class ::Content_Item \
+    -where [list "shared_p" "extra->'XO.File.Type' != 'audio'"] \
+    -order "creation_date desc" \
+    -offset @{offset} \
+    -limit ${limit_plus_one} \
+    -extend {
+
+	set extra [::util::decode ${filetype} image -s800 video / document / ""]
+	set link_url @{media_base_url}/view/${filetype}/${id}${extra}
+	set image_url @{media_base_url}/view/${filetype}/${id}-s120
+
+    }
+
+if {0}  {
+
+    if { $tag ne {} } {
+	set base ..
+	set tagdata [::db::Set new -pathexp ${pathexp} -select "id" -type ::Content_Item_Label -where [list "name=[::util::dbquotevalue $tag]"] -limit 1]
+	$tagdata load
+	if { ![$tagdata emptyset_p] } {
+	    set tag_id [[$tagdata head] set id]
+	} else {
+	    set tag_id 0
+	}
+	$ds_items lappend where "tags_ia @> '\{$tag_id\}'"
+    } else {
+	set base .
+    }
+}
+
+
+
+val -id prev_url { 
+    set offset [expr { @{offset} - @{limit} }]
+    if { $offset <= 0 } { set offset "" }
+    export_vars -url -base "." -no_empty offset  
+}
+
+val -id next_url { 
+    set offset [expr { @{offset} + @{limit} }]
+    export_vars -url -base "." -no_empty offset 
+}
+
+
+# for includelet
+val -id selectedtab { return "media" }
+
+master -src "/templates/www-shared.master.inc" -title "MediaBox - @{object_get.userdata.full_name}" {
+    include -src "/templates/www-shared.tabs.inc"
+
+    h3 { b { t "Images, Documents, and Videos" } }
+
+    tpl -if @{mediadata:rowcount} {
+	ul -class "thumbnails" {
+	    tpl -for "mediadata" {
+		li -class span2 {
+		    div -class "thumbnail" {
+			a -href "@{link_url}" {
+			    img -src "@{image_url}" -title @{title} -border 0
+			}
+			# t "add title and labels here"
+		    }
+		}
+	    }
+	}
+    }
+    tpl -else "" {
+	t "None Yet"
+    }
+
+    div -x-master-renderTo "sidebar" {
+	p
+	div -style "text-align:center;" {
+	    tpl -if "@{offset} > 0 || @{mediadata:rowcount} == ${limit_plus_one}" {
+		div -class "sidebar-heading" {
+		    t "Navigate" 
+		}
+		p
+		span -style "background:#ccc;padding:2px;" {
+		    tpl -if "@{offset} > 0" {
+			a -href "@{prev_url}" { nt "&laquo; Newer" }
+		    }
+		    tpl -if "@{offset} > 0 && @{mediadata:rowcount} == ${limit_plus_one}" {
+			t " | "
+		    }
+		    tpl -if "@{mediadata:rowcount} == ${limit_plus_one}" {
+			a -href "@{next_url}" { nt "Older &raquo;" }
+		    }
+		}
+	    }
+	}
+    }
+
+}

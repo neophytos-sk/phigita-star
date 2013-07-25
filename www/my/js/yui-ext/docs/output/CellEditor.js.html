@@ -1,0 +1,93 @@
+<html><head><title>CellEditor.js</title><link rel="stylesheet" type="text/css" href="../resources/style.css" media="screen"/></head><body><h1>CellEditor.js</h1><pre class="highlighted"><code><i>/**
+ * @class YAHOO.ext.grid.CellEditor
+ * Base class <b>for</b> all EditorGrid editors
+ */</i>
+YAHOO.ext.grid.CellEditor = <b>function</b>(element){
+    <b>this</b>.colIndex = null;
+    <b>this</b>.rowIndex = null;
+    <b>this</b>.grid = null;
+    <b>this</b>.editing = false;
+    <b>this</b>.originalValue = null;
+    <b>this</b>.element = getEl(element, true);
+    <b>this</b>.element.addClass('ygrid-editor');
+    <b>this</b>.element.dom.tabIndex = 1;
+    <b>this</b>.initialized = false;
+    <b>this</b>.callback = null;
+};
+
+YAHOO.ext.grid.CellEditor.prototype = {
+    init : <b>function</b>(grid, bodyElement, callback){
+        <i>// there's no way <b>for</b> the grid to know <b>if</b> multiple columns </i>
+        <i>// share the same editor so it will try to initialize the </i>
+        <i>// same one over and over</i>
+        <b>if</b>(this.initialized) <b>return</b>;
+        <b>this</b>.initialized = true;
+        <b>this</b>.callback = callback;
+        <b>this</b>.grid = grid;
+        bodyElement.appendChild(<b>this</b>.element.dom);
+        <b>this</b>.initEvents();
+    },
+    
+    initEvents : <b>function</b>(){
+        <b>var</b> stopOnEnter = <b>function</b>(e){
+            <b>if</b>(e.browserEvent.keyCode == e.RETURN){
+                <b>this</b>.stopEditing(true);
+            }<b>else</b> if(e.browserEvent.keyCode == e.ESC){
+                <b>this</b>.setValue(<b>this</b>.originalValue);
+                <b>this</b>.stopEditing(true);
+            }
+        }
+        <b>this</b>.element.mon('keydown', stopOnEnter, <b>this</b>, true);
+        <b>this</b>.element.on('blur', <b>this</b>.stopEditing, <b>this</b>, true);
+    },
+
+    startEditing : <b>function</b>(value, row, cell){
+        <b>this</b>.originalValue = value;
+        <b>this</b>.rowIndex = row.rowIndex;
+        <b>this</b>.colIndex = cell.columnIndex;
+        <b>this</b>.cell = cell;
+        <b>this</b>.setValue(value);
+        <b>var</b> cellbox = getEl(cell, true).getBox();
+        <b>this</b>.fitToCell(cellbox);
+        <b>this</b>.editing = true;
+        <b>this</b>.show();
+    },
+     
+    stopEditing : <b>function</b>(focusCell){
+         <b>if</b>(this.editing){
+             <b>this</b>.editing = false;
+             <b>var</b> newValue = <b>this</b>.getValue();
+             <b>this</b>.hide();
+             <i>//<b>if</b>(focusCell){try{<b>this</b>.cell.focus();}catch(e){}}; // try to give the cell focus so keyboard nav still works</i>
+             <b>if</b>(this.originalValue != newValue){
+                <b>this</b>.callback(newValue, <b>this</b>.rowIndex, <b>this</b>.colIndex);
+             }
+         }
+     },
+     
+    setValue : <b>function</b>(value){
+        <b>this</b>.element.dom.value = value;
+    },
+    
+    getValue : <b>function</b>(){
+        <b>return</b> this.element.dom.value;
+    },
+    
+    fitToCell : <b>function</b>(box){
+        <b>this</b>.element.setBox(box, true);
+    },
+    
+    show : <b>function</b>(){
+        <b>this</b>.element.show();
+        <b>this</b>.element.focus();
+    },
+    
+    hide : <b>function</b>(){
+        try{
+            <b>this</b>.element.dom.blur();
+        }catch(e){}
+        <b>this</b>.element.hide();
+    }
+};</code></pre><hr><div style="font-size:10px;text-align:center;color:gray;">yui-ext - Copyright &copy; 2006 Jack Slocum.  |
+    Yahoo! UI - Copyright &copy; 2006 Yahoo! Inc.<br />All rights reserved.</div>
+    </body></html>

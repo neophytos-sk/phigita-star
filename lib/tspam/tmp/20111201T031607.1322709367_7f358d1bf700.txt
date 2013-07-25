@@ -1,0 +1,215 @@
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed/relaxed; s=k1; d=mail31.us2.mcsv.net;
+ h=Subject:From:Reply-To:To:Date:Message-ID:List-Unsubscribe:Sender:Content-Type:MIME-Version; i=newsletter=3Dphileleftheros.com@mail31.us2.mcsv.net;
+ bh=7tFPLKc7DnEvAknsa55H/Q0oDTo=;
+ b=ZRaXwePYsCkwFk86UfZYiWVKxfB0gLtUO4+Kr3fCDiK9DEERhsv0ZIJri1Q3e/VkuPjNuyMTwIFl
+   M0pUpFZEIdaDI9konFiJQbuKGkOMgieeAWMmCpIiYfbdVMnOlJLNj2WLznoSZP2Eg1kDP2TCnQE6
+   Cfq9sPP8UdqYHyPQgmo= 
+DomainKey-Signature: a=rsa-sha1; c=nofws; q=dns; s=k1; d=mail31.us2.mcsv.net;
+ b=W/c9nzuR13DutpU2glerFGl3TtyO5lIoRVOE0G5VRVEuA2Uaws3toqN6ks7JMC3lLNxGZvsp/0ME
+   JkUjXsv3YJSjZn7vTXMBf6SoUcKpQyqtZ6lsATFvBhfjbVlYM41owZsZ4sJ83k1v6rtTG9Tk+/Ip
+   2hJrTWPSLQw3MSbbGM8=; 
+Received: from (127.0.0.1) by mail31.us2.mcsv.net (PowerMTA(TM) v3.5r16) id hqromo0ik189 for <k2pts@phigita.net>; Wed, 30 Nov 2011 22:15:54 -0500 (envelope-from <bounce-mc.us2_6419294.1292565-k2pts=phigita.net@mail31.us2.mcsv.net>) 
+Subject: =?utf-8?Q?Philenews=20Newsletter=2001=2F12=2F2011?= 
+From: =?utf-8?Q?Phileleftheros=20Newsletter?= <newsletter@phileleftheros.com> 
+Reply-To: =?utf-8?Q?Phileleftheros=20Newsletter?= <newsletter@phileleftheros.com> 
+To: <k2pts@phigita.net> 
+Date: Wed, 30 Nov 2011 22:15:54 -0500 
+Message-ID: <84e8c0ea4dc808b59204e2171b4828836f9.20111201031531@mail31.us2.mcsv.net> 
+X-Mailer: MailChimp Mailer - **CIDcd792011b3b4828836f9** 
+X-Campaign: mailchimp84e8c0ea4dc808b59204e2171.cd792011b3 
+X-campaignid: mailchimp84e8c0ea4dc808b59204e2171.cd792011b3 
+x-im: 38509-cd792011b3 
+X-Report-Abuse: Please report abuse for this campaign here: http://www.mailchimp.com/abuse/abuse.phtml?u=84e8c0ea4dc808b59204e2171&id=cd792011b3&e=b4828836f9 
+x-accounttype: pd 
+List-Unsubscribe: <mailto:unsubscribe-84e8c0ea4dc808b59204e2171-cd792011b3-b4828836f9@mailin1.us2.mcsv.net?subject=unsubscribe>, <http://philenews.us2.list-manage.com/unsubscribe?u=84e8c0ea4dc808b59204e2171&id=13cea9817b&e=b4828836f9&c=cd792011b3> 
+Sender: "Phileleftheros Newsletter" <newsletter=phileleftheros.com@mail31.us2.mcsv.net> 
+x-mcda: FALSE 
+--------------------------------------
+Trouble viewing this email?[1]Click Here
+    Links:
+      1. http://us2.campaign-archive1.com/?u=84e8c0ea4dc808b59204e2171&id=cd792011b3&e=b4828836f9
+
+  right logo _ΠΕΜΠΤΗ
+  1 ΔΕΚΕΜΒΡΙΟΥ 2011_
+  Philenews
+
+  left logo
+  _[2]www.philenews.com
+  [3]www.sentragoal.com.cy _
+  line
+    Links:
+      2. http://www.philenews.com
+      3. http://www.sentragoal.com.cy
+
+ΠΡΩΤΟ ΘΕΜΑ
+
+  [4]Παρασκήνιο για τελικό πακέτο μέτρων
+    Links:
+      4. http://www.philenews.com/el-gr/New-Homepage-With-Slider/4995/87719
+
+  Έντονο παρασκήνιο σε μια προσπάθεια η κάθε πλευρά να κερδίσει πόντους
+  διαδραματίζεται στο θέμα της οικονομίας και των εξαγγελθέντων οικονομικών
+  μέτρων. Η πολιτική συναίνεση  κλειδώνει πάγωμα μισθών.
+
+"Φ" ΑΠΟΚΛΕΙΣΤΙΚΟ
+
+  [5]Επώνυμοι φοροφυγάδες στα χέρια Γιωρκάτζιη
+    Links:
+      5. http://www.philenews.com/el-gr/Eidiseis-Kypros/22/87717
+
+  Γνωστοί  μεγαλοδικηγόροι,  επιχειρηματίες  και γιατροί που παρελαύνουν
+  καθημερινά από τα ΜΜΕ και ανήκουν στην κατηγορία των επωνύμων,  στάθηκε
+  αδύνατο διωχθούν ποινικά, για υποθέσεις φοροαποφυγής και φοροδιαφυγής.
+
+  [6]Πήγε για αφυπηρέτηση, αλλά βρέθηκε με προαγωγή
+    Links:
+      6. http://www.philenews.com/el-gr/Eidiseis-Kypros/22/87718
+
+  Ανώτερος γραμματειακός λειτουργός ζήτησε πρόωρη αφυπηρέτηση, το αίτημα του
+  έγινε  αποδεκτό  από  την  ΕΔΥ,  άλλαξε  γνώμη όμως και ανακάλεσε όταν
+  πληροφορήθηκε  ότι η ΕΔΥ θα προσφέρει προαγωγές στη μόνιμη θέση πρώτου
+  γραμματειακού λειτουργού.
+
+ΟΙΚΟΝΟΜΙΑ
+
+  [7]Οριστικές αποφάσεις στο Προεδρικό
+    Links:
+      7. http://www.philenews.com/el-gr/Oikonomia-Kypros-XAK/3353/87713
+
+  Ο ΔΗΣΥ θα θεωρήσει κάζους μπέλι μια πιθανή υπαναχώρηση του Προεδρικού από
+  τα όσα θα αποφασιστούν στην αυριανή σύσκεψη. προειδοποίησε χθες ο πρόεδρος
+  του κόμματος το Προεδρικό.
+
+  [8]Σύγκρουση MIG με Μarfin
+    Links:
+      8. http://www.philenews.com/el-gr/Oikonomia-Kypros-XAK/3353/87714
+
+  Μετά την αποχώρηση του Ανδρέα Βγενόπουλο από τη θέση του προέδρου του Δ.Σ
+  της Τράπεζας έγιναν φανερές οι διαιρετικές τάσεις και η διάσταση απόψεων
+  μεταξύ  ελλαδικού  και  κυπριακού κομματιού της Τράπεζας για μια σειρά
+  θεμάτων.
+
+  [9]ΑΕΚ: «Το παιχνίδι είναι στα μέτρα μας»
+    Links:
+      9. http://www.sentragoal.com.cy/article.asp?catid=19181&subid=2&pubid=128876313
+
+  Την  πίστη,  αλλά  και  την  αισιοδοξία ότι η ομάδα του θα μπορέσει να
+  παρουσιάσει ένα καλό πρόσωπο εξέφρασε ο υπηρεσιακός προπονητής της ΑΕΚ,
+  Δημήτρης Δημητρίου στη συνέντευξη Τύπου ενόψει του αγώνα με τη Μακάμπι
+  Χάιφα στο ΓΣΠ.
+
+ΕΝΔΙΑΦΕΡΟΥΝ ΚΙ' ΑΥΤΑ
+
+  [10]Το πρώτο σχολείο του... σεξ στον κόσμο ανοίγει το 2012!
+    Links:
+      10. http://www.philenews.com/el-gr/Eidiseis-Ta-Perierga/4688/87700/to-proto-scholeio-tou-sex-ston-kosmo-anoigei-to-2012
+
+  Το πρώτο σχολείο σεξ είναι γεγονός! Πρόκειται για το Austrian International
+  School  of Sex (AISOS) που υπόσχεται κάνει τους μαθητές του καλύτερους
+  εραστές μέσω …εκπαίδευσης.
+
+  [11]Δεν πάω, δεν πάω για… ύπνο
+    Links:
+      11. http://www.philenews.com/el-gr/Ygeia/1152/87695/de-pao-den-pao-gia-ypno
+
+  Πώς θα αντιμετωπίσετε τις… «πολεμικές» μάχες και τα κλάματα πριν τον ύπνο;
+  Η αλήθεια είναι ότι τα πιο πολλά παιδιά σκαρφίζονται χιλιάδες πράγματα
+  προκειμένου  να  μην  πάνε  στο  κρεβάτι  τους  και  να το ξενυχτίσουν
+  «τυραννώντας» σας!
+
+  [12]Ραγδαία αύξηση της ανεργίας σε Κύπρο και Ευρωζώνη
+    Links:
+      12. http://www.philenews.com/el-gr/New-Homepage-With-Slider/4995/87694/ragdaia-ayxisi-tis-anergias-se-kypro-kai-evrozoni
+
+  Στο 8,2% του ενεργού πληθυσμού αυξήθηκε η ανεργία στην Κύπρο τον Οκτώβριο
+  από 7,9% το Σεπτέμβριο, σύμφωνα με τα στοιχεία που έδωσε στη δημοσιότητα η
+  Eurostat. Ιστορικό υψηλό κατέγραψε η ανεργία στην Ευρωζώνη.
+
+  _ΕΛΛΑΔΑ_
+
+  [13]Σε απεργιακό κλοιό η χώρα την Πέμπτη, λόγω 24ωρης απεργίας ΓΣΕΕ-ΑΔΕΔΥ
+    Links:
+      13. http://www.philenews.com/el-gr/Eidiseis-Ellada/23/87656/se-apergiako-kloio-i-chora-tin-pempti-logo-24oris-apergias-gsee-adedy
+
+  [14]Είκοσι πέντε συλλήψεις έπειτα από επιχείρηση σε καταστήματα με τυχερά
+  παιχνίδια
+    Links:
+      14. http://www.philenews.com/el-gr/Eidiseis-Ellada/23/87651/eikosi-pente-syllipseis-epeita-apo-epicheirisi-se-katastimata-me-tychera-paichnidia
+
+  _ΚΟΣΜΟΣ_
+  [15]Σε ψυχιατρικό άσυλο αντί στη φυλακή ο δολοφόνος της Νορβηγίας
+    Links:
+      15. http://www.philenews.com/el-gr/Eidiseis-Kosmos/25/87709/se-psychiatriko-asylo-anti-sti-fylaki-o-dolofonos-tis-norvigias
+
+  [16]Λίβυο ένοπλο που σκόρπισε τρόμο στην Κων/πολη σκότωσαν οι τουρκικές
+  Αρχές
+    Links:
+      16. http://www.philenews.com/el-gr/Eidiseis-Kosmos/25/87699/livyo-enoplo-pou-skorpise-tromo-stin-konpoli-skotosan-oi-tourkikes-arches
+
+  _ΑΘΛΗΤΙΚΑ ΝΕΑ_
+
+  _ ΚΥΠΡΟΣ_
+
+  [17]Ομόνοια: «Δεν χάθηκε ο κόσμος»
+    Links:
+      17. http://www.sentragoal.com.cy/article.asp?catid=19169&subid=2&pubid=128876251
+
+  [18]ΑΠΟΕΛ: Του φυσάνε και δεν κρυώνει
+    Links:
+      18. http://www.sentragoal.com.cy/article.asp?catid=19171&subid=2&pubid=128876318
+
+  [19]Έκπληξη στην Πάφο, θύμα το Παραλίμνι!
+    Links:
+      19. http://www.sentragoal.com.cy/article.asp?catid=19186&subid=2&pubid=128876181
+
+  _ ΕΛΛΑΔΑ & ΚΟΣΜΟΣ_
+
+  [20]Europa League: Δικέφαλη πτήση στους «32»
+    Links:
+      20. http://www.sentragoal.com.cy/article.asp?catid=19187&subid=2&pubid=128876347
+
+  [21]«Ερυθρόλευκο» πάρτι!
+    Links:
+      21. http://www.sentragoal.com.cy/article.asp?catid=19187&subid=2&pubid=128876343
+
+  _ΧΡΗΣΙΜΑ_
+
+  Γιορτάζουν σήμερα:
+
+  Θεόκλητος, Ιακώβ
+  Ναούμ, Φιλάρετος, Αρετή
+
+  [22]Αεροπορικές πτήσεις
+    Links:
+      22. http://www.philenews.com/el-gr/Aeroporikes-Ptiseis
+
+  [23]Φαρμακεία
+    Links:
+      23. http://www.philenews.com/el-gr/Farmakeia
+
+  [24]Λιμάνια
+    Links:
+      24. http://www.philenews.com/el-gr/Limeniki-Kinisi
+
+  [25]Τηλέφωνα
+    Links:
+      25. http://www.philenews.com/el-gr/Tilefwna
+
+  [26]Κληρώσεις /[27]Λαχεία
+    Links:
+      26. http://www.philenews.com/el-gr/Klirwseis-OPAP
+      27. http://www.philenews.com/el-gr/Klirwseis-OPAP
+
+  Copyright © 2011 Phileleftheros, All rights reserved.
+
+  [28]Unsubscribe from this list | [29]Update subscription preferences
+    Links:
+      28. http://philenews.us2.list-manage.com/unsubscribe?u=84e8c0ea4dc808b59204e2171&id=13cea9817b&e=b4828836f9&c=cd792011b3
+      29. http://philenews.us2.list-manage1.com/profile?u=84e8c0ea4dc808b59204e2171&id=13cea9817b&e=b4828836f9
+
+  [30]Αν επιθυμείτε να κάνετε εγγραφή στο newsletter κάντε κλικ εδώ
+    Links:
+      30. http://eepurl.com/getzb
+
+  To ensure future delivery of our e-mails,
+  please add newsletter@phileleftheros.com to your contacts.

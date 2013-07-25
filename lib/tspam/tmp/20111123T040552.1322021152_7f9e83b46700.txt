@@ -1,0 +1,35 @@
+Received: from baum-mail-01.a2zmoonlighter.com (10.25.0.20) by mail.guru.com
+ (10.15.5.21) with Microsoft SMTP Server (TLS) id 8.1.436.0; Tue, 22 Nov 2011
+ 23:06:05 -0500 from GURU_EMS.a2zmoonlighter.com (10.25.0.173) by
+ baum-mail-01.a2zmoonlighter.com (10.25.0.21) with Microsoft SMTP Server id
+ 8.1.436.0; Tue, 22 Nov 2011 23:05:42 -0500 
+Date: Tue, 22 Nov 2011 23:05:37 -0500 
+X-Priority: 3 (Normal) 
+Subject: Guru.com: Payment Name Changes 
+From: Guru.com <guru_enews@guru.com> 
+To: <k2pts@phigita.net> 
+X-TokenInfo-CID: 163 
+X-TokenInfo-UID: 727478 
+Message-ID: <6C80F6F285B81EF8678F6AAD3381B3CB700CB8C5@GURU_EMS.a2zmoonlighter.com> 
+Return-Path: bounce@guru.com 
+--------------------------------------
+Having trouble viewing this email? 
+
+Please visit http://answers.guru.com/pro/Announcements/Payment-Name-Changes.aspx
+
+Starting December 4, 2011, you will see the following name changes in the Guru Billing and Payment System...
+
+   * SafePay Account > Cash Account
+   * SafePay Invoice > Guru Invoice
+   * SafePay Escrow > Safepay
+   * SafePay Billing Code > Billing Code
+
+These  new names are intended to provide clarity and, therefore, make the payment system easier to use.
+
+Think about it... you can't use a credit card to deposit funds into your SafePay Account. You can only use check, e-check or wire transfer. Hence the change to "cash account."
+
+These new names will help reinforce the differences between the two very distinct service propositions, escrow and invoicing.
+
+Your tried and tested benefits... now with simpler names.
+
+

@@ -1,0 +1,60 @@
+hlcrie8r LucidaCalligraphy-Italic " TeXBase1Encoding ReEncodeFont " <8r.enc <lbc.pfb
+hlcrf8r LucidaBlackletter " TeXBase1Encoding ReEncodeFont " <8r.enc <lbl.pfb
+hlcrn8r LucidaCasual " TeXBase1Encoding ReEncodeFont " <8r.enc <lbkr.pfb
+hlcrin8r LucidaCasual-Italic " TeXBase1Encoding ReEncodeFont " <8r.enc <lbki.pfb
+hlcrt8r LucidaTypewriter " TeXBase1Encoding ReEncodeFont " <8r.enc <lbtr.pfb
+hlcrot8r LucidaTypewriterOblique " TeXBase1Encoding ReEncodeFont " <8r.enc <lbto.pfb
+hlcbt8r LucidaTypewriterBold " TeXBase1Encoding ReEncodeFont " <8r.enc <lbtb.pfb
+hlcbot8r LucidaTypewriterBoldOblique " TeXBase1Encoding ReEncodeFont " <8r.enc <lbtbo.pfb
+hlcriw8r LucidaHandwriting-Italic " TeXBase1Encoding ReEncodeFont " <8r.enc <lbh.pfb
+hlhr8r LucidaBright " TeXBase1Encoding ReEncodeFont " <8r.enc <lbr.pfb
+hlhri8r LucidaBright-Italic " TeXBase1Encoding ReEncodeFont " <8r.enc <lbi.pfb
+hlhro8r LucidaBright-Oblique " TeXBase1Encoding ReEncodeFont " <8r.enc <lbsl.pfb
+hlhrc8r LucidaBrightSmallcaps " TeXBase1Encoding ReEncodeFont " <8r.enc <lbrsc.pfb
+hlhb8r LucidaBright-Demi " TeXBase1Encoding ReEncodeFont " <8r.enc <lbd.pfb
+hlhbi8r LucidaBright-DemiItalic " TeXBase1Encoding ReEncodeFont " <8r.enc <lbdi.pfb
+hlhbc8r LucidaBrightSmallcaps-Demi " TeXBase1Encoding ReEncodeFont " <8r.enc <lbdsc.pfb
+hlsr8r LucidaSans " TeXBase1Encoding ReEncodeFont " <8r.enc <lsr.pfb
+hlsri8r LucidaSans-Italic " TeXBase1Encoding ReEncodeFont " <8r.enc <lsi.pfb
+hlsb8r LucidaSans-Demi " TeXBase1Encoding ReEncodeFont " <8r.enc <lsd.pfb
+hlsbi8r LucidaSans-DemiItalic " TeXBase1Encoding ReEncodeFont " <8r.enc <lsdi.pfb
+hlsu8r LucidaSans-Bold " TeXBase1Encoding ReEncodeFont " <8r.enc <lsb.pfb
+hlsui8r LucidaSans-BoldItalic " TeXBase1Encoding ReEncodeFont " <8r.enc <lsbi.pfb
+hlsrt8r LucidaSans-Typewriter " TeXBase1Encoding ReEncodeFont " <8r.enc <lstr.pfb
+hlsrot8r LucidaSans-TypewriterOblique " TeXBase1Encoding ReEncodeFont " <8r.enc <lsto.pfb
+hlsbt8r LucidaSans-TypewriterBold " TeXBase1Encoding ReEncodeFont " <8r.enc <lstb.pfb
+hlsbot8r LucidaSans-TypewriterBoldOblique " TeXBase1Encoding ReEncodeFont " <8r.enc <lstbo.pfb
+hlxr8r LucidaFax " TeXBase1Encoding ReEncodeFont " <8r.enc <lfr.pfb
+hlxri8r LucidaFax-Italic " TeXBase1Encoding ReEncodeFont " <8r.enc <lfi.pfb
+hlxb8r LucidaFax-Demi " TeXBase1Encoding ReEncodeFont " <8r.enc <lfd.pfb
+hlxbi8r LucidaFax-DemiItalic " TeXBase1Encoding ReEncodeFont " <8r.enc <lfdi.pfb
+hlcrie8y  LucidaCalligraphy-Italic           "TeXnANSIEncoding ReEncodeFont" <texnansi.enc <lbc.pfb
+hlhb8y    LucidaBright-Demi                  "TeXnANSIEncoding ReEncodeFont" <texnansi.enc <lbd.pfb
+hlhbi8y   LucidaBright-DemiItalic            "TeXnANSIEncoding ReEncodeFont" <texnansi.enc <lbdi.pfb
+hlhbc8y   LucidaBrightSmallcaps-Demi         "TeXnANSIEncoding ReEncodeFont" <texnansi.enc <lbdsc.pfb
+hlcriw8y  LucidaHandwriting-Italic           "TeXnANSIEncoding ReEncodeFont" <texnansi.enc <lbh.pfb
+hlhri8y   LucidaBright-Italic                "TeXnANSIEncoding ReEncodeFont" <texnansi.enc <lbi.pfb
+hlcrin8y  LucidaCasual-Italic                "TeXnANSIEncoding ReEncodeFont" <texnansi.enc <lbki.pfb
+hlcrn8y   LucidaCasual                       "TeXnANSIEncoding ReEncodeFont" <texnansi.enc <lbkr.pfb
+hlcrf8y   LucidaBlackletter                  "TeXnANSIEncoding ReEncodeFont" <texnansi.enc <lbl.pfb
+hlhr8y    LucidaBright                       "TeXnANSIEncoding ReEncodeFont" <texnansi.enc <lbr.pfb
+hlhrc8y   LucidaBrightSmallcaps              "TeXnANSIEncoding ReEncodeFont" <texnansi.enc <lbrsc.pfb
+hlhro8y   LucidaBright-Oblique               "TeXnANSIEncoding ReEncodeFont" <texnansi.enc <lbsl.pfb
+hlcbt8y   LucidaTypewriterBold               "TeXnANSIEncoding ReEncodeFont" <texnansi.enc <lbtb.pfb
+hlcbot8y  LucidaTypewriterBoldOblique        "TeXnANSIEncoding ReEncodeFont" <texnansi.enc <lbtbo.pfb
+hlcrot8y  LucidaTypewriterOblique            "TeXnANSIEncoding ReEncodeFont" <texnansi.enc <lbto.pfb
+hlcrt8y   LucidaTypewriter                   "TeXnANSIEncoding ReEncodeFont" <texnansi.enc <lbtr.pfb
+hlxb8y    LucidaFax-Demi                     "TeXnANSIEncoding ReEncodeFont" <texnansi.enc <lfd.pfb
+hlxbi8y   LucidaFax-DemiItalic               "TeXnANSIEncoding ReEncodeFont" <texnansi.enc <lfdi.pfb
+hlxri8y   LucidaFax-Italic                   "TeXnANSIEncoding ReEncodeFont" <texnansi.enc <lfi.pfb
+hlxr8y    LucidaFax                          "TeXnANSIEncoding ReEncodeFont" <texnansi.enc <lfr.pfb
+hlsu8y    LucidaSans-Bold                    "TeXnANSIEncoding ReEncodeFont" <texnansi.enc <lsb.pfb
+hlsui8y   LucidaSans-BoldItalic              "TeXnANSIEncoding ReEncodeFont" <texnansi.enc <lsbi.pfb
+hlsb8y    LucidaSans-Demi                    "TeXnANSIEncoding ReEncodeFont" <texnansi.enc <lsd.pfb
+hlsbi8y   LucidaSans-DemiItalic              "TeXnANSIEncoding ReEncodeFont" <texnansi.enc <lsdi.pfb
+hlsri8y   LucidaSans-Italic                  "TeXnANSIEncoding ReEncodeFont" <texnansi.enc <lsi.pfb
+hlsr8y    LucidaSans                         "TeXnANSIEncoding ReEncodeFont" <texnansi.enc <lsr.pfb
+hlsbt8y   LucidaSans-TypewriterBold          "TeXnANSIEncoding ReEncodeFont" <texnansi.enc <lstb.pfb
+hlsbot8y  LucidaSans-TypewriterBoldOblique   "TeXnANSIEncoding ReEncodeFont" <texnansi.enc <lstbo.pfb
+hlsrot8y  LucidaSans-TypewriterOblique       "TeXnANSIEncoding ReEncodeFont" <texnansi.enc <lsto.pfb
+hlsrt8y   LucidaSans-Typewriter              "TeXnANSIEncoding ReEncodeFont" <texnansi.enc <lstr.pfb

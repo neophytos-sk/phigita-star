@@ -1,0 +1,11 @@
+Received: from 221.137.66.94 by server46.appriver.com; Tue, 20 Sep 2011 11:44:16 +0800 
+Date: Tue, 20 Sep 2011 11:44:16 +0800 
+From: =?koi8-r?B?Iu3P08vXwSI=?= <playroomsiu959@grouptech.com> 
+X-Mailer: The Bat! (v3.5.25) Educational 
+Reply-To: playroomsiu959@grouptech.com 
+X-Priority: 3 (Normal) 
+Message-ID: <799579710.04285775914662@grouptech.com> 
+To: webmaster@phigita.net 
+Subject: =?koi8-r?B?IO7p+uvp5SDj5e75IO7hIPDv7Onn8uHm6eAhIPfp+un06+kgMzYwINIu?= 
+--------------------------------------
+ content-type=image/jpeg part-token=::mime::3690-2

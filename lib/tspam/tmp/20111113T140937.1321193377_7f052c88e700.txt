@@ -1,0 +1,11 @@
+Received: (qmail 11461 invoked from network); 13 Nov 2011 08:25:50 +0900 from unknown (HELO htqlb) (admin@110.53.24.18)
+	by 0 (qmail 1.03 + ejcp) with SMTP;
+	13 Nov 2011 08:25:50 +0900 
+Message-ID: <20111113072713584201@motorpolish.co.kr> 
+From: =?gb2312?B?yq+6xs/p?= <admin@motorpolish.co.kr> 
+To:  
+Subject: =?gb2312?B?0NAu1f4uuaQu1/cuzbMus+8uudwuwO0uuN8uvLYu?=
+	=?gb2312?B?0dAu0N4usOAtLS0tyq+6xs/p?= 
+Date: Sun, 13 Nov 2011 07:27:05 +0800 
+X-mailer: Chpcsjs 8 
+Whoops!  What is a 'application/vnd.ms-excel'?

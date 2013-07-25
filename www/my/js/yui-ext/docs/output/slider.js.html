@@ -1,0 +1,1116 @@
+<html><head><title>slider.js</title><link rel="stylesheet" type="text/css" href="../resources/style.css" media="screen"/></head><body><h1>slider.js</h1><pre class="highlighted"><code><i>/*                                                                                                                                                      
+Copyright (c) 2006, Yahoo! Inc. All rights reserved.
+Code licensed under the BSD License:
+http:<i>//developer.yahoo.net/yui/license.txt</i>
+version: 0.12.0
+*/</i>
+<i>// holder</i>
+<i>/**
+ * The Slider component is a UI control that enables the user to adjust 
+ * values <b>in</b> a finite range along one or two axes. Typically, the Slider 
+ * control is used <b>in</b> a web application as a rich, visual replacement 
+ * <b>for</b> an input box that takes a number as input. The Slider control can 
+ * also easily accommodate a second dimension, providing x,y output <b>for</b> 
+ * a selection point chosen from a rectangular region.
+ *
+ * @module    slider
+ * @title     Slider Widget
+ * @namespace YAHOO.widget
+ * @requires  yahoo,dom,dragdrop,event
+ * @optional  animation
+ */</i>
+<i>// holder</i>
+<i>/**
+ * A DragDrop implementation that can be used as a background <b>for</b> a
+ * slider.  It takes a reference to the thumb instance 
+ * so it can delegate some of the events to it.  The goal is to make the 
+ * thumb jump to the location on the background when the background is 
+ * clicked.  
+ *
+ * @class Slider
+ * @extends YAHOO.util.DragDrop
+ * @constructor
+ * @param {String} id     The id of the element linked to <b>this</b> instance
+ * @param {String} sGroup The group of related DragDrop items
+ * @param {String} sType  The type of slider (horiz, vert, region)
+ */</i>
+YAHOO.widget.Slider = <b>function</b>(sElementId, sGroup, oThumb, sType) {
+    <b>if</b> (sElementId) {
+
+        <i>/**
+         * The type of the slider (horiz, vert, region)
+         * @property type
+         * @type string
+         */</i>
+        <b>this</b>.type = sType;
+
+        <b>this</b>.init(sElementId, sGroup, true);
+
+        <i>//<b>this</b>.removeInvalidHandleType(&quot;A&quot;);</i>
+
+
+        <b>var</b> self = <b>this</b>;
+
+        <i>/**
+         * Event the fires when the value of the control changes.  If 
+         * the control is animated the event will fire every point
+         * along the way.
+         * @event change
+         * @param {int} <b>new</b>
+         * @param {int} firstOffset the number of pixels the thumb has moved
+         * from its start position. Normal horizontal and vertical sliders will only
+         * have the firstOffset.  Regions will have both, the first is the horizontal
+         * offset, the second the vertical.
+         * @param {int} secondOffset the y offset <b>for</b> region sliders
+         */</i>
+        <b>this</b>.createEvent(&quot;change&quot;, <b>this</b>);
+
+        <i>/**
+         * Event that fires at the end of a slider thumb move.
+         * @event slideStart
+         */</i>
+        <b>this</b>.createEvent(&quot;slideStart&quot;, <b>this</b>);
+
+        <i>/**
+         * Event that fires at the end of a slider thumb move
+         * @event slideEnd
+         */</i>
+        <b>this</b>.createEvent(&quot;slideEnd&quot;, <b>this</b>);
+
+        <i>/**
+         * A YAHOO.widget.SliderThumb instance that we will use to 
+         * reposition the thumb when the background is clicked
+         * @property thumb
+         * @type YAHOO.widget.SliderThumb
+         */</i>
+        <b>this</b>.thumb = oThumb;
+
+        <i>// add handler <b>for</b> the handle onchange event</i>
+        oThumb.onChange = <b>function</b>() { 
+            self.handleThumbChange(); 
+        };
+
+        <i>/**
+         * Overrides the isTarget property <b>in</b> YAHOO.util.DragDrop
+         * @property isTarget
+         * @private
+         */</i>
+        <b>this</b>.isTarget = false;
+    
+        <i>/**
+         * Flag that determines <b>if</b> the thumb will animate when moved
+         * @property animate
+         * @type boolean
+         */</i>
+        <b>this</b>.animate = YAHOO.widget.Slider.ANIM_AVAIL;
+
+        <i>/**
+         * Set to false to disable a background click thumb move
+         * @property backgroundEnabled
+         * @type boolean
+         */</i>
+        <b>this</b>.backgroundEnabled = true;
+
+        <i>/**
+         * Adjustment factor <b>for</b> tick animation, the more ticks, the
+         * faster the animation (by <b>default</b>)
+         * @property tickPause
+         * @type int
+         */</i>
+        <b>this</b>.tickPause = 40;
+
+        <i>/**
+         * Enables the arrow, home and end keys, defaults to true.
+         * @property enableKeys
+         * @type boolean
+         */</i>
+        <b>this</b>.enableKeys = true;
+
+        <i>/**
+         * Specifies the number of pixels the arrow keys will move the slider.
+         * Default is 25.
+         * @property keyIncrement
+         * @type int
+         */</i>
+        <b>this</b>.keyIncrement = 20;
+
+        <i>/**
+         * moveComplete is set to true when the slider has moved to its final
+         * destination.  For animated slider, <b>this</b> value can be checked <b>in</b> 
+         * the onChange handler to make it possible to execute logic only
+         * when the move is complete rather than at all points along the way.
+         *
+         * @property moveComplete
+         * @type Boolean
+         */</i>
+        <b>this</b>.moveComplete = true;
+
+        <i>/**
+         * If animation is configured, specifies the length of the animation
+         * <b>in</b> seconds.
+         * @property animationDuration
+         * @type int
+         * @<b>default</b> 0.2
+         */</i>
+        <b>this</b>.animationDuration = 0.2;
+
+        <b>if</b> (oThumb._isHoriz &amp;&amp; oThumb.xTicks &amp;&amp; oThumb.xTicks.length) {
+            <b>this</b>.tickPause = Math.round(360 / oThumb.xTicks.length);
+        } <b>else</b> if (oThumb.yTicks &amp;&amp; oThumb.yTicks.length) {
+            <b>this</b>.tickPause = Math.round(360 / oThumb.yTicks.length);
+        }
+
+
+        <i>// delegate thumb methods</i>
+        oThumb.onMouseDown = <b>function</b> () { <b>return</b> self.focus(); };
+        <i>//oThumb.b4MouseDown = <b>function</b> () { <b>return</b> self.b4MouseDown(); };</i>
+        <i>// oThumb.lock = <b>function</b>() { self.lock(); };</i>
+        <i>// oThumb.unlock = <b>function</b>() { self.unlock(); };</i>
+        oThumb.onMouseUp = <b>function</b>() { self.thumbMouseUp(); };
+        oThumb.onDrag = <b>function</b>() { self.fireEvents(); };
+        oThumb.onAvailable = <b>function</b>() { <b>return</b> self.setStartSliderState(); };
+    }
+};
+
+<i>/**
+ * Factory method <b>for</b> creating a horizontal slider
+ * @method YAHOO.widget.Slider.getHorizSlider
+ * @static
+ * @param {String} sBGElId the id of the slider's background element
+ * @param {String} sHandleElId the id of the thumb element
+ * @param {int} iLeft the number of pixels the element can move left
+ * @param {int} iRight the number of pixels the element can move right
+ * @param {int} iTickSize optional parameter <b>for</b> specifying that the element 
+ * should move a certain number pixels at a time.
+ * @<b>return</b> {Slider} a horizontal slider control
+ */</i>
+YAHOO.widget.Slider.getHorizSlider = 
+    <b>function</b> (sBGElId, sHandleElId, iLeft, iRight, iTickSize) {
+        <b>return</b> new YAHOO.widget.Slider(sBGElId, sBGElId, 
+            <b>new</b> YAHOO.widget.SliderThumb(sHandleElId, sBGElId, 
+                               iLeft, iRight, 0, 0, iTickSize), &quot;horiz&quot;);
+};
+
+<i>/**
+ * Factory method <b>for</b> creating a vertical slider
+ * @method YAHOO.widget.Slider.getVertSlider
+ * @static
+ * @param {String} sBGElId the id of the slider's background element
+ * @param {String} sHandleElId the id of the thumb element
+ * @param {int} iUp the number of pixels the element can move up
+ * @param {int} iDown the number of pixels the element can move down
+ * @param {int} iTickSize optional parameter <b>for</b> specifying that the element 
+ * should move a certain number pixels at a time.
+ * @<b>return</b> {Slider} a vertical slider control
+ */</i>
+YAHOO.widget.Slider.getVertSlider = 
+    <b>function</b> (sBGElId, sHandleElId, iUp, iDown, iTickSize) {
+        <b>return</b> new YAHOO.widget.Slider(sBGElId, sBGElId, 
+            <b>new</b> YAHOO.widget.SliderThumb(sHandleElId, sBGElId, 0, 0, 
+                               iUp, iDown, iTickSize), &quot;vert&quot;);
+};
+
+<i>/**
+ * Factory method <b>for</b> creating a slider region like the one <b>in</b> the color
+ * picker example
+ * @method YAHOO.widget.Slider.getSliderRegion
+ * @static
+ * @param {String} sBGElId the id of the slider's background element
+ * @param {String} sHandleElId the id of the thumb element
+ * @param {int} iLeft the number of pixels the element can move left
+ * @param {int} iRight the number of pixels the element can move right
+ * @param {int} iUp the number of pixels the element can move up
+ * @param {int} iDown the number of pixels the element can move down
+ * @param {int} iTickSize optional parameter <b>for</b> specifying that the element 
+ * should move a certain number pixels at a time.
+ * @<b>return</b> {Slider} a slider region control
+ */</i>
+YAHOO.widget.Slider.getSliderRegion = 
+    <b>function</b> (sBGElId, sHandleElId, iLeft, iRight, iUp, iDown, iTickSize) {
+        <b>return</b> new YAHOO.widget.Slider(sBGElId, sBGElId, 
+            <b>new</b> YAHOO.widget.SliderThumb(sHandleElId, sBGElId, iLeft, iRight, 
+                               iUp, iDown, iTickSize), &quot;region&quot;);
+};
+
+<i>/**
+ * By <b>default</b>, animation is available <b>if</b> the animation library is detected.
+ * @property YAHOO.widget.Slider.ANIM_AVAIL
+ * @static
+ * @type boolean
+ */</i>
+YAHOO.widget.Slider.ANIM_AVAIL = true;
+
+YAHOO.extend(YAHOO.widget.Slider, YAHOO.util.DragDrop, {
+
+    onAvailable: <b>function</b>() {
+        <b>var</b> Event = YAHOO.util.Event;
+        Event.on(<b>this</b>.id, &quot;keydown&quot;,  <b>this</b>.handleKeyDown,  <b>this</b>, true);
+        Event.on(<b>this</b>.id, &quot;keypress&quot;, <b>this</b>.handleKeyPress, <b>this</b>, true);
+    },
+ 
+    handleKeyPress: <b>function</b>(e) {
+        <b>if</b> (<b>this</b>.enableKeys) {
+            <b>var</b> Event = YAHOO.util.Event;
+            <b>var</b> kc = Event.getCharCode(e);
+            <b>switch</b> (kc) {
+                <b>case</b> 0x25: <i>// left</i>
+                <b>case</b> 0x26: <i>// up</i>
+                <b>case</b> 0x27: <i>// right</i>
+                <b>case</b> 0x28: <i>// down</i>
+                <b>case</b> 0x24: <i>// home</i>
+                <b>case</b> 0x23: <i>// end</i>
+                    Event.preventDefault(e);
+                    <b>break</b>;
+                <b>default</b>:
+            }
+        }
+   },
+
+    handleKeyDown: <b>function</b>(e) {
+        <b>if</b> (<b>this</b>.enableKeys) {
+            <b>var</b> Event = YAHOO.util.Event;
+
+            <b>var</b> kc = Event.getCharCode(e), t=<b>this</b>.thumb;
+            <b>var</b> h=<b>this</b>.getXValue(),v=<b>this</b>.getYValue();
+
+            <b>var</b> horiz = false;
+            <b>var</b> changeValue = true;
+            <b>switch</b> (kc) {
+
+                <i>// left</i>
+                <b>case</b> 0x25: h -= <b>this</b>.keyIncrement; <b>break</b>;
+
+                <i>// up</i>
+                <b>case</b> 0x26: v -= <b>this</b>.keyIncrement; <b>break</b>;
+
+                <i>// right</i>
+                <b>case</b> 0x27: h += <b>this</b>.keyIncrement; <b>break</b>;
+
+                <i>// down</i>
+                <b>case</b> 0x28: v += <b>this</b>.keyIncrement; <b>break</b>;
+
+                <i>// home</i>
+                <b>case</b> 0x24: h = t.leftConstraint;    
+                           v = t.topConstraint;    
+                           <b>break</b>;
+
+                <i>// end</i>
+                <b>case</b> 0x23: h = t.rightConstraint; 
+                           v = t.bottomConstraint;    
+                           <b>break</b>;
+
+                <b>default</b>:   changeValue = false;
+            }
+
+            <b>if</b> (changeValue) {
+                <b>if</b> (t._isRegion) {
+                    <b>this</b>.setRegionValue(h, v, true);
+                } <b>else</b> {
+                    <b>var</b> newVal = (t._isHoriz) ? h : v;
+                    <b>this</b>.setValue(newVal, true);
+                }
+                Event.stopEvent(e);
+            }
+
+        }
+    },
+
+    <i>/**
+     * Initialization that sets up the value offsets once the elements are ready
+     * @method setSliderStartState
+     */</i>
+    setStartSliderState: <b>function</b>() {
+
+
+        <b>this</b>.setThumbCenterPoint();
+
+        <i>/**
+         * The basline position of the background element, used
+         * to determine <b>if</b> the background has moved since the last
+         * operation.
+         * @property baselinePos
+         * @type [int, int]
+         */</i>
+        <b>this</b>.baselinePos = YAHOO.util.Dom.getXY(<b>this</b>.getEl());
+
+        <b>this</b>.thumb.startOffset = <b>this</b>.thumb.getOffsetFromParent(<b>this</b>.baselinePos);
+
+        <b>if</b> (<b>this</b>.thumb._isRegion) {
+            <b>if</b> (<b>this</b>.deferredSetRegionValue) {
+                <b>this</b>.setRegionValue.apply(<b>this</b>, <b>this</b>.deferredSetRegionValue, true);
+                <b>this</b>.deferredSetRegionValue = null;
+            } <b>else</b> {
+                <b>this</b>.setRegionValue(0, 0, true);
+            }
+        } <b>else</b> {
+            <b>if</b> (<b>this</b>.deferredSetValue) {
+                <b>this</b>.setValue.apply(<b>this</b>, <b>this</b>.deferredSetValue, true);
+                <b>this</b>.deferredSetValue = null;
+            } <b>else</b> {
+                <b>this</b>.setValue(0, true, true);
+            }
+        }
+    },
+
+    <i>/**
+     * When the thumb is available, we cache the centerpoint of the element so
+     * we can position the element correctly when the background is clicked
+     * @method setThumbCenterPoint
+     */</i>
+    setThumbCenterPoint: <b>function</b>() {
+
+        <b>var</b> el = <b>this</b>.thumb.getEl();
+
+        <b>if</b> (el) {
+            <i>/**
+             * The center of the slider element is stored so we can position 
+             * place it <b>in</b> the correct position when the background is clicked
+             * @property thumbCenterPoint
+             * @type {&quot;x&quot;: int, &quot;y&quot;: int}
+             */</i>
+            <b>this</b>.thumbCenterPoint = { 
+                    x: parseInt(el.offsetWidth/2, 10), 
+                    y: parseInt(el.offsetHeight/2, 10) 
+            };
+        }
+
+    },
+
+    <i>/**
+     * Locks the slider, overrides YAHOO.util.DragDrop
+     * @method lock
+     */</i>
+    lock: <b>function</b>() {
+        <b>this</b>.thumb.lock();
+        <b>this</b>.locked = true;
+    },
+
+    <i>/**
+     * Unlocks the slider, overrides YAHOO.util.DragDrop
+     * @method unlock
+     */</i>
+    unlock: <b>function</b>() {
+        <b>this</b>.thumb.unlock();
+        <b>this</b>.locked = false;
+    },
+
+    <i>/**
+     * Handles mouseup event on the slider background
+     * @method thumbMouseUp
+     * @private
+     */</i>
+    thumbMouseUp: <b>function</b>() {
+        <b>if</b> (!<b>this</b>.isLocked() &amp;&amp; !<b>this</b>.moveComplete) {
+            <b>this</b>.endMove();
+        }
+
+    },
+
+    <i>/**
+     * Returns a reference to <b>this</b> slider's thumb
+     * @method getThumb
+     * @<b>return</b> {SliderThumb} <b>this</b> slider's thumb
+     */</i>
+    getThumb: <b>function</b>() {
+        <b>return</b> this.thumb;
+    },
+
+    <i>/**
+     * Try to focus the element when clicked so we can add
+     * accessibility features
+     * @method focus
+     * @private
+     */</i>
+    focus: <b>function</b>() {
+
+        <i>// Focus the background element <b>if</b> possible</i>
+        <b>var</b> el = <b>this</b>.getEl();
+
+        <b>if</b> (el.focus) {
+            try {
+                el.focus();
+            } catch(e) {
+                <i>// Prevent permission denied unhandled exception <b>in</b> FF that can</i>
+                <i>// happen when setting focus <b>while</b> another element is handling</i>
+                <i>// the blur.  @TODO <b>this</b> is still writing to the error log </i>
+                <i>// (unhandled error) <b>in</b> FF1.5 <b>with</b> strict error checking on.</i>
+            }
+        }
+
+        <b>this</b>.verifyOffset();
+
+        <b>if</b> (<b>this</b>.isLocked()) {
+            <b>return</b> false;
+        } <b>else</b> {
+            <b>this</b>.onSlideStart();
+            <b>return</b> true;
+        }
+    },
+
+    <i>/**
+     * Event that fires when the value of the slider has changed
+     * @method onChange
+     * @param {int} firstOffset the number of pixels the thumb has moved
+     * from its start position. Normal horizontal and vertical sliders will only
+     * have the firstOffset.  Regions will have both, the first is the horizontal
+     * offset, the second the vertical.
+     * @param {int} secondOffset the y offset <b>for</b> region sliders
+     * @deprecated use instance.subscribe(&quot;change&quot;) instead
+     */</i>
+    onChange: <b>function</b> (firstOffset, secondOffset) { 
+        <i>/* override me */</i> 
+    },
+
+    <i>/**
+     * Event that fires when the at the beginning of the slider thumb move
+     * @method onSlideStart
+     * @deprecated use instance.subscribe(&quot;slideStart&quot;) instead
+     */</i>
+    onSlideStart: <b>function</b> () { 
+        <i>/* override me */</i> 
+    },
+
+    <i>/**
+     * Event that fires at the end of a slider thumb move
+     * @method onSliderEnd
+     * @deprecated use instance.subscribe(&quot;slideEnd&quot;) instead
+     */</i>
+    onSlideEnd: <b>function</b> () { 
+        <i>/* override me */</i> 
+    },
+
+    <i>/**
+     * Returns the slider's thumb offset from the start position
+     * @method getValue
+     * @<b>return</b> {int} the current value
+     */</i>
+    getValue: <b>function</b> () { 
+        <b>return</b> this.thumb.getValue();
+    },
+
+    <i>/**
+     * Returns the slider's thumb X offset from the start position
+     * @method getXValue
+     * @<b>return</b> {int} the current horizontal offset
+     */</i>
+    getXValue: <b>function</b> () { 
+        <b>return</b> this.thumb.getXValue();
+    },
+
+    <i>/**
+     * Returns the slider's thumb Y offset from the start position
+     * @method getYValue
+     * @<b>return</b> {int} the current vertical offset
+     */</i>
+    getYValue: <b>function</b> () { 
+        <b>return</b> this.thumb.getYValue();
+    },
+
+    <i>/**
+     * Internal handler <b>for</b> the slider thumb's onChange event
+     * @method handleThumbChange
+     * @private
+     */</i>
+    handleThumbChange: <b>function</b> () { 
+        <b>var</b> t = <b>this</b>.thumb;
+        <b>if</b> (t._isRegion) {
+            t.onChange(t.getXValue(), t.getYValue());
+            <b>this</b>.fireEvent(&quot;change&quot;, { x: t.getXValue(), y: t.getYValue() } );
+        } <b>else</b> {
+            t.onChange(t.getValue());
+            <b>this</b>.fireEvent(&quot;change&quot;, t.getValue());
+        }
+
+    },
+
+    <i>/**
+     * Provides a way to set the value of the slider <b>in</b> code.
+     * @method setValue
+     * @param {int} newOffset the number of pixels the thumb should be
+     * positioned away from the initial start point 
+     * @param {boolean} skipAnim set to true to disable the animation
+     * <b>for</b> this move action (but not others).
+     * @param {boolean} force ignore the locked setting and set value anyway
+     * @<b>return</b> {boolean} true <b>if</b> the move was performed, false <b>if</b> it failed
+     */</i>
+    setValue: <b>function</b>(newOffset, skipAnim, force) {
+
+        <b>if</b> (!<b>this</b>.thumb.available) {
+            <b>this</b>.deferredSetValue = arguments;
+            <b>return</b> false;
+        }
+
+        <b>if</b> (<b>this</b>.isLocked() &amp;&amp; !force) {
+            <b>return</b> false;
+        }
+
+        <b>if</b> ( isNaN(newOffset) ) {
+            <b>return</b> false;
+        }
+
+        <b>var</b> t = <b>this</b>.thumb;
+        <b>var</b> newX, newY;
+        <b>this</b>.verifyOffset();
+        <b>if</b> (t._isRegion) {
+            <b>return</b> false;
+        } <b>else</b> if (t._isHoriz) {
+            <b>this</b>.onSlideStart();
+            <i>// <b>this</b>.fireEvent(&quot;slideStart&quot;);</i>
+            newX = t.initPageX + newOffset + <b>this</b>.thumbCenterPoint.x;
+            <b>this</b>.moveThumb(newX, t.initPageY, skipAnim);
+        } <b>else</b> {
+            <b>this</b>.onSlideStart();
+            <i>// <b>this</b>.fireEvent(&quot;slideStart&quot;);</i>
+            newY = t.initPageY + newOffset + <b>this</b>.thumbCenterPoint.y;
+            <b>this</b>.moveThumb(t.initPageX, newY, skipAnim);
+        }
+
+        <b>return</b> true;
+    },
+
+    <i>/**
+     * Provides a way to set the value of the region slider <b>in</b> code.
+     * @method setRegionValue
+     * @param {int} newOffset the number of pixels the thumb should be
+     * positioned away from the initial start point (x axis <b>for</b> region)
+     * @param {int} newOffset2 the number of pixels the thumb should be
+     * positioned away from the initial start point (y axis <b>for</b> region)
+     * @param {boolean} skipAnim set to true to disable the animation
+     * <b>for</b> this move action (but not others).
+     * @param {boolean} force ignore the locked setting and set value anyway
+     * @<b>return</b> {boolean} true <b>if</b> the move was performed, false <b>if</b> it failed
+     */</i>
+    setRegionValue: <b>function</b>(newOffset, newOffset2, skipAnim) {
+
+        <b>if</b> (!<b>this</b>.thumb.available) {
+            <b>this</b>.deferredSetRegionValue = arguments;
+            <b>return</b> false;
+        }
+
+        <b>if</b> (<b>this</b>.isLocked() &amp;&amp; !force) {
+            <b>return</b> false;
+        }
+
+        <b>if</b> ( isNaN(newOffset) ) {
+            <b>return</b> false;
+        }
+
+        <b>var</b> t = <b>this</b>.thumb;
+        <b>if</b> (t._isRegion) {
+            <b>this</b>.onSlideStart();
+            <b>var</b> newX = t.initPageX + newOffset + <b>this</b>.thumbCenterPoint.x;
+            <b>var</b> newY = t.initPageY + newOffset2 + <b>this</b>.thumbCenterPoint.y;
+            <b>this</b>.moveThumb(newX, newY, skipAnim);
+            <b>return</b> true;
+        }
+
+        <b>return</b> false;
+
+    },
+
+    <i>/**
+     * Checks the background position element position.  If it has moved from the
+     * baseline position, the constraints <b>for</b> the thumb are reset
+     * @method verifyOffset
+     * @<b>return</b> {boolean} True <b>if</b> the offset is the same as the baseline.
+     */</i>
+    verifyOffset: <b>function</b>() {
+
+        <b>var</b> newPos = YAHOO.util.Dom.getXY(<b>this</b>.getEl());
+
+        <b>if</b> (newPos[0] != <b>this</b>.baselinePos[0] || newPos[1] != <b>this</b>.baselinePos[1]) {
+            <b>this</b>.thumb.resetConstraints();
+            <b>this</b>.baselinePos = newPos;
+            <b>return</b> false;
+        }
+
+        <b>return</b> true;
+    },
+
+    <i>/**
+     * Move the associated slider moved to a timeout to try to get around the 
+     * mousedown stealing moz does when I move the slider element between the 
+     * cursor and the background during the mouseup event
+     * @method moveThumb
+     * @param {int} x the X coordinate of the click
+     * @param {int} y the Y coordinate of the click
+     * @param {boolean} skipAnim don't animate <b>if</b> the move happend onDrag
+     * @private
+     */</i>
+    moveThumb: <b>function</b>(x, y, skipAnim) {
+
+
+        <b>var</b> t = <b>this</b>.thumb;
+        <b>var</b> self = <b>this</b>;
+
+        <b>if</b> (!t.available) {
+            <b>return</b>;
+        }
+
+
+        <i>// <b>this</b>.verifyOffset();</i>
+
+        t.setDelta(<b>this</b>.thumbCenterPoint.x, <b>this</b>.thumbCenterPoint.y);
+
+        <b>var</b> _p = t.getTargetCoord(x, y);
+        <b>var</b> p = [_p.x, _p.y];
+
+        <b>this</b>.fireEvent(&quot;slideStart&quot;);
+
+        <b>if</b> (<b>this</b>.animate &amp;&amp; YAHOO.widget.Slider.ANIM_AVAIL &amp;&amp; t._graduated &amp;&amp; !skipAnim) {
+            <i>// <b>this</b>.thumb._animating = true;</i>
+            <b>this</b>.lock();
+            
+            setTimeout( <b>function</b>() { self.moveOneTick(p); }, <b>this</b>.tickPause );
+
+        } <b>else</b> if (<b>this</b>.animate &amp;&amp; YAHOO.widget.Slider.ANIM_AVAIL &amp;&amp; !skipAnim) {
+
+            <i>// <b>this</b>.thumb._animating = true;</i>
+            <b>this</b>.lock();
+
+            <b>var</b> oAnim = <b>new</b> YAHOO.util.Motion( 
+                    t.id, { points: { to: p } }, 
+                    <b>this</b>.animationDuration, 
+                    YAHOO.util.Easing.easeOut );
+
+            oAnim.onComplete.subscribe( <b>function</b>() { self.endMove(); } );
+            oAnim.animate();
+        } <b>else</b> {
+            t.setDragElPos(x, y);
+            <i>// <b>this</b>.fireEvents();</i>
+            <b>this</b>.endMove();
+        }
+    },
+
+    <i>/**
+     * Move the slider one tick mark towards its final coordinate.  Used
+     * <b>for</b> the animation when tick marks are defined
+     * @method moveOneTick
+     * @param {int[]} the destination coordinate
+     * @private
+     */</i>
+    moveOneTick: <b>function</b>(finalCoord) {
+
+        <b>var</b> t = <b>this</b>.thumb;
+        <b>var</b> curCoord = YAHOO.util.Dom.getXY(t.getEl());
+        <b>var</b> tmp;
+
+        <i>// <b>var</b> thresh = Math.min(t.tickSize + (Math.floor(t.tickSize/2)), 10);</i>
+        <i>// <b>var</b> thresh = 10;</i>
+        <i>// <b>var</b> thresh = t.tickSize + (Math.floor(t.tickSize/2));</i>
+
+        <b>var</b> nextCoord = null;
+
+        <b>if</b> (t._isRegion) {
+            nextCoord = <b>this</b>._getNextX(curCoord, finalCoord);
+            <b>var</b> tmpX = (nextCoord) ? nextCoord[0] : curCoord[0];
+            nextCoord = <b>this</b>._getNextY([tmpX, curCoord[1]], finalCoord);
+
+        } <b>else</b> if (t._isHoriz) {
+            nextCoord = <b>this</b>._getNextX(curCoord, finalCoord);
+        } <b>else</b> {
+            nextCoord = <b>this</b>._getNextY(curCoord, finalCoord);
+        }
+
+
+        <b>if</b> (nextCoord) {
+
+            <i>// move to the next coord</i>
+            <i>// YAHOO.util.Dom.setXY(t.getEl(), nextCoord);</i>
+
+            <i>// <b>var</b> el = t.getEl();</i>
+            <i>// YAHOO.util.Dom.setStyle(el, &quot;left&quot;, (nextCoord[0] + <b>this</b>.thumb.deltaSetXY[0]) + &quot;px&quot;);</i>
+            <i>// YAHOO.util.Dom.setStyle(el, &quot;top&quot;,  (nextCoord[1] + <b>this</b>.thumb.deltaSetXY[1]) + &quot;px&quot;);</i>
+
+            <b>this</b>.thumb.alignElWithMouse(t.getEl(), nextCoord[0], nextCoord[1]);
+            
+            <i>// check <b>if</b> we are <b>in</b> the final position, <b>if</b> not make a recursive call</i>
+            <b>if</b> (!(nextCoord[0] == finalCoord[0] &amp;&amp; nextCoord[1] == finalCoord[1])) {
+                <b>var</b> self = <b>this</b>;
+                setTimeout(<b>function</b>() { self.moveOneTick(finalCoord); }, 
+                        <b>this</b>.tickPause);
+            } <b>else</b> {
+                <b>this</b>.endMove();
+            }
+        } <b>else</b> {
+            <b>this</b>.endMove();
+        }
+
+        <i>//<b>this</b>.tickPause = Math.round(<b>this</b>.tickPause/2);</i>
+    },
+
+    <i>/**
+     * Returns the next X tick value based on the current coord and the target coord.
+     * @method _getNextX
+     * @private
+     */</i>
+    _getNextX: <b>function</b>(curCoord, finalCoord) {
+        <b>var</b> t = <b>this</b>.thumb;
+        <b>var</b> thresh;
+        <b>var</b> tmp = [];
+        <b>var</b> nextCoord = null;
+        <b>if</b> (curCoord[0] &gt; finalCoord[0]) {
+            thresh = t.tickSize - <b>this</b>.thumbCenterPoint.x;
+            tmp = t.getTargetCoord( curCoord[0] - thresh, curCoord[1] );
+            nextCoord = [tmp.x, tmp.y];
+        } <b>else</b> if (curCoord[0] &lt; finalCoord[0]) {
+            thresh = t.tickSize + <b>this</b>.thumbCenterPoint.x;
+            tmp = t.getTargetCoord( curCoord[0] + thresh, curCoord[1] );
+            nextCoord = [tmp.x, tmp.y];
+        } <b>else</b> {
+            <i>// equal, <b>do</b> nothing</i>
+        }
+
+        <b>return</b> nextCoord;
+    },
+
+    <i>/**
+     * Returns the next Y tick value based on the current coord and the target coord.
+     * @method _getNextY
+     * @private
+     */</i>
+    _getNextY: <b>function</b>(curCoord, finalCoord) {
+        <b>var</b> t = <b>this</b>.thumb;
+        <b>var</b> thresh;
+        <b>var</b> tmp = [];
+        <b>var</b> nextCoord = null;
+
+        <b>if</b> (curCoord[1] &gt; finalCoord[1]) {
+            thresh = t.tickSize - <b>this</b>.thumbCenterPoint.y;
+            tmp = t.getTargetCoord( curCoord[0], curCoord[1] - thresh );
+            nextCoord = [tmp.x, tmp.y];
+        } <b>else</b> if (curCoord[1] &lt; finalCoord[1]) {
+            thresh = t.tickSize + <b>this</b>.thumbCenterPoint.y;
+            tmp = t.getTargetCoord( curCoord[0], curCoord[1] + thresh );
+            nextCoord = [tmp.x, tmp.y];
+        } <b>else</b> {
+            <i>// equal, <b>do</b> nothing</i>
+        }
+
+        <b>return</b> nextCoord;
+    },
+
+    <i>/**
+     * Resets the constraints before moving the thumb.
+     * @method b4MouseDown
+     * @private
+     */</i>
+    b4MouseDown: <b>function</b>(e) {
+        <b>this</b>.thumb.autoOffset();
+        <b>this</b>.thumb.resetConstraints();
+    },
+
+    <i>/**
+     * Handles the mousedown event <b>for</b> the slider background
+     * @method onMouseDown
+     * @private
+     */</i>
+    onMouseDown: <b>function</b>(e) {
+        <i>// <b>this</b>.resetConstraints(true);</i>
+        <i>// <b>this</b>.thumb.resetConstraints(true);</i>
+
+        <b>if</b> (! <b>this</b>.isLocked() &amp;&amp; <b>this</b>.backgroundEnabled) {
+            <b>var</b> x = YAHOO.util.Event.getPageX(e);
+            <b>var</b> y = YAHOO.util.Event.getPageY(e);
+
+            <b>this</b>.focus();
+            <b>this</b>.moveThumb(x, y);
+        }
+        
+    },
+
+    <i>/**
+     * Handles the onDrag event <b>for</b> the slider background
+     * @method onDrag
+     * @private
+     */</i>
+    onDrag: <b>function</b>(e) {
+        <b>if</b> (! <b>this</b>.isLocked()) {
+            <b>var</b> x = YAHOO.util.Event.getPageX(e);
+            <b>var</b> y = YAHOO.util.Event.getPageY(e);
+            <b>this</b>.moveThumb(x, y, true);
+        }
+    },
+
+    <i>/**
+     * Fired when the slider movement ends
+     * @method endMove
+     * @private
+     */</i>
+    endMove: <b>function</b> () {
+        <i>// <b>this</b>._animating = false;</i>
+        <b>this</b>.unlock();
+        <b>this</b>.moveComplete = true;
+        <b>this</b>.fireEvents();
+    },
+
+    <i>/**
+     * Fires the change event <b>if</b> the value has been changed.  Ignored <b>if</b> we are <b>in</b>
+     * the middle of an animation as the event will fire when the animation is
+     * complete
+     * @method fireEvents
+     * @private
+     */</i>
+    fireEvents: <b>function</b> () {
+
+        <b>var</b> t = <b>this</b>.thumb;
+
+        t.cachePosition();
+
+        <b>if</b> (! <b>this</b>.isLocked()) {
+            <b>if</b> (t._isRegion) {
+                <b>var</b> newX = t.getXValue();
+                <b>var</b> newY = t.getYValue();
+
+                <b>if</b> (newX != <b>this</b>.previousX || newY != <b>this</b>.previousY) {
+                    <b>this</b>.onChange(newX, newY);
+                    <b>this</b>.fireEvent(&quot;change&quot;, { x: newX, y: newY });
+                }
+
+                <b>this</b>.previousX = newX;
+                <b>this</b>.previousY = newY;
+
+            } <b>else</b> {
+                <b>var</b> newVal = t.getValue();
+                <b>if</b> (newVal != <b>this</b>.previousVal) {
+                    <b>this</b>.onChange( newVal );
+                    <b>this</b>.fireEvent(&quot;change&quot;, newVal);
+                }
+                <b>this</b>.previousVal = newVal;
+            }
+
+            <b>if</b> (<b>this</b>.moveComplete) {
+                <b>this</b>.onSlideEnd();
+                <b>this</b>.fireEvent(&quot;slideEnd&quot;);
+                <b>this</b>.moveComplete = false;
+            }
+
+        }
+    },
+
+    <i>/**
+     * Slider toString
+     * @method toString
+     * @<b>return</b> {string} string representation of the instance
+     */</i>
+    toString: <b>function</b> () { 
+        <b>return</b> (&quot;Slider (&quot; + <b>this</b>.type +&quot;) &quot; + <b>this</b>.id);
+    }
+
+});
+
+YAHOO.augment(YAHOO.widget.Slider, YAHOO.util.EventProvider);
+
+<i>/**
+ * A drag and drop implementation to be used as the thumb of a slider.
+ * @class SliderThumb
+ * @extends YAHOO.util.DD
+ * @constructor
+ * @param {String} id the id of the slider html element
+ * @param {String} sGroup the group of related DragDrop items
+ * @param {int} iLeft the number of pixels the element can move left
+ * @param {int} iRight the number of pixels the element can move right
+ * @param {int} iUp the number of pixels the element can move up
+ * @param {int} iDown the number of pixels the element can move down
+ * @param {int} iTickSize optional parameter <b>for</b> specifying that the element 
+ * should move a certain number pixels at a time.
+ */</i>
+YAHOO.widget.SliderThumb = <b>function</b>(id, sGroup, iLeft, iRight, iUp, iDown, iTickSize) {
+
+    <b>if</b> (id) {
+        <b>this</b>.init(id, sGroup);
+
+        <i>/**
+         * The id of the thumbs parent HTML element (the slider background 
+         * element).
+         * @property parentElId
+         * @type string
+         */</i>
+        <b>this</b>.parentElId = sGroup;
+    }
+
+    <i>//<b>this</b>.removeInvalidHandleType(&quot;A&quot;);</i>
+
+
+    <i>/**
+     * Overrides the isTarget property <b>in</b> YAHOO.util.DragDrop
+     * @property isTarget
+     * @private
+     */</i>
+    <b>this</b>.isTarget = false;
+
+    <i>/**
+     * The tick size <b>for</b> this slider
+     * @property tickSize
+     * @type int
+     * @private
+     */</i>
+    <b>this</b>.tickSize = iTickSize;
+
+    <i>/**
+     * Informs the drag and drop util that the offsets should remain when
+     * resetting the constraints.  This preserves the slider value when
+     * the constraints are reset
+     * @property maintainOffset
+     * @type boolean
+     * @private
+     */</i>
+    <b>this</b>.maintainOffset = true;
+
+    <b>this</b>.initSlider(iLeft, iRight, iUp, iDown, iTickSize);
+
+    <i>/**
+     * Turns off the autoscroll feature <b>in</b> drag and drop
+     * @property scroll
+     * @private
+     */</i>
+    <b>this</b>.scroll = false;
+
+}; 
+
+YAHOO.extend(YAHOO.widget.SliderThumb, YAHOO.util.DD, {
+
+    <i>/**
+     * The (X and Y) difference between the thumb location and its parent 
+     * (the slider background) when the control is instantiated.
+     * @property startOffset
+     * @type [int, int]
+     */</i>
+    startOffset: null,
+
+    <i>/**
+     * Flag used to figure out <b>if</b> this is a horizontal or vertical slider
+     * @property _isHoriz
+     * @type boolean
+     * @private
+     */</i>
+    _isHoriz: false,
+
+    <i>/**
+     * Cache the last value so we can check <b>for</b> change
+     * @property _prevVal
+     * @type int
+     * @private
+     */</i>
+    _prevVal: 0,
+
+    <i>/**
+     * The slider is _graduated <b>if</b> there is a tick interval defined
+     * @property _graduated
+     * @type boolean
+     * @private
+     */</i>
+    _graduated: false,
+
+    <i>/**
+     * Returns the difference between the location of the thumb and its parent.
+     * @method getOffsetFromParent
+     * @param {[int, int]} parentPos Optionally accepts the position of the parent
+     * @type [int, int]
+     */</i>
+    getOffsetFromParent: <b>function</b>(parentPos) {
+        <b>var</b> myPos = YAHOO.util.Dom.getXY(<b>this</b>.getEl());
+        <b>var</b> ppos  = parentPos || YAHOO.util.Dom.getXY(<b>this</b>.parentElId);
+
+        <b>return</b> [ (myPos[0] - ppos[0]), (myPos[1] - ppos[1]) ];
+    },
+
+    <i>/**
+     * Set up the slider, must be called <b>in</b> the constructor of all subclasses
+     * @method initSlider
+     * @param {int} iLeft the number of pixels the element can move left
+     * @param {int} iRight the number of pixels the element can move right
+     * @param {int} iUp the number of pixels the element can move up
+     * @param {int} iDown the number of pixels the element can move down
+     * @param {int} iTickSize the width of the tick interval.
+     */</i>
+    initSlider: <b>function</b> (iLeft, iRight, iUp, iDown, iTickSize) {
+
+        <b>this</b>.setXConstraint(iLeft, iRight, iTickSize);
+        <b>this</b>.setYConstraint(iUp, iDown, iTickSize);
+
+        <b>if</b> (iTickSize &amp;&amp; iTickSize &gt; 1) {
+            <b>this</b>._graduated = true;
+        }
+
+        <b>this</b>._isHoriz  = (iLeft || iRight); 
+        <b>this</b>._isVert   = (iUp   || iDown);
+        <b>this</b>._isRegion = (<b>this</b>._isHoriz &amp;&amp; <b>this</b>._isVert); 
+
+    },
+
+    <i>/**
+     * Clear's the slider's ticks
+     * @method clearTicks
+     */</i>
+    clearTicks: <b>function</b> () {
+        YAHOO.widget.SliderThumb.superclass.clearTicks.call(<b>this</b>);
+        <b>this</b>._graduated = false;
+    },
+
+    <i>/**
+     * Gets the current offset from the element's start position <b>in</b>
+     * pixels.
+     * @method getValue
+     * @<b>return</b> {int} the number of pixels (positive or negative) the
+     * slider has moved from the start position.
+     */</i>
+    getValue: <b>function</b> () {
+        <b>if</b> (!<b>this</b>.available) { <b>return</b> 0; }
+        <b>var</b> val = (<b>this</b>._isHoriz) ? <b>this</b>.getXValue() : <b>this</b>.getYValue();
+        <b>return</b> val;
+    },
+
+    <i>/**
+     * Gets the current X offset from the element's start position <b>in</b>
+     * pixels.
+     * @method getXValue
+     * @<b>return</b> {int} the number of pixels (positive or negative) the
+     * slider has moved horizontally from the start position.
+     */</i>
+    getXValue: <b>function</b> () {
+        <b>if</b> (!<b>this</b>.available) { <b>return</b> 0; }
+        <b>var</b> newOffset = <b>this</b>.getOffsetFromParent();
+        <b>return</b> (newOffset[0] - <b>this</b>.startOffset[0]);
+    },
+
+    <i>/**
+     * Gets the current Y offset from the element's start position <b>in</b>
+     * pixels.
+     * @method getYValue
+     * @<b>return</b> {int} the number of pixels (positive or negative) the
+     * slider has moved vertically from the start position.
+     */</i>
+    getYValue: <b>function</b> () {
+        <b>if</b> (!<b>this</b>.available) { <b>return</b> 0; }
+        <b>var</b> newOffset = <b>this</b>.getOffsetFromParent();
+        <b>return</b> (newOffset[1] - <b>this</b>.startOffset[1]);
+    },
+
+    <i>/**
+     * Thumb toString
+     * @method toString
+     * @<b>return</b> {string} string representation of the instance
+     */</i>
+    toString: <b>function</b> () { 
+        <b>return</b> &quot;SliderThumb &quot; + <b>this</b>.id;
+    },
+
+    <i>/**
+     * The onchange event <b>for</b> the handle/thumb is delegated to the YAHOO.widget.Slider
+     * instance it belongs to.
+     * @method onChange
+     * @private
+     */</i>
+    onChange: <b>function</b> (x, y) { 
+    }
+
+});
+
+<b>if</b> (&quot;undefined&quot; == <b>typeof</b> YAHOO.util.Anim) {
+    YAHOO.widget.Slider.ANIM_AVAIL = false;
+}
+
+</code></pre><hr><div style="font-size:10px;text-align:center;color:gray;">yui-ext - Copyright &copy; 2006 Jack Slocum.  |
+    Yahoo! UI - Copyright &copy; 2006 Yahoo! Inc.<br />All rights reserved.</div>
+    </body></html>

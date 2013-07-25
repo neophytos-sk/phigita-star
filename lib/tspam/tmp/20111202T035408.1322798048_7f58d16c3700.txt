@@ -1,0 +1,53 @@
+DomainKey-Signature: q=dns; a=rsa-sha1; c=nofws;
+	s=prod; d=linkedin.com;
+	h=DKIM-Signature:Sender:Date:From:To:Message-ID:Subject:MIME-Version:Content-Type:X-LinkedIn-Template:X-LinkedIn-Class:X-LinkedIn-fbl;
+	b=K4TqkjKkJVJka7UiJE1dewWGR5UrH1HopNs4xHy/ZY7Qz+cXRwRfdII+Rb0YA6bK
+	EIyGQaVGYb6QBqXEq5o/ldu1NaxYp3LdS49khEo+cwW81iPDgSwG8912p9Q66rce 
+DKIM-Signature: v=1; a=rsa-sha1; d=linkedin.com; s=proddkim; c=relaxed/relaxed;
+	q=dns/txt; i=@linkedin.com; t=1322798037;
+	h=From:Subject:Date:To:MIME-Version:Content-Type:X-LinkedIn-Class:X-LinkedIn-fbl:
+	X-LinkedIn-Template;
+	bh=YYiLwHEjwjfbx1Ou9OyyIDOHiyg=;
+	b=zBfVeozyXHN0fRj74PtNkFMr5OQqKwgravditsEzA2f1pdpOu3nugSNq/wf9erVL
+	9XGCtovFBSkrxw9qaKD9ynXm5CeQihgZUPozfhgOFrG4sWoXQoYKZPSefx2lJ17l; 
+Sender: messages-noreply@bounce.linkedin.com 
+Date: Fri, 2 Dec 2011 03:53:57 +0000 (UTC) 
+From: Cassandra NoSQL Group Members <group-digests@linkedin.com> 
+To: Neophytos Demetriou <k2pts@phigita.net> 
+Message-ID: <1199284550.57278491.1322798037373.JavaMail.app@ela4-app0106.prod> 
+Subject: [1] new discussion and [3] new jobs on LinkedIn 
+X-LinkedIn-Template: anet_digest_type 
+X-LinkedIn-Class: GROUPDIGEST 
+X-LinkedIn-fbl: m-T1yeaBOKt1t9M1MBTDWKakdMpH2-C_-B3se0ZVIet_xQM-3g32tN33A 
+--------------------------------------
+Cassandra NoSQL
+  Latest discussions from Cassandra NoSQL group members.  Change the frequency of this digest:
+  http://www.linkedin.com/e/-1ht5d5-gvonspyx-66/ahs/2822930/EMLt_anet_settings/?hs=false&tok=3D-SCJzFGFpR01
+
+
+
+
+Send me an email for each new discussion &#187; http://www.linkedin.com/e/-1ht5d5-gvonspyx-66/snp/2822930/true/grp_email_subscribe_new_posts/?hs=false&tok=1Hwne4CR6FpR01
+
+
+
+Discussions
+ * David  Boney Organization Meeting - Austin ACM Special Interest Group on Knowledge Discovery and Data Mining
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvonspyx-66/ava/82420308/2822930/EMLt_anet_qa_ttle/?hs=false&tok=0_iCavtcqFpR01
+
+
+Weekly Job Postings * Steve  A.: Want to Make a Real Difference
+  Want to Make a Real Difference (0)
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvonspyx-66/ava/82867977/2822930/EMLt_anet_qa_ttle/?hs=false&tok=1mgznO9r-FpR01
+
+ * Marissa  Aarons: Looking for a MySQL/NoSQL Database Administrator in Metro Atlanta Area for a Contract-to-Hire Opportunity!
+  Looking for a MySQL/NoSQL Database Administrator in Metro Atlanta Area for a Contract-to-Hire Opportunity! (0)
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvonspyx-66/ava/82790221/2822930/EMLt_anet_qa_ttle/?hs=false&tok=2jjayUeHKFpR01
+
+ * Kaleb  Leeming: Looking for a change in lifestyle - We currently have a number of Apache Cassandra Developers / Consultants / IT Professionals  roles in New Zealand. If you are interested see below for more details.
+  Looking for a change in lifestyle - We currently have a number of Apache Cassandra Developers / Consultants / IT Professionals  roles in New Zealand. If you are interested see below for more details. (0)
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvonspyx-66/ava/82438504/2822930/EMLt_anet_qa_ttle/?hs=false&tok=0lDxbjCN2FpR01
+
+
+

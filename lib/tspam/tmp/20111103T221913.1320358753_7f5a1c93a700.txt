@@ -1,0 +1,12 @@
+Received: from unknown (helo ugkueboiv)(unknown@218.1.66.114)
+	by ws05 with SMTP; Thu, 03 Nov 2011 22:12:10 +0000 
+X-Lasthop: 218.1.66.114 
+Message-ID: <20111104062144854543@oxygen18.com.cn> 
+From: =?gb2312?B?tsXQyt7I?= <business@oxygen18.com.cn> 
+To:  
+Subject: =?gb2312?B?aXJydHdkZ2nU9cO00LTG89K1tcTQvdfK1f6y36Osy/w=?=
+	=?gb2312?B?sPzAqMTE0KnE2sjd?= 
+Date: Fri, 4 Nov 2011 06:21:30 +0800 
+X-mailer: Deif 3 
+--------------------------------------
+ content-type=application/msword part-token=::mime::1809-2

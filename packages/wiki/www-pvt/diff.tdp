@@ -1,0 +1,96 @@
+contract {
+    param -id "page_id" -check "naturalnum notnull"
+    param -id "revision_id" -check "naturalnum notnull"
+    param -id "compare_revision_id" -check "naturalnum notnull"
+}
+
+val -id user_id { return [ad_conn user_id] }
+val -id screen_name { return [ad_conn screen_name] }
+
+datastore \
+    -id r1 \
+    -scope user \
+    -singleton true \
+    -from_class ::wiki::Page_Revision \
+    -where [list "id=:revision_id"] \
+    -extend {
+	set content_root "[User set id]-@{user_id}"
+	array set config [list \
+			      root ${content_root} \
+			      container_object_id @{page_id} \
+			      image_prefix "/~@{screen_name}/media/preview/"]
+
+	::xo::structured_text::stx_to_html config content content_in_html
+
+
+    }
+
+guard { return @{r1:rowcount} } 
+#guard { return [expr { @{object_get.r1.page_id} == @{param.page_id} }] }
+
+datastore \
+    -id r2 \
+    -scope user \
+    -singleton true \
+    -from_class ::wiki::Page_Revision \
+    -where [list "id=:compare_revision_id"] \
+    -extend {
+	set content_root "[User set id]-@{user_id}"
+	array set config [list \
+			      root ${content_root} \
+			      container_object_id @{page_id} \
+			      image_prefix "/~@{screen_name}/media/preview/"]
+
+	::xo::structured_text::stx_to_html config content content_in_html
+
+
+    }
+
+guard { return @{r2:rowcount} } 
+#guard { return [expr { @{object_get.r2.page_id} == @{param.page_id} }] }
+
+
+val -id title_diff { 
+    return [::util::html_diff -new @{object_get.r1.title} -old @{object_get.r2.title}]
+}
+
+val -id content_diff {
+    return [::util::html_diff -new @{object_get.r1.content_in_html} -old @{object_get.r2.content_in_html}] 
+}
+
+
+::xo::tdp::excludeClassesFromRenaming {diff-added diff-deleted diff-changed}
+
+css {
+    .diff-added {color:green;}
+    .diff-deleted {color:red;text-decoration:line-through;}
+    .diff-changed {color:blue;}
+}
+
+
+val -id title { return "Comparing r@{revision_id} and r@{compare_revision_id}" }
+
+val -id context_bar { 
+
+    set revisions_link "page-revisions?page_id=@{object_get.r1.page_id}"
+    set revisions_text "Revisions for #@{page_id}"
+
+    return [::xo::kit::context_bar [list ${revisions_link} ${revisions_text}] @{title}] 
+}
+
+# keep css classes and tags used by context_bar
+::xo::tdp::excludeClassesFromRenaming {breadcrumb divider ul li active}
+
+
+master -title @{title} {
+
+    nt @{context_bar:noquote}
+
+
+    h1 {
+	nt @{title_diff:noquote}
+    }
+
+    nt @{content_diff:noquote}
+
+}

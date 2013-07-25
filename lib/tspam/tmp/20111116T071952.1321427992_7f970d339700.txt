@@ -1,0 +1,10 @@
+Received: (qmail 25633 invoked from network); 16 Nov 2011 03:08:23 +0800 from hn.kd.ny.adsl (HELO zaife) (115.63.15.9)
+  by lite-magic.com with SMTP; 16 Nov 2011 03:08:23 +0800 
+Sender: info@lite-magic.com 
+Message-ID: <20111116030823678578@lite-magic.com> 
+From: "hqepgga" <xlfrn@fgawdd.com> 
+To:  
+Subject: =?gb2312?B?udzA7bXEv8bRp9DU0+vS1cr10NQ3NTI=?= 
+Date: Wed, 16 Nov 2011 03:08:09 +0800 
+X-mailer: Dzmauij 5 
+Whoops!  What is a 'application/vnd.ms-excel'?

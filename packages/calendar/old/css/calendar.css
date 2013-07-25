@@ -1,0 +1,759 @@
+.cal-table-header {
+	background: #99CCFF;
+	color: #000000;
+	margin: 0px;
+	padding: 0px;
+	font-weight: bold;
+}
+
+.cal-month-title-text {
+        font-size: 140%;
+        font-weight: bold;
+        background-color: #003366;
+        text-align: center;
+        color: #FFFFFF;
+}
+
+.cal-table-header a {
+	color: #0055AA;
+}
+
+.cal-table-header a:hover {
+	text-decoration: underline;
+}
+
+.cal-table-title {
+	background: #FFFFFF;
+	font-weight: bold;
+	border-width: 0px 0px 1px 0px;
+	border-style: solid;
+	border-color: #99CCFF;
+}
+
+.cal-week {
+	background: #FFFFFF;
+	valign: top;
+	font-weight: bold;
+	border-width: 0px 0px 1px 0px;
+	border-style: solid;
+	border-color: #99CCFF;
+}
+
+.cal-month-day {
+	background: #DDEEFF;
+	border: 0px none;
+	color: #003366;
+	font-weight: bold;
+	font-size: 80%;
+	vertical-align: top;
+        height: 60px;
+}
+
+.cal-month-day:hover {
+	background: #cccccc;
+        cursor: pointer;
+}
+
+.cal-month-today {
+	font-weight: bold;
+	background-color: #003366;
+	text-align: left;
+	color: #FFFFFF;
+	border: 0px solid;
+	font-size: 80%;
+	vertical-align: top;
+
+}
+.cal-month-today:hover {
+	background: #666666;
+        cursor: pointer;
+}
+.cal-month-today a {
+	color: #DDEEFF;
+}
+
+.cal-no-border {
+        border: medium none; 
+}
+
+.mini-calendar .view-list {
+	color: #999999;
+	text-decoration: none;
+	font-size: 8pt;
+	white-space: nowrap;
+	font-weight: bold;
+	border-top: 0px solid #99CCFF;
+	border-right: 0px solid #99CCFF;
+	border-bottom: 1px solid #99CCFF;
+	border-left: 0px solid #99CCFF;
+}
+
+.mini-calendar .view-list td {
+	padding-right: 8px;
+	padding-left: 8px;
+	padding-top: 4px;
+	padding-bottom:4px;
+	text-align: center;
+}
+
+.mini-calendar .view-list .selected {
+	background-color: #CEE6FF;
+}
+
+.mini-calendar .view-list a {
+	color: #999999;
+}
+
+.mini-calendar .view-list .selected a {
+	color: #000000;
+}
+
+.mini-calendar .view-list .selected a:visited {
+	color: #000000;
+}
+
+.mini-calendar .view-list a:visited {
+	color: #999999;
+}
+
+.mini-calendar .view-list a:hover {
+	color: #000000;
+	text-decoration: none;
+}
+
+.mini-calendar a {
+        text-decoration: none;
+}
+
+.cal-field {
+	font-size: 8pt;
+	color: #000000;
+	margin: 0px;
+	padding: 0px;
+	border: 1px solid #99CCFF;
+	background-color: #FFFFFF;
+}
+
+.cal-frm-compact {
+	font-size: 9pt;
+	color: #000000;
+	margin: 0px;
+	padding: 0px;
+	border: 0px solid #000000;
+	vertical-align: top;
+}
+
+.cal-navbar-spacer {
+	color: #000000;
+	font-size: 8pt;
+	text-align: center;
+	font-weight: bold;
+	text-decoration: none;
+	padding-top: 4px;
+	padding-bottom:4px;
+	padding-right: 8px;
+	padding-left: 8px;
+	white-space: nowrap;
+	border-top: 1px solid #000000;
+	border-right: 0px solid #000000;
+	border-bottom: 0px solid #000000;
+	border-left: 0px solid #000000;
+	background-color: #CEE6FF;
+}
+
+.cal-navbar-spacer-end {
+	color: #000000;
+	font-size: 8pt;
+	text-align: center;
+	font-weight: bold;
+	text-decoration: none;
+	padding-top: 4px;
+	padding-bottom:4px;
+	padding-right: 8px;
+	padding-left: 8px;
+	white-space: nowrap;
+	border-top: 1px solid #000000;
+	border-right: 0px solid #000000;
+	border-bottom: 0px solid #000000;
+	border-left: 0px solid #000000;
+	background-color: #CEE6FF;
+}
+
+.cal-navbar-end {
+	color: #000000;
+	font-size: 8pt;
+	text-align: center;
+	font-weight: bold;
+	text-decoration: none;
+	padding-top: 4px;
+	padding-bottom:4px;
+	padding-right: 8px;
+	padding-left: 8px;
+	white-space: nowrap;
+	border-width: 0px 0px 0px 1px;
+	border-style: solid;
+	border-color: #99CCFF;
+}
+
+.cal-navbar-spacer-start {
+	border-width: 1px 0px 0px 0px;
+	border-style: solid;
+	border-color: #000000;
+	background-color: #CEE6FF;
+}
+
+.cal-navbar-spacer-selected {
+	color: #000000;
+	font-size: 8pt;
+	text-align: center;
+	font-weight: bold;
+	text-decoration: none;
+	white-space: nowrap;
+	padding: 4px 8px;
+	background-color: #CEE6FF;
+	border: 0px solid #000000;
+}
+
+.cal-navbar-spacer-body {
+	background-color: #DDDDFF;
+	color: #000000;
+	font-size: 8pt;
+	text-decoration: none;
+	padding: 4px 8px;
+	white-space: nowrap;
+	border-width: 0px 1px;
+	border-style: solid;
+	border-right-color: #663399;
+	border-left-color: #FFFFFF;
+}
+
+.cal-navbar-spacer-selected-start {
+	background-color: #CEE6FF;
+	border-width: 0px 0px 0px 1px;
+	border-style: solid;
+	border-color: #FFFFFF;
+}
+
+.cal-button-sml {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 8pt;
+	font-weight: bold;
+	background-color: #CC0000;
+	margin: 0px;
+	padding: 0px;
+	border: 1px solid #000000;
+	cursor: hand;
+	color: #FFFFFF;
+}
+
+.cal-row-dark {
+        background: #DDEEFF;
+}
+
+.cal-row-light {
+        background: #FFFFFF;
+}
+
+.cal-row-hi {
+	font-weight: bold;
+	border: 0px solid #7D7DFF;
+}
+
+.cal-row-lo {
+	color: #999999;
+	border: 0px solid #7D7DFF;
+}
+
+#at-a-glance {
+	font-weight: normal;
+	border: 0px solid;
+	line-height: 140%;
+}
+
+#at-a-glance td {
+	margin: 3px;
+	padding: 1px;
+        width: 30px;
+        border: 1px solid #ffffff;
+	background-color: #DDEEFF;
+}
+
+#at-a-glance td.months {
+        width: 80px;
+}
+
+#at-a-glance td.selected {
+	background-color: darkgray;
+        color: #ffffff;
+}
+
+#at-a-glance td.selected a {
+        color: #ffffff;
+}
+
+#at-a-glance td.selected a:link {
+        color: #ffffff;
+}
+
+#at-a-glance td.selected a:visited {
+        color: #ffffff;
+}
+
+#at-a-glance td.selected a:hover {
+        color: #ffffff;
+}
+
+#at-a-glance td.selected a:active {
+        color: #ffffff;
+}
+
+#at-a-glance tr.days td {
+	font-weight: bold;
+	background-color: #FFFFFF;
+	text-align: right;
+	color: #000000;
+	border: 0px solid #002C5A;
+}
+
+#at-a-glance td.inactive {
+	background-color: #DDEEFF;
+	text-align: right;
+}
+
+#at-a-glance td.inactive a {
+	color: #999999;
+}
+
+#at-a-glance td.active {
+	background-color: #DDEEFF;
+	text-align: right;
+}
+#at-a-glance td.active:hover {
+	background-color: #cccccc;
+	text-align: right;
+}
+
+#at-a-glance td.today {
+	font-weight: bold;
+	text-align: right;
+	background-color: #CC3300;
+}
+
+#at-a-glance td.today a {
+	color: #FFFFFF;
+}
+
+#jump {
+	background: #99CCFF;
+	color: #000000;
+	margin: 0px;
+	padding: 0px;
+}
+
+#jump a {
+	color: #0055AA;
+}
+
+#jump a:hover {
+	text-decoration: underline;
+}
+
+#jump tr {
+        text-align: center;
+}
+
+#jump td {
+        padding-left: 1em;
+        font-size: smaller;
+}
+
+
+.cal-spacer {
+	line-height: 1px;
+	font-size: 0px;
+	margin: 0px;
+	padding: 0px;
+	border-top: 0px solid #003366;
+	border-right: 0px solid #003366;
+	border-bottom: 1px solid #003366;
+	border-left: 0px solid #003366;
+}
+
+.mini-calendar .header {
+	width: 100%;
+	border: 0px none;
+	margin: 0px;
+	padding: 0px;
+
+}
+
+.mini-calendar .header td.back {
+	background-color: #003366;
+	vertical-align: middle;
+        text-align: left;
+}
+
+.mini-calendar .header td.forward {
+	background-color: #003366;
+	vertical-align: middle;
+        text-align: right;
+}
+
+.mini-calendar .header td.current_view {
+	font-size: 140%;
+	font-weight: bold;
+	background-color: #003366;
+	text-align: center;
+	color: #FFFFFF;
+}
+
+.mini-calendar {
+	border: 1px solid #99CCFF;
+	font-size: 90%;
+        width: 240px;
+}
+
+.cal-month {
+	font-weight: bold;
+	background-color: #DDEEFF;
+	text-align: center;
+	line-height: 160%;
+
+}
+.cal-week-table {
+	width: 100%;
+	border: 0px none;
+	background-color: #FFFFFF;
+
+}
+.cal-text-grey-sml {
+	font-size: 75%;
+	color: #999999;
+	font-weight: normal;
+
+}
+.cal-week-events {
+	width: 100%;
+	background-color: #DDEEFF;
+
+
+}
+.cal-month-day-title {
+	background: #FFFFFF;
+	border: 0px none;
+	color: #000000;
+	font-weight: bold;
+	text-align: center;
+	margin: 0px;
+	padding: 0px;
+}
+
+.cal-month-event {
+	text-align: left;
+	font-weight: normal;
+}
+
+.cal-month-event a {
+	font-weight: normal;
+}
+
+.cal-month-table {
+
+	width: 100%;
+	border: 0px none;
+	margin: 0px;
+	padding: 0px;
+}
+
+.cal-month-thismonth {
+	font-weight: bold;
+	background-color: #003366;
+	text-align: center;
+	color: #FFFFFF;
+	line-height: 160%;
+	border: 0px solid;
+}
+
+.cal-month-day-inactive {
+	background: #EEEEEE;
+	border: 0px none;
+	color: #999999;
+}
+
+.cal-month-event-notime {
+	text-align: left;
+	font-weight: bold;
+	font-size: 120%;
+}
+
+.cal-day-time {
+	font-weight: bold;
+	text-align: right;
+        font-size: 80%;
+}
+
+.cal-day-event {
+	text-align: left;
+	vertical-align: top;
+        font-size: 80%;
+}
+
+.cal-week-event-notime {
+	background-color: #DDEEFF;
+	font-weight: bold;
+}
+
+.cal-week-event-notime a {
+	background-color: #DDEEFF;
+}
+
+.cal-day-event-notime {
+	font-weight: bold;
+}
+
+.cal-day-event-notime a {
+	font-weight: bold;
+}
+
+.cal-day-event-spans {
+	text-align: left;
+	white-space: nowrap;
+	vertical-align: top;
+	border-width: 0px 0px 0px 2px;
+	border-style: solid;
+	border-color: #000066;
+}
+
+.cal-table-data-title {
+	background: #FFFFFF;
+	font-weight: bold;
+	border: 0px solid #99CCFF;
+	text-align: right;
+	padding-top: 0px 10px 0px 0px;
+	width: 1%;
+	white-space: nowrap;
+}
+
+.cal-table-data-action {
+	background: #DDEEFF;
+	font-weight: bold;
+	border: 1px solid #99CCFF;
+	text-align: center;
+	width: 1%;
+	white-space: nowrap;
+	padding: 2px;
+	font-size: 95%;
+}
+
+#viewadp-mini-calendar {
+         width: 240px;
+         float: left;
+}
+
+#events {
+         margin-left: 250px;
+         margin-bottom: 0px;
+}
+
+#login-box {
+    border: black 1px solid;
+    padding: 4px;
+}
+
+TABLE.table-display {
+    font-family: tahoma, verdana, helvetica; 
+    font-size: 85%;
+}
+
+TR.table-header {
+    background-color: #cccccc; 
+}
+
+TR.even {
+    background-color: #f0f0f0;
+}
+
+TR.odd {
+    background-color: #e0e0e0;
+}
+
+/* Calendar widget css */
+
+/* The main calendar widget.  DIV containing a table. */
+
+div.calendar { position: relative; }
+
+.calendar, .calendar table {
+  border: 1px solid #556;
+  font-size: 11px;
+  color: #000;
+  cursor: default;
+  background: #eef;
+  font-family: tahoma,verdana,sans-serif;
+}
+
+/* Header part -- contains navigation buttons and day names. */
+
+.calendar .button { /* "<<", "<", ">", ">>" buttons have this class */
+  text-align: center;    /* They are the navigation buttons */
+  padding: 2px;          /* Make the buttons seem like they're pressing */
+}
+
+.calendar thead .title { /* This holds the current "month, year" */
+  font-weight: bold;      /* Pressing it will take you to the current date */
+  text-align: center;
+  background: #fff;
+  color: #000;
+  padding: 2px;
+}
+
+.calendar thead .headrow { /* Row <TR> containing navigation buttons */
+  background: #778;
+  color: #fff;
+}
+
+.calendar thead .daynames { /* Row <TR> containing the day names */
+  background: #bdf;
+}
+
+.calendar thead .name { /* Cells <TD> containing the day names */
+  border-bottom: 1px solid #556;
+  padding: 2px;
+  text-align: center;
+  color: #000;
+}
+
+.calendar thead .weekend { /* How a weekend day name shows in header */
+  color: #a66;
+}
+
+.calendar thead .hilite { /* How do the buttons in header appear when hover */
+  background: #aaf;
+  color: #000;
+  border: 1px solid #04f;
+  padding: 1px;
+}
+
+.calendar thead .active { /* Active (pressed) buttons in header */
+  background: #77c;
+  padding: 2px 0px 0px 2px;
+}
+
+/* The body part -- contains all the days in month. */
+
+.calendar tbody .day { /* Cells <TD> containing month days dates */
+  width: 2em;
+  color: #456;
+  text-align: right;
+  padding: 2px 4px 2px 2px;
+}
+
+.calendar table .wn {
+  padding: 2px 3px 2px 2px;
+  border-right: 1px solid #000;
+  background: #bdf;
+}
+
+.calendar tbody .rowhilite td {
+  background: #def;
+}
+
+.calendar tbody .rowhilite td.wn {
+  background: #eef;
+}
+
+.calendar tbody td.hilite { /* Hovered cells <TD> */
+  background: #def;
+  padding: 1px 3px 1px 1px;
+  border: 1px solid #bbb;
+}
+
+.calendar tbody td.active { /* Active (pressed) cells <TD> */
+  background: #cde;
+  padding: 2px 2px 0px 2px;
+}
+
+.calendar tbody td.selected { /* Cell showing today date */
+  font-weight: bold;
+  border: 1px solid #000;
+  padding: 1px 3px 1px 1px;
+  background: #fff;
+  color: #000;
+}
+
+.calendar tbody td.weekend { /* Cells showing weekend days */
+  color: #a66;
+}
+
+.calendar tbody td.today { /* Cell showing selected date */
+  font-weight: bold;
+  color: #00f;
+}
+
+.calendar tbody .disabled { color: #999; }
+
+.calendar tbody .emptycell { /* Empty cells (the best is to hide them) */
+  visibility: hidden;
+}
+
+.calendar tbody .emptyrow { /* Empty row (some months need less than 6 rows) */
+  display: none;
+}
+
+/* The footer part -- status bar and "Close" button */
+
+.calendar tfoot .footrow { /* The <TR> in footer (only one right now) */
+  text-align: center;
+  background: #556;
+  color: #fff;
+}
+
+.calendar tfoot .ttip { /* Tooltip (status bar) cell <TD> */
+  background: #fff;
+  color: #445;
+  border-top: 1px solid #556;
+  padding: 1px;
+}
+
+.calendar tfoot .hilite { /* Hover style for buttons in footer */
+  background: #aaf;
+  border: 1px solid #04f;
+  color: #000;
+  padding: 1px;
+}
+
+.calendar tfoot .active { /* Active (pressed) style for buttons in footer */
+  background: #77c;
+  padding: 2px 0px 0px 2px;
+}
+
+/* Combo boxes (menus that display months/years for direct selection) */
+
+.combo {
+  position: absolute;
+  display: none;
+  top: 0px;
+  left: 0px;
+  width: 4em;
+  cursor: default;
+  border: 1px solid #655;
+  background: #def;
+  color: #000;
+  font-size: smaller;
+}
+
+.combo .label {
+  width: 100%;
+  text-align: center;
+}
+
+.combo .hilite {
+  background: #acf;
+}
+
+.combo .active {
+  border-top: 1px solid #46a;
+  border-bottom: 1px solid #46a;
+  background: #eef;
+  font-weight: bold;
+}

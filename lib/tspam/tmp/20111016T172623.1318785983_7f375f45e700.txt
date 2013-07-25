@@ -1,0 +1,11 @@
+Received: from gms (unknown [110.52.7.240])
+	by mail.e21.cn (Postfix - by e21.cn) with ESMTPA id DCE293B8D55;
+	Mon, 17 Oct 2011 01:26:02 +0800 (CST) 
+Message-ID: <20111017012906255514@e21.edu.cn> 
+From: =?gb2312?B?0MG8r8urseq7r7mk09DP3rmry74=?= <yj@e21.edu.cn> 
+To:  
+Subject: =?gb2312?B?qWzG8y7StS6w1y7B7C66yy7QxC6w7C65qy68vC7E3A==?=
+	=?gb2312?B?LrjfLry2LtOmLtPDLmdrNw==?= 
+Date: Mon, 17 Oct 2011 01:28:54 +0800 
+X-mailer: Swdlvyv 9 
+Whoops!  What is a 'application/vnd.ms-excel'?

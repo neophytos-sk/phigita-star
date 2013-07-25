@@ -1,0 +1,10 @@
+Received: from 80.6.253.56 by tobsinc.com.s5a2.psmtp.com; Wed, 31 Aug 2011 14:07:54 +0000 
+Date: Wed, 31 Aug 2011 14:07:54 +0000 
+From: =?koi8-r?B?Iu3P08vXwSwg8s/T08nRIg==?= <sedgeo26@davidconsultinggroup.com> 
+X-Mailer: The Bat! (v3.0.1.33) Educational 
+Reply-To: sedgeo26@davidconsultinggroup.com 
+X-Priority: 3 (Normal) 
+Message-ID: <336611503.40795716648556@davidconsultinggroup.com> 
+To: webmaster@phigita.net 
+Subject: =?koi8-r?B?MyDSwdPT2czLySDawSA1IDAwMCDS1cLMxcohIOHr4+nxIQ==?= 
+

@@ -1,0 +1,14 @@
+Received: from qquabjts([221.208.245.45]) by mail.hl.cn(AIMC 3.1.0.0)
+	with SMTP id jm1b94ed8a679; Fri, 02 Dec 2011 11:27:18 +0800 from qquabjts([110.52.6.50]) by aisp.com(AIMC 2.9.5.4)
+	with SMTP id AISP action; Fri, 02 Dec 2011 11:27:18 +0800 
+Message-ID: <20111202112921243621@mail.hl.cn> 
+From: =?gb2312?B?yfLR9Mfvu6q7r7mk09DP3rmry74=?= <ptnz@mail.hl.cn> 
+To:  
+Subject: =?gb2312?B?0MJ8fMjOvq3A7Xx8yKvD5rncwO28vMTcfHzM4cn90bXBtw==?=
+	=?gb2312?B?LS0tLcLt6srZuw==?= 
+Date: Fri, 2 Dec 2011 11:29:09 +0800 
+X-mailer: Fmqrcu 1 
+X-AIMC-AUTH: ptnz:hljdefault 
+X-AIMC-MAILFROM: ptnz@mail.hl.cn 
+X-AIMC-Msg-ID: D10mT61B 
+Whoops!  What is a 'application/vnd.ms-excel'?

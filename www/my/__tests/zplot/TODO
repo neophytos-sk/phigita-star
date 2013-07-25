@@ -1,0 +1,138 @@
+:: TODO :: 
+
+code
+    error handling
+        just want to print the right message when something goes wrong ...
+    finish horizontal bar plots (needed?)
+Write documentation paper
+    Move examples, docs to web page
+
+*Fix pattern thing: params -> size and skip
+*Test legend support for all types
+*breaks in a graph - how to do this nicely?
+*Map categories -> numbers (table, axis)
+
+-------------------------------------------------------------------
+
+Plot*Intervals (and other routines)
+    add limits (chop off intervals)
+
+-------------------------------------------------------------------
+
+new way of mapping categories onto tables
+    just do it in a table routine
+    then, enable label,num pairs to be imported from a table
+
+legends
+    finish legend support in all known plot routines
+    finish up support for horizontal bar plots 
+
+-------------------------------------------------------------------
+
+ps
+    text that includes linebreaks (e.g., <br> symbol or something)
+        (alternate: specify number of characters to wrap after)
+    still must interact properly with anchors!
+    also, subscripts and superscripts and change of fonts in-line and ...
+
+-------------------------------------------------------------------
+
+drawable
+    category: how to allow for slightly bigger axis 
+    category: how to map to offcenter point
+       (e.g., one data set at A+delta,y* :: the other at A-delta,y* )
+       for entire category, this is probably easy: specify argument to Drawable -xscalearg {0.5}
+       and thus the entire thing will be shifted by that amount
+       BUT, what a pain to do for multiple data sets
+       can we update this 'scalearg' during execution? 
+           e.g., now, change it to XXX? DrawableSetScaleArg -drawable drawable -axis axis -value 0.3
+
+newaxis
+    doUnpackDescription:: 
+      how many decimal places for the floating point format: guess better (low priority)
+
+Algorithms
+    FindStep: how to automatically determine steps between a min,max
+
+drawable
+    dateplots
+
+demos
+    for demos, make many small graphs with variations
+	e.g. all the different bar types, colors, point types, etc.
+    can make this programmatic: 
+        foreach point type (x y z)
+            make a drawable, draw the same data with this new point type
+
+args
+    generic way to deal with fixed list of args ... (e.g,, 'style' field of PlotPoints)
+    better message when something is not correct (print warning, then print help message of routine)
+
+styles
+    a way to talk about the "style" used for each of a set of lines/bars/etc.
+    and then an easy way to use this exact info in the legend
+
+database
+    student-t when doing devs, etc.
+
+random and unlikely
+    autosize the canvas (optionally) based on how big the whole thing was
+    similarly, allow size to change after its done
+    don't allow lines, etc., to be drawn if they are off the canvas
+      (can this be done with some kind of clipping in postscript?)
+
+********************************************************************************
+
+:: DONE ::
+
+axis
+    better interface and arguments -- after all, it is just a line
+
+tics
+    simpler interface to get the "default" behavior
+
+scaling/translating
+    needs to be fixed (doesn't work for non-zero mins)
+
+labels
+    more flexible label service
+    (subsumes, title, xlabel, ylabel)
+
+text placement
+    need to better understand offsets for vertical positioning
+    (especially when text is rotated, for example)
+
+legend
+    basic legend service (horizontal, vertical, etc.)
+    placement control
+
+plots
+    lineplots: need a simple way to make these, and a bunch of styles if
+        points are used (and legend interaction)
+    boxplots
+    all sorts of styles of plots
+
+database
+    more ability to manipulate data
+    standard deviations
+    mins, maxes
+
+axis
+    autosetting based on table values
+
+bar styles
+    more bar styles, including circles, boxes, stars, diag lines, ...
+    generic fill service, used by boxes, circles, polyshapes, etc.
+    labeled bars: easy way to add numbers to the top of the bars
+
+drawable
+    logplots
+    justplainwordplots (add TableMap feature? takes column of words, makes new column of numbers with mapping)
+        (but how can we extract the mapping to draw the labels on the axis? hence, bad idea)
+
+table
+    add ability to have multiword entries with "separator" feature (e.g., ":")
+
+Algorithms
+    Location: how to place xlabel, ylabel, title automagically
+

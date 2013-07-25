@@ -1,0 +1,35 @@
+Received: from [231.219.231.215] (helo=ntnfcfcklnljmej.dpajri.su)
+	by port-90068.pppoe.wtnet.de with esmtpa (Exim 4.69)
+	(envelope-from )
+	id 1MMOU0-2720mv-L2
+	for k2pts@phigita.net; Fri, 18 Nov 2011 09:53:19 +0100 
+Date: Fri, 18 Nov 2011 09:53:19 +0100 
+From: <Joey_Scott@irs.gov> 
+X-Mailer: The Bat! (v3.71.04) Professional 
+X-Priority: 3 (Normal) 
+Message-ID: <7745563304.BK6WGRKI144087@tzekkaztzy.jajctedj.org> 
+To: <k2pts@phigita.net> 
+Subject: Federal Tax payment canceled 
+--------------------------------------
+Internal Revenue Service United States Department of the Treasury
+
+
+Your    Tax  transaction (ID: 58193942055581), recently sent from your  checking account was returned by the  your Bank. 
+
+ Rejected Tax  transaction
+Tax Transaction ID: 58193942055581
+ Reason for rejection : See details in the report below
+
+ Federal Tax Transaction Report:
+http://jebiyifi.comule.com/
+
+
+Important Information for Home-care Service RecipientsIf you are a home-care service recipient who has a previously assigned EIN either as a sole proprietor or as a household employer, do not apply for a new EIN. Use the EIN previously provided. If you can not locate your EIN for any reason, follow the instructions on the Misplaced Your EIN? Web page.If you are a home-care service recipient who does not have an EIN, do not use the online application to apply for one. You must apply for your EIN using one of the other methods (phone, fax or mail). For additional information, visit the How to Apply for an EIN Web page.
+
+
+
+ Internal Revenue Service, 
+ Metro Plex 1, 
+ 8401 Corporate Drive, Suite 300, 
+ Landover, MD  20785
+

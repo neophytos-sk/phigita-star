@@ -1,0 +1,48 @@
+set path_info_parts [split [ad_conn path_info] /]
+set id [lindex $path_info_parts 0]
+
+rp_form_put id $id
+
+ad_page_contract {
+	@author Neophytos Demetriou
+} {
+	id:integer
+	{original_p:boolean "f"}
+}
+
+set pathexp [list "User [ad_conn user_id]"]
+set data [::db::Set new \
+	      -pathexp $pathexp \
+	      -select [list id title {extra->'XO.File.Type' as filetype} {extra->'XO.Info.page_size' as page_size}] \
+	      -type ::Content_Item \
+	      -noinit]
+
+$data lappend where "id=[::util::dbquotevalue $id]"
+$data load
+set o [$data head]
+
+set storage_path /web/data/storage/10-[ad_conn user_id]/${id}/
+
+switch -exact -- [$o set filetype] {
+    {document}     - 
+    {spreadsheet}  -
+    {presentation} {
+	set mimetype application/pdf
+	set filename c-${id}.pdf
+    }
+    {image} {
+	set mimetype image/jpeg
+	set filename preview/c-${id}_p-1-s1000.jpg
+    }
+    {audio} {
+	set mimetype audio/mp3
+	set filename ${id}.mp3
+    }
+    {video} {
+	set mimetype application/octet-stream
+	set filename o-${id}
+    }
+}
+
+#set mimetype application/octet-stream
+ad_returnfile_background 200 $mimetype [file normalize ${storage_path}/${filename}]

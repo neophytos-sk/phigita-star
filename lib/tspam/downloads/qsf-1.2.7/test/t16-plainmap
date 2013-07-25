@@ -1,0 +1,15 @@
+#!/bin/sh
+#
+# TEST: Plaintext map:                  
+
+rm -f $TESTDB
+./mboxsplit 1 < .test-spam | $PROG -d $BACKEND:$TESTDB -P $TESTFILE -m -w 2
+ISSPAM=0
+./mboxsplit 1 < .test-spam | $PROG -d $BACKEND:$TESTDB -t || ISSPAM=1
+test $ISSPAM -eq 1
+./mboxsplit 2 < .test-spam | $PROG -d $BACKEND:$TESTDB -P $TESTFILE -m
+
+COUNT=`wc -l < $TESTFILE | tr -d ' '`
+test "$COUNT" -gt 2 && exit 0
+
+exit 1

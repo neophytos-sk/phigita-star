@@ -1,0 +1,121 @@
+Received: from p2-jbsched08.ad.prodcc.net (p2-pen6.ad.prodcc.net [10.252.0.106])
+	by p2-mail190.ccm166.constantcontact.com (Postfix) with ESMTP id 81809F24461
+	for <neophytos@phigita.net>; Wed, 30 Nov 2011 11:26:44 -0500 (EST) 
+DKIM-Signature: v=1; q=dns/txt; a=rsa-sha256; c=relaxed/relaxed; s=105386; d=manning.ccsend.com; h=to:subject:mime-version:message-id:from:date:sender:list-unsubscribe:reply-to; bh=MDUjeq/pFBv9jEtauAJuAfwXe6yj1Fl+mdqrCbIE2pM=; b=RO4bwPkJaC10Riqgv0JqBzCKM0imn6myLq9jPB2OnCgD9vR2L4JYy11VySlxP3PpnrjfqMRjWsyWLzXD1UKGib9g+i+npi1jMyT7CBc6oEryTi9ulanLaJpsFbz6kfRpURz2q8kPUO2lW7+ebMqvHxul/MXrQgLL6bF4+K6kqYM= 
+Message-ID: <1108849427109.1101335703814.281293.8.331100CA@scheduler> 
+Date: Wed, 30 Nov 2011 11:26:44 -0500 (EST) 
+From: Manning Publications <mkt@manning.com> 
+Reply-To: mkt@manning.com 
+Sender: Manning Publications <manning@manning.ccsend.com> 
+To: neophytos@phigita.net 
+Subject: Countdown to 2012! Win an iPad! Free ebooks daily! 
+X-Mailer: Roving Constant Contact 2009 (http://www.constantcontact.com) 
+List-Unsubscribe: http://visitor.constantcontact.com/do?p=un&mse=0018GC6MpVjY0QsVHXO2XbbSb_v5l8P9v_bapbCBCe8WWg%3D&t=001f49yAPjLg7vDhdqdbQC4lA%3D%3D&llr=gimslwbab 
+X-Return-Path-Hint: ESC1108849427109_1101335703814_281293_r20@in.constantcontact.com 
+X-Roving-ID: 1101335703814.281293 
+X-Lumos-SenderID: 1101335703814 
+X-Roving-CampaignId: 1108849427109 
+X-Roving-StreamId: 0 
+--------------------------------------
+view in your
+browser
+http://campaign.r20.constantcontact.com/render?llr=gimslwbab&v=001J8BvtJGIt7s8QdCwSWP_FSMk63uYtbcQJPr4tgORvN5fSei14jDjaYYitCknBvzMm4oNJ96ccYv4yCmH8QQ_iwhChjPxgqfzIe0KLV_FWObbtyLTBsuXXAe2Gz0GKTDlzc2Nw9iFm1iFVedjgiGqow%3D%3D
+
+
+home [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108849427109&s=281293&e=0010AoavYs2sxyI18ivcSr5rbruGd4l-HmqPusYc_ja2olj7meAd9VddMusS9D4Z1PZK_CBKGZ17vFqpRzvOoix57QqGumWtwXU_k3aKMnUaMSyTofyTqgX3g==]support
+[http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108849427109&s=281293&e=0010AoavYs2sxx3KYoGkxg2JEYCVicfcYD7ZoLOooDW7O7lsPiLdLwcTzrQqMuk0tsOUULB4QT1KTY4M9yz8lQ2XlumuW1Ddm4hh4QP0DfJ8Hs0PS0KyXzppro1e1L9e2rtegT1vKnT8xU=]
+
+Free eBooks! Great deals! Win an iPad 2!
+
+countdown2012 [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108849427109&s=281293&e=0010AoavYs2sxxTIKcQKe4moWbzD_lP25HhF8Ri0XX9yyd1CXWMlWNzG6PaaVH1b42MoALoLKkBx9fvbOuavROQWnUWHa7HwqtCMWJpWmni7Vazoy7HBP9v-lgB5fQP9llre4U0hEk6Mw0l6s78ATN45TEZrGBcF2gh]
+
+Welcome 2012 with a little fun and games! Register for Manning's Countdown to 2012
+[http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108849427109&s=281293&e=0010AoavYs2sxyDptQiaOoj1sKLHFMWchqVbvMEDW_tyu03ocntRg0aZfBrTYHLW8fx6recs7dKtMdECtdDhlfLPzMrCvYeCQAh8XjjlOpTBhYrwK5B7ae_LIss1AtI6kkNpNrYQ-uE9xk=]
+and you'll get
+
+
+* An email alert with a fantastic deal good for one day only
+* A chance to win one of two free eBooks every day
+* A chance to win a 16GB 3G iPad2
+
+It all starts tomorrow, December 1. Each day we'll announce two eBook winners, and
+on January 5, 2012 we'll let you know who takes home a new iPad 2 to start the new
+year.
+
+How to play
+
+If you get the Deal of the Day Email Alert [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108849427109&s=281293&e=0010AoavYs2sxxTIKcQKe4moWbzD_lP25HhF8Ri0XX9yyd1CXWMlWNzG6PaaVH1b42MoALoLKkBx9fvbOuavROQWnUWHa7HwqtCMWJpWmni7Vazoy7HBP9v-lgB5fQP9llre4U0hEk6Mw0l6s78ATN45TEZrGBcF2gh],
+you're automatically registered for the Countdown to 2012 [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108849427109&s=281293&e=0010AoavYs2sxxTIKcQKe4moWbzD_lP25HhF8Ri0XX9yyd1CXWMlWNzG6PaaVH1b42MoALoLKkBx9fvbOuavROQWnUWHa7HwqtCMWJpWmni7Vazoy7HBP9v-lgB5fQP9llre4U0hEk6Mw0l6s78ATN45TEZrGBcF2gh].
+If not, it's easy to sign up! [Go to the sign up page [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108849427109&s=281293&e=0010AoavYs2sxxTIKcQKe4moWbzD_lP25HhF8Ri0XX9yyd1CXWMlWNzG6PaaVH1b42MoALoLKkBx9fvbOuavROQWnUWHa7HwqtCMWJpWmni7Vazoy7HBP9v-lgB5fQP9llre4U0hEk6Mw0l6s78ATN45TEZrGBcF2gh]]
+
+New in MEAP
+
+Countdown to 2012 [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108849427109&s=281293&e=0010AoavYs2sxxTIKcQKe4moWbzD_lP25HhF8Ri0XX9yyd1CXWMlWNzG6PaaVH1b42MoALoLKkBx9fvbOuavROQWnUWHa7HwqtCMWJpWmni7Vazoy7HBP9v-lgB5fQP9llre4U0hEk6Mw0l6s78ATN45TEZrGBcF2gh]
+starts tomorrow. You can get in the spirit today by saving 50% on any of our four
+newest MEAPs. Just use Promotional Code n3950 when you check out at manning..com 
+[http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108849427109&s=281293&e=0010AoavYs2sxxTIKcQKe4moab6JJbMJbequ_8WG-vou6cJZ5Gcxh9n7TmhrYgDg-5Q3Sd2WSjktDzqPVqNhcWTd9iJbYbMFvmi1YBc-ogbTElSgXpHDO1-Ww==].
+This offer expires December 5.
+
+flexmobileinaction [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108849427109&s=281293&e=0010AoavYs2sxwr9glLB7EFKY0yKlXsx3CKP-p1VArx5ZrCxUWayc6rPOl_nED2Gc0LIllW_MtHmW_GStMAW6koRTh8XTV9OxV5masYHAY7MktIkBUzKFud-b-ZoR8SJLFQ]
+
+Flex Mobile in Action [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108849427109&s=281293&e=0010AoavYs2sxwr9glLB7EFKY0yKlXsx3CKP-p1VArx5ZrCxUWayc6rPOl_nED2Gc0LIllW_MtHmW_GStMAW6koRTh8XTV9OxV5masYHAY7MktIkBUzKFud-b-ZoR8SJLFQ]
+» Build your apps using Flex 4.5 and you can export them to Android, iOS, or any
+ other mobile platform, eliminating the need to write and re-write your code. This
+book shows you how to use the Flex skills you already have to build great mobile
+ apps. Along the way, you'll pick up new design ideas and techniques. [Read more
+ [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108849427109&s=281293&e=0010AoavYs2sxwr9glLB7EFKY0yKlXsx3CKP-p1VArx5ZrCxUWayc6rPOl_nED2Gc0LIllW_MtHmW_GStMAW6koRTh8XTV9OxV5masYHAY7MktIkBUzKFud-b-ZoR8SJLFQ]]
+
+learnsqlserverinmonth [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108849427109&s=281293&e=0010AoavYs2sxzDzeixrNQMasSFMxrrR-tfDdnt8_6UR2LtUro8X_qJrjZ_t_TqmP39P312Il06-mxV5Dup5LOHJma6oxe6WSrVob4my_fv1Pji4A6FloMrtQ_A3vuJ-LHT]
+
+Learn SQL Server in a Month of Lunches [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108849427109&s=281293&e=0010AoavYs2sxzDzeixrNQMasSFMxrrR-tfDdnt8_6UR2LtUro8X_qJrjZ_t_TqmP39P312Il06-mxV5Dup5LOHJma6oxe6WSrVob4my_fv1Pji4A6FloMrtQ_A3vuJ-LHT]
+» If you want to learn SQL Server but don't have a lot of time, this is the book
+ for you. Master DBA basics on your lunch hour by following these short, focused
+ lessons. You'll start at the beginning and get what you need to set up and administer
+a working SQL Server system--no experience required. [Read more [http://r20..rs6.net/tn.jsp?llr=gimslwbab&et=1108849427109&s=281293&e=0010AoavYs2sxzDzeixrNQMasSFMxrrR-tfDdnt8_6UR2LtUro8X_qJrjZ_t_TqmP39P312Il06-mxV5Dup5LOHJma6oxe6WSrVob4my_fv1Pji4A6FloMrtQ_A3vuJ-LHT]]
+
+html5forNETdevelopers [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108849427109&s=281293&e=0010AoavYs2sxwcGkQq-CIDKGYzehLjT5NlDGvDUgSGb0FEpaCJ58qMXOPN6YX7ZxxNSRTEzOxXo4uu7Dpw4cIt2fxcz03jgE81mr73XsfJZfX-wAwq-e6Q2ETFMniwtfZF]
+
+HTML5 for the .NET Developer [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108849427109&s=281293&e=0010AoavYs2sxwcGkQq-CIDKGYzehLjT5NlDGvDUgSGb0FEpaCJ58qMXOPN6YX7ZxxNSRTEzOxXo4uu7Dpw4cIt2fxcz03jgE81mr73XsfJZfX-wAwq-e6Q2ETFMniwtfZF]
+» Learn how to integrate the new HTML5 APIs into rich web applications using JavaScript,
+ASP.NET MVC, and WCF. Written from the .NET perspective, this book is full of practical
+applications and ways to connect the new web standards with your existing development
+practices. [Read more [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108849427109&s=281293&e=0010AoavYs2sxwcGkQq-CIDKGYzehLjT5NlDGvDUgSGb0FEpaCJ58qMXOPN6YX7ZxxNSRTEzOxXo4uu7Dpw4cIt2fxcz03jgE81mr73XsfJZfX-wAwq-e6Q2ETFMniwtfZF]]
+
+extjs2e [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108849427109&s=281293&e=0010AoavYs2sxxw6k1fR-dQYhTWf7gTV7qGiSovPF8QllvxFm8bSd1_geEflehk4rBxzaQd_n9Lb2V_aydwqiNkMoMOidIo9dT3uYjwez5Xe1l_LlwZz1LwLHldHjf8WcYY]
+
+Ext JS in Action, Second Edition [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108849427109&s=281293&e=0010AoavYs2sxxw6k1fR-dQYhTWf7gTV7qGiSovPF8QllvxFm8bSd1_geEflehk4rBxzaQd_n9Lb2V_aydwqiNkMoMOidIo9dT3uYjwez5Xe1l_LlwZz1LwLHldHjf8WcYY]
+» This totally revised new edition starts with an overview of the Ext JS framework
+and then dives into complete examples, engaging illustrations, and crisp, straightforward
+explanations. You'll feel like you have an expert guide right at your elbow teaching
+you important Ext techniques. [Read more [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108849427109&s=281293&e=0010AoavYs2sxxw6k1fR-dQYhTWf7gTV7qGiSovPF8QllvxFm8bSd1_geEflehk4rBxzaQd_n9Lb2V_aydwqiNkMoMOidIo9dT3uYjwez5Xe1l_LlwZz1LwLHldHjf8WcYY]]
+
+Deal of the Day Email Alert [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108849427109&s=281293&e=0010AoavYs2sxyDptQiaOoj1sKLHFMWchqVbvMEDW_tyu03ocntRg0aZfBrTYHLW8fx6recs7dKtMdECtdDhlfLPzMrCvYeCQAh8XjjlOpTBhYrwK5B7ae_LIss1AtI6kkNpNrYQ-uE9xk=]
+| Test our new dashboard [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108849427109&s=281293&e=0010AoavYs2sxwxY5S9Ftu0SDWSYMu2EDjVHih-8FQWj93A06p7v2BPOGquFNFbR3KJMn3lWzEegCQrgx1wTP60G7VHsK8Rvm89Mv34J3Gt-Oe7FdITbDP1yrfRTRPFRh5r]
+| Customer Support  [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108849427109&s=281293&e=0010AoavYs2sxx3KYoGkxg2JEYCVicfcYD7ZoLOooDW7O7lsPiLdLwcTzrQqMuk0tsOUULB4QT1KTY4M9yz8lQ2XlumuW1Ddm4hh4QP0DfJ8Hs0PS0KyXzppro1e1L9e2rtegT1vKnT8xU=]
+
+Copyright © 2011 Manning Publications. All rights reserved.
+
+follow us on Twitter
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Forward email
+http://ui.constantcontact.com/sa/fwtf.jsp?llr=gimslwbab&m=1101335703814&ea=neophytos@phigita.net&a=1108849427109
+
+
+This email was sent to neophytos@phigita.net by mkt@manning.com.
+
+Update Profile/Email Address
+http://visitor.constantcontact.com/do?p=oo&mse=0018GC6MpVjY0QsVHXO2XbbSb_v5l8P9v_bapbCBCe8WWg%3D&t=001f49yAPjLg7vDhdqdbQC4lA%3D%3D&reason=001y5KaVlBn7_Y%3D&llr=gimslwbab
+
+
+Instant removal with SafeUnsubscribe(TM)
+http://visitor.constantcontact.com/do?p=un&mse=0018GC6MpVjY0QsVHXO2XbbSb_v5l8P9v_bapbCBCe8WWg%3D&t=001f49yAPjLg7vDhdqdbQC4lA%3D%3D&reason=001y5KaVlBn7_Y%3D&llr=gimslwbab
+
+
+Privacy Policy:
+http://ui.constantcontact.com/roving/CCPrivacyPolicy.jsp
+
+
+
+
+Manning Publications Co. | Sound View Ct. #3B | Greenwich | CT | 06830

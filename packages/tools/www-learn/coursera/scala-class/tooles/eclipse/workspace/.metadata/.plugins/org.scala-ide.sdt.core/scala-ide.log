@@ -1,0 +1,3 @@
+2012-09-30 16:46:11,920 ERROR [main] - org.scala-ide.sdt.core - org.scala-ide.sdt.core - org.scala-ide.sdt.core - 0 - scala.tools.nsc.MissingRequirementError: object scala not found.
+2012-09-30 16:47:35,156 ERROR [main] - org.scala-ide.sdt.core - org.scala-ide.sdt.core - org.scala-ide.sdt.core - 0 - scala.tools.nsc.MissingRequirementError: object scala not found.
+2012-09-30 16:47:47,929 ERROR [org.eclipse.jdt.internal.ui.text.JavaReconciler] - ImplicitHighlightingPresenter - scala.tools.nsc.interactive.MissingResponse: response missing

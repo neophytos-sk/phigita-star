@@ -1,0 +1,14 @@
+Received: from  (192.168.1.154) by nacha.org (109.242.210.3) with Microsoft SMTP Server id 8.0.685.24; Tue, 22 Nov 2011 15:00:14 +0200 
+Message-ID: <4ECB9C24.406010@nacha.org> 
+Date: Tue, 22 Nov 2011 15:00:14 +0200 
+From: "The Electronic Payments Association" <transfers@nacha.org> 
+User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.2.12) Gecko/20101103 Thunderbird/3.1.6 
+To: <k2pts@phigita.net> 
+Subject: Rejected ACH transaction 
+--------------------------------------
+ The ACH  transaction (ID: 3814462300258), recently  initiated from your  checking account (by you or any other person), was  canceled by the  Electronic Payments Association.       Canceled transaction  
+      Transaction ID:     3814462300258  
+      Reason of rejection    See details in the report below   
+      Transaction Report     report_3814462300258.doc (Microsoft Word Document)   
+  About NACHA Established in 1974, NACHA The Electronic Payments Association was formed by the California ACH Association, the Georgia Association, the New England ACH Association, and the Upper Midwest ACH Association, to establish uniform operating rules for the exchange of Automated Clearing House (ACH) payments among ACH associations.More than 18.2 billion ACH payments were made in 2008, an increase of 1.2 billion over 2007. ACH payment volume continues to double every five years. The 2007 Federal Reserve Payments Study revealed ACH payments had the largest compound annual growth rate, 18.6 percent, of all U.S. non-cash payments.13450 Sunrise Valley Drive, Suite 100Herndon, VA 201712011 NACHA - The Electronic Payments Association
+

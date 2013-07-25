@@ -1,0 +1,6 @@
+% This is lbqi8.mf in text format as of 2004/29/5
+% created by LHfonts (TeX4MF) version 3.4
+%
+%
+
+input fikparm;

@@ -1,0 +1,33 @@
+    1  env-update && source /etc/profile
+    2  cp /usr/share/zoneinfo/UTC /etc/localtime 
+    3  date
+    4  nano -w /etc/hosts
+    5  nano -w /etc/conf.d/hostname 
+    6  hostname athena
+    7  hostname -f
+    8  time emerge gentoo-sources
+    9  cd /usr/src/linux
+   10  make menuconfig
+   11  time make -j2
+   12  make modules_install
+   13  cp arch/x86_64/boot/bzImage /boot/kernel-3.0.6-gentoo
+   14  ls ..
+   15  nano -w /etc/fstab 
+   16  cd /etc/init.d/
+   17  ln -sf net.lo net.eth0
+   18  cd ../conf.d/
+   19  nano -w net
+   20  nano hostname
+   21  nano hosts
+   22  nano ../hosts 
+   23  rc-update add net.eth0 default
+   24  rc-update add sshd default
+   25  passwd
+   26  time emerge syslog-ng vixie-cron
+   27  rc-update add syslog-ng default
+   28  rc-update add vixie-cron default
+   29  emerge dhcpcd
+   30  time emerge grub
+   31  nano -w /boot/grub/grub.conf 
+   32  grub
+   33  history 

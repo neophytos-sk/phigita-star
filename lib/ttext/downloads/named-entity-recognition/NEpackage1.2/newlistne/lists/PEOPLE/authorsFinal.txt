@@ -1,0 +1,353 @@
+Tobias Wolff
+Jerry Pournelle
+Gabriel Garcia Marquez
+Carol Bruneau
+Tibor Fischer
+JRR Tolkien
+Sarah Waters
+Wally Lamb
+Keri Hulme
+E. Annie Proulx
+Iris Murdoch
+Matthew Kneale
+Jonathan Kellerman
+A.A. Milne
+S. Rushdie
+Hans Moravec
+Michele Roberts
+Arthur C. Clarke
+John Fuller
+Jane Hamilton
+Bob Woodward
+Bram Stoker
+Robert Gilmore
+Karen Robards
+Ahdaf Soueif
+Karen Cushman
+F. Paul Wilson
+Julia O'Faolain
+Margaret Mitchell
+Oliver Sacks
+P.D. Cacek
+Raymond E. Feist
+Lawrence Durrell
+James Fenimore Cooper
+Peter Ackroyd
+Willa Cather
+Louise Erdrich
+Patricia Cornwell
+Elizabeth Bowen
+Toni Morrison
+Ian McEwan
+Jan Morris
+Nancy Holder
+Jim Thompson
+John Arden
+J.L. Carr
+Leo Tolstoy
+J.D. Salinger
+P.D. James
+Andre Brink
+Thomas Keneally
+Phillip K. Dick
+E. E. Cummings
+Tim Powers
+Mary Oliver
+William Baring-Gould
+Roger Zelazny
+Mick Jackson
+Alistair MacLeod
+Alice Munro
+Harriet Beecher Stowe
+R.C. Hutchinson
+Arundhati Roy
+John Banville
+Alan Hollinghurst
+Shannon Creech
+Ruthie Bolton
+Donna Tartt
+Mario Puzzo
+Graham Green
+David J. Schow
+Frederick Forseythe
+T. Jefferson Parker
+Linda Howard
+George Orwell
+Wendell Berry
+Amy Herrick
+Charlotte Bronte
+William Gibson
+David Lodge
+A. S. Byatt
+Umberto Eco
+Nancy Farmer
+Owl Goingback
+Nina Bawden
+Johnny Updike
+Robert R. McCammon
+Rohinton Mistry
+William Heath
+Homer Hickham Jr.
+Barbara Kingolver
+A.L. Barker
+H.D. Thoreau
+Michael Ignatieff
+Leslie Feinberg
+Sandra Brown
+Betty Friedan
+Agatha Christie
+J.M. Coetzee
+Peter Hoeg
+Mark Z. Danielewski
+Alice Thomas Ellis
+Joseph Heller
+John Berger
+Abdulrazak Gurnah
+S.P. Somtow
+Eve Ensler
+Patrick McCabe
+James Joyce
+Barry Unsworth
+Thomas Pynchon
+Magnus Mills
+William Golding
+Peter Carey
+Tom Piccirilli
+J.G. Farrell
+Douglas Adams
+Colm Tóibín
+Kem Nunn
+John Irving
+Malcolm Bradbury
+Caroline Blackwood
+E. B. White
+Aldous Huxley
+Richard Preston
+Tom Clancy
+Jane Gardam
+Nicholas Mosley
+Rex Miller
+Brian A. Hopkins
+Russell Banks
+Abraham Pais
+Anthony Burgess
+Robert Cormier
+Gerard Daniel Houarner
+Brenda Joyce
+J.R. Tolkien
+Anita Brookner
+Frank McCourt
+Salman Rushdie
+Kingsley Amis
+Ralph Leighton
+John Knowles
+Thomas Harris
+George MacKay Brown
+Stephen Hawking
+Stephen King
+Brian O'Doherty
+Mark Salzman
+Piers Anthony
+Beryl Bainbridge
+Susan Sheehan
+Robin Cook
+Joyce Carol Oates
+Benjamin hoff
+James Kelman
+Mary Karr
+Bill Watterson
+Jack Ketchum
+F. Scott Fitzgerald
+Kahlil Gihbran
+Alan Rodgers
+Lois McMaster Bujold
+Michael Frayn
+Anita Desai
+Susan Hill
+Sarah Smith
+D.M. Thomas
+Dan Simmons
+Tony Richards
+Anita Shreve
+William Shakespeare
+Billie Letts
+Tom Stoppard
+Daphne du Maurier
+Paul Scott
+Caleb Carr
+Barbara Pym
+Melanie Tem
+Charles Dickens
+Armisted Maupin
+Chet Williamson
+Alice Walker
+Elizabeth Lowell
+Marina Warner
+Richard P. Feynman
+Penelope Lively
+Fyodor Dostoevsky
+William Trevor
+Simon Clark
+Billy Faulkner
+John McGahern
+Issac Assimov
+Harper Lee
+Charles L. Grant
+Thomas Chesnutt
+Deborah Smith
+Louisa May Alcott
+Michael Chabon
+Roddy Doyle
+Judith McNaught
+J. G. Ballard
+Timothy Zahn
+Elizabeth Gilbert
+Monica Ferris
+Jack Kerouac
+Martin Booth
+Vladimir Nabokov
+Nadine Gordimer
+Tim Parks
+Ruth Prawer Jhabvala
+W.E.B. Griffin
+David Storey
+Leon Uris
+Edward Dumas
+Marylin French
+Marilyn French
+Barry Hughart
+Zora Neale Hurston
+Martin Amis
+C.P. Snow
+Bernard MacLaverty
+Negreponte
+C.S. Friedman
+Mark Frost
+Ira Levin
+Madeleine St John
+Justin Cartwright
+Carol Shields
+William Boyd
+Jerzy Kosinski
+Thomas Kilroy
+Bernice Rubens
+Anchee Min
+Sybille Bedford
+Anne Bronte
+Jayne Ann Philips
+Richard Laymon
+Brian Moore
+Muriel Spark
+Tammi Hogue
+Howard Norman
+Sylvia Plath
+James Clavell
+Derek Robinson
+Anne Schlee
+Erich Segal
+Ray Garton
+Christopher Hope
+Michael Ondaatje
+J. L. Carr
+Tad Williams
+Bruce Chatwin
+Joe R. Lansdale
+George R.R. Martin
+Anne Rice
+Pierre Leroux
+Paul Bailey
+Rose Tremain
+Timothy Mo
+Phil Farrand
+Seamus Deane
+Nancy Price
+Kimberly Cates
+Jane Smiley
+T. W. Wheeler
+John Berendt
+Kazuo Ishiguro
+Trezza Azzopardi
+Michael Chrichton
+Henry James
+Barry England
+P.H. Newby
+Robertson Davies
+Graham Swift
+Elizabeth Mavor
+Jennifer Johnston
+Neal Stephenson
+Michael Collins
+Walter Mosley
+Barbara Hambly
+Fay Weldon
+Emily Bronte
+Aimee Liu
+Steve Rasnic Tem
+V.S. Naipaul
+Paul O. Williams
+Peter Straub
+Bryce Courteney
+Robert Bloch
+Ken Follett
+Jim Crace
+Tom Robbins
+Caryl Phillips
+Margaret Atwood
+J. M. Coetzee
+Guy Gavriel Kay
+Steven Brust
+Shena Mackay
+Terry Goodkind
+Tim Winton
+Ben Okri
+Charles Sheffield
+Betty Smith
+Gary A. Braunbeck
+Chinua Achebe
+G.M. Williams
+Nan Ryan
+Daniel Quinn
+Camus
+Richard Brautigan
+Ernest Hemingway
+Raymond Chandler
+Lisa Cantrell
+Julian Barnes
+Penelope Fitzgerald
+David Eddings
+Don DeLillo
+John Steinbeck
+Anita Mason
+Robert Jordan
+Caitlin R. Kiernan
+Jill Paton Walsh
+Katherine Dunn
+Ramsey Campbell
+Molly Keane
+Anne Tyler
+Charlee Jacob
+James P. Hogan
+Stanley Middleton
+Jonathan Carroll
+Doug Hofstadter
+JD Salinger
+Susanna Kaysen
+Isabel Allende
+Kate Chopin
+Clive Barker
+David Malouf
+Harlan Ellison
+Carol Edgarian
+Mordecai Richler
+Jane Austen
+Chaim Potok
+Michael Marano
+Patricia Highsmith
+Elizabeth Taylor
+Lawrence P. Santoro
+Doris Lessing
+Julian Rathbone
+Andrew O'Hagan
+Romesh Gunesekera
+Kurt Vonnegut
+Pat Barker

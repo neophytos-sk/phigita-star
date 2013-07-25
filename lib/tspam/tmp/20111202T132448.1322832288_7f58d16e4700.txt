@@ -1,0 +1,14 @@
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed/relaxed; d=email.waterstones.com;
+	s=20111007; t=1322832299; x=1338643499;
+	bh=mULYXXjkdzoLDVc6urHH9hYn3pA=; h=From:Reply-To;
+	b=eHaq+1wpd97DSkzs7Qqx2GgXqMJhNNnzGpMvNqDJoGVuguUWo3n+gnjbORrQXaKn2
+	 Hk8cLiEdN08Ap0lE14pTW46fjA5vbv58YdorpX7c2+jI33iHjOJuSWl7zm2As7LdkU
+	 /8Hhq5EjtN47tVS22g/TA7D+lT3z+yErI8HtpRQk= 
+Date: Fri, 2 Dec 2011 13:24:59 -0000 
+Message-ID: <bwj1vu1akhzmzcau7xh0zdftsygefv.2719141403.5141@mta805.email.waterstones.com> 
+List-Unsubscribe: <mailto:rm-0bwj1vu1akhzmzcau7xh0zdftsygefv@email.waterstones.com> 
+From: "Waterstone's Card" <team@email.waterstones.com> 
+To: k2pts@phigita.net 
+Subject: Your December balance, free Jamie recipe and reduced prices on almost all books! 
+Reply-To: "Waterstone's Card" <support-bwj1vu1akhzmzcau7xh0zdftsygefv@email.waterstones.com> 
+

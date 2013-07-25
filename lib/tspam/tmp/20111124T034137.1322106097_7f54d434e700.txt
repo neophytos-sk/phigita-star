@@ -1,0 +1,110 @@
+DomainKey-Signature: q=dns; a=rsa-sha1; c=nofws;
+	s=prod; d=linkedin.com;
+	h=DKIM-Signature:Sender:Date:From:To:Message-ID:Subject:MIME-Version:Content-Type:X-LinkedIn-Template:X-LinkedIn-Class:X-LinkedIn-fbl;
+	b=i1sgH0j6ArSJO1Sy5iHcT7+eJeW47/x0SOejPnuFbLmb+UX1AAzUGtIuZ38wsjRw
+	qa9VxO6HkPp4XPrtmt+IsS33GaNE/ftHNn/WO3bce/saOQghlnKdbSHXcxavpSlH 
+DKIM-Signature: v=1; a=rsa-sha1; d=linkedin.com; s=proddkim; c=relaxed/relaxed;
+	q=dns/txt; i=@linkedin.com; t=1322106087;
+	h=From:Subject:Date:To:MIME-Version:Content-Type:X-LinkedIn-Class:X-LinkedIn-fbl:
+	X-LinkedIn-Template;
+	bh=+mdGs0uXdvgflpPu6Hvr5+LJamA=;
+	b=Dd00Omcr01efwk6nTMd3jJHKuckf+xWXGJfO8L7C9NaVYrC7QKZCDNyP3QKZEGVn
+	4lFrmZTnKfq2QVRpawmAZz/DHO4GkW57lmoaQDCu/pdYoF5Cnjoq6kf4wh1FRWDn; 
+Sender: messages-noreply@bounce.linkedin.com 
+Date: Thu, 24 Nov 2011 03:41:27 +0000 (UTC) 
+From: "Big Data, Low Latency Group Members" <group-digests@linkedin.com> 
+To: Neophytos Demetriou <k2pts@phigita.net> 
+Message-ID: <901573639.250210423.1322106087229.JavaMail.app@ela4-app0106.prod> 
+Subject: [3] new discussions and [16] new jobs on LinkedIn 
+X-LinkedIn-Template: anet_digest_type 
+X-LinkedIn-Class: GROUPDIGEST 
+X-LinkedIn-fbl: m-XjYDJnZ1PPDB83USeBi_EvAyGxQbngUAW-SDBqC152-ktM2AuSdLwE 
+--------------------------------------
+Big Data, Low Latency
+  Latest discussions from Big Data, Low Latency group members.  Change the frequency of this digest:
+  http://www.linkedin.com/e/-1ht5d5-gvd7ttte-y/ahs/3638279/EMLt_anet_settings/?hs=false&tok=1Ro1r848iteB01
+
+
+
+
+Send me an email for each new discussion &#187; http://www.linkedin.com/e/-1ht5d5-gvd7ttte-y/snp/3638279/true/grp_email_subscribe_new_posts/?hs=false&tok=0edCcfgzOteB01
+
+
+
+Discussions
+ * Alessandro  Mantelero Hi, everyone. I am an Italian professor of ICT law and I am interested in the legal aspects of big data.
+Alessandro Mantelero Faculty Fellow at the Nexa Center for Internet (Politecnico di Torino)
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd7ttte-y/ava/81289518/3638279/EMLt_anet_qa_ttle/?hs=false&tok=1STZSyc-GteB01
+
+
+ * Connie  Ora Strata News: More Hadoop hullabloo, defining data scientists, talking Tika, complete Clojure, and then some. http://bit.ly/uychuv
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd7ttte-y/ava/81024814/3638279/EMLt_anet_qa_ttle/?hs=false&tok=3FS9xvWBateB01
+
+
+ * Silvius  Rus 1 Terabyte of Text in 7 Seconds
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd7ttte-y/ava/80987388/3638279/EMLt_anet_qa_ttle/?hs=false&tok=3840jgBPOteB01
+
+
+Weekly Job Postings * Dave  Freireich: Manager of European Automated Trading Systems Development, can be based in UK or US.
+  Manager of European Automated Trading Systems Development, can be based in UK or US. (0)
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd7ttte-y/ava/81832065/3638279/EMLt_anet_qa_ttle/?hs=false&tok=0hVC8mVg6teB01
+
+ * Derek  Fettig: High-Performance Engineer - C /C++, network programming and multi-threading, and audio/video codecs and VOIP/video expertise
+  High-Performance Engineer - C /C++, network programming and multi-threading, and audio/video codecs and VOIP/video expertise (0)
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd7ttte-y/ava/81675601/3638279/EMLt_anet_qa_ttle/?hs=false&tok=24dPKJ_6qteB01
+
+ * Ernie  Salle: VMware in Palo Alto, CA is hiring!  We hire talented distributed systems developers, irrespective of domain. " Accelerate. Innovate. Lead." Contact me directly for details.
+sallee@vmware.com
+  VMware in Palo Alto, CA is hiring!  We hire talented distributed systems developers, irrespective of domain. " Accelerate. Innovate. Lead." Contact me directly for details.
+sallee@vmware.com (0)
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd7ttte-y/ava/81521502/3638279/EMLt_anet_qa_ttle/?hs=false&tok=2BgMVA-SateB01
+
+ * Kimberly  Owen: VP of Engineering with a Big Data Background -Downtown SF
+  VP of Engineering with a Big Data Background -Downtown SF (0)
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd7ttte-y/ava/81512010/3638279/EMLt_anet_qa_ttle/?hs=false&tok=3GiP_3mDateB01
+
+ * Shannon  Anderson: SEATTLE: Hiring 4 Sr. JAVA SDEs & SDETs to solve a large-scale transactional computing problem for a START-UP digital distribution company. SHANNONA@NUWESTGROUP.COM
+  SEATTLE: Hiring 4 Sr. JAVA SDEs & SDETs to solve a large-scale transactional computing problem for a START-UP digital distribution company. SHANNONA@NUWESTGROUP.COM (0)
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd7ttte-y/ava/81471410/3638279/EMLt_anet_qa_ttle/?hs=false&tok=1Lr-NGffateB01
+
+ * Mindy  Marty: Distributed Database or Vertica Data Analytics Engineer
+  Distributed Database or Vertica Data Analytics Engineer (0)
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd7ttte-y/ava/81233533/3638279/EMLt_anet_qa_ttle/?hs=false&tok=2qgGT2SKSteB01
+
+ * Brian  Simpson: Big Data Engineer – NO Clearance required –Company will provide TS/SCI Clearance (FULL TIME)
+  Big Data Engineer – NO Clearance required –Company will provide TS/SCI Clearance (FULL TIME) (0)
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd7ttte-y/ava/81229678/3638279/EMLt_anet_qa_ttle/?hs=false&tok=03g7VK0yeteB01
+
+ * Jason  Stiles: Senior LAMP - PHP o Java, NoSQL (Cassandra + Hadoop {learn or utilise}) - London UK - Backend / Frontend Developers, QA / Testers, Sys Admin / Engineers
+  Senior LAMP - PHP o Java, NoSQL (Cassandra + Hadoop {learn or utilise}) - London UK - Backend / Frontend Developers, QA / Testers, Sys Admin / Engineers (0)
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd7ttte-y/ava/81161931/3638279/EMLt_anet_qa_ttle/?hs=false&tok=2ZdfBh7RKteB01
+
+ * Andrew  Jardine: Pioneers of Open Source technologies and passionate C/C++ coders – I want to hear from you!
+  Pioneers of Open Source technologies and passionate C/C++ coders – I want to hear from you! (0)
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd7ttte-y/ava/81089939/3638279/EMLt_anet_qa_ttle/?hs=false&tok=0vJR-k-WeteB01
+
+ * Jim  Williams: Business Lead - Finance Technology and Advisory Services-Connecticut
+  Business Lead - Finance Technology and Advisory Services-Connecticut (0)
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd7ttte-y/ava/81038888/3638279/EMLt_anet_qa_ttle/?hs=false&tok=0rEQ-bn5WteB01
+
+ * Jim  Williams: Business Lead - Finance Technology and Advisory Services-Connecticut
+  Business Lead - Finance Technology and Advisory Services-Connecticut (0)
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd7ttte-y/ava/81038254/3638279/EMLt_anet_qa_ttle/?hs=false&tok=1VxqtGRuWteB01
+
+ * Shannon  Anderson: Seattle: Hiring 4 Sr. JAVA SDEs & SDETs to solve a large-scale transactional computing problem for a digital distribution company (no, not for Amazon, but the problem set approaches that magnitude).
+  Seattle: Hiring 4 Sr. JAVA SDEs & SDETs to solve a large-scale transactional computing problem for a digital distribution company (no, not for Amazon, but the problem set approaches that magnitude). (0)
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd7ttte-y/ava/81018568/3638279/EMLt_anet_qa_ttle/?hs=false&tok=1l8vmh-DqteB01
+
+ * Dave  Freireich: Rare customer facing, UI AND back-end C++ development role, Princeton, NJ 100-200k+
+  Rare customer facing, UI AND back-end C++ development role, Princeton, NJ 100-200k+ (0)
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd7ttte-y/ava/80999954/3638279/EMLt_anet_qa_ttle/?hs=false&tok=0onoYp7G2teB01
+
+ * Zoe  Cho: Senior C++ Developer | Prop Trading House | City, London | Competitive Salary
+  Senior C++ Developer | Prop Trading House | City, London | Competitive Salary (0)
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd7ttte-y/ava/80766291/3638279/EMLt_anet_qa_ttle/?hs=false&tok=1uENdxiZGteB01
+
+
+

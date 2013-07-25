@@ -1,0 +1,17 @@
+Return-path: <webmaster@phigita.net> 
+Received: from [195.246.41.232] (port=9400 helo=user)
+	by mail.realprodata.com with asmtp 
+	id 1A8D9D-000508-66
+	for <webmaster@phigita.net>; Wed, 16 Nov 2011 12:01:54 +0200 
+Message-ID: <63FB3A3126C342D08FAD0B4B9994047D@user> 
+From: =?koi8-r?B?Iu/L08HOwSI=?= <poignantj03@city-net.com> 
+To: <webmaster@phigita.net> 
+Subject: =?koi8-r?B?88XNyc7B0tkgIvzMxcvU0s/czsXSx8XUycvBLTIwMTIiLCAi/M7F0sfP?=
+	=?koi8-r?B?08LF0sXWxc7JxS0yMDEyIg==?= 
+Date: Wed, 16 Nov 2011 12:01:54 +0200 
+X-Priority: 3 
+X-MSMail-Priority: Normal 
+X-Mailer: Microsoft Windows Mail 6.0.6001.18000 
+X-MimeOLE: Produced By Microsoft MimeOLE V6.0.6001.18049 
+X-Spam: Not detected 
+X-Mras: Ok 

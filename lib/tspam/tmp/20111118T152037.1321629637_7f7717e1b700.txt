@@ -1,0 +1,111 @@
+Received: from localhost ([127.0.0.1] helo=sfs-ml-1.v29.ch3.sourceforge.com)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <quickfix-developers-bounces@lists.sourceforge.net>)
+	id 1RRQEg-0004KB-I7; Fri, 18 Nov 2011 15:20:14 +0000 from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <mstjacques@decisionplus.com>) id 1RRQEf-0004K6-Es
+	for quickfix-developers@lists.sourceforge.net;
+	Fri, 18 Nov 2011 15:20:13 +0000 from smtp115.iad.emailsrvr.com ([207.97.245.115])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1RRQEa-0001bE-Qs
+	for quickfix-developers@lists.sourceforge.net;
+	Fri, 18 Nov 2011 15:20:13 +0000 from smtp51.relay.iad1a.emailsrvr.com (localhost.localdomain
+	[127.0.0.1])
+	by smtp51.relay.iad1a.emailsrvr.com (SMTP Server) with ESMTP id
+	770FD20EE2 for <quickfix-developers@lists.sourceforge.net>;
+	Fri, 18 Nov 2011 10:20:03 -0500 (EST) from localhost (localhost.localdomain [127.0.0.1])
+	by smtp51.relay.iad1a.emailsrvr.com (SMTP Server) with ESMTP id
+	7314720E40 for <quickfix-developers@lists.sourceforge.net>;
+	Fri, 18 Nov 2011 10:20:03 -0500 (EST) by smtp51.relay.iad1a.emailsrvr.com (Authenticated sender:
+	mstjacques-AT-decisionplus.com) with ESMTPSA id 40A6420EE2
+	for <quickfix-developers@lists.sourceforge.net>;
+	Fri, 18 Nov 2011 10:20:03 -0500 (EST) 
+X-ACL-Warn:  
+X-SMTPDoctor-Processed: csmtpprox 2.7.4 
+X-Virus-Scanned: OK 
+Message-ID: <4EC67793.2050309@decisionplus.com> 
+Date: Fri, 18 Nov 2011 10:19:47 -0500 
+From: Marc St-Jacques <mstjacques@decisionplus.com> 
+User-Agent: Mozilla/5.0 (Windows NT 6.0; rv:8.0) Gecko/20111105 Thunderbird/8.0 
+To: quickfix-developers@lists.sourceforge.net 
+References: <4EC5888A.8000707@decisionplus.com>
+	<CANL=BTpJaYFJ1oXfot1P2FfFFbu0HqTsNADDjZ=0kf8kKo3dTA@mail.gmail.com> 
+In-Reply-To: <CANL=BTpJaYFJ1oXfot1P2FfFFbu0HqTsNADDjZ=0kf8kKo3dTA@mail.gmail.com> 
+X-Spam-Score: 0.5 (/) 
+X-Spam-Report: Spam Filtering performed by mx.sourceforge.net.
+	See http://spamassassin.org/tag/ for more details.
+	1.0 HTML_MESSAGE           BODY: HTML included in message
+	-0.5 AWL AWL: From: address is in the auto white-list 
+X-Headers-End: 1RRQEa-0001bE-Qs 
+Subject: Re: [Quickfix-developers] FileLogPath required when MySQL is used 
+X-BeenThere: quickfix-developers@lists.sourceforge.net 
+X-Mailman-Version: 2.1.9 
+Precedence: list 
+List-Id: <quickfix-developers.lists.sourceforge.net> 
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/quickfix-developers>,
+	<mailto:quickfix-developers-request@lists.sourceforge.net?subject=unsubscribe> 
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=quickfix-developers> 
+List-Post: <mailto:quickfix-developers@lists.sourceforge.net> 
+List-Help: <mailto:quickfix-developers-request@lists.sourceforge.net?subject=help> 
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/quickfix-developers>,
+	<mailto:quickfix-developers-request@lists.sourceforge.net?subject=subscribe> 
+Errors-To: quickfix-developers-bounces@lists.sourceforge.net 
+--------------------------------------
+QuickFIX Documentation: http://www.quickfixengine.org/quickfix/doc/html/index.html
+QuickFIX Support: http://www.quickfixengine.org/services.html
+
+--------------------------------------
+Thanks.  It worked great.
+
+Le 2011-11-17 18:09, Djalma Rosa dos Santos Filho a écrit :
+> QuickFIX Documentation: http://www.quickfixengine.org/quickfix/doc/html/index.html
+> QuickFIX Support: http://www.quickfixengine.org/services.html
+>
+>
+>
+> You need to replace in your code FileLogFactory with MySQLLogFactory.
+>
+> On Thu, Nov 17, 2011 at 8:19 PM, Marc St-Jacques 
+> <mstjacques@decisionplus.com <mailto:mstjacques@decisionplus.com>> wrote:
+>
+>     QuickFIX Documentation:
+>     http://www.quickfixengine.org/quickfix/doc/html/index.html
+>     QuickFIX Support: http://www.quickfixengine.org/services.html
+>
+>     I'm sure this is a FAQ, I see numerous requests on the Net on various
+>     forums without a clear answer.
+>
+>     I'm using VC++ 2003.
+>     I would have thought that rebuilding QuickFix with MySQL support
+>     (#define HAVE_MYSQL 1) was sufficient for enable MySQL logging.
+>
+>     The rebuild was successful.
+>
+>     After completing all the mandatory MySQLLog... and MySQLStore...
+>     entries
+>     in the configuration file (and put them in either [DEFAULT] or
+>     [SESSION]
+>     in case I'm doing this wrong), the program still asks for a valid
+>     FileLogPath.
+>
+>     Any hint ?
+>
+>     Regards.
+>
+>     Marc St-Jacques.
+>
+>
+>
+
+--------------------------------------
+------------------------------------------------------------------------------
+All the data continuously generated in your IT infrastructure 
+contains a definitive record of customers, application performance, 
+security threats, fraudulent activity, and more. Splunk takes this 
+data and makes sense of it. IT sense. And common sense.
+http://p.sf.net/sfu/splunk-novd2d--------------------------------------
+_______________________________________________
+Quickfix-developers mailing list
+Quickfix-developers@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/quickfix-developers

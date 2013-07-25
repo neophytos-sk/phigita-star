@@ -1,0 +1,14 @@
+Received: from mjhzj (unknown [110.53.31.152])
+	(Authenticated sender: resume_school)
+	by mail.lepumedical.com (aqcx) with ESMTPA id 390826ECC3B;
+	Fri, 25 Nov 2011 13:20:47 +0800 (CST) 
+Message-ID: <20111125133824383642@lepumedical.com> 
+From: =?gb2312?B?sszB5sm6?= <resume_school@lepumedical.com> 
+To:  
+Subject: =?gb2312?B?yfousvouvMYuu64u0+suzu8uwc8uv9gu1sYuUC4=?=
+	=?gb2312?B?TS5DLrjfLry2LtHQLtDeLrDgLS0tLbLMwebJug==?= 
+Date: Fri, 25 Nov 2011 13:38:18 +0800 
+X-mailer: Loq 4 
+X-Virus-Scanned: clamav-milter 0.97 at mailser 
+X-Virus-Status: Clean 
+Whoops!  What is a 'application/vnd.ms-excel'?

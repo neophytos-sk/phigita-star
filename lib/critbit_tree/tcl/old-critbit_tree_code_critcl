@@ -1,0 +1,248 @@
+
+	/*
+	int key;
+	Tcl_GetIntFromObj(interp,objv[2],&key);
+	char *elem= Tcl_GetStringFromObj(objv[3],&ulen);
+	elem[0]=(key>>24) & 0xff;
+	elem[1]=(key>>16) & 0xff;
+	elem[2]=(key>>8)  & 0xff;
+	elem[3]= key      & 0xff;
+	*/
+
+
+
+
+	/*
+	int key;
+	Tcl_GetIntFromObj(interp,objv[2],&key);
+	char u[4];
+	u[0]=(key>>24) & 0xff;
+	u[1]=(key>>16) & 0xff;
+	u[2]=(key>>8)  & 0xff;
+	u[3]= key      & 0xff;
+	ulen=4;
+	*/
+
+
+
+
+	// HERE: parameterize value startIndex, i.e. change elem[4] to elem[internal->valueIndex]
+	//const char *p = rawmemchr(elem+keylen, '\0');
+	//DBG(fprintf(stderr,"prefix_match: size %zd == %zd bytelen=%d\n",match,p-elem,critbit0_bytelen(internal->dataPtr,elem)));
+	//Tcl_ListObjAppendElement(interp,listPtr,Tcl_NewIntObj((int)elem));
+	//Tcl_SetObjResult(interp,listPtr);
+	//Tcl_SetObjResult(interp, Tcl_NewStringObj(elem,p-elem));
+	//Tcl_SetObjResult(interp, Tcl_NewByteArrayObj(elem, p-elem));
+	//Tcl_SetObjResult(interp, Tcl_NewStringObj(&elem[4],-1));
+
+	//Tcl_SetObjResult(interp, objPtr);
+
+
+
+
+
+
+   
+critbit0_tree *critbit0_NewTree()
+{
+  critbit0_tree *tree = (critbit0_tree *)Tcl_Alloc(sizeof(critbit0_tree));
+  tree->root = 0;
+  return  tree;
+}
+   
+critbit0_tree *critbit0_FreeTree(critbit0_tree *tree)
+{
+  critbit0_clear(tree);
+  Tcl_Free((char *)tree);
+}
+   
+critbit0_tree *critbit0_CopyTree(critbit0_tree *tree)
+{
+  critbit0_tree *newTree = critbit0_NewTree();
+  //newTree->freeData = tree->freeData;
+  //newTree->dupData = tree->dupData;
+  //newTree->compareKeys = tree->compareKeys;
+  //newTree->compareData = tree->compareData;
+  //newTree->root = deepCopyNode(newTree, &newTree->null, tree, tree->root);
+       
+  //static const char *EMPTY_STRING = "";
+  //critbit0_allprefixed(tree,EMPTY_STRING,allprefixed_cb,newTree);
+  critbit0_allprefixed(tree,"",allprefixed_cb,newTree);
+  //allprefixed_traverse(tree->root,allprefixed_cb,newTree);
+  return newTree;
+}
+
+// Crit-bit Tree Type
+
+static void FreeTreeInternalRep(Tcl_Obj *objPtr);
+static void DupTreeInternalRep(Tcl_Obj *srcPtr, Tcl_Obj *copyPtr);
+static void UpdateStringOfTree(Tcl_Obj *objPtr);
+static int SetTreeFromAny(Tcl_Interp *interp, Tcl_Obj *objPtr);
+
+
+
+typedef struct xoCBTree_s {
+  Tcl_Interp* interp;
+  critbit0_tree *tree;        /* Object hash table to store mapping in. */
+  int epoch;                  /* Epoch counter */
+  int refcount;               /* Reference counter (see above) */
+} xoCBTree_t;
+
+
+static Tcl_ObjType xoCBTreeType = {
+  "xoCBTree",                           /* name */
+  FreeTreeInternalRep,                  /* freeIntRepProc */
+  DupTreeInternalRep,                   /* dupIntRepProc */
+  UpdateStringOfTree,                   /* updateStringProc */
+  SetTreeFromAny                        /* setFromAnyProc */
+};
+
+
+static void FreeTreeInternalRep(Tcl_Obj *objPtr)
+{
+  xoCBTree_t *internal = (xoCBTree_t *)objPtr->internalRep.otherValuePtr;
+  critbit0_FreeTree(internal->tree);
+  Tcl_Free((char *)internal);
+  objPtr->typePtr = NULL;
+}
+
+static void DupTreeInternalRep(Tcl_Obj *srcPtr, Tcl_Obj *copyPtr)
+{
+  xoCBTree_t *internal = (xoCBTree_t *)srcPtr->internalRep.otherValuePtr;
+  *internal = *(xoCBTree_t *)srcPtr->internalRep.otherValuePtr;
+  internal->tree = critbit0_CopyTree(internal->tree);
+  copyPtr->internalRep.otherValuePtr = internal;
+  copyPtr->typePtr = &xoCBTreeType;
+}
+
+static void UpdateStringOfTree(Tcl_Obj *objPtr)
+{
+  char *str;
+  xoCBTree_t *internal = (xoCBTree_t *)objPtr->internalRep.otherValuePtr;
+
+
+  //Tcl_Obj *listPtr = contentsAsList(internal);
+  Tcl_Obj *listPtr = Tcl_NewListObj(0,NULL);
+  // HERE: allprefixed_traverse(internal->tree->root,allprefixed_TclObj_cb,listPtr);
+  //static const char *EMPTY_STRING = "";
+  //critbit0_allprefixed(internal->tree,EMPTY_STRING,allprefixed_TclObj_cb,listPtr);
+
+  critbit0_allprefixed(internal->tree,"",allprefixed_TclObj_cb,listPtr);
+
+  str = Tcl_GetStringFromObj(listPtr, &objPtr->length);
+  objPtr->bytes = Tcl_Alloc(objPtr->length+1);
+  memcpy(objPtr->bytes, str, objPtr->length+1);
+  Tcl_IncrRefCount(listPtr);
+  Tcl_DecrRefCount(listPtr);
+}
+
+static int SetTreeFromAny(Tcl_Interp *interp, Tcl_Obj *objPtr)
+{
+
+  Tcl_Obj *asList = Tcl_DuplicateObj(objPtr);
+  xoCBTree_t *internal;
+  int count;
+  int i;
+
+  Tcl_IncrRefCount(asList);
+  if (Tcl_ListObjLength(interp, asList, &count) != TCL_OK)
+    {
+      Tcl_DecrRefCount(asList);
+      return TCL_ERROR;
+    }
+
+  if (objPtr->typePtr && objPtr->typePtr->freeIntRepProc) 
+    {
+      objPtr->typePtr->freeIntRepProc(objPtr);
+    }
+
+  internal = (xoCBTree_t *)Tcl_Alloc(sizeof(xoCBTree_t));
+  internal->interp = interp;
+  internal->tree = critbit0_NewTree();
+
+  Tcl_Obj *objPtr2;
+  for (i = 0; i < count; i++)
+    {
+      Tcl_ListObjIndex(interp, asList, i, (Tcl_Obj **)&objPtr2);
+      critbit0_insert(internal->tree,Tcl_GetString(objPtr2));
+    }
+       
+  objPtr->internalRep.otherValuePtr = internal;
+  objPtr->typePtr = &xoCBTreeType;
+       
+  return TCL_OK;
+}
+
+
+
+
+   static Tcl_Obj *newTreeObj(Tcl_Interp *interp) {
+       Tcl_Obj *objPtr;
+
+       cbt_InternalType *internal = (cbt_InternalType *)Tcl_Alloc(sizeof(cbt_InternalType));
+
+       // this is temporary - remove when done
+       //static const char *elems[] = {"neophytos", "a", "aa", "b", "bb", "ab", "ba", "aba", "bab", NULL};
+       //critbit0_tree *tree = critbit0_NewTree();
+       //critbit0_insert(tree,elems[0]);
+
+       critbit0_tree *tree = cbt_AllocData();
+
+       internal->interp = interp;
+       internal->dataPtr = tree;
+       //internal->compareCallback = NULL;
+       //internal->sortBy = sortBy;
+       //internal->tree->freeData = freeTclNode;
+       //internal->tree->dupData = dupTclNode;
+       //internal->tree->compareKeys = compareProcs[sortBy];
+       //internal->tree->compareData = internal;
+
+       objPtr = Tcl_NewObj();
+       objPtr->bytes = NULL;
+       objPtr->internalRep.otherValuePtr = internal;
+       objPtr->typePtr = &cbt_ObjType;
+
+       return objPtr;
+   }  
+
+
+
+::critcl::cproc cbt_prefix_match {Tcl_Interp* interp Tcl_Obj* inTreePtr char* u} ok {
+
+    cbt_InternalType *internal = (cbt_InternalType *)inTreePtr->internalRep.otherValuePtr;
+    const critbit0_tree* t  = (const critbit0_tree *)internal->dataPtr;
+
+    const char* elem = NULL;
+    size_t match = critbit0_prefix_match(internal->dataPtr,u,-1,(void**)&elem);
+    if (!match) {
+      return TCL_OK;
+    }
+
+    Tcl_SetObjResult(interp, Tcl_NewStringObj(elem,-1));
+    return TCL_OK;
+}
+
+
+::critcl::cproc cbt_exact_match {Tcl_Interp* interp Tcl_Obj* inTreePtr char* u} ok {
+
+    cbt_InternalType *internal = (cbt_InternalType *)inTreePtr->internalRep.otherValuePtr;
+    const critbit0_tree* t  = (const critbit0_tree *)internal->dataPtr;
+
+    const size_t ulen = strlen(u);
+    const char* elem = NULL;
+    size_t match = critbit0_prefix_match(internal->dataPtr,u,ulen,(void**)&elem);
+    if (match != ulen) {
+      return TCL_OK;
+    }
+
+    Tcl_SetObjResult(interp, Tcl_NewStringObj(elem,-1));
+    return TCL_OK;
+
+}
+
+::critcl::cproc cbt_convert {Tcl_Interp* interp Tcl_Obj* objPtr} ok {
+    printf("cbt_convert\n");
+    Tcl_ConvertToType(interp, objPtr, &cbt_ObjType);
+    Tcl_SetObjResult(interp, objPtr);
+    return TCL_OK;
+}

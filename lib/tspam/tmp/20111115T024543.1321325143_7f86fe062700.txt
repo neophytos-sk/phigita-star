@@ -1,0 +1,12 @@
+Received: from [115.58.134.61] (envelope-sender <zht@bgyfhc.net>)
+	by [192.168.41.188] with ESMTP
+	for <dongxiao5200@sohu.com>; Tue, 15 Nov 2011 10:40:49 +0800 
+Sender: zht@bgyfhc.net 
+Message-ID: <20111115104050738540@bgyfhc.net> 
+From: "uwmiwfewg" <cavwo@sdgaqc.com> 
+To:  
+Subject: =?gb2312?B?dTAyzqrKssO0xPq1xMbz0rXIy7LFwffKp9HP1tijrKGwwe3Bog==?=
+	=?gb2312?B?yb3Nt6Gxz9bP88LFtM63osn6o78=?= 
+Date: Tue, 15 Nov 2011 10:40:42 +0800 
+X-mailer: Tnc 2 
+Whoops!  What is a 'application/vnd.ms-excel'?

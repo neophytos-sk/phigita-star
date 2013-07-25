@@ -1,0 +1,284 @@
+contract {
+    param -id "isbn" -check "notnull"
+}
+
+val -id user_id { return [ad_conn user_id] }
+
+datastore \
+    -id bookdata \
+    -pool bookdb \
+    -singleton true \
+    -from_class ::Book \
+    -where [list "ean13=:isbn"] \
+    -extend {
+	if { ${description} ne {} } {
+	    set description "<p>[join [split ${description} "\n"] {</p><p>}]</p>"
+	}
+	set no_dash_ean13 [string map {- {}} ${ean13}]
+	set authorlist [util::coalesce ${authorlist} ${author}]
+	set authorlist_with_comma [util::coalesce [join ${authorlist} {, }] ${author}]
+
+	set translation [join ${translation} ","]
+
+	set categories_list [list]
+	foreach category ${categories} {
+	    lassign [split $category {|}] subject ddc
+	    set subject [string trim ${subject}]
+	    set subject_for_url [string map {{ } {_}} ${subject}]
+	    lappend categories_list [list ${subject_for_url} ${subject}]
+	}
+
+	# for page title
+	if { ${author} eq {} && ${authorlist} ne {} } {
+	    set author "[lindex ${authorlist} 0] et al."
+	}
+
+    }
+
+
+
+guard { 
+    if { !@{bookdata:rowcount} } {
+	rp_returnnotfound
+	return 0
+    }
+    return 1
+}
+
+val -id title -with bookdata { return "@{title} \[@{author}\]" }
+
+val -id context_bar { return [::xo::kit::context_bar "One Book"] }
+# keep css classes and tags used by context_bar
+::xo::tdp::excludeClassesFromRenaming {breadcrumb divider ul li active}
+
+
+val -id advertisement { return [::xo::google::adsense::get_slot_html 9117605027 125 125] }
+
+val -id image_host { return "http://i00-books.phigita.net" }
+
+# ---------------------------------------------------------------------------------------------
+
+css {
+    table#bsb {margin-right:10px;}
+    td.sbcell {width:300px; margin-left:0;}
+    td.sbmargin {width:10px;}
+    td.sbamargin {width:12px; background-color:#e3e3e3;}
+    .btitle {font-size:155%; font-weight:bold; margin-top:0;}
+    td.bsec {width:300px; vertical-align:middle; padding-bottom:0.1em; padding-top:0.1em;}
+    td#sbtbn {padding-bottom:0.15em;}
+    img#tbnlcol{margin-right:3px; margin-top:0.4em; margin-bottom:0.1em;}
+    img#tbnrcol{margin-left: 3px; margin-top:0.4em; margin-bottom:0.1em;}
+    td#btb {padding-top:0.6em; padding-bottom:0.7em; border-top:1px solid #d3d3d3; border-bottom:1px solid #d3d3d3;}
+    td#swbf{padding-top:0.6em;}
+    .swbstat {padding-top:0.5em; padding-bottom:0; text-align:right;}
+    td.swbres {width:300px; vertical-align:middle; padding-top:0.25em; padding-bottom:0.4em;}
+    td.swbares {vertical-align:middle; width:300px; padding-top:0.25em; padding-bottom:0.4em; background-color:#e3e3e3;}
+    td#swbnav { padding-top: 0.8em; padding-bottom: 0.9em; border-bottom: 1px solid #d3d3d3 }
+    table#bpagetop {margin-bottom:2px;}
+
+    table {border-style:none; margin:0;}
+    .green {color:#00aa00;}
+    .grey {color:#777777;}
+    .smaller {font-size:85%;}
+    table.lads {background-color:#e5ecf9; border-top:1px solid #e1e8f5; border-bottom: 1px solid #e1e8f5; margin-bottom:0.6em;}
+    #return {font-size: 83%; margin-left: 1em;}
+    #about {font-size: 100%; margin-left: 3em; margin-right: 3em; margin-top: 1em; text-align: left;}
+    #bib {font-size: 100%}
+    .vrline {border-right: 1px solid #e1e8f5; margin: auto}
+
+    .book .subject {font-size:small;color:#864;font-weight:bold;text-decoration:none;}
+    .book .subject:hover {text-decoration:underline;}
+}
+
+
+# ---------------------------------------------------------------------------------------------
+
+master -src "/templates/phigita.net/books/www-global.master.inc" -title @{title} {
+
+    nt @{context_bar:noquote}
+
+    tpl -with bookdata {
+	table -class book -cellspacing 0 -cellpadding 0 -id bvmain {
+	    tr {
+		td -width 617 -valign top -class vrline {
+		    div -align center {
+
+			table -width 550 -cellspacing 0 -cellpadding 0 -id about {
+			    tr {
+				td {
+				    tpl -if { @{description} ne {} } {
+					b { t "Synopsis" }
+					br
+					t @{description:noquote}
+				    }
+
+				    p {	b { t "Bibliographic information" } }
+				    table -id bib -cellpadding 2 {
+					tr {
+					    td {
+						div -align right {
+						    b { t Title: }
+						}
+					    }
+					    td {
+						t @{title}
+					    }
+					}
+					tr {
+					    td {
+						div -align right {
+						    b { t ISBN: }
+						}
+					    }
+					    td {
+						t @{no_dash_ean13}
+					    }
+					}
+					tr {
+					    td {
+						div -align right {
+						    b { t Publisher: }
+						}
+					    }
+					    td {
+						t @{publisher}
+						# remember: edition
+						t "(@{year})"
+					    }
+					}
+					tpl -if { @{prototype} ne {} } {
+					    tr {
+						td {
+						    div -align right {
+							b { t Prototype: }
+						    }
+						}
+						td {
+						    t @{prototype}
+						}
+					    }
+					}
+					tr {
+					    td {
+						div -align right {
+						    b { t Author(s): }
+						}
+					    }
+					    td {
+						t @{authorlist_with_comma}
+					    }
+					}
+					tpl -if { @{translation} ne {} } {
+					    tr {
+						td {
+						    div -align right {
+							b { t Translator(s): }
+						    }
+						}
+						td {
+						    t @{translation}
+						}
+					    }
+					}
+					tr {
+					    td {
+						div -align right {
+						    b { t Format: }
+						}
+					    }
+					    td {
+						t @{binding}
+					    }
+					}
+
+					tpl -if { @{categories} ne {} } {
+					    tr {
+						td {
+						    div -align right {
+							b { t Subject: }
+						    }
+						}
+						td {
+						    tpl -for "categories_list" {
+							a -class subject -href "../subject/@{_.0}" {
+							    t "@{_.1}"
+							}
+							br
+						    }
+						}
+					    }
+					}
+					tpl -if { @{width} ne {} && @{height} ne {} } { 
+					    tr {
+						td {
+						    div -align right {
+							b { t Dimensions: }
+						    }
+						}
+						td {
+						    t "@{width} x @{height} cm"
+						}
+					    }
+					}
+					tpl -if { @{pages} ne {} } {
+					    tr {
+						td {
+						    div -align right {
+							b { t Pages: }
+						    }
+						}
+						td {
+						    t @{pages}
+						}
+					    }
+					}
+
+				    }
+				}
+			    }
+			}
+
+
+		    }
+		}
+		td -valign top -align left {
+		    table -cellspacing 0 -id bsb {
+			tr {
+			    td -class sbmargin {
+				nt "&nbsp;"
+			    }
+			    td -class sbcell {
+				span -class btitle {
+				    t @{title}
+				}
+				br
+				tpl -if { @{authorlist_with_comma} ne {} } {
+				    span -class green {
+					t "By @{authorlist_with_comma}"
+				    }
+				    br
+				    br
+				}
+				div {
+				    tpl -if { @{image_p} } {
+					img -class "cover" -src "@{val.image_host}/b@{ean13}.jpg" -border 0
+				    } 
+				    tpl -else "" {
+					img -class "cover" -src "http://www.phigita.net/graphics/nobook.gif" -border 0
+				    }
+				}
+				br
+				br
+				b { t "List Price: " }
+				nt "@{price} &euro;"
+				br
+				br
+				nt @{val.advertisement:noquote}
+			    }
+			}
+		    }
+		}
+	    }
+	}
+    }
+}

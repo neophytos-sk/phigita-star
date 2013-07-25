@@ -1,0 +1,15 @@
+#!/bin/sh
+
+unset DISPLAY
+
+source /web/files/.bash_profile
+sysctl -p 
+
+SERVER_HOST=127.0.0.1
+SERVER_PORT=8103
+OOo_CMD=/usr/lib/openoffice/program/soffice.bin
+
+OOo_ACC="-accept=socket,host=$SERVER_HOST,port=$SERVER_PORT;urp;StarOffice.ServiceManager"
+OOo_PARAM="-nofirststartwizard -nologo -nolockcheck -nodefault -norestore -headless"
+
+exec $OOo_CMD $OOo_ACC $OOo_PARAM 

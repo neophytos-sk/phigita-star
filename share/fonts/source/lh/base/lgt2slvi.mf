@@ -1,0 +1,192 @@
+%
+% lgt2slvi.mf
+%
+%% Cyrillic font container with T2 encoding beta-support
+%
+% This file is future part of lxfonts package
+% Version 3.4 // Patchlevel=0
+% (c) O.Lapko
+%
+% This package belongs to the public domain under conditions similar to
+% those of D. E. Knuth specified for the Computer Modern family of fonts.
+% In particular, only the authors are entitled to modify this file
+% and to save it under the same name.
+%
+% Content:
+%
+% Italic Old Slav letters
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% List of letternames
+%
+% az
+% i_az
+% l_yus
+% il_yus
+% gerv
+% nash
+% zemla
+% ksi
+% vizhe    used ukr_i
+% izhe     used lat_i
+% izh      in lgcomu
+% omga
+% omga_rnd
+% ot
+% omga_tlo
+% Vzelo    used lat_s
+% fita     in lgcomu
+% koppa
+% uk
+% yat      in lgcomu
+% cherv
+% shta
+% psi
+% b_yus    in lgcomu
+% ib_yus
+% est      used ukr_e
+% i_est
+% narrow_e used eps
+%
+
+LHver_check(3,4); % like |version_check| in ec
+
+lhchar "Italic Cyrillic letter ligature az - old a";
+cyrcharmoving(az);
+
+lhchar "Italic Cyrillic letter ligature i_az - iot az";
+cyrcharmoving(i_az);
+
+lhchar "Italic Cyrillic letter l_yus - little yus";
+cyrcharmoving(l_yus);
+
+lhchar "Italic Cyrillic letter il_yus - iotfied little yus";
+cyrcharmoving(il_yus);
+
+lhchar "Italic Cyrillic letter gerv - Glagolic letter";
+cyrcharmoving(gerv);
+
+lhchar "Italic Cyrillic letter nash - old en";
+cyrcharmoving(nash);
+
+lhchar "Italic Cyrillic letter zemla";
+cyrcharmoving(zemla);
+
+% like CYR_.z or numeral 3
+lhchar "Italic Cyrillic letter ksi";
+cyrchar(ksi,7.5u#,x_height#+1.75dot_size#,desc_depth#);
+bh#:=min(bar_height#,1.14x_height#-bar_height#); define_pixels(bh);
+italcorr if math_fitting:1/3x_height#*slant else:x_height#*slant-u# fi; %e
+adjust_fit(0,.5serif_fit#); h:=x_height; pickup fine.nib;
+pos0(flare,180); pos2(vair,90); top y2r=h+oo;
+numeric right_curve; right_curve=max(fine.breadth,curve-stem_corr);
+pos4(vair,-90); pos5(vair,-90); pos6(vair,90); pos5'(vair,90);
+x2=x6=.5[u,x7']; pos7'(right_curve,0); rt x7'r=hround(w-.6u);
+pos3(.5[hair,curve],0); rt x3r=min(rt x7'r-1,hround(w-u));
+y3=.5[y4l,y2l]; x4=1/3[x5,x3l]; y4=y5; y5'=y13; y5=y5'=bar_height;
+lft x1r=hround .625u; y1=min(bh+.5flare+2vair+2,.9[bh,h]-.5flare);
+pos1(hair,180); bulb(2,1,0);  % bulb
+lft x5=lft x5'=min(rt x0l+.5vair,lft x6)+eps;
+filldraw stroke super_arc.e(2,3) & super_arc.e(3,4)..z5e; % upper bowl
+pos13(vair,90); x13=hround.5[.5u,w-.8u];
+rt x7r=hround(w-.6u); x7r-x7l=hround .5[vair,stem]-fine; %
+x9=x10=2u; x11=.5w-.5u; y9=-.3d; pos11(vair,135); pos10(vair,90);
+numeric theta; theta=-90+angle(28u,x_height); slope:=x_height/28u;
+pos9(.5[stem,curve],theta); ellipse_set(13l,7l,8l,9l); ellipse_set(13r,7r,8r,9r);
+bot y10l=-d-oo; y11=min(-3/4d-oo,y7l);
+filldraw stroke z11e{x10-x11,2(y10-y11)}...z10e{left}...z9e
+ ---z8e...{up}z7e...{left}z13e...{left}z5'e;  % main stroke
+%"hachek"
+pickup crisp.nib;
+pos15(vair',90); x15=x13; y15=h;
+x13-x14=x16-x13=good.x 2.25u; top y14=top y16=h+.75dot_size;
+pos16(.25[vair,curve],angle(z16-z15)+90); pos14(whatever,0);
+z14l=z15l+whatever*(z15-z14); (x14r,y)=z15r+whatever*(z15-z14); %y14l=y14r=y14;
+filldraw stroke z14e--z15e{z16r-z15}..{.5right}z16e;  % diagonals
+penlabels(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16); endchar;
+
+lhchar "Italic Cyrillic letter vizhe - variant izhe";
+cyrcharmoving(vizhe);
+
+lhchar "Italic Cyrillic letter izhe";
+cyrcharmoving(izhe);
+
+lhchar "Italic Cyrillic letter omga - omega";
+cyrcharmoving(omga);
+
+lhchar "Italic Cyrillic letter omga_rnd - omega round";
+cyrcharmoving(omga_rnd);
+
+lhchar "Italic Cyrillic letter ot - omega with te accent";
+cyrcharmoving(ot);
+
+lhchar "Italic Cyrillic letter omga_tlo";
+cyrcharmoving(omga_tlo);
+
+lhchar "Italic Cyrillic letter koppa (looks like c with tail)";
+cyrchar(koppa,8u#,x_height#,desc_depth#);
+italcorr if math_fitting:1/3x_height#*slant else:x_height#*slant-u# fi;
+adjust_fit(if monospace:0 else:-.35u#fi,0); pickup fine.nib;
+pickup fine.nib; pos2(vair,90); pos1(hair,0); pos0(flare,0);
+x2=.5(w+u); top y2l=vround(h+1.5oo); y1=.5[bar_height,h];
+rt x1r=max(rt x2,hround(w-u))+eps; bulb(2,1,0); % bulb
+numeric theta; theta=-90-angle(27u,x_height); slope:=x_height/-27u;
+pos5(max(fine.breadth,fudged.stem-4stem_corr),theta); pos6(vair,135);
+lft x3r=hround max(.6u,1.35u-.5curve); x3l-x3r=hround.8[vair,fudged.stem]-fine;
+x5+u=x6=w-2u; y5=.1d; bot y6l=-d-oo;
+ellipse_set(2l,3l,4l,5l); ellipse_set(2r,3r,4r,5r);
+{{less_tense;
+ filldraw stroke z6e{right}...z5e---z4e...{up}z3e...{right}z2e}}; % main stroke
+penlabels(0,1,2,3,4,5,6); endchar;
+
+lhchar "Italic Cyrillic letter uk";
+cyrcharmoving(uk);
+
+lhchar "Italic Cyrillic letter cherv - old che";
+cyrcharmoving(cherv);
+
+lhchar "Italic Cyrillic letter psi";
+cyrchar(psi,11u#,asc_height#,desc_depth#);
+italcorr x_height#*slant;
+adjust_fit(0,0); pickup fine.nib; interim superness:=more_super;
+x0=0; x2=x3+.25u; pos3(stem,-180); lft x3r=hround(2.5u-.5stem);
+hook_in(0,1,2)(skewed);  % opening hook
+pos2'(stem,-180); z2'=z2; pos4(vair,-90); pos5(hair,0);
+x4=.5w+u; rt x5r=hround(w-.5u);
+y3=.7[y4,y5]; bot y4r=-oo; y5=.57x_height;
+filldraw stroke z2'e{-u,-x_height}...super_arc.e(3,4)
+ ..tension atleast 1.05..{up}z5e; % left stem and arc
+v_bulb(5,6);  % closing bulb
+%%ef stem
+pickup tiny.nib; pos9(stem',0); pos10(stem,0);
+pos0'(stem',0); pos1'(stem,0); z1'l=z0'l; x0'=x9; x1'=x10;
+lft x9l=hround(.5[x3,x5]-.5stem'); top y9=h; % if serifs: +min(oo,serif_drop) fi;
+numeric edge; edge=rt x10r;
+y1'=ypart(((edge,body_height+2dot_size)--(edge,-o))
+	intersectionpoint(z3r{down}...{right}z4r...{up}z5r));
+pickup tiny.nib; bot y10=-d;
+filldraw stroke z9e--z0'e--z1'e--z10e;  % stem
+pickup crisp.nib; pos12(hair,0); pos11'(stem,0);
+z11'=z10; x12l=x11'l; bot y12=0;
+filldraw stroke z11'e--z12e;  % point
+if serifs: numeric ef_jut; ef_jut=if monospace:1.4 fi jut;
+ sloped_serif.l(9,0',a,1/3,ef_jut,serif_drop);  % upper serif
+ save slab; slab:=vair; % lower.slab
+ dish_serif(10,0',b,1/3,ef_jut,c,1/3,ef_jut); fi  % lower serif
+penlabels(0,1,2,3,4,5,6,7,8); endchar;
+
+lhchar "Italic Cyrillic letter shta - old sh";
+cyrcharmoving(shta);
+
+lhchar "Italic Cyrillic letter ib_yus - iot big yus";
+cyrcharmoving(ib_yus);
+
+lhchar "Italic Cyrillic letter i_est - iot est (IC with mid-line)";
+cyrcharmoving(i_est);
+
+lhchar "Italic Cyrillic letter vnarrow_e";
+cyrcharmoving(vnarrow_e);
+
+endinput;
+%end of file

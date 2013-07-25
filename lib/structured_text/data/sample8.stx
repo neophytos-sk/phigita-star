@@ -1,0 +1,34 @@
+Σήμερα είχα ένα πολύ ενδιαφέρον πρόβλημα να αντιμετωπίσω σε Oracle 10g 10.2.0.3.
+
+Προσπαθούσα να τρέξω ένα query όπως το παρακάτω:
+
+::
+
+	Select * From ZOLOS Where AGE = 20 And Name = 'Christos';
+
+Μερικές φορές έτρεχε χωρίς πρόβλημα, ενώ άλλες φορές έβγαζε exception ''ORA-01722: invalid number''.
+
+Πραγματικό μυστήριο. Η πολύ απλή δομή του πίνακα ZOLOS ήταν όπως παρακάτω. Ο πίνακας δεν έχει ούτε triggers ούτε policies.
+
+::
+
+  Create Table ZOLOS(
+	NAME Varchar2(50),
+	AGE Varchar2(50)
+  );
+
+  Create Index ZOLOS_I01 On ZOLOS(NAME,AGE);
+
+Και τα περιεχόμενα μόλις 4 γραμμές, όπως παρακάτω:
+
+::
+
+  Insert Into ZOLOS Values('Christos','20');
+  Insert Into ZOLOS Values('Haros','30');
+  Insert Into ZOLOS Values('Floros','40');
+  Insert Into ZOLOS Values('Pompos','VeryOld');
+
+Γιατί λοιπόν να αποτυγχάνει σε μερικές περιπτώσεις και σε άλλες όχι;
+
+Όποιος το βρεί, κερδίζει ένα ΦΑΝΤΑΣΤΙΚΟ ΔΩΡΟ!
+HINT: Θέλει φαντασία και hints ;)

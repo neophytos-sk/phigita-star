@@ -1,0 +1,115 @@
+Received: from localhost ([127.0.0.1] helo=sfs-ml-4.v29.ch3.sourceforge.com)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <quickfix-developers-bounces@lists.sourceforge.net>)
+	id 1RSrVi-0003WR-R8; Tue, 22 Nov 2011 14:39:46 +0000 from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <benjamin.j.natala@jpmorgan.com>) id 1RSrVh-0003WI-O5
+	for quickfix-developers@lists.sourceforge.net;
+	Tue, 22 Nov 2011 14:39:45 +0000 from sj1.jpmchase.com ([159.53.110.137])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1RSrVf-0003CJ-H1
+	for quickfix-developers@lists.sourceforge.net;
+	Tue, 22 Nov 2011 14:39:45 +0000 from se2.svr.bankone.net (se2.svr.bankone.net [155.180.234.120])
+	by sj1.jpmchase.com (Switch-3.4.4/Switch-3.3.3mp) with ESMTP id
+	pAMEAKpi030645
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=FAIL)
+	for <quickfix-developers@lists.sourceforge.net>;
+	Tue, 22 Nov 2011 09:10:20 -0500 from svr.bankone.net ([169.111.247.232])
+	by se2.svr.bankone.net (Switch-3.4.4/Switch-3.4.3) with ESMTP id
+	pAMEAKaf020596
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=FAIL)
+	for <quickfix-developers@lists.sourceforge.net>;
+	Tue, 22 Nov 2011 09:10:20 -0500 from ([155.180.52.15])
+	by imf2.svr.bankone.net with ESMTP  id F0Z0FN1.41457466;
+	Tue, 22 Nov 2011 09:08:55 -0500 from HUBR104.exchad.jpmchase.net (169.70.191.86) by
+	HUBCR101.exchad.jpmchase.net (169.70.190.78) with Microsoft SMTP Server
+	(TLS) id 8.2.247.2; Tue, 22 Nov 2011 09:10:11 -0500 from EMARC136VS01.exchad.jpmchase.net ([169.254.1.102]) by
+	HUBR104.exchad.jpmchase.net ([169.70.191.86]) with mapi;
+	Tue, 22 Nov 2011 09:10:11 -0500 
+Received-SPF: pass (sog-mx-2.v43.ch3.sourceforge.com: domain of jpmorgan.com
+	designates 159.53.110.137 as permitted sender)
+	client-ip=159.53.110.137;
+	envelope-from=benjamin.j.natala@jpmorgan.com;
+	helo=sj1.jpmchase.com; 
+X-DKIM: Sendmail DKIM Filter v2.8.4 sj1.jpmchase.com pAMEAKpi030645 
+From: "Natala, Benjamin J" <benjamin.j.natala@jpmorgan.com> 
+To: "Johannes.Grimm@die-software.com" <Johannes.Grimm@die-software.com>,
+	"quickfix-developers@lists.sourceforge.net"
+	<quickfix-developers@lists.sourceforge.net> 
+Date: Tue, 22 Nov 2011 09:10:10 -0500 
+Thread-Topic: [Quickfix-developers] QF/C++: building as FIX-message from a
+	string 
+Thread-Index: AcypHr7OKFjIVnXCSQe+8mfREbiYwwAAPVFw 
+Message-ID: <70AE6B36920A1740A277C825C937FF9DA39F76D108@EMARC136VS01.exchad.jpmchase.net> 
+References: <OF16D4AC76.2FB06308-ONC1257950.004BCFAF-C1257950.004C840C@die-software.com> 
+In-Reply-To: <OF16D4AC76.2FB06308-ONC1257950.004BCFAF-C1257950.004C840C@die-software.com> 
+Accept-Language: en-US 
+Content-Language: en-US 
+X-MS-Has-Attach:  
+X-MS-TNEF-Correlator:  
+acceptlanguage: en-US 
+X-DLP-FWD: Yes 
+X-Spam-Score: -1.6 (-) 
+X-Spam-Report: Spam Filtering performed by mx.sourceforge.net.
+	See http://spamassassin.org/tag/ for more details.
+	-1.5 SPF_CHECK_PASS SPF reports sender host as permitted sender for
+	sender-domain
+	-0.0 SPF_PASS               SPF: sender matches SPF record
+	-0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
+	author's domain
+	0.1 DKIM_SIGNED            Message has a DKIM or DK signature,
+	not necessarily valid
+	-0.1 DKIM_VALID Message has at least one valid DKIM or DK signature 
+X-Headers-End: 1RSrVf-0003CJ-H1 
+Subject: Re: [Quickfix-developers] QF/C++: building as FIX-message from a
+ string 
+X-BeenThere: quickfix-developers@lists.sourceforge.net 
+X-Mailman-Version: 2.1.9 
+Precedence: list 
+List-Id: <quickfix-developers.lists.sourceforge.net> 
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/quickfix-developers>,
+	<mailto:quickfix-developers-request@lists.sourceforge.net?subject=unsubscribe> 
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=quickfix-developers> 
+List-Post: <mailto:quickfix-developers@lists.sourceforge.net> 
+List-Help: <mailto:quickfix-developers-request@lists.sourceforge.net?subject=help> 
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/quickfix-developers>,
+	<mailto:quickfix-developers-request@lists.sourceforge.net?subject=subscribe> 
+Errors-To: quickfix-developers-bounces@lists.sourceforge.net 
+--------------------------------------
+QuickFIX Documentation: http://www.quickfixengine.org/quickfix/doc/html/index.html
+QuickFIX Support: http://www.quickfixengine.org/services.html
+
+The message constructor accepts string FIX messages. With repeating groups, pass the data dictionary in as well. In python it looks like this:
+
+dataDictionary = quickfix.DataDictionary( "C:\\Temp\\FIX44.xml" ) # you should already have the data dictionary object in your application
+message = quickfix.Message( fixstring, dataDictionary )
+
+-----Original Message-----
+From: Johannes.Grimm@die-software.com [mailto:Johannes.Grimm@die-software.com] 
+Sent: Tuesday, November 22, 2011 8:56 AM
+To: quickfix-developers@lists.sourceforge.net
+Subject: [Quickfix-developers] QF/C++: building as FIX-message from a string
+
+QuickFIX Documentation: http://www.quickfixengine.org/quickfix/doc/html/index.html
+QuickFIX Support: http://www.quickfixengine.org/services.html
+
+This email is confidential and subject to important disclaimers and
+conditions including on offers for the purchase or sale of
+securities, accuracy and completeness of information, viruses,
+confidentiality, legal privilege, and legal entity disclaimers,
+available at http://www.jpmorgan.com/pages/disclosures/email.  
+
+------------------------------------------------------------------------------
+All the data continuously generated in your IT infrastructure 
+contains a definitive record of customers, application performance, 
+security threats, fraudulent activity, and more. Splunk takes this 
+data and makes sense of it. IT sense. And common sense.
+http://p.sf.net/sfu/splunk-novd2d
+_______________________________________________
+Quickfix-developers mailing list
+Quickfix-developers@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/quickfix-developers
+
+
+

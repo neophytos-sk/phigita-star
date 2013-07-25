@@ -1,0 +1,279 @@
+<html>
+ <head>
+	<link type="text/css" rel="stylesheet" href="../ext-1.1.1/resources/css/ext-all.css"/>
+	<link type="text/css" rel="stylesheet" href="../ext-1.1.1/resources/css/xtheme-vista.css"/>
+	<link type="text/css" rel="stylesheet" href="../common/ext-ux-slidezone.css"/>
+	<script type="text/javascript" src="../ext-1.1.1/adapter/prototype/prototype.js"></script>
+	<script type="text/javascript" src="../ext-1.1.1/adapter/ext/ext-base.js"></script>
+	<script type="text/javascript" src="../ext-1.1.1/ext-all.js"></script>
+	<script type="text/javascript" src="Ext.ux.SlideZone.js"></script>	
+	
+	
+  <script type="text/javascript" language="JavaScript">
+
+function fv(v) {
+	return parseFloat(v).toFixed(2);
+}
+
+Ext.onReady(function() {
+
+	Test = {};
+
+	Test.zone1 = new Ext.ux.SlideZone('slider_1', {  
+		type: 'vertical',
+		size: 300, 
+		sliderWidth: 21,
+		sliderHeight: 15,
+		maxValue: 100,
+		minValue: 0,
+		sliders: [{ 
+					value: 40,  
+					name: '1_1'
+				  }]
+
+		 });
+	Test.zone1.getSlider('1_1').on('drag',
+		function() {
+				$('slider_1_1_value').innerHTML = parseInt(this.value);
+				$('slider_1_1_percent').innerHTML = this.percent.toFixed(2);
+				}
+	)
+	$('slider_1_1_value').innerHTML = parseInt(Test.zone1.getSlider('1_1').value);
+	$('slider_1_1_percent').innerHTML = Test.zone1.getSlider('1_1').percent.toFixed(2);	
+
+
+	Test.zone2 = new Ext.ux.SlideZone('slider_2', {  
+		type: 'vertical',
+		size: 500, 
+		sliderWidth: 21,
+		sliderHeight: 15,
+		maxValue: 100,
+		minValue: 0,
+		allowSliderCrossing: false,
+		sliderSnap: 20,
+		sliders: [{ 
+					value: 20,  
+					name: '2_1'
+				  },{ 
+					value: 50,  
+					name: '2_2'
+				  },{ 
+					value: 80,  
+					name: '2_3'
+				  }]
+
+		 });
+	Test.zone2.getSlider('2_1').on('drag',
+		function() {
+				$('slider_2_1_value').innerHTML = parseInt(this.value);
+				$('slider_2_1_percent').innerHTML = this.percent.toFixed(2);
+				}
+	)
+	Test.zone2.getSlider('2_2').on('drag',
+		function() {
+				$('slider_2_2_value').innerHTML = parseInt(this.value);
+				$('slider_2_2_percent').innerHTML = this.percent.toFixed(2);
+				}
+	)
+	Test.zone2.getSlider('2_3').on('drag',
+		function() {
+				$('slider_2_3_value').innerHTML = parseInt(this.value);
+				$('slider_2_3_percent').innerHTML = this.percent.toFixed(2);
+				}
+	)
+	$('slider_2_1_value').innerHTML = parseInt(Test.zone2.getSlider('2_1').value);
+	$('slider_2_1_percent').innerHTML = Test.zone2.getSlider('2_1').percent.toFixed(2);	
+	$('slider_2_2_value').innerHTML = parseInt(Test.zone2.getSlider('2_2').value);
+	$('slider_2_2_percent').innerHTML = Test.zone2.getSlider('2_2').percent.toFixed(2);	
+	$('slider_2_3_value').innerHTML = parseInt(Test.zone2.getSlider('2_3').value);
+	$('slider_2_3_percent').innerHTML = Test.zone2.getSlider('2_3').percent.toFixed(2);	
+
+	Test.zone3 = new Ext.ux.SlideZone('slider_3', {  
+		type: 'vertical',
+		size: 500, 
+		sliderHeight: 12,
+		maxValue: 1000,
+		minValue: 0,
+		sliderSnap: 1,
+		allowSliderCrossing: false
+		 });
+	
+	var rs1 = new Ext.ux.RangeSlider({
+			value: [100,200],  
+			name: '3_1'
+			});
+	var rs3 = new Ext.ux.RangeSlider({
+			value: [800,900],  
+			name: '3_3'
+			});
+
+	var rs2 = new Ext.ux.RangeSlider({
+			value: [450,550],  
+			name: '3_2'
+			});
+			
+	Test.zone3.add(rs3);
+	Test.zone3.add(rs1);	
+	Test.zone3.add(rs2);		
+
+	Test.zone3.getSlider('3_1').on('drag',
+		function() {
+				$('slider_3_1_value').innerHTML = parseInt(this.value[0]) + "|" + parseInt(this.value[1]).toFixed(2);
+				$('slider_3_1_percent').innerHTML = parseInt(this.percent[0]) + "|" + parseInt(this.percent[1]);	
+				}
+	)
+	$('slider_3_1_value').innerHTML  = parseInt(Test.zone3.getSlider('3_1').value[0]) + "|" + parseInt(Test.zone3.getSlider('3_1').value[1]);
+	$('slider_3_1_percent').innerHTML = parseInt(Test.zone3.getSlider('3_1').percent[0]) + "|" + parseInt(Test.zone3.getSlider('3_1').percent[1]);
+			
+	Test.zone3.getSlider('3_2').on('drag',
+		function() {
+				$('slider_3_2_value').innerHTML = parseInt(this.value[0]) + "|" + parseInt(this.value[1]);
+				$('slider_3_2_percent').innerHTML = parseInt(this.percent[0]) + "|" + parseInt(this.percent[1]);	
+				}
+	)
+	$('slider_3_2_value').innerHTML  = parseInt(Test.zone3.getSlider('3_2').value[0]) + "|" + parseInt(Test.zone3.getSlider('3_2').value[1]);
+	$('slider_3_2_percent').innerHTML = parseInt(Test.zone3.getSlider('3_2').percent[0]) + "|" + parseInt(Test.zone3.getSlider('3_2').percent[1]);
+
+	Test.zone3.getSlider('3_3').on('drag',
+		function() {
+				$('slider_3_3_value').innerHTML = parseInt(this.value[0]) + "|" + parseInt(this.value[1]);
+				$('slider_3_3_percent').innerHTML = parseInt(this.percent[0]) + "|" + parseInt(this.percent[1]);	
+				}
+	)
+	$('slider_3_3_value').innerHTML  = parseInt(Test.zone3.getSlider('3_3').value[0]) + "|" + parseInt(Test.zone3.getSlider('3_3').value[1]);
+	$('slider_3_3_percent').innerHTML = parseInt(Test.zone3.getSlider('3_3').percent[0]) + "|" + parseInt(Test.zone3.getSlider('3_3').percent[1]);
+
+	$('eventLog').value = '';
+	
+	$('enableLogging').checked = false;
+	});
+
+function enableLogging(cb) {
+	var ssEvts = $A(['mouseover', 'mouseout', 'dragstart', 'drag', 'dragend']);
+	for(s in Test) {
+		var ss = Test[s];
+		ss.sliders.each( function(slider) {
+			ssEvts.each(
+				function(evt) {
+					if(cb.checked) {
+						slider.on(evt, function() {
+							$('eventLog').value = this.name + ', ' + evt + ', ' + this.value + "\n" + $('eventLog').value;
+						})
+					} else {
+						slider.purgeListeners();
+					}
+				}
+			)		
+		})
+	}			
+}
+
+</script>
+</head>
+<body>
+
+	<h1>Vertical slider examples</h1>
+	<p></p>
+	<a href="examples_h.html">Horizontal sliders</a>  |
+	<a href="examples_a.html">Area sliders</a> 
+	</p>
+
+	<div style="float: right; width: 250px">
+		<h4>Event Log</h4>
+		<input type="checkbox" id="enableLogging" onclick="enableLogging(this);" />
+		<label for="enableLogging">Enable Logging</label><br/>
+		<label for="eventLog">Slider, event, value</label>
+		<textarea id="eventLog" style="width: 250px; height: 600px; font-size: 10px;"></textarea>
+		<button onclick="$('eventLog').value = '';">Clear log</button>
+	</div>
+	
+	<div style="float: left; padding: 15px; ">
+		<h4>Ex 1</h4>	
+		<div id="slider_1" ></div> 
+		<div >
+			<input type="checkbox" name="slider_1Crossing" onClick="if(this.checked) { Test.zone1.enableCrossing(); } else {Test.zone1.disableCrossing();};">
+			<label for="slider_1Crossing">Allow sliders to cross</label>
+		</div>
+		<div id="output1" >
+			<table>
+				<tr>
+					<th>Slider</th>
+					<th>Percent</th>
+					<th>Value</th>
+				</tr>
+				<tr>
+					<td>1</td>
+					<td id="slider_1_1_percent"></td>
+					<td id="slider_1_1_value"></td>
+				</tr>
+			</table>
+		</div>
+	</div>
+
+	<div style="float: left; padding: 15px; ">
+		<h4>Ex 2</h4>	
+		<div id="slider_2" ></div> 
+		<div >
+			<input type="checkbox" name="slider_2Crossing" onClick="if(this.checked) { Test.zone1.enableCrossing(); } else {Test.zone1.disableCrossing();};">
+			<label for="slider_2Crossing">Allow sliders to cross</label>
+		</div>
+		<div id="output4" >
+			<table>
+				<tr>
+					<th>Slider</th>
+					<th>Percent</th>
+					<th>Value</th>
+				</tr>
+				<tr>
+					<td>1</td>
+					<td id="slider_2_1_percent"></td>
+					<td id="slider_2_1_value"></td>
+				</tr>
+				<tr>
+					<td>2</td>
+					<td id="slider_2_2_percent"></td>
+					<td id="slider_2_2_value"></td>
+				</tr>
+				<tr>
+					<td>3</td>
+					<td id="slider_2_3_percent"></td>
+					<td id="slider_2_3_value"></td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	
+	<div style="float: left; padding: 15px; ">
+		<h4>Ex 3</h4>
+		<div id="slider_3" ></div> 
+			<div >
+				<input type="checkbox" name="slider3Crossing" onClick="if(this.checked) { Test.zone3.enableCrossing(); } else {Test.zone3.disableCrossing();};">
+				<label for="slider3Crossing">Allow sliders to cross</label>
+			</div>
+		<div id="output6" >
+			<table>
+				<tr>
+					<th>Slider</th>
+					<th>Percent</th>
+					<th>Value</th>
+				</tr>
+				<tr>
+					<td>1</td>
+					<td id="slider_3_1_percent"></td>
+					<td id="slider_3_1_value"></td>
+				</tr>
+				<tr>
+					<td>2</td>
+					<td id="slider_3_2_percent"></td>
+					<td id="slider_3_2_value"></td>
+				</tr>
+				<tr>
+					<td>3</td>
+					<td id="slider_3_3_percent"></td>
+					<td id="slider_3_3_value"></td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</body>
+</html>

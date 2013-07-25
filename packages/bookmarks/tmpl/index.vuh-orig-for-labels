@@ -1,0 +1,4 @@
+ns_set delkey [rp_getform] label
+rp_form_put label [string map {_ " "} [ad_conn extra_url]]
+
+rp_internal_redirect /packages/bookmarks/www-global/index

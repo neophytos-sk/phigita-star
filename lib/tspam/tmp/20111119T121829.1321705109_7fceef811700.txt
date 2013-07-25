@@ -1,0 +1,77 @@
+Received: from localhost ([127.0.0.1] helo=sfs-ml-4.v29.ch3.sourceforge.com)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <aolserver-talk-bounces@lists.sourceforge.net>)
+	id 1RRjrA-0006iP-6A; Sat, 19 Nov 2011 12:17:16 +0000 from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+	helo=mx.sourceforge.net)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <john@bookmooch.com>) id 1RRjr9-0006iI-Nd
+	for aolserver-talk@lists.sourceforge.net;
+	Sat, 19 Nov 2011 12:17:15 +0000 from fs3.magnatune.com ([64.62.148.4])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1RRjr8-00048c-MX
+	for aolserver-talk@lists.sourceforge.net;
+	Sat, 19 Nov 2011 12:17:15 +0000 from [192.168.1.159] (87-194-39-243.bethere.co.uk [87.194.39.243])
+	(authenticated bits=0)
+	by fs3.magnatune.com (8.13.1/8.13.1) with ESMTP id pAJCH5tt012657
+	(version=TLSv1/SSLv3 cipher=AES128-SHA bits=128 verify=NO)
+	for <aolserver-talk@lists.sourceforge.net>;
+	Sat, 19 Nov 2011 04:17:08 -0800 
+Received-SPF: pass (sog-mx-1.v43.ch3.sourceforge.com: domain of bookmooch.com
+	designates 64.62.148.4 as permitted sender)
+	client-ip=64.62.148.4; envelope-from=john@bookmooch.com;
+	helo=fs3.magnatune.com; 
+From: John Buckman <john@bookmooch.com> 
+In-Reply-To: <50655BA8-2487-4CE8-A5F9-F8F96FAC7978@bookmooch.com> 
+Date: Sat, 19 Nov 2011 12:17:05 +0000 
+Message-Id: <3F43D842-28BD-4EBA-9502-FBBA1AEE2B82@bookmooch.com> 
+References: <CA+OZ_Ci__Nqq-bKg6sBCY2-b0sa4ROt4HmT8UC7xa7oro73-Qw@mail.gmail.com>
+	<4EBC1442.1070500@diphi.com>
+	<CA+OZ_Cg3jm8KuUsYQf0tYrBnvaXjJNWr2+gmHBJuy6KmoVvjew@mail.gmail.com>
+	<50655BA8-2487-4CE8-A5F9-F8F96FAC7978@bookmooch.com> 
+To: aolserver-talk@lists.sourceforge.net 
+X-Mailer: Apple Mail (2.1084) 
+X-Spam-Score: -1.5 (-) 
+X-Spam-Report: Spam Filtering performed by mx.sourceforge.net.
+	See http://spamassassin.org/tag/ for more details.
+	-1.5 SPF_CHECK_PASS SPF reports sender host as permitted sender for
+	sender-domain
+	-0.0 SPF_HELO_PASS          SPF: HELO matches SPF record
+	-0.0 SPF_PASS               SPF: sender matches SPF record 
+X-Headers-End: 1RRjr8-00048c-MX 
+Subject: [AOLSERVER] awstats LogFormat= question 
+X-BeenThere: aolserver-talk@lists.sourceforge.net 
+X-Mailman-Version: 2.1.9 
+Precedence: list 
+List-Id: AOLserver Discussion List <aolserver-talk.lists.sourceforge.net> 
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/aolserver-talk>, 
+	<mailto:aolserver-talk-request@lists.sourceforge.net?subject=unsubscribe> 
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=aolserver-talk> 
+List-Post: <mailto:aolserver-talk@lists.sourceforge.net> 
+List-Help: <mailto:aolserver-talk-request@lists.sourceforge.net?subject=help> 
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/aolserver-talk>, 
+	<mailto:aolserver-talk-request@lists.sourceforge.net?subject=subscribe> 
+Errors-To: aolserver-talk-bounces@lists.sourceforge.net 
+--------------------------------------
+Is anyone using awstats with aolserver?
+
+Can you share your LogFormat= line from your awstats.conf file?
+
+LogFormat=4 (the default) works, but doesn't support a number of awstats features.  
+
+I could RTFM and figure out the exact awstats LogFormat= line, but if someone has already done it...
+
+-john
+
+------------------------------------------------------------------------------
+All the data continuously generated in your IT infrastructure 
+contains a definitive record of customers, application performance, 
+security threats, fraudulent activity, and more. Splunk takes this 
+data and makes sense of it. IT sense. And common sense.
+http://p.sf.net/sfu/splunk-novd2d
+_______________________________________________
+aolserver-talk mailing list
+aolserver-talk@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/aolserver-talk
+
+
+

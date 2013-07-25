@@ -1,0 +1,99 @@
+Received: from alice.wu.wien.ac.at (localhost.localdomain [127.0.0.1])
+	by alice.wu-wien.ac.at (8.14.5/8.14.4) with ESMTP id pATN287J021842;
+	Wed, 30 Nov 2011 00:02:09 +0100 from mohegan.wu-wien.ac.at (mohegan.wu-wien.ac.at [137.208.116.40])
+ by alice.wu-wien.ac.at (8.14.5/8.14.4) with ESMTP id pATN25YF021831
+ for <xotcl@alice.wu-wien.ac.at>; Wed, 30 Nov 2011 00:02:06 +0100 from Gustaf-A-Neumanns-iMac.local
+ (80-121-60-161.adsl.highway.telekom.at [80.121.60.161])
+ by mohegan.wu-wien.ac.at (8.14.5/8.14.2) with ESMTP id pATN258H020257;
+ Wed, 30 Nov 2011 00:02:05 +0100 
+Message-ID: <4ED5646D.5090904@wu-wien.ac.at> 
+Date: Wed, 30 Nov 2011 00:02:05 +0100 
+From: Gustaf Neumann <neumann@wu-wien.ac.at> 
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.7;
+ rv:8.0) Gecko/20111105 Thunderbird/8.0 
+To: Victor Mayevski <vitick@gmail.com> 
+References: <CAPiNEUfMLvkGBm1sDxRnyVOv=xaTD=k=TCqP+HMdejkw9=evEQ@mail.gmail.com> 
+In-Reply-To: <CAPiNEUfMLvkGBm1sDxRnyVOv=xaTD=k=TCqP+HMdejkw9=evEQ@mail.gmail.com> 
+X-Spam-Flag: YES 
+X-Spam-Status: Yes, score=6.4 required=5.0 tests=AWL,BAYES_50,RCVD_IN_PBL,
+	RCVD_IN_RP_RNBL,RCVD_IN_SORBS_DUL,RDNS_DYNAMIC autolearn=no version=3.3.2 
+X-Spam-Level: ****** 
+X-Spam-Checker-Version: SpamAssassin 3.3.2 (2011-06-06) on alice.wu-wien.ac.at 
+Cc: xotcl@alice.wu-wien.ac.at 
+Subject: Re: [Xotcl] constant/immutable property 
+X-BeenThere: xotcl@alice.wu-wien.ac.at 
+X-Mailman-Version: 2.1.14 
+Precedence: list 
+List-Id: <xotcl.alice.wu-wien.ac.at> 
+List-Unsubscribe: <http://alice.wu-wien.ac.at/mailman/options/xotcl>,
+ <mailto:xotcl-request@alice.wu-wien.ac.at?subject=unsubscribe> 
+List-Archive: <http://alice.wu-wien.ac.at/pipermail/xotcl/> 
+List-Post: <mailto:xotcl@alice.wu-wien.ac.at> 
+List-Help: <mailto:xotcl-request@alice.wu-wien.ac.at?subject=help> 
+List-Subscribe: <http://alice.wu-wien.ac.at/mailman/listinfo/xotcl>,
+ <mailto:xotcl-request@alice.wu-wien.ac.at?subject=subscribe> 
+Errors-To: xotcl-bounces@alice.wu-wien.ac.at 
+Sender: xotcl-bounces@alice.wu-wien.ac.at 
+--------------------------------------
+On 29.11.11 18:39, Victor Mayevski wrote:
+> Hello Gustaf,
+>
+> What would be a good way to define a constant/immutable
+> property/variable in Next?
+
+Dear Victor,
+
+Below is a short study to set all current instance variables 
+of an object immutable based on variable traces. To 
+implement the immutable functionality on the property level 
+is more involved, since one has to handle 
+default/non-default cases, and one has to register the 
+traces at the right time for every object creation.
+
+Maybe this simple study helps already
+
+-gustaf neumann
+
+==============================================================
+package req nx
+package req nx::test
+package req nx::trait
+
+::nx::Class create C {
+   :require trait nx::traits::callback
+
+   #
+   # Method called via trace to reject write operations
+   #
+   :public method reject {name sub op} {
+     error "$op operation on variable $name of object [self] is not allowed"
+   }
+
+   #
+   # Method to make all currently defined variables of an object
+   # immutable
+   #
+   :public method immutable {} {
+     foreach v [:info vars] {
+       ::trace add variable :$v write [:callback reject]
+     }
+   }
+   :create c1 {
+     set :x 1
+     set :y 2
+   }
+}
+
+c1 immutable
+? {c1 eval {set :x}} 1
+? {c1 eval {set :y}} 2
+? {c1 eval {set :x 1}} {can't set ":x": write operation on variable :x of object ::c1 is not allowed}
+? {c1 eval {set :z 3}} 3
+
+_______________________________________________
+Xotcl mailing list
+Xotcl@alice.wu-wien.ac.at
+http://alice.wu-wien.ac.at/mailman/listinfo/xotcl
+
+
+

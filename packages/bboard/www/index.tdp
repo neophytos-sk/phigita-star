@@ -1,0 +1,34 @@
+
+datastore \
+    -id bbdata \
+    -from_class ::bboard::Message \
+    -order "creation_date desc" \
+    -where [list "live_p"] \
+    -limit 100
+
+master -title "BBoard" {
+
+    b {
+	a -class "btn btn-primary" -href "message-one" {
+	    t "Post to BBoard"
+	}
+    }
+
+    p
+    
+    h3 { t "Recently posted messages" }
+    ul {
+	tpl -if { !@{bbdata:rowcount} } {
+	    li { t "None Yet" }
+	} 
+	tpl -else "" {
+	    tpl -for bbdata {
+		li {
+		    a -href message/@{id} {
+			t @{title}
+		    }
+		}
+	    }
+	}
+    }
+}

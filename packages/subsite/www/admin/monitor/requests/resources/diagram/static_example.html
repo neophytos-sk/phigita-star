@@ -1,0 +1,171 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>JavaScript Diagram Builder - Static example</title>
+<link rel=stylesheet type="text/css" href="diagram.css" />
+<SCRIPT Language="JavaScript">if ((document.layers)&&(history.length==1)) location.href=location.href+"#";</SCRIPT>
+<SCRIPT Language="JavaScript" src="diagram.js"></SCRIPT>
+</head>
+<body>
+<DIV STYLE="position:absolute; top:0px"></DIV>
+<TABLE NOBORDER CELLPADDING=2 CELLSPACING=2 WIDTH=720><TR><TD>
+<H3>JavaScript Diagram Builder - Static Example</H3>
+</TD></TR><TR><TD>
+The diagrams on this page are static in a sense, that after the objects are created, they are never changed.
+Here are shown several date scales, which can be in the range from seconds up to years. 
+Unfortunately, there are many different date formats in the world (for instance day.month, day-month,
+month/day). If you want to use another date format, then you can add it to the function _DateFormat()
+in the file 'diagram.js'.
+</TD></TR></TABLE>
+<SCRIPT Language="JavaScript">
+document.open();
+
+//1st diagram
+var D1=new Diagram();
+D1.SetFrame(90, 170, 500, 390);
+D1.SetBorder(
+Date.UTC(2001,11,1,8,0,0), Date.UTC(2001,11,1,17,0,0),
+Date.UTC(2003,0,1,0,0,0), Date.UTC(2001,11,1,0,0,0));
+D1.XScale=2;
+D1.YScale=2;
+D1.SetText("","", "<B> Our Call Service 2002</B>");
+D1.Draw("#C0C080", "#004080", false,"Click on a bar to get the phone number");
+Name=new Array("Peter", "Paul", "Mike");
+Job=new Array("Project Manager", "Assistant", "Developer");
+Color=new Array("#FF0000" ,"#00FF00" ,"#0000FF");
+BGColor=new Array("#000000" ,"#000000" ,"#FFFFFF");
+Phone=new Array("000-11-23", "123-45-67", "333-66-99");
+for (var i=0; i<12; i++) new Bar(
+D1.ScreenX(Date.UTC(2001,11,1,8+random(4),30*random(2),0)), 
+D1.ScreenY(Date.UTC(2002,i,1,0,0,0))-8, 
+D1.ScreenX(Date.UTC(2001,11,1,13+random(4),30*random(2),0)), 
+D1.ScreenY(Date.UTC(2002,i,1,0,0,0))+8,
+Color[i%3], Name[i%3], BGColor[i%3], Job[i%3], "ShowPhoneNum("+eval(i%3)+")");
+function ShowPhoneNum(ii)
+{ alert("Dial "+Phone[ii]+" to speak with "+Name[ii]+".");
+}
+new Arrow(600,225,565,295,Color[0],2);
+new Arrow(565,325,635,375,"#000000",1);
+new Arrow(610,225,650,375,Color[2],3);
+new Box(570, 180, 640, 220, Color[0], Name[0]+"<br><img src='smile.gif'  width=20 height=20 border=0>", BGColor[0], 2, "#000000", Job[0], "ShowPhoneNum(0)");
+new Box(530, 300, 600, 320, Color[1], Name[1], BGColor[1], 2, "#000000", Job[1], "ShowPhoneNum(1)");
+new Box(610, 380, 680, 400, Color[2], Name[2], BGColor[2], 2, "#000000", Job[2], "ShowPhoneNum(2)");
+
+//2nd diagram
+var D2=new Diagram();
+D2.SetFrame(90, 450, 500, 640);
+D2.SetBorder(Date.UTC(2001,11,1,0,0,0), Date.UTC(2001,11,17,0,0,0), 0, 80);
+D2.XScale=2;
+D2.YScale=" $";
+D2.SetText("","", "<B>prices of some selected goods</B>");
+D2.SetGridColor("#DDDDFF");
+D2.Draw("#C0C0FF", "#004080", false);
+Color=new Array("#FF0000","#FF8000","#FFFF00");
+Price=new Array(3);
+for (i=0; i<3; i++) Price[i]=new Array(17);
+for (i=0; i<3; i++)
+{ Price[i][0]=50-20*i+random(5);
+  new Dot(D2.ScreenX(Date.UTC(2001,11,1,0,0,0)), D2.ScreenY(Price[i][0]),
+    12, i, Color[i], Price[i][0]+" $");
+  for (j=1; j<17; j++)
+  { Price[i][j]=Price[i][j-1]+random(10)-4+2*i-random(2*i+2);
+    new Dot(D2.ScreenX(Date.UTC(2001,11,j+1,0,0,0)), D2.ScreenY(Price[i][j]),
+      12, i, Color[i], Price[i][j]+" $");
+  }
+}
+new Bar(520, 500, 600, 520, Color[0], "apples", "#000000");
+new Bar(520, 540, 600, 560, Color[1], "oranges", "#000000");
+new Bar(520, 580, 600, 600, Color[2], "bananas", "#000000");
+
+//3rd diagram
+var xmin, xmax, ymin, ymax, nInterval=21;
+PriceCount=new Array(3);
+for (i=0; i<3; i++) PriceCount[i]=new Array(nInterval);
+for (i=0; i<3; i++)
+{ for (j=0; j<nInterval; j++) PriceCount[i][j]=0;
+}
+xmin=Price[0][0];
+xmax=Price[0][0];
+for (i=0; i<3; i++)
+{ for (j=0; j<17; j++)
+  { if (xmin>Price[i][j]) xmin=Price[i][j];
+    if (xmax<Price[i][j]) xmax=Price[i][j];
+  }
+}
+i=xmax-xmin;
+xmin-=0.1*i;
+xmax+=0.1*i;
+var D3=new Diagram();
+D3.SetFrame(90, 690, 500, 880);
+D3.SetBorder(xmin, xmax, 0, 1);
+D3.XScale=" $";
+D3.GetXGrid();
+for (i=0; i<3; i++)
+{ for (j=0; j<17; j++)
+    PriceCount[i][GetInterval(D3.XGrid[0],D3.XGrid[1],D3.XGrid[2],Price[i][j])]++;
+}
+ymin=0; ymax=0; 
+for (i=0; i<nInterval; i++)
+{ if (ymax<PriceCount[0][i]+PriceCount[1][i]+PriceCount[2][i])
+    ymax=PriceCount[0][i]+PriceCount[1][i]+PriceCount[2][i];
+}
+ymax*=1.1;
+D3.SetBorder(xmin, xmax, ymin, ymax);
+D3.SetText("","", "<B>distribution of prices</B>");
+D3.Draw("#A0C0A0", "#004080", false);
+for (j=0; j<nInterval; j++)
+{ i=D3.ScreenX(D3.XGrid[0]+j*D3.XGrid[1]/2);
+  ymin=D3.ScreenY(0);
+  ymax=D3.ScreenY(PriceCount[0][j]);
+  if (PriceCount[0][j]>0) 
+    new Box(i-10,ymax,i+10,ymin,Color[0],"","#000000",1,"#0000ff",PriceCount[0][j]+" days");
+  ymin=ymax;
+  ymax=D3.ScreenY(PriceCount[0][j]+PriceCount[1][j]);
+  if (PriceCount[1][j]>0) 
+    new Box(i-10,ymax,i+10,ymin,Color[1],"","#000000",1,"#0000ff",PriceCount[1][j]+" days");
+  ymin=ymax;
+  ymax=D3.ScreenY(PriceCount[0][j]+PriceCount[1][j]+PriceCount[2][j]);
+  if (PriceCount[2][j]>0) 
+    new Box(i-10,ymax,i+10,ymin,Color[2],"","#000000",1,"#0000ff",PriceCount[2][j]+" days");
+}
+new Box(520, 740, 600, 760, Color[0], "apples", "#000000", 1, "#0000ff");
+new Box(520, 780, 600, 800, Color[1], "oranges", "#000000", 1, "#0000ff");
+new Box(520, 820, 600, 840, Color[2], "bananas", "#000000", 1, "#0000ff");
+document.close();
+function GetInterval(mmin,ddelta,mmax,vvalue)
+{ var ii, nn=0;
+  for (ii=mmin; ii<mmax; ii+=ddelta/2)
+  { if (vvalue<ii+ddelta/4) return(nn);
+    nn++;
+  }
+  return(nn);
+}
+
+function random(vv)
+{ return(Math.floor(Math.random()*vv));
+}
+</SCRIPT>
+<DIV STYLE="position:absolute; top:920px">
+<B>Code example for a diagram with date scale:</B><BR /><BR />
+&lt;SCRIPT Language="JavaScript"&gt;<BR />
+D=new Diagram();<BR />
+...<BR />
+<B>D.SetBorder(</B><BR />
+<B>Date.UTC(2001,0,1,0,0,0),</B> //date/time (left): year, month(0..11), day, hour, min, sec<BR />
+<B>Date.UTC(2001,11,31,23,59,59),</B> //date/time (right): year, month(0..11), day, hour, min, sec<BR />
+<B>0, 1);</B> //any y scale<BR />
+//change the scale type from default=1 into 2 or higher before drawing:<BR />
+<B>D.XScale=2;</B> //2,3,4=predefined date scales; 5,6,..=userdefined date scales<BR />
+...<BR />
+//get the screen position of a date/time for the display of bars, dots or pixels:<BR />
+<B>var x=D.ScreenX(Date.UTC(2001,10,11,11,11,0));</B><BR />
+...<BR />
+&lt;/SCRIPT&gt;<BR />
+<BR />
+<TABLE NOBORDER CELLPADDING=2 CELLSPACING=2 WIDTH=720><TR>
+<TD ALIGN=LEFT><A HREF="pie_object.html">&#171; The Pie object</A></TD>
+<TD ALIGN=RIGHT><A HREF="dynamic_example.html">Dynamic Example &#187;</A></TD>
+</TR></TABLE>
+</DIV>
+</body>
+</html>

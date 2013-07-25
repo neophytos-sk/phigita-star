@@ -1,0 +1,17 @@
+Return-path: <webmaster@phigita.net> 
+Received: from [41.145.136.243] (port=3800 helo=bertusxp)
+	by mailgate.virtual-abc.co.uk with asmtp 
+	id 5A25A0-000505-47
+	for <webmaster@phigita.net>; Mon, 21 Nov 2011 09:36:02 +0200 
+Message-ID: <742D9FECECEA4371A4E229A69EB863A3@bertusxp> 
+From: =?koi8-r?B?IuLPztPByiDHwczF0sXRIg==?= <reopened134@virtualbusinesscentre.com> 
+To: <webmaster@phigita.net> 
+Subject: =?koi8-r?B?8sHT0NLPxMHWwSDR0M/O08vJyCDCz87TwcouIPDPxMHSz8sgzsEgxM/M?=
+	=?koi8-r?B?x8nFIMfPxNk=?= 
+Date: Mon, 21 Nov 2011 09:36:02 +0200 
+X-Priority: 3 
+X-MSMail-Priority: Normal 
+X-Mailer: Microsoft Windows Mail 6.0.6001.18000 
+X-MimeOLE: Produced By Microsoft MimeOLE V6.0.6001.18049 
+X-Spam: Not detected 
+X-Mras: Ok 

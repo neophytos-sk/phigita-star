@@ -1,0 +1,133 @@
+<html><head><title>AbstractColumnModel.js</title><link rel="stylesheet" type="text/css" href="../resources/style.css" media="screen"/></head><body><h1>AbstractColumnModel.js</h1><pre class="highlighted"><code><i>/**
+ * @class YAHOO.ext.grid.AbstractColumnModel
+ * @extends YAHOO.ext.util.Observable
+ * This abstract class defines the ColumnModel interface and provides <b>default</b> implementations of the events required by the Grid. 
+ * @constructor
+*/</i>
+YAHOO.ext.grid.AbstractColumnModel = <b>function</b>(){
+	<i>// legacy events</i>
+	<b>this</b>.onWidthChange = <b>new</b> YAHOO.util.CustomEvent('widthChanged');
+    <b>this</b>.onHeaderChange = <b>new</b> YAHOO.util.CustomEvent('headerChanged');
+	<b>this</b>.onHiddenChange = <b>new</b> YAHOO.util.CustomEvent('hiddenChanged');
+    
+    <b>this</b>.events = {
+        <i>/**
+	     * @event widthchange
+	     * Fires when the width of a column changes
+	     * @param {ColumnModel} <b>this</b>
+	     * @param {Number} columnIndex The column index
+	     * @param {Number} newWidth The <b>new</b> width
+	     */</i>
+	    'widthchange': <b>this</b>.onWidthChange,
+        <i>/**
+	     * @event headerchange
+	     * Fires when the text of a header changes 
+	     * @param {ColumnModel} <b>this</b>
+	     * @param {Number} columnIndex The column index
+	     * @param {Number} newText The <b>new</b> header text
+	     */</i>
+	    'headerchange': <b>this</b>.onHeaderChange,
+        <i>/**
+	     * @event hiddenchange
+	     * Fires when a column is hidden or &quot;unhidden&quot;
+	     * @param {ColumnModel} <b>this</b>
+	     * @param {Number} columnIndex The column index
+	     * @param {Number} hidden true <b>if</b> hidden, false otherwise
+	     */</i>
+	    'hiddenchange': <b>this</b>.onHiddenChange
+    };
+};
+
+YAHOO.ext.grid.AbstractColumnModel.prototype = {
+	fireEvent : YAHOO.ext.util.Observable.prototype.fireEvent,
+    on : YAHOO.ext.util.Observable.prototype.on,
+    addListener : YAHOO.ext.util.Observable.prototype.addListener,
+    delayedListener : YAHOO.ext.util.Observable.prototype.delayedListener,
+    removeListener : YAHOO.ext.util.Observable.prototype.removeListener,
+    purgeListeners : YAHOO.ext.util.Observable.prototype.purgeListeners,
+    
+    fireWidthChange : <b>function</b>(colIndex, newWidth){
+		<b>this</b>.onWidthChange.fireDirect(<b>this</b>, colIndex, newWidth);
+	},
+	
+	fireHeaderChange : <b>function</b>(colIndex, newHeader){
+		<b>this</b>.onHeaderChange.fireDirect(<b>this</b>, colIndex, newHeader);
+	},
+	
+	fireHiddenChange : <b>function</b>(colIndex, hidden){
+		<b>this</b>.onHiddenChange.fireDirect(<b>this</b>, colIndex, hidden);
+	},
+	
+	<i>/**
+     * Interface method - Returns the number of columns.
+     * @<b>return</b> {Number}
+     */</i>
+    getColumnCount : <b>function</b>(){
+        <b>return</b> 0;
+    },
+    
+    <i>/**
+     * Interface method - Returns true <b>if</b> the specified column is sortable.
+     * @param {Number} col The column index
+     * @<b>return</b> {Boolean}
+     */</i>
+    isSortable : <b>function</b>(col){
+        <b>return</b> false;
+    },
+    
+    <i>/**
+     * Interface method - Returns true <b>if</b> the specified column is hidden.
+     * @param {Number} col The column index
+     * @<b>return</b> {Boolean}
+     */</i>
+    isHidden : <b>function</b>(col){
+        <b>return</b> false;
+    },
+    
+    <i>/**
+     * Interface method - Returns the sorting comparison <b>function</b> defined <b>for</b> the column (defaults to sortTypes.none).
+     * @param {Number} col The column index
+     * @<b>return</b> {Function}
+     */</i>
+    getSortType : <b>function</b>(col){
+        <b>return</b> YAHOO.ext.grid.DefaultColumnModel.sortTypes.none;
+    },
+    
+    <i>/**
+     * Interface method - Returns the rendering (formatting) <b>function</b> defined <b>for</b> the column.
+     * @param {Number} col The column index
+     * @<b>return</b> {Function}
+     */</i>
+    getRenderer : <b>function</b>(col){
+        <b>return</b> YAHOO.ext.grid.DefaultColumnModel.defaultRenderer;
+    },
+    
+    <i>/**
+     * Interface method - Returns the width <b>for</b> the specified column.
+     * @param {Number} col The column index
+     * @<b>return</b> {Number}
+     */</i>
+    getColumnWidth : <b>function</b>(col){
+        <b>return</b> 0;
+    },
+    
+    <i>/**
+     * Interface method - Returns the total width of all columns.
+     * @<b>return</b> {Number}
+     */</i>
+    getTotalWidth : <b>function</b>(){
+        <b>return</b> 0;
+    },
+    
+    <i>/**
+     * Interface method - Returns the header <b>for</b> the specified column.
+     * @param {Number} col The column index
+     * @<b>return</b> {String}
+     */</i>
+    getColumnHeader : <b>function</b>(col){
+        <b>return</b> '';
+    }
+};
+</code></pre><hr><div style="font-size:10px;text-align:center;color:gray;">yui-ext - Copyright &copy; 2006 Jack Slocum.  |
+    Yahoo! UI - Copyright &copy; 2006 Yahoo! Inc.<br />All rights reserved.</div>
+    </body></html>

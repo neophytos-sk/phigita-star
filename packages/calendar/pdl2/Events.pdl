@@ -1,0 +1,85 @@
+
+# A schedule is an aggregator of events.
+DB_Class Schedule -attribute {
+    {OID id}
+    {String title -maxlen 255}
+    {String description}
+    {FKey parent_id -ref Schedule -refkey id -isNullable yes}
+    {LTree tree_sk -isUnique yes}
+}
+
+DB_Class Event_Type 
+
+
+# start_date is null = todo item, end_date is the deadline
+# duration is null = all day event (ade)
+# end_date is not null = recurring event
+DB_Class Event -attribute {
+    {OID id}
+    {String title -maxlen 255 -isNullable yes}
+    {String description -isNullable yes}
+    {FKey evt_type_id -ref Event_Type -refkey id -isNullable yes}
+    {Timestamptz start_date -isNullable yes}
+    {Interval duration -isNullable yes}
+    {Timestamptz end_date -isNullable yes}
+    {Boolean shared_p -isNullable yes}
+}
+
+
+DB_Class Event_Timespan -attribute {
+    {FKey evt_id -ref Event -refkey id}
+    {FKey interval_id -ref Time_Interval -refkey id}
+}
+
+DB_Class Event_Recurrence_Type -attribute {
+    {OID id}
+    {String name -maxlen 50}
+}
+
+# ropt -- Recurrence OPerator Type
+DB_Class Event_Recurrence -attribute {
+    {OID id}
+    {FKey evt_ropt_id -ref Event_Recurrence_Type -refkey id}
+    {String ropt_value}
+    {Timestamptz recur_until}
+}
+
+
+
+
+## From Yahoo! Calendar
+
+# TITLE      = title
+
+# DESC       = description
+
+# evt_type   = event type (i.e. appointment, birthday, meeting, dinner, interview, class, holiday, call, chat, concert, graduation, bill payment, breakfast, movie, lunch, breakfast)
+
+# StartMon, StartDay, StartYear = start date
+
+# ade = all day event? Yes or No
+
+# StartHourMerid, StartMin = starts at hour,min.
+
+# DurHour, DurMin = duration
+
+# evt_conf = Sharing (0 Private, 3 Show as Busy, 7 Public)
+
+
+# INV_LOC = location
+
+# ROPT = Repeat OPerator Type (0 does not repeat, 1 repeat every 'FR' 'Freq' , 2 repeat on the 'WF' 'WD' of the month every __nth_interval__)
+
+  # 'FR' -- Every, Every other, Every third, Every fourth
+  # 'Freq' -- Day, Week, Month, Year, Mon&Wed&Fri, Tue&Thu, Mon-Fri, Sat&Sun
+  # 'WF' -- Week Frequency
+  # 'WD' -- Week Day
+  # 'WX' -- Week X
+
+# until = a for always, u for specific end date (EndMon,EndDay,EndYear)
+
+# INVITEES = what it says
+
+# HAS_REM = Has reminders?
+
+# rem1, rem2 = send reminder 'rem1' before and 'rem2' before the event

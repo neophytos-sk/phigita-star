@@ -1,0 +1,177 @@
+StartFontMetrics 2.0
+Version 001.104
+Comment XYEUAT10: upper arrow tips for Xy-pic at 10 point "Euler style".
+Comment
+Comment Original Metafont design  Copyright (C) 1991-1997 Kristoffer H. Rose.
+Comment PostScript adaptation     Copyright (C) 1994-1997 Ross Moore.
+Comment Hinting and ATM compatibility  Copyright (C) 1997 Y&Y, Inc.
+Comment
+Comment This file is part of the Xy-pic macro package.
+Comment Xy-pic Copyright (c) 1991-1997  Kristoffer H. Rose  <krisrose@brics.dk>
+Comment
+Comment The Xy-pic macro package is free software; you can redistribute it 
+Comment and/or modify it under the terms of the GNU General Public License 
+Comment as published by the Free Software Foundation; either version 2  
+Comment of the License, or (at your option) any later version.
+Comment
+Comment The Xy-pic macro package is distributed in the hope that it will 
+Comment be useful, but WITHOUT ANY WARRANTY; without even the implied 
+Comment warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+Comment See the GNU General Public License for more details.
+Comment
+Comment You should have received a copy of the GNU General Public License 
+Comment along with this macro package; if not, write to the 
+Comment Free Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+FullName XYEUAT10
+FamilyName XYEUAT
+Weight Medium
+ItalicAngle 0
+IsFixedPitch false
+UnderlinePosition -276
+UnderlineThickness 138
+Ascender 271
+Descender -271
+FontName XYEUAT10
+FontBBox -271 -271 271 271
+Comment UniqueID 5092845
+EncodingScheme FontSpecific
+Comment following is extra info from TFM file
+Comment FontID XYEUAT
+Comment DesignSize 10 (pts)
+Comment CharacterCodingScheme Xy-pic directional
+Comment Space 0 0 0
+Comment ExtraSpace 0
+Comment Quad 125
+Comment WARNING: one extra parameter not given in AFM file
+StartCharMetrics 129
+C 0 ; WX 0 ; N d0 ; B -20 -79 265 20 ; 
+C 1 ; WX 0 ; N d1 ; B -20 -70 267 20 ; 
+C 2 ; WX 0 ; N d2 ; B -20 -61 268 20 ; 
+C 3 ; WX 0 ; N d3 ; B -20 -52 269 22 ; 
+C 4 ; WX 0 ; N d4 ; B -20 -41 270 24 ; 
+C 5 ; WX 0 ; N d5 ; B -20 -30 271 27 ; 
+C 6 ; WX 0 ; N d6 ; B -20 -20 271 33 ; 
+C 7 ; WX 0 ; N d7 ; B -20 -20 271 40 ; 
+C 8 ; WX 0 ; N d8 ; B -20 -20 270 49 ; 
+C 9 ; WX 0 ; N d9 ; B -20 -20 268 61 ; 
+C 10 ; WX 0 ; N d10 ; B -21 -21 266 74 ; 
+C 11 ; WX 0 ; N d11 ; B -21 -21 262 88 ; 
+C 12 ; WX 0 ; N d12 ; B -21 -21 257 103 ; 
+C 13 ; WX 0 ; N d13 ; B -20 -20 252 117 ; 
+C 14 ; WX 0 ; N d14 ; B -21 -21 246 131 ; 
+C 15 ; WX 0 ; N d15 ; B -21 -21 238 145 ; 
+C 16 ; WX 0 ; N d16 ; B -20 -20 230 159 ; 
+C 17 ; WX 0 ; N d17 ; B -20 -20 221 171 ; 
+C 18 ; WX 0 ; N d18 ; B -20 -20 212 183 ; 
+C 19 ; WX 0 ; N d19 ; B -21 -21 202 194 ; 
+C 20 ; WX 0 ; N d20 ; B -21 -21 191 204 ; 
+C 21 ; WX 0 ; N d21 ; B -20 -20 181 214 ; 
+C 22 ; WX 0 ; N d22 ; B -20 -20 170 222 ; 
+C 23 ; WX 0 ; N d23 ; B -21 -21 160 229 ; 
+C 24 ; WX 0 ; N d24 ; B -21 -21 149 236 ; 
+C 25 ; WX 0 ; N d25 ; B -21 -20 139 242 ; 
+C 26 ; WX 0 ; N d26 ; B -20 -19 130 247 ; 
+C 27 ; WX 0 ; N d27 ; B -20 -20 120 251 ; 
+C 28 ; WX 0 ; N d28 ; B -20 -19 111 254 ; 
+C 29 ; WX 0 ; N d29 ; B -20 -19 103 258 ; 
+C 30 ; WX 0 ; N d30 ; B -20 -20 94 261 ; 
+C 31 ; WX 0 ; N d31 ; B -20 -20 87 263 ; 
+C 32 ; WX 0 ; N d32 ; B -20 -20 79 265 ; 
+C 33 ; WX 0 ; N d33 ; B -20 -20 70 267 ; 
+C 34 ; WX 0 ; N d34 ; B -20 -20 61 268 ; 
+C 35 ; WX 0 ; N d35 ; B -22 -20 52 269 ; 
+C 36 ; WX 0 ; N d36 ; B -24 -20 41 270 ; 
+C 37 ; WX 0 ; N d37 ; B -27 -20 30 271 ; 
+C 38 ; WX 0 ; N d38 ; B -33 -20 20 271 ; 
+C 39 ; WX 0 ; N d39 ; B -40 -20 20 271 ; 
+C 40 ; WX 0 ; N d40 ; B -49 -20 20 270 ; 
+C 41 ; WX 0 ; N d41 ; B -61 -20 20 268 ; 
+C 42 ; WX 0 ; N d42 ; B -74 -21 21 266 ; 
+C 43 ; WX 0 ; N d43 ; B -88 -21 21 262 ; 
+C 44 ; WX 0 ; N d44 ; B -103 -21 21 257 ; 
+C 45 ; WX 0 ; N d45 ; B -117 -20 20 252 ; 
+C 46 ; WX 0 ; N d46 ; B -131 -21 21 246 ; 
+C 47 ; WX 0 ; N d47 ; B -145 -21 21 238 ; 
+C 48 ; WX 0 ; N d48 ; B -159 -20 20 230 ; 
+C 49 ; WX 0 ; N d49 ; B -171 -20 20 221 ; 
+C 50 ; WX 0 ; N d50 ; B -183 -20 20 212 ; 
+C 51 ; WX 0 ; N d51 ; B -194 -21 21 202 ; 
+C 52 ; WX 0 ; N d52 ; B -204 -21 21 191 ; 
+C 53 ; WX 0 ; N d53 ; B -214 -20 20 181 ; 
+C 54 ; WX 0 ; N d54 ; B -222 -20 20 170 ; 
+C 55 ; WX 0 ; N d55 ; B -229 -21 21 160 ; 
+C 56 ; WX 0 ; N d56 ; B -236 -21 21 149 ; 
+C 57 ; WX 0 ; N d57 ; B -242 -21 20 139 ; 
+C 58 ; WX 0 ; N d58 ; B -247 -20 19 130 ; 
+C 59 ; WX 0 ; N d59 ; B -251 -20 20 120 ; 
+C 60 ; WX 0 ; N d60 ; B -254 -20 19 111 ; 
+C 61 ; WX 0 ; N d61 ; B -258 -20 19 103 ; 
+C 62 ; WX 0 ; N d62 ; B -261 -20 20 94 ; 
+C 63 ; WX 0 ; N d63 ; B -263 -20 20 87 ; 
+C 64 ; WX 0 ; N d64 ; B -265 -20 20 79 ; 
+C 65 ; WX 0 ; N d65 ; B -267 -20 20 70 ; 
+C 66 ; WX 0 ; N d66 ; B -268 -20 20 61 ; 
+C 67 ; WX 0 ; N d67 ; B -269 -22 20 52 ; 
+C 68 ; WX 0 ; N d68 ; B -270 -24 20 41 ; 
+C 69 ; WX 0 ; N d69 ; B -271 -27 20 30 ; 
+C 70 ; WX 0 ; N d70 ; B -271 -33 20 20 ; 
+C 71 ; WX 0 ; N d71 ; B -271 -40 20 20 ; 
+C 72 ; WX 0 ; N d72 ; B -270 -49 20 20 ; 
+C 73 ; WX 0 ; N d73 ; B -268 -61 20 20 ; 
+C 74 ; WX 0 ; N d74 ; B -266 -74 21 21 ; 
+C 75 ; WX 0 ; N d75 ; B -262 -88 21 21 ; 
+C 76 ; WX 0 ; N d76 ; B -257 -103 21 21 ; 
+C 77 ; WX 0 ; N d77 ; B -252 -117 20 20 ; 
+C 78 ; WX 0 ; N d78 ; B -246 -131 21 21 ; 
+C 79 ; WX 0 ; N d79 ; B -239 -145 21 21 ; 
+C 80 ; WX 0 ; N d80 ; B -230 -159 20 20 ; 
+C 81 ; WX 0 ; N d81 ; B -221 -171 20 20 ; 
+C 82 ; WX 0 ; N d82 ; B -212 -183 20 20 ; 
+C 83 ; WX 0 ; N d83 ; B -202 -194 21 21 ; 
+C 84 ; WX 0 ; N d84 ; B -191 -204 21 21 ; 
+C 85 ; WX 0 ; N d85 ; B -181 -214 20 20 ; 
+C 86 ; WX 0 ; N d86 ; B -170 -222 20 20 ; 
+C 87 ; WX 0 ; N d87 ; B -160 -229 21 21 ; 
+C 88 ; WX 0 ; N d88 ; B -149 -236 21 21 ; 
+C 89 ; WX 0 ; N d89 ; B -139 -242 21 20 ; 
+C 90 ; WX 0 ; N d90 ; B -130 -247 20 19 ; 
+C 91 ; WX 0 ; N d91 ; B -120 -251 20 20 ; 
+C 92 ; WX 0 ; N d92 ; B -111 -254 20 19 ; 
+C 93 ; WX 0 ; N d93 ; B -103 -258 20 19 ; 
+C 94 ; WX 0 ; N d94 ; B -94 -261 20 20 ; 
+C 95 ; WX 0 ; N d95 ; B -87 -263 20 20 ; 
+C 96 ; WX 0 ; N d96 ; B -79 -265 20 20 ; 
+C 97 ; WX 0 ; N d97 ; B -70 -267 20 20 ; 
+C 98 ; WX 0 ; N d98 ; B -61 -268 20 20 ; 
+C 99 ; WX 0 ; N d99 ; B -52 -269 22 20 ; 
+C 100 ; WX 0 ; N d100 ; B -41 -270 24 20 ; 
+C 101 ; WX 0 ; N d101 ; B -30 -271 27 20 ; 
+C 102 ; WX 0 ; N d102 ; B -20 -271 33 20 ; 
+C 103 ; WX 0 ; N d103 ; B -20 -271 40 20 ; 
+C 104 ; WX 0 ; N d104 ; B -20 -270 49 20 ; 
+C 105 ; WX 0 ; N d105 ; B -20 -268 61 20 ; 
+C 106 ; WX 0 ; N d106 ; B -21 -266 74 21 ; 
+C 107 ; WX 0 ; N d107 ; B -21 -262 88 21 ; 
+C 108 ; WX 0 ; N d108 ; B -21 -257 103 21 ; 
+C 109 ; WX 0 ; N d109 ; B -20 -252 117 20 ; 
+C 110 ; WX 0 ; N d110 ; B -21 -246 131 21 ; 
+C 111 ; WX 0 ; N d111 ; B -21 -239 145 21 ; 
+C 112 ; WX 0 ; N d112 ; B -20 -230 159 20 ; 
+C 113 ; WX 0 ; N d113 ; B -20 -221 171 20 ; 
+C 114 ; WX 0 ; N d114 ; B -20 -212 183 20 ; 
+C 115 ; WX 0 ; N d115 ; B -21 -202 194 21 ; 
+C 116 ; WX 0 ; N d116 ; B -21 -191 204 21 ; 
+C 117 ; WX 0 ; N d117 ; B -20 -181 214 20 ; 
+C 118 ; WX 0 ; N d118 ; B -20 -170 222 20 ; 
+C 119 ; WX 0 ; N d119 ; B -21 -160 229 21 ; 
+C 120 ; WX 0 ; N d120 ; B -21 -149 236 21 ; 
+C 121 ; WX 0 ; N d121 ; B -20 -139 242 21 ; 
+C 122 ; WX 0 ; N d122 ; B -19 -130 247 20 ; 
+C 123 ; WX 0 ; N d123 ; B -20 -120 251 20 ; 
+C 124 ; WX 0 ; N d124 ; B -19 -111 254 20 ; 
+C 125 ; WX 0 ; N d125 ; B -19 -103 258 20 ; 
+C 126 ; WX 0 ; N d126 ; B -20 -94 261 20 ; 
+C 127 ; WX 0 ; N d127 ; B -20 -87 263 20 ; 
+C 160 ; WX 250 ; N space ; B 0 0 0 0 ; 
+EndCharMetrics
+EndFontMetrics

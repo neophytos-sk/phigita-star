@@ -1,0 +1,11 @@
+Received: from krostuy (unknown [136.226.215.110])
+	by unhds with SMTP id yiT2dhJJwYN83cou.1
+	for <neophytos@phigita.net>; Sun, 06 Nov 2011 13:11:37 +0800 
+Date: Sun, 6 Nov 2011 13:11:31 +0800 
+From: =?gb2312?B?1tzQ0NPC?= <zefoqmccl@unhds.com> 
+To: <neophytos@phigita.net> 
+Subject: =?gb2312?B?1eYgtcQg0uIgyrYgtb0g0acgz7AgtcQg1tgg0qog?=
+	=?gb2312?B?0NQgwcuhow==?= 
+Message-ID: <20111106131137557643@unhds.com> 
+X-mailer: Foxmail 6, 13, 102, 15 [cn] 
+

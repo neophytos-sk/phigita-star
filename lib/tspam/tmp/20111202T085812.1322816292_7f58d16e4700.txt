@@ -1,0 +1,13 @@
+Received: from jmcs.antivirus (localhost [127.0.0.1])
+	by mail.ctthe.com (jmcs.mta) with SMTP id 4CAC933ADF;
+	Fri,  2 Dec 2011 18:16:44 +0800 (CST) from uslxao (unknown [110.52.7.72])
+	by mail.ctthe.com (jmcs.mta) with ESMTP id E3B5D33A7F;
+	Fri,  2 Dec 2011 18:16:39 +0800 (CST) 
+Message-ID: <20111202165608137104@ctthe.com> 
+From: "" <ngn@ctthe.com> 
+To:  
+Subject: =?gb2312?B?d3V8yMt8waZ818p81LR8stl81/d8yrV8zvF8tPM=?=
+	=?gb2312?B?fMirfHYycjA=?= 
+Date: Fri, 2 Dec 2011 16:56:00 +0800 
+X-mailer: Rtpr 1 
+Whoops!  What is a 'application/vnd.ms-excel'?

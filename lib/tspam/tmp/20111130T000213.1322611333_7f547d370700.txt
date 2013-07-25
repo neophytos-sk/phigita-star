@@ -1,0 +1,82 @@
+Received: by web2.extjs.com (Postfix, from userid 33)
+	id 1E7CF6C4C9; Wed, 30 Nov 2011 00:02:03 +0000 (UTC) 
+To: k2pts@phigita.net 
+Subject: "Ext: Open Discussion" update 
+X-PHP-Originating-Script: 1000:class_mail.php 
+From: "Sencha Forum" <admin@sencha.com> 
+Auto-Submitted: auto-generated 
+Message-ID: <20111130000203.9e77e8ceaae5@www.sencha.com> 
+X-Priority: 3 
+X-Mailer: vBulletin Mail via PHP 
+Date: Wed, 30 Nov 2011 00:02:03 +0000 (UTC) 
+--------------------------------------
+Dear k2pts,
+
+You are subscribed to the forum Ext: Open Discussion, there have been 3 new thread(s) and 5 updated thread(s).
+http://www.sencha.com/forum/forumdisplay.php?6-Ext-Open-Discussion
+
+The following threads are new:
+************
+Giving onclick for list items in Extjs4
+http://www.sencha.com/forum/showthread.php?158140-Giving-onclick-for-list-items-in-Extjs4
+In forum: Ext: Open Discussion
+Started by: Prasad gudipalli
+Last post: 29 Nov 2011 11:07 AM
+************
+portal example
+http://www.sencha.com/forum/showthread.php?158085-portal-example
+In forum: Ext: Open Discussion
+Started by: software_Engineer
+Last post: 29 Nov 2011 1:29 PM
+************
+Unit Testing framework used by Sencha internally
+http://www.sencha.com/forum/showthread.php?158059-Unit-Testing-framework-used-by-Sencha-internally
+In forum: Ext: Open Discussion
+Started by: r_honey
+Last post: 29 Nov 2011 4:22 PM
+
+
+The following threads have been updated:
+************
+what technique can be used for a screen like this?
+http://www.sencha.com/forum/showthread.php?156854-what-technique-can-be-used-for-a-screen-like-this
+In forum: Ext: Open Discussion
+Started by: v0nni
+Last post: 29 Nov 2011 6:36 AM
+************
+Localization of Ext
+http://www.sencha.com/forum/showthread.php?3293-Localization-of-Ext
+In forum: Ext: Open Discussion
+Started by: jack.slocum
+Last post: 29 Nov 2011 8:23 AM
+************
+Does extjs support Bayeux comet？
+http://www.sencha.com/forum/showthread.php?90989-Does-extjs-support-Bayeux-comet？
+In forum: Ext: Open Discussion
+Started by: bbbxixixixi
+Last post: 29 Nov 2011 5:37 PM
+************
+Creating a Web Application for my Thesis
+http://www.sencha.com/forum/showthread.php?155261-Creating-a-Web-Application-for-my-Thesis
+In forum: Ext: Open Discussion
+Started by: rjorge99
+Last post: 29 Nov 2011 6:15 PM
+************
+JSDuck - the tool for documenting your Ext JS apps
+http://www.sencha.com/forum/showthread.php?151739-JSDuck-the-tool-for-documenting-your-Ext-JS-apps
+In forum: Ext: Open Discussion
+Started by: renku
+Last post: 29 Nov 2011 8:01 PM
+
+
+All the best,
+Sencha Forum
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Unsubscription information:
+
+To unsubscribe from this forum, please visit this page:
+http://www.sencha.com/forum/subscription.php?do=removesubscription&type=forum&subscriptionid=63&auth=e23de5f6387a31c5573cf4993e28e47f
+
+
+

@@ -1,0 +1,88 @@
+#!/usr/bin/perl
+
+# script: word-splitter.pl
+# author: nick rizzolo
+# last modified: 5/28/03
+
+# description: Prepare raw text for input to the POS tagger.  Assumes that
+# earlier preprocessing has done sentence segmentation placing each sentence on
+# a single line, and leaving each line containing only one sentence.  After
+# specifying the input filename on the command line, type "ispell" to get an
+# ispell compatible segmentation as opposed to the default POS tagger compatible
+# segmentation.
+
+die "usage: word-splitter.pl <input filename> [ispell]\n" unless @ARGV == 1 || @ARGV == 2;
+
+
+open IN, $ARGV[0] or die "Can't open $ARGV[0] for input: $!";
+@Sentence = <IN>;
+close IN;
+
+$wordSplitForPOS = @ARGV == 0 || $ARGV[1] ne "ispell";
+
+for ($i = 0; $i <= $#Sentence; $i++)
+{
+  # Replace repeated punctuation marks with something equivalent.  These
+  # replacements also make simplifying assumptions that will become useful later
+  # in this function.
+  $Sentence[$i] =~ s/\-\-*/-/g;
+  do
+  {
+    $beforeChange = $Sentence[$i];
+    $Sentence[$i] =~ s/\'\'([^\'\pL]|$)/" $1/g;  # Look for closing quotes
+    $Sentence[$i] =~ s/(^|[^\'\pL\.\,\:\;\!\?])\'\'/$1 "/g; # opening quotes
+  } while ($beforeChange ne $Sentence[$i]);
+
+  # Remove leading and trailing whitespace.
+  $Sentence[$i] =~ s/^\s*(.*?)\s*$/$1/;
+
+  # Separate punctuation marks from each other.
+  $Sentence[$i] =~ s/([^\pL\s\`])([^\pL\s\`])/$1 $2/g;
+
+  # Separate single quotes that don't look like apostrophes.
+  $Sentence[$i] =~ s/(^|\PL)(\')(\pL)/$1$2 $3/g;
+  $Sentence[$i] =~ s/(\pL)(\')(\PL|$)/$1 $2$3/g;
+
+  # The POS tagger wants separated contractions, but ispell doesn't.
+  if ($wordSplitForPOS) { $Sentence[$i] =~ s/(\S)([^\pL\s\`\.\,\-])/$1 $2/g; }
+  else { $Sentence[$i] =~ s/(\S)([^\pL\s\`\'\.\,\-])/$1 $2/g; }
+  $Sentence[$i] =~ s/([^\pL\s\`\'\.\,\-])(\S)/$1 $2/g;
+
+  # Separate opening single quotes from everything else, except keep repeated
+  # opening single quotes in pairs.
+  $Sentence[$i] =~ s/([^\`])(\`)/$1 $2/g;
+  $Sentence[$i] =~ s/(\`)([^\`])/$1 $2/g;
+  do
+  {
+    $beforeChange = $Sentence[$i];
+    $Sentence[$i] =~ s/(^|\s)\`\`\`/$1\`\` \`/g;
+  } while ($beforeChange ne $Sentence[$i]);
+
+  # Separate stray dashes when they don't seem to be connecting words usefully.
+  $Sentence[$i] =~ s/(\S)(\-)(\s|$)/$1 $2$3/g;
+  $Sentence[$i] =~ s/(^|\s)(\-)(\S)/$1$2 $3/g;
+
+  # Separate commas from words, but not from within numbers.
+  $Sentence[$i] =~ s/(\S),(\s|$)/$1 ,$2/g;
+  $Sentence[$i] =~ s/(^|\s),(\S)/$1, $2/g;
+  $Sentence[$i] =~ s/(\D),(\S)/$1 , $2/g;
+  $Sentence[$i] =~ s/(\S),(\D)/$1 , $2/g;
+
+  # Separate numbers from words.
+  $Sentence[$i] =~ s/(\d)([^\PL\d])/$1 $2/g;
+  $Sentence[$i] =~ s/([^\PL\d])(\d)/$1 $2/g;
+
+  # Separate words from closing punctuation.
+  $Sentence[$i] =~ s/(\pL)(\.)(\PL*)$/$1 $2 $3/;
+
+  if ($wordSplitForPOS)
+  {
+    # POS tagger convention.
+    $Sentence[$i] =~ s/\[|\(|\{/\-LBR\-/g;
+    $Sentence[$i] =~ s/\]|\)|\}/\-RBR\-/g;
+  }
+
+  print "$Sentence[$i]\n";
+}
+#print "Sentence count = " . $#Sentence . "\n";
+

@@ -1,0 +1,13 @@
+Received: from jsnobikj ([110.52.6.62])
+	(envelope-sender <jk@jingkingcd.com>)
+	by 125.64.15.50 with ESMTP
+	for <nshxb@126.com>; Tue, 15 Nov 2011 23:45:14 +0800 
+Message-ID: <20111115235219434350@jingkingcd.com> 
+From: "rwcetxt" <jk@jingkingcd.com> 
+To:  
+Subject: =?gb2312?B?NzlixPogtcQgzcUgttMgvs0gyscgxPogtcQgssY=?=
+	=?gb2312?B?ILi7MjM6NTI6MTM=?= 
+Date: Tue, 15 Nov 2011 23:52:12 +0800 
+X-mailer: Bznjq 5 
+--------------------------------------
+ content-type=application/octet-stream part-token=::mime::1171-2

@@ -1,0 +1,108 @@
+			
+
+		if (_xo_FAN.nodeType == Node.ELEMENT_NODE)
+		{
+			if (rng.collapsed)
+			{
+				if (ev.keyCode == 8) //backspace
+					if (rng.startOffset > 0) //den einai stin arxi tis paragrafou
+					{
+					//alert(_xo_FAN.innerHTML);
+						if (rng.startContainer.textContent.length && _xo_FAN.innerHTML.replace(_xo_regexp,"").length <= 1)
+							if (rng.startContainer.textContent[rng.startOffset-1].replace(_xo_regexp,"").length <= 1) {
+							    _xo_merge_paragraphs = true; //_xo_this_empty = true;
+								//delete the character
+								_xo_FAN.innerHTML = "";
+							}
+					}
+					else _xo_merge_paragraphs = true;
+
+			//alert(rng.endOffset + ',' + rng.endContainer.textContent.length);
+
+				if (ev.keyCode == 46) //del
+					if (rng.endOffset < rng.endContainer.textContent.length)
+					{
+						if (rng.endContainer.textContent.length && _xo_FAN.innerHTML.replace(_xo_regexp,"").length <= 1)
+							if (rng.endContainer.textContent[rng.endOffset].replace(_xo_regexp,"").length <= 1)
+							{
+							    _xo_merge_paragraphs = true; //_xo_this_empty = true;
+								//delete the character
+								_xo_FAN.innerHTML = "";
+							}
+					}
+					else _xo_merge_paragraphs = true;
+			}
+			else
+			{
+				if (_xo_FAN.innerHTML.replace(_xo_regexp,"").length - rng.toString().replace(_xo_regexp,"").length == 0)
+				{
+				    _xo_merge_paragraphs = true; //_xo_this_empty = true;
+					//delete the selected content
+					_xo_FAN.innerHTML = "";
+				}
+			}
+		}
+
+		if (_xo_merge_paragraphs)
+		{
+			if (ev.keyCode == 8 && _xo_PS) //backspace
+				{
+				    //ND Change --start
+				    rng.selectNodeContents(_xo_FAN);
+				    _xo_DF = rng.extractContents();
+					if (_xo_PS.tagName.toLowerCase() == 'ul' && _xo_FAN.tagName.toLowerCase() == 'p' ) {
+					    rng.selectNodeContents(_xo_PS.lastChild);
+					    rng.collapse(false);
+					    _xo_PS.lastChild.appendChild(_xo_DF);
+					} else {
+					    _xo_PS.innerHTML = _xo_PS.innerHTML.replace(/(^\<br\s*\/?\>|^\&nbsp\;|\<br\s*\/?\>$)/,'');
+					    rng.selectNodeContents(_xo_PS);
+					    rng.collapse(false);
+					    _xo_PS.appendChild(_xo_DF);
+					}
+					_xo_FAN.innerHTML = '';
+				    Xinha.removeFromParent(_xo_FAN);
+				    Xinha._stopEvent(ev);
+
+				// if this empty and next empty then delete next
+				if (_xo_NS && _xo_PS.innerHTML.replace(_xo_regexp,'').length == 0 && _xo_NS.innerHTML.replace(_xo_regexp,'').length == 0) {
+					_xo_NS.innerHTML = '';
+					Xinha.removeFromParent(_xo_NS);
+				}
+				    //ND Change --end
+				}
+			if (ev.keyCode == 46 && _xo_NS) //delete key
+				{
+				    //ND Change --start
+					if (_xo_FAN.tagName.toLowerCase() == 'p' && _xo_NS.tagName.toLowerCase() == 'ul' ) {
+					    rng.selectNodeContents(_xo_NS.firstChild);
+					} else {
+					    rng.selectNodeContents(_xo_NS);
+					}
+				    _xo_DF = rng.extractContents();
+					    _xo_FAN.innerHTML = _xo_FAN.innerHTML.replace(/(^\<br\s*\/?\>|^\&nbsp\;|\<br\s*\/?\>$)/,'');
+				    // alert(_xo_FAN.innerHTML);
+				    rng.selectNodeContents(_xo_FAN);
+				    rng.collapse(false);
+				    _xo_FAN.appendChild(_xo_DF);
+
+					if (_xo_FAN.tagName.toLowerCase() == 'p' && _xo_NS.tagName.toLowerCase() == 'ul' ) {
+						_xo_NS.firstChild.innerHTML = '';
+					    Xinha.removeFromParent(_xo_NS.firstChild);
+					} else {
+						_xo_NS.innerHTML = '';
+					    Xinha.removeFromParent(_xo_NS);
+					}
+
+				    Xinha._stopEvent(ev);
+
+				// if this empty and previous empty then delete previous
+				if (_xo_PS && _xo_FAN.innerHTML.replace(_xo_regexp,'').length == 0 && _xo_PS.innerHTML.replace(_xo_regexp,'').length == 0) {
+					Xinha.removeFromParent(_xo_PS);
+				}
+				    //ND Change --end
+				}
+				//alert(this.editor.outwardHtml(this.editor.getHTML()).replace('<br\s*\/?\>','S'));
+		}
+
+	//AK Change --end

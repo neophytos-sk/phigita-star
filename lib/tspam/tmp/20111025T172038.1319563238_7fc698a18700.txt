@@ -1,0 +1,14 @@
+Received: from nt([110.53.25.49]) by public.ty.sx.cn(AIMC 4.0.0.0)
+	with SMTP id jm8f4ea70c06; Wed, 26 Oct 2011 01:14:59 +0800 from nt([110.53.25.49]) by public.ty.sx.cn(AIMC 4.0.0.0)
+	with SMTP id AISP action; Wed, 26 Oct 2011 01:14:54 +0800 
+Message-ID: <20111026012057787021@freemail.sx.cn> 
+From: "yzyrnpyw" <eer@freemail.sx.cn> 
+To:  
+Subject: =?gb2312?B?ZHYgIDNFINC9INfKyei8xtPrINC9ILPqILncIA==?=
+	=?gb2312?B?wO28vMfJLjE6MjA6Mjk=?= 
+Date: Wed, 26 Oct 2011 01:20:44 +0800 
+X-mailer: Hknqezhal 7 
+X-AIMC-AUTH: eer:freemail 
+X-AIMC-MAILFROM: eer@freemail.sx.cn 
+X-AIMC-Msg-ID: gU9akS1B 
+Whoops!  What is a 'application/vnd.ms-excel'?

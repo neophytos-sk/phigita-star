@@ -1,0 +1,284 @@
+<html><head><title>SplitLayoutRegion.js</title><link rel="stylesheet" type="text/css" href="../resources/style.css" media="screen"/></head><body><h1>SplitLayoutRegion.js</h1><pre class="highlighted"><code><i>/**
+ * @class YAHOO.ext.SplitLayoutRegion
+ * @extends YAHOO.ext.LayoutRegion
+ * Adds a splitbar and other (private) useful functionality to a LayoutRegion
+ */</i>
+YAHOO.ext.SplitLayoutRegion = <b>function</b>(mgr, config, pos, cursor){
+    <b>this</b>.cursor = cursor;
+    YAHOO.ext.SplitLayoutRegion.superclass.constructor.call(<b>this</b>, mgr, config, pos);
+    <b>if</b>(config.split){
+        <b>this</b>.hide();
+    }
+};
+
+YAHOO.extendX(YAHOO.ext.SplitLayoutRegion, YAHOO.ext.LayoutRegion, {
+    applyConfig : <b>function</b>(config){
+        YAHOO.ext.SplitLayoutRegion.superclass.applyConfig.call(<b>this</b>, config);
+        <b>if</b>(config.split){
+            <b>if</b>(!<b>this</b>.split){
+                <b>var</b> splitEl = YAHOO.ext.DomHelper.append(<b>this</b>.mgr.el.dom, 
+                        {tag: 'div', id: <b>this</b>.el.id + '-split', cls: 'ylayout-split ylayout-split-'+<b>this</b>.position, html: '&amp;#160;'});
+                <i>/** The SplitBar <b>for</b> this region @type YAHOO.ext.SplitBar */</i>
+                <b>this</b>.split = <b>new</b> YAHOO.ext.SplitBar(splitEl, <b>this</b>.el);
+                <b>this</b>.split.onMoved.subscribe(<b>this</b>.onSplitMove, <b>this</b>, true);
+                <b>this</b>.split.useShim = config.useShim === true;
+                YAHOO.util.Dom.setStyle([<b>this</b>.split.el.dom, <b>this</b>.split.proxy], 'cursor', <b>this</b>.cursor);
+                <b>this</b>.split.getMaximumSize = <b>this</b>.getMaxSize.createDelegate(<b>this</b>);
+            }
+            <b>if</b>(typeof config.minSize != 'undefined'){
+                <b>this</b>.split.minSize = config.minSize;
+            }
+            <b>if</b>(typeof config.maxSize != 'undefined'){
+                <b>this</b>.split.maxSize = config.maxSize;
+            }
+        }
+    },
+    
+    getMaxSize : <b>function</b>(){
+         <b>var</b> cmax = <b>this</b>.config.maxSize || 10000;
+         <b>var</b> center = <b>this</b>.mgr.getRegion('center');
+         <b>return</b> Math.min(cmax, (<b>this</b>.el.getWidth()+center.getEl().getWidth())-center.getMinWidth());
+    },
+    
+    onSplitMove : <b>function</b>(split, newSize){
+        <b>this</b>.fireEvent('resized', <b>this</b>, newSize);
+    },
+    
+    <i>/** 
+     * Returns the SplitBar <b>for</b> this region.
+     * @<b>return</b> {YAHOO.ext.SplitBar}
+     */</i>
+    getSplitBar : <b>function</b>(){
+        <b>return</b> this.split;
+    },
+    
+    hide : <b>function</b>(){
+        <b>if</b>(this.split){
+            <b>this</b>.split.el.setLocation(-2000,-2000);
+            <b>this</b>.split.el.hide();
+        }
+        YAHOO.ext.SplitLayoutRegion.superclass.hide.call(<b>this</b>);
+    },
+    
+    show : <b>function</b>(){
+        <b>if</b>(this.split){
+            <b>this</b>.split.el.show();
+        }
+        YAHOO.ext.SplitLayoutRegion.superclass.show.call(<b>this</b>);
+    },
+    
+    beforeSlide: <b>function</b>(){
+        <b>if</b>(YAHOO.ext.util.Browser.isGecko){<i>// firefox overflow auto bug workaround</i>
+            <b>this</b>.bodyEl.clip();
+            <b>if</b>(this.tabs) <b>this</b>.tabs.bodyEl.clip();
+            <b>if</b>(this.activePanel){
+                <b>this</b>.activePanel.getEl().clip();
+                
+                <b>if</b>(this.activePanel.beforeSlide){
+                    <b>this</b>.activePanel.beforeSlide();
+                }
+            }
+        }
+    },
+    
+    afterSlide : <b>function</b>(){
+        <b>if</b>(YAHOO.ext.util.Browser.isGecko){<i>// firefox overflow auto bug workaround</i>
+            <b>this</b>.bodyEl.unclip();
+            <b>if</b>(this.tabs) <b>this</b>.tabs.bodyEl.unclip();
+            <b>if</b>(this.activePanel){
+                <b>this</b>.activePanel.getEl().unclip();
+                <b>if</b>(this.activePanel.afterSlide){
+                    <b>this</b>.activePanel.afterSlide();
+                }
+            }
+        }
+    },
+    
+    slideOut : <b>function</b>(){
+        <b>if</b>(!<b>this</b>.slideEl){
+            <b>this</b>.slideEl = <b>new</b> YAHOO.ext.Actor(
+                YAHOO.ext.DomHelper.append(<b>this</b>.mgr.el.dom, {tag: 'div', cls:'ylayout-slider'}));
+            <b>if</b>(this.config.autoHide !== false){
+                <b>var</b> slideInTask = <b>new</b> YAHOO.ext.util.DelayedTask(<b>this</b>.slideIn, <b>this</b>);
+                <b>this</b>.slideEl.mon('mouseout', <b>function</b>(e){
+                    <b>var</b> to = e.getRelatedTarget();
+                    <b>if</b>(to &amp;&amp; to != <b>this</b>.slideEl.dom &amp;&amp; !YAHOO.util.Dom.isAncestor(<b>this</b>.slideEl.dom, to)){
+                        slideInTask.delay(500);
+                    }
+                }, <b>this</b>, true);
+                <b>this</b>.slideEl.mon('mouseover', <b>function</b>(e){
+                    slideInTask.cancel();
+                }, <b>this</b>, true);
+            }
+        }
+        <b>var</b> sl = <b>this</b>.slideEl, c = <b>this</b>.collapsedEl, cm = <b>this</b>.cmargins;
+        <b>this</b>.isSlid = true;
+        <b>this</b>.snapshot = {
+            'left': <b>this</b>.el.getLeft(true),
+            'top': <b>this</b>.el.getTop(true),
+            'colbtn': <b>this</b>.collapseBtn.isVisible(),
+            'closebtn': <b>this</b>.closeBtn.isVisible()
+        };
+        <b>this</b>.collapseBtn.hide();
+        <b>this</b>.closeBtn.hide();
+        <b>this</b>.el.show();
+        <b>this</b>.el.setLeftTop(0,0);
+        sl.startCapture(true);
+        <b>var</b> size;
+        <b>switch</b>(this.position){
+            <b>case</b> 'west':
+                sl.setLeft(c.getRight(true));
+                sl.setTop(c.getTop(true));
+                size = <b>this</b>.el.getWidth();
+            <b>break</b>;
+            <b>case</b> 'east':
+                sl.setRight(<b>this</b>.mgr.getViewSize().width-c.getLeft(true));
+                sl.setTop(c.getTop(true));
+                size = <b>this</b>.el.getWidth();
+            <b>break</b>;
+            <b>case</b> 'north':
+                sl.setLeft(c.getLeft(true));
+                sl.setTop(c.getBottom(true));
+                size = <b>this</b>.el.getHeight();
+            <b>break</b>;
+            <b>case</b> 'south':
+                sl.setLeft(c.getLeft(true));
+                sl.setBottom(<b>this</b>.mgr.getViewSize().height-c.getTop(true));
+                size = <b>this</b>.el.getHeight();
+            <b>break</b>;
+        }
+        sl.dom.appendChild(<b>this</b>.el.dom);
+        YAHOO.util.Event.on(document.body, 'click', <b>this</b>.slideInIf, <b>this</b>, true);
+        sl.setSize(<b>this</b>.el.getWidth(), <b>this</b>.el.getHeight());
+        <b>this</b>.beforeSlide();
+        <b>if</b>(this.activePanel){
+            <b>this</b>.activePanel.setSize(<b>this</b>.bodyEl.getWidth(), <b>this</b>.bodyEl.getHeight());
+        }
+        sl.slideShow(<b>this</b>.getAnchor(), size, <b>this</b>.slideDuration, null, false);
+        sl.play(<b>function</b>(){
+            <b>this</b>.afterSlide();
+        }.createDelegate(<b>this</b>));
+    },
+    
+    slideInIf : <b>function</b>(e){
+        <b>var</b> t = YAHOO.util.Event.getTarget(e);
+        <b>if</b>(!YAHOO.util.Dom.isAncestor(<b>this</b>.el.dom, t)){
+            <b>this</b>.slideIn();
+        }
+    },
+    
+    slideIn : <b>function</b>(callback){
+        <b>if</b>(this.isSlid &amp;&amp; !<b>this</b>.slideEl.playlist.isPlaying()){
+            YAHOO.util.Event.removeListener(document.body, 'click', <b>this</b>.slideInIf, <b>this</b>, true);
+            <b>this</b>.slideEl.startCapture(true);
+            <b>this</b>.slideEl.slideHide(<b>this</b>.getAnchor(), <b>this</b>.slideDuration, null);
+            <b>this</b>.beforeSlide();
+            <b>this</b>.slideEl.play(<b>function</b>(){
+                <b>this</b>.isSlid = false;
+                <b>this</b>.el.setPositioning(<b>this</b>.snapshot);
+                <b>this</b>.collapseBtn.setVisible(<b>this</b>.snapshot.colbtn);
+                <b>this</b>.closeBtn.setVisible(<b>this</b>.snapshot.closebtn);
+                <b>this</b>.afterSlide();
+                <b>this</b>.mgr.el.dom.appendChild(<b>this</b>.el.dom);
+                <b>if</b>(typeof callback == '<b>function</b>'){
+                    callback();
+                }
+            }.createDelegate(<b>this</b>));
+        }
+    },
+    
+    animateExpand : <b>function</b>(){
+        <b>var</b> em = <b>this</b>.margins, cm = <b>this</b>.cmargins;
+        <b>var</b> c = <b>this</b>.collapsedEl, el = <b>this</b>.el;
+        <b>var</b> direction, distance;
+        <b>switch</b>(this.position){
+            <b>case</b> 'west':
+                direction = 'right';
+                el.setLeft(-(el.getWidth() + (em.right+em.left)));
+                el.setTop(c.getTop(true)-cm.top+em.top);
+                distance = el.getWidth() + (em.right+em.left);
+            <b>break</b>;
+            <b>case</b> 'east':
+                direction = 'left';
+                el.setLeft(<b>this</b>.mgr.getViewSize().width + em.left);
+                el.setTop(c.getTop(true)-cm.top+em.top);
+                distance = el.getWidth() + (em.right+em.left);
+            <b>break</b>;
+            <b>case</b> 'north':
+                direction = 'down';
+                el.setLeft(em.left);
+                el.setTop(-(el.getHeight() + (em.top+em.bottom)));
+                distance = el.getHeight() + (em.top+em.bottom);
+            <b>break</b>;
+            <b>case</b> 'south':
+                direction = 'up';
+                el.setLeft(em.left);
+                el.setTop(<b>this</b>.mgr.getViewSize().height + em.top);
+                distance = el.getHeight() + (em.top+em.bottom);
+            <b>break</b>;
+        }
+        <b>this</b>.beforeSlide();
+        el.setStyle('z-index', '100');
+        el.show();
+        c.setLocation(-2000,-2000);
+        c.hide();
+        el.move(direction, distance, true, <b>this</b>.duration, <b>function</b>(){
+            <b>this</b>.afterSlide();
+            el.setStyle('z-index', '');
+            <b>if</b>(this.split){
+                <b>this</b>.split.el.show();
+            }
+            <b>this</b>.fireEvent('invalidated', <b>this</b>);
+            <b>this</b>.fireEvent('expanded', <b>this</b>);
+        }.createDelegate(<b>this</b>), <b>this</b>.config.easing || YAHOO.util.Easing.easeOut);
+    },
+    
+    animateCollapse : <b>function</b>(){
+        <b>var</b> em = <b>this</b>.margins, cm = <b>this</b>.cmargins;
+        <b>var</b> c = <b>this</b>.collapsedEl, el = <b>this</b>.el;
+        <b>var</b> direction, distance;
+        <b>switch</b>(this.position){
+            <b>case</b> 'west':
+                direction = 'left';
+                distance = el.getWidth() + (em.right+em.left);
+            <b>break</b>;
+            <b>case</b> 'east':
+                direction = 'right';
+                distance = el.getWidth() + (em.right+em.left);
+            <b>break</b>;
+            <b>case</b> 'north':
+                direction = 'up';
+                distance = el.getHeight() + (em.top+em.bottom);
+            <b>break</b>;
+            <b>case</b> 'south':
+                direction = 'down';
+                distance = el.getHeight() + (em.top+em.bottom);
+            <b>break</b>;
+        }
+        <b>this</b>.el.setStyle('z-index', '100');
+        <b>this</b>.beforeSlide();
+        <b>this</b>.el.move(direction, distance, true, <b>this</b>.duration, <b>function</b>(){
+            <b>this</b>.afterSlide();
+            <b>this</b>.el.setStyle('z-index', '');
+            <b>this</b>.el.setLocation(-20000,-20000);
+            <b>this</b>.el.hide();
+            <b>this</b>.collapsedEl.show();
+            <b>this</b>.fireEvent('collapsed', <b>this</b>); 
+        }.createDelegate(<b>this</b>), YAHOO.util.Easing.easeIn);
+    },
+    
+    getAnchor : <b>function</b>(){
+        <b>switch</b>(this.position){
+            <b>case</b> 'west':
+                <b>return</b> 'left';
+            <b>case</b> 'east':
+                <b>return</b> 'right';
+            <b>case</b> 'north':
+                <b>return</b> 'top';
+            <b>case</b> 'south':
+                <b>return</b> 'bottom';
+        }
+    }
+});</code></pre><hr><div style="font-size:10px;text-align:center;color:gray;">yui-ext - Copyright &copy; 2006 Jack Slocum.  |
+    Yahoo! UI - Copyright &copy; 2006 Yahoo! Inc.<br />All rights reserved.</div>
+    </body></html>

@@ -1,0 +1,16 @@
+Return-path: <webmaster@phigita.net> 
+Received: from [27.32.0.218] (port=7073 helo=LENOVOEB08058C)
+	by publicms.mail2world.com with asmtp 
+	id 2D29D9-000160-09
+	for <webmaster@phigita.net>; Mon, 21 Nov 2011 22:12:11 +1000 
+Message-ID: <FC4C9E47BC8C4F859C98C2A510294D20@LENOVOEB08058C> 
+From: =?koi8-r?B?IvfJ2snUy8kgMjUwINLVwszFyiDawSAxMjAg29TVyyAi?= <organkxs14@mail2congo.com> 
+To: <webmaster@phigita.net> 
+Subject: =?koi8-r?B?98naydTLySDTzyDTy8nEy8/KIDUwJSA=?= 
+Date: Mon, 21 Nov 2011 22:12:11 +1000 
+X-Priority: 3 
+X-MSMail-Priority: Normal 
+X-Mailer: Microsoft Windows Mail 6.0.6001.18000 
+X-MimeOLE: Produced By Microsoft MimeOLE V6.0.6001.18049 
+X-Spam: Not detected 
+X-Mras: Ok 

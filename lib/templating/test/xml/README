@@ -1,0 +1,2 @@
+xmllint --valid --noout BookstoreQ.xml
+xmllint --noout --schema Bookstore.xsd Bookstore-XSD.xml 

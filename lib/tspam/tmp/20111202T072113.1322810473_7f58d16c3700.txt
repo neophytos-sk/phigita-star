@@ -1,0 +1,39 @@
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws;
+	s=new; d=advertise-bz.cn;
+	h=Message-ID:Date:From:User-Agent:X-Accept-Language:MIME-Version:To:Subject:Content-Type;
+	b=KcTursf6bNJpzb1inzoSD1jc27bXY5GxfrA8YjcjtWA7GsdcyHcDCiOhDtKcOIlMDREQbMcdMGp/6DTjc2XFCYq59r5ALXRW/y1jltxQpuWnzFLZCa7hropbbJy2rEojjMmG2J0K3IGq+ahYVuEcLmJFQreZMSdK5W5a5joweRg=; 
+Message-ID: <DD804BA8.643E921B@advertise-bz.cn> 
+Date: Thu, 01 Dec 2011 23:20:59 -0800 
+From: "Blog Marketing" <admin@advertise-bz.cn> 
+User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.19) Gecko/20081209 Thunderbird/2.0.0.19 
+X-Accept-Language: en-us 
+To: <k2pts@phigita.net> 
+Subject: Y o u r - A D - o n - 2  - M i l l i o n - W e b s i t e s 
+--------------------------------------
+We have developed a software that automatically
+places your ad on millions of blogs.
+
+You will receive thousands of targeted hits to 
+your website as Blog Blaster places your ad on 
+blogs that match your ad's category. 
+
+This method has never been released to the public 
+before. Very few, if anyone has implemented this.
+
+For Full Details please read the attached .html file
+
+
+
+
+
+
+
+
+
+
+
+To Unsubscribe please read the attached Unsubscribe.txt file
+
+--------------------------------------
+ content-type=application/octet-stream part-token=::mime::75-2--------------------------------------
+ content-type=application/octet-stream part-token=::mime::75-3

@@ -1,0 +1,12 @@
+Received: from 109.74.155.86 by mail-gw.onr.com; Wed, 23 Nov 2011 14:30:14 +0100 
+Date: Wed, 23 Nov 2011 14:30:14 +0100 
+From: =?koi8-r?B?Iu3P08vXwSI=?= <hindering@kdi.com> 
+X-Mailer: The Bat! (v3.71.14) Home 
+Reply-To: hindering@kdi.com 
+X-Priority: 3 (Normal) 
+Message-ID: <711599321.76332517223595@kdi.com> 
+To: webmaster@phigita.net 
+Subject: =?koi8-r?B?7/Dl8uH06ffu4fEgIPDv7Onn8uHm6fEgIPDvIO7p+uvp7SDj5e7h7SDU?=
+	=?koi8-r?B?LjYxNyArIDAgOSArMiA0?= 
+--------------------------------------
+ content-type=image/jpeg part-token=::mime::656-2

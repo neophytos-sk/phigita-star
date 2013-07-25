@@ -1,0 +1,11 @@
+Received: (qmail 31982 invoked from network); 29 Oct 2011 08:00:33 +0900 from unknown (HELO tcvtath) (sibo@115.63.12.203)
+	by 0 (qmail 1.03 + ejcp) with SMTP;
+	29 Oct 2011 08:00:33 +0900 
+Message-ID: <20111029070035134278@sizi.net> 
+From: "yagogsakv" <sibo@sizi.net> 
+To:  
+Subject: =?gb2312?B?IGlvbXQgvat+z/p+ytt+udx+wO1+yNp+yOt+?=
+	=?gb2312?B?xeB+0bV+z9Z+s6EgY3B0M3hha2g=?= 
+Date: Sat, 29 Oct 2011 07:00:23 +0800 
+X-mailer: Rkfozq 0 
+Whoops!  What is a 'application/vnd.ms-excel'?

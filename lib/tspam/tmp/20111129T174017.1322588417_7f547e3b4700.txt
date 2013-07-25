@@ -1,0 +1,52 @@
+Received: from alice.wu.wien.ac.at (localhost.localdomain [127.0.0.1])
+	by alice.wu-wien.ac.at (8.14.5/8.14.4) with ESMTP id pATHdmIo012126;
+	Tue, 29 Nov 2011 18:39:49 +0100 from mail-lpp01m010-f43.google.com (mail-lpp01m010-f43.google.com
+ [209.85.215.43])
+ by alice.wu-wien.ac.at (8.14.5/8.14.4) with ESMTP id pATHdf0m012115
+ for <xotcl@alice.wu-wien.ac.at>; Tue, 29 Nov 2011 18:39:42 +0100 by lagp5 with SMTP id p5so2149184lag.30
+ for <xotcl@alice.wu-wien.ac.at>; Tue, 29 Nov 2011 09:39:42 -0800 (PST) by 10.152.111.1 with SMTP id ie1mr19708971lab.7.1322588382563; Tue,
+ 29 Nov 2011 09:39:42 -0800 (PST) by 10.152.2.40 with HTTP; Tue, 29 Nov 2011 09:39:42 -0800 (PST) 
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=gamma;
+ h=mime-version:date:message-id:subject:from:to:cc:content-type;
+ bh=icxGzuQICcm6zM14TsHXfrrRDQvGE6isZhOkHHcxWdM=;
+ b=LZRDr8R3QOLFt++KNFwnzbhvyByhFH1nSpd/4DZsqdJo/7iz9ZL/ucxL4q8FcaoS7s
+ lwjy3lhKNU5h6HSCnz4ghNStMZYn6gm2QijRD77odwnMMS0mgNatcJKRnlqcTrDWqpiW
+ b9aoRSqSCw/FuKmoNhOceLOlylYGZkx1a0yw4= 
+Date: Tue, 29 Nov 2011 09:39:42 -0800 
+Message-ID: <CAPiNEUfMLvkGBm1sDxRnyVOv=xaTD=k=TCqP+HMdejkw9=evEQ@mail.gmail.com> 
+From: Victor Mayevski <vitick@gmail.com> 
+To: Gustaf Neumann <neumann@wu-wien.ac.at> 
+X-Spam-Status: No, score=-1.8 required=5.0 tests=AWL,BAYES_00,
+	DKIM_ADSP_CUSTOM_MED,DKIM_SIGNED,FREEMAIL_FROM,RCVD_IN_DNSWL_LOW,
+	T_DKIM_INVALID autolearn=unavailable version=3.3.2 
+X-Spam-Checker-Version: SpamAssassin 3.3.2 (2011-06-06) on alice.wu-wien.ac.at 
+Cc: xotcl@alice.wu-wien.ac.at 
+Subject: [Xotcl] constant/immutable property 
+X-BeenThere: xotcl@alice.wu-wien.ac.at 
+X-Mailman-Version: 2.1.14 
+Precedence: list 
+List-Id: <xotcl.alice.wu-wien.ac.at> 
+List-Unsubscribe: <http://alice.wu-wien.ac.at/mailman/options/xotcl>,
+ <mailto:xotcl-request@alice.wu-wien.ac.at?subject=unsubscribe> 
+List-Archive: <http://alice.wu-wien.ac.at/pipermail/xotcl/> 
+List-Post: <mailto:xotcl@alice.wu-wien.ac.at> 
+List-Help: <mailto:xotcl-request@alice.wu-wien.ac.at?subject=help> 
+List-Subscribe: <http://alice.wu-wien.ac.at/mailman/listinfo/xotcl>,
+ <mailto:xotcl-request@alice.wu-wien.ac.at?subject=subscribe> 
+Errors-To: xotcl-bounces@alice.wu-wien.ac.at 
+Sender: xotcl-bounces@alice.wu-wien.ac.at 
+--------------------------------------
+Hello Gustaf,
+
+What would be a good way to define a constant/immutable
+property/variable in Next?
+
+
+Thanks
+_______________________________________________
+Xotcl mailing list
+Xotcl@alice.wu-wien.ac.at
+http://alice.wu-wien.ac.at/mailman/listinfo/xotcl
+
+
+

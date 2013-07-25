@@ -1,0 +1,16 @@
+Return-path: <webmaster@phigita.net> 
+Received: from [92.84.155.239] (port=1133 helo=nectarie582043)
+	by p.nsm.ctmail.com with asmtp 
+	id 4F802A-000592-19
+	for <webmaster@phigita.net>; Wed, 14 Sep 2011 22:04:00 +0200 
+Message-ID: <7AE76C53014F4AA2A950EC086DBAFBBF@nectarie582043> 
+From: =?koi8-r?B?IuXMxc7BIg==?= <housewivesq9@tialaska.com> 
+To: <webmaster@phigita.net> 
+Subject: =?koi8-r?B?y9XEwSDQ0s/QwczJ?= 
+Date: Wed, 14 Sep 2011 22:04:00 +0200 
+X-Priority: 3 
+X-MSMail-Priority: Normal 
+X-Mailer: Microsoft Windows Mail 6.0.6001.18000 
+X-MimeOLE: Produced By Microsoft MimeOLE V6.0.6001.18049 
+X-Spam: Not detected 
+X-Mras: Ok 

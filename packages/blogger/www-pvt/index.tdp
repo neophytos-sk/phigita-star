@@ -1,0 +1,303 @@
+contract -require_registration "1" -require_secure_conn "1" {
+    param -id "label_id" -check "naturalnum" -optional 1
+    param -id "offset" -check "naturalnum" -optional 1 -default 0
+    param -id "date" -check "year_month" -optional 1
+}
+
+val -id selection_date { 
+    if { @{date} eq {} } { return }
+    return @{date}-01 
+}
+
+set limit 10
+set limit_plus_one [expr 1+${limit}]
+
+val -id limit "return $limit"
+
+val -id prev_url { 
+    set date @{date}
+    set label_id @{label_id}
+    set offset [expr { @{offset} - @{limit} }]
+    if { $offset <= 0 } { set offset "" }
+    export_vars -url -base "." -no_empty {label_id date offset}
+}
+val -id next_url { 
+    set date @{date}
+    set label_id @{label_id}
+    set offset [expr { @{offset} + @{limit} }]
+    export_vars -url -base "." -no_empty {label_id date offset}
+}
+
+datastore \
+    -id blogdata \
+    -scope user \
+    -order "entry_date desc" \
+    -from_class [db::Left_Outer_Join new \
+		     -lhs [::db::Set new \
+			       -alias bi \
+			       -scope user \
+			       -type ::Blog_Item \
+			       -order "entry_date desc"] \
+		     -rhs [db::Set new \
+			       -alias bilmarr \
+			       -select {
+				   {object_id}
+				   {int_array_aggregate(label_id) as label_id_array}
+				   {trim(xo__concatenate_aggregate(name || '|'),'|') as label_name_list}
+			       } -type [db::Right_Outer_Join new \
+					    -lhs [db::Set new \
+						      -alias bilm \
+						      -scope user \
+						      -type ::Blog_Item_Label_Map] \
+					    -rhs [db::Set new \
+						      -alias bila \
+						      -scope user \
+						      -type ::Blog_Item_Label \
+						      -where [list "cnt_entries > 0"]] \
+					    -join_condition {bila.id=bilm.label_id}] \
+			       -group bilm.object_id] \
+		     -join_condition {bilmarr.object_id = bi.id}] \
+    -where_if {
+	"@{label_id} ne {}" => "label_id_array @ '{@{label_id}}'"
+	"@{selection_date} ne {}" => "entry_date between :selection_date and (:selection_date::timestamp + '1 month'::interval)"
+    } \
+    -offset @{offset} \
+    -limit ${limit_plus_one} \
+    -extend {
+	set pretty_date [lc_time_fmt $entry_date %q]
+
+	set labels [list]
+	set label_id_list [split [string range $label_id_array 1 end-1] {,}]
+	set label_name_list [split $label_name_list {|}]
+	foreach label_id ${label_id_list} label_name $label_name_list {
+	    lappend labels [list $label_id $label_name]
+	}
+    }
+
+datastore \
+    -id labeldata \
+    -scope user \
+    -from_class ::Blog_Item_Label \
+    -order "name"
+
+datastore \
+    -id archivedata \
+    -scope user \
+    -select {
+	{extract('year' from entry_date) as year}
+	{extract('month' from entry_date) as month}
+	{count(1) as num_entries}
+    } -from_class ::Blog_Item \
+    -order "year desc, month desc" \
+    -group "year, month" \
+    -extend {
+	set pretty_abbr_month [lc_time_fmt 1999-${month}-01 "%b"]
+	set year_month ${year}-${month}
+    }
+
+
+val -id pretty_date { 
+    if { @{date} ne {} } { 
+	return [lc_time_fmt @{date}-01 "%B %Y"] 
+    } 
+}
+
+val -id selected_label_name {
+    if { @{label_id} ne {} } {
+	foreach o @{labeldata} {
+	    if { [$o set id] == @{label_id} } {
+		return [$o set name]
+	    }
+	}
+    }
+    return
+}
+
+val -id pagenum {
+    if { @{offset} > 0 } {
+	return [expr { 1 + int(@{offset}/@{limit}) }]
+    }
+    return
+}
+
+
+val -id context_bar { return [::xo::kit::context_bar] }
+
+# keep css classes and tags used by context_bar
+::xo::tdp::excludeClassesFromRenaming {breadcrumb divider ul li active}
+
+
+
+# -------------------------------------------------------------------------------------------
+
+js {
+    (function(){
+	function check(func,msg){
+	    var i;
+	    if (func==0) {
+		return confirm("Are you sure you want to " + msg + " this blog item?");
+	    }
+	    return true;
+	}
+	window['check'] = check;
+    })();
+}
+
+css {
+    #btnCreatePost {font-variant:small-caps;}
+}
+
+# TODO: show filtering criteria and provide the user an option to clear them all
+
+master -title "Your Blog - Private Area" {
+
+    layout_row {
+	layout_col -class span1 
+	layout_col -class span11 {
+	    nt @{context_bar:noquote}
+	}
+    }
+
+    layout_row {
+	layout_col -class span1
+	layout_col -class span8 {
+
+	    div -class "pull-right" {
+		tpl -if "@{offset} > 0" {
+		    a -href "@{prev_url}" { nt "&laquo; Newer" }
+		}
+		tpl -if "@{offset} > 0 && @{blogdata:rowcount} == ${limit_plus_one}" {
+		    t " | "
+		}
+		tpl -if "@{blogdata:rowcount} == ${limit_plus_one}" {
+		    a -href "@{next_url}" { nt "Older &raquo;" }
+		}
+	    }
+	    p
+	    a -id btnCreatePost -class "btn btn-mini btn-primary" -href "post-create" {
+		t "Create Post"
+	    }
+	    p
+	    tpl -if "@{offset} > 0 || @{selection_date} ne {} || @{label_id} ne {}" {
+		div -class "well" {
+		    b { t "Filters" }
+		    t " \["
+		    a -href "." {
+			t "clear"
+		    }
+		    t "\]"
+		    ul {
+			tpl -if "@{selection_date} ne {}" {
+			    li { t "Showing posts from specific month (@{pretty_date})" }
+			}
+			tpl -if "@{label_id} ne {}" {
+			    li { t "Showing posts labelled '@{selected_label_name}'" }
+			}
+			tpl -if "@{offset} > 0" {
+			    li { t "Showing page @{pagenum}" }
+			}
+		    }
+		}
+	    }
+	    p
+	    table -class "table" {
+		tpl -for blogdata {
+		    tr { 
+			td {
+			    a -href @{id} {
+				t @{title} 
+			    }
+			    br
+			    small {
+				tpl -if "@{cnt_comments} == 1" {
+				    t "1 comment"
+				}
+				tpl -if "@{cnt_comments} > 1" {
+				    t "@{cnt_comments} comments"
+				}
+				tpl -if "@{cnt_comments} == 0" {
+				    t "no comments"
+				}
+			    }
+			    br
+			    tpl -for labels { 
+				a -class "label label-success" -href "?label_id=@{_.0}" {
+				    t @{_.1}
+				}
+				t "\["
+				a -href "one-unapply?label_id=@{_.0}&object_id=@{parent.id}" {
+				    t "x"
+				}
+				t "\] "
+			    }
+			}
+			td { 
+			    div -class "pull-right" {
+				tpl -if @{shared_p} {
+				    span {
+					t "Public"
+				    }
+				}
+				tpl -else "" {
+				    span -class "muted" {
+					t "Private"
+				    }
+				}
+				br
+				small { 
+				    t @{pretty_date} 
+				} 
+			    }
+			}
+			td -nowrap "" {
+			    a -class "btn btn-mini btn-warning" -href "post-edit?id=@{id}" {
+				t "edit"
+			    }
+			    t " "
+			    a -class "btn btn-mini btn-danger" -href "one-delete?id=@{id}" -onclick "return check(0,'delete')" {
+				t "delete"
+			    }
+			}
+		    }
+		}		    
+	    }
+	}
+	layout_col -class span3 {
+
+	    #a -class "pull-right" -href "labels/" { t "Manage Labels" }
+
+	    b { t "Labels" }
+	    form -action "." -method get {
+		select -name "label_id" -onchange "this.form.submit()" {
+		    option -value ""
+		    tpl -for labeldata {
+			tpl -if "@{id} eq @{param.label_id}" {
+			    option -value @{id} -selected "" { t @{name} }
+			}
+			tpl -else "" {
+			    option -value @{id} { t @{name} }
+			}
+		    }
+		}
+	    }
+	    b { t "Archive (by month)" }
+	    form -action "." -method get {
+		select -name "date" -onchange "this.form.submit()" { 
+		    option -value ""
+		    tpl -for "archivedata" {
+			tpl -if "@{year_month} eq @{param.date}" {
+			    option -value "@{year_month}" -selected "" {
+				t "@{pretty_abbr_month} @{year} (@{num_entries})"
+			    }
+			}
+			tpl -else "" {
+			    option -value "@{year_month}" {
+				t "@{pretty_abbr_month} @{year} (@{num_entries})"
+			    }
+			}
+		    }
+		}
+	    }
+	}
+    }
+}

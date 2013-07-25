@@ -1,0 +1,5 @@
+ns_set delkey [::xo::ns::getform] label
+set label [string map {_ " "} [ad_conn extra_url]]
+rp_form_put label $label
+
+rp_internal_redirect /packages/bookmarks/www-shared/index

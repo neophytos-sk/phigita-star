@@ -1,0 +1,16 @@
+Return-path: <webmaster@phigita.net> 
+Received: from [89.165.22.19] (port=6750 helo=IT2)
+	by terrasage.pri-mx.smtproutes.com with asmtp 
+	id 9B02E2-000420-11
+	for <webmaster@phigita.net>; Tue, 22 Nov 2011 15:27:01 +0330 
+Message-ID: <71F78A4860D24445B46E69E554A56441@IT2> 
+From: =?koi8-r?B?IuTPzcEg0yDHwdLBztTJxcoi?= <capriciously1@terrasage.com> 
+To: <webmaster@phigita.net> 
+Subject: =?koi8-r?B?5M/NwSDJ2iDC0tXTwQ==?= 
+Date: Tue, 22 Nov 2011 15:27:01 +0330 
+X-Priority: 3 
+X-MSMail-Priority: Normal 
+X-Mailer: Microsoft Windows Mail 6.0.6001.18000 
+X-MimeOLE: Produced By Microsoft MimeOLE V6.0.6001.18049 
+X-Spam: Not detected 
+X-Mras: Ok 

@@ -1,0 +1,139 @@
+<HTML>
+<HEAD>
+<TITLE>The phigita.net Crawler</TITLE>
+</HEAD>
+<BODY BGCOLOR=#ffffff>
+<PRE>
+If you are reading this document, then your website has likely been
+touched by our web crawler.  We have included some information below
+to help you understand what a crawler is, how you can deal with
+crawlers, and how to contact us.
+
+Some people are surprised when a crawler visits their site regularly,
+downloading pages.  There are many groups with crawlers which crawl
+the web, and a code of conduct exists to ensure that crawlers and web
+sites can cooperate to achieve their respective goals.  Being
+responsible professionals, we are very anxious to make sure that
+webmasters are not inconvenienced by our crawling activities, and we
+only wish to use publicly available data.  Therefore, we abide by the
+Robots Exclusion Standard (see <A HREF="http://www.robotstxt.org/wc/exclusion.html">http://www.robotstxt.org/wc/exclusion.html</A>), 
+but more importantly we subscribe to the notion of being good citizens
+in our use of the Internet.  We will therefore do our best to make
+sure that nobody is inconvenienced by our crawling activities.
+
+
+
+------------------------------------------------------------------
+What is a Crawler?
+------------------------------------------------------------------
+
+A Crawler (which may also be called a robot, spider, or bot) is a
+program that automatically traverses the Web's hypertext structure by
+retrieving a document, and recursively retrieving all documents that
+are referenced.  For more information on Crawlers and the standards of
+crawling which we follow, you can visit the WebRobots FAQ
+<A HREF="http://www.robotstxt.org/wc/robots.html">(http://www.robotstxt.org/wc/robots.html)</A>.
+
+------------------------------------------------------------------
+How Do I Prevent My Website or Parts of My Website From Being 
+Crawled by Your Crawler?
+------------------------------------------------------------------
+
+Our crawler activities may create a burst of moderate activity to a
+single server.  However, if you would prefer that ours or other
+crawlers bypass a part or all of your website, or if you are concerned
+that your site is being heavily loaded by our crawler, then the
+simplest method for you to prevent this is to create a robots.txt file
+on your server.  Any crawler should access this file before
+downloading anything from your server(s).  This file should reside in
+the top level of your server, and allows you to control which parts of
+your server may be visited, and which crawlers are allowed to visit
+your site(s).  Note that if your robots.txt file is malformed, then a
+crawler may not recognize your intention.  We obey the Robot Exclusion
+Standard, originally constructed in 1994 and updated in 1996.  You can
+review the standard at the Robotstxt website
+<A HREF="http://www.robotstxt.org/wc/exclusion.html">(http://www.robotstxt.org/wc/exclusion.html)</A>
+
+------------------------------------------------------------------
+How do I make a Robots.txt File?
+------------------------------------------------------------------
+
+If you are wondering what a robots.txt file look like, here is a
+simple one that asks all robots to stay away from /temp/documents and
+its subdirectories:
+
+    # Sample robots.txt file 1
+    User-agent: *
+    Disallow: /temp/documents/
+
+The first line is a comment line which can be placed anywhere in a
+robots.txt file as long as the comment is preceded by a pound symbol
+(#).  The second line designates robots to which the access policies
+apply, with a "*" meaning all robots.  The third line disallows access
+to the specified directory and to any directories below it in the
+hierarchy. You can include multiple Disallow statements to prohibit
+access to two or more directories.  You may want certain robots to
+access areas that are disallowed by other robots.  The following
+robots.txt file allows unrestricted site access to a robot named
+CRAWLER but prohibits others from accessing either /temp/documents or
+/under_construction:
+
+    # Sample robots.txt file 2
+    User-agent: *
+    Disallow: /tmp/documents/
+    Disallow: /under_construction/
+    User-agent: CRAWLER
+    Disallow:
+
+If you want to forbid all crawlers from crawling your site altogether,
+then create a robots.txt file with the following lines:
+
+    # Sample robots.txt file 3
+    User-agent: *
+    Disallow: /
+
+Upon seeing this, crawlers which abide by the robots standard, like we
+do, will immediately disconnect and go find another server.  Any of
+the above sample robots.txt files must be placed in the top level of
+your server under the file name "robots.txt".  Be sure to verify that
+the URL http://your.server.name/robots.txt will retrieve your newly
+created file.
+
+If you only want to forbid only our crawler from going through your
+site, then create a robots.txt file that contains the following lines:
+
+    User-agent: http://www.almaden.ibm.com/cs/crawler 
+    Disallow: /
+
+Again, place this file in the top level of your server under the file
+name "robots.txt", and verify that the URL
+http://your.server.name/robots.txt will retrieve your newly created
+file.
+
+------------------------------------------------------------------
+How You Can Help Us Quickly Respond To You:
+------------------------------------------------------------------
+
+You can provides us with some pieces of information so that we can
+rapidly identify the source of any problems or issues involving our
+crawler interacting with your website.  In your email to us, please
+include the following information:
+
+ * An outline of your problem or issue
+ * Identification of the IP Address of the server which our crawler touched
+ * Identification of the time and date of the problem or issue
+ * Identification of your name as contact person, email address and/or
+   phone number 
+ * Entries from your server log(s) which shows the problem or URLs that 
+   triggered the problem or issue would also be helpful.
+
+How To Contact Us:
+
+If you have created a robots.txt file on your server and still have
+questions for us, then please contact us via email, including the
+information outlined above, using the email address <IMG SRC="/graphics/53dab96f0fd8087a4110eb0174b4cfbb.png">
+ 
+
+</PRE>
+</BODY>
+</HTML>

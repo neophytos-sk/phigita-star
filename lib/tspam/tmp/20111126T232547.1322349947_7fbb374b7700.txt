@@ -1,0 +1,38 @@
+Received: from oms-da01.r1000.mx.aol.com (oms-da01.r1000.mx.aol.com [205.188.255.11])
+	by ims-d12.mx.aol.com (8.14.1/8.14.1) with ESMTP id pAQNOJCg005987;
+	Sat, 26 Nov 2011 18:24:19 -0500 from mtaomg-da06.r1000.mx.aol.com (mtaomg-da06.r1000.mx.aol.com [172.29.51.142])
+	by oms-da01.r1000.mx.aol.com (AOL Outbound OMS Interface) with ESMTP id D0FC138000083;
+	Sat, 26 Nov 2011 18:24:19 -0500 (EST) from core-mpb002a.r1000.mail.aol.com (core-mpb002.r1000.mail.aol.com [172.29.191.69])
+	by mtaomg-da06.r1000.mx.aol.com (OMAG/Core Interface) with ESMTP id 59325E000081;
+	Sat, 26 Nov 2011 18:24:19 -0500 (EST) from 149.174.10.175 by webmail-m130.sysops.aol.com (149.174.9.21) with HTTP (WebMailUI); Sat, 26 Nov 2011 18:24:19 -0500 
+To: k2lbe@hotmail.com, k2pts@phigita.net, ka1013@hotmail.com,
+        ka4life04@yahoo.com, kadam_gitesh@yahoo.com, kajabi@dealpimper.com,
+        kaki0084@yopmail.com 
+Subject:  
+X-MB-Message-Source: WebUI 
+X-MB-Message-Type: User 
+From: morjl@aol.co.uk 
+X-Mailer: AOL Webmail 34945-MOBILE 
+Message-Id: <8CE7AA9A835D612-12B8-8F08A@webmail-m130.sysops.aol.com> 
+X-Originating-IP: [149.174.10.175] 
+Date: Sat, 26 Nov 2011 18:24:19 -0500 (EST) 
+x-aol-global-disposition: S 
+X-SPAM-FLAG: YES 
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mx.aol.com;
+	s=20110426; t=1322349859;
+	bh=X6Xw7WRKjSppuQQdQvxyINoM/3oQmLexX5tc43zvsPI=;
+	h=From:To:Subject:Message-Id:Date:MIME-Version:Content-Type;
+	b=cly3iPaChY+JCsAPERcBCsndZfCY90u5/U0RIa7/TH1c2fNKX+QLy3VCjOK936obV
+	 Ez5hjO+1xsQOOda7uqioTURCLMrriUYa4vIyUlc6rosQLJtNawwldqE6qXZ1/VzUiE
+	 vokhOJpimpxCkxmOPSoC8e9nVitJ7vgFYl9Hi8X4= 
+X-AOL-SCOLL-SCORE: 0:2:193818704:93952408 
+X-AOL-SCOLL-URL_COUNT: 0 
+X-AOL-REROUTE: YES 
+x-aol-sid: 3039ac1d338e4ed175231813 
+--------------------------------------
+... http://www.maricom.pl/winterpharm.html?nlinkFriend=aaky2
+
+
+
+
+

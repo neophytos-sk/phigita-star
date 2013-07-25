@@ -1,0 +1,10 @@
+rm *.exe
+gcc -o kmeans kmeans.c
+
+kmeans.exe infile.txt 50 2 > output_50_2.txt
+
+kmeans.exe infile.txt 50 5 > output_50_5.txt
+
+kmeans.exe infile.txt 50 10 > output_50_10.txt
+
+kmeans.exe infile.txt 50 15 > output_50_15.txt

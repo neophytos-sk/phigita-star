@@ -1,0 +1,16 @@
+access-list 103 permit esp any any
+access-list 103 permit gre any any
+access-list 103 permit udp any any eq isakmp
+access-list 103 permit udp any any eq non500-isakmp
+access-list 103 permit udp any any eq 10000
+access-list 103 permit udp any eq domain any
+access-list 103 permit udp any eq ntp any
+access-list 103 permit udp any any eq ntp
+access-list 103 permit udp host 195.14.130.220 any
+access-list 103 permit tcp any any established
+access-list 103 permit tcp any any eq www
+access-list 103 permit tcp any any eq 22
+access-list 103 permit tcp any any eq smtp
+access-list 103 permit tcp any any eq 443
+access-list 103 permit tcp any any eq domain
+access-list 103 deny   ip any any

@@ -1,0 +1,15 @@
+
+EXPORTS
+	DKIMSignInit
+	DKIMSignProcess
+	DKIMSignGetSig
+	DKIMSignFree
+	DKIMVerifyInit
+	DKIMVerifyProcess
+	DKIMVerifyResults
+	DKIMVerifyGetDetails
+	DKIMVerifyFree
+	DKIMVersion
+	DKIMGetErrorString
+	DKIMSignGetSig2
+

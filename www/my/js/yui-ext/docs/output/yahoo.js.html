@@ -1,0 +1,148 @@
+<html><head><title>yahoo.js</title><link rel="stylesheet" type="text/css" href="../resources/style.css" media="screen"/></head><body><h1>yahoo.js</h1><pre class="highlighted"><code><i>/*                                                                                                                                                      
+Copyright (c) 2006, Yahoo! Inc. All rights reserved.
+Code licensed under the BSD License:
+http:<i>//developer.yahoo.net/yui/license.txt</i>
+version: 0.12.0
+*/</i>
+<i>// holder</i>
+<i>/**
+ * The YAHOO object is the single global object used by YUI Library.  It
+ * contains utility <b>function</b> for setting up namespaces, inheritance, and
+ * logging.  YAHOO.util, YAHOO.widget, and YAHOO.example are namespaces
+ * created automatically <b>for</b> and used by the library.
+ * @module yahoo
+ * @title  YAHOO Global
+ */</i>
+<i>// holder</i>
+<i>/**
+ * The YAHOO global namespace object
+ * @class YAHOO
+ * @static
+ */</i>
+<b>if</b> (<b>typeof</b> YAHOO == &quot;undefined&quot;) {
+    <b>var</b> YAHOO = {};
+}
+
+<i>/**
+ * Returns the namespace specified and creates it <b>if</b> it doesn't exist
+ * &lt;pre&gt;
+ * YAHOO.namespace(&quot;property.package&quot;);
+ * YAHOO.namespace(&quot;YAHOO.property.package&quot;);
+ * &lt;/pre&gt;
+ * Either of the above would create YAHOO.property, then
+ * YAHOO.property.package
+ *
+ * Be careful when naming packages. Reserved words may work <b>in</b> some browsers
+ * and not others. For instance, the following will fail <b>in</b> Safari:
+ * &lt;pre&gt;
+ * YAHOO.namespace(&quot;really.long.nested.namespace&quot;);
+ * &lt;/pre&gt;
+ * This fails because &quot;long&quot; is a future reserved word <b>in</b> ECMAScript
+ *
+ * @method namespace
+ * @static
+ * @param  {String*} arguments 1-n namespaces to create 
+ * @<b>return</b> {Object}  A reference to the last namespace object created
+ */</i>
+YAHOO.namespace = <b>function</b>() {
+    <b>var</b> a=arguments, o=null, i, j, d;
+    <b>for</b> (i=0; i&lt;a.length; ++i) {
+        d=a[i].split(&quot;.&quot;);
+        o=YAHOO;
+
+        <i>// YAHOO is implied, so it is ignored <b>if</b> it is included</i>
+        <b>for</b> (j=(d[0] == &quot;YAHOO&quot;) ? 1 : 0; j&lt;d.length; ++j) {
+            o[d[j]]=o[d[j]] || {};
+            o=o[d[j]];
+        }
+    }
+
+    <b>return</b> o;
+};
+
+<i>/**
+ * Uses YAHOO.widget.Logger to output a log message, <b>if</b> the widget is available.
+ *
+ * @method log
+ * @static
+ * @param  {String}  msg  The message to log.
+ * @param  {String}  cat  The log category <b>for</b> the message.  Default
+ *                        categories are &quot;info&quot;, &quot;warn&quot;, &quot;error&quot;, time&quot;.
+ *                        Custom categories can be used as well. (opt)
+ * @param  {String}  src  The source of the the message (opt)
+ * @<b>return</b> {Boolean}      True <b>if</b> the log operation was successful.
+ */</i>
+YAHOO.log = <b>function</b>(msg, cat, src) {
+    <b>var</b> l=YAHOO.widget.Logger;
+    <b>if</b>(l &amp;&amp; l.log) {
+        <b>return</b> l.log(msg, cat, src);
+    } <b>else</b> {
+        <b>return</b> false;
+    }
+};
+
+<i>/**
+ * Utility to set up the prototype, constructor and superclass properties to
+ * support an inheritance strategy that can chain constructors and methods.
+ *
+ * @method extend
+ * @static
+ * @param {Function} subc   the object to modify
+ * @param {Function} superc the object to inherit
+ * @param {String[]} overrides  additional properties/methods to add to the
+ *                              subclass prototype.  These will override the
+ *                              matching items obtained from the superclass 
+ *                              <b>if</b> present.
+ */</i>
+YAHOO.extend = <b>function</b>(subc, superc, overrides) {
+    <b>var</b> F = <b>function</b>() {};
+    F.prototype=superc.prototype;
+    subc.prototype=<b>new</b> F();
+    subc.prototype.constructor=subc;
+    subc.superclass=superc.prototype;
+    <b>if</b> (superc.prototype.constructor == Object.prototype.constructor) {
+        superc.prototype.constructor=superc;
+    }
+
+    <b>if</b> (overrides) {
+        <b>for</b> (<b>var</b> i <b>in</b> overrides) {
+            subc.prototype[i]=overrides[i];
+        }
+    }
+};
+
+<i>/**
+ * Applies all prototype properties <b>in</b> the supplier to the receiver <b>if</b> the
+ * receiver does not have these properties yet.  Optionally, one or more
+ * methods/properties can be specified (as additional parameters).  This
+ * option will overwrite the property <b>if</b> receiver has it already.
+ *
+ * @method augment
+ * @static
+ * @param {Function} r  the object to receive the augmentation
+ * @param {Function} s  the object that supplies the properties to augment
+ * @param {String*}  arguments zero or more properties methods to augment the
+ *                             receiver <b>with</b>.  If none specified, everything
+ *                             <b>in</b> the supplier will be used unless it would
+ *                             overwrite an existing property <b>in</b> the receiver
+ */</i>
+YAHOO.augment = <b>function</b>(r, s) {
+    <b>var</b> rp=r.prototype, sp=s.prototype, a=arguments, i, p;
+    <b>if</b> (a[2]) {
+        <b>for</b> (i=2; i&lt;a.length; ++i) {
+            rp[a[i]] = sp[a[i]];
+        }
+    } <b>else</b> {
+        <b>for</b> (p <b>in</b> sp) { 
+            <b>if</b> (!rp[p]) {
+                rp[p] = sp[p];
+            }
+        }
+    }
+};
+
+YAHOO.namespace(&quot;util&quot;, &quot;widget&quot;, &quot;example&quot;);
+
+</code></pre><hr><div style="font-size:10px;text-align:center;color:gray;">yui-ext - Copyright &copy; 2006 Jack Slocum.  |
+    Yahoo! UI - Copyright &copy; 2006 Yahoo! Inc.<br />All rights reserved.</div>
+    </body></html>

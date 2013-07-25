@@ -1,0 +1,19 @@
+DB_Class Blog_Item_Label -attribute {
+
+    {OID id}
+    {String name -isUnique yes -maxlen "255"}
+    {String description -isNullable yes -maxlen "1000"}
+
+}
+
+DB_Class Blog_Item_Label_Map -attribute {
+
+    {FKey object_id -ref "Blog_Item" -refkey "id" -onDeleteAction "cascade"}
+    {FKey label_id -ref "Blog_Item_Label" -refkey "id" -onDeleteAction "cascade"}
+
+} -index {
+
+    object_id
+    label_id
+
+}

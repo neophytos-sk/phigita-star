@@ -1,0 +1,357 @@
+<html><head><title>AOLserver</title></head>
+<body>
+
+<table border="0" cellpadding="0" cellspacing="0" width="585">
+<tbody><tr>
+<td align="left" valign="top">
+
+<h1>AOLserver nsv Commands</h1>
+
+The nsv commands provide a high performance data sharing mechanism.
+This facility is much flexible alternative to the obsolete ns_share
+command.  The model uses an array syntax and includes more features.
+In addition, lock contention is managed in a much more scalable
+way--something that is not possible with the obsolete ns_share
+facility.
+
+<p>
+
+<font color="red"><b>NOTE: The use of ns_share is deprecated.  Careless
+use of ns_share commands can severely limit the scalability of an
+application.  The nsv commands solve this and this document describes
+how to migrate your ns_share code to use nsv.</b></font>
+
+</p><p>
+
+
+</p><h2>Basics</h2>
+
+<p>
+
+The following commands currently make up the nsv interface:
+
+</p><p>
+
+    	nsv_get - get key value 
+<br>
+    	nsv_exists - check key existence
+<br>
+    	nsv_set - set key value
+<br>
+    	nsv_append - append value
+<br>
+    	nsv_lappend - append value as list element
+<br>
+    	nsv_incr - increment and return value
+<br>
+    	nsv_unset - unset a value
+<br>
+    	nsv_array - manage nsv arrays
+<br>
+
+</p><p>
+
+Commands for the most part mirror the cooresponding Tcl command for
+ordinary variables.  Basically, to set a value, simply use the nsv_set
+command:
+
+</p><p>
+
+	nsv_set myarray foo $value
+
+</p><p>
+
+and to get a value, simply use the nsv_get command:
+
+</p><p>
+
+	set value [nsv_get myarray foo]
+
+</p><p>
+
+
+
+</p><p>
+
+</p><h2>Migrating From ns_share</h2>
+
+<p>
+
+Migrating from ns_share is straightforward.  If your init.tcl included
+commands such as:
+
+</p><p>
+
+	ns_share myshare
+<br>
+	set myshare(lock) [ns_mutex create]
+
+</p><p>
+
+use instead:
+
+</p><p>
+
+	nsv_set myshare lock [ns_mutex create]
+
+</p><p>
+
+In your procedures, instead of:
+
+</p><p>
+
+	proc myproc {} {
+		ns_share myshare
+
+</p><p>
+
+		ns_mutex lock $myshare(lock)
+		...
+
+</p><p>
+
+use:
+
+</p><p>
+
+	proc myproc {} {
+<br>
+		ns_mutex lock [nsv_get myshare lock]
+<br>
+		...
+
+</p><p>
+
+and within an ADP page, instead of:
+
+</p><p>
+
+	&lt;%
+<br>
+	ns_share myshare
+<br>
+	ns_puts $myshare(key1)
+<br>
+	%&gt;
+
+</p><p>
+
+	&lt;%=$myshare(key2)%&gt;
+
+</p><p>
+
+use:
+
+</p><p>
+
+	&lt;%
+<br>
+	ns_puts [nsv_get myshare key1]
+<br>
+	%&gt;
+
+</p><p>
+
+	&lt;%=[nsv_get myshare key2]%&gt;
+
+</p><p>
+
+
+Notice that, unlike ns_share, no command is required to define the
+shared array.  The first attempt at setting the variable through any
+means will automaticaly create the array.  Also notice that only arrays
+are supported.  However, to migrate from ns_share you can simply package
+up all existing ns_share scalars into a single array with a short name,
+perhaps just ".". For example, if you had:
+
+</p><p>
+
+	ns_share mylock myfile
+<br>
+	set myfile /tmp/some.file
+<br>
+	set mylock [ns_mutex create]
+
+</p><p>
+
+you can use:
+
+</p><p>
+
+	nsv_set . myfile /tmp/some.file
+<br>
+	nsv_set . mylock [ns_mutex create]
+
+</p><p>
+
+
+</p><h2>Multithreading Features</h2>
+
+<p>
+
+One advantages of nsv is built in interlocking for thread safety.
+For example, consider a case of a "increment-by-one" unique id system.
+Here's the ns_share solution:
+
+</p><p>
+
+	ns_share ids
+<br>
+	set ids(lock) [ns_mutex create]
+<br>
+	set ids(next) 0
+
+</p><p>
+
+	proc nextid {} {
+<br>
+		ns_share ids
+<br>
+		ns_mutex lock $ids(lock)
+<br>
+		set next [incr ids(next)]
+<br>
+		ns_mutex unlock $ids(lock)
+<br>
+		return $next
+<br>
+	}
+
+</p><p>
+
+and here's an nsv solution:
+
+</p><p>
+
+	nsv_set ids next 0
+
+</p><p>
+
+	proc nextid {} {
+<br>
+		return [nsv_incr ids next]
+<br>
+	}
+
+</p><p>
+
+Note that the nsv solution does not need a mutex as the nsv_incr command
+is internally interlocked.
+
+</p><p>
+
+
+</p><h2>Compatibility with Tcl Arrays</h2>
+
+<p>
+
+Another useful feature of nsv is the nsv_array command which works much
+like the Tcl array command.  This can be used to import and export values
+from ordinary Tcl arrays.  For example, to copy from Tcl use:
+
+</p><p>
+
+	nsv_array set meta [array get tmpmeta]
+
+</p><p>
+
+and to copy to Tcl use:
+
+</p><p>
+
+	array set metacopy [nsv_array get meta]
+
+</p><p>
+
+As with all other nsv command, nsv_array is atomic and no explicit
+locking is required.  This feature can be used to contruct a new nsv
+array by first filling up an ordinary temporary Tcl array via some time
+consuming process and then swapping it into place as above.  While the
+new temporary array is being constructed, other threads can access the
+old array without delay or inconsistant data.  You can even reset a
+complete nsv array in one step with "reset".  For example, instead of:
+
+</p><p>
+
+	ns_share lock meta
+<br>
+	set lock [ns_mutex create]
+
+</p><p>
+
+	ns_mutex lock $lock
+<br>
+	unset meta
+<br>
+	array set meta [array get tmpmeta]
+<br>
+	ns_mutex unlock $lock
+
+</p><p>
+
+you can simply use:
+
+</p><p>
+
+	nsv_array reset meta [array get tmpmeta]
+
+</p><p>
+
+The reset option will flush and then reset all values atomically,
+eliminating the need for the explicit lock.
+
+</p><p>
+
+Other options for the nsv_array command include:
+
+</p><p>
+
+	nsv_exists array - test existance of array
+<br>
+	nsv_size array - return # of elements in array
+<br>
+	nsv_names array - return keys of array
+
+</p><p>
+
+
+</p><h2>Configuration</h2>
+
+<p>
+
+The nsv system uses a common multithreading technique to reduce the
+potential for lock contention which is to split the locks to acheive
+finer grained locking.  This technique groups arrays randomly into
+buckets and only the arrays within a particular bucket share a lock.
+The number of buckets to be used can be configured by setting the
+"nsvbuckets" tcl parameters, e.g.:
+
+</p><p>
+
+	[ns/server/server1/tcl]
+<br>
+	nsvbuckets=20
+
+</p><p>
+
+The default is 8 which should be reasonalbe.  Note that you can monitor
+the lock contention, if any, by enabling mutex metering:
+
+</p><p>
+
+	[ns/threads]
+<br>
+	mutexmetering=on
+
+</p><p>
+
+and then viewing the results of "ns_info locks" command after the server
+has been running for some time.  The nsv locks all have names of the
+form "nsv:##".  If you find many lock attempts which did not successed
+immediately, try increasing nsvbuckets.
+
+</p></td>
+</tr>
+</tbody></table>
+
+</body></html>

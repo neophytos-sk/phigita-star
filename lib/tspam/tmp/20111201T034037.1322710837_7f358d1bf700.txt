@@ -1,0 +1,181 @@
+DomainKey-Signature: q=dns; a=rsa-sha1; c=nofws;
+	s=prod; d=linkedin.com;
+	h=DKIM-Signature:Sender:Date:From:To:Message-ID:Subject:MIME-Version:Content-Type:X-LinkedIn-Template:X-LinkedIn-Class:X-LinkedIn-fbl;
+	b=Pzeb0++10fJ7/ZrKzwHckdi2I6Y8EQ4s7XlXeSVWgthG1mOkja4lwO51mz+1qjgR
+	NriP6uXYN8LkWLtSt0ycQl3QnWz6+Vt/WC/IYl1k1FMxvpytpTUnNQAY6Ip/n2wN 
+DKIM-Signature: v=1; a=rsa-sha1; d=linkedin.com; s=proddkim; c=relaxed/relaxed;
+	q=dns/txt; i=@linkedin.com; t=1322710825;
+	h=From:Subject:Date:To:MIME-Version:Content-Type:X-LinkedIn-Class:X-LinkedIn-fbl:
+	X-LinkedIn-Template;
+	bh=63C6PZqUKck0BpNIayWLjnMVDlo=;
+	b=eDrDRKJAWYRiEoZfFH+bJeQvZCgzkCxx6laGHPcEwvbJjwSFxWVUREaj18sqvsHJ
+	8xe55KQDoesQQPaiwzaDblPnte/FFdM0ajpCMcFBMw6Ld+raPvVe/BMnT0inxTSj; 
+Sender: messages-noreply@bounce.linkedin.com 
+Date: Thu, 1 Dec 2011 03:40:25 +0000 (UTC) 
+From: High Frequency Trading Group Members <group-digests@linkedin.com> 
+To: Neophytos Demetriou <k2pts@phigita.net> 
+Message-ID: <2082875294.29101653.1322710825515.JavaMail.app@ela4-app0103.prod> 
+Subject: [16] new discussions, [2] new comments and [4] new jobs on LinkedIn 
+X-LinkedIn-Template: anet_digest_type 
+X-LinkedIn-Class: GROUPDIGEST 
+X-LinkedIn-fbl: m-qV12XPQK8TdnpR_H4nJ6uZEiBNUZM5jHzL1hXwy5DO4aC3xrzcj5KG1 
+--------------------------------------
+High Frequency Trading
+  Latest discussions from High Frequency Trading group members.  Change the frequency of this digest:
+  http://www.linkedin.com/e/-1ht5d5-gvn7vgui-40/ahs/86999/EMLt_anet_settings/?hs=false&tok=1ZXY4qDVzYol01
+
+
+
+
+Send me an email for each new discussion &#187; http://www.linkedin.com/e/-1ht5d5-gvn7vgui-40/snp/86999/true/grp_email_subscribe_new_posts/?hs=false&tok=2bpJySWszYol01
+
+
+Active Discussion of the week
+
+ * SixFigureTrader.com  EurexDayTrader.com started a discussion on a news article:
+  How to treat the losers? (5)
+
+  > If "losers grow by way of distance from the entry" the most naive answer
+  > to your question would be: make that distance small ;-))
+  > 
+  > The fact that you have a relatively small percentage of losers under
+  > random entry assumption tells me that you are using large stops (or no
+  > stops at all). So most of time you close profitably due to reversion,
+  > but eventually, as Dmitrii indicates you give all back (with interests!)
+  > in "black swans" with just a few losers. Well actually it would more
+  > frequent than one can think. Not only, if capital is relatively small,
+  > sooner or later your margins might blow, thus practically creating a
+  > time bomb.
+  > 
+  > On the other hand, i guess that you have already found out that in case
+  > you use tight stops (which would be the naive and trivial answer to your
+  > question) they would eat you alive, not even allowing you to reach a
+  > break even point in the long run.
+  > 
+  > Especially because "the entry logic is pretty close to random" and,
+  > therefore, there is actually no reason why a trade should close
+  > favorably with an higher probability, instead of hitting a stop. So you
+  > would be "realizing" a lot of negative trades (which added up with
+  > spread and commission) would give rise a losing strat.
+  > 
+  > If you insist keeping almost random the nature of entries, imho, you
+  > will have just a few possibilities:
+  > 
+  > * Use an option game to hedge (both sell and buy appropriately options
+  > at different strikes to protect margins and at same time possibly create
+  > a steady revenue)
+  > 
+  > * Create an algorithmic overlay by "superposing" strategies in such a
+  > way that each strat provides an hedging action to the other ones, while
+  > all strategies may run essentially without stops. (This requires clearly
+  > a full algorithmic approach and top minds/top quants for effective
+  > implementation.)
+  > 
+  > * Do both (depending on strategy)
+  > 
+  > Or you can (partially) give up on your "random" entry appoach and make
+  > slighly easier the trade management part.
+  > 
+  > Tom
+
+
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvn7vgui-40/vai/86999/81704737/member/EMLt_anet_act_disc/?hs=false&tok=1KmrG8S6DYol01
+
+
+
+Discussions
+ * Adam  Halpern Bollinger Bands Suite | Watch Erich Play Detective
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvn7vgui-40/ava/82905618/86999/EMLt_anet_qa_ttle/?hs=false&tok=136ae2HDfYol01
+
+
+ * Ryan  Surprenant New Woodbine Report:  Buy-Side Corporate Bond Execution
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvn7vgui-40/ava/82854700/86999/EMLt_anet_qa_ttle/?hs=false&tok=08lWZk_t7Yol01
+
+
+ * Thomas Allen  Bibiyan Markets Blast Off
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvn7vgui-40/ava/82785820/86999/EMLt_anet_qa_ttle/?hs=false&tok=3hCuhDdrHYol01
+
+
+ * Adam  Halpern Trading Gold with Breakaway Bars – NinjaTrader Live Trading Demo
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvn7vgui-40/ava/82782246/86999/EMLt_anet_qa_ttle/?hs=false&tok=19WmFtIe3Yol01
+
+
+ * Daniele  Bernardi 7th Annual QUANTITATIVE ASSET & RISK Management Workshop 2012
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvn7vgui-40/ava/82725465/86999/EMLt_anet_qa_ttle/?hs=false&tok=0JT3JjqKLYol01
+
+
+ * Thomas Allen  Bibiyan Markets Rally For Two Consecutive Days?
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvn7vgui-40/ava/82617087/86999/EMLt_anet_qa_ttle/?hs=false&tok=3BFAHAo6LYol01
+
+
+ * Will  Jan http://aberdeen.reg.meeting-stream.com/managing_risk_compliance/
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvn7vgui-40/ava/82607723/86999/EMLt_anet_qa_ttle/?hs=false&tok=0I7L3vg1nYol01
+
+
+ * Christopher  Szemraj The axe starts to fall on trading jobs - FT.com | FT Trading Room
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvn7vgui-40/ava/82601303/86999/EMLt_anet_qa_ttle/?hs=false&tok=3JltL9wczYol01
+
+
+ * Brock  Crabtree Be connected in NY4 for ultra low latency by being fiber optically connected to 13+ multi-national banks and several LP's. Email info@fxfts.com for more information.
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvn7vgui-40/ava/82579882/86999/EMLt_anet_qa_ttle/?hs=false&tok=2l0QQcst_Yol01
+
+
+ * Kazim  Shah ELKAN INVESTMENT: LOOKING FOR HEDGE FUND THIRD PARTY MARKETING MANAGERS AND INVESTORS
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvn7vgui-40/ava/82520551/86999/EMLt_anet_qa_ttle/?hs=false&tok=0yawn0x7TYol01
+
+
+ * Martin  Kelly This is a really good article by Dell on Low latency - for anyone who is looking into technology on extreme low latency it is definitely worth a read.
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvn7vgui-40/ava/82388673/86999/EMLt_anet_qa_ttle/?hs=false&tok=1rD1T1WcnYol01
+
+
+ * Brandon  Pilzner Benzinga's Weekly Radar: Technical Levels and Analysis for Major...
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvn7vgui-40/ava/82434077/86999/EMLt_anet_qa_ttle/?hs=false&tok=36CQ0rxX7Yol01
+
+
+ * Thomas Allen  Bibiyan All About Europe
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvn7vgui-40/ava/82370180/86999/EMLt_anet_qa_ttle/?hs=false&tok=21X9fjDXbYol01
+
+
+ * Fivos S.  Georgiades Automated Trading, Strategy Testing and Optimization Articles
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvn7vgui-40/ava/82335231/86999/EMLt_anet_qa_ttle/?hs=false&tok=3UtFbsIRnYol01
+
+
+ * Álvaro  Cartea New paper on AT and HFT
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvn7vgui-40/ava/82171813/86999/EMLt_anet_qa_ttle/?hs=false&tok=3ZY-HDL03Yol01
+
+
+ * Ieva  Strupule FXOpen is looking for new PAMM Managers and IB partners! Inbox me for details!
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvn7vgui-40/ava/81943139/86999/EMLt_anet_qa_ttle/?hs=false&tok=11-HIqUY3Yol01
+
+
+Weekly Job Postings * Paige  Edwards: Trading Operations Specialist
+  Trading Operations Specialist (0)
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvn7vgui-40/ava/82376524/86999/EMLt_anet_qa_ttle/?hs=false&tok=0NoHPs5U_Yol01
+
+ * Paige  Edwards: Trading Operations Engineer - QA, KSH, SQL
+  Trading Operations Engineer - QA, KSH, SQL (0)
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvn7vgui-40/ava/82376131/86999/EMLt_anet_qa_ttle/?hs=false&tok=1y8UzdNFnYol01
+
+ * Paige  Edwards: Associate Trading Operations Specialist
+  Associate Trading Operations Specialist (0)
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvn7vgui-40/ava/82375600/86999/EMLt_anet_qa_ttle/?hs=false&tok=1hUd9tq33Yol01
+
+
+

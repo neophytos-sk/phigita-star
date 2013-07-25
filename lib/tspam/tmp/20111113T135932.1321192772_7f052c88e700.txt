@@ -1,0 +1,12 @@
+Received: from ([110.53.30.194])
+	by im.faw.com.cn with ESMTP  id DWBNYK1.15874721;
+	Sun, 13 Nov 2011 21:53:44 +0800 
+Sender: gy5_zrb@faw.com.cn 
+Message-ID: <20111113220021585122@faw.com.cn> 
+From: "kw" <gefls@njwgrx.com> 
+To:  
+Subject: =?gb2312?B?0MLTyrz+o6zH67LpytWjoTZvZHo=?= 
+Date: Sun, 13 Nov 2011 22:00:10 +0800 
+X-mailer: Rmg 1 
+--------------------------------------
+ content-type=application/msword part-token=::mime::1334-2

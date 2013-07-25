@@ -1,0 +1,12 @@
+Received: from [99.137.176.172] (account progressively895@uob-oskam.com.my HELO urjdhhsyjkj.mxwsfdsbnossr.biz)
+	by 143-222-231-201.fibertel.com.ar (CommuniGate Pro SMTP 5.2.3)
+	with ESMTPA id 502420443 for webmaster@phigita.net; Thu, 1 Dec 2011 05:47:45 -0300 
+Date: Thu, 1 Dec 2011 05:47:45 -0300 
+From: =?koi8-r?B?Iu3B0svF1MnOxyDQzyDFLc3Fyswi?= 
+	<spectaclec9002@iztzg.hr> 
+X-Mailer: The Bat! (v2.00.0) Business 
+X-Priority: 3 (Normal) 
+Message-ID: <9799185150.Q4OZHFSK728831@nhokmg.jrxixkab.ua> 
+To: <webmaster@phigita.net> 
+Subject: =?koi8-r?B?NSDSwdPT2czPyyDawSAxMCAwMDAgLSDtxdPRwyDawSAyMCAwMDA=?= 
+

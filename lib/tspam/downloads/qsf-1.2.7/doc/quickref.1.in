@@ -1,0 +1,1252 @@
+.TH @UCPACKAGE@ 1 "August 2007" Linux "User Manuals"
+.SH NAME
+@PACKAGE@ \- quick spam filter
+.SH SYNOPSIS 
+Filtering:       \fB@PACKAGE@\fR
+[\fI\-snrAtav\fR] [\fI-d DB\fR] [\fI-g DB\fR]
+.br
+                     [\fI-L LVL\fR] [\fI-S SUBJ\fR] [\fI-H MARK\fR] [\fI-Q NUM\fR]
+.br
+                     [\fI-X NUM\fR]
+.br
+Training:        \fB@PACKAGE@\fR
+\fI\-T SPAM NONSPAM\fR [\fIMAXROUNDS\fR] [\fI-d DB\fR]
+.br
+Retraining:      \fB@PACKAGE@\fR
+\fI\-\fR[\fIm|M\fR] [\fI-d DB\fR] [\fI-w WEIGHT\fR] [\fI-ayN\fR]
+.br
+Database:        \fB@PACKAGE@\fR
+\fI\-\fR[\fIp|D|R|O\fR] [\fI-d DB\fR]
+.br
+Database merge:  \fB@PACKAGE@\fR
+\fI\-E OTHERDB\fR [\fI-d DB\fR]
+.br
+Allowlist query: \fB@PACKAGE@\fR
+\fI\-e EMAIL\fR [\fI-m|-M|-t\fR] [\fI-d DB\fR] [\fI-g DB\fR]
+.br
+Denylist query:  \fB@PACKAGE@\fR
+\fI\-y\fR \fI\-e EMAIL\fR [\fI-m -m|-M -M|-t\fR] [\fI-d DB\fR] [\fI-g DB\fR]
+.br
+Help:            \fB@PACKAGE@\fR
+\fI-\fR[\fIh|V\fR]
+
+.SH DESCRIPTION
+.B @PACKAGE@
+reads a single email on standard input, and by default outputs it on
+standard output.  If the email is determined to be spam, an additional header
+("X-Spam: YES") will be added, and optionally the subject line can have
+"[SPAM]" prepended to it.
+
+.B @PACKAGE@
+is intended to be used in a
+.BR procmail (1)
+recipe, in a ruleset such as this:
+
+.RS
+ :0 wf
+ | @PACKAGE@ -ra
+ 
+ :0 H:
+ * X-Spam: YES
+ $HOME/mail/spam
+.RE
+
+For more examples, including sample
+.BR procmail (1)
+recipes, see the
+.B EXAMPLES
+section below.
+
+.SH TRAINING
+Before
+.B @PACKAGE@
+can be used properly, it needs to be trained.  A good way to train
+.B @PACKAGE@
+is to collect a copy of all your email into two folders - one for spam, and
+one for non-spam.  Once you have done this, you can use the training
+function, like this:
+
+.RS
+ @PACKAGE@ -aT spam-folder non-spam-folder
+.RE
+
+This will generate a database that can be used by
+.B @PACKAGE@
+to guess whether email received in the future is spam or not.
+Note that this initial training run may take a long time, but you should
+only need to do it once.
+
+To mark a 
+.B single message
+as
+.BR spam ,
+pipe it to
+.B @PACKAGE@
+with the
+.BR \-\-mark-spam " or " \-m
+("mark as spam") option.  This will update the database accordingly and
+discard the email.
+
+To mark a
+.B single message
+as
+.BR non-spam ,
+pipe it to
+.B @PACKAGE@
+with the
+.BR \-\-mark-nonspam " or " \-M
+("mark as non-spam") option.  Again, this will discard the email.
+
+If a message has been mis-tagged, simply send it to
+.B @PACKAGE@
+as the opposite type, i.e. if it has been mistakenly tagged as spam, pipe it
+into
+.B @PACKAGE@ --mark-nonspam --weight=2
+to add it to the non-spam side of the database with double the usual
+weighting.
+
+.SH OPTIONS
+The
+.B @PACKAGE@
+options are listed below.
+.TP
+.BI "\-d, \-\-database " [TYPE:]FILE
+Use
+.I FILE
+as the spam/non-spam database.  The default is to use
+.B /var/lib/@PACKAGE@db
+and, if that is not available or is read-only,
+.BR $HOME/.@PACKAGE@db .
+This option can also be useful if there is a system-wide database but you do
+not want to use it - specifying your own here will override the default.
+
+If you prefix the filename with a
+.BR TYPE ,
+of the form
+.BR btree:$HOME/.@PACKAGE@db ,
+then this will specify what kind of database
+.B FILE
+is, such as
+.BR list ", " btree ", " gdbm ", " sqlite
+and so on.  Check the output of
+.B @PACKAGE@ -V
+to see which database backends are available.  The default is to auto-detect
+the type, or, if the file does not already exist, use
+.BR list .
+Note that
+.B TYPE
+is not case-sensitive.
+.TP
+.BI "\-g, \-\-global " [TYPE:]FILE
+Use
+.I FILE
+as the default global database, instead of
+.BR /var/lib/@PACKAGE@db .
+If you also specify a database with
+.BR \-d ,
+then this "global" database will be used in read-only mode in conjunction
+with the read-write database specified with
+.BR \-d .
+The
+.B \-g
+option can be used a second time to specify a third database, which will
+also be used in read-only mode.
+Again, the filename can optionally be prefixed with a
+.B TYPE
+which specifies the database type.
+.TP
+.BR "\-P, \-\-plain-map " "FILE"
+Maintain a mapping of all database tokens to their non-hashed counterparts in
+.IR FILE ,
+one token per line.  This can be useful if you want to be able to list the
+contents of your database at a later date, for instance to get a list of
+email addresses in your allow-list.  Note that using this option may slow
+.B @PACKAGE@
+down, and only entries written to the database while this option is active
+will be stored in
+.IR FILE .
+.TP
+.B \-s, \-\-subject
+Rewrite the Subject line of any email that turns out to be spam, adding
+"[SPAM]" to the start of the line.
+.TP
+.BI "\-S, \-\-subject-marker " "SUBJECT"
+Instead of adding "[SPAM]", add
+.B SUBJECT
+to the Subject line of any email that turns out to be spam.  Implies
+.BR \-s .
+.TP
+.BI "\-H, \-\-header-marker " "MARK"
+Instead of setting the X-Spam header to "YES", set it to
+.B MARK
+if email turns out to be spam.  This can be useful if your email client
+can only search all headers for a string, rather than one particular header
+(so searching for "YES" might match more than just the output of
+.BR @PACKAGE@ ).
+.TP
+.B \-n, \-\-no-header
+Do not add an X-Spam header to messages.
+.TP
+.B \-r, \-\-add-rating
+Insert an additional header X-Spam-Rating which is a rating of the
+"spamminess" of a message from 0 to 100; 90 and above are counted as spam,
+anything under 90 is not considered spam.
+If combined with
+.BR \-t ,
+then the rating (0-100) will be output, on its own, on standard output.
+.TP
+.B \-A, \-\-asterisk
+Insert an additional header X-Spam-Level which will contain between 0 and 20
+asterisks (*), depending on the spam rating.
+.TP
+.B \-t, \-\-test
+Instead of passing the message out on standard output, output nothing,
+and exit 0 if the message is not spam, or exit 1 if the message is spam.
+If combined with
+.BR \-r ,
+then the spam rating will be output on standard output.
+.TP
+.B \-a, \-\-allowlist
+Enable the allow-list.  This causes the email addresses given in the
+message's "From:" and "Return-Path:" headers to be checked against a list;
+if either one matches, then the message is always treated as non-spam,
+regardless of what the token database says. When specified with a retraining
+flag,
+.B -a -m
+(mark as spam) will remove that address from the allow-list as well as
+marking the message as spam, and
+.B -a -M
+(mark as non-spam) will add that address to the allow-list as well as
+marking the message as non-spam.  The idea is that you add all of your
+friends to the allow-list, and then none of their messages ever get marked
+as spam.
+.TP
+.B \-y, \-\-denylist
+Enable the deny-list.  This causes the email addresses given in the
+message's "From:" and "Return-Path:" headers to be checked against a second
+list; if either one matches, then theh message is always treated as spam.
+Training works in the same way as with
+.BR \-a ,
+except that you must specify
+.B -m
+or
+.B -M
+twice to modify the deny-list instead of the allow-list, and with the
+reverse syntax:
+.B -y -m -m
+(mark as spam) will add that address to the deny-list, whereas
+.B -y -M -M
+(mark as non-spam) will remove that address from the deny-list.
+This double specification is so that the usual retraining process never
+touches the deny-list; the deny-list should be carefully maintained
+rather than automatically generated.
+
+Normally you would not need to use the deny-list.
+.TP
+.BI "\-L, \-\-level, \-\-threshold " "LEVEL"
+Change the spam scoring threshold level which must be reached before an
+email is classified as spam.  The default is 90.
+.TP
+.BI "\-Q, \-\-min-tokens " "NUM"
+Only give a score if more than
+.B NUM
+tokens are found in the message - otherwise the message is assumed to be
+non-spam, and it is not modified in any way.  The default is 0.  This option
+might be useful if you find that very short messages are being frequently
+miscategorised.
+.TP
+.BI "\-e, \-\-email, \-\-email\-only " "EMAIL"
+Query or update the allow-list entry for the email address
+.BR EMAIL .
+With no other options, this will simply output "YES" if
+.B EMAIL
+is in the allow-list, or "NO" if it is not. With
+.BR \-t ,
+it will not output anything, but will exit 0 (success) if
+.B EMAIL
+is in the allow-list, or 1 (failure) if it is not. With the
+.B \-m
+(mark-spam) option, any previous allow-list entry for
+.B EMAIL
+will be removed. Finally, with the
+.B \-M
+(mark-nonspam) option,
+.B EMAIL
+will be added to the allow-list if it is not already on it.
+
+If
+.B EMAIL
+is just the word
+.B MSG
+on its own, then an email will be read from standard input, and the email
+addresses given in the "From:" and "Return-Path:" headers will be used.
+
+Using
+.B \-e
+automatically switches on
+.BR \-a .
+
+If you also specify
+.BR \-y ,
+then the deny-list will be operated on. Remember that
+.B \-m
+and
+.B \-M
+are reversed with the deny-list.
+
+If you specify an email address of the form
+.B @domain
+(nothing before the @), then the whole
+.I domain
+will be allow or deny listed.
+.TP
+.B \-v, \-\-verbose
+Add extra
+.B X-@UCPACKAGE@-Info
+headers to any filtered email, containing error messages and so on if
+applicable.  Specify
+.B \-v
+more than once to increase verbosity.
+.TP
+.BI "\-T, \-\-train " "SPAM NONSPAM [MAXROUNDS]"
+Train the database using the two mbox folders
+.B SPAM
+and
+.BR NONSPAM ,
+by testing each message in each folder and updating the database each time
+a message is miscategorised.  This is done several times, and may take a
+while to run.  Specify the
+.B -a
+(allow-list) flag to add every sender in the
+.B NONSPAM
+folder to your allow-list as a side-effect of the training process.
+If
+.B MAXROUNDS
+is specified, training will end after this number of rounds if the results
+are still not good enough. The default is a maximum of 200 rounds.
+.TP
+.B \-m, \-\-mark-spam
+Instead of passing the message out on standard output, mark its contents as
+spam and update the database accordingly.  If the allow-list
+.BR "" ( -a )
+is enabled, the message's "From:" and "Return-Path:" addresses are removed
+from the allow-list.
+If the deny-list
+.BR "" ( -y )
+is enabled and you specify
+.B -m
+twice, the message's addresses are added to the deny-list instead.
+.TP
+.B \-M, \-\-mark-nonspam
+Instead of passing the message out on standard output, mark its contents as
+non-spam and update the database accordingly.  If the allow-list
+.BR "" ( -a )
+is enabled, the message's "From:" and "Return-Path:" addresses are added to
+the allow-list (see the
+.B -a
+option above).
+If the deny-list
+.BR "" ( -y )
+is enabled and you specify
+.B -M
+twice, the message's addresses are removed from the deny-list instead.
+.TP
+.BI "\-w, \-\-weight " WEIGHT
+When marking as spam or non-spam, update the database with a weighting of
+.B WEIGHT
+per token instead of the default of 1.  Useful when correcting mistakes,
+eg a message that has been mistakenly detected as spam should be marked as
+non-spam using a weighting of 2, i.e. double the usual weighting, to
+counteract the error.
+.TP
+.BI "\-D, \-\-dump " "[FILE]"
+Dump the contents of the database as a platform-independent text file,
+suitable for archival, transfer to another machine, and so on.  The data
+is output on stdout or into the given
+.BR FILE .
+.TP
+.BI "\-R, \-\-restore " "[FILE]"
+Rebuild the database from scratch from the text file on stdin.  If a
+.B FILE
+is given, data is read from there instead of from stdin.
+.TP
+.B \-O, \-\-tokens
+Instead of filtering, output a list of the tokens found in the message read
+from standard input, along with the number of times each token was found. 
+This is only useful if you want to use
+.B @PACKAGE@
+as a general tokeniser for use with another filtering package.
+.TP
+.BI "\-E, \-\-merge " "OTHERDB"
+Merge the
+.B OTHERDB
+database into the current database.  This can be useful if you want to take
+one user's mailbox and merge it into the system-wide one, for instance (this
+would be done by, as root, doing
+.B @PACKAGE@ -d /var/lib/@PACKAGE@db -E /home/user/.@PACKAGE@db
+and then removing
+.BR /home/user/.@PACKAGE@db ).
+.TP
+.BI "\-B, \-\-benchmark " "SPAM NONSPAM [MAXROUNDS]"
+Benchmark the training process using the two mbox folders
+.B SPAM
+and
+.BR NONSPAM .
+A temporary database is created and trained using the first 75% of the
+messages in each folder, and then the entire contents of each folder is
+tested to see how many false positives and false negatives occur. Some
+timing information is also displayed.
+
+This can be used to decide which backend is best on your system.  Use
+.B -d
+to select a backend, eg
+.B @PACKAGE@ -B spam nonspam -d GDBM
+- this will create a temporary database which is removed afterwards.
+
+The exception to this is the MySQL backend, where a full database
+specification must be given
+.BR "" "(" "-d MySQL:database=db;host=localhost;..." ")"
+and the database table given will not be wiped beforehand or dropped
+afterwards.
+
+As with
+.BR -T ,
+if
+.B MAXROUNDS
+is specified, training will never be done for more than this number of
+rounds; the default is 200.
+
+.TP
+.B \-h, \-\-help
+Print a usage message on standard output and exit successfully.
+.TP
+.B \-V, \-\-version         
+Print version information, including a list of available database backends,
+on standard output and exit successfully.
+
+.SH DEPRECATED OPTIONS
+
+The following options are only for use with the old binary tree database
+backend or old databases that haven't been upgraded to the new format that
+came in with version 1.1.0.
+
+.TP
+.B \-N, \-\-no-autoprune
+When marking as spam or nonspam, never automatically prune the database.
+Usually the database is pruned after every 500 marks; if you would rather
+.B \-\-prune
+manually, use 
+.B \-N
+to disable automatic pruning.
+.TP
+.B \-p, \-\-prune
+Remove redundant entries from the database and clean it up a little.  This
+is automatically done after several calls to
+.B --mark-spam
+or
+.BR --mark-nonspam ,
+and during training with
+.B \-\-train
+if the training takes a large number of rounds, so it should rarely be
+necessary to use
+.B \-\-prune
+manually unless you are using
+.BR \-N " / " \-\-no\-autoprune .
+.TP
+.BI "\-X, \-\-prune\-max " NUM
+When the database is being pruned, no more than
+.B NUM
+entries will be considered for removal.  This is to prevent CPU and memory
+resources being taken over.  The default is 100,000 but in some
+circumstances (if you find that pruning takes too long) this option may be
+used to reduce it to a more manageable number.
+
+.SH FILES
+.TP
+.B /var/lib/@PACKAGE@db
+The default (system-wide) spam database.  If you wish to install
+.B @PACKAGE@
+system-wide, this should be read-only to everyone; there should be one user
+with write access who can update the spam database with
+.B @PACKAGE@ --mark-spam
+and
+.B @PACKAGE@ --mark-non-spam
+when necessary.
+.TP
+.B /var/lib/@PACKAGE@db2
+A second, read-only, system-wide database. This can be useful when
+installing
+.B @PACKAGE@
+system-wide and using third-party spam databases; the first global database
+can be updated with system-specific changes, and this second database can be
+periodically updated when the third-party spam database is updated.
+.TP
+.B $HOME/.@PACKAGE@db
+The default spam database for per-user data.  Users without write access to
+the system-wide database will have their data written here, and the two
+databases will be read together.  The per-user database will be given a
+weighting equivalent to 10 times the weighting of the global database.
+
+.SH NOTES
+Currently, you cannot use
+.B @PACKAGE@
+to check for spam while the database is being updated.  This means that
+while an update is in progress, all email is passed through as non-spam.
+
+There is an upper size limit of 512Kb on incoming email; anything larger
+than this is just passed through as non-spam, to avoid tying up machine
+resources.
+
+The plaintext token mapping maintained by
+.B --plain-map
+will never shrink, only grow.  It is intended for use by housekeeping and
+user interface scripts that, for instance, the user can use to list all
+email addresses on their allow-list.  These scripts should take care of
+weeding out entries for tokens that are no longer in the database.  If you
+have no such scripts, there is probably no point in using
+.B --plain-map
+anyway.
+
+Avoid using the deny-list
+.BR "" ( -y )
+in any automated retraining, as it can be cause the filter to reject
+mail unnecessarily.  In general the deny-list is probably best left unused
+unless explicitly required by your particular setup.
+
+If both the allow-list and the deny-list are enabled, then email addresses
+will first be checked against the deny-list, then the allow-list, then the
+domain of the email address will be checked for matching "@domain" entries
+in the deny-list and then in the allow-list.
+
+.SH EXAMPLES
+To filter all of your mail through
+.BR @PACKAGE@ ,
+with the allow-list enabled and the "spam rating" header being added, add
+this to your
+.B .procmailrc
+file:
+
+.RS
+ :0 wf
+ | @PACKAGE@ -ra
+.RE
+
+If you want
+.B @PACKAGE@
+to add "[SPAM]" to the subject line of any messages it thinks are spam, do
+this instead:
+
+.RS
+ :0 wf
+ | @PACKAGE@ -sra
+.RE
+
+To automatically mark any email sent to
+.B spambox@yourdomain.com
+as spam (this is the "naive" version):
+
+.RS
+ :0 H
+ * ^To:.*spambox@yourdomain.com
+ | @PACKAGE@ -am
+.RE
+
+To do the same, but cleverly, so that only email to
+.B spambox@yourdomain.com
+which
+.B @PACKAGE@
+does NOT already classify as spam gets marked as spam in the database (this
+stops the database getting too heavily weighted):
+
+.RS
+ # If sent to spambox@yourdomain.com:
+ :0
+ * ^To:.*spambox@yourdomain.com
+ {
+    :0 wf
+    | @PACKAGE@ -a
+
+    # The above two lines can be skipped if you've
+    # already piped the message through @PACKAGE@.
+
+    # If the @PACKAGE@ database says it's not spam,
+    # mark it as spam!
+    :0 H
+    * ^X-Spam: NO
+    | @PACKAGE@ -am
+ }
+.RE
+
+Remove the
+.B -a
+option in the above examples if you don't want to use the allow-list.
+
+A more complicated filtering example - this will only run
+.B @PACKAGE@
+on messages which don't have a subject line saying "your <something> is on
+fire" and which don't have a sender address ending in "@foobar.com", meaning
+that messages with that subject line OR that sender address will NEVER be
+marked as spam, no matter what:
+
+.RS
+ :0 wf
+ * ! ^Subject: Your .* is on fire
+ * ! ^From: .*@foobar.com
+ | @PACKAGE@ -ra
+.RE
+
+For more on
+.BR procmail (1)
+recipes, see the
+.BR procmailrc (5)
+and
+.BR procmailex (5)
+manual pages.
+
+A couple of macros to add to your
+.B .muttrc
+file, if you use
+.BR mutt (1)
+as a mail user agent:
+
+.RS
+ # Press F5 to mark a message as spam and delete it
+ macro index <f5> "<pipe-message>@PACKAGE@ -am\\n<delete-message>"
+ macro pager <f5> "<pipe-message>@PACKAGE@ -am\\n<delete-message>"
+ 
+ # Press F9 to mark a message as non-spam
+ macro index <f9> "<pipe-message>@PACKAGE@ -aM\\n"
+ macro pager <f9> "<pipe-message>@PACKAGE@ -aM\\n"
+.RE
+
+Again, remove the
+.B -a
+option in the above examples if you don't want to use the allow-list.
+
+Note, however, that the above macros won't work when operating on multiple
+tagged messages. For that, you'd need something like this:
+
+.RS
+ macro index <f5> ":set pipe_split\\n<tag-prefix><pipe-message>@PACKAGE@ -am\\n<tag-prefix><delete-message>\\n:unset pipe_split\\n"
+.RE
+
+If you use
+.BR qmail (7),
+then to get
+.B procmail
+working with it you will need to put a line containing just
+.B DEFAULT=./Maildir/
+at the top of your
+.B ~/.procmailrc
+file, so that
+.B procmail
+delivers to your Maildir folder instead of trying to deliver to
+/var/spool/mail/$USER, and you will need to put this in your
+.B ~/.qmail
+file:
+
+.RS
+ | preline procmail
+.RE
+
+This will cause all your mail to be delivered via
+.B procmail
+instead of being delivered directly into your mail directory.
+
+See the
+.BR qmail (7)
+documentation for more about mail delivery with qmail.
+
+If you use
+.BR postfix (1),
+you can set up a system-wide mail filter by creating a user account for the
+purpose of filtering mail, populating that account's
+.BR .@PACKAGE@db ,
+and then creating a shell script, to run as that user, which runs
+.B @PACKAGE@
+on stdin and passes stdout to
+.BR sendmail (8).
+
+Doing this requires some knowledge of
+.B postfix
+configuration and care needs to be taken to avoid mail loops.
+One
+.B @PACKAGE@
+user's full HOWTO is included in the
+.B doc/
+directory with this package.
+
+.SH "THE ALLOW-LIST"
+A feature called the "allow-list" can be switched on by specifying the
+.BR \-\-allowlist " or " \-a
+option.  This causes messages' "From:" and "Return-Path:" addresses to be
+checked against a list of people you have said to allow all messages from,
+and if a message's "From:" or "Return-Path:" address is in the list, it is
+never marked as spam.  This means you can add all your friends to an
+"allow-list" and
+.B @PACKAGE@
+will then never mis-file their messages - a quick way to do this is to use
+.B -a
+with
+.B -T
+(train); everyone in your non-spam folder who has sent you an email will be
+added to the allow-list automatically during training.
+
+You can manually add and remove addresses to and from the allow-list using
+the
+.B \-e
+(email) option. For instance, to add
+.B foo@bar.com
+to the allow-list, do this:
+
+.RS
+ @PACKAGE@ -e foo@bar.com -M
+.RE
+
+To remove
+.B bad@nasty.com
+from the allow-list, do this:
+
+.RS
+ @PACKAGE@ -e bad@nasty.com -m
+.RE
+
+And to see whether
+.B someone@somewhere.com
+is in the allow-list or not, just do this:
+
+.RS
+ @PACKAGE@ -e someone@somewhere.com
+.RE
+
+In general, you probably always want to enable the allow-list, so always
+specify the
+.B -a
+option when using
+.BR @PACKAGE@ .
+This will automatically maintain the allow-list based on what you classify
+as spam or non-spam.
+
+The only times you might want to turn it off are when people on your
+allow-list are prone to getting viruses or if a virus is causing email to be
+sent to you that is pretending to be from someone on your allow-list.
+
+.SH "BACKUP AND RESTORE"
+Because the database format is platform-specific, it is a good idea to
+periodically dump the database to a text file using
+.B @PACKAGE@ -D
+so that, if necessary, it can be transferred to another machine and restored
+with
+.B @PACKAGE@ -R
+later on.
+
+Also note that since the actual contents of email messages are never stored
+in the database (see
+.BR "TECHNICAL DETAILS" ),
+you can safely share your
+.B @PACKAGE@
+database with friends - simply dump your database to a file, like this:
+
+.RS
+ @PACKAGE@ -D > your-database-dump.txt
+.RE
+
+Once you have sent
+.B your-database-dump.txt
+to another person, they can do this:
+
+.RS
+ @PACKAGE@ -R < your-database-dump.txt
+.RE
+
+They will then have an identical database to yours.
+
+.SH "TECHNICAL DETAILS"
+When a message is passed to
+.BR @PACKAGE@ ,
+any attachments are decoded, all HTML elements are removed, and the message
+text is then broken up into "tokens", where a "token" is a single word or
+URL.  Each token is hashed using the MD5 algorithm (see below for why), and
+that hash is then used to look up each token in the
+.B @PACKAGE@
+database.
+
+For full details of which parts of an email (headers, body, attachments,
+etc) are used to calculate the spam rating, see the
+.B TOKENISATION
+section below.
+
+Within the database, each token has two numbers associated with it: the
+number of times that token has been seen in spam, and the number of times it
+has been seen in non-spam.  These two numbers, along with the total number
+of spam and non-spam messages seen, are then used to give a "spamminess"
+value for that particular token.  This "spamminess" value ranges from
+"definitely not spammy" at one end of the scale, through "neutral" in the
+middle, up to "definitely spammy" at the other end.
+
+Once a "spamminess" value has been calculated for all of the tokens in the
+message, a summary calculation is made to give an overall "is this spam?"
+probability rating for the message.  If the overall probability is 0.9 or
+above, the message is flagged as spam.
+
+In addition to the probability test is the "allow-list".  If enabled (with
+the
+.B -a
+option), the whole probability check is skipped if the sender of the message
+is listed in the allow-list, and the message is not marked as spam.
+
+When training the database, a message is split up into tokens as described
+above, and then the numbers in the database for each token are simply added
+to: if you tell
+.B @PACKAGE@
+that a message is spam, it adds one to the "number of times seen in spam"
+counter for each token, and if you tell it a message is not spam, it adds
+one to the "number of times seen in non-spam" counter for each token.  If
+you specify a weight, with
+.BR -w ,
+then the number you specify is added instead of one.
+
+To stop the database growing uncontrollably, the database keeps track of
+when a token was last used.  Underused tokens are automatically removed from
+the database.  (The old method was to "prune" every 500 updates).
+
+Finally, the reason MD5 hashes were used is privacy.  If the actual tokens
+from the messages, and the actual email addresses in the allow-list, were
+stored, you could not share a single
+.B @PACKAGE@
+database between multiple users because bits of everyone's messages would be
+in the database - things like emailed passwords, keywords relating to
+personal gossip, and so on.  So a hash is stored instead.  A hash is a
+"one-way" function; it is easy to turn a token into a hash but very hard
+(some might say impossible) to turn a hash back into the token that created
+it.  This means that you end up with a database with no personal information
+in it.
+
+.SH "TOKENISATION"
+
+When a message is broken up into tokens, various parts of the message are
+treated in different ways.
+
+First, all header fields are discarded, except for the important ones:
+.BR From ,
+.BR Return-Path ,
+.BR Sender ,
+.BR To ,
+.BR Reply-To ,
+and
+.BR Subject .
+
+Next, any MIME-encoded attachments are decoded.  Any attachments whose MIME
+type starts with "text/" (i.e. HTML and text) are tokenised, after having
+any HTML tags stripped.  Any non-textual attachments are replaced with their
+MD5 hash (such that two identical attachments will have the same hash), and
+that hash is then used as a token.
+
+In addition to single-word tokens from textual message parts,
+.B @PACKAGE@
+adds doubled-up tokens so that word pairs get added to the database.  This
+makes the database a bit bigger (although the automatic pruning tends to
+take care of that) but makes matching more exact.
+
+.SH "SPECIAL FILTERS"
+As well as using the textual content of email to detect spam,
+.B @PACKAGE@
+also uses special filters which create "pseudo-tokens" based on various
+rules.  This means that specific patterns, not just individual words, can be
+used to determine whether a message is spam or not.
+
+For example, if a message contains lots of words with multiple consonants,
+like "ashjkbnxcsdjh", then each time a word like that is seen the special
+token ".GIBBERISH-CONSONANTS." is added to the list of tokens found in the
+message.  If it turns out that most messages with words that trigger this
+filter rule are spam, then other messages with gibberish consonant strings
+will be more likely to be flagged as spam.
+
+Currently the special filters are:
+
+.TP
+.B GTUBE
+Flags any message containing the string
+.B XJS*C4JDBQADN1.NSBN3*2IDNEN*GTUBE-STANDARD-ANTI-UBE-TEST-EMAIL*C.34X
+as spam - useful for testing that your
+.B @PACKAGE@
+installation is working.
+.TP
+.B ATTACH-SCR
+.TP
+.B ATTACH-PIF
+.TP
+.B ATTACH-EXE
+.TP
+.B ATTACH-VBS
+.TP
+.B ATTACH-VBA
+.TP
+.B ATTACH-LNK
+.TP
+.B ATTACH-COM
+.TP
+.B ATTACH-BAT
+Adds a token for every attachment whose filename ends in ".scr", ".pif",
+".exe", ".vbs", ".vba", ".lnk", ".com", and ".bat" respectively (these are
+often viruses).
+
+.TP
+.B ATTACH-GIF
+.TP
+.B ATTACH-JPG
+.TP
+.B ATTACH-PNG
+Adds a token for every attachment whose filename ends in ".gif", ".jpg" or
+".jpeg", and ".png" respectively.
+
+.TP
+.B ATTACH-DOC
+.TP
+.B ATTACH-XLS
+.TP
+.B ATTACH-PDF
+Adds a token for every attachment whose filename ends in ".doc", ".xls", or
+".pdf" respectively (these tend to indicate a non-spam email).
+
+.TP
+.B SINGLE-IMAGE
+Adds a token if the message contains exactly one attached image.
+
+.TP
+.B MULTIPLE-IMAGES
+Adds a token if the message contains more than one attached image.
+
+.TP
+.B GIBBERISH-CONSONANTS
+Adds a token for every word found that has multiple consonants in a row, as
+described above.  Spam often contains strings of gibberish.
+.TP
+.B GIBBERISH-VOWELS
+Adds a token for every word found that has multiple vowels in a row, eg
+"aeaiaiaeeio".
+.TP
+.B GIBBERISH-FROMCONS
+Like
+.BR GIBBERISH-CONSONANTS ,
+but only for the "From:" and "Return-Path:" addresses on their own.
+.TP
+.B GIBBERISH-FROMVOWL
+Like
+.BR GIBBERISH-VOWELS ,
+but only for the "From:" and "Return-Path:" addresses on their own.
+.TP
+.B GIBBERISH-BADSTART
+Adds a token for every word that starts with a bad character such as %.
+.TP
+.B GIBBERISH-HYPHENS
+Adds a token for every word with more than three hyphens or underscores in
+it.
+.TP
+.B GIBBERISH-LONGWORDS
+Adds a token for every word with over 30 characters in it (but less than 60).
+.TP
+.B HTML-COMMENTS-IN-WORDS
+Adds a token for every HTML comment found in the middle of a word.  Spam
+often contains HTML inside words, like this: w<!--dsgfhsdgjgh-->ord
+.TP
+.B HTML-EXTERNAL-IMG
+Adds a token for every HTML <img> (image) tag found that contains :// (i.e.
+it refers to an external image).
+.TP
+.B HTML-FONT
+Adds a token for every HTML <font> tag found.
+.TP
+.B HTML-IP-IN-URLS
+Adds a token for every URL found containing an IP address.
+.TP
+.B HTML-INT-IN-URL
+Adds a token for every URL found containing an integer in its hostname.
+.TP
+.B HTML-URLENCODED-URL
+Adds a token for every URL found containing a % sign in its hostname.
+
+.P
+
+Normally, filters will just cause a token to be added, and these tokens are
+processed by the normal weighting algorithm.  However the
+.B GTUBE
+filter will immediately flag any matching message as spam, bypassing the
+token matching.
+
+.SH DATABASE BACKENDS
+
+The inbuilt "list" database backend will not necessarily provide the best
+performance, but is provided because using it requires no external
+libraries.
+
+If, when
+.B @PACKAGE@
+was compiled, the correct libraries were available, then it will be possible
+to use
+.B @PACKAGE@
+with alternative database backends.  To find out which backends you have
+available, run
+.B @PACKAGE@ -V
+(capital V) and read the second line of output.  To see how well a backend
+performs, collect some spam and non-spam and use
+.B @PACKAGE@ -d BACKEND -B SPAM NONSPAM
+(see the entry for
+.B -B
+above).
+
+Some people find that they get the best performance out of the
+.B gdbm
+backend; this is a library that is widely available on many systems.
+
+To efficiently share a
+.B @PACKAGE@
+database across multiple machines, you may find the MySQL backend useful. 
+However, using it is a little more complicated.
+
+To use the MySQL backend you will need to create a table with the fields
+.IR key1 ", " key2 ", " token ", " value1 ", " value2 " and " value3 .
+The
+.IR token ", " value1 ", " value2 ", and " value3
+fields must be
+.BR VARCHAR(64) ", " BIGINT " or " INT ", and " BIGINT " or " INT
+respectively, and indexing on the
+.I token
+field is a good idea. The
+.IR key1 " and " key2
+fields can be anything, but they must be present.
+
+For example:
+
+.RS
+  USE mydatabase;
+  CREATE TABLE @PACKAGE@db (
+    key1      BIGINT UNSIGNED NOT NULL,
+    key2      BIGINT UNSIGNED NOT NULL,
+    token     VARCHAR(64) DEFAULT '' NOT NULL,
+    value1    INT UNSIGNED NOT NULL,
+    value2    INT UNSIGNED NOT NULL,
+    value3    INT UNSIGNED NOT NULL,
+    PRIMARY KEY (key1,key2,token),
+    KEY (key1),
+    KEY (key2),
+    KEY (token)
+  );
+.RE
+
+The
+.IR key1 " and " key2
+fields allow you to have multiple
+.B @PACKAGE@
+databases in one table, by specifying different
+.IR key1 " and " key2
+values on invocation.
+
+Instead of specifying a database file with the
+.BR --database " / " -d
+option, you must specify either a specification string as described below,
+or the name of a file containing such a string on its first line.
+
+The specification string is as follows:
+
+.RS
+  database=DATABASE;host=HOST;port=PORT;
+  user=USER;pass=PASS;table=TABLE;
+  key1=KEY1;key2=KEY2
+.RE
+
+This string must be all on one line, with no spaces.
+
+.TP
+.B DATABASE
+is the name of the MySQL database.
+.TP
+.B HOST
+is the hostname of the database server (eg "localhost").
+.TP
+.B PORT
+is the TCP port to connect on (eg 3306).
+.TP
+.B USER
+is the username to connect with.
+.TP
+.B PASS
+is the password to connect with.
+.TP
+.B TABLE
+is the database table to use.  If a table with this name does not exist when
+.B @PACKAGE@
+is called in update or training mode, then it will be created if permissions
+allow this to be done.
+.TP
+.B KEY1
+is the value to use for the
+.I key1
+field.
+.TP
+.B KEY2
+is the value to use for the
+.I key2
+field.
+
+.P
+
+Since command lines can be seen in the process list, it is probably best to
+specify a filename (eg
+.BR "@PACKAGE@ -d mysql:@PACKAGE@db.spec" )
+and put the specification string inside that file.
+
+.SH TROUBLESHOOTING
+
+If you have problems with
+.BR @PACKAGE@ ,
+please check the list below; if this does not help, go to the
+.B @PACKAGE@
+home page and investigate the mailing lists, or email the author.
+
+.TP
+.B Nothing is being marked as spam.
+.br
+First, use the
+.B -r
+option to switch on the
+.B X-Spam-Rating
+header, and check that this header appears in email passed through
+.BR @PACKAGE@ .
+If it does not, then it is likely that
+.B @PACKAGE@
+is not being run at all - check your configuration of
+.BR procmail (1)
+or its equivalent.
+.TP
+.B " "
+.br
+If you are seeing
+.B X-Spam-Rating
+headers, and different emails have different scores, then you may simply
+need to retrain your database a little more.  Take more spam email and pass
+it to
+.BR "@PACKAGE@ -m" .
+.TP
+.B " "
+.br
+If you are seeing
+.B X-Spam-Rating
+headers but they all give the same spam rating, then the most likely reason
+is that
+.B @PACKAGE@
+is not reading any database.  Make sure that whatever is processing the email
+has read permissions on
+.B /var/lib/@PACKAGE@db
+and/or
+.B ~/.@PACKAGE@db
+- and make sure that, if you are using
+.BR ~/.@PACKAGE@db ,
+what your database creator thought was
+.BR ~ " (" $HOME ")"
+is the same as it is for whatever is processing the email.
+
+.TP
+.B Retraining sometimes takes a very long time.
+With the 
+.B obtree
+backend or 2-column MySQL or SQLite tables, every 500th retrain
+.BR "" "(" -m " or " -M "),"
+the database is pruned.  On some systems this may take some time, and during
+this time the database is locked (except when using the MySQL or SQLite backends).
+If you constantly do a lot of retraining and want to avoid this, then use
+the
+.B -N
+option to suppress auto-pruning, and then have a
+.BR cron (8)
+job or something run a manual prune
+.BR "" "(" "@PACKAGE@ -p" ")"
+every now and again.
+
+.TP
+.B Running @PACKAGE@ from procmail fails with an error.
+If you can run
+.B @PACKAGE@
+from the command line, but in your
+.B procmail
+log file you get errors about "@PACKAGE@: cannot execute binary file", then
+contact your system administrator for help. It may be that incoming email is
+handled by a different server to the one you normally shell into, and either
+they are of a different architecture or operating system, or the mail server
+is not permitted to execute user-owned binaries.
+
+.SH ACKNOWLEDGEMENTS
+
+The following people have contributed suggestions, comments, patches, and
+testing:
+
+.RS
+Tom Parker
+.IR "" < http://www.bits.bris.ac.uk/palfrey/ >
+.br
+Dr Kelly A. Parker
+.br
+Vesselin Mladenov
+.IR "" < http://www.antipodes.bg/ >
+.br
+Glyn Faulkner
+.br
+Mark Reynolds
+.br
+Sam Roberts
+.br
+Scott Allen
+.br
+Karsten Kankowski
+.br
+M. Kolbl
+.br
+Micha Holzmann
+.br
+Jef Poskanzer
+.IR "" < http://www.acme.com/jef/ >
+.br
+Clemens Fischer
+.IR "" < http://ino-waiting.gmxhome.de/ >
+.br
+Nelson A. de Oliveira
+.br
+Michal Vitecek
+.br
+Tommy Pettersson
+.IR "" < http://www.lysator.liu.se/~ptp/ >
+.RE
+
+.SH AUTHOR
+
+The author:
+
+.RS
+Andrew Wood <andrew.wood@ivarch.com>
+.br
+.I http://www.ivarch.com/
+.RE
+
+Project home page:
+
+.RS
+.I http://www.ivarch.com/programs/@PACKAGE@/
+.RE
+
+.SH BUGS
+If you find any bugs, please contact the author, either by email or by
+using the contact form on the web site.
+
+.SH "SEE ALSO"
+.BR procmail (1),
+.BR procmailrc (5),
+.BR procmailex (5)
+
+Someone has written a guide to using
+.B @PACKAGE@
+with KMail that can be found at:
+.br
+http://www.softwaredesign.co.uk/Information.SpamFilters.html
+
+.SH LICENSE
+This is free software, distributed under the ARTISTIC 2.0 license.

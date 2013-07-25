@@ -1,0 +1,2 @@
+These programs require CYGWIN (http://www.cygwin.com/) to run.
+Please see README.txt for more details.

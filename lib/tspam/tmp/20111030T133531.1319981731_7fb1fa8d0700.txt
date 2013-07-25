@@ -1,0 +1,10 @@
+Received: from fiaxjjay [115.63.12.17] by ntylwl-55455 with ESMTP
+  (SMTPD-8.22) id A24301F0; Sun, 30 Oct 2011 21:33:55 +0800 
+Message-ID: <20111030213449541076@gzoneworld.cn> 
+From: =?gb2312?B?0MK80sbCy6vH4LXnxvi/2NbGz7XNs7mry74=?= <jecky@gzoneworld.cn> 
+To:  
+Subject: =?gb2312?B?cHJjZHbI57rOzai5/dXQzbax6r340NDT0NCntcShsL+zvNs=?=
+	=?gb2312?B?obGjvyAyMTozNDowOQ==?= 
+Date: Sun, 30 Oct 2011 21:34:39 +0800 
+X-mailer: Qsopahzqe 2 
+Whoops!  What is a 'application/vnd.ms-excel'?

@@ -1,0 +1,123 @@
+Received: from p2-jbsched08.ad.prodcc.net (p2-pen6.ad.prodcc.net [10.252.0.106])
+	by p2-mail182.ccm34.constantcontact.com (Postfix) with ESMTP id 07503B45374
+	for <neophytos@phigita.net>; Fri, 25 Nov 2011 00:23:56 -0500 (EST) 
+DKIM-Signature: v=1; q=dns/txt; a=rsa-sha256; c=relaxed/relaxed; s=105386; d=manning.ccsend.com; h=to:subject:mime-version:message-id:from:date:sender:list-unsubscribe:reply-to; bh=/03zX87EBdpaWZ2K6pa/WVEYjoK0QwhckELKI8N/+Jg=; b=Py0k+dX4jE0N1j0W/XUO76lIyE4X6NtHt/qQ23ukSlfF58PfHMhQ/Llga2vdb2ZTu6XuBPaREqpNsFlruupKDHbuIPVb6+XHAFdF6WR7kEx7Q9o/VJrvXwA4DMWt7DSER5rWs6iVOtVSxLm8Ukmp5dggrlF2sKRLXVFteFw70kw= 
+Message-ID: <1108721254878.1101335703814.281293.8.30000559@scheduler> 
+Date: Fri, 25 Nov 2011 00:23:56 -0500 (EST) 
+From: Manning Publications <mkt@manning.com> 
+Reply-To: mkt@manning.com 
+Sender: Manning Publications <manning@manning.ccsend.com> 
+To: neophytos@phigita.net 
+Subject: Holiday special! Hello World! Kids programming for $20 
+X-Mailer: Roving Constant Contact 2009 (http://www.constantcontact.com) 
+List-Unsubscribe: http://visitor.constantcontact.com/do?p=un&mse=0018GC6MpVjY0QsVHXO2XbbSb_v5l8P9v_bapbCBCe8WWg%3D&t=001sElTIiSt5Xda5ZWxXVQSNw%3D%3D&llr=gimslwbab 
+X-Return-Path-Hint: ESC1108721254878_1101335703814_281293_r20@in.constantcontact.com 
+X-Roving-ID: 1101335703814.281293 
+X-Lumos-SenderID: 1101335703814 
+X-Roving-CampaignId: 1108721254878 
+X-Roving-StreamId: 0 
+--------------------------------------
+Click here to
+view in your browser.
+http://campaign.r20.constantcontact.com/render?llr=gimslwbab&v=001kSkfsfL4g8jJO-tI8gj4dJWEUmzLekLEilm55oNV_UYfD_Iw2H7-7o8G_EMhmSKmkP_gJHXoEGaiO68CF9Ft77JA1RJR90YdxxYkX0t0IRen7mkqvsiMDI56brlexMTirXqly-qlL3wZMOHlWzoaJA%3D%3D
+
+
+home [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108721254878&s=281293&e=001Os6I33bepQYKj6sBPBcmhspw8ShWVJOR_On9v3kLTxr0bW8HHZHJh0HEa098yv0oczsFxYesd9cXlm19bXGmhGnCcPEqjVSH0CPdsMBGUqq0gy9kNcWX6Q==]support
+
+Hello World! Computer Programming for Kids
+
+Get the print book for just $20 through December 10
+
+Give a kid the gift of computer programming. It's easy with Hello World! Computer
+Programming for Kids and Other Beginners [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108721254878&s=281293&e=001Os6I33bepQZJKapQMjN_GS522CbIwDpN6h3u0QylSxEstjOnN-1qqUWndEHPtsfpWdG0mDd2Fjkj2Hmw-yVx3fSMaGhAsm2ZuYxuzC5pN5LWkDaq_dISSMSK-SK4tXOk].
+This best-selling book is written in language any 12-year-old can follow. It's kid-tested
+and parent-approved. And through December 10, you can get the pBook for $20 and 
+have it in the hands of your young programmer in time for the holidays. That's $15
+off the regular price!
+
+Meet Carter...
+
+Carter Sande wanted to learn how to program, and couldn't find any good books just
+for kids. So Carter and his dad wrote Hello World! [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108721254878&s=281293&e=001Os6I33bepQZJKapQMjN_GS522CbIwDpN6h3u0QylSxEstjOnN-1qqUWndEHPtsfpWdG0mDd2Fjkj2Hmw-yVx3fSMaGhAsm2ZuYxuzC5pN5LWkDaq_dISSMSK-SK4tXOk]
+[See Carter on Canada's CTV News [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108721254878&s=281293&e=001Os6I33bepQZgNX1Rx41Max4bUbbH4SMQ1RXMT6zNfE10Em1Ahm4vvRzLQNA7S-k-poDP_fcVlUnv73pAUjdKLLhkIhuSLtlgSa5ccu354QD0_1oSEBzo87nEwH1EDlvgHIHUhyjFKxD5PSa37Wl50g==]]
+
+Carter not only wrote the book, he's in it. His questions and comments guide readers
+through each engaging, fully-illustrated lesson. Along the way, Carter introduces
+a cast of characters that include a hip female coder who tells you how to "think
+ like a programmer," a ninja granny who remembers how it was in the good old days,
+and even the occasional pirate. Arrrghhh!
+[Take a look at Chapter 1 [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108721254878&s=281293&e=001Os6I33bepQbvlw_7o04MwQF29eoCugI4ZsIkxxCrNP6uGWf5VxXqQaZ9_xWZh343c6jA9wBmtVw4bVLE8izq1RmJe640MxcOpPcrxv50OMuieGm3cBCEIU89cI46gxMmS0J8VfUx1YKIsYWALpG4fQ==]]
+
+This book is a hands-on adventure. There's code on nearly every page, with comments
+pointing out the interesting and important features. The reader constantly experiments
+with new ideas and programming concepts. Notes, tips, and definitions appear throughout
+the book, along with screen images so young programmers can check their work as 
+they go along. [Take a look at Chapter 6 [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108721254878&s=281293&e=001Os6I33bepQYkwMJlMOCbBob61umtm7IDUsMoOiqy_9qG8d7Z1Ze6-wOYCFKZLO5tPR5sdxro1fdU0s3nvGgWR8luGfBI3vgvOxCbwgQcP_NwjQjKmrmbDe3lwZlHH049UEo0KECOe28Dz2K0mwqwQg==]]
+
+And just because it's for kids doesn't mean it's dumbed down. Hello World! [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108721254878&s=281293&e=001Os6I33bepQZJKapQMjN_GS522CbIwDpN6h3u0QylSxEstjOnN-1qqUWndEHPtsfpWdG0mDd2Fjkj2Hmw-yVx3fSMaGhAsm2ZuYxuzC5pN5LWkDaq_dISSMSK-SK4tXOk]
+uses the Python language. It teaches good programming practice with examples ranging
+from simple concepts like displaying text all the way through graphics, games, and
+more. The concepts in the book apply to nearly any programming language, not just
+Python.
+
+How to get Hello World! for $20
+
+This special price for Hello World! Computer Programming for Kids and Other Beginners
+[http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108721254878&s=281293&e=001Os6I33bepQZJKapQMjN_GS522CbIwDpN6h3u0QylSxEstjOnN-1qqUWndEHPtsfpWdG0mDd2Fjkj2Hmw-yVx3fSMaGhAsm2ZuYxuzC5pN5LWkDaq_dISSMSK-SK4tXOk]
+lasts only until December 10. Just enter hello20 in the Promotional Code box when
+you check out. As with all Manning books, you get the eBook in PDF, Kindle, and 
+ePub at no additional cost with your pBook purchase, so you can read along. If you
+tell us the shipping address, we can ship the book directly to the future programmer.
+This offer is available only at manning.com [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108721254878&s=281293&e=001Os6I33bepQYKj6sBPBcmhspw8ShWVJOR_On9v3kLTxr0bW8HHZHJh0HEa098yv0oczsFxYesd9cXlm19bXGmhGnCcPEqjVSH0CPdsMBGUqq0gy9kNcWX6Q==].
+
+What readers are saying
+
+"Hello World! Programming for Kids and Other Beginners [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108721254878&s=281293&e=001Os6I33bepQZJKapQMjN_GS522CbIwDpN6h3u0QylSxEstjOnN-1qqUWndEHPtsfpWdG0mDd2Fjkj2Hmw-yVx3fSMaGhAsm2ZuYxuzC5pN5LWkDaq_dISSMSK-SK4tXOk]
+helps challenge young people to take on technology, making it fun without dumbing-down
+the adventure."
+--David Brin, author of The Postman and The Transparent Society
+
+"...an excellent read for a 12-year old, or an adult novice. Provides superb instruction
+and entertainment for its readers."
+--Ira Laefsky [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108721254878&s=281293&e=001Os6I33bepQa9CrQ3fnMVsLYQBf1NVc3KByoTUOHmfRgWzv9fqD1PW61YqPjCUNtBps_TR6M3OqS11vXwCnOkgEhP1VZXYjXKdpHD-stvURMeoe0ctdbEg9_DK3zkUqJHFMiV_oPZEwbx8Yhetr-Xz6Ee1dPj7TXrvmg9hdb_8cERDphGZqcG2A==]
+
+"The authors chose to use Python as their computer language. They made an outstanding
+decision...A kid who learns it will be able to move to others if necessary."
+--Dan Appleman, Examiner.com Review [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108721254878&s=281293&e=001Os6I33bepQbpW2AvFtZjGSqFh6QsGFF3vt59qt_9qGgYbkgkR8CSeTuLtmaOGfXMDQjTHhc9JB0vK8yV7wIVMlStqMHItxGaIXbpPKzCZNddmE0hxcVukhdmPIJhRMeyZ9OHEjj9rDnCXoy7aZSWS4dA94C5OXFi7XnPAGqL_qwcQg3hDW9Yl37pFUUSmykDdRGqO6pHjoKOApil9y37wQ==]
+
+"Hello World! Programming for Kids and Other Beginners [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108721254878&s=281293&e=001Os6I33bepQZJKapQMjN_GS522CbIwDpN6h3u0QylSxEstjOnN-1qqUWndEHPtsfpWdG0mDd2Fjkj2Hmw-yVx3fSMaGhAsm2ZuYxuzC5pN5LWkDaq_dISSMSK-SK4tXOk]
+is a clear and easy to digest voyage through the beginnings of programming with 
+Python. The core elements of programming are clearly explained in terms that anyone,
+at just about any age, can understand."
+--James Wagner, Bucket-O-Cool [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108721254878&s=281293&e=001Os6I33bepQb8pPasEqhgUjpBqCg3_RU6us7Y9_LBi3M8J5aMeQjtVyQWnXEvK-UThayLvb_7ZkhqlCj0xDhZZ_eOasetX6b3ESJBi-8M2TDloGDi-xNEPXh2YSTvslQfo4uXwO9LYevR_Ulq40bw95Ra2G-P0T-jB80C-9J_PoY=]
+
+"What's amazing is that it has set its sights so high, and yet manages to meet its
+goals. If you know kids interested in computers, give them an opportunity to develop
+a fascinating hobby and get them this book."
+--Noel O'Boyle, Noel O'Blog [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108721254878&s=281293&e=001Os6I33bepQbMbgsNEK3rAvsc3lnvjBxjLadw9Mn0ZL9npHPehCNTM-9C-mOwtpKCnt7pQ3xMFSpYU_r2_LUuT68qz6mXsnmJeLobn5QhYRTCV46-1jpitf2Sz4y0_QczZSdkRLJGcPXE967Bx0Ucy7RznJ6SseEaXGCEBL7lxErPFAx3jISfRAAgaAOaD8wW]
+
+"If you want to learn programming or teach it to a kid, this is your book."
+--Josh Cronemeyer, Senior Consultant, ThoughtWorks [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108721254878&s=281293&e=001Os6I33bepQY6hJYkYGHqyTqHHV6wxsBJtp22mps-PlUEfev5IAx9XP1Aj4ragtF6jN7_NomifWdwswFQ0riHbeAWS48P9lqOJgHCcgDXFfTjli1L9tIaxW2X14JRk3mmje2YsojyhyFcNHMl5fBPmj66N6foCPgv-lJhNGDiXgo=]
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Forward email
+http://ui.constantcontact.com/sa/fwtf.jsp?llr=gimslwbab&m=1101335703814&ea=neophytos@phigita.net&a=1108721254878
+
+
+This email was sent to neophytos@phigita.net by mkt@manning.com.
+
+Update Profile/Email Address
+http://visitor.constantcontact.com/do?p=oo&mse=0018GC6MpVjY0QsVHXO2XbbSb_v5l8P9v_bapbCBCe8WWg%3D&t=001sElTIiSt5Xda5ZWxXVQSNw%3D%3D&reason=001y5KaVlBn7_Y%3D&llr=gimslwbab
+
+
+Instant removal with SafeUnsubscribe(TM)
+http://visitor.constantcontact.com/do?p=un&mse=0018GC6MpVjY0QsVHXO2XbbSb_v5l8P9v_bapbCBCe8WWg%3D&t=001sElTIiSt5Xda5ZWxXVQSNw%3D%3D&reason=001y5KaVlBn7_Y%3D&llr=gimslwbab
+
+
+Privacy Policy:
+http://ui.constantcontact.com/roving/CCPrivacyPolicy.jsp
+
+
+
+
+Manning Publications Co. | Sound View Ct. #3B | Greenwich | CT | 06830

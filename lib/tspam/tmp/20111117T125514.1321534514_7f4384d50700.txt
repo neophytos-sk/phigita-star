@@ -1,0 +1,14 @@
+Received: from  (192.168.1.69) by nacha.org (86.156.4.209) with Microsoft SMTP Server id 8.0.685.24; Thu, 17 Nov 2011 12:55:05 +0000 
+Message-ID: <4EC50322.401060@nacha.org> 
+Date: Thu, 17 Nov 2011 12:55:05 +0000 
+From: "The Electronic Payments Association" sanitariesc@uncw.edu 
+User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.2.12) Gecko/20101027 Thunderbird/3.1.6 
+To: <k2pts@phigita.net> 
+Subject: ACH payment rejected 
+--------------------------------------
+ The ACH  transaction (ID: 80006102736909), recently  initiated from your bank account (by you or any other person), was   rejected by the  Electronic Payments Association.        Rejected transaction  
+      Transaction ID:     80006102736909  
+      Reason of rejection    See details in the report below   
+      Transaction Report     report_80006102736909.doc (Microsoft Word Document)   
+  About NACHA NACHA manages the development, administration, and governance of the ACH Network, the backbone for the electronic movement of money and data. The ACH Network serves as a safe, secure, reliable network for direct consumer, business, and government payments, and annually facilitates billions of payments such as Direct Deposit and Direct Payment. The ACH Network had its start in the early 1970's when a group of California bankers formed the Special Committee on Paperless Entries (SCOPE) in direct response to the rapid escalation of check volume in the United States. The Committee set out to explore the technical, operational, and legal framework necessary for an automated payments system, leading to the formation of the first ACH association in 1972. Similar groups soon formed around the country.13450 Sunrise Valley Drive, Suite 100Herndon, VA 201712011 NACHA - The Electronic Payments Association
+

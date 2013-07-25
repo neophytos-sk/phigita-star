@@ -1,0 +1,19 @@
+Received: from normanel.tpn.terra.com (normanel.tpn.terra.com [10.235.200.11])
+	by mail-fb06-mia.tpn.terra.com (Postfix) with ESMTP id 27B53280089DB;
+	Sun, 23 Oct 2011 04:59:04 +0000 (UTC) from tjbawvjcx (unknown [42.49.128.173])
+	(authenticated user argencables@speedy.com.ar)
+	by normanel.tpn.terra.com (Postfix) with ESMTPA id 6ECDBAA9745FC;
+	Sun, 23 Oct 2011 04:58:47 +0000 (UTC) 
+X-Terra-Karma: 0% 
+X-Terra-Hash: 2fc701c22c25e2f3c0372253e5f0878b 
+Received-SPF: pass (normanel.tpn.terra.com: domain of speedy.com.ar designates 208.84.242.62 as permitted sender) client-ip=208.84.242.62; envelope-from=argencables@speedy.com.ar; helo=tjbawvjcx; 
+Message-ID: <20111023130152774546@speedy.com.ar> 
+From: =?gb2312?B?x/HttYtx?= <argencables@speedy.com.ar> 
+To:  
+Subject: =?gb2312?B?OXJhcdOqfs/6fsr9fr7doaShpLfWfs72dW12MQ==?=
+	=?gb2312?B?eWxtY3Y=?= 
+Date: Sun, 23 Oct 2011 13:01:47 +0800 
+X-mailer: Mwxizz 2 
+X-CLX-Rate-Response: fi=10.235.200.248:2001; rg=B; GT=0; fs=1011; PS=xujinqiang@163.com:0,neophytos@phigita.net:0,neopets@neopets.com:0,xujinqiu6825035@126.com:0,lijie110250@163.com:0,zsjmwjgy@alibaba.com.cn:0,ctca@ctca.org.au:0,andy@worldtex-co.com:0,veronika.madsen@tmail.com:0,service@fyyb.com.cn:0,xujinquan188@zjou.net.cn:0,zsjlzm@zsjlzm.com:0,service@fyypaypal.com:0; ns=0; id=a133GLF8B2m80VH-9N04594; rv=6463/208.84.242.248:14051; ts=F2UOz; fl=I; ip=42.49.128.173; he=D8wjkbs+0rk; nr=13; nt=0; ho=rHFtwIkn0J; hd=PSGRXrlw5k3; hf=Lm178ZPg6zT; hF=GVcsLNLMpt0; hj=NxIKz9+xMV4; ZB=GqR4mEidBYW; ZB=GnjHyAxsvo3; ZB=Cok7unZahbG; ZB=NK2cMntzUQI; ZB=5CT9ZupTD0; ZA=PcaKXqzdTqJ; Za=Kw5miFkBGsE; ZF=NwWH1Ev7WR+; 
+X-CLX-ID: a133GLF8B2m80VH-9N04594 
+Whoops!  What is a 'application/vnd.ms-excel'?

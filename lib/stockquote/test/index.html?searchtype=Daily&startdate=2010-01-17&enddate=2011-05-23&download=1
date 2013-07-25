@@ -1,0 +1,2738 @@
+<span id="ctl00_ctl00_ctl00_MainContent_A2_A3_ctl00_control1_cgiHistoricalQuotesDaily"><div class="market-set-date-range">
+  <div class="market-set-date-range-header">IBM from 2010-Jan-17 to 2011-May-23</div>
+</div>
+          
+          <table id="tablesorter-daily" class="tablesorter" border="0">
+            <thead>
+              <tr>
+                <th width="20%">Date</th>
+                <th class="text-align-right">Open</th>
+                <th class="text-align-right">High</th>
+                <th class="text-align-right">Low</th>
+                <th class="text-align-right">Close</th>
+                <th class="text-align-right" width="20%">Volume</th>
+              </tr>
+            </thead>
+          
+        <tbody>
+  <tr>
+    <td>2010-01-19</td>
+    <td class="text-align-right">131.63</td>
+    <td class="text-align-right">134.25</td>
+    <td class="text-align-right">131.56</td>
+    <td class="text-align-right">134.14</td>
+    <td class="text-align-right">13840600</td>
+  </tr>
+  <tr>
+    <td>2010-01-20</td>
+    <td class="text-align-right">130.46</td>
+    <td class="text-align-right">131.15</td>
+    <td class="text-align-right">128.95</td>
+    <td class="text-align-right">130.25</td>
+    <td class="text-align-right">15197500</td>
+  </tr>
+  <tr>
+    <td>2010-01-21</td>
+    <td class="text-align-right">130.47</td>
+    <td class="text-align-right">130.69</td>
+    <td class="text-align-right">128.06</td>
+    <td class="text-align-right">129</td>
+    <td class="text-align-right">9608600</td>
+  </tr>
+  <tr>
+    <td>2010-01-22</td>
+    <td class="text-align-right">128.67</td>
+    <td class="text-align-right">128.89</td>
+    <td class="text-align-right">125.37</td>
+    <td class="text-align-right">125.5</td>
+    <td class="text-align-right">10088600</td>
+  </tr>
+  <tr>
+    <td>2010-01-25</td>
+    <td class="text-align-right">126.33</td>
+    <td class="text-align-right">126.89</td>
+    <td class="text-align-right">125.71</td>
+    <td class="text-align-right">126.12</td>
+    <td class="text-align-right">5738500</td>
+  </tr>
+  <tr>
+    <td>2010-01-26</td>
+    <td class="text-align-right">125.92</td>
+    <td class="text-align-right">127.75</td>
+    <td class="text-align-right">125.41</td>
+    <td class="text-align-right">125.75</td>
+    <td class="text-align-right">7135300</td>
+  </tr>
+  <tr>
+    <td>2010-01-27</td>
+    <td class="text-align-right">125.82</td>
+    <td class="text-align-right">126.96</td>
+    <td class="text-align-right">125.04</td>
+    <td class="text-align-right">126.33</td>
+    <td class="text-align-right">8719200</td>
+  </tr>
+  <tr>
+    <td>2010-01-28</td>
+    <td class="text-align-right">127.03</td>
+    <td class="text-align-right">127.04</td>
+    <td class="text-align-right">123.05</td>
+    <td class="text-align-right">123.75</td>
+    <td class="text-align-right">9622200</td>
+  </tr>
+  <tr>
+    <td>2010-01-29</td>
+    <td class="text-align-right">124.32</td>
+    <td class="text-align-right">125</td>
+    <td class="text-align-right">121.9</td>
+    <td class="text-align-right">122.39</td>
+    <td class="text-align-right">11571200</td>
+  </tr>
+  <tr>
+    <td>2010-02-01</td>
+    <td class="text-align-right">123.23</td>
+    <td class="text-align-right">124.95</td>
+    <td class="text-align-right">122.78</td>
+    <td class="text-align-right">124.67</td>
+    <td class="text-align-right">7242900</td>
+  </tr>
+  <tr>
+    <td>2010-02-02</td>
+    <td class="text-align-right">124.79</td>
+    <td class="text-align-right">125.81</td>
+    <td class="text-align-right">123.95</td>
+    <td class="text-align-right">125.53</td>
+    <td class="text-align-right">5899900</td>
+  </tr>
+  <tr>
+    <td>2010-02-03</td>
+    <td class="text-align-right">125.16</td>
+    <td class="text-align-right">126.07</td>
+    <td class="text-align-right">125.07</td>
+    <td class="text-align-right">125.66</td>
+    <td class="text-align-right">4177100</td>
+  </tr>
+  <tr>
+    <td>2010-02-04</td>
+    <td class="text-align-right">125.19</td>
+    <td class="text-align-right">125.44</td>
+    <td class="text-align-right">122.9</td>
+    <td class="text-align-right">123</td>
+    <td class="text-align-right">9126900</td>
+  </tr>
+  <tr>
+    <td>2010-02-05</td>
+    <td class="text-align-right">123.04</td>
+    <td class="text-align-right">123.72</td>
+    <td class="text-align-right">121.83</td>
+    <td class="text-align-right">123.52</td>
+    <td class="text-align-right">8617000</td>
+  </tr>
+  <tr>
+    <td>2010-02-08</td>
+    <td class="text-align-right">123.15</td>
+    <td class="text-align-right">123.22</td>
+    <td class="text-align-right">121.74</td>
+    <td class="text-align-right">121.88</td>
+    <td class="text-align-right">5718500</td>
+  </tr>
+  <tr>
+    <td>2010-02-09</td>
+    <td class="text-align-right">122.65</td>
+    <td class="text-align-right">124.2</td>
+    <td class="text-align-right">122.46</td>
+    <td class="text-align-right">123.21</td>
+    <td class="text-align-right">6044500</td>
+  </tr>
+  <tr>
+    <td>2010-02-10</td>
+    <td class="text-align-right">122.94</td>
+    <td class="text-align-right">123.65</td>
+    <td class="text-align-right">122.21</td>
+    <td class="text-align-right">122.81</td>
+    <td class="text-align-right">5219100</td>
+  </tr>
+  <tr>
+    <td>2010-02-11</td>
+    <td class="text-align-right">122.58</td>
+    <td class="text-align-right">124.2</td>
+    <td class="text-align-right">122.06</td>
+    <td class="text-align-right">123.73</td>
+    <td class="text-align-right">5089000</td>
+  </tr>
+  <tr>
+    <td>2010-02-12</td>
+    <td class="text-align-right">123.01</td>
+    <td class="text-align-right">124.05</td>
+    <td class="text-align-right">121.61</td>
+    <td class="text-align-right">124</td>
+    <td class="text-align-right">8017700</td>
+  </tr>
+  <tr>
+    <td>2010-02-16</td>
+    <td class="text-align-right">124.91</td>
+    <td class="text-align-right">125.23</td>
+    <td class="text-align-right">124.11</td>
+    <td class="text-align-right">125.23</td>
+    <td class="text-align-right">6777300</td>
+  </tr>
+  <tr>
+    <td>2010-02-17</td>
+    <td class="text-align-right">125.5</td>
+    <td class="text-align-right">126.53</td>
+    <td class="text-align-right">125.21</td>
+    <td class="text-align-right">126.33</td>
+    <td class="text-align-right">5827400</td>
+  </tr>
+  <tr>
+    <td>2010-02-18</td>
+    <td class="text-align-right">126.13</td>
+    <td class="text-align-right">128</td>
+    <td class="text-align-right">126</td>
+    <td class="text-align-right">127.81</td>
+    <td class="text-align-right">5525900</td>
+  </tr>
+  <tr>
+    <td>2010-02-19</td>
+    <td class="text-align-right">127.35</td>
+    <td class="text-align-right">128.06</td>
+    <td class="text-align-right">126.87</td>
+    <td class="text-align-right">127.19</td>
+    <td class="text-align-right">6303100</td>
+  </tr>
+  <tr>
+    <td>2010-02-22</td>
+    <td class="text-align-right">127.3</td>
+    <td class="text-align-right">127.43</td>
+    <td class="text-align-right">126.31</td>
+    <td class="text-align-right">126.85</td>
+    <td class="text-align-right">3808100</td>
+  </tr>
+  <tr>
+    <td>2010-02-23</td>
+    <td class="text-align-right">126.48</td>
+    <td class="text-align-right">127.66</td>
+    <td class="text-align-right">126</td>
+    <td class="text-align-right">126.46</td>
+    <td class="text-align-right">4591900</td>
+  </tr>
+  <tr>
+    <td>2010-02-24</td>
+    <td class="text-align-right">127.02</td>
+    <td class="text-align-right">128.27</td>
+    <td class="text-align-right">126.81</td>
+    <td class="text-align-right">127.59</td>
+    <td class="text-align-right">4782000</td>
+  </tr>
+  <tr>
+    <td>2010-02-25</td>
+    <td class="text-align-right">126.05</td>
+    <td class="text-align-right">127.24</td>
+    <td class="text-align-right">125.57</td>
+    <td class="text-align-right">127.07</td>
+    <td class="text-align-right">5658700</td>
+  </tr>
+  <tr>
+    <td>2010-02-26</td>
+    <td class="text-align-right">127.01</td>
+    <td class="text-align-right">128</td>
+    <td class="text-align-right">126.74</td>
+    <td class="text-align-right">127.16</td>
+    <td class="text-align-right">4784200</td>
+  </tr>
+  <tr>
+    <td>2010-03-01</td>
+    <td class="text-align-right">127.5</td>
+    <td class="text-align-right">128.83</td>
+    <td class="text-align-right">127.47</td>
+    <td class="text-align-right">128.57</td>
+    <td class="text-align-right">4577700</td>
+  </tr>
+  <tr>
+    <td>2010-03-02</td>
+    <td class="text-align-right">128.7</td>
+    <td class="text-align-right">129.09</td>
+    <td class="text-align-right">127.13</td>
+    <td class="text-align-right">127.42</td>
+    <td class="text-align-right">6013300</td>
+  </tr>
+  <tr>
+    <td>2010-03-03</td>
+    <td class="text-align-right">127.73</td>
+    <td class="text-align-right">128.02</td>
+    <td class="text-align-right">126.68</td>
+    <td class="text-align-right">126.88</td>
+    <td class="text-align-right">6390000</td>
+  </tr>
+  <tr>
+    <td>2010-03-04</td>
+    <td class="text-align-right">127.07</td>
+    <td class="text-align-right">127.07</td>
+    <td class="text-align-right">125.47</td>
+    <td class="text-align-right">126.72</td>
+    <td class="text-align-right">6032300</td>
+  </tr>
+  <tr>
+    <td>2010-03-05</td>
+    <td class="text-align-right">127.17</td>
+    <td class="text-align-right">127.55</td>
+    <td class="text-align-right">127.04</td>
+    <td class="text-align-right">127.25</td>
+    <td class="text-align-right">6140200</td>
+  </tr>
+  <tr>
+    <td>2010-03-08</td>
+    <td class="text-align-right">127.06</td>
+    <td class="text-align-right">127.5</td>
+    <td class="text-align-right">126.36</td>
+    <td class="text-align-right">126.41</td>
+    <td class="text-align-right">6199300</td>
+  </tr>
+  <tr>
+    <td>2010-03-09</td>
+    <td class="text-align-right">126.27</td>
+    <td class="text-align-right">126.29</td>
+    <td class="text-align-right">125.2</td>
+    <td class="text-align-right">125.55</td>
+    <td class="text-align-right">7528800</td>
+  </tr>
+  <tr>
+    <td>2010-03-10</td>
+    <td class="text-align-right">125.99</td>
+    <td class="text-align-right">126.36</td>
+    <td class="text-align-right">125.21</td>
+    <td class="text-align-right">125.62</td>
+    <td class="text-align-right">6916200</td>
+  </tr>
+  <tr>
+    <td>2010-03-11</td>
+    <td class="text-align-right">125.71</td>
+    <td class="text-align-right">127.81</td>
+    <td class="text-align-right">125.71</td>
+    <td class="text-align-right">127.6</td>
+    <td class="text-align-right">7922200</td>
+  </tr>
+  <tr>
+    <td>2010-03-12</td>
+    <td class="text-align-right">127.91</td>
+    <td class="text-align-right">128.37</td>
+    <td class="text-align-right">127.51</td>
+    <td class="text-align-right">127.94</td>
+    <td class="text-align-right">5169500</td>
+  </tr>
+  <tr>
+    <td>2010-03-15</td>
+    <td class="text-align-right">127.4</td>
+    <td class="text-align-right">128.34</td>
+    <td class="text-align-right">127.28</td>
+    <td class="text-align-right">127.83</td>
+    <td class="text-align-right">4497700</td>
+  </tr>
+  <tr>
+    <td>2010-03-16</td>
+    <td class="text-align-right">128</td>
+    <td class="text-align-right">128.88</td>
+    <td class="text-align-right">127.45</td>
+    <td class="text-align-right">128.67</td>
+    <td class="text-align-right">6134900</td>
+  </tr>
+  <tr>
+    <td>2010-03-17</td>
+    <td class="text-align-right">128.9</td>
+    <td class="text-align-right">128.93</td>
+    <td class="text-align-right">127.36</td>
+    <td class="text-align-right">127.76</td>
+    <td class="text-align-right">6348400</td>
+  </tr>
+  <tr>
+    <td>2010-03-18</td>
+    <td class="text-align-right">127.46</td>
+    <td class="text-align-right">128.75</td>
+    <td class="text-align-right">127.45</td>
+    <td class="text-align-right">128.38</td>
+    <td class="text-align-right">4954400</td>
+  </tr>
+  <tr>
+    <td>2010-03-19</td>
+    <td class="text-align-right">128.84</td>
+    <td class="text-align-right">128.93</td>
+    <td class="text-align-right">126.78</td>
+    <td class="text-align-right">127.71</td>
+    <td class="text-align-right">10744000</td>
+  </tr>
+  <tr>
+    <td>2010-03-22</td>
+    <td class="text-align-right">127.11</td>
+    <td class="text-align-right">128.39</td>
+    <td class="text-align-right">126.57</td>
+    <td class="text-align-right">127.98</td>
+    <td class="text-align-right">5651900</td>
+  </tr>
+  <tr>
+    <td>2010-03-23</td>
+    <td class="text-align-right">127.94</td>
+    <td class="text-align-right">129.43</td>
+    <td class="text-align-right">127.64</td>
+    <td class="text-align-right">129.37</td>
+    <td class="text-align-right">5978500</td>
+  </tr>
+  <tr>
+    <td>2010-03-24</td>
+    <td class="text-align-right">128.63</td>
+    <td class="text-align-right">129.95</td>
+    <td class="text-align-right">128.47</td>
+    <td class="text-align-right">128.53</td>
+    <td class="text-align-right">6669300</td>
+  </tr>
+  <tr>
+    <td>2010-03-25</td>
+    <td class="text-align-right">129.36</td>
+    <td class="text-align-right">130.73</td>
+    <td class="text-align-right">129.13</td>
+    <td class="text-align-right">129.24</td>
+    <td class="text-align-right">7603200</td>
+  </tr>
+  <tr>
+    <td>2010-03-26</td>
+    <td class="text-align-right">128.93</td>
+    <td class="text-align-right">129.78</td>
+    <td class="text-align-right">128.72</td>
+    <td class="text-align-right">129.26</td>
+    <td class="text-align-right">5550800</td>
+  </tr>
+  <tr>
+    <td>2010-03-29</td>
+    <td class="text-align-right">129.3</td>
+    <td class="text-align-right">129.95</td>
+    <td class="text-align-right">128.26</td>
+    <td class="text-align-right">128.59</td>
+    <td class="text-align-right">4643000</td>
+  </tr>
+  <tr>
+    <td>2010-03-30</td>
+    <td class="text-align-right">128.9</td>
+    <td class="text-align-right">129.13</td>
+    <td class="text-align-right">128.25</td>
+    <td class="text-align-right">128.77</td>
+    <td class="text-align-right">3426600</td>
+  </tr>
+  <tr>
+    <td>2010-03-31</td>
+    <td class="text-align-right">128.23</td>
+    <td class="text-align-right">128.75</td>
+    <td class="text-align-right">127.65</td>
+    <td class="text-align-right">128.25</td>
+    <td class="text-align-right">4904800</td>
+  </tr>
+  <tr>
+    <td>2010-04-01</td>
+    <td class="text-align-right">128.95</td>
+    <td class="text-align-right">129.31</td>
+    <td class="text-align-right">127.55</td>
+    <td class="text-align-right">128.25</td>
+    <td class="text-align-right">4980500</td>
+  </tr>
+  <tr>
+    <td>2010-04-05</td>
+    <td class="text-align-right">128.38</td>
+    <td class="text-align-right">129.8</td>
+    <td class="text-align-right">128.14</td>
+    <td class="text-align-right">129.35</td>
+    <td class="text-align-right">4118700</td>
+  </tr>
+  <tr>
+    <td>2010-04-06</td>
+    <td class="text-align-right">128.68</td>
+    <td class="text-align-right">129.3</td>
+    <td class="text-align-right">128.05</td>
+    <td class="text-align-right">128.93</td>
+    <td class="text-align-right">3926300</td>
+  </tr>
+  <tr>
+    <td>2010-04-07</td>
+    <td class="text-align-right">128.53</td>
+    <td class="text-align-right">129.27</td>
+    <td class="text-align-right">128.01</td>
+    <td class="text-align-right">128.48</td>
+    <td class="text-align-right">5157000</td>
+  </tr>
+  <tr>
+    <td>2010-04-08</td>
+    <td class="text-align-right">128.04</td>
+    <td class="text-align-right">128.23</td>
+    <td class="text-align-right">127.2</td>
+    <td class="text-align-right">127.61</td>
+    <td class="text-align-right">6006900</td>
+  </tr>
+  <tr>
+    <td>2010-04-09</td>
+    <td class="text-align-right">127.88</td>
+    <td class="text-align-right">128.87</td>
+    <td class="text-align-right">127.12</td>
+    <td class="text-align-right">128.76</td>
+    <td class="text-align-right">5185100</td>
+  </tr>
+  <tr>
+    <td>2010-04-12</td>
+    <td class="text-align-right">128.57</td>
+    <td class="text-align-right">128.96</td>
+    <td class="text-align-right">128.24</td>
+    <td class="text-align-right">128.36</td>
+    <td class="text-align-right">3992300</td>
+  </tr>
+  <tr>
+    <td>2010-04-13</td>
+    <td class="text-align-right">128.26</td>
+    <td class="text-align-right">129.43</td>
+    <td class="text-align-right">127.84</td>
+    <td class="text-align-right">129.03</td>
+    <td class="text-align-right">6819100</td>
+  </tr>
+  <tr>
+    <td>2010-04-14</td>
+    <td class="text-align-right">129.73</td>
+    <td class="text-align-right">131.42</td>
+    <td class="text-align-right">129.46</td>
+    <td class="text-align-right">131.25</td>
+    <td class="text-align-right">8545800</td>
+  </tr>
+  <tr>
+    <td>2010-04-15</td>
+    <td class="text-align-right">130.53</td>
+    <td class="text-align-right">131.14</td>
+    <td class="text-align-right">130.19</td>
+    <td class="text-align-right">130.89</td>
+    <td class="text-align-right">6425300</td>
+  </tr>
+  <tr>
+    <td>2010-04-16</td>
+    <td class="text-align-right">130.68</td>
+    <td class="text-align-right">132.17</td>
+    <td class="text-align-right">130.25</td>
+    <td class="text-align-right">130.63</td>
+    <td class="text-align-right">9546200</td>
+  </tr>
+  <tr>
+    <td>2010-04-19</td>
+    <td class="text-align-right">130.38</td>
+    <td class="text-align-right">132.28</td>
+    <td class="text-align-right">130.38</td>
+    <td class="text-align-right">132.23</td>
+    <td class="text-align-right">11304500</td>
+  </tr>
+  <tr>
+    <td>2010-04-20</td>
+    <td class="text-align-right">129.2</td>
+    <td class="text-align-right">130.33</td>
+    <td class="text-align-right">128.26</td>
+    <td class="text-align-right">129.69</td>
+    <td class="text-align-right">15216500</td>
+  </tr>
+  <tr>
+    <td>2010-04-21</td>
+    <td class="text-align-right">129.87</td>
+    <td class="text-align-right">130.27</td>
+    <td class="text-align-right">128.5</td>
+    <td class="text-align-right">128.99</td>
+    <td class="text-align-right">7559200</td>
+  </tr>
+  <tr>
+    <td>2010-04-22</td>
+    <td class="text-align-right">128.64</td>
+    <td class="text-align-right">129.36</td>
+    <td class="text-align-right">127.77</td>
+    <td class="text-align-right">129.13</td>
+    <td class="text-align-right">6018500</td>
+  </tr>
+  <tr>
+    <td>2010-04-23</td>
+    <td class="text-align-right">129.08</td>
+    <td class="text-align-right">130.1</td>
+    <td class="text-align-right">128.71</td>
+    <td class="text-align-right">129.99</td>
+    <td class="text-align-right">6197300</td>
+  </tr>
+  <tr>
+    <td>2010-04-26</td>
+    <td class="text-align-right">129.76</td>
+    <td class="text-align-right">131.04</td>
+    <td class="text-align-right">129.54</td>
+    <td class="text-align-right">130.73</td>
+    <td class="text-align-right">5285400</td>
+  </tr>
+  <tr>
+    <td>2010-04-27</td>
+    <td class="text-align-right">129.9</td>
+    <td class="text-align-right">132</td>
+    <td class="text-align-right">128.71</td>
+    <td class="text-align-right">128.82</td>
+    <td class="text-align-right">10916700</td>
+  </tr>
+  <tr>
+    <td>2010-04-28</td>
+    <td class="text-align-right">129.4</td>
+    <td class="text-align-right">130.47</td>
+    <td class="text-align-right">129.03</td>
+    <td class="text-align-right">130.1</td>
+    <td class="text-align-right">7122300</td>
+  </tr>
+  <tr>
+    <td>2010-04-29</td>
+    <td class="text-align-right">130.55</td>
+    <td class="text-align-right">131.21</td>
+    <td class="text-align-right">130.15</td>
+    <td class="text-align-right">130.46</td>
+    <td class="text-align-right">5786900</td>
+  </tr>
+  <tr>
+    <td>2010-04-30</td>
+    <td class="text-align-right">130.43</td>
+    <td class="text-align-right">130.64</td>
+    <td class="text-align-right">128.84</td>
+    <td class="text-align-right">129</td>
+    <td class="text-align-right">6266700</td>
+  </tr>
+  <tr>
+    <td>2010-05-03</td>
+    <td class="text-align-right">129.39</td>
+    <td class="text-align-right">130.14</td>
+    <td class="text-align-right">128.8</td>
+    <td class="text-align-right">129.6</td>
+    <td class="text-align-right">4992100</td>
+  </tr>
+  <tr>
+    <td>2010-05-04</td>
+    <td class="text-align-right">128.89</td>
+    <td class="text-align-right">128.93</td>
+    <td class="text-align-right">126.57</td>
+    <td class="text-align-right">128.12</td>
+    <td class="text-align-right">8285000</td>
+  </tr>
+  <tr>
+    <td>2010-05-05</td>
+    <td class="text-align-right">127.12</td>
+    <td class="text-align-right">128.23</td>
+    <td class="text-align-right">126.87</td>
+    <td class="text-align-right">127.46</td>
+    <td class="text-align-right">6072700</td>
+  </tr>
+  <tr>
+    <td>2010-05-06</td>
+    <td class="text-align-right">126.29</td>
+    <td class="text-align-right">127.93</td>
+    <td class="text-align-right">116</td>
+    <td class="text-align-right">123.92</td>
+    <td class="text-align-right">13168800</td>
+  </tr>
+  <tr>
+    <td>2010-05-07</td>
+    <td class="text-align-right">123.36</td>
+    <td class="text-align-right">124.39</td>
+    <td class="text-align-right">120</td>
+    <td class="text-align-right">122.1</td>
+    <td class="text-align-right">10584800</td>
+  </tr>
+  <tr>
+    <td>2010-05-10</td>
+    <td class="text-align-right">126.27</td>
+    <td class="text-align-right">126.67</td>
+    <td class="text-align-right">125.06</td>
+    <td class="text-align-right">126.27</td>
+    <td class="text-align-right">8463900</td>
+  </tr>
+  <tr>
+    <td>2010-05-11</td>
+    <td class="text-align-right">125.21</td>
+    <td class="text-align-right">128.42</td>
+    <td class="text-align-right">125.15</td>
+    <td class="text-align-right">126.89</td>
+    <td class="text-align-right">6498900</td>
+  </tr>
+  <tr>
+    <td>2010-05-12</td>
+    <td class="text-align-right">127.16</td>
+    <td class="text-align-right">132.85</td>
+    <td class="text-align-right">127.01</td>
+    <td class="text-align-right">132.68</td>
+    <td class="text-align-right">16626900</td>
+  </tr>
+  <tr>
+    <td>2010-05-13</td>
+    <td class="text-align-right">130.93</td>
+    <td class="text-align-right">133.1</td>
+    <td class="text-align-right">130.85</td>
+    <td class="text-align-right">131.48</td>
+    <td class="text-align-right">10497800</td>
+  </tr>
+  <tr>
+    <td>2010-05-14</td>
+    <td class="text-align-right">131.06</td>
+    <td class="text-align-right">131.67</td>
+    <td class="text-align-right">129.41</td>
+    <td class="text-align-right">131.19</td>
+    <td class="text-align-right">9920100</td>
+  </tr>
+  <tr>
+    <td>2010-05-17</td>
+    <td class="text-align-right">130.68</td>
+    <td class="text-align-right">131.76</td>
+    <td class="text-align-right">128.7</td>
+    <td class="text-align-right">130.44</td>
+    <td class="text-align-right">8923400</td>
+  </tr>
+  <tr>
+    <td>2010-05-18</td>
+    <td class="text-align-right">131.26</td>
+    <td class="text-align-right">131.99</td>
+    <td class="text-align-right">129.9</td>
+    <td class="text-align-right">129.95</td>
+    <td class="text-align-right">9330000</td>
+  </tr>
+  <tr>
+    <td>2010-05-19</td>
+    <td class="text-align-right">129.37</td>
+    <td class="text-align-right">130.5</td>
+    <td class="text-align-right">127.82</td>
+    <td class="text-align-right">128.86</td>
+    <td class="text-align-right">8669300</td>
+  </tr>
+  <tr>
+    <td>2010-05-20</td>
+    <td class="text-align-right">127.22</td>
+    <td class="text-align-right">127.96</td>
+    <td class="text-align-right">123.68</td>
+    <td class="text-align-right">123.8</td>
+    <td class="text-align-right">13176500</td>
+  </tr>
+  <tr>
+    <td>2010-05-21</td>
+    <td class="text-align-right">122.16</td>
+    <td class="text-align-right">125.61</td>
+    <td class="text-align-right">121.4</td>
+    <td class="text-align-right">125.42</td>
+    <td class="text-align-right">12639500</td>
+  </tr>
+  <tr>
+    <td>2010-05-24</td>
+    <td class="text-align-right">125.26</td>
+    <td class="text-align-right">126.02</td>
+    <td class="text-align-right">124.04</td>
+    <td class="text-align-right">124.45</td>
+    <td class="text-align-right">6868600</td>
+  </tr>
+  <tr>
+    <td>2010-05-25</td>
+    <td class="text-align-right">121.47</td>
+    <td class="text-align-right">124.95</td>
+    <td class="text-align-right">121.47</td>
+    <td class="text-align-right">124.52</td>
+    <td class="text-align-right">9494800</td>
+  </tr>
+  <tr>
+    <td>2010-05-26</td>
+    <td class="text-align-right">124.89</td>
+    <td class="text-align-right">125.94</td>
+    <td class="text-align-right">123</td>
+    <td class="text-align-right">123.23</td>
+    <td class="text-align-right">9083200</td>
+  </tr>
+  <tr>
+    <td>2010-05-27</td>
+    <td class="text-align-right">125.05</td>
+    <td class="text-align-right">126.39</td>
+    <td class="text-align-right">124.77</td>
+    <td class="text-align-right">126.39</td>
+    <td class="text-align-right">7725900</td>
+  </tr>
+  <tr>
+    <td>2010-05-28</td>
+    <td class="text-align-right">125.96</td>
+    <td class="text-align-right">126.28</td>
+    <td class="text-align-right">124.29</td>
+    <td class="text-align-right">125.26</td>
+    <td class="text-align-right">7421900</td>
+  </tr>
+  <tr>
+    <td>2010-06-01</td>
+    <td class="text-align-right">124.69</td>
+    <td class="text-align-right">126.88</td>
+    <td class="text-align-right">124.2</td>
+    <td class="text-align-right">124.34</td>
+    <td class="text-align-right">7135400</td>
+  </tr>
+  <tr>
+    <td>2010-06-02</td>
+    <td class="text-align-right">124.85</td>
+    <td class="text-align-right">127.5</td>
+    <td class="text-align-right">124.35</td>
+    <td class="text-align-right">127.41</td>
+    <td class="text-align-right">7705300</td>
+  </tr>
+  <tr>
+    <td>2010-06-03</td>
+    <td class="text-align-right">127.75</td>
+    <td class="text-align-right">128.22</td>
+    <td class="text-align-right">126.46</td>
+    <td class="text-align-right">127.96</td>
+    <td class="text-align-right">6645300</td>
+  </tr>
+  <tr>
+    <td>2010-06-04</td>
+    <td class="text-align-right">126.37</td>
+    <td class="text-align-right">127.1</td>
+    <td class="text-align-right">124.67</td>
+    <td class="text-align-right">125.28</td>
+    <td class="text-align-right">9632700</td>
+  </tr>
+  <tr>
+    <td>2010-06-07</td>
+    <td class="text-align-right">125.57</td>
+    <td class="text-align-right">125.86</td>
+    <td class="text-align-right">124.13</td>
+    <td class="text-align-right">124.13</td>
+    <td class="text-align-right">6951400</td>
+  </tr>
+  <tr>
+    <td>2010-06-08</td>
+    <td class="text-align-right">124.26</td>
+    <td class="text-align-right">124.46</td>
+    <td class="text-align-right">122.82</td>
+    <td class="text-align-right">123.72</td>
+    <td class="text-align-right">8282700</td>
+  </tr>
+  <tr>
+    <td>2010-06-09</td>
+    <td class="text-align-right">124.83</td>
+    <td class="text-align-right">125.84</td>
+    <td class="text-align-right">123.58</td>
+    <td class="text-align-right">123.9</td>
+    <td class="text-align-right">7795500</td>
+  </tr>
+  <tr>
+    <td>2010-06-10</td>
+    <td class="text-align-right">125.99</td>
+    <td class="text-align-right">128.22</td>
+    <td class="text-align-right">125.8</td>
+    <td class="text-align-right">127.68</td>
+    <td class="text-align-right">7427100</td>
+  </tr>
+  <tr>
+    <td>2010-06-11</td>
+    <td class="text-align-right">126.73</td>
+    <td class="text-align-right">128.8</td>
+    <td class="text-align-right">126.44</td>
+    <td class="text-align-right">128.45</td>
+    <td class="text-align-right">5820200</td>
+  </tr>
+  <tr>
+    <td>2010-06-14</td>
+    <td class="text-align-right">128.5</td>
+    <td class="text-align-right">129.97</td>
+    <td class="text-align-right">128.49</td>
+    <td class="text-align-right">128.5</td>
+    <td class="text-align-right">6753000</td>
+  </tr>
+  <tr>
+    <td>2010-06-15</td>
+    <td class="text-align-right">128.93</td>
+    <td class="text-align-right">129.95</td>
+    <td class="text-align-right">128.37</td>
+    <td class="text-align-right">129.79</td>
+    <td class="text-align-right">6652500</td>
+  </tr>
+  <tr>
+    <td>2010-06-16</td>
+    <td class="text-align-right">128.34</td>
+    <td class="text-align-right">130.68</td>
+    <td class="text-align-right">128.34</td>
+    <td class="text-align-right">130.35</td>
+    <td class="text-align-right">6401000</td>
+  </tr>
+  <tr>
+    <td>2010-06-17</td>
+    <td class="text-align-right">130.07</td>
+    <td class="text-align-right">131.03</td>
+    <td class="text-align-right">129.86</td>
+    <td class="text-align-right">130.98</td>
+    <td class="text-align-right">5571000</td>
+  </tr>
+  <tr>
+    <td>2010-06-18</td>
+    <td class="text-align-right">131.02</td>
+    <td class="text-align-right">131.25</td>
+    <td class="text-align-right">130.13</td>
+    <td class="text-align-right">130.15</td>
+    <td class="text-align-right">9581400</td>
+  </tr>
+  <tr>
+    <td>2010-06-21</td>
+    <td class="text-align-right">131.42</td>
+    <td class="text-align-right">131.94</td>
+    <td class="text-align-right">130.22</td>
+    <td class="text-align-right">130.65</td>
+    <td class="text-align-right">6857800</td>
+  </tr>
+  <tr>
+    <td>2010-06-22</td>
+    <td class="text-align-right">130.37</td>
+    <td class="text-align-right">131.47</td>
+    <td class="text-align-right">129.07</td>
+    <td class="text-align-right">129.3</td>
+    <td class="text-align-right">6030200</td>
+  </tr>
+  <tr>
+    <td>2010-06-23</td>
+    <td class="text-align-right">129.25</td>
+    <td class="text-align-right">131.47</td>
+    <td class="text-align-right">129.09</td>
+    <td class="text-align-right">130.11</td>
+    <td class="text-align-right">6855800</td>
+  </tr>
+  <tr>
+    <td>2010-06-24</td>
+    <td class="text-align-right">129.57</td>
+    <td class="text-align-right">129.73</td>
+    <td class="text-align-right">127.7</td>
+    <td class="text-align-right">128.19</td>
+    <td class="text-align-right">5565500</td>
+  </tr>
+  <tr>
+    <td>2010-06-25</td>
+    <td class="text-align-right">128.34</td>
+    <td class="text-align-right">129.1</td>
+    <td class="text-align-right">127.12</td>
+    <td class="text-align-right">127.12</td>
+    <td class="text-align-right">10420400</td>
+  </tr>
+  <tr>
+    <td>2010-06-28</td>
+    <td class="text-align-right">127.65</td>
+    <td class="text-align-right">129.47</td>
+    <td class="text-align-right">127.22</td>
+    <td class="text-align-right">128.98</td>
+    <td class="text-align-right">6335100</td>
+  </tr>
+  <tr>
+    <td>2010-06-29</td>
+    <td class="text-align-right">127.35</td>
+    <td class="text-align-right">128.4</td>
+    <td class="text-align-right">124.12</td>
+    <td class="text-align-right">125.09</td>
+    <td class="text-align-right">9376200</td>
+  </tr>
+  <tr>
+    <td>2010-06-30</td>
+    <td class="text-align-right">124.83</td>
+    <td class="text-align-right">125.22</td>
+    <td class="text-align-right">123</td>
+    <td class="text-align-right">123.48</td>
+    <td class="text-align-right">8018000</td>
+  </tr>
+  <tr>
+    <td>2010-07-01</td>
+    <td class="text-align-right">123.55</td>
+    <td class="text-align-right">124.21</td>
+    <td class="text-align-right">121.61</td>
+    <td class="text-align-right">122.57</td>
+    <td class="text-align-right">9742100</td>
+  </tr>
+  <tr>
+    <td>2010-07-02</td>
+    <td class="text-align-right">123.29</td>
+    <td class="text-align-right">123.29</td>
+    <td class="text-align-right">120.61</td>
+    <td class="text-align-right">121.86</td>
+    <td class="text-align-right">6454500</td>
+  </tr>
+  <tr>
+    <td>2010-07-06</td>
+    <td class="text-align-right">123.58</td>
+    <td class="text-align-right">124.63</td>
+    <td class="text-align-right">122.17</td>
+    <td class="text-align-right">123.46</td>
+    <td class="text-align-right">6348700</td>
+  </tr>
+  <tr>
+    <td>2010-07-07</td>
+    <td class="text-align-right">123.47</td>
+    <td class="text-align-right">127.12</td>
+    <td class="text-align-right">123.47</td>
+    <td class="text-align-right">127</td>
+    <td class="text-align-right">7090300</td>
+  </tr>
+  <tr>
+    <td>2010-07-08</td>
+    <td class="text-align-right">127.37</td>
+    <td class="text-align-right">128.15</td>
+    <td class="text-align-right">126.74</td>
+    <td class="text-align-right">127.97</td>
+    <td class="text-align-right">5439300</td>
+  </tr>
+  <tr>
+    <td>2010-07-09</td>
+    <td class="text-align-right">127.9</td>
+    <td class="text-align-right">128.2</td>
+    <td class="text-align-right">127.29</td>
+    <td class="text-align-right">127.96</td>
+    <td class="text-align-right">3898000</td>
+  </tr>
+  <tr>
+    <td>2010-07-12</td>
+    <td class="text-align-right">127.37</td>
+    <td class="text-align-right">128.83</td>
+    <td class="text-align-right">127.16</td>
+    <td class="text-align-right">128.67</td>
+    <td class="text-align-right">4206900</td>
+  </tr>
+  <tr>
+    <td>2010-07-13</td>
+    <td class="text-align-right">128.97</td>
+    <td class="text-align-right">130.98</td>
+    <td class="text-align-right">128.69</td>
+    <td class="text-align-right">130.48</td>
+    <td class="text-align-right">6687700</td>
+  </tr>
+  <tr>
+    <td>2010-07-14</td>
+    <td class="text-align-right">129.32</td>
+    <td class="text-align-right">131.6</td>
+    <td class="text-align-right">129.14</td>
+    <td class="text-align-right">130.72</td>
+    <td class="text-align-right">6607200</td>
+  </tr>
+  <tr>
+    <td>2010-07-15</td>
+    <td class="text-align-right">129.87</td>
+    <td class="text-align-right">130.92</td>
+    <td class="text-align-right">129.55</td>
+    <td class="text-align-right">130.72</td>
+    <td class="text-align-right">6186800</td>
+  </tr>
+  <tr>
+    <td>2010-07-16</td>
+    <td class="text-align-right">129.96</td>
+    <td class="text-align-right">130.15</td>
+    <td class="text-align-right">127.85</td>
+    <td class="text-align-right">128.03</td>
+    <td class="text-align-right">7002900</td>
+  </tr>
+  <tr>
+    <td>2010-07-19</td>
+    <td class="text-align-right">128.67</td>
+    <td class="text-align-right">130.38</td>
+    <td class="text-align-right">128.37</td>
+    <td class="text-align-right">129.79</td>
+    <td class="text-align-right">8388600</td>
+  </tr>
+  <tr>
+    <td>2010-07-20</td>
+    <td class="text-align-right">122.97</td>
+    <td class="text-align-right">126.56</td>
+    <td class="text-align-right">122.93</td>
+    <td class="text-align-right">126.55</td>
+    <td class="text-align-right">16337400</td>
+  </tr>
+  <tr>
+    <td>2010-07-21</td>
+    <td class="text-align-right">126.44</td>
+    <td class="text-align-right">126.5</td>
+    <td class="text-align-right">124.62</td>
+    <td class="text-align-right">125.27</td>
+    <td class="text-align-right">8570200</td>
+  </tr>
+  <tr>
+    <td>2010-07-22</td>
+    <td class="text-align-right">126.32</td>
+    <td class="text-align-right">127.78</td>
+    <td class="text-align-right">126.05</td>
+    <td class="text-align-right">127.47</td>
+    <td class="text-align-right">6909000</td>
+  </tr>
+  <tr>
+    <td>2010-07-23</td>
+    <td class="text-align-right">127.3</td>
+    <td class="text-align-right">128.8</td>
+    <td class="text-align-right">127</td>
+    <td class="text-align-right">128.38</td>
+    <td class="text-align-right">5058700</td>
+  </tr>
+  <tr>
+    <td>2010-07-26</td>
+    <td class="text-align-right">128.18</td>
+    <td class="text-align-right">128.43</td>
+    <td class="text-align-right">127.14</td>
+    <td class="text-align-right">128.41</td>
+    <td class="text-align-right">5164500</td>
+  </tr>
+  <tr>
+    <td>2010-07-27</td>
+    <td class="text-align-right">128.78</td>
+    <td class="text-align-right">129.17</td>
+    <td class="text-align-right">127.89</td>
+    <td class="text-align-right">128.63</td>
+    <td class="text-align-right">4648200</td>
+  </tr>
+  <tr>
+    <td>2010-07-28</td>
+    <td class="text-align-right">128.67</td>
+    <td class="text-align-right">129.35</td>
+    <td class="text-align-right">127.88</td>
+    <td class="text-align-right">128.43</td>
+    <td class="text-align-right">4248800</td>
+  </tr>
+  <tr>
+    <td>2010-07-29</td>
+    <td class="text-align-right">129.06</td>
+    <td class="text-align-right">129.5</td>
+    <td class="text-align-right">127.14</td>
+    <td class="text-align-right">128.02</td>
+    <td class="text-align-right">8994200</td>
+  </tr>
+  <tr>
+    <td>2010-07-30</td>
+    <td class="text-align-right">127.43</td>
+    <td class="text-align-right">128.98</td>
+    <td class="text-align-right">127.04</td>
+    <td class="text-align-right">128.4</td>
+    <td class="text-align-right">6021000</td>
+  </tr>
+  <tr>
+    <td>2010-08-02</td>
+    <td class="text-align-right">129.25</td>
+    <td class="text-align-right">131.2</td>
+    <td class="text-align-right">129.25</td>
+    <td class="text-align-right">130.76</td>
+    <td class="text-align-right">6390100</td>
+  </tr>
+  <tr>
+    <td>2010-08-03</td>
+    <td class="text-align-right">130.03</td>
+    <td class="text-align-right">131.04</td>
+    <td class="text-align-right">129.33</td>
+    <td class="text-align-right">130.37</td>
+    <td class="text-align-right">5091800</td>
+  </tr>
+  <tr>
+    <td>2010-08-04</td>
+    <td class="text-align-right">130.46</td>
+    <td class="text-align-right">131.5</td>
+    <td class="text-align-right">129.85</td>
+    <td class="text-align-right">131.27</td>
+    <td class="text-align-right">4567500</td>
+  </tr>
+  <tr>
+    <td>2010-08-05</td>
+    <td class="text-align-right">130.73</td>
+    <td class="text-align-right">131.98</td>
+    <td class="text-align-right">130.53</td>
+    <td class="text-align-right">131.83</td>
+    <td class="text-align-right">4520600</td>
+  </tr>
+  <tr>
+    <td>2010-08-06</td>
+    <td class="text-align-right">130.41</td>
+    <td class="text-align-right">130.48</td>
+    <td class="text-align-right">128.76</td>
+    <td class="text-align-right">130.14</td>
+    <td class="text-align-right">6136200</td>
+  </tr>
+  <tr>
+    <td>2010-08-09</td>
+    <td class="text-align-right">130.79</td>
+    <td class="text-align-right">132.34</td>
+    <td class="text-align-right">130.4</td>
+    <td class="text-align-right">132</td>
+    <td class="text-align-right">6131700</td>
+  </tr>
+  <tr>
+    <td>2010-08-10</td>
+    <td class="text-align-right">131.18</td>
+    <td class="text-align-right">132.49</td>
+    <td class="text-align-right">130.77</td>
+    <td class="text-align-right">131.84</td>
+    <td class="text-align-right">5350100</td>
+  </tr>
+  <tr>
+    <td>2010-08-11</td>
+    <td class="text-align-right">130.69</td>
+    <td class="text-align-right">130.69</td>
+    <td class="text-align-right">129.46</td>
+    <td class="text-align-right">129.83</td>
+    <td class="text-align-right">6316100</td>
+  </tr>
+  <tr>
+    <td>2010-08-12</td>
+    <td class="text-align-right">127.69</td>
+    <td class="text-align-right">128.78</td>
+    <td class="text-align-right">127.52</td>
+    <td class="text-align-right">128.3</td>
+    <td class="text-align-right">5132200</td>
+  </tr>
+  <tr>
+    <td>2010-08-13</td>
+    <td class="text-align-right">127.96</td>
+    <td class="text-align-right">128.46</td>
+    <td class="text-align-right">127.33</td>
+    <td class="text-align-right">127.87</td>
+    <td class="text-align-right">4669400</td>
+  </tr>
+  <tr>
+    <td>2010-08-16</td>
+    <td class="text-align-right">127.47</td>
+    <td class="text-align-right">128.23</td>
+    <td class="text-align-right">126.96</td>
+    <td class="text-align-right">127.77</td>
+    <td class="text-align-right">4009200</td>
+  </tr>
+  <tr>
+    <td>2010-08-17</td>
+    <td class="text-align-right">128.83</td>
+    <td class="text-align-right">129.85</td>
+    <td class="text-align-right">127.9</td>
+    <td class="text-align-right">128.45</td>
+    <td class="text-align-right">4298300</td>
+  </tr>
+  <tr>
+    <td>2010-08-18</td>
+    <td class="text-align-right">128.87</td>
+    <td class="text-align-right">130.2</td>
+    <td class="text-align-right">127.8</td>
+    <td class="text-align-right">129.39</td>
+    <td class="text-align-right">4883200</td>
+  </tr>
+  <tr>
+    <td>2010-08-19</td>
+    <td class="text-align-right">128.67</td>
+    <td class="text-align-right">129.59</td>
+    <td class="text-align-right">128.02</td>
+    <td class="text-align-right">128.9</td>
+    <td class="text-align-right">5402400</td>
+  </tr>
+  <tr>
+    <td>2010-08-20</td>
+    <td class="text-align-right">128.72</td>
+    <td class="text-align-right">128.98</td>
+    <td class="text-align-right">126.96</td>
+    <td class="text-align-right">127.5</td>
+    <td class="text-align-right">6246300</td>
+  </tr>
+  <tr>
+    <td>2010-08-23</td>
+    <td class="text-align-right">127.57</td>
+    <td class="text-align-right">128.03</td>
+    <td class="text-align-right">126.44</td>
+    <td class="text-align-right">126.47</td>
+    <td class="text-align-right">4034400</td>
+  </tr>
+  <tr>
+    <td>2010-08-24</td>
+    <td class="text-align-right">125.21</td>
+    <td class="text-align-right">126.02</td>
+    <td class="text-align-right">124.57</td>
+    <td class="text-align-right">124.9</td>
+    <td class="text-align-right">5621200</td>
+  </tr>
+  <tr>
+    <td>2010-08-25</td>
+    <td class="text-align-right">124.57</td>
+    <td class="text-align-right">125.6</td>
+    <td class="text-align-right">124</td>
+    <td class="text-align-right">125.27</td>
+    <td class="text-align-right">5235300</td>
+  </tr>
+  <tr>
+    <td>2010-08-26</td>
+    <td class="text-align-right">125.78</td>
+    <td class="text-align-right">125.78</td>
+    <td class="text-align-right">122.78</td>
+    <td class="text-align-right">122.78</td>
+    <td class="text-align-right">7746600</td>
+  </tr>
+  <tr>
+    <td>2010-08-27</td>
+    <td class="text-align-right">123.83</td>
+    <td class="text-align-right">124.8</td>
+    <td class="text-align-right">122.42</td>
+    <td class="text-align-right">124.73</td>
+    <td class="text-align-right">6214200</td>
+  </tr>
+  <tr>
+    <td>2010-08-30</td>
+    <td class="text-align-right">125.08</td>
+    <td class="text-align-right">125.27</td>
+    <td class="text-align-right">123.4</td>
+    <td class="text-align-right">123.4</td>
+    <td class="text-align-right">3604000</td>
+  </tr>
+  <tr>
+    <td>2010-08-31</td>
+    <td class="text-align-right">123.31</td>
+    <td class="text-align-right">123.99</td>
+    <td class="text-align-right">122.28</td>
+    <td class="text-align-right">123.13</td>
+    <td class="text-align-right">5624200</td>
+  </tr>
+  <tr>
+    <td>2010-09-01</td>
+    <td class="text-align-right">125.31</td>
+    <td class="text-align-right">126.31</td>
+    <td class="text-align-right">124.52</td>
+    <td class="text-align-right">125.77</td>
+    <td class="text-align-right">5623100</td>
+  </tr>
+  <tr>
+    <td>2010-09-02</td>
+    <td class="text-align-right">126.03</td>
+    <td class="text-align-right">126.23</td>
+    <td class="text-align-right">124.65</td>
+    <td class="text-align-right">125.04</td>
+    <td class="text-align-right">5103300</td>
+  </tr>
+  <tr>
+    <td>2010-09-03</td>
+    <td class="text-align-right">126.22</td>
+    <td class="text-align-right">127.6</td>
+    <td class="text-align-right">125.9</td>
+    <td class="text-align-right">127.58</td>
+    <td class="text-align-right">5142900</td>
+  </tr>
+  <tr>
+    <td>2010-09-07</td>
+    <td class="text-align-right">126.99</td>
+    <td class="text-align-right">127.36</td>
+    <td class="text-align-right">125.88</td>
+    <td class="text-align-right">125.95</td>
+    <td class="text-align-right">4353300</td>
+  </tr>
+  <tr>
+    <td>2010-09-08</td>
+    <td class="text-align-right">126.02</td>
+    <td class="text-align-right">126.52</td>
+    <td class="text-align-right">125.39</td>
+    <td class="text-align-right">126.08</td>
+    <td class="text-align-right">4477500</td>
+  </tr>
+  <tr>
+    <td>2010-09-09</td>
+    <td class="text-align-right">127.27</td>
+    <td class="text-align-right">127.57</td>
+    <td class="text-align-right">126.15</td>
+    <td class="text-align-right">126.36</td>
+    <td class="text-align-right">3436700</td>
+  </tr>
+  <tr>
+    <td>2010-09-10</td>
+    <td class="text-align-right">126.99</td>
+    <td class="text-align-right">128.29</td>
+    <td class="text-align-right">126.26</td>
+    <td class="text-align-right">127.99</td>
+    <td class="text-align-right">4418700</td>
+  </tr>
+  <tr>
+    <td>2010-09-13</td>
+    <td class="text-align-right">128.63</td>
+    <td class="text-align-right">130</td>
+    <td class="text-align-right">128.52</td>
+    <td class="text-align-right">129.61</td>
+    <td class="text-align-right">5271300</td>
+  </tr>
+  <tr>
+    <td>2010-09-14</td>
+    <td class="text-align-right">128.43</td>
+    <td class="text-align-right">129.92</td>
+    <td class="text-align-right">128.43</td>
+    <td class="text-align-right">128.85</td>
+    <td class="text-align-right">4850500</td>
+  </tr>
+  <tr>
+    <td>2010-09-15</td>
+    <td class="text-align-right">128.65</td>
+    <td class="text-align-right">129.96</td>
+    <td class="text-align-right">128.54</td>
+    <td class="text-align-right">129.43</td>
+    <td class="text-align-right">4762500</td>
+  </tr>
+  <tr>
+    <td>2010-09-16</td>
+    <td class="text-align-right">129.2</td>
+    <td class="text-align-right">129.95</td>
+    <td class="text-align-right">128.8</td>
+    <td class="text-align-right">129.67</td>
+    <td class="text-align-right">4685000</td>
+  </tr>
+  <tr>
+    <td>2010-09-17</td>
+    <td class="text-align-right">129.92</td>
+    <td class="text-align-right">130.6</td>
+    <td class="text-align-right">129.7</td>
+    <td class="text-align-right">130.19</td>
+    <td class="text-align-right">10397400</td>
+  </tr>
+  <tr>
+    <td>2010-09-20</td>
+    <td class="text-align-right">130.24</td>
+    <td class="text-align-right">132.09</td>
+    <td class="text-align-right">130.11</td>
+    <td class="text-align-right">131.79</td>
+    <td class="text-align-right">7145500</td>
+  </tr>
+  <tr>
+    <td>2010-09-21</td>
+    <td class="text-align-right">131.45</td>
+    <td class="text-align-right">132.8</td>
+    <td class="text-align-right">130.78</td>
+    <td class="text-align-right">131.98</td>
+    <td class="text-align-right">5267900</td>
+  </tr>
+  <tr>
+    <td>2010-09-22</td>
+    <td class="text-align-right">131.61</td>
+    <td class="text-align-right">132.58</td>
+    <td class="text-align-right">131.4</td>
+    <td class="text-align-right">132.57</td>
+    <td class="text-align-right">4922400</td>
+  </tr>
+  <tr>
+    <td>2010-09-23</td>
+    <td class="text-align-right">131.42</td>
+    <td class="text-align-right">132.78</td>
+    <td class="text-align-right">131.22</td>
+    <td class="text-align-right">131.67</td>
+    <td class="text-align-right">3898800</td>
+  </tr>
+  <tr>
+    <td>2010-09-24</td>
+    <td class="text-align-right">132.42</td>
+    <td class="text-align-right">134.15</td>
+    <td class="text-align-right">132.34</td>
+    <td class="text-align-right">134.11</td>
+    <td class="text-align-right">7078200</td>
+  </tr>
+  <tr>
+    <td>2010-09-27</td>
+    <td class="text-align-right">133.51</td>
+    <td class="text-align-right">135</td>
+    <td class="text-align-right">133.51</td>
+    <td class="text-align-right">134.65</td>
+    <td class="text-align-right">6155400</td>
+  </tr>
+  <tr>
+    <td>2010-09-28</td>
+    <td class="text-align-right">134.67</td>
+    <td class="text-align-right">135.14</td>
+    <td class="text-align-right">133.71</td>
+    <td class="text-align-right">134.89</td>
+    <td class="text-align-right">7481300</td>
+  </tr>
+  <tr>
+    <td>2010-09-29</td>
+    <td class="text-align-right">134.4</td>
+    <td class="text-align-right">135.8</td>
+    <td class="text-align-right">134.34</td>
+    <td class="text-align-right">135.48</td>
+    <td class="text-align-right">5151200</td>
+  </tr>
+  <tr>
+    <td>2010-09-30</td>
+    <td class="text-align-right">135.5</td>
+    <td class="text-align-right">136.11</td>
+    <td class="text-align-right">133.67</td>
+    <td class="text-align-right">134.14</td>
+    <td class="text-align-right">6425800</td>
+  </tr>
+  <tr>
+    <td>2010-10-01</td>
+    <td class="text-align-right">135.51</td>
+    <td class="text-align-right">136.28</td>
+    <td class="text-align-right">135.09</td>
+    <td class="text-align-right">135.64</td>
+    <td class="text-align-right">5606200</td>
+  </tr>
+  <tr>
+    <td>2010-10-04</td>
+    <td class="text-align-right">135.23</td>
+    <td class="text-align-right">135.92</td>
+    <td class="text-align-right">134.39</td>
+    <td class="text-align-right">135.25</td>
+    <td class="text-align-right">4059900</td>
+  </tr>
+  <tr>
+    <td>2010-10-05</td>
+    <td class="text-align-right">136.18</td>
+    <td class="text-align-right">137.9</td>
+    <td class="text-align-right">136.12</td>
+    <td class="text-align-right">137.66</td>
+    <td class="text-align-right">6181600</td>
+  </tr>
+  <tr>
+    <td>2010-10-06</td>
+    <td class="text-align-right">136.88</td>
+    <td class="text-align-right">137.96</td>
+    <td class="text-align-right">136.83</td>
+    <td class="text-align-right">137.84</td>
+    <td class="text-align-right">4783000</td>
+  </tr>
+  <tr>
+    <td>2010-10-07</td>
+    <td class="text-align-right">137.92</td>
+    <td class="text-align-right">138.88</td>
+    <td class="text-align-right">137.52</td>
+    <td class="text-align-right">138.72</td>
+    <td class="text-align-right">6418600</td>
+  </tr>
+  <tr>
+    <td>2010-10-08</td>
+    <td class="text-align-right">138.4</td>
+    <td class="text-align-right">139.09</td>
+    <td class="text-align-right">138.06</td>
+    <td class="text-align-right">138.85</td>
+    <td class="text-align-right">4540800</td>
+  </tr>
+  <tr>
+    <td>2010-10-11</td>
+    <td class="text-align-right">138.79</td>
+    <td class="text-align-right">139.94</td>
+    <td class="text-align-right">138.64</td>
+    <td class="text-align-right">139.66</td>
+    <td class="text-align-right">4004300</td>
+  </tr>
+  <tr>
+    <td>2010-10-12</td>
+    <td class="text-align-right">138.4</td>
+    <td class="text-align-right">139.99</td>
+    <td class="text-align-right">138.27</td>
+    <td class="text-align-right">139.85</td>
+    <td class="text-align-right">5637300</td>
+  </tr>
+  <tr>
+    <td>2010-10-13</td>
+    <td class="text-align-right">139.91</td>
+    <td class="text-align-right">141.48</td>
+    <td class="text-align-right">139.78</td>
+    <td class="text-align-right">140.37</td>
+    <td class="text-align-right">8784300</td>
+  </tr>
+  <tr>
+    <td>2010-10-14</td>
+    <td class="text-align-right">140.35</td>
+    <td class="text-align-right">141.5</td>
+    <td class="text-align-right">139.69</td>
+    <td class="text-align-right">141.5</td>
+    <td class="text-align-right">5653100</td>
+  </tr>
+  <tr>
+    <td>2010-10-15</td>
+    <td class="text-align-right">142.1</td>
+    <td class="text-align-right">142.1</td>
+    <td class="text-align-right">140.54</td>
+    <td class="text-align-right">141.06</td>
+    <td class="text-align-right">7220400</td>
+  </tr>
+  <tr>
+    <td>2010-10-18</td>
+    <td class="text-align-right">140.9</td>
+    <td class="text-align-right">143.03</td>
+    <td class="text-align-right">140.84</td>
+    <td class="text-align-right">142.83</td>
+    <td class="text-align-right">10322700</td>
+  </tr>
+  <tr>
+    <td>2010-10-19</td>
+    <td class="text-align-right">137.3</td>
+    <td class="text-align-right">139.34</td>
+    <td class="text-align-right">136.7</td>
+    <td class="text-align-right">138.03</td>
+    <td class="text-align-right">14159100</td>
+  </tr>
+  <tr>
+    <td>2010-10-20</td>
+    <td class="text-align-right">138.28</td>
+    <td class="text-align-right">139.87</td>
+    <td class="text-align-right">138.13</td>
+    <td class="text-align-right">139.07</td>
+    <td class="text-align-right">6945500</td>
+  </tr>
+  <tr>
+    <td>2010-10-21</td>
+    <td class="text-align-right">139.81</td>
+    <td class="text-align-right">140.49</td>
+    <td class="text-align-right">138.4</td>
+    <td class="text-align-right">139.83</td>
+    <td class="text-align-right">6221200</td>
+  </tr>
+  <tr>
+    <td>2010-10-22</td>
+    <td class="text-align-right">140.15</td>
+    <td class="text-align-right">140.75</td>
+    <td class="text-align-right">139.46</td>
+    <td class="text-align-right">139.67</td>
+    <td class="text-align-right">4105300</td>
+  </tr>
+  <tr>
+    <td>2010-10-25</td>
+    <td class="text-align-right">140.42</td>
+    <td class="text-align-right">141.4</td>
+    <td class="text-align-right">139.81</td>
+    <td class="text-align-right">139.84</td>
+    <td class="text-align-right">4870000</td>
+  </tr>
+  <tr>
+    <td>2010-10-26</td>
+    <td class="text-align-right">139.29</td>
+    <td class="text-align-right">142</td>
+    <td class="text-align-right">138.53</td>
+    <td class="text-align-right">140.67</td>
+    <td class="text-align-right">7327100</td>
+  </tr>
+  <tr>
+    <td>2010-10-27</td>
+    <td class="text-align-right">139.52</td>
+    <td class="text-align-right">141.57</td>
+    <td class="text-align-right">139</td>
+    <td class="text-align-right">141.43</td>
+    <td class="text-align-right">6465300</td>
+  </tr>
+  <tr>
+    <td>2010-10-28</td>
+    <td class="text-align-right">141.84</td>
+    <td class="text-align-right">141.95</td>
+    <td class="text-align-right">140.42</td>
+    <td class="text-align-right">140.9</td>
+    <td class="text-align-right">5481600</td>
+  </tr>
+  <tr>
+    <td>2010-10-29</td>
+    <td class="text-align-right">140.9</td>
+    <td class="text-align-right">144</td>
+    <td class="text-align-right">140.75</td>
+    <td class="text-align-right">143.6</td>
+    <td class="text-align-right">8439300</td>
+  </tr>
+  <tr>
+    <td>2010-11-01</td>
+    <td class="text-align-right">143.64</td>
+    <td class="text-align-right">144.26</td>
+    <td class="text-align-right">142.32</td>
+    <td class="text-align-right">143.32</td>
+    <td class="text-align-right">5674600</td>
+  </tr>
+  <tr>
+    <td>2010-11-02</td>
+    <td class="text-align-right">143.85</td>
+    <td class="text-align-right">144.71</td>
+    <td class="text-align-right">143.71</td>
+    <td class="text-align-right">143.84</td>
+    <td class="text-align-right">4626400</td>
+  </tr>
+  <tr>
+    <td>2010-11-03</td>
+    <td class="text-align-right">144.24</td>
+    <td class="text-align-right">144.46</td>
+    <td class="text-align-right">142.63</td>
+    <td class="text-align-right">144.17</td>
+    <td class="text-align-right">5182100</td>
+  </tr>
+  <tr>
+    <td>2010-11-04</td>
+    <td class="text-align-right">144.82</td>
+    <td class="text-align-right">146.84</td>
+    <td class="text-align-right">144.71</td>
+    <td class="text-align-right">146.79</td>
+    <td class="text-align-right">6622500</td>
+  </tr>
+  <tr>
+    <td>2010-11-05</td>
+    <td class="text-align-right">145.94</td>
+    <td class="text-align-right">146.93</td>
+    <td class="text-align-right">145.67</td>
+    <td class="text-align-right">146.92</td>
+    <td class="text-align-right">4995800</td>
+  </tr>
+  <tr>
+    <td>2010-11-08</td>
+    <td class="text-align-right">145.35</td>
+    <td class="text-align-right">146.58</td>
+    <td class="text-align-right">145.25</td>
+    <td class="text-align-right">146.46</td>
+    <td class="text-align-right">4459700</td>
+  </tr>
+  <tr>
+    <td>2010-11-09</td>
+    <td class="text-align-right">146.7</td>
+    <td class="text-align-right">147.53</td>
+    <td class="text-align-right">145.63</td>
+    <td class="text-align-right">146.14</td>
+    <td class="text-align-right">5700600</td>
+  </tr>
+  <tr>
+    <td>2010-11-10</td>
+    <td class="text-align-right">146.09</td>
+    <td class="text-align-right">146.79</td>
+    <td class="text-align-right">145.63</td>
+    <td class="text-align-right">146.55</td>
+    <td class="text-align-right">5172000</td>
+  </tr>
+  <tr>
+    <td>2010-11-11</td>
+    <td class="text-align-right">144.7</td>
+    <td class="text-align-right">145.5</td>
+    <td class="text-align-right">143.35</td>
+    <td class="text-align-right">145.43</td>
+    <td class="text-align-right">4752200</td>
+  </tr>
+  <tr>
+    <td>2010-11-12</td>
+    <td class="text-align-right">144.59</td>
+    <td class="text-align-right">145.77</td>
+    <td class="text-align-right">143.55</td>
+    <td class="text-align-right">143.74</td>
+    <td class="text-align-right">4731500</td>
+  </tr>
+  <tr>
+    <td>2010-11-15</td>
+    <td class="text-align-right">143.89</td>
+    <td class="text-align-right">144.75</td>
+    <td class="text-align-right">143.27</td>
+    <td class="text-align-right">143.64</td>
+    <td class="text-align-right">3827700</td>
+  </tr>
+  <tr>
+    <td>2010-11-16</td>
+    <td class="text-align-right">142.93</td>
+    <td class="text-align-right">143.38</td>
+    <td class="text-align-right">141.18</td>
+    <td class="text-align-right">142.24</td>
+    <td class="text-align-right">6342100</td>
+  </tr>
+  <tr>
+    <td>2010-11-17</td>
+    <td class="text-align-right">142.49</td>
+    <td class="text-align-right">142.49</td>
+    <td class="text-align-right">141.39</td>
+    <td class="text-align-right">141.95</td>
+    <td class="text-align-right">4785900</td>
+  </tr>
+  <tr>
+    <td>2010-11-18</td>
+    <td class="text-align-right">143.04</td>
+    <td class="text-align-right">144.99</td>
+    <td class="text-align-right">142.75</td>
+    <td class="text-align-right">144.36</td>
+    <td class="text-align-right">4236200</td>
+  </tr>
+  <tr>
+    <td>2010-11-19</td>
+    <td class="text-align-right">144.38</td>
+    <td class="text-align-right">145.35</td>
+    <td class="text-align-right">143.99</td>
+    <td class="text-align-right">145.05</td>
+    <td class="text-align-right">5015900</td>
+  </tr>
+  <tr>
+    <td>2010-11-22</td>
+    <td class="text-align-right">144</td>
+    <td class="text-align-right">145.43</td>
+    <td class="text-align-right">143.56</td>
+    <td class="text-align-right">145.39</td>
+    <td class="text-align-right">3693100</td>
+  </tr>
+  <tr>
+    <td>2010-11-23</td>
+    <td class="text-align-right">144.24</td>
+    <td class="text-align-right">144.53</td>
+    <td class="text-align-right">142.33</td>
+    <td class="text-align-right">143.18</td>
+    <td class="text-align-right">4570300</td>
+  </tr>
+  <tr>
+    <td>2010-11-24</td>
+    <td class="text-align-right">143.95</td>
+    <td class="text-align-right">146.44</td>
+    <td class="text-align-right">143.82</td>
+    <td class="text-align-right">145.81</td>
+    <td class="text-align-right">4874100</td>
+  </tr>
+  <tr>
+    <td>2010-11-26</td>
+    <td class="text-align-right">145.3</td>
+    <td class="text-align-right">145.3</td>
+    <td class="text-align-right">143.57</td>
+    <td class="text-align-right">143.9</td>
+    <td class="text-align-right">2081300</td>
+  </tr>
+  <tr>
+    <td>2010-11-29</td>
+    <td class="text-align-right">143.53</td>
+    <td class="text-align-right">143.67</td>
+    <td class="text-align-right">141.5</td>
+    <td class="text-align-right">142.89</td>
+    <td class="text-align-right">5040300</td>
+  </tr>
+  <tr>
+    <td>2010-11-30</td>
+    <td class="text-align-right">142.24</td>
+    <td class="text-align-right">142.76</td>
+    <td class="text-align-right">141.28</td>
+    <td class="text-align-right">141.46</td>
+    <td class="text-align-right">7674800</td>
+  </tr>
+  <tr>
+    <td>2010-12-01</td>
+    <td class="text-align-right">143.61</td>
+    <td class="text-align-right">145.13</td>
+    <td class="text-align-right">143.51</td>
+    <td class="text-align-right">144.41</td>
+    <td class="text-align-right">6822800</td>
+  </tr>
+  <tr>
+    <td>2010-12-02</td>
+    <td class="text-align-right">144.33</td>
+    <td class="text-align-right">145.85</td>
+    <td class="text-align-right">144.3</td>
+    <td class="text-align-right">145.18</td>
+    <td class="text-align-right">5374000</td>
+  </tr>
+  <tr>
+    <td>2010-12-03</td>
+    <td class="text-align-right">144.25</td>
+    <td class="text-align-right">145.68</td>
+    <td class="text-align-right">144.25</td>
+    <td class="text-align-right">145.38</td>
+    <td class="text-align-right">3710600</td>
+  </tr>
+  <tr>
+    <td>2010-12-06</td>
+    <td class="text-align-right">144.54</td>
+    <td class="text-align-right">145.87</td>
+    <td class="text-align-right">144.52</td>
+    <td class="text-align-right">144.99</td>
+    <td class="text-align-right">3321800</td>
+  </tr>
+  <tr>
+    <td>2010-12-07</td>
+    <td class="text-align-right">146.02</td>
+    <td class="text-align-right">146.3</td>
+    <td class="text-align-right">143.87</td>
+    <td class="text-align-right">144.02</td>
+    <td class="text-align-right">4828600</td>
+  </tr>
+  <tr>
+    <td>2010-12-08</td>
+    <td class="text-align-right">144.35</td>
+    <td class="text-align-right">145.65</td>
+    <td class="text-align-right">143.84</td>
+    <td class="text-align-right">144.98</td>
+    <td class="text-align-right">4961400</td>
+  </tr>
+  <tr>
+    <td>2010-12-09</td>
+    <td class="text-align-right">145.94</td>
+    <td class="text-align-right">145.94</td>
+    <td class="text-align-right">143.52</td>
+    <td class="text-align-right">144.3</td>
+    <td class="text-align-right">4405300</td>
+  </tr>
+  <tr>
+    <td>2010-12-10</td>
+    <td class="text-align-right">144.88</td>
+    <td class="text-align-right">144.95</td>
+    <td class="text-align-right">143.73</td>
+    <td class="text-align-right">144.82</td>
+    <td class="text-align-right">3503800</td>
+  </tr>
+  <tr>
+    <td>2010-12-13</td>
+    <td class="text-align-right">145.14</td>
+    <td class="text-align-right">145.4</td>
+    <td class="text-align-right">144.21</td>
+    <td class="text-align-right">144.28</td>
+    <td class="text-align-right">4741000</td>
+  </tr>
+  <tr>
+    <td>2010-12-14</td>
+    <td class="text-align-right">144.26</td>
+    <td class="text-align-right">146.01</td>
+    <td class="text-align-right">144.26</td>
+    <td class="text-align-right">145.82</td>
+    <td class="text-align-right">4800800</td>
+  </tr>
+  <tr>
+    <td>2010-12-15</td>
+    <td class="text-align-right">145.13</td>
+    <td class="text-align-right">145.72</td>
+    <td class="text-align-right">144.31</td>
+    <td class="text-align-right">144.72</td>
+    <td class="text-align-right">4433600</td>
+  </tr>
+  <tr>
+    <td>2010-12-16</td>
+    <td class="text-align-right">144.84</td>
+    <td class="text-align-right">145.32</td>
+    <td class="text-align-right">144.15</td>
+    <td class="text-align-right">144.55</td>
+    <td class="text-align-right">4178600</td>
+  </tr>
+  <tr>
+    <td>2010-12-17</td>
+    <td class="text-align-right">144.69</td>
+    <td class="text-align-right">145.5</td>
+    <td class="text-align-right">144.4</td>
+    <td class="text-align-right">145</td>
+    <td class="text-align-right">10010600</td>
+  </tr>
+  <tr>
+    <td>2010-12-20</td>
+    <td class="text-align-right">145.39</td>
+    <td class="text-align-right">145.54</td>
+    <td class="text-align-right">144.39</td>
+    <td class="text-align-right">144.51</td>
+    <td class="text-align-right">3980400</td>
+  </tr>
+  <tr>
+    <td>2010-12-21</td>
+    <td class="text-align-right">144.99</td>
+    <td class="text-align-right">145.99</td>
+    <td class="text-align-right">144.33</td>
+    <td class="text-align-right">145.74</td>
+    <td class="text-align-right">3777100</td>
+  </tr>
+  <tr>
+    <td>2010-12-22</td>
+    <td class="text-align-right">145.66</td>
+    <td class="text-align-right">146.4</td>
+    <td class="text-align-right">145.58</td>
+    <td class="text-align-right">145.95</td>
+    <td class="text-align-right">3388800</td>
+  </tr>
+  <tr>
+    <td>2010-12-23</td>
+    <td class="text-align-right">145.89</td>
+    <td class="text-align-right">146.33</td>
+    <td class="text-align-right">145.33</td>
+    <td class="text-align-right">145.89</td>
+    <td class="text-align-right">2424500</td>
+  </tr>
+  <tr>
+    <td>2010-12-27</td>
+    <td class="text-align-right">145.12</td>
+    <td class="text-align-right">145.7</td>
+    <td class="text-align-right">145</td>
+    <td class="text-align-right">145.34</td>
+    <td class="text-align-right">2314700</td>
+  </tr>
+  <tr>
+    <td>2010-12-28</td>
+    <td class="text-align-right">145.31</td>
+    <td class="text-align-right">146.15</td>
+    <td class="text-align-right">145.06</td>
+    <td class="text-align-right">145.71</td>
+    <td class="text-align-right">2699600</td>
+  </tr>
+  <tr>
+    <td>2010-12-29</td>
+    <td class="text-align-right">146</td>
+    <td class="text-align-right">147.5</td>
+    <td class="text-align-right">145.71</td>
+    <td class="text-align-right">146.52</td>
+    <td class="text-align-right">3661100</td>
+  </tr>
+  <tr>
+    <td>2010-12-30</td>
+    <td class="text-align-right">146.36</td>
+    <td class="text-align-right">147.11</td>
+    <td class="text-align-right">146.25</td>
+    <td class="text-align-right">146.67</td>
+    <td class="text-align-right">3039100</td>
+  </tr>
+  <tr>
+    <td>2010-12-31</td>
+    <td class="text-align-right">146.73</td>
+    <td class="text-align-right">147.07</td>
+    <td class="text-align-right">145.96</td>
+    <td class="text-align-right">146.76</td>
+    <td class="text-align-right">2969800</td>
+  </tr>
+  <tr>
+    <td>2011-01-03</td>
+    <td class="text-align-right">147.21</td>
+    <td class="text-align-right">148.2</td>
+    <td class="text-align-right">147.14</td>
+    <td class="text-align-right">147.48</td>
+    <td class="text-align-right">4603800</td>
+  </tr>
+  <tr>
+    <td>2011-01-04</td>
+    <td class="text-align-right">147.56</td>
+    <td class="text-align-right">148.22</td>
+    <td class="text-align-right">146.64</td>
+    <td class="text-align-right">147.64</td>
+    <td class="text-align-right">5060100</td>
+  </tr>
+  <tr>
+    <td>2011-01-05</td>
+    <td class="text-align-right">147.34</td>
+    <td class="text-align-right">147.48</td>
+    <td class="text-align-right">146.73</td>
+    <td class="text-align-right">147.05</td>
+    <td class="text-align-right">4657400</td>
+  </tr>
+  <tr>
+    <td>2011-01-06</td>
+    <td class="text-align-right">147.13</td>
+    <td class="text-align-right">148.79</td>
+    <td class="text-align-right">146.82</td>
+    <td class="text-align-right">148.66</td>
+    <td class="text-align-right">5029200</td>
+  </tr>
+  <tr>
+    <td>2011-01-07</td>
+    <td class="text-align-right">148.79</td>
+    <td class="text-align-right">148.86</td>
+    <td class="text-align-right">146.94</td>
+    <td class="text-align-right">147.93</td>
+    <td class="text-align-right">4135700</td>
+  </tr>
+  <tr>
+    <td>2011-01-10</td>
+    <td class="text-align-right">147.58</td>
+    <td class="text-align-right">148.06</td>
+    <td class="text-align-right">147.23</td>
+    <td class="text-align-right">147.64</td>
+    <td class="text-align-right">3633400</td>
+  </tr>
+  <tr>
+    <td>2011-01-11</td>
+    <td class="text-align-right">148.2</td>
+    <td class="text-align-right">148.35</td>
+    <td class="text-align-right">146.75</td>
+    <td class="text-align-right">147.28</td>
+    <td class="text-align-right">4163600</td>
+  </tr>
+  <tr>
+    <td>2011-01-12</td>
+    <td class="text-align-right">147.99</td>
+    <td class="text-align-right">149.29</td>
+    <td class="text-align-right">147.67</td>
+    <td class="text-align-right">149.1</td>
+    <td class="text-align-right">3998600</td>
+  </tr>
+  <tr>
+    <td>2011-01-13</td>
+    <td class="text-align-right">149.24</td>
+    <td class="text-align-right">149.29</td>
+    <td class="text-align-right">148.25</td>
+    <td class="text-align-right">148.82</td>
+    <td class="text-align-right">3445800</td>
+  </tr>
+  <tr>
+    <td>2011-01-14</td>
+    <td class="text-align-right">148.89</td>
+    <td class="text-align-right">150</td>
+    <td class="text-align-right">148.47</td>
+    <td class="text-align-right">150</td>
+    <td class="text-align-right">4544200</td>
+  </tr>
+  <tr>
+    <td>2011-01-18</td>
+    <td class="text-align-right">149.82</td>
+    <td class="text-align-right">151.46</td>
+    <td class="text-align-right">149.38</td>
+    <td class="text-align-right">150.65</td>
+    <td class="text-align-right">9165700</td>
+  </tr>
+  <tr>
+    <td>2011-01-19</td>
+    <td class="text-align-right">153.26</td>
+    <td class="text-align-right">156.13</td>
+    <td class="text-align-right">152.83</td>
+    <td class="text-align-right">155.69</td>
+    <td class="text-align-right">12141000</td>
+  </tr>
+  <tr>
+    <td>2011-01-20</td>
+    <td class="text-align-right">154.53</td>
+    <td class="text-align-right">155.96</td>
+    <td class="text-align-right">154.45</td>
+    <td class="text-align-right">155.8</td>
+    <td class="text-align-right">7439900</td>
+  </tr>
+  <tr>
+    <td>2011-01-21</td>
+    <td class="text-align-right">156.4</td>
+    <td class="text-align-right">156.78</td>
+    <td class="text-align-right">154.96</td>
+    <td class="text-align-right">155.5</td>
+    <td class="text-align-right">7009000</td>
+  </tr>
+  <tr>
+    <td>2011-01-24</td>
+    <td class="text-align-right">155.42</td>
+    <td class="text-align-right">159.79</td>
+    <td class="text-align-right">155.33</td>
+    <td class="text-align-right">159.63</td>
+    <td class="text-align-right">7285100</td>
+  </tr>
+  <tr>
+    <td>2011-01-25</td>
+    <td class="text-align-right">159.21</td>
+    <td class="text-align-right">164.35</td>
+    <td class="text-align-right">159</td>
+    <td class="text-align-right">161.44</td>
+    <td class="text-align-right">8260800</td>
+  </tr>
+  <tr>
+    <td>2011-01-26</td>
+    <td class="text-align-right">161.67</td>
+    <td class="text-align-right">161.9</td>
+    <td class="text-align-right">160.42</td>
+    <td class="text-align-right">161.04</td>
+    <td class="text-align-right">5353100</td>
+  </tr>
+  <tr>
+    <td>2011-01-27</td>
+    <td class="text-align-right">161.43</td>
+    <td class="text-align-right">162.18</td>
+    <td class="text-align-right">160.86</td>
+    <td class="text-align-right">161.07</td>
+    <td class="text-align-right">4878300</td>
+  </tr>
+  <tr>
+    <td>2011-01-28</td>
+    <td class="text-align-right">161.05</td>
+    <td class="text-align-right">161.92</td>
+    <td class="text-align-right">158.67</td>
+    <td class="text-align-right">159.21</td>
+    <td class="text-align-right">6725600</td>
+  </tr>
+  <tr>
+    <td>2011-01-31</td>
+    <td class="text-align-right">159.18</td>
+    <td class="text-align-right">162</td>
+    <td class="text-align-right">158.68</td>
+    <td class="text-align-right">162</td>
+    <td class="text-align-right">7194800</td>
+  </tr>
+  <tr>
+    <td>2011-02-01</td>
+    <td class="text-align-right">162.11</td>
+    <td class="text-align-right">163.94</td>
+    <td class="text-align-right">162</td>
+    <td class="text-align-right">163.56</td>
+    <td class="text-align-right">5831300</td>
+  </tr>
+  <tr>
+    <td>2011-02-02</td>
+    <td class="text-align-right">163.4</td>
+    <td class="text-align-right">163.6</td>
+    <td class="text-align-right">162.61</td>
+    <td class="text-align-right">163.3</td>
+    <td class="text-align-right">3904000</td>
+  </tr>
+  <tr>
+    <td>2011-02-03</td>
+    <td class="text-align-right">163.16</td>
+    <td class="text-align-right">164.2</td>
+    <td class="text-align-right">162.81</td>
+    <td class="text-align-right">163.53</td>
+    <td class="text-align-right">4683400</td>
+  </tr>
+  <tr>
+    <td>2011-02-04</td>
+    <td class="text-align-right">163.48</td>
+    <td class="text-align-right">164.14</td>
+    <td class="text-align-right">163.22</td>
+    <td class="text-align-right">164</td>
+    <td class="text-align-right">3755200</td>
+  </tr>
+  <tr>
+    <td>2011-02-07</td>
+    <td class="text-align-right">164.08</td>
+    <td class="text-align-right">164.99</td>
+    <td class="text-align-right">164.02</td>
+    <td class="text-align-right">164.82</td>
+    <td class="text-align-right">4928100</td>
+  </tr>
+  <tr>
+    <td>2011-02-08</td>
+    <td class="text-align-right">164.82</td>
+    <td class="text-align-right">166.25</td>
+    <td class="text-align-right">164.32</td>
+    <td class="text-align-right">166.05</td>
+    <td class="text-align-right">5612600</td>
+  </tr>
+  <tr>
+    <td>2011-02-09</td>
+    <td class="text-align-right">165.62</td>
+    <td class="text-align-right">165.97</td>
+    <td class="text-align-right">164.1</td>
+    <td class="text-align-right">164.65</td>
+    <td class="text-align-right">4633600</td>
+  </tr>
+  <tr>
+    <td>2011-02-10</td>
+    <td class="text-align-right">163.9</td>
+    <td class="text-align-right">165</td>
+    <td class="text-align-right">163.18</td>
+    <td class="text-align-right">164.09</td>
+    <td class="text-align-right">5737800</td>
+  </tr>
+  <tr>
+    <td>2011-02-11</td>
+    <td class="text-align-right">163.98</td>
+    <td class="text-align-right">165.01</td>
+    <td class="text-align-right">163.31</td>
+    <td class="text-align-right">163.85</td>
+    <td class="text-align-right">5185200</td>
+  </tr>
+  <tr>
+    <td>2011-02-14</td>
+    <td class="text-align-right">164.18</td>
+    <td class="text-align-right">164.38</td>
+    <td class="text-align-right">162.85</td>
+    <td class="text-align-right">163.22</td>
+    <td class="text-align-right">4129800</td>
+  </tr>
+  <tr>
+    <td>2011-02-15</td>
+    <td class="text-align-right">162.89</td>
+    <td class="text-align-right">163.57</td>
+    <td class="text-align-right">162.52</td>
+    <td class="text-align-right">162.84</td>
+    <td class="text-align-right">3768700</td>
+  </tr>
+  <tr>
+    <td>2011-02-16</td>
+    <td class="text-align-right">163.33</td>
+    <td class="text-align-right">163.6</td>
+    <td class="text-align-right">162.75</td>
+    <td class="text-align-right">163.4</td>
+    <td class="text-align-right">3216000</td>
+  </tr>
+  <tr>
+    <td>2011-02-17</td>
+    <td class="text-align-right">163.3</td>
+    <td class="text-align-right">164.67</td>
+    <td class="text-align-right">162.85</td>
+    <td class="text-align-right">164.24</td>
+    <td class="text-align-right">3230500</td>
+  </tr>
+  <tr>
+    <td>2011-02-18</td>
+    <td class="text-align-right">164.46</td>
+    <td class="text-align-right">164.84</td>
+    <td class="text-align-right">164.1</td>
+    <td class="text-align-right">164.84</td>
+    <td class="text-align-right">4245000</td>
+  </tr>
+  <tr>
+    <td>2011-02-22</td>
+    <td class="text-align-right">163.57</td>
+    <td class="text-align-right">164.26</td>
+    <td class="text-align-right">161.78</td>
+    <td class="text-align-right">161.95</td>
+    <td class="text-align-right">5209300</td>
+  </tr>
+  <tr>
+    <td>2011-02-23</td>
+    <td class="text-align-right">161.81</td>
+    <td class="text-align-right">162.68</td>
+    <td class="text-align-right">160.14</td>
+    <td class="text-align-right">160.18</td>
+    <td class="text-align-right">5998100</td>
+  </tr>
+  <tr>
+    <td>2011-02-24</td>
+    <td class="text-align-right">159.63</td>
+    <td class="text-align-right">161.27</td>
+    <td class="text-align-right">159.03</td>
+    <td class="text-align-right">160.77</td>
+    <td class="text-align-right">5707500</td>
+  </tr>
+  <tr>
+    <td>2011-02-25</td>
+    <td class="text-align-right">161.06</td>
+    <td class="text-align-right">162.34</td>
+    <td class="text-align-right">160.86</td>
+    <td class="text-align-right">162.28</td>
+    <td class="text-align-right">4518400</td>
+  </tr>
+  <tr>
+    <td>2011-02-28</td>
+    <td class="text-align-right">162.36</td>
+    <td class="text-align-right">162.99</td>
+    <td class="text-align-right">161.24</td>
+    <td class="text-align-right">161.88</td>
+    <td class="text-align-right">4773000</td>
+  </tr>
+  <tr>
+    <td>2011-03-01</td>
+    <td class="text-align-right">163.15</td>
+    <td class="text-align-right">163.15</td>
+    <td class="text-align-right">159.88</td>
+    <td class="text-align-right">159.97</td>
+    <td class="text-align-right">4382800</td>
+  </tr>
+  <tr>
+    <td>2011-03-02</td>
+    <td class="text-align-right">159.43</td>
+    <td class="text-align-right">161.11</td>
+    <td class="text-align-right">159.41</td>
+    <td class="text-align-right">160.16</td>
+    <td class="text-align-right">3413000</td>
+  </tr>
+  <tr>
+    <td>2011-03-03</td>
+    <td class="text-align-right">161.42</td>
+    <td class="text-align-right">164</td>
+    <td class="text-align-right">161.27</td>
+    <td class="text-align-right">163.48</td>
+    <td class="text-align-right">4057800</td>
+  </tr>
+  <tr>
+    <td>2011-03-04</td>
+    <td class="text-align-right">163.4</td>
+    <td class="text-align-right">164.31</td>
+    <td class="text-align-right">160.65</td>
+    <td class="text-align-right">161.83</td>
+    <td class="text-align-right">4910700</td>
+  </tr>
+  <tr>
+    <td>2011-03-07</td>
+    <td class="text-align-right">161.6</td>
+    <td class="text-align-right">162.98</td>
+    <td class="text-align-right">158.85</td>
+    <td class="text-align-right">159.93</td>
+    <td class="text-align-right">5312000</td>
+  </tr>
+  <tr>
+    <td>2011-03-08</td>
+    <td class="text-align-right">159.7</td>
+    <td class="text-align-right">163.43</td>
+    <td class="text-align-right">159.21</td>
+    <td class="text-align-right">162.28</td>
+    <td class="text-align-right">5384800</td>
+  </tr>
+  <tr>
+    <td>2011-03-09</td>
+    <td class="text-align-right">163.47</td>
+    <td class="text-align-right">167.72</td>
+    <td class="text-align-right">163.28</td>
+    <td class="text-align-right">165.86</td>
+    <td class="text-align-right">9086600</td>
+  </tr>
+  <tr>
+    <td>2011-03-10</td>
+    <td class="text-align-right">164.64</td>
+    <td class="text-align-right">164.67</td>
+    <td class="text-align-right">161.38</td>
+    <td class="text-align-right">162.02</td>
+    <td class="text-align-right">7041400</td>
+  </tr>
+  <tr>
+    <td>2011-03-11</td>
+    <td class="text-align-right">162.4</td>
+    <td class="text-align-right">163.24</td>
+    <td class="text-align-right">160.84</td>
+    <td class="text-align-right">162.43</td>
+    <td class="text-align-right">4271000</td>
+  </tr>
+  <tr>
+    <td>2011-03-14</td>
+    <td class="text-align-right">161.16</td>
+    <td class="text-align-right">161.98</td>
+    <td class="text-align-right">160.09</td>
+    <td class="text-align-right">161.39</td>
+    <td class="text-align-right">4300500</td>
+  </tr>
+  <tr>
+    <td>2011-03-15</td>
+    <td class="text-align-right">157.35</td>
+    <td class="text-align-right">159.64</td>
+    <td class="text-align-right">156.88</td>
+    <td class="text-align-right">159.02</td>
+    <td class="text-align-right">6475800</td>
+  </tr>
+  <tr>
+    <td>2011-03-16</td>
+    <td class="text-align-right">156.52</td>
+    <td class="text-align-right">156.98</td>
+    <td class="text-align-right">151.71</td>
+    <td class="text-align-right">153</td>
+    <td class="text-align-right">12195300</td>
+  </tr>
+  <tr>
+    <td>2011-03-17</td>
+    <td class="text-align-right">154</td>
+    <td class="text-align-right">154.5</td>
+    <td class="text-align-right">152.7</td>
+    <td class="text-align-right">154.18</td>
+    <td class="text-align-right">7376400</td>
+  </tr>
+  <tr>
+    <td>2011-03-18</td>
+    <td class="text-align-right">156.5</td>
+    <td class="text-align-right">156.95</td>
+    <td class="text-align-right">154.32</td>
+    <td class="text-align-right">155.89</td>
+    <td class="text-align-right">11434200</td>
+  </tr>
+  <tr>
+    <td>2011-03-21</td>
+    <td class="text-align-right">157.64</td>
+    <td class="text-align-right">159.63</td>
+    <td class="text-align-right">157.07</td>
+    <td class="text-align-right">157.68</td>
+    <td class="text-align-right">5784000</td>
+  </tr>
+  <tr>
+    <td>2011-03-22</td>
+    <td class="text-align-right">158.56</td>
+    <td class="text-align-right">158.61</td>
+    <td class="text-align-right">157.52</td>
+    <td class="text-align-right">158</td>
+    <td class="text-align-right">4311400</td>
+  </tr>
+  <tr>
+    <td>2011-03-23</td>
+    <td class="text-align-right">158</td>
+    <td class="text-align-right">160.08</td>
+    <td class="text-align-right">157.53</td>
+    <td class="text-align-right">159.53</td>
+    <td class="text-align-right">4782500</td>
+  </tr>
+  <tr>
+    <td>2011-03-24</td>
+    <td class="text-align-right">160.23</td>
+    <td class="text-align-right">160.71</td>
+    <td class="text-align-right">158.84</td>
+    <td class="text-align-right">160.04</td>
+    <td class="text-align-right">5145800</td>
+  </tr>
+  <tr>
+    <td>2011-03-25</td>
+    <td class="text-align-right">160.98</td>
+    <td class="text-align-right">162.74</td>
+    <td class="text-align-right">160.76</td>
+    <td class="text-align-right">162.18</td>
+    <td class="text-align-right">5348100</td>
+  </tr>
+  <tr>
+    <td>2011-03-28</td>
+    <td class="text-align-right">161.54</td>
+    <td class="text-align-right">162.58</td>
+    <td class="text-align-right">161.12</td>
+    <td class="text-align-right">161.37</td>
+    <td class="text-align-right">3972800</td>
+  </tr>
+  <tr>
+    <td>2011-03-29</td>
+    <td class="text-align-right">161.34</td>
+    <td class="text-align-right">163.09</td>
+    <td class="text-align-right">161.15</td>
+    <td class="text-align-right">162.88</td>
+    <td class="text-align-right">3456700</td>
+  </tr>
+  <tr>
+    <td>2011-03-30</td>
+    <td class="text-align-right">163.55</td>
+    <td class="text-align-right">163.99</td>
+    <td class="text-align-right">163.02</td>
+    <td class="text-align-right">163.6</td>
+    <td class="text-align-right">3394100</td>
+  </tr>
+  <tr>
+    <td>2011-03-31</td>
+    <td class="text-align-right">163.4</td>
+    <td class="text-align-right">164.06</td>
+    <td class="text-align-right">163.07</td>
+    <td class="text-align-right">163.07</td>
+    <td class="text-align-right">3860800</td>
+  </tr>
+  <tr>
+    <td>2011-04-01</td>
+    <td class="text-align-right">163.7</td>
+    <td class="text-align-right">164.42</td>
+    <td class="text-align-right">163.04</td>
+    <td class="text-align-right">164.27</td>
+    <td class="text-align-right">4381900</td>
+  </tr>
+  <tr>
+    <td>2011-04-04</td>
+    <td class="text-align-right">164.42</td>
+    <td class="text-align-right">164.73</td>
+    <td class="text-align-right">163.58</td>
+    <td class="text-align-right">164.25</td>
+    <td class="text-align-right">3225100</td>
+  </tr>
+  <tr>
+    <td>2011-04-05</td>
+    <td class="text-align-right">163.81</td>
+    <td class="text-align-right">164.7</td>
+    <td class="text-align-right">163.62</td>
+    <td class="text-align-right">163.99</td>
+    <td class="text-align-right">3612000</td>
+  </tr>
+  <tr>
+    <td>2011-04-06</td>
+    <td class="text-align-right">164.34</td>
+    <td class="text-align-right">164.75</td>
+    <td class="text-align-right">163.81</td>
+    <td class="text-align-right">164.04</td>
+    <td class="text-align-right">3774800</td>
+  </tr>
+  <tr>
+    <td>2011-04-07</td>
+    <td class="text-align-right">164.1</td>
+    <td class="text-align-right">164.55</td>
+    <td class="text-align-right">163.28</td>
+    <td class="text-align-right">164.38</td>
+    <td class="text-align-right">3666700</td>
+  </tr>
+  <tr>
+    <td>2011-04-08</td>
+    <td class="text-align-right">164.35</td>
+    <td class="text-align-right">164.38</td>
+    <td class="text-align-right">163.16</td>
+    <td class="text-align-right">164.05</td>
+    <td class="text-align-right">3324100</td>
+  </tr>
+  <tr>
+    <td>2011-04-11</td>
+    <td class="text-align-right">163.44</td>
+    <td class="text-align-right">164</td>
+    <td class="text-align-right">163.11</td>
+    <td class="text-align-right">163.95</td>
+    <td class="text-align-right">4139000</td>
+  </tr>
+  <tr>
+    <td>2011-04-12</td>
+    <td class="text-align-right">163.36</td>
+    <td class="text-align-right">163.77</td>
+    <td class="text-align-right">162.3</td>
+    <td class="text-align-right">163.25</td>
+    <td class="text-align-right">3860600</td>
+  </tr>
+  <tr>
+    <td>2011-04-13</td>
+    <td class="text-align-right">163.97</td>
+    <td class="text-align-right">164.93</td>
+    <td class="text-align-right">163.66</td>
+    <td class="text-align-right">163.95</td>
+    <td class="text-align-right">4181900</td>
+  </tr>
+  <tr>
+    <td>2011-04-14</td>
+    <td class="text-align-right">163.84</td>
+    <td class="text-align-right">165.36</td>
+    <td class="text-align-right">163.16</td>
+    <td class="text-align-right">164.97</td>
+    <td class="text-align-right">4699100</td>
+  </tr>
+  <tr>
+    <td>2011-04-15</td>
+    <td class="text-align-right">165</td>
+    <td class="text-align-right">166.34</td>
+    <td class="text-align-right">164.87</td>
+    <td class="text-align-right">166.21</td>
+    <td class="text-align-right">5287400</td>
+  </tr>
+  <tr>
+    <td>2011-04-18</td>
+    <td class="text-align-right">164.64</td>
+    <td class="text-align-right">166.16</td>
+    <td class="text-align-right">162.86</td>
+    <td class="text-align-right">165.94</td>
+    <td class="text-align-right">6160700</td>
+  </tr>
+  <tr>
+    <td>2011-04-19</td>
+    <td class="text-align-right">165.71</td>
+    <td class="text-align-right">166.38</td>
+    <td class="text-align-right">164.44</td>
+    <td class="text-align-right">165.4</td>
+    <td class="text-align-right">6547100</td>
+  </tr>
+  <tr>
+    <td>2011-04-20</td>
+    <td class="text-align-right">163.1</td>
+    <td class="text-align-right">165.89</td>
+    <td class="text-align-right">162.19</td>
+    <td class="text-align-right">164.75</td>
+    <td class="text-align-right">10891800</td>
+  </tr>
+  <tr>
+    <td>2011-04-21</td>
+    <td class="text-align-right">165.63</td>
+    <td class="text-align-right">168.45</td>
+    <td class="text-align-right">164.86</td>
+    <td class="text-align-right">168.28</td>
+    <td class="text-align-right">6158400</td>
+  </tr>
+  <tr>
+    <td>2011-04-25</td>
+    <td class="text-align-right">167.65</td>
+    <td class="text-align-right">168.77</td>
+    <td class="text-align-right">167.23</td>
+    <td class="text-align-right">167.67</td>
+    <td class="text-align-right">3583800</td>
+  </tr>
+  <tr>
+    <td>2011-04-26</td>
+    <td class="text-align-right">167.99</td>
+    <td class="text-align-right">169.2</td>
+    <td class="text-align-right">167.4</td>
+    <td class="text-align-right">168.49</td>
+    <td class="text-align-right">7265600</td>
+  </tr>
+  <tr>
+    <td>2011-04-27</td>
+    <td class="text-align-right">168.61</td>
+    <td class="text-align-right">170.59</td>
+    <td class="text-align-right">168.46</td>
+    <td class="text-align-right">170.37</td>
+    <td class="text-align-right">5299700</td>
+  </tr>
+  <tr>
+    <td>2011-04-28</td>
+    <td class="text-align-right">169.99</td>
+    <td class="text-align-right">171.38</td>
+    <td class="text-align-right">169.7</td>
+    <td class="text-align-right">170.78</td>
+    <td class="text-align-right">5087700</td>
+  </tr>
+  <tr>
+    <td>2011-04-29</td>
+    <td class="text-align-right">171.1</td>
+    <td class="text-align-right">173</td>
+    <td class="text-align-right">170.48</td>
+    <td class="text-align-right">170.58</td>
+    <td class="text-align-right">5600000</td>
+  </tr>
+  <tr>
+    <td>2011-05-02</td>
+    <td class="text-align-right">172.11</td>
+    <td class="text-align-right">173.54</td>
+    <td class="text-align-right">171.49</td>
+    <td class="text-align-right">172.15</td>
+    <td class="text-align-right">5396200</td>
+  </tr>
+  <tr>
+    <td>2011-05-03</td>
+    <td class="text-align-right">172</td>
+    <td class="text-align-right">173.48</td>
+    <td class="text-align-right">171.23</td>
+    <td class="text-align-right">172.87</td>
+    <td class="text-align-right">5007700</td>
+  </tr>
+  <tr>
+    <td>2011-05-04</td>
+    <td class="text-align-right">172.36</td>
+    <td class="text-align-right">172.62</td>
+    <td class="text-align-right">169.59</td>
+    <td class="text-align-right">170.62</td>
+    <td class="text-align-right">6890300</td>
+  </tr>
+  <tr>
+    <td>2011-05-05</td>
+    <td class="text-align-right">170.47</td>
+    <td class="text-align-right">170.87</td>
+    <td class="text-align-right">167.5</td>
+    <td class="text-align-right">168.46</td>
+    <td class="text-align-right">7332000</td>
+  </tr>
+  <tr>
+    <td>2011-05-06</td>
+    <td class="text-align-right">169.03</td>
+    <td class="text-align-right">170.15</td>
+    <td class="text-align-right">168.24</td>
+    <td class="text-align-right">168.89</td>
+    <td class="text-align-right">4839400</td>
+  </tr>
+  <tr>
+    <td>2011-05-09</td>
+    <td class="text-align-right">168.39</td>
+    <td class="text-align-right">169.85</td>
+    <td class="text-align-right">168.31</td>
+    <td class="text-align-right">169.1</td>
+    <td class="text-align-right">3594800</td>
+  </tr>
+  <tr>
+    <td>2011-05-10</td>
+    <td class="text-align-right">169.25</td>
+    <td class="text-align-right">170.9</td>
+    <td class="text-align-right">169.22</td>
+    <td class="text-align-right">170.38</td>
+    <td class="text-align-right">4934800</td>
+  </tr>
+  <tr>
+    <td>2011-05-11</td>
+    <td class="text-align-right">170.3</td>
+    <td class="text-align-right">170.52</td>
+    <td class="text-align-right">167.82</td>
+    <td class="text-align-right">169.5</td>
+    <td class="text-align-right">4663200</td>
+  </tr>
+  <tr>
+    <td>2011-05-12</td>
+    <td class="text-align-right">169.65</td>
+    <td class="text-align-right">172.77</td>
+    <td class="text-align-right">168.65</td>
+    <td class="text-align-right">172.24</td>
+    <td class="text-align-right">5100000</td>
+  </tr>
+  <tr>
+    <td>2011-05-13</td>
+    <td class="text-align-right">171.7</td>
+    <td class="text-align-right">172.15</td>
+    <td class="text-align-right">169.44</td>
+    <td class="text-align-right">169.92</td>
+    <td class="text-align-right">5167400</td>
+  </tr>
+  <tr>
+    <td>2011-05-16</td>
+    <td class="text-align-right">169.81</td>
+    <td class="text-align-right">170.64</td>
+    <td class="text-align-right">168.31</td>
+    <td class="text-align-right">168.86</td>
+    <td class="text-align-right">4662200</td>
+  </tr>
+  <tr>
+    <td>2011-05-17</td>
+    <td class="text-align-right">167.85</td>
+    <td class="text-align-right">171.41</td>
+    <td class="text-align-right">166.53</td>
+    <td class="text-align-right">170.5</td>
+    <td class="text-align-right">8773200</td>
+  </tr>
+  <tr>
+    <td>2011-05-18</td>
+    <td class="text-align-right">170.1</td>
+    <td class="text-align-right">171.19</td>
+    <td class="text-align-right">169.46</td>
+    <td class="text-align-right">170.44</td>
+    <td class="text-align-right">4154300</td>
+  </tr>
+  <tr>
+    <td>2011-05-19</td>
+    <td class="text-align-right">170.86</td>
+    <td class="text-align-right">171.4</td>
+    <td class="text-align-right">169.32</td>
+    <td class="text-align-right">170.59</td>
+    <td class="text-align-right">3588000</td>
+  </tr>
+  <tr>
+    <td>2011-05-20</td>
+    <td class="text-align-right">170.4</td>
+    <td class="text-align-right">171.15</td>
+    <td class="text-align-right">169.38</td>
+    <td class="text-align-right">170.16</td>
+    <td class="text-align-right">4869900</td>
+  </tr>
+  <tr>
+    <td>2011-05-23</td>
+    <td class="text-align-right">168.58</td>
+    <td class="text-align-right">168.69</td>
+    <td class="text-align-right">167.07</td>
+    <td class="text-align-right">168.26</td>
+    <td class="text-align-right">5144000</td>
+  </tr>
+</tbody></span>

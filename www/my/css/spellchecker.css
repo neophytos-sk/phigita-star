@@ -1,0 +1,52 @@
+.webfx-spellchecker-menu {
+	border: 1px solid;
+	border-color: threedlightshadow threeddarkshadow threeddarkshadow threedlightshadow;
+	position: absolute;
+}
+
+.webfx-spellchecker-menu .inner {
+	border: 1px solid;
+	border-color: threedhighlight threedshadow threedshadow threedhighlight;
+	background: threedface;
+	padding: 2px;
+}
+
+.webfx-spellchecker-menu a {
+	display: block;
+	font: menu;
+	color: menutext;
+	padding: 1px 5ex 1px 3ex;
+	text-decoration: none;
+}
+
+.webfx-spellchecker-menu a:hover {
+	background: highlight;
+	color: highlighttext;
+}
+
+.webfx-spellchecker-menu .separator {
+	border-top: 1px solid threedshadow;
+	border-bottom: 1px solid threedhighlight;
+	overflow: hidden;
+	margin: 2px;
+}
+
+.webfx-spell-textarea {
+	border: 0px;
+	position: absolute;
+	background: transparent;
+	color: windowtext;
+	font: menu;
+	line-height: expression('1.5em');
+	padding: 1px;
+}
+
+.webfx-spell-markupbox {
+	position: absolute;
+	overflow: auto;
+	font: menu;
+	line-height: expression('1.5em');
+	padding: 3px 1px 1px 1px;
+	background: window;
+	color: window;
+}

@@ -1,0 +1,4 @@
+foreach filename [lsort [glob [acs_root_dir]/packages/persistence/pdl/*.tcl]] {
+	###    ns_log notice "source pdl file: $filename"
+    source ${filename}
+}

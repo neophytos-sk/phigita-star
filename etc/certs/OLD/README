@@ -1,0 +1,5 @@
+/etc/ssl/misc/CA.sh -newcert
+openssl rsa -in newreq.pem -out keyfile.pem
+cp newreq.pem certfile.pem
+emacs certfile.pem
+

@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svn/!svn/ver/54/trunk/src/tinySIP/src/parsers
+END
+tsip_parser_uri.js
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/!svn/ver/36/trunk/src/tinySIP/src/parsers/tsip_parser_uri.js
+END
+tsip_parser_message.js
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/!svn/ver/36/trunk/src/tinySIP/src/parsers/tsip_parser_message.js
+END
+tsip_parser_header.js
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/!svn/ver/54/trunk/src/tinySIP/src/parsers/tsip_parser_header.js
+END

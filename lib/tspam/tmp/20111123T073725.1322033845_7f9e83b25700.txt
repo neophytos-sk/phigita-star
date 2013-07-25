@@ -1,0 +1,17 @@
+Return-path: <webmaster@phigita.net> 
+Received: from [119.70.45.136] (port=3854 helo=hs1110)
+	by exsmtp1.71.com with asmtp 
+	id 1D6CB9-000980-07
+	for <webmaster@phigita.net>; Wed, 23 Nov 2011 16:36:42 +0900 
+Message-ID: <A40905678EF945B7BD7E2E8A886E0F74@hs1110> 
+From: =?koi8-r?B?Iu/v7yDz6yDzycLJ0tjsxdMi?= <revengingyn@lanxinggolf.com> 
+To: <webmaster@phigita.net> 
+Subject: =?koi8-r?B?6drExczJ0SDJ2iDzycLJ0tPLz8fPIOvFxNLBOiD3wcfPzsvBLCDpzcnU?=
+	=?koi8-r?B?wcPJ0SDC0tXTwSDJIMTSLg==?= 
+Date: Wed, 23 Nov 2011 16:36:42 +0900 
+X-Priority: 3 
+X-MSMail-Priority: Normal 
+X-Mailer: Microsoft Windows Mail 6.0.6001.18000 
+X-MimeOLE: Produced By Microsoft MimeOLE V6.0.6001.18049 
+X-Spam: Not detected 
+X-Mras: Ok 

@@ -1,0 +1,11 @@
+Received: from 110.53.26.205 (HELO uneehpyx) (envelope-from fhc@rzyaowang.com)
+	by mxzwg7.hichina.com (quarkmail-1.2.1) with ESMTP id S38696216Ab1JXQdU
+	for neophytes@hkem.com; Tue, 25 Oct 2011 00:33:20 +0800 
+Message-ID: <20111025005007110716@rzyaowang.com> 
+From: "afkt" <fhc@rzyaowang.com> 
+To:  
+Subject: =?gb2312?B?aHZu178u1L0uyMsuwaYu18ou1LQuudwuwO0uyMs=?=
+	=?gb2312?B?LrLFZ2IzdnpicXdu?= 
+Date: Tue, 25 Oct 2011 00:49:58 +0800 
+X-mailer: Uymzps 4 
+Whoops!  What is a 'application/vnd.ms-excel'?

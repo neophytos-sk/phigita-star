@@ -1,0 +1,36 @@
+    1  env-update && source /etc/profile
+    2  cp /usr/share/zoneinfo/UTC /etc/localtime 
+    3  date
+    4  cd /etc/
+    5  nano hosts
+    6  nano -w conf.d/hostname 
+    7  hostname urania
+    8  hostname -f
+    9  time emerge gentoo-sources
+   10  cd /usr/src/linux
+   11  make menuconfig
+   12  make menuconfig
+   13  time make -j2
+   14  make modules_install
+   15  cp arch/x86_64/boot/bzImage /boot/kernel-3.0.6-gentoo
+   16  cd /etc/
+   17  nano -w fstab 
+   18  cd init.d/
+   19  ln -sf net.lo net.eth0
+   20  cd ../conf.d/
+   21  nano -w net
+   22  nano hostname 
+   23  rc-update add net.eth0 default
+   24  rc-update add sshd default
+   25  passwd
+   26  time emerge syslog-ng vixie-cron
+   27  time emerge grub
+   28  rc-update add syslog-ng default
+   29  rc-update add vixie-cron default
+   30  cat /proc/mdstat 
+   31  cat /proc/mdstat 
+   32  mdadm --detail --scan >> /etc/mdadm.conf
+   33  emerge mdadm; rc-update add mdadm boot
+   34  mdadm --detail --scan >> /etc/mdadm.conf
+   35  cat /etc/mdadm.conf 
+   36  history

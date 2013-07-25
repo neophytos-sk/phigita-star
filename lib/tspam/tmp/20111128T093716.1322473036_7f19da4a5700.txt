@@ -1,0 +1,80 @@
+Received: by eaac10 with SMTP id c10so1835338eaa.8
+        for <webmaster@phigita.net>; Mon, 28 Nov 2011 01:37:06 -0800 (PST) by 10.180.80.162 with SMTP id s2mr3922675wix.27.1322473008083; Mon,
+ 28 Nov 2011 01:36:48 -0800 (PST) by 10.180.95.36 with HTTP; Mon, 28 Nov 2011 01:36:48 -0800 (PST) 
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=mime-version:date:message-id:subject:from:to:content-type;
+        bh=0gr1Acn/oOH9gci02hRYYlWlbXm5AMijmhZvKMm21Nc=;
+        b=j3AZa0vcN2YpgMm3vWoI6SXaAmABBZPr0UVorpvJmNque6zqE66VepiezU+DgTPR57
+         e5AZwp2akdtfvujjauF6zBl5VGuTSWty10jVJsVBzL5ukwsINgsDgpXzup2E0dqpVpE9
+         bzkA+Xxn8IKzatG52LtRTxYDTe99C3ykIL7Hk= 
+Date: Mon, 28 Nov 2011 11:36:48 +0200 
+Message-ID: <CABbDDGOm74E6XMSwRNiTovYDfTc49VG0M0=pEnvZJ-CeGH9adg@mail.gmail.com> 
+Subject: =?ISO-8859-7?B?xyBQYXJhbGxheGkgxOXq5ezi8d/v9SDs5SDh8O/q6+U=?=
+	=?ISO-8859-7?B?6fP06ereIPP17d3t9OX17ucg9O/1IOTn7Nzx9+/1IMM=?=
+	=?ISO-8859-7?B?6dzt7ecgzPDv9fTc8ec=?= 
+From: Parallaxi Magazine <parallaximagazine@gmail.com> 
+To: Parallaxi Magazine <parallaximagazine@gmail.com> 
+Bcc: webmaster@phigita.net 
+--------------------------------------
+Η Parallaxi έρχεται το Δεκέμβριο μ' ένα τεύχος
+(#175)<http://parallaximag.gr/content/%CE%B4%CE%B9%CE%B1%CE%B2%CE%B1%CF%83%CE%B5-%CE%BC%CE%B5-%CE%B7-parallaxi-%CE%B4%CE%B5%CE%BA%CE%B5%CE%BC%CE%B2%CF%81%CE%AF%CE%BF%CF%85-%CE%B5%CE%AF%CE%BD%CE%B1%CE%B9-%CE%B5%CE%B4%CF%8E>που
+εξερευνά εμφανείς και αφανείς πτυχές της πόλης.
+
+-*Ένας χρόνος μετά τις δημοτικές εκλογές*: Ο Μιχάλης Γουδής και ο Γιώργος
+Τούλας αποτιμούν το έργο της δημοτικής αρχής και ανακρίνουν το δήμαρχο
+Θεσσαλονίκης, κ. Γιάννη Μπουτάρη σε μία αποκλειστική, αποκαλυπτική
+συνέντευξη<http://parallaximag.gr/content/%CE%B3%CE%B9%CE%AC%CE%BD%CE%BD%CE%B7%CF%82-%CE%BC%CF%80%CE%BF%CF%85%CF%84%CE%AC%CF%81%CE%B7%CF%82-%CE%BC%CE%B1%CF%82-%CE%B2%CE%B1%CE%B8%CE%BC%CE%BF%CE%BB%CE%BF%CE%B3%CF%8E-%CE%BC%CE%B5-6>χωρίς
+περιορισμούς. Ο δήμαρχος απαντάει για όλα τα προβλήματα της πόλης,
+στο ενδεχόμενο να είναι υποψήφιος άλλη μία φορά, βαθμολογεί το έργο του και
+πολλά ακόμη σε μία συνέντευξη που βγάζει ειδήσεις...
+
+-*Η φαβέλλα της Θεσσαλονίκης*: Ο Σάκης Ιωαννίδης αποκαλύπτει σε ένα
+σοκαριστικό ρεπορτάζ την ύπαρξη ενός παράλληλου αθέατου κόσμου στην καρδιά
+της πόλης. Το άδοξο ρέμα της Δόξας λίγα μέτρα από το Καυταντζόγλειο
+Στάδιο...
+
+-Η Εύη Καρκίτη συνεχίζει τις συναντήσεις της με θρυλικές προσωπικότητες της
+πόλης, συνομιλώντας αυτή τη φορά τον ποιητή *Μάρκο Μέσκο* για *"Μια Ζωή Εδώ"
+*.
+
+-Ο Μιχάλης Αποστολίδης μας ξεναγεί στα μυστικά της δουλειάς μιας
+*κατασκευάστριας
+βιολιών* για τη στήλη *"I Love this Job"*.
+
+Και όπως πάντα όλες οι σταθερές στήλες της Parallaxi: Ο Άκης Δήμου
+"Ξυπόλυτος στην Άσφαλτο", ο Μανώλης Σταυρουλάκης και ο Άκης Σακισλόγλου μας
+προσφέρουν μουσικά
+ταξίδια<http://parallaximag.gr/content/%CE%B3%CE%B9%CF%8E%CF%81%CE%B3%CE%BF%CF%82-%CE%BA%CE%B1%CE%B6%CE%B1%CE%BD%CF%84%CE%B6%CE%AE%CF%82-%CF%84%CE%B1-%CF%80%CE%B1%CE%B9%CE%B4%CE%B9%CE%AC-%CF%84%CE%B7%CF%82-%CE%AC%CE%BB%CE%BB%CE%B7%CF%82-%CF%8C%CF%87%CE%B8%CE%B7%CF%82>,
+ο Γιάννης Κοτσιφός μας ξεφυλλίζει ένα βιβλίο, η Exodos, ο Δημήτρης
+Κοπαράνης με γευστικές
+προτάσεις<http://parallaximag.gr/content/taste-me-cake>και όχι μόνο...
+
+* Μείνετε συντονισμένοι στο parallaximag.gr για να διαβάσετε όλα τα θέματα
+του τεύχους, πολλά από τα οποία επεκτείνονται με εμπλουτισμένο περιεχόμενο
+διαδικτυακά!
+
+
+
+-- 
+Περιοδικό Parallaxi
+Θεσσαλονίκη
+Δελφών 216 & Ν. Τύπα 12
+54655
+τηλ. 2310429050
+fax. 2310429051
+www.parallaximag.gr
+www.facebook.com/Parallaxi
+http://twitter.com/parallaximag
+----------------------------------------
+"Parallaxi" Magazine
+Thessaloniki, Greece
+216 Delfon Str. & N. Typa 12 Str.
+54655
+tel. +30 2310 429050
+fax.+30 2310 429051
+www.parallaximag.gr
+www.facebook.com/Parallaxi
+http://twitter.com/parallaximag
+--------------------------------------
+ content-type=image/jpeg part-token=::mime::487-2

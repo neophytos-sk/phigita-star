@@ -1,0 +1,10 @@
+Received: from 114.80.244.10 by smtp12-in.cegeka.be; Wed, 21 Sep 2011 22:49:52 +0800 
+Date: Wed, 21 Sep 2011 22:49:52 +0800 
+From: =?koi8-r?B?IvPPwtPU18XOzsnLIg==?= <gaietyicng52@mscbelgium.com> 
+X-Mailer: The Bat! (v3.0) Educational 
+Reply-To: gaietyicng52@mscbelgium.com 
+X-Priority: 3 (Normal) 
+Message-ID: <663523228.03134648299055@mscbelgium.com> 
+To: webmaster@phigita.net 
+Subject: =?koi8-r?B?8NLRzcHRIMHSxc7EwSDPxsnTz9chIO3F1NLPIC0g7cHS2MnOwSDyz93B?= 
+

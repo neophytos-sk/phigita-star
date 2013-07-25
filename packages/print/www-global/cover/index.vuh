@@ -1,0 +1,8 @@
+set filename [web_root_dir]/data/books/cover/[lindex [ad_conn urlv] end].jpg
+
+if { [file exists $filename] } {
+    ad_returnfile_background 200 [ns_guesstype ${filename}] ${filename}
+} else {
+    set notfound /var/lib/naviserver/service-phgt-0/www/graphics/nobook.gif
+    ad_returnfile_background 200 [ns_guesstype ${notfound}] ${notfound}
+}

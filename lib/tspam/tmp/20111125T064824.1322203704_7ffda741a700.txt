@@ -1,0 +1,17 @@
+Return-path: <webmaster@phigita.net> 
+Received: from [120.62.170.38] (port=0534 helo=Ashutosh)
+	by server84.appriver.com with asmtp 
+	id 5D4FF5-000752-63
+	for <webmaster@phigita.net>; Fri, 25 Nov 2011 12:17:36 +0530 
+Message-ID: <D90F2E5B41204E9999CBB2FF1130E227@Ashutosh> 
+From: =?koi8-r?B?IvTP0sfP19nKIOTPzSDF19LP0MXK08vPx88gyc7UxdLYxdLBIOHS1CI=?= <everlastingsgeb4@raymondinsurance.com> 
+To: <webmaster@phigita.net> 
+Subject: =?koi8-r?B?8M/EwdLJIMsg7s/Xz83VIMfPxNUgLSDU2dPR3skgycTFyi4g5M/T1MHX?=
+	=?koi8-r?B?y8E=?= 
+Date: Fri, 25 Nov 2011 12:17:36 +0530 
+X-Priority: 3 
+X-MSMail-Priority: Normal 
+X-Mailer: Microsoft Windows Mail 6.0.6001.18000 
+X-MimeOLE: Produced By Microsoft MimeOLE V6.0.6001.18049 
+X-Spam: Not detected 
+X-Mras: Ok 

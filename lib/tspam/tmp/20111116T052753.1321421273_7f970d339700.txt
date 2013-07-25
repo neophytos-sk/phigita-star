@@ -1,0 +1,16 @@
+Return-path: <webmaster@phigita.net> 
+Received: from [119.92.253.60] (port=4296 helo=freaksurc90a31)
+	by inbound.designteam.com.netsolmail.net with asmtp 
+	id 3F6650-000055-27
+	for <webmaster@phigita.net>; Tue, 15 Nov 2011 21:27:03 -0800 
+Message-ID: <16B9B1BDAF434D1C94F5B47E780B5CBF@freaksurc90a31> 
+From: =?koi8-r?B?IvDPzMnH0sHGyd7F08vPxSDQ0sXE0NLJ0dTJxSI=?= <rangoony30@designteam.com> 
+To: <webmaster@phigita.net> 
+Subject: =?koi8-r?B?8MXewdTYIMzJ09TP18/L?= 
+Date: Tue, 15 Nov 2011 21:27:03 -0800 
+X-Priority: 3 
+X-MSMail-Priority: Normal 
+X-Mailer: Microsoft Windows Mail 6.0.6001.18000 
+X-MimeOLE: Produced By Microsoft MimeOLE V6.0.6001.18049 
+X-Spam: Not detected 
+X-Mras: Ok 

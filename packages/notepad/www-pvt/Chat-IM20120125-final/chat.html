@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat</title>
+
+    <link href="style/ChatStyleSheet.css" type="text/css" rel="Stylesheet" />
+
+    <script type="text/javascript" src="scripts/core-v2.js"></script>
+
+    <script type="text/javascript" src="scripts/sharedraw.js"></script>
+    <script type="text/javascript" src="scripts/draw.js"></script>
+
+    <script type="text/javascript" src="scripts/participants.js"></script>
+    <script type="text/javascript" src="scripts/chat.js"></script>
+    
+<script type="text/javascript" src="scripts/wave.js"></script>
+
+    <script  type="text/javascript">
+      function init_chat_and_sharedraw(){
+        Chat.init();
+        Controller.init();
+      }
+      </script>
+
+</head>
+<body onload="init_chat_and_sharedraw();">
+
+      <object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000"
+          width="40"
+          height="40"
+          id="audio1"
+          align="middle">
+          <embed src="flash/wavplayer.swf?gui=mini&h=20&w=300&sound=sounds/im1.wav&"
+              bgcolor="#ffffff"
+              width="40"
+              height="40"
+              allowScriptAccess="always"
+              type="application/x-shockwave-flash"
+              pluginspage="http://www.macromedia.com/go/getflashplayer"
+          />
+      </object>
+
+ 
+    <table  class="mainTable" style="width: 70%; height: 70%">
+       <tr>
+       <td colspan="2"></td>
+       </tr>
+        <tr>
+            <td class="chattd" style="width: 25%">
+                <div id="div_participants" class="participants">
+                </div>
+            </td>
+            <td class="chattd" style="width: 75%;">
+                <div id="div_chatarea" class="chatarea">
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td style="width: 10%">
+                <input id="participantList" type="text" />
+            </td>
+            <td class="chatInputtd" >
+                <input id="chat_message" type="text" size="100" style="width: 99%" />
+            </td>
+        </tr>
+       
+      
+       
+    </table>
+
+   
+<div id="bottomBar" style="display:block; " > </div> 
+ 
+  
+    <div id="container">
+      <canvas id="imageView" width="400" height="300">
+        <p>Unfortunately, your browser is currently unsupported by this widget.  
+        We are sorry for the inconvenience. Please use one of the 
+        supported browsers listed below:</p>
+        <p>Supported browsers: <a href="http://www.opera.com">Opera</a>, <a 
+          href="http://www.mozilla.com">Firefox</a>, <a 
+          href="http://www.apple.com/safari">Safari</a>, and <a 
+          href="http://www.konqueror.org">Konqueror</a>.</p>
+
+      </canvas>
+    </div>
+
+
+
+</body>
+</html>

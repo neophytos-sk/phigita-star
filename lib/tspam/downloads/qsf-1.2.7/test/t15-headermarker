@@ -1,0 +1,15 @@
+#!/bin/sh
+#
+# TEST: Spam header marker:             
+
+rm -f $TESTDB
+./mboxsplit 1 < .test-spam | $PROG -d $BACKEND:$TESTDB -m -w 2
+ISSPAM=0
+./mboxsplit 1 < .test-spam | $PROG -d $BACKEND:$TESTDB | grep 'X-Spam: YES' >/dev/null && ISSPAM=1
+test $ISSPAM -eq 1
+ISSPAM=0
+./mboxsplit 1 < .test-spam | $PROG -d $BACKEND:$TESTDB -H 'LONGER TEST STRING' | grep 'X-Spam: LONGER TEST STRING' >/dev/null && ISSPAM=1
+test $ISSPAM -eq 1
+BADHEADER=0
+./mboxsplit 1 < .test-spam | $PROG -d $BACKEND:$TESTDB -H 'LONGER TEST STRING' | grep 'X-Spam: YES' >/dev/null && BADHEADER=1
+test $BADHEADER -eq 0

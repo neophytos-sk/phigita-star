@@ -1,0 +1,58 @@
+Received: by web1.extjs.com (Postfix, from userid 33)
+	id 1B7A16C1F5; Fri, 25 Nov 2011 00:02:08 +0000 (UTC) 
+To: k2pts@phigita.net 
+Subject: "Ext: Open Discussion" update 
+X-PHP-Originating-Script: 1000:class_mail.php 
+From: "Sencha Forum" <admin@sencha.com> 
+Auto-Submitted: auto-generated 
+Message-ID: <20111125000208.d0ef452aff0d@www.sencha.com> 
+X-Priority: 3 
+X-Mailer: vBulletin Mail via PHP 
+Date: Fri, 25 Nov 2011 00:02:08 +0000 (UTC) 
+--------------------------------------
+Dear k2pts,
+
+You are subscribed to the forum Ext: Open Discussion, there have been 3 new thread(s) and 1 updated thread(s).
+http://www.sencha.com/forum/forumdisplay.php?6-Ext-Open-Discussion
+
+The following threads are new:
+************
+Issues with view rendering in MVC
+http://www.sencha.com/forum/showthread.php?156951-Issues-with-view-rendering-in-MVC
+In forum: Ext: Open Discussion
+Started by: jimits
+Last post: 24 Nov 2011 4:39 PM
+************
+JsonStore and Paging Toobar problem
+http://www.sencha.com/forum/showthread.php?157019-JsonStore-and-Paging-Toobar-problem
+In forum: Ext: Open Discussion
+Started by: h4r1
+Last post: 24 Nov 2011 4:41 PM
+************
+trackResetOnLoad and loadRecord dirtychange behaves not as expected.
+http://www.sencha.com/forum/showthread.php?157043-trackResetOnLoad-and-loadRecord-dirtychange-behaves-not-as-expected.
+In forum: Ext: Open Discussion
+Started by: CrazyEnigma
+Last post: 24 Nov 2011 5:24 PM
+
+
+The following threads have been updated:
+************
+what technique can be used for a screen like this?
+http://www.sencha.com/forum/showthread.php?156854-what-technique-can-be-used-for-a-screen-like-this
+In forum: Ext: Open Discussion
+Started by: v0nni
+Last post: 24 Nov 2011 9:55 AM
+
+
+All the best,
+Sencha Forum
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Unsubscription information:
+
+To unsubscribe from this forum, please visit this page:
+http://www.sencha.com/forum/subscription.php?do=removesubscription&type=forum&subscriptionid=63&auth=e23de5f6387a31c5573cf4993e28e47f
+
+
+

@@ -1,0 +1,11 @@
+#!/bin/sh 
+
+# give time for Postgres to come up
+# see http://openacs.org/forums/message-view?message_id=176100
+sleep 4
+
+exec /opt/naviserver/bin/nsd-postgres -z -i -t ~nsadmin/service-phgt-0/etc/nsd/config-sms-8010.tcl -u service-phgt-0 -g web
+
+
+# For AOLserver 4 using privileged ports (usually < 1024), add the flag
+# -b youraddress:yourport to the nsd command

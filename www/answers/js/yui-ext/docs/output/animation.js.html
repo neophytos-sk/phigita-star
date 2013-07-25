@@ -1,0 +1,1275 @@
+<html><head><title>animation.js</title><link rel="stylesheet" type="text/css" href="../resources/style.css" media="screen"/></head><body><h1>animation.js</h1><pre class="highlighted"><code><i>/*
+Copyright (c) 2006, Yahoo! Inc. All rights reserved.
+Code licensed under the BSD License:
+http:<i>//developer.yahoo.net/yui/license.txt</i>
+version: 0.12.0
+*/</i>
+<i>// holder</i>
+<i>/**
+ * The animation module provides allows effects to be added to HTMLElements.
+ * @module animation
+ */</i>
+<i>// holder</i>
+<i>/**
+ *
+ * Base animation class that provides the interface <b>for</b> building animated effects.
+ * &lt;p&gt;Usage: <b>var</b> myAnim = <b>new</b> YAHOO.util.Anim(el, { width: { from: 10, to: 100 } }, 1, YAHOO.util.Easing.easeOut);&lt;/p&gt;
+ * @class Anim
+ * @namespace YAHOO.util
+ * @requires YAHOO.util.AnimMgr
+ * @requires YAHOO.util.Easing
+ * @requires YAHOO.util.Dom
+ * @requires YAHOO.util.Event
+ * @requires YAHOO.util.CustomEvent
+ * @constructor
+ * @param {String | HTMLElement} el Reference to the element that will be animated
+ * @param {Object} attributes The attribute(s) to be animated.
+ * Each attribute is an object <b>with</b> at minimum a &quot;to&quot; or &quot;by&quot; member defined.
+ * Additional optional members are &quot;from&quot; (defaults to current value), &quot;units&quot; (defaults to &quot;px&quot;).
+ * All attribute names use camelCase.
+ * @param {Number} duration (optional, defaults to 1 second) Length of animation (frames or seconds), defaults to time-based
+ * @param {Function} method (optional, defaults to YAHOO.util.Easing.easeNone) Computes the values that are applied to the attributes per frame (generally a YAHOO.util.Easing method)
+ */</i>
+
+YAHOO.util.Anim = <b>function</b>(el, attributes, duration, method) {
+   <b>if</b> (el) {
+      <b>this</b>.init(el, attributes, duration, method);
+   }
+};
+
+YAHOO.util.Anim.prototype = {
+   <i>/**
+    * Provides a readable name <b>for</b> the Anim instance.
+    * @method toString
+    * @<b>return</b> {String}
+    */</i>
+   toString: <b>function</b>() {
+      <b>var</b> el = <b>this</b>.getEl();
+      <b>var</b> id = el.id || el.tagName;
+      <b>return</b> (&quot;Anim &quot; + id);
+   },
+
+   patterns: { <i>// cached <b>for</b> performance</i>
+      noNegatives:      /width|height|opacity|padding/i, <i>// keep at zero or above</i>
+      offsetAttribute:  /^((width|height)|(top|left))$/, <i>// use offsetValue as <b>default</b></i>
+      defaultUnit:      /width|height|top$|bottom$|left$|right$/i, <i>// use 'px' by <b>default</b></i>
+      offsetUnit:       /\d+(em|%|en|ex|pt|<b>in</b>|cm|mm|pc)$/i <i>// IE may <b>return</b> these, so convert these to offset</i>
+   },
+
+   <i>/**
+    * Returns the value computed by the animation's &quot;method&quot;.
+    * @method doMethod
+    * @param {String} attr The name of the attribute.
+    * @param {Number} start The value <b>this</b> attribute should start from <b>for</b> this animation.
+    * @param {Number} end  The value <b>this</b> attribute should end at <b>for</b> this animation.
+    * @<b>return</b> {Number} The Value to be applied to the attribute.
+    */</i>
+   doMethod: <b>function</b>(attr, start, end) {
+      <b>return</b> this.method(<b>this</b>.currentFrame, start, end - start, <b>this</b>.totalFrames);
+   },
+
+   <i>/**
+    * Applies a value to an attribute.
+    * @method setAttribute
+    * @param {String} attr The name of the attribute.
+    * @param {Number} val The value to be applied to the attribute.
+    * @param {String} unit The unit ('px', '%', etc.) of the value.
+    */</i>
+   setAttribute: <b>function</b>(attr, val, unit) {
+      <b>if</b> ( <b>this</b>.patterns.noNegatives.test(attr) ) {
+         val = (val &gt; 0) ? val : 0;
+      }
+
+      YAHOO.util.Dom.setStyle(<b>this</b>.getEl(), attr, val + unit);
+   },
+
+   <i>/**
+    * Returns current value of the attribute.
+    * @method getAttribute
+    * @param {String} attr The name of the attribute.
+    * @<b>return</b> {Number} val The current value of the attribute.
+    */</i>
+   getAttribute: <b>function</b>(attr) {
+      <b>var</b> el = <b>this</b>.getEl();
+      <b>var</b> val = YAHOO.util.Dom.getStyle(el, attr);
+
+      <b>if</b> (val !== 'auto' &amp;&amp; !<b>this</b>.patterns.offsetUnit.test(val)) {
+         <b>return</b> parseFloat(val);
+      }
+
+      <b>var</b> a = <b>this</b>.patterns.offsetAttribute.exec(attr) || [];
+      <b>var</b> pos = !!( a[3] ); <i>// top or left</i>
+      <b>var</b> box = !!( a[2] ); <i>// width or height</i>
+
+      <i>// use offsets <b>for</b> width/height and abs pos top/left</i>
+      <b>if</b> ( box || (YAHOO.util.Dom.getStyle(el, 'position') == 'absolute' &amp;&amp; pos) ) {
+         val = el['offset' + a[0].charAt(0).toUpperCase() + a[0].substr(1)];
+      } <b>else</b> { <i>// <b>default</b> to zero <b>for</b> other 'auto'</i>
+         val = 0;
+      }
+
+      <b>return</b> val;
+   },
+
+   <i>/**
+    * Returns the unit to use when none is supplied.
+    * @method getDefaultUnit
+    * @param {attr} attr The name of the attribute.
+    * @<b>return</b> {String} The <b>default</b> unit to be used.
+    */</i>
+   getDefaultUnit: <b>function</b>(attr) {
+       <b>if</b> ( <b>this</b>.patterns.defaultUnit.test(attr) ) {
+         <b>return</b> 'px';
+       }
+
+       <b>return</b> '';
+   },
+
+   <i>/**
+    * Sets the actual values to be used during the animation.
+    * @method setRuntimeAttribute
+    * Should only be needed <b>for</b> subclass use.
+    * @param {Object} attr The attribute object
+    * @private
+    */</i>
+   setRuntimeAttribute: <b>function</b>(attr) {
+      <b>var</b> start;
+      <b>var</b> end;
+      <b>var</b> attributes = <b>this</b>.attributes;
+
+      <b>this</b>.runtimeAttributes[attr] = {};
+
+      <b>var</b> isset = <b>function</b>(prop) {
+         <b>return</b> (<b>typeof</b> prop !== 'undefined');
+      };
+
+      <b>if</b> ( !isset(attributes[attr]['to']) &amp;&amp; !isset(attributes[attr]['by']) ) {
+         <b>return</b> false; <i>// note <b>return</b>; nothing to animate to</i>
+      }
+
+      start = ( isset(attributes[attr]['from']) ) ? attributes[attr]['from'] : <b>this</b>.getAttribute(attr);
+
+      <i>// To beats by, per SMIL 2.1 spec</i>
+      <b>if</b> ( isset(attributes[attr]['to']) ) {
+         end = attributes[attr]['to'];
+      } <b>else</b> if ( isset(attributes[attr]['by']) ) {
+         <b>if</b> (start.constructor == Array) {
+            end = [];
+            <b>for</b> (<b>var</b> i = 0, len = start.length; i &lt; len; ++i) {
+               end[i] = start[i] + attributes[attr]['by'][i];
+            }
+         } <b>else</b> {
+            end = start + attributes[attr]['by'];
+         }
+      }
+
+      <b>this</b>.runtimeAttributes[attr].start = start;
+      <b>this</b>.runtimeAttributes[attr].end = end;
+
+      <i>// set units <b>if</b> needed</i>
+      <b>this</b>.runtimeAttributes[attr].unit = ( isset(attributes[attr].unit) ) ? attributes[attr]['unit'] : <b>this</b>.getDefaultUnit(attr);
+   },
+
+   <i>/**
+    * Constructor <b>for</b> Anim instance.
+    * @method init
+    * @param {String | HTMLElement} el Reference to the element that will be animated
+    * @param {Object} attributes The attribute(s) to be animated.
+    * Each attribute is an object <b>with</b> at minimum a &quot;to&quot; or &quot;by&quot; member defined.
+    * Additional optional members are &quot;from&quot; (defaults to current value), &quot;units&quot; (defaults to &quot;px&quot;).
+    * All attribute names use camelCase.
+    * @param {Number} duration (optional, defaults to 1 second) Length of animation (frames or seconds), defaults to time-based
+    * @param {Function} method (optional, defaults to YAHOO.util.Easing.easeNone) Computes the values that are applied to the attributes per frame (generally a YAHOO.util.Easing method)
+    */</i>
+   init: <b>function</b>(el, attributes, duration, method) {
+      <i>/**
+       * Whether or not the animation is running.
+       * @property isAnimated
+       * @private
+       * @type Boolean
+       */</i>
+      <b>var</b> isAnimated = false;
+
+      <i>/**
+       * A Date object that is created when the animation begins.
+       * @property startTime
+       * @private
+       * @type Date
+       */</i>
+      <b>var</b> startTime = null;
+
+      <i>/**
+       * The number of frames <b>this</b> animation was able to execute.
+       * @property actualFrames
+       * @private
+       * @type Int
+       */</i>
+      <b>var</b> actualFrames = 0;
+
+      <i>/**
+       * The element to be animated.
+       * @property el
+       * @private
+       * @type HTMLElement
+       */</i>
+      el = YAHOO.util.Dom.get(el);
+
+      <i>/**
+       * The collection of attributes to be animated.
+       * Each attribute must have at least a &quot;to&quot; or &quot;by&quot; defined <b>in</b> order to animate.
+       * If &quot;to&quot; is supplied, the animation will end <b>with</b> the attribute at that value.
+       * If &quot;by&quot; is supplied, the animation will end at that value plus its starting value.
+       * If both are supplied, &quot;to&quot; is used, and &quot;by&quot; is ignored.
+       * Optional additional member include &quot;from&quot; (the value the attribute should start animating from, defaults to current value), and &quot;unit&quot; (the units to apply to the values).
+       * @property attributes
+       * @type Object
+       */</i>
+      <b>this</b>.attributes = attributes || {};
+
+      <i>/**
+       * The length of the animation.  Defaults to &quot;1&quot; (second).
+       * @property duration
+       * @type Number
+       */</i>
+      <b>this</b>.duration = duration || 1;
+
+      <i>/**
+       * The method that will provide values to the attribute(s) during the animation.
+       * Defaults to &quot;YAHOO.util.Easing.easeNone&quot;.
+       * @property method
+       * @type Function
+       */</i>
+      <b>this</b>.method = method || YAHOO.util.Easing.easeNone;
+
+      <i>/**
+       * Whether or not the duration should be treated as seconds.
+       * Defaults to true.
+       * @property useSeconds
+       * @type Boolean
+       */</i>
+      <b>this</b>.useSeconds = true; <i>// <b>default</b> to seconds</i>
+
+      <i>/**
+       * The location of the current animation on the timeline.
+       * In time-based animations, <b>this</b> is used by AnimMgr to ensure the animation finishes on time.
+       * @property currentFrame
+       * @type Int
+       */</i>
+      <b>this</b>.currentFrame = 0;
+
+      <i>/**
+       * The total number of frames to be executed.
+       * In time-based animations, <b>this</b> is used by AnimMgr to ensure the animation finishes on time.
+       * @property totalFrames
+       * @type Int
+       */</i>
+      <b>this</b>.totalFrames = YAHOO.util.AnimMgr.fps;
+
+
+      <i>/**
+       * Returns a reference to the animated element.
+       * @method getEl
+       * @<b>return</b> {HTMLElement}
+       */</i>
+      <b>this</b>.getEl = <b>function</b>() { <b>return</b> el; };
+
+      <i>/**
+       * Checks whether the element is currently animated.
+       * @method isAnimated
+       * @<b>return</b> {Boolean} current value of isAnimated.
+       */</i>
+      <b>this</b>.isAnimated = <b>function</b>() {
+         <b>return</b> isAnimated;
+      };
+
+      <i>/**
+       * Returns the animation start time.
+       * @method getStartTime
+       * @<b>return</b> {Date} current value of startTime.
+       */</i>
+      <b>this</b>.getStartTime = <b>function</b>() {
+         <b>return</b> startTime;
+      };
+
+      <b>this</b>.runtimeAttributes = {};
+
+
+
+      <i>/**
+       * Starts the animation by registering it <b>with</b> the animation manager.
+       * @method animate
+       */</i>
+      <b>this</b>.animate = <b>function</b>() {
+         <b>if</b> ( <b>this</b>.isAnimated() ) { <b>return</b> false; }
+
+         <b>this</b>.currentFrame = 0;
+
+         <b>this</b>.totalFrames = ( <b>this</b>.useSeconds ) ? Math.ceil(YAHOO.util.AnimMgr.fps * <b>this</b>.duration) : <b>this</b>.duration;
+
+         YAHOO.util.AnimMgr.registerElement(<b>this</b>);
+      };
+
+      <i>/**
+       * Stops the animation.  Normally called by AnimMgr when animation completes.
+       * @method stop
+       * @param {Boolean} finish (optional) If true, animation will jump to final frame.
+       */</i>
+      <b>this</b>.stop = <b>function</b>(finish) {
+         <b>if</b> (finish) {
+             <b>this</b>.currentFrame = <b>this</b>.totalFrames;
+             <b>this</b>._onTween.fire();
+         }
+         YAHOO.util.AnimMgr.stop(<b>this</b>);
+      };
+
+      <b>var</b> onStart = <b>function</b>() {
+         <b>this</b>.onStart.fire();
+
+         <b>this</b>.runtimeAttributes = {};
+         <b>for</b> (<b>var</b> attr <b>in</b> this.attributes) {
+            <b>this</b>.setRuntimeAttribute(attr);
+         }
+
+         isAnimated = true;
+         actualFrames = 0;
+         startTime = <b>new</b> Date();
+      };
+
+      <i>/**
+       * Feeds the starting and ending values <b>for</b> each animated attribute to doMethod once per frame, then applies the resulting value to the attribute(s).
+       * @private
+       */</i>
+
+      <b>var</b> onTween = <b>function</b>() {
+         <b>var</b> data = {
+            duration: <b>new</b> Date() - <b>this</b>.getStartTime(),
+            currentFrame: <b>this</b>.currentFrame
+         };
+
+         data.toString = <b>function</b>() {
+            <b>return</b> (
+               'duration: ' + data.duration +
+               ', currentFrame: ' + data.currentFrame
+            );
+         };
+
+         <b>this</b>.onTween.fire(data);
+
+         <b>var</b> runtimeAttributes = <b>this</b>.runtimeAttributes;
+
+         <b>for</b> (<b>var</b> attr <b>in</b> runtimeAttributes) {
+            <b>this</b>.setAttribute(attr, <b>this</b>.doMethod(attr, runtimeAttributes[attr].start, runtimeAttributes[attr].end), runtimeAttributes[attr].unit);
+         }
+
+         actualFrames += 1;
+      };
+
+      <b>var</b> onComplete = <b>function</b>() {
+         <b>var</b> actual_duration = (<b>new</b> Date() - startTime) / 1000 ;
+
+         <b>var</b> data = {
+            duration: actual_duration,
+            frames: actualFrames,
+            fps: actualFrames / actual_duration
+         };
+
+         data.toString = <b>function</b>() {
+            <b>return</b> (
+               'duration: ' + data.duration +
+               ', frames: ' + data.frames +
+               ', fps: ' + data.fps
+            );
+         };
+
+         isAnimated = false;
+         actualFrames = 0;
+         <b>this</b>.onComplete.fire(data);
+      };
+
+      <i>/**
+       * Custom event that fires after onStart, useful <b>in</b> subclassing
+       * @private
+       */</i>
+      <b>this</b>._onStart = <b>new</b> YAHOO.util.CustomEvent('_start', <b>this</b>, true);
+
+      <i>/**
+       * Custom event that fires when animation begins
+       * Listen via subscribe method (e.g. myAnim.onStart.subscribe(someFunction)
+       * @event onStart
+       */</i>
+      <b>this</b>.onStart = <b>new</b> YAHOO.util.CustomEvent('start', <b>this</b>);
+
+      <i>/**
+       * Custom event that fires between each frame
+       * Listen via subscribe method (e.g. myAnim.onTween.subscribe(someFunction)
+       * @event onTween
+       */</i>
+      <b>this</b>.onTween = <b>new</b> YAHOO.util.CustomEvent('tween', <b>this</b>);
+
+      <i>/**
+       * Custom event that fires after onTween
+       * @private
+       */</i>
+      <b>this</b>._onTween = <b>new</b> YAHOO.util.CustomEvent('_tween', <b>this</b>, true);
+
+      <i>/**
+       * Custom event that fires when animation ends
+       * Listen via subscribe method (e.g. myAnim.onComplete.subscribe(someFunction)
+       * @event onComplete
+       */</i>
+      <b>this</b>.onComplete = <b>new</b> YAHOO.util.CustomEvent('complete', <b>this</b>);
+      <i>/**
+       * Custom event that fires after onComplete
+       * @private
+       */</i>
+      <b>this</b>._onComplete = <b>new</b> YAHOO.util.CustomEvent('_complete', <b>this</b>, true);
+
+      <b>this</b>._onStart.subscribe(onStart);
+      <b>this</b>._onTween.subscribe(onTween);
+      <b>this</b>._onComplete.subscribe(onComplete);
+   }
+};
+
+<i>/**
+ * Handles animation queueing and threading.
+ * Used by Anim and subclasses.
+ * @class AnimMgr
+ * @namespace YAHOO.util
+ */</i>
+YAHOO.util.AnimMgr = <b>new</b> function() {
+   <i>/**
+    * Reference to the animation Interval.
+    * @property thread
+    * @private
+    * @type Int
+    */</i>
+   <b>var</b> thread = null;
+
+   <i>/**
+    * The current queue of registered animation objects.
+    * @property queue
+    * @private
+    * @type Array
+    */</i>
+   <b>var</b> queue = [];
+
+   <i>/**
+    * The number of active animations.
+    * @property tweenCount
+    * @private
+    * @type Int
+    */</i>
+   <b>var</b> tweenCount = 0;
+
+   <i>/**
+    * Base frame rate (frames per second).
+    * Arbitrarily high <b>for</b> better x-browser calibration (slower browsers drop more frames).
+    * @property fps
+    * @type Int
+    *
+    */</i>
+   <b>this</b>.fps = 200;
+
+   <i>/**
+    * Interval delay <b>in</b> milliseconds, defaults to fastest possible.
+    * @property delay
+    * @type Int
+    *
+    */</i>
+   <b>this</b>.delay = 1;
+
+   <i>/**
+    * Adds an animation instance to the animation queue.
+    * All animation instances must be registered <b>in</b> order to animate.
+    * @method registerElement
+    * @param {object} tween The Anim instance to be be registered
+    */</i>
+   <b>this</b>.registerElement = <b>function</b>(tween) {
+      queue[queue.length] = tween;
+      tweenCount += 1;
+      tween._onStart.fire();
+      <b>this</b>.start();
+   };
+
+   <i>/**
+    * removes an animation instance from the animation queue.
+    * All animation instances must be registered <b>in</b> order to animate.
+    * @method unRegister
+    * @param {object} tween The Anim instance to be be registered
+    * @param {Int} index The index of the Anim instance
+    * @private
+    */</i>
+   <b>this</b>.unRegister = <b>function</b>(tween, index) {
+      tween._onComplete.fire();
+      index = index || getIndex(tween);
+      <b>if</b> (index != -1) { queue.splice(index, 1); }
+
+      tweenCount -= 1;
+      <b>if</b> (tweenCount &lt;= 0) { <b>this</b>.stop(); }
+   };
+
+   <i>/**
+    * Starts the animation thread.
+	* Only one thread can run at a time.
+    * @method start
+    */</i>
+   <b>this</b>.start = <b>function</b>() {
+      <b>if</b> (thread === null) { thread = setInterval(<b>this</b>.run, <b>this</b>.delay); }
+   };
+
+   <i>/**
+    * Stops the animation thread or a specific animation instance.
+    * @method stop
+    * @param {object} tween A specific Anim instance to stop (optional)
+    * If no instance given, Manager stops thread and all animations.
+    */</i>
+   <b>this</b>.stop = <b>function</b>(tween) {
+      <b>if</b> (!tween) {
+         clearInterval(thread);
+         <b>for</b> (<b>var</b> i = 0, len = queue.length; i &lt; len; ++i) {
+            <b>if</b> (queue[i].isAnimated()) {
+               <b>this</b>.unRegister(tween, i);
+            }
+         }
+         queue = [];
+         thread = null;
+         tweenCount = 0;
+      }
+      <b>else</b> {
+         <b>this</b>.unRegister(tween);
+      }
+   };
+
+   <i>/**
+    * Called per Interval to handle each animation frame.
+    * @method run
+    */</i>
+   <b>this</b>.run = <b>function</b>() {
+      <b>for</b> (<b>var</b> i = 0, len = queue.length; i &lt; len; ++i) {
+         <b>var</b> tween = queue[i];
+         <b>if</b> ( !tween || !tween.isAnimated() ) { <b>continue</b>; }
+
+         <b>if</b> (tween.currentFrame &lt; tween.totalFrames || tween.totalFrames === null)
+         {
+            tween.currentFrame += 1;
+
+            <b>if</b> (tween.useSeconds) {
+               correctFrame(tween);
+            }
+            tween._onTween.fire();
+         }
+         <b>else</b> { YAHOO.util.AnimMgr.stop(tween, i); }
+      }
+   };
+
+   <b>var</b> getIndex = <b>function</b>(anim) {
+      <b>for</b> (<b>var</b> i = 0, len = queue.length; i &lt; len; ++i) {
+         <b>if</b> (queue[i] == anim) {
+            <b>return</b> i; <i>// note <b>return</b>;</i>
+         }
+      }
+      <b>return</b> -1;
+   };
+
+   <i>/**
+    * On the fly frame correction to keep animation on time.
+    * @method correctFrame
+    * @private
+    * @param {Object} tween The Anim instance being corrected.
+    */</i>
+   <b>var</b> correctFrame = <b>function</b>(tween) {
+      <b>var</b> frames = tween.totalFrames;
+      <b>var</b> frame = tween.currentFrame;
+      <b>var</b> expected = (tween.currentFrame * tween.duration * 1000 / tween.totalFrames);
+      <b>var</b> elapsed = (<b>new</b> Date() - tween.getStartTime());
+      <b>var</b> tweak = 0;
+
+      <b>if</b> (elapsed &lt; tween.duration * 1000) { <i>// check <b>if</b> falling behind</i>
+         tweak = Math.round((elapsed / expected - 1) * tween.currentFrame);
+      } <b>else</b> { <i>// went over duration, so jump to end</i>
+         tweak = frames - (frame + 1);
+      }
+      <b>if</b> (tweak &gt; 0 &amp;&amp; isFinite(tweak)) { <i>// adjust <b>if</b> needed</i>
+         <b>if</b> (tween.currentFrame + tweak &gt;= frames) {<i>// dont go past last frame</i>
+            tweak = frames - (frame + 1);
+         }
+
+         tween.currentFrame += tweak;
+      }
+   };
+};
+<i>/**
+ * Used to calculate Bezier splines <b>for</b> any number of control points.
+ * @class Bezier
+ * @namespace YAHOO.util
+ *
+ */</i>
+YAHOO.util.Bezier = <b>new</b> function()
+{
+   <i>/**
+    * Get the current position of the animated element based on t.
+    * Each point is an array of &quot;x&quot; and &quot;y&quot; values (0 = x, 1 = y)
+    * At least 2 points are required (start and end).
+    * First point is start. Last point is end.
+    * Additional control points are optional.
+    * @method getPosition
+    * @param {Array} points An array containing Bezier points
+    * @param {Number} t A number between 0 and 1 which is the basis <b>for</b> determining current position
+    * @<b>return</b> {Array} An array containing int x and y member data
+    */</i>
+   <b>this</b>.getPosition = <b>function</b>(points, t)
+   {
+      <b>var</b> n = points.length;
+      <b>var</b> tmp = [];
+
+      <b>for</b> (<b>var</b> i = 0; i &lt; n; ++i){
+         tmp[i] = [points[i][0], points[i][1]]; <i>// save input</i>
+      }
+
+      <b>for</b> (<b>var</b> j = 1; j &lt; n; ++j) {
+         <b>for</b> (i = 0; i &lt; n - j; ++i) {
+            tmp[i][0] = (1 - t) * tmp[i][0] + t * tmp[parseInt(i + 1, 10)][0];
+            tmp[i][1] = (1 - t) * tmp[i][1] + t * tmp[parseInt(i + 1, 10)][1];
+         }
+      }
+
+      <b>return</b> [ tmp[0][0], tmp[0][1] ];
+
+   };
+};
+<i>/**
+ * Anim subclass <b>for</b> color transitions.
+ * &lt;p&gt;Usage: &lt;code&gt;<b>var</b> myAnim = <b>new</b> Y.ColorAnim(el, { backgroundColor: { from: '#FF0000', to: '#FFFFFF' } }, 1, Y.Easing.easeOut);&lt;/code&gt; Color values can be specified <b>with</b> either 112233, #112233,
+ * [255,255,255], or rgb(255,255,255)&lt;/p&gt;
+ * @class ColorAnim
+ * @namespace YAHOO.util
+ * @requires YAHOO.util.Anim
+ * @requires YAHOO.util.AnimMgr
+ * @requires YAHOO.util.Easing
+ * @requires YAHOO.util.Bezier
+ * @requires YAHOO.util.Dom
+ * @requires YAHOO.util.Event
+ * @constructor
+ * @extends YAHOO.util.Anim
+ * @param {HTMLElement | String} el Reference to the element that will be animated
+ * @param {Object} attributes The attribute(s) to be animated.
+ * Each attribute is an object <b>with</b> at minimum a &quot;to&quot; or &quot;by&quot; member defined.
+ * Additional optional members are &quot;from&quot; (defaults to current value), &quot;units&quot; (defaults to &quot;px&quot;).
+ * All attribute names use camelCase.
+ * @param {Number} duration (optional, defaults to 1 second) Length of animation (frames or seconds), defaults to time-based
+ * @param {Function} method (optional, defaults to YAHOO.util.Easing.easeNone) Computes the values that are applied to the attributes per frame (generally a YAHOO.util.Easing method)
+ */</i>
+(<b>function</b>() {
+   YAHOO.util.ColorAnim = <b>function</b>(el, attributes, duration,  method) {
+      YAHOO.util.ColorAnim.superclass.constructor.call(<b>this</b>, el, attributes, duration, method);
+   };
+
+   YAHOO.extend(YAHOO.util.ColorAnim, YAHOO.util.Anim);
+
+   <i>// shorthand</i>
+   <b>var</b> Y = YAHOO.util;
+   <b>var</b> superclass = Y.ColorAnim.superclass;
+   <b>var</b> proto = Y.ColorAnim.prototype;
+
+   proto.toString = <b>function</b>() {
+      <b>var</b> el = <b>this</b>.getEl();
+      <b>var</b> id = el.id || el.tagName;
+      <b>return</b> (&quot;ColorAnim &quot; + id);
+   };
+
+   proto.patterns.color = /color$/i;
+   proto.patterns.rgb         = /^rgb\(([0-9]+)\s*,\s*([0-9]+)\s*,\s*([0-9]+)\)$/i;
+   proto.patterns.hex         = /^#?([0-9A-F]{2})([0-9A-F]{2})([0-9A-F]{2})$/i;
+   proto.patterns.hex3        = /^#?([0-9A-F]{1})([0-9A-F]{1})([0-9A-F]{1})$/i;
+   proto.patterns.transparent = /^transparent|rgba\(0, 0, 0, 0\)$/; <i>// need rgba <b>for</b> safari</i>
+
+   <i>/**
+    * Attempts to parse the given string and <b>return</b> a 3-tuple.
+    * @method parseColor
+    * @param {String} s The string to parse.
+    * @<b>return</b> {Array} The 3-tuple of rgb values.
+    */</i>
+   proto.parseColor = <b>function</b>(s) {
+      <b>if</b> (s.length == 3) { <b>return</b> s; }
+
+      <b>var</b> c = <b>this</b>.patterns.hex.exec(s);
+      <b>if</b> (c &amp;&amp; c.length == 4) {
+         <b>return</b> [ parseInt(c[1], 16), parseInt(c[2], 16), parseInt(c[3], 16) ];
+      }
+
+      c = <b>this</b>.patterns.rgb.exec(s);
+      <b>if</b> (c &amp;&amp; c.length == 4) {
+         <b>return</b> [ parseInt(c[1], 10), parseInt(c[2], 10), parseInt(c[3], 10) ];
+      }
+
+      c = <b>this</b>.patterns.hex3.exec(s);
+      <b>if</b> (c &amp;&amp; c.length == 4) {
+         <b>return</b> [ parseInt(c[1] + c[1], 16), parseInt(c[2] + c[2], 16), parseInt(c[3] + c[3], 16) ];
+      }
+
+      <b>return</b> null;
+   };
+
+   proto.getAttribute = <b>function</b>(attr) {
+      <b>var</b> el = <b>this</b>.getEl();
+      <b>if</b> (  <b>this</b>.patterns.color.test(attr) ) {
+         <b>var</b> val = YAHOO.util.Dom.getStyle(el, attr);
+
+         <b>if</b> (<b>this</b>.patterns.transparent.test(val)) { <i>// bgcolor <b>default</b></i>
+            <b>var</b> parent = el.parentNode; <i>// try and get from an ancestor</i>
+            val = Y.Dom.getStyle(parent, attr);
+
+            <b>while</b> (parent &amp;&amp; <b>this</b>.patterns.transparent.test(val)) {
+               parent = parent.parentNode;
+               val = Y.Dom.getStyle(parent, attr);
+               <b>if</b> (parent.tagName.toUpperCase() == 'HTML') {
+                  val = '#fff';
+               }
+            }
+         }
+      } <b>else</b> {
+         val = superclass.getAttribute.call(<b>this</b>, attr);
+      }
+
+      <b>return</b> val;
+   };
+
+   proto.doMethod = <b>function</b>(attr, start, end) {
+      <b>var</b> val;
+
+      <b>if</b> ( <b>this</b>.patterns.color.test(attr) ) {
+         val = [];
+         <b>for</b> (<b>var</b> i = 0, len = start.length; i &lt; len; ++i) {
+            val[i] = superclass.doMethod.call(<b>this</b>, attr, start[i], end[i]);
+         }
+
+         val = 'rgb('+Math.floor(val[0])+','+Math.floor(val[1])+','+Math.floor(val[2])+')';
+      }
+      <b>else</b> {
+         val = superclass.doMethod.call(<b>this</b>, attr, start, end);
+      }
+
+      <b>return</b> val;
+   };
+
+   proto.setRuntimeAttribute = <b>function</b>(attr) {
+      superclass.setRuntimeAttribute.call(<b>this</b>, attr);
+
+      <b>if</b> ( <b>this</b>.patterns.color.test(attr) ) {
+         <b>var</b> attributes = <b>this</b>.attributes;
+         <b>var</b> start = <b>this</b>.parseColor(<b>this</b>.runtimeAttributes[attr].start);
+         <b>var</b> end = <b>this</b>.parseColor(<b>this</b>.runtimeAttributes[attr].end);
+         <i>// fix colors <b>if</b> going &quot;by&quot;</i>
+         <b>if</b> ( <b>typeof</b> attributes[attr]['to'] === 'undefined' &amp;&amp; <b>typeof</b> attributes[attr]['by'] !== 'undefined' ) {
+            end = <b>this</b>.parseColor(attributes[attr].by);
+
+            <b>for</b> (<b>var</b> i = 0, len = start.length; i &lt; len; ++i) {
+               end[i] = start[i] + end[i];
+            }
+         }
+
+         <b>this</b>.runtimeAttributes[attr].start = start;
+         <b>this</b>.runtimeAttributes[attr].end = end;
+      }
+   };
+})();<i>/*
+TERMS OF USE - EASING EQUATIONS
+Open source under the BSD License.
+Copyright 2001 Robert Penner All rights reserved.
+
+Redistribution and use <b>in</b> source and binary forms, <b>with</b> or without modification, are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, <b>this</b> list of conditions and the following disclaimer.
+ * Redistributions <b>in</b> binary form must reproduce the above copyright notice, <b>this</b> list of conditions and the following disclaimer <b>in</b> the documentation and/or other materials provided <b>with</b> the distribution.
+ * Neither the name of the author nor the names of contributors may be used to endorse or promote products derived from <b>this</b> software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/</i>
+<i>// holder</i>
+<i>/**
+ * Singleton that determines how an animation proceeds from start to end.
+ * @class Easing
+ * @namespace YAHOO.util
+*/</i>
+
+YAHOO.util.Easing = {
+
+   <i>/**
+    * Uniform speed between points.
+    * @method easeNone
+    * @param {Number} t Time value used to compute current value
+    * @param {Number} b Starting value
+    * @param {Number} c Delta between start and end values
+    * @param {Number} d Total length of animation
+    * @<b>return</b> {Number} The computed value <b>for</b> the current animation frame
+    */</i>
+   easeNone: <b>function</b> (t, b, c, d) {
+   	<b>return</b> c*t/d + b;
+   },
+
+   <i>/**
+    * Begins slowly and accelerates towards end. (quadratic)
+    * @method easeIn
+    * @param {Number} t Time value used to compute current value
+    * @param {Number} b Starting value
+    * @param {Number} c Delta between start and end values
+    * @param {Number} d Total length of animation
+    * @<b>return</b> {Number} The computed value <b>for</b> the current animation frame
+    */</i>
+   easeIn: <b>function</b> (t, b, c, d) {
+   	<b>return</b> c*(t/=d)*t + b;
+   },
+
+   <i>/**
+    * Begins quickly and decelerates towards end.  (quadratic)
+    * @method easeOut
+    * @param {Number} t Time value used to compute current value
+    * @param {Number} b Starting value
+    * @param {Number} c Delta between start and end values
+    * @param {Number} d Total length of animation
+    * @<b>return</b> {Number} The computed value <b>for</b> the current animation frame
+    */</i>
+   easeOut: <b>function</b> (t, b, c, d) {
+   	<b>return</b> -c *(t/=d)*(t-2) + b;
+   },
+
+   <i>/**
+    * Begins slowly and decelerates towards end. (quadratic)
+    * @method easeBoth
+    * @param {Number} t Time value used to compute current value
+    * @param {Number} b Starting value
+    * @param {Number} c Delta between start and end values
+    * @param {Number} d Total length of animation
+    * @<b>return</b> {Number} The computed value <b>for</b> the current animation frame
+    */</i>
+   easeBoth: <b>function</b> (t, b, c, d) {
+   	<b>if</b> ((t/=d/2) &lt; 1) <b>return</b> c/2*t*t + b;
+   	<b>return</b> -c/2 * ((--t)*(t-2) - 1) + b;
+   },
+
+   <i>/**
+    * Begins slowly and accelerates towards end. (quartic)
+    * @method easeInStrong
+    * @param {Number} t Time value used to compute current value
+    * @param {Number} b Starting value
+    * @param {Number} c Delta between start and end values
+    * @param {Number} d Total length of animation
+    * @<b>return</b> {Number} The computed value <b>for</b> the current animation frame
+    */</i>
+   easeInStrong: <b>function</b> (t, b, c, d) {
+   	<b>return</b> c*(t/=d)*t*t*t + b;
+   },
+
+   <i>/**
+    * Begins quickly and decelerates towards end.  (quartic)
+    * @method easeOutStrong
+    * @param {Number} t Time value used to compute current value
+    * @param {Number} b Starting value
+    * @param {Number} c Delta between start and end values
+    * @param {Number} d Total length of animation
+    * @<b>return</b> {Number} The computed value <b>for</b> the current animation frame
+    */</i>
+   easeOutStrong: <b>function</b> (t, b, c, d) {
+   	<b>return</b> -c * ((t=t/d-1)*t*t*t - 1) + b;
+   },
+
+   <i>/**
+    * Begins slowly and decelerates towards end. (quartic)
+    * @method easeBothStrong
+    * @param {Number} t Time value used to compute current value
+    * @param {Number} b Starting value
+    * @param {Number} c Delta between start and end values
+    * @param {Number} d Total length of animation
+    * @<b>return</b> {Number} The computed value <b>for</b> the current animation frame
+    */</i>
+   easeBothStrong: <b>function</b> (t, b, c, d) {
+   	<b>if</b> ((t/=d/2) &lt; 1) <b>return</b> c/2*t*t*t*t + b;
+   	<b>return</b> -c/2 * ((t-=2)*t*t*t - 2) + b;
+   },
+
+   <i>/**
+    * Snap <b>in</b> elastic effect.
+    * @method elasticIn
+    * @param {Number} t Time value used to compute current value
+    * @param {Number} b Starting value
+    * @param {Number} c Delta between start and end values
+    * @param {Number} d Total length of animation
+    * @param {Number} p Period (optional)
+    * @<b>return</b> {Number} The computed value <b>for</b> the current animation frame
+    */</i>
+
+   elasticIn: <b>function</b> (t, b, c, d, a, p) {
+   	<b>if</b> (t==0) <b>return</b> b;  <b>if</b> ((t/=d)==1) <b>return</b> b+c;  <b>if</b> (!p) p=d*.3;
+   	<b>if</b> (!a || a &lt; Math.abs(c)) { a=c; <b>var</b> s=p/4; }
+   	<b>else</b> var s = p/(2*Math.PI) * Math.asin (c/a);
+   	<b>return</b> -(a*Math.pow(2,10*(t-=1)) * Math.sin( (t*d-s)*(2*Math.PI)/p )) + b;
+   },
+
+   <i>/**
+    * Snap out elastic effect.
+    * @method elasticOut
+    * @param {Number} t Time value used to compute current value
+    * @param {Number} b Starting value
+    * @param {Number} c Delta between start and end values
+    * @param {Number} d Total length of animation
+    * @param {Number} p Period (optional)
+    * @<b>return</b> {Number} The computed value <b>for</b> the current animation frame
+    */</i>
+   elasticOut: <b>function</b> (t, b, c, d, a, p) {
+   	<b>if</b> (t==0) <b>return</b> b;  <b>if</b> ((t/=d)==1) <b>return</b> b+c;  <b>if</b> (!p) p=d*.3;
+   	<b>if</b> (!a || a &lt; Math.abs(c)) { a=c; <b>var</b> s=p/4; }
+   	<b>else</b> var s = p/(2*Math.PI) * Math.asin (c/a);
+   	<b>return</b> a*Math.pow(2,-10*t) * Math.sin( (t*d-s)*(2*Math.PI)/p ) + c + b;
+   },
+
+   <i>/**
+    * Snap both elastic effect.
+    * @method elasticBoth
+    * @param {Number} t Time value used to compute current value
+    * @param {Number} b Starting value
+    * @param {Number} c Delta between start and end values
+    * @param {Number} d Total length of animation
+    * @param {Number} p Period (optional)
+    * @<b>return</b> {Number} The computed value <b>for</b> the current animation frame
+    */</i>
+   elasticBoth: <b>function</b> (t, b, c, d, a, p) {
+   	<b>if</b> (t==0) <b>return</b> b;  <b>if</b> ((t/=d/2)==2) <b>return</b> b+c;  <b>if</b> (!p) p=d*(.3*1.5);
+   	<b>if</b> (!a || a &lt; Math.abs(c)) { a=c; <b>var</b> s=p/4; }
+   	<b>else</b> var s = p/(2*Math.PI) * Math.asin (c/a);
+   	<b>if</b> (t &lt; 1) <b>return</b> -.5*(a*Math.pow(2,10*(t-=1)) * Math.sin( (t*d-s)*(2*Math.PI)/p )) + b;
+   	<b>return</b> a*Math.pow(2,-10*(t-=1)) * Math.sin( (t*d-s)*(2*Math.PI)/p )*.5 + c + b;
+   },
+
+   <i>/**
+    * Backtracks slightly, then reverses direction and moves to end.
+    * @method backIn
+    * @param {Number} t Time value used to compute current value
+    * @param {Number} b Starting value
+    * @param {Number} c Delta between start and end values
+    * @param {Number} d Total length of animation
+    * @param {Number} s Overshoot (optional)
+    * @<b>return</b> {Number} The computed value <b>for</b> the current animation frame
+    */</i>
+   backIn: <b>function</b> (t, b, c, d, s) {
+   	<b>if</b> (<b>typeof</b> s == 'undefined') s = 1.70158;
+   	<b>return</b> c*(t/=d)*t*((s+1)*t - s) + b;
+   },
+
+   <i>/**
+    * Overshoots end, then reverses and comes back to end.
+    * @method backOut
+    * @param {Number} t Time value used to compute current value
+    * @param {Number} b Starting value
+    * @param {Number} c Delta between start and end values
+    * @param {Number} d Total length of animation
+    * @param {Number} s Overshoot (optional)
+    * @<b>return</b> {Number} The computed value <b>for</b> the current animation frame
+    */</i>
+   backOut: <b>function</b> (t, b, c, d, s) {
+   	<b>if</b> (<b>typeof</b> s == 'undefined') s = 1.70158;
+   	<b>return</b> c*((t=t/d-1)*t*((s+1)*t + s) + 1) + b;
+   },
+
+   <i>/**
+    * Backtracks slightly, then reverses direction, overshoots end,
+    * then reverses and comes back to end.
+    * @method backBoth
+    * @param {Number} t Time value used to compute current value
+    * @param {Number} b Starting value
+    * @param {Number} c Delta between start and end values
+    * @param {Number} d Total length of animation
+    * @param {Number} s Overshoot (optional)
+    * @<b>return</b> {Number} The computed value <b>for</b> the current animation frame
+    */</i>
+   backBoth: <b>function</b> (t, b, c, d, s) {
+   	<b>if</b> (<b>typeof</b> s == 'undefined') s = 1.70158;
+   	<b>if</b> ((t/=d/2) &lt; 1) <b>return</b> c/2*(t*t*(((s*=(1.525))+1)*t - s)) + b;
+   	<b>return</b> c/2*((t-=2)*t*(((s*=(1.525))+1)*t + s) + 2) + b;
+   },
+
+   <i>/**
+    * Bounce off of start.
+    * @method bounceIn
+    * @param {Number} t Time value used to compute current value
+    * @param {Number} b Starting value
+    * @param {Number} c Delta between start and end values
+    * @param {Number} d Total length of animation
+    * @<b>return</b> {Number} The computed value <b>for</b> the current animation frame
+    */</i>
+   bounceIn: <b>function</b> (t, b, c, d) {
+   	<b>return</b> c - YAHOO.util.Easing.bounceOut(d-t, 0, c, d) + b;
+   },
+
+   <i>/**
+    * Bounces off end.
+    * @method bounceOut
+    * @param {Number} t Time value used to compute current value
+    * @param {Number} b Starting value
+    * @param {Number} c Delta between start and end values
+    * @param {Number} d Total length of animation
+    * @<b>return</b> {Number} The computed value <b>for</b> the current animation frame
+    */</i>
+   bounceOut: <b>function</b> (t, b, c, d) {
+   	<b>if</b> ((t/=d) &lt; (1/2.75)) {
+   		<b>return</b> c*(7.5625*t*t) + b;
+   	} <b>else</b> if (t &lt; (2/2.75)) {
+   		<b>return</b> c*(7.5625*(t-=(1.5/2.75))*t + .75) + b;
+   	} <b>else</b> if (t &lt; (2.5/2.75)) {
+   		<b>return</b> c*(7.5625*(t-=(2.25/2.75))*t + .9375) + b;
+   	} <b>else</b> {
+   		<b>return</b> c*(7.5625*(t-=(2.625/2.75))*t + .984375) + b;
+   	}
+   },
+
+   <i>/**
+    * Bounces off start and end.
+    * @method bounceBoth
+    * @param {Number} t Time value used to compute current value
+    * @param {Number} b Starting value
+    * @param {Number} c Delta between start and end values
+    * @param {Number} d Total length of animation
+    * @<b>return</b> {Number} The computed value <b>for</b> the current animation frame
+    */</i>
+   bounceBoth: <b>function</b> (t, b, c, d) {
+   	<b>if</b> (t &lt; d/2) <b>return</b> YAHOO.util.Easing.bounceIn(t*2, 0, c, d) * .5 + b;
+   	<b>return</b> YAHOO.util.Easing.bounceOut(t*2-d, 0, c, d) * .5 + c*.5 + b;
+   }
+};
+
+<i>/**
+ * Anim subclass <b>for</b> moving elements along a path defined by the &quot;points&quot;
+ * member of &quot;attributes&quot;.  All &quot;points&quot; are arrays <b>with</b> x, y coordinates.
+ * &lt;p&gt;Usage: &lt;code&gt;<b>var</b> myAnim = <b>new</b> YAHOO.util.Motion(el, { points: { to: [800, 800] } }, 1, YAHOO.util.Easing.easeOut);&lt;/code&gt;&lt;/p&gt;
+ * @class Motion
+ * @namespace YAHOO.util
+ * @requires YAHOO.util.Anim
+ * @requires YAHOO.util.AnimMgr
+ * @requires YAHOO.util.Easing
+ * @requires YAHOO.util.Bezier
+ * @requires YAHOO.util.Dom
+ * @requires YAHOO.util.Event
+ * @requires YAHOO.util.CustomEvent
+ * @constructor
+ * @extends YAHOO.util.Anim
+ * @param {String | HTMLElement} el Reference to the element that will be animated
+ * @param {Object} attributes The attribute(s) to be animated.
+ * Each attribute is an object <b>with</b> at minimum a &quot;to&quot; or &quot;by&quot; member defined.
+ * Additional optional members are &quot;from&quot; (defaults to current value), &quot;units&quot; (defaults to &quot;px&quot;).
+ * All attribute names use camelCase.
+ * @param {Number} duration (optional, defaults to 1 second) Length of animation (frames or seconds), defaults to time-based
+ * @param {Function} method (optional, defaults to YAHOO.util.Easing.easeNone) Computes the values that are applied to the attributes per frame (generally a YAHOO.util.Easing method)
+ */</i>
+(<b>function</b>() {
+   YAHOO.util.Motion = <b>function</b>(el, attributes, duration,  method) {
+      <b>if</b> (el) { <i>// dont <b>break</b> existing subclasses not using YAHOO.extend</i>
+         YAHOO.util.Motion.superclass.constructor.call(<b>this</b>, el, attributes, duration, method);
+      }
+   };
+
+   YAHOO.extend(YAHOO.util.Motion, YAHOO.util.ColorAnim);
+
+   <i>// shorthand</i>
+   <b>var</b> Y = YAHOO.util;
+   <b>var</b> superclass = Y.Motion.superclass;
+   <b>var</b> proto = Y.Motion.prototype;
+
+   proto.toString = <b>function</b>() {
+      <b>var</b> el = <b>this</b>.getEl();
+      <b>var</b> id = el.id || el.tagName;
+      <b>return</b> (&quot;Motion &quot; + id);
+   };
+
+   proto.patterns.points = /^points$/i;
+
+   proto.setAttribute = <b>function</b>(attr, val, unit) {
+      <b>if</b> (  <b>this</b>.patterns.points.test(attr) ) {
+         unit = unit || 'px';
+         superclass.setAttribute.call(<b>this</b>, 'left', val[0], unit);
+         superclass.setAttribute.call(<b>this</b>, 'top', val[1], unit);
+      } <b>else</b> {
+         superclass.setAttribute.call(<b>this</b>, attr, val, unit);
+      }
+   };
+
+   proto.getAttribute = <b>function</b>(attr) {
+      <b>if</b> (  <b>this</b>.patterns.points.test(attr) ) {
+         <b>var</b> val = [
+            superclass.getAttribute.call(<b>this</b>, 'left'),
+            superclass.getAttribute.call(<b>this</b>, 'top')
+         ];
+      } <b>else</b> {
+         val = superclass.getAttribute.call(<b>this</b>, attr);
+      }
+
+      <b>return</b> val;
+   };
+
+   proto.doMethod = <b>function</b>(attr, start, end) {
+      <b>var</b> val = null;
+
+      <b>if</b> ( <b>this</b>.patterns.points.test(attr) ) {
+         <b>var</b> t = <b>this</b>.method(<b>this</b>.currentFrame, 0, 100, <b>this</b>.totalFrames) / 100;
+         val = Y.Bezier.getPosition(<b>this</b>.runtimeAttributes[attr], t);
+      } <b>else</b> {
+         val = superclass.doMethod.call(<b>this</b>, attr, start, end);
+      }
+      <b>return</b> val;
+   };
+
+   proto.setRuntimeAttribute = <b>function</b>(attr) {
+      <b>if</b> ( <b>this</b>.patterns.points.test(attr) ) {
+         <b>var</b> el = <b>this</b>.getEl();
+         <b>var</b> attributes = <b>this</b>.attributes;
+         <b>var</b> start;
+         <b>var</b> control = attributes['points']['control'] || [];
+         <b>var</b> end;
+         <b>var</b> i, len;
+
+         <b>if</b> (control.length &gt; 0 &amp;&amp; !(control[0] instanceof Array) ) { <i>// could be single point or array of points</i>
+            control = [control];
+         } <b>else</b> { <i>// <b>break</b> reference to attributes.points.control</i>
+            <b>var</b> tmp = [];
+            <b>for</b> (i = 0, len = control.length; i&lt; len; ++i) {
+               tmp[i] = control[i];
+            }
+            control = tmp;
+         }
+
+         <b>if</b> (Y.Dom.getStyle(el, 'position') == 'static') { <i>// <b>default</b> to relative</i>
+            Y.Dom.setStyle(el, 'position', 'relative');
+         }
+
+         <b>if</b> ( isset(attributes['points']['from']) ) {
+            Y.Dom.setXY(el, attributes['points']['from']); <i>// set position to from point</i>
+         }
+         <b>else</b> { Y.Dom.setXY( el, Y.Dom.getXY(el) ); } <i>// set it to current position</i>
+
+         start = <b>this</b>.getAttribute('points'); <i>// get actual top &amp; left</i>
+
+         <i>// TO beats BY, per SMIL 2.1 spec</i>
+         <b>if</b> ( isset(attributes['points']['to']) ) {
+            end = translateValues.call(<b>this</b>, attributes['points']['to'], start);
+
+            <b>var</b> pageXY = Y.Dom.getXY(<b>this</b>.getEl());
+            <b>for</b> (i = 0, len = control.length; i &lt; len; ++i) {
+               control[i] = translateValues.call(<b>this</b>, control[i], start);
+            }
+
+
+         } <b>else</b> if ( isset(attributes['points']['by']) ) {
+            end = [ start[0] + attributes['points']['by'][0], start[1] + attributes['points']['by'][1] ];
+
+            <b>for</b> (i = 0, len = control.length; i &lt; len; ++i) {
+               control[i] = [ start[0] + control[i][0], start[1] + control[i][1] ];
+            }
+         }
+
+         <b>this</b>.runtimeAttributes[attr] = [start];
+
+         <b>if</b> (control.length &gt; 0) {
+            <b>this</b>.runtimeAttributes[attr] = <b>this</b>.runtimeAttributes[attr].concat(control);
+         }
+
+         <b>this</b>.runtimeAttributes[attr][<b>this</b>.runtimeAttributes[attr].length] = end;
+      }
+      <b>else</b> {
+         superclass.setRuntimeAttribute.call(<b>this</b>, attr);
+      }
+   };
+
+   <b>var</b> translateValues = <b>function</b>(val, start) {
+      <b>var</b> pageXY = Y.Dom.getXY(<b>this</b>.getEl());
+      val = [ val[0] - pageXY[0] + start[0], val[1] - pageXY[1] + start[1] ];
+
+      <b>return</b> val;
+   };
+
+   <b>var</b> isset = <b>function</b>(prop) {
+      <b>return</b> (<b>typeof</b> prop !== 'undefined');
+   };
+})();
+<i>/**
+ * Anim subclass <b>for</b> scrolling elements to a position defined by the &quot;scroll&quot;
+ * member of &quot;attributes&quot;.  All &quot;scroll&quot; members are arrays <b>with</b> x, y scroll positions.
+ * &lt;p&gt;Usage: &lt;code&gt;<b>var</b> myAnim = <b>new</b> YAHOO.util.Scroll(el, { scroll: { to: [0, 800] } }, 1, YAHOO.util.Easing.easeOut);&lt;/code&gt;&lt;/p&gt;
+ * @class Scroll
+ * @namespace YAHOO.util
+ * @requires YAHOO.util.Anim
+ * @requires YAHOO.util.AnimMgr
+ * @requires YAHOO.util.Easing
+ * @requires YAHOO.util.Bezier
+ * @requires YAHOO.util.Dom
+ * @requires YAHOO.util.Event
+ * @requires YAHOO.util.CustomEvent
+ * @extends YAHOO.util.Anim
+ * @constructor
+ * @param {String or HTMLElement} el Reference to the element that will be animated
+ * @param {Object} attributes The attribute(s) to be animated.
+ * Each attribute is an object <b>with</b> at minimum a &quot;to&quot; or &quot;by&quot; member defined.
+ * Additional optional members are &quot;from&quot; (defaults to current value), &quot;units&quot; (defaults to &quot;px&quot;).
+ * All attribute names use camelCase.
+ * @param {Number} duration (optional, defaults to 1 second) Length of animation (frames or seconds), defaults to time-based
+ * @param {Function} method (optional, defaults to YAHOO.util.Easing.easeNone) Computes the values that are applied to the attributes per frame (generally a YAHOO.util.Easing method)
+ */</i>
+(<b>function</b>() {
+   YAHOO.util.Scroll = <b>function</b>(el, attributes, duration,  method) {
+      <b>if</b> (el) { <i>// dont <b>break</b> existing subclasses not using YAHOO.extend</i>
+         YAHOO.util.Scroll.superclass.constructor.call(<b>this</b>, el, attributes, duration, method);
+      }
+   };
+
+   YAHOO.extend(YAHOO.util.Scroll, YAHOO.util.ColorAnim);
+
+   <i>// shorthand</i>
+   <b>var</b> Y = YAHOO.util;
+   <b>var</b> superclass = Y.Scroll.superclass;
+   <b>var</b> proto = Y.Scroll.prototype;
+
+   proto.toString = <b>function</b>() {
+      <b>var</b> el = <b>this</b>.getEl();
+      <b>var</b> id = el.id || el.tagName;
+      <b>return</b> (&quot;Scroll &quot; + id);
+   };
+
+   proto.doMethod = <b>function</b>(attr, start, end) {
+      <b>var</b> val = null;
+
+      <b>if</b> (attr == 'scroll') {
+         val = [
+            <b>this</b>.method(<b>this</b>.currentFrame, start[0], end[0] - start[0], <b>this</b>.totalFrames),
+            <b>this</b>.method(<b>this</b>.currentFrame, start[1], end[1] - start[1], <b>this</b>.totalFrames)
+         ];
+
+      } <b>else</b> {
+         val = superclass.doMethod.call(<b>this</b>, attr, start, end);
+      }
+      <b>return</b> val;
+   };
+
+   proto.getAttribute = <b>function</b>(attr) {
+      <b>var</b> val = null;
+      <b>var</b> el = <b>this</b>.getEl();
+
+      <b>if</b> (attr == 'scroll') {
+         val = [ el.scrollLeft, el.scrollTop ];
+      } <b>else</b> {
+         val = superclass.getAttribute.call(<b>this</b>, attr);
+      }
+
+      <b>return</b> val;
+   };
+
+   proto.setAttribute = <b>function</b>(attr, val, unit) {
+      <b>var</b> el = <b>this</b>.getEl();
+
+      <b>if</b> (attr == 'scroll') {
+         el.scrollLeft = val[0];
+         el.scrollTop = val[1];
+      } <b>else</b> {
+         superclass.setAttribute.call(<b>this</b>, attr, val, unit);
+      }
+   };
+})();
+</code></pre><hr><div style="font-size:10px;text-align:center;color:gray;">yui-ext - Copyright &copy; 2006 Jack Slocum.  |
+    Yahoo! UI - Copyright &copy; 2006 Yahoo! Inc.<br />All rights reserved.</div>
+    </body></html>

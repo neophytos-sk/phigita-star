@@ -1,0 +1,46 @@
+Received: by web2.extjs.com (Postfix, from userid 33)
+	id C20AA6C1F3; Sat, 19 Nov 2011 00:02:05 +0000 (UTC) 
+To: k2pts@phigita.net 
+Subject: "Ext 1.x: Help & Discussion" update 
+X-PHP-Originating-Script: 1000:class_mail.php 
+From: "Sencha Forum" <admin@sencha.com> 
+Auto-Submitted: auto-generated 
+Message-ID: <20111119000205.e4440da5f06e@www.sencha.com> 
+X-Priority: 3 
+X-Mailer: vBulletin Mail via PHP 
+Date: Sat, 19 Nov 2011 00:02:05 +0000 (UTC) 
+--------------------------------------
+Dear k2pts,
+
+You are subscribed to the forum Ext 1.x: Help & Discussion, there have been 0 new thread(s) and 2 updated thread(s).
+http://www.sencha.com/forum/forumdisplay.php?5-Ext-1.x-Help-amp-Discussion
+
+The following threads are new:
+
+
+The following threads have been updated:
+************
+How to give HYPERLINK in EXTJS grid
+http://www.sencha.com/forum/showthread.php?22967-How-to-give-HYPERLINK-in-EXTJS-grid
+In forum: Ext 1.x: Help & Discussion
+Started by: uma
+Last post: 18 Nov 2011 6:01 AM
+************
+grid pagination, sort help
+http://www.sencha.com/forum/showthread.php?13336-grid-pagination-sort-help
+In forum: Ext 1.x: Help & Discussion
+Started by: cleancutEddie
+Last post: 18 Nov 2011 10:22 AM
+
+
+All the best,
+Sencha Forum
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Unsubscription information:
+
+To unsubscribe from this forum, please visit this page:
+http://www.sencha.com/forum/subscription.php?do=removesubscription&type=forum&subscriptionid=64&auth=03ea1c99ffc5f299c59714b9adcc29a0
+
+
+

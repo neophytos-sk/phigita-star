@@ -1,0 +1,17 @@
+Return-path: <webmaster@phigita.net> 
+Received: from [180.241.91.190] (port=6559 helo=yoko7e8c4502b1)
+	by kaku.metrohispeed.com with asmtp 
+	id 753EF2-000216-61
+	for <webmaster@phigita.net>; Tue, 22 Nov 2011 13:57:41 +0700 
+Message-ID: <5C9F953FA85D47F9B28745164A46462A@yoko7e8c4502b1> 
+From: =?koi8-r?B?IuLPztPByiDHwczF0sXRIiA=?= <recapitulatednyu@cedargroveinv.com> 
+To: <webmaster@phigita.net> 
+Subject: =?koi8-r?B?8sHT0NLPxMHWwSDR0M/O08vJyCDCz87TwcouIPDPxMHSz8sgzsEgxM/M?=
+	=?koi8-r?B?x8nFIMfPxNk=?= 
+Date: Tue, 22 Nov 2011 13:57:41 +0700 
+X-Priority: 3 
+X-MSMail-Priority: Normal 
+X-Mailer: Microsoft Windows Mail 6.0.6001.18000 
+X-MimeOLE: Produced By Microsoft MimeOLE V6.0.6001.18049 
+X-Spam: Not detected 
+X-Mras: Ok 

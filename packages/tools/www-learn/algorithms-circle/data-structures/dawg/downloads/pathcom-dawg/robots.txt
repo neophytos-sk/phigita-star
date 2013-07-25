@@ -1,0 +1,17 @@
+# Robots.txt file created by Surinder Jan 16, 2009
+# For domain: http://www.pathcom.com
+# All robots will spider the domain
+
+User-agent: *
+Disallow: /css/ 
+Disallow: /jsfiles/ 
+Disallow: /images/
+Disallow: /classes/
+Disallow: /admin/
+Disallow: /includes/
+Disallow: /menu/
+Disallow: /middle/
+Disallow: /support_pdf/
+Disallow: /tabmenu/
+
+Sitemap: http://www.pathcom.com/sitemap.xml

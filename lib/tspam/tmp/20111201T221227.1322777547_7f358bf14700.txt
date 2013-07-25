@@ -1,0 +1,63 @@
+Received: from mail16.artegic.net (localhost [127.0.0.1])
+	by mail16.artegic.net (Postfix) with ESMTP id 2461224C31D2
+	for <k2pts@phigita.net>; Thu,  1 Dec 2011 23:03:52 +0100 (CET) from mail16.artegic.net (localhost [127.0.0.1])
+	by mail16.artegic.net (Postfix) with ESMTP id 337AF24DA0B3
+	for <k2pts@phigita.net>; Thu,  1 Dec 2011 22:57:39 +0100 (CET) 
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=sedo.mydkim.de; h=date:to
+	:from:reply-to:subject:message-id:mime-version:content-type
+	:content-transfer-encoding; s=elaine; bh=3WR+gT1x7Pa5Q9kwYTsY7v8
+	fX9c=; b=VwsPkbAga5TBcRT/UbL5hVikW4hJGV3T0Sehguq7CVH8Tup12LJ8flI
+	oLM3zSpePypfKHKCdoxJuVmGyeQDc5H3n9YgdxvsZI9p4McbejF6iqEKOTHtv4ET
+	/z+WPIjA3dTIwYWu/slWbXYa47VcS3yee4e0dfpQsl0nuEvvAiik= 
+Date: Thu, 1 Dec 2011 22:57:39 +0100 
+To: k2pts@phigita.net 
+From: "Sedo.com" <info@news.sedo.com> 
+Reply-to: noreply@sedo.com 
+Subject: Notice: Change of Parking Policy that May Affect Your Parking Revenue 
+Message-ID: <E5-1xg49wof-nr18/9/3188-2486@mail16.artegic.net> 
+X-Priority: 3 
+X-Mailer: Elaine [Elaine 5.3] 
+X-Data: E5-1xg49wof-nr18/9/3188-2486 
+--------------------------------------
+Hi Neophytos,
+
+As of January 1st 2012, Sedo will no longer pay out parking revenue for any domains parked using URL
+forwarding, regardless of the advertising provider source. This is based on a decision from our  primary
+online advertiser, Google, who has stated that they will only  monetize name-server (DNS) parked domains.
+
+• DNS-parked domains are more secure and less susceptible to downtime.
+
+• DNS-parked domains load more quickly for visitors, resulting in better CTR and ultimately more revenue.
+
+• DNS forwarding settings can be adjusted in bulk by most registrars, whereas URL forwarding must be set up
+one domain at a time.
+
+Over the last few months we have sent out multiple communications (personalized emails and newsletter articles) reminding you of the required switch and deadlines to secure your parking earnings. Google already
+tested not monetizing URL forwarded domains for 48 hours between November 14 and 16. Unfortunately, we cannot
+make this change for you, but we can make it as easy as possible.
+
+Please visit your registrar account to switch to name-server parking now (check whether a bulk change option
+is possible) by entering the following details:
+
+• Primary name server: ns1.sedoparking.com
+
+• Secondary name server: ns2.sedoparking.com
+
+Should you have any questions whatsoever, please contact our Customer Care team http://sedo.com/us/services/customer-support/?tracked=&partnerid=&language=us or your dedicated account manager.
+
+We would like to thank you in advance for taking the time to make the change. This change will help ensure
+steady earnings, and using name-server parking will only benefit your parked domains!
+
+Best Regards,
+Liesbeth Mack-de Boer
+CSO :: Sedo.com
+
+
+
+
+
+
+
+
+
+

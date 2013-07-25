@@ -1,0 +1,982 @@
+div.tr_bubble {
+  position: absolute;
+}
+.tr_bubble .tr_link{
+  color: blue;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 10pt;
+}
+
+.tr_bubble .tr_body, .tr_bubble .tr_t, .tr_bubble .tr_l, .tr_bubble .tr_r, .tr_bubble .tr_b{
+  background-color: #E0ECFF;
+}
+.tr_bubble .tr_body {
+  padding: 5px;
+  white-space: nowrap;
+}
+.tr_bubble .tr_spacer {
+  padding: 2px;
+}
+.tr_bubble .tr_body, .tr_bubble .tr_td, .tr_bubble .tr_th {
+  font-size: 83%;
+  font-family: Arial, Helvetica, sans-serif;
+}
+.tr_bubble .tr_tr, .tr_bubble .tr_tl, .tr_bubble .tr_bl, .tr_bubble .tr_br {
+  background-repeat: no-repeat;
+  height: 2px;
+  width: 2px;
+}
+.tr_bubble .tr_tr {
+  background-image: url(../images/bubble2_tr.gif);
+}
+.tr_bubble .tr_tl {
+  background-image: url(../images/bubble2_tl.gif);
+}
+.tr_bubble .tr_bl {
+  background-image: url(../images/bubble2_bl.gif);
+}
+.tr_bubble .tr_br {
+  background-image: url(../images/bubble2_br.gif);
+}
+.tr_bubble .tr_t {
+  border-top: 1px solid #99c0ff;
+}
+.tr_bubble	.tr_b {
+  border-bottom: 1px solid #99c0ff;
+}
+.tr_bubble .tr_l {
+  border-left: 1px solid #99c0ff;
+}
+.tr_bubble .tr_r {
+  border-right: 1px solid #99c0ff;
+}
+
+table.tr_speechBubble {
+  position: absolute;
+  cursor: default;
+}
+
+.tr_speechBubble .tr_body {
+  font-size: 83%;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.tr_speechBubble .tr_body,
+.tr_speechBubble .tr_t, 
+.tr_speechBubble .tr_l, 
+.tr_speechBubble .tr_r, 
+.tr_speechBubble .tr_b{
+  background-color: #FFFFFF;
+}
+
+.tr_speechBubble .tr_tr,
+.tr_speechBubble .tr_tl,
+.tr_speechBubble .tr_bl,
+.tr_speechBubble .tr_br {
+  width: 5px;
+  height: 5px;
+}
+
+.tr_speechBubble .tr_tr {
+  background-image: url(../images/speechbubble_r1_c5.gif);
+}
+.tr_speechBubble .tr_tl {
+  background-image: url(../images/speechbubble_r1_c1.gif);
+}
+.tr_speechBubble .tr_bl {
+  background-image: url(../images/speechbubble_r3_c1.gif);
+}
+.tr_speechBubble .tr_br {
+  background-image: url(../images/speechbubble_r3_c5.gif);
+}
+.tr_speechBubble .tr_bp {
+  background-image: url(../images/speechbubble_r4_c3.gif);
+  background-repeat: no-repeat;
+}
+.tr_speechBubble .tr_t {
+  border-top: 1px solid #bebebe;
+}
+.tr_speechBubble .tr_b {
+  border-bottom: 1px solid #bebebe;
+ }
+.tr_speechBubble .tr_l {
+  border-left: 1px solid #bebebe;
+}
+.tr_speechBubble .tr_r {
+  border-right: 1px solid #bebebe;
+}.tr_dialog {
+  background: #E8EEF7;
+  font-family: arial;
+  font-size: 10pt;
+}
+
+.tr_dialog body {
+  font-size: 10pt;
+}
+
+.tr_dialog .tr_dialog-title {
+  margin: 0;
+  padding: 0 5px 3px 5px;
+  background: #C3D9FF;
+  color: #000;
+  font-weight: bold;
+  font-size: 10pt;
+}
+
+.tr_dialog .tr_dialog-title .tr_dialog-title-layout-table {
+  margin: 0px 0px 0px 0px;
+  padding: 0px 0px 0px 0px;
+  background: #C3D9FF;
+  color: #000;
+  font-weight: bold;
+  font-size: 10pt;
+}
+
+.tr_dialog .tr_dialog-title .tr_dialog-title-layout-table td {
+  padding-top: 5px;
+}
+.tr_button-region-lhs {
+  float: left;
+  padding: 0px 7px 5px 0px;
+}
+
+.tr_dialog .tr_button-region-rhs {
+  float: right;
+  clear: both;
+  padding: 0px 7px 5px 0px;
+}
+
+.tr_dialog .tr_button-region-rhs input, .tr_button-region-lhs {
+  padding: .25ex .3ex;
+  margin: 6px 0 1px 1.2ex;  
+}
+
+.tr_dialog .tr_dialog-section {
+  border-bottom: solid 2px #C3D9FF;
+  font-size: 10pt;
+}
+
+.tr_pseudo-link {
+ color: #00c;
+ text-decoration: underline;
+ cursor: pointer;
+}
+
+.tr_dialog-tab-content-explanation-text {
+  font-size: 83%;
+  margin-top: 15px;
+}
+      
+.tr_external-input-div {
+  margin: 1ex 0;
+}
+
+.tr_backgroundMask {
+  position: absolute;
+  display: none;
+  top: 0px;
+  left: 0px;
+
+  opacity: .4;
+  filter: alpha(opacity=40);
+  /* this hack is so it works in IE
+   * I find setting the color in the css gives me more flexibility
+   * than the PNG solution.
+   */
+  background-color: #FFFFFF;
+}
+
+.tr_resource-list div {
+  padding-bottom: 2px;
+  margin-bottom: 1px;
+  border-bottom: solid #ccc 1px;
+  cursor: pointer;
+  font-size: 10pt;
+}
+
+.tr_resource-list-icons img {
+  margin-left: 1px;
+  margin-right: 4px;
+  top: 2px;
+}
+
+.tr_resource-list-size {
+  overflow: auto; height: 200px;
+  font-size: 10pt;
+}.tr_edit-link-dialog {
+  position: absolute;
+  border: 2px solid #99c0ff;
+  width: 650px;
+}
+
+.tr_edit-link-dialog-body {
+  margin: 0;
+  padding: 5px 10px 0px 10px;
+  line-height: 1.3;
+  font-size: 10pt;
+}
+
+#tr_on-the-web-tab-input, #tr_email-address-tab-input {
+  width: 100%;
+}.tr_igmoduleDialog-module-dialog {
+  position: absolute;
+  border: 2px solid #99c0ff;
+  width: 650px;
+}
+
+.tr_igmoduleDialog-module-dialog-body {
+  margin: 0;
+  padding: 5px 10px 0px 10px;
+  line-height: 1.3;
+  font-size: 10pt;
+}
+
+.tr_igmoduleDialog-setup-module-content {
+  width: 100%;
+  height: 100%;
+}
+
+.tr_igmoduleDialog-setup-module-edit {
+  width: 100%;
+  height: 300px;
+  margin: 0px;
+  padding: 0px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.tr_igmoduleDialog-setup-module-preview {
+  margin: 0px;
+  padding: 0px;
+  text-align: center;
+  vertical-align: middle;
+  width: 300px;
+  height: 300px;
+}
+.tr_image-dialog {
+  position: absolute;
+  border: 2px solid #99c0ff;
+  width: 650px;
+}
+
+.tr_image-dialog-body {
+  margin: 0;
+  padding: 5px 10px 0px 10px;
+  line-height: 1.3;
+  font-size: 10pt;
+}
+
+#tr_imageDialog-external-image-preview {
+  border: solid 1px #ddd;
+  padding: 0;
+  text-align: center;
+  vertical-align: middle;
+  color: #888;
+}
+
+#tr_imageDialog-image-list span {
+  float: left;
+  width: 96px;
+  height: 96px;
+  text-align: center;
+  margin: 2px;
+  padding: 8px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+#tr_imageDialog-image-list table {
+  width: 96px;
+  height: 96px;
+  border: solid 1px #ECE9D8;
+  border-collapse: collapse;
+}
+
+#tr_imageDialog-image-list td {
+  width: 96px;
+  height: 96px;
+  text-align: center;
+  vertical-align: middle;
+  padding: 0;
+  background: white;
+}
+
+#tr_imageDialog-image-list {
+  overflow: auto; 
+  height: 230px;
+}.tr_raw-html-dialog {
+  position: absolute;
+  border: 2px solid #99c0ff;
+}
+
+.tr_raw-html-dialog-body {
+  margin: 0;
+  padding: 5px 10px 0px 10px;
+  line-height: 1.3;
+  font-size: 10pt;
+}
+
+#tr_raw-html-dialog-preview-pane {
+  border: solid 1px #ddd;
+  padding: 0;
+  text-align: center;
+  vertical-align: middle;
+  color: #888;
+}
+
+.tr_raw-html-dialog .tr_tabbed-pane-tab-content {
+  padding-right: 9px;
+  /* IE 6 standards mode needs this.  For now apply to all IE 6 */
+  _padding-right: 12px;
+}.tr_well .tr_tl {
+	background-image: url(../images/well_tl2.gif);
+	background-repeat: no-repeat;
+}
+.tr_well .tr_t {
+	background-image: url(../images/well_top2.gif);
+	background-repeat: repeat-x;
+}
+.tr_well .tr_tr {
+	background-image: url(../images/well_tr.gif);
+	background-repeat: no-repeat;
+}
+.tr_well .tr_l {
+	background-image: url(../images/well_left.gif);
+	background-repeat: repeat-y;
+}
+.tr_well .tr_r {
+	background-image: url(../images/well_right.gif);
+	background-repeat: repeat-y;
+}
+.tr_well .tr_r2 {
+	background-image: url(../images/well_right2.gif);
+	background-repeat: repeat-y;
+	background-position: right;
+}
+.tr_well .tr_bl {
+	background-image: url(../images/well_bl.gif);
+	background-repeat: no-repeat;
+}
+.tr_well .tr_b {
+	background-image: url(../images/well_bottom.gif);
+	background-repeat: repeat-x;
+}
+.tr_well .tr_br {
+	background-image: url(../images/well_br.gif);
+	background-repeat: no-repeat;
+}
+
+.tr_toolbar-styles .tr_well {
+  border: none;
+  padding: 0;
+  font-size: 83%;
+  text-align: center;
+}
+.tr_toolbar-vertical .tr_toolbar-styles .tr_well .tr_separator {
+  height: 5px;
+  display: block;
+}
+.tr_toolbar-styles .tr_well .tr_selected-style {
+  background: #FAD163;
+}
+.tr_toolbar-styles .tr_well .tr_unselected-style span {
+  color: #6161BC;
+  text-decoration: underline;
+  font-weight: normal;
+  cursor: pointer;
+}
+.tr_toolbar-styles .tr_well .tr_selected-style span {
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.tr_toolbar-vertical .tr_toolbar-styles {
+  float: left;
+}
+
+.tr_toolbar-vertical .tr_toolbar-styles .tr_well {
+  width: 7.8em;
+}
+.tr_tabbed-pane-tabs {
+  line-height: 1.3; 
+  vertical-align: top;
+  font-size: 10pt;
+}
+
+.tr_tabbed-pane-tabs p {
+  margin-bottom: .7ex;
+  font-size: 10pt;
+}
+
+.tr_tabbed-pane-tabs div {
+  cursor: pointer;
+  width: 22ex;
+}
+
+.tr_tabbed-pane-tabs .tr_tabbed-pane-tab-label {
+  color: blue;
+  text-decoration: underline;
+}
+
+.tr_tabbed-pane-tabs td {
+  font-size: 10pt;
+}
+
+.tr_vertical-tab div {
+  padding: .5ex 0 .5ex .7ex;
+}
+
+.tr_horizontal-tab div {
+  padding: .7ex;
+  border-top: 2px solid #99c0ff;
+  border-left: 2px solid #99c0ff;
+  border-right: 2px solid #99c0ff;
+  margin-left: 2px;
+}
+
+.tr_tabbed-pane {
+  padding: 1.3ex 0;
+  font-size: 10pt;
+}
+
+.tr_tabbed-pane-tabs .tr_selected-tab-in-tabbed-pane {
+  background: white;
+}
+
+.tr_tabbed-pane-tabs .tr_selected-tab-in-tabbed-pane .tr_tabbed-pane-tab-label {
+  color: black;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.tr_tabbed-pane-tab-content {
+  width: 100%;
+  vertical-align: top;
+  padding: 5px 7px 1px 7px;
+  background: white;
+  font-size: 10pt;
+}
+.tr_wfield-dialog {
+  position: absolute;
+  border: 2px solid #99c0ff;
+  width: 650px;
+}
+
+.tr_wfield-dialog-body {
+  margin: 0;
+  padding: 5px 10px 0px 10px;
+  line-height: 1.3;
+}
+
+#tr_wfield-resource-list {
+  /*TODO(gabor): this is bad but layout is messed up with width: 100%*/
+  width: 629px; 
+  vertical-align: top;
+  padding: 5px 7px 1px 7px;
+  background: white;
+}/* ------------------------------------------------------------
+  Customized Button
+------------------------------------------------------------ */
+
+.tr_toolbar {
+  font-family: arial;
+  font-size: 83%;
+}
+
+.container,
+.containerhover,
+.containeron {
+  float: left; 
+  margin: 2px 3px 2px 0 !important;
+  padding: 0 !important;
+  color: #000;
+  cursor: default;
+  whitespace: nowrap !important;
+}
+
+.desc {
+  margin: 0 !important;
+  padding: 2px 4px -1px 4px !important;
+  line-height: .2em !important;
+  background: url(http://pages.google.com/-/images/bg/cbleft_ltr.gif) top left no-repeat;
+}
+
+.link {
+  margin: 0 !important;
+  padding: 4px 0 0 9px !important; /* EDIT TOP MARGIN */
+  background: url(http://pages.google.com/-/images/bg/cbleft_ltr.gif) bottom left no-repeat;
+}
+
+.link em {
+  display: block !important;
+  padding: 0 8px 6px 0 !important; /* EDIT BOTTOM MARGIN */
+  font-style: normal;
+  line-height: 1em !important;
+  text-decoration: none;
+  text-align: center !important;
+  background: url(http://pages.google.com/-/images/bg/cbright_ltr.gif) bottom right no-repeat;
+}
+
+
+/* ------------------------------------------------------------
+  Pill Buttons
+------------------------------------------------------------ */
+div.leftpill, div.leftpillhover, div.leftpillon {margin-right: 0 !important}
+div.leftpill p em {background: url(http://pages.google.com/-/images/bg/cbpillbg.gif) bottom right no-repeat}
+
+div.middlepill, div.middlepillhover, div.middlepillon {margin-right: 0 !important}
+div.middlepill {background: url(http://pages.google.com/-/images/bg/cbpillbg.gif) top right no-repeat}
+div.middlepill p.desc {background: url(http://pages.google.com/-/images/bg/cbleftpill_ltr.gif) top left no-repeat}
+div.middlepill p.link {background: url(http://pages.google.com/-/images/bg/cbleftpill_ltr.gif) bottom left no-repeat}
+div.middlepill p em {background: url(http://pages.google.com/-/images/bg/cbpillbg.gif) bottom right no-repeat}
+
+div.rightpill p.desc {background: url(http://pages.google.com/-/images/bg/cbleftpill_ltr.gif) top left no-repeat}
+div.rightpill p.link {background: url(http://pages.google.com/-/images/bg/cbleftpill_ltr.gif) bottom left no-repeat}
+
+/* ------------------------------------------------------------
+  Background States (normal, hover, press)
+------------------------------------------------------------ */
+
+/* Normal */
+.container {background: url(http://pages.google.com/-/images/bg/cbright_ltr.gif) top right no-repeat}
+.leftpill {background: url(http://pages.google.com/-/images/bg/cbpillbg.gif) top right no-repeat}
+
+/* Hover State */
+.containerhover {background: url(http://pages.google.com/-/images/bg/cbright_h_ltr.gif) top right no-repeat}
+.containerhover .p1 {background: url(http://pages.google.com/-/images/bg/cbleft_h_ltr.gif) top left no-repeat}
+.containerhover .p2 {background: url(http://pages.google.com/-/images/bg/cbleft_h_ltr.gif) bottom left no-repeat}
+.containerhover .p2 em {background: url(http://pages.google.com/-/images/bg/cbright_h_ltr.gif) bottom right no-repeat}
+
+div.middlepillhover {background: url(http://pages.google.com/-/images/bg/cbpillbg_h.gif) top right no-repeat}
+div.middlepillhover p.desc {background: url(http://pages.google.com/-/images/bg/cbleftpill_h_ltr.gif) top left no-repeat}
+div.middlepillhover p.link {background: url(http://pages.google.com/-/images/bg/cbleftpill_h_ltr.gif) bottom left no-repeat}
+div.middlepillhover p.p2 em {background: url(http://pages.google.com/-/images/bg/cbpillbg_h.gif) bottom right no-repeat}
+
+div.leftpillhover {background: url(http://pages.google.com/-/images/bg/cbpillbg_h.gif) top right no-repeat}
+div.leftpillhover p em {background: url(http://pages.google.com/-/images/bg/cbpillbg_h.gif) bottom right no-repeat}
+div.leftpillhover .p2 em {background: url(http://pages.google.com/-/images/bg/cbpillbg_h.gif) bottom right no-repeat}
+
+div.rightpillhover p.desc {background: url(http://pages.google.com/-/images/bg/cbleftpill_h_ltr.gif) top left no-repeat}
+div.rightpillhover p.link {background: url(http://pages.google.com/-/images/bg/cbleftpill_h_ltr.gif) bottom left no-repeat}
+
+/* On State */
+.containeron {background: url(http://pages.google.com/-/images/bg/cbright_o_ltr.gif) top right no-repeat}
+.containeron .p1 {background: url(http://pages.google.com/-/images/bg/cbleft_o_ltr.gif) top left no-repeat}
+.containeron .p2 {background: url(http://pages.google.com/-/images/bg/cbleft_o_ltr.gif) bottom left no-repeat}
+.containeron .p2 em {background: url(http://pages.google.com/-/images/bg/cbright_o_ltr.gif) bottom right no-repeat}
+
+div.middlepillon {background: url(http://pages.google.com/-/images/bg/cbpillbg_o.gif) top right no-repeat}
+div.middlepillon p.desc {background: url(http://pages.google.com/-/images/bg/cbleftpill_o_ltr.gif) top left no-repeat}
+div.middlepillon p.link {background: url(http://pages.google.com/-/images/bg/cbleftpill_o_ltr.gif) bottom left no-repeat}
+div.middlepillon p.p2 em {background: url(http://pages.google.com/-/images/bg/cbpillbg_o.gif) bottom right no-repeat}
+
+div.leftpillon {background: url(http://pages.google.com/-/images/bg/cbpillbg_o.gif) top right no-repeat}
+div.leftpillon p em {background: url(http://pages.google.com/-/images/bg/cbpillbg_o.gif) bottom right no-repeat}
+div.leftpillon .p2 em {background: url(http://pages.google.com/-/images/bg/cbpillbg_o.gif) bottom right no-repeat}
+
+div.rightpillon p.desc {background: url(http://pages.google.com/-/images/bg/cbleftpill_o_ltr.gif) top left no-repeat}
+div.rightpillon p.link {background: url(http://pages.google.com/-/images/bg/cbleftpill_o_ltr.gif) bottom left no-repeat}
+
+/* Icon Style */
+.container span, .containerhover span, .containeron span {
+  background-position: 0% 50%;
+  padding: 2px 0 2px 20px !important;
+  margin: -2px 0 !important;
+  width: 1px !important;
+  white-space: nowrap !important;
+}
+
+/* Fixed Width Icon */
+.icon { width: 1.5em !important; font-family: times; line-height: 1.2em !important; font-weight: bold;}
+
+/* Background image icons with only an image. Need to subtract the space
+ for the NBSP */
+.container .imageOnly, .containerhover .imageOnly, .containeron .imageOnly {
+  margin-right: -1ex !important;
+}
+
+.tr_toolbar-vertical {
+  width: 7em !important;
+  _width: 7.1em !important;
+  padding-left: 4px !important;
+}
+
+.tr_toolbar-vertical .container .p2,
+.tr_toolbar-vertical .containeron .p2,
+.tr_toolbar-vertical .containerhover .p2 {
+  width: 5.7em !important;
+  _width: 6.6em !important;
+}
+
+.tr_toolbar-vertical .container .icon,
+.tr_toolbar-vertical .containeron .icon,
+.tr_toolbar-vertical .containerhover .icon {
+  width: 2.4em !important;
+  _width: 3.2em !important;
+}
+
+.tr_toolbar-vertical .leftpill .p2,
+.tr_toolbar-vertical .leftpillon .p2,
+.tr_toolbar-vertical .leftpillhover .p2 {
+  width: 4em !important;
+}
+
+.tr_toolbar-vertical .rightpill .p2,
+.tr_toolbar-vertical .rightpillon .p2,
+.tr_toolbar-vertical .rightpillhover .p2 {
+  width: auto !important;
+}
+
+.tr_toolbar-vertical .threepill .link em,
+.tr_toolbar-vertical .threepill .link em,
+.tr_toolbar-vertical .threepill .link em {
+  _padding-right: 6px !important;
+}
+
+.tr_toolbar-vertical .threepill .p2 {
+  width: 1.47em !important;
+  _padding-left: 6px !important;
+}
+
+/* For 3 Pill Style */
+.container span.justify,
+.containerhover span.justify,
+.containeron span.justify {
+  padding: 0 0 0 12px !important
+}
+
+/* Icons */
+.icon_image {background: url(http://pages.google.com/-/images/icons/icon_image.gif) no-repeat}
+.icon_link {background: url(http://pages.google.com/-/images/icons/icon_link.gif) no-repeat}
+.icon_bullet {background: url(http://pages.google.com/-/images/icons/icon_bullet.gif) no-repeat}
+.icon_numbered {background: url(http://pages.google.com/-/images/icons/icon_numbered.gif) no-repeat}
+.icon_text {background: url(http://pages.google.com/-/images/icons/icon_text.gif) no-repeat}
+.icon_font {background: url(http://pages.google.com/-/images/icons/icon_font.gif) no-repeat}
+.icon_size {background: url(http://pages.google.com/-/images/icons/icon_size.gif) no-repeat}
+.icon_justleft {background: url(http://pages.google.com/-/images/icons/icon_left.gif) no-repeat}
+.icon_justmiddle {background: url(http://pages.google.com/-/images/icons/icon_middle.gif) no-repeat}
+.icon_justright {background: url(http://pages.google.com/-/images/icons/icon_right.gif) no-repeat}
+.icon_wfield {background: url(/-/images/icons/icon_wfield.gif) no-repeat}
+
+/*Menu Button Style */
+.link em b {
+  padding-left: .2em !important;
+  background: url(http://pages.google.com/-/images/bg/downarrow.gif)  no-repeat;
+  background-position: 80% 50%
+}
+
+/* Disabled */
+.disabled {
+  filter:alpha(opacity=50);
+  -moz-opacity:0.5;
+  opacity: 0.5;
+  cursor: default;
+}
+
+#tr_preloadImages {
+  width: 0px;
+  height: 0px;
+  display: inline;
+}
+
+/* Used in the JS to preload images */
+.cbleft {background-image: url(http://pages.google.com/-/images/bg/cbleft_ltr.gif);}
+.cbleft_h {background-image: url(http://pages.google.com/-/images/bg/cbleft_h_ltr.gif);}
+.cbleft_o {background-image: url(http://pages.google.com/-/images/bg/cbleft_o_ltr.gif);}
+.cbleftpill {background-image: url(http://pages.google.com/-/images/bg/cbleftpill_ltr.gif);}
+.cbleftpill_h {background-image: url(http://pages.google.com/-/images/bg/cbleftpill_h_ltr.gif);}
+.cbleftpill_o {background-image: url(http://pages.google.com/-/images/bg/cbleftpill_o_ltr.gif);}
+.cbpillbggif {background-image: url(http://pages.google.com/-/images/bg/cbpillbg.gif);}
+.cbpillbgpng {background-image: url(http://pages.google.com/-/images/bg/cbpillbg.png);}
+.cbpillbg_h {background-image: url(http://pages.google.com/-/images/bg/cbpillbg_h.gif);}
+.cbright {background-image: url(http://pages.google.com/-/images/bg/cbright_ltr.gif);}
+.cbright_h {background-image: url(http://pages.google.com/-/images/bg/cbright_h_ltr.gif);}
+.cbright_o {background-image: url(http://pages.google.com/-/images/bg/cbright_o_ltr.gif);}
+.downarrow {background-image: url(http://pages.google.com/-/images/bg/downarrow.gif);}
+.cbpillbg_o {background-image: url(http://pages.google.com/-/images/bg/cbpillbg_o.gif);}
+body {
+ margin: 0px 4px 4px 0px;
+ overflow: hidden;
+ background-color: white;
+ color: black;
+}
+body, td, th {
+ font-family: arial, sans-serif, helvetica;
+}
+a:link, a:visited {
+ color: #00c;
+}
+
+h1 {
+  font-size: 115%;
+  margin-bottom: 0;
+  font-weight: normal;
+  margin-top: 0;
+}
+
+input.tr_button, input.tr_submit {
+ font-size: 83%;
+ padding: 1px 10px;
+}
+input.tr_submit {
+ font-weight: bold;
+}
+
+table {
+ border-collapse: collapse;
+}
+
+#tr_bigtable {
+ width: 100%;
+ height: 100%;
+}
+
+#tr_title-bar {
+ font-size: 83%;
+ font-weight: bold;
+}
+#tr_save-state, #tr_other-pages {
+ font-size: 83%;
+ white-space: nowrap;
+}
+#tr_other-pages span {
+ padding-right: .9ex;
+}
+#tr_new-page-link, #tr_back-link {
+ font-weight: bold;
+}
+#tr_create-new-page-form td {
+ font-size: 83%;
+ padding-left: .2ex;
+ padding-right: .8ex;
+}
+#tr_new-page-title {
+ width: 175px;
+}
+
+#tr_enclosure-top, #tr_enclosure-bottom {
+ background: #C3D9FF;
+ padding: 0;
+}
+#tr_enclosure-top-table {
+ width: 100%;
+ height: 30px;
+}
+#tr_enclosure-bottom table {
+ width: 100%;
+ height: 26px;
+}
+.tr_enclosure-top-td, #tr_enclosure-bottom td {
+ white-space: nowrap;
+ vertical-align: middle;
+ font-size: 83%;
+ padding: 0;
+}
+.tr_enclosure-top-td {
+ padding-right: 9px;
+}
+#tr_enclosure-bottom td #tr_change-url-command {
+ padding-right: 9px;
+ padding-left: 9px;
+}
+.tr_pseudo-link, .tr_link-looking, .tr_bracketed-command span, #tr_unqualified-url-input {
+ color: #00c;
+ text-decoration: underline;
+}
+.tr_pseudo-link, .tr_bracketed-command span {
+ cursor: pointer;
+}
+
+#tr_unqualified-url-input {
+ margin-left: 2px;
+ width: 20ex;
+}
+
+.tr_enclosure-side {
+ background: #C3D9FF;
+ color: #C3D9FF;
+ width: 3px;
+}
+.tr_tl, .tr_tr, .tr_bl, .tr_br {
+ background-repeat: no-repeat;
+}
+.tr_tl {
+ background-image: url(/-/images/tl.gif);
+ background-position: top left;
+}
+.tr_tr {
+ background-image: url(/-/images/tr.gif);
+ background-position: top right;
+}
+.tr_bl {
+ background-image: url(/-/images/bl.gif);
+ background-position: bottom left;
+}
+.tr_br {
+ background-image: url(/-/images/br.gif);
+ background-position: bottom right;
+}
+
+#tr_innerpage {
+ border: solid 3px #E8F1FF;
+ border-top: solid 3px #9DAECD;
+ border-right: solid 3px #9DAECD;
+}
+iframe {
+ border: 0;
+}
+
+.tr_cycle-arrow-left, .tr_cycle-arrow-right {
+ background: #C7DCFF;
+ color: #7AABFF;
+ border: solid 1px #ADCBFF;
+ font-weight: bold;
+ font-size: 115%;
+ cursor: pointer;
+}
+.tr_cycle-arrow-left {
+ padding: 0 2px 0 3px;
+}
+.tr_cycle-arrow-right {
+ padding: 0 1px 0 4px;
+}
+
+#tr_sidebar {
+ vertical-align: top;
+}
+
+.tr_bubble_button .tr_body {
+  padding: 0px;
+}
+.tr_bubble_button .tr_tr, .tr_bubble_button .tr_tl, .tr_bubble_button .tr_bl, .tr_bubble_button .tr_br {
+  background-repeat: no-repeat;
+  height: 4px;
+  width: 4px;
+}
+.tr_bubble_button .tr_tr {
+  background-image: url(../images/bubble_button_tr.gif);
+}
+.tr_bubble_button .tr_tl {
+  background-image: url(../images/bubble_button_tl.gif);
+}
+.tr_bubble_button .tr_bl {
+  background-image: url(../images/bubble_button_bl.gif);
+}
+.tr_bubble_button .tr_br {
+  background-image: url(../images/bubble_button_br.gif);
+}
+.tr_bubble_button .tr_t {
+  border-top: 1px solid #e0ecff;
+}
+.tr_bubble_button	.tr_b {
+  border-bottom: 1px solid #e0ecff;
+}
+.tr_bubble_button .tr_l {
+  border-left: 1px solid #e0ecff;
+}
+.tr_bubble_button .tr_r {
+  border-right: 1px solid #e0ecff;
+}
+.tr_bubble_button .tr_body {
+  padding: 0px;
+}
+.tr_bubble_button .tr_undo_redo_enabled {
+	color: #0000cc;
+	cursor: pointer;
+}
+.tr_bubble_button DIV.tr_undo_redo_enabled:hover {
+	text-decoration: underline;
+}
+.tr_bubble_button .tr_undo_redo_disabled {
+	color: #999999;
+}
+#tr_undo, #tr_redo {
+ font-size: 83%;
+}
+#tr_undo {
+	float: left; 
+	margin-left: 3px; 
+	border-right: 2px solid #bed2f6; 
+	padding-right: 8px;
+}
+#tr_redo {
+	float: right; 
+	margin-right: 3px; 
+	padding-left: 8px;
+}
+#tr_undo_redo_table {
+  padding: 3px;
+}
+
+#tr_save-link, #tr_reconnect-link {
+  color: #7777CC;
+}
+
+#tr_save-link-area {
+  font-size: 83%;
+  color: #7777CC;
+  white-space: nowrap;
+}
+.tr_rtop,.tr_rbottom{display:block}
+.tr_rtop *,.tr_rbottom *{display:block;height: 1px;overflow: hidden}
+.tr_r1{margin: 0 5px}
+.tr_r2{margin: 0 3px}
+.tr_r3{margin: 0 2px}
+.tr_r4{margin: 0 1px;height: 2px}
+
+.tr_rs1{margin: 0 2px}
+.tr_rs2{margin: 0 1px}
+a:visited {
+  color: #0000cc;
+}
+
+.tr_feedback .tr_tr, .tr_feedback .tl_tr, .tr_feedback .tr_bl, .tr_feedback .tr_br {
+  background-repeat: no-repeat;
+  height: 2px;
+  width: 2px;
+}
+.tr_feedback .tr_tl {
+  background-image: url(/-/images/feedback_tl.gif);
+}
+.tr_feedback .tr_tr {
+  background-image: url(/-/images/feedback_tr.gif);
+}
+.tr_feedback .tr_bl {
+  background-image: url(/-/images/feedback_bl.gif);
+}
+.tr_feedback .tr_br {
+  background-image: url(/-/images/feedback_br.gif);
+}
+.tr_feedback .tr_body, .tr_feedback .tr_sidebar {
+  background-color: #fad163;
+  padding:0;
+  font-weight: bold;
+}
+.tr_feedback .tr_body, .tr_feedback .tr_td, .tr_feedback .tr_th {
+  font-size: 83%;
+  font-family: Arial, Helvetica, sans-serif;
+}
+.tr_feedback .tr_body {
+  padding-left: 1em;
+  padding-right: 1em;
+}.tr_message-dialog {
+  padding: 0px;
+  border: 2px solid #9c9c9c;
+  max-width: 500px;
+}
+
+.tr_message-dialog-side {
+  background: #e0ecff;
+  width: 60px;
+  padding: 20px 5px 5px 15px;
+}
+
+.tr_message-dialog-body {
+  background: white;
+  padding: 10px;
+}
+
+.tr_message-dialog-body h3 {
+  margin-top: 2px;
+}

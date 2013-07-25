@@ -1,0 +1,35 @@
+Received: from apache by surewest.com with local (Exim 4.63)
+	(envelope-from <hemorrhoidsphxh6@bernina.co.il>)
+	id 960DPR-1GEQ15-7J
+	for <k2pts@phigita.net>; Wed, 30 Nov 2011 10:29:19 +0100 
+To: <k2pts@phigita.net> 
+Subject: Federal Tax payment returned 
+Date: Wed, 30 Nov 2011 10:29:19 +0100 
+From: <Krista_Faulkner@irs.gov> 
+Message-ID: <9536C6A2E5660EF802DEEA68D1266AC3@scujoiudigaduimeshhecs.surewest.com> 
+X-Priority: 3 
+X-Mailer: PHPMailer 5.1 (phpmailer.sourceforge.net) 
+--------------------------------------
+Internal Revenue Service United States Department of the Treasury
+
+
+Your  federal  Tax  transaction (ID: 811055562639), recently initiated from your bank account was returned by the  The Electronic Federal Tax Payment System. 
+
+Canceled Tax  transfer
+Tax Transaction ID: 811055562639
+ Return Reason : See details in the report below
+
+  Tax Transaction Report:
+http://feqynivycu.pop3.ru/egylewyb.html
+
+
+Important Information for Home-care Service RecipientsIf you are a home-care service recipient who has a previously assigned EIN either as a sole proprietor or as a household employer, do not apply for a new EIN. Use the EIN previously provided. If you can not locate your EIN for any reason, follow the instructions on the Misplaced Your EIN? Web page.If you are a home-care service recipient who does not have an EIN, do not use the online application to apply for one. You must apply for your EIN using one of the other methods (phone, fax or mail). For additional information, visit the How to Apply for an EIN Web page.
+
+
+
+ Internal Revenue Service, 
+ Metro Plex 1, 
+ 8401 Corporate Drive, Suite 300, 
+ Landover, MD  20785
+
+

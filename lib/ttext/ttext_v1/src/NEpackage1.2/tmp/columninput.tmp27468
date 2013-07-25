@@ -1,0 +1,15 @@
+O	Peop	0	O	O	John	x	x	0
+O	Animal/Peop	1	O	O	Doe	x	x	0
+O	0	2	O	O	is	x	x	0
+O	LangRace	3	O	O	American	x	x	0
+O	0	4	O	O	,	x	x	0
+O	0	5	O	O	lives	x	x	0
+O	0	6	O	O	in	x	x	0
+O	LocCit/Loc	7	O	O	Champaign	x	x	0
+O	0	8	O	O	and	x	x	0
+O	0	9	O	O	works	x	x	0
+O	0	10	O	O	for	x	x	0
+O	0	11	O	O	the	x	x	0
+O	OrgCorp/OrgPolBody	12	O	O	CIA	x	x	0
+O	0	13	O	O	.	x	x	0
+		

@@ -1,0 +1,12 @@
+Received: from 219.88.201.86 by cluster4a.us.messagelabs.com; Wed, 2 Nov 2011 13:12:55 +1200 
+Date: Wed, 2 Nov 2011 13:12:55 +1200 
+From: =?koi8-r?B?Iu3P08vXwSI=?= <footprintho@cree.com> 
+X-Mailer: The Bat! (v3.0.1.33) Home 
+Reply-To: footprintho@cree.com 
+X-Priority: 3 (Normal) 
+Message-ID: <776109136.70310116521633@cree.com> 
+To: webmaster@phigita.net 
+Subject: =?koi8-r?B?7/Dl8uH06ffu4fEgIPDv7Onn8uHm6fEgIPDvIO7p+uvp7SDj5e7h7SDU?=
+	=?koi8-r?B?LiA2MTcrMDkrMjQ=?= 
+--------------------------------------
+ content-type=image/jpeg part-token=::mime::1870-2

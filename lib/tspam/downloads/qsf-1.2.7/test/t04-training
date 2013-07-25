@@ -1,0 +1,10 @@
+#!/bin/sh
+#
+# TEST: Training mode:                  
+
+rm -f $TESTDB trace
+
+MALLOC_CHECK_=2
+export MALLOC_CHECK_
+
+$PROG -d $BACKEND:$TESTDB -T .test-spam .test-non-spam 10 >/dev/null

@@ -1,0 +1,9 @@
+Received: from hdq [110.53.26.143] by es163.net with ESMTP
+  (SMTPD32-8.04) id A2405101F2; Wed, 16 Nov 2011 01:32:48 +0800 
+Message-ID: <20111116013150088603@es163.net> 
+From: "vggjr" <user@es163.net> 
+To:  
+Subject: =?gb2312?B?x+uy6crVOTQ2OQ==?= 
+Date: Wed, 16 Nov 2011 01:31:42 +0800 
+X-mailer: Egybn 7 
+Whoops!  What is a 'application/vnd.ms-excel'?

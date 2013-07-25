@@ -1,0 +1,142 @@
+#val -id pretend_user_id { ::xo::kit::pretend_user 814 }
+
+guard -id require_secure_conn { ::xo::kit::require_secure_conn }
+guard -id require_registration { ::xo::kit::require_registration }
+
+val -id user_id { return [ad_conn user_id] }
+
+datastore \
+    -id userdata \
+    -singleton true \
+    -select {
+	user_id
+	email
+	screen_name
+	{first_names || ' ' || last_name as full_name}
+	member_since
+	allow_ads_p
+	priv_contact_info
+	second_to_last_visit
+    } \
+    -from_class ::CC_Users \
+    -where [list "user_id=:user_id"] \
+    -limit 1 \
+    -extend {
+	set pretty_member_since [lc_time_fmt $member_since %q]
+	set pretty_second_to_last_visit [lc_time_fmt $second_to_last_visit %Q]
+    }
+
+
+val -id context_bar { return [::xo::kit::context_bar] }
+
+# keep css classes and tags used by context_bar
+::xo::tdp::excludeClassesFromRenaming {breadcrumb divider ul li active}
+
+
+css -src "/www/resources/bootstrap/css/phigita.bootstrap.css"
+
+
+master -title "Your Workspace - Private Area" {
+    layout_row {
+	layout_col -class span1 
+	layout_col -class span11 {
+	    nt @{context_bar:noquote}
+	}
+    }
+
+    layout_row {
+	layout_col -class span1
+	layout_col -class span8 {
+	    tpl -with "userdata" {
+		h3 { t "Basic Information" }
+		ul {
+		    li { 
+			b { t "Name: " }
+			t "@{full_name}"
+		    }
+		    li { 
+			b { t "Nickname: " }
+			t "@{screen_name}"
+		    }
+		    li { 
+			b { t "Email: " }
+			t "@{email}"
+		    }
+		    li { 
+			b { t "Last visit: " }
+			t "@{pretty_second_to_last_visit}"
+		    }
+		}
+		h3 { t "Account Settings" }
+		ul {
+		    li { 
+			b { t "Who can see your contact information?" } 
+			t " "
+			tpl -if "@{priv_contact_info} == 5" {
+			    t "Registered Users"
+			}
+			tpl -if "@{priv_contact_info} == 2" {
+			    t "Only Friends"
+			}
+		    }
+		    li {
+			b  { t "Helping to defray the costs of operating the site?" }
+			t " "
+			tpl -if "@{allow_ads_p}" {
+			    t "YES"
+			}
+			tpl -if "not @{allow_ads_p}"  {
+			    t "NO"
+			}
+		    }
+		}
+	    }
+	    t "Select from the following administrative options on your account:"
+	    ul { 
+		li { 
+		    a -href "settings/devices/" { t "Manage Devices" }
+		}
+		li { 
+		    a -href "password-change" { t "Change your password" }
+		}
+		li {
+		    a -href "settings/" {
+			t "Change the settings associated with your account"
+		    }
+		}
+	    }
+
+	    h3 { t "What we tell other users about you" }
+	    blockquote {
+		t {
+		    In general we identify content that you've posted by your full name. In an attempt to protect you from unsolicited bulk email (spam), we keep your email address hidden except from other registered users or friends. Total privacy is technically feasible but an important element of an online community is that people can learn from each other. So we try to make it possible for users with common interests to contact each other.
+		}
+	    }
+	}
+	layout_col -class span3 {
+	    dl {
+		dt { t "Connect" }
+		dd {
+		    ul {
+			li { t "Chat" }
+		    }
+		}
+		dt { t "Organize" }
+		dd {
+		    ul {
+			li { a -href "bookmarks/" { t "Bookmarks" } }
+			li { a -href "media/" { t "MediaBox"  } }
+		    }
+		}
+		dt { t "Publish" }
+		dd {
+		    ul {
+			li { a -href "blog/" { t "Blog" } }
+			li { a -href "wiki/" { t "Wiki" } }
+		    }
+		}
+
+	    }
+	}
+    }
+}

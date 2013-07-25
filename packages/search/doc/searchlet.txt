@@ -1,0 +1,1 @@
+javascript:q=document.getSelection();for(i=0;i<frames.length;i++){q=frames[i].document.getSelection();if(q)break;}if(!q)void(q=prompt('Keywords:',''));if(q)location.href='http://www.phigita.net/search/?q='+escape(q)

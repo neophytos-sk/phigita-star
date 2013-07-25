@@ -1,0 +1,3 @@
+Tektable.o: Tektable.c Tekparse.h
+
+Tekparse.h:

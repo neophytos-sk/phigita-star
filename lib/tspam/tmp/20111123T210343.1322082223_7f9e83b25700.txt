@@ -1,0 +1,20 @@
+Received: from xznuckk by cn.cnlink.net (MDaemon PRO v10.1.2)
+	with ESMTP id md50000643151.msg
+	for <neophytos@phigita.net>; Thu, 24 Nov 2011 05:03:28 +0800 
+X-Spam-Processed: cn.cnlink.net, Thu, 24 Nov 2011 05:03:28 +0800
+	(not processed: spam filter heuristic analysis disabled) 
+X-MDPtrLookup-Result: hardfail ip=110.53.25.121 (no PTR records found) (cn.cnlink.net) 
+X-MDHeloLookup-Result: hardfail smtp.helo=xznuckk (does not match 110.53.25.121) (cn.cnlink.net) 
+X-Authenticated-Sender: helen.hua@cn.cnlink.net 
+X-MDRemoteIP: 110.53.25.121 
+X-Return-Path: helen.hua@cn.cnlink.net 
+X-Envelope-From: helen.hua@cn.cnlink.net 
+X-MDaemon-Deliver-To: neophytos@phigita.net 
+Message-ID: <20111124050054135053@cn.cnlink.net> 
+From: "inmwbzylk" <helen.hua@cn.cnlink.net> 
+To:  
+Subject: =?gb2312?B?uau/qr/Os8y087jZIKOhvavU2jk1OTU4M8PruvPX1Lav?=
+	=?gb2312?B?yb6z/aOsx+u8sMqx1MS2waOh?= 
+Date: Thu, 24 Nov 2011 05:00:48 +0800 
+X-mailer: Ommnu 7 
+Whoops!  What is a 'application/vnd.ms-excel'?

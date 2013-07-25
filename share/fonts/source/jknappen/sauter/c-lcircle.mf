@@ -1,0 +1,3 @@
+% Compute parameters for the CIRCLE font.
+
+thickness#:= 0.04 * design_size * nominal_thickness * pt#;

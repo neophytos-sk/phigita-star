@@ -1,0 +1,10 @@
+Received: from 124.241.2.42 by mail.cslpak.com; Mon, 17 Oct 2011 05:35:18 +0900 
+Date: Mon, 17 Oct 2011 05:35:18 +0900 
+From: =?koi8-r?B?IvPPwtPF1NfFzs7Jyywg7c/Ty9fBIg==?= <tenuringze@cslpak.com> 
+X-Mailer: The Bat! (v3.80.06) Home 
+Reply-To: tenuringze@cslpak.com 
+X-Priority: 3 (Normal) 
+Message-ID: <925239563.21578826387371@cslpak.com> 
+To: webmaster@phigita.net 
+Subject: =?koi8-r?B?8NLRzcEgwdLFzsTBIM/GydPP1yAtw8XO1NIsIMTF28XXzyE=?= 
+

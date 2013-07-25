@@ -1,0 +1,14 @@
+body,td,font,.p,p,.stx,a{font-family:"Arial Unicode MS",Arial,helvetica,sans-serif;}
+
+pre {
+	font-family:"Arial Unicode MS",Arial; 
+	padding: 1em; 
+	border: 1px solid #8cacbb; 
+	color: black; 
+	background-color: #dee7ec;
+	white-space:normal;
+}
+
+code {
+	color: blue;
+}

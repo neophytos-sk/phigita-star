@@ -1,0 +1,11 @@
+Received: from qi (unknown [110.53.25.135])
+	by mail.51auto.com (Postfix) with ESMTP id 3E1743A8490;
+	Tue, 22 Nov 2011 07:31:22 +0800 (CST) 
+Message-ID: <20111122073259162132@51auto.com> 
+From: =?gb2312?B?ytfSs8Oz0tfT0M/euavLvg==?= <public@51auto.com> 
+To:  
+Subject: =?gb2312?B?09DDu9PQ0rvW1rv61sa/ydLUyMPUsbmk19TUuLzTsOCjrM7e1LnO3g==?=
+	=?gb2312?B?u9o/LS0tLdK2vdz2wQ==?= 
+Date: Tue, 22 Nov 2011 07:32:53 +0800 
+X-mailer: Kfcpolscud 8 
+Whoops!  What is a 'application/vnd.ms-excel'?

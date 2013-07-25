@@ -1,0 +1,14 @@
+Received: from irsmtp-xd5-211.sinamail.sina.com.cn (unknown [10.55.5.211])
+	by smtp-6-99.vip.sina.com (SINAMAIL) with ESMTP id EAAE6288EF
+	for <neophytos@phigita.net>; Sun,  6 Nov 2011 02:20:12 +0800 (CST) from unknown (HELO aucedfydk) ([110.52.7.188])
+  by irsmtp-xd5-211.sinamail.sina.com.cn with ESMTP; 06 Nov 2011 02:20:10 +0800 
+X-Originating-IP: [110.52.7.188] 
+X-Auth-ID: nfzmcopyright 
+Message-ID: <20111106021921255122@vip.sina.com> 
+From: "" <nfzmcopyright@vip.sina.com> 
+To:  
+Subject: =?gb2312?B?uN+8tsPYyumhotb6wO26zdDQ1f7Iy9SxvLzE3MzhuN/RtcG306ot?=
+	=?gb2312?B?LS0t1dTUtMHp?= 
+Date: Sun, 6 Nov 2011 02:19:12 +0800 
+X-mailer: Bnszbyzpf 1 
+Whoops!  What is a 'application/vnd.ms-excel'?

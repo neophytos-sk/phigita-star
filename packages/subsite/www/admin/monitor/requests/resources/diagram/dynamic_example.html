@@ -1,0 +1,172 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>JavaScript Diagram Builder - Dynamic example</title>
+<link rel=stylesheet type="text/css" href="diagram.css" />
+<SCRIPT Language="JavaScript">if ((document.layers)&&(history.length==1)) location.href=location.href+"#";</SCRIPT>
+<SCRIPT Language="JavaScript" src="diagram.js"></script>
+<SCRIPT Language="JavaScript">if (document.getElementById) document.write("<SCRIPT Language=\"JavaScript\" SRC=\"evalsafe.js\"><\/SCRIPT>");</SCRIPT> 
+</head>
+<body>
+<DIV STYLE="position:absolute; top:0px"></DIV>
+<TABLE NOBORDER CELLPADDING=2 CELLSPACING=2 WIDTH=720><TR><TD>
+<H3>JavaScript Diagram Builder - Dynamic example</H3>
+</TD></TR></TABLE>
+<form name="inputform">
+<TABLE NOBORDER CELLPADDING=2 CELLSPACING=2 WIDTH=720>
+<TR><TD width=40></TD>
+    <TD width=50 align=right>x-min:</TD>
+    <TD width=80 align=left><input name="xmin" value="-4" size=8></TD>
+    <TD width=50 align=right>x-max:</TD>
+    <TD width=80 align=left><input name="xmax" value="4" size=8></TD>
+    <TD width=50 align=right>y-min:</TD>
+    <TD width=80 align=left><input name="ymin" value="-0.2" size=8></TD>
+    <TD width=50 align=right>y-max:</TD>
+    <TD width=80 align=left><input name="ymax" value="0.5" size=8></TD>
+    <TD></TD>
+</TR>
+<TR><TD align=right>y=</TD>
+    <TD colspan=8 align=left><input name="fx" value="1/sqrt(2*PI)*exp(-x*x/2)+sin(PI*x)/10" size=56></TD>
+    <TD><input type=button value="Draw" onClick="javascript:Draw()"></TD>
+</TR>
+</TABLE>
+</form>
+<SCRIPT Language="JavaScript">
+document.open();
+var D=new Diagram();
+D.SetFrame(60, 175, 635, 500);
+D.SetBorder(-1, 1, -1, 1);
+D.SetText("x","y", "y=f(x)");
+D.SetGridColor("#808080", "#CCCCCC");
+D.Draw("#DDDDDD", "#000000", true);
+var i, j, x, y;
+j= D.ScreenY(0);
+P=new Array(636);
+for (i=60; i<=635; i++)
+  P[i]=new Pixel(i, j, "#0000FF");
+document.close();
+function Draw()
+{ if ((navigator.userAgent.search("Opera 5")>=0)||(navigator.userAgent.search("Opera 6")>=0))
+  { alert("Sorry, this doesn't work with this version of Opera.\nUse Opera 7.x, IE 5.x or Netscape 6.x instead.");
+    return;
+  }
+  if ((navigator.appName=="Netscape")&&(parseInt(navigator.appVersion)<5))
+  { if (!confirm("This is not a safe operation with Netscape 4.x."+
+                " It can cause a crash of the browser."+
+                " Do you want to continue anyway?"))
+      return;
+  }
+  var xmin=parseFloat(document.inputform.xmin.value);
+  var xmax=parseFloat(document.inputform.xmax.value);
+  var ymin=parseFloat(document.inputform.ymin.value);
+  var ymax=parseFloat(document.inputform.ymax.value);
+  if (isNaN(xmin)) { alert("x-min is not a number"); return; }
+  if (isNaN(xmax)) { alert("x-max is not a number"); return; }
+  if (isNaN(ymin)) { alert("y-min is not a number"); return; }
+  if (isNaN(ymax)) { alert("y-max is not a number"); return; }
+  D.SetBorder(xmin, xmax, ymin, ymax);
+  D.SetText("x", "y", "y="+document.inputform.fx.value);
+  D.SetGridColor("#808080", "#CCCCCC");
+  D.Draw("#DDDDDD", "#000000", true, "y="+document.inputform.fx.value);
+  var isEvalSafe=((window.EvalSafe)&&(EvalSafe("1+1")==2));
+  for (i=60; i<=635; i++)
+  { x = D.RealX(i);
+    if (isEvalSafe)
+    { y=EvalSafe(document.inputform.fx.value);
+      if ((y=="")&&(isNaN(parseInt(y))))
+      { alert(document.inputform.fx.value+" can not be evaluated for x="+x);
+        return; 
+      }
+    }
+    else
+    { with (Math) y=eval(document.inputform.fx.value);
+    }
+    if ((ymin<=y)&&(y<=ymax)) P[i].MoveTo(i, D.ScreenY(y));
+    else P[i].SetVisibility(false);
+  }
+}
+</SCRIPT>
+<DIV STYLE="position:absolute; top:540px; width:720px;">
+The diagram displays the function which you type into the input field in the specified
+x and y interval.<BR />
+You can use the standard operators<BR />
+<blockquote>
+<B>+ - * / ( )</B><BR />
+</blockquote>
+the constants of the JavaScript Math object<BR />
+<blockquote>
+<B>E LN2 LN10 LOG2E LOG10E PI SQRT1_2 SQRT2</B><BR />
+</blockquote>
+and the functions of the Math object<BR />
+<blockquote>
+<B>abs acos asin atan ceil cos exp floor log max min pow random round
+sin sqrt tan</B><BR />
+</blockquote>
+to define a function.<BR />
+<BR />
+<B>When the page is loaded, first a new diagram object and new pixel objects are created:</B><BR />
+<BR />
+&lt;SCRIPT Language="JavaScript"&gt;<BR />
+document.open();<BR />
+var D=new Diagram();<BR />
+D.SetFrame(60, 175, 635, 500);<BR />
+D.SetBorder(-1, 1, -1, 1);<BR />
+D.SetText("x","y", "y=f(x)");<BR />
+D.SetGridColor("#808080", "#CCCCCC");<BR />
+D.Draw("#DDDDDD", "#000000", true, "");<BR />
+var i, j, x, y;<BR />
+j= D.ScreenY(0);<BR />
+P=new Array(636);<BR />
+for (i=60; i<=635; i++)<BR />
+&nbsp;&nbsp;P[i]=new Pixel(i, j, "#0000FF");<BR />
+document.close();<BR />
+&lt;/SCRIPT&gt;<BR />
+<BR />
+<B>After you click the "Draw" button, the properties of the already existing objects are changed,
+to display the new function:</B><BR />
+<BR />
+&lt;SCRIPT Language="JavaScript"&gt;<BR />
+function Draw()<BR />
+{ // ... some code was cutted here<BR />
+&nbsp;&nbsp;D.SetBorder(xmin, xmax, ymin, ymax);<BR />
+&nbsp;&nbsp;D.SetText("x", "y", "y="+document.inputform.fx.value);<BR />
+&nbsp;&nbsp;D.SetGridColor("#808080", "#CCCCCC");<BR />
+&nbsp;&nbsp;D.Draw("#DDDDDD", "#000000", true, "y="+document.inputform.fx.value);<BR />
+&nbsp;&nbsp;var isEvalSafe=(window.EvalSafe)&&(EvalSafe("1+1")==2);<BR />
+&nbsp;&nbsp;for (i=60; i<=635; i++)<BR />
+&nbsp;&nbsp;{ x = D.RealX(i);<BR />
+&nbsp;&nbsp;&nbsp;&nbsp;if (isEvalSafe)<BR />
+&nbsp;&nbsp;&nbsp;&nbsp;{ y=EvalSafe(document.inputform.fx.value);<BR />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (isNaN(parseInt(y)))<BR />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ alert(document.inputform.fx.value+" can not be evaluated for x="+x);<BR />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return;<BR />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<BR />
+&nbsp;&nbsp;&nbsp;&nbsp;}<BR />
+&nbsp;&nbsp;&nbsp;&nbsp;else<BR />
+&nbsp;&nbsp;&nbsp;&nbsp;{ with (Math) y=eval(document.inputform.fx.value);<BR />
+&nbsp;&nbsp;&nbsp;&nbsp;}<BR />
+&nbsp;&nbsp;&nbsp;&nbsp;if ((ymin<=y)&&(y<=ymax)) P[i].MoveTo(i, D.ScreenY(y));<BR />
+&nbsp;&nbsp;&nbsp;&nbsp;else P[i].SetVisibility(false);<BR />
+&nbsp;&nbsp;}<BR />
+}<BR />
+&lt;/SCRIPT&gt;<BR />
+The above example will only work correctly with IE 5.x or Netscape 6.x. However, instead of dynamically changing
+the properties of the objects you can use two frames - the first for the input and the second for the diagram.
+After clicking the "Draw" button the first frame writes the parameters to variables in the parent window and reloads
+the second frame (use location.href=url, not history.go(0)!), which reads the variables from the parent window and
+draws the diagram and function corresponding to the parameters.<BR />
+This will work with all browsers.
+<form><input type=button value="see the example" onClick="javascript:fx_static()"></form>
+<BR /><BR />
+<SCRIPT language="JavaScript1.2">
+function fx_static()
+{ window.open("fx_main.html","FXWindow","width="+eval(760+_nav4*60)+",height=520,menubar=yes,locationbar=no,resizable=yes,status=no,scrollbars=no");
+}
+</SCRIPT>
+<TABLE NOBORDER CELLPADDING=2 CELLSPACING=2 WIDTH=720><TR>
+<TD ALIGN=LEFT><A HREF="static_example.html">&#171; Static Example</A></TD>
+<TD ALIGN=RIGHT><A HREF="iframe_example.html">Iframe Example &#187;</A></TD>
+</TR></TABLE>
+</DIV>
+</body>
+</html>

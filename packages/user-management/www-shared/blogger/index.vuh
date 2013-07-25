@@ -1,0 +1,1 @@
+ad_returnredirect [regsub -- {blogger} [ns_conn url] {blog}]

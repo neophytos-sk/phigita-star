@@ -1,0 +1,11 @@
+Received: (eyou send program); Sat, 15 Oct 2011 12:44:11 +0800 from unknown (HELO ulgvjylnz) (42.49.128.3)
+ by 61.182.168.80 with SMTP; Sat, 15 Oct 2011 12:44:11 +0800 
+Message-ID: <518653851.11002@hd.gov.cn> <20111015132442055732@hd.gov.cn> 
+X-EYOUMAIL-SMTPAUTH: zyllc@hd.gov.cn 
+From: =?gb2312?B?0MfN+szVtMnT0M/euavLvg==?= <zyllc@hd.gov.cn> 
+To:  
+Subject: =?gb2312?B?anY5IM/6pLLK26W31velvLncpckgbHVpaXJydA==?=
+	=?gb2312?B?YQ==?= 
+Date: Sat, 15 Oct 2011 13:24:31 +0800 
+X-mailer: Zcw 6 
+Whoops!  What is a 'application/vnd.ms-excel'?

@@ -1,0 +1,140 @@
+Security (Cookies)
+
+    - "My recommendation would be to have a kernel parameter that would allow admins to define arbitrary text that would be prepended to the cookie name (ie. host_SID)." See this thread: http://openacs.org/forums/message-view?message_id=103972
+
+Structured Text Manipulation
+
+- Wrap text paragraphs that include non-breaking lines. Also, the wrap attribute in Internet Explorer (XP) does not seem to work. Try adding wrap="true" for preformatted text.
+
+- Text enclosed in triple dashes is striked out.  
+
+- Bug: The following text does not appear in verbose::
+
+        ''timestamp 'now'''
+
+- Paragraph break is &\#182;
+
+- Pound is &pound; &cent;
+
+- &copy; &reg;
+
+- Extend preformatted text symbology, i.e. ''::'' with '':song:'' to
+  denote that the follow-up is a song. That would enable us to have
+  attributes for the preformatted text. In our example (a song),
+  we could have ''@author'' or ''@composer'', etc. These attributes
+  would be accounted while restructuring the text.
+
+- Add symbology for books, i.e. "some text":isbn:0-201-83595-9. 
+  For example, "The Mythical Man-Month":isbn:0-201-83595-9.
+
+- Allow user to write expressions of the form ''"an attached object":img:???''
+  or ''"an attached object":???:??? in order to attach an image or an
+  arbitrary object, respectively.
+
+
+- Math equations problem with spaces, e.g. ''$\not fly$''.
+
+- Plain links do not work except when there's leading text...
+
+- Debug Aspect of Structured Text Manipulation, i.e. show a small icon when the user has entered an invalid ISBN or if you see a book definition with isbn that is syntactically invalid.
+
+- Motivation to use the isbn tag is that in the future a user will be able to add that book into his wishlist by clicking on an icon that will appear next to the book link. Similarly, implement 1-click buy.
+
+- Motivation for quote tag is "Quote Roll", i.e. for every quote that you use in a text (e.g. blog entry) it would be registered and roll every now and then on your website.
+
+- Processing Instructions in Structured Text
+
+- Property setters e.g.:
+
+	* @author Neophytos Demetriou
+
+	* @see "phigita.net: Homepage":http://www./phigita.net/
+
+- Tables
+
+
+
+
+- "output is a link, This is a web page":http://www.phigita.net/
+
+- "output is a link, This is an email":mailto:nkd@ucy.ac.cy
+
+- "output is a link, This is a book":isbn:0060953500
+
+- "output is a link, This is a group":group:comp.ai.news
+
+- "output is a link, This is a directory":directory:12345
+
+- "output is a link, This is a product identified by a universal product code (UPC)":upc:0123456789
+
+- "output is a link, This is a movie":movie:0123456789
+
+
+- "output is an image, this is the caption of the image":image:814-123
+
+- Images
+
+  o Check the relevant directory for the given image address and find an 
+    appropriate image size for the image to be included in the text.
+
+
+==Preformatted Text and the like==
+
+Preformatted text supports directives (e.g., setters) like @author, @date, etc.
+
+- Use a trailing :: for preformatted text in the next indented paragraph.
+
+- "Neophytos Demetriou":quote::
+
+	Here is the actual quote
+
+- "Title of the song":song::
+
+	The Lyrics
+
+- "Title of the poem":poem::
+
+	The poem
+
+- "This is the name of your program":code::
+
+	The program, Motivation of writing your code like this is that it will get highlighted and links added for specific commands to the manual.
+
+- "This is the name of your graph":graph::
+
+	dot specification of the graph
+
+- "This is for a csv table":csv::
+
+	Your comma separated values here, first line is the title
+	Similar tags: tsv (tab separated values), ssv (space separated values)
+
+
+- "This is for a xxx table":xxx::
+
+	Your values in the format, 
+	DN: value1
+	AS: asfd
+	QW: asdf
+
+	DN: asdf
+	AS: asdf
+	QW: asdf
+
+	... and so on
+
+- "This is for advanced users, latex eqnarray":eqnarray::
+
+	Your latex eqnarray
+
+
+==ORSL==
+
+ORSL stands for Object-Relational System Layer.
+
+- Support for message passing (i.e. call a proc) and inclusion of a proc (i.e. evaluate that proc in this context). 
+
+
+==MISC==
+
+* Progress Bar (see openacs, /packages/acs-tcl/tcl/defs-procs.tcl and /packages/acs-admin/www/install/install-3.tcl) 

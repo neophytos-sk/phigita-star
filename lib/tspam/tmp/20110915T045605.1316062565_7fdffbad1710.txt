@@ -1,0 +1,17 @@
+Return-path: <webmaster@phigita.net> 
+Received: from [122.167.130.73] (port=2673 helo=office2)
+	by eforwardct.name-services.com with asmtp 
+	id 1D03F0-000968-04
+	for <webmaster@phigita.net>; Thu, 15 Sep 2011 12:25:52 +0530 
+Message-ID: <67C7FB06148C4A19B88CAA7BF377B2F0@office2> 
+From: "Sensorus" <trajectory@2x9.com> 
+To: <webmaster@phigita.net> 
+Subject: =?koi8-r?B?88XO08/Szs/FINfFxNLPIM7FxM/Sz8fPLCDJzMkg58zB187ZyiDLz87L?=
+	=?koi8-r?B?1dLFztQg0MXEwczYzs/Hzw==?= 
+Date: Thu, 15 Sep 2011 12:25:52 +0530 
+X-Priority: 3 
+X-MSMail-Priority: Normal 
+X-Mailer: Microsoft Windows Mail 6.0.6001.18000 
+X-MimeOLE: Produced By Microsoft MimeOLE V6.0.6001.18049 
+X-Spam: Not detected 
+X-Mras: Ok 

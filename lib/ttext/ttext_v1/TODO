@@ -1,0 +1,42 @@
+--------------
+  TODO FILE
+--------------
+
+======================================================================
+                              important
+                              =========
+Auti i grammi pisteuw den tin metafrasa swsta apo tin Java stin C++
+datapoint class
+----------------
+Java : sum  += StrictMath.pow(((Double)i.next()).doubleValue(), 2);
+C++ : sum  += pow(wordVector[(*i).first], 2);
+======================================================================
+
+TIDY
+----
+* Na fygw arxreiasta arxeia
+(done) * Na prosthesw tin entodi ttext::tidy
+* Na valw _ANSI_ARGS_ stis synartiseis
+
+
+CLUSTER
+-------
+(done) * na genikeftei akoma perissotero to text clustering kai ta clusters pou tha epistrefei tha periexoun mono to index twn arthrwn pou periexei to kathe cluster
+(done) *** provlima : ean pairnei arthra anti arxeia gia input ti links [gia ta sxetika arthra] tha dinei ws apotelesma ?
+	- lysi1 : na to kanw me to index toy arthrou ston pinaka tou input]
+	- lysi2 : na xrisimopoiei ton titlo tou arthrou
+(done) * Na allaxtei i synartisi parceArticle (datapoint) wste na kanei parse strings kai oxi arxeia (genikotera olo to datapoint)
+(done) * Na antikatastathei to mainnews me kati pio geniko
+(done) * Na graftei synartisi poy na dexetai mia lista me ta clusters, kai mia alli me ta path/filenames
+
+* Panw ston server na ginei monima loaded i vivliothiki (pkg_mkindex)
+(done) * Na sygirisw ligo ton kwdika (mainnews.cpp) [den xreiazetai epeidi tha katargithei]
+(done) * H synartisi clearString na afairei tous non-printed characters kai oxi na tous antikathista me kena
+(done) * Use current time for correct randomization
+(done) * Na typwnontai oi paragrafoi sto telos me ola ta symvola
+(done) * Na graftei na synartisi poy na katharizei to keimeno apo unprinted characters
+(done)* Na ginoun oi aparaitites metatropes gia tin ypostiriksi twn Ellinikwn
+(done)* Create README file
+
+
+***For better maintenance of this file please insert the word "(done)" before the star when a task is completed

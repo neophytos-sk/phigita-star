@@ -1,0 +1,17 @@
+Return-path: <webmaster@phigita.net> 
+Received: from [110.137.251.123] (port=5354 helo=Client05)
+	by newamigos.com with asmtp 
+	id 4611BC-0007A6-32
+	for <webmaster@phigita.net>; Thu, 24 Nov 2011 14:32:48 +0700 
+Message-ID: <49D52C044FEA425EB4283687364D9EA1@Client05> 
+From: =?koi8-r?B?IuvBzMXOxMHSyS0yMDEyIg==?= <tumultuousp291@newamigos.com> 
+To: <webmaster@phigita.net> 
+Subject: =?koi8-r?B?6drHz9TP18nNIM7BINrBy8HaIM7B09TPzNjO2cUgy8HMxc7EwdLJLcTP?=
+	=?koi8-r?B?zcnLyQ==?= 
+Date: Thu, 24 Nov 2011 14:32:48 +0700 
+X-Priority: 3 
+X-MSMail-Priority: Normal 
+X-Mailer: Microsoft Windows Mail 6.0.6001.18000 
+X-MimeOLE: Produced By Microsoft MimeOLE V6.0.6001.18049 
+X-Spam: Not detected 
+X-Mras: Ok 

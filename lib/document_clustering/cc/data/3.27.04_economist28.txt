@@ -1,0 +1,68 @@
+Microsoft 
+
+Windows ` la carte
+
+Mar 25th 2004 
+From The Economist print edition
+
+
+ 
+ 
+ 
+
+ 
+
+Might the European Commission's controversial new antidote to
+Microsoft's monopoly actually work?
+
+HALF a billion euro? Forget about it. The headline-grabbing in other
+words, the unbundled version must not cost more than the full version
+of Windows. Surely it should cost less.
+
+Yet PC-makers might simply prefer to stick with the full version of
+Windows. Today they can do deals with Microsoft's rivals to add extra
+software to their PCs. Hewlett-Packard, for example, is to sell PCs
+with Apple's media-player software, and Dell ships RealNetworks'
+player on some of its computers. But in both cases, Microsoft's media
+player is still present. Why antagonise Microsoft by removing it, even
+if it were for a small cut in the price of Windows? Philip Lowe, the
+commission's director general of competition, notes that rival
+software firms already pay PC-makers to carry their software. In
+future, he says, they might insist that Microsoft's rival product be
+removed.
+
+The scope of the commission's ruling is limited to the European
+market. But Thomas Vinje, a lawyer at Clifford Chance, which
+represented a consortium of Microsoft's opponents in the case, says
+that Europe is probably a big enough market to act as a laboratory in
+which to test th e model. If it worked, PC-makers would probably be
+able to insist on the same terms worldwide. Hence the unease at
+Microsoft: if the commission's ruling is upheld on appeal and the
+unbundling of media player goes ahead, its current business model
+could start to unravel.
+
+All this, of course, assumes that the remedy is not
+overturned. Microsoft says that it will appeal, and will also ask for
+the commission's remedies to be suspended while the appeal is
+underway. On past form, says John Kallaugher, an expert on comparative
+competition law at University College, London, and a partner at Latham
+& Watkins, a law firm, the decision on whether or not to suspend the
+remedies could come as early as June. The appeal itself would take
+several years, however. By then the media-player case may well have
+become moot, and Longhorn will probably have been released. But a
+ruling in the commission's favour could still shape future versions of
+Windows.
+
+By rejecting Microsoft's offer to include rival media players in
+Windows, says Brad Smith, Microsoft's general counsel, the commission
+turned down an opportunity t o. Such an agreement, he says, would have
+demonstrated that future bundling disputes could be solved by
+negotiation, on a case-by-case basis. Of course, that would also leave
+Microsoft the option of spinning out negotiations indefinitely, to its
+own advantage. Recognising this, the commission has in effect taken a
+bold gamble, rejecting a solution to a specific problem now in the
+hope of establishing a general precedent for the future. If it can get
+its remedy to stick, there is an outside chance that it might be able
+to dent the mighty Microsoft monopoly. 
+
+

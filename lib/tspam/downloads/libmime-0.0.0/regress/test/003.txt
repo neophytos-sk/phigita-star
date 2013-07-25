@@ -1,0 +1,5 @@
+Subject: =?us-ascii?b?VGhpcyBpcyBhIHRlc3Q=?= 	 =????=
+ 	=?us-ascii?q?This is =3D another test?= break =?us-ascii?q?_crlf =0a=0d?=
+ here
+
+This is a simple test of base64 encoded words in the header.

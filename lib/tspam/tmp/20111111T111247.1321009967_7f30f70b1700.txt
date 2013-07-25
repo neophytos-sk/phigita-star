@@ -1,0 +1,11 @@
+Received: from lg (unknown [42.49.136.179])
+	by l.pow.net.cn (Postfix) with ESMTP
+	id D00D051973; Fri, 11 Nov 2011 19:28:48 +0800 (CST) 
+Message-ID: <20111111190550428782@rimen.net> 
+From: =?gb2312?B?yfLR9L7ewabN8s2ou/q158nosbjT0M/euavLvg==?= <sales@rimen.net> 
+To:  
+Subject: =?gb2312?B?uN+8tsPYyumhotb6wO26zdDQ1f7Iy9SxvLzE3MzhuN/RtcG306ot?=
+	=?gb2312?B?LS0tus72ydXX?= 
+Date: Fri, 11 Nov 2011 19:05:44 +0800 
+X-mailer: Jpbcyiybpf 5 
+Whoops!  What is a 'application/vnd.ms-excel'?

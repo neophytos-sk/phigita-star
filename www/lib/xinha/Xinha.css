@@ -1,0 +1,119 @@
+.htmlarea { background: #fff; margin:2px; }
+
+
+.htmlarea iframe.xinha_iframe, .htmlarea textarea.xinha_textarea
+{
+   border: 1px dashed blue;
+   margin:2px;
+   padding:2px;
+}
+
+
+.htmlarea .statusBar {
+  border: 1px solid;
+  border-color: ButtonShadow ButtonHighlight ButtonHighlight ButtonShadow;
+  padding: 2px 4px;
+  background-color: ButtonFace;
+  color: ButtonText;
+  font: 11px Tahoma,Verdana,sans-serif;
+}
+
+.htmlarea .statusBar .statusBarTree a {
+  padding: 2px 5px;
+  color: #00f;
+}
+
+.htmlarea .statusBar .statusBarTree a:visited { color: #00f; }
+.htmlarea .statusBar .statusBarTree a:hover {
+  background-color: Highlight;
+  color: HighlightText;
+  padding: 1px 4px;
+  border: 1px solid HighlightText;
+}
+
+
+/* popup dialogs */
+
+
+.popupwin {
+  padding: 0px;
+  margin: 0px;
+}
+
+.popupwin .title {
+  background: #fff;
+  color: #000;
+  font-weight: bold;
+  font-size: 120%;
+  padding: 3px 10px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid black;
+  letter-spacing: 2px;
+}
+
+form { margin: 0px; border: none; }
+
+
+/** Panels **/
+.htmlarea .panels.top
+{
+  border-bottom : 1px solid;
+  border-color: ButtonShadow;
+}
+
+.htmlarea .panels.right
+{
+  border-left : 1px solid;
+  border-color: ButtonShadow;
+}
+
+.htmlarea .panels.left
+{
+  border-right : 1px solid;
+  border-color: ButtonShadow;
+}
+
+.htmlarea .panels.bottom
+{
+  border-top : 1px solid;
+  border-color: ButtonShadow;
+}
+
+.htmlarea .panel h1 {
+  background: ButtonFace;
+  border: 1px solid;
+  border-color: ButtonHighlight ButtonShadow ButtonShadow ButtonHighlight;
+  margin:   0px;
+  padding:  0px;
+  font-size:100%;
+  font-weight:bold;
+  padding: 2px;
+  clear:left;
+  
+}
+
+.htmlarea .panel { overflow:auto; }
+.htmlarea .panels.left  .panel { border-right:none; border-left:none; }
+.htmlarea .panels.left  h1     { border-right:none;  }
+.htmlarea .panels.right .panel { border-right:none; border-left:none; }
+.htmlarea .panels.left  h1     { border-left:none;  }
+
+
+.loading
+{
+  background-color:#666;
+  position:absolute;
+  z-index:998;
+}
+.loading_main
+{
+  font-size:1.6em;
+  color:#ff6;
+  text-align:center;
+}
+.loading_sub
+{
+  font-size:1.0em;
+  color:#fff;
+  text-align:center;
+}

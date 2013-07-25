@@ -1,0 +1,8 @@
+/dev/md1                /boot           ext4            noauto,noatime          1 2
+/dev/md3                /               ext4            noatime,commit=0        0 1
+/dev/sda2               none            swap            sw,pri=1                0 0
+/dev/sdb2               none            swap            sw,pri=1                0 0
+/dev/sdc2               none            swap            sw,pri=1                0 0
+/dev/sdd2               none            swap            sw,pri=1                0 0
+
+

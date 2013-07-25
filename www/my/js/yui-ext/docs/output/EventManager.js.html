@@ -1,0 +1,438 @@
+<html><head><title>EventManager.js</title><link rel="stylesheet" type="text/css" href="../resources/style.css" media="screen"/></head><body><h1>EventManager.js</h1><pre class="highlighted"><code>
+<i>/**
+ * @class YAHOO.ext.EventManager
+ * Registers event handlers that want to receive a normalized EventObject instead of the standard browser event and provides 
+ * several useful events directly.
+ * See {@link YAHOO.ext.EventObject} <b>for</b> more details on normalized event objects.
+ * @singleton
+ */</i>
+YAHOO.ext.EventManager = <b>new</b> function(){
+    <b>var</b> docReadyEvent;
+    <b>var</b> docReadyProcId;
+    <b>var</b> docReadyState = false;
+    <b>this</b>.ieDeferSrc = false;
+    <b>var</b> resizeEvent;
+    <b>var</b> resizeTask;
+    
+    <b>var</b> fireDocReady = <b>function</b>(){
+        <b>if</b>(!docReadyState){
+            docReadyState = true;
+            <b>if</b>(docReadyProcId){
+                clearInterval(docReadyProcId);
+            }
+            <b>if</b>(docReadyEvent){
+                docReadyEvent.fire();
+            }
+        }
+    };
+    
+    <b>var</b> initDocReady = <b>function</b>(){
+        docReadyEvent = <b>new</b> YAHOO.util.CustomEvent('documentready');
+        <b>if</b>(document.addEventListener) {
+            YAHOO.util.Event.on(document, &quot;DOMContentLoaded&quot;, fireDocReady);
+        }<b>else</b> if(YAHOO.ext.util.Browser.isIE){
+            <i>// inspired by  http://www.thefutureoftheweb.com/blog/2006/6/adddomloadevent</i>
+            document.write('&lt;s'+'cript id=&quot;ie-deferred-loader&quot; defer=&quot;defer&quot; src=&quot;' +
+                        (YAHOO.ext.EventManager.ieDeferSrc || YAHOO.ext.SSL_SECURE_URL) + '&quot;&gt;&lt;/s'+'cript&gt;');
+            YAHOO.util.Event.on('ie-deferred-loader', 'readystatechange', <b>function</b>(){
+                <b>if</b>(this.readyState == 'complete'){
+                    fireDocReady();
+                }
+            });
+        }<b>else</b> if(YAHOO.ext.util.Browser.isSafari){ 
+            docReadyProcId = setInterval(<b>function</b>(){
+                <b>var</b> rs = document.readyState;
+                <b>if</b>(rs == 'loaded' || rs == 'complete') {
+                    fireDocReady();     
+                 }
+            }, 10);
+        }
+        <i>// no matter what, make sure it fires on load</i>
+        YAHOO.util.Event.on(window, 'load', fireDocReady);
+    };
+    <i>/** 
+     * Places a simple wrapper around an event handler to override the browser event 
+     * object <b>with</b> a YAHOO.ext.EventObject
+     * @param {Function} fn        The method the event invokes
+     * @param {Object}   scope    An object that becomes the scope of the handler
+     * @param {boolean}  override If true, the obj passed <b>in</b> becomes
+     *                             the execution scope of the listener
+     * @<b>return</b> {Function} The wrapped <b>function</b>
+     */</i>
+    <b>this</b>.wrap = <b>function</b>(fn, scope, override){
+        <b>var</b> wrappedFn = <b>function</b>(e){
+            YAHOO.ext.EventObject.setEvent(e);
+            fn.call(override ? scope || window : window, YAHOO.ext.EventObject, scope);
+        };
+        <b>return</b> wrappedFn;
+    };
+    
+    <i>/**
+     * Appends an event handler
+     *
+     * @param {Object}   element        The html element to assign the 
+     *                             event to
+     * @param {String}   eventName     The type of event to append
+     * @param {Function} fn        The method the event invokes
+     * @param {Object}   scope    An object that becomes the scope of the handler
+     * @param {boolean}  override If true, the obj passed <b>in</b> becomes
+     *                             the execution scope of the listener
+     * @<b>return</b> {Function} The wrapper <b>function</b> created (to be used to remove the listener <b>if</b> necessary)
+     */</i>
+    <b>this</b>.addListener = <b>function</b>(element, eventName, fn, scope, override){
+        <b>var</b> wrappedFn = <b>this</b>.wrap(fn, scope, override);
+        YAHOO.util.Event.addListener(element, eventName, wrappedFn);
+        <b>return</b> wrappedFn;
+    };
+    
+    <i>/**
+     * Removes an event handler
+     *
+     * @param {Object}   element        The html element to remove the 
+     *                             event from
+     * @param {String}   eventName     The type of event to append
+     * @param {Function} wrappedFn        The wrapper method returned when adding the listener
+     * @<b>return</b> {Boolean} True <b>if</b> a listener was actually removed
+     */</i>
+    <b>this</b>.removeListener = <b>function</b>(element, eventName, wrappedFn){
+        <b>return</b> YAHOO.util.Event.removeListener(element, eventName, wrappedFn);
+    };
+    
+    <i>/**
+     * Appends an event handler (shorthand <b>for</b> addListener)
+     *
+     * @param {Object}   element        The html element to assign the 
+     *                             event to
+     * @param {String}   eventName     The type of event to append
+     * @param {Function} fn        The method the event invokes
+     * @param {Object}   scope    An arbitrary object that will be 
+     *                             passed as a parameter to the handler
+     * @param {boolean}  override If true, the obj passed <b>in</b> becomes
+     *                             the execution scope of the listener
+     * @<b>return</b> {Function} The wrapper <b>function</b> created (to be used to remove the listener <b>if</b> necessary)
+     * @method
+     */</i>
+    <b>this</b>.on = <b>this</b>.addListener;
+    
+    <i>/**
+     * Fires when the document is ready (before onload and before images are loaded)
+     * @param {Function} fn        The method the event invokes
+     * @param {Object}   scope    An  object that becomes the scope of the handler
+     * @param {boolean}  override If true, the obj passed <b>in</b> becomes
+     *                             the execution scope of the listener
+     */</i>
+    <b>this</b>.onDocumentReady = <b>function</b>(fn, scope, override){
+        <b>if</b>(docReadyState){ <i>// <b>if</b> it already fired</i>
+            fn.call(override? scope || window : window, scope);
+            <b>return</b>;
+        }
+        <b>if</b>(!docReadyEvent){
+            initDocReady();
+        }
+        docReadyEvent.subscribe(fn, scope, override);
+    }
+    
+    <i>/**
+     * Fires when the window is resized and provides resize event buffering (50 milliseconds), passes <b>new</b> viewport width and height to handlers.
+     * @param {Function} fn        The method the event invokes
+     * @param {Object}   scope    An object that becomes the scope of the handler
+     * @param {boolean}  override If true, the obj passed <b>in</b> becomes
+     *                             the execution scope of the listener
+     */</i>
+    <b>this</b>.onWindowResize = <b>function</b>(fn, scope, override){
+        <b>if</b>(!resizeEvent){
+            resizeEvent = <b>new</b> YAHOO.util.CustomEvent('windowresize');
+            resizeTask = <b>new</b> YAHOO.ext.util.DelayedTask(<b>function</b>(){
+                resizeEvent.fireDirect(YAHOO.util.Dom.getViewportWidth(), YAHOO.util.Dom.getViewportHeight());
+            });
+            YAHOO.util.Event.on(window, 'resize', <b>function</b>(){
+                resizeTask.delay(50);
+            });
+        }
+        resizeEvent.subscribe(fn, scope, override);
+    },
+    
+    <i>/**
+     * Removes the passed window resize listener.
+     * @param {Function} fn        The method the event invokes
+     * @param {Object}   scope    The scope of handler
+     */</i>
+    <b>this</b>.removeResizeListener = <b>function</b>(fn, scope){
+        <b>if</b>(resizeEvent){
+            resizeEvent.unsubscribe(fn, scope);
+        }
+    }
+};
+
+<i>/**
+ * @class YAHOO.ext.EventObject
+ * EventObject exposes the Yahoo! UI Event functionality directly on the object
+ * passed to your event handler. It exists mostly <b>for</b> convenience. It also fixes the annoying null checks automatically to cleanup your code 
+ * (All the YAHOO.util.Event methods throw javascript errors <b>if</b> the passed event is null).
+ * To get an EventObject instead of the standard browser event,
+ * your must register your listener thru the {@link YAHOO.ext.EventManager} or directly on an Element
+ * <b>with</b> {@link YAHOO.ext.Element#addManagedListener} or the shorthanded equivalent {@link YAHOO.ext.Element#mon}.&lt;br&gt;
+ * Example:
+ * &lt;pre&gt;&lt;code&gt;
+ fu&lt;&gt;nction handleClick(e){ <i>// e is not a standard event object, it is a YAHOO.ext.EventObject</i>
+    e.preventDefault();
+    <b>var</b> target = e.getTarget();
+    ...
+ }
+ <b>var</b> myDiv = getEl('myDiv');
+ myDiv.mon('click', handleClick);
+ <i>//or</i>
+ YAHOO.ext.EventManager.on('myDiv', 'click', handleClick);
+ YAHOO.ext.EventManager.addListener('myDiv', 'click', handleClick);
+ &lt;/code&gt;&lt;/pre&gt;
+ * @singleton
+ */</i>
+YAHOO.ext.EventObject = <b>new</b> function(){
+    <i>/** The normal browser event */</i> 
+    <b>this</b>.browserEvent = null;
+    <i>/** The button pressed <b>in</b> a mouse event */</i> 
+    <b>this</b>.button = -1;
+    <i>/** True <b>if</b> the shift key was down during the event */</i> 
+    <b>this</b>.shiftKey = false;
+    <i>/** True <b>if</b> the control key was down during the event */</i> 
+    <b>this</b>.ctrlKey = false;
+    <i>/** True <b>if</b> the alt key was down during the event */</i> 
+    <b>this</b>.altKey = false;
+    
+    <i>/** Key constant @type Number */</i>
+    <b>this</b>.BACKSPACE = 8;
+    <i>/** Key constant @type Number */</i>
+    <b>this</b>.TAB = 9;
+    <i>/** Key constant @type Number */</i>
+    <b>this</b>.RETURN = 13;
+    <i>/** Key constant @type Number */</i>
+    <b>this</b>.ESC = 27;
+    <i>/** Key constant @type Number */</i>
+    <b>this</b>.SPACE = 32;
+    <i>/** Key constant @type Number */</i>
+    <b>this</b>.PAGEUP = 33;
+    <i>/** Key constant @type Number */</i>
+    <b>this</b>.PAGEDOWN = 34;
+    <i>/** Key constant @type Number */</i>
+    <b>this</b>.END = 35;
+    <i>/** Key constant @type Number */</i>
+    <b>this</b>.HOME = 36;
+    <i>/** Key constant @type Number */</i>
+    <b>this</b>.LEFT = 37;
+    <i>/** Key constant @type Number */</i>
+    <b>this</b>.UP = 38;
+    <i>/** Key constant @type Number */</i>
+    <b>this</b>.RIGHT = 39;
+    <i>/** Key constant @type Number */</i>
+    <b>this</b>.DOWN = 40;
+    <i>/** Key constant @type Number */</i>
+    <b>this</b>.DELETE = 46;
+    <i>/** Key constant @type Number */</i>
+    <b>this</b>.F5 = 116;
+
+       <i>/** @private */</i> 
+    <b>this</b>.setEvent = <b>function</b>(e){
+        <b>if</b>(e == <b>this</b>){ <i>// already wrapped</i>
+            <b>return</b> this;
+        }
+        <b>this</b>.browserEvent = e;
+        <b>if</b>(e){
+            <b>this</b>.button = e.button;
+            <b>this</b>.shiftKey = e.shiftKey;
+            <b>this</b>.ctrlKey = e.ctrlKey;
+            <b>this</b>.altKey = e.altKey;
+        }<b>else</b>{
+            <b>this</b>.button = -1;
+            <b>this</b>.shiftKey = false;
+            <b>this</b>.ctrlKey = false;
+            <b>this</b>.altKey = false;
+        }
+        <b>return</b> this;
+    };
+    
+    <i>/**
+     * Stop the event. Calls YAHOO.util.Event.stopEvent() <b>if</b> the event is not null.
+     */</i> 
+    <b>this</b>.stopEvent = <b>function</b>(){
+        <b>if</b>(this.browserEvent){
+            YAHOO.util.Event.stopEvent(<b>this</b>.browserEvent);
+        }
+    };
+    
+    <i>/**
+     * Prevents the browsers <b>default</b> handling of the event. Calls YAHOO.util.Event.preventDefault() <b>if</b> the event is not null.
+     */</i> 
+    <b>this</b>.preventDefault = <b>function</b>(){
+        <b>if</b>(this.browserEvent){
+            YAHOO.util.Event.preventDefault(<b>this</b>.browserEvent);
+        }
+    };
+    
+    <i>/** @private */</i>
+    <b>this</b>.isNavKeyPress = <b>function</b>(){
+        <b>return</b> (<b>this</b>.browserEvent.keyCode &amp;&amp; <b>this</b>.browserEvent.keyCode &gt;= 33 &amp;&amp; <b>this</b>.browserEvent.keyCode &lt;= 40);
+    };
+    
+    <i>/**
+     * Cancels bubbling of the event. Calls YAHOO.util.Event.stopPropagation() <b>if</b> the event is not null.
+     */</i> 
+    <b>this</b>.stopPropagation = <b>function</b>(){
+        <b>if</b>(this.browserEvent){
+            YAHOO.util.Event.stopPropagation(<b>this</b>.browserEvent);
+        }
+    };
+    
+    <i>/**
+     * Gets the key code <b>for</b> the event. Returns value from YAHOO.util.Event.getCharCode() <b>if</b> the event is not null.
+     * @<b>return</b> {Number}
+     */</i> 
+    <b>this</b>.getCharCode = <b>function</b>(){
+        <b>if</b>(this.browserEvent){
+            <b>return</b> YAHOO.util.Event.getCharCode(<b>this</b>.browserEvent);
+        }
+        <b>return</b> null;
+    };
+    
+    <i>/**
+     * Returns a browsers key <b>for</b> a keydown event
+     * @<b>return</b> {Number} The key code
+     */</i>
+    <b>this</b>.getKey = <b>function</b>(){
+        <b>if</b>(this.browserEvent){
+            <b>return</b> this.browserEvent.keyCode || <b>this</b>.browserEvent.charCode;
+        }
+        <b>return</b> null;
+    };
+    
+    <i>/**
+     * Gets the x coordinate of the event. Returns value from YAHOO.util.Event.getPageX() <b>if</b> the event is not null.
+     * @<b>return</b> {Number}
+     */</i> 
+    <b>this</b>.getPageX = <b>function</b>(){
+        <b>if</b>(this.browserEvent){
+            <b>return</b> YAHOO.util.Event.getPageX(<b>this</b>.browserEvent);
+        }
+        <b>return</b> null;
+    };
+    
+    <i>/**
+     * Gets the y coordinate of the event. Returns value from YAHOO.util.Event.getPageY() <b>if</b> the event is not null.
+     * @<b>return</b> {Number}
+     */</i> 
+    <b>this</b>.getPageY = <b>function</b>(){
+        <b>if</b>(this.browserEvent){
+            <b>return</b> YAHOO.util.Event.getPageY(<b>this</b>.browserEvent);
+        }
+        <b>return</b> null;
+    };
+    
+    <i>/**
+     * Gets the time of the event. Returns value from YAHOO.util.Event.getTime() <b>if</b> the event is not null.
+     * @<b>return</b> {Number}
+     */</i> 
+    <b>this</b>.getTime = <b>function</b>(){
+        <b>if</b>(this.browserEvent){
+            <b>return</b> YAHOO.util.Event.getTime(<b>this</b>.browserEvent);
+        }
+        <b>return</b> null;
+    };
+    
+    <i>/**
+     * Gets the page coordinates of the event. Returns value from YAHOO.util.Event.getXY() <b>if</b> the event is not null.
+     * @<b>return</b> {Array} The xy values like [x, y]
+     */</i> 
+    <b>this</b>.getXY = <b>function</b>(){
+        <b>if</b>(this.browserEvent){
+            <b>return</b> YAHOO.util.Event.getXY(<b>this</b>.browserEvent);
+        }
+        <b>return</b> [];
+    };
+    
+    <i>/**
+     * Gets the target <b>for</b> the event. Returns value from YAHOO.util.Event.getTarget() <b>if</b> the event is not null.
+     * @<b>return</b> {HTMLelement}
+     */</i> 
+    <b>this</b>.getTarget = <b>function</b>(){
+        <b>if</b>(this.browserEvent){
+            <b>return</b> YAHOO.util.Event.getTarget(<b>this</b>.browserEvent);
+        }
+        <b>return</b> null;
+    };
+    
+    <i>/**
+     * Walk up the DOM looking <b>for</b> a particular target - <b>if</b> the <b>default</b> target matches, it is returned.
+     * @param {String} className The class name to look <b>for</b> or null
+     * @param {String} tagName (optional) The tag name to look <b>for</b>
+     * @<b>return</b> {HTMLelement}
+     */</i> 
+    <b>this</b>.findTarget = <b>function</b>(className, tagName){
+        <b>if</b>(tagName) tagName = tagName.toLowerCase();
+        <b>if</b>(this.browserEvent){
+            <b>function</b> isMatch(el){
+               <b>if</b>(!el){
+                   <b>return</b> false;
+               }
+               <b>if</b>(className &amp;&amp; !YAHOO.util.Dom.hasClass(el, className)){
+                   <b>return</b> false;
+               }
+               <b>if</b>(tagName &amp;&amp; el.tagName.toLowerCase() != tagName){
+                   <b>return</b> false;
+               }
+               <b>return</b> true;
+            };
+            
+            <b>var</b> t = <b>this</b>.getTarget();
+            <b>if</b>(!t || isMatch(t)){
+    		    <b>return</b> t;
+    	    }
+    	    <b>var</b> p = t.parentNode;
+    	    <b>var</b> b = document.body;
+    	    <b>while</b>(p &amp;&amp; p != b){
+                <b>if</b>(isMatch(p)){
+                	<b>return</b> p;
+                }
+                p = p.parentNode;
+            }
+    	}
+        <b>return</b> null;
+    };
+    <i>/**
+     * Gets the related target. Returns value from YAHOO.util.Event.getRelatedTarget() <b>if</b> the event is not null.
+     * @<b>return</b> {HTMLElement}
+     */</i> 
+    <b>this</b>.getRelatedTarget = <b>function</b>(){
+        <b>if</b>(this.browserEvent){
+            <b>return</b> YAHOO.util.Event.getRelatedTarget(<b>this</b>.browserEvent);
+        }
+        <b>return</b> null;
+    };
+    
+    <i>/**
+     * Normalizes mouse wheel delta across browsers
+     * @<b>return</b> {Number} The delta 
+     */</i>
+    <b>this</b>.getWheelDelta = <b>function</b>(){
+        <b>var</b> e = <b>this</b>.browserEvent;
+        <b>var</b> delta = 0;
+        <b>if</b>(e.wheelDelta){ <i>/* IE/Opera. */</i>
+            delta = e.wheelDelta/120;
+            <i>/* In Opera 9, delta differs <b>in</b> sign as compared to IE. */</i>
+            <b>if</b>(window.opera) delta = -delta;
+        }<b>else</b> if(e.detail){ <i>/* Mozilla <b>case</b>. */</i>
+            delta = -e.detail/3;
+        }
+        <b>return</b> delta;
+    };
+    
+    <i>/**
+     * Returns true <b>if</b> the control, shift or alt key was pressed during <b>this</b> event.
+     * @<b>return</b> {Boolean}
+     */</i> 
+    <b>this</b>.hasModifier = <b>function</b>(){
+        <b>return</b> this.ctrlKey || <b>this</b>.altKey || <b>this</b>.shiftKey;
+    };
+}();
+            
+    </code></pre><hr><div style="font-size:10px;text-align:center;color:gray;">yui-ext - Copyright &copy; 2006 Jack Slocum.  |
+    Yahoo! UI - Copyright &copy; 2006 Yahoo! Inc.<br />All rights reserved.</div>
+    </body></html>

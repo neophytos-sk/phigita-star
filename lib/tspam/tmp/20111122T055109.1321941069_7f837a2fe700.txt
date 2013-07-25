@@ -1,0 +1,16 @@
+Return-path: <webmaster@phigita.net> 
+Received: from [202.107.251.156] (port=5834 helo=d0a453622495456)
+	by spiga-sxm.com with asmtp 
+	id 9E5AE8-000630-27
+	for <webmaster@phigita.net>; Tue, 22 Nov 2011 13:50:31 +0800 
+Message-ID: <40C96408E6F749B3819C6ABF110A82B4@d0a453622495456> 
+From: =?koi8-r?B?IvDSydfP2iDJINLB09TBzc/Wy8Ei?= <weaknessy8@spiga-sxm.com> 
+To: <webmaster@phigita.net> 
+Subject: =?koi8-r?B?88/L0sHdwcXNINrB1NLB1NkgzsEgzM/HydPUz9c=?= 
+Date: Tue, 22 Nov 2011 13:50:31 +0800 
+X-Priority: 3 
+X-MSMail-Priority: Normal 
+X-Mailer: Microsoft Windows Mail 6.0.6001.18000 
+X-MimeOLE: Produced By Microsoft MimeOLE V6.0.6001.18049 
+X-Spam: Not detected 
+X-Mras: Ok 

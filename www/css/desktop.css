@@ -1,0 +1,131 @@
+.desktop {
+	position: absolute;
+	top: 0;
+	left: 30px;
+	border: 1px solid #28d524;
+	background-color: #fff;
+	border-top: 0;
+	overflow: hidden;
+	z-index: 99999;
+	display: none;
+}
+.desktop a, .desktop b, .desktop a:hover, .desktop a:link, .desktop a:visited, .desktop a:active, .desktop td, .desktop input, .desktop div, #blummy_wiki, #blummy_wiki_iframe, #blummy_wiki_iframe textarea {
+	font-family: verdana, helvetica, sans-serif;
+	font-size: 10px;
+	color: #000;
+	text-decoration: none;
+	border: 0;
+	padding: 0;
+	margin: 0;
+	background: none;
+	background-color: transparent;
+	font-weight: normal;
+	text-align: left;
+	line-height: 12px;
+}
+#blummy_wiki iframe {
+	background-color: #fff;
+	border: 0;
+}
+#blummy_wiki {
+	border: 1px solid #28d524;
+	border-top: 0;
+}
+#blummy_wiki_iframe {
+	padding: 4px;
+}
+#blummy_wiki_iframe h1 {
+	font-family: verdana, helvetica, sans-serif;
+	font-size: 10px;
+	margin: 0; border: 0;
+	line-height: 12px;
+	padding: 0;
+	padding-bottom: 4px;
+}
+#blummy_wiki_nav {
+	position: fixed;
+	top: 3px;
+	right: 3px;
+}
+.desktop b {
+	font-weight: bold;
+}
+.desktop img {
+	border: 0;
+	display: inline;
+	float: none;
+	vertical-align: middle;
+}
+
+#blummy_wiki_iframe a, #blummy_wiki_iframe a:link, #blummy_wiki_iframe a:visited, #blummy_wiki_iframe a:active,
+.desktop a, .desktop a:link, .desktop a:visited, .desktop a:active, .desktop_test_a {
+	color: #28d524;
+	text-decoration: underline;
+}
+.desktop a, .desktop a:link, .desktop a:visited, .desktop a:active, .desktop a:hover, .desktop_test_a {
+	font-weight: bold;
+}
+.desktop div {
+	position: absolute;
+	display: block;
+}
+.desktop a:hover, #blummy_wiki_iframe a:hover {
+	color: #c00;
+	text-decoration: none;
+}
+
+.desktop td {
+	padding: 2px;
+	vertical-align: top;
+}
+.desktop input, #blummy_wiki_iframe textarea {
+	padding: 2px;
+	border: 1px solid #28d524;
+	background-color: #fff;
+}
+.desktop input.text {
+	width: 265px;
+}
+.desktop .hidden {
+	display: none;
+}
+.desktop .close {
+	position: absolute;
+	padding: 6px;
+}
+.desktop .copyright {
+	position: absolute;
+	bottom: 0;
+	height: 10px;
+	width: 100%;
+	left: 0;
+	padding: 3px 0 4px 10px;
+	border-top: 1px solid #28d524;
+	font-size: 9px;
+	color: #999;
+}
+.desktop .copyright b {
+	font-size: 9px;
+	color: #999;
+}
+a.desktopgrey, a.desktopgrey:link, a.desktopgrey:active, a.desktopgrey:visited {
+	font-size: 9px;
+	font-weight: normal;
+	color: #666;
+}
+
+.desktopmsg {
+	font-size: 9px;
+	font-weight: normal;
+	color: #333;
+}
+.desktopmsg a {
+	color: #666;
+}
+
+a.desktophome, a.desktophome:link, a.desktophome:active, a.desktophome:visited {
+	font-family: arial, sans-serif;
+	font-weight: bold;
+	color: #0c0;
+	text-decoration: none;
+}

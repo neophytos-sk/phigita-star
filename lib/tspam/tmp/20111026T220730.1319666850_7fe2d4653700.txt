@@ -1,0 +1,14 @@
+Received: from vizyziwok([115.63.9.53]) by ah163.com(AIMC 3.1.0.0)
+	with SMTP id jmd74ea8aff9; Thu, 27 Oct 2011 05:51:18 +0800 from vizyziwok([115.63.9.53]) by aisp.com(AIMC 2.9.5.4)
+	with SMTP id AISP action; Thr, 27 Oct 2011 05:51:16 +0800 
+Message-ID: <20111027060719772750@ah163.com> 
+From: "kzhkn" <zxd888@ah163.com> 
+To:  
+Subject: =?gb2312?B?OGp1ajVoaWhzINf2ILPJILmmILXEILL6IA==?=
+	=?gb2312?B?xrcgvq0gwO0gZHpjcg==?= 
+Date: Thu, 27 Oct 2011 06:07:09 +0800 
+X-mailer: Nnygfel 7 
+X-AIMC-AUTH: zxd888 
+X-AIMC-MAILFROM: zxd888@ah163.com 
+X-AIMC-Msg-ID: f96XLT1B 
+Whoops!  What is a 'application/vnd.ms-excel'?

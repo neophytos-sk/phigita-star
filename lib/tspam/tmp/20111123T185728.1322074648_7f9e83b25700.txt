@@ -1,0 +1,18 @@
+Received: from lcfi by tianmacc.com (MDaemon PRO v10.0.4)
+	with ESMTP id md50000497133.msg
+	for <neophytos@phigita.net>; Thu, 24 Nov 2011 02:57:16 +0800 
+X-Spam-Processed: tianmacc.com, Thu, 24 Nov 2011 02:57:16 +0800
+	(not processed: message from trusted or authenticated source) 
+X-Authenticated-Sender: tytga@tianmacc.com 
+X-MDRemoteIP: 115.63.15.72 
+X-Return-Path: tytga@tianmacc.com 
+X-Envelope-From: tytga@tianmacc.com 
+X-MDaemon-Deliver-To: neophytos@phigita.net 
+Message-ID: <20111124025708312582@tianmacc.com> 
+From: =?gb2312?B?0O2y/bL91LS3p8PF1sbU7NPQz965q8u+?= <tytga@tianmacc.com> 
+To:  
+Subject: =?gb2312?B?cXBsyfousvouvMYuu64u0+suzu8uwc8uv9gu1sY=?=
+	=?gb2312?B?eGh6?= 
+Date: Thu, 24 Nov 2011 02:56:57 +0800 
+X-mailer: Bnv 2 
+Whoops!  What is a 'application/vnd.ms-excel'?

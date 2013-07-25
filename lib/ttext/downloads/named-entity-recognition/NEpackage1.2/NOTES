@@ -1,0 +1,7 @@
+./sentence-boundary/sentence-boundary.pl -d sentence-boundary/HONORIFICS -i greek_example.txt -o greek_example.ss.out2
+./wordsplitter/word-splitter.pl example_input.txt
+./newlistne/UpperCaseNEAll.pl greek_example.ss.out uppercaseNEall.out
+./newlistne/makelistscolumn.pl uppercaseNEall.out
+#  fex [options] <script-file> <lexicon-file> <corpus-file> <example-file>
+./fex/fex -p localwideconll.scr BILOU.lex $columninput $columninput.ex`;
+./snow/snow -test -F BILOUtrain.net -I $columninput.ex -o allactivations > $classout

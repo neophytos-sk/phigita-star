@@ -1,0 +1,17 @@
+Return-path: <webmaster@phigita.net> 
+Received: from [114.160.214.238] (port=4008 helo=MCCTE033)
+	by bencmartin.com.2.arsmtp.com with asmtp 
+	id 154785-000532-50
+	for <webmaster@phigita.net>; Mon, 21 Nov 2011 17:56:16 +0900 
+Message-ID: <8CC146AF8B4040C2B125929450957A8B@MCCTE033> 
+From: =?koi8-r?B?Iu/v7yD3wc0g8MnT2M3PIC0gZS1tYWlsIM3B0svF1MnOxyI=?= <chirpingem@bencmartin.com> 
+To: <webmaster@phigita.net> 
+Subject: =?koi8-r?B?NSDSwdPT2czPyyDawSAxMCAwMDAg0tXCzMXKICsgyM/T1MnOxyDOwSDN?=
+	=?koi8-r?B?xdPRwyDXIPDv5OHy7+sgyczJIDbRINLB09nMy8E=?= 
+Date: Mon, 21 Nov 2011 17:56:16 +0900 
+X-Priority: 3 
+X-MSMail-Priority: Normal 
+X-Mailer: Microsoft Windows Mail 6.0.6001.18000 
+X-MimeOLE: Produced By Microsoft MimeOLE V6.0.6001.18049 
+X-Spam: Not detected 
+X-Mras: Ok 

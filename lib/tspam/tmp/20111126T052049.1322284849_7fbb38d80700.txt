@@ -1,0 +1,110 @@
+Received: from p2-jbsched08.ad.prodcc.net (p2-pen6.ad.prodcc.net [10.252.0.106])
+	by p2-mail174.ccm38.constantcontact.com (Postfix) with ESMTP id F32D633F386
+	for <neophytos@phigita.net>; Sat, 26 Nov 2011 00:20:38 -0500 (EST) 
+DKIM-Signature: v=1; q=dns/txt; a=rsa-sha256; c=relaxed/relaxed; s=105386; d=manning.ccsend.com; h=to:subject:mime-version:message-id:from:date:sender:list-unsubscribe:reply-to; bh=VSboBC0XBs5LTSi/1zwGlCyywlu6/oFeQ+dwMhjUNOY=; b=RB4CKNpMci6fNfMXnBrAIVXyZ63EN8qsQVY1lPNH/qcMbQj8ROg0D+QBNagaT6k2jBODmeEN7JdW9Lt2fQ7p36yRhDx0w9jYBZUjcs7ey3gCu+S5nlYsDtL8NIVRoNj6MEAwqKrcwXPpkcUyRZaNkzq+FOjldguY+KqNJ+98ah0= 
+Message-ID: <1108740973074.1101335703814.281293.8.31000559@scheduler> 
+Date: Sat, 26 Nov 2011 00:20:38 -0500 (EST) 
+From: Manning Publications <mkt@manning.com> 
+Reply-To: mkt@manning.com 
+Sender: Manning Publications <manning@manning.ccsend.com> 
+To: neophytos@phigita.net 
+Subject: Small Business Saturday! Small prices on great books 
+X-Mailer: Roving Constant Contact 2009 (http://www.constantcontact.com) 
+List-Unsubscribe: http://visitor.constantcontact.com/do?p=un&mse=0018GC6MpVjY0QsVHXO2XbbSb_v5l8P9v_bapbCBCe8WWg%3D&t=001GnhfnQDOY6W36q2Nvi8pHg%3D%3D&llr=gimslwbab 
+X-Return-Path-Hint: ESC1108740973074_1101335703814_281293_r20@in.constantcontact.com 
+X-Roving-ID: 1101335703814.281293 
+X-Lumos-SenderID: 1101335703814 
+X-Roving-CampaignId: 1108740973074 
+X-Roving-StreamId: 0 
+--------------------------------------
+view in your
+browser
+http://campaign.r20.constantcontact.com/render?llr=gimslwbab&v=001750MJEUdJzOuGe7BBkD371_-CPFJyCGDH7LBskVoapcqZIBAG9OkZc0MDgHCtH_wTJDjxhon6lRrUxulTdhOdfUw7_JiSNaOoZbR-QTnmLSFcMjVfeMEDL4SGunBDBBeJJQq5vX_s93DE8kFBDDbqA%3D%3D
+
+
+home [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108740973074&s=281293&e=001K-My9N-aw2KNeM2lMX407FKF31UlDWFFFO1PLLG3AO9x42SSwV6dRjSRLZe5zTaZbc5FNg8tqdRB8-L-2lINw7XjWzyDT6IgUmIk_xzEJv5TS8Mmr4v1ag==]support
+[http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108740973074&s=281293&e=001K-My9N-aw2LsYoM7vrK5zdwhsCL1DrqPpYOnDf3vhL6_ALAsB1jbVxfHWEN8Th2DYe231YZTeEL-QBQya__F8ipz62Ovpkj5AKspF7UUHZ59KXY3hUjHVUH8e0Vry2Vxy1EmsZHd_LQ=]
+
+Think Small! It's Small Business Saturday
+
+Many of you run your own businesses so you know how tough it can get. We know, too.
+We'd like to give you our support with a special Small Business Saturday discount
+on these selected books at manning.com [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108740973074&s=281293&e=001K-My9N-aw2IeTu1FcvqEPlnAHaO1BhsaRgN4BIODUvTFppyAd8vf-m1Ga2B_fml89ayq5jNiO7BEyd5MpSnis5etQEUOMLGQlCTQq8bC1bwpDTSeBWRK-w==].
+
+Small Business Saturday Special
+
+Today only, save 42% on these selected books for small businesses--eBook, pBook,
+ or MEAP. Enter sbs42 in the Promotional Code box when you check
+out at manning.com [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108740973074&s=281293&e=001K-My9N-aw2IeTu1FcvqEPlnAHaO1BhsaRgN4BIODUvTFppyAd8vf-m1Ga2B_fml89ayq5jNiO7BEyd5MpSnis5etQEUOMLGQlCTQq8bC1bwpDTSeBWRK-w==].
+
+Big ideas for small businesses
+
+Learn SQL Server in a Month of Lunches [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108740973074&s=281293&e=001K-My9N-aw2JCMUf3icB7aHoViUSwLHCH4MwgZChFSrPwetgITgh4reheelHTEphBxMCR-8Huq_mvIEjB1aHqZWDNuGacj9LZozTqKadzUmkcOMZxw7of1CU9n2uNYnBb]
+» If you want to learn SQL Server but don't have a lot of time, this is the book
+ for you. Master DBA basics on your lunch hour by following these short, focused
+ lessons.  [Read more [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108740973074&s=281293&e=001K-My9N-aw2JCMUf3icB7aHoViUSwLHCH4MwgZChFSrPwetgITgh4reheelHTEphBxMCR-8Huq_mvIEjB1aHqZWDNuGacj9LZozTqKadzUmkcOMZxw7of1CU9n2uNYnBb]]
+
+Learn Windows PowerShell in a Month of Lunches [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108740973074&s=281293&e=001K-My9N-aw2K61OTT53xju2mS327zlpsfvllOhvWLly6Jca8IO0SrwVXszBnWYaAOmrP1YhfeKujWCNhSUjhOTfdhQk8pAlil1GTiU9onHag3KSIaawdXc9UQWoYo0ItV]
+» When you automate administrative tasks with PowerShell, it's like having an extra
+hand in the office. This book shows you how to make PowerShell work for you in 28
+one-hour lessons. [Read more [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108740973074&s=281293&e=001K-My9N-aw2K61OTT53xju2mS327zlpsfvllOhvWLly6Jca8IO0SrwVXszBnWYaAOmrP1YhfeKujWCNhSUjhOTfdhQk8pAlil1GTiU9onHag3KSIaawdXc9UQWoYo0ItV]]
+
+jQuery in Action, Second Edition [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108740973074&s=281293&e=001K-My9N-aw2KvDGj6C3X5jx15--CBKOK_MRgY7TDNmtb9LlmSh58XHi_cvRDpLeZvopNKA5eDUFueTik2PeDI9ySZ7OAoS2GMbK1mkGY0Wp1KEmDMn9flsWXleuAYljNu]
+» jQuery makes it easy to build professional web sites with a lot less effort. This
+book introduces jQuery and gets you up and running fast, even if you're new to JavaScript.
+[Read more [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108740973074&s=281293&e=001K-My9N-aw2KvDGj6C3X5jx15--CBKOK_MRgY7TDNmtb9LlmSh58XHi_cvRDpLeZvopNKA5eDUFueTik2PeDI9ySZ7OAoS2GMbK1mkGY0Wp1KEmDMn9flsWXleuAYljNu]]
+
+Hello! HTML5 and CSS3 [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108740973074&s=281293&e=001K-My9N-aw2KflJMXmSfefbqk8IDlPs5ip2CUi5lYpvYztTg7RaAqlMgK8A1FBbivw_b-CXe3qRnwLcC3P0MGlhmqaK4WdJCjMn63UAQty0TARL3hsGn5o_M_58PQdMgk]
+» HTML5 and CSS3 are the new standards behind the web. This book is a friendly reference
+that makes it a breeze to start using these new tools today. [Read more [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108740973074&s=281293&e=001K-My9N-aw2KflJMXmSfefbqk8IDlPs5ip2CUi5lYpvYztTg7RaAqlMgK8A1FBbivw_b-CXe3qRnwLcC3P0MGlhmqaK4WdJCjMn63UAQty0TARL3hsGn5o_M_58PQdMgk]]
+
+Hello! Python [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108740973074&s=281293&e=001K-My9N-aw2JEIcvkDbzX_u_r4AQQVHTKVX6e6GWxLD-v6qnKy3hlftNFwoqTPRVd390CsuHvk1sZ8drq99cL7P7WingsjJDfOlPBvKwIST_TBVMqEI_GTlBiMyejbeqF]
+» Python is free, powerful, and easy to learn. This easy-to-follow, example-packed
+book guides you from your first line of Python code through the techniques you'll
+need to be a proficient programmer. [Read more [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108740973074&s=281293&e=001K-My9N-aw2JEIcvkDbzX_u_r4AQQVHTKVX6e6GWxLD-v6qnKy3hlftNFwoqTPRVd390CsuHvk1sZ8drq99cL7P7WingsjJDfOlPBvKwIST_TBVMqEI_GTlBiMyejbeqF]]
+
+Arduino in Action [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108740973074&s=281293&e=001K-My9N-aw2JXSLQ-MblB8-nvHvoZSJ-Nka09679ySdNrVSA89rSu7ZL5AnFXN6cSWPjvGUgxSJvbY9t5P7pseR3yrL4v0PC5D3TqlfInEHs82ubZSNxJvntTRztYLA7H]
+» There's a whole new world of opportunity for building your own custom hardware.
+Whether you want to create a new musical instrument or a smart robot, Arduino is
+ a low-cost platform you can use to bring your ideas to life. [Read more [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108740973074&s=281293&e=001K-My9N-aw2JXSLQ-MblB8-nvHvoZSJ-Nka09679ySdNrVSA89rSu7ZL5AnFXN6cSWPjvGUgxSJvbY9t5P7pseR3yrL4v0PC5D3TqlfInEHs82ubZSNxJvntTRztYLA7H]]
+
+Android in Action, Third Edition [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108740973074&s=281293&e=001K-My9N-aw2KryLSXmoRhOYx-kpGhXMQKeqh3LEWpD9Jmx2w44hqq7h0UTfNF485ptR7vzICLY0Mk3Nm6_8BYkKNV0V88vq5kXxFvsRQoNz2X56DCIgEHNx7I9JH7Xofl]
+» Mobile development is the ultimate small business platform. This book teaches 
+you to build Android apps and shows you how to get them ready for the Android market.
+[Read more [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108740973074&s=281293&e=001K-My9N-aw2KryLSXmoRhOYx-kpGhXMQKeqh3LEWpD9Jmx2w44hqq7h0UTfNF485ptR7vzICLY0Mk3Nm6_8BYkKNV0V88vq5kXxFvsRQoNz2X56DCIgEHNx7I9JH7Xofl]]
+
+iOS 4 in Action [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108740973074&s=281293&e=001K-My9N-aw2IYySpcsS_aU2gY649jT8dtYd0ZKY-VlI8Dq_qUwYPFgMf8KXFmZNWgsSsgDOKTGfsJBG-5687JB2HC6B9Pl7OIhmfYA_YQ9fZ0lY6Eka_uiyDt1H21uS5H]
+» Go from idea to app store in nothing flat with this hands-on guide. You'll learn
+the ins and outs of native iPhone app development, even if you've never touched 
+Objective-C. [Read more [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108740973074&s=281293&e=001K-My9N-aw2IYySpcsS_aU2gY649jT8dtYd0ZKY-VlI8Dq_qUwYPFgMf8KXFmZNWgsSsgDOKTGfsJBG-5687JB2HC6B9Pl7OIhmfYA_YQ9fZ0lY6Eka_uiyDt1H21uS5H]]
+
+Deal of the Day Email Alert [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108740973074&s=281293&e=001K-My9N-aw2JkCo69lu2Qp9sWaoWTm_PEvJ6wJtTg6Inc1yBqeiOo_0IRJdldj6WwZBEsqX1opnRlpgVOoEomxp5Wl8dg-pkZF8uF5PaFYO8mt-6DB-W5vu7SfzGtcHcuRDAVLgX9Xco=]
+| Test our new dashboard [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108740973074&s=281293&e=001K-My9N-aw2IQrOLKOJCujdUaInAmdANEcnuZCon_daPW9rC9nE8h9EcO550LKcHoZj2d007GvmDROrdDXEqU408BNKq-ONe4QWDCRSdIBt5x_bWT_zV7oAWl5_6Nz63M]
+| Customer Support  [http://r20.rs6.net/tn.jsp?llr=gimslwbab&et=1108740973074&s=281293&e=001K-My9N-aw2LsYoM7vrK5zdwhsCL1DrqPpYOnDf3vhL6_ALAsB1jbVxfHWEN8Th2DYe231YZTeEL-QBQya__F8ipz62Ovpkj5AKspF7UUHZ59KXY3hUjHVUH8e0Vry2Vxy1EmsZHd_LQ=]
+
+Copyright © 2011 Manning Publications. All rights reserved.
+
+follow us on Twitter
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Forward email
+http://ui.constantcontact.com/sa/fwtf.jsp?llr=gimslwbab&m=1101335703814&ea=neophytos@phigita.net&a=1108740973074
+
+
+This email was sent to neophytos@phigita.net by mkt@manning.com.
+
+Update Profile/Email Address
+http://visitor.constantcontact.com/do?p=oo&mse=0018GC6MpVjY0QsVHXO2XbbSb_v5l8P9v_bapbCBCe8WWg%3D&t=001GnhfnQDOY6W36q2Nvi8pHg%3D%3D&reason=001y5KaVlBn7_Y%3D&llr=gimslwbab
+
+
+Instant removal with SafeUnsubscribe(TM)
+http://visitor.constantcontact.com/do?p=un&mse=0018GC6MpVjY0QsVHXO2XbbSb_v5l8P9v_bapbCBCe8WWg%3D&t=001GnhfnQDOY6W36q2Nvi8pHg%3D%3D&reason=001y5KaVlBn7_Y%3D&llr=gimslwbab
+
+
+Privacy Policy:
+http://ui.constantcontact.com/roving/CCPrivacyPolicy.jsp
+
+
+
+
+Manning Publications Co. | Sound View Ct. #3B | Greenwich | CT | 06830

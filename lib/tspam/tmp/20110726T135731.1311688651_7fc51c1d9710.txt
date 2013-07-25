@@ -1,0 +1,10 @@
+Received: from 59.117.171.249 by cluster.relay.agava.net; Tue, 26 Jul 2011 21:56:58 +0800 
+Date: Tue, 26 Jul 2011 21:56:58 +0800 
+From: =?koi8-r?B?IvPPwtPU18XOzsnLIg==?= <ruttingay@primeural.ru> 
+X-Mailer: The Bat! (v3.81.14 Beta) Home 
+Reply-To: ruttingay@primeural.ru 
+X-Priority: 3 (Normal) 
+Message-ID: <940674879.35437989275872@primeural.ru> 
+To: webmaster@phigita.net 
+Subject: =?koi8-r?B?4dLFzsTBLiDvxsnTztnKIMPFztTSIC0g7cHS2MnOwSDyz93BIQ==?= 
+

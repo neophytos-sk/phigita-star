@@ -1,0 +1,77 @@
+This document was mainly written by M. Kölbl, and details the steps that can
+be taken to implement QSF as a system-wide mail filter.
+
+ 1. Create a user "filter" with password "*" and usergroup "nogroup".
+ 2. Make the dir "/var/spool/filter"
+ 3. Do "> /var/spool/filter/.qsfdb" (i.e. create an empty file).
+ 4. Do "chown -R filter:nogroup /var/spool/filter"
+ 5. Do "chmod -R 700 /var/spool/filter"
+ 6. Create a file "/usr/bin/qsf-postfix" with the following content:
+
+#### BEGIN ####
+#!/bin/sh
+# Simple shell-based filter. It is meant to be invoked as follows:
+#       /path/to/script -f sender recipients...
+
+# Localize these.
+INSPECT_DIR=/var/spool/filter
+SENDMAIL="/usr/sbin/sendmail -i"
+QSF="/usr/bin/qsf -r"
+
+# Exit codes from <sysexits.h>
+EX_TEMPFAIL=75
+EX_UNAVAILABLE=69
+
+# Clean up when done or when aborting.
+trap "rm -f in.$$; rm -f out.$$" 0 1 2 3 15
+
+# Start processing.
+cd $INSPECT_DIR || {
+    echo $INSPECT_DIR does not exist; exit $EX_TEMPFAIL; }
+
+cat >in.$$ || { 
+    echo Cannot save mail to file; exit $EX_TEMPFAIL; }
+
+# Specify your content filter here.
+$QSF <in.$$ >out.$$|| {
+    echo Message content rejected; exit $EX_UNAVAILABLE; }
+
+$SENDMAIL "$@" <out.$$
+exit $?
+#### END ####
+
+Now do the following:
+
+ 7. Do "chmod 750" on "/usr/bin/qsf-postfix"
+ 8. Do "chown filter:nogroup" on "/usr/bin/qsf-postfix"
+ 9. Copy the binary qsf to /usr/bin/ and run "chmod 755 /usr/bin/qsf"
+10. Do "chown filter:nogroup /usr/bin/qsf"
+11. Do "cp /etc/postfix/master.cf /etc/postfix/master.old"
+12. Edit "/etc/postfix/master.cf" and replace:
+
+smtp      inet  n       -       n       -       -       smtpd
+With:
+smtp      inet  n       -       n       -       -       smtpd -o 
+content_filter=spamfilter:
+
+At the end of the master.cf file add:
+spamfilter unix  -      n       n       -       10      pipe flags=Rq
+  user=filter argv=/usr/bin/qsf-postfix -f ${sender} -- ${recipient}
+
+13. If you have a predefined database (I have trained my qsf on my local
+    machine first, so I backed up this database and restored it on the
+    server) run:
+
+    su filter
+    qsf -R backup.txt; # replace backup.txt with your backupfile
+    exit
+
+14. Finally run a "postfix reload"
+
+Now run "tail -f /var/log/mail" (or maillog) and send a mail to your server
+or wait for the next mail. Make sure postfix will not fall into a
+neverending mail loop.
+
+Normally everything works fine now but if it falls into the neverending loop
+run "mv /etc/postfix/master.old /etc/postfix/master.cf; postfix reload" to
+restore the normal configuration.

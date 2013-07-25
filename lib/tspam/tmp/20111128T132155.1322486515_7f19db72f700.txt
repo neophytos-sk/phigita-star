@@ -1,0 +1,13 @@
+Received: from [110.53.26.123] (helo=uvsyggcr)
+	by a2s23.a2hosting.com with esmtpa (Exim 4.69)
+	(envelope-from <hr@gomireal.com>)
+	id 1RV19N-0004Wq-H1; Mon, 28 Nov 2011 08:21:42 -0500 
+Message-ID: <20111128212407677626@gomireal.com> 
+From: =?gb2312?B?uqvT8b64?= <hr@gomireal.com> 
+To:  
+Subject: =?gb2312?B?Y3BoeM3qIMnGINfUILy6LLPJIL7NILmrIMu+cA==?=
+	=?gb2312?B?dnk5?= 
+Date: Mon, 28 Nov 2011 21:24:01 +0800 
+X-mailer: Onkvpqxpi 7 
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report Primary Hostname - a2s23.a2hosting.com Original Domain - phigita.net Originator/Caller UID/GID - [47 12] / [47 12] Sender Address Domain - gomireal.com 
+Whoops!  What is a 'application/vnd.ms-excel'?

@@ -1,0 +1,119 @@
+Research and development 
+
+Innovative India
+
+Apr 1st 2004 | BANGALORE AND DELHI 
+From The Economist print edition
+
+
+AFP 
+ 
+
+Please don't call it outsourcing
+
+UNDERSTANDABLY, many Indians take umbrage at the wave of protectionist
+rhetoric engulfing the American election campaign. Not only do they
+point to the endless lectures they have received from Americans in
+years past on the benefits of globalisation and open markets. They
+also resent an insinuation underlying the debate ove r: that all
+countries such as India have to offer is cheap labour and a
+telecommunications link. Just look, they say, at the extent of the
+high-end research and development (R&D) work being undertaken in
+India.
+
+Or, rather, they say so in private. In public, conscious of western
+fears of the migration of ever more technically demanding and
+high-paid jobs, many Indians have recently concluded that the best
+strategy is not to draw attention to themselves. The ultimate American
+nightmare is not just about white-collar employment, but the loss of
+the country's great international advantage: the ability to
+innovate. So a veil of discretion is masking some of India's R&D
+achievements. Industry lobbyists are playing down this aspect of
+India's success. Some multinationals, such as IBM, are loth to discuss
+it at all. Others, such as Texas Instruments, boast that the y, but
+make sure to add tha t. Indian IT firms are stressing that, great as
+their contributions are, the real cutting-edge, innovative work is
+done in their clients' laboratories in America. 
+
+Some veterans of the Indian technology industry are truly sceptical
+about the potential of Indian R&D. Lakshmi Narayanan, chief executive
+of Cognizant, a New Jersey-based IT-services firm with big operations
+in India, argues that the country does not yet have the capability to
+develop its own intellectual property. So far, he says, R&D's
+contribution to overall growth i s, and where multinationals, such as
+Cisco Systems and Nortel, have contracted work out to Indian services
+firms it has been in upgrading old products, not developing new
+lines. Satyam Cherukuri of Sarnoff, an American R&D firm, argues that,
+of the three requirements for developing an innovation-driven
+industry, India has two: the technical skills and access to
+capital. What is missing is an indigenous business model.
+
+
+
+Patently obvious
+ 
+ 
+ 
+
+ 
+Yet by the crude measure of patents earned by the Indian subsidiaries
+of multinational firms (see chart), a significant amount of innovation
+now stems from India. Last year, Intel's Indian subsidiary filed for
+63 patents. Its president, Ketan Sampat, says that the 1,500 IT
+professionals employed by the firm in R&D in Bangalore are engaged i n
+They use the fastest supercomputer in India (ranked as the 109th-most
+powerful computer in the world) and are divided into four
+product-design divisions covering ultra-wideband radio, enterprise
+processors, mobile and wireless chip-sets, and communications.
+
+For Intel, which has a similar-sized R&D operation in Israel, and
+smaller facilities in Russia and China, the attractions of Bangalore
+are simple: the best climate in India an d, who are technically
+well-educated and speak good English. D.B. Inamdar, the senior civil
+servant in the provincial government's IT department, says that some
+140,000 IT professionals now work in Bangalorejects.
+
+Wipro's boss, Vivek Paul, says that R&D is becomin g. Firms, like film
+studios, are increasingly unwilling to keep expensive teams together
+between projects. For Wipro, providing firms with an alternative to
+doing R&D with permanent in-house teams has become a big business,
+accounting for one third of its $1 billion in annual revenues, and
+employing 6,500 people. It is probably the world's biggest
+R&D-services firm.
+
+Its customers include all the big telecoms-equipment vendors (except
+Germany's Siemens). Its smallest commitment to any of these clients is
+300 people. Elaborate procedures protect the customer's intellectual
+property, including mandator y periods for engineers between clients,
+and sometimes a right of veto on their redeployment. The corollary is
+that the breadth of industry knowledge is part of the sales pitch.
+
+The approach, says Mr Paul, varies from micro-management by the
+customer, who takes on Wipro engineers virtually as members of his own
+staff, t om of tactful political correctness behind the reluctance of
+Indian firms and of India-based multinationals to describe their
+involvement in design work a s. Nandan Nilekani, boss of Infosys,
+which has a $150m-a-year R&D business, points out how much this area
+differs from the outsourcing of IT and other back-office
+processes. There, business is coming from cost centres, and is driven
+by price and efficiency. R&D clients, however, are looking for
+innovation and a shorter time to market. They hope to be profit
+centres.
+
+That does not mean the trend has no impact on jobs in the West,
+however. SAP may be typical. The Indian operation has not caused a
+single lay-off in Germany. But the firm's planned expansion of its R&D
+capability is entirely offshore, in India and to a lesser extent
+China. So if R&D jobs are not being lost in the West, they are not
+being created there either.
+
+Many firms still see untapped potential in using the wealth of Indian
+talent for R&Der industries such as drugs and biotech. The long-term
+worry this raises for America is what Mr Paul call s. Even if much of
+the work being done in India is not at the most advanced and
+sophisticated technical level, it is filling what used to be part of
+the professional experience that has helped to create America's
+legions of great innovators. Just as once unassailable American
+corporate R&D departments have seen their sway weakened, will it be
+long before America itself loses its near-monopoly of global
+innovation?

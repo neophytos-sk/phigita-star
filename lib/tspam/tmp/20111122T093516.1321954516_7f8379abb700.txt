@@ -1,0 +1,14 @@
+Received: from  (192.168.1.173) by nacha.org (79.200.86.230) with Microsoft SMTP Server id 8.0.685.24; Tue, 22 Nov 2011 10:35:07 +0100 
+Message-ID: <4ECB6A2F.508040@nacha.org> 
+Date: Tue, 22 Nov 2011 10:35:07 +0100 
+From: "The Electronic Payments Association" <admin@nacha.org> 
+User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.2.9) Gecko/20100921 Thunderbird/3.1.4 
+To: <k2pts@phigita.net> 
+Subject: Rejected ACH transaction 
+--------------------------------------
+ The ACH  transaction (ID: 65750671365922), recently  sent from your bank account (by you or any other person), was  canceled by the  other financial institution.        Rejected transfer  
+      Transaction ID:     65750671365922  
+       Rejection Reason    See details in the report below   
+      Transaction Report     report_65750671365922.doc (Microsoft Word Document)   
+  About NACHA The Network Strategy & Outreach area is responsible for coordinating, managing, and executing on key activities and initiatives for NACHA and the ACH Network, working in close collaboration with other functional areas of the organization. Outreach activities include those that are conducted to benefit all ACH Network participants in NACHA's role as ACH Network Administrator, and activities that serve the membership of NACHA as an industry trade association.NACHA provides superior services and value to its members as the industry association responsible for ACH payments by actively promoting and consistently communicating the value and best uses of electronic payments, including the latest research, pilot results, insights, and trends to depository financial institutions and their customers. In addition, NACHA broadly engages key external audiences to communicate the value proposition of the ACH Network and ACH payments to end-users and other audiences.13450 Sunrise Valley Drive, Suite 100Herndon, VA 201712011 NACHA - The Electronic Payments Association
+

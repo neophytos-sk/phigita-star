@@ -1,0 +1,59 @@
+%
+% lgilig.mf
+%
+%% Cyrillic font container with T2 encoding beta-support
+%
+% This file is future part of lxfonts package
+% Version 3.4 // Patchlevel=0
+% (c) O.Lapko
+%
+% This package belongs to the public domain under conditions similar to
+% those of D. E. Knuth specified for the Computer Modern family of fonts.
+% In particular, only the authors are entitled to modify this file
+% and to save it under the same name.
+%
+% Content:
+%
+% roman dotless i,j
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Special letters
+%
+% i_dotl        "19     i dotless
+% j_dotl        "1a     j dotless
+% ff-ligs (lgiligff.mf)
+%
+
+LHver_check(3,4); % like |version_check| in ec
+
+if (roman_ec=true) and (old_cyr=false):
+
+input lgiligff.mf
+
+fi %roman_ec
+
+lhchar "Italic Cyrillic letter dotless i";
+cyrchar(i_dotl,5u#,x_height#,0);
+italcorr 1/3x_height#*slant+.5hair#+.5u#;
+adjust_fit(if monospace:u#,u# else: 0,0 fi); pickup fine.nib;
+x0=0; x5=w; x2=.5w+.25u; x3=.5w-.25u;
+hook_in(0,1,2)(skewed); hook_out(3,4,5)(skewed);  % hooks
+filldraw stroke z2e--z3e;  % stem
+penlabels(0,1,2,3,4,5); endchar;
+
+lhchar "Italic Cyrillic dotless j";
+cyrchar(j_dotl,5.5u#,x_height#,desc_depth#);
+italcorr x_height#*slant+.5stem#-2u#;
+adjust_fit(if monospace:2u# else: 0 fi, 0); pickup fine.nib;
+x0=0; x2=x3; pos3(stem,0); lft x3l=hround(w-2u-.5stem);
+hook_in(0,1,2);  % opening hook
+pos4(vair,-90); pos5(hair,-180); pos6(flare,-180);
+bot y3=-1/3d; bot y4r=-d-oo; y6-.5flare=-vround.9d;
+x4=1/3(w-u); lft x5r=min(hround-.5u,lft x5r+x4-x5l-eps);
+filldraw stroke z2e---z3e...{left}z4e;  % stem and arc
+bulb(4,5,6);  % bulb
+penlabels(0,1,2,3,4,5,6); endchar;
+
+endinput;
+%end of file

@@ -1,0 +1,90 @@
+Received: by ywp31 with SMTP id 31sf2439702ywp.26
+        for <k2pts@phigita.net>; Thu, 01 Dec 2011 08:22:08 -0800 (PST) by 10.236.131.110 with SMTP id l74mr3691363yhi.19.1322756520002;
+        Thu, 01 Dec 2011 08:22:00 -0800 (PST) by 10.101.55.11 with SMTP id h11ls12160907ank.4.gmail; Thu, 01 Dec
+ 2011 08:20:52 -0800 (PST) by 10.236.190.200 with SMTP id e48mr13369293yhn.5.1322756452401;
+        Thu, 01 Dec 2011 08:20:52 -0800 (PST) by 10.150.195.7 with SMTP id s7msybf;
+        Thu, 1 Dec 2011 08:15:02 -0800 (PST) by 10.236.173.68 with SMTP id u44mr13261559yhl.6.1322756102281;
+        Thu, 01 Dec 2011 08:15:02 -0800 (PST) by 10.236.173.68 with SMTP id u44mr13261554yhl.6.1322756102245;
+        Thu, 01 Dec 2011 08:15:02 -0800 (PST) from mail-yw0-f74.google.com (mail-yw0-f74.google.com [209.85.213.74])
+        by gmr-mx.google.com with ESMTPS id m17si1257071ybe.0.2011.12.01.08.15.02
+        (version=TLSv1/SSLv3 cipher=OTHER);
+        Thu, 01 Dec 2011 08:15:02 -0800 (PST) by ywb26 with SMTP id 26so268392ywb.3
+        for <inside-adsense@googlegroups.com>; Thu, 01 Dec 2011 08:15:02 -0800 (PST) by 10.236.124.80 with SMTP id w56mr13360866yhh.0.1322756102120; Thu,
+ 01 Dec 2011 08:15:02 -0800 (PST) 
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlegroups.com; s=beta;
+        h=x-beenthere:received-spf:mime-version:x-bloggermail:message-id:date
+         :subject:from:to:x-original-sender:x-original-authentication-results
+         :reply-to:precedence:mailing-list:list-id:x-google-group-id
+         :list-post:list-help:list-archive:sender:list-subscribe
+         :list-unsubscribe:content-type;
+        bh=dYVXhplLj+yAOAHfkwOZAPNmU6HDFyopsjZs+p/sge4=;
+        b=nAVlg8KsRnxyLBtEzKvhk/3JshoIOQQ4TFHRKiPXCYr9I8kLfred1WyZfnsnHjtZ27
+         5scIL9KiOgFN08nSYYaOZPGke/sSMzwUB2Vz0UkUrEpBw+GwISnmpOMmDAD3zNGSvsN7
+         tbX4tY22pgopnDH7fb3bIsw1yiap0tORgPdxY= 
+X-BeenThere: inside-adsense@googlegroups.com 
+Received-SPF: pass (google.com: domain of 3BqjXTg4KADEVafVQR-NQfRafRTbbTYR.PbZ@blogger.bounces.google.com designates 209.85.213.74 as permitted sender) client-ip=209.85.213.74; 
+X-BloggerMail: 8d2a8e8ca87dc2060d077dc8ff65ec509446c7d7 
+Message-ID: <20cf301b65b797693f04b30a2756@google.com> 
+Date: Thu, 01 Dec 2011 16:15:02 +0000 
+Subject: [Inside AdSense] Taking your channels to a new limit 
+From: Inside AdSense Team <inside-adsense@google.com> 
+To: inside-adsense@googlegroups.com 
+X-Original-Sender: inside-adsense@google.com 
+X-Original-Authentication-Results: gmr-mx.google.com; spf=pass (google.com:
+ domain of 3BqjXTg4KADEVafVQR-NQfRafRTbbTYR.PbZ@blogger.bounces.google.com
+ designates 209.85.213.74 as permitted sender) smtp.mail=3BqjXTg4KADEVafVQR-NQfRafRTbbTYR.PbZ@blogger.bounces.google.com;
+ dkim=pass header.i=@google.com 
+Reply-To: inside-adsense+owners@googlegroups.com 
+Precedence: list 
+Mailing-list: list inside-adsense@googlegroups.com; contact inside-adsense+owners@googlegroups.com 
+List-ID: <inside-adsense.googlegroups.com> 
+X-Google-Group-Id: 933049293311 
+List-Post: <http://groups.google.com/group/inside-adsense/post?hl=en_US>, <mailto:inside-adsense@googlegroups.com> 
+List-Help: <http://groups.google.com/support/?hl=en_US>, <mailto:inside-adsense+help@googlegroups.com> 
+List-Archive: <http://groups.google.com/group/inside-adsense?hl=en_US> 
+Sender: inside-adsense@googlegroups.com 
+List-Subscribe: <http://groups.google.com/group/inside-adsense/subscribe?hl=en_US>,
+ <mailto:inside-adsense+subscribe@googlegroups.com> 
+List-Unsubscribe: <http://groups.google.com/group/inside-adsense/subscribe?hl=en_US>,
+ <mailto:inside-adsense+unsubscribe@googlegroups.com> 
+--------------------------------------
+As you know, channels in your AdSense account are powerful reporting tools.  
+Custom channels help you track ad performance and enable advertisers to  
+target their ads for maximum impact, while URL channels allow you to  
+deep-dive into the performance of AdSense for content on your subdomains.
+
+To date, you've been limited to a total of 200 custom and URL channels, and  
+many of you have asked for more. That's why today, we're very excited to  
+announce that we've raised this limit to 500 custom channels per product,  
+and 500 URL channels for AdSense for content. You'll see your available  
+custom channels count clearly displayed in the custom channels table, and  
+also highlighted in the “create new custom channel” pop-up.
+
+This change will enable you to expand your testing, and you'll be able to  
+do more granular analysis of how different formats, ad styles, and ad types  
+perform. In addition, you can use your increased allocation of custom  
+channels to create new ad placements for advertisers to target directly.  
+This can help increase the amount you earn from placement targeting, as  
+advertisers will be able to review the information you've provided about  
+your ad units to match their campaigns to your site and audience. As the  
+holidays approach and advertisers look to create additional placement  
+targeted campaigns, now is the perfect time to set up more custom channels  
+and ad placements.
+
+Log in to your AdSense account today and visit your My ads tab to get  
+started.
+
+Posted by Alex Benton -- AdSense Engineering
+
+
+--
+Posted By Inside AdSense Team to Inside AdSense at 12/01/2011 08:15:00 AM
+
+-- 
+Unable to view the links or images in the message above? Want to comment on this post? Visit http://adsense.blogspot.com/ .
+
+You received this message because you are subscribed to the Google Groups "Inside AdSense" group.
+To unsubscribe from this group, send email to Inside-AdSense+unsubscribe@googlegroups.com
+For more options, visit this group at http://groups.google.com/group/Inside-AdSense
+

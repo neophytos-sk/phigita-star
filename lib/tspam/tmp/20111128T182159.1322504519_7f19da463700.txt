@@ -1,0 +1,51 @@
+DomainKey-Signature: q=dns; a=rsa-sha1; c=nofws;
+	s=prod; d=linkedin.com;
+	h=DKIM-Signature:Sender:Date:From:To:Message-ID:Subject:MIME-Version:Content-Type:X-LinkedIn-Class:X-LinkedIn-Template:X-LinkedIn-fbl;
+	b=Rc5+PFqYsPBos0vzwL4gidBmKJ60JjpzpUkVq96U/gJgq3KQvd2t7z5kc6EPzoqD
+	y1DlS30N89gUX9b1SRp0BplAtbUHyDGXdP7DH2sUZVMQDtAIQJMn4SSAJFsETjLP 
+DKIM-Signature: v=1; a=rsa-sha1; d=linkedin.com; s=proddkim; c=relaxed/relaxed;
+	q=dns/txt; i=@linkedin.com; t=1322504509;
+	h=From:Subject:Date:To:MIME-Version:Content-Type:X-LinkedIn-Class:X-LinkedIn-fbl:
+	X-LinkedIn-Template;
+	bh=8jMr3G0kzI/vPF0s5xAaQ1D1nTE=;
+	b=kv7hyvi1/ZTeE++9BSH8N9ZXMqyfEW6u2S2US7XbbsU3Vt03lks6NT0WK7DIQDRG
+	rfWPjRHrkFNWtXCwJHyeeTcuorSPkNC5AWyWQ+zaC1QDZ22cXTLoyZMGEq5z13nZ; 
+Sender: messages-noreply@bounce.linkedin.com 
+Date: Mon, 28 Nov 2011 18:21:49 +0000 (UTC) 
+From: Cloud Computing <groups-noreply@linkedin.com> 
+To: Neophytos Demetriou <k2pts@phigita.net> 
+Message-ID: <255588766.64737732.1322504509054.JavaMail.app@ela4-app0128.prod> 
+Subject: All Aboard! Final Invitation to Attend UP 2011 Cloud Computing
+ Conference 
+X-LinkedIn-Class: GROUP-DISC-THREAD 
+X-LinkedIn-Template: group_announcement_message 
+X-LinkedIn-fbl: m-uhlDMNk03l1rQanCat__my8WGKWgjonjAhxDCEd55r0uMLajD3kLIH 
+--------------------------------------
+LinkedIn
+------------Group: Cloud Computing
+
+Subject: All Aboard! Final Invitation to Attend UP 2011 Cloud Computing Conference 
+
+Dear Group Member,
+
+UP 2011 conference starts next Monday Dec 5, 2011 and we invite you to join us in Mountain View, California and Online. 
+
+We have a real cloud treat for you, with exclusive cutting edge content, groundbreaking news and next generation product release announcements. Check out our exclusive agenda and secure your place today!
+
+Click following link to take advantage of your exclusive 10% group member discount: http://up11.eventbrite.com/?discount=LI10 (expires on November 30, 2011, subject to availability) 
+
+Don’t miss this unique opportunity to hear the voice of Fortune 1000 end-users attending UP2011, seeking to leverage the power of the cloud.
+ 
+We look forward to seeing you in Computer History Museum and in the Cloud.
+
+Group Management
+
+P.S All session recordings will be provided for download 2-3 weeks after the conference, also available on DVD which will be shipped 3-4 weeks after the conference.
+
+Posted By Khazret Sapenov
+
+Go to the complete announcement http://www.linkedin.com/e/-1ht5d5-gvjt1e2k-t/vaq/82419175/61513/-1/eml-anet_ancmt-b-0/?hs=false&tok=36byWZvhSdl501
+
+Don't want to hear from the manager: http://www.linkedin.com/e/-1ht5d5-gvjt1e2k-t/vgs/61513/?hs=false&tok=1RSbqQoY2dl501
+
+

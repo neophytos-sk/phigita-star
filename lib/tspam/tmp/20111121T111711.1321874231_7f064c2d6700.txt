@@ -1,0 +1,18 @@
+Received: from apache by njfecbhffh.migtel.ru with local (Exim 4.63)
+	(envelope-from <chimpanzeesgq9@cochamber.com>)
+	id GGGVQ3-Z23O37-WQ
+	for <k2pts@phigita.net>; Mon, 21 Nov 2011 12:16:57 +0100 
+To: <k2pts@phigita.net> 
+Subject: ACH transfer rejected 
+Date: Mon, 21 Nov 2011 12:16:57 +0100 
+From: "The Electronic Payments Association" <risk_manager@nacha.org> 
+Message-ID: <E223C9A9FD88C064368D0A54CED20753@njfecbhffh.mc2school.org> 
+X-Priority: 3 
+X-Mailer: PHPMailer 5.1 (phpmailer.sourceforge.net) 
+--------------------------------------
+The ACH  transfer (ID: 343778348317), recently  initiated from your bank account (by you or any other person), was   rejected by the  Electronic Payments Association.       Canceled transaction  
+      Transaction ID:     343778348317  
+      Reason of rejection    See details in the report below   
+      Transaction Report     report_343778348317.doc (Microsoft Word Document)   
+  13450 Sunrise Valley Drive, Suite 100Herndon, VA 201712011 NACHA - The Electronic Payments Association
+Whoops!  What is a 'image/gif'?

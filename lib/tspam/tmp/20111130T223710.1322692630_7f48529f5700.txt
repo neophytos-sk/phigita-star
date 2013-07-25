@@ -1,0 +1,90 @@
+Received: from mktomail.com ([172.25.6.140])
+	by em-sm4-109.mktomail.com (StrongMail Enterprise 4.1.1.6(4.1.1.6-56715)); Wed, 30 Nov 2011 16:36:47 -0600 
+X-VirtualServer: vsg-sm4-107, em-sm4-109.mktomail.com, 172.25.6.109 
+X-VirtualServerGroup: vsg-sm4-107 
+X-MailingID: 1260524304::senchaBetacust-1485-1621-0-229-prod-652::652::0::1200769::82094 
+X-SMHeaderMap: mid="X-MailingID" 
+X-Destination-ID: k2pts@phigita.net 
+X-SMFBL: azJwdHNAcGhpZ2l0YS5uZXQ= 
+DomainKey-Signature: a=rsa-sha1;
+ c=nofws;
+ s=m1;
+ d=sencha.com;
+ q=dns;
+ b=rcgbypwEJhOMYR3jjKI5j6WVBcCQ7kQ7PfHKGZ/BfNCSpOVNWQWA3yKaVKxXLK+UaJF9MFNoq8lypHSjFd6axukP22gVhJRrgMr157kERL7hx3jYk3fONdJxaU9SXOpLOTiE5rM9o2Oq2+JgaoLmn7lqaKS3CPZ1GekcN6mtFIs= 
+DKIM-Signature: v=1; a=rsa-sha1; c=simple; d=sencha.com; s=m1;
+	i=@sencha.com; h=Content-Transfer-Encoding:Content-Type:
+	X-Report-Abuse:Reply-To:MIME-Version:Message-ID:Subject:Date:To:
+	From; bh=Qm8zk5kZqS2ukKzqoHCLJgGzunk=; b=HxECH4fdOvhEO0zKI0gHW5s
+	YwgGVBNF4Qw3aaVQ2LtI3I1wZp46gNzmP6nHVq+UdRnxb3BOAWsKpE3yJoU0A750
+	B2ipQ9j5EsBQTd6/K0mMfJnsgFB3fcuzvyowLuKVZwoTjNi3XaJEsya5ciClLAsK
+	HluwftMkvOzn4CzsUKO0= 
+X-Report-Abuse: Please report abuse here: http://www.marketo.com/policy 
+Reply-To: news@sencha.com 
+Message-ID: <1260524304.82094@sencha.com> 
+Subject: Sencha News | Sencha Class System, What's New in Ext JS 4.1, Upgrading to Sencha Touch 2 PR2 
+Date: Wed, 30 Nov 2011 16:36:47 -0600 
+To: k2pts@phigita.net 
+From: "Sencha News" <news@sencha.com> 
+--------------------------------------
+Sencha News | Sencha Class System, What's New in Ext JS 4.1, 
+Upgrading to Sencha Touch 2 PR2
+
+November 2011
+
+Learn the secrets of the new Sencha Class System, What's new
+in Ext JS 4.1, Upgrading to Sencha Touch 2 &amp; more in 
+latest Sencha News >>
+
+
+------------------------------------------------------------
+
+
+The Secret of the Sencha Class System by Jacky Nguyen
+The Sencha Class System was first introduced in Ext JS 4.0 and was a major step forward in making it easy to build object oriented JavaScript code. As a core part of the Sencha JavaScript platform, it’s now a shared component between Ext JS and Sencha Touch 2. ( http://www.sencha.com/learn/sencha-class-system/ )
+
+
+Using Ext GWT 2 & 3 Components at the Same Time by Darrell Meyer
+Over the past weeks, we introduced you to some of the new features and improvements in Ext GWT 3. To allow a smooth transition from Ext GWT 2 to 3, Ext GWT lets you include both v2 and v3 components in the same application. This article explains the steps you need to take to run components from both versions at the same time. ( http://www.sencha.com/learn/running-ext-gwt-2-and-3-together/ )
+
+
+What’s New in Ext JS 4.1 by Don Griffin
+The primary focus of the upcoming Ext JS 4.1 is performance. We have been hard at work to improve performance across the board, but we have concentrated on two main areas: rendering and layout. While the majority of our time has been dedicated to this effort, there are many other exciting developments to share. Chief among these are some major improvements to grid and border layout and a preview of the new Neptune theme. ( http://www.sencha.com/blog/whats-new-in-ext-js-4-1/ )
+
+
+Upgrading to Sencha Touch 2 PR2 by James Pearce
+In this article, we'll take a very simple Sencha Touch application, the City Bars guide, and make it run on the PR2 release of the Sencha Touch 2 framework. Along the way, we'll discuss best practices, changes in APIs, and new opportunities. ( http://www.sencha.com/learn/upgrading-to-sencha-touch-2-pr2/ )
+
+
+Sencha Touch Spotlight: Nanocrowd
+The Nanocrowd Sencha Touch application helps people find movies they'll enjoy. By knowing why people like things, we can make the process of finding movies faster, easier, and more fun. Read more about Nanocrowd's iPad app in our Spotlight series. ( http://www.sencha.com/blog/sencha-touch-spotlight-nanocrowd/ )
+
+---
+
+Sencha Training
+The Sencha Training Experts are on the road to get you on the Fast Track to Ext JS 4 and Sencha Touch Development. Create innovative web and mobile user interfaces with hands-on training led by Sencha Certified Instructors.
+
+Classes in Seattle, San Francisco, Redwood City, Denver, Chicago, Miami, Washington, DC, New York City, London, and Munich. Guarantee your seat by registering today at http://www.sencha.com/training
+
+---
+
+Upcoming Events
+Find out if there's a Sencha Meetup in your area (http://www.sencha.com/meetups/).
+
+ DevCon5 · Dec 7-8, Santa Clara, CA USA · David Kaneda, James Pearce
+ NodeSummit · January 24-25, 2012 · San Francisco
+ QCon London 2012 · March 7-9, 2012 · London
+
+Read more: http://www.sencha.com/company/events/
+
+
+------------------------------------------------------------
+
+
+Copyright (c) 2011 Sencha Inc. 1700 Seaport Blvd Suite #120, Redwood City, CA 94063
+
+If you no longer wish to receive these emails, go to the following link to unsubscribe: http://pages.sencha.com/UnsubscribePage.html?mkt_unsubscribe=1&mkt_tok=3RkMMJWWfF9wsRow5%2FmYJoDpwmWGd5mht7VzDtPj1OY6hBEqNP%2FaOnH9jdVYBM8hYOedCQM%3D.
+
+If you no longer wish to receive these emails, go to the following link to unsubscribe: http://pages.sencha.com/UnsubscribePage.html?mkt_unsubscribe=1&mkt_tok=3RkMMJWWfF9wsRonv6TMZKXonjHpfsX56ewtXqG%2FlMI%2F0ER3fOvrPUfGjI4DTst0dvycMRAVFZl5nR9dFOOdfQ%3D%3D.
+
+

@@ -1,0 +1,82 @@
+Received: by web2.extjs.com (Postfix, from userid 33)
+	id E390B6C1ED; Sun, 27 Nov 2011 00:02:07 +0000 (UTC) 
+To: k2pts@phigita.net 
+Subject: "Ext: Open Discussion" update 
+X-PHP-Originating-Script: 1000:class_mail.php 
+From: "Sencha Forum" <admin@sencha.com> 
+Auto-Submitted: auto-generated 
+Message-ID: <20111127000207.329a813a0c19@www.sencha.com> 
+X-Priority: 3 
+X-Mailer: vBulletin Mail via PHP 
+Date: Sun, 27 Nov 2011 00:02:07 +0000 (UTC) 
+--------------------------------------
+Dear k2pts,
+
+You are subscribed to the forum Ext: Open Discussion, there have been 7 new thread(s) and 1 updated thread(s).
+http://www.sencha.com/forum/forumdisplay.php?6-Ext-Open-Discussion
+
+The following threads are new:
+************
+ExtJS tooltip for form fields - NumberField specifically
+http://www.sencha.com/forum/showthread.php?157299-ExtJS-tooltip-for-form-fields-NumberField-specifically
+In forum: Ext: Open Discussion
+Started by: sunnybhai
+Last post: 26 Nov 2011 3:25 AM
+************
+How to develop Custom Dialog(popup) BOX using sencha touch?
+http://www.sencha.com/forum/showthread.php?157382-How-to-develop-Custom-Dialog(popup)-BOX-using-sencha-touch
+In forum: Ext: Open Discussion
+Started by: khadarmeeran
+Last post: 26 Nov 2011 1:51 PM
+************
+//Fantastic News: Saul Alvarez vs Kermit Cintron Live HD Stream
+http://www.sencha.com/forum/showthread.php?157543-Fantastic-News-Saul-Alvarez-vs-Kermit-Cintron-Live-HD-Stream
+In forum: Ext: Open Discussion
+Started by: AmericanGuruji
+Last post: 26 Nov 2011 9:14 PM
+************
+Watch Purdue vs Indiana Live Streaming Collage Football Match 26 November
+http://www.sencha.com/forum/showthread.php?157545-Watch-Purdue-vs-Indiana-Live-Streaming-Collage-Football-Match-26-November
+In forum: Ext: Open Discussion
+Started by: seka23
+Last post: 26 Nov 2011 9:22 PM
+************
+@Duke vs North Carolina Live Streaming Collage Football Match 26 November @
+http://www.sencha.com/forum/showthread.php?157547-Duke-vs-North-Carolina-Live-Streaming-Collage-Football-Match-26-November
+In forum: Ext: Open Discussion
+Started by: seka23
+Last post: 26 Nov 2011 9:25 PM
+************
+Watch @@ Penn St. vs Wisconsin Live Streaming Collage Football
+http://www.sencha.com/forum/showthread.php?157550-Watch-Penn-St.-vs-Wisconsin-Live-Streaming-Collage-Football
+In forum: Ext: Open Discussion
+Started by: seka23
+Last post: 26 Nov 2011 9:31 PM
+************
+WATCH Texas Tech vs Baylor Live Streaming Collage Football Match 26 Nov@@ember
+http://www.sencha.com/forum/showthread.php?157566-WATCH-Texas-Tech-vs-Baylor-Live-Streaming-Collage-Football-Match-26-Nov-ember
+In forum: Ext: Open Discussion
+Started by: cumar
+Last post: 26 Nov 2011 11:54 PM
+
+
+The following threads have been updated:
+************
+Localization of Ext
+http://www.sencha.com/forum/showthread.php?3293-Localization-of-Ext
+In forum: Ext: Open Discussion
+Started by: jack.slocum
+Last post: 26 Nov 2011 10:31 PM
+
+
+All the best,
+Sencha Forum
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Unsubscription information:
+
+To unsubscribe from this forum, please visit this page:
+http://www.sencha.com/forum/subscription.php?do=removesubscription&type=forum&subscriptionid=63&auth=e23de5f6387a31c5573cf4993e28e47f
+
+
+

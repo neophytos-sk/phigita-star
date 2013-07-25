@@ -1,0 +1,11 @@
+Received: from ([115.58.134.1])
+	by jnfda.gov.cn(SkyMiracle WPX) with ESMTP 
+Message-ID: <20111109100241643817@jnfda.gov.cn> 
+From: =?gb2312?B?1Pi549X+?= <szyj@jnfda.gov.cn> 
+To:  
+Subject: =?gb2312?B?Mzk3IMjnus7X9srQs6HQvdfKtfey6aOsytCzodC918q197Lp?=
+	=?gb2312?B?tcSx373nuMPU9cO0yLe2qKOh?= 
+Date: Wed, 9 Nov 2011 10:02:35 +0800 
+X-mailer: Hcqq 9 
+--------------------------------------
+ content-type=application/msword part-token=::mime::1584-2

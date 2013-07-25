@@ -1,0 +1,1 @@
+echo level.txt | ./snake

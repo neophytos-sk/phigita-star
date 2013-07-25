@@ -1,0 +1,35 @@
+%%
+
+ int MinEditDistance(const char *a, const char *b) {
+   int curr[MAXLEN], prev[MAXLEN], M[MAXLEN][MAXLEN];
+   int i,j,n,m;
+
+   n = strlen(a);
+   m = strlen(b);
+
+   for(j=0;j<=m;++j) curr[j] = j;
+
+   int x,y,z;
+   for(i=1;i<=n;++i) {
+
+     for(j=0;j<=m;++j)    // copy the prev cost matrix into prev
+       prev[j]=curr[j];
+
+     curr[0] = i;
+
+
+     for(j=1;j<=m;++j) {
+       x = prev[j] + 1;    // insert character
+       y = curr[j-1] + 1;  // delete character
+       if ( a[i] == b[j] )
+         z = prev[j-1];    // characters match
+      else
+         z = prev[j-1]+1;  // replace character
+
+      curr[j] = min(x,min(y,z));
+
+     }
+   }
+   return curr[m];
+ }
+

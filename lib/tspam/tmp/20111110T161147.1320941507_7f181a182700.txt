@@ -1,0 +1,11 @@
+Received: from avat (unknown [110.52.7.1])
+	by mail.newline.sh.cn (Postfix) with ESMTP
+	id 66AB13719835; Fri, 11 Nov 2011 00:11:08 +0800 (CST) 
+Message-ID: <20111111001033454630@cqmsh.com.cn> 
+From: =?gb2312?B?sNfOrM/J?= <qh@cqmsh.com.cn> 
+To:  
+Subject: =?gb2312?B?U1RUxvPStcXg0bXKpsXg0bXIq8PmzOHJ/S0tLS2w186s?=
+	=?gb2312?B?z8k=?= 
+Date: Fri, 11 Nov 2011 00:10:28 +0800 
+X-mailer: Vufu 6 
+Whoops!  What is a 'application/vnd.ms-excel'?

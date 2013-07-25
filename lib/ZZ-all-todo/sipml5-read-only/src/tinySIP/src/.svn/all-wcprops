@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/svn/!svn/ver/54/trunk/src/tinySIP/src
+END
+tsip_stack.js
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/!svn/ver/54/trunk/src/tinySIP/src/tsip_stack.js
+END
+tsip_api.js
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/!svn/ver/54/trunk/src/tinySIP/src/tsip_api.js
+END
+tsip_action.js
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/!svn/ver/36/trunk/src/tinySIP/src/tsip_action.js
+END
+tsip_uri.js
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/!svn/ver/36/trunk/src/tinySIP/src/tsip_uri.js
+END
+tsip_event.js
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/!svn/ver/36/trunk/src/tinySIP/src/tsip_event.js
+END
+tsip_session.js
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/!svn/ver/36/trunk/src/tinySIP/src/tsip_session.js
+END
+tsip_timers.js
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/!svn/ver/36/trunk/src/tinySIP/src/tsip_timers.js
+END
+tsip_message.js
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/!svn/ver/54/trunk/src/tinySIP/src/tsip_message.js
+END

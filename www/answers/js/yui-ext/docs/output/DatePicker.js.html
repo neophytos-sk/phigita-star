@@ -1,0 +1,345 @@
+<html><head><title>DatePicker.js</title><link rel="stylesheet" type="text/css" href="../resources/style.css" media="screen"/></head><body><h1>DatePicker.js</h1><pre class="highlighted"><code>YAHOO.ext.DatePicker = <b>function</b>(id, parentElement){
+    <b>this</b>.id = id;
+    <b>this</b>.selectedDate = <b>new</b> Date();
+    <b>this</b>.visibleDate = <b>new</b> Date();
+    <b>this</b>.element = null;
+    <b>this</b>.shadow = null;
+    <b>this</b>.callback = null;
+    <b>this</b>.buildControl(parentElement || document.body);
+    <b>this</b>.mouseDownHandler = YAHOO.ext.EventManager.wrap(<b>this</b>.handleMouseDown, <b>this</b>, true);
+    <b>this</b>.keyDownHandler = YAHOO.ext.EventManager.wrap(<b>this</b>.handleKeyDown, <b>this</b>, true);
+    <b>this</b>.wheelHandler = YAHOO.ext.EventManager.wrap(<b>this</b>.handleMouseWheel, <b>this</b>, true);
+};
+
+YAHOO.ext.DatePicker.prototype = {
+    show : <b>function</b>(x, y, value, callback){
+        <b>this</b>.hide();
+        <b>this</b>.selectedDate = value;
+        <b>this</b>.visibleDate = value;
+        <b>this</b>.callback = callback;
+        <b>this</b>.refresh();
+        <b>this</b>.element.show();
+        <b>this</b>.element.setXY(<b>this</b>.constrainToViewport ? <b>this</b>.constrainXY(x, y) : [x, y]);
+        <b>this</b>.shadow.show();
+        <b>this</b>.shadow.setRegion(<b>this</b>.element.getRegion());
+        <b>this</b>.element.dom.tabIndex = 1;
+        <b>this</b>.element.focus();
+        YAHOO.util.Event.on(document, &quot;mousedown&quot;, <b>this</b>.mouseDownHandler);
+        YAHOO.util.Event.on(document, &quot;keydown&quot;, <b>this</b>.keyDownHandler);
+        YAHOO.util.Event.on(document, &quot;mousewheel&quot;, <b>this</b>.wheelHandler);
+        YAHOO.util.Event.on(document, &quot;DOMMouseScroll&quot;, <b>this</b>.wheelHandler);
+    },
+    
+    constrainXY : <b>function</b>(x, y){
+        <b>var</b> w = YAHOO.util.Dom.getViewportWidth();
+        <b>var</b> h = YAHOO.util.Dom.getViewportHeight();
+        <b>var</b> size = <b>this</b>.element.getSize();
+        <b>return</b> [
+            Math.min(w-size.width, x),
+            Math.min(h-size.height, y)
+        ];
+    },
+    
+    hide : <b>function</b>(){
+        <b>this</b>.shadow.hide();
+        <b>this</b>.element.hide();
+        YAHOO.util.Event.removeListener(document, &quot;mousedown&quot;, <b>this</b>.mouseDownHandler);
+        YAHOO.util.Event.removeListener(document, &quot;keydown&quot;, <b>this</b>.keyDownHandler);
+        YAHOO.util.Event.removeListener(document, &quot;mousewheel&quot;, <b>this</b>.wheelHandler);
+        YAHOO.util.Event.removeListener(document, &quot;DOMMouseScroll&quot;, <b>this</b>.wheelHandler);
+    },
+    
+    setSelectedDate : <b>function</b>(date){
+        <b>this</b>.selectedDate = date;
+    },
+    
+    getSelectedDate : <b>function</b>(){
+        <b>return</b> this.selectedDate;
+    },
+    
+    showPrevMonth : <b>function</b>(){
+        <b>this</b>.visibleDate = <b>this</b>.getPrevMonth(<b>this</b>.visibleDate);
+        <b>this</b>.refresh();
+    },
+    
+    showNextMonth : <b>function</b>(){
+        <b>this</b>.visibleDate = <b>this</b>.getNextMonth(<b>this</b>.visibleDate);
+        <b>this</b>.refresh();
+    },
+    
+    showPrevYear : <b>function</b>(){
+        <b>var</b> d = <b>this</b>.visibleDate;
+        <b>this</b>.visibleDate = <b>new</b> Date(d.getFullYear()-1, d.getMonth(), d.getDate());
+        <b>this</b>.refresh();
+    },
+    
+    showNextYear : <b>function</b>(){
+        <b>var</b> d = <b>this</b>.visibleDate;
+        <b>this</b>.visibleDate = <b>new</b> Date(d.getFullYear()+1, d.getMonth(), d.getDate());
+        <b>this</b>.refresh();
+    },
+    
+    handleMouseDown : <b>function</b>(e){
+        <b>var</b> target = e.getTarget();
+        <b>if</b>(target != <b>this</b>.element.dom &amp;&amp; !YAHOO.util.Dom.isAncestor(<b>this</b>.element.dom, target)){
+            <b>this</b>.hide();
+        }
+    },
+    
+    handleKeyDown : <b>function</b>(e){
+        <b>switch</b>(e.browserEvent.keyCode){
+            <b>case</b> e.LEFT:
+                <b>this</b>.showPrevMonth();
+                e.stopEvent();
+            <b>break</b>;
+            <b>case</b> e.RIGHT:
+                <b>this</b>.showNextMonth();
+                e.stopEvent();
+            <b>break</b>;
+            <b>case</b> e.DOWN:
+                <b>this</b>.showPrevYear();
+                e.stopEvent();
+            <b>break</b>;
+            <b>case</b> e.UP:
+                <b>this</b>.showNextYear();
+                e.stopEvent();
+            <b>break</b>;
+        }
+    },
+    
+    handleMouseWheel : <b>function</b>(e){
+        <b>var</b> delta = e.getWheelDelta();
+        <b>if</b>(delta &gt; 0){
+            <b>this</b>.showPrevMonth();
+            e.stopEvent();
+        } <b>else</b> if(delta &lt; 0){
+            <b>this</b>.showNextMonth();
+            e.stopEvent();
+        }
+    },
+    
+    handleClick : <b>function</b>(e){
+        <b>var</b> d = <b>this</b>.visibleDate;
+        <b>var</b> t = e.getTarget();
+        <b>if</b>(t &amp;&amp; t.className){
+            <b>switch</b>(t.className){
+                <b>case</b> 'active':
+                    <b>this</b>.handleSelection(<b>new</b> Date(d.getFullYear(), d.getMonth(), parseInt(t.innerHTML)));
+                <b>break</b>;
+                <b>case</b> 'prevday':
+                    <b>var</b> p = <b>this</b>.getPrevMonth(d);
+                    <b>this</b>.handleSelection(<b>new</b> Date(p.getFullYear(), p.getMonth(), parseInt(t.innerHTML)));
+                <b>break</b>;
+                <b>case</b> 'nextday':
+                    <b>var</b> n = <b>this</b>.getNextMonth(d);
+                    <b>this</b>.handleSelection(<b>new</b> Date(n.getFullYear(), n.getMonth(), parseInt(t.innerHTML)));
+                <b>break</b>;
+                <b>case</b> 'ypopcal-today':
+                    <b>this</b>.handleSelection(<b>new</b> Date());
+                <b>break</b>;
+                <b>case</b> 'next-month':
+                    <b>this</b>.showNextMonth();
+                <b>break</b>;
+                <b>case</b> 'prev-month':
+                    <b>this</b>.showPrevMonth();
+                <b>break</b>;
+            }   
+        }
+        e.stopEvent();
+    },
+    
+    selectToday : <b>function</b>(){
+        <b>this</b>.handleSelection(<b>new</b> Date());
+    },
+    
+    handleSelection: <b>function</b>(date){
+        <b>this</b>.selectedDate = date;
+        <b>this</b>.callback(date);
+        <b>this</b>.hide();    
+    },
+    
+    getPrevMonth : <b>function</b>(d){
+        <b>var</b> m = d.getMonth();<b>var</b> y = d.getFullYear();
+        <b>return</b> (m == 0 ? <b>new</b> Date(--y, 11, 1) : <b>new</b> Date(y, --m, 1));
+    },
+    
+    getNextMonth : <b>function</b>(d){
+        <b>var</b> m = d.getMonth();<b>var</b> y = d.getFullYear();
+        <b>return</b> (m == 11 ? <b>new</b> Date(++y, 0, 1) : <b>new</b> Date(y, ++m, 1));
+    },
+    
+    getDaysInMonth : <b>function</b>(m, y){
+        <b>return</b> (m == 1 || m == 3 || m == 5 || m == 7 || m == 8 || m == 10 || m == 12) ? 31 : (m == 4 || m == 6 || m == 9 || m == 11) ? 30 : <b>this</b>.isLeapYear(y) ? 29 : 28;
+    },
+    
+    isLeapYear : <b>function</b>(y){
+        <b>return</b> (((y % 4) == 0) &amp;&amp; ((y % 100) != 0) || ((y % 400) == 0));
+    },
+    
+    clearTime : <b>function</b>(date){
+        <b>if</b>(date){
+            date.setHours(0);
+            date.setMinutes(0);
+            date.setSeconds(0);
+            date.setMilliseconds(0);
+        }
+        <b>return</b> date;
+    },
+    
+    refresh : <b>function</b>(){
+        <b>var</b> d = <b>this</b>.visibleDate;
+        <b>this</b>.buildInnerCal(d);
+        <b>this</b>.calHead.update(<b>this</b>.monthNames[d.getMonth()] + ' ' + d.getFullYear());
+        <b>if</b>(this.element.isVisible()){
+            <b>this</b>.shadow.setRegion(<b>this</b>.element.getRegion());
+        }
+    }
+};
+
+<i>/**
+ * This code is not pretty, but it is fast!
+ * @ignore
+ */</i> 
+YAHOO.ext.DatePicker.prototype.buildControl = <b>function</b>(parentElement){
+    <b>var</b> c = document.createElement('div');
+    c.style.position = 'absolute';
+    c.style.visibility = 'hidden';
+    document.body.appendChild(c);
+    <b>var</b> html = '&lt;iframe id=&quot;'+<b>this</b>.id+'_shdw&quot; frameborder=&quot;0&quot; style=&quot;position:absolute; z-index:2000; display:none; top:0px; left:0px;&quot; class=&quot;ypopcal-shadow&quot;&gt;&lt;/iframe&gt;' +
+    '&lt;div hidefocus=&quot;true&quot; class=&quot;ypopcal&quot; id=&quot;'+<b>this</b>.id+'&quot; style=&quot;-moz-outline:none; position:absolute; z-index:2001; display:none; top:0px; left:0px;&quot;&gt;' +
+    '&lt;table class=&quot;ypopcal-head&quot; border=0 cellpadding=0 cellspacing=0&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class=&quot;ypopcal-arrow&quot;&gt;&lt;div class=&quot;prev-month&quot;&gt;&amp;#160;&lt;/div&gt;&lt;/td&gt;&lt;td class=&quot;ypopcal-month&quot;&gt;&amp;#160;&lt;/td&gt;&lt;td class=&quot;ypopcal-arrow&quot;&gt;&lt;div class=&quot;next-month&quot;&gt;&amp;#160;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;' +
+    '&lt;center&gt;&lt;div class=&quot;ypopcal-inner&quot;&gt;';
+    html += &quot;&lt;table border=0 cellpadding=2 cellspacing=0 class=\&quot;ypopcal-table\&quot;&gt;&lt;thead&gt;&lt;tr class=\&quot;ypopcal-daynames\&quot;&gt;&quot;;
+    <b>var</b> names = <b>this</b>.dayNames;
+    <b>for</b>(var i = 0; i &lt; names.length; i++){
+        html += '&lt;td&gt;' + names[i].substr(0, 1) + '&lt;/td&gt;';
+    }
+    html+= &quot;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr&gt;&quot;;
+    <b>for</b>(var i = 0; i &lt; 42; i++) {
+        <b>if</b>(i % 7 == 0 &amp;&amp; i != 0){
+            html += '&lt;/tr&gt;&lt;tr&gt;';
+        }
+        html += &quot;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&quot;;
+    }
+    html += &quot;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&quot;;
+    html += '&lt;/div&gt;&lt;button class=&quot;ypopcal-today&quot; style=&quot;margin-top:2px;&quot;&gt;'+<b>this</b>.todayText+'&lt;/button&gt;&lt;/center&gt;&lt;/div&gt;';
+    c.innerHTML = html;
+    <b>this</b>.shadow = getEl(c.childNodes[0], true);
+    <b>this</b>.shadow.enableDisplayMode();
+    <b>this</b>.element = getEl(c.childNodes[1], true);
+    <b>this</b>.element.enableDisplayMode();
+    document.body.appendChild(<b>this</b>.shadow.dom);
+    document.body.appendChild(<b>this</b>.element.dom);
+    document.body.removeChild(c);
+    <b>this</b>.element.on(&quot;selectstart&quot;, <b>function</b>(){<b>return</b> false;});
+    <b>var</b> tbody = <b>this</b>.element.dom.getElementsByTagName('tbody')[1];
+    <b>this</b>.cells = tbody.getElementsByTagName('td');
+    <b>this</b>.calHead = <b>this</b>.element.getChildrenByClassName('ypopcal-month', 'td')[0];
+    <b>this</b>.element.mon('mousedown', <b>this</b>.handleClick, <b>this</b>, true);
+};
+
+YAHOO.ext.DatePicker.prototype.buildInnerCal = <b>function</b>(dateVal){
+    <b>var</b> days = <b>this</b>.getDaysInMonth(dateVal.getMonth() + 1, dateVal.getFullYear());
+    <b>var</b> firstOfMonth = <b>new</b> Date(dateVal.getFullYear(), dateVal.getMonth(), 1);
+    <b>var</b> startingPos = firstOfMonth.getDay();
+    <b>if</b>(startingPos == 0) startingPos = 7;
+    <b>var</b> pm = <b>this</b>.getPrevMonth(dateVal);
+    <b>var</b> prevStart = <b>this</b>.getDaysInMonth(pm.getMonth()+1, pm.getFullYear())-startingPos;
+    <b>var</b> cells = <b>this</b>.cells;
+    days += startingPos;
+    
+    <i>// convert everything to numbers so it's fast</i>
+    <b>var</b> day = 86400000;
+    <b>var</b> date = <b>this</b>.clearTime(<b>new</b> Date(pm.getFullYear(), pm.getMonth(), prevStart));
+    <b>var</b> today = <b>this</b>.clearTime(<b>new</b> Date()).getTime();
+    <b>var</b> sel = <b>this</b>.selectedDate ? <b>this</b>.clearTime(<b>this</b>.selectedDate).getTime() : today + 1; <i>//today +1 will never match anything</i>
+    <b>var</b> min = <b>this</b>.minDate ? <b>this</b>.clearTime(<b>this</b>.minDate).getTime() : Number.NEGATIVE_INFINITY;
+    <b>var</b> max = <b>this</b>.maxDate ? <b>this</b>.clearTime(<b>this</b>.maxDate).getTime() : Number.POSITIVE_INFINITY;
+    <b>var</b> ddMatch = <b>this</b>.disabledDatesRE;
+    <b>var</b> ddText = <b>this</b>.disabledDatesText;
+    <b>var</b> ddays = <b>this</b>.disabledDays;
+    <b>var</b> ddaysText = <b>this</b>.disabledDaysText;
+    <b>var</b> format = <b>this</b>.format;
+    
+    <b>var</b> setCellClass = <b>function</b>(cal, cell, d){
+        cell.title = '';
+        <b>var</b> t = d.getTime();
+        <b>if</b>(t == today){
+            cell.className += ' today';
+            cell.title = cal.todayText;
+        }
+        <b>if</b>(t == sel){
+            cell.className += ' selected';
+        }
+        <i>// disabling</i>
+        <b>if</b>(t &lt; min) {
+            cell.className = ' ypopcal-disabled';
+            cell.title = cal.minText;
+            <b>return</b>;
+        }
+        <b>if</b>(t &gt; max) {
+            cell.className = ' ypopcal-disabled';
+            cell.title = cal.maxText;
+            <b>return</b>;
+        }
+        <b>if</b>(ddays){
+            <b>var</b> day = d.getDay();
+            <b>for</b>(var i = 0; i &lt; ddays.length; i++) {
+            	<b>if</b>(day === ddays[i]){
+            	    cell.title = ddaysText;
+                    cell.className = ' ypopcal-disabled';
+                    <b>return</b>;
+                }
+            }
+        }
+        <b>if</b>(ddMatch &amp;&amp; format){
+            <b>var</b> fvalue = d.format(format);
+            <b>if</b>(ddMatch.test(fvalue)){
+                cell.title = ddText.replace('%0', fvalue);
+                cell.className = ' ypopcal-disabled';
+                <b>return</b>;
+            }
+        }
+    };
+    
+    <b>var</b> i = 0;
+    <b>for</b>(; i &lt; startingPos; i++) {
+        cells[i].innerHTML = (++prevStart);
+        date.setDate(date.getDate()+1);
+        cells[i].className = 'prevday';
+        setCellClass(<b>this</b>, cells[i], date);
+    }
+    <b>for</b>(; i &lt; days; i++){
+        intDay = i - startingPos + 1;
+        cells[i].innerHTML = (intDay);
+        date.setDate(date.getDate()+1);
+        cells[i].className = 'active';
+        setCellClass(<b>this</b>, cells[i], date);
+    }
+    <b>var</b> extraDays = 0;
+    <b>for</b>(; i &lt; 42; i++) {
+         cells[i].innerHTML = (++extraDays);
+         date.setDate(date.getDate()+1);
+         cells[i].className = 'nextday';
+         setCellClass(<b>this</b>, cells[i], date);
+    }
+};
+
+YAHOO.ext.DatePicker.prototype.todayText = &quot;Today&quot;;
+YAHOO.ext.DatePicker.prototype.minDate = null;
+YAHOO.ext.DatePicker.prototype.maxDate = null;
+YAHOO.ext.DatePicker.prototype.minText = &quot;This date is before the minimum date&quot;;
+YAHOO.ext.DatePicker.prototype.maxText = &quot;This date is after the maximum date&quot;;
+YAHOO.ext.DatePicker.prototype.format = 'm/d/y';
+YAHOO.ext.DatePicker.prototype.disabledDays = null;
+YAHOO.ext.DatePicker.prototype.disabledDaysText = '';
+YAHOO.ext.DatePicker.prototype.disabledDatesRE = null;
+YAHOO.ext.DatePicker.prototype.disabledDatesText = '';
+YAHOO.ext.DatePicker.prototype.constrainToViewport = true;
+
+
+YAHOO.ext.DatePicker.prototype.monthNames = Date.monthNames;
+
+YAHOO.ext.DatePicker.prototype.dayNames = Date.dayNames;</code></pre><hr><div style="font-size:10px;text-align:center;color:gray;">yui-ext - Copyright &copy; 2006 Jack Slocum.  |
+    Yahoo! UI - Copyright &copy; 2006 Yahoo! Inc.<br />All rights reserved.</div>
+    </body></html>

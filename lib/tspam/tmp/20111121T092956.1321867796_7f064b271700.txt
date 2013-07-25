@@ -1,0 +1,54 @@
+DomainKey-Signature: q=dns; a=rsa-sha1; c=nofws;
+	s=prod; d=linkedin.com;
+	h=DKIM-Signature:Sender:Date:From:Reply-To:To:Message-ID:Subject:MIME-Version:Content-Type:X-LinkedIn-Template:X-LinkedIn-Class:X-LinkedIn-fbl;
+	b=UPe+3s4aYPulRBMtn/nfN42MPNmWlgdOhHeaIiNUdp1h3pEJIb7NhlEJFtSux1Fo
+	9blPdPaq7IOBC/idoEfiiKsZb+2/iUAuqHKrVAriIkSrz2uk4jTqUDH6GjKP/A1h 
+DKIM-Signature: v=1; a=rsa-sha1; d=linkedin.com; s=proddkim; c=relaxed/relaxed;
+	q=dns/txt; i=@linkedin.com; t=1321867787;
+	h=From:Subject:Date:To:MIME-Version:Content-Type:X-LinkedIn-Class:X-LinkedIn-fbl:
+	X-LinkedIn-Template;
+	bh=x9z6Yj2A/nVJvDsRUjQ+37e+L58=;
+	b=NDnBanQh91sdEDps9QEFeDK96Kt6Q8FJFiQn3+PQ205mGjj4U5UJZrOWONDPbumI
+	GtwvjKT9zg+A8DwLNAz08h1INRR43JUg1hFGorYQMdxGu3hUvI+aTWiSGtYTnfl1; 
+Sender: messages-noreply@bounce.linkedin.com 
+Date: Mon, 21 Nov 2011 09:29:47 +0000 (UTC) 
+From: Mike  Rosenberg via LinkedIn <member@linkedin.com> 
+Reply-To: Mike  Rosenberg <michael@mail.aleutia.com> 
+To: Neophytos  Demetriou <k2pts@phigita.net> 
+Message-ID: <115402675.42987156.1321867787360.JavaMail.app@ela4-bed83.prod> 
+Subject: Invitation to connect on LinkedIn 
+X-LinkedIn-Template: invite_member_17 
+X-LinkedIn-Class: INVITE-MBR 
+X-LinkedIn-fbl: s-X6gZNwHWpCuxjdgdouR6wmwTJZuc8kfu7LcGeTF5LLu9KzgwGXl7Hx 
+--------------------------------------
+LinkedIn
+------------
+
+
+
+
+    Mike  Rosenberg requested to add you as a connection on LinkedIn:
+  
+
+------------------------------------------
+
+Neophytos,
+
+I'd like to add you to my professional network on LinkedIn.
+
+Accept invitation from Mike  Rosenberg
+http://www.linkedin.com/e/-1ht5d5-gv99y8gs-29/nB9t5BWezhW_ZrFUCzldyBvzJYib/blk/I3247980117_2/1BpC5vrmRLoRZcjkkZt5YCpnlOt3RApnhMpmdzgmhxrSNBszYOnPsNcj0UejsQczd9bR9emmxiekBJbPcTcz0Pe3wTejgLrCBxbOYWrSlI/EML_comm_afe/?hs=false&tok=0OgrcnOA0paR01
+
+View invitation from Mike  Rosenberg
+http://www.linkedin.com/e/-1ht5d5-gv99y8gs-29/nB9t5BWezhW_ZrFUCzldyBvzJYib/blk/I3247980117_2/39vdP4Nc3wVdPgOcQALqnpPbOYWrSlI/svi/?hs=false&tok=14bA_0rxcpaR01
+
+------------------------------------------
+
+Why might connecting with Mike  Rosenberg be a good idea?
+
+Mike  Rosenberg's connections could be useful to you:
+
+After accepting Mike  Rosenberg's invitation, check Mike  Rosenberg's connections to see who else you may know and who you might want an introduction to. Building these connections can create opportunities in the future.
+ 
+-- 
+(c) 2011, LinkedIn Corporation

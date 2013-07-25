@@ -1,0 +1,11 @@
+Received: (eyou send program); Mon, 17 Oct 2011 12:02:47 +0800 from unknown (HELO wpofsj) (110.52.6.156)
+ by 218.198.32.3 with SMTP; Mon, 17 Oct 2011 12:02:47 +0800 
+Message-ID: <518824167.01668@shengda.edu.cn> <20111017113751114037@shengda.edu.cn> 
+X-EYOUMAIL-SMTPAUTH: keyan@shengda.edu.cn 
+From: =?gb2312?B?z8TpqtG1?= <keyan@shengda.edu.cn> 
+To:  
+Subject: =?gb2312?B?cm52cnF5eHZrILWxILrDIMbzINK1ILXEIA==?=
+	=?gb2312?B?tPMgudwgvNIgaW5u?= 
+Date: Mon, 17 Oct 2011 11:37:44 +0800 
+X-mailer: Iwcruze 1 
+Whoops!  What is a 'application/vnd.ms-excel'?

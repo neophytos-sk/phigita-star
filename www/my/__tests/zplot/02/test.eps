@@ -1,0 +1,55 @@
+%!PS-Adobe-3.0
+%%Title: default.eps
+%%Creator: zdraw version 1.0.0
+%%CreationDate: Sat Apr 14 08:15:28 CDT 2007
+%%DocumentFonts: (atend)
+%%BoundingBox: 0 0 300 240
+%%Orientation: Portrait
+%%EndComments
+% zdraw dictionary
+/zdict 256 dict def
+zdict begin
+/m {moveto} bind def
+/l {lineto} bind def
+/mr {rmoveto} bind def
+/lr {rlineto} bind def
+/lshow { show } def
+/rshow { dup stringwidth pop neg 0 mr show } def
+/cshow { dup stringwidth pop -2 div 0 mr show } def
+/lbshow { show } def
+/rbshow { dup stringwidth pop neg 0 mr show } def
+/cbshow { dup stringwidth pop -2 div 0 mr show } def
+/lmshow { dup stringwidth -2 div 0 exch mr pop show } def
+/rmshow { dup stringwidth -2 div 0 exch mr neg 0 mr show } def
+/cmshow { dup stringwidth -2 div 0 exch mr -2 div 0 mr show } def
+/ltshow { dup stringwidth neg 0 exch mr pop show } def
+/rtshow { dup stringwidth neg div 0 exch mr neg 0 mr show } def
+/ctshow { dup stringwidth neg div 0 exch mr -2 div 0 mr show } def
+end
+zdict begin
+% testing this out
+gsave
+newpath
+0 0 0 setrgbcolor
+(Helvetica) findfont 10 scalefont setfont
+100 0 m (string) show 
+100 0 m (string) dup stringwidth mr show 
+100 50 m (label) rshow  % 
+150 47 m (BIGSTRING) rshow  % 
+200 55 m (label) rshow  %
+103 50 m 5 0 lr 
+153 50 m 5 0 lr 
+203 50 m 5 0 lr 
+(Helvetica) findfont 20 scalefont setfont
+250 43 m (BIGSTRING) rshow  % 
+253 50 m 5 0 lr 
+(TimesRoman) findfont 40 scalefont setfont
+350 36 m (BIGSTRING) rshow  % 
+353 50 m 5 0 lr 
+stroke
+grestore
+% zdraw epilogue
+end
+showpage
+%%Trailer
+%%DocumentFonts: Helvetica

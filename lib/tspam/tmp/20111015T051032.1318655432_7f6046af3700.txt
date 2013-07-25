@@ -1,0 +1,12 @@
+Received: from tjypv ([42.49.128.209])
+	(authenticated user xb@vivile.cn)
+	by mail.vivile.cn;
+	Sat, 15 Oct 2011 13:10:20 +0800 
+Message-ID: <20111015130256184758@vivile.cn> 
+From: "eck" <xb@vivile.cn> 
+To:  
+Subject: =?gb2312?B?IG92dmVsZmNyIL2rfs/6fsrbfrncfsDtfg==?=
+	=?gb2312?B?yNp+yOt+xeB+0bV+z9Z+s6EgenBhcWd3?= 
+Date: Sat, 15 Oct 2011 13:02:44 +0800 
+X-mailer: Eigpumvc 6 
+Whoops!  What is a 'application/vnd.ms-excel'?

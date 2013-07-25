@@ -1,0 +1,103 @@
+contract -require_registration "1" -require_secure_conn "1"
+
+if {0} {
+
+contract
+
+js -src "/www/js/spell-checker/spell-checker.js"
+ 
+js {
+    var SC = null;
+    function initEditor() {
+	SC = new SpellChecker();
+	return false;
+    }
+}
+
+}
+
+
+val -id context_bar { return [::xo::kit::context_bar "Create Page"] }
+
+# keep css classes and tags used by context_bar
+::xo::tdp::excludeClassesFromRenaming {breadcrumb divider ul li active}
+
+
+
+# -------------------------------------------------------------------------------------------
+# -onload "initEditor()"
+
+css {
+    #publishPost {font-variant:small-caps;}
+    #saveDraft {font-variant:small-caps;}
+}
+
+master -title "Create Page"  {
+    layout_row {
+	layout_col -class span1
+	layout_col -class span11 {
+	    nt @{context_bar:noquote}
+	}
+    }
+
+
+    layout_row {
+	layout_col -class span2
+	layout_col -class span8 {
+	    h2 { i { t "Create New Page" } }
+	    form -action page-create-2 -method post {
+		if {0} { 
+		    a -href "" -style "text-decoration:none;font-variant: small-caps;" -class fl -onclick "SC.buttonPress('ta');return false;" { 
+			t "Spell Check" 
+		    } 
+		}
+		t " "
+		#img -src /graphics/spell-check -width 18 -height 18 -onclick "SC.buttonPress('ta')" -title "Spell Check"
+		div -class "control-group" {
+		    label -for "subject" { t "Title" }
+		    div -class "controls" {
+			input \
+			    -id "subject" \
+			    -class "input-block-level" \
+			    -type "text" \
+			    -name "subject" \
+			    -value "" \
+			    -placeholder "Enter title here" \
+			    -onkeypress "return event.keyCode!=13;"
+		    }
+		}
+		div -class "control-group" {
+		    label -for "body" { t "Body" }
+		    div -class "controls" {
+			textarea \
+			    -id "body" \
+			    -class "input-block-level" \
+			    -name "body" \
+			    -rows "15" \
+			    -cols "80" \
+			    -wrap "soft"
+		    }
+		}
+		div -class "form-actions" {
+		    input \
+			-class "btn btn-warning" \
+			-value "Publish Page" \
+			-type "submit" \
+			-id "publishPage" \
+			-name "publishPage"
+
+		    t " "
+
+		    input \
+			-class "btn btn-info" \
+			-value "Save as Draft" \
+			-type "submit" \
+			-id "saveDraft" \
+			-name "saveDraft"
+		}
+	    }
+	    layout_col -class span2
+	}
+    }
+}
+

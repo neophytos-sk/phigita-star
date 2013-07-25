@@ -1,0 +1,19 @@
+% Computer Modern Blackboard
+%
+% font v ?.? 29/03/1993, sauterised v1.0 15/11/1995
+%
+% Author :         Gilles F. ROBERT
+% sauterisation : Hubert HOLIN
+
+if unknown blbbase: input blbbase fi
+
+font_identifier:="CMBB"; font_size design_size*pt#;
+
+input c-cmr;   % compute size parameters for CMR family
+
+interspace#:=jut#;    % space between the doubled bars
+
+cap_interspace#:= cap_jut#;   % same for uppercase letters
+
+generate blbord      % switch to the driver file
+

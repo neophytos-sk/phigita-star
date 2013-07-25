@@ -1,0 +1,17 @@
+Return-path: <webmaster@phigita.net> 
+Received: from [58.18.220.106] (port=2504 helo=FREESKYC3BA619)
+	by mx1.emailsrvr.com with asmtp 
+	id 808C89-000393-75
+	for <webmaster@phigita.net>; Tue, 22 Nov 2011 18:07:04 +0800 
+Message-ID: <86D6291B2EAE41489AA70D1DAD0E883B@FREESKYC3BA619> 
+From: =?koi8-r?B?IuLPztPByiDHwczF0sXRIiA=?= <donefsbr@monogramdirect.com> 
+To: <webmaster@phigita.net> 
+Subject: =?koi8-r?B?8sHT0NLPxMHWwSDR0M/O08vJyCDCz87TwcouIPDPxMHSz8sgzsEgxM/M?=
+	=?koi8-r?B?x8nFIMfPxNk=?= 
+Date: Tue, 22 Nov 2011 18:07:04 +0800 
+X-Priority: 3 
+X-MSMail-Priority: Normal 
+X-Mailer: Microsoft Windows Mail 6.0.6001.18000 
+X-MimeOLE: Produced By Microsoft MimeOLE V6.0.6001.18049 
+X-Spam: Not detected 
+X-Mras: Ok 

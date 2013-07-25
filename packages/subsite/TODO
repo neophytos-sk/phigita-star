@@ -1,0 +1,4 @@
+
+* Forgot your password? -- Send user email with link to reset her password. For example:
+
+	Please follow the link below to reset your password: http://www.yourhostname.yourdomain/register/password-update?password%5fold=A698B4E58&user%5fid=1295

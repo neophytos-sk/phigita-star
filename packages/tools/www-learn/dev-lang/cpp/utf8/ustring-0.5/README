@@ -1,0 +1,56 @@
+
+ustring, a C++ Unicode library.
+
+the latest release is available at http://ustring.charabia.net
+
+---------------------
+
+1. What is the ustring library ?
+
+ ustring targets the complete conformance of the Unicode 3.0
+standard. That is :
+ - an access to the Unicode characters database
+ - the normalization forms C, D, KC, and KD
+ - unicode-based standard string processing
+ - unicode level-1 Regular Expressions
+ - line breaking properties
+ - the bidirectionnal algorithm
+ - and all the other features defined by the unicode standard.
+
+ Not all those features are implemented yet, please look at the TODO
+file to have a list of the missing features. Go to the
+http://www.unicode.org for more details on the Unicode Standard.
+
+2. What can a Unicode library do for me ?
+
+ Unicode stores characters on 16 (or 32) bit, which implies it can
+handle european, chinese, hebrew, etc. characters. The character
+database allows a complete handling of case mapping (upper, lower, and
+title case transformations). Normalization forms can decompose the
+characters into letters and diacritical marks, and recompose them.
+
+ If your programs use multiple charsets, multiple languages, or need
+informations on character properties (eg. to have the upper case of a
+letter, of remove the diacritics from a string), then you probably
+need Unicode.
+
+3. Can I freely use the ustring library ?
+
+ Yes, as long as your program uses a license compatible with the GNU
+GENERAL PUBLIC LICENSE. Read the COPYING for details on this license.
+
+4. How can I install the library ?
+
+ Read the INSTALL file that comes with the package.
+
+5. The configure script complains about a iconv function missing, or
+not implementing UCS-x. How can I fix this ?
+
+ The ustring library relies on the iconv function to convert the
+different charsets to/from UCS-2 or UCS-4. If the iconv function
+available on your system does not suit the current needs of ustring,
+you will have to install the LIBICONV package, freely available at
+http://clisp.cons.org/~haible/packages-libiconv.html (homepage), or at
+ftp://ftp.ilog.fr/pub/Users/haible/gnu/libiconv-1.3.tar.gz
+(distribution).
+

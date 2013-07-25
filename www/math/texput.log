@@ -1,0 +1,20 @@
+This is pdfTeXk, Version 3.1415926-1.40.9 (Web2C 7.5.7) (format=latex 2009.9.6)  6 SEP 2009 10:59
+entering extended mode
+ %&-line parsing enabled.
+**\nonstopmode\input slope.tex.tex
+
+! Emergency stop.
+<*> \nonstopmode\input slope.tex.tex
+                                    
+*** (job aborted, file error in nonstop mode)
+
+ 
+Here is how much of TeX's memory you used:
+ 3 strings out of 495070
+ 100 string characters out of 1183057
+ 45092 words of memory out of 3000000
+ 3282 multiletter control sequences out of 10000+50000
+ 3640 words of font info for 14 fonts, out of 3000000 for 5000
+ 28 hyphenation exceptions out of 8191
+ 4i,0n,3p,1b,8s stack positions out of 5000i,500n,10000p,200000b,50000s
+No pages of output.

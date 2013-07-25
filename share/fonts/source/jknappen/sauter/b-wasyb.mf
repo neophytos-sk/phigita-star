@@ -1,0 +1,94 @@
+% WASYB, bold additional symbols for math, physics, astronomy and other 
+% fields
+if unknown cmbase: input cmbase fi
+
+font_identifier:="WASYB"; font_size design_size*pt#;
+
+input c-cmbx;
+input c-bmath;
+
+% the following are taken from c-cmmi, and match the 10pt wasyb data
+
+cap_height#:=      % height of caps
+    (if design_size < 10: (design_size*246)
+                    else: (-(0.0228937728937*design_size*design_size) +
+                           (246.503663003*design_size) -
+                           (2.74725274725))fi)/360pt#;
+
+x_height#:=        % height of lowercase without ascenders
+    (if design_size < 10: (design_size*155)
+                    else: (-(0.010406260406*design_size*design_size) +
+                           (155.22893772*design_size) -
+                           (1.2487512487))fi)/360pt#;
+
+bar_height#:=      % height of crossbar in lowercase e
+    (if design_size < 10: (design_size*87)
+                    else: ((-(0.087412587412*design_size*design_size) +
+                           (88.923076923*design_size) -
+                           (10.4895104895))+0.0008)fi)/360pt#;
+
+crisp#:=           % diameter of serif corners
+    (if design_size <  7: ((design_size*5)+35)
+ elseif design_size <  8: (design_size*10)
+                    else: (80)fi)/360pt#;
+
+bracket#:=         % vertical distance from serif base to tangent
+    (if design_size < 10: (design_size*20)
+                    else: (-(0.145687645687*design_size*design_size) +
+                           (23.2051282051*design_size) -
+                           (17.4825174825))fi)/360pt#;
+
+cap_jut#:=         % protrusion of uppercase serifs
+    (if design_size <  8: ((design_size*30)+50)
+ elseif design_size < 10: ((design_size*40)-30)
+ elseif design_size < 12: ((design_size*20)+170)
+                    else: ((design_size*17.0454545454)+205.45454546)fi)/360pt#;
+
+beak_jut#:=        % horizontal protrusion of beak serifs
+    (if design_size < 10: ((design_size*8)+20)
+%elseif design_size < 12: ((design_size*7)+30)
+                    else: ((-(0.024975024975*design_size*design_size) +
+                           (7.5494505494*design_size) +
+                           (27.0029970029))+0.0005)fi)/360pt#;
+
+serif_drop#:=      % vertical drop of sloped serifs
+    (if design_size < 12: (design_size*4)
+                    else: ((design_size*design_size*0.0228937728937) +
+                          (design_size * 3.49633699633) +
+                          2.74725274725)fi)/360pt#;
+
+vair_corr#:=       % for small refinements of hairline height
+    (if design_size <  7: ((design_size*2)-5)
+ elseif design_size <  8: (-(design_size*design_size*0.5) +
+                           (design_size*8.5) - 26)
+                    else: (10)fi)/360pt#;
+
+o#:=               % amount of overshoot for curves
+    (if design_size <  7: ((design_size*5)+15)
+ elseif design_size < 10: ((design_size*10)-20)
+ elseif design_size < 12: ((design_size*5)+30)
+                    else: ((design_size*1.8939393939)+67.2727272732)fi)/360pt#;
+
+apex_o#:=          % amount of overshoot for diagonal junctions
+    (if design_size <  7: ((design_size*5)+15)
+ elseif design_size < 10: ((design_size*10)-20)
+ elseif design_size < 12: ((design_size*5)+30)
+                    else: ((design_size*1.8939393939)+67.2727272732)fi)/360pt#;
+
+math_spread:=0;      % extra openness of math symbols
+superness:=1/sqrt2;    % parameter for superellipses
+superpull:=1/6;      % extra openness inside bowls
+
+% the following are taken from c-cmr, and match the 10pt wasyb data
+
+jut#:=             % protrusion of lowercase serifs
+    (if design_size <  7: ((design_size*20)+50)
+ elseif design_size < 10: ((design_size*30)-20)
+ elseif design_size < 12: ((design_size*25)+30)
+                    else: ((design_size*17.0454545454)+125.45454546)fi)/360pt#;
+
+slant:=0;      % tilt ratio $(\Delta x/\Delta y)$
+variant_g:=false;    % should an italic-style g be used?
+math_fitting:=false;    % should math-mode spacing be used?
+
+generate wasy 

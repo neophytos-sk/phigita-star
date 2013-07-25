@@ -1,0 +1,25 @@
+Received: from localhost (go2game.com [127.0.0.1])
+	by go2game.com (go2game_mail_system) with ESMTP id 3641316E11;
+	Tue, 22 Nov 2011 11:07:45 +0800 (CST) from go2game.com ([127.0.0.1])
+	by localhost (mail.go2game.com [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id pstB5R4hmd9B; Tue, 22 Nov 2011 11:07:43 +0800 (CST) from rzbn (unknown [115.58.135.218])
+	by go2game.com (go2game_mail_system) with ESMTPA id 3AFEC1741F;
+	Tue, 22 Nov 2011 11:07:24 +0800 (CST) 
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=go2game.com; h=
+	x-mailer:content-type:mime-version:date:subject:to:from
+	:message-id:x-virus-scanned; s=dkim; t=1321931263; x=1322795263;
+	 bh=+VodVFYongLMj9Cg8ROWzeq0f7PgNp7DoT2ihxLcJFI=; b=zgqnC58Aed65
+	gV/hCINM/D2ONhh6iOIqA5uCjvFQyMFlYTWHsOZAhvjThKh9Xwbn9RdE5CmXua5x
+	oUPp4/KUWHCBlwyYAsAxA3wYRzkABzuyb7SjZ5VOGJdzQkn2I6fM6y3oLTSSCpXx
+	ZNBWfIEHk0Q2UtryxkVW4W32lIT/6OU= 
+X-Virus-Scanned: Debian amavisd-new at go2game.com 
+X-Original-Helo: rzbn (iRedMail: http://www.iredmail.org/) rzbn (iRedMail: http://www.iredmail.org/) rzbn (iRedMail: http://www.iredmail.org/) rzbn (iRedMail: http://www.iredmail.org/) rzbn (iRedMail: http://www.iredmail.org/) rzbn (iRedMail: http://www.iredmail.org/) rzbn (iRedMail: http://www.iredmail.org/) rzbn (iRedMail: http://www.iredmail.org/) rzbn (iRedMail: http://www.iredmail.org/) rzbn (iRedMail: http://www.iredmail.org/) rzbn (iRedMail: http://www.iredmail.org/) rzbn (iRedMail: http://www.iredmail.org/) rzbn (iRedMail: http://www.iredmail.org/) rzbn (iRedMail: http://www.iredmail.org/) rzbn (iRedMail: http://www.iredmail.org/) rzbn (iRedMail: http://www.iredmail.org/) rzbn (iRedMail: http://www.iredmail.org/) 
+Sender: lsc@go2game.com 
+Message-ID: <20111122110743100663@go2game.com> 
+From: "2011-11-22 11:07:24" <qoxzu@amumhm.com> 
+To:  
+Subject: =?gb2312?B?wfnKrsTquvO/tMTjtcTG89K1IDFpYg==?= 
+Date: Tue, 22 Nov 2011 11:07:35 +0800 
+X-mailer: Kdc 3 
+--------------------------------------
+ content-type=application/msword part-token=::mime::786-2

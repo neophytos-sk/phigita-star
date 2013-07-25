@@ -1,0 +1,447 @@
+/*player configuration*/
+
+config.player{
+	owner: xmoov.com;
+	skin: vitamini;
+	skinURL: /library/players/xmoov-flv-player/skins/xmoovpod/;
+	/*image_icon: icon.png;*/
+	keyControl: on;
+	scrollWheel: on;
+	osdDelay: 3;
+	hideMouse: true;
+	postrollOnSkip: true;
+	screenClick: true;
+	thumbnailClick: true;
+	width: scale;
+	height: scale;
+}
+
+config.context{
+	useContext: yes;
+	xmoovFLVlink: on;
+	useHelp: yes;
+	helpURL: http://xmoov.com/xmoov-flv-player/help/;
+	useBugReport: yes;
+	bugReportEmail: xmoov-flv-player@xmoov.com;
+	useContextPlayerControl: yes;
+	useQualityControl: yes;
+}
+
+config.preroll{
+	URL: /library/media/video/;
+	swf: /library/media/flash/interactive/rolls/preroll_ad_xmoov.swf;
+	video: antismoking.flv;
+	autoplay: true;
+	onCompleteDelay: 1;
+	hideControls: false;
+	thumbnailTarget: _blank;
+	
+}
+
+config.content{
+	showVideoOverlay: false;
+	URL: /library/media/video/;
+	autoplay: true;
+	onCompleteDelay: 3;
+}
+
+config.postroll{
+	thumbnail: playstation.jpg;
+	thumbnailLink: http://www.google.com;
+	onComplete: content;
+	video: gottony_antismoking.flv;
+	autoplay: true;
+	onCompleteDelay: 0;
+	thumbnailTarget: _blank;
+	title: Replay;
+}
+
+config.stream{
+	URL: /;
+	forceScript: true;
+	fileKey: ?file=;
+	positionKey: &position=;
+	securityKey: &key=;
+	bandwidthKey: &bw=;
+	/*type: php-http;*/
+}
+config.buffer{
+	buffertime: 3; 
+	autoBuffer: true; 
+	bandwidthCaptureTime: 5; 
+	rememberBandwidth: true; 
+	bufferUpdateThreshold: 4;
+	bandwidthUpdateThreshold: 20; 
+	quickstartOffset: 400; 
+	bufferPadding: 4; 
+	limitBuffer: true;
+	bufferLimit: 20; 
+	correctBufferTime: true; 
+	ipHeaderOverhead: 0.07; 
+}
+config.video{
+	screenMode: stretch;
+	smoothing: on;
+	deblocking: 1;
+	defaultVolume: 60;
+	rememberVolume: true;
+	rememberScreenMode: true;
+	seekStepTime: 1;
+	screenClick: true;
+	left-margin: 14;
+	right-margin: 14;
+	top-margin: 14;
+	bottom-margin: 54;
+}
+/* type:f9, popup, auto */
+config.fullscreen{
+	continueLastPosition: true;
+	scrollbars: no;
+	menubar: no;
+	fullscreen: yes;
+	toolbar: no;
+	statusbar: no;
+	resizable: yes;
+	titlebar: no;
+}
+
+config.security{
+	allowDomain: xmoov.local,xmoov.com;
+	reportSecurityErrors: yes;
+	allowOverride: no;
+}
+
+config.error{
+	correction: on;
+	correctBrokenStream: yes;
+	retry: 3;
+	retryDelay: 30;
+}
+
+/*interface skins*/
+
+/*interface skins*/
+
+skin.topLeft{
+	image: skin_TL.png;
+}
+
+skin.top{
+image: skin_T.png;
+	width: scale;
+}
+
+skin.topRight{
+	image: skin_TR.png;
+}
+
+skin.right{
+	image: skin_R.png;
+	height: scale;
+}
+
+skin.bottomRight{
+	image: skin_BR.png;
+}
+
+skin.bottom{
+	image: skin_B.png;
+	width: scale;
+}
+
+skin.bottomLeft{
+	image: skin_BL.png;
+	color: FFFFFF;
+}
+
+skin.left{
+	image: skin_L.png;
+	height: scale;
+}
+
+/*interface element groups*/
+
+group.navigation{
+	osd: true;
+	function: seek;
+	format: uiSets;
+	valign: bottom;
+	align: center;
+	voffset: -75;
+	margin: 30;
+	clips: seeker;
+}
+
+group.currentTime{
+	osd: true;
+	function: time;
+	format: uiSets;
+	valign: bottom;
+	align: left;
+	left-margin: 28;
+	voffset: -57;
+	clips: currentTime;
+}
+
+group.totalTime{
+	osd: true;
+	function: time;
+	format: uiSets;
+	valign: bottom;
+	align: right;
+	right-margin: 28;
+	voffset: -57;
+	clips: totalTime;
+}
+
+group.videoTitle{
+	osd: true;
+	function: title;
+	format: titleSet;
+	valign: top;
+	align: center;
+	voffset: 15;
+	clips: videoTitle;
+}
+
+group.transport{
+	function: transport;
+	format: uiSets;
+	valign: bottom;
+	align: center;
+	voffset: -4;
+	clips: backSeek, play, fowardSeek;
+}
+
+group.screenOptions{
+	function: screen;
+	format: uiSets;
+	valign: bottom;
+	align: left;
+	voffset: -22;
+	left-margin: 15;
+	clips: stretch, fitToScreen, originalSize, fullScreen;
+}
+
+/*group.playThumb{
+	function: play_thumbnail;
+	valign: center;
+	align: center;
+	clips: playThumbnail;
+}*/
+
+group.sound{
+	function: sound;
+	format: uiSets;
+	valign: bottom;
+	align: right;
+	voffset: -19;
+	left-margin: 10;
+	right-margin: 10;
+	clips: volume, sound;
+}
+
+/*interface elements*/
+
+clip.stretch{
+function: viewMode_stretch;
+up_format: screenButtonUp;
+over_format: screenButtonOver;
+image_up: skin_STRETCH.png;
+right-margin: 2;
+voffset: 0;
+}
+
+clip.fitToScreen{
+function: viewMode_fit;
+up_format: screenButtonUp;
+over_format: screenButtonOver;
+image_up: skin_FIT.png;
+margin: 2;
+voffset: 0;
+}
+
+clip.originalSize{
+function: viewMode_noscale;
+up_format: screenButtonUp;
+over_format: screenButtonOver;
+image_up: skin_ORIG.png;
+margin: 2;
+voffset: 0;
+}
+
+clip.fullScreen{
+	function: viewMode_full;
+	up_format: screenButtonUp;
+	over_format: screenButtonOver;
+	image_up: skin_FS.png;
+	margin: 2;
+	voffset: 0;
+}
+
+clip.play{
+	function: play_toggle;
+	up_format: highlightUp;
+	over_format: highlightOver;
+	image_play_up: skin_PL.png;
+	image_play_over: skin_PL_OVER.png;
+	image_stop_up: skin_PS.png;
+	image_stop_over: skin_PS_OVER.png;
+	voffset: 0;
+}
+
+clip.playThumbnail{
+	function: play_thumbnail;
+	up_format: thumbUp;
+	over_format: thumbOver;
+	image_play_up: skin_thumbPlay.png;
+}
+
+
+
+clip.sound{
+	function: sound_toggle;
+	up_format: buttonUp;
+	over_format: buttonOver;
+	image_soundOn_up: skin_MT.png;
+	image_soundOff_up: skin_UMT.png;
+	image_soundOn_over: skin_UMT.png;
+	image_soundOff_over: skin_MT.png;
+	left-margin: 6;
+	voffset: 0;
+}
+clip.backSeek{
+function: bseek;
+up_format: buttonUp;
+over_format: buttonOver;
+image_up: skin_RW.png;
+image_over: skin_RW_OVER.png;
+right-margin: 10;
+}
+
+clip.fowardSeek{
+function: fseek;
+up_format: buttonUp;
+over_format: buttonOver;
+image_up: skin_FF.png;
+image_over: skin_FF_OVER.png;
+margin: 10;
+}
+
+clip.seeker{
+	function: seek;
+	front_alpha: 60;
+	image_front_left: skin_SFL.png;
+	image_front_center: skin_SF.png;
+	image_front_right: skin_SFR.png;
+	middle_alpha: 60;
+	image_middle_left: skin_SML.png;
+	image_middle_center: skin_SM.png;
+	image_middle_right: skin_SMR.png;
+	button_alpha: 100;
+	image_button: skin_SBT.png;
+	width: fit;
+	voffset: 0;
+}
+
+clip.totalTime{
+function: time_total;
+format: timeFormat;
+margin: 0;
+voffset: 0;
+}
+
+clip.currentTime{
+function: time_currentSeek;
+format: timeFormat;
+margin: 0;
+voffset: 0;
+}
+
+clip.videoTitle{
+function: title;
+format: titleFormat;
+voffset: 0;
+}
+
+clip.volume{
+	function: volume;
+	front_alpha: 60;
+	image_front_left: skin_VFL.png;
+	image_front_center: skin_VF.png;
+	image_front_right: skin_VFR.png;
+	middle_alpha: 60;
+	image_middle_left: skin_VML.png;
+	image_middle_center: skin_VM.png;
+	image_middle_right: skin_VMR.png;
+	button_alpha: 0;
+	image_button: skin_SBT.png;
+	width: 80;
+	voffset: 1;
+}
+
+/*styles*/
+
+/*text styles*/
+
+textFormat.timeFormat{
+font: Arial;
+bold: true;
+italic: false;
+textColor: CCCCCC;
+size: 11;
+}
+
+textFormat.titleFormat{
+	font: Arial;
+	bold: true;
+	textColor: FFFFFF;
+	size: 13;
+}
+
+/*clip styles*/
+
+clipFormat.thumbUp{
+	dropShadow: false;
+	alpha: 95;
+}
+clipFormat.thumbOver{
+	dropShadow: true;
+	alpha: 100;
+}
+clipFormat.titleSet{
+	dropShadow: true;
+	alpha: 100;
+}
+clipFormat.highlightUp{
+	alpha: 60;
+	dropShadow: false;
+}
+
+clipFormat.highlightOver{
+	alpha: 100;
+	dropShadow: false;
+}
+
+clipFormat.screenButtonUp{
+	alpha: 60;
+}
+
+clipFormat.screenButtonOver{
+	alpha: 100;
+}
+
+clipFormat.buttonUp{
+	bevel: false;
+	alpha: 60;
+}
+
+clipFormat.buttonOver{
+	bevel: false;
+	alpha: 100;
+}
+
+clipFormat.uiSets{
+	alpha: 100;
+	blendMode: add;
+}

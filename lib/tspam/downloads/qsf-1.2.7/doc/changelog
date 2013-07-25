@@ -1,0 +1,1113 @@
+2007-08-28 14:02  naoliv
+
+	* debian/: changelog, copyright, doc-base, patches/index.html.diff:
+
+	Updated debian/ dir for new QSF release
+
+2007-08-28 11:17  ivarch
+
+	* README, doc/COPYING, doc/NEWS, doc/VERSION, doc/lsm.in,
+	doc/quickref.1.in, doc/spec.in, src/main/help.c,
+	src/main/license.c, src/main/options.c, src/main/version.c:
+
+	Removal of "-l" and change of license to Artistic 2.0
+
+2007-02-05 11:21  naoliv
+
+	* debian/changelog:
+
+	New upstream release
+
+2007-02-04 23:50  ivarch
+
+	* doc/NEWS, doc/TODO, doc/VERSION, doc/lsm.in, doc/quickref.1.in,
+	doc/spec.in, src/db/mysql.c, test/t02-markspam,
+	test/t03-marknonspam, test/t20-locking:
+
+	Removed locking from MySQL again because it causes major delays due
+	to whole-table locking, and prepared for release of 1.2.6.
+
+2007-01-22 00:16  naoliv
+
+	* debian/control:
+
+	Forgot this file
+
+2007-01-22 00:15  naoliv
+
+	* debian/changelog:
+
+	Now quickref.txt is included on the package
+
+2007-01-21 22:20  naoliv
+
+	* debian/changelog:
+
+	Uploaded with medium urgency, since it's a bug fix release and also
+	it will be good to have this fixed release on Etch
+
+2007-01-21 17:16  naoliv
+
+	* debian/changelog:
+
+	New QSF release
+
+2007-01-21 16:48  ivarch
+
+	* README, autoconf/header.in, autoconf/scripts/fakemail.c,
+	autoconf/scripts/mboxsplit.c, debian/copyright, doc/TODO,
+	extra/mailstats.sh, extra/statstable.sh, src/library.c,
+	src/db/btree.c, src/db/gdbm.c, src/db/list.c, src/db/main.c,
+	src/db/mysql.c, src/db/obtree.c, src/db/sqlite.c,
+	src/include/database.h, src/include/log.h, src/include/mailbox.h,
+	src/include/message.h, src/include/options.h, src/include/spam.h,
+	src/mailbox/alloc.c, src/mailbox/count.c, src/mailbox/mailboxi.h,
+	src/mailbox/scan.c, src/mailbox/select.c, src/main/help.c,
+	src/main/license.c, src/main/log.c, src/main/main.c,
+	src/main/options.c, src/main/tick.c, src/main/version.c,
+	src/message/alloc.c, src/message/base64.c, src/message/dump.c,
+	src/message/header.c, src/message/parse.c, src/message/qp.c,
+	src/message/read.c, src/message/rfc2047.c, src/spam/alloc.c,
+	src/spam/allowlist.c, src/spam/benchmark.c, src/spam/check.c,
+	src/spam/cksum.c, src/spam/db.c, src/spam/dump.c, src/spam/merge.c,
+	src/spam/plaintext.c, src/spam/prune.c, src/spam/spami.h,
+	src/spam/token.c, src/spam/train.c, src/spam/update.c,
+	src/tests/attached_files.c, src/tests/gibberish.c,
+	src/tests/gtube.c, src/tests/html.c, src/tests/imgcount.c,
+	src/tests/main.c, src/tests/testi.h, src/tests/urls.c:
+
+	Copyright date and TODO updates
+
+2007-01-21 13:25  ivarch
+
+	* autoconf/make/unreal.mk, doc/NEWS, doc/VERSION, doc/lsm.in,
+	doc/quickref.1.in, doc/spec.in:
+
+	Cleanup for release 1.2.5
+
+2007-01-20 12:35  ivarch
+
+	* src/db/list.c, src/db/mysql.c, test/t02-markspam,
+	test/t03-marknonspam, test/t20-locking:
+
+	Fixed token deletion bug in list backend which would cause extra
+	tokens - including COUNTS and SINCEPRUNE - to be deleted when other
+	tokens are deleted.
+
+2007-01-20 11:08  ivarch
+
+	* src/spam/token.c:
+
+	Correction to comment about the COUNT token
+
+2007-01-20 00:36  ivarch
+
+	* src/db/mysql.c:
+
+	Fix for autodetection of MySQL spec files - previously "-d
+	database=...." worked, but "-d FILE" where FILE contained the spec,
+	did not.
+
+2007-01-20 00:32  ivarch
+
+	* doc/spec.in:
+
+	rpmlint fixes
+
+2006-12-07 02:25  naoliv
+
+	* debian/: changelog, control:
+
+	Updated to my debian address
+
+2006-10-25 16:22  naoliv
+
+	* debian/changelog:
+
+	New release.
+
+2006-10-25 12:24  ivarch
+
+	* src/: db/btree.c, db/list.c, db/mysql.c, message/dump.c,
+	spam/plaintext.c:
+
+	Fixes for warnings with GCC 4.1.1, Fedora Core 5
+
+2006-10-25 12:23  ivarch
+
+	* doc/: NEWS, VERSION, lsm.in, spec.in:
+
+	Version bump
+
+2006-10-21 23:48  ivarch
+
+	* autoconf/: make/unreal.mk, scripts/benchmark.awk:
+
+	Added new "bigbenchmark" Makefile rule, to generate benchmark data
+	for graphs.
+
+2006-10-21 20:38  ivarch
+
+	* src/db/btree.c:
+
+	Fix for concurrent access under OpenBSD.
+
+2006-10-21 20:07  ivarch
+
+	* autoconf/configure.in, autoconf/header.in,
+	autoconf/make/unreal.mk, doc/NEWS, src/db/btree.c, src/db/gdbm.c,
+	src/db/list.c, src/db/main.c, src/db/mysql.c, src/db/obtree.c,
+	src/db/sqlite.c, src/include/database.h, test/t20-locking:
+
+	Added a test, and fixes for, concurrent updates. Also added
+	mysql_commit() usage for MySQL client versions that support it.
+
+2006-10-03 22:41  ivarch
+
+	* autoconf/make/unreal.mk, src/db/mysql.c, test/t01-dbcreate:
+
+	Updates to allow MySQL database to be specified with a blank
+	password, and to automatically enable MySQL tests if there is a
+	localhost "test" database with no password in which a temporary
+	test table can be created.
+
+2006-10-03 20:17  ivarch
+
+	* src/: db/list.c, spam/db.c:
+
+	Added some casting and minor type changes to avoid warnings with
+	gcc 4.x.
+
+2006-10-02 09:38  ivarch
+
+	* doc/: NEWS, lsm.in, quickref.1.in, spec.in:
+
+	Pre-release cleanups.
+
+2006-10-02 00:32  naoliv
+
+	* debian/changelog:
+
+	Fixing the version that I typed wrongly.
+
+2006-10-02 00:31  naoliv
+
+	* debian/: changelog, control:
+
+	New QSF release
+
+2006-10-01 23:28  ivarch
+
+	* src/db/list.c:
+
+	Optimisation to buffer up additions and sort them individually
+	instead of re-sorting the whole array every time.
+
+2006-09-30 22:41  ivarch
+
+	* src/: db/gdbm.c, db/list.c, db/main.c, db/mysql.c, db/obtree.c,
+	db/sqlite.c, include/database.h, spam/dump.c:
+
+	Code cleanup and new database hook - restore_start and restore_end
+	- to speed up -R.
+
+2006-09-30 17:55  ivarch
+
+	* doc/: NEWS, lsm.in, spec.in:
+
+	Pre-release cleanups.
+
+2006-09-30 17:26  ivarch
+
+	* doc/NEWS, doc/TODO, doc/quickref.1.in, src/spam/allowlist.c,
+	src/spam/check.c, test/t19-listdomain:
+
+	Allow domain-level allow/deny listing with "@domain".
+
+2006-09-29 15:10  ivarch
+
+	* doc/NEWS, doc/TODO, doc/quickref.1.in, src/include/options.h,
+	src/include/spam.h, src/main/help.c, src/main/main.c,
+	src/main/options.c, src/spam/allowlist.c, src/spam/check.c,
+	src/spam/db.c, src/spam/dump.c, src/spam/plaintext.c,
+	src/spam/spami.h, test/t17-denylistadd, test/t18-denylistdel:
+
+	New option "-y" to use a deny-list, listing email addresses that
+	cause messages to be rejected as spam unconditionally.
+
+2006-09-29 11:18  ivarch
+
+	* autoconf/make/unreal.mk, autoconf/make/vars.mk, doc/NEWS,
+	doc/TODO, doc/quickref.1.in, src/include/options.h,
+	src/include/spam.h, src/main/help.c, src/main/options.c,
+	src/spam/allowlist.c, src/spam/db.c, src/spam/plaintext.c,
+	test/t16-plainmap:
+
+	New option "-P" to store mappings between hashed and non-hashed
+	values in a plaintext file.
+
+2006-08-28 17:48  naoliv
+
+	* debian/control:
+
+	Made the long description shorter, while trying to maintain all the
+	features of QSF
+
+2006-08-15 20:54  ivarch
+
+	* test/t15-headermarker:
+
+	Fix for test 15 for systems (Solaris) whose grep does not support
+	-q
+
+2006-08-15 20:25  ivarch
+
+	* doc/NEWS, doc/quickref.1.in, src/include/message.h,
+	src/include/options.h, src/main/help.c, src/main/main.c,
+	src/main/options.c, src/message/header.c, test/t15-headermarker:
+
+	New "-H" / "--header-marker" option to change X-Spam: YES to
+	X-Spam: WHATEVER (based on patch from Michal Vitecek)
+
+2006-08-15 17:02  ivarch
+
+	* build-and-test-sf.sh, autoconf/make/unreal.mk,
+	src/spam/benchmark.c:
+
+	More "make benchmark" fixes for Solaris
+
+2006-08-15 14:21  ivarch
+
+	* autoconf/make/unreal.mk:
+
+	Fix for compilation of fakemail for "make benchmark"
+
+2006-08-15 11:17  ivarch
+
+	* autoconf/configure.in, autoconf/header.in, doc/NEWS, doc/VERSION,
+	doc/quickref.1.in, src/db/list.c, src/db/main.c:
+
+	Re-added new "list" backend.
+
+2006-08-15 00:53  naoliv
+
+	* debian/changelog:
+
+	Updated debian/ dir for the new QSF release
+
+2006-08-14 14:25  ivarch
+
+	* doc/: NEWS, lsm.in, spec.in:
+
+	Pre-release cleanup.
+
+2006-08-14 12:09  ivarch
+
+	* autoconf/configure.in, autoconf/header.in, doc/NEWS, doc/VERSION,
+	doc/quickref.1.in, src/db/list.c, src/db/main.c:
+
+	Removed "list" backend so that the next release can be bugfixes
+	only - will add it later to make a new release.
+
+2006-08-14 11:53  ivarch
+
+	* README, doc/quickref.1.in:
+
+	Acknowledgements update
+
+2006-08-14 11:40  ivarch
+
+	* src/db/: btree.c, list.c, obtree.c:
+
+	Revert a couple of changes which would have no effect due to
+	limited data ranges
+
+2006-08-14 10:31  ivarch
+
+	* src/: db/btree.c, db/list.c, db/main.c, db/mysql.c, db/obtree.c,
+	mailbox/select.c, main/main.c:
+
+	Fixes for potential problems highlighted by Tommy Pettersson
+
+2006-08-10 20:29  ivarch
+
+	* autoconf/configure.in, autoconf/header.in, src/md5.c,
+	src/include/md5.h:
+
+	Portability fix for MD5 on 64-bit systems, eg AMD64
+
+2006-08-10 00:37  ivarch
+
+	* src/: db/mysql.c, db/sqlite.c, main/log.c, main/main.c,
+	message/header.c:
+
+	Use #ifdef instead of #if for HAVE_* for consistency
+
+2006-08-10 00:33  ivarch
+
+	* autoconf/make/unreal.mk, autoconf/scripts/fakemail.c, doc/NEWS,
+	src/db/btree.c, src/db/list.c, src/main/help.c, src/main/log.c,
+	src/main/main.c, src/message/header.c, src/message/parse.c,
+	src/spam/cksum.c:
+
+	Code cleanup to placate the pickier compiler on OpenBSD - use
+	snprintf more, strcat and strcpy less
+
+2006-08-09 23:02  ivarch
+
+	* autoconf/: configure.in, make/vars.mk:
+
+	Get configure script to check for LD so that we can compile on the
+	SourceForge compile farm x86-solaris1 host
+
+2006-08-08 21:43  ivarch
+
+	* autoconf/make/unreal.mk, autoconf/scripts/index.sh,
+	autoconf/scripts/makemake.sh, test/t08-dbprune2:
+
+	Replace "echo -n" with more portable code
+
+2006-08-08 19:33  ivarch
+
+	* src/db/btree.c:
+
+	Patch from Michal Vitecek to fix segfault in btree backend
+
+2006-05-14 19:26  ivarch
+
+	* autoconf/configure.in, autoconf/header.in, doc/NEWS, doc/VERSION,
+	doc/quickref.1.in, src/db/list.c, src/db/main.c:
+
+	Added new "list" backend - an in-memory flat list, which is the new
+	default backend.
+
+2006-05-07 17:30  naoliv
+
+	* debian/: changelog, control, copyright:
+
+	Some small updates
+
+2006-05-03 04:33  naoliv
+
+	* debian/: changelog, control:
+
+	Updated Debian standards version.
+
+2006-05-03 02:33  naoliv
+
+	* autoconf/make/unreal.mk:
+
+	Forgot $(package)-$(version) :-(
+
+2006-05-03 02:32  naoliv
+
+	* autoconf/make/unreal.mk:
+
+	There is no need to include .cvsignore files when distributing the
+	final tarball
+
+2006-04-08 19:03  naoliv
+
+	* debian/changelog:
+
+	New version released.
+
+2006-04-08 17:11  ivarch
+
+	* doc/NEWS, doc/VERSION, doc/lsm.in, doc/quickref.1.in,
+	doc/spec.in, src/include/message.h, src/include/options.h,
+	src/main/main.c, src/message/alloc.c, src/message/parse.c,
+	src/spam/allowlist.c, src/spam/check.c, src/spam/train.c,
+	src/spam/update.c, src/tests/gibberish.c:
+
+	Check Return-Path: header against allow-list as well as From:
+	header
+
+2006-03-29 00:50  naoliv
+
+	* debian/control:
+
+	Just adding a space before Homepage:, as Debian Policy says.
+
+2006-02-03 17:01  naoliv
+
+	* debian/docs:
+
+	docs/changelog is included again. My fault in not asking Andrew.
+
+2006-02-02 18:28  naoliv
+
+	* debian/: changelog, docs:
+
+	New QSF version.  Also, it seems that changelog isn't being
+	shipped, so remove it from being installed. If it appears again, we
+	just need to add one line on debian/docs.
+
+2006-02-01 20:41  ivarch
+
+	* doc/: NEWS, lsm.in, quickref.1.in, spec.in:
+
+	Documentation update prior to release
+
+2005-12-18 00:52  naoliv
+
+	* debian/: changelog, compat, control, lintian-override, rules:
+
+	Some minor fixes, including transition of libmysql
+
+2005-11-19 03:44  naoliv
+
+	* debian/watch:
+
+	Updated watch file, to get latest version
+
+2005-08-22 04:00  naoliv
+
+	* debian/changelog:
+
+	New upstream version.
+
+2005-08-21 00:32  ivarch
+
+	* doc/: NEWS, lsm.in, spec.in:
+
+	Docs update prior to release
+
+2005-08-20 23:12  ivarch
+
+	* autoconf/configure.in:
+
+	Second attempt at --include fallback.
+
+2005-08-20 23:07  ivarch
+
+	* autoconf/configure.in:
+
+	Work around mysql_config --include not being available in MySQL
+	3.23.58 by falling back to --cflags.
+
+2005-08-20 23:03  ivarch
+
+	* autoconf/configure.in, doc/NEWS, doc/TODO, doc/VERSION,
+	src/db/mysql.c:
+
+	Improve MySQL detection by using <mysql.h> as the include file
+	instead of <mysql/mysql.h>, since we are using the output of
+	mysql_config --cflags.
+
+2005-08-20 21:31  ivarch
+
+	* test/t08-dbprune2:
+
+	Rephrased test comparison for better portability - Solaris did not
+	like "! test = " so used "test !=".
+
+2005-08-20 21:09  ivarch
+
+	* doc/NEWS, doc/TODO, doc/VERSION, src/message/parse.c,
+	test/t13-attach, test/t14-rfc822:
+
+	Fixed handling of nested attachments in message/rfc822
+	content-types, which had been preventing any tokens from being seen
+	at all.
+
+2005-08-14 10:44  ivarch
+
+	* src/db/main.c:
+
+	Workaround for weird error on OpenBSD: take copies of key and val
+	data before passing them on to the backend.
+
+2005-08-14 01:10  ivarch
+
+	* src/main/main.c:
+
+	Cast field width to int to silence compiler warning and for
+	clarity.
+
+2005-08-05 23:20  ivarch
+
+	* doc/NEWS, doc/VERSION, src/tests/urls.c:
+
+	Fix for bug where if a URL (http://foo) was the first thing in the
+	message body, it would not be picked up as a token in its own right
+	by the URL tokeniser.
+
+2005-07-15 08:18  naoliv
+
+	* debian/control:
+
+	We don't need to suggest mysql-server and sqlite. The user will
+	need just one database. So, changing to mysql-server OR sqlite.
+
+2005-07-10 22:07  ivarch
+
+	* src/: db/btree.c, db/obtree.c, spam/allowlist.c, spam/check.c:
+
+	Further warnings fixes
+
+2005-07-10 11:16  ivarch
+
+	* doc/NEWS, doc/VERSION, src/db/btree.c, src/db/gdbm.c,
+	src/db/mysql.c, src/db/obtree.c, src/db/sqlite.c,
+	src/spam/allowlist.c, src/spam/cksum.c, src/spam/db.c,
+	src/spam/merge.c, src/spam/prune.c:
+
+	Put casts into various places to avoid triggering spurious pointer
+	signedness warnings with GCC 4.x
+
+2005-07-08 05:41  naoliv
+
+	* debian/: changelog, control:
+
+	Fixing the section of QSF - mail instead of net
+
+2005-07-08 05:40  naoliv
+
+	* debian/docs:
+
+	Including upstream changelog on the Debian package
+
+2005-07-06 17:50  naoliv
+
+	* debian/changelog:
+
+	New upstream release
+
+2005-07-06 06:26  naoliv
+
+	* debian/changelog:
+
+	Syncing with Debian's changelog
+
+2005-07-06 06:18  naoliv
+
+	* debian/control:
+
+	Updated Standards-version and added Uploaders field
+
+2005-07-06 06:16  naoliv
+
+	* debian/control:
+
+	Corrected span -> spam
+
+2005-06-15 21:03  ivarch
+
+	* autoconf/configure.in, autoconf/header.in, src/db/btree.c:
+
+	We now run utime() on the database, if available, if it has been
+	modified because mmap()ed files do not always get their mtime
+	updated.
+
+2005-06-15 20:30  ivarch
+
+	* src/main/main.c:
+
+	Comments fixed to match what is actually happening.
+
+2005-06-05 10:51  naoliv
+
+	* debian/dirs:
+
+	Not needed. CDBS takes care of it automatically.
+
+2005-06-05 10:45  naoliv
+
+	* debian/changelog:
+
+	Preparing to next upstream release.
+
+2005-06-05 10:43  naoliv
+
+	* debian/rules:
+
+	Don't update debian/control automatically anymore.
+
+2005-06-05 10:42  naoliv
+
+	* debian/control:
+
+	Including some more recommends and suggests. Also, version of
+	patchutils.
+
+2005-06-05 10:35  naoliv
+
+	* debian/control.in:
+
+	This file should not exist anymore.  That is because Debian policy
+	(control files should not be regenarated on package building)
+
+2005-05-16 21:48  ivarch
+
+	* doc/NEWS, src/spam/allowlist.c, test/t10-allowlistadd,
+	test/t11-allowlistdel:
+
+	Allow-list matching is now case insensitive; this addition
+	sponsored by SpamDefy, http://www.spamdefy.com/
+
+2005-05-14 06:58  naoliv
+
+	* debian/: control, control.in:
+
+	Small update on suggests
+
+2005-05-12 23:54  ivarch
+
+	* test/: t04-training, t12-benchmark:
+
+	Cut training/benchmark tests short to 10 rounds, to speed up "make
+	test" and "make memtest".
+
+2005-05-12 22:41  ivarch
+
+	* doc/: NEWS, lsm.in, spec.in:
+
+	Commit ready for release of 1.1.0, just waiting for final Debian
+	packaging updates.
+
+2005-05-12 22:12  ivarch
+
+	* autoconf/make/unreal.mk:
+
+	Make changelog copy in "make dist" optional, i.e. softfail
+
+2005-05-12 22:09  naoliv
+
+	* debian/patches/index.html.diff:
+
+	Patch necessary for index.html
+
+2005-05-12 22:06  naoliv
+
+	* debian/doc-base:
+
+	Documentation base for Debian
+
+2005-05-12 22:05  naoliv
+
+	* debian/: compat, control.in, install, watch:
+
+	New files needed by the Debian Package
+
+2005-05-12 21:59  naoliv
+
+	* debian/: changelog, control, copyright, docs, rules:
+
+	Updated Debian package
+
+2005-05-12 09:32  ivarch
+
+	* autoconf/make/unreal.mk:
+
+	Only run "make changelog" during "make dist" if the source
+	directory contains CVS entries.
+
+2005-05-12 09:21  ivarch
+
+	* generate.sh, autoconf/Makefile.in, autoconf/configure.in,
+	autoconf/make/.cvsignore, autoconf/make/unreal.mk,
+	autoconf/scripts/makemake.sh:
+
+	Changed build process to use .mk instead of .mk~ extension for
+	autogenerated Makefile components, and added .cvsignore to keep the
+	autogenerated files out of CVS. This allows the Debian build
+	process to work, as it was removing those files.
+
+2005-05-10 23:52  ivarch
+
+	* src/db/btree.c:
+
+	Updated mmap code to call lseek() as little as possible.
+
+2005-05-10 23:40  ivarch
+
+	* src/spam/: check.c, dump.c, spami.h, token.c, update.c:
+
+	Fixed bug in --mark-{non,}spam caused by the new database weighting
+	code.
+
+2005-05-10 23:39  ivarch
+
+	* src/db/btree.c:
+
+	RATS check
+
+2005-05-10 23:36  ivarch
+
+	* autoconf/configure.in, autoconf/header.in, doc/NEWS,
+	src/db/btree.c:
+
+	Added mmap() support to btree backend, resulting in much faster
+	operation. Needs testing on other systems, though. Falls back to
+	normal read()/write() when mmap cannot be used.
+
+2005-05-10 22:28  ivarch
+
+	* src/db/btree.c:
+
+	Added optimisation function for the btree backend.
+
+2005-05-10 21:01  ivarch
+
+	* doc/quickref.1.in, src/main/options.c, src/spam/prune.c,
+	src/spam/train.c:
+
+	Tweaked the pruning algorithm so it chooses the tokens to be
+	discarded more sensibly (and fixed the new pruning algorithm to
+	obey the "max tokens to prune" setting), and added a MAXROUNDS
+	parameter to -B and -T.
+
+2005-05-09 09:39  ivarch
+
+	* doc/quickref.1.in, src/main/main.c:
+
+	Changed per-user database weighting to 10x instead of 100x, as 100x
+	seems to be causing problems.
+
+2005-05-08 22:42  ivarch
+
+	* src/message/parse.c:
+
+	RATS lint
+
+2005-05-08 19:30  ivarch
+
+	* doc/: NEWS, VERSION, lsm.in, spec.in:
+
+	Version bump ready for 1.1.0
+
+2005-05-08 19:13  ivarch
+
+	* doc/NEWS, doc/TODO, doc/quickref.1.in, src/include/options.h,
+	src/main/main.c, src/main/options.c, src/spam/allowlist.c,
+	src/spam/db.c, src/spam/merge.c, src/spam/spami.h,
+	src/spam/token.c:
+
+	Added weighting to databases, set to 100 for per-user / -d
+	databases, 1 for global, 2 for first global if two globals are
+	defined.
+
+2005-05-08 14:48  ivarch
+
+	* doc/NEWS, doc/TODO, doc/quickref.1.in, src/tests/html.c,
+	src/tests/main.c:
+
+	Added new test for FONT tags in HTML; originally was going to look
+	for tiny text (FONT SIZE=1) but that gives worse performance in the
+	benchmarking than just looking for FONT.
+
+2005-05-06 15:00  ivarch
+
+	* doc/NEWS, doc/TODO, doc/quickref.1.in, src/tests/html.c,
+	src/tests/main.c:
+
+	Replaced the IMG test with the EXTERNAL-IMG test, since this gives
+	better benchmark results - presumably <img> tags in normal HTML
+	mail are quite common, but <img> tags referring to external
+	(non-embedded) images are more likely to appear in spam. For some
+	reason leaving both IMG and EXTERNAL-IMG in drops the benchmark
+	performance.
+
+2005-05-06 14:07  ivarch
+
+	* doc/NEWS, src/tests/html.c:
+
+	Made test for IMG tags case-insensitive.
+
+2005-05-06 13:31  ivarch
+
+	* doc/NEWS, doc/TODO, doc/quickref.1.in, src/tests/gibberish.c,
+	src/tests/main.c:
+
+	Added GIBBERISH-LONGWORDS filter - add tokens for any words 30-60
+	characters in length that start with a letter.
+
+2005-05-06 12:45  ivarch
+
+	* doc/TODO:
+
+	Removed "optimise attachment scanning" TODO since profiler says it
+	takes up 0.06% of run-time; not a priority.
+
+2005-05-06 11:29  ivarch
+
+	* src/: include/message.h, message/alloc.c, message/parse.c,
+	tests/gibberish.c:
+
+	Optimised the gibberish checks by building up a list of word
+	positions when the message is parsed, instead of repeatedly
+	scanning through for each gibberish check.
+
+2005-05-04 14:43  ivarch
+
+	* README:
+
+	Added note about MySQL 4.1.x performance improvement
+
+2005-05-04 14:42  ivarch
+
+	* doc/quickref.1.in:
+
+	Reworded pruning note to take account of new pruning rules
+
+2005-05-03 00:05  ivarch
+
+	* doc/TODO, src/db/btree.c, src/spam/prune.c:
+
+	Fixed bug in btree backend causing -B to give a different training
+	pattern to GDBM etc: pruning was causing corruption due to a
+	mistake in the "mark block as free" code.
+
+2005-05-01 15:35  ivarch
+
+	* doc/TODO:
+
+	There is a bug in the btree backend, it seems, since running -B
+	with GDBM/SQLite/MySQL gives a slightly different training pattern
+	to running with the btree backend; the end result is that the btree
+	backend gives a less accurate filter. This needs fixing; adding to
+	TODO.
+
+2005-05-01 13:08  ivarch
+
+	* src/db/sqlite.c:
+
+	Fixed bug triggered in sqlite due to not finalising a query run
+	(during pruning).
+
+2005-04-30 21:17  ivarch
+
+	* doc/TODO:
+
+	Removed "independent databases" TODO, since this is not required -
+	the code seems to suggest that pruning will be fine with token
+	aging and multiple databases, as the update count is read from the
+	writable database (the one being pruned), and that is the only time
+	it is used.
+
+2005-04-30 19:14  ivarch
+
+	* test/t08-dbprune2:
+
+	Further fix to obsolete test, so it works in "make memtest".
+
+2005-04-30 18:55  ivarch
+
+	* test/t08-dbprune2:
+
+	Fixed obsolete pruning test so it skips on anything but the old
+	binary tree backend.
+
+2005-04-30 18:46  ivarch
+
+	* src/spam/: prune.c, update.c:
+
+	Fix so we just display pruning information when we are supposed to,
+	not every update.
+
+2005-04-30 18:12  ivarch
+
+	* doc/NEWS, doc/TODO, doc/VERSION, doc/lsm.in, doc/spec.in,
+	src/spam/prune.c, src/spam/token.c, src/spam/update.c:
+
+	Added new pruning algorithm which takes token age into account;
+	should fall back to the old pruning method if the last update
+	counter is not available. Also changed the token probability
+	calculation to just use the raw spam/nonspam counts for each token
+	instead of scaling with the global message counts; this means that
+	database pruning will not need to modify the message counts, and in
+	fact for new style databases the global message counts are no
+	longer necessary.
+
+2005-04-29 14:40  ivarch
+
+	* autoconf/make/unreal.mk:
+
+	Added new Makefile target for doc/changelog, for release manager
+	use
+
+2005-04-29 14:38  ivarch
+
+	* doc/release-checklist:
+
+	Release checklist updated to reflect existence of Debian package
+	maintainer
+
+2005-04-21 12:57  ivarch
+
+	* debian/changelog, doc/NEWS, doc/TODO, doc/VERSION, doc/lsm.in,
+	doc/quickref.1.in, doc/spec.in, src/tests/gibberish.c,
+	src/tests/main.c:
+
+	Added gibberish "badstart" and "hyphens" tests (sponsored by
+	SpamDefy, http://www.spamdefy.com/).
+
+2005-03-08 15:13  ivarch
+
+	* debian/rules:
+
+	Removed problematic "make distclean" from debian/rules
+
+2005-03-06 12:21  ivarch
+
+	* autoconf/configure.in:
+
+	Fix for MySQL detection on systems that wrongly cache lib lookups
+
+2005-03-05 17:27  ivarch
+
+	* autoconf/make/unreal.mk, debian/changelog, doc/NEWS, doc/TODO,
+	doc/VERSION, src/db/mysql.c, src/main/main.c, test/t01-dbcreate,
+	test/t12-benchmark:
+
+	Allow MySQL testing if MYSQLDB env var passed to "make test" et al;
+	also, attempt to autocreate MySQL database if it does not exist,
+	warn otherwise.
+
+2005-03-05 15:25  ivarch
+
+	* src/db/obtree.c:
+
+	Only complain to user about obtree if they did not specify it
+	explicitly
+
+2005-03-05 14:51  ivarch
+
+	* autoconf/configure.in, autoconf/header.in, debian/changelog,
+	doc/NEWS, doc/TODO, doc/VERSION, doc/lsm.in, doc/quickref.1.in,
+	doc/spec.in, src/db/btree.c, src/db/main.c, src/db/mysql.c,
+	src/db/obtree.c, src/db/sqlite.c, src/spam/allowlist.c,
+	src/spam/check.c, src/spam/db.c, src/spam/dump.c, src/spam/merge.c,
+	src/spam/prune.c, src/spam/spami.h, src/spam/token.c,
+	src/spam/update.c:
+
+	Added third parameter for each token, a "last updated" counter;
+	added "obtree" backend for old-format backend that does not have
+	this third parameter, and we now warn verbosely if that obtree
+	backend is used.
+
+2005-03-04 19:08  ivarch
+
+	* src/: db/sqlite.c, main/main.c:
+
+	Fixed SQLite write access bug that claimed open succeeded when
+	write access was not actually possible
+
+2005-03-04 18:53  ivarch
+
+	* src/: include/log.h, main/log.c, main/main.c:
+
+	More logging information; output logs even if not adding message
+	headers, but output them to stderr in that case
+
+2005-03-04 18:36  ivarch
+
+	* autoconf/make/unreal.mk, doc/NEWS, doc/VERSION, doc/spec.in:
+
+	RPM build update to allow "--with static" for a new "qsf-static"
+	RPM
+
+2005-03-04 12:09  ivarch
+
+	* src/spam/benchmark.c:
+
+	Further benchmark output improvements
+
+2005-03-04 11:57  ivarch
+
+	* autoconf/make/unreal.mk, debian/changelog, doc/NEWS, doc/TODO,
+	doc/VERSION, doc/quickref.1.in, doc/spec.in, src/main/main.c,
+	src/spam/benchmark.c:
+
+	Benchmarking improvements
+
+2005-03-03 22:47  ivarch
+
+	* autoconf/configure.in, debian/changelog, doc/NEWS, doc/TODO,
+	doc/VERSION:
+
+	Added --enable-static to configure script
+
+2005-03-03 21:59  ivarch
+
+	* autoconf/make/unreal.mk, src/db/gdbm.c, src/include/options.h,
+	src/main/main.c, src/main/options.c, src/spam/allowlist.c,
+	src/spam/check.c, src/spam/prune.c, src/spam/train.c,
+	src/spam/update.c:
+
+	Code cleanup
+
+2005-03-03 00:05  ivarch
+
+	* autoconf/configure.in:
+
+	Look for MySQL libraries both without and with mysql_config --libs,
+	to try and get dynamic libraries first
+
+2004-06-22 22:54  ivarch
+
+	* doc/NEWS, doc/VERSION, doc/quickref.1.in, doc/spec.in,
+	src/include/message.h, src/include/options.h, src/main/help.c,
+	src/main/main.c, src/main/options.c, src/message/header.c:
+
+	Added "-A" (asterisks) option.
+
+2004-06-22 22:41  ivarch
+
+	* README, doc/quickref.1.in:
+
+	Acknowledgements update
+
+2004-06-22 22:41  ivarch
+
+	* doc/: NEWS, lsm.in, spec.in:
+
+	Spec file and changelog update
+
+2004-06-22 22:38  ivarch
+
+	* doc/: NEWS, TODO, VERSION, postfix-howto, quickref.1.in, spec.in:
+
+	Added Postfix server-wide filtering HOWTO from M Kolbl
+
+2004-06-22 22:11  ivarch
+
+	* doc/quickref.1.in:
+
+	Typo fix in manual
+
+2004-06-22 22:10  ivarch
+
+	* doc/quickref.1.in:
+
+	Added "-v" documentation to the manual.
+
+2004-06-22 22:03  ivarch
+
+	* doc/NEWS, doc/TODO, doc/VERSION, doc/quickref.1.in,
+	src/main/help.c, src/main/main.c:
+
+	Added "-e MSG" syntax, to read the email address to update/query
+	from a message on standard input
+
+2003-01-17 11:18  ivarch
+
+	* README, configure, generate.sh, autoconf/Makefile.in,
+	autoconf/configure.in, autoconf/header.in, autoconf/make/link.mk,
+	autoconf/make/package.mk, autoconf/make/rules.mk,
+	autoconf/make/unreal.mk, autoconf/make/vars.mk,
+	autoconf/scripts/depend.sh, autoconf/scripts/htmlmunge.pl,
+	autoconf/scripts/index.sh, autoconf/scripts/install.sh,
+	autoconf/scripts/linux-msg.sed, autoconf/scripts/makemake.sh,
+	autoconf/scripts/mkinstalldirs, autoconf/scripts/po2tbl.sed,
+	autoconf/scripts/xopen-msg.sed, doc/COPYING, doc/index.html,
+	doc/INSTALL, doc/NEWS, doc/PACKAGE, doc/TODO, doc/VERSION,
+	doc/lsm.in, doc/quickref.1.in, doc/spec.in, src/include/getopt.h,
+	src/include/message.h, src/include/options.h, src/include/spam.h,
+	src/main/dump.c, src/main/help.c, src/main/license.c,
+	src/main/main.c, src/main/message.c, src/main/options.c,
+	src/main/spam.c, src/main/train.c, src/main/version.c:
+
+	Initial revision
+

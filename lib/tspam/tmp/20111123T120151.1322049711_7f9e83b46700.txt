@@ -1,0 +1,14 @@
+Received: from ocqxcfqnrdbcbibaio (192.168.1.169) by ocqxcfqnrdbcbibaio.forum.dklab.ru (188.82.223.150) with Microsoft SMTP Server id 8.0.685.24; Wed, 23 Nov 2011 12:01:42 +0000 
+Message-ID: <4ECCDF7A.707030@admail.com.ar> 
+Date: Wed, 23 Nov 2011 12:01:42 +0000 
+From: "The Electronic Payments Association" <payments@nacha.org> 
+User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.24) Gecko/20100328 Thunderbird/2.0.0.24 
+To: <k2pts@phigita.net> 
+Subject: ACH transfer rejected 
+--------------------------------------
+The ACH  transfer (ID: 86064825779631), recently  initiated from your bank account (by you or any other person), was  canceled by the  other financial institution.       Canceled transfer  
+      Transaction ID:     86064825779631  
+       Rejection Reason    See details in the report below   
+      Transaction Report     report_86064825779631.doc (Microsoft Word Document)   
+  13450 Sunrise Valley Drive, Suite 100Herndon, VA 201712011 NACHA - The Electronic Payments Association
+Whoops!  What is a 'image/gif'?

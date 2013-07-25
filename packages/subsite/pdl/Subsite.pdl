@@ -1,0 +1,3 @@
+DB_Class Subsite -shorthand "SS" -attribute {                              
+    {OID id}
+}

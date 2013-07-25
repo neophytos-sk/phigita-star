@@ -1,0 +1,13 @@
+Received: from [110.52.6.240] (helo=pcsgoc)
+	by cl-r015-021cl.privatedns.com with esmtpa (Exim 4.69)
+	(envelope-from <test@yourbizwebsites.com>)
+	id 1RKSr4-0001Rm-9x; Sun, 30 Oct 2011 06:43:08 -0400 
+Message-ID: <20111030184413122325@yourbizwebsites.com> 
+From: =?gb2312?B?vs/Dt8en?= <test@yourbizwebsites.com> 
+To:  
+Subject: =?gb2312?B?0NAu1f4uuaQu1/cuzbMus+8uudwuwO0uuN8uvLYu?=
+	=?gb2312?B?0dAu0N4usOAtLS0tvs/Dt8en?= 
+Date: Sun, 30 Oct 2011 18:44:05 +0800 
+X-mailer: Pqbmglhy 9 
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report Primary Hostname - cl-r015-021cl.privatedns.com Original Domain - phigita.net Originator/Caller UID/GID - [47 12] / [47 12] Sender Address Domain - yourbizwebsites.com 
+Whoops!  What is a 'application/vnd.ms-excel'?

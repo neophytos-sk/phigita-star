@@ -1,0 +1,197 @@
+<html><head><title>PagedGridView.js</title><link rel="stylesheet" type="text/css" href="../resources/style.css" media="screen"/></head><body><h1>PagedGridView.js</h1><pre class="highlighted"><code><i>/**
+ * @class YAHOO.ext.grid.PagedGridView
+ * @extends YAHOO.ext.grid.GridView
+ * Extends the <b>default</b> GridView to add a paging interface.
+ * @constructor
+ * This class is created <b>for</b> you automatically <b>if</b> your data model is set to use paging.
+ */</i>
+YAHOO.ext.grid.PagedGridView = <b>function</b>(){
+    YAHOO.ext.grid.PagedGridView.superclass.constructor.call(<b>this</b>);
+    <b>this</b>.cursor = 1;
+};
+
+YAHOO.extendX(YAHOO.ext.grid.PagedGridView, YAHOO.ext.grid.GridView, {
+    appendFooter : <b>function</b>(parentEl){
+        <b>var</b> fwrap = document.createElement('div');
+        fwrap.className = 'ygrid-wrap-footer';
+        <b>var</b> fbody = document.createElement('span');
+        fbody.className = 'ygrid-footer';
+        fwrap.appendChild(fbody);
+        parentEl.appendChild(fwrap);
+        <b>this</b>.createPagingToolbar(fbody);
+        <b>return</b> fwrap;
+    },
+
+    createPagingToolbar : <b>function</b>(container){
+        <b>var</b> tb = <b>new</b> YAHOO.ext.Toolbar(container);
+        <b>this</b>.pageToolbar = tb;
+        <b>this</b>.first = tb.addButton({
+            tooltip: <b>this</b>.firstText, 
+            className: 'ygrid-page-first',
+            disabled: true,
+            click: <b>this</b>.onClick.createDelegate(<b>this</b>, ['first'])
+        });
+        <b>this</b>.prev = tb.addButton({
+            tooltip: <b>this</b>.prevText, 
+            className: 'ygrid-page-prev', 
+            disabled: true,
+            click: <b>this</b>.onClick.createDelegate(<b>this</b>, ['prev'])
+        });
+        tb.addSeparator();
+        tb.add(<b>this</b>.beforePageText);
+        <b>var</b> pageBox = document.createElement('input');
+        pageBox.type = 'text';
+        pageBox.size = 3;
+        pageBox.value = '1';
+        pageBox.className = 'ygrid-page-number';
+        tb.add(pageBox);
+        <b>this</b>.field = getEl(pageBox, true);
+        <b>this</b>.field.mon('keydown', <b>this</b>.onEnter, <b>this</b>, true);
+        <b>this</b>.field.on('focus', <b>function</b>(){pageBox.select();});
+        <b>this</b>.afterTextEl = tb.addText(<b>this</b>.afterPageText.replace('%0', '1'));
+        <b>this</b>.field.setHeight(18);
+        tb.addSeparator();
+        <b>this</b>.next = tb.addButton({
+            tooltip: <b>this</b>.nextText, 
+            className: 'ygrid-page-next', 
+            disabled: true,
+            click: <b>this</b>.onClick.createDelegate(<b>this</b>, ['next'])
+        });
+        <b>this</b>.last = tb.addButton({
+            tooltip: <b>this</b>.lastText, 
+            className: 'ygrid-page-last', 
+            disabled: true,
+            click: <b>this</b>.onClick.createDelegate(<b>this</b>, ['last'])
+        });
+        tb.addSeparator();
+        <b>this</b>.loading = tb.addButton({
+            tooltip: <b>this</b>.refreshText, 
+            className: 'ygrid-loading',
+            disabled: true,
+            click: <b>this</b>.onClick.createDelegate(<b>this</b>, ['refresh'])
+        });
+        <b>this</b>.onPageLoaded(1, <b>this</b>.grid.dataModel.getTotalPages());
+    },
+    
+    <i>/**
+     * Returns the toolbar used <b>for</b> paging so you can add <b>new</b> buttons.
+     * @<b>return</b> {YAHOO.ext.Toolbar}
+     */</i>
+    getPageToolbar : <b>function</b>(){
+        <b>return</b> this.pageToolbar;  
+    },
+    
+    onPageLoaded : <b>function</b>(pageNum, totalPages){
+        <b>this</b>.cursor = pageNum;
+        <b>this</b>.lastPage = totalPages;
+        <b>this</b>.afterTextEl.innerHTML = <b>this</b>.afterPageText.replace('%0', totalPages);
+        <b>this</b>.field.dom.value = pageNum;
+        <b>this</b>.first.setDisabled(pageNum == 1);
+        <b>this</b>.prev.setDisabled(pageNum == 1);
+        <b>this</b>.next.setDisabled(pageNum == totalPages);
+        <b>this</b>.last.setDisabled(pageNum == totalPages);
+        <b>this</b>.loading.enable();
+    },
+    
+    onLoadError : <b>function</b>(){
+        <b>this</b>.loading.enable();
+    },
+    
+    onEnter : <b>function</b>(e){
+        <b>if</b>(e.browserEvent.keyCode == e.RETURN){
+            <b>var</b> v = <b>this</b>.field.dom.value;
+            <b>if</b>(!v){
+                <b>this</b>.field.dom.value = <b>this</b>.cursor;
+                <b>return</b>;
+            }
+            <b>var</b> pageNum = parseInt(v, 10);
+            <b>if</b>(isNaN(pageNum)){
+                <b>this</b>.field.dom.value = <b>this</b>.cursor;
+                <b>return</b>;
+            }
+            pageNum = Math.min(Math.max(1, pageNum), <b>this</b>.lastPage);
+            <b>this</b>.grid.dataModel.loadPage(pageNum);
+            e.stopEvent();
+        }
+    },
+    
+    beforeLoad : <b>function</b>(){
+        <b>this</b>.grid.stopEditing();
+        <b>if</b>(this.loading){
+            <b>this</b>.loading.disable();
+        }  
+    },
+    
+    onClick : <b>function</b>(which){
+        <b>switch</b>(which){
+            <b>case</b> 'first':
+                <b>this</b>.grid.dataModel.loadPage(1);
+            <b>break</b>;
+            <b>case</b> 'prev':
+                <b>this</b>.grid.dataModel.loadPage(<b>this</b>.cursor -1);
+            <b>break</b>;
+            <b>case</b> 'next':
+                <b>this</b>.grid.dataModel.loadPage(<b>this</b>.cursor + 1);
+            <b>break</b>;
+            <b>case</b> 'last':
+                <b>this</b>.grid.dataModel.loadPage(<b>this</b>.lastPage);
+            <b>break</b>;
+            <b>case</b> 'refresh':
+                <b>this</b>.grid.dataModel.loadPage(<b>this</b>.cursor);
+            <b>break</b>;
+        }
+    },
+    
+    unplugDataModel : <b>function</b>(dm){
+        dm.removeListener('beforeload', <b>this</b>.beforeLoad, <b>this</b>);
+        dm.removeListener('load', <b>this</b>.onPageLoaded, <b>this</b>);
+        dm.removeListener('loadexception', <b>this</b>.onLoadError, <b>this</b>);
+        YAHOO.ext.grid.PagedGridView.superclass.unplugDataModel.call(<b>this</b>, dm);
+    },
+    
+    plugDataModel : <b>function</b>(dm){
+        dm.on('beforeload', <b>this</b>.beforeLoad, <b>this</b>, true);
+        dm.on('load', <b>this</b>.onPageLoaded, <b>this</b>, true);
+        dm.on('loadexception', <b>this</b>.onLoadError, <b>this</b>);
+        YAHOO.ext.grid.PagedGridView.superclass.plugDataModel.call(<b>this</b>, dm);
+    },
+    
+    <i>/**
+     * Customizable piece of the <b>default</b> paging text (defaults to &quot;Page&quot;)
+     * @type String
+     */</i>
+    beforePageText : &quot;Page&quot;,
+    <i>/**
+     * Customizable piece of the <b>default</b> paging text (defaults to &quot;of %0&quot;)
+     * @type String
+     */</i>
+    afterPageText : &quot;of %0&quot;,
+    <i>/**
+     * Customizable piece of the <b>default</b> paging text (defaults to &quot;First Page&quot;)
+     * @type String
+     */</i>
+    firstText : &quot;First Page&quot;,
+    <i>/**
+     * Customizable piece of the <b>default</b> paging text (defaults to &quot;Previous Page&quot;)
+     * @type String
+     */</i>
+    prevText : &quot;Previous Page&quot;,
+    <i>/**
+     * Customizable piece of the <b>default</b> paging text (defaults to &quot;Next Page&quot;)
+     * @type String
+     */</i>
+    nextText : &quot;Next Page&quot;,
+    <i>/**
+     * Customizable piece of the <b>default</b> paging text (defaults to &quot;Last Page&quot;)
+     * @type String
+     */</i>
+    lastText : &quot;Last Page&quot;,
+    <i>/**
+     * Customizable piece of the <b>default</b> paging text (defaults to &quot;Refresh&quot;)
+     * @type String
+     */</i>
+    refreshText : &quot;Refresh&quot;
+});
+</code></pre><hr><div style="font-size:10px;text-align:center;color:gray;">yui-ext - Copyright &copy; 2006 Jack Slocum.  |
+    Yahoo! UI - Copyright &copy; 2006 Yahoo! Inc.<br />All rights reserved.</div>
+    </body></html>

@@ -1,0 +1,16 @@
+Received: from wrgne([125.42.203.109]) by ah163.com(AIMC 3.1.0.0)
+	with SMTP id jm6b4ecf8f9c; Fri, 25 Nov 2011 19:44:16 +0800 from wrgne([125.42.203.109]) by aimc.com(AIMC 2.9.5.4)
+	with SMTP id AISP action; Fri, 25 Nov 2011 19:44:15 +0800 
+Sender: wsshi@mail.hf.ah.cn 
+Message-ID: <20111125192052818088@mail.hf.ah.cn> 
+From: "iolfh" <gcqwl@zzjytl.com> 
+To:  
+Subject: =?gb2312?B?NjQx1tC5+s/zxuXW0LXEudzA7dXc0adzc2I=?= 
+Date: Fri, 25 Nov 2011 19:20:41 +0800 
+X-mailer: Eofia 6 
+X-AIMC-AUTH: wsshi:hefei 
+X-AIMC-MAILFROM: wsshi@mail.hf.ah.cn 
+X-SPAM-AISP: marked by Jmail: Sender mismatches FROM field in mail context. 
+X-AIMC-Msg-ID: RJ6Mu31B 
+--------------------------------------
+ content-type=application/msword part-token=::mime::495-2

@@ -1,0 +1,58 @@
+Received: by web1.extjs.com (Postfix, from userid 33)
+	id DA4C56C1FA; Thu,  1 Dec 2011 00:02:03 +0000 (UTC) 
+To: k2pts@phigita.net 
+Subject: "Ext: Open Discussion" update 
+X-PHP-Originating-Script: 1000:class_mail.php 
+From: "Sencha Forum" <admin@sencha.com> 
+Auto-Submitted: auto-generated 
+Message-ID: <20111201000203.239671189466@www.sencha.com> 
+X-Priority: 3 
+X-Mailer: vBulletin Mail via PHP 
+Date: Thu,  1 Dec 2011 00:02:03 +0000 (UTC) 
+--------------------------------------
+Dear k2pts,
+
+You are subscribed to the forum Ext: Open Discussion, there have been 2 new thread(s) and 2 updated thread(s).
+http://www.sencha.com/forum/forumdisplay.php?6-Ext-Open-Discussion
+
+The following threads are new:
+************
+Using Sencha Ext JS in .NET Applications
+http://www.sencha.com/forum/showthread.php?158303-Using-Sencha-Ext-JS-in-.NET-Applications
+In forum: Ext: Open Discussion
+Started by: ndani1014
+Last post: 30 Nov 2011 2:37 PM
+************
+question regarding namespace is undefined
+http://www.sencha.com/forum/showthread.php?158389-question-regarding-namespace-is-undefined
+In forum: Ext: Open Discussion
+Started by: Praveen Adivi
+Last post: 30 Nov 2011 10:39 PM
+
+
+The following threads have been updated:
+************
+JSDuck - the tool for documenting your Ext JS apps
+http://www.sencha.com/forum/showthread.php?151739-JSDuck-the-tool-for-documenting-your-Ext-JS-apps
+In forum: Ext: Open Discussion
+Started by: renku
+Last post: 30 Nov 2011 3:10 PM
+************
+How to make the combobox act like simple dropdown
+http://www.sencha.com/forum/showthread.php?158374-How-to-make-the-combobox-act-like-simple-dropdown
+In forum: Ext: Open Discussion
+Started by: balaram_reddy
+Last post: 30 Nov 2011 6:12 PM
+
+
+All the best,
+Sencha Forum
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Unsubscription information:
+
+To unsubscribe from this forum, please visit this page:
+http://www.sencha.com/forum/subscription.php?do=removesubscription&type=forum&subscriptionid=63&auth=e23de5f6387a31c5573cf4993e28e47f
+
+
+

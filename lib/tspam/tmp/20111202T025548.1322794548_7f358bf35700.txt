@@ -1,0 +1,42 @@
+DomainKey-Signature: q=dns; a=rsa-sha1; c=nofws;
+	s=prod; d=linkedin.com;
+	h=DKIM-Signature:Sender:Date:From:To:Message-ID:Subject:MIME-Version:Content-Type:X-LinkedIn-Class:X-LinkedIn-Template:X-LinkedIn-fbl;
+	b=iiy7KFlK3EQsfgHufvqLvwgs7zfox7NxnZI8VRyNV/LE8As5qt/mhIQK37lvqgLA
+	tJNZK5Kplg6HtWInCaMLLccJsiJhHPdInqCY6wle7E7FqHjnyH2spWKDuYqZ5/1r 
+DKIM-Signature: v=1; a=rsa-sha1; d=linkedin.com; s=proddkim; c=relaxed/relaxed;
+	q=dns/txt; i=@linkedin.com; t=1322794536;
+	h=From:Subject:Date:To:MIME-Version:Content-Type:X-LinkedIn-Class:X-LinkedIn-fbl:
+	X-LinkedIn-Template;
+	bh=cmbpGgUVdCrO6fqPWMv7islDhEw=;
+	b=tUuzEFIbW64kdREr4nA1MyUUsjqIyD6MFfe0WjFPwGcgVoK6WeOLVzmhI5Ppje4j
+	gWbE2cYQ4RhL6Nvv/gpGcu/X+vQui4Ln3Nkh5AfH0ZxA6qaSyzFhwJ6rJ9yl0eCu; 
+Sender: messages-noreply@bounce.linkedin.com 
+Date: Fri, 2 Dec 2011 02:55:36 +0000 (UTC) 
+From: "Big Data, Low Latency" <groups-noreply@linkedin.com> 
+To: Neophytos Demetriou <k2pts@phigita.net> 
+Message-ID: <2029379007.78396820.1322794536957.JavaMail.app@ela4-bed84.prod> 
+Subject: Site Reliability at Scale - You're Invited! 
+X-LinkedIn-Class: GROUP-DISC-THREAD 
+X-LinkedIn-Template: group_announcement_message 
+X-LinkedIn-fbl: m-VHvBbj4NaaNjApoaL2oRs-jgTP_PeqaaEVXQ4iiQaaTYAkknENrE4zK 
+--------------------------------------
+LinkedIn
+------------Group: Big Data, Low Latency
+
+Subject: Site Reliability at Scale - You're Invited! 
+
+You're invited to join "Site Reliability at Scale", a new group for the people who keep the lights on within large, fast growing websites. If you can see this page, it's probably through the efforts of someone who will be joining our group.
+
+If you'd like to join, here's the link:
+
+http://www.linkedin.com/groups/Site-Reliability-Scale-4200099
+
+Alex
+
+Posted By Alexander Lawrence
+
+Go to the complete announcement http://www.linkedin.com/e/-1ht5d5-gvolpp17-6f/vaq/83112569/3638279/-1/eml-anet_ancmt-b-0/?hs=false&tok=3ENyBCGU1LpR01
+
+Don't want to hear from the manager: http://www.linkedin.com/e/-1ht5d5-gvolpp17-6f/vgs/3638279/?hs=false&tok=1a-Yl1TXZLpR01
+
+

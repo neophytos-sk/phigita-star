@@ -1,0 +1,17 @@
+Return-path: <webmaster@phigita.net> 
+Received: from [218.164.197.74] (port=7332 helo=PC1)
+	by mail.messaging.microsoft.com with asmtp 
+	id 923EB8-000409-31
+	for <webmaster@phigita.net>; Thu, 10 Nov 2011 19:17:10 +0800 
+Message-ID: <9FFBB1037C43482EA90AB3D95A61EC72@PC1> 
+From: =?koi8-r?B?Iu/v7yD3wc0t8MnT2M3PIC0gZS1tYWlsIM3B0svF1MnOxyI=?= <maltreatso3@wpgca.com> 
+To: <webmaster@phigita.net> 
+Subject: =?koi8-r?B?NSDSwdPT2czPyyDawSAxMCAwMDAg0tXCzMXKICsgyM/T1MnOxyDOwSDN?=
+	=?koi8-r?B?xdPRwyDXIPDv5OHy7+sgyczJIDbRINLB09nMy8E=?= 
+Date: Thu, 10 Nov 2011 19:17:10 +0800 
+X-Priority: 3 
+X-MSMail-Priority: Normal 
+X-Mailer: Microsoft Windows Mail 6.0.6001.18000 
+X-MimeOLE: Produced By Microsoft MimeOLE V6.0.6001.18049 
+X-Spam: Not detected 
+X-Mras: Ok 

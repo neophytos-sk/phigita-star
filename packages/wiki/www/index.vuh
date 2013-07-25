@@ -1,0 +1,9 @@
+set extra_url [string tolower [ad_conn extra_url]]
+
+if { [string length ${extra_url}] > 255 || ![regexp -- {^[a-z0-9]+(?:\-[a-z]*)?(?:\'[a-z])?(_[a-z0-9]+(?:\-[a-z]*)?(?:\'[a-z])?)*$} ${extra_url}] } {
+    rp_returnnotfound
+}
+
+
+rp_form_put name [ad_conn extra_url]
+rp_internal_redirect /packages/wiki/lib/one-view

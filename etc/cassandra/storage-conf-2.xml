@@ -1,0 +1,54 @@
+<Storage>
+   <ClusterName>Test</ClusterName>
+   <RackAware>false</RackAware>
+   <MulticastChannel>230.0.0.1</MulticastChannel>
+   <ReplicationFactor>3</ReplicationFactor>
+   <ZookeeperAddress></ZookeeperAddress>
+   <RpcTimeoutInMillis>5000</RpcTimeoutInMillis>
+   <StoragePort>7000</StoragePort>
+   <ControlPort>7001</ControlPort>
+   <HttpPort>7002</HttpPort>
+   <ThriftPort>9160</ThriftPort>
+   <RequestCountSampleThreshold>300000</RequestCountSampleThreshold>
+   <MaxCountingElements>2000000</MaxCountingElements>
+   <BitsPerElement>4</BitsPerElement>
+   <MinWorkerThreads>8</MinWorkerThreads>
+   <MaxWorkerThreads>16</MaxWorkerThreads>
+   <StopTimeoutVal>60</StopTimeoutVal>
+   <MemtableThreshold>32000000</MemtableThreshold>
+   <MemtableThresholdCount>128000</MemtableThresholdCount>
+   <BinaryMemtableThreshold>128000000</BinaryMemtableThreshold>
+   <TouchKeyCacheSize>1024</TouchKeyCacheSize>
+   <MemtableLifetimeInDays>6</MemtableLifetimeInDays>
+   <ThreadsPerPool>4</ThreadsPerPool>
+   <ZookeeperSessionTimeout>30000</ZookeeperSessionTimeout>
+   <ColumnIndexSizeInKB>256</ColumnIndexSizeInKB>
+   <MetadataDirectory>/var/cassandra/system</MetadataDirectory>
+   <CommitLogDirectory>/var/cassandra/d4/commitlog</CommitLogDirectory>
+   <CommitLogRotationThresholdInMB>128</CommitLogRotationThresholdInMB>
+   <GangliaServers>
+     <GangliaServer>127.0.0.1:12000</GangliaServer>
+   </GangliaServers>
+   <DataFileDirectories>
+     <DataFileDirectory>/var/cassandra/d1/data</DataFileDirectory>
+     <DataFileDirectory>/var/cassandra/d2/data</DataFileDirectory>
+     <DataFileDirectory>/var/cassandra/d3/data</DataFileDirectory>
+   </DataFileDirectories>
+   <BootstrapFileDirectory>/var/cassandra/bootstrap</BootstrapFileDirectory>
+   <StagingFileDirectory>/var/cassandra/staging</StagingFileDirectory>
+   <CommitLogFastSync>false</CommitLogFastSync>
+   <Tables>
+      <Table Name = "BT">
+            <ColumnFamily Index="Name">title</ColumnFamily>
+            <ColumnFamily Index="Name">content</ColumnFamily>
+            <ColumnFamily ColumnType="Super" Index="Name">anchor</ColumnFamily>
+            <ColumnFamily ColumnType="Super" Index="Name">folder</ColumnFamily>
+            <ColumnFamily ColumnType="Super" Index="Name">tag</ColumnFamily>
+            <ColumnFamily ColumnType="Super" Index="Name">FTS</ColumnFamily>
+      </Table>
+   </Tables>
+   <Seeds>
+     <!-- Add names of hosts that are deemed contact points -->
+     <Seed>prometheus</Seed>
+   </Seeds>
+</Storage>

@@ -1,0 +1,10 @@
+font_identifier "LINEW"; font_size design_size * pt#;
+font_coding_scheme:="LATEX LINE";
+mode_setup;
+
+nominal_width = 2;	% use double-width lines
+input c-line;
+
+%arrow dimensions:
+arrowlen#=.6*qqw#; arrowht#=.22*qqw#; arrowcurve#=.1*arrowht#;
+input line;

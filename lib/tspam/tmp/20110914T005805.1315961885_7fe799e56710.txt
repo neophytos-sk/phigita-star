@@ -1,0 +1,13 @@
+Received: from babbage.ucdb.br ([192.168.43.126])
+	by webmail.ucdb.br (8.14.1/8.14.1) with ESMTP id p8E0w30V003393
+	for <webmaster@phigita.net>; Tue, 13 Sep 2011 20:58:15 -0400 from 200.199.223.8 by mxav2.alterna-ac.com; Tue, 13 Sep 2011 21:57:38 -0400 
+Date: Tue, 13 Sep 2011 21:57:38 -0400 
+From: =?koi8-r?B?Iu3l9OHs7O/w8u/r4fQi?= <cheeky@alterna-ac.com> 
+X-Mailer: The Bat! (v3.0.1.33) Professional 
+Reply-To: cheeky@alterna-ac.com 
+X-Priority: 3 (Normal) 
+Message-ID: <298521259.54817699405447@alterna-ac.com> 
+To: webmaster@phigita.net 
+Subject: =?koi8-r?B?7Onz9Cwg9PL14vksIPPv8vTv9+/qIPDy7+vh9CDu5fL24ffl4P3p6iDp?=
+	=?koi8-r?B?IOP35fTu7+o=?= 
+

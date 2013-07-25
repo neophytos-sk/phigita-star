@@ -1,0 +1,16 @@
+Received: from localhost (localhost [127.0.0.1])
+	by vm.advantagetel.com (Postfix) with ESMTP id E6CF23483BC;
+	Wed, 23 Nov 2011 14:15:08 -0500 (EST) from vm.advantagetel.com ([127.0.0.1])
+	by localhost (vm.advantagetel.com [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id 8XUoMLjpYLQs; Wed, 23 Nov 2011 14:15:08 -0500 (EST) from rbj (unknown [115.63.14.211])
+	by vm.advantagetel.com (Postfix) with ESMTPA id 1196C348397;
+	Wed, 23 Nov 2011 14:15:01 -0500 (EST) 
+X-Virus-Scanned: amavisd-new at vm.advantagetel.com 
+Message-ID: <20111124031508212628@elijahspromise.net> 
+From: "fbkplkl" <lfinston@elijahspromise.net> 
+To:  
+Subject: =?gb2312?B?LTl2YcjDuPq1pcjL1LHVxs7VudzA7cbz0rW1xNSt1PKhoszY?=
+	=?gb2312?B?teO6zby8t6gtc2lj?= 
+Date: Thu, 24 Nov 2011 03:15:02 +0800 
+X-mailer: Tte 1 
+Whoops!  What is a 'application/vnd.ms-excel'?

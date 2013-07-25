@@ -1,0 +1,17 @@
+Return-path: <webmaster@phigita.net> 
+Received: from [80.191.41.234] (port=7618 helo=hac)
+	by mail.veriscape.com with asmtp 
+	id 259197-000506-05
+	for <webmaster@phigita.net>; Mon, 21 Nov 2011 11:03:30 +0330 
+Message-ID: <067078E340984366B2962818961CD7B8@hac> 
+From: =?koi8-r?B?IuLPztPByiDHwczF0sXRIg==?= <collectivized4106@veriscape.com> 
+To: <webmaster@phigita.net> 
+Subject: =?koi8-r?B?8sHT0NLPxMHWwSDR0M/O08vJyCDCz87TwcouIPDPxMHSz8sgzsEgxM/M?=
+	=?koi8-r?B?x8nFIMfPxNk=?= 
+Date: Mon, 21 Nov 2011 11:03:30 +0330 
+X-Priority: 3 
+X-MSMail-Priority: Normal 
+X-Mailer: Microsoft Windows Mail 6.0.6001.18000 
+X-MimeOLE: Produced By Microsoft MimeOLE V6.0.6001.18049 
+X-Spam: Not detected 
+X-Mras: Ok 

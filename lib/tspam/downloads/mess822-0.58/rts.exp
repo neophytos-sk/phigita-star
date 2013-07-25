@@ -1,0 +1,1207 @@
+--- quote handles simple address
+God@heaven.af.mil
+0
+--- quote handles simple address with name
+"The Boss" <God@heaven.af.mil>
+0
+--- quote handles domain ending with dot
+"The Boss" <God@"heaven.af.mil.">
+0
+--- quote handles domain containing double dot
+"The Boss" <God@"heaven..af.mil">
+0
+--- quote handles domain starting with dot
+"The Boss" <God@".heaven.af.mil">
+0
+--- quote handles address without domain
+"Local User" <local>
+0
+--- quote handles empty address
+<>
+0
+--- quote handles empty address with name
+"Mail Delivery Subsystem" <>
+0
+--- quote handles double-bounce address
+"Trash" <#@[]>
+0
+--- quote handles domain literal
+root@[127.0.0.1]
+0
+--- quote handles nasty domain literal
+root@[\[\]\[\]:;\"\\\\]
+0
+--- quote handles empty box at domain
+""@heaven.af.mil
+0
+--- quote handles \n->\0 in box
+"\^@"@heaven.af.mil
+0
+--- quote handles control-A in box
+"^A"@heaven.af.mil
+0
+--- quote handles space in box
+" "@heaven.af.mil
+0
+--- quote handles < in box
+"<"@heaven.af.mil
+0
+--- quote handles > in box
+">"@heaven.af.mil
+0
+--- quote handles ( in box
+"("@heaven.af.mil
+0
+--- quote handles ) in box
+")"@heaven.af.mil
+0
+--- quote handles [ in box
+"\["@heaven.af.mil
+0
+--- quote handles ] in box
+"\]"@heaven.af.mil
+0
+--- quote handles \ in box
+"\\"@heaven.af.mil
+0
+--- quote handles " in box
+"\""@heaven.af.mil
+0
+--- quote handles , in box
+","@heaven.af.mil
+0
+--- quote handles ; in box
+";"@heaven.af.mil
+0
+--- quote handles : in box
+":"@heaven.af.mil
+0
+--- quote handles @ in box
+"@"@heaven.af.mil
+0
+--- quote handles . in box
+"."@heaven.af.mil
+0
+--- quote handles box starting with dot
+"Starting dot" <".dot"@heaven.af.mil>
+0
+--- quote handles box ending with dot
+"Ending dot" <"dot."@heaven.af.mil>
+0
+--- quote handles box with double dot
+"Double dot" <"dot..dot"@heaven.af.mil>
+0
+--- quote handles box with single dot
+"Single dot" <dot.dot@heaven.af.mil>
+0
+--- quote handles nasty box with @
+"@at@"@heaven.af.mil
+0
+--- quote handles nasty box with "
+"a\"quote"@heaven.af.mil
+0
+--- quote handles nasty box with space
+"The Almighty.One"@heaven.af.mil
+0
+--- iftocc notices To recipient
+0
+--- iftocc notices Cc recipient
+0
+--- iftocc does not notice Apparently-To recipient
+100
+--- iftocc notices second recipient in To line
+0
+--- iftocc notices recipient in second To line
+0
+--- iftocc handles multiple recipients on command line
+0
+--- iftocc ignores $RECIPIENT if it has arguments
+100
+--- iftocc uses $RECIPIENT if it does not have arguments
+0
+--- iftocc does not notice recipient in body
+100
+--- inject converts year 0 to year 2000
+Envelope-Sender: anonymous@DH.DD
+Envelope-Recipients:
+Date: 1 Jan 2000 00:00:00 +0900
+message-id: skip
+From: anonymous@DH.DD
+Cc: recipient list not shown: ;
+0
+--- inject converts year 1 to year 2001
+Envelope-Sender: anonymous@DH.DD
+Envelope-Recipients:
+Date: 1 Jan 2001 00:00:00 +0200
+message-id: skip
+From: anonymous@DH.DD
+Cc: recipient list not shown: ;
+0
+--- inject converts year 10 to year 2010
+Envelope-Sender: anonymous@DH.DD
+Envelope-Recipients:
+Date: 1 Jan 2010 00:00:00 +0200
+message-id: skip
+From: anonymous@DH.DD
+Cc: recipient list not shown: ;
+0
+--- inject converts year 70 to year 1970
+Envelope-Sender: anonymous@DH.DD
+Envelope-Recipients:
+Date: 1 Jan 1970 00:00:00 -0800
+message-id: skip
+From: anonymous@DH.DD
+Cc: recipient list not shown: ;
+0
+--- inject converts year 100 to year 2000
+Envelope-Sender: anonymous@DH.DD
+Envelope-Recipients:
+Date: 1 Jan 2000 00:00:00 +0000
+message-id: skip
+From: anonymous@DH.DD
+Cc: recipient list not shown: ;
+0
+--- inject handles year 1000
+Envelope-Sender: anonymous@DH.DD
+Envelope-Recipients:
+Date: 1 Jan 1000 00:00:00 +0000
+message-id: skip
+From: anonymous@DH.DD
+Cc: recipient list not shown: ;
+0
+--- inject handles year 2000
+Envelope-Sender: anonymous@DH.DD
+Envelope-Recipients:
+Date: 29 Feb 2000 00:00:00 -0500
+message-id: skip
+From: anonymous@DH.DD
+Cc: recipient list not shown: ;
+0
+--- inject handles year 10000
+Envelope-Sender: anonymous@DH.DD
+Envelope-Recipients:
+Date: 1 Jan 10000 00:00:00 -0600
+message-id: skip
+From: anonymous@DH.DD
+Cc: recipient list not shown: ;
+0
+--- inject rewrites addresses
+Envelope-Sender: anonymous@DH.DD
+Envelope-Recipients:
+Date: 15 Aug 1998 13:32:12 -0500
+message-id: skip
+From: anonymous@DH.DD
+Sender: "<>" <>, "<>" <>
+Reply-To: "DH.DD" <a123456789012345678901234567890.b@DH.DD>,
+  "DH.DD" <a123456789012345678901234567890.b@DH.DD>,
+  "DH.DD" <a123456789012345678901234567890.b@DH.DD>,
+  "Here.DD" <a123456789012345678901234567890.b@Here.DD>,
+  "Here.DD" <a123456789012345678901234567890.b@Here.DD>,
+  "Here.PD" <a123456789012345678901234567890.b@Here.PD>,
+  "Here.PD" <a123456789012345678901234567890.b@Here.PD>,
+  "\[1.2.3.4\]" <a123456789012345678901234567890.b@[1.2.3.4]>,
+  "\[1.2.3.4\]" <a123456789012345678901234567890.b@[1.2.3.4]>,
+  "My.Dom" <a123456789012345678901234567890.b@My.Dom>,
+  "My.Dom" <a123456789012345678901234567890.b@My.Dom>,
+  "Local.PD" <a123456789012345678901234567890.b@Local.PD>,
+  "Local.PD" <a123456789012345678901234567890.b@Local.PD>,
+  "Here.My.Dom" <a123456789012345678901234567890.b@Here.My.Dom>,
+  "Here.My.Dom" <a123456789012345678901234567890.b@Here.My.Dom>,
+  "X.Y.My.Dom" <a123456789012345678901234567890.b@X.Y.My.Dom>
+Cc: recipient list not shown: ;
+0
+--- inject finds recipients in To
+Envelope-Sender: anonymous@DH.DD
+Envelope-Recipients:
+  Right@Here.My.Dom,
+Date: 15 Aug 1998 13:32:12 -0500
+message-id: skip
+From: anonymous@DH.DD
+To: Right@Here.My.Dom
+0
+--- inject finds recipients in Cc
+Envelope-Sender: anonymous@DH.DD
+Envelope-Recipients:
+  Right@Here.My.Dom,
+Date: 15 Aug 1998 13:32:12 -0500
+message-id: skip
+From: anonymous@DH.DD
+Cc: Right@Here.My.Dom
+0
+--- inject finds recipients in Bcc
+Envelope-Sender: anonymous@DH.DD
+Envelope-Recipients:
+  Right@Here.My.Dom,
+Date: 15 Aug 1998 13:32:12 -0500
+message-id: skip
+From: anonymous@DH.DD
+Cc: recipient list not shown: ;
+0
+--- inject finds recipients in Apparently-To
+Envelope-Sender: anonymous@DH.DD
+Envelope-Recipients:
+  Right@Here.My.Dom,
+Date: 15 Aug 1998 13:32:12 -0500
+message-id: skip
+From: anonymous@DH.DD
+Cc: recipient list not shown: ;
+0
+--- inject ignores header recipients when arguments are supplied
+Envelope-Sender: anonymous@DH.DD
+Envelope-Recipients:
+  Right@Here.My.Dom,
+Date: 15 Aug 1998 13:32:12 -0500
+message-id: skip
+From: anonymous@DH.DD
+To: Wrong@DH.DD
+0
+--- inject -h ignores argument recipients
+Envelope-Sender: anonymous@DH.DD
+Envelope-Recipients:
+  Right@Here.My.Dom,
+Date: 15 Aug 1998 13:32:12 -0500
+message-id: skip
+From: anonymous@DH.DD
+To: Right@Here.My.Dom
+0
+--- inject -a ignores header recipients
+Envelope-Sender: anonymous@DH.DD
+Envelope-Recipients:
+Date: 15 Aug 1998 13:32:12 -0500
+message-id: skip
+From: anonymous@DH.DD
+To: Wrong@DH.DD
+0
+--- inject -a uses argument recipients
+Envelope-Sender: anonymous@DH.DD
+Envelope-Recipients:
+  Right@Here.My.Dom,
+Date: 15 Aug 1998 13:32:12 -0500
+message-id: skip
+From: anonymous@DH.DD
+To: Wrong@DH.DD
+0
+--- inject -a uses multiple argument recipients
+Envelope-Sender: anonymous@DH.DD
+Envelope-Recipients:
+  Right@Here.My.Dom,
+  Right2@DH.DD,
+Date: 15 Aug 1998 13:32:12 -0500
+message-id: skip
+From: anonymous@DH.DD
+To: Wrong@DH.DD
+0
+--- inject -f sets sender
+Envelope-Sender: Sender@DH.DD
+Envelope-Recipients:
+  Right@Here.My.Dom,
+Date: 15 Aug 1998 13:32:12 -0500
+message-id: skip
+From: anonymous@DH.DD
+To: Right@Here.My.Dom
+0
+--- inject -f sets sender with host
+Envelope-Sender: Sender@Host.DD
+Envelope-Recipients:
+  Right@Here.My.Dom,
+Date: 15 Aug 1998 13:32:12 -0500
+message-id: skip
+From: anonymous@DH.DD
+To: Right@Here.My.Dom
+0
+--- inject -f sets bounce sender
+Envelope-Sender: <>
+Envelope-Recipients:
+  Right@Here.My.Dom,
+Date: 15 Aug 1998 13:32:12 -0500
+message-id: skip
+From: anonymous@DH.DD
+To: Right@Here.My.Dom
+0
+--- inject sets sender from Return-Path
+Envelope-Sender: Sender@DH.DD
+Envelope-Recipients:
+  Right@Here.My.Dom,
+Date: 15 Aug 1998 13:32:12 -0500
+message-id: skip
+From: anonymous@DH.DD
+To: Right@Here.My.Dom
+0
+--- inject -S discards Return-Path
+Envelope-Sender: anonymous@DH.DD
+Envelope-Recipients:
+  Right@Here.My.Dom,
+Date: 15 Aug 1998 13:32:12 -0500
+message-id: skip
+From: anonymous@DH.DD
+To: Right@Here.My.Dom
+0
+--- inject treats QMAILINJECT=S same way as -S
+Envelope-Sender: anonymous@DH.DD
+Envelope-Recipients:
+  Right@Here.My.Dom,
+Date: 15 Aug 1998 13:32:12 -0500
+message-id: skip
+From: anonymous@DH.DD
+To: Right@Here.My.Dom
+0
+--- inject handles QMAILINJECT=s for compatibility
+Envelope-Sender: anonymous@DH.DD
+Envelope-Recipients:
+  Right@Here.My.Dom,
+Date: 15 Aug 1998 13:32:12 -0500
+message-id: skip
+From: anonymous@DH.DD
+To: Right@Here.My.Dom
+0
+--- inject -f overrides Return-Path
+Envelope-Sender: Sender@Host.DD
+Envelope-Recipients:
+  Right@Here.My.Dom,
+Date: 15 Aug 1998 13:32:12 -0500
+message-id: skip
+From: anonymous@DH.DD
+To: Right@Here.My.Dom
+0
+--- inject completes partial line at end of header
+Envelope-Sender: anonymous@DH.DD
+Envelope-Recipients:
+Date: 15 Aug 1998 13:32:12 -0500
+message-id: skip
+From: anonymous@DH.DD
+Cc: recipient list not shown: ;
+0
+--- inject does not add blank line to header-only message
+Envelope-Sender: anonymous@DH.DD
+Envelope-Recipients:
+Date: 15 Aug 1998 13:32:12 -0500
+message-id: skip
+From: anonymous@DH.DD
+Cc: recipient list not shown: ;
+0
+--- inject inserts blank line in front of body
+Envelope-Sender: anonymous@DH.DD
+Envelope-Recipients:
+Date: 15 Aug 1998 13:32:12 -0500
+message-id: skip
+From: anonymous@DH.DD
+Cc: recipient list not shown: ;
+
+body
+0
+--- inject does not insert blank line if one is present
+Envelope-Sender: anonymous@DH.DD
+Envelope-Recipients:
+Date: 15 Aug 1998 13:32:12 -0500
+message-id: skip
+From: anonymous@DH.DD
+Cc: recipient list not shown: ;
+
+body
+0
+--- inject completes partial line at end of body
+Envelope-Sender: anonymous@DH.DD
+Envelope-Recipients:
+Date: 15 Aug 1998 13:32:12 -0500
+message-id: skip
+From: anonymous@DH.DD
+Cc: recipient list not shown: ;
+
+body
+0
+--- inject inserts blank line in front of partial-line body
+Envelope-Sender: anonymous@DH.DD
+Envelope-Recipients:
+Date: 15 Aug 1998 13:32:12 -0500
+message-id: skip
+From: anonymous@DH.DD
+Cc: recipient list not shown: ;
+
+body
+0
+--- inject wraps properly
+Envelope-Sender: anonymous@DH.DD
+Envelope-Recipients:
+  x@x.x,
+  x@x.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx77,
+  x@x.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx78,
+  x@x.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx79,
+  x@x.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx80,
+  x@x.xxxxxxxxxxxxxxxxxxxxxxxxxxxx,
+  x@x.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx78,
+  x@x.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx,
+  x@x.xxxxxxxxxxxxxxxxxxxxxxxxxxxx,
+  x@x.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx79,
+  x@x.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx,
+  x@x.xxxxxxxxx,
+  x@x.xxxxxxxxxxxxx,
+  x@x.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx78,
+  x@x.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx,
+  x@x.xxxxxxxxx,
+  x@x.xxxxxxxxxxxxx,
+  x@x.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx79,
+  x@x.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx,
+  x@x.xxxxxxxxxxxxx,
+  x@x.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx78,
+  x@x.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx,
+  x@x.xxxxxxxxxxxxx,
+  x@x.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx79,
+  x@x.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx,
+Date: 15 Aug 1998 13:32:12 -0500
+message-id: skip
+From: anonymous@DH.DD
+Cc: x@x.x,
+  x@x.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx77,
+  x@x.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx78,
+  x@x.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx79,
+  x@x.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx80,
+  x@x.xxxxxxxxxxxxxxxxxxxxxxxxxxxx, x@x.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx78,
+  x@x.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx,
+  x@x.xxxxxxxxxxxxxxxxxxxxxxxxxxxx,
+  x@x.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx79,
+  x@x.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx,
+  x@x.xxxxxxxxx, x@x.xxxxxxxxxxxxx, x@x.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx78,
+  x@x.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx,
+  x@x.xxxxxxxxx, x@x.xxxxxxxxxxxxx,
+  x@x.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx79,
+  x@x.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx,
+  x@x.xxxxxxxxxxxxx, x@x.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx78,
+  x@x.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx,
+  x@x.xxxxxxxxxxxxx,
+  x@x.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx79,
+  x@x.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+body
+0
+--- inject handles basic address list parsing
+Envelope-Sender: anonymous@DH.DD
+Envelope-Recipients:
+  <>,
+  me@home.com,
+  me@home.com,
+  me@home.com,
+  me@home.com,
+  me@home.com,
+  me@home.com,
+  me@home.com,
+  you@work.com,
+  them@play.com,
+  me@home.com,
+  you@work.com,
+  them@play.com,
+  me@home.com,
+  you@work.com,
+  them@play.com,
+  me@home.com,
+  you@work.com,
+  them@play.com,
+  me@home.com,
+  you@work.com,
+  them@play.com,
+  me@home.com,
+  you@work.com,
+  illegal@work.com,
+  me@home.com,
+  illegal@work.com,
+  me@home.com,
+  you@work.com,
+  me@home.com,
+  you@work.com,
+  "quoted address"@home.com,
+  you@work.com,
+  me@home.com,
+  you@work.com,
+  me@home.com,
+  you@work.com,
+  me@home.com,
+  you@work.com,
+  them@play.com,
+Date: 15 Aug 1998 13:32:12 -0500
+message-id: skip
+From: anonymous@DH.DD
+Cc: <>, "comment" <me@home.com>, "comment" <me@home.com>,
+  "comment (nested (deeply)))" <me@home.com>, me@home.com,
+  "a phrase" <me@home.com>, "mailing list": ;, "mailing list" <me@home.com>,
+  "mailing list" <me@home.com>, you@work.com, them@play.com,
+  "mailing list": ;, "route" <me@home.com>, you@work.com, them@play.com,
+  "mailing list": ;, "route two" <me@home.com>, you@work.com, them@play.com,
+  "mailing list" <me@home.com>, "route" <you@work.com>, them@play.com,
+  "mailing list" <me@home.com>, "route two" <you@work.com>, them@play.com,
+  "mailing list" <me@home.com>, you@work.com,
+  "mailing list" <illegal@work.com>, "a phrase" <me@home.com>,
+  illegal@work.com, me@home.com, you@work.com, me@home.com, you@work.com,
+  "quoted address"@home.com, you@work.com, "a phrase" <me@home.com>,
+  you@work.com, me@home.com, "a phrase" <you@work.com>,
+  "mailing list" <me@home.com>, you@work.com, them@play.com
+
+body
+0
+--- inject handles RFC 822 examples
+Envelope-Sender: anonymous@DH.DD
+Envelope-Recipients:
+  ddd@org.DD,
+  JJV@BBN.DD,
+  ":sysmail"@Some-Group.Some-Org,
+  Muhammed.Ali@Vegas.WBA,
+  Shared@Group.Arpanet,
+  Wilt.Chamberlain@NBA.US,
+  WhoZiWhatZit@Cordon-Bleu.DD,
+  Childs@WGBH.Boston,
+  "Galloping Gourmet"@ANT.Down-Under,
+  Cheapie@Discount-Liquors.DD,
+  Port@Portugal.DD,
+  Jones@SEA.DD,
+  Another@Somewhere.SomeOrg,
+  Balsa@Tree.Root,
+  "Sam Irving"@Other-Host.DD,
+  /main/davis/people/standard@Other-Host.DD,
+  "<Jones>standard.dist.3"@Tops-20-Host.DD,
+Date: 15 Aug 1998 13:32:12 -0500
+message-id: skip
+From: anonymous@DH.DD
+Cc: "Joe & J. Harvey" <ddd@org.DD>, JJV@BBN.DD,
+  ":sysmail"@Some-Group.Some-Org,
+  "I am the greatest the" <Muhammed.Ali@Vegas.WBA>,
+  "George, Ted" <Shared@Group.Arpanet>, "the Stilt" <Wilt.Chamberlain@NBA.US>,
+  "Gourmets": ;, "Pompous Person" <WhoZiWhatZit@Cordon-Bleu.DD>,
+  Childs@WGBH.Boston,
+  "Australian National Television" <"Galloping Gourmet"@ANT.Down-Under>,
+  Cheapie@Discount-Liquors.DD, "Cruisers" <Port@Portugal.DD>, Jones@SEA.DD,
+  Another@Somewhere.SomeOrg, "Important folk": ;,
+  "Tom Softwood" <Balsa@Tree.Root>, "Sam Irving"@Other-Host.DD,
+  "Standard Distribution" </main/davis/people/standard@Other-Host.DD>,
+  "<Jones>standard.dist.3"@Tops-20-Host.DD
+
+body
+0
+--- inject disallows field name bytes below 33
+Envelope-Sender: anonymous@DH.DD
+Envelope-Recipients:
+Date: 15 Aug 1998 13:32:12 -0500
+message-id: skip
+From: anonymous@DH.DD
+Cc: recipient list not shown: ;
+
+^_: y
+0
+--- inject disallows field name bytes above 126
+Envelope-Sender: anonymous@DH.DD
+Envelope-Recipients:
+Date: 15 Aug 1998 13:32:12 -0500
+message-id: skip
+From: anonymous@DH.DD
+Cc: recipient list not shown: ;
+
+^?: y
+0
+--- inject handles source routes
+Envelope-Sender: anonymous@DH.DD
+Envelope-Recipients:
+  God@heaven.af.mil,
+Date: 15 Aug 1998 13:32:12 -0500
+message-id: skip
+From: anonymous@DH.DD
+Cc: "@host" <God@heaven.af.mil>
+0
+--- inject handles double source routes
+Envelope-Sender: anonymous@DH.DD
+Envelope-Recipients:
+  God@heaven.af.mil,
+Date: 15 Aug 1998 13:32:12 -0500
+message-id: skip
+From: anonymous@DH.DD
+Cc: "@host1@host2" <God@heaven.af.mil>
+0
+--- inject handles triple source routes
+Envelope-Sender: anonymous@DH.DD
+Envelope-Recipients:
+  God@heaven.af.mil,
+Date: 15 Aug 1998 13:32:12 -0500
+message-id: skip
+From: anonymous@DH.DD
+Cc: "@host1@host2@host3" <God@heaven.af.mil>
+0
+--- inject rewrites Sender
+Envelope-Sender: anonymous@DH.DD
+Envelope-Recipients:
+Date: 15 Aug 1998 13:32:12 -0500
+message-id: skip
+From: anonymous@DH.DD
+Sender: a@b.c
+Cc: recipient list not shown: ;
+0
+--- inject does not rewrite Random
+Envelope-Sender: anonymous@DH.DD
+Envelope-Recipients:
+Date: 15 Aug 1998 13:32:12 -0500
+message-id: skip
+From: anonymous@DH.DD
+Cc: recipient list not shown: ;
+random: a @ b . c
+0
+--- inject rewrites Reply-To
+Envelope-Sender: anonymous@DH.DD
+Envelope-Recipients:
+Date: 15 Aug 1998 13:32:12 -0500
+message-id: skip
+From: anonymous@DH.DD
+Reply-To: a@b.c
+Cc: recipient list not shown: ;
+0
+--- inject does not rewrite Errors-To
+Envelope-Sender: anonymous@DH.DD
+Envelope-Recipients:
+errors-to: a @ b . c
+Date: 15 Aug 1998 13:32:12 -0500
+message-id: skip
+From: anonymous@DH.DD
+Cc: recipient list not shown: ;
+0
+--- inject discards Content-Length
+Envelope-Sender: anonymous@DH.DD
+Envelope-Recipients:
+Date: 15 Aug 1998 13:32:12 -0500
+message-id: skip
+From: anonymous@DH.DD
+Cc: recipient list not shown: ;
+0
+--- inject adds From line using QMAILUSER, QMAILHOST, QMAILNAME
+Envelope-Sender: MU@M.H
+Envelope-Recipients:
+Date: 15 Aug 1998 13:32:12 -0500
+message-id: skip
+From: "MN" <MU@M.H>
+Cc: recipient list not shown: ;
+0
+--- inject understands QMAILSUSER, QMAILSHOST
+Envelope-Sender: SMU@SM.H
+Envelope-Recipients:
+Date: 15 Aug 1998 13:32:12 -0500
+message-id: skip
+From: "MN" <MU@M.H>
+Cc: recipient list not shown: ;
+0
+--- inject -R creates per-recipient VERP
+Envelope-Sender: "anonymous-@DH.DD-"@[]
+Envelope-Recipients:
+Date: 15 Aug 1998 13:32:12 -0500
+message-id: skip
+From: anonymous@DH.DD
+Cc: recipient list not shown: ;
+0
+--- inject treats QMAILINJECT=R same way as -R
+Envelope-Sender: "anonymous-@DH.DD-"@[]
+Envelope-Recipients:
+Date: 15 Aug 1998 13:32:12 -0500
+message-id: skip
+From: anonymous@DH.DD
+Cc: recipient list not shown: ;
+0
+--- inject handles QMAILINJECT=r for compatibility
+Envelope-Sender: "anonymous-@DH.DD-"@[]
+Envelope-Recipients:
+Date: 15 Aug 1998 13:32:12 -0500
+message-id: skip
+From: anonymous@DH.DD
+Cc: recipient list not shown: ;
+0
+--- inject can use USER, MAILHOST, NAME
+Envelope-Sender: MU@M.H
+Envelope-Recipients:
+Date: 15 Aug 1998 13:32:12 -0500
+message-id: skip
+From: "MN" <MU@M.H>
+Cc: recipient list not shown: ;
+0
+--- inject can use LOGNAME
+Envelope-Sender: MU@DH.DD
+Envelope-Recipients:
+Date: 15 Aug 1998 13:32:12 -0500
+message-id: skip
+From: MU@DH.DD
+Cc: recipient list not shown: ;
+0
+--- inject uses MAILUSER, MAILNAME over USER, NAME
+Envelope-Sender: MU@M.H
+Envelope-Recipients:
+Date: 15 Aug 1998 13:32:12 -0500
+message-id: skip
+From: "MN" <MU@M.H>
+Cc: recipient list not shown: ;
+0
+--- inject quotes spaces in MAILUSER
+Envelope-Sender: "a space"@DH.DD
+Envelope-Recipients:
+Date: 15 Aug 1998 13:32:12 -0500
+message-id: skip
+From: "a space"@DH.DD
+Cc: recipient list not shown: ;
+0
+--- inject quotes backslashes in MAILNAME
+Envelope-Sender: anonymous@DH.DD
+Envelope-Recipients:
+Date: 15 Aug 1998 13:32:12 -0500
+message-id: skip
+From: "\\\\\\" <anonymous@DH.DD>
+Cc: recipient list not shown: ;
+0
+--- inject rewrites atom with backslash in From
+Envelope-Sender: anonymous@DH.DD
+Envelope-Recipients:
+Date: 15 Aug 1998 13:32:12 -0500
+message-id: skip
+From: "back\\slash"@DH.DD
+Cc: recipient list not shown: ;
+0
+--- inject rewrites atom with frivolous backslash in From
+Envelope-Sender: anonymous@DH.DD
+Envelope-Recipients:
+Date: 15 Aug 1998 13:32:12 -0500
+message-id: skip
+From: backslash@DH.DD
+Cc: recipient list not shown: ;
+0
+--- inject understands QMAILMFTFILE
+Envelope-Sender: anonymous@DH.DD
+Envelope-Recipients:
+  God@heaven.af.mil,
+  Root@Heaven.AF.Mil,
+Date: 15 Aug 1998 13:32:12 -0500
+message-id: skip
+From: anonymous@DH.DD
+Mail-Followup-To: God@heaven.af.mil, Root@Heaven.AF.Mil
+To: God@heaven.af.mil
+Cc: Root@Heaven.AF.Mil
+0
+--- tokenize handles basic examples
+string {heaven}
+tab
+string {heaven}
+tab
+string {heaven}
+
+string {\}
+space
+string {\}
+
+string {\\}
+space
+string {\\}
+
+string {[127.0.0.1]}
+space
+string {[127.0.0.1]}
+
+string {[FF02::3492:A98F]}
+
+comment {by way of J. Q. Public <redir@my.org>}
+space
+comment {)\}
+
+comment {comment (nested (deeply)) (and (oh no!) again)}
+
+string {:sysmail}
+special @
+space
+space
+string {group}
+special .
+space
+string {org}
+special ,
+space
+string {Muhammed}
+special .
+comment {the greatest}
+space
+string {Ali}
+space
+special @
+comment {the}
+string {Vegas}
+special .
+string {WBA}
+
+string {God}
+special @
+string {heaven}
+special .
+space
+string {af}
+special .
+string {mil}
+
+0
+--- addrlist handles basic examples
+input {"\\slash" . "and space" @[]  (dot).[\\].yp.  to}
+comment {dot}
+address {\slash.and space@[].[\].yp.to}
+rewrite {"dot" <"\\slash.and space"@"\[\].\[\\\].yp.to">}
+
+input {  "\\slash.and space"@[].[\\].yp.to    (Might work)}
+comment {Might work}
+address {\slash.and space@[].[\].yp.to}
+rewrite {"Might work" <"\\slash.and space"@"\[\].\[\\\].yp.to">}
+
+input {  <@gateway.af.mil:God@heaven.af.mil>}
+comment {@gateway.af.mil}
+address {God@heaven.af.mil}
+rewrite {"@gateway.af.mil" <God@heaven.af.mil>}
+
+input {  @proxy.research.att.com:God@heaven.af.mil   (WRONG)}
+comment {@proxy.research.att.com WRONG}
+address {God@heaven.af.mil}
+rewrite {"@proxy.research.att.com WRONG" <God@heaven.af.mil>}
+
+input {  < innocent.user@heaven.af.mil >  (spotted in 1998)}
+comment {spotted in 1998}
+address {innocent.user@heaven.af.mil}
+rewrite {"spotted in 1998" <innocent.user@heaven.af.mil>}
+
+input {  "The Boss" <God@heaven.af.mil>}
+comment {The Boss}
+address {God@heaven.af.mil}
+rewrite {"The Boss" <God@heaven.af.mil>}
+
+input {  God@heaven.af.mil (The Boss)}
+comment {The Boss}
+address {God@heaven.af.mil}
+rewrite {"The Boss" <God@heaven.af.mil>}
+
+input {  The Boss <God@heaven.af.mil>, angels@heaven.af.mil}
+comment {The Boss}
+address {God@heaven.af.mil}
+address {angels@heaven.af.mil}
+rewrite {"The Boss" <God@heaven.af.mil>,
+  angels@heaven.af.mil}
+
+input {  God@heaven.af.mil angels@heaven.af.mil      (WRONG)}
+address {God@heaven.af.mil}
+comment {WRONG}
+address {angels@heaven.af.mil}
+rewrite {God@heaven.af.mil,
+  "WRONG" <angels@heaven.af.mil>}
+
+input {  the gang: angels@heaven.af.mil, saints@heaven.af.mil;}
+comment {the gang}
+address {angels@heaven.af.mil}
+address {saints@heaven.af.mil}
+rewrite {"the gang" <angels@heaven.af.mil>,
+  saints@heaven.af.mil}
+
+input {  people who asked: ;, other people who should know: ;}
+comment {people who asked}
+comment {other people who should know}
+rewrite {"people who asked": ;,
+  "other people who should know": ;}
+
+input {}
+rewrite {}
+
+input {(comment)}
+comment {comment}
+rewrite {"comment": ;}
+
+input {<>}
+address {@}
+rewrite {<>}
+
+input {""}
+address {@}
+rewrite {<>}
+
+input {""@host}
+address {@host}
+rewrite {""@host}
+
+input {<box>}
+address {box@}
+rewrite {box}
+
+input {<box@>}
+address {box@}
+rewrite {box}
+
+input {<"box@">}
+address {box@@}
+rewrite {"box@"}
+
+input {<box@@>}
+address {box@@}
+rewrite {"box@"}
+
+input {me@home.com}
+address {me@home.com}
+rewrite {me@home.com}
+
+input {me@home.com (comment)}
+comment {comment}
+address {me@home.com}
+rewrite {"comment" <me@home.com>}
+
+input {me@home.com (comment (nested (deeply\))))}
+comment {comment (nested (deeply)))}
+address {me@home.com}
+rewrite {"comment (nested (deeply)))" <me@home.com>}
+
+input {<me@home.com>}
+address {me@home.com}
+rewrite {me@home.com}
+
+input {me@home.com, you@work.com}
+address {me@home.com}
+address {you@work.com}
+rewrite {me@home.com,
+  you@work.com}
+
+input {me@home.com you@work.com}
+address {me@home.com}
+address {you@work.com}
+rewrite {me@home.com,
+  you@work.com}
+
+input {me@home."com"you@work.com}
+address {me@home.com}
+address {you@work.com}
+rewrite {me@home.com,
+  you@work.com}
+
+input {me <you> <them>}
+comment {me}
+address {you@}
+address {them@}
+rewrite {"me" <you>,
+  them}
+
+input {a phrase <me@home.com>}
+comment {a phrase}
+address {me@home.com}
+rewrite {"a phrase" <me@home.com>}
+
+input {mailing list: ;}
+comment {mailing list}
+rewrite {"mailing list": ;}
+
+input {mailing list: me@home.com ;}
+comment {mailing list}
+address {me@home.com}
+rewrite {"mailing list" <me@home.com>}
+
+input {mailing list: me@home.com, you@work.com, them@play.com ;}
+comment {mailing list}
+address {me@home.com}
+address {you@work.com}
+address {them@play.com}
+rewrite {"mailing list" <me@home.com>,
+  you@work.com,
+  them@play.com}
+
+input {mailing list: route <me@home.com>, you@work.com, them@play.com ;}
+comment {mailing list}
+comment {route}
+address {me@home.com}
+address {you@work.com}
+address {them@play.com}
+rewrite {"mailing list": ;,
+  "route" <me@home.com>,
+  you@work.com,
+  them@play.com}
+
+input {mailing list: route two <me@home.com>, you@work.com, them@play.com ;}
+comment {mailing list}
+comment {route two}
+address {me@home.com}
+address {you@work.com}
+address {them@play.com}
+rewrite {"mailing list": ;,
+  "route two" <me@home.com>,
+  you@work.com,
+  them@play.com}
+
+input {mailing list: me@home.com, route <you@work.com>, them@play.com ;}
+comment {mailing list}
+address {me@home.com}
+comment {route}
+address {you@work.com}
+address {them@play.com}
+rewrite {"mailing list" <me@home.com>,
+  "route" <you@work.com>,
+  them@play.com}
+
+input {mailing list: me@home.com, route two <you@work.com>, them@play.com ;}
+comment {mailing list}
+address {me@home.com}
+comment {route two}
+address {you@work.com}
+address {them@play.com}
+rewrite {"mailing list" <me@home.com>,
+  "route two" <you@work.com>,
+  them@play.com}
+
+input {mailing list: ,,me@home.com,,, you@work.com,, ;}
+comment {mailing list}
+address {me@home.com}
+address {you@work.com}
+rewrite {"mailing list" <me@home.com>,
+  you@work.com}
+
+input {mailing list: ; illegal@work.com}
+comment {mailing list}
+address {illegal@work.com}
+rewrite {"mailing list" <illegal@work.com>}
+
+input {a phrase <me@home.com> illegal@work.com}
+comment {a phrase}
+address {me@home.com}
+address {illegal@work.com}
+rewrite {"a phrase" <me@home.com>,
+  illegal@work.com}
+
+input {"quoted address"@home.com, you@work.com}
+address {quoted address@home.com}
+address {you@work.com}
+rewrite {"quoted address"@home.com,
+  you@work.com}
+
+input {a phrase <me@home.com>, you@work.com}
+comment {a phrase}
+address {me@home.com}
+address {you@work.com}
+rewrite {"a phrase" <me@home.com>,
+  you@work.com}
+
+input {me@home.com, a phrase <you@work.com>}
+address {me@home.com}
+comment {a phrase}
+address {you@work.com}
+rewrite {me@home.com,
+  "a phrase" <you@work.com>}
+
+input {mailing list: ,,me@home.com,,, you@work.com,, ;,them@play.com}
+comment {mailing list}
+address {me@home.com}
+address {you@work.com}
+address {them@play.com}
+rewrite {"mailing list" <me@home.com>,
+  you@work.com,
+  them@play.com}
+
+input {"Joe & J. Harvey" <ddd@org>, JJV@BBN}
+comment {Joe & J. Harvey}
+address {ddd@org}
+address {JJV@BBN}
+rewrite {"Joe & J. Harvey" <ddd@org>,
+  JJV@BBN}
+
+input {":sysmail"@  Some-Group.  Some-Org, Muhammed.(I am  the greatest) Ali @(the)Vegas.WBA}
+address {:sysmail@Some-Group.Some-Org}
+comment {I am the greatest the}
+address {Muhammed.Ali@Vegas.WBA}
+rewrite {":sysmail"@Some-Group.Some-Org,
+  "I am the greatest the" <Muhammed.Ali@Vegas.WBA>}
+
+input {"George, Ted" <Shared@Group.Arpanet>}
+comment {George, Ted}
+address {Shared@Group.Arpanet}
+rewrite {"George, Ted" <Shared@Group.Arpanet>}
+
+input {Wilt . (the  Stilt) Chamberlain@NBA.US}
+comment {the Stilt}
+address {Wilt.Chamberlain@NBA.US}
+rewrite {"the Stilt" <Wilt.Chamberlain@NBA.US>}
+
+input {Gourmets:  Pompous Person <WhoZiWhatZit@Cordon-Bleu>, Childs@WGBH.Boston, "Galloping Gourmet"@ ANT.Down-Under (Australian National Television), Cheapie@Discount-Liquors;, Cruisers:  Port@Portugal, Jones@SEA;, Another@Somewhere.SomeOrg}
+comment {Gourmets}
+comment {Pompous Person}
+address {WhoZiWhatZit@Cordon-Bleu}
+address {Childs@WGBH.Boston}
+comment {Australian National Television}
+address {Galloping Gourmet@ANT.Down-Under}
+address {Cheapie@Discount-Liquors}
+comment {Cruisers}
+address {Port@Portugal}
+address {Jones@SEA}
+address {Another@Somewhere.SomeOrg}
+rewrite {"Gourmets": ;,
+  "Pompous Person" <WhoZiWhatZit@Cordon-Bleu>,
+  Childs@WGBH.Boston,
+  "Australian National Television" <"Galloping Gourmet"@ANT.Down-Under>,
+  Cheapie@Discount-Liquors,
+  "Cruisers" <Port@Portugal>,
+  Jones@SEA,
+  Another@Somewhere.SomeOrg}
+
+input {   Important folk: Tom Softwood <Balsa@Tree.Root>, "Sam Irving"@Other-Host;, Standard Distribution: /main/davis/people/standard@Other-Host, "<Jones>standard.dist.3"@Tops-20-Host;}
+comment {Important folk}
+comment {Tom Softwood}
+address {Balsa@Tree.Root}
+address {Sam Irving@Other-Host}
+comment {Standard Distribution}
+address {/main/davis/people/standard@Other-Host}
+address {<Jones>standard.dist.3@Tops-20-Host}
+rewrite {"Important folk": ;,
+  "Tom Softwood" <Balsa@Tree.Root>,
+  "Sam Irving"@Other-Host,
+  "Standard Distribution" </main/davis/people/standard@Other-Host>,
+  "<Jones>standard.dist.3"@Tops-20-Host}
+
+0
+--- parsedate handles basic examples
+1998-01-02 09:00:00 +0100	1998-01-02 08:00:00 +0000
+1998-01-02 09:00:00 -0500	1998-01-02 14:00:00 +0000
+1998-01-02 09:00:00 +0100	1998-01-02 08:00:00 +0000
+1998-01-02 09:00:00 -0600	1998-01-02 15:00:00 +0000
+1998-01-02 09:00:00 -0400	1998-01-02 13:00:00 +0000
+1998-01-02 09:00:00 +0200	1998-01-02 07:00:00 +0000
+1998-01-02 09:00:00 -0500	1998-01-02 14:00:00 +0000
+1998-01-02 09:00:00 +0000	1998-01-02 09:00:00 +0000
+1998-01-02 09:00:00 +0800	1998-01-02 01:00:00 +0000
+1998-01-02 09:00:00 +0200	1998-01-02 07:00:00 +0000
+1998-01-02 09:00:00 +0900	1998-01-02 00:00:00 +0000
+1998-01-02 09:00:00 -0600	1998-01-02 15:00:00 +0000
+1998-01-02 09:00:00 +0100	1998-01-02 08:00:00 +0000
+1998-01-02 09:00:00 +0200	1998-01-02 07:00:00 +0000
+1998-01-02 09:00:00 +0200	1998-01-02 07:00:00 +0000
+1998-01-02 09:00:00 -0700	1998-01-02 16:00:00 +0000
+1998-01-02 09:00:00 -0700	1998-01-02 16:00:00 +0000
+1998-01-02 09:00:00 -0800	1998-01-02 17:00:00 +0000
+1998-01-02 09:00:00 -0700	1998-01-02 16:00:00 +0000
+1998-01-02 09:00:00 +0000	1998-01-02 09:00:00 +0000
+1998-01-02 09:00:00 -1111	1998-01-02 20:11:00 +0000
+1998-01-02 09:00:00 -0111	1998-01-02 10:11:00 +0000
+1998-01-02 09:00:00 -0011	1998-01-02 09:11:00 +0000
+1998-01-02 09:00:00 -0001	1998-01-02 09:01:00 +0000
+1998-01-02 09:00:00 +0000?	1998-01-02 09:00:00 +0000
+1998-01-02 09:00:00 +0000	1998-01-02 09:00:00 +0000
+1998-01-02 09:00:00 +0001	1998-01-02 08:59:00 +0000
+1998-01-02 09:00:00 +0011	1998-01-02 08:49:00 +0000
+1998-01-02 09:00:00 +0111	1998-01-02 07:49:00 +0000
+1998-01-02 09:00:00 +1111	1998-01-01 21:49:00 +0000
+
+1000-01-01 12:04:37 +0000?	1000-01-01 12:04:37 +0000
+1799-12-31 23:59:59 +0000?	1799-12-31 23:59:59 +0000
+1900-01-01 00:00:00 +0000?	1900-01-01 00:00:00 +0000
+1969-12-31 23:59:49 +0000?	1969-12-31 23:59:49 +0000
+1969-12-31 23:59:59 +0000?	1969-12-31 23:59:59 +0000
+1970-01-01 00:00:00 +0000?	1970-01-01 00:00:00 +0000
+1970-01-01 00:00:01 +0000?	1970-01-01 00:00:01 +0000
+1972-06-30 23:59:58 +0000?	1972-06-30 23:59:58 +0000
+1972-06-30 23:59:59 +0000?	1972-06-30 23:59:59 +0000
+1972-06-30 23:59:60 +0000?	1972-06-30 23:59:60 +0000
+1972-07-01 00:00:00 +0000?	1972-07-01 00:00:00 +0000
+10000-01-01 17:42:15 +0000?	10000-01-01 17:42:15 +0000
+
+1998-01-02 09:00:00 -0500	1998-01-02 14:00:00 +0000
+1999-01-02 09:00:00 -0500	1999-01-02 14:00:00 +0000
+2000-01-02 09:00:00 -0500	2000-01-02 14:00:00 +0000
+2001-01-02 09:00:00 -0500	2001-01-02 14:00:00 +0000
+2002-01-02 09:00:00 -0500	2002-01-02 14:00:00 +0000
+2003-01-02 09:00:00 -0500	2003-01-02 14:00:00 +0000
+
+1995-12-23 19:25:43 +0000?	1995-12-23 19:25:43 +0000
+1996-03-31 15:53:10 +0200	1996-03-31 13:53:10 +0000
+1996-03-31 15:53:10 +0200	1996-03-31 13:53:10 +0000
+1998-05-04 03:04:12 +0000	1998-05-04 03:04:12 +0000
+1998-03-30 17:30:39 +1000	1998-03-30 07:30:39 +0000
+
+0

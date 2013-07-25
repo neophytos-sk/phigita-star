@@ -1,0 +1,50 @@
+JAKOB'S NER PACKAGE v0.1
+-------------------
+
+This is a rudimentary package of my code that enables the user to extract person, location, organization, and "miscellaneous" named enitities from a text file.
+
+INSTALLATION
+
+Sorry for not providing a simple installation script. You have to compile each part separately. The parts are:
+
+SCRIPTS
+-------
+make sure your perl/sh paths are compatible with the ones I use in the scripts.
+
+FEX: feature extraction
+-----------------------
+go to NEpackage/fex/ and run gmake. If there are any problems, try to consult the user manual which can be found at l2r.cs.uiuc.edu/~cogcomp/cc-software.html.
+
+SNOW: the classifer
+-------------------
+go to NEpackage/Snow_v3.0/ and run gmake. if there are any problems, try to consult the user manual which can be found at l2r.cs.uiuc.edu/~cogcomp/cc-software.html.
+
+HMMPure: the inference
+----------------------
+go to NEpackage/cscl/ and run makeit.sh in order to build HMMPure.
+
+
+
+USAGE
+
+Once all the parts above succesfully compiled, you should use NEpackage/NEClassifier.pl to do the tagging.
+An example file is supplied. It contains a simple sentence. You have to supply this filename as an argument to the script. The output is sent to stdout.
+This is an example output:
+
+	[metzler1@frosty NEpackage]$ more example_input.txt 
+	John Doe is American,  lives in Champaign and works for the CIA.
+	
+	[metzler1@frosty NEpackage]$ ./NEClassifier.pl example_input.txt 
+	[PER John Doe ] is [MISC American ] , lives in [LOC Champaign ] and works for the [ORG CIA ] . 
+	[metzler1@frosty NEpackage]$ 
+
+
+It is important to note that this package should be used in batch mode, since the overhead of loading the files is ca. 20-30 seconds. Classifying just one sentence as done above will result in 99% overhead.
+
+
+if you have any problems with this, ask me at metzler1@uiuce.du
+Have fun!
+
+- Jakob Metzler
+
+

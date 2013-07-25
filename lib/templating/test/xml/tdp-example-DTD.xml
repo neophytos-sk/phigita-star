@@ -1,0 +1,24 @@
+<?xml version="1.0" ?>
+<!-- [name of page here] with DTD          -->
+<!DOCTYPE tdp [
+   <!ELEMENT contract (param | constraint)*>
+   <!ATTLIST contract accept_proto CDATA #IMPLIED
+                      accept_method CDATA #IMPLIED
+                      require_secure_conn CDATA #IMPLIED
+                      require_registration CDATA #IMPLIED>
+   <!ELEMENT datastore>
+   <!ATTLIST datastore id CDATA #REQUIRED
+                       singleton CDATA #IMPLIED
+                       from_class CDATA #IMPLIED
+                       order CDATA #IMPLIED
+                       offset CDATA #IMPLIED
+                       limit CDATA #IMPLIED
+                       extend CDATA #IMPLIED>
+   <!ELEMENT guard (#PCDATA)>
+   <!ATTLIST guard id CDATA #IMPLIED>
+   <!ELEMENT val (#PCDATA)>
+   <!ATTLIST val id CDATA #REQUIRED>
+   <!ELEMENT master (dataview | tpl | htmltag)*>
+   <!ELEMENT dataview (tpl | htmltag)*>
+   <!ELEMENT htmltag (htmltag|tpl|dataview)*>
+]>

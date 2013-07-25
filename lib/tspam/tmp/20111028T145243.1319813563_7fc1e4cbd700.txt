@@ -1,0 +1,11 @@
+Received: from jndpl (unknown [110.53.27.223])
+	by 124.vps.agava.net (Postfix) with ESMTP id A89BE28139EB;
+	Fri, 28 Oct 2011 18:52:16 +0400 (MSD) 
+Message-ID: <20111028225016754753@marketelectro.ru> 
+From: "ih" <office@marketelectro.ru> 
+To:  
+Subject: =?gb2312?B?bnhtMzJ0ciDHsSDBpiBob2xkILK7INeh?=
+	=?gb2312?B?IGhleDE=?= 
+Date: Fri, 28 Oct 2011 22:50:10 +0800 
+X-mailer: Ptrxzjbca 6 
+Whoops!  What is a 'application/vnd.ms-excel'?

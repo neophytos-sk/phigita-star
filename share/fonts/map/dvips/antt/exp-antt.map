@@ -1,0 +1,16 @@
+exp-anttb AntykwaTorunska-Bold "encexp-antt ReEncodeFont" <exp-antt.enc <anttb.pfb
+exp-anttl AntykwaTorunskaLigh-Regular "encexp-antt ReEncodeFont" <exp-antt.enc <anttl.pfb
+exp-anttm AntykwaTorunskaMed-Regular "encexp-antt ReEncodeFont" <exp-antt.enc <anttm.pfb
+exp-anttr AntykwaTorunska-Regular "encexp-antt ReEncodeFont" <exp-antt.enc <anttr.pfb
+exp-anttbi AntykwaTorunska-BoldItalic "encexp-antt ReEncodeFont" <exp-antt.enc <anttbi.pfb
+exp-anttli AntykwaTorunskaLigh-Italic "encexp-antt ReEncodeFont" <exp-antt.enc <anttli.pfb
+exp-anttmi AntykwaTorunskaMed-Italic "encexp-antt ReEncodeFont" <exp-antt.enc <anttmi.pfb
+exp-anttri AntykwaTorunska-Italic "encexp-antt ReEncodeFont" <exp-antt.enc <anttri.pfb
+exp-anttcr AntykwaTorunskaCond-Regular "encexp-antt ReEncodeFont" <exp-antt.enc <anttcr.pfb
+exp-anttcb AntykwaTorunskaCond-Bold "encexp-antt ReEncodeFont" <exp-antt.enc <anttcb.pfb
+exp-anttcm AntykwaTorunskaCondMed-Regular "encexp-antt ReEncodeFont" <exp-antt.enc <anttcm.pfb
+exp-anttcl AntykwaTorunskaCondLigh-Regular "encexp-antt ReEncodeFont" <exp-antt.enc <anttcl.pfb
+exp-anttcri AntykwaTorunskaCond-Italic "encexp-antt ReEncodeFont" <exp-antt.enc <anttcri.pfb
+exp-anttcmi AntykwaTorunskaCondMed-Italic "encexp-antt ReEncodeFont" <exp-antt.enc <anttcmi.pfb
+exp-anttcli AntykwaTorunskaCondLigh-Italic "encexp-antt ReEncodeFont" <exp-antt.enc <anttcli.pfb
+exp-anttcbi AntykwaTorunskaCond-BoldItalic "encexp-antt ReEncodeFont" <exp-antt.enc <anttcbi.pfb

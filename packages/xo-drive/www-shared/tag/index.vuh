@@ -1,0 +1,9 @@
+lassign [split [ad_conn extra_url] "/"] __dummy__ tag
+
+if { $__dummy__ eq {tag} } {
+	rp_form_put tag $tag
+	rp_internal_redirect /packages/xo-drive/www-shared/index
+} else {
+	rp_returnnotfound
+	return
+}

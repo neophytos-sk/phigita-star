@@ -1,0 +1,125 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang='en'>
+<head>
+<title>Tcl_Obj refCount HOWTO</title>
+
+	<link rel='stylesheet' href='/_css/wikit_screen.css' media='screen' type='text/css' title='With TOC'>
+	<link rel='alternate stylesheet' href='/_css/wikit_screen_notoc.css' media='screen' type='text/css' title='Without TOC'>
+	<link rel='stylesheet' href='/_css/wikit_print.css' media='print' type='text/css'>
+	<link rel='stylesheet' href='/_css/wikit_handheld.css' media='handheld' type='text/css'>
+	<link rel='stylesheet' href='/_css/tooltips.css' type='text/css'>
+
+	<script type="text/javascript" src="/_scripts/sh_main.js"></script>
+	<script type="text/javascript" src="/_scripts/sh_tcl.js"></script>
+	<script type="text/javascript" src="/_scripts/sh_c.js"></script>
+	<script type="text/javascript" src="/_scripts/sh_cpp.js"></script>
+	<link type="text/css" rel="stylesheet" href="/_css/sh_style.css">
+
+	<link rel='alternate' type='application/rss+xml' title='RSS' href='/rss.xml'>
+	<script type='text/javascript'>/* <![CDATA[ */
+
+	    function init() {
+		// quit if this function has already been called
+		if (arguments.callee.done) return;
+
+		// flag this function so we don't do the same thing twice
+		arguments.callee.done = true;
+
+		try {
+		    hide_discussions()
+		} catch (err) {
+		    /* nothing */
+		}
+	    };
+
+	    /* for Mozilla */
+	    if (document.addEventListener) {
+		document.addEventListener("DOMContentLoaded", init, false);
+	    }
+
+	    // for Internet Explorer (using conditional comments)
+	    /*@cc_on @*/
+	    /*@if (@_win32)
+	    document.write("<script id=__ie_onload defer src=javascript:void(0)><\/script>");
+	    var script = document.getElementById("__ie_onload");
+	    script.onreadystatechange = function() {
+		if (this.readyState == "complete") {
+		    init(); // call the onload handler
+		}
+	    };
+	    /*@end @*/
+	  
+	    /* for other browsers */
+	    window.onload = init;
+	
+/* ]]> */
+</script>
+	<meta name="verify-v1" content="89v39Uh9xwxtWiYmK2JcYDszlGjUVT1Tq0QX+7H8AD0=">
+    </head>
+<body onload='sh_highlightDocument();'>
+
+	<div class='container'>
+	<div class='header'>
+	    <div class='logo'><a href='http://wiki.tcl.tk' class='logo'>wiki.tcl.tk</a><a href='http://wiki.tcl.tk'><img border='0' src='http://wiki.tcl.tk/plume.png'></a></div>
+	    <div id='title' class='title'><a href='/_/ref?N=14880' title='click to see reference to this page'>Tcl_Obj refCount HOWTO</a></div>
+	    <div id='updated' class='updated'>Updated 2011-12-19 11:23:49 by <a href='/25979'>RLE</a> <a href='/_/diff?N=14880#diff0' class='delta'>▲</a></div>
+	</div>
+    
+	    
+	    <div id='wrapper'><div id='content'><p></p>The clt thread at [<a rel="nofollow" href="http://groups.google.com/group/comp.lang.tcl/browse_frm/thread/6a6853a37b1d95a6">1</a>] and Bug #1334947 [<a rel="nofollow" href="https://sourceforge.net/tracker/?func=detail&amp;atid=110894&amp;aid=1334947&amp;group_id=10894">2</a>] revived the discussion of how to properly manage the reference count of Tcl_Objs.<p></p>This is an attempt at clarifying the issue, and a roadmap to improving both the core&#39;s refCount management as well as the documentation related to the subject.<p></p><b>1. Categorization</b><p></p>Joe English writes: <i>There are roughly four classes of Tcl_Obj-related library routines:</i><p></p><ul><li><b>Constructors</b>, which return a fresh Tcl_Obj with 0 refcount;</li><li><b>Readers</b>, which only read the value (but may cause shimmering).</li><li><b>Consumers</b>, which store a new reference to an existing Tcl_Obj, increment the refcount, and arrange to decrement the refcount at some unspecified point in the future.</li><li><b>Mutators</b>, which change the Tcl_Obj and can *only* be used with unshared Tcl_Objs (refcount = 0 or 1).</li></ul><p></p>and Donal Fellows adds the category<p></p><ul><li><b>Hairy Monsters</b>. Don&#39;t give these things refcount==0 objects since they will manipulate the refcount during their processing and might or might not retain a reference.</li></ul><p></p>Please note that the same funtion may belong to different categories with respect to different arguments: for example, as currently implemented (up to Tcl8.5a4), the function <i>Tcl_ObjSetVar2(interp, part1Ptr, part2Ptr, newValuePtr, flags)</i> is a Reader wrt part1Ptr and part2Ptr, but a Hairy-Monster wrt newValuePtr. <i>(<a href="/1280">DKF</a>: It should be noted that there is no guarantee that Tcl_ObjSetVar2 will remain a reader wrt part2ptr; if we ever optimize internal memory management of arrays, that will likely change. This is why knowing which function is what with respect to each argument is hard.)</i><p></p><b>As a general rule, all Tcl commands should be considered to be Hairy-Monsters wrt the objects in the objv array.</b><p></p>We hope to improve the documentation wrt to the categorization of the different functions, and also to reduce significantly the population of Hairy-Monsters. As of today, Constructors and Mutators should be properly documented as such.<p></p><b>2. Rules for dealing safely with the different categories</b><p></p>Note first that <b>Constructors</b> are not an issue: there is no Tcl_Obj to manage before you call them.<p></p>The <b>always-safe rules</b> are:<p></p><ul><li><b>Mutators</b>: pass an unshared object (refCount is 0 or 1). In order to respect <i>copy-on-write</i> semantics, make a copy for your use if you need to modify a shared object, and modify the copy.</li><li><b>Readers</b>, <b>Consumers</b> and <b>Hairy-Monsters</b>: Tcl_IncrRefCount(objPtr) before calling the library function, Tcl_DecrRefCount(objPtr) on return. This means: assume that every function in the Tcl library that is not a Mutator is a Hairy-Monster.</li></ul><p></p>The <b>optimal rules</b> in terms of performance and code simplicity (but risky in light of incomplete documentation) are:<p></p><ul><li><b>Mutators</b>: pass an unshared object (refCount is 0 or 1). In order to respect <i>copy-on-write</i> semantics, make a copy for your use if you need to modify a shared object, and modify the copy. Use <i>Tcl_IsShared</i> to determine whether you may modify, and <i>Tcl_DuplicateObj</i> to get the copy.</li><li><b>Readers</b>: if you pass an object with refCount==0, make sure to Tcl_DecrRefCount(objPtr) on return in order not to leak the object.</li><li><b>Consumers</b>: do not worry about reference counts as the consumer takes care of it, including the freeing of unneeded objects. This is <i>fire-and-forget</i>. Passing a fresh Tcl_Obj* to a consumer means you&#39;re through using it.</li><li><b>Hairy-Monsters</b>: Tcl_IncrRefCount(objPtr) before calling the library function, Tcl_DecrRefCount(objPtr) on return.</li></ul><hr><p></p>See also:<p></p><ul><li><a href="/14706">routines safe for zero-ref objs</a></li><li><a href="/5925">Tcl_Obj</a></li><li><a href="/1192">Managing the reference count of Tcl objects</a></li></ul><p></p><hr><div class='centered'><p></p><table summary='' class='wikit_table'><thead><tr><th><a href="/8564">Category Internals</a></th></tr></thead></table></div><p></p></div></div>
+	
+	<div id='menu_area'><div id='wiki_menu'><ul id='menu'>
+<li><a href='/'>Home</a></li><li><a href='/_/recent'>Recent changes</a></li><li><a href='/Help'>Help</a></li><li><a href='/_/whoami'>WhoAmI</a>/<a href='/_/logout'>Logout</a></li><li><a href='/_/new'>Create new page</a></li><li><a href='/_/random'>Random page</a></li><li><br></li><li><a href='/_/edit?N=14880&amp;A=1'>Add comments</a></li><li><a href='/_/edit?N=14880'>Edit</a></li><li><a href='/_/history?N=14880'>History</a></li><li><a href='/_/summary?N=14880'>Edit summary</a></li><li><a href='/_/ref?N=14880'>References</a></li></ul></div>
+	<form method='get' action='/_/search' id='searchform'><input id='searchtxt' onfocus='clearSearch();' onblur='setSearch();' name='S' type='text' value='Search' tabindex='1'>
+	    <input name='_charset_' type='hidden' value='' tabindex='2' id='_charset_'></form>
+    <div class='navigation'><div id='page_toc'></div></div><div class='extra'><div id='wiki_toc'><div class='toc1'>Getting started
+<div class='toc2'><a class='toc' href='/299'>What is Tcl?</a></div>
+<div class='toc2'><a class='toc' href='/487'>What is Tk?</a></div>
+<div class='toc2'><a class='toc' href='/20786'>Getting Tcl/Tk</a></div>
+<div class='toc2'><a class='toc' href='/20788'>Getting help</a></div>
+<div class='toc2'><a class='toc' href='/20789'>Learning Tcl</a></div>
+<div class='toc2'><a class='toc' href='/20790'>Tcl Dev Xchange</a></div>
+<div class='toc3'><a class='toc' href='/20791'>About the Wiki</a></div>
+</div>
+<div class='toc1'>Community
+<div class='toc2'><a class='toc' href='/590'>Advocacy</a></div>
+<div class='toc2'><a class='toc' href='/828'>Conferences</a></div>
+<div class='toc2'><a class='toc' href='/20792'>Chat, news, lists</a></div>
+<div class='toc2'><a class='toc' href='/20794'>History</a></div>
+<div class='toc2'><a class='toc' href='/17182'>Humor</a></div>
+<div class='toc2'><a class='toc' href='/10681'>People</a></div>
+<div class='toc3'><a class='toc' href='/20810'>Tcl websites</a></div>
+</div>
+<div class='toc1'>Reference
+<div class='toc2'><a class='toc' href='/1887'>Companies</a></div>
+<div class='toc2'><a class='toc' href='/20788'>Getting help</a></div>
+<div class='toc2'><a class='toc' href='/20795'>Online books</a></div>
+<div class='toc2'><a class='toc' href='/20796'>Online tutorials</a></div>
+<div class='toc2'><a class='toc' href='/3109'>Manual pages</a></div>
+<div class='toc2'><a class='toc' href='/20797'>Tcl roadmap</a></div>
+<div class='toc3'><a class='toc' href='/49'>Acronyms</a></div>
+</div>
+<div class='toc1'>Tcl software
+<div class='toc2'><a class='toc' href='/20798'>Applications</a></div>
+<div class='toc2'><a class='toc' href='/20799'>The Tcl core</a></div>
+<div class='toc2'><a class='toc' href='/20800'>Development tools</a></div>
+<div class='toc2'><a class='toc' href='/11485'>Documentation</a></div>
+<div class='toc2'><a class='toc' href='/940'>Extensions</a></div>
+<div class='toc3'><a class='toc' href='/20801'>Toys and games</a></div>
+</div>
+<div class='toc1'>Tcl in the wild
+<div class='toc2'><a class='toc' href='/20802'>Major applications</a></div>
+<div class='toc2'><a class='toc' href='/20803'>Businesses</a></div>
+<div class='toc2'><a class='toc' href='/20804'>Education</a></div>
+<div class='toc2'><a class='toc' href='/20805'>Engineering</a></div>
+<div class='toc2'><a class='toc' href='/20806'>Government</a></div>
+<div class='toc2'><a class='toc' href='/20811'>Medical</a></div>
+<div class='toc3'><a class='toc' href='/20809'>Other</a></div>
+</div>
+</div></div></div>
+    
+	<div class='footer'><p id='footer'><a href='/'>Home</a> &bull; <a href='/_/recent'>Recent changes</a> &bull; <a href='/Help'>Help</a> &bull; <a href='/_/new'>Create new page</a> &bull; <a href='/_/searchp'>Search</a> &bull; <a href='/_/edit?N=14880&amp;A=1'>Add comments</a> &bull; <a href='/_/edit?N=14880'>Edit</a></p></div>
+    </div>
+    <script type='text/javascript' src='/_scripts/wiki.js'></script>
+</body>
+</html>

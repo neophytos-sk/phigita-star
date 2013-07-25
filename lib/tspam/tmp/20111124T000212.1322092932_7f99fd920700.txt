@@ -1,0 +1,40 @@
+Received: by web1.extjs.com (Postfix, from userid 33)
+	id BA4206C1F0; Thu, 24 Nov 2011 00:02:03 +0000 (UTC) 
+To: k2pts@phigita.net 
+Subject: "Ext 1.x: Help & Discussion" update 
+X-PHP-Originating-Script: 1000:class_mail.php 
+From: "Sencha Forum" <admin@sencha.com> 
+Auto-Submitted: auto-generated 
+Message-ID: <20111124000203.f5840ea2c476@www.sencha.com> 
+X-Priority: 3 
+X-Mailer: vBulletin Mail via PHP 
+Date: Thu, 24 Nov 2011 00:02:03 +0000 (UTC) 
+--------------------------------------
+Dear k2pts,
+
+You are subscribed to the forum Ext 1.x: Help & Discussion, there have been 0 new thread(s) and 1 updated thread(s).
+http://www.sencha.com/forum/forumdisplay.php?5-Ext-1.x-Help-amp-Discussion
+
+The following threads are new:
+
+
+The following threads have been updated:
+************
+Submit always failure help!!!
+http://www.sencha.com/forum/showthread.php?9650-Submit-always-failure-help!!!
+In forum: Ext 1.x: Help & Discussion
+Started by: ratatuia
+Last post: 23 Nov 2011 9:17 AM
+
+
+All the best,
+Sencha Forum
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Unsubscription information:
+
+To unsubscribe from this forum, please visit this page:
+http://www.sencha.com/forum/subscription.php?do=removesubscription&type=forum&subscriptionid=64&auth=03ea1c99ffc5f299c59714b9adcc29a0
+
+
+

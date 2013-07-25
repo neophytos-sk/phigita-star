@@ -1,0 +1,39 @@
+<html><head><title>SelectEditor.js</title><link rel="stylesheet" type="text/css" href="../resources/style.css" media="screen"/></head><body><h1>SelectEditor.js</h1><pre class="highlighted"><code><i>/**
+ * @class YAHOO.ext.grid.SelectEditor
+ * @extends YAHOO.ext.grid.CellEditor
+Creates an editor out of an existing select field. You can create the select element through DOM <b>in</b> Javascript and pass it to the SelectEditor's constructor &lt;b&gt;or&lt;/b&gt; an easier way is like <b>this</b>:
+&lt;br&gt;&lt;br&gt;
+Define the select field <b>in</b> your document, giving it the ygrid-editor class.
+&lt;pre&gt;&lt;code&gt;
+&amp;lt;select id=&quot;light&quot; class=&quot;ygrid-editor&quot;&amp;gt;
+	&amp;lt;option value=&quot;Shade&quot;&amp;gt;Shade&amp;lt;/option&amp;gt;
+	&amp;lt;option value=&quot;Mostly Shady&quot;&amp;gt;Mostly Shady&amp;lt;/option&amp;gt;
+	&amp;lt;option value=&quot;Sun or Shade&quot;&amp;gt;Sun or Shade&amp;lt;/option&amp;gt;
+	&amp;lt;option value=&quot;Mostly Sunny&quot;&amp;gt;Mostly Sunny&amp;lt;/option&amp;gt;
+	&amp;lt;option value=&quot;Sunny&quot;&amp;gt;Sunny&amp;lt;/option&amp;gt;
+&amp;lt;/select&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+Create the SelectEditor object, passing <b>in</b> the id of your select field.
+&lt;pre&gt;&lt;code&gt;
+<b>var</b> editor = <b>new</b> YAHOO.ext.grid.SelectEditor('light'); 
+&lt;/code&gt;&lt;/pre&gt;
+For more information on using <b>this</b> editor, see &lt;a href=&quot;http:<i>//www.jackslocum.com/yui/2006/09/10/adding-built-<b>in</b>-editing-support-to-the-yahoo-ui-extensions-grid/&quot;&gt;<b>this</b> blog post&lt;/a&gt;.</i>
+* @constructor
+* Create a <b>new</b> SelectEditor
+* @param {HTMLElement/String} element
+ */</i>
+YAHOO.ext.grid.SelectEditor = <b>function</b>(element){
+    element.hideFocus = true;
+    YAHOO.ext.grid.SelectEditor.superclass.constructor.call(<b>this</b>, element);
+    <b>this</b>.element.swallowEvent('click');
+};
+YAHOO.extendX(YAHOO.ext.grid.SelectEditor, YAHOO.ext.grid.CellEditor);
+
+YAHOO.ext.grid.SelectEditor.prototype.fitToCell = <b>function</b>(box){
+    <b>if</b>(YAHOO.ext.util.Browser.isGecko){
+        box.height -= 3;
+    }
+    <b>this</b>.element.setBox(box, true);
+};</code></pre><hr><div style="font-size:10px;text-align:center;color:gray;">yui-ext - Copyright &copy; 2006 Jack Slocum.  |
+    Yahoo! UI - Copyright &copy; 2006 Yahoo! Inc.<br />All rights reserved.</div>
+    </body></html>

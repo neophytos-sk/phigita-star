@@ -1,0 +1,413 @@
+Aliceblue
+      code F0F8FF	
+
+Antiquewhite
+	code FAEBD7		
+
+Aqua
+	code 00FFFF
+
+Aquamarine
+	code 7FFFD4		
+
+Azure
+	code F0FFFF		
+
+Beige
+	code F5F5DC
+
+Bisque
+	code FFE4C4		
+
+Black
+	code 000000		
+
+Blanchedalmond
+	code FFEBCD
+
+Blue
+	code 0000FF		
+
+Blueviolet
+     code 8A2BE2	
+
+Brown
+	code A52A2A
+
+Burlywood
+	code DEB887		
+
+Cadetblue
+      code 5F9EA0	
+
+Chartreuse
+	code 7FFF00
+
+Chocolate
+	code D2691E		
+
+Coral
+	code FF7F50		
+
+Cornflowerblue
+	   code 6495ED
+
+Cornsilk
+	code FFF8DC		
+
+Crimson
+	code DC143C		
+
+Cyan
+	code 00FFFF
+
+Darkblue
+     code 00008B	
+
+Darkcyan
+     code 008B8B	
+
+Darkgoldenrod
+     code B8860B
+
+Darkgray
+     code A9A9A9	
+
+Darkgreen
+     code 006400	
+
+Darkkhaki
+     code BDB76B
+
+Darkmagenta
+     code 8B008B	
+
+Darkolivegreen
+     code 556B2F	
+
+Darkorange
+     code FF8C00
+
+Darkorchid
+     code 9932CC	
+
+Darkred
+     code 8B0000	
+
+Darksalmon
+     code E9967A
+
+Darkseagreen
+     code 8DBC8F	
+
+Darkslateblue
+     code 483D8B	
+
+Darkslategray
+     code 2F4F4F
+
+Darkturquoise
+     code 00DED1	
+
+Darkviolet
+     code 9400D3	
+
+Deeppink
+     code FF1493
+
+Deepskyblue
+     code 00BFFF	
+
+Dimgray
+    code 696969	
+
+Dodgerblue
+       code 1E90FF
+
+Firebrick
+	code B22222		
+
+Floralwhite
+       code FFFAF0	
+
+Forestgreen
+       code 228B22
+
+Fuchsia
+	code FF00FF		
+
+Gainsboro
+	code DCDCDC		
+
+Ghostwhite
+      code F8F8FF
+
+Gold
+	code FFD700		
+
+Goldenrod
+	code DAA520		
+
+Gray
+	code 808080
+
+Green
+	code 008000		
+
+Greenyellow
+      code ADFF2F	
+
+Honeydew
+	code F0FFF0
+
+Hotpink
+    code FF69B4	
+
+Indianred
+       code CD5C5C	
+
+Indigo
+	code 4B0082
+
+Ivory
+	code FFFFF0		
+
+Khaki
+	code F0E68C		
+
+Lavender
+	code E6E6FA
+
+Lavenderblush
+	 code FFF0F5	
+
+Lawngreen
+	code 7CFC00		
+
+Lemonchiffon
+      code FFFACD
+
+Lightblue
+      code ADD8E6	
+
+Lightcoral
+      code F08080	
+
+Lightcyan
+      code E0FFFF
+
+Lightgoldenrodyellow
+      code FAFAD2	
+
+Lightgreen
+      code 90EE90	
+
+Lightgrey
+      code D3D3D3
+
+Lightpink
+      code FFB6C1	
+
+Lightsalmon
+      code FFA07A	
+
+Lightseagreen
+      code 20B2AA
+
+Lightskyblue
+      code 87CEFA	
+
+Lightslategray
+      code 778899	
+
+Lightsteelblue
+      code B0C4DE
+
+Lightyellow
+      code FFFFE0	
+
+Lime
+	code 00FF00		
+
+Limegreen
+     code 32CD32
+
+Linen
+	code FAF0E6		
+
+Magenta
+	code FF00FF		
+
+Maroon
+	code 800000
+
+Mediumaquamarine
+       code 66CDAA	
+
+Mediumblue
+       code 0000CD	
+
+Mediumorchid
+       code BA55D3
+
+Mediumpurple
+       code 9370DB	
+
+Mediumseagreen
+       code 3CB371	
+
+Mediumslateblue
+       code 7B68EE
+
+Mediumspringgreen
+       code 00FA9A	
+
+Mediumturquoise
+       code 48D1CC	
+
+Mediumvioletred
+       code C71585
+
+Midnightblue
+	 code 191970	
+
+Mintcream
+     code F5FFFA	
+
+Mistyrose
+      code FFE4E1
+
+Moccasin
+	code FFE4B5		
+
+Navajowhite
+       code FFDEAD	
+
+Navy
+	code 000080
+
+Oldlace
+    code FDF5E6	
+
+Olivedrab
+      code 6B8E23	
+
+Orange
+	code FFA500
+
+Orangered
+       code FF4500	
+
+Orchid
+	code DA70D6		
+
+Palegoldenrod
+     code EEE8AA
+
+Palegreen
+     code 98FB98	
+
+Paleturquoise
+     code AFEEEE	
+
+Palevioletred
+     code DB7093
+
+Papayawhip
+       code FFEFD5	
+
+Peachpuff
+      code FFDAB9	
+
+Peru
+	code CD853F
+
+Pink
+	code FFC8CB		
+
+Plum
+	code DDA0DD		
+
+Powderblue
+       code B0E0E6
+
+Purple
+	code 800080		
+
+Red
+	code FF0000		
+
+Rosybrown
+     code BC8F8F
+
+Royalblue
+      code 4169E1	
+
+Saddlebrown
+       code 8B4513	
+
+Salmon
+	code FA8072
+
+Sandybrown
+      code F4A460	
+
+Seagreen
+    code 2E8B57	
+
+Seashell
+    code FFF5EE
+
+Sienna
+	code A0522D		
+
+Silver
+	code C0C0C0		
+
+Skyblue
+    code 87CEEB
+
+Slateblue
+      code 6A5ACD	
+
+Snow
+	code FFFAFA		
+
+Springgreen
+       code 00FF7F
+
+Steelblue
+	code 4682B4		
+
+Tan
+	code D2B48C		
+
+Teal
+	code 008080
+
+Thistle
+	code D8BFD8		
+
+Tomato
+	code FF6347		
+
+Turquoise
+	code 40E0D0
+
+Violet
+	code EE82EE		
+
+Wheat
+	code F5DEB3		
+
+White
+	code FFFFFF
+
+Whitesmoke
+	code F5F5F5		
+
+Yellow
+	code FFFF00		
+
+Yellowgreen
+       code 9ACD32

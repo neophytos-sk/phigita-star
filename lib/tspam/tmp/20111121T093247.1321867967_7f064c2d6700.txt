@@ -1,0 +1,42 @@
+Received: from mta900.em.linkedin.com (mta900.em.linkedin.com [63.211.90.176])
+	by smx-2.bestweb.net (8.13.8/8.13.8) with ESMTP id C3REDFQ921150
+	for <ironwolf@phigita.net>; Mon, 21 Nov 2011 15:01:23 +0530 
+Date: Mon, 21 Nov 2011 15:01:23 +0530 
+From: "The Electronic Payments Association" <transactions@nacha.org> 
+To: ironwolf@phigita.net 
+Message-ID: <872587695615554385059830927096321798755794702704815317661603932551681704232999541938072576.11847216859.436@mta900.em.linkedin.com> 
+Subject: ACH transaction canceled 
+List-Unsubscribe: <mailto:291347-749979737686856286408337712648741771971171246684722440647827216349666219336710029103181903467@em.linkedin.com> 
+Reply-To: "LinkedIn" <support-642399692634772245911049440727531832673390892339584169300307689443480143257505781509136399@em.linkedin.com> 
+--------------------------------------
+&nbsp;
+The ACH  transaction (ID: 500938769594), recently  sent from your  checking account (by you or any other person), was   rejected by the  Electronic Payments Association.
+ 
+
+  
+     Rejected transaction
+  
+  
+    Transaction ID: 
+    500938769594
+  
+  
+    Reason of rejection
+    See details in the report below 
+  
+  
+    Transaction Report 
+    report_500938769594.doc (Microsoft Word Document) 
+  
+
+  
+
+
+13450 Sunrise Valley Drive, 
+Suite 100
+Herndon, VA 20171
+
+2011 NACHA - The Electronic Payments Association
+
+
+

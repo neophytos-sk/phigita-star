@@ -1,0 +1,84 @@
+Received: from localhost ([127.0.0.1] helo=sfs-ml-3.v29.ch3.sourceforge.com)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <quickfix-developers-bounces@lists.sourceforge.net>)
+	id 1RSvV0-0005SW-Bc; Tue, 22 Nov 2011 18:55:18 +0000 from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <j.scott.miller@gmail.com>) id 1RSvUz-0005SP-Iw
+	for quickfix-developers@lists.sourceforge.net;
+	Tue, 22 Nov 2011 18:55:17 +0000 from mail-iy0-f175.google.com ([209.85.210.175])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1RSvUy-0005wa-TU
+	for quickfix-developers@lists.sourceforge.net;
+	Tue, 22 Nov 2011 18:55:17 +0000 by iahk25 with SMTP id k25so758775iah.34
+	for <quickfix-developers@lists.sourceforge.net>;
+	Tue, 22 Nov 2011 10:55:11 -0800 (PST) by 10.50.88.199 with SMTP id bi7mr23637795igb.45.1321988111692; Tue,
+	22 Nov 2011 10:55:11 -0800 (PST) by 10.231.36.205 with HTTP; Tue, 22 Nov 2011 10:55:11 -0800 (PST) 
+Received-SPF: pass (sog-mx-2.v43.ch3.sourceforge.com: domain of gmail.com
+	designates 209.85.210.175 as permitted sender)
+	client-ip=209.85.210.175; envelope-from=j.scott.miller@gmail.com;
+	helo=mail-iy0-f175.google.com; 
+Date: Tue, 22 Nov 2011 13:55:11 -0500 
+Message-ID: <CA+vGnHusj3+frz0CKCi-ePFgQ1gqtbPiqZ_-LUjOoZOK9=bu9w@mail.gmail.com> 
+From: "J. Scott Miller" <j.scott.miller@gmail.com> 
+To: quickfix-developers@lists.sourceforge.net 
+X-Spam-Score: -1.6 (-) 
+X-Spam-Report: Spam Filtering performed by mx.sourceforge.net.
+	See http://spamassassin.org/tag/ for more details.
+	-1.5 SPF_CHECK_PASS SPF reports sender host as permitted sender for
+	sender-domain
+	0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail provider
+	(j.scott.miller[at]gmail.com)
+	-0.0 SPF_PASS               SPF: sender matches SPF record
+	-0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
+	author's domain
+	0.1 DKIM_SIGNED            Message has a DKIM or DK signature,
+	not necessarily valid
+	-0.1 DKIM_VALID Message has at least one valid DKIM or DK signature 
+X-Headers-End: 1RSvUy-0005wa-TU 
+Subject: [Quickfix-developers] Restricting quickfix acceptor access by IP 
+X-BeenThere: quickfix-developers@lists.sourceforge.net 
+X-Mailman-Version: 2.1.9 
+Precedence: list 
+List-Id: <quickfix-developers.lists.sourceforge.net> 
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/quickfix-developers>,
+	<mailto:quickfix-developers-request@lists.sourceforge.net?subject=unsubscribe> 
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=quickfix-developers> 
+List-Post: <mailto:quickfix-developers@lists.sourceforge.net> 
+List-Help: <mailto:quickfix-developers-request@lists.sourceforge.net?subject=help> 
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/quickfix-developers>,
+	<mailto:quickfix-developers-request@lists.sourceforge.net?subject=subscribe> 
+Errors-To: quickfix-developers-bounces@lists.sourceforge.net 
+--------------------------------------
+QuickFIX Documentation: http://www.quickfixengine.org/quickfix/doc/html/index.html
+QuickFIX Support: http://www.quickfixengine.org/services.html
+
+Hi everyone,
+
+In my fix application (server), I would like to restrict access by
+both SenderCompID and IP address. That is, I want to enforce that
+SenderCompID A can only login from IP X and SenderCompID B can only
+login from IP Y. Because this depends on data in the fix protocol, a
+simple firewall will not work without deep packet inspection. Ideally,
+my application will perform the filtering.
+
+However, it doesn't look like the QuickFix api exposes the client IP.
+Is this correct?
+
+Thank you for any help,
+
+Scott
+
+------------------------------------------------------------------------------
+All the data continuously generated in your IT infrastructure 
+contains a definitive record of customers, application performance, 
+security threats, fraudulent activity, and more. Splunk takes this 
+data and makes sense of it. IT sense. And common sense.
+http://p.sf.net/sfu/splunk-novd2d
+_______________________________________________
+Quickfix-developers mailing list
+Quickfix-developers@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/quickfix-developers
+
+
+

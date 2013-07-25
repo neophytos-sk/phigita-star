@@ -1,0 +1,17 @@
+Return-path: <webmaster@phigita.net> 
+Received: from [117.203.247.51] (port=0798 helo=gggs4e06d40535)
+	by inbound.group3aviation.com.netsolmail.net with asmtp 
+	id 5D1B03-0008B1-45
+	for <webmaster@phigita.net>; Wed, 23 Nov 2011 13:59:47 +0530 
+Message-ID: <6915B315B100406CA94CE9E3524D4A14@gggs4e06d40535> 
+From: =?koi8-r?B?IuTFxCDtz9LP2iDFxMXUIMsg18HNIg==?= <hairlines3@group3aviation.com> 
+To: <webmaster@phigita.net> 
+Subject: =?koi8-r?B?7s/Xz8fPxM7JxSDLz9LQz9LB1MnXztnFINvP1S3Q0s/H0sHNzdkg1yDv?=
+	=?koi8-r?B?5unz5Q==?= 
+Date: Wed, 23 Nov 2011 13:59:47 +0530 
+X-Priority: 3 
+X-MSMail-Priority: Normal 
+X-Mailer: Microsoft Windows Mail 6.0.6001.18000 
+X-MimeOLE: Produced By Microsoft MimeOLE V6.0.6001.18049 
+X-Spam: Not detected 
+X-Mras: Ok 

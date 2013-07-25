@@ -1,0 +1,565 @@
+<html><head><title>Resizable.js</title><link rel="stylesheet" type="text/css" href="../resources/style.css" media="screen"/></head><body><h1>Resizable.js</h1><pre class="highlighted"><code><i>/**
+ * @class YAHOO.ext.Resizable
+ * @extends YAHOO.ext.util.Observable
+ * &lt;p&gt;Applies drag handles to an element to make it resizable. The drag handles are inserted into the element 
+ * and positioned absolute. Some elements, such as a textarea or image, don't support <b>this</b>. To overcome that, you can wrap
+ * the textarea <b>in</b> a div and set &quot;resizeChild&quot; to true (or the id of the textarea), &lt;b&gt;or&lt;/b&gt; set wrap:true <b>in</b> your config and
+ * the element will be wrapped <b>for</b> you automatically.&lt;/p&gt;&lt;br/&gt;
+ * Here's a Resizable <b>with</b> every possible config option and it's <b>default</b> value:
+&lt;pre&gt;&lt;code&gt;
+<b>var</b> resizer = <b>new</b> YAHOO.ext.Resizable('element-id', {
+    resizeChild : false,
+    adjustments : [0, 0],
+    minWidth : 5,
+    minHeight : 5,
+    maxWidth : 10000,
+    maxHeight : 10000,
+    enabled : true,
+    wrap: false, <i>// true to wrap the element</i>
+    width: null, <i>// initial size</i>
+    height: null, <i>// initial size</i>
+    animate : false,
+    duration : .35,
+    dynamic : false,
+    handles : false,
+    multiDirectional : false,
+    disableTrackOver : false,
+    easing : YAHOO.util.Easing ? YAHOO.util.Easing.easeOutStrong : null,
+    widthIncrement : 0,
+    heightIncrement : 0,
+    pinned : false,
+    width : null,
+    height : null,
+    preserveRatio : false,
+    transparent: false,
+    minX: 0,
+    minY: 0,
+    draggable: false
+});
+resizer.on('resize', myHandler);
+&lt;/code&gt;&lt;/pre&gt;
+* &lt;p&gt;
+ * To hide a particular handle, set it's display to none <b>in</b> CSS, or through script:&lt;br&gt;
+ * resizer.east.setDisplayed(false);
+ * &lt;/p&gt;
+ * @constructor
+ * Create a <b>new</b> resizable component
+ * @param {String/HTMLElement/YAHOO.ext.Element} el The id or element to resize
+ * @param {Object} config configuration options
+  */</i>
+YAHOO.ext.Resizable = <b>function</b>(el, config){
+    <b>this</b>.el = getEl(el);
+    
+    <b>if</b>(config &amp;&amp; config.wrap){
+        config.resizeChild = <b>this</b>.el;
+        <b>this</b>.el = <b>this</b>.el.wrap(<b>typeof</b> config.wrap == 'object' ? config.wrap : null);
+        <b>this</b>.el.id = <b>this</b>.el.dom.id = config.resizeChild.id + '-rzwrap';
+        <b>this</b>.el.setStyle('overflow', 'hidden');
+        <b>this</b>.el.setPositioning(config.resizeChild.getPositioning());
+        config.resizeChild.clearPositioning();
+        <b>if</b>(!config.width || !config.height){
+            <b>var</b> csize = config.resizeChild.getSize();
+            <i>//csize.width -= config.adjustments[0];</i>
+            <i>//csize.height -= config.adjustments[1];</i>
+            <b>this</b>.el.setSize(csize.width, csize.height);
+        }
+        <b>if</b>(config.pinned &amp;&amp; !config.adjustments){
+            config.adjustments = 'auto';
+        }
+    }
+    
+    <b>this</b>.proxy = <b>this</b>.el.createProxy({tag: 'div', cls: 'yresizable-proxy', id: <b>this</b>.el.id + '-rzproxy'})
+    <b>this</b>.proxy.unselectable();
+    
+    <i>// the overlay traps mouse events <b>while</b> dragging and fixes iframe issue</i>
+    <b>this</b>.overlay = <b>this</b>.el.createProxy({tag: 'div', cls: 'yresizable-overlay', html: '&amp;#160;'});
+    <b>this</b>.overlay.unselectable();
+    <b>this</b>.overlay.enableDisplayMode('block');
+    <b>this</b>.overlay.mon('mousemove', <b>this</b>.onMouseMove, <b>this</b>, true);
+    <b>this</b>.overlay.mon('mouseup', <b>this</b>.onMouseUp, <b>this</b>, true);
+    
+    YAHOO.ext.util.Config.apply(<b>this</b>, config, {
+        <i>/** True to resizeSize the first child or id/element to resize @type YAHOO.ext.Element */</i>
+        resizeChild : false,
+        <i>/** String &quot;auto&quot; or an array [width, height] <b>with</b> values to be &lt;b&gt;added&lt;/b&gt; to the resize operation's <b>new</b> size. @type Array/String */</i>
+        adjustments : [0, 0],
+        <i>/** The minimum width <b>for</b> the element @type Number */</i>
+        minWidth : 5,
+        <i>/** The minimum height <b>for</b> the element @type Number */</i>
+        minHeight : 5,
+        <i>/** The maximum width <b>for</b> the element @type Number */</i>
+        maxWidth : 10000,
+        <i>/** The maximum height <b>for</b> the element @type Number */</i>
+        maxHeight : 10000,
+        <i>/** false to disable resizing @type Boolean */</i>
+        enabled : true,
+        <i>/** True to animate the resize (not compatible <b>with</b> dynamic sizing) @type Boolean */</i>
+        animate : false,
+        <i>/** Animation duration @type Float */</i>
+        duration : .35,
+        <i>/** True to resize the element <b>while</b> dragging instead of using a proxy @type Boolean */</i>
+        dynamic : false,
+        <i>// these 3 are only available at config time</i>
+        <i>/** String consisting of the resize handles to display. Valid handles are 
+         * n (north), s (south) e (east), w (west), ne (northeast), nw (northwest), se (southeast), sw (southwest) 
+         * and all (which applies them all). If <b>this</b> is blank it defaults to &quot;e,s,se&quot;. Handles can be delimited using
+         * a space, comma or semi-colon. This is only applied at config time.  @type String*/</i>
+        handles : false,
+        multiDirectional : false,
+        <i>/** true to disable mouse tracking. This is only applied at config time.  @type Boolean*/</i>
+        disableTrackOver : false,
+        <i>/** Animation easing @type YAHOO.util.Easing */</i>
+        easing : YAHOO.util.Easing ? YAHOO.util.Easing.easeOutStrong : null,
+        <i>/** The increment to snap the width resize <b>in</b> pixels (dynamic must be true) @type Number */</i>
+        widthIncrement : 0,
+        <i>/** The increment to snap the height resize <b>in</b> pixels (dynamic must be true) @type Number */</i>
+        heightIncrement : 0,
+        <i>/** true to pin the resize handles. This is only applied at config time.  @type Boolean*/</i>
+        pinned : false,
+        <i>/** The initial width <b>for</b> the element @type Number */</i>
+        width : null,
+        <i>/** The initial height <b>for</b> the element @type Number */</i>
+        height : null,
+        <i>/** true to preserve the initial size ratio.  @type Boolean*/</i>
+        preserveRatio : false,
+        <i>/** true <b>for</b> transparent handles. This is only applied at config time.  @type Boolean*/</i>
+        transparent: false,
+        <i>/** The minimum allowed page X <b>for</b> the element (only used <b>for</b> west resizing, defaults to 0) @type Number */</i>
+        minX: 0,
+        <i>/** The minimum allowed page Y <b>for</b> the element (only used <b>for</b> north resizing, defaults to 0) @type Number */</i>
+        minY: 0,
+        <i>/** convenience to initialize drag drop.  @type Boolean*/</i>
+        draggable: false
+    });
+    
+    <b>if</b>(this.pinned){
+        <b>this</b>.disableTrackOver = true;
+        <b>this</b>.el.addClass('yresizable-pinned');    
+    }
+    <i>// <b>if</b> the element isn't positioned, make it relative</i>
+    <b>var</b> position = <b>this</b>.el.getStyle('position');
+    <b>if</b>(position != 'absolute' &amp;&amp; position != 'fixed'){
+        <b>this</b>.el.setStyle('position', 'relative');
+    }
+    <b>if</b>(!<b>this</b>.handles){ <i>// no handles passed, must be legacy style</i>
+        <b>this</b>.handles = 's,e,se';
+        <b>if</b>(this.multiDirectional){
+            <b>this</b>.handles += ',n,w';
+        }
+    }
+    <b>if</b>(this.handles == 'all'){
+        <b>this</b>.handles = 'n s e w ne nw se sw';
+    }
+    <b>var</b> hs = <b>this</b>.handles.split(/\s*?[,;]\s*?| /);
+    <b>var</b> ps = YAHOO.ext.Resizable.positions;
+    <b>for</b>(var i = 0, len = hs.length; i &lt; len; i++){
+        <b>if</b>(hs[i] &amp;&amp; ps[hs[i]]){
+            <b>var</b> pos = ps[hs[i]];
+            <b>this</b>[pos] = <b>new</b> YAHOO.ext.Resizable.Handle(<b>this</b>, pos, <b>this</b>.disableTrackOver, <b>this</b>.transparent);
+        }
+    }
+    <i>// legacy</i>
+    <b>this</b>.corner = <b>this</b>.southeast;
+    
+    <b>this</b>.activeHandle = null;
+    
+    <b>if</b>(this.resizeChild){
+        <b>if</b>(typeof <b>this</b>.resizeChild == 'boolean'){
+            <b>this</b>.resizeChild = YAHOO.ext.Element.get(<b>this</b>.el.dom.firstChild, true);
+        }<b>else</b>{
+            <b>this</b>.resizeChild = YAHOO.ext.Element.get(<b>this</b>.resizeChild, true);
+        }
+    }
+    
+    <b>if</b>(this.adjustments == 'auto'){
+        <b>var</b> rc = <b>this</b>.resizeChild;
+        <b>var</b> hw = <b>this</b>.west, he = <b>this</b>.east, hn = <b>this</b>.north, hs = <b>this</b>.south;
+        <b>if</b>(rc &amp;&amp; (hw || hn)){
+            rc.setRelativePositioned();
+            rc.setLeft(hw ? hw.el.getWidth() : 0);
+            rc.setTop(hn ? hn.el.getHeight() : 0);
+        }
+        <b>this</b>.adjustments = [
+            (he ? -he.el.getWidth() : 0) + (hw ? -hw.el.getWidth() : 0),
+            (hn ? -hn.el.getHeight() : 0) + (hs ? -hs.el.getHeight() : 0) -1 
+        ];
+    }
+    
+    <b>if</b>(this.draggable){
+        <b>this</b>.dd = <b>this</b>.dynamic ? 
+            <b>this</b>.el.initDD(null) : <b>this</b>.el.initDDProxy(null, {dragElId: <b>this</b>.proxy.id});
+        <b>this</b>.dd.setHandleElId(<b>this</b>.resizeChild ? <b>this</b>.resizeChild.id : <b>this</b>.el.id);
+    }
+    
+    <i>// public events</i>
+    <b>this</b>.events = {
+        <i>/**
+         * @event beforeresize
+         * Fired before resize is allowed. Set enabled to false to cancel resize. 
+         * @param {YAHOO.ext.Resizable} <b>this</b>
+         * @param {YAHOO.ext.EventObject} e The mousedown event
+         */</i>
+        'beforeresize' : <b>new</b> YAHOO.util.CustomEvent(),
+        <i>/**
+         * @event resize
+         * Fired after a resize. 
+         * @param {YAHOO.ext.Resizable} <b>this</b>
+         * @param {Number} width The <b>new</b> width
+         * @param {Number} height The <b>new</b> height
+         * @param {YAHOO.ext.EventObject} e The mouseup event
+         */</i>
+        'resize' : <b>new</b> YAHOO.util.CustomEvent()
+    };
+    
+    <b>if</b>(this.width !== null &amp;&amp; <b>this</b>.height !== null){
+        <b>this</b>.resizeTo(<b>this</b>.width, <b>this</b>.height);
+    }<b>else</b>{
+        <b>this</b>.updateChildSize();
+    }
+};
+
+YAHOO.extendX(YAHOO.ext.Resizable, YAHOO.ext.util.Observable, {
+    <i>/**
+     * Perform a manual resize
+     * @param {Number} width
+     * @param {Number} height
+     */</i>
+    resizeTo : <b>function</b>(width, height){
+        <b>this</b>.el.setSize(width, height);
+        <b>this</b>.updateChildSize();
+        <b>this</b>.fireEvent('resize', <b>this</b>, width, height, null);
+    },
+    
+    startSizing : <b>function</b>(e){
+        <b>this</b>.fireEvent('beforeresize', <b>this</b>, e);
+        <b>if</b>(this.enabled){ <i>// 2nd enabled check <b>in</b> case disabled before beforeresize handler</i>
+            <b>this</b>.resizing = true;
+            <b>this</b>.startBox = <b>this</b>.el.getBox();
+            <b>this</b>.startPoint = e.getXY();
+            <b>this</b>.offsets = [(<b>this</b>.startBox.x + <b>this</b>.startBox.width) - <b>this</b>.startPoint[0],
+                            (<b>this</b>.startBox.y + <b>this</b>.startBox.height) - <b>this</b>.startPoint[1]];
+            <b>this</b>.proxy.setBox(<b>this</b>.startBox);
+            
+            <b>this</b>.overlay.setSize(YAHOO.util.Dom.getDocumentWidth(), YAHOO.util.Dom.getDocumentHeight());
+            <b>this</b>.overlay.show();
+            
+            <b>if</b>(!<b>this</b>.dynamic){
+                <b>this</b>.proxy.show();
+            }
+        }
+    },
+    
+    onMouseDown : <b>function</b>(handle, e){
+        <b>if</b>(this.enabled){
+            e.stopEvent();
+            <b>this</b>.activeHandle = handle;
+            <b>this</b>.overlay.setStyle('cursor', handle.el.getStyle('cursor'));
+            <b>this</b>.startSizing(e);
+        }          
+    },
+    
+    onMouseUp : <b>function</b>(e){
+        <b>var</b> size = <b>this</b>.resizeElement();
+        <b>this</b>.resizing = false;
+        <b>this</b>.handleOut();
+        <b>this</b>.overlay.hide();
+        <b>this</b>.fireEvent('resize', <b>this</b>, size.width, size.height, e);
+    },
+    
+    updateChildSize : <b>function</b>(){
+        <b>if</b>(this.resizeChild){
+            <b>var</b> el = <b>this</b>.el;
+            <b>var</b> child = <b>this</b>.resizeChild;
+            <b>var</b> adj = <b>this</b>.adjustments;
+            <b>if</b>(el.dom.offsetWidth){
+                <b>var</b> b = el.getSize(true);
+                child.setSize(b.width+adj[0], b.height+adj[1]);
+            }
+            <i>// Second call here <b>for</b> IE</i>
+            <i>// The first call enables instant resizing and</i>
+            <i>// the second call corrects scroll bars <b>if</b> they</i>
+            <i>// exist</i>
+            <b>if</b>(YAHOO.ext.util.Browser.isIE){
+                setTimeout(<b>function</b>(){
+                    <b>if</b>(el.dom.offsetWidth){
+                        <b>var</b> b = el.getSize(true);
+                        child.setSize(b.width+adj[0], b.height+adj[1]);
+                    }
+                }, 10);
+            }
+        }
+    },
+    
+    snap : <b>function</b>(value, inc, min){
+        <b>if</b>(!inc || !value) <b>return</b> value;
+        <b>var</b> newValue = value;
+        <b>var</b> m = value % inc;
+        <b>if</b>(m &gt; 0){
+            <b>if</b>(m &gt; (inc/2)){
+                newValue = value + (inc-m);
+            }<b>else</b>{
+                newValue = value - m;
+            }
+        }
+        <b>return</b> Math.max(min, newValue);
+    },
+    
+    resizeElement : <b>function</b>(){
+        <b>var</b> box = <b>this</b>.proxy.getBox();
+        <i>//box.width = <b>this</b>.snap(box.width, <b>this</b>.widthIncrement);</i>
+        <i>//box.height = <b>this</b>.snap(box.height, <b>this</b>.heightIncrement);</i>
+        <i>//<b>if</b>(this.multiDirectional){</i>
+            <b>this</b>.el.setBox(box, false, <b>this</b>.animate, <b>this</b>.duration, null, <b>this</b>.easing);
+        <i>//}<b>else</b>{</i>
+        <i>//    <b>this</b>.el.setSize(box.width, box.height, <b>this</b>.animate, <b>this</b>.duration, null, <b>this</b>.easing);</i>
+        <i>//}</i>
+        <b>this</b>.updateChildSize();
+        <b>this</b>.proxy.hide();
+        <b>return</b> box;
+    },
+    
+    constrain : <b>function</b>(v, diff, m, mx){
+        <b>if</b>(v - diff &lt; m){
+            diff = v - m;    
+        }<b>else</b> if(v - diff &gt; mx){
+            diff = mx - v; 
+        }
+        <b>return</b> diff;                
+    },
+    
+    onMouseMove : <b>function</b>(e){
+        <b>if</b>(this.enabled){
+            try{<i>// try catch so <b>if</b> something goes wrong the user doesn't get hung</i>
+            
+            <i>//<b>var</b> curXY = <b>this</b>.startPoint;</i>
+            <b>var</b> curSize = <b>this</b>.curSize || <b>this</b>.startBox;
+            <b>var</b> x = <b>this</b>.startBox.x, y = <b>this</b>.startBox.y;
+            <b>var</b> ox = x, oy = y;
+            <b>var</b> w = curSize.width, h = curSize.height;
+            <b>var</b> ow = w, oh = h;
+            <b>var</b> mw = <b>this</b>.minWidth, mh = <b>this</b>.minHeight;
+            <b>var</b> mxw = <b>this</b>.maxWidth, mxh = <b>this</b>.maxHeight;
+            <b>var</b> wi = <b>this</b>.widthIncrement;
+            <b>var</b> hi = <b>this</b>.heightIncrement;
+            
+            <b>var</b> eventXY = e.getXY();
+            <b>var</b> diffX = -(<b>this</b>.startPoint[0] - Math.max(<b>this</b>.minX, eventXY[0]));
+            <b>var</b> diffY = -(<b>this</b>.startPoint[1] - Math.max(<b>this</b>.minY, eventXY[1]));
+            
+            <b>var</b> pos = <b>this</b>.activeHandle.position;
+            
+            <b>switch</b>(pos){
+                <b>case</b> 'east':
+                    w += diffX; 
+                    w = Math.min(Math.max(mw, w), mxw);
+                    <b>break</b>;
+                <b>case</b> 'south':
+                    h += diffY;
+                    h = Math.min(Math.max(mh, h), mxh);
+                    <b>break</b>;
+                <b>case</b> 'southeast':
+                    w += diffX; 
+                    h += diffY;
+                    w = Math.min(Math.max(mw, w), mxw);
+                    h = Math.min(Math.max(mh, h), mxh);
+                    <b>break</b>;
+                <b>case</b> 'north':
+                    diffY = <b>this</b>.constrain(h, diffY, mh, mxh);
+                    y += diffY;
+                    h -= diffY;
+                    <b>break</b>;
+                <b>case</b> 'west':
+                    diffX = <b>this</b>.constrain(w, diffX, mw, mxw);
+                    x += diffX;
+                    w -= diffX;
+                    <b>break</b>;
+                <b>case</b> 'northeast':
+                    w += diffX; 
+                    w = Math.min(Math.max(mw, w), mxw);
+                    diffY = <b>this</b>.constrain(h, diffY, mh, mxh);
+                    y += diffY;
+                    h -= diffY;
+                    <b>break</b>;
+                <b>case</b> 'northwest':
+                    diffX = <b>this</b>.constrain(w, diffX, mw, mxw);
+                    diffY = <b>this</b>.constrain(h, diffY, mh, mxh);
+                    y += diffY;
+                    h -= diffY;
+                    x += diffX;
+                    w -= diffX;
+                    <b>break</b>;
+               <b>case</b> 'southwest':
+                    diffX = <b>this</b>.constrain(w, diffX, mw, mxw);
+                    h += diffY;
+                    h = Math.min(Math.max(mh, h), mxh);
+                    x += diffX;
+                    w -= diffX;
+                    <b>break</b>;
+            }
+            
+            <b>var</b> sw = <b>this</b>.snap(w, wi, mw);
+            <b>var</b> sh = <b>this</b>.snap(h, hi, mh);
+            <b>if</b>(sw != w || sh != h){
+                <b>switch</b>(pos){
+                    <b>case</b> 'northeast':
+                        y -= sh - h;
+                    <b>break</b>;
+                    <b>case</b> 'north':
+                        y -= sh - h;
+                        <b>break</b>;
+                    <b>case</b> 'southwest':
+                        x -= sw - w;
+                    <b>break</b>;
+                    <b>case</b> 'west':
+                        x -= sw - w;
+                        <b>break</b>;
+                    <b>case</b> 'northwest':
+                        x -= sw - w;
+                        y -= sh - h;
+                    <b>break</b>;
+                }
+                w = sw;
+                h = sh;
+            }
+            
+            <b>if</b>(this.preserveRatio){
+                <b>switch</b>(pos){
+                    <b>case</b> 'southeast':
+                    <b>case</b> 'east':
+                        h = oh * (w/ow);
+                        h = Math.min(Math.max(mh, h), mxh);
+                        w = ow * (h/oh);
+                       <b>break</b>;
+                    <b>case</b> 'south':
+                        w = ow * (h/oh);
+                        w = Math.min(Math.max(mw, w), mxw);
+                        h = oh * (w/ow);
+                        <b>break</b>;
+                    <b>case</b> 'northeast':
+                        w = ow * (h/oh);
+                        w = Math.min(Math.max(mw, w), mxw);
+                        h = oh * (w/ow);
+                    <b>break</b>;
+                    <b>case</b> 'north':
+                        <b>var</b> tw = w;
+                        w = ow * (h/oh);
+                        w = Math.min(Math.max(mw, w), mxw);
+                        h = oh * (w/ow);
+                        x += (tw - w) / 2;
+                        <b>break</b>;
+                    <b>case</b> 'southwest':
+                        h = oh * (w/ow);
+                        h = Math.min(Math.max(mh, h), mxh);
+                        <b>var</b> tw = w;
+                        w = ow * (h/oh);
+                        x += tw - w;
+                        <b>break</b>;
+                    <b>case</b> 'west':
+                        <b>var</b> th = h;
+                        h = oh * (w/ow);
+                        h = Math.min(Math.max(mh, h), mxh);
+                        y += (th - h) / 2;
+                        <b>var</b> tw = w;
+                        w = ow * (h/oh);
+                        x += tw - w;
+                       <b>break</b>;
+                    <b>case</b> 'northwest':
+                        <b>var</b> tw = w;
+                        <b>var</b> th = h;
+                        h = oh * (w/ow);
+                        h = Math.min(Math.max(mh, h), mxh);
+                        w = ow * (h/oh);
+                        y += th - h;
+                         x += tw - w;
+                       <b>break</b>;
+                        
+                }
+            }
+            <b>this</b>.proxy.setBounds(x, y, w, h);
+            <b>if</b>(this.dynamic){
+                <b>this</b>.resizeElement();
+            }
+            }catch(e){}
+        }
+    },
+    
+    handleOver : <b>function</b>(){
+        <b>if</b>(this.enabled){
+            <b>this</b>.el.addClass('yresizable-over');
+        }
+    },
+    
+    handleOut : <b>function</b>(){
+        <b>if</b>(!<b>this</b>.resizing){
+            <b>this</b>.el.removeClass('yresizable-over');
+        }
+    },
+    
+    <i>/**
+     * Returns the element <b>this</b> component is bound to.
+     * @<b>return</b> {YAHOO.ext.Element}
+     */</i>
+    getEl : <b>function</b>(){
+        <b>return</b> this.el;
+    },
+    
+    <i>/**
+     * Returns the resizeChild element (or null).
+     * @<b>return</b> {YAHOO.ext.Element}
+     */</i>
+    getResizeChild : <b>function</b>(){
+        <b>return</b> this.resizeChild;
+    }
+});
+
+<i>// hash to map config positions to true positions</i>
+YAHOO.ext.Resizable.positions = {
+    n: 'north', s: 'south', e: 'east', w: 'west', se: 'southeast', sw: 'southwest', nw: 'northwest', ne: 'northeast' 
+};
+
+
+YAHOO.ext.Resizable.Handle = <b>function</b>(rz, pos, disableTrackOver, transparent){
+    <b>if</b>(!<b>this</b>.tpl){
+        <i>// only initialize the template <b>if</b> resizable is used</i>
+        <b>var</b> tpl = YAHOO.ext.DomHelper.createTemplate(
+            {tag: 'div', cls: 'yresizable-handle yresizable-handle-{0}', html: '&amp;#160;'}
+        );
+        tpl.compile();
+        YAHOO.ext.Resizable.Handle.prototype.tpl = tpl;
+    }
+    <b>this</b>.position = pos;
+    <b>this</b>.rz = rz;
+    <b>this</b>.el = <b>this</b>.tpl.append(rz.el.dom, [<b>this</b>.position], true);
+    <b>this</b>.el.unselectable();
+    <b>if</b>(transparent){
+        <b>this</b>.el.setOpacity(0);
+    }
+    <b>this</b>.el.mon('mousedown', <b>this</b>.onMouseDown, <b>this</b>, true);
+    <b>if</b>(!disableTrackOver){
+        <b>this</b>.el.mon('mouseover', <b>this</b>.onMouseOver, <b>this</b>, true);
+        <b>this</b>.el.mon('mouseout', <b>this</b>.onMouseOut, <b>this</b>, true);
+    }
+};
+
+YAHOO.ext.Resizable.Handle.prototype = {
+    afterResize : <b>function</b>(rz){
+        <i>// <b>do</b> nothing    </i>
+    },
+    
+    onMouseDown : <b>function</b>(e){
+        <b>this</b>.rz.onMouseDown(<b>this</b>, e);
+    },
+    
+    onMouseOver : <b>function</b>(e){
+        <b>this</b>.rz.handleOver(<b>this</b>, e);
+    },
+    
+    onMouseOut : <b>function</b>(e){
+        <b>this</b>.rz.handleOut(<b>this</b>, e);
+    }  
+};
+
+
+</code></pre><hr><div style="font-size:10px;text-align:center;color:gray;">yui-ext - Copyright &copy; 2006 Jack Slocum.  |
+    Yahoo! UI - Copyright &copy; 2006 Yahoo! Inc.<br />All rights reserved.</div>
+    </body></html>

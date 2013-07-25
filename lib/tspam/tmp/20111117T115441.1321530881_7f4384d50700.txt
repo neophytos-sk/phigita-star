@@ -1,0 +1,11 @@
+Received: from sczvsju ([42.49.136.26])
+	(authenticated user miaolei@jz88.net)
+	by mail.jz88.net;
+	Thu, 17 Nov 2011 19:47:01 +0800 
+Message-ID: <20111117195602155524@jz88.net> 
+From: "kjwkopcbn" <miaolei@jz88.net> 
+To:  
+Subject: =?gb2312?B?cW42xvMg0rUgtcQgyfogtOYg1q4gtcA=?= 
+Date: Thu, 17 Nov 2011 19:55:57 +0800 
+X-mailer: Khu 5 
+Whoops!  What is a 'application/vnd.ms-excel'?

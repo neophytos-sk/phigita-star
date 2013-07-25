@@ -1,0 +1,142 @@
+<html><head><title>CompositeElement.js</title><link rel="stylesheet" type="text/css" href="../resources/style.css" media="screen"/></head><body><h1>CompositeElement.js</h1><pre class="highlighted"><code><i>/**
+ * @class YAHOO.ext.CompositeElement
+ * Standard composite class. Creates a YAHOO.ext.Element <b>for</b> every element <b>in</b> the collection.
+ * &lt;br&gt;&lt;br&gt;
+ * &lt;b&gt;NOTE: Although they are not listed, <b>this</b> class supports all of the set/update methods of YAHOO.ext.Element. All YAHOO.ext.Element
+ * actions will be performed on all the elements <b>in</b> this collection.&lt;/b&gt;
+ * &lt;br&gt;&lt;br&gt;
+ * All methods <b>return</b> &lt;i&gt;<b>this</b>&lt;/i&gt; and can be chained.
+ &lt;pre&gt;&lt;code&gt;
+ <b>var</b> els = getEls('#some-el div.some-class');
+ <i>// or</i>
+ <b>var</b> els = YAHOO.ext.Element.select('#some-el div.some-class');
+ els.setWidth(100); <i>// all elements become 100 width</i>
+ els.hide(true); <i>// all elements fade out and hide</i>
+ <i>// or</i>
+ els.setWidth(100).hide(true);
+ &lt;/code&gt;&lt;/pre&gt;
+ */</i>
+YAHOO.ext.CompositeElement = <b>function</b>(els){
+    <b>this</b>.elements = [];
+    <b>this</b>.addElements(els);
+};
+YAHOO.ext.CompositeElement.prototype = {
+    isComposite: true,
+    addElements : <b>function</b>(els){
+        <b>if</b>(!els) <b>return</b> this;
+        <b>var</b> yels = <b>this</b>.elements;
+        <b>var</b> index = yels.length-1;
+        <b>for</b>(var i = 0, len = els.length; i &lt; len; i++) {
+        	yels[++index] = getEl(els[i], true);
+        }
+        <b>return</b> this;
+    },
+    invoke : <b>function</b>(fn, args){
+        <b>var</b> els = <b>this</b>.elements;
+        <b>for</b>(var i = 0, len = els.length; i &lt; len; i++) {
+        	YAHOO.ext.Element.prototype[fn].apply(els[i], args);
+        }
+        <b>return</b> this;
+    },
+    <i>/**
+    * Adds elements to <b>this</b> composite.
+    * @param {String/Array} els A string CSS selector, an array of elements or an element
+    * @<b>return</b> {CompositeElement} <b>this</b>
+    */</i>
+    add : <b>function</b>(els){
+        <b>if</b>(typeof els == 'string'){
+            <b>this</b>.addElements(YAHOO.ext.Element.selectorFunction(string));
+        }<b>else</b> if(els instanceof Array){
+            <b>this</b>.addElements(els);
+        }<b>else</b>{
+            <b>this</b>.addElements([els]);
+        }
+        <b>return</b> this;
+    },
+    <i>/**
+    * Calls the passed <b>function</b> passing (el, <b>this</b>, index) <b>for</b> each element <b>in</b> this composite.
+    * @param {Function} fn The <b>function</b> to call
+    * @param {Object} scope (optional) The &lt;i&gt;<b>this</b>&lt;/i&gt; object (defaults to the element)
+    * @<b>return</b> {CompositeElement} <b>this</b>
+    */</i>
+    each : <b>function</b>(fn, scope){
+        <b>var</b> els = <b>this</b>.elements;
+        <b>for</b>(var i = 0, len = els.length; i &lt; len; i++){
+            fn.call(scope || els[i], els[i], <b>this</b>, i);
+        }
+        <b>return</b> this;
+    }
+};
+<i>/**
+ * @class YAHOO.ext.CompositeElementLite
+ * @extends YAHOO.ext.CompositeElement
+ * Flyweight composite class. Reuses the same YAHOO.ext.Element <b>for</b> element operations.
+ * &lt;br&gt;&lt;br&gt;
+ * &lt;b&gt;NOTE: Although they are not listed, <b>this</b> class supports all of the set/update methods of YAHOO.ext.Element. All YAHOO.ext.Element
+ * actions will be performed on all the elements <b>in</b> this collection.&lt;/b&gt;
+ */</i>
+YAHOO.ext.CompositeElementLite = <b>function</b>(els){
+    YAHOO.ext.CompositeElementLite.superclass.constructor.call(<b>this</b>, els);
+    <b>this</b>.el = YAHOO.ext.Element.get(<b>this</b>.elements[0], true);
+};
+YAHOO.extendX(YAHOO.ext.CompositeElementLite, YAHOO.ext.CompositeElement, {
+    addElements : <b>function</b>(els){
+        <b>if</b>(els){
+            <b>this</b>.elements = <b>this</b>.elements.concat(els);
+        }
+        <b>return</b> this;
+    },
+    invoke : <b>function</b>(fn, args){
+        <b>var</b> els = <b>this</b>.elements;
+        <b>var</b> el = <b>this</b>.el;
+        <b>for</b>(var i = 0, len = els.length; i &lt; len; i++) {
+            el.dom = els[i];
+        	YAHOO.ext.Element.prototype[fn].apply(el, args);
+        }
+        <b>return</b> this;
+    }
+});
+YAHOO.ext.CompositeElement.createCall = <b>function</b>(proto, fnName){
+    <b>if</b>(!proto[fnName]){
+        proto[fnName] = <b>function</b>(){
+            <b>return</b> this.invoke(fnName, arguments);  
+        };
+    }
+};
+<b>for</b>(var fnName <b>in</b> YAHOO.ext.Element.prototype){
+    <b>if</b>(typeof YAHOO.ext.Element.prototype[fnName] == '<b>function</b>'){
+        YAHOO.ext.CompositeElement.createCall(YAHOO.ext.CompositeElement.prototype, fnName);
+    }
+}
+<b>if</b>(typeof cssQuery == '<b>function</b>'){<i>// Dean Edwards cssQuery</i>
+    YAHOO.ext.Element.selectorFunction = cssQuery;
+}<b>else</b> if(<b>typeof</b> document.getElementsBySelector == '<b>function</b>'){ <i>// Simon Willison's getElementsBySelector</i>
+    YAHOO.ext.Element.selectorFunction = document.getElementsBySelector.createDelegate(document);
+}
+<i>/**
+ * @member YAHOO.ext.Element
+* Selects elements based on the passed CSS selector to enable working on them as 1.
+* @param {String/Array} selector The CSS selector or an array of elements
+* @param {Boolean} unique (optional) true to create a unique YAHOO.ext.Element <b>for</b> each element (defaults to a shared flyweight object)
+* @<b>return</b> {CompositeElementLite/CompositeElement}
+* @method @static
+*/</i>
+YAHOO.ext.Element.select = <b>function</b>(selector, unique){
+    <b>var</b> els;
+    <b>if</b>(typeof selector == 'string'){
+        els = YAHOO.ext.Element.selectorFunction(selector);
+    }<b>else</b> if(selector instanceof Array){
+        els = selector;
+    }<b>else</b>{
+        throw 'Invalid selector';
+    }
+    <b>if</b>(unique === true){
+        <b>return</b> new YAHOO.ext.CompositeElement(els);
+    }<b>else</b>{
+        <b>return</b> new YAHOO.ext.CompositeElementLite(els);
+    }
+};
+
+<b>var</b> getEls = YAHOO.ext.Element.select;</code></pre><hr><div style="font-size:10px;text-align:center;color:gray;">yui-ext - Copyright &copy; 2006 Jack Slocum.  |
+    Yahoo! UI - Copyright &copy; 2006 Yahoo! Inc.<br />All rights reserved.</div>
+    </body></html>

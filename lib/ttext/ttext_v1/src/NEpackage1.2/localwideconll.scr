@@ -1,0 +1,102 @@
+
+-1 : lab(colOne)
+-1 inc: isFirstW&icap[0,0]
+-1 inc: not(isFirstW(x=X))&icap[0,0]
+-1 inc: isFirstW&nicap[0,0]
+-1 inc: acap[0,0]
+-1 inc: nicap&incap[0,0]
+-1 inc loc: nicap&incap[-4,4]
+
+-1 loc: icap[1,1]
+-1 loc: acap[1,1]
+-1 loc: nicap&incap[1,1]
+-1 loc: isFirstW&icap[-1,-1]
+-1 loc:not(isFirstW(x=X))&icap[-1,-1]
+-1 loc: isFirstW&nicap[-1,-1]
+-1 loc: acap[-1,-1]
+-1 loc: nicap&incap[-1,-1]
+
+-1 inc loc : coloc(icap,icap,icap)[-1,1]
+-1 inc loc : coloc(icap,nicap,icap)[-1,1]
+
+//-1 inc loc : t[-4,4]
+
+-1 inc loc: icap[-4,4]
+-1 inc loc: acap[-4,4]
+-1 inc loc: incap[-4,4]
+-1 inc loc: nicap[-4,4]
+-1 inc loc: charPat[-4,4]
+
+-1 inc loc: icap&suffixOne(x=.)[-4,4]
+-1 inc loc: len(x=1)&acap[-4,4]
+-1 inc loc: charPat(x=A.)[-4,4]
+-1 inc loc: hasDigit[-4,4]
+-1 inc loc: len(x=2)&charPat(x=0)[-4,4]
+-1 inc loc: len(x=4)&charPat(x=0)[-4,4]
+-1 inc loc: charPat(x=0/0)[-4,4]
+-1 inc loc: hasPM(x=$)[-4,4]
+-1 inc loc: hasPM(x=%)[-4,4]
+-1 inc loc: hasDigit&hasPM(x=.)[-4,4]
+-1 inc loc: wUpper[-4,4]
+
+-1 inc loc: coloc(wUpper,icap)[-1,0]
+-1 inc loc: coloc(wUpper,nicap)[-1,0]
+
+-1 inc loc: coloc(icap,wUpper)[0,1]
+-1 inc loc: coloc(nicap,wUpper)[0,1]
+
+-1 inc loc: hypCase[-4,4]
+-1 inc loc: inQP[-4,4]
+-1 inc loc: freqW(x=NO)[-4,4]
+-1 inc loc: nePreBi[-4,4]
+-1 inc loc: uniPre[-4,4]
+-1 inc loc: neSuffix[-4,4]
+-1 inc loc: ncs[-4,4]
+-1 inc loc: funcW[-2,-2]
+
+
+// gazeteers
+
+//-1 inc: isOrg[0,0]
+//-1 inc: isName[0,0]
+//-1 inc: isTitle[-1,-1]
+//-1 inc: isCity[0,0]
+//-1 inc: isState[0,0]
+//-1 inc: isCountry[0,0]
+//-1 inc: isPlace[0,0]
+
+//others
+-1 inc loc: wUpper[-2,-2]
+-1 inc loc: wUpper[-1,-1]
+-1 inc loc: wUpper[1,1]
+-1 inc loc: wUpper[2,2]
+-1 inc loc: wUpper[-3,-1]
+-1 inc loc: wUpper[1,3]
+
+-1 inc loc:allDigit[-4,4]
+-1 inc loc:not(alphaNum(x=X))[-4,4]
+-1 inc loc:romanNum[-4,4]
+-1 inc loc:prefixTwo[-4,4]
+-1 inc loc:prefixThree[-4,4]
+-1 inc loc:prefixFour[-4,4]
+-1 inc loc:suffixTwo[-4,4]
+-1 inc loc:suffixThree[-4,4]
+-1 inc loc:suffixFour[-4,4]
+-1 inc loc:len[-4,4]
+
+
+-1 inc:coloc(charPat,charPat)[0,1]
+-1 inc:coloc(charPat,charPat,charPat)[0,2]
+-1 inc:coloc(charPat,charPat,charPat,charPat)[0,3]
+-1 inc loc:charPat[-1,-1]
+-1 inc loc:coloc(charPat,charPat)[-2,-1]
+-1 inc loc:coloc(charPat,charPat,charPat)[-3,-1]
+-1 inc loc:coloc(charPat,charPat,charPat,charPat)[-4,-1]
+-1 inc loc:charPat[1,1]  
+-1 inc loc:coloc(charPat,charPat)[1,2]
+-1 inc loc:coloc(charPat,charPat,charPat)[1,3]
+-1 inc loc:coloc(charPat,charPat,charPat,charPat)[1,4]
+//
+//-1 inc: nerList[0,0]
+-1 inc loc: colTwo[-4,4]
+//-1 inc loc: scoloc(wUpper|t|acap|icap|nicap|incap,wUpper|t|acap|icap|nicap|incap)[-4,4]

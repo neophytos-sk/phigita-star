@@ -1,0 +1,20 @@
+Things still to do, in order of priority:
+
+  20070222: weight as personal if 1 database, use -d/-g for weight if more
+            than 1 (Pavel Kolar)
+  20070129: strip \r, re-add afterwards, if first line is \r\n (Nora Etukudo)
+  20050227: autotrain option "-u", retrains based on classification
+  20050624: try stripping double/triple letters, eg "fffinancce" -> "finance"
+  20050308: token for nonsense META tags (META NAME="blah blah blah")
+  20050226: support MH/Maildir training folders
+  20050227: environment variable for -d and -g
+  20050228: more verbosity, with profiling data
+  20040320: comma-separated training folders (-T spam1,spam2,spam3 nonspam1,2,3)
+  20050322: generate a "%age new tokens" score (eg 90% new tokens)
+  20050201: support for SQLite v3
+  20050527: look at http://plg.uwaterloo.ca/~trlynam/spamjig/
+  20060217: allow MySQL Unix socket connections (socket location configurable)
+  20060217: remove pruning step from training if using 3-column database
+  20070121: improve efficiency of token deletion from list backend
+
+Any assistance would be appreciated.

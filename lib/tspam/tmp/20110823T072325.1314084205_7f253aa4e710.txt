@@ -1,0 +1,16 @@
+Return-path: <webmaster@phigita.net> 
+Received: from [41.177.64.117] (port=8373 helo=nxp28)
+	by eforwardct.name-services.com with asmtp 
+	id 3D19E2-000582-78
+	for <webmaster@phigita.net>; Tue, 23 Aug 2011 09:22:43 +0200 
+Message-ID: <C8D093778C304D449A8E20CF5EEA7D1C@nxp28> 
+From: =?koi8-r?B?Iu/v7yD3wc0g8MnT2M3PIg==?= <stifferpb25@escortcorp.com> 
+To: <webmaster@phigita.net> 
+Subject: =?koi8-r?B?OCDSwdPT2czPyyDawSAxMCAwMDAg0tXCzMXK?= 
+Date: Tue, 23 Aug 2011 09:22:43 +0200 
+X-Priority: 3 
+X-MSMail-Priority: Normal 
+X-Mailer: Microsoft Windows Mail 6.0.6001.18000 
+X-MimeOLE: Produced By Microsoft MimeOLE V6.0.6001.18049 
+X-Spam: Not detected 
+X-Mras: Ok 

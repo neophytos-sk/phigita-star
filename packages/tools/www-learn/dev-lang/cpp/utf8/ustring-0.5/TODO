@@ -1,0 +1,15 @@
+TO DO:
+
+- all the standard member functions of the stl string (find, rfind,
+substr, etc.)
+
+- The line breaking algorithm
+
+- The bidi algorithm
+
+- The Unicode compression scheme
+
+- Regular expressions ?
+
+- a WString tokenizer
+

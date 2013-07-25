@@ -1,0 +1,17 @@
+Return-path: <webmaster@phigita.net> 
+Received: from [89.110.217.115] (port=0940 helo=csrks12)
+	by rotor.com.mx2.emailblockade.rcimx.net with asmtp 
+	id 29179E-000856-76
+	for <webmaster@phigita.net>; Thu, 10 Nov 2011 09:48:09 +0100 
+Message-ID: <3B28AA34BED4475183C2238730E9CD1D@csrks12> 
+From: =?koi8-r?B?Iu/v7yD3wc0t8MnT2M3PIC0gZS1tYWlsIM3B0svF1MnOxyI=?= <cavortedkp0@rotor.com> 
+To: <webmaster@phigita.net> 
+Subject: =?koi8-r?B?NSDSwdPT2czPyyDawSAxMCAwMDAg0tXCzMXKICsgyM/T1MnOxyDOwSDN?=
+	=?koi8-r?B?xdPRwyDXIPDv5OHy7+sgyczJIDbRINLB09nMy8E=?= 
+Date: Thu, 10 Nov 2011 09:48:09 +0100 
+X-Priority: 3 
+X-MSMail-Priority: Normal 
+X-Mailer: Microsoft Windows Mail 6.0.6001.18000 
+X-MimeOLE: Produced By Microsoft MimeOLE V6.0.6001.18049 
+X-Spam: Not detected 
+X-Mras: Ok 

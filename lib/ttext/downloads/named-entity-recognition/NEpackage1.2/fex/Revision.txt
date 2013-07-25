@@ -1,0 +1,25 @@
+
+Cognitive Computations Group - University of Illinois at Urbana/Champaign
+Dr. Dan Roth
+
+Fex - Feature Extractor
+
+Revision History
+==========================================================================
+Seq     Date     Originator  Description
+---  ----------  ----------  ---------------------------------------------
+001              J. Rosen    Original Release.
+002              J. Rosen    Specify a set of targets in a file.
+003              J. Rosen    Output examples with labels (targets) first,
+                             followed by the active features.
+004  03/23/1999  J. Rosen    Fixed bug in ExtractFlag.cpp which caused 
+                             extraction of words and tags when just 't' 
+                             was specified.
+005  08/01/1999  C. Cumby    v2.0 Fex revamped with newer scripting language
+006  11/01/2000  C. Cumby    v2.1 Modified interface to add new sensors 
+007  02/23/2001  C. Cumby    v2.1.1 Updated corpus input routine and implemented
+                             hashmap to improve performance
+008  xx/xx/2001  W-T. Yih    v2.2.0 Added Phrase extension as -P option.
+009  xx/xx/2002  W-T. Yih    v2.3.0 Added ER extension as -f option.
+010  10/16/2002  C. Cumby    v2.3.1 Added 'not' operator.
+011  12/07/2002  J.Metzler   added phrase sensors (first/last)

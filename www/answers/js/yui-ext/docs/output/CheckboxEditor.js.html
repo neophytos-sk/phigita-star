@@ -1,0 +1,62 @@
+<html><head><title>CheckboxEditor.js</title><link rel="stylesheet" type="text/css" href="../resources/style.css" media="screen"/></head><body><h1>CheckboxEditor.js</h1><pre class="highlighted"><code><i>/**
+ * @class YAHOO.ext.grid.CheckboxEditor
+ * @extends YAHOO.ext.grid.CellEditor
+Provides a checkbox <b>for</b> editing boolean values. It currently has no configuration options.&lt;br&gt;&lt;br&gt;
+For more information on using <b>this</b> editor, see &lt;a href=&quot;http:<i>//www.jackslocum.com/yui/2006/09/10/adding-built-<b>in</b>-editing-support-to-the-yahoo-ui-extensions-grid/&quot;&gt;<b>this</b> blog post&lt;/a&gt;.</i>
+* @constructor
+* Create a <b>new</b> CheckboxEditor
+ */</i>
+YAHOO.ext.grid.CheckboxEditor = <b>function</b>(){
+    <b>var</b> div = document.createElement('span');
+    div.className = 'ygrid-editor ygrid-checkbox-editor';
+    <b>var</b> cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.setAttribute('autocomplete', 'off');
+    div.appendChild(cb);
+    document.body.appendChild(div);
+    YAHOO.ext.grid.CheckboxEditor.superclass.constructor.call(<b>this</b>, div);
+    div.tabIndex = '';
+    cb.tabIndex = 1;
+    <b>this</b>.cb = getEl(cb, true);
+};
+
+YAHOO.extendX(YAHOO.ext.grid.CheckboxEditor, YAHOO.ext.grid.CellEditor);
+
+YAHOO.ext.grid.CheckboxEditor.prototype.fitToCell = <b>function</b>(box){
+    <b>this</b>.element.setBox(box, true);
+};
+
+YAHOO.ext.grid.CheckboxEditor.prototype.setValue = <b>function</b>(value){
+     <b>this</b>.cb.dom.checked = (value === true || value === 'true' || value === 1 || value === '1');
+};
+
+YAHOO.ext.grid.CheckboxEditor.prototype.getValue = <b>function</b>(){
+     <b>return</b> this.cb.dom.checked;
+};
+
+YAHOO.ext.grid.CheckboxEditor.prototype.show = <b>function</b>(){
+    <b>this</b>.element.show();
+    <b>this</b>.cb.focus();
+};
+
+YAHOO.ext.grid.CheckboxEditor.prototype.initEvents = <b>function</b>(){
+    <b>var</b> stopOnEnter = <b>function</b>(e){
+        <b>if</b>(e.browserEvent.keyCode == e.RETURN){
+            <b>this</b>.stopEditing(true);
+        }<b>else</b> if(e.browserEvent.keyCode == e.ESC){
+            <b>this</b>.setValue(<b>this</b>.originalValue);
+            <b>this</b>.stopEditing(true);
+        }
+    }
+    <b>this</b>.cb.mon('keydown', stopOnEnter, <b>this</b>, true);
+    <b>this</b>.cb.on('blur', <b>this</b>.stopEditing, <b>this</b>, true);
+};
+
+YAHOO.ext.grid.CheckboxEditor.prototype.hide = <b>function</b>(){
+    try{
+        <b>this</b>.cb.dom.blur();
+    }catch(e){}
+    <b>this</b>.element.hide();
+};</code></pre><hr><div style="font-size:10px;text-align:center;color:gray;">yui-ext - Copyright &copy; 2006 Jack Slocum.  |
+    Yahoo! UI - Copyright &copy; 2006 Yahoo! Inc.<br />All rights reserved.</div>
+    </body></html>

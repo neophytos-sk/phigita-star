@@ -1,0 +1,8 @@
+set path_info [ad_conn path_info]
+
+lassign [split $path_info .] _s scale _t top _l left extension
+
+rp_form_put t $top
+rp_form_put l $left
+rp_form_put s $scale
+rp_internal_redirect /packages/maps/lib/tile

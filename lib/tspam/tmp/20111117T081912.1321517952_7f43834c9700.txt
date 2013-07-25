@@ -1,0 +1,17 @@
+Return-path: <webmaster@phigita.net> 
+Received: from [121.148.215.76] (port=3621 helo=room2)
+	by mailgw.asiapay.com with asmtp 
+	id 1B7042-000998-38
+	for <webmaster@phigita.net>; Thu, 17 Nov 2011 17:17:52 +0900 
+Message-ID: <2BB9500014E440A0A9DFEDDF047A4851@room2> 
+From: =?koi8-r?B?IvTP0sfP19nKIOTPzSDF19LP0MXK08vPx88gyc7UxdLYxdLBIOHS1CI=?= <honeycombs@asiapay.com> 
+To: <webmaster@phigita.net> 
+Subject: =?koi8-r?B?8NLFxM3F1Nkgyc7UxdLYxdLBLCDtxcLFzNggxMzRIMTPzcEsIPDPxMHS?=
+	=?koi8-r?B?y8kgxMzRIMzAws/HzyDTzNXewdE=?= 
+Date: Thu, 17 Nov 2011 17:17:52 +0900 
+X-Priority: 3 
+X-MSMail-Priority: Normal 
+X-Mailer: Microsoft Windows Mail 6.0.6001.18000 
+X-MimeOLE: Produced By Microsoft MimeOLE V6.0.6001.18049 
+X-Spam: Not detected 
+X-Mras: Ok 

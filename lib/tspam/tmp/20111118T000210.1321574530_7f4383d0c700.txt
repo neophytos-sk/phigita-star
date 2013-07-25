@@ -1,0 +1,82 @@
+Received: by web2.extjs.com (Postfix, from userid 33)
+	id 9DE806C1DD; Fri, 18 Nov 2011 00:02:02 +0000 (UTC) 
+To: k2pts@phigita.net 
+Subject: "Ext: Open Discussion" update 
+X-PHP-Originating-Script: 1000:class_mail.php 
+From: "Sencha Forum" <admin@sencha.com> 
+Auto-Submitted: auto-generated 
+Message-ID: <20111118000202.40a3cc74d6d5@www.sencha.com> 
+X-Priority: 3 
+X-Mailer: vBulletin Mail via PHP 
+Date: Fri, 18 Nov 2011 00:02:02 +0000 (UTC) 
+--------------------------------------
+Dear k2pts,
+
+You are subscribed to the forum Ext: Open Discussion, there have been 1 new thread(s) and 7 updated thread(s).
+http://www.sencha.com/forum/forumdisplay.php?6-Ext-Open-Discussion
+
+The following threads are new:
+************
+Radiofield Event not Triggered in Extjs4 MVC
+http://www.sencha.com/forum/showthread.php?155487-Radiofield-Event-not-Triggered-in-Extjs4-MVC
+In forum: Ext: Open Discussion
+Started by: frankpeng
+Last post: 17 Nov 2011 3:13 PM
+
+
+The following threads have been updated:
+************
+Combobox loadMask loop
+http://www.sencha.com/forum/showthread.php?152875-Combobox-loadMask-loop
+In forum: Ext: Open Discussion
+Started by: livensnick
+Last post: 17 Nov 2011 7:00 AM
+************
+How to access attributes xml using xmlReader?
+http://www.sencha.com/forum/showthread.php?144935-How-to-access-attributes-xml-using-xmlReader
+In forum: Ext: Open Discussion
+Started by: Arnom Maciel
+Last post: 17 Nov 2011 9:18 AM
+************
+Forum Editing - Advanced Mode Broken
+http://www.sencha.com/forum/showthread.php?155069-Forum-Editing-Advanced-Mode-Broken
+In forum: Ext: Open Discussion
+Started by: sumit.madan
+Last post: 17 Nov 2011 4:35 PM
+************
+Problem displaying Sencha Website and forum in Google Chrome and Safari
+http://www.sencha.com/forum/showthread.php?155189-Problem-displaying-Sencha-Website-and-forum-in-Google-Chrome-and-Safari
+In forum: Ext: Open Discussion
+Started by: muhler
+Last post: 17 Nov 2011 4:36 PM
+************
+Creating a Web Application for my Thesis
+http://www.sencha.com/forum/showthread.php?155261-Creating-a-Web-Application-for-my-Thesis
+In forum: Ext: Open Discussion
+Started by: rjorge99
+Last post: 17 Nov 2011 4:37 PM
+************
+CDN issues
+http://www.sencha.com/forum/showthread.php?153084-CDN-issues
+In forum: Ext: Open Discussion
+Started by: mankz
+Last post: 17 Nov 2011 4:48 PM
+************
+Field doesn't shifted as user scrolls down using mouse
+http://www.sencha.com/forum/showthread.php?152965-Field-doesn-t-shifted-as-user-scrolls-down-using-mouse
+In forum: Ext: Open Discussion
+Started by: manjeet.vaseer
+Last post: 17 Nov 2011 4:54 PM
+
+
+All the best,
+Sencha Forum
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Unsubscription information:
+
+To unsubscribe from this forum, please visit this page:
+http://www.sencha.com/forum/subscription.php?do=removesubscription&type=forum&subscriptionid=63&auth=e23de5f6387a31c5573cf4993e28e47f
+
+
+

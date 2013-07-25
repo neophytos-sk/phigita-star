@@ -1,0 +1,13 @@
+Received: from [110.52.6.96] (helo=qxey)
+	by server.catwalkcommerce.com with esmtpa (Exim 4.69)
+	(envelope-from <sales@designfurnishings.com>)
+	id 1RNv3x-0000Gv-5U; Tue, 08 Nov 2011 15:26:42 -0800 
+Message-ID: <20111109070315104507@designfurnishings.com> 
+From: =?gb2312?B?ye7b2tLazfK/xry809DP3rmry74=?= <sales@designfurnishings.com> 
+To:  
+Subject: =?gb2312?B?09DDu9PQ0rvW1rv61sa/ydLUyMPUsbmk19TUuLzTsOCjrM7e1LnO3g==?=
+	=?gb2312?B?u9o/LS0tLc66usbYtw==?= 
+Date: Wed, 9 Nov 2011 07:03:01 +0800 
+X-mailer: Zqtvuw 6 
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report Primary Hostname - server.catwalkcommerce.com Original Domain - phigita.net Originator/Caller UID/GID - [47 12] / [47 12] Sender Address Domain - designfurnishings.com 
+Whoops!  What is a 'application/vnd.ms-excel'?

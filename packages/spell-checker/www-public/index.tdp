@@ -1,0 +1,159 @@
+val -id context_bar { return [::xo::kit::context_bar] }
+# keep css classes and tags used by context_bar
+::xo::tdp::excludeClassesFromRenaming {breadcrumb divider ul li active}
+
+val -id advertisement_top_right { return [::xo::google::adsense::get_slot_html 2239820321 160 600] }
+
+
+js -deps {
+    kernel/lib/base.js
+    spell-checker/lib/spell-checker.js
+} -tags {
+    public
+    defer
+} {
+
+    function CountWords(stext) {
+	var stemp;
+	var scount=0;
+	
+	//Count
+	for (var i = 0; i < stext.length; i++) 
+	{
+	 //If letter 0-9 or a-z or A-Z
+	 if (((stext.charCodeAt(i) >= 0x30) && (stext.charCodeAt(i) <= 0x39)) || ((stext.charCodeAt(i) >= 0x41) && (stext.charCodeAt(i) <= 0x5A)) || ((stext.charCodeAt(i) >= 0x61) && (stext.charCodeAt(i) <= 0x7A)))
+	 {
+	     if (i==0)
+	     {
+		 scount++;
+	     } else {
+		 //If previous character is not a letter a-z or A-Z then count it
+		 if (((stext.charCodeAt(i-1) < 0x30) || (stext.charCodeAt(i-1) > 0x39)) && ((stext.charCodeAt(i-1) < 0x41) || (stext.charCodeAt(i-1) > 0x5A)) && ((stext.charCodeAt(i-1) < 0x61) || (stext.charCodeAt(i-1) > 0x7A))) {
+		     scount++;
+		 }
+	     }
+	 }
+        }
+	
+	text=$('charcount').childNodes[0];
+	text.nodeValue = stext.length;
+	text=$('wordcount').childNodes[0];
+	text.nodeValue = scount;
+	return scount
+    }
+    window ['CountWords']=CountWords;
+
+
+    // initialize spell checker
+    window['SC'] = new SpellChecker();
+
+    // normally, we would not need this because we defer loading
+    // but it can be included in the html page, i.e. js(internal)
+    // because of its size and thus the reason why we keep the 
+    // onload handler
+    xo.onDocumentReady(function() {
+	$('input_check_word').focus();
+    });
+
+}
+
+
+
+
+master -title "Spell Check" {
+
+    nt @{context_bar:noquote}
+
+    layout_row {
+	layout_col -class span1
+	layout_col -class span8 {
+	    div -style "padding:25px;margin:15px;background:ButtonFace;" {
+		form -name wf -action word-suggest -type GET -onsubmit {return document.wf.q.value!='';} {
+		    font -size "-1" {
+			t "Enter a single word to spell check:"
+			br
+			input -id input_check_word -name q -type text -size 25 -maxlength 80
+			input -type submit -value "Check Word"
+		    }
+		}
+		form -name tf -action text-suggest -type post {
+		    font -size "-1" {
+			t "Body of text to spell check: (Up to 20,000 characters)"
+			br
+			textarea \
+			    -id textbody \
+			    -name q \
+			    -class "input-block-level" \
+			    -rows 10 \
+			    -wrap soft \
+			    -onkeyup {CountWords(document.tf.q.value)}
+		    }
+		    table {
+			tbody {
+			    tr {
+				td -valign top {
+				    font -size "-1" {
+					t "Dictionary"
+					select -id dictionary -name dictionary {
+					    option -value el { t Greek }
+					    option -value en { t English }
+					}
+					input -type "button" -value "Check Text" -onclick {SC.buttonPress('textbody');return false;}
+					t " "
+					input -type "button" -value "Clear" -onClick {document.tf.q.value='';CountWords(document.textbody.string.value)}
+
+				    }
+				}
+				td -valign top {
+				    font -size "-2" {
+					t "Character Count: "
+					font -id "charcount" {
+					    t "0"
+					}
+					br
+					t "Word Count: "
+					font -id "wordcount" {
+					    t "0"
+					}
+				    }
+				}
+			    }
+			}
+		    }
+		}
+	    }
+	    table -cellpadding 10 {
+		tr { 
+		    td {
+			div -style "margin:0;font-size:75%;width:200px;background:#f0f0f0;padding:4px;" {
+			    t "In computing terms, a spell checker is a software program designed to verify the spelling of words in a document, helping a user to ensure correct spelling."
+			    br
+			    a -href "http://en.wikipedia.org/wiki/Spell_checker" -style "color:green;" {
+				t "wikipedia: spell checker"
+			    }
+			}
+		    }
+
+		    td {
+			small {
+			    i { t "Supported Languages" }
+			    ul {
+				li {
+				    t "Greek" 
+				}
+				li {
+				    t "English"
+				}
+			    }
+			}
+		    }
+		}
+	    }
+	}
+	layout_col -class "span3" {
+	    div -class little -style "padding:10px;border-left: 1px solid #efefef;" {
+		nt @{advertisement_top_right:noquote}
+	    }
+	}
+    }
+}

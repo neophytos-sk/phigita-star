@@ -1,0 +1,67 @@
+/* Define if you have standard C headers. */
+#undef STDC_HEADERS
+
+/* Define if you have "config.h" (yes, you have). */
+#undef HAVE_CONFIG_H
+
+/* Define these to select database backends. */
+#undef USING_OBTREE
+#undef USING_BTREE
+#undef USING_LIST
+#undef USING_GDBM
+#undef USING_MYSQL
+#undef USING_SQLITE
+
+/* Define if debugging is to be compiled in. */
+#undef DEBUG
+
+/* Define these for various system header files and functions. */
+#undef HAVE_GETOPT_H
+#undef HAVE_MCHECK_H
+#undef HAVE_SYS_RESOURCE_H
+#undef HAVE_FCNTL_H
+#undef HAVE_MKSTEMP
+#undef HAVE_GETOPT
+#undef HAVE_FCNTL
+#undef HAVE_SNPRINTF
+#undef HAVE_VSNPRINTF
+#undef HAVE_GETOPT_LONG
+#undef HAVE_GDBM_FDESC
+#undef HAVE_MMAP
+#undef HAVE_UTIME
+#undef HAVE_SEARCH_H
+#undef HAVE_BSEARCH
+#undef HAVE_QSORT
+#undef HAVE_MYSQL_AUTOCOMMIT
+#undef IS_BIG_ENDIAN
+
+#ifdef ENABLE_NLS
+# include <libintl.h>
+# ifdef HAVE_LOCALE_H
+#  include <locale.h>
+# endif
+# define _(String)	gettext (String)
+# define N_(String)	gettext_noop (String)
+#else
+# define _(String) (String)
+#endif
+
+/* The name of the program. */
+#define PROGRAM_NAME	"progname"
+
+/* The name of the package. */
+#define PACKAGE		""
+
+/* The current package version. */
+#define VERSION		"0.0.0"
+
+/* Various identification and legal drivel. */
+#define COPYRIGHT_YEAR   _("2007")
+#define COPYRIGHT_HOLDER _("Andrew Wood <andrew.wood@ivarch.com>")
+#define PROJECT_HOMEPAGE "http://www.ivarch.com/programs/" PROGRAM_NAME "/"
+#define BUG_REPORTS_TO   _("Andrew Wood <andrew.wood@ivarch.com>")
+
+/* Backends available. */
+#define BACKENDS ""
+
+/* EOF */

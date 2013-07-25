@@ -1,0 +1,298 @@
+<html><head><title>Toolbar.js</title><link rel="stylesheet" type="text/css" href="../resources/style.css" media="screen"/></head><body><h1>Toolbar.js</h1><pre class="highlighted"><code><i>/**
+ * @class YAHOO.ext.Toolbar
+ * Basic Toolbar used by the Grid to create the paging toolbar. This class is reusable but functionality
+ * is limited. Look <b>for</b> more functionality <b>in</b> a future version. 
+ * @constructor
+ * @param {String/HTMLElement/Element} container
+ * @param {Array} buttons (optional) array of button configs or elements to add
+ */</i> 
+ YAHOO.ext.Toolbar = <b>function</b>(container, buttons){
+    <b>this</b>.el = getEl(container, true);
+    <b>var</b> div = document.createElement('div');
+    div.className = 'ytoolbar';
+    <b>var</b> tb = document.createElement('table');
+    tb.border = 0;
+    tb.cellPadding = 0; 
+    tb.cellSpacing = 0;
+    div.appendChild(tb);
+    <b>var</b> tbody = document.createElement('tbody');
+    tb.appendChild(tbody);
+    <b>var</b> tr = document.createElement('tr');
+    tbody.appendChild(tr);
+    <b>this</b>.el.dom.appendChild(div);
+    <b>this</b>.tr = tr;
+    <b>if</b>(buttons){
+        <b>this</b>.add.apply(<b>this</b>, buttons);
+    }
+};
+
+YAHOO.ext.Toolbar.prototype = {
+    <i>/**
+     * Adds element(s) to the toolbar - <b>this</b> function takes a variable number of 
+     * arguments of mixed type and adds them to the toolbar...
+     * 
+     * @param {Mixed} arg If arg is a ToolbarButton, it is added. If arg is a string, it is wrapped 
+     * <b>in</b> a ytb-text element and added unless the text is &quot;separator&quot; <b>in</b> which <b>case</b> a separator
+     * is added. Otherwise, it is assumed the element is an HTMLElement and it is added directly.
+     */</i>
+    add : <b>function</b>(){
+        <b>for</b>(var i = 0; i &lt; arguments.length; i++){
+            <b>var</b> el = arguments[i];
+            <b>var</b> td = document.createElement('td');
+            <b>this</b>.tr.appendChild(td);
+            <b>if</b>(el instanceof YAHOO.ext.ToolbarButton){
+                el.init(td);
+            }<b>else</b> if(el instanceof Array){
+                <b>this</b>.addButton(el);
+            }<b>else</b> if(<b>typeof</b> el == 'string'){
+                <b>var</b> span = document.createElement('span');
+                <b>if</b>(el == 'separator'){
+                    span.className = 'ytb-sep';
+                }<b>else</b>{
+                    span.innerHTML = el;
+                    span.className = 'ytb-text';
+                }
+                td.appendChild(span);
+            }<b>else</b> if(<b>typeof</b> el == 'object' &amp;&amp; el.nodeType){ <i>// must be element?</i>
+                td.appendChild(el);
+            }<b>else</b> if(<b>typeof</b> el == 'object'){ <i>// must be button config?</i>
+                <b>this</b>.addButton(el);
+            }
+        }
+    },
+    
+    <i>/**
+     * Returns the element <b>for</b> this toolbar
+     * @<b>return</b> {YAHOO.ext.Element}
+     */</i>
+    getEl : <b>function</b>(){
+        <b>return</b> this.el;  
+    },
+    
+    <i>/**
+     * Adds a separator
+     */</i>
+    addSeparator : <b>function</b>(){
+        <b>var</b> td = document.createElement('td');
+        <b>this</b>.tr.appendChild(td);
+        <b>var</b> span = document.createElement('span');
+        span.className = 'ytb-sep';
+        td.appendChild(span);
+    },
+    
+    <i>/**
+     * Add a button (or buttons), see {@link YAHOO.ext.ToolbarButton} <b>for</b> more info on the config
+     * @param {Object/Array} config A button config or array of configs
+     * @<b>return</b> {YAHOO.ext.ToolbarButton/Array}
+     */</i>
+    addButton : <b>function</b>(config){
+        <b>if</b>(config instanceof Array){
+            <b>var</b> buttons = [];
+            <b>for</b>(var i = 0, len = config.length; i &lt; len; i++) {
+            	buttons.push(<b>this</b>.addButton(config[i]));
+            }
+            <b>return</b> buttons;
+        }
+        <b>var</b> b = config;
+        <b>if</b>(!(config instanceof YAHOO.ext.ToolbarButton)){
+             b = <b>new</b> YAHOO.ext.ToolbarButton(config);
+        }
+        <b>this</b>.add(b);
+        <b>return</b> b;
+    },
+    
+    <i>/**
+     * Adds text to the toolbar
+     * @param {String} text The text to add
+     * @<b>return</b> {HTMLElement} The span element created which you can use to update the text.
+     */</i>
+    addText : <b>function</b>(text){
+        <b>var</b> td = document.createElement('td');
+        <b>this</b>.tr.appendChild(td);
+        <b>var</b> span = document.createElement('span');
+        span.className = 'ytb-text';
+        span.innerHTML = text;
+        td.appendChild(span);
+        <b>return</b> span;
+    },
+    
+    <i>/**
+     * Inserts a button (or buttons) at the specified index
+     * @param {Number} index The index where the buttons are to be inserted
+     * @param {Object/Array} config A button config or array of configs
+     * @<b>return</b> {YAHOO.ext.ToolbarButton/Array}
+     */</i>
+    insertButton : <b>function</b>(index, config){
+        <b>if</b>(config instanceof Array){
+            <b>var</b> buttons = [];
+            <b>for</b>(var i = 0, len = config.length; i &lt; len; i++) {
+               buttons.push(<b>this</b>.insertButton(index + i, config[i]));
+            }
+            <b>return</b> buttons;
+        }
+        <b>var</b> b = <b>new</b> YAHOO.ext.ToolbarButton(config);
+        <b>var</b> td = document.createElement('td');
+        <b>var</b> nextSibling = <b>this</b>.tr.childNodes[index];
+        <b>if</b> (nextSibling)
+           <b>this</b>.tr.insertBefore(td, nextSibling);
+       <b>else</b>
+           <b>this</b>.tr.appendChild(td);
+        b.init(td);
+        <b>return</b> b;
+    }
+};
+
+<i>/**
+ * @class YAHOO.ext.ToolbarButton
+ * A toolbar button. The config has the following options:
+ * &lt;ul&gt;
+ * &lt;li&gt;className - The CSS class <b>for</b> the button. Use <b>this</b> to attach a background image <b>for</b> an icon.&lt;/li&gt;
+ * &lt;li&gt;text - The button's text&lt;/li&gt;
+ * &lt;li&gt;tooltip - The buttons tooltip text&lt;/li&gt;
+ * &lt;li&gt;click - <b>function</b> to call when the button is clicked&lt;/li&gt;
+ * &lt;li&gt;mouseover - <b>function</b> to call when the mouse moves over the button&lt;/li&gt;
+ * &lt;li&gt;mouseout - <b>function</b> to call when the mouse moves off the button&lt;/li&gt;
+ * &lt;li&gt;scope - The scope of the above event handlers&lt;/li&gt;
+ * &lt;li&gt;&lt;/li&gt;
+ * &lt;li&gt;&lt;/li&gt;
+ * @constructor
+ * @param {Object} config
+ */</i>
+YAHOO.ext.ToolbarButton = <b>function</b>(config){
+    YAHOO.ext.util.Config.apply(<b>this</b>, config);
+};
+
+YAHOO.ext.ToolbarButton.prototype = {
+    <i>/** @private */</i>
+    init : <b>function</b>(appendTo){
+        <b>var</b> element = document.createElement('span');
+        element.className = 'ytb-button';
+        <b>if</b>(this.id){
+            element.id = <b>this</b>.id;
+        }
+        <b>this</b>.setDisabled(<b>this</b>.disabled === true);
+        <b>var</b> inner = document.createElement('span');
+        inner.className = 'ytb-button-inner ' + <b>this</b>.className;
+        inner.unselectable = 'on';
+        <b>if</b>(this.tooltip){
+            element.setAttribute('title', <b>this</b>.tooltip);
+        }
+        <b>if</b>(this.style){
+           YAHOO.ext.DomHelper.applyStyles(inner, <b>this</b>.style);
+        } 
+        element.appendChild(inner);
+        appendTo.appendChild(element);
+        <b>this</b>.el = getEl(element, true);
+        <b>this</b>.el.unselectable();
+        inner.innerHTML = (<b>this</b>.text ? <b>this</b>.text : '&amp;#160;');
+        <b>this</b>.inner = inner;
+        <b>this</b>.el.mon('click', <b>this</b>.onClick, <b>this</b>, true);    
+        <b>this</b>.el.mon('mouseover', <b>this</b>.onMouseOver, <b>this</b>, true);    
+        <b>this</b>.el.mon('mouseout', <b>this</b>.onMouseOut, <b>this</b>, true);
+    },
+    
+    <i>/**
+     * Sets <b>this</b> buttons click handler
+     * @param {Function} click The <b>function</b> to call when the button is clicked
+     * @param {Object} scope (optional) Scope <b>for</b> the <b>function</b> passed above
+     */</i>
+    setHandler : <b>function</b>(click, scope){
+        <b>this</b>.click = click;
+        <b>this</b>.scope = scope;  
+    },
+    
+    <i>/**
+     * Set <b>this</b> buttons text
+     * @param {String} text
+     */</i>
+    setText : <b>function</b>(text){
+        <b>this</b>.inner.innerHTML = text;    
+    },
+    
+    <i>/**
+     * Set <b>this</b> buttons tooltip text
+     * @param {String} text
+     */</i>
+    setTooltip : <b>function</b>(text){
+        <b>this</b>.el.dom.title = text;    
+    },
+    
+    <i>/**
+     * Show <b>this</b> button
+     */</i>
+    show: <b>function</b>(){
+        <b>this</b>.el.dom.parentNode.style.display = '';
+    },
+    
+    <i>/**
+     * Hide <b>this</b> button
+     */</i>
+    hide: <b>function</b>(){
+        <b>this</b>.el.dom.parentNode.style.display = 'none';  
+    },
+    
+    <i>/**
+     * Disable <b>this</b> button
+     */</i>
+    disable : <b>function</b>(){
+        <b>this</b>.disabled = true;
+        <b>if</b>(this.el){
+            <b>this</b>.el.addClass('ytb-button-disabled');
+        }
+    },
+    
+    <i>/**
+     * Enable <b>this</b> button
+     */</i>
+    enable : <b>function</b>(){
+        <b>this</b>.disabled = false;
+        <b>if</b>(this.el){
+            <b>this</b>.el.removeClass('ytb-button-disabled');
+        }
+    },
+    
+    <i>/**
+     * Returns true <b>if</b> this button is disabled.
+     * @<b>return</b> {Boolean}
+     */</i>
+    isDisabled : <b>function</b>(){
+        <b>return</b> this.disabled === true;
+    },
+    
+    setDisabled : <b>function</b>(disabled){
+        <b>if</b>(disabled){
+            <b>this</b>.disable();
+        }<b>else</b>{
+            <b>this</b>.enable();
+        }
+    },
+    
+    <i>/** @private */</i>
+    onClick : <b>function</b>(){
+        <b>if</b>(!<b>this</b>.disabled &amp;&amp; <b>this</b>.click){
+            <b>this</b>.click.call(<b>this</b>.scope || window, <b>this</b>);
+        }
+    },
+    
+    <i>/** @private */</i>
+    onMouseOver : <b>function</b>(){
+        <b>if</b>(!<b>this</b>.disabled){
+            <b>this</b>.el.addClass('ytb-button-over');
+            <b>if</b>(this.mouseover){
+                <b>this</b>.mouseover.call(<b>this</b>.scope || window, <b>this</b>);
+            }
+        }
+    },
+    
+    <i>/** @private */</i>
+    onMouseOut : <b>function</b>(){
+        <b>this</b>.el.removeClass('ytb-button-over');
+        <b>if</b>(!<b>this</b>.disabled){
+            <b>if</b>(this.mouseout){
+                <b>this</b>.mouseout.call(<b>this</b>.scope || window, <b>this</b>);
+            }
+        }
+    }
+};</code></pre><hr><div style="font-size:10px;text-align:center;color:gray;">yui-ext - Copyright &copy; 2006 Jack Slocum.  |
+    Yahoo! UI - Copyright &copy; 2006 Yahoo! Inc.<br />All rights reserved.</div>
+    </body></html>

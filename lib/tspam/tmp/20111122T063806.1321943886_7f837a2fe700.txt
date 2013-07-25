@@ -1,0 +1,17 @@
+Return-path: <webmaster@phigita.net> 
+Received: from [117.211.86.26] (port=4946 helo=mjprud0e552fe3)
+	by mx1.emailsrvr.com with asmtp 
+	id 20874F-000765-11
+	for <webmaster@phigita.net>; Mon, 21 Nov 2011 22:37:03 -0800 
+Message-ID: <4719F0ABD4CB4F7E86B45A41084E772F@mjprud0e552fe3> 
+From: =?koi8-r?B?IuLPztPByiDHwczF0sXRIiA=?= <narrateh@fiveforfighting.com> 
+To: <webmaster@phigita.net> 
+Subject: =?koi8-r?B?8sHT0NLPxMHWwSDR0M/O08vJyCDCz87TwcouIPDPxMHSz8sgzsEgxM/M?=
+	=?koi8-r?B?x8nFIMfPxNk=?= 
+Date: Mon, 21 Nov 2011 22:37:03 -0800 
+X-Priority: 3 
+X-MSMail-Priority: Normal 
+X-Mailer: Microsoft Windows Mail 6.0.6001.18000 
+X-MimeOLE: Produced By Microsoft MimeOLE V6.0.6001.18049 
+X-Spam: Not detected 
+X-Mras: Ok 

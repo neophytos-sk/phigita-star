@@ -1,0 +1,49 @@
+export LAN="eth0"
+export WAN="eth0" ;# eth1 if available
+
+iptables --flush            # Flush all the rules in filter and nat tables
+iptables --table nat --flush
+iptables --delete-chain     # Delete all chains that are not in default filter and nat table
+iptables --table nat --delete-chain
+
+#Setup default policies to handle unmatched traffic
+iptables -P INPUT ACCEPT
+iptables -P OUTPUT ACCEPT
+iptables -P FORWARD DROP
+
+# allow everything on loopback interface
+iptables -A INPUT -i lo -j ACCEPT
+iptables -A OUTPUT -o lo -j ACCEPT
+
+#Then we lock our services so they only work from the LAN
+iptables -A INPUT -p UDP --dport bootps ! -s 192.168.200.0/255.255.255.0 -j REJECT
+iptables -A INPUT -p UDP --dport domain ! -s 192.168.200.0/255.255.255.0 -j REJECT
+
+# allow incoming traffic on 25,80,443
+iptables -A INPUT -p TCP --dport 25 -i ${WAN} -j ACCEPT
+iptables -A INPUT -p TCP --dport 80 -i ${WAN} -j ACCEPT
+iptables -A INPUT -p TCP --dport 443 -i ${WAN} -j ACCEPT
+
+# Allow access to our ssh server from the LAN
+iptables -A INPUT -p TCP --dport ssh -i ${LAN} -s 192.168.200.0/255.255.255.0 -j ACCEPT
+
+# (Optional) Allow access to our ssh server from the WAN
+#iptables -A INPUT -p TCP --dport ssh -i ${WAN} ! -s 192.168.200.0/255.255.255.0 -j ACCEPT
+
+
+# Finally we add the rules for NAT
+iptables -t nat -A POSTROUTING -o ${WAN} ! -d 192.168.200.0/255.255.255.0 -j MASQUERADE
+iptables -A FORWARD -i ${WAN} -o ${LAN} -d 192.168.200.0/255.255.255.0 -m state --state RELATED,ESTABLISHED -j ACCEPT
+iptables -A FORWARD -i ${LAN} -s 192.168.200.0/255.255.255.0 -o ${WAN} -j ACCEPT
+
+# Drop TCP / UDP packets to privileged ports
+iptables -A INPUT -p TCP ! -s 192.168.200.0/255.255.255.0 -d 0/0 --dport 0:1023 -j DROP
+iptables -A INPUT -p UDP ! -s 192.168.200.0/255.255.255.0 -d 0/0 --dport 0:1023 -j DROP
+
+# Make sure that the main chains end with DROP
+# Zero counters
+
+#iptables -A INPUT -j DROP
+#iptables -A OUTPUT -j DROP
+#iptables -A FORWARD -j DROP
+#iptables -Z

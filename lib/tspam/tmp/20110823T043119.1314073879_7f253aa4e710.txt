@@ -1,0 +1,16 @@
+Return-path: <webmaster@phigita.net> 
+Received: from [59.97.104.172] (port=0259 helo=ORDER)
+	by hansokusite.com with asmtp 
+	id 20052C-000311-76
+	for <webmaster@phigita.net>; Tue, 23 Aug 2011 10:00:19 +0530 
+Message-ID: <FF0279718B8C49F8BAB2CCE567F071B7@ORDER> 
+From: =?koi8-r?B?Iu/v7yD3wc0g8MnT2M3PIg==?= <freyahi29@hansokusite.com> 
+To: <webmaster@phigita.net> 
+Subject: =?koi8-r?B?OCDSwdPT2czPyyDawSAxMCAwMDAg0tXCzMXK?= 
+Date: Tue, 23 Aug 2011 10:00:19 +0530 
+X-Priority: 3 
+X-MSMail-Priority: Normal 
+X-Mailer: Microsoft Windows Mail 6.0.6001.18000 
+X-MimeOLE: Produced By Microsoft MimeOLE V6.0.6001.18049 
+X-Spam: Not detected 
+X-Mras: Ok 

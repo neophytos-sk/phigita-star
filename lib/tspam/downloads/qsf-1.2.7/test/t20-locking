@@ -1,0 +1,37 @@
+#!/bin/sh
+#
+# TEST: Concurrency / locking:          
+
+rm -f $TESTDB
+./mboxsplit 1 < .test-spam | $PROG -d $BACKEND:$TESTDB -m
+
+UPDATECOUNT1=`$PROG -d $BACKEND:$TESTDB -D | sed -n 's/^COUNT-UPDATES //p'`
+
+((echo From: test1@test.com; echo Subject: test; echo; cat .test-spam ) | $PROG -d $BACKEND:$TESTDB -aM) &
+((echo From: test2@test.com; echo Subject: test; echo; cat .test-spam ) | $PROG -d $BACKEND:$TESTDB -aM) &
+((echo From: test3@test.com; echo Subject: test; echo; cat .test-spam ) | $PROG -d $BACKEND:$TESTDB -aM) &
+((echo From: test4@test.com; echo Subject: test; echo; cat .test-spam ) | $PROG -d $BACKEND:$TESTDB -aM) &
+((echo From: test5@test.com; echo Subject: test; echo; cat .test-spam ) | $PROG -d $BACKEND:$TESTDB -aM) &
+((echo From: test6@test.com; echo Subject: test; echo; cat .test-spam ) | $PROG -d $BACKEND:$TESTDB -aM) &
+((echo From: test7@test.com; echo Subject: test; echo; cat .test-spam ) | $PROG -d $BACKEND:$TESTDB -aM) &
+((echo From: test8@test.com; echo Subject: test; echo; cat .test-spam ) | $PROG -d $BACKEND:$TESTDB -aM) &
+
+wait
+
+$PROG -d $BACKEND:$TESTDB -te test1@test.com
+$PROG -d $BACKEND:$TESTDB -te test2@test.com
+$PROG -d $BACKEND:$TESTDB -te test3@test.com
+$PROG -d $BACKEND:$TESTDB -te test4@test.com
+$PROG -d $BACKEND:$TESTDB -te test5@test.com
+$PROG -d $BACKEND:$TESTDB -te test6@test.com
+$PROG -d $BACKEND:$TESTDB -te test7@test.com
+$PROG -d $BACKEND:$TESTDB -te test8@test.com
+
+test $BACKEND = MySQL && exit 0
+test $BACKEND = mysql && exit 0
+
+if test $UPDATECOUNT1 -gt 0; then
+	UPDATECOUNT2=`$PROG -d $BACKEND:$TESTDB -D | sed -n 's/^COUNT-UPDATES //p'`
+	DIFFERENCE=`expr $UPDATECOUNT2 - $UPDATECOUNT1`
+	test $DIFFERENCE -eq 8
+fi

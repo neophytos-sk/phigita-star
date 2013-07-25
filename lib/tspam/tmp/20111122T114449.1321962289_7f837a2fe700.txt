@@ -1,0 +1,16 @@
+Return-path: <webmaster@phigita.net> 
+Received: from [113.168.148.22] (port=3725 helo=toand9b9502347)
+	by mx.jk.locaweb.com.br with asmtp 
+	id 4B9933-000648-96
+	for <webmaster@phigita.net>; Tue, 22 Nov 2011 18:38:49 +0700 
+Message-ID: <4B130EB84E3243A89DF26EC590AB22BE@toand9b9502347> 
+From: =?koi8-r?B?IuTPzcEg0yDHwdLBztTJxcoi?= <emeryingt5@whitecwhite.com> 
+To: <webmaster@phigita.net> 
+Subject: =?koi8-r?B?5M/NwSDJ2iDC0tXTwQ==?= 
+Date: Tue, 22 Nov 2011 18:38:49 +0700 
+X-Priority: 3 
+X-MSMail-Priority: Normal 
+X-Mailer: Microsoft Windows Mail 6.0.6001.18000 
+X-MimeOLE: Produced By Microsoft MimeOLE V6.0.6001.18049 
+X-Spam: Not detected 
+X-Mras: Ok 

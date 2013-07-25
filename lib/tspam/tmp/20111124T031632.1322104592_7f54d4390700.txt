@@ -1,0 +1,198 @@
+DomainKey-Signature: q=dns; a=rsa-sha1; c=nofws;
+	s=prod; d=linkedin.com;
+	h=DKIM-Signature:Sender:Date:From:To:Message-ID:Subject:MIME-Version:Content-Type:X-LinkedIn-Template:X-LinkedIn-Class:X-LinkedIn-fbl;
+	b=jXnQdP602NbGo8XWsUyqNKiktGLH6P3UnQPl/DVkVIy+Jj9/7zUMEIqC2pfF5cMX
+	dVn9qzLwtmWHmpyRrC39mkNSmKKwndbD0q5H+I7cbHKTQTK2wY/lEjZHUgtAGLeH 
+DKIM-Signature: v=1; a=rsa-sha1; d=linkedin.com; s=proddkim; c=relaxed/relaxed;
+	q=dns/txt; i=@linkedin.com; t=1322104581;
+	h=From:Subject:Date:To:MIME-Version:Content-Type:X-LinkedIn-Class:X-LinkedIn-fbl:
+	X-LinkedIn-Template;
+	bh=gxXDkZl+1GqY+X1AKKIta1hy51Y=;
+	b=cO7lkCL2hz1jfxLOVzPcAOP2O9ft0o3SfsZ7G8fe3UmqePibcsukLiW4FN3GjCcS
+	AFiQ6I1FgPZhGzzoZd9WWU1SxYsZQvBgzpSNG6ktvGg/WkpPGDjHbp4tJToly/9C; 
+Sender: messages-noreply@bounce.linkedin.com 
+Date: Thu, 24 Nov 2011 03:16:21 +0000 (UTC) 
+From: High Frequency Trading Group Members <group-digests@linkedin.com> 
+To: Neophytos Demetriou <k2pts@phigita.net> 
+Message-ID: <1825957643.249216420.1322104581423.JavaMail.app@ela4-app0106.prod> 
+Subject: [24] new discussions, [2] new comments and [5] new jobs on LinkedIn 
+X-LinkedIn-Template: anet_digest_type 
+X-LinkedIn-Class: GROUPDIGEST 
+X-LinkedIn-fbl: m-GA3PWqFaJLm9zK54UdPjWq7phthlksx40wS50pTaC1lcbbjx0JKl5wn 
+--------------------------------------
+High Frequency Trading
+  Latest discussions from High Frequency Trading group members.  Change the frequency of this digest:
+  http://www.linkedin.com/e/-1ht5d5-gvd6xjrt-1v/ahs/86999/EMLt_anet_settings/?hs=false&tok=2s0gq4cTi4eB01
+
+
+
+
+Send me an email for each new discussion &#187; http://www.linkedin.com/e/-1ht5d5-gvd6xjrt-1v/snp/86999/true/grp_email_subscribe_new_posts/?hs=false&tok=2RktVXMWe4eB01
+
+
+Active Discussion of the week
+
+ * Mao  Song-Gong started a discussion on a news article:
+  Which do you think is the most profitable in HFT among market making, event driven and stat arb? (22)
+
+  > Hi Manuel, thanks a lot. I feel I can now shape up RenTec, to some
+  > extent, as a great leader in HFT fields. It's a great work produced by
+  > PhDs in Math and Physics, etc. led by Jim Simmons. And his personality
+  > of an "art" part has contributed lots to it. Genius.
+  > 
+  > Compared with RenTec, how about Citadel and Millenium? I think they both
+  > have produced many talented persons. It will be interesting to show up
+  > the differences between them in order to understand better what HFT is.
+
+
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd6xjrt-1v/vai/86999/78013351/member/EMLt_anet_act_disc/?hs=false&tok=1GwcrTv0-4eB01
+
+
+ * Michael  McDonald started a discussion on a news article:
+  Common Trading Mistakes: http://www.stockniche.com/trading-general/2083.htm (1)
+
+  > Good cautious points to noted down..
+
+
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd6xjrt-1v/vai/86999/80613106/member/EMLt_anet_act_disc/?hs=false&tok=2Ht_E1x6O4eB01
+
+
+
+Discussions
+ * Byron  Baldwin Eurex has made it easier to connect to its Matching Engine with its recent Release 14 technical upgrade introducing a number of FIX alternatives.
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd6xjrt-1v/ava/81865651/86999/EMLt_anet_qa_ttle/?hs=false&tok=3ROECPFJq4eB01
+
+
+ * Verônica  Magli TradeTech Brazil 2012
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd6xjrt-1v/ava/81798230/86999/EMLt_anet_qa_ttle/?hs=false&tok=3m5_o1Ssq4eB01
+
+
+ * Ami  Elstein Diamonds as an investment opportunity
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd6xjrt-1v/ava/81777765/86999/EMLt_anet_qa_ttle/?hs=false&tok=28vk3tpiy4eB01
+
+
+ * Lokesh  Madan (mcp_ccie2005@yahoo.co.in) Order Book Based HFT Trading for NSE India.
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd6xjrt-1v/ava/81740928/86999/EMLt_anet_qa_ttle/?hs=false&tok=2cWZVPuBS4eB01
+
+
+ * Kimberly  Williams Register for a Free Social Networking Webinarand learn how you can grow your business and increase your revenues with the new social media.:
+http://srcom.net/?26e251
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd6xjrt-1v/ava/81736870/86999/EMLt_anet_qa_ttle/?hs=false&tok=18oNGccS-4eB01
+
+
+ * Boris  Fesenko Arbitrage, Scalping, Grid Trading Strategies Free Video Courses
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd6xjrt-1v/ava/81736271/86999/EMLt_anet_qa_ttle/?hs=false&tok=1ddYZ9ZHy4eB01
+
+
+ * SixFigureTrader.com  EurexDayTrader.com How to treat the losers?
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd6xjrt-1v/ava/81704737/86999/EMLt_anet_qa_ttle/?hs=false&tok=0m8Wpa-YS4eB01
+
+
+ * Jeff  Bonaventura CQF - Certficate in Quant Finance Webinar - Nov 29th & Dec 6th
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd6xjrt-1v/ava/81698694/86999/EMLt_anet_qa_ttle/?hs=false&tok=1wn5UkOIO4eB01
+
+
+ * Karl  Krug The LLN – Low Latency Networks
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd6xjrt-1v/ava/81682693/86999/EMLt_anet_qa_ttle/?hs=false&tok=0QIwHPk9e4eB01
+
+
+ * Raminder  Anand Learn Automated Technical Analysis based Trading
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd6xjrt-1v/ava/81630217/86999/EMLt_anet_qa_ttle/?hs=false&tok=1g5nMv4Ki4eB01
+
+
+ * Kirk  Du Plessis 101 Inverse ETFs To Short Any Market – But Do They Really Work?
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd6xjrt-1v/ava/81595316/86999/EMLt_anet_qa_ttle/?hs=false&tok=3l_7LsUS-4eB01
+
+
+ * Kimberly  Williams Free Job Search Webinar reveals secrets on how to gain the competitive edge into day’s challenging job market.  http://srcom.net/?9ab1ec
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd6xjrt-1v/ava/81591833/86999/EMLt_anet_qa_ttle/?hs=false&tok=2PxYXwDry4eB01
+
+
+ * Mike  O'Hara Why Network Timing Accuracy is Increasingly Important in Electronic Markets - High Frequency Trading Review's blog - High Frequency Trading Review
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd6xjrt-1v/ava/81584206/86999/EMLt_anet_qa_ttle/?hs=false&tok=2hMjzibC-4eB01
+
+
+ * Brandon  Pilzner An informative weekly trading report, shows technical levels of major asset classes every week
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd6xjrt-1v/ava/81500524/86999/EMLt_anet_qa_ttle/?hs=false&tok=32E__r-fO4eB01
+
+
+ * Michael  McDonald How to make money in the stock market: http://www.stockniche.com/trading-general/2096.htm
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd6xjrt-1v/ava/81499911/86999/EMLt_anet_qa_ttle/?hs=false&tok=1Lrv7GUlO4eB01
+
+
+ * Martin  Kulik Anyone interested to attend event on High Frequency Trading - HIFREQ TRADE 2012 on February 29, in London?
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd6xjrt-1v/ava/81431131/86999/EMLt_anet_qa_ttle/?hs=false&tok=2cBeWy4Z24eB01
+
+
+ * William  O'Brien Direct Edge announces plans to launch Direct Edge Brazil - see www.directedge.com.br
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd6xjrt-1v/ava/81427102/86999/EMLt_anet_qa_ttle/?hs=false&tok=3llIq5M6S4eB01
+
+
+ * bundy  victor with the Get Hired Boot Camp Webinar.  The $149 Webinar is now Free!    http://alturl.com/y4xw3
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd6xjrt-1v/ava/81381319/86999/EMLt_anet_qa_ttle/?hs=false&tok=3vm9GGyNa4eB01
+
+
+ * Kelise  Ward Robert Charles' Trading Blog
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd6xjrt-1v/ava/81300686/86999/EMLt_anet_qa_ttle/?hs=false&tok=3VbNIbgA64eB01
+
+
+ * Edgar  Perez Hot Mexico Boosting Its Position As Paradise for High-Speed Traders
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd6xjrt-1v/ava/81258591/86999/EMLt_anet_qa_ttle/?hs=false&tok=3edoQNRdK4eB01
+
+
+ * Salah  Elmorry Monitor market opportunities. Run High Frequency Strategies.
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd6xjrt-1v/ava/81157135/86999/EMLt_anet_qa_ttle/?hs=false&tok=2ElC99Cji4eB01
+
+
+ * Dan  O'Connor http://community.nasdaq.com/News/2011-11/top-apps-for-investing-and-finance.aspx?storyid=102783
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd6xjrt-1v/ava/80929460/86999/EMLt_anet_qa_ttle/?hs=false&tok=0Oqn-tQxq4eB01
+
+
+ * Rob  Hunt Alphaflash explained.... https://mail.ntkn.com/service/home/~/Asiamoney_AlphaFlash_2011_11.pdf?auth=co&loc=en_GB&id=8113&part=2
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd6xjrt-1v/ava/80908157/86999/EMLt_anet_qa_ttle/?hs=false&tok=0SLJ6b7TK4eB01
+
+
+ * Emma  Haefeli FPL Spain Briefing: Bringing together the Spanish electronic trading community for an afternoon of education, debate and networking on November 29th in Madrid
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd6xjrt-1v/ava/80889225/86999/EMLt_anet_qa_ttle/?hs=false&tok=1JUkSHms24eB01
+
+
+Weekly Job Postings * Drew  Bachmann: Senior Network Engineer NY Metro
+  Senior Network Engineer NY Metro (0)
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd6xjrt-1v/ava/81703226/86999/EMLt_anet_qa_ttle/?hs=false&tok=1YExObo9q4eB01
+
+ * James  S Pandhal: Test Analyst, FIX PROTOCOL (45k – 55k per annum), London, UK
+  Test Analyst, FIX PROTOCOL (45k – 55k per annum), London, UK (0)
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd6xjrt-1v/ava/81519835/86999/EMLt_anet_qa_ttle/?hs=false&tok=3J-D2aHyO4eB01
+
+ * James  S Pandhal: FIX On-boarding Specialist, London, UK (excellent market rate)
+  FIX On-boarding Specialist, London, UK (excellent market rate) (0)
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd6xjrt-1v/ava/81506749/86999/EMLt_anet_qa_ttle/?hs=false&tok=2nwi8zXta4eB01
+
+
+

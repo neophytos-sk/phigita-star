@@ -1,0 +1,1166 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<head>
+	<title>Minesweeper</title>
+	<meta name="Author" content="Alf Magne Kalleland (post@dhtmlgoodies.com)">
+<META NAME="Generator" CONTENT="Alf Magne Kalleland (www.dhtmlgoodies.com)">
+<meta name="KeyWords" content="DHTML, HTML, Dynamic HTML,CSS, Menu, Menus,Drag and drop, Drag, Drop, Cross-browser, Cross browser, Examples, Javascript, Free, Javascripts, Cascading Style Sheet, Crossbrowser,Alf Magne Kalleland, Batalf, minesweeper">
+<meta name="Description" content="A library of nice looking DHTML(dynamic HTML) scripts for your website. (CSS + Javascript + HTML = DHTML = true)">
+<meta name="country" content="Norway">
+<meta name="organization-Email" content="post@dhtmlgoodies.com">
+<meta name="copyright" content="copyright 2005 - Alf Magne Kalleland">
+<meta name="coverage" content="Worldwide">
+<meta name="revisit_after" content="30days">
+<meta name="title" content="A library of nice looking DHTML(dynamic HTML) scripts - DHTMLgoodies.com">
+<meta name="identifier" content="http://www.dhtmlgoodies.com/">
+<meta name="language" content="English">
+<meta name="robots" content="follow">
+<meta name="googlebot" content="index, follow">
+
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+</script>
+<script type="text/javascript">
+_uacct = "UA-85864-2";
+urchinTracker();
+</script>		
+	<style type="text/css">
+	body{
+		font-family: Trebuchet MS, Lucida Sans Unicode, Arial, sans-serif;
+		margin-top:0px;
+		background-repeat:no-repeat;
+	}
+	#theGame{
+		background-color: #C0C0C0;
+		padding:5px;
+		width:490px;
+		border:1px solid #555555;
+	}
+	#theGame_score{
+		width:490px;
+		border:1px solid #555555;
+		display:none;
+	
+	}
+	h3,p{
+		font-size:0.9em;
+	}
+	#theGame_score h3,{
+		padding-left:0px;
+	}
+	
+	p,h3,th,label{
+		font-family: Trebuchet MS, Lucida Sans Unicode, Arial, sans-serif;
+		margin-top:0px;
+		margin-bottom:0px;	
+	}
+	
+	#ad{
+		margin-top:20px;
+	}
+	
+	#game_container{
+		border-right:3px solid #FFFFFF;
+		border-bottom:3px solid #FFFFFF;
+		border-left:3px solid #808080;
+		border-top:3px solid #808080;
+		width:480px;
+		background-color: #C0C0C0;	
+		overflow:auto;
+	}
+	.game_cell{
+		border-left:2px solid #FFFFFF;
+		border-top:2px solid #FFFFFF;
+		border-right:2px solid #808080;
+		border-bottom:2px solid #808080;
+		width:12px;
+		height:12px;
+		background-color: #C0C0C0;
+		float:left;	
+	}	
+	.game_cell_clicked{
+		border-left:1px solid #808080;
+		border-bottom:1px solid #808080;
+		padding-left:1px;
+		padding-bottom:1px;
+		padding-right:2px;
+		padding-top:2px;
+		width:12px;
+		height:12px;
+		background-color: #C0C0C0;
+		float:left;
+		font-size:12px;
+		font-family: "Franklin Gothic Demi";
+		text-align:center;
+		line-height:12px;
+		font-weight:bold;		
+	}
+	.game_row{
+		float:left;
+	}
+	.button_pane{
+		width:480px;
+		border-right:3px solid #FFFFFF;
+		border-bottom:3px solid #FFFFFF;
+		border-left:3px solid #808080;
+		border-top:3px solid #808080;
+		margin-bottom:5px;		
+		height:28px;
+		padding-top:3px;
+		position:relative;
+	}
+	#theGame_button{
+		margin-left:auto;
+		margin-right:auto;
+		width:21px;
+		height:21px;
+		background-image: url('images/face1.gif');
+		background-repeat:no-repeat;
+		background-position: center center;
+		border-left: 2px solid #FFFFFF;
+		border-top: 2px solid #FFFFFF;
+		border-right: 2px solid #808080;
+		border-bottom: 2px solid #808080;
+	}
+	#theGame_restMines,#theGame_time{
+		position: absolute;
+		left:5px;
+		width:39px;
+		height:24px;
+		border-right:1px solid #FFFFFF;
+		border-bottom:1px solid #FFFFFF;		
+	}
+	#theGame_time{
+		position: absolute;
+		left:435px;	
+	}
+	#theGame_restMines img,#theGame_time img{
+		float:left;
+	}	
+	#theGame_scoreList th{
+		text-align:left;
+		font-size:0.9em;
+	}
+	#theGame_scoreList p{
+		font-size:11px;
+	}
+	#theGame_scoreList{
+		display:none;
+	}
+	#theGame_scoreList,#theGame_score{
+		padding-left:10px;
+		height:300px;
+		width:500px;
+		border:1px solid #555555;
+		padding: 5px;
+		width:490px;
+		background-color: #C0C0C0;
+		
+	}
+	#theGame_scoreInner,#theGame_scoreInner{
+		width:476px;
+		height:298px;
+		border-left:3px solid #808080;
+		border-top:3px solid #808080;
+		border-bottom:3px solid #FFFFFF;
+		border-right:2px solid #FFFFFF;
+		background-color: #C0C0C0;
+	
+	}
+	#theGame_scoreList h3{
+		padding-left:15px;
+	}
+	#theGame_scoreInner table{
+		width:210px;
+		float:left;
+		margin-right:20px;
+	}
+	#theGame_scoreInner .right_aligned{
+		text-align:right;
+	}
+	.modeDiv{
+		clear:both;
+	}
+	.highscore_highlighed p{
+		font-weight:bold;
+		color: #FF0000;
+	}
+	</style>
+	
+
+	<script type="text/javascript">
+	var mineArray = new Array();
+	var elementChecked = new Array();
+	var flaggedCells = new Array();
+	
+	var gameOver=false;
+	var totalMines = 60;
+	var restMines = totalMines;
+	var gameStarted = false;
+	var timeStarted = false;
+	function initMineSweeper(){
+		
+		var cells = document.getElementsByTagName('DIV');
+		for(var no=0;no<cells.length;no++){
+			if(cells[no].className=='game_cell'){
+				cells[no].onclick = clickCell;	
+				cells[no].onmousedown = flagCell;			
+			}	
+		}		
+		document.body.oncontextmenu = cancelEvent;
+		document.getElementById('theGame_button').onclick = initMines;
+		document.getElementById('theGame_button').onmousedown = buttonDown;
+		document.getElementById('theGame_button').onmouseup = buttonUp;
+		document.getElementById('theGame_button').onmouseout = buttonUp;
+		initMines();
+	}
+	
+	function buttonDown()
+	{
+		this.style.borderLeft = '2px solid #808080';
+		this.style.borderTop = '2px solid #808080';
+		this.style.borderRight = '1px solid #808080';
+		this.style.borderBottom = '1px solid #808080';
+	}
+	function buttonUp(){
+		this.style.borderLeft = '2px solid #FFFFFF';
+		this.style.borderTop = '2px solid #FFFFFF';		
+		this.style.borderRight = '2px solid #808080';
+		this.style.borderBottom = '2px solid #808080';		
+	}
+	
+	function showRestMines(prefix,number){
+		number = number + '';
+		while(number.length<3){
+			number = '0' + number;
+		}
+		for(var no=0;no<3;no++){
+			document.getElementById(prefix+(no+1)).src = 'images/number_'+number.charAt(no) + '.gif';
+		}
+	}
+	
+	function initMines()
+	{
+		document.getElementById('theGame_button').style.backgroundImage = 'url(\'images/face1.gif\')';
+		var countAssigned = 0;
+		for(var prop in mineArray){
+			mineArray[prop] = false;
+		}
+		for(var prop in elementChecked){
+			elementChecked[prop] = false;
+		}
+		for(var prop in flaggedCells){
+			flaggedCells[prop] = false;
+		}
+		while(countAssigned<totalMines){
+			var no1 = Math.floor(Math.random()*30);
+			var no2 = Math.floor(Math.random()*16);
+			if(!mineArray[no1+','+no2]){
+				mineArray[no1+','+no2] = true;
+				countAssigned = countAssigned + 1;				
+			}
+		}	
+		restMines = totalMines
+		showRestMines('pic_remainder',totalMines);
+		var parent = document.getElementById('game_container');
+		var sub = parent.getElementsByTagName('DIV');
+		for(var no=0;no<sub.length;no++){
+			if(sub[no].className=='game_cell_clicked'){
+				sub[no].innerHTML = '<span></span>';
+				sub[no].className='game_cell';
+				sub[no].style.backgroundImage='';	
+			}
+			if(sub[no].className=='game_cell'){
+				sub[no].style.backgroundImage='';
+			}			
+		}
+		gameOver = false;
+		gameStarted = false;
+		
+		self.frames['getSession'].location.href = 'getSession.html?getSession=true';
+	}
+
+	function cancelEvent(){
+		return false;
+	}
+	
+	function flagCell(e){
+		if(gameOver)return;
+		if(this.className=='game_cell_clicked')return;
+		if(document.all)e = event;
+		var flagExists = false;
+		if(e.button==2){
+			if(this.style.backgroundImage.indexOf('images/flag.gif')>=0)flagExists=true;
+			
+			var id = this.id;
+			var numbers = id.split('_');
+			numbers[0] = numbers[0].replace(/[^\d]/g,'');
+			if(flagExists){
+				restMines = restMines/1 + 1;
+				this.style.backgroundImage = '';
+				flaggedCells[numbers[0] + ',' +numbers[1]] = false;
+			}else{
+				if(restMines==0)return; // Number of flags equals number of mines
+				this.style.backgroundImage = 'url(\'images/flag.gif\')';	
+				var id = this.id;
+				flaggedCells[numbers[0] + ',' +numbers[1]] = true;
+				restMines = restMines/1 - 1;
+			}	
+			showRestMines('pic_remainder',restMines);
+			if(restMines==0)checkScore();
+			return false;	
+		}			
+		if(e.button==1){	// Left mouse button clicked -> Show smiling face at the button
+			document.getElementById('theGame_button').style.backgroundImage = 'url(\'images/face3.gif\')';
+		}	
+	}
+	
+	/*
+	Number of flags equals number of mines -> Check if they are checked correctly
+	*/
+	
+	function checkScore()
+	{
+		var d = new Date();
+		var sec = Math.floor(d.getTime()/1000);
+		var diff = sec - timeStarted;
+		document.forms[0].seconds.value = diff;
+		var errorsFound = false;
+		for(var prop in flaggedCells){
+			if(!mineArray[prop] && flaggedCells[prop]){
+				errorsFound = true;
+				break;
+			}
+		}
+		
+		if(!errorsFound){ // Wrong flags
+			document.getElementById('theGame').style.display='none';
+			document.getElementById('theGame_score').style.display='block';
+		
+		}
+		
+	}
+	
+	
+	/*
+	Start game - reset timer
+	*/
+	function startTimer()
+	{
+		var d = new Date();
+		timeStarted = Math.floor(d.getTime()/1000);
+		showTimer();
+	}
+	/*
+	Display seconds at the top right corner 
+	*/
+	function showTimer()
+	{
+		var d = new Date();
+		var sec = Math.floor(d.getTime()/1000);
+		var diff = sec - timeStarted;
+		showRestMines('pic_time',diff);
+		if(gameStarted)setTimeout('showTimer()',800);else{
+			showRestMines('pic_time',0);
+		}
+	}
+	
+	function clickAllCells(){
+		for(var no=0;no<30;no++){
+			for(var no2=0;no2<16;no2++){
+				currentCell = document.getElementById('cell' + no + '_'+no2);
+				var theID = currentCell.id;	
+				var numbers = theID.split('_');	// Getting array of the x and y coordinage
+				numbers[0] = numbers[0].replace(/[^\d]/g,'');
+				var x = numbers[0]/1;
+				var y = numbers[1]/1;	
+				var neighbours = getNeighbours(numbers[0],numbers[1]);	// Retreve number of mines in the "neihgbourhood"
+				currentCell.className='game_cell_clicked';	
+				if(neighbours==99){
+					currentCell.style.backgroundImage = 'url(\'images/mine.gif\')';
+				}else if(neighbours>0){
+					currentCell.innerHTML = neighbours;
+					currentCell.style.backgroundImage = '';
+					switch(neighbours){
+						case 1: 
+							currentCell.style.color = '#0000FF';
+							break;
+						case 2:	
+							currentCell.style.color = '#008000';
+							break;
+						case 3:
+							currentCell.style.color = '#FF0000';
+							break;
+						case 4:
+							currentCell.style.color = '#000080';
+							break;
+						case 5:
+							currentCell.style.color = 'brown';
+							break;
+								
+					}					
+				}	
+							
+			}			
+		}		
+	}
+	
+	function clickCell(e,currentCell,skipNeighbors)
+	{
+		
+		if(gameOver && skipNeighbors!='1')return;
+		if(!gameStarted){
+			gameStarted=true;
+			startTimer();	
+		}
+		if(document.all)e = event;
+		if(this && this!="undefined" && !currentCell){
+			currentCell=this;
+			document.getElementById('theGame_button').style.backgroundImage = 'url(\'images/face1.gif\')';
+			if(currentCell.style.backgroundImage.indexOf('flag')>=0)return;	
+		}
+		if(currentCell.className=='game_cell_clicked')return;
+		currentCell.className='game_cell_clicked';	
+		currentCell.style.backgroundImage='';	
+		var theID = currentCell.id;		
+		var numbers = theID.split('_');	// Getting array of the x and y coordinage
+		numbers[0] = numbers[0].replace(/[^\d]/g,'');
+		var x = numbers[0]/1;
+		var y = numbers[1]/1;
+		elementChecked[x+','+y] = true;	// Flag this element as checked
+		var neighbours = getNeighbours(numbers[0],numbers[1]);	// Retreve number of mines in the "neihgbourhood"
+		if(neighbours==99){
+			currentCell.style.backgroundImage = 'url(\'images/mine.gif\')';
+			clickAllCells();
+			gameOver = true;
+			gameStarted = false;
+			document.getElementById('theGame_button').style.backgroundImage = 'url(\'images/face2.gif\')';
+			
+			return;	
+		}
+		if(neighbours>0){
+			switch(neighbours){
+				case 1: 
+					currentCell.style.color = '#0000FF';
+					break;
+				case 2:	
+					currentCell.style.color = '#008000';
+					break;
+				case 3:
+					currentCell.style.color = '#FF0000';
+					break;
+				case 4:
+					currentCell.style.color = '#000080';
+					break;
+				case 5:
+					currentCell.style.color = 'brown';
+					break;
+				case 6:
+					currentCell.style.color = 'orange';
+					break;
+						
+			}
+			currentCell.innerHTML = neighbours;
+		}else{
+			if(skipNeighbors!='1'){
+				if(x<29){
+					if(!elementChecked[(x+1)+','+y])callClickFunction((x+1),y);
+					if(!elementChecked[(x+1)+','+(y-1)] && y>0)callClickFunction((x+1),(y-1));
+					if(!elementChecked[(x+1)+','+(y+1)] && y<15)callClickFunction((x+1),(y+1));				
+				}
+				if(x>0){
+					if(!elementChecked[(x-1)+','+y])callClickFunction((x-1),y);
+				}
+				if(y<15){
+					if(!elementChecked[(x)+','+(y+1)])callClickFunction(x,(y+1));
+					if(!elementChecked[(x-1) + ',' + (y+1)] && x>0)callClickFunction( (x-1),(y+1));
+	
+				}
+				if(y>0){
+					if(!elementChecked[(x)+','+(y-1)])callClickFunction(x,(y-1));
+					if(x>0 && !elementChecked[(x-1)+','+(y-1)])callClickFunction((x-1),(y-1));
+				}
+			}
+		}
+	}
+	
+	
+	/*
+	To get a smooth auto click
+	*/
+	function callClickFunction(x,y)
+	{		
+		setTimeout('clickCell(false,document.getElementById("cell' + x + '_' + y + '"))',1);
+	}
+	
+	/*
+	Count number of mines in the neighbourhood
+	*/
+	function getNeighbours(x,y)
+	{
+		if(mineArray[x+','+y])return 99;
+		var countNeighbours = 0;
+		if(x>0){
+			if(y>0)if(mineArray[(x-1)+','+(y-1)])countNeighbours++;	
+			if(mineArray[(x-1)+','+y])countNeighbours++;
+			if(y<15)if(mineArray[(x-1)+','+(y/1+1)])countNeighbours++;
+		}
+		if(y>0){
+			if(mineArray[x+','+(y-1)])countNeighbours++;	
+			if(x<29)if(mineArray[(x/1+1)+','+(y-1)])countNeighbours++;
+		}
+		if(y<15){
+			if(mineArray[x+','+(y/1+1)])countNeighbours++;
+			if(x<29)if(mineArray[(x/1+1)+','+(y/1+1)])countNeighbours++;
+		}
+		if(x<29){
+			if(mineArray[(x/1+1)+','+y])countNeighbours++;	
+		}
+		
+		return countNeighbours;
+		
+	}
+	
+	function showHideScore(buttonObj)
+	{
+
+		if(buttonObj.value=='Show highscore'){
+			document.getElementById('theGame').style.display='none';	
+			document.getElementById('theGame_scoreList').style.display='block';	
+			buttonObj.value = 'Show game';
+		}else if(buttonObj.value=='Show game'){
+			document.getElementById('theGame').style.display='block';	
+			document.getElementById('theGame_scoreList').style.display='none';	
+			buttonObj.value = 'Show highscore';
+		}	
+		
+	}
+	
+	window.onload = initMineSweeper;
+	</script>
+</head>
+<body>
+
+	<img src="../../images/heading3.gif">
+	<div id="theGame">
+	<div class="button_pane">
+		<div id="theGame_restMines">
+			<img src="images/number_0.gif" id="pic_remainder1">
+			<img src="images/number_0.gif" id="pic_remainder2">
+			<img src="images/number_0.gif" id="pic_remainder3">
+		</div>
+		<div id="theGame_time">
+			<img src="images/number_0.gif" id="pic_time1">
+			<img src="images/number_0.gif" id="pic_time2">
+			<img src="images/number_0.gif" id="pic_time3">
+		</div>		
+		<div id="theGame_button"></div>
+	
+	</div>
+	<div id="game_container">
+					<div class="game_row">
+							<div class="game_cell" id="cell0_0"><span></span></div>
+								<div class="game_cell" id="cell1_0"><span></span></div>
+								<div class="game_cell" id="cell2_0"><span></span></div>
+								<div class="game_cell" id="cell3_0"><span></span></div>
+								<div class="game_cell" id="cell4_0"><span></span></div>
+								<div class="game_cell" id="cell5_0"><span></span></div>
+								<div class="game_cell" id="cell6_0"><span></span></div>
+								<div class="game_cell" id="cell7_0"><span></span></div>
+								<div class="game_cell" id="cell8_0"><span></span></div>
+								<div class="game_cell" id="cell9_0"><span></span></div>
+								<div class="game_cell" id="cell10_0"><span></span></div>
+								<div class="game_cell" id="cell11_0"><span></span></div>
+								<div class="game_cell" id="cell12_0"><span></span></div>
+								<div class="game_cell" id="cell13_0"><span></span></div>
+								<div class="game_cell" id="cell14_0"><span></span></div>
+								<div class="game_cell" id="cell15_0"><span></span></div>
+								<div class="game_cell" id="cell16_0"><span></span></div>
+								<div class="game_cell" id="cell17_0"><span></span></div>
+								<div class="game_cell" id="cell18_0"><span></span></div>
+								<div class="game_cell" id="cell19_0"><span></span></div>
+								<div class="game_cell" id="cell20_0"><span></span></div>
+								<div class="game_cell" id="cell21_0"><span></span></div>
+								<div class="game_cell" id="cell22_0"><span></span></div>
+								<div class="game_cell" id="cell23_0"><span></span></div>
+								<div class="game_cell" id="cell24_0"><span></span></div>
+								<div class="game_cell" id="cell25_0"><span></span></div>
+								<div class="game_cell" id="cell26_0"><span></span></div>
+								<div class="game_cell" id="cell27_0"><span></span></div>
+								<div class="game_cell" id="cell28_0"><span></span></div>
+								<div class="game_cell" id="cell29_0"><span></span></div>
+							
+			</div>
+						<div class="game_row">
+							<div class="game_cell" id="cell0_1"><span></span></div>
+								<div class="game_cell" id="cell1_1"><span></span></div>
+								<div class="game_cell" id="cell2_1"><span></span></div>
+								<div class="game_cell" id="cell3_1"><span></span></div>
+								<div class="game_cell" id="cell4_1"><span></span></div>
+								<div class="game_cell" id="cell5_1"><span></span></div>
+								<div class="game_cell" id="cell6_1"><span></span></div>
+								<div class="game_cell" id="cell7_1"><span></span></div>
+								<div class="game_cell" id="cell8_1"><span></span></div>
+								<div class="game_cell" id="cell9_1"><span></span></div>
+								<div class="game_cell" id="cell10_1"><span></span></div>
+								<div class="game_cell" id="cell11_1"><span></span></div>
+								<div class="game_cell" id="cell12_1"><span></span></div>
+								<div class="game_cell" id="cell13_1"><span></span></div>
+								<div class="game_cell" id="cell14_1"><span></span></div>
+								<div class="game_cell" id="cell15_1"><span></span></div>
+								<div class="game_cell" id="cell16_1"><span></span></div>
+								<div class="game_cell" id="cell17_1"><span></span></div>
+								<div class="game_cell" id="cell18_1"><span></span></div>
+								<div class="game_cell" id="cell19_1"><span></span></div>
+								<div class="game_cell" id="cell20_1"><span></span></div>
+								<div class="game_cell" id="cell21_1"><span></span></div>
+								<div class="game_cell" id="cell22_1"><span></span></div>
+								<div class="game_cell" id="cell23_1"><span></span></div>
+								<div class="game_cell" id="cell24_1"><span></span></div>
+								<div class="game_cell" id="cell25_1"><span></span></div>
+								<div class="game_cell" id="cell26_1"><span></span></div>
+								<div class="game_cell" id="cell27_1"><span></span></div>
+								<div class="game_cell" id="cell28_1"><span></span></div>
+								<div class="game_cell" id="cell29_1"><span></span></div>
+							
+			</div>
+						<div class="game_row">
+							<div class="game_cell" id="cell0_2"><span></span></div>
+								<div class="game_cell" id="cell1_2"><span></span></div>
+								<div class="game_cell" id="cell2_2"><span></span></div>
+								<div class="game_cell" id="cell3_2"><span></span></div>
+								<div class="game_cell" id="cell4_2"><span></span></div>
+								<div class="game_cell" id="cell5_2"><span></span></div>
+								<div class="game_cell" id="cell6_2"><span></span></div>
+								<div class="game_cell" id="cell7_2"><span></span></div>
+								<div class="game_cell" id="cell8_2"><span></span></div>
+								<div class="game_cell" id="cell9_2"><span></span></div>
+								<div class="game_cell" id="cell10_2"><span></span></div>
+								<div class="game_cell" id="cell11_2"><span></span></div>
+								<div class="game_cell" id="cell12_2"><span></span></div>
+								<div class="game_cell" id="cell13_2"><span></span></div>
+								<div class="game_cell" id="cell14_2"><span></span></div>
+								<div class="game_cell" id="cell15_2"><span></span></div>
+								<div class="game_cell" id="cell16_2"><span></span></div>
+								<div class="game_cell" id="cell17_2"><span></span></div>
+								<div class="game_cell" id="cell18_2"><span></span></div>
+								<div class="game_cell" id="cell19_2"><span></span></div>
+								<div class="game_cell" id="cell20_2"><span></span></div>
+								<div class="game_cell" id="cell21_2"><span></span></div>
+								<div class="game_cell" id="cell22_2"><span></span></div>
+								<div class="game_cell" id="cell23_2"><span></span></div>
+								<div class="game_cell" id="cell24_2"><span></span></div>
+								<div class="game_cell" id="cell25_2"><span></span></div>
+								<div class="game_cell" id="cell26_2"><span></span></div>
+								<div class="game_cell" id="cell27_2"><span></span></div>
+								<div class="game_cell" id="cell28_2"><span></span></div>
+								<div class="game_cell" id="cell29_2"><span></span></div>
+							
+			</div>
+						<div class="game_row">
+							<div class="game_cell" id="cell0_3"><span></span></div>
+								<div class="game_cell" id="cell1_3"><span></span></div>
+								<div class="game_cell" id="cell2_3"><span></span></div>
+								<div class="game_cell" id="cell3_3"><span></span></div>
+								<div class="game_cell" id="cell4_3"><span></span></div>
+								<div class="game_cell" id="cell5_3"><span></span></div>
+								<div class="game_cell" id="cell6_3"><span></span></div>
+								<div class="game_cell" id="cell7_3"><span></span></div>
+								<div class="game_cell" id="cell8_3"><span></span></div>
+								<div class="game_cell" id="cell9_3"><span></span></div>
+								<div class="game_cell" id="cell10_3"><span></span></div>
+								<div class="game_cell" id="cell11_3"><span></span></div>
+								<div class="game_cell" id="cell12_3"><span></span></div>
+								<div class="game_cell" id="cell13_3"><span></span></div>
+								<div class="game_cell" id="cell14_3"><span></span></div>
+								<div class="game_cell" id="cell15_3"><span></span></div>
+								<div class="game_cell" id="cell16_3"><span></span></div>
+								<div class="game_cell" id="cell17_3"><span></span></div>
+								<div class="game_cell" id="cell18_3"><span></span></div>
+								<div class="game_cell" id="cell19_3"><span></span></div>
+								<div class="game_cell" id="cell20_3"><span></span></div>
+								<div class="game_cell" id="cell21_3"><span></span></div>
+								<div class="game_cell" id="cell22_3"><span></span></div>
+								<div class="game_cell" id="cell23_3"><span></span></div>
+								<div class="game_cell" id="cell24_3"><span></span></div>
+								<div class="game_cell" id="cell25_3"><span></span></div>
+								<div class="game_cell" id="cell26_3"><span></span></div>
+								<div class="game_cell" id="cell27_3"><span></span></div>
+								<div class="game_cell" id="cell28_3"><span></span></div>
+								<div class="game_cell" id="cell29_3"><span></span></div>
+							
+			</div>
+						<div class="game_row">
+							<div class="game_cell" id="cell0_4"><span></span></div>
+								<div class="game_cell" id="cell1_4"><span></span></div>
+								<div class="game_cell" id="cell2_4"><span></span></div>
+								<div class="game_cell" id="cell3_4"><span></span></div>
+								<div class="game_cell" id="cell4_4"><span></span></div>
+								<div class="game_cell" id="cell5_4"><span></span></div>
+								<div class="game_cell" id="cell6_4"><span></span></div>
+								<div class="game_cell" id="cell7_4"><span></span></div>
+								<div class="game_cell" id="cell8_4"><span></span></div>
+								<div class="game_cell" id="cell9_4"><span></span></div>
+								<div class="game_cell" id="cell10_4"><span></span></div>
+								<div class="game_cell" id="cell11_4"><span></span></div>
+								<div class="game_cell" id="cell12_4"><span></span></div>
+								<div class="game_cell" id="cell13_4"><span></span></div>
+								<div class="game_cell" id="cell14_4"><span></span></div>
+								<div class="game_cell" id="cell15_4"><span></span></div>
+								<div class="game_cell" id="cell16_4"><span></span></div>
+								<div class="game_cell" id="cell17_4"><span></span></div>
+								<div class="game_cell" id="cell18_4"><span></span></div>
+								<div class="game_cell" id="cell19_4"><span></span></div>
+								<div class="game_cell" id="cell20_4"><span></span></div>
+								<div class="game_cell" id="cell21_4"><span></span></div>
+								<div class="game_cell" id="cell22_4"><span></span></div>
+								<div class="game_cell" id="cell23_4"><span></span></div>
+								<div class="game_cell" id="cell24_4"><span></span></div>
+								<div class="game_cell" id="cell25_4"><span></span></div>
+								<div class="game_cell" id="cell26_4"><span></span></div>
+								<div class="game_cell" id="cell27_4"><span></span></div>
+								<div class="game_cell" id="cell28_4"><span></span></div>
+								<div class="game_cell" id="cell29_4"><span></span></div>
+							
+			</div>
+						<div class="game_row">
+							<div class="game_cell" id="cell0_5"><span></span></div>
+								<div class="game_cell" id="cell1_5"><span></span></div>
+								<div class="game_cell" id="cell2_5"><span></span></div>
+								<div class="game_cell" id="cell3_5"><span></span></div>
+								<div class="game_cell" id="cell4_5"><span></span></div>
+								<div class="game_cell" id="cell5_5"><span></span></div>
+								<div class="game_cell" id="cell6_5"><span></span></div>
+								<div class="game_cell" id="cell7_5"><span></span></div>
+								<div class="game_cell" id="cell8_5"><span></span></div>
+								<div class="game_cell" id="cell9_5"><span></span></div>
+								<div class="game_cell" id="cell10_5"><span></span></div>
+								<div class="game_cell" id="cell11_5"><span></span></div>
+								<div class="game_cell" id="cell12_5"><span></span></div>
+								<div class="game_cell" id="cell13_5"><span></span></div>
+								<div class="game_cell" id="cell14_5"><span></span></div>
+								<div class="game_cell" id="cell15_5"><span></span></div>
+								<div class="game_cell" id="cell16_5"><span></span></div>
+								<div class="game_cell" id="cell17_5"><span></span></div>
+								<div class="game_cell" id="cell18_5"><span></span></div>
+								<div class="game_cell" id="cell19_5"><span></span></div>
+								<div class="game_cell" id="cell20_5"><span></span></div>
+								<div class="game_cell" id="cell21_5"><span></span></div>
+								<div class="game_cell" id="cell22_5"><span></span></div>
+								<div class="game_cell" id="cell23_5"><span></span></div>
+								<div class="game_cell" id="cell24_5"><span></span></div>
+								<div class="game_cell" id="cell25_5"><span></span></div>
+								<div class="game_cell" id="cell26_5"><span></span></div>
+								<div class="game_cell" id="cell27_5"><span></span></div>
+								<div class="game_cell" id="cell28_5"><span></span></div>
+								<div class="game_cell" id="cell29_5"><span></span></div>
+							
+			</div>
+						<div class="game_row">
+							<div class="game_cell" id="cell0_6"><span></span></div>
+								<div class="game_cell" id="cell1_6"><span></span></div>
+								<div class="game_cell" id="cell2_6"><span></span></div>
+								<div class="game_cell" id="cell3_6"><span></span></div>
+								<div class="game_cell" id="cell4_6"><span></span></div>
+								<div class="game_cell" id="cell5_6"><span></span></div>
+								<div class="game_cell" id="cell6_6"><span></span></div>
+								<div class="game_cell" id="cell7_6"><span></span></div>
+								<div class="game_cell" id="cell8_6"><span></span></div>
+								<div class="game_cell" id="cell9_6"><span></span></div>
+								<div class="game_cell" id="cell10_6"><span></span></div>
+								<div class="game_cell" id="cell11_6"><span></span></div>
+								<div class="game_cell" id="cell12_6"><span></span></div>
+								<div class="game_cell" id="cell13_6"><span></span></div>
+								<div class="game_cell" id="cell14_6"><span></span></div>
+								<div class="game_cell" id="cell15_6"><span></span></div>
+								<div class="game_cell" id="cell16_6"><span></span></div>
+								<div class="game_cell" id="cell17_6"><span></span></div>
+								<div class="game_cell" id="cell18_6"><span></span></div>
+								<div class="game_cell" id="cell19_6"><span></span></div>
+								<div class="game_cell" id="cell20_6"><span></span></div>
+								<div class="game_cell" id="cell21_6"><span></span></div>
+								<div class="game_cell" id="cell22_6"><span></span></div>
+								<div class="game_cell" id="cell23_6"><span></span></div>
+								<div class="game_cell" id="cell24_6"><span></span></div>
+								<div class="game_cell" id="cell25_6"><span></span></div>
+								<div class="game_cell" id="cell26_6"><span></span></div>
+								<div class="game_cell" id="cell27_6"><span></span></div>
+								<div class="game_cell" id="cell28_6"><span></span></div>
+								<div class="game_cell" id="cell29_6"><span></span></div>
+							
+			</div>
+						<div class="game_row">
+							<div class="game_cell" id="cell0_7"><span></span></div>
+								<div class="game_cell" id="cell1_7"><span></span></div>
+								<div class="game_cell" id="cell2_7"><span></span></div>
+								<div class="game_cell" id="cell3_7"><span></span></div>
+								<div class="game_cell" id="cell4_7"><span></span></div>
+								<div class="game_cell" id="cell5_7"><span></span></div>
+								<div class="game_cell" id="cell6_7"><span></span></div>
+								<div class="game_cell" id="cell7_7"><span></span></div>
+								<div class="game_cell" id="cell8_7"><span></span></div>
+								<div class="game_cell" id="cell9_7"><span></span></div>
+								<div class="game_cell" id="cell10_7"><span></span></div>
+								<div class="game_cell" id="cell11_7"><span></span></div>
+								<div class="game_cell" id="cell12_7"><span></span></div>
+								<div class="game_cell" id="cell13_7"><span></span></div>
+								<div class="game_cell" id="cell14_7"><span></span></div>
+								<div class="game_cell" id="cell15_7"><span></span></div>
+								<div class="game_cell" id="cell16_7"><span></span></div>
+								<div class="game_cell" id="cell17_7"><span></span></div>
+								<div class="game_cell" id="cell18_7"><span></span></div>
+								<div class="game_cell" id="cell19_7"><span></span></div>
+								<div class="game_cell" id="cell20_7"><span></span></div>
+								<div class="game_cell" id="cell21_7"><span></span></div>
+								<div class="game_cell" id="cell22_7"><span></span></div>
+								<div class="game_cell" id="cell23_7"><span></span></div>
+								<div class="game_cell" id="cell24_7"><span></span></div>
+								<div class="game_cell" id="cell25_7"><span></span></div>
+								<div class="game_cell" id="cell26_7"><span></span></div>
+								<div class="game_cell" id="cell27_7"><span></span></div>
+								<div class="game_cell" id="cell28_7"><span></span></div>
+								<div class="game_cell" id="cell29_7"><span></span></div>
+							
+			</div>
+						<div class="game_row">
+							<div class="game_cell" id="cell0_8"><span></span></div>
+								<div class="game_cell" id="cell1_8"><span></span></div>
+								<div class="game_cell" id="cell2_8"><span></span></div>
+								<div class="game_cell" id="cell3_8"><span></span></div>
+								<div class="game_cell" id="cell4_8"><span></span></div>
+								<div class="game_cell" id="cell5_8"><span></span></div>
+								<div class="game_cell" id="cell6_8"><span></span></div>
+								<div class="game_cell" id="cell7_8"><span></span></div>
+								<div class="game_cell" id="cell8_8"><span></span></div>
+								<div class="game_cell" id="cell9_8"><span></span></div>
+								<div class="game_cell" id="cell10_8"><span></span></div>
+								<div class="game_cell" id="cell11_8"><span></span></div>
+								<div class="game_cell" id="cell12_8"><span></span></div>
+								<div class="game_cell" id="cell13_8"><span></span></div>
+								<div class="game_cell" id="cell14_8"><span></span></div>
+								<div class="game_cell" id="cell15_8"><span></span></div>
+								<div class="game_cell" id="cell16_8"><span></span></div>
+								<div class="game_cell" id="cell17_8"><span></span></div>
+								<div class="game_cell" id="cell18_8"><span></span></div>
+								<div class="game_cell" id="cell19_8"><span></span></div>
+								<div class="game_cell" id="cell20_8"><span></span></div>
+								<div class="game_cell" id="cell21_8"><span></span></div>
+								<div class="game_cell" id="cell22_8"><span></span></div>
+								<div class="game_cell" id="cell23_8"><span></span></div>
+								<div class="game_cell" id="cell24_8"><span></span></div>
+								<div class="game_cell" id="cell25_8"><span></span></div>
+								<div class="game_cell" id="cell26_8"><span></span></div>
+								<div class="game_cell" id="cell27_8"><span></span></div>
+								<div class="game_cell" id="cell28_8"><span></span></div>
+								<div class="game_cell" id="cell29_8"><span></span></div>
+							
+			</div>
+						<div class="game_row">
+							<div class="game_cell" id="cell0_9"><span></span></div>
+								<div class="game_cell" id="cell1_9"><span></span></div>
+								<div class="game_cell" id="cell2_9"><span></span></div>
+								<div class="game_cell" id="cell3_9"><span></span></div>
+								<div class="game_cell" id="cell4_9"><span></span></div>
+								<div class="game_cell" id="cell5_9"><span></span></div>
+								<div class="game_cell" id="cell6_9"><span></span></div>
+								<div class="game_cell" id="cell7_9"><span></span></div>
+								<div class="game_cell" id="cell8_9"><span></span></div>
+								<div class="game_cell" id="cell9_9"><span></span></div>
+								<div class="game_cell" id="cell10_9"><span></span></div>
+								<div class="game_cell" id="cell11_9"><span></span></div>
+								<div class="game_cell" id="cell12_9"><span></span></div>
+								<div class="game_cell" id="cell13_9"><span></span></div>
+								<div class="game_cell" id="cell14_9"><span></span></div>
+								<div class="game_cell" id="cell15_9"><span></span></div>
+								<div class="game_cell" id="cell16_9"><span></span></div>
+								<div class="game_cell" id="cell17_9"><span></span></div>
+								<div class="game_cell" id="cell18_9"><span></span></div>
+								<div class="game_cell" id="cell19_9"><span></span></div>
+								<div class="game_cell" id="cell20_9"><span></span></div>
+								<div class="game_cell" id="cell21_9"><span></span></div>
+								<div class="game_cell" id="cell22_9"><span></span></div>
+								<div class="game_cell" id="cell23_9"><span></span></div>
+								<div class="game_cell" id="cell24_9"><span></span></div>
+								<div class="game_cell" id="cell25_9"><span></span></div>
+								<div class="game_cell" id="cell26_9"><span></span></div>
+								<div class="game_cell" id="cell27_9"><span></span></div>
+								<div class="game_cell" id="cell28_9"><span></span></div>
+								<div class="game_cell" id="cell29_9"><span></span></div>
+							
+			</div>
+						<div class="game_row">
+							<div class="game_cell" id="cell0_10"><span></span></div>
+								<div class="game_cell" id="cell1_10"><span></span></div>
+								<div class="game_cell" id="cell2_10"><span></span></div>
+								<div class="game_cell" id="cell3_10"><span></span></div>
+								<div class="game_cell" id="cell4_10"><span></span></div>
+								<div class="game_cell" id="cell5_10"><span></span></div>
+								<div class="game_cell" id="cell6_10"><span></span></div>
+								<div class="game_cell" id="cell7_10"><span></span></div>
+								<div class="game_cell" id="cell8_10"><span></span></div>
+								<div class="game_cell" id="cell9_10"><span></span></div>
+								<div class="game_cell" id="cell10_10"><span></span></div>
+								<div class="game_cell" id="cell11_10"><span></span></div>
+								<div class="game_cell" id="cell12_10"><span></span></div>
+								<div class="game_cell" id="cell13_10"><span></span></div>
+								<div class="game_cell" id="cell14_10"><span></span></div>
+								<div class="game_cell" id="cell15_10"><span></span></div>
+								<div class="game_cell" id="cell16_10"><span></span></div>
+								<div class="game_cell" id="cell17_10"><span></span></div>
+								<div class="game_cell" id="cell18_10"><span></span></div>
+								<div class="game_cell" id="cell19_10"><span></span></div>
+								<div class="game_cell" id="cell20_10"><span></span></div>
+								<div class="game_cell" id="cell21_10"><span></span></div>
+								<div class="game_cell" id="cell22_10"><span></span></div>
+								<div class="game_cell" id="cell23_10"><span></span></div>
+								<div class="game_cell" id="cell24_10"><span></span></div>
+								<div class="game_cell" id="cell25_10"><span></span></div>
+								<div class="game_cell" id="cell26_10"><span></span></div>
+								<div class="game_cell" id="cell27_10"><span></span></div>
+								<div class="game_cell" id="cell28_10"><span></span></div>
+								<div class="game_cell" id="cell29_10"><span></span></div>
+							
+			</div>
+						<div class="game_row">
+							<div class="game_cell" id="cell0_11"><span></span></div>
+								<div class="game_cell" id="cell1_11"><span></span></div>
+								<div class="game_cell" id="cell2_11"><span></span></div>
+								<div class="game_cell" id="cell3_11"><span></span></div>
+								<div class="game_cell" id="cell4_11"><span></span></div>
+								<div class="game_cell" id="cell5_11"><span></span></div>
+								<div class="game_cell" id="cell6_11"><span></span></div>
+								<div class="game_cell" id="cell7_11"><span></span></div>
+								<div class="game_cell" id="cell8_11"><span></span></div>
+								<div class="game_cell" id="cell9_11"><span></span></div>
+								<div class="game_cell" id="cell10_11"><span></span></div>
+								<div class="game_cell" id="cell11_11"><span></span></div>
+								<div class="game_cell" id="cell12_11"><span></span></div>
+								<div class="game_cell" id="cell13_11"><span></span></div>
+								<div class="game_cell" id="cell14_11"><span></span></div>
+								<div class="game_cell" id="cell15_11"><span></span></div>
+								<div class="game_cell" id="cell16_11"><span></span></div>
+								<div class="game_cell" id="cell17_11"><span></span></div>
+								<div class="game_cell" id="cell18_11"><span></span></div>
+								<div class="game_cell" id="cell19_11"><span></span></div>
+								<div class="game_cell" id="cell20_11"><span></span></div>
+								<div class="game_cell" id="cell21_11"><span></span></div>
+								<div class="game_cell" id="cell22_11"><span></span></div>
+								<div class="game_cell" id="cell23_11"><span></span></div>
+								<div class="game_cell" id="cell24_11"><span></span></div>
+								<div class="game_cell" id="cell25_11"><span></span></div>
+								<div class="game_cell" id="cell26_11"><span></span></div>
+								<div class="game_cell" id="cell27_11"><span></span></div>
+								<div class="game_cell" id="cell28_11"><span></span></div>
+								<div class="game_cell" id="cell29_11"><span></span></div>
+							
+			</div>
+						<div class="game_row">
+							<div class="game_cell" id="cell0_12"><span></span></div>
+								<div class="game_cell" id="cell1_12"><span></span></div>
+								<div class="game_cell" id="cell2_12"><span></span></div>
+								<div class="game_cell" id="cell3_12"><span></span></div>
+								<div class="game_cell" id="cell4_12"><span></span></div>
+								<div class="game_cell" id="cell5_12"><span></span></div>
+								<div class="game_cell" id="cell6_12"><span></span></div>
+								<div class="game_cell" id="cell7_12"><span></span></div>
+								<div class="game_cell" id="cell8_12"><span></span></div>
+								<div class="game_cell" id="cell9_12"><span></span></div>
+								<div class="game_cell" id="cell10_12"><span></span></div>
+								<div class="game_cell" id="cell11_12"><span></span></div>
+								<div class="game_cell" id="cell12_12"><span></span></div>
+								<div class="game_cell" id="cell13_12"><span></span></div>
+								<div class="game_cell" id="cell14_12"><span></span></div>
+								<div class="game_cell" id="cell15_12"><span></span></div>
+								<div class="game_cell" id="cell16_12"><span></span></div>
+								<div class="game_cell" id="cell17_12"><span></span></div>
+								<div class="game_cell" id="cell18_12"><span></span></div>
+								<div class="game_cell" id="cell19_12"><span></span></div>
+								<div class="game_cell" id="cell20_12"><span></span></div>
+								<div class="game_cell" id="cell21_12"><span></span></div>
+								<div class="game_cell" id="cell22_12"><span></span></div>
+								<div class="game_cell" id="cell23_12"><span></span></div>
+								<div class="game_cell" id="cell24_12"><span></span></div>
+								<div class="game_cell" id="cell25_12"><span></span></div>
+								<div class="game_cell" id="cell26_12"><span></span></div>
+								<div class="game_cell" id="cell27_12"><span></span></div>
+								<div class="game_cell" id="cell28_12"><span></span></div>
+								<div class="game_cell" id="cell29_12"><span></span></div>
+							
+			</div>
+						<div class="game_row">
+							<div class="game_cell" id="cell0_13"><span></span></div>
+								<div class="game_cell" id="cell1_13"><span></span></div>
+								<div class="game_cell" id="cell2_13"><span></span></div>
+								<div class="game_cell" id="cell3_13"><span></span></div>
+								<div class="game_cell" id="cell4_13"><span></span></div>
+								<div class="game_cell" id="cell5_13"><span></span></div>
+								<div class="game_cell" id="cell6_13"><span></span></div>
+								<div class="game_cell" id="cell7_13"><span></span></div>
+								<div class="game_cell" id="cell8_13"><span></span></div>
+								<div class="game_cell" id="cell9_13"><span></span></div>
+								<div class="game_cell" id="cell10_13"><span></span></div>
+								<div class="game_cell" id="cell11_13"><span></span></div>
+								<div class="game_cell" id="cell12_13"><span></span></div>
+								<div class="game_cell" id="cell13_13"><span></span></div>
+								<div class="game_cell" id="cell14_13"><span></span></div>
+								<div class="game_cell" id="cell15_13"><span></span></div>
+								<div class="game_cell" id="cell16_13"><span></span></div>
+								<div class="game_cell" id="cell17_13"><span></span></div>
+								<div class="game_cell" id="cell18_13"><span></span></div>
+								<div class="game_cell" id="cell19_13"><span></span></div>
+								<div class="game_cell" id="cell20_13"><span></span></div>
+								<div class="game_cell" id="cell21_13"><span></span></div>
+								<div class="game_cell" id="cell22_13"><span></span></div>
+								<div class="game_cell" id="cell23_13"><span></span></div>
+								<div class="game_cell" id="cell24_13"><span></span></div>
+								<div class="game_cell" id="cell25_13"><span></span></div>
+								<div class="game_cell" id="cell26_13"><span></span></div>
+								<div class="game_cell" id="cell27_13"><span></span></div>
+								<div class="game_cell" id="cell28_13"><span></span></div>
+								<div class="game_cell" id="cell29_13"><span></span></div>
+							
+			</div>
+						<div class="game_row">
+							<div class="game_cell" id="cell0_14"><span></span></div>
+								<div class="game_cell" id="cell1_14"><span></span></div>
+								<div class="game_cell" id="cell2_14"><span></span></div>
+								<div class="game_cell" id="cell3_14"><span></span></div>
+								<div class="game_cell" id="cell4_14"><span></span></div>
+								<div class="game_cell" id="cell5_14"><span></span></div>
+								<div class="game_cell" id="cell6_14"><span></span></div>
+								<div class="game_cell" id="cell7_14"><span></span></div>
+								<div class="game_cell" id="cell8_14"><span></span></div>
+								<div class="game_cell" id="cell9_14"><span></span></div>
+								<div class="game_cell" id="cell10_14"><span></span></div>
+								<div class="game_cell" id="cell11_14"><span></span></div>
+								<div class="game_cell" id="cell12_14"><span></span></div>
+								<div class="game_cell" id="cell13_14"><span></span></div>
+								<div class="game_cell" id="cell14_14"><span></span></div>
+								<div class="game_cell" id="cell15_14"><span></span></div>
+								<div class="game_cell" id="cell16_14"><span></span></div>
+								<div class="game_cell" id="cell17_14"><span></span></div>
+								<div class="game_cell" id="cell18_14"><span></span></div>
+								<div class="game_cell" id="cell19_14"><span></span></div>
+								<div class="game_cell" id="cell20_14"><span></span></div>
+								<div class="game_cell" id="cell21_14"><span></span></div>
+								<div class="game_cell" id="cell22_14"><span></span></div>
+								<div class="game_cell" id="cell23_14"><span></span></div>
+								<div class="game_cell" id="cell24_14"><span></span></div>
+								<div class="game_cell" id="cell25_14"><span></span></div>
+								<div class="game_cell" id="cell26_14"><span></span></div>
+								<div class="game_cell" id="cell27_14"><span></span></div>
+								<div class="game_cell" id="cell28_14"><span></span></div>
+								<div class="game_cell" id="cell29_14"><span></span></div>
+							
+			</div>
+						<div class="game_row">
+							<div class="game_cell" id="cell0_15"><span></span></div>
+								<div class="game_cell" id="cell1_15"><span></span></div>
+								<div class="game_cell" id="cell2_15"><span></span></div>
+								<div class="game_cell" id="cell3_15"><span></span></div>
+								<div class="game_cell" id="cell4_15"><span></span></div>
+								<div class="game_cell" id="cell5_15"><span></span></div>
+								<div class="game_cell" id="cell6_15"><span></span></div>
+								<div class="game_cell" id="cell7_15"><span></span></div>
+								<div class="game_cell" id="cell8_15"><span></span></div>
+								<div class="game_cell" id="cell9_15"><span></span></div>
+								<div class="game_cell" id="cell10_15"><span></span></div>
+								<div class="game_cell" id="cell11_15"><span></span></div>
+								<div class="game_cell" id="cell12_15"><span></span></div>
+								<div class="game_cell" id="cell13_15"><span></span></div>
+								<div class="game_cell" id="cell14_15"><span></span></div>
+								<div class="game_cell" id="cell15_15"><span></span></div>
+								<div class="game_cell" id="cell16_15"><span></span></div>
+								<div class="game_cell" id="cell17_15"><span></span></div>
+								<div class="game_cell" id="cell18_15"><span></span></div>
+								<div class="game_cell" id="cell19_15"><span></span></div>
+								<div class="game_cell" id="cell20_15"><span></span></div>
+								<div class="game_cell" id="cell21_15"><span></span></div>
+								<div class="game_cell" id="cell22_15"><span></span></div>
+								<div class="game_cell" id="cell23_15"><span></span></div>
+								<div class="game_cell" id="cell24_15"><span></span></div>
+								<div class="game_cell" id="cell25_15"><span></span></div>
+								<div class="game_cell" id="cell26_15"><span></span></div>
+								<div class="game_cell" id="cell27_15"><span></span></div>
+								<div class="game_cell" id="cell28_15"><span></span></div>
+								<div class="game_cell" id="cell29_15"><span></span></div>
+							
+			</div>
+				
+	</div>
+	</div>
+	<div id="theGame_score">
+		<div id="theGame_scoreInner">
+			<form method="post" action="/scripts/minesweeper/minesweeper.html">				
+				<table border="0">
+					<tr>
+						<td colspan="2"><h3>Congratulations, you have reached the highscore list</h3></td>
+					</tr>
+					<tr>
+						<td nowrap><p><label for="user_name">Your name:</td>
+						<td><p><input type="text" name="user_name" style="width:280px"></td>
+					</tr>
+					<tr>
+						<td colspan="2"><input type="submit" name="submitScore" value="Submit your score"></td>
+					</tr>
+				</table>
+			<input type="hidden" name="session_ID" value="">	
+			<input type="hidden" name="seconds" value="">	
+			</form>	
+			<iframe src="getSession.html" name="getSession" id="getSession" frameborder="0" width="1" height="1"></iframe>
+		</div>
+	</div>
+	<div id="theGame_scoreList">
+		<div id="theGame_scoreInner">
+				<h3>Highscore list</h3>
+										<table border="0" cellpadding="1" cellspacing="1">
+							<tr>
+								<th></th>
+								<th>Name</th>
+								<th class="right_aligned">Seconds</th>
+							</tr>					
+						
+						<tr id="1aiaujtm11j77lejyfat660y020060924165917"><td width="20"><p class="right_aligned">1</td><td><p>www.dan-friedman.com&nbsp;</td><td><p class="right_aligned">14&nbsp;</td></tr>
+<tr id="2e0t0dyu7k2pmkw527np6slp20060924170002"><td width="20"><p class="right_aligned">2</td><td><p>www.dan-friedman.com&nbsp;</td><td><p class="right_aligned">15&nbsp;</td></tr>
+<tr id="zvcpeeor7lco48t7ogo553b520060924165854"><td width="20"><p class="right_aligned">3</td><td><p>www.dan-friedman.com&nbsp;</td><td><p class="right_aligned">21&nbsp;</td></tr>
+<tr id="7hh6wz5ku7kbu0p74f9t307120060924165835"><td width="20"><p class="right_aligned">4</td><td><p>www.dan-friedman.com&nbsp;</td><td><p class="right_aligned">34&nbsp;</td></tr>
+<tr id="jzlqbmft4lo7i3b2fs761fgpq20060924165817"><td width="20"><p class="right_aligned">5</td><td><p>www.dan-friedman.com&nbsp;</td><td><p class="right_aligned">52&nbsp;</td></tr>
+<tr id="nz_cwt0307ywhi9hiqbk4wfq20060924165738"><td width="20"><p class="right_aligned">6</td><td><p>www.dan-friedman.com&nbsp;</td><td><p class="right_aligned">76&nbsp;</td></tr>
+<tr id="ns_b7gy0mmqcah0fmazdl35120060924165719"><td width="20"><p class="right_aligned">7</td><td><p>Dan&nbsp;</td><td><p class="right_aligned">77&nbsp;</td></tr>
+<tr id="749i6y82ch6wicqq1lzaoq20060924165654"><td width="20"><p class="right_aligned">8</td><td><p>Dan&nbsp;</td><td><p class="right_aligned">78&nbsp;</td></tr>
+<tr id="q7pu5d056ojh11rbrl9lev7120060505113619"><td width="20"><p class="right_aligned">9</td><td><p>Joyce&nbsp;</td><td><p class="right_aligned">79&nbsp;</td></tr>
+<tr id="f5zzedsh26r7zk9kimdrmh40i20060505012257"><td width="20"><p class="right_aligned">10</td><td><p>Joyce&nbsp;</td><td><p class="right_aligned">79&nbsp;</td></tr>
+</table>
+						<table border="0" cellpadding="1" cellspacing="1">
+							<tr>
+								<th></th>
+								<th>Name</th>
+								<th class="right_aligned">Seconds</th>
+							</tr>					
+						
+						<tr id="gz5gz1103yfels3lg2qctrlty20060924165520"><td width="20"><p class="right_aligned">11</td><td><p>Dan&nbsp;</td><td><p class="right_aligned">79&nbsp;</td></tr>
+<tr id="jyvo4hzfy2bz9c6yvebwbz9o20060505112402"><td width="20"><p class="right_aligned">12</td><td><p>Joyce&nbsp;</td><td><p class="right_aligned">80&nbsp;</td></tr>
+<tr id="gv5zsj059izlj27rdpvbzq6e20060723182349"><td width="20"><p class="right_aligned">13</td><td><p>dsg&nbsp;</td><td><p class="right_aligned">82&nbsp;</td></tr>
+<tr id="e96nzckutko4zidr4pji1njj20060414204301"><td width="20"><p class="right_aligned">14</td><td><p>Peter wins!&nbsp;</td><td><p class="right_aligned">84&nbsp;</td></tr>
+<tr id="zz72ngofestjy67vnql8df2w20060505003603"><td width="20"><p class="right_aligned">15</td><td><p>Joyce&nbsp;</td><td><p class="right_aligned">86&nbsp;</td></tr>
+<tr id="73bblzltnszhkrn48czuudli20060505004813"><td width="20"><p class="right_aligned">16</td><td><p>Joyce&nbsp;</td><td><p class="right_aligned">89&nbsp;</td></tr>
+<tr id="gofi5caygu8iu7en_3hf77z920060505111838"><td width="20"><p class="right_aligned">17</td><td><p>Joyce&nbsp;</td><td><p class="right_aligned">90&nbsp;</td></tr>
+<tr id="mvzqezpsnpft66h6q_zl1qo5w20060505002953"><td width="20"><p class="right_aligned">18</td><td><p>Joyce&nbsp;</td><td><p class="right_aligned">91&nbsp;</td></tr>
+<tr id="_fcycq6lyjz4gtah0cnghlfup20060505013337"><td width="20"><p class="right_aligned">19</td><td><p>Joyce&nbsp;</td><td><p class="right_aligned">91&nbsp;</td></tr>
+<tr id="ihc9tdf151ifbohkzq8429zhz20060505003256"><td width="20"><p class="right_aligned">20</td><td><p>Joyce&nbsp;</td><td><p class="right_aligned">93&nbsp;</td></tr>
+	
+				</table>
+		</div>
+	</div>
+	<div id="modeDiv">
+		<form><input type="button" id="modeSwitch" value="Show highscore" onclick="showHideScore(this)"></form>
+	</div>
+
+		<!-- Kontera ContentLink™  -->
+<SCRIPT LANGUAGE="JavaScript">
+var dc_UnitID = 14;
+var dc_PublisherID = 3695;
+var dc_AdLinkColor = 'blue';
+var dc_adprod='ADL';
+</SCRIPT>
+<SCRIPT LANGUAGE="JavaScript" SRC="http://kona.kontera.com/javascript/lib/KonaLibInline.js"></SCRIPT>
+<!-- Kontera ContentLink™  --></body>
+</html>

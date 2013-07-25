@@ -1,0 +1,5 @@
+set package_key [lindex [ad_conn urlv] 1]
+ns_log notice "/packages/${package_key}/help/[lindex [ad_conn urlv] end]"
+
+rp_internal_redirect /packages/${package_key}/help/[lindex [ad_conn urlv] end]
+

@@ -1,0 +1,11 @@
+Received: from 110.53.31.126 (HELO egh) (envelope-from gxrepair@gx-logistics.com)
+	by quarkmail.com (quarkmail-1.2.1) with ESMTP id S434405829Ab1KIG3K
+	for neonworld@163.com; Wed, 9 Nov 2011 14:29:10 +0800 
+Message-ID: <20111109143331582243@gx-logistics.com> 
+From: "fccenz" <gxrepair@gx-logistics.com> 
+To:  
+Subject: =?gb2312?B?dDluzqrKssO0xPq1xMbz0rXIy7LFwffKp9HP1tijrKGwwe3Bog==?=
+	=?gb2312?B?yb3Nt6Gxz9bP88LFtM63osn6o78=?= 
+Date: Wed, 9 Nov 2011 14:33:26 +0800 
+X-mailer: Otccav 0 
+Whoops!  What is a 'application/vnd.ms-excel'?

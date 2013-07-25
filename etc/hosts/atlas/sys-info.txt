@@ -1,0 +1,7 @@
+grep bogo /proc/cpuinfo
+bogomips	: 4988.47
+bogomips	: 4988.03
+bogomips	: 4988.03
+bogomips	: 4988.03
+atlas ~ #  grep MemTotal /proc/meminfo
+MemTotal:        8101388 kB

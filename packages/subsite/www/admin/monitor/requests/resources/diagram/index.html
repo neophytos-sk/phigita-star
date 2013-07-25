@@ -1,0 +1,26 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>JavaScript Diagram Builder</title>
+<script language="JavaScript">
+function EvalUrlString()
+{ url = window.location.search;
+  if (url != "")
+  { url = url.substring(1, url.length);
+    if (url!="") setTimeout("Redirect(\""+url+"\")",1000);
+  }
+}
+function Redirect(url)
+{ window.frames[1].location.href=url;
+}
+EvalUrlString();
+</script>
+</head>
+<frameset cols="172,*">
+<frame src="menu.html" name="Menu" />
+<frame src="introduction.html" name="Main" />
+</frameset>
+<body>
+</body>
+</html>
+

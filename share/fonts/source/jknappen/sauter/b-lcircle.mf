@@ -1,0 +1,11 @@
+% b-lcircle.mf
+% Changes[Sauter-2.3] Renamed c-circle.mf to c-lcircle.mf;
+
+font_identifier "CIRCLE"; font_size design_size * pt#;
+font_coding_scheme:="LATEX CIRCLE";
+mode_setup;
+
+nominal_thickness = 1;		% use normal-width lines
+input c-lcircle;
+
+input circle;

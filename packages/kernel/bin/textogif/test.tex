@@ -1,0 +1,20 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% LaTeX:       latex test.tex
+% Printing:    dvips test.dvi -o stats.ps 
+%              lp -dpsoft -onb test.ps
+% Viewing:     xdvi test.dvi 
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentstyle{article}
+\pagestyle{empty}
+\begin{document}
+
+       \begin{displaymath}
+       \bf  % Compiled formulae often look better in boldface
+       \int H(x,x')\psi(x')dx' = -\frac{\hbar^2}{2m}\frac{d^2}{dx^2}
+                                 \psi(x)+V(x)\psi(x)
+       \end{displaymath}
+
+\end{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

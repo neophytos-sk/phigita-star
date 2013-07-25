@@ -1,0 +1,10 @@
+Received: from 84.240.29.195 by mail.dedicatedtech.com; Mon, 12 Sep 2011 20:38:50 +0200 
+Date: Mon, 12 Sep 2011 20:38:50 +0200 
+From: =?koi8-r?B?Iu3P08vXwSwg8s/T08nRIg==?= <consolesl043@dedicatedtech.com> 
+X-Mailer: The Bat! (v3.71.14) Educational 
+Reply-To: consolesl043@dedicatedtech.com 
+X-Priority: 3 (Normal) 
+Message-ID: <525856729.31866542215869@dedicatedtech.com> 
+To: webmaster@phigita.net 
+Subject: =?koi8-r?B?MyDSwdPT2czLySDawSA1IDAwMCDS1cLMxcohIOHr4+nxIQ==?= 
+

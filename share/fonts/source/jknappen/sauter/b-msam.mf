@@ -1,0 +1,184 @@
+% First extra symbol font in AMSFonts 2.2.
+%
+% font v 2.2 04-JAN-1995, sauterised v 1.0 23/11/1995
+%
+% Author :        American Mathematical Society
+% sauterisation : Hubert HOLIN
+
+if unknown cmbase: input cmbase fi
+
+font_identifier:="MSAM V2.2"; font_size design_size * pt#;
+
+input c-cmmi;
+
+crisp#:=0;
+
+slant:=0;
+
+
+subs:=             % subscript point size
+    (if design_size <   7.5: (5/design_size)
+ elseif design_size <   9.5: (6/design_size)
+ elseif design_size <  10.5: (7/design_size)
+ elseif design_size <  12.5: (8/design_size)
+ elseif design_size < 12.96: (1/1.44)
+                       else: (1/1.2)fi);
+
+input c-sigma;
+
+
+% The following parameters seem to be used only for the R and S in circles.
+% Despite the following attempts, it might prove better to use another font
+% (or another method) if you really want to use these symbols at sizes other
+% than 5, 6, 7, 8, 9 and 10 points.
+
+
+lower.u#:=               % unit width
+    (if design_size < 10: ((design_size*15)+10)
+                    else: (-(0.062437562437*design_size*design_size) +
+                           (18.8736263736*design_size) -
+                           (22.492507493))fi)/360pt#;
+
+lower.width_adj#:=       % width adjustment for certain characters
+                          0pt#;
+
+lower.letter_fit#:=      % extra space added to all sidebars
+    (if design_size <  8: (40)
+ elseif design_size <  9: (-(design_size*5)+80)
+ elseif design_size < 10: (-(design_size*11)+134)
+                    else: (24)fi)/360pt#;    
+
+lower.cap_serif_fit#:=   % extra sidebar near uppercase serifs
+    (if design_size <  6: (15)
+ elseif design_size <  7: ((design_size*5)-15)
+ elseif design_size <  9: ((design_size*7)-29)
+ elseif design_size < 10: ((design_size*6)-20)
+                    else: (((0.022893772893*design_size*design_size) +
+                           (3.4963369963*design_size) +
+                           (2.7472527472))+0.002)fi)/360pt#;
+
+lower.body_height#:=     % height of tallest characters
+    (if design_size <  6: ((design_size*70)+630)
+ elseif design_size <  7: ((design_size*150)+150)
+ elseif design_size <  8: ((design_size*180)-60)
+ elseif design_size < 10: ((design_size*270)-700)
+                    else: (-(0.14568764568*design_size*design_size) +
+                           (273.205128205*design_size) -
+                           (17.482517482)-700)fi)/360pt#;
+
+lower.cap_height#:=      % height of caps
+    (if design_size <  6: ((design_size*70)+630)
+ elseif design_size <  7: ((design_size*140)+210)
+ elseif design_size <  8: ((design_size*268)-686)
+ elseif design_size <  9: ((design_size*246)+510)
+ elseif design_size < 10: ((design_size*146)+390)
+                    else: (-(0.0228937728937*design_size*design_size) +
+                           (246.503663003*design_size) -
+                           (2.74725274725)-610)fi)/360pt#;
+
+lower.x_height#:=        % height of lowercase without ascenders
+    (if design_size <  7: ((design_size*130)-200)
+ elseif design_size <  8: ((design_size*140)-270)
+ elseif design_size < 10: ((design_size*155)-390)
+                    else: (-(0.010406260406*design_size*design_size) +
+                           (155.22893772*design_size) -
+                           (1.2487512487)-390)fi)/360pt#;
+
+lower.bar_height#:=      % height of crossbar in lowercase e
+    (if design_size <  7: ((design_size*80)-170)
+ elseif design_size <  8: ((design_size*86)-212)
+ elseif design_size < 10: ((design_size*87)-220)
+                    else: ((-(0.087412587412*design_size*design_size) +
+                           (88.923076923*design_size) -
+                           (10.4895104895))+0.0008-220)fi)/360pt#;
+
+lower.comma_depth#:=     % depth of comma below baseline
+    (if design_size < 10: ((design_size*70)-180)
+                    else: ((0.010406260406*design_size*design_size) +
+                           (69.771062271*design_size) +
+                           (1.2487512487)-180)fi)/360pt#;
+
+lower.flare#:=           % diameter of bulbs or breadth of terminals
+    (if design_size <  8: ((design_size*10)+120)
+ elseif design_size <  9: ((design_size*20)+40)
+ elseif design_size < 10: ((design_size*30)-50)
+                    else: ((0.280969030969*design_size*design_size) +
+                           (8.8186813186*design_size) +
+                           (143.71628317))fi)/360pt#;    
+
+lower.cap_hair#:=        % uppercase hairline breadth
+    (if design_size < 10: ((design_size*5)+41)
+                    else: ((0.046828171828*design_size*design_size) +
+                           (1.4697802197*design_size) +
+                           (71.6193806193))fi)/360pt#;
+
+lower.stem#:=            % lowercase stem breadth
+    (if design_size < 10: ((design_size*20)+10)
+                    else: ((design_size*9.4696969696)+115.30303030)fi)/360pt#;
+
+lower.cap_stem#:=        % uppercase stem breadth
+    (if design_size < 10: ((design_size*25)+10)
+                    else: ((-0.4995004995*design_size*design_size) +
+                           (25.989010989*design_size) +
+                           (50.059940059))fi)/360pt#;
+
+lower.cap_curve#:=       % uppercase curve breadth
+    (if design_size < 10: ((design_size*30)+10)
+                    else: ((-0.23934398934*design_size*design_size) +
+                           (10.2131202132*design_size) +
+                           (231.803196802))fi)/360pt#;
+
+lower.cap_ess#:=         % breadth in middle of uppercase s
+    (if design_size <  6: (120)
+ elseif design_size < 10: ((design_size*40)-120)
+                    else: ((design_size*9.46969696)+185.3030303030)fi)/360pt#;
+
+lower.cap_jut#:=         % protrusion of uppercase serifs
+    (if design_size <  6: (140)
+ elseif design_size < 10: ((design_size*30)-40)
+                    else: ((design_size*17.0454545454)+89.54545454)fi)/360pt#;
+
+lower.beak_jut#:=        % horizontal protrusion of beak serifs
+    (if design_size < 10: ((design_size*8)-10)
+                    else: (-(0.024975024975*design_size*design_size) +
+                           (7.5494505494*design_size) -
+                           (2.9965029971))fi)/360pt#;
+
+lower.beak#:=            % vertical protrusion of beak serifs
+    (if design_size < 10: ((design_size*70)-180)
+                    else: ((0.010406260406*design_size*design_size) +
+                           (69.771062271*design_size) -
+                           (178.751487513))fi)/360pt#;
+
+lower.slab#:=            % serif and arm thickness
+    (if design_size < 10: ((design_size*5)+41)
+                    else: ((design_size*6.6287878787)+24.71212121212)fi)/360pt#;
+
+lower.cap_bar#:=         % uppercase bar thickness
+			   lower.slab#;
+
+lower.cap_band#:=        % uppercase thickness above/below lobes
+			   lower.slab#;
+
+lower.cap_notch_cut#:=   % max breadth above/below uppercase notches
+    (if design_size < 10: (design_size*100)
+                    else: (-(0.72843822843*design_size*design_size) +
+                           (116.025641025*design_size) -
+                           (87.412587412))fi)/100pt#;
+
+lower.o#:=               % amount of overshoot for curves
+    (if design_size < 12: ((design_size*5))
+                    else: ((design_size*1.8939393939)+50.5303030303)fi)/360pt#;
+
+lower.apex_o#:=          % amount of overshoot for diagonal junctions
+    (if design_size <  7: (20)
+ elseif design_size <  8: ((design_size*10)-50)
+ elseif design_size <  9: (30)
+ elseif design_size < 10: ((design_size*10)-60)
+                    else: ((design_size*1.8939393939)+40.5303030303)fi)/360pt#;
+
+lower.fudge:=            % factor applied to weights of heavy characters
+                           1;
+
+generate amsya      % switch to the driver file
+

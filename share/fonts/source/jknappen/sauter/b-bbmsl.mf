@@ -1,0 +1,23 @@
+% Computer Modern Slanted Blackboard
+%
+% font v ?.? 29/03/1993, sauterised v1.0 15/11/1995
+%
+% Author :         Gilles F. ROBERT
+% sauterisation : Hubert HOLIN
+
+if unknown blbbase: input blbbase fi
+
+font_identifier:="CMBBSL"; font_size design_size * pt#;
+
+% This font is a simple modification of Computer Modern Roman.
+
+input c-cmr;
+
+slant:=1/6;      % tilt ratio $(\Delta x/\Delta y)$
+
+interspace#:=jut#;    % space between the doubled bars
+
+cap_interspace#:= cap_jut#;   % same for uppercase letters
+
+generate blbord      % switch to the driver file
+

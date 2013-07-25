@@ -1,0 +1,28 @@
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by omta2.brinkster.com (Postfix) with ESMTP id 660711C18FA1;
+	Tue, 15 Nov 2011 01:08:29 -0700 (MST) from omta2.brinkster.com ([127.0.0.1])
+	by localhost (omta2.brinkster.com [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id OWYFrCajDsHh; Tue, 15 Nov 2011 01:08:28 -0700 (MST) from mta5.brinkster.com (unknown [65.182.109.84])
+	by omta2.brinkster.com (Postfix) with ESMTPS id CE0A51C1816F;
+	Tue, 15 Nov 2011 01:08:28 -0700 (MST) from localhost (localhost.localdomain [127.0.0.1])
+	by mta5.brinkster.com (Postfix) with ESMTP id 724A42C010D;
+	Tue, 15 Nov 2011 03:08:28 -0500 (EST) from mta5.brinkster.com ([127.0.0.1])
+	by localhost (mta5.brinkster.com [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id G+wclhoMqM8p; Tue, 15 Nov 2011 03:08:28 -0500 (EST) from xbgbiybov (unknown [110.52.6.52])
+	(Authenticated sender: basel@gondol.com)
+	by mta5.brinkster.com (Postfix) with ESMTPA id BCD892C0020;
+	Tue, 15 Nov 2011 03:08:18 -0500 (EST) 
+X-DSPAM-Result: Innocent 
+X-DSPAM-Class: Innocent 
+X-DSPAM-Confidence: 0.60 
+X-DSPAM-Probability: 0.0000 
+X-DSPAM-Signature: N/A 
+X-Virus-Scanned: amavisd-new at amavisd-new at mta5.brinkster.com 
+Message-ID: <20111115160950816652@gondol.com> 
+From: =?gb2312?B?yq+80tevzazIy86w0rW/xry809DP3rmry74=?= <basel@gondol.com> 
+To:  
+Subject: =?gb2312?B?uN+8tsPYyumhotb6wO26zdDQ1f7Iy9SxvLzE3MzhuN/RtcG306ot?=
+	=?gb2312?B?LS0tva/S1MTH?= 
+Date: Tue, 15 Nov 2011 16:09:42 +0800 
+X-mailer: Xnktiixsbd 7 
+Whoops!  What is a 'application/vnd.ms-excel'?

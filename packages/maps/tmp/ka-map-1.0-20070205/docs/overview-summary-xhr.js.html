@@ -1,0 +1,363 @@
+<!doctype html public "-//W3C//DTD HTML 4.0 Frameset//EN""http://www.w3.org/TR/REC-html40/frameset.dtd">
+<html>
+<head>
+<title>
+ka-Map Overview
+</title>
+<link rel ="stylesheet" type="text/css" href="stylesheet.css" title="Style">
+<script>
+function asd() {
+	
+		parent.document.title="xhr.js Overview";
+	
+}
+</script>
+</head>
+<body bgcolor="white" onload="asd();">
+
+<!-- ========== START OF NAVBAR ========== -->
+<a name="navbar_top"><!-- --></a>
+<table border="0" width="100%" cellpadding="1" cellspacing="0">
+<tr>
+<td colspan=2 bgcolor="#EEEEFF" class="NavBarCell1">
+<a name="navbar_top_firstrow"><!-- --></a>
+<table border="0" cellpadding="0" cellspacing="3">
+  <tr align="center" valign="top">
+  
+  
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-summary.html"><font class="NavBarFont1"><b>Overview</b></font></a>&nbsp;</td>
+  <td bgcolor="#FFFFFF" class="NavBarCell1Rev">	&nbsp;<font class="NavBarFont1Rev"><b>File</b></font>&nbsp;</td>
+  
+
+  <td bgcolor="#FFFFFF" class="NavBarCell1"> 	<font class="NavBarFont1">Class</font>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-tree.html"><font class="NavBarFont1"><b>Tree</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="index-all.html"--><font class="NavBarFont1"><b>Index</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="help-doc.html"><font class="NavBarFont1"><b>Help</b></font></a>&nbsp;</td>
+  </tr>
+</table>
+</td>
+<td bgcolor="#EEEEFF" align="right" valign="top">
+<em>
+<b>ka-Map</b></em>
+</td>
+</tr>
+
+<tr>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+&nbsp;PREV&nbsp;
+&nbsp;NEXT</font></td>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+  <a href="index.html" target="_top"><b>FRAMES</b></a>  &nbsp;
+&nbsp;<a href="overview-summary.html" target="_top"><b>NO FRAMES</b></a>
+&nbsp;&nbsp;
+<script>
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="allclasses-noframe.html" TARGET=""><B>All Classes</B></A>');
+  }
+  //-->
+</script>
+<noscript>
+<a href="allclasses-noframe.html" target=""><b>All Classes</b></a>
+</noscript>
+</font></td>
+</tr>
+</table>
+<!-- =========== END OF NAVBAR =========== -->
+
+<hr>
+<center>
+	
+	   <h2>xhr.js</h2>
+	
+</center>
+
+	
+
+
+<h4>Summary</h4>
+<p>
+	
+		No overview generated for 'xhr.js'<BR/><BR/>
+	
+</p>
+
+<hr>
+
+
+
+<!-- ========== METHOD SUMMARY =========== -->
+
+	<a name="method_summary"><!-- --></a>
+	<table border="1" cellpadding="3" cellspacing="0" width="100%">
+		<tr bgcolor="#CCCCFF" class="TableHeadingColor">
+			<td colspan=2>
+				<font size="+2">
+					<b>Method Summary</b>
+				</font>
+			</td>
+		</tr>
+	
+		
+		   <tr bgcolor="white" class="TableRowColor">
+		      <td align="right" valign="top" width="1%">
+			 <font size="-1">
+			    <code>static&nbsp;void</code>
+			 </font>
+		      </td>
+		      <td>
+			 <code>
+			    <b>
+			       <a href="GLOBALS.html#!s!call">call</a></b>(u,o,f)
+			 </code>
+			 <br>
+			 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			 
+		      </td>
+		   </tr>
+		
+		   <tr bgcolor="white" class="TableRowColor">
+		      <td align="right" valign="top" width="1%">
+			 <font size="-1">
+			    <code>static&nbsp;Object</code>
+			 </font>
+		      </td>
+		      <td>
+			 <code>
+			    <b>
+			       <a href="GLOBALS.html#!s!getXMLHTTP">getXMLHTTP</a></b>()
+			 </code>
+			 <br>
+			 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			 
+		      </td>
+		   </tr>
+		
+		   <tr bgcolor="white" class="TableRowColor">
+		      <td align="right" valign="top" width="1%">
+			 <font size="-1">
+			    <code>static&nbsp;void</code>
+			 </font>
+		      </td>
+		      <td>
+			 <code>
+			    <b>
+			       <a href="GLOBALS.html#!s!xmlResult">xmlResult</a></b>()
+			 </code>
+			 <br>
+			 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			 
+		      </td>
+		   </tr>
+		
+	
+	</table>
+    <p>
+
+<!-- ========== END METHOD SUMMARY =========== -->
+
+
+        <pre class="sourceview"><span class="comment">/**********************************************************************
+ *
+ * $Id: xhr.js,v 1.8 2006/02/07 03:19:55 pspencer Exp $
+ *
+ * purpose: a simple cross-browser XmlHttpRequest interface that adds
+ *          support for multiple, concurrent requests
+ *
+ * author: Paul Spencer (pspencer<span class="attrib">@dmsolutions</span>.ca)
+ *
+ * TODO:
+ *   - reponse only contains responseText, should contain response so
+ *     access to reponseXML is possible if we ever want to implement
+ *     xml stuff (i.e. real AJAX)
+ * 
+ **********************************************************************
+ *
+ * Copyright (c) 2005, DM Solutions Group Inc.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
+ * DEALINGS IN THE SOFTWARE.
+ *
+ **********************************************************************/</span>
+
+<span class="comment">/* to make an asynchronous call to the server, execute the call() function
+ * with the URL to the script to be executed.  The second and third
+ * parameters to call() define object and method to call when the server
+ * returns its response ... if the second parameter is null, third is
+ * just a function.  If second is an object, then the third is a method
+ * of that instance.
+ *
+ * There is an optional fourth parameter to issue the request as a POST
+ * to the server.  This is important in some browsers due to limited 
+ * URL length.
+ * 
+ * The callback function is called when the request completes.  There is
+ * currently no callback for errors so they just silently fail if the
+ * server side script dies.  The callback function is passed a single
+ * parameter, the text output of the server side script.  In ka-Map, this
+ * text is typically some javascript to eval().
+ */</span>
+var aXmlHttp = new Array();
+var aXmlResponse = new Array();
+<span class="reserved">function</span> xmlResult()
+{
+    <span class="reserved">for</span>(var i=0;i&lt;aXmlHttp.length;i++)
+    {
+        <span class="reserved">if</span>(aXmlHttp[i] &amp;&amp; aXmlHttp[i][0] &amp;&amp; aXmlHttp[i][0].readyState==4&amp;&amp;aXmlHttp[i][0].responseText)
+        {
+            <span class="comment">//must null out record before calling function in case</span>
+            <span class="comment">//function invokes another xmlHttpRequest.</span>
+            var f = aXmlHttp[i][2];
+            var o = aXmlHttp[i][1];
+            var s = aXmlHttp[i][0].responseText;
+            aXmlHttp[i][0] = null;
+            aXmlHttp[i][1] = null;
+            aXmlHttp[i] = null;
+            f.apply(o,new Array(s));
+        }
+    }
+}
+
+<span class="comment">// u -&gt; url</span>
+<span class="comment">// o -&gt; object (can be null) to invoke function on</span>
+<span class="comment">// f -&gt; callback function</span>
+<span class="comment">// p -&gt; optional argument to specify POST</span>
+<span class="reserved">function</span> call(u,o,f)
+{
+    var method = <span class="literal">"GET"</span>;
+    var dat;
+    <span class="reserved">if</span> (arguments.length==4){
+      method = <span class="literal">"POST"</span>;
+      tmp = u.split(/\?/);
+      u = tmp[0];
+      dat = tmp[1];
+
+    }
+    var idx = aXmlHttp.length;
+    <span class="reserved">for</span>(var i=0; i&lt;idx;i++)
+    <span class="reserved">if</span> (aXmlHttp[i] == null)
+    {
+        idx = i;
+        break;
+    }
+    aXmlHttp[idx]=new Array(2);
+    aXmlHttp[idx][0] = getXMLHTTP();
+
+    aXmlHttp[idx][1] = o;
+    aXmlHttp[idx][2] = f;
+    <span class="reserved">if</span>(aXmlHttp[idx])
+    {
+        aXmlHttp[idx][0].open(method,u,true);
+        <span class="reserved">if</span>(method == <span class="literal">"POST"</span>){
+          aXmlHttp[idx][0].setRequestHeader(<span class="literal">"Content-Type"</span>, <span class="literal">"application/x-www-form-urlencoded"</span>);
+
+          aXmlHttp[idx][0].send(dat);
+        }
+        aXmlHttp[idx][0].onreadystatechange=xmlResult;
+        
+       <span class="reserved">if</span>(method ==<span class="literal">"GET"</span>){ aXmlHttp[idx][0].send(null);}
+    }
+}
+
+<span class="reserved">function</span> getXMLHTTP()
+{
+    var A=null;
+    <span class="reserved">if</span>(!A &amp;&amp; typeof XMLHttpRequest != <span class="literal">"undefined"</span>)
+    {
+        A=new XMLHttpRequest();
+    }
+    <span class="reserved">if</span> (!A)
+    {
+        try
+        {
+            A=new ActiveXObject(<span class="literal">"Msxml2.XMLHTTP"</span>);
+        }
+        catch(e)
+        {
+            try
+            {
+                A=new ActiveXObject(<span class="literal">"Microsoft.XMLHTTP"</span>);
+            }
+            catch(oc)
+            {
+                A=null
+            }
+        }
+    }    
+    <span class="reserved">return</span> A;
+}</pre>
+	<hr>
+
+
+
+<!-- ========== START OF NAVBAR ========== -->
+<a name="navbar_top"><!-- --></a>
+<table border="0" width="100%" cellpadding="1" cellspacing="0">
+<tr>
+<td colspan=2 bgcolor="#EEEEFF" class="NavBarCell1">
+<a name="navbar_top_firstrow"><!-- --></a>
+<table border="0" cellpadding="0" cellspacing="3">
+  <tr align="center" valign="top">
+  
+  
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-summary.html"><font class="NavBarFont1"><b>Overview</b></font></a>&nbsp;</td>
+  <td bgcolor="#FFFFFF" class="NavBarCell1Rev">	&nbsp;<font class="NavBarFont1Rev"><b>File</b></font>&nbsp;</td>
+  
+
+  <td bgcolor="#FFFFFF" class="NavBarCell1"> <font class="NavBarFont1">Class</font>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-tree.html"><font class="NavBarFont1"><b>Tree</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="index-all.html"--><font class="NavBarFont1"><b>Index</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="help-doc.html"><font class="NavBarFont1"><b>Help</b></font></a>&nbsp;</td>
+  </tr>
+</table>
+</td>
+<td bgcolor="#EEEEFF" align="right" valign="top"><em>
+<b>ka-Map</b></em>
+</td>
+</tr>
+
+<tr>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+&nbsp;PREV&nbsp;
+&nbsp;NEXT</font></td>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+  <a href="index.html" target="_top"><b>FRAMES</b></a>  &nbsp;
+&nbsp;<a href="overview-summary.html" target="_top"><b>NO FRAMES</b></a>
+&nbsp;&nbsp;
+<script>
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="allclasses-noframe.html" TARGET=""><B>All Classes</B></A>');
+  }
+  //-->
+</script>
+<noscript>
+<a href="allclasses-noframe.html" target=""><b>All Classes</b></a>
+</noscript>
+</font></td>
+</tr>
+</table>
+<!-- =========== END OF NAVBAR =========== -->
+
+<hr>
+<font size="-1">
+
+</font>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Mon Feb  5 08:25:15 2007</div>
+</body>
+</html>

@@ -1,0 +1,46 @@
+Received: by web1.extjs.com (Postfix, from userid 33)
+	id B99846C286; Sat, 26 Nov 2011 00:02:03 +0000 (UTC) 
+To: k2pts@phigita.net 
+Subject: "Ext: Open Discussion" update 
+X-PHP-Originating-Script: 1000:class_mail.php 
+From: "Sencha Forum" <admin@sencha.com> 
+Auto-Submitted: auto-generated 
+Message-ID: <20111126000203.b175c63db7fc@www.sencha.com> 
+X-Priority: 3 
+X-Mailer: vBulletin Mail via PHP 
+Date: Sat, 26 Nov 2011 00:02:03 +0000 (UTC) 
+--------------------------------------
+Dear k2pts,
+
+You are subscribed to the forum Ext: Open Discussion, there have been 1 new thread(s) and 1 updated thread(s).
+http://www.sencha.com/forum/forumdisplay.php?6-Ext-Open-Discussion
+
+The following threads are new:
+************
+Help needed to deploy app on Blackberry device
+http://www.sencha.com/forum/showthread.php?157092-Help-needed-to-deploy-app-on-Blackberry-device
+In forum: Ext: Open Discussion
+Started by: pranj1488
+Last post: 25 Nov 2011 7:16 AM
+
+
+The following threads have been updated:
+************
+Issues with view rendering in MVC
+http://www.sencha.com/forum/showthread.php?156951-Issues-with-view-rendering-in-MVC
+In forum: Ext: Open Discussion
+Started by: jimits
+Last post: 25 Nov 2011 6:21 PM
+
+
+All the best,
+Sencha Forum
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Unsubscription information:
+
+To unsubscribe from this forum, please visit this page:
+http://www.sencha.com/forum/subscription.php?do=removesubscription&type=forum&subscriptionid=63&auth=e23de5f6387a31c5573cf4993e28e47f
+
+
+

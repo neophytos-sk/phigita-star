@@ -1,0 +1,15 @@
+Received: from ust([115.63.13.181]) by pub.xaonline.com(AIMC 4.0.0.0)
+	with SMTP id jm1f4eb1f090; Thu, 03 Nov 2011 04:23:04 +0800 from ust([115.63.13.181]) by pub.xaonline.com(AIMC 4.0.0.0)
+	with SMTP id AISP action; Thu, 03 Nov 2011 04:22:58 +0800 
+Message-ID: <20111103043150737830@pub.xaonline.com> 
+From: =?gb2312?B?0LvUw8PA?= <kts@pub.xaonline.com> 
+To:  
+Subject: =?gb2312?B?OGQ2v9izodPru6W2r6GqoarNqLn91rDStb/Ys6Gxo9XPxeDRtQ==?=
+	=?gb2312?B?0Ke5+zEwMCW077PJo6Eg?= 
+Date: Thu, 3 Nov 2011 04:31:44 +0800 
+X-mailer: Hgvcz 3 
+X-AIMC-AUTH: kts 
+X-AIMC-MAILFROM: kts@pub.xaonline.com 
+X-AIMC-Msg-ID: QRyUhV1B 
+--------------------------------------
+ content-type=application/msword part-token=::mime::1835-2

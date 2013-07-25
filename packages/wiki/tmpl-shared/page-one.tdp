@@ -1,0 +1,75 @@
+contract {
+    param -id "id" -check "naturalnum notnull"
+}
+
+val -id user_id { return [ad_conn user_id] }
+val -id context_user_id { return [ad_conn ctx_uid] }
+val -id context_username { return [ad_conn context_username] }
+
+datastore \
+    -id pagedata \
+    -singleton true \
+    -scope context_user \
+    -from_class ::wiki::Page \
+    -where [list "shared_p='t'" "id = :id"] \
+    -extend {
+	set pretty_creation_date [lc_time_fmt $creation_date "%Y-%m-%d"]
+	set pretty_last_update [lc_time_fmt $last_update "%Y-%m-%d"]
+	
+	set content_root [User set id]-@{context_user_id}
+	array set config [list \
+			      root ${content_root} \
+			      container_object_id $id \
+			      image_prefix "/~@{context_username}/blog/image/"]
+
+	set content_in_html ""
+	::xo::structured_text::stx_to_html config content content_in_html
+
+    }
+
+guard { return @{pagedata:rowcount} }
+
+# for includelet
+val -id selectedtab { return "wiki-post" }
+
+# -------------------------------------------------------------------
+
+
+
+master -src "/templates/www-shared.master.inc" {
+    include -src "/templates/www-shared.tabs.inc"
+
+    tpl -with pagedata {
+	div -class "pull-right" {
+	    small {
+		t "Submitted on: @{pretty_creation_date}"
+		br
+		t "Last updated: @{pretty_last_update}"
+	    }
+	}
+	h2 { t @{title} }
+	p
+	div -style "margin-right:10px;" {
+	    t @{content_in_html:noquote}
+	}
+    }
+
+    div -x-master-renderTo "sidebar" {
+	tpl -if { @{user_id} == @{context_user_id} } {
+	    tpl -with pagedata {
+		div -style "text-align:center;" {
+		    div -class "sidebar-heading" { t "Owner Actions" }
+		    p
+		    a -class "btn btn-warning btn-mini" -href "https://my.phigita.net/wiki/page-edit?id=@{id}" {
+			t "Edit"
+		    }
+		    t " "
+		    a -class "btn btn-info btn-mini" -href "https://my.phigita.net/wiki/@{id}" {
+			t "Private View"
+		    }
+		}
+	    }
+	}
+    }
+
+}

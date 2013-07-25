@@ -1,0 +1,17 @@
+Return-path: <webmaster@phigita.net> 
+Received: from [115.77.146.231] (port=5232 helo=thu498a0406f97)
+	by nullmx.lbtrucks.com with asmtp 
+	id 840968-000943-86
+	for <webmaster@phigita.net>; Thu, 24 Nov 2011 05:20:26 -0800 
+Message-ID: <49BEA22BEDE14ACE94BEB22271559447@thu498a0406f97> 
+From: =?koi8-r?B?IuLPztPByiDHwczF0sXRIg==?= <kebab6@lbtrucks.com> 
+To: <webmaster@phigita.net> 
+Subject: =?koi8-r?B?8sHT0NLPxMHWwSDR0M/O08vJyCDCz87TwcouIPDPxMHSz8sgzsEgxM/M?=
+	=?koi8-r?B?x8nFIMfPxNk=?= 
+Date: Thu, 24 Nov 2011 05:20:26 -0800 
+X-Priority: 3 
+X-MSMail-Priority: Normal 
+X-Mailer: Microsoft Windows Mail 6.0.6001.18000 
+X-MimeOLE: Produced By Microsoft MimeOLE V6.0.6001.18049 
+X-Spam: Not detected 
+X-Mras: Ok 

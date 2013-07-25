@@ -1,0 +1,18 @@
+Entity / at line 0 spanning 0
+Header in / at line 0 spanning 1: Subject: [20] 'Some multipart stuff'
+Header in / at line 1 spanning 1: Content-type: [37] 'multipart/alternative; boundary=12345'
+End of header in / at line 0 spanning 0
+Boundary in / at line 5 spanning 1: --12345
+Entity /12345 at line 5 spanning 0
+Header in /12345 at line 6 spanning 1: Subject: [23] 'This is an ebedded part'
+Header in /12345 at line 7 spanning 2: Content-type: [57] 'multipart/alternative; 		boundary=54321; charset=us-ascii'
+End of header in /12345 at line 5 spanning 0
+Boundary in /12345 at line 10 spanning 1: --54321
+Entity /12345/54321 at line 10 spanning 0
+Header in /12345/54321 at line 11 spanning 1: Subject: [16] 'An embedded part'
+Header in /12345/54321 at line 12 spanning 1: Content-type: [10] 'text/plain'
+End of header in /12345/54321 at line 10 spanning 0
+End of entity /12345/54321 at line 16 spanning 1
+End of entity /12345 at line 16 spanning 1
+Boundary in / at line 16 spanning 1: --12345--
+End of entity / at line 20 spanning 1

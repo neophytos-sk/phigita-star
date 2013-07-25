@@ -1,0 +1,12 @@
+Received: from ygis ([42.49.128.57])
+	(envelope-sender <peixun@bmilp.ac.cn>)
+	by 192.168.0.237 with ESMTP
+	for <neophytos@phigita.net>; Sun, 23 Oct 2011 14:14:44 +0800 
+Message-ID: <20111023142245824533@bmilp.ac.cn> 
+From: =?gb2312?B?0OzW3bOkva241rnc09DP3rmry74=?= <peixun@bmilp.ac.cn> 
+To:  
+Subject: =?gb2312?B?dmFhN7TTILy8IMr1INffIM/yILncIMDtIGlu?=
+	=?gb2312?B?ZWlw?= 
+Date: Sun, 23 Oct 2011 14:22:37 +0800 
+X-mailer: Ysajsbfju 3 
+Whoops!  What is a 'application/vnd.ms-excel'?

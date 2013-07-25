@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>JavaScript Diagram Builder</title>
+<link rel=stylesheet type="text/css" href="diagram.css">
+<SCRIPT Language="JavaScript">if ((document.layers)&&(history.length==1)) location.href=location.href+"#";</SCRIPT>
+<SCRIPT Language="JavaScript" src="diagram.js"></SCRIPT>
+<SCRIPT Language="JavaScript">if (document.getElementById) document.write("<SCRIPT Language=\"JavaScript\" SRC=\"evalsafe.js\"><\/SCRIPT>");</SCRIPT> 
+</head>
+<body>
+<DIV STYLE="position:absolute; top:0"></DIV>
+<SCRIPT Language="JavaScript">
+function Display()
+{ if ((!parent.x)||(!parent.y)) { location.href="linreg_main.html"; return; }
+  var i, l=parent.x.length, x=parent.x, y=parent.y;
+  var xmin, ymin, xmax, ymax, xm=0, ym=0, xxm=0, xym=0, a, b;
+
+  xmin=x[0]; xmax=x[0];
+  for (i=0; i<l; i++)
+  { if (xmin>x[i]) xmin=x[i];
+    if (xmax<x[i]) xmax=x[i];
+  }
+  i=xmax-xmin;
+  if (i==0) { xmin--; xmax++; }
+  else { xmin-=i/20; xmax+=i/20; }
+
+  ymin=y[0]; ymax=y[0];
+  for (i=0; i<l; i++)
+  { if (ymin>y[i]) ymin=y[i];
+    if (ymax<y[i]) ymax=y[i];
+  }
+  i=ymax-ymin;
+  if (i==0) { ymin--; ymax++; }
+  else { ymin-=i/20; ymax+=i/20; }
+
+  for (i=0; i<l; i++)
+  { xm+=x[i];
+    ym+=y[i];
+    xxm+=x[i]*x[i];
+    xym+=x[i]*y[i];
+  }
+  if (l>0)
+  { xm/=l;
+    ym/=l;
+    xxm/=l;
+    xym/=l;
+  }
+  if (xxm-xm*xm!=0)
+  { b=(xym-xm*ym)/(xxm-xm*xm);
+    a=ym-b*xm;
+    if (ymin>a+b*xmin) ymin=a+b*xmin;
+    if (ymax<a+b*xmin) ymax=a+b*xmin;
+    if (ymin>a+b*xmax) ymin=a+b*xmax;
+    if (ymax<a+b*xmax) ymax=a+b*xmax;
+  }
+  document.open();
+  var D=new Diagram();
+  D.SetFrame(60, 40, 460, 340);
+  D.SetBorder(xmin, xmax, ymin, ymax);
+  var ss=a<0 ? "" : "+";
+  if (xxm-xm*xm!=0)
+    D.SetText("x","y", "linear regression of "+l+" points: y="+Math.round(b*10000)/10000+"*x"+ss+Math.round(a*10000)/10000);
+  else
+    D.SetText("x","y","");
+  D.Draw("#eeeeee", "#000000", true, "", "", "#888888", "#cccccc");
+  if (xxm-xm*xm!=0)
+    new Line(D.ScreenX(xmin), D.ScreenY(a+b*xmin), D.ScreenX(xmax), D.ScreenY(a+b*xmax), "ff0000", 1);
+  for (i=0; i<l; i++)
+    new Dot(D.ScreenX(x[i]), D.ScreenY(y[i]), 6, 6, "#0000ff", "("+x[i]+", "+y[i]+")");
+  document.close();
+}
+Display();
+</SCRIPT>
+</body>
+</html>

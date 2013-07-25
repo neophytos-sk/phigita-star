@@ -1,0 +1,884 @@
+<html><head><title>dom.js</title><link rel="stylesheet" type="text/css" href="../resources/style.css" media="screen"/></head><body><h1>dom.js</h1><pre class="highlighted"><code><i>/*
+Copyright (c) 2006, Yahoo! Inc. All rights reserved.
+Code licensed under the BSD License:
+http:<i>//developer.yahoo.net/yui/license.txt</i>
+version: 0.12.0
+*/</i>
+<i>// holder</i>
+<i>/**
+ * The dom module provides helper methods <b>for</b> manipulating Dom elements.
+ * @module dom
+ *
+ */</i>
+
+(<b>function</b>() {
+    <b>var</b> Y = YAHOO.util,     <i>// internal shorthand</i>
+        getStyle,           <i>// <b>for</b> load time browser branching</i>
+        setStyle,           <i>// ditto</i>
+        id_counter = 0,     <i>// <b>for</b> use <b>with</b> generateId</i>
+        propertyCache = {}; <i>// <b>for</b> faster hyphen converts</i>
+
+    <i>// brower detection</i>
+    <b>var</b> ua = navigator.userAgent.toLowerCase(),
+        isOpera = (ua.indexOf('opera') &gt; -1),
+        isSafari = (ua.indexOf('safari') &gt; -1),
+        isGecko = (!isOpera &amp;&amp; !isSafari &amp;&amp; ua.indexOf('gecko') &gt; -1),
+        isIE = (!isOpera &amp;&amp; ua.indexOf('msie') &gt; -1);
+
+    <i>// regex cache</i>
+    <b>var</b> patterns = {
+        HYPHEN: /(-[a-z])/i
+    };
+
+
+    <b>var</b> toCamel = <b>function</b>(property) {
+        <b>if</b> ( !patterns.HYPHEN.test(property) ) {
+            <b>return</b> property; <i>// no hyphens</i>
+        }
+
+        <b>if</b> (propertyCache[property]) { <i>// already converted</i>
+            <b>return</b> propertyCache[property];
+        }
+
+        <b>while</b>( patterns.HYPHEN.exec(property) ) {
+            property = property.replace(RegExp.$1,
+                    RegExp.$1.substr(1).toUpperCase());
+        }
+
+        propertyCache[property] = property;
+        <b>return</b> property;
+        <i>//<b>return</b> property.replace(/-([a-z])/gi, <b>function</b>(m0, m1) {<b>return</b> m1.toUpperCase()}) // cant use <b>function</b> as 2nd arg yet due to safari bug</i>
+    };
+
+    <i>// branching at load instead of runtime</i>
+    <b>if</b> (document.defaultView &amp;&amp; document.defaultView.getComputedStyle) { <i>// W3C DOM method</i>
+        getStyle = <b>function</b>(el, property) {
+            <b>var</b> value = null;
+
+            <b>var</b> computed = document.defaultView.getComputedStyle(el, '');
+            <b>if</b> (computed) { <i>// test computed before touching <b>for</b> safari</i>
+                value = computed[toCamel(property)];
+            }
+
+            <b>return</b> el.style[property] || value;
+        };
+    } <b>else</b> if (document.documentElement.currentStyle &amp;&amp; isIE) { <i>// IE method</i>
+        getStyle = <b>function</b>(el, property) {
+            <b>switch</b>( toCamel(property) ) {
+                <b>case</b> 'opacity' :<i>// IE opacity uses filter</i>
+                    <b>var</b> val = 100;
+                    try { <i>// will error <b>if</b> no DXImageTransform</i>
+                        val = el.filters['DXImageTransform.Microsoft.Alpha'].opacity;
+
+                    } catch(e) {
+                        try { <i>// make sure its <b>in</b> the document</i>
+                            val = el.filters('alpha').opacity;
+                        } catch(e) {
+                        }
+                    }
+                    <b>return</b> val / 100;
+                    <b>break</b>;
+                <b>default</b>:
+                    <i>// test currentStyle before touching</i>
+                    <b>var</b> value = el.currentStyle ? el.currentStyle[property] : null;
+                    <b>return</b> ( el.style[property] || value );
+            }
+        };
+    } <b>else</b> { <i>// <b>default</b> to inline only</i>
+        getStyle = <b>function</b>(el, property) { <b>return</b> el.style[property]; };
+    }
+
+    <b>if</b> (isIE) {
+        setStyle = <b>function</b>(el, property, val) {
+            <b>switch</b> (property) {
+                <b>case</b> 'opacity':
+                    <b>if</b> ( <b>typeof</b> el.style.filter == 'string' ) { <i>// <b>in</b> case not appended</i>
+                        el.style.filter = 'alpha(opacity=' + val * 100 + ')';
+
+                        <b>if</b> (!el.currentStyle || !el.currentStyle.hasLayout) {
+                            el.style.zoom = 1; <i>// when no layout or cant tell</i>
+                        }
+                    }
+                    <b>break</b>;
+                <b>default</b>:
+                el.style[property] = val;
+            }
+        };
+    } <b>else</b> {
+        setStyle = <b>function</b>(el, property, val) {
+            el.style[property] = val;
+        };
+    }
+
+    <i>/**
+     * Provides helper methods <b>for</b> DOM elements.
+     * @namespace YAHOO.util
+     * @class Dom
+     */</i>
+    YAHOO.util.Dom = {
+        <i>/**
+         * Returns an HTMLElement reference.
+         * @method get
+         * @param {String | HTMLElement |Array} el Accepts a string to use as an ID <b>for</b> getting a DOM reference, an actual DOM reference, or an Array of IDs and/or HTMLElements.
+         * @<b>return</b> {HTMLElement | Array} A DOM reference to an HTML element or an array of HTMLElements.
+         */</i>
+        get: <b>function</b>(el) {
+            <b>if</b> (!el) { <b>return</b> null; } <i>// nothing to work <b>with</b></i>
+
+            <b>if</b> (<b>typeof</b> el != 'string' &amp;&amp; !(el instanceof Array) ) { <i>// assuming HTMLElement or HTMLCollection, so pass back as is</i>
+                <b>return</b> el;
+            }
+
+            <b>if</b> (<b>typeof</b> el == 'string') { <i>// ID</i>
+                <b>return</b> document.getElementById(el);
+            }
+            <b>else</b> { <i>// array of ID's and/or elements</i>
+                <b>var</b> collection = [];
+                <b>for</b> (<b>var</b> i = 0, len = el.length; i &lt; len; ++i) {
+                    collection[collection.length] = Y.Dom.get(el[i]);
+                }
+
+                <b>return</b> collection;
+            }
+
+            <b>return</b> null; <i>// safety, should never happen</i>
+        },
+
+        <i>/**
+         * Normalizes currentStyle and ComputedStyle.
+         * @method getStyle
+         * @param {String | HTMLElement |Array} el Accepts a string to use as an ID, an actual DOM reference, or an Array of IDs and/or HTMLElements.
+         * @param {String} property The style property whose value is returned.
+         * @<b>return</b> {String | Array} The current value of the style property <b>for</b> the element(s).
+         */</i>
+        getStyle: <b>function</b>(el, property) {
+            property = toCamel(property);
+
+            <b>var</b> f = <b>function</b>(element) {
+                <b>return</b> getStyle(element, property);
+            };
+
+            <b>return</b> Y.Dom.batch(el, f, Y.Dom, true);
+        },
+
+        <i>/**
+         * Wrapper <b>for</b> setting style properties of HTMLElements.  Normalizes &quot;opacity&quot; across modern browsers.
+         * @method setStyle
+         * @param {String | HTMLElement | Array} el Accepts a string to use as an ID, an actual DOM reference, or an Array of IDs and/or HTMLElements.
+         * @param {String} property The style property to be set.
+         * @param {String} val The value to apply to the given property.
+         */</i>
+        setStyle: <b>function</b>(el, property, val) {
+            property = toCamel(property);
+
+            <b>var</b> f = <b>function</b>(element) {
+                setStyle(element, property, val);
+
+            };
+
+            Y.Dom.batch(el, f, Y.Dom, true);
+        },
+
+        <i>/**
+         * Gets the current position of an element based on page coordinates.  Element must be part of the DOM tree to have page coordinates (display:none or elements not appended <b>return</b> false).
+         * @method getXY
+         * @param {String | HTMLElement | Array} el Accepts a string to use as an ID, an actual DOM reference, or an Array of IDs and/or HTMLElements
+         * @<b>return</b> {Array} The XY position of the element(s)
+         */</i>
+        getXY: <b>function</b>(el) {
+            <b>var</b> f = <b>function</b>(el) {
+
+            <i>// has to be part of document to have pageXY</i>
+                <b>if</b> (el.parentNode === null || el.offsetParent === null ||
+                        <b>this</b>.getStyle(el, 'display') == 'none') {
+                    <b>return</b> false;
+                }
+
+                <b>var</b> parentNode = null;
+                <b>var</b> pos = [];
+                <b>var</b> box;
+
+                <b>if</b> (el.getBoundingClientRect) { <i>// IE</i>
+                    box = el.getBoundingClientRect();
+                    <b>var</b> doc = document;
+                    <b>if</b> ( !<b>this</b>.inDocument(el) &amp;&amp; parent.document != document) {<i>// might be <b>in</b> a frame, need to get its scroll</i>
+                        doc = parent.document;
+
+                        <b>if</b> ( !<b>this</b>.isAncestor(doc.documentElement, el) ) {
+                            <b>return</b> false;
+                        }
+
+                    }
+
+                    <b>var</b> scrollTop = Math.max(doc.documentElement.scrollTop, doc.body.scrollTop);
+                    <b>var</b> scrollLeft = Math.max(doc.documentElement.scrollLeft, doc.body.scrollLeft);
+
+                    <b>return</b> [box.left + scrollLeft, box.top + scrollTop];
+                }
+                <b>else</b> { <i>// safari, opera, &amp; gecko</i>
+                    pos = [el.offsetLeft, el.offsetTop];
+                    parentNode = el.offsetParent;
+                    <b>if</b> (parentNode != el) {
+                        <b>while</b> (parentNode) {
+                            pos[0] += parentNode.offsetLeft;
+                            pos[1] += parentNode.offsetTop;
+                            parentNode = parentNode.offsetParent;
+                        }
+                    }
+                    <b>if</b> (isSafari &amp;&amp; <b>this</b>.getStyle(el, 'position') == 'absolute' ) { <i>// safari doubles <b>in</b> some cases</i>
+                        pos[0] -= document.body.offsetLeft;
+                        pos[1] -= document.body.offsetTop;
+                    }
+                }
+
+                <b>if</b> (el.parentNode) { parentNode = el.parentNode; }
+                <b>else</b> { parentNode = null; }
+
+                <b>while</b> (parentNode &amp;&amp; parentNode.tagName.toUpperCase() != 'BODY' &amp;&amp; parentNode.tagName.toUpperCase() != 'HTML')
+                { <i>// account <b>for</b> any scrolled ancestors</i>
+                    <b>if</b> (Y.Dom.getStyle(parentNode, 'display') != 'inline') { <i>// work around opera inline scrollLeft/Top bug</i>
+                        pos[0] -= parentNode.scrollLeft;
+                        pos[1] -= parentNode.scrollTop;
+                    }
+
+                    <b>if</b> (parentNode.parentNode) {
+                        parentNode = parentNode.parentNode;
+                    } <b>else</b> { parentNode = null; }
+                }
+
+
+                <b>return</b> pos;
+            };
+
+            <b>return</b> Y.Dom.batch(el, f, Y.Dom, true);
+        },
+
+        <i>/**
+         * Gets the current X position of an element based on page coordinates.  The element must be part of the DOM tree to have page coordinates (display:none or elements not appended <b>return</b> false).
+         * @method getX
+         * @param {String | HTMLElement | Array} el Accepts a string to use as an ID, an actual DOM reference, or an Array of IDs and/or HTMLElements
+         * @<b>return</b> {String | Array} The X position of the element(s)
+         */</i>
+        getX: <b>function</b>(el) {
+            <b>var</b> f = <b>function</b>(el) {
+                <b>return</b> Y.Dom.getXY(el)[0];
+            };
+
+            <b>return</b> Y.Dom.batch(el, f, Y.Dom, true);
+        },
+
+        <i>/**
+         * Gets the current Y position of an element based on page coordinates.  Element must be part of the DOM tree to have page coordinates (display:none or elements not appended <b>return</b> false).
+         * @method getY
+         * @param {String | HTMLElement | Array} el Accepts a string to use as an ID, an actual DOM reference, or an Array of IDs and/or HTMLElements
+         * @<b>return</b> {String | Array} The Y position of the element(s)
+         */</i>
+        getY: <b>function</b>(el) {
+            <b>var</b> f = <b>function</b>(el) {
+                <b>return</b> Y.Dom.getXY(el)[1];
+            };
+
+            <b>return</b> Y.Dom.batch(el, f, Y.Dom, true);
+        },
+
+        <i>/**
+         * Set the position of an html element <b>in</b> page coordinates, regardless of how the element is positioned.
+         * The element(s) must be part of the DOM tree to have page coordinates (display:none or elements not appended <b>return</b> false).
+         * @method setXY
+         * @param {String | HTMLElement | Array} el Accepts a string to use as an ID, an actual DOM reference, or an Array of IDs and/or HTMLElements
+         * @param {Array} pos Contains X &amp; Y values <b>for</b> new position (coordinates are page-based)
+         * @param {Boolean} noRetry By <b>default</b> we try and set the position a second time <b>if</b> the first fails
+         */</i>
+        setXY: <b>function</b>(el, pos, noRetry) {
+            <b>var</b> f = <b>function</b>(el) {
+                <b>var</b> style_pos = <b>this</b>.getStyle(el, 'position');
+                <b>if</b> (style_pos == 'static') { <i>// <b>default</b> to relative</i>
+                    <b>this</b>.setStyle(el, 'position', 'relative');
+                    style_pos = 'relative';
+                }
+
+                <b>var</b> pageXY = <b>this</b>.getXY(el);
+                <b>if</b> (pageXY === false) { <i>// has to be part of doc to have pageXY</i>
+                    <b>return</b> false;
+                }
+
+                <b>var</b> delta = [ <i>// assuming pixels; <b>if</b> not we will have to retry</i>
+                    parseInt( <b>this</b>.getStyle(el, 'left'), 10 ),
+                    parseInt( <b>this</b>.getStyle(el, 'top'), 10 )
+                ];
+
+                <b>if</b> ( isNaN(delta[0]) ) {<i>// <b>in</b> case of 'auto'</i>
+                    delta[0] = (style_pos == 'relative') ? 0 : el.offsetLeft;
+                }
+                <b>if</b> ( isNaN(delta[1]) ) { <i>// <b>in</b> case of 'auto'</i>
+                    delta[1] = (style_pos == 'relative') ? 0 : el.offsetTop;
+                }
+
+                <b>if</b> (pos[0] !== null) { el.style.left = pos[0] - pageXY[0] + delta[0] + 'px'; }
+                <b>if</b> (pos[1] !== null) { el.style.top = pos[1] - pageXY[1] + delta[1] + 'px'; }
+
+                <b>var</b> newXY = <b>this</b>.getXY(el);
+
+                <i>// <b>if</b> retry is true, try one more time <b>if</b> we miss</i>
+                <b>if</b> (!noRetry &amp;&amp; (newXY[0] != pos[0] || newXY[1] != pos[1]) ) {
+                    <b>this</b>.setXY(el, pos, true);
+                }
+
+            };
+
+            Y.Dom.batch(el, f, Y.Dom, true);
+        },
+
+        <i>/**
+         * Set the X position of an html element <b>in</b> page coordinates, regardless of how the element is positioned.
+         * The element must be part of the DOM tree to have page coordinates (display:none or elements not appended <b>return</b> false).
+         * @method setX
+         * @param {String | HTMLElement | Array} el Accepts a string to use as an ID, an actual DOM reference, or an Array of IDs and/or HTMLElements.
+         * @param {Int} x The value to use as the X coordinate <b>for</b> the element(s).
+         */</i>
+        setX: <b>function</b>(el, x) {
+            Y.Dom.setXY(el, [x, null]);
+        },
+
+        <i>/**
+         * Set the Y position of an html element <b>in</b> page coordinates, regardless of how the element is positioned.
+         * The element must be part of the DOM tree to have page coordinates (display:none or elements not appended <b>return</b> false).
+         * @method setY
+         * @param {String | HTMLElement | Array} el Accepts a string to use as an ID, an actual DOM reference, or an Array of IDs and/or HTMLElements.
+         * @param {Int} x To use as the Y coordinate <b>for</b> the element(s).
+         */</i>
+        setY: <b>function</b>(el, y) {
+            Y.Dom.setXY(el, [null, y]);
+        },
+
+        <i>/**
+         * Returns the region position of the given element.
+         * The element must be part of the DOM tree to have a region (display:none or elements not appended <b>return</b> false).
+         * @method getRegion
+         * @param {String | HTMLElement | Array} el Accepts a string to use as an ID, an actual DOM reference, or an Array of IDs and/or HTMLElements.
+         * @<b>return</b> {Region | Array} A Region or array of Region instances containing &quot;top, left, bottom, right&quot; member data.
+         */</i>
+        getRegion: <b>function</b>(el) {
+            <b>var</b> f = <b>function</b>(el) {
+                <b>var</b> region = <b>new</b> Y.Region.getRegion(el);
+                <b>return</b> region;
+            };
+
+            <b>return</b> Y.Dom.batch(el, f, Y.Dom, true);
+        },
+
+        <i>/**
+         * Returns the width of the client (viewport).
+         * @method getClientWidth
+         * @deprecated Now using getViewportWidth.  This interface left intact <b>for</b> back compat.
+         * @<b>return</b> {Int} The width of the viewable area of the page.
+         */</i>
+        getClientWidth: <b>function</b>() {
+            <b>return</b> Y.Dom.getViewportWidth();
+        },
+
+        <i>/**
+         * Returns the height of the client (viewport).
+         * @method getClientHeight
+         * @deprecated Now using getViewportHeight.  This interface left intact <b>for</b> back compat.
+         * @<b>return</b> {Int} The height of the viewable area of the page.
+         */</i>
+        getClientHeight: <b>function</b>() {
+            <b>return</b> Y.Dom.getViewportHeight();
+        },
+
+        <i>/**
+         * Returns a array of HTMLElements <b>with</b> the given class.
+         * For optimized performance, include a tag and/or root node when possible.
+         * @method getElementsByClassName
+         * @param {String} className The class name to match against
+         * @param {String} tag (optional) The tag name of the elements being collected
+         * @param {String | HTMLElement} root (optional) The HTMLElement or an ID to use as the starting point
+         * @<b>return</b> {Array} An array of elements that have the given class name
+         */</i>
+        getElementsByClassName: <b>function</b>(className, tag, root) {
+            <b>var</b> method = <b>function</b>(el) { <b>return</b> Y.Dom.hasClass(el, className); };
+            <b>return</b> Y.Dom.getElementsBy(method, tag, root);
+        },
+
+        <i>/**
+         * Determines whether an HTMLElement has the given className.
+         * @method hasClass
+         * @param {String | HTMLElement | Array} el The element or collection to test
+         * @param {String} className the class name to search <b>for</b>
+         * @<b>return</b> {Boolean | Array} A boolean value or array of boolean values
+         */</i>
+        hasClass: <b>function</b>(el, className) {
+            <b>var</b> re = <b>new</b> RegExp('(?:^|\\s+)' + className + '(?:\\s+|$)');
+
+            <b>var</b> f = <b>function</b>(el) {
+                <b>return</b> re.test(el['className']);
+            };
+
+            <b>return</b> Y.Dom.batch(el, f, Y.Dom, true);
+        },
+
+        <i>/**
+         * Adds a class name to a given element or collection of elements.
+         * @method addClass
+         * @param {String | HTMLElement | Array} el The element or collection to add the class to
+         * @param {String} className the class name to add to the class attribute
+         */</i>
+        addClass: <b>function</b>(el, className) {
+            <b>var</b> f = <b>function</b>(el) {
+                <b>if</b> (<b>this</b>.hasClass(el, className)) { <b>return</b>; } <i>// already present</i>
+
+
+                el['className'] = [el['className'], className].join(' ');
+            };
+
+            Y.Dom.batch(el, f, Y.Dom, true);
+        },
+
+        <i>/**
+         * Removes a class name from a given element or collection of elements.
+         * @method removeClass
+         * @param {String | HTMLElement | Array} el The element or collection to remove the class from
+         * @param {String} className the class name to remove from the class attribute
+         */</i>
+        removeClass: <b>function</b>(el, className) {
+            <b>var</b> re = <b>new</b> RegExp('(?:^|\\s+)' + className + '(?:\\s+|$)', 'g');
+
+            <b>var</b> f = <b>function</b>(el) {
+                <b>if</b> (!<b>this</b>.hasClass(el, className)) { <b>return</b>; } <i>// not present</i>
+
+
+                <b>var</b> c = el['className'];
+                el['className'] = c.replace(re, ' ');
+                <b>if</b> ( <b>this</b>.hasClass(el, className) ) { <i>// <b>in</b> case of multiple adjacent</i>
+                    <b>this</b>.removeClass(el, className);
+                }
+
+            };
+
+            Y.Dom.batch(el, f, Y.Dom, true);
+        },
+
+        <i>/**
+         * Replace a class <b>with</b> another class <b>for</b> a given element or collection of elements.
+         * If no oldClassName is present, the newClassName is simply added.
+         * @method replaceClass
+         * @param {String | HTMLElement | Array} el The element or collection to remove the class from
+         * @param {String} oldClassName the class name to be replaced
+         * @param {String} newClassName the class name that will be replacing the old class name
+         */</i>
+        replaceClass: <b>function</b>(el, oldClassName, newClassName) {
+            <b>if</b> (oldClassName === newClassName) { <i>// avoid infinite loop</i>
+                <b>return</b> false;
+            }
+
+            <b>var</b> re = <b>new</b> RegExp('(?:^|\\s+)' + oldClassName + '(?:\\s+|$)', 'g');
+
+            <b>var</b> f = <b>function</b>(el) {
+
+                <b>if</b> ( !<b>this</b>.hasClass(el, oldClassName) ) {
+                    <b>this</b>.addClass(el, newClassName); <i>// just add it <b>if</b> nothing to replace</i>
+                    <b>return</b>; <i>// note <b>return</b></i>
+                }
+
+                el['className'] = el['className'].replace(re, ' ' + newClassName + ' ');
+
+                <b>if</b> ( <b>this</b>.hasClass(el, oldClassName) ) { <i>// <b>in</b> case of multiple adjacent</i>
+                    <b>this</b>.replaceClass(el, oldClassName, newClassName);
+                }
+            };
+
+            Y.Dom.batch(el, f, Y.Dom, true);
+        },
+
+        <i>/**
+         * Generates a unique ID
+         * @method generateId
+         * @param {String | HTMLElement | Array} el (optional) An optional element array of elements to add an ID to (no ID is added <b>if</b> one is already present).
+         * @param {String} prefix (optional) an optional prefix to use (defaults to &quot;yui-gen&quot;).
+         * @<b>return</b> {String | Array} The generated ID, or array of generated IDs (or original ID <b>if</b> already present on an element)
+         */</i>
+        generateId: <b>function</b>(el, prefix) {
+            prefix = prefix || 'yui-gen';
+            el = el || {};
+
+            <b>var</b> f = <b>function</b>(el) {
+                <b>if</b> (el) {
+                    el = Y.Dom.get(el);
+                } <b>else</b> {
+                    el = {}; <i>// just generating ID <b>in</b> this <b>case</b></i>
+                }
+
+                <b>if</b> (!el.id) {
+                    el.id = prefix + id_counter++;
+                } <i>// dont override existing</i>
+
+
+                <b>return</b> el.id;
+            };
+
+            <b>return</b> Y.Dom.batch(el, f, Y.Dom, true);
+        },
+
+        <i>/**
+         * Determines whether an HTMLElement is an ancestor of another HTML element <b>in</b> the DOM hierarchy.
+         * @method isAncestor
+         * @param {String | HTMLElement} haystack The possible ancestor
+         * @param {String | HTMLElement} needle The possible descendent
+         * @<b>return</b> {Boolean} Whether or not the haystack is an ancestor of needle
+         */</i>
+        isAncestor: <b>function</b>(haystack, needle) {
+            haystack = Y.Dom.get(haystack);
+            <b>if</b> (!haystack || !needle) { <b>return</b> false; }
+
+            <b>var</b> f = <b>function</b>(needle) {
+                <b>if</b> (haystack.contains &amp;&amp; !isSafari) { <i>// safari &quot;contains&quot; is broken</i>
+                    <b>return</b> haystack.contains(needle);
+                }
+                <b>else</b> if ( haystack.compareDocumentPosition ) {
+                    <b>return</b> !!(haystack.compareDocumentPosition(needle) &amp; 16);
+                }
+                <b>else</b> { <i>// loop up and test each parent</i>
+                    <b>var</b> parent = needle.parentNode;
+
+                    <b>while</b> (parent) {
+                        <b>if</b> (parent == haystack) {
+                            <b>return</b> true;
+                        }
+                        <b>else</b> if (!parent.tagName || parent.tagName.toUpperCase() == 'HTML') {
+                            <b>return</b> false;
+                        }
+
+                        parent = parent.parentNode;
+                    }
+                    <b>return</b> false;
+                }
+            };
+
+            <b>return</b> Y.Dom.batch(needle, f, Y.Dom, true);
+        },
+
+        <i>/**
+         * Determines whether an HTMLElement is present <b>in</b> the current document.
+         * @method inDocument
+         * @param {String | HTMLElement} el The element to search <b>for</b>
+         * @<b>return</b> {Boolean} Whether or not the element is present <b>in</b> the current document
+         */</i>
+        inDocument: <b>function</b>(el) {
+            <b>var</b> f = <b>function</b>(el) {
+                <b>return</b> this.isAncestor(document.documentElement, el);
+            };
+
+            <b>return</b> Y.Dom.batch(el, f, Y.Dom, true);
+        },
+
+        <i>/**
+         * Returns a array of HTMLElements that pass the test applied by supplied boolean method.
+         * For optimized performance, include a tag and/or root node when possible.
+         * @method getElementsBy
+         * @param {Function} method - A boolean method <b>for</b> testing elements which receives the element as its only argument.
+
+         * @param {String} tag (optional) The tag name of the elements being collected
+         * @param {String | HTMLElement} root (optional) The HTMLElement or an ID to use as the starting point
+         */</i>
+        getElementsBy: <b>function</b>(method, tag, root) {
+            tag = tag || '*';
+            root = Y.Dom.get(root) || document;
+
+            <b>var</b> nodes = [];
+            <b>var</b> elements = root.getElementsByTagName(tag);
+
+            <b>if</b> ( !elements.length &amp;&amp; (tag == '*' &amp;&amp; root.all) ) {
+                elements = root.all; <i>// IE &lt; 6</i>
+            }
+
+            <b>for</b> (<b>var</b> i = 0, len = elements.length; i &lt; len; ++i) {
+                <b>if</b> ( method(elements[i]) ) { nodes[nodes.length] = elements[i]; }
+            }
+
+
+            <b>return</b> nodes;
+        },
+
+        <i>/**
+         * Returns an array of elements that have had the supplied method applied.
+         * The method is called <b>with</b> the element(s) as the first arg, and the optional param as the second ( method(el, o) ).
+         * @method batch
+         * @param {String | HTMLElement | Array} el (optional) An element or array of elements to apply the method to
+         * @param {Function} method The method to apply to the element(s)
+         * @param {Any} o (optional) An optional arg that is passed to the supplied method
+         * @param {Boolean} override (optional) Whether or not to override the scope of &quot;method&quot; <b>with</b> &quot;o&quot;
+         * @<b>return</b> {HTMLElement | Array} The element(s) <b>with</b> the method applied
+         */</i>
+        batch: <b>function</b>(el, method, o, override) {
+            <b>var</b> id = el;
+            el = Y.Dom.get(el);
+
+            <b>var</b> scope = (override) ? o : window;
+
+            <b>if</b> (!el || el.tagName || !el.length) { <i>// is null or not a collection (tagName <b>for</b> SELECT and others that can be both an element and a collection)</i>
+                <b>if</b> (!el) {
+                    <b>return</b> false;
+                }
+                <b>return</b> method.call(scope, el, o);
+            }
+
+            <b>var</b> collection = [];
+
+            <b>for</b> (<b>var</b> i = 0, len = el.length; i &lt; len; ++i) {
+                <b>if</b> (!el[i]) {
+                    id = el[i];
+                }
+                collection[collection.length] = method.call(scope, el[i], o);
+            }
+
+            <b>return</b> collection;
+        },
+
+        <i>/**
+         * Returns the height of the document.
+         * @method getDocumentHeight
+         * @<b>return</b> {Int} The height of the actual document (which includes the body and its margin).
+         */</i>
+        getDocumentHeight: <b>function</b>() {
+            <b>var</b> scrollHeight = (document.compatMode != 'CSS1Compat') ? document.body.scrollHeight : document.documentElement.scrollHeight;
+
+            <b>var</b> h = Math.max(scrollHeight, Y.Dom.getViewportHeight());
+            <b>return</b> h;
+        },
+
+        <i>/**
+         * Returns the width of the document.
+         * @method getDocumentWidth
+         * @<b>return</b> {Int} The width of the actual document (which includes the body and its margin).
+         */</i>
+        getDocumentWidth: <b>function</b>() {
+            <b>var</b> scrollWidth = (document.compatMode != 'CSS1Compat') ? document.body.scrollWidth : document.documentElement.scrollWidth;
+            <b>var</b> w = Math.max(scrollWidth, Y.Dom.getViewportWidth());
+            <b>return</b> w;
+        },
+
+        <i>/**
+         * Returns the current height of the viewport.
+         * @method getViewportHeight
+         * @<b>return</b> {Int} The height of the viewable area of the page (excludes scrollbars).
+         */</i>
+        getViewportHeight: <b>function</b>() {
+            <b>var</b> height = self.innerHeight; <i>// Safari, Opera</i>
+            <b>var</b> mode = document.compatMode;
+
+            <b>if</b> ( (mode || isIE) &amp;&amp; !isOpera ) { <i>// IE, Gecko</i>
+                height = (mode == 'CSS1Compat') ?
+                        document.documentElement.clientHeight : <i>// Standards</i>
+                        document.body.clientHeight; <i>// Quirks</i>
+            }
+
+            <b>return</b> height;
+        },
+
+        <i>/**
+         * Returns the current width of the viewport.
+         * @method getViewportWidth
+         * @<b>return</b> {Int} The width of the viewable area of the page (excludes scrollbars).
+         */</i>
+
+        getViewportWidth: <b>function</b>() {
+            <b>var</b> width = self.innerWidth;  <i>// Safari</i>
+            <b>var</b> mode = document.compatMode;
+
+            <b>if</b> (mode || isIE) { <i>// IE, Gecko, Opera</i>
+                width = (mode == 'CSS1Compat') ?
+                        document.documentElement.clientWidth : <i>// Standards</i>
+                        document.body.clientWidth; <i>// Quirks</i>
+            }
+            <b>return</b> width;
+        }
+    };
+})();
+<i>/**
+ * A region is a representation of an object on a grid.  It is defined
+ * by the top, right, bottom, left extents, so is rectangular by <b>default</b>.  If
+ * other shapes are required, <b>this</b> class could be extended to support it.
+ * @namespace YAHOO.util
+ * @class Region
+ * @param {Int} t the top extent
+ * @param {Int} r the right extent
+ * @param {Int} b the bottom extent
+ * @param {Int} l the left extent
+ * @constructor
+ */</i>
+YAHOO.util.Region = <b>function</b>(t, r, b, l) {
+
+    <i>/**
+     * The region's top extent
+     * @property top
+     * @type Int
+     */</i>
+    <b>this</b>.top = t;
+
+    <i>/**
+     * The region's top extent as index, <b>for</b> symmetry <b>with</b> set/getXY
+     * @property 1
+     * @type Int
+     */</i>
+    <b>this</b>[1] = t;
+
+    <i>/**
+     * The region's right extent
+     * @property right
+     * @type int
+     */</i>
+    <b>this</b>.right = r;
+
+    <i>/**
+     * The region's bottom extent
+     * @property bottom
+     * @type Int
+     */</i>
+    <b>this</b>.bottom = b;
+
+    <i>/**
+     * The region's left extent
+     * @property left
+     * @type Int
+     */</i>
+    <b>this</b>.left = l;
+
+    <i>/**
+     * The region's left extent as index, <b>for</b> symmetry <b>with</b> set/getXY
+     * @property 0
+     * @type Int
+     */</i>
+    <b>this</b>[0] = l;
+};
+
+<i>/**
+ * Returns true <b>if</b> this region contains the region passed <b>in</b>
+ * @method contains
+ * @param  {Region}  region The region to evaluate
+ * @<b>return</b> {Boolean}        True <b>if</b> the region is contained <b>with</b> this region,
+ *                          <b>else</b> false
+ */</i>
+YAHOO.util.Region.prototype.contains = <b>function</b>(region) {
+    <b>return</b> ( region.left   &gt;= <b>this</b>.left   &amp;&amp;
+             region.right  &lt;= <b>this</b>.right  &amp;&amp;
+             region.top    &gt;= <b>this</b>.top    &amp;&amp;
+             region.bottom &lt;= <b>this</b>.bottom    );
+
+};
+
+<i>/**
+ * Returns the area of the region
+ * @method getArea
+ * @<b>return</b> {Int} the region's area
+ */</i>
+YAHOO.util.Region.prototype.getArea = <b>function</b>() {
+    <b>return</b> ( (<b>this</b>.bottom - <b>this</b>.top) * (<b>this</b>.right - <b>this</b>.left) );
+};
+
+<i>/**
+ * Returns the region where the passed <b>in</b> region overlaps <b>with</b> this one
+ * @method intersect
+ * @param  {Region} region The region that intersects
+ * @<b>return</b> {Region}        The overlap region, or null <b>if</b> there is no overlap
+ */</i>
+YAHOO.util.Region.prototype.intersect = <b>function</b>(region) {
+    <b>var</b> t = Math.max( <b>this</b>.top,    region.top    );
+    <b>var</b> r = Math.min( <b>this</b>.right,  region.right  );
+    <b>var</b> b = Math.min( <b>this</b>.bottom, region.bottom );
+    <b>var</b> l = Math.max( <b>this</b>.left,   region.left   );
+
+    <b>if</b> (b &gt;= t &amp;&amp; r &gt;= l) {
+        <b>return</b> new YAHOO.util.Region(t, r, b, l);
+    } <b>else</b> {
+        <b>return</b> null;
+    }
+};
+
+<i>/**
+ * Returns the region representing the smallest region that can contain both
+ * the passed <b>in</b> region and <b>this</b> region.
+ * @method union
+ * @param  {Region} region The region that to create the union <b>with</b>
+ * @<b>return</b> {Region}        The union region
+ */</i>
+YAHOO.util.Region.prototype.union = <b>function</b>(region) {
+    <b>var</b> t = Math.min( <b>this</b>.top,    region.top    );
+    <b>var</b> r = Math.max( <b>this</b>.right,  region.right  );
+    <b>var</b> b = Math.max( <b>this</b>.bottom, region.bottom );
+    <b>var</b> l = Math.min( <b>this</b>.left,   region.left   );
+
+    <b>return</b> new YAHOO.util.Region(t, r, b, l);
+};
+
+<i>/**
+ * toString
+ * @method toString
+ * @<b>return</b> string the region properties
+ */</i>
+YAHOO.util.Region.prototype.toString = <b>function</b>() {
+    <b>return</b> ( &quot;Region {&quot;    +
+             &quot;top: &quot;       + <b>this</b>.top    +
+             &quot;, right: &quot;   + <b>this</b>.right  +
+             &quot;, bottom: &quot;  + <b>this</b>.bottom +
+             &quot;, left: &quot;    + <b>this</b>.left   +
+             &quot;}&quot; );
+};
+
+<i>/**
+ * Returns a region that is occupied by the DOM element
+ * @method getRegion
+ * @param  {HTMLElement} el The element
+ * @<b>return</b> {Region}         The region that the element occupies
+ * @static
+ */</i>
+YAHOO.util.Region.getRegion = <b>function</b>(el) {
+    <b>var</b> p = YAHOO.util.Dom.getXY(el);
+
+    <b>var</b> t = p[1];
+    <b>var</b> r = p[0] + el.offsetWidth;
+    <b>var</b> b = p[1] + el.offsetHeight;
+    <b>var</b> l = p[0];
+
+    <b>return</b> new YAHOO.util.Region(t, r, b, l);
+};
+
+<i>/////////////////////////////////////////////////////////////////////////////</i>
+
+<i>/**
+ * A point is a region that is special <b>in</b> that it represents a single point on
+ * the grid.
+ * @namespace YAHOO.util
+ * @class Point
+ * @param {Int} x The X position of the point
+ * @param {Int} y The Y position of the point
+ * @constructor
+ * @extends YAHOO.util.Region
+ */</i>
+YAHOO.util.Point = <b>function</b>(x, y) {
+   <b>if</b> (x instanceof Array) { <i>// accept output from Dom.getXY</i>
+      y = x[1];
+      x = x[0];
+   }
+
+    <i>/**
+     * The X position of the point, which is also the right, left and index zero (<b>for</b> Dom.getXY symmetry)
+     * @property x
+     * @type Int
+     */</i>
+
+    <b>this</b>.x = <b>this</b>.right = <b>this</b>.left = <b>this</b>[0] = x;
+
+    <i>/**
+     * The Y position of the point, which is also the top, bottom and index one (<b>for</b> Dom.getXY symmetry)
+     * @property y
+     * @type Int
+     */</i>
+    <b>this</b>.y = <b>this</b>.top = <b>this</b>.bottom = <b>this</b>[1] = y;
+};
+
+YAHOO.util.Point.prototype = <b>new</b> YAHOO.util.Region();
+
+</code></pre><hr><div style="font-size:10px;text-align:center;color:gray;">yui-ext - Copyright &copy; 2006 Jack Slocum.  |
+    Yahoo! UI - Copyright &copy; 2006 Yahoo! Inc.<br />All rights reserved.</div>
+    </body></html>

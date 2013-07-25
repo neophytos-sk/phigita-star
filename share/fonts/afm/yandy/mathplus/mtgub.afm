@@ -1,0 +1,74 @@
+StartFontMetrics 2.0
+Comment CreationDate: Sat May 04 19:49:34 1996
+Comment RevisionDate: Tue Jun 24 10:32:04 1996
+Comment VMusage 1024 19627     
+Version 1.000
+Notice Copyright (c) 1996 Michael Spivak.  Hinting Copyright (c) 1996 Y&Y, Inc.
+FullName MTGUB
+FamilyName MathTime
+Weight Bold
+IsFixedPitch false
+ItalicAngle 0
+UnderlinePosition -100
+UnderlineThickness 50
+FontName MTGUB
+Comment UniqueID 5087360
+FontBBox 0 -205 879 699
+CapHeight 669
+XHeight 462
+Ascender 694
+Descender -205
+EncodingScheme FontSpecific
+StartCharMetrics 50
+C 32 ; WX 333 ; N space ; B 0 0 0 0 ;
+C 33 ; WX 555 ; N eta ; B 40 -198 459 462 ;
+C 34 ; WX 475 ; N theta ; B 35 -13 441 694 ;
+C 35 ; WX 643 ; N phi ; B 50 -200 593 685 ;
+C 36 ; WX 652 ; N chi ; B 69 -197 583 462 ;
+C 37 ; WX 752 ; N psi ; B 50 -205 702 685 ;
+C 38 ; WX 718 ; N omega ; B 50 -13 668 462 ;
+C 39 ; WX 879 ; N Theta ; B 67 -18 817 685 ;
+C 40 ; WX 793 ; N Phi ; B 80 0 726 669 ;
+C 41 ; WX 763 ; N Psi ; B 63 0 750 669 ;
+C 42 ; WX 0 ; N asterisknull ; B 0 0 0 0 ;
+C 43 ; WX 470 ; N epsilon ; B 45 -13 425 462 ;
+C 44 ; WX 575 ; N theta1 ; B 28 -13 550 685 ;
+C 45 ; WX 925 ; N pi1 ; B 50 -13 879 462 ;
+C 46 ; WX 491 ; N rho1 ; B 50 -205 456 462 ;
+C 47 ; WX 511 ; N sigma1 ; B 50 -192 461 462 ;
+C 48 ; WX 654 ; N phi1 ; B 75 -203 629 462 ;
+C 49 ; WX 564 ; N kappa1 ; B 50 -13 514 462 ;
+C 50 ; WX 778 ; N Omega ; B 72 0 718 685 ;
+C 51 ; WX 0 ; N vtnull ; B 0 0 0 0 ;
+C 68 ; WX 804 ; N Delta ; B 76 0 735 683 ;
+C 71 ; WX 650 ; N Gamma ; B 68 0 600 669 ;
+C 76 ; WX 780 ; N Lambda ; B 53 0 702 683 ;
+C 79 ; WX 0 ; N Onull ; B 0 0 0 0 ;
+C 80 ; WX 862 ; N Pi ; B 88 0 777 669 ;
+C 83 ; WX 741 ; N Sigma ; B 71 0 679 669 ;
+C 84 ; WX 0 ; N Tnull ; B 0 0 0 0 ;
+C 85 ; WX 772 ; N Upsilon ; B 64 0 786 685 ;
+C 88 ; WX 832 ; N Xi ; B 148 0 671 670 ;
+C 97 ; WX 610 ; N alpha ; B 30 -13 581 462 ;
+C 98 ; WX 515 ; N beta ; B 55 -201 460 699 ;
+C 99 ; WX 0 ; N cnull ; B 0 0 0 0 ;
+C 100 ; WX 466 ; N delta ; B 50 -13 416 699 ;
+C 101 ; WX 430 ; N epsilon1 ; B 25 -13 354 462 ;
+C 103 ; WX 539 ; N gamma ; B 23 -206 514 462 ;
+C 104 ; WX 0 ; N hnull ; B 0 0 0 0 ;
+C 105 ; WX 400 ; N iota ; B 80 -12 330 462 ;
+C 107 ; WX 515 ; N kappa ; B 60 -9 467 462 ;
+C 108 ; WX 675 ; N lambda ; B 60 -9 626 675 ;
+C 109 ; WX 700 ; N mu ; B 75 -188 625 462 ;
+C 110 ; WX 475 ; N nu ; B 25 -9 435 462 ;
+C 111 ; WX 0 ; N onull ; B 0 0 0 0 ;
+C 112 ; WX 683 ; N pi ; B 70 -13 613 462 ;
+C 114 ; WX 560 ; N rho ; B 100 -205 525 462 ;
+C 115 ; WX 560 ; N sigma ; B 25 -13 535 462 ;
+C 116 ; WX 525 ; N tau ; B 49 -13 474 463 ;
+C 117 ; WX 602 ; N upsilon ; B 50 -13 552 462 ;
+C 118 ; WX 0 ; N vnull ; B 0 0 0 0 ;
+C 120 ; WX 456 ; N xi ; B 50 -205 374 699 ;
+C 122 ; WX 450 ; N zeta ; B 30 -204 399 626 ;
+EndCharMetrics
+EndFontMetrics

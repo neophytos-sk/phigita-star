@@ -1,0 +1,16 @@
+Received: from cmdjmqlfg ([110.52.7.152])
+          by mail.mybaby123.com (Lotus Domino Release 7.0.2)
+          with ESMTP id 2011111003541974-7956 ;
+          Thu, 10 Nov 2011 03:54:19 +0800 
+Message-ID: <20111110035538215382@mybaby123.com> 
+From: =?gb2312?B?yfLsx7Cu?= <heyunfei@mybaby123.com> 
+To:  
+Subject: =?gb2312?B?ZXBsM7/Ys6HT67ultq+hqqGq1rDStb/Ys6GjoQ==?= 
+Date: Thu, 10 Nov 2011 03:55:28 +0800 
+X-mailer: Xft 0 
+X-MIMETrack: Itemize by SMTP Server on slmailserver/shenglong(Release 7.0.2|September 26, 2006) at
+ 2011-11-10 03:54:21,
+	Serialize by Router on slmailserver/shenglong(Release 7.0.2|September 26, 2006) at
+ 2011-11-10 03:54:25 
+--------------------------------------
+ content-type=application/msword part-token=::mime::1535-2

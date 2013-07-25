@@ -1,0 +1,76 @@
+# libdkim makefile for VC6
+#
+#  Note: The INCLUDE environment variable must contain the Platform SDK include
+#        directory and the OpenSSL inc32 directory. The LIB environment variable must
+#        contain the Platform SDK lib directory and the OpenSSL out32dll directory.
+#
+# To build:
+#  nmake /f makefile.vc
+#
+
+CC	=	cl /nologo
+AR	=	lib /nologo
+LD	=	link /nologo
+
+OPENSSL_INC = ../OpenSSL/inc32
+OPENSSL_LIB = ../OpenSSL
+
+!IFDEF DEBUG
+OUTDIR	= Debug
+CFLAGS  = /MTd /W3 /GX /Zi /Od /I"$(OPENSSL_INC)" /D "WIN32" /D "DEBUG" /D "_WINDOWS" /c /Fo"$(OUTDIR)/"
+LFLAGS  = /debug
+LIBS    = LIBCMTD.LIB $(OPENSSL_LIB)/libeay32.lib ws2_32.lib Advapi32.lib
+!ELSE
+OUTDIR	= Release
+CFLAGS  = /MT /W3 /GX /O2 /I"$(OPENSSL_INC)" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /c /Fo"$(OUTDIR)/"
+LFLAGS  = 
+LIBS    = LIBCMT.LIB $(OPENSSL_LIB)/libeay32.lib ws2_32.lib Advapi32.lib
+!ENDIF
+
+LIBOBJS = $(OUTDIR)/dkim.obj $(OUTDIR)/dns.obj $(OUTDIR)/dnsresolv.obj \
+          $(OUTDIR)/dkimbase.obj $(OUTDIR)/dkimsign.obj $(OUTDIR)/dkimverify.obj
+
+HDRS = dkim.h dns.h dnsresolv.h dkimbase.h dkimsign.h dkimverify.h
+
+all: $(OUTDIR) $(OUTDIR)/libdkim.dll $(OUTDIR)/libdkim.lib $(OUTDIR)/libdkimtest.exe
+
+$(OUTDIR):
+	mkdir $(OUTDIR)
+
+$(OUTDIR)/dkim.obj: dkim.cpp $(HDRS)
+	$(CC) $(CFLAGS) dkim.cpp
+
+$(OUTDIR)/dns.obj: dns.cpp $(HDRS)
+	$(CC) $(CFLAGS) dns.cpp
+
+$(OUTDIR)/dnsresolv.obj: dnsresolv.cpp $(HDRS)
+	$(CC) $(CFLAGS) dnsresolv.cpp
+
+$(OUTDIR)/dkimbase.obj: dkimbase.cpp $(HDRS)
+	$(CC) $(CFLAGS) dkimbase.cpp
+
+$(OUTDIR)/dkimsign.obj: dkimsign.cpp $(HDRS)
+	$(CC) $(CFLAGS) dkimsign.cpp
+
+$(OUTDIR)/dkimverify.obj: dkimverify.cpp $(HDRS)
+	$(CC) $(CFLAGS) dkimverify.cpp
+
+$(OUTDIR)/libdkim.lib: $(LIBOBJS)
+	$(AR) /out:$(OUTDIR)/libdkim.lib $(LIBOBJS) 
+
+$(OUTDIR)/libdkim.dll: $(LIBOBJS) libdkim.res
+	$(LD) /dll /def:libdkim.def /out:$(OUTDIR)/libdkim.dll $(LFLAGS) \
+	      /implib:$(OUTDIR)/libdkim.dll.lib $(LIBOBJS) libdkim.res $(LIBS)
+
+$(OUTDIR)/libdkimtest.exe : $(OUTDIR)/libdkim.lib $(OUTDIR)/libdkimtest.obj
+	$(LD) /out:$(OUTDIR)/libdkimtest.exe $(LFLAGS) \
+	       $(OUTDIR)/libdkim.lib $(OUTDIR)/libdkimtest.obj $(LIBS)
+	
+$(OUTDIR)/libdkimtest.obj: libdkimtest.cpp $(HDRS)
+	$(CC) $(CFLAGS) libdkimtest.cpp
+
+
+clean:
+	rmdir /s /q $(OUTDIR)
+
+

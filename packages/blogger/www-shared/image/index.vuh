@@ -1,0 +1,8 @@
+set parts [split [ad_conn extra_url] "/"]
+if { [lindex $parts 0] ne {image} } {
+    rp_returnnotfound
+    return
+} else {
+    rp_form_put q [lindex $parts 1]
+    rp_internal_redirect /packages/xo-drive/tmpl-shared/image-view
+}

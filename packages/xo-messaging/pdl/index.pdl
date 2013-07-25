@@ -1,0 +1,3 @@
+foreach filename [lsort [glob [acs_root_dir]/packages/xo-messaging/pdl/*.tcl]] {
+    source ${filename}
+}

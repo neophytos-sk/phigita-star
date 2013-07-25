@@ -1,0 +1,58 @@
+Received: by web1.extjs.com (Postfix, from userid 33)
+	id E30226C1FF; Thu, 24 Nov 2011 00:02:03 +0000 (UTC) 
+To: k2pts@phigita.net 
+Subject: "Ext: Examples and Extras" update 
+X-PHP-Originating-Script: 1000:class_mail.php 
+From: "Sencha Forum" <admin@sencha.com> 
+Auto-Submitted: auto-generated 
+Message-ID: <20111124000203.f91d09125b5f@www.sencha.com> 
+X-Priority: 3 
+X-Mailer: vBulletin Mail via PHP 
+Date: Thu, 24 Nov 2011 00:02:03 +0000 (UTC) 
+--------------------------------------
+Dear k2pts,
+
+You are subscribed to the forum Ext: Examples and Extras, there have been 2 new thread(s) and 2 updated thread(s).
+http://www.sencha.com/forum/forumdisplay.php?7-Ext-Examples-and-Extras
+
+The following threads are new:
+************
+Build a dynamic toolbar with XML
+http://www.sencha.com/forum/showthread.php?156728-Build-a-dynamic-toolbar-with-XML
+In forum: Ext: Examples and Extras
+Started by: cscProgrammer
+Last post: 23 Nov 2011 3:29 AM
+************
+Where can I edit the css files
+http://www.sencha.com/forum/showthread.php?156824-Where-can-I-edit-the-css-files
+In forum: Ext: Examples and Extras
+Started by: ilovemydesigns
+Last post: 23 Nov 2011 3:56 PM
+
+
+The following threads have been updated:
+************
+Yahoo Web Messenger based on ExtJS + cometd + spring framework
+http://www.sencha.com/forum/showthread.php?41384-Yahoo-Web-Messenger-based-on-ExtJS-cometd-spring-framework
+In forum: Ext: Examples and Extras
+Started by: vijaykudayakumar
+Last post: 23 Nov 2011 6:23 AM
+************
+Editors in Grid Header for Filter or New Data
+http://www.sencha.com/forum/showthread.php?55730-Editors-in-Grid-Header-for-Filter-or-New-Data
+In forum: Ext: Examples and Extras
+Started by: durlabh
+Last post: 23 Nov 2011 9:48 AM
+
+
+All the best,
+Sencha Forum
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Unsubscription information:
+
+To unsubscribe from this forum, please visit this page:
+http://www.sencha.com/forum/subscription.php?do=removesubscription&type=forum&subscriptionid=66&auth=3a25e442e8ac3bf8d89a6f9b6eb4f810
+
+
+

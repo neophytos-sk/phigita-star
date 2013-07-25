@@ -1,0 +1,115 @@
+val -id user_agent {
+    return [string tolower [ns_set iget [ns_conn headers] User-Agent]]
+}
+
+val -id is_gecko {
+    return [string match *gecko* @{user_agent}]
+}
+
+val -id bookmarklet_href {
+    return [::bm::bookmarklet_href]
+}
+
+css {
+    #tip 
+    {
+	padding:4px;
+	line-height:1.75em;
+	font-size: 1.2em;
+	width: 100%;
+	margin-top:5px;
+	margin-bottom:5px;
+	border-top: 1px solid #E5D766;
+	border-bottom: 1px solid #E5D766;
+	background: #FFF8C0;
+    }
+
+    #bookmarklet 
+    {
+	padding: 4px;
+	text-decoration: none;
+	display: inline;
+	color: #224059;
+	background-color: #b5c9e2;
+	border-top: 2px #cce3ff solid;
+	border-left: 2px #cce3ff solid;
+	border-bottom: 2px #31557f solid;
+	border-right: 2px #31557f solid;
+    }
+    #bookmarklet:hover 
+    {
+	background-color: #99aabf;
+	border-top: 2px #31557f solid;
+	border-left: 2px #31557f solid;
+	border-bottom: 2px #cce3ff solid;
+	border-right: 2px #cce3ff solid;
+    }
+}
+
+set onclick_warning "alert('You must first drag and drop this bookmarklet\\n to your browser\\'s toolbar (or favorites bar).');return false;"
+
+
+val -id context_bar { return [::xo::kit::context_bar "How To Bookmark"] }
+
+# keep css classes and tags used by context_bar
+::xo::tdp::excludeClassesFromRenaming {breadcrumb divider ul li active}
+
+
+
+master -title "bookmark-howto" {
+    layout_row {
+	layout_col -class span1 
+	layout_col -class span11 {
+	    nt @{context_bar:noquote}
+	}
+    }
+
+    layout_row {
+	layout_col -class span1
+	layout_col -class span11 {
+	    
+	    div -id tip {
+		
+		tpl -if { @{is_gecko} } {
+		    b { t "Instructions for Mozilla Firefox" }
+		    br
+		    t "1. Drag and drop this bookmarklet " 
+		    a -id bookmarklet -href @{bookmarklet_href} -onclick $onclick_warning {
+			t "reMark"
+		    }
+		    t " to your browser's toolbar."
+		    br
+		    nt "2. Usage: Click on the \"<b>reMark</b>\" link on your browser's toolbar to bookmark or share pages."
+		    div -style "margin-top:10px;"
+		    br
+		    t "The old and good bookmarklet is here: "
+		    a -id bookmarklet -href {javascript:void((function(){w=window.open(%22%22,%22_blank%22,%22toolbar=no,status=no,menubar=no,personalbar=no,width=500,height=485,scrollbars=no,resizable=yes%22); w.document.open();w.document.write('<html><head><script language="javascript">function Init() {var s=document.createElement("script"); s.language="javascript"; s.src="http://www.phigita.net/js/url-add.js"; document.getElementsByTagName("head")[0].appendChild(s);}</script></head></html>'); w.Init();w.document.close();})())} -title "reMark (popup)" -onclick $onclick_warning  {
+			t "reMark (popup)"
+		    }
+		    br
+		    t "(you'll need it if you have disabled third-party cookies)"
+
+		}
+		tpl -else "" {
+		    b { t "Instructions for Internet Explorer" }
+		    br
+		    #nt "1. Make sure \"<b>Links</b>\" is checked under the \"<b>View &gt; Toolbars</b>\" menu."
+		    #br
+		    nt "1. Right-click this bookmarklet " 
+		    a -id bookmarklet -href  @{bookmarklet_href} -onclick $onclick_warning {
+			t "reMark"
+		    }
+		    nt " and choose \"<b>Add to Favorites...</b>\""
+		    br
+		    nt "2. Click \"<b>Yes</b>\" if there is a \"<b>may not be safe</b>\" popup."
+		    br
+		    nt "3. Choose \"<b>Favorites Bar</b>\" in the \"<b>Create in</b>\" pane and click OK."
+		    br
+		    nt "4. Usage: Click on the \"<b>reMark</b>\" link on your browser's favorites bar to bookmark or share pages."
+
+		}
+	    }
+
+	}
+    }
+}

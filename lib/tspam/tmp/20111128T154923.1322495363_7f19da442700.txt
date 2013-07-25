@@ -1,0 +1,48 @@
+Received: (qmail 31227 invoked from network); 28 Nov 2011 10:49:12 -0500 from unknown (HELO dot78.prod.topcoder.com) (192.168.12.78)
+  by mailer.topcoder.com with SMTP; 28 Nov 2011 10:49:12 -0500 
+Message-ID: <373681056.1322495352369.JavaMail.web@192.168.10.51> 
+Date: Mon, 28 Nov 2011 10:49:12 -0500 (EST) 
+From: TopCoder Competitions <no-reply@topcoder.com> 
+To: k2pts@phigita.net 
+Subject: TopCoder Single Round Match 525 Sponsored by Intel 
+--------------------------------------
+Hello k2pts,
+
+TopCoder Single Round Match 525 is sponsored by Intel and is scheduled for Tuesday, November 29, 2011 at 07:00 UTC -5 hours.  
+
+Please be sure to check here for the start time in your time zone:
+http://www.timeanddate.com/worldclock/fixedtime.html?&day=29&month=11&year=2011&hour=07&min=00&sec=0&p1=179
+
+* Registration will begin at 04:00 and will end at 06:55 UTC -5 hours
+* Allowable programming languages are Java, C++, Microsoft(R) Visual
+C#(R) .NET, and Microsoft Visual Basic(R) .NET
+* TopCoder Administrators will be available in the Admin Lobby Room to answer questions
+* For more details click here: 
+http://community.topcoder.com/tc?module=MatchDetails&rd=14550
+
+There will be a chat session starting at 06:00 UTC -5 with Intel representatives.
+
+Intel software engineers are at the forefront of everything from enhanced usability and security to integrated software and hardware solutions to seamless connectivity. In fact, we're one of the largest and most influential software companies in the world, and one of the few that touch the entire software ecosystem. And we're looking for brilliant engineers to help us push computing capabilities even further.  We are hiring interns, recent graduates and experienced Software Engineers at our campuses in the United States, India, China, Israel, Russia, Poland and Romania.  Join our recruiters and business group leaders in the chat room to learn about jobs at Intel, and apply for current openings at http://intel.com/go/topcoder
+ 
+Best of luck to you in the Arena!
+
+- The TopCoder(R) Competitions Team
+
+LIKE TopCoder? Join our Facebook community for exclusive content, contests, polls and videos. We want to know what you want to create! 
+http://facebook.com/topcoderinc
+
+You Tweet? So do we! Follow TopCoder on Twitter for conversations on innovation, design and development.  http://twitter.com/topcoder
+
+===========================================================
+You have received this email because you indicated in your TopCoder profile that you want to be notified of TopCoder Competitions.  If you no longer wish to receive these emails, you may change your email notification preferences at http://www.topcoder.com/tc?module=EditNotifications.
+
+www.topcoder.com 
+TopCoder, Inc.
+95 Glastonbury Boulevard
+Glastonbury, CT 06033
+Phone: 1-866-867-2633
+
+
+
+
+

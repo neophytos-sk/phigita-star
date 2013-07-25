@@ -1,0 +1,6 @@
+Library.TXMLParser:                         libXMLParser.so
+Library.TSAXParser:                         libXMLParser.so
+Library.TDOMParser:                         libXMLParser.so
+Library.TXMLAttr:                           libXMLParser.so
+Library.TXMLDocument:                       libXMLParser.so
+Library.TXMLNode:                           libXMLParser.so

@@ -1,0 +1,10 @@
+Received: from 189.13.59.139 by suodin1.service.datainfo.fi; Thu, 13 Oct 2011 21:52:34 -0300 
+Date: Thu, 13 Oct 2011 21:52:34 -0300 
+From: =?koi8-r?B?IvPPwtPF1NfFzs7Jyywg7c/Ty9fBIg==?= <congeniale6@keittiokeskus.com> 
+X-Mailer: The Bat! (v3.51.10) Educational 
+Reply-To: congeniale6@keittiokeskus.com 
+X-Priority: 3 (Normal) 
+Message-ID: <638371094.83023062708976@keittiokeskus.com> 
+To: webmaster@phigita.net 
+Subject: =?koi8-r?B?8NLRzcEgwdLFzsTBIM/GydPP1yAtw8XO1NIsIMTF28XXzyE=?= 
+

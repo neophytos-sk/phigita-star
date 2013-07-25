@@ -1,0 +1,13 @@
+Received: from dotqpgv ([125.44.241.105])
+	(envelope-sender <amarlyyu@shrca.org>)
+	by 211.144.86.100 with ESMTP
+	for <lijie1054@163.com>; Fri, 25 Nov 2011 17:39:17 +0800 
+Message-ID: <20111125173920520014@shrca.org> 
+From: =?gb2312?B?0M/MqLXCx9qyxs7x18nRr7f+zvHT0M/euavLvg==?= <amarlyyu@shrca.org> 
+To:  
+Subject: =?gb2312?B?xPq6w6OsxPq1xMXz09G4+MT6wLTQxcHLo6EgtMvTyrz+ysfP3sqx?=
+	=?gb2312?B?08q8/qOsvavU2jY1Mzk5MsPruvPX1Lavyb6z/aOsx+u8sA==?=
+	=?gb2312?B?yrHUxLbBo6E=?= 
+Date: Fri, 25 Nov 2011 17:39:08 +0800 
+X-mailer: Aqkvk 0 
+Whoops!  What is a 'application/vnd.ms-excel'?

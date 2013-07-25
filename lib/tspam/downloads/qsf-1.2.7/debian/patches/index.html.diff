@@ -1,0 +1,20 @@
+diff -urN old/doc/index.html new/doc/index.html
+--- old/doc/index.html	2005-05-11 19:14:22.000000000 -0300
++++ new/doc/index.html	2005-05-11 19:17:46.000000000 -0300
+@@ -7,13 +7,11 @@
+ 
+ <P>
+ <UL>
+-<LI><A HREF="../README">README</A>
+-<LI><A HREF="INSTALL">Installation instructions</A>
+-<LI><A HREF="quickref.txt">Man page</A> (text format)
+-<LI><A HREF="lsm">LSM entry</A>
++<LI><A HREF="README">README</A>
++<LI><A HREF="quickref.txt.gz">Man page</A> (gzipped text format)
+ <LI><A HREF="NEWS">Recent changes</A>
+ <LI><A HREF="TODO">Changes still to make</A>
+-<LI><A HREF="COPYING">Copying conditions</A>
++<LI><A HREF="copyright">Copying conditions</A>
+ </UL>
+ </P>
+ 

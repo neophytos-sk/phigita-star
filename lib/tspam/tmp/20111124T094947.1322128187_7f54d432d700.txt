@@ -1,0 +1,16 @@
+Return-path: <webmaster@phigita.net> 
+Received: from [220.69.230.84] (port=8770 helo=nanoca)
+	by smtp2.americangolf.com with asmtp 
+	id 2E1C39-000936-61
+	for <webmaster@phigita.net>; Thu, 24 Nov 2011 18:46:54 +0900 
+Message-ID: <4F2936D99D4C489B92A556FD5796EB0E@nanoca> 
+From: =?koi8-r?B?IvLFy8zBzc7PLdPV18XOydLOwdEg0NLPxNXLw8nRIg==?= <butcheruskv64@americangolf.com> 
+To: <webmaster@phigita.net> 
+Subject: =?koi8-r?B?7s/Xz8fPxM7JxSDQz8TB0svJIPP19+Xu6fLu4fEg8PLv5PXr4+nx?= 
+Date: Thu, 24 Nov 2011 18:46:54 +0900 
+X-Priority: 3 
+X-MSMail-Priority: Normal 
+X-Mailer: Microsoft Windows Mail 6.0.6001.18000 
+X-MimeOLE: Produced By Microsoft MimeOLE V6.0.6001.18049 
+X-Spam: Not detected 
+X-Mras: Ok 

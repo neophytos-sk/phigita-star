@@ -1,0 +1,1 @@
+ad_schedule_proc -thread t 300 xo__auth_secret_tokens__sweep

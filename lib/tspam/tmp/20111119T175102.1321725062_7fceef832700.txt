@@ -1,0 +1,13 @@
+Received: from WebsRS01.brains.net (websrs01.brains.net [203.128.6.131])
+	by dommx1.brains.net (Postfix) with SMTP id 33853178B72;
+	Sat, 19 Nov 2011 22:50:51 +0500 (PKT) from 127.0.0.1 (AVG SMTP 8.5.454 [271.1.1/4025]); Sat, 19 Nov 2011 22:50:46 +0500 from jkbm ([110.52.6.232])
+        by WebsRS01.brains.net (websrs01.brains.net (SPARC MTA V10.0.4-52)) with ASMTP id CCR48443;
+        Sat, 19 Nov 2011 22:50:43 +0500 
+Message-ID: <20111120015322025874@unitedwash.com> 
+From: "fj" <info@unitedwash.com> 
+To:  
+Subject: =?gb2312?B?cml5OGQ1N7TTvLx+yvV+199+z/J+udx+wO0u?=
+	=?gb2312?B?MTo1MzoxNQ==?= 
+Date: Sun, 20 Nov 2011 01:53:08 +0800 
+X-mailer: Vywbszc 4 
+Whoops!  What is a 'application/vnd.ms-excel'?

@@ -1,0 +1,1 @@
+  core/base/src/TRegexp.o core/base/src/TRegexp.d: $(wildcard include/TRegexp.h include/Rtypes.h include/RConfig.h include/RVersion.h include/DllImport.h include/Rtypeinfo.h include/snprintf.h include/strlcpy.h include/TGenericClassInfo.h include/TSchemaHelper.h include/Match.h include/TString.h include/TRefCnt.h include/Riosfwd.h include/TMathBase.h include/TError.h)

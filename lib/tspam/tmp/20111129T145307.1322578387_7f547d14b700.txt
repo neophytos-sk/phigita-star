@@ -1,0 +1,198 @@
+Received: by eeba50 with SMTP id a50sf784405eeb.26
+        for <k2pts@phigita.net>; Tue, 29 Nov 2011 06:52:57 -0800 (PST) by 10.216.139.215 with SMTP id c65mr8621wej.62.1322578369462;
+        Tue, 29 Nov 2011 06:52:49 -0800 (PST) by 10.180.77.233 with SMTP id v9ls2268394wiw.4.gmail; Tue, 29 Nov
+ 2011 06:52:35 -0800 (PST) by 10.216.138.82 with SMTP id z60mr6880wei.10.1322578355611;
+        Tue, 29 Nov 2011 06:52:35 -0800 (PST) by 10.216.46.208 with SMTP id r58msweb;
+        Tue, 29 Nov 2011 06:38:39 -0800 (PST) by 10.204.129.8 with SMTP id m8mr7808480bks.5.1322577518318;
+        Tue, 29 Nov 2011 06:38:38 -0800 (PST) by 10.204.129.8 with SMTP id m8mr7808479bks.5.1322577518301;
+        Tue, 29 Nov 2011 06:38:38 -0800 (PST) from mail-ee0-f52.google.com (mail-ee0-f52.google.com [74.125.83.52])
+        by gmr-mx.google.com with ESMTPS id y22si8537153bkf.3.2011.11.29.06.38.38
+        (version=TLSv1/SSLv3 cipher=OTHER);
+        Tue, 29 Nov 2011 06:38:38 -0800 (PST) by mail-ee0-f52.google.com with SMTP id d49so1065269eek.25
+        for <cloud-computing@googlegroups.com>; Tue, 29 Nov 2011 06:38:38 -0800 (PST) by 10.213.19.130 with SMTP id a2mr1239084ebb.37.1322577517366; Tue,
+ 29 Nov 2011 06:38:37 -0800 (PST) by 10.213.3.148 with HTTP; Tue, 29 Nov 2011 06:38:37 -0800 (PST) 
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlegroups.com; s=beta;
+        h=x-beenthere:received-spf:mime-version:in-reply-to:references:date
+         :message-id:subject:from:to:x-original-sender
+         :x-original-authentication-results:reply-to:precedence:mailing-list
+         :list-id:x-google-group-id:list-post:list-help:list-archive:sender
+         :list-unsubscribe:content-type;
+        bh=shxKjE+f/+sACA6fvFUUC8HlN/QCYjqTYYJ+y6hYQck=;
+        b=lxNAsHZ4JIMaGAPGusPxAdgbLXX4sYHCsZk3US2AeF6agHTnSSrfB6orUHbHlo/rU2
+         8sYQR/G0/N4Xvm0ugxrMBvpw20GRyvLaXgpnJb3OifwrUMz6XpgW5hnTNzFYMCTKx/b7
+         xyc2r1tXpDS8DTToL2jM6jzV0nx+pJa7OkYCQ= 
+X-BeenThere: cloud-computing@googlegroups.com 
+Received-SPF: pass (google.com: domain of saligram@gmail.com designates 74.125.83.52 as permitted sender) client-ip=74.125.83.52; 
+In-Reply-To: <CAPshrK4wFhf_egwszvgzMG3xkUizNy=P1v6HxT7chJ4jyWF5Qw@mail.gmail.com> 
+References: <309f1e55-7464-478d-87ba-e35d6b613f5d@m7g2000vbc.googlegroups.com>
+	<CAPshrK4wFhf_egwszvgzMG3xkUizNy=P1v6HxT7chJ4jyWF5Qw@mail.gmail.com> 
+Date: Tue, 29 Nov 2011 06:38:37 -0800 
+Message-ID: <CAMGMei53mhZ_Hg1dWYr3hpaW_njt63OFtkdYhXxOJ=6j4DtN2g@mail.gmail.com> 
+Subject: Re: [ Cloud Computing ] Cloud Computing marketing failure 
+From: Raja Srinivasan <saligram@gmail.com> 
+To: cloud-computing@googlegroups.com 
+X-Original-Sender: saligram@gmail.com 
+X-Original-Authentication-Results: gmr-mx.google.com; spf=pass (google.com:
+ domain of saligram@gmail.com designates 74.125.83.52 as permitted sender)
+ smtp.mail=saligram@gmail.com; dkim=pass (test mode) header.i=@gmail.com 
+Reply-To: cloud-computing@googlegroups.com 
+Precedence: list 
+Mailing-list: list cloud-computing@googlegroups.com; contact cloud-computing+owners@googlegroups.com 
+List-ID: <cloud-computing.googlegroups.com> 
+X-Google-Group-Id: 555718547949 
+List-Post: <http://groups.google.com/group/cloud-computing/post?hl=en_CA>, <mailto:cloud-computing@googlegroups.com> 
+List-Help: <http://groups.google.com/support/?hl=en_CA>, <mailto:cloud-computing+help@googlegroups.com> 
+List-Archive: <http://groups.google.com/group/cloud-computing?hl=en_CA> 
+Sender: cloud-computing@googlegroups.com 
+List-Unsubscribe: <http://groups.google.com/group/cloud-computing/subscribe?hl=en_CA>,
+ <mailto:cloud-computing+unsubscribe@googlegroups.com> 
+--------------------------------------
+A major factor to consider is pricing for the cloud. Most of the
+enterprise vendors sell to large enterprises with so called perpetual
+license deals worth anywhere from $50,000 to $500,000 per license.
+These licenses support between 100 to 500 different applications. When
+a business-user (it is always the business user and not the IT
+department that initiates the first move), they are looking to
+deploying a single application on a pay as you go model.
+
+How does an enterprise software company price their product? Most of
+them come up with a formula based on the life of the software (between
+4 to 7 years) added a processing margin on top and come up with a
+monthly price. But get this: This price is still based on their old
+enterprise price supporting 100-500 different applications, not on a
+single application! Therefore the ROI model that the business user is
+looking for is not there. On top of it, you have Ian's situation of
+server/software utilization. It is no wonder that more and more
+companies are looking at Open Source software when they go to the
+cloud.
+
+If the Oracle's of the world do not pay attention, they are likely to
+lose their dominance in a few years. It seems just like yesterday when
+I was told, we are a complete Microsoft shop and everyone used MS
+Software. Today 30% of the sales team have Macs and quite a few of the
+developers and internal IT folks are running Linux. I would estimate
+the MSFT adoption has dropped to about 50% in my current organization.
+Is this the future for enterprise software vendors?
+
+Raja
+
+On Tue, Nov 29, 2011 at 1:54 AM, Ian Mills <i.c.r.mills@googlemail.com> wrote:
+> An interesting theme to explore would be the position of the current large
+> IT vendors, the IBMs the MSofts the Oracles. Cloud is a real threat to them.
+> A typical IT server in one of their customers has an average utilisation of
+> around 5%. Yet the customer pays for 100% of the hardware, software and
+> support. In a cloud service, public or private, you can easily achieve 20%.
+> So you get four times the business function for the same price, or more
+> worryingly for the vendors you can get the same business function for a
+> quarter of their price, crash their revenues and even more so their profits,
+> this 'stuff' still has the very high margins.
+> So how have they reacted? Most with initial scepticism and throwing on cold
+> water and then later with cloud offerings which did not seem to sell because
+> they weren't realy trying. None have made significant marketing push to
+> promote cloud. Why should Amazon still be the biggest cloud supplier when
+> any one of the large vendors could just swat them with one swipe?
+>
+> On 28 November 2011 23:15, Marcus Thelander <marcus.thelander@gmail.com>
+> wrote:
+>>
+>> So, Cloud Computing is emerging and so are different cloud business
+>> model. Some says that the catalyst for business and market adoption
+>> are new business models. As well, one of the reasons to the failure of
+>> Grid computing in spite of the promising technology was the lack of
+>> effective business models. To facilitate further adoption, how should
+>> we communicate Cloud Computing? Or, if I put it the other way around,
+>> what are cloud computing marketers biggest mistakes?
+>>
+>> (Through your respond you will contribute to my dissertation
+>> concerning Cloud Computing and marketing. Please let me know if you
+>> are interested of my forthcoming conclusion.)
+>>
+>> --
+>> ~~~~~
+>> Register to attend UP 2011 Cloud Conference
+>> http://up-con.com/register-now
+>>
+>> Posting guidelines: http://bit.ly/bL3u3v
+>> Follow us on Twitter @cloudcomp_group @cloudslam @up_con
+>> Post Job/Resume at http://cloudjobs.net
+>>
+>> Download hundreds of recorded cloud sessions at
+>> - http://cloudslam.org/register
+>> - http://2010.up-con.com/register
+>> - http://cloudslam09.com/content/registration-5.html
+>> - http://cloudslam10.com/content/registration
+>>
+>> or get it on DVD at
+>> http://www.amazon.com/gp/product/B002H07SEC,
+>> http://www.amazon.com/gp/product/B004L1755W,
+>> http://www.amazon.com/gp/product/B002H0IW1U
+>>
+>> ~~~~~
+>> You received this message because you are subscribed to the Google Groups
+>> "Cloud Computing" group.
+>> To post to this group, send email to cloud-computing@googlegroups.com
+>> To unsubscribe from this group, send email to
+>> cloud-computing-unsubscribe@googlegroups.com
+>
+>
+>
+> --
+> Ian Mills
+> 0755 394 6958
+> Service to the customer, the pursuit of excellence, respect for the
+> individual.
+>
+> --
+> ~~~~~
+> Register to attend UP 2011 Cloud Conference
+> http://up-con.com/register-now
+>
+> Posting guidelines: http://bit.ly/bL3u3v
+> Follow us on Twitter @cloudcomp_group @cloudslam @up_con
+> Post Job/Resume at http://cloudjobs.net
+>
+> Download hundreds of recorded cloud sessions at
+> - http://cloudslam.org/register
+> - http://2010.up-con.com/register
+> - http://cloudslam09.com/content/registration-5.html
+> - http://cloudslam10.com/content/registration
+>
+> or get it on DVD at
+> http://www.amazon.com/gp/product/B002H07SEC,
+> http://www.amazon.com/gp/product/B004L1755W,
+> http://www.amazon.com/gp/product/B002H0IW1U
+>
+> ~~~~~
+> You received this message because you are subscribed to the Google Groups
+> "Cloud Computing" group.
+> To post to this group, send email to cloud-computing@googlegroups.com
+> To unsubscribe from this group, send email to
+> cloud-computing-unsubscribe@googlegroups.com
+>
+
+-- 
+~~~~~
+Register to attend UP 2011 Cloud Conference
+http://up-con.com/register-now
+
+Posting guidelines: http://bit.ly/bL3u3v
+Follow us on Twitter @cloudcomp_group @cloudslam @up_con
+Post Job/Resume at http://cloudjobs.net
+
+Download hundreds of recorded cloud sessions at 
+- http://cloudslam.org/register
+- http://2010.up-con.com/register 
+- http://cloudslam09.com/content/registration-5.html  
+- http://cloudslam10.com/content/registration
+
+or get it on DVD at 
+http://www.amazon.com/gp/product/B002H07SEC, http://www.amazon.com/gp/product/B004L1755W, http://www.amazon.com/gp/product/B002H0IW1U 
+
+~~~~~
+You received this message because you are subscribed to the Google Groups "Cloud Computing" group.
+To post to this group, send email to cloud-computing@googlegroups.com
+To unsubscribe from this group, send email to cloud-computing-unsubscribe@googlegroups.com
+
+
+

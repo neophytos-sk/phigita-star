@@ -1,0 +1,781 @@
+<html><head><title>GridView.js</title><link rel="stylesheet" type="text/css" href="../resources/style.css" media="screen"/></head><body><h1>GridView.js</h1><pre class="highlighted"><code><i>/**
+ * @class YAHOO.ext.grid.GridView
+ * Default UI code used internally by the Grid. This is the object returned by {@link YAHOO.ext.grid.Grid#getView}.
+ * @constructor
+ */</i>
+YAHOO.ext.grid.GridView = <b>function</b>(){
+	<b>this</b>.grid = null;
+	<b>this</b>.lastFocusedRow = null;
+	<b>this</b>.onScroll = <b>new</b> YAHOO.util.CustomEvent('onscroll');
+	<b>this</b>.adjustScrollTask = <b>new</b> YAHOO.ext.util.DelayedTask(<b>this</b>._adjustForScroll, <b>this</b>);
+	<b>this</b>.ensureVisibleTask = <b>new</b> YAHOO.ext.util.DelayedTask();
+};
+
+YAHOO.ext.grid.GridView.prototype = {
+	init: <b>function</b>(grid){
+		<b>this</b>.grid = grid;
+	},
+	
+	fireScroll: <b>function</b>(scrollLeft, scrollTop){
+		<b>this</b>.onScroll.fireDirect(<b>this</b>.grid, scrollLeft, scrollTop);
+	},
+	
+	<i>/**
+	 * @private
+	 * Utility method that gets an array of the cell renderers
+	 */</i>
+	getColumnRenderers : <b>function</b>(){
+    	<b>var</b> renderers = [];
+    	<b>var</b> cm = <b>this</b>.grid.colModel;
+        <b>var</b> colCount = cm.getColumnCount();
+        <b>for</b>(var i = 0; i &lt; colCount; i++){
+            renderers.push(cm.getRenderer(i));
+        }
+        <b>return</b> renderers;
+    },
+    
+    buildIndexMap : <b>function</b>(){
+        <b>var</b> colToData = {};
+        <b>var</b> dataToCol = {};
+        <b>var</b> cm = <b>this</b>.grid.colModel;
+        <b>for</b>(var i = 0, len = cm.getColumnCount(); i &lt; len; i++){
+            <b>var</b> di = cm.getDataIndex(i);
+            colToData[i] = di;
+            dataToCol[di] = i;
+        }
+        <b>return</b> {'colToData': colToData, 'dataToCol': dataToCol};
+    },
+    
+    getDataIndexes : <b>function</b>(){
+    	<b>if</b>(!<b>this</b>.indexMap){
+            <b>this</b>.indexMap = <b>this</b>.buildIndexMap();
+        }
+        <b>return</b> this.indexMap.colToData;
+    },
+    
+    getColumnIndexByDataIndex : <b>function</b>(dataIndex){
+        <b>if</b>(!<b>this</b>.indexMap){
+            <b>this</b>.indexMap = <b>this</b>.buildIndexMap();
+        }
+    	<b>return</b> this.indexMap.dataToCol[dataIndex];
+    },
+    
+    updateHeaders : <b>function</b>(){
+        <b>var</b> colModel = <b>this</b>.grid.colModel;
+        <b>var</b> hcells = <b>this</b>.headers;
+        <b>var</b> colCount = colModel.getColumnCount();
+        <b>for</b>(var i = 0; i &lt; colCount; i++){
+            hcells[i].textNode.innerHTML = colModel.getColumnHeader(i);
+        }
+    },
+    
+    adjustForScroll : <b>function</b>(disableDelay){
+        <b>if</b>(!disableDelay){
+            <b>this</b>.adjustScrollTask.delay(50);
+        }<b>else</b>{
+            <b>this</b>._adjustForScroll();
+        }
+    },
+    
+    <i>/**
+     * Returns the rowIndex/columnIndex of the cell found at the passed page coordinates
+     * @param {Number} x
+     * @param {Number} y
+     * @<b>return</b> {Array} [rowIndex, columnIndex]
+     */</i>
+     getCellAtPoint : <b>function</b>(x, y){
+        <b>var</b> colIndex = null;        
+        <b>var</b> rowIndex = null;
+        
+        <i>// translate page coordinates to local coordinates</i>
+        <b>var</b> xy = YAHOO.util.Dom.getXY(<b>this</b>.wrap);
+        x = (x - xy[0]) + <b>this</b>.wrap.scrollLeft;
+        y = (y - xy[1]) + <b>this</b>.wrap.scrollTop;
+        
+        <b>var</b> colModel = <b>this</b>.grid.colModel;
+        <b>var</b> pos = 0;
+        <b>var</b> colCount = colModel.getColumnCount();
+        <b>for</b>(var i = 0; i &lt; colCount; i++){
+            <b>if</b>(colModel.isHidden(i)) <b>continue</b>;
+            <b>var</b> width = colModel.getColumnWidth(i);
+            <b>if</b>(x &gt;= pos &amp;&amp; x &lt; pos+width){
+                colIndex = i;
+                <b>break</b>;
+            }
+            pos += width;
+        }
+        <b>if</b>(colIndex != null){
+            rowIndex = (y == 0 ? 0 : Math.floor(y / <b>this</b>.getRowHeight()));
+            <b>if</b>(rowIndex &gt;= <b>this</b>.grid.dataModel.getRowCount()){
+                <b>return</b> null;
+            }
+            <b>return</b> [colIndex, rowIndex];
+        }
+        <b>return</b> null;
+    },
+    
+    <i>/** @private */</i>
+    _adjustForScroll : <b>function</b>(){
+        <b>this</b>.forceScrollUpdate();
+        <b>if</b>(this.scrollbarMode == YAHOO.ext.grid.GridView.SCROLLBARS_OVERLAP){
+            <b>var</b> adjustment = 0;
+            <b>if</b>(this.wrap.clientWidth &amp;&amp; <b>this</b>.wrap.clientWidth !== 0){
+                adjustment = <b>this</b>.wrap.offsetWidth - <b>this</b>.wrap.clientWidth;
+            }
+            <b>this</b>.hwrap.setWidth(<b>this</b>.wrap.offsetWidth-adjustment);
+        }<b>else</b>{
+            <b>this</b>.hwrap.setWidth(<b>this</b>.wrap.offsetWidth);
+        }
+        <b>this</b>.bwrap.setWidth(Math.max(<b>this</b>.grid.colModel.getTotalWidth(), <b>this</b>.wrap.clientWidth));
+    },
+
+    <i>/**
+     * Focuses the specified row. The preferred way to scroll to a row is {@link #ensureVisible}.
+     * @param {Number/HTMLElement} row The index of a row or the row itself
+     */</i>
+     focusRow : <b>function</b>(row){
+        <b>if</b>(typeof row == 'number'){
+            row = <b>this</b>.getBodyTable().childNodes[row];
+        }
+        <b>if</b>(!row) <b>return</b>;
+    	<b>var</b> left = <b>this</b>.wrap.scrollLeft;
+    	try{ <i>// try catch <b>for</b> IE occasional focus bug</i>
+    	    row.childNodes.item(0).hideFocus = true;
+        	row.childNodes.item(0).focus();
+        }catch(e){}
+        <b>this</b>.ensureVisible(row);
+        <b>this</b>.wrap.scrollLeft = left;
+        <b>this</b>.handleScroll();
+        <b>this</b>.lastFocusedRow = row;
+    },
+
+    <i>/**
+     * Scrolls the specified row into view. This call is automatically buffered (delayed), to disable
+     * the delay, pass true <b>for</b> disableDelay. 
+     * @param {Number/HTMLElement} row The index of a row or the row itself
+     * @param {Boolean} disableDelay
+     */</i>
+     ensureVisible : <b>function</b>(row, disableDelay){
+        <b>if</b>(!disableDelay){
+            <b>this</b>.ensureVisibleTask.delay(50, <b>this</b>._ensureVisible, <b>this</b>, [row]);
+        }<b>else</b>{
+            <b>this</b>._ensureVisible(row);
+        }
+    },
+
+    <i>/** @ignore */</i>
+    _ensureVisible : <b>function</b>(row){
+        <b>if</b>(typeof row == 'number'){
+            row = <b>this</b>.getBodyTable().childNodes[row];
+        }
+        <b>if</b>(!row) <b>return</b>;
+    	<b>var</b> left = <b>this</b>.wrap.scrollLeft;
+    	<b>var</b> rowTop = parseInt(row.offsetTop, 10); <i>// parseInt <b>for</b> safari bug</i>
+        <b>var</b> rowBottom = rowTop + row.offsetHeight;
+        <b>var</b> clientTop = parseInt(<b>this</b>.wrap.scrollTop, 10); <i>// parseInt <b>for</b> safari bug</i>
+        <b>var</b> clientBottom = clientTop + <b>this</b>.wrap.clientHeight;
+        <b>if</b>(rowTop &lt; clientTop){
+        	<b>this</b>.wrap.scrollTop = rowTop;
+        }<b>else</b> if(rowBottom &gt; clientBottom){
+            <b>this</b>.wrap.scrollTop = rowBottom-<b>this</b>.wrap.clientHeight;
+        }
+        <b>this</b>.wrap.scrollLeft = left;
+        <b>this</b>.handleScroll();
+    },
+    
+    updateColumns : <b>function</b>(){
+        <b>this</b>.grid.stopEditing();
+        <b>var</b> colModel = <b>this</b>.grid.colModel;
+        <b>var</b> hcols = <b>this</b>.headers;
+        <b>var</b> colCount = colModel.getColumnCount();
+        <b>var</b> pos = 0;
+        <b>var</b> totalWidth = colModel.getTotalWidth();
+        <b>for</b>(var i = 0; i &lt; colCount; i++){
+            <b>if</b>(colModel.isHidden(i)) <b>continue</b>;
+            <b>var</b> width = colModel.getColumnWidth(i);
+            hcols[i].style.width = width + 'px';
+            hcols[i].style.left = pos + 'px';
+            hcols[i].split.style.left = (pos+width-3) + 'px';
+            <b>this</b>.setCSSWidth(i, width, pos);
+            pos += width;
+        }
+        <b>this</b>.lastWidth = totalWidth;
+        <b>if</b>(this.grid.autoWidth){
+            <b>this</b>.grid.container.setWidth(totalWidth+<b>this</b>.grid.container.getBorderWidth('lr'));
+            <b>this</b>.grid.autoSize();
+        }
+        <b>this</b>.bwrap.setWidth(Math.max(totalWidth, <b>this</b>.wrap.clientWidth));
+        <b>if</b>(!YAHOO.ext.util.Browser.isIE){ <i>// fix scrolling prob <b>in</b> gecko and opera</i>
+        	<b>this</b>.wrap.scrollLeft = <b>this</b>.hwrap.dom.scrollLeft;
+        }
+        <b>this</b>.syncScroll();
+        <b>this</b>.forceScrollUpdate();
+        <b>if</b>(this.grid.autoHeight){
+            <b>this</b>.autoHeight();
+            <b>this</b>.updateWrapHeight();
+        }
+    },
+    
+    setCSSWidth : <b>function</b>(colIndex, width, pos){
+        <b>var</b> selector = [&quot;#&quot; + <b>this</b>.grid.id + &quot; .ygrid-col-&quot; + colIndex, &quot;.ygrid-col-&quot; + colIndex];
+        YAHOO.ext.util.CSS.updateRule(selector, 'width', width + 'px');
+        <b>if</b>(typeof pos == 'number'){
+            YAHOO.ext.util.CSS.updateRule(selector, 'left', pos + 'px');
+        }
+    },
+    
+    <i>/**
+     * Set a css style <b>for</b> a column dynamically. 
+     * @param {Number} colIndex The index of the column
+     * @param {String} name The css property name
+     * @param {String} value The css value
+     */</i>
+     setCSSStyle : <b>function</b>(colIndex, name, value){
+        <b>var</b> selector = [&quot;#&quot; + <b>this</b>.grid.id + &quot; .ygrid-col-&quot; + colIndex, &quot;.ygrid-col-&quot; + colIndex];
+        YAHOO.ext.util.CSS.updateRule(selector, name, value);
+    },
+    
+    handleHiddenChange : <b>function</b>(colModel, colIndex, hidden){
+        <b>if</b>(hidden){
+            <b>this</b>.hideColumn(colIndex);
+        }<b>else</b>{
+            <b>this</b>.unhideColumn(colIndex);
+        }
+        <b>this</b>.updateColumns();
+    },
+    
+    hideColumn : <b>function</b>(colIndex){
+        <b>var</b> selector = [&quot;#&quot; + <b>this</b>.grid.id + &quot; .ygrid-col-&quot; + colIndex, &quot;.ygrid-col-&quot; + colIndex];
+        YAHOO.ext.util.CSS.updateRule(selector, 'position', 'absolute');
+        YAHOO.ext.util.CSS.updateRule(selector, 'visibility', 'hidden');
+        
+        <b>this</b>.headers[colIndex].style.display = 'none';
+        <b>this</b>.headers[colIndex].split.style.display = 'none';
+    },
+    
+    unhideColumn : <b>function</b>(colIndex){
+        <b>var</b> selector = [&quot;#&quot; + <b>this</b>.grid.id + &quot; .ygrid-col-&quot; + colIndex, &quot;.ygrid-col-&quot; + colIndex];
+        YAHOO.ext.util.CSS.updateRule(selector, 'position', '');
+        YAHOO.ext.util.CSS.updateRule(selector, 'visibility', 'visible');
+        
+        <b>this</b>.headers[colIndex].style.display = '';
+        <b>this</b>.headers[colIndex].split.style.display = '';
+    },
+    
+    getBodyTable : <b>function</b>(){
+    	<b>return</b> this.bwrap.dom;
+    },
+    
+    updateRowIndexes : <b>function</b>(firstRow, lastRow){
+        <b>var</b> stripeRows = <b>this</b>.grid.stripeRows;
+        <b>var</b> bt = <b>this</b>.getBodyTable();
+        <b>var</b> nodes = bt.childNodes;
+        firstRow = firstRow || 0;
+        lastRow = lastRow || nodes.length-1;
+        <b>var</b> re = /^(?:ygrid-row ygrid-row-alt|ygrid-row)/;
+        <b>for</b>(var rowIndex = firstRow; rowIndex &lt;= lastRow; rowIndex++){
+            <b>var</b> node = nodes[rowIndex];
+            <b>if</b>(stripeRows &amp;&amp; (rowIndex+1) % 2 == 0){
+        		node.className = node.className.replace(re, 'ygrid-row ygrid-row-alt');
+        	}<b>else</b>{
+        		node.className = node.className.replace(re, 'ygrid-row');
+        	}
+            node.rowIndex = rowIndex;
+            nodes[rowIndex].style.top = (rowIndex * <b>this</b>.rowHeight) + 'px';
+        }
+    },
+
+    insertRows : <b>function</b>(dataModel, firstRow, lastRow){
+        <b>this</b>.updateBodyHeight();
+        <b>this</b>.adjustForScroll(true);
+        <b>var</b> renderers = <b>this</b>.getColumnRenderers();
+        <b>var</b> dindexes = <b>this</b>.getDataIndexes();
+        <b>var</b> colCount = <b>this</b>.grid.colModel.getColumnCount();
+        <b>var</b> beforeRow = null;
+        <b>var</b> bt = <b>this</b>.getBodyTable();
+        <b>if</b>(firstRow &lt; bt.childNodes.length){
+            beforeRow = bt.childNodes[firstRow];
+        }
+        <b>for</b>(var rowIndex = firstRow; rowIndex &lt;= lastRow; rowIndex++){
+            <b>var</b> row = document.createElement('span');
+            row.className = 'ygrid-row';
+            row.style.top = (rowIndex * <b>this</b>.rowHeight) + 'px';
+            <b>this</b>.renderRow(dataModel, row, rowIndex, colCount, renderers, dindexes);
+            <b>if</b>(beforeRow){
+            	bt.insertBefore(row, beforeRow);
+            }<b>else</b>{
+                bt.appendChild(row);
+            }
+        }
+        <b>this</b>.updateRowIndexes(firstRow);
+        <b>this</b>.adjustForScroll(true);
+    },
+    
+    renderRow : <b>function</b>(dataModel, row, rowIndex, colCount, renderers, dindexes){
+        <b>for</b>(var colIndex = 0; colIndex &lt; colCount; colIndex++){
+            <b>var</b> td = document.createElement('span');
+            td.className = 'ygrid-col ygrid-col-' + colIndex + (colIndex == colCount-1 ? ' ygrid-col-last' : '');
+            td.columnIndex = colIndex;
+            td.tabIndex = 0;
+            <b>var</b> span = document.createElement('span');
+            span.className = 'ygrid-cell-text';
+            td.appendChild(span);
+            <b>var</b> val = renderers[colIndex](dataModel.getValueAt(rowIndex, dindexes[colIndex]), rowIndex, colIndex, td);
+            <b>if</b>(typeof val == 'undefined' || val === '') val = '&amp;#160;';
+            span.innerHTML = val;
+            row.appendChild(td);
+        }
+    },
+    
+    deleteRows : <b>function</b>(dataModel, firstRow, lastRow){
+        <b>this</b>.updateBodyHeight();
+        <i>// first make sure they are deselected</i>
+        <b>this</b>.grid.selModel.deselectRange(firstRow, lastRow);
+        <b>var</b> bt = <b>this</b>.getBodyTable();
+        <b>var</b> rows = []; <i>// get references because the rowIndex will change</i>
+        <b>for</b>(var rowIndex = firstRow; rowIndex &lt;= lastRow; rowIndex++){
+            rows.push(bt.childNodes[rowIndex]);
+        }
+        <b>for</b>(var i = 0; i &lt; rows.length; i++){
+            bt.removeChild(rows[i]);
+            rows[i] = null;
+        }
+        rows = null;
+        <b>this</b>.updateRowIndexes(firstRow);
+        <b>this</b>.adjustForScroll();
+    },
+    
+    updateRows : <b>function</b>(dataModel, firstRow, lastRow){
+        <b>var</b> bt = <b>this</b>.getBodyTable();
+        <b>var</b> dindexes = <b>this</b>.getDataIndexes();
+        <b>var</b> renderers = <b>this</b>.getColumnRenderers();
+        <b>var</b> colCount = <b>this</b>.grid.colModel.getColumnCount();
+        <b>for</b>(var rowIndex = firstRow; rowIndex &lt;= lastRow; rowIndex++){
+            <b>var</b> row = bt.rows[rowIndex];
+            <b>var</b> cells = row.childNodes;
+            <b>for</b>(var colIndex = 0; colIndex &lt; colCount; colIndex++){
+                <b>var</b> td = cells[colIndex];
+                <b>var</b> val = renderers[colIndex](dataModel.getValueAt(rowIndex, dindexes[colIndex]), rowIndex, colIndex, td);
+                <b>if</b>(typeof val == 'undefined' || val === '') val = '&amp;#160;';
+                td.firstChild.innerHTML = val;
+            }
+        }
+    },
+    
+    handleSort : <b>function</b>(dataModel, sortColumnIndex, sortDir, noRefresh){
+        <b>this</b>.grid.selModel.syncSelectionsToIds();
+        <b>if</b>(!noRefresh){
+           <b>this</b>.updateRows(dataModel, 0, dataModel.getRowCount()-1);
+        }
+        <b>this</b>.updateHeaderSortState();
+        <b>if</b>(this.lastFocusedRow){
+            <b>this</b>.focusRow(<b>this</b>.lastFocusedRow);
+        }
+    },
+    
+    syncScroll : <b>function</b>(){
+        <b>this</b>.hwrap.dom.scrollLeft = <b>this</b>.wrap.scrollLeft;
+    },
+    
+    handleScroll : <b>function</b>(){
+        <b>this</b>.syncScroll();
+        <b>this</b>.fireScroll(<b>this</b>.wrap.scrollLeft, <b>this</b>.wrap.scrollTop);
+        <b>this</b>.grid.fireEvent('bodyscroll', <b>this</b>.wrap.scrollLeft, <b>this</b>.wrap.scrollTop);
+    },
+    
+    getRowHeight : <b>function</b>(){
+        <b>if</b>(!<b>this</b>.rowHeight){
+            <b>var</b> rule = YAHOO.ext.util.CSS.getRule([&quot;#&quot; + <b>this</b>.grid.id + &quot; .ygrid-row&quot;, &quot;.ygrid-row&quot;]);
+        	<b>if</b>(rule &amp;&amp; rule.style.height){
+        	    <b>this</b>.rowHeight = parseInt(rule.style.height, 10);
+        	}<b>else</b>{
+        	    <b>this</b>.rowHeight = 21;
+        	}
+        }
+        <b>return</b> this.rowHeight;
+    },
+    
+    renderRows : <b>function</b>(dataModel){
+        <b>this</b>.grid.stopEditing();
+        <b>if</b>(this.grid.selModel){
+            <b>this</b>.grid.selModel.clearSelections();
+        }
+    	<b>var</b> bt = <b>this</b>.getBodyTable();
+    	bt.innerHTML = '';
+    	<b>this</b>.rowHeight = <b>this</b>.getRowHeight();
+    	<b>this</b>.insertRows(dataModel, 0, dataModel.getRowCount()-1);
+    },
+    
+    updateCell : <b>function</b>(dataModel, rowIndex, dataIndex){
+        <b>var</b> colIndex = <b>this</b>.getColumnIndexByDataIndex(dataIndex);
+        <b>if</b>(typeof colIndex == 'undefined'){ <i>// not present <b>in</b> grid</i>
+            <b>return</b>;
+        }
+        <b>var</b> bt = <b>this</b>.getBodyTable();
+        <b>var</b> row = bt.childNodes[rowIndex];
+        <b>var</b> cell = row.childNodes[colIndex];
+        <b>var</b> renderer = <b>this</b>.grid.colModel.getRenderer(colIndex);
+        <b>var</b> val = renderer(dataModel.getValueAt(rowIndex, dataIndex), rowIndex, colIndex, cell);
+        <b>if</b>(typeof val == 'undefined' || val === '') val = '&amp;#160;';
+        cell.firstChild.innerHTML = val;
+    },
+    
+    calcColumnWidth : <b>function</b>(colIndex, maxRowsToMeasure){
+        <b>var</b> maxWidth = 0;
+        <b>var</b> bt = <b>this</b>.getBodyTable();
+        <b>var</b> rows = bt.childNodes;
+        <b>var</b> stopIndex = Math.min(maxRowsToMeasure || rows.length, rows.length);
+        <b>if</b>(this.grid.autoSizeHeaders){
+            <b>var</b> h = <b>this</b>.headers[colIndex];
+            <b>var</b> curWidth = h.style.width;
+            h.style.width = <b>this</b>.grid.minColumnWidth+'px';
+            maxWidth = Math.max(maxWidth, h.scrollWidth);
+            h.style.width = curWidth;
+        }
+        <b>for</b>(var i = 0; i &lt; stopIndex; i++){
+            <b>var</b> cell = rows[i].childNodes[colIndex].firstChild;
+            maxWidth = Math.max(maxWidth, cell.scrollWidth);
+        }
+        <b>return</b> maxWidth + <i>/*margin <b>for</b> error <b>in</b> IE*/</i> 5;
+    },
+    
+    <i>/**
+     * Autofit a column to it's content.
+     * @param {Number} colIndex
+     * @param {Boolean} forceMinSize true to force the column to go smaller <b>if</b> possible
+     */</i>
+     autoSizeColumn : <b>function</b>(colIndex, forceMinSize){
+        <b>if</b>(forceMinSize){
+           <b>this</b>.setCSSWidth(colIndex, <b>this</b>.grid.minColumnWidth);
+        }
+        <b>var</b> newWidth = <b>this</b>.calcColumnWidth(colIndex);
+        <b>this</b>.grid.colModel.setColumnWidth(colIndex,
+            Math.max(<b>this</b>.grid.minColumnWidth, newWidth));
+        <b>this</b>.grid.fireEvent('columnresize', colIndex, newWidth);
+    },
+    
+    <i>/**
+     * Autofits all columns to their content and then expands to fit any extra space <b>in</b> the grid
+     */</i>
+     autoSizeColumns : <b>function</b>(){
+        <b>var</b> colModel = <b>this</b>.grid.colModel;
+        <b>var</b> colCount = colModel.getColumnCount();
+        <b>var</b> wrap = <b>this</b>.wrap;
+        <b>for</b>(var i = 0; i &lt; colCount; i++){
+            <b>this</b>.setCSSWidth(i, <b>this</b>.grid.minColumnWidth);
+            colModel.setColumnWidth(i, <b>this</b>.calcColumnWidth(i, <b>this</b>.grid.maxRowsToMeasure), true);
+        }
+        <b>if</b>(colModel.getTotalWidth() &lt; wrap.clientWidth){
+            <b>var</b> diff = Math.floor((wrap.clientWidth - colModel.getTotalWidth()) / colCount);
+            <b>for</b>(var i = 0; i &lt; colCount; i++){
+                colModel.setColumnWidth(i, colModel.getColumnWidth(i) + diff, true);
+            }
+        }
+        <b>this</b>.updateColumns();  
+    },
+    
+    <i>/**
+     * Autofits all columns to the grid's width proportionate <b>with</b> their current size
+     */</i>
+    fitColumns : <b>function</b>(){
+        <b>var</b> cm = <b>this</b>.grid.colModel;
+        <b>var</b> colCount = cm.getColumnCount();
+        <b>var</b> cols = [];
+        <b>var</b> width = 0;
+        <b>var</b> i, w;
+        <b>for</b> (i = 0; i &lt; colCount; i++){
+            <b>if</b>(!cm.isHidden(i) &amp;&amp; !cm.isFixed(i)){
+                w = cm.getColumnWidth(i);
+                cols.push(i);
+                cols.push(w);
+                width += w;
+            }
+        }
+        <b>var</b> frac = (<b>this</b>.wrap.clientWidth - cm.getTotalWidth())/width;
+        <b>while</b> (cols.length){
+            w = cols.pop();
+            i = cols.pop();
+            cm.setColumnWidth(i, Math.floor(w + w*frac), true);
+        }
+        <b>this</b>.updateColumns();
+    }, 
+    
+    onWindowResize : <b>function</b>(){
+        <b>if</b>(this.grid.monitorWindowResize){
+            <b>this</b>.adjustForScroll();
+            <b>this</b>.updateWrapHeight();
+            <b>this</b>.adjustForScroll();
+        }  
+    },
+    
+    updateWrapHeight : <b>function</b>(){
+        <b>this</b>.grid.container.beginMeasure();
+        <b>this</b>.autoHeight();
+        <b>var</b> box = <b>this</b>.grid.container.getSize(true);
+        <b>this</b>.wrapEl.setHeight(box.height-<b>this</b>.footerHeight-parseInt(<b>this</b>.wrap.offsetTop, 10));
+        <b>this</b>.pwrap.setSize(box.width, box.height);
+        <b>this</b>.grid.container.endMeasure();
+    },
+    
+    forceScrollUpdate : <b>function</b>(){
+        <b>var</b> wrap = <b>this</b>.wrapEl;
+        wrap.setWidth(wrap.getWidth(true));
+        setTimeout(<b>function</b>(){ <i>// set timeout so FireFox works</i>
+            wrap.setWidth('');
+        }, 1);
+    },
+    
+    updateHeaderSortState : <b>function</b>(){
+        <b>var</b> state = <b>this</b>.grid.dataModel.getSortState();
+        <b>if</b>(!state || <b>typeof</b> state.column == 'undefined') <b>return</b>;
+        <b>var</b> sortColumn = <b>this</b>.getColumnIndexByDataIndex(state.column);
+        <b>var</b> sortDir = state.direction;
+        <b>for</b>(var i = 0, len = <b>this</b>.headers.length; i &lt; len; i++){
+            <b>var</b> h = <b>this</b>.headers[i];
+            <b>if</b>(i != sortColumn){
+                h.sortDesc.style.display = 'none';
+                h.sortAsc.style.display = 'none';
+            }<b>else</b>{
+                h.sortDesc.style.display = sortDir == 'DESC' ? 'block' : 'none';
+                h.sortAsc.style.display = sortDir == 'ASC' ? 'block' : 'none';
+            }
+        }
+    },
+
+    unplugDataModel : <b>function</b>(dm){
+        dm.removeListener('cellupdated', <b>this</b>.updateCell, <b>this</b>);
+        dm.removeListener('datachanged', <b>this</b>.renderRows, <b>this</b>);
+        dm.removeListener('rowsdeleted', <b>this</b>.deleteRows, <b>this</b>);
+        dm.removeListener('rowsinserted', <b>this</b>.insertRows, <b>this</b>);
+        dm.removeListener('rowsupdated', <b>this</b>.updateRows, <b>this</b>);
+        dm.removeListener('rowssorted', <b>this</b>.handleSort, <b>this</b>);
+    },
+    
+    plugDataModel : <b>function</b>(dm){
+        dm.on('cellupdated', <b>this</b>.updateCell, <b>this</b>, true);
+        dm.on('datachanged', <b>this</b>.renderRows, <b>this</b>, true);
+        dm.on('rowsdeleted', <b>this</b>.deleteRows, <b>this</b>, true);
+        dm.on('rowsinserted', <b>this</b>.insertRows, <b>this</b>, true);
+        dm.on('rowsupdated', <b>this</b>.updateRows, <b>this</b>, true);
+        dm.on('rowssorted', <b>this</b>.handleSort, <b>this</b>, true);
+    },
+    
+    destroy : <b>function</b>(){
+        <b>this</b>.unplugDataModel(<b>this</b>.grid.dataModel);
+        <b>var</b> sp = <b>this</b>.splitters;
+        <b>if</b>(sp){
+            <b>for</b>(var i <b>in</b> sp){
+                <b>if</b>(sp[i] &amp;&amp; <b>typeof</b> sp[i] != '<b>function</b>'){
+                    sp[i].destroy(true);
+                }
+            }
+        }
+    },
+    
+    render : <b>function</b>(){
+        <b>var</b> grid = <b>this</b>.grid;
+        <b>var</b> container = grid.container.dom;
+        <b>var</b> dataModel = grid.dataModel;
+        <b>this</b>.plugDataModel(dataModel);
+    
+        <b>var</b> colModel = grid.colModel;
+        colModel.onWidthChange.subscribe(<b>this</b>.updateColumns, <b>this</b>, true);
+        colModel.onHeaderChange.subscribe(<b>this</b>.updateHeaders, <b>this</b>, true);
+        colModel.onHiddenChange.subscribe(<b>this</b>.handleHiddenChange, <b>this</b>, true);
+        
+        <b>if</b>(grid.monitorWindowResize === true){
+            YAHOO.ext.EventManager.onWindowResize(<b>this</b>.onWindowResize, <b>this</b>, true);
+        }
+        <b>var</b> autoSizeDelegate = <b>this</b>.autoSizeColumn.createDelegate(<b>this</b>);
+        
+        <b>var</b> colCount = colModel.getColumnCount();
+        
+        <b>var</b> dh = YAHOO.ext.DomHelper;
+        <b>this</b>.pwrap = dh.append(container, 
+            {tag: 'div', cls: 'ygrid-positioner', 
+            style: 'position:relative;width:100%;height:100%;left:0;top:0;overflow:hidden;'}, true);
+        <b>var</b> pos = <b>this</b>.pwrap.dom;
+        
+        <i>//create wrapper elements that handle offsets and scrolling</i>
+        <b>var</b> wrap = dh.append(pos, {tag: 'div', cls: 'ygrid-wrap'});
+        <b>this</b>.wrap = wrap;
+        <b>this</b>.wrapEl = getEl(wrap, true);
+        YAHOO.ext.EventManager.on(wrap, 'scroll', <b>this</b>.handleScroll, <b>this</b>, true);
+        
+        <b>var</b> hwrap = dh.append(pos, {tag: 'div', cls: 'ygrid-wrap-headers'});
+        <b>this</b>.hwrap = getEl(hwrap, true);
+        
+        <b>var</b> bwrap = dh.append(wrap, {tag: 'div', cls: 'ygrid-wrap-body', id: container.id + '-body'});
+        <b>this</b>.bwrap = getEl(bwrap, true);
+        <b>this</b>.bwrap.setWidth(colModel.getTotalWidth());
+        bwrap.rows = bwrap.childNodes;
+        
+        <b>this</b>.footerHeight = 0;
+        <b>var</b> foot = <b>this</b>.appendFooter(<b>this</b>.pwrap.dom);
+        <b>if</b>(foot){
+            <b>this</b>.footer = getEl(foot, true);
+            <b>this</b>.footerHeight = <b>this</b>.footer.getHeight();
+        }
+        <b>this</b>.updateWrapHeight();
+        
+        <b>var</b> hrow = dh.append(hwrap, {tag: 'span', cls: 'ygrid-hrow'});
+        <b>this</b>.hrow = hrow;
+        
+        <b>if</b>(!YAHOO.ext.util.Browser.isGecko){
+            <i>// IE doesn't like iframes, we will leave <b>this</b> alone</i>
+            <b>var</b> iframe = document.createElement('iframe');
+            iframe.className = 'ygrid-hrow-frame';
+            iframe.frameBorder = 0;
+            iframe.src = YAHOO.ext.SSL_SECURE_URL;
+            hwrap.appendChild(iframe);
+        }
+        <b>this</b>.headerCtrl = <b>new</b> YAHOO.ext.grid.HeaderController(<b>this</b>.grid);
+        <b>this</b>.headers = [];
+        <b>this</b>.cols = [];
+        <b>this</b>.splitters = [];
+        
+        <b>var</b> htemplate = dh.createTemplate({
+           tag: 'span', cls: 'ygrid-hd ygrid-header-{0}', children: [{
+                tag: 'span',
+                cls: 'ygrid-hd-body',
+                html: '&lt;table border=&quot;0&quot; cellpadding=&quot;0&quot; cellspacing=&quot;0&quot; title=&quot;{2}&quot;&gt;' +
+                      '&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;&lt;span&gt;{1}&lt;/span&gt;&lt;/td&gt;' +
+                      '&lt;td&gt;&lt;span class=&quot;sort-desc&quot;&gt;&lt;/span&gt;&lt;span class=&quot;sort-asc&quot;&gt;&lt;/span&gt;&lt;/td&gt;' +
+                      '&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;'
+           }]
+        });
+        htemplate.compile();
+        <b>for</b>(var i = 0; i &lt; colCount; i++){
+            <b>var</b> hd = htemplate.append(hrow, [i, colModel.getColumnHeader(i), colModel.getColumnTooltip(i) || '']);
+            <b>var</b> spans = hd.getElementsByTagName('span');
+            hd.textNode = spans[1];
+            hd.sortDesc = spans[2];
+            hd.sortAsc = spans[3];
+    	    hd.columnIndex = i;
+            <b>this</b>.headers.push(hd);
+            <b>if</b>(colModel.isSortable(i)){
+                <b>this</b>.headerCtrl.register(hd);
+            }
+            <b>var</b> split = dh.append(hrow, {tag: 'span', cls: 'ygrid-hd-split'});
+            hd.split = split;
+        	
+        	<b>if</b>(colModel.isResizable(i) &amp;&amp; !colModel.isFixed(i)){
+            	YAHOO.util.Event.on(split, 'dblclick', autoSizeDelegate.createCallback(i+0, true));
+            	<b>var</b> sb = <b>new</b> YAHOO.ext.SplitBar(split, hd, null, YAHOO.ext.SplitBar.LEFT);
+            	sb.columnIndex = i;
+            	sb.minSize = grid.minColumnWidth;
+            	sb.onMoved.subscribe(<b>this</b>.onColumnSplitterMoved, <b>this</b>, true);
+            	YAHOO.util.Dom.addClass(sb.proxy, 'ygrid-column-sizer');
+            	YAHOO.util.Dom.setStyle(sb.proxy, 'background-color', '');
+            	sb.dd._resizeProxy = <b>function</b>(){
+            	    <b>var</b> el = <b>this</b>.getDragEl();
+            	    YAHOO.util.Dom.setStyle(el, 'height', (hwrap.clientHeight+wrap.clientHeight-2) +'px');
+            	};
+            	<b>this</b>.splitters[i] = sb;
+        	}<b>else</b>{
+        	    split.style.cursor = '<b>default</b>';
+        	}
+        }
+       <b>if</b>(grid.autoSizeColumns){
+            <b>this</b>.renderRows(dataModel);
+            <b>this</b>.autoSizeColumns();
+        }<b>else</b>{
+            <b>this</b>.updateColumns();
+            <b>this</b>.renderRows(dataModel);
+        }
+        
+        <b>for</b>(var i = 0; i &lt; colCount; i++){
+            <b>if</b>(colModel.isHidden(i)){
+                <b>this</b>.hideColumn(i);
+            }
+        }
+        <b>this</b>.updateHeaderSortState();
+        <b>return</b> this.bwrap;
+    },
+    
+    onColumnSplitterMoved : <b>function</b>(splitter, newSize){
+        <b>this</b>.grid.colModel.setColumnWidth(splitter.columnIndex, newSize);
+        <b>this</b>.grid.fireEvent('columnresize', splitter.columnIndex, newSize);
+    },
+    
+    appendFooter : <b>function</b>(parentEl){
+        <b>return</b> null;  
+    },
+    
+    autoHeight : <b>function</b>(){
+        <b>if</b>(this.grid.autoHeight){
+            <b>var</b> h = <b>this</b>.getBodyHeight();
+            <b>var</b> c = <b>this</b>.grid.container;
+            <b>var</b> total = h + (parseInt(<b>this</b>.wrap.offsetTop, 10)||0) + 
+                    <b>this</b>.footerHeight + c.getBorderWidth('tb') + c.getPadding('tb')
+                    + (<b>this</b>.wrap.offsetHeight - <b>this</b>.wrap.clientHeight);
+            c.setHeight(total);
+            
+        }
+    },
+    
+    getBodyHeight : <b>function</b>(){
+        <b>return</b> this.grid.dataModel.getRowCount() * <b>this</b>.getRowHeight();;
+    },
+    
+    updateBodyHeight : <b>function</b>(){
+        <b>this</b>.getBodyTable().style.height = <b>this</b>.getBodyHeight() + 'px';
+        <b>if</b>(this.grid.autoHeight){
+            <b>this</b>.autoHeight();
+            <b>this</b>.updateWrapHeight();
+        }
+    }
+};
+YAHOO.ext.grid.GridView.SCROLLBARS_UNDER = 0;
+YAHOO.ext.grid.GridView.SCROLLBARS_OVERLAP = 1;
+YAHOO.ext.grid.GridView.prototype.scrollbarMode = YAHOO.ext.grid.GridView.SCROLLBARS_UNDER;
+
+YAHOO.ext.grid.GridView.prototype.fitColumnsToContainer = YAHOO.ext.grid.GridView.prototype.fitColumns;
+
+YAHOO.ext.grid.HeaderController = <b>function</b>(grid){
+	<b>this</b>.grid = grid;
+	<b>this</b>.headers = [];
+};
+
+YAHOO.ext.grid.HeaderController.prototype = {
+	register : <b>function</b>(header){
+		<b>this</b>.headers.push(header);
+		YAHOO.ext.EventManager.on(header, 'selectstart', <b>this</b>.cancelTextSelection, <b>this</b>, true);
+        YAHOO.ext.EventManager.on(header, 'mousedown', <b>this</b>.cancelTextSelection, <b>this</b>, true);
+        YAHOO.ext.EventManager.on(header, 'mouseover', <b>this</b>.headerOver, <b>this</b>, true);
+        YAHOO.ext.EventManager.on(header, 'mouseout', <b>this</b>.headerOut, <b>this</b>, true);
+        YAHOO.ext.EventManager.on(header, 'click', <b>this</b>.headerClick, <b>this</b>, true);
+	},
+	
+	headerClick : <b>function</b>(e){
+	    <b>var</b> grid = <b>this</b>.grid, cm = grid.colModel, dm = grid.dataModel;
+	    grid.stopEditing();
+        <b>var</b> header = grid.getHeaderFromChild(e.getTarget());
+        <b>var</b> state = dm.getSortState();
+        <b>var</b> direction = header.sortDir || 'ASC';
+        <b>if</b>(typeof state.column != 'undefined' &amp;&amp; 
+                 grid.getView().getColumnIndexByDataIndex(state.column) == header.columnIndex){
+            direction = (state.direction == 'ASC' ? 'DESC' : 'ASC');
+        }
+        header.sortDir = direction;
+        dm.sort(cm, cm.getDataIndex(header.columnIndex), direction);
+    },
+    
+    headerOver : <b>function</b>(e){
+        <b>var</b> header = <b>this</b>.grid.getHeaderFromChild(e.getTarget());
+        YAHOO.util.Dom.addClass(header, 'ygrid-hd-over');
+        <i>//YAHOO.ext.util.CSS.applyFirst(header, <b>this</b>.grid.id, '.ygrid-hd-over');</i>
+    },
+    
+    headerOut : <b>function</b>(e){
+        <b>var</b> header = <b>this</b>.grid.getHeaderFromChild(e.getTarget());
+        YAHOO.util.Dom.removeClass(header, 'ygrid-hd-over');
+        <i>//YAHOO.ext.util.CSS.revertFirst(header, <b>this</b>.grid.id, '.ygrid-hd-over');</i>
+    },
+    
+    cancelTextSelection : <b>function</b>(e){
+    	e.preventDefault();
+    }
+};</code></pre><hr><div style="font-size:10px;text-align:center;color:gray;">yui-ext - Copyright &copy; 2006 Jack Slocum.  |
+    Yahoo! UI - Copyright &copy; 2006 Yahoo! Inc.<br />All rights reserved.</div>
+    </body></html>

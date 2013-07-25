@@ -1,0 +1,10 @@
+Received: from cwdhexyr [110.53.27.59] by panmusic.com.tr with ESMTP
+  (SMTPD32-8.15) id A8CD158F0FFC; Fri, 18 Nov 2011 23:06:21 +0200 
+Message-ID: <20111119050409513361@panmusic.com.tr> 
+From: "2011-11-19 05:04:05" <webmaster@panmusic.com.tr> 
+To:  
+Subject: =?gb2312?B?aW1wZ7bU09rS1LS00MLOqtb3tcS5q8u+o6y78tXf1qrKttDN?=
+	=?gb2312?B?tcS5q8u+o6zTprjDyOe6ztbGtqhLUEmjvw==?= 
+Date: Sat, 19 Nov 2011 05:03:56 +0800 
+X-mailer: Hcdkgnxc 6 
+Whoops!  What is a 'application/vnd.ms-excel'?

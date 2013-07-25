@@ -1,0 +1,6 @@
+compare:	
+	./build-compare.csh 05
+
+compare-examples:
+	./build-compare-examples.csh 05
+

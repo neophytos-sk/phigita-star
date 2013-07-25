@@ -1,0 +1,123 @@
+/**********************************************************************
+ *
+ * $Id: wps_winman.css,v 1.2 2006/12/12 18:44:29 lbecchi Exp $
+ *
+ * purpose: css declarations for sample interface.
+ *
+ * purpose: This is the sample ka-Map interface for pywps  (bug 1623)
+ *
+ * author: Lorenzo Becchi and Luca Casagrande (www.ominiverdi.org)
+ * 
+ *
+ **********************************************************************
+ *
+ * Copyright (c) 2006 ominiverdi.org
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
+ * DEALINGS IN THE SOFTWARE.
+ *
+ **********************************************************************/
+ #map {
+    position: absolute;
+    background-color: #f0f0f0;
+    overflow: hidden;
+    border: 1px solid #999;
+    cursor: move;
+    -moz-box-sizing: border-box;
+}
+#toolbar{
+	border:0;
+}
+#blackboard, #description{
+	border:0;
+	overflow: auto;
+}
+#scaleReference{
+	z-index:100;
+	position:absolute;
+	right:2px;
+	bottom:2px;
+	}
+
+#params{
+	border:0;
+	overflow: auto;
+	width:250px;
+	font-size:0.9em;
+	}
+#zoomTools{
+	border:0;
+	text-align:center;
+}
+.kaWinHeader{
+	border:1px solid rgb(60,60,60);
+	background-color:rgb(60,60,60);
+	margin:0;
+	padding:0;
+}
+.kaWinHeaderTitle{
+	padding:2px;
+	color:white;
+	padding-left:12px;
+	letter-spacing:0.15em;
+	margin:0;
+	/*margin-right:12px;*/
+}
+.kaWinHeaderExpanderToggler{
+	border:1px solid rgb(60,60,60);
+	background-color:white;
+	margin:0;
+}
+.kaWinBody{
+	border:1px solid rgb(60,60,60);
+	background-color:rgb(220,220,220);
+	margin:0;
+}
+.kaWinFooter{
+	border:1px solid rgb(60,60,60);
+	background-color:rgb(220,220,220);
+}
+.kaWinFooterResizer{
+	border:1px solid rgb(100,100,100);
+	background-color:rgb(220,220,220);
+	margin:0px;
+}
+
+/*
+	FOR DATA OUTPUT
+*/
+#data h2 {
+    border:1px solid black;
+    font-size:1.2em;
+    padding:0.2em;
+    background: gray;
+    color: white;   
+}
+#data th {
+    border:1px solid black;
+    font-size:0.9em;
+    padding:0.2em;
+    background: rgb(170,170,170);
+    color: white; 
+    font-weight:bold;  
+}
+#data td {
+    border-bottom:1px solid black;
+    font-size:0.9em;
+    padding:0.2em;
+}

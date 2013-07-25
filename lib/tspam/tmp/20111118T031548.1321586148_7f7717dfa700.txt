@@ -1,0 +1,215 @@
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed/relaxed; s=k1; d=mail45.us1.rsgsv.net;
+ h=Subject:From:Reply-To:To:Date:Message-ID:List-Unsubscribe:Sender:Content-Type:MIME-Version; i=newsletter=3Dphileleftheros.com@mail45.us1.rsgsv.net;
+ bh=vfxoAebcaCwMSxlNqWJEGw+kBvU=;
+ b=KpzXDz8arsNI3TFQUAKOuWV9DHmqe4+LK/Ql2jwp0AavgiZLXUsuITLQKpahmv9lm4lxaBrg5WQt
+   XVYW/s7JbcA2hkpONrSwdvTKNdphgaEUPcB6YALqU99eU5GbXk1b2tZc8jrDPBYVaqL0WaPeSFiH
+   Jd3qbAV+G201Lqa2odE= 
+DomainKey-Signature: a=rsa-sha1; c=nofws; q=dns; s=k1; d=mail45.us1.rsgsv.net;
+ b=M6ohDdB3sgMJfyW7H7FjunIcR1+zfYEof25BHZJgVWlApktwQRRUUdzXJIRcw8FenqiWQf7ssfH8
+   hn7/m4vraki7a62e+WVzxyUBWY7eW6NY/a49PaxyuoOwYDix7JEILQvYsTyrLuXpnUMA50m2Z5qv
+   S0P3CNxKR+XKgXrPHSU=; 
+Received: from (127.0.0.1) by mail45.us1.rsgsv.net (PowerMTA(TM) v3.5r16) id hon6tq0lj3ga for <k2pts@phigita.net>; Thu, 17 Nov 2011 22:15:35 -0500 (envelope-from <bounce-mc.us2_6419294.1276345-k2pts=phigita.net@mail45.us1.rsgsv.net>) 
+Subject: =?utf-8?Q?Philenews=20Newsletter=2018=2F11=2F2011?= 
+From: =?utf-8?Q?Phileleftheros=20Newsletter?= <newsletter@phileleftheros.com> 
+Reply-To: =?utf-8?Q?Phileleftheros=20Newsletter?= <newsletter@phileleftheros.com> 
+To: <k2pts@phigita.net> 
+Date: Thu, 17 Nov 2011 22:15:35 -0500 
+Message-ID: <84e8c0ea4dc808b59204e2171b4828836f9.20111118031515@mail45.us1.rsgsv.net> 
+X-Mailer: MailChimp Mailer - **CID07dda52c9fb4828836f9** 
+X-Campaign: mailchimp84e8c0ea4dc808b59204e2171.07dda52c9f 
+X-campaignid: mailchimp84e8c0ea4dc808b59204e2171.07dda52c9f 
+x-im: 38509-07dda52c9f 
+X-Report-Abuse: Please report abuse for this campaign here: http://www.mailchimp.com/abuse/abuse.phtml?u=84e8c0ea4dc808b59204e2171&id=07dda52c9f&e=b4828836f9 
+x-accounttype: pd 
+List-Unsubscribe: <mailto:unsubscribe-84e8c0ea4dc808b59204e2171-07dda52c9f-b4828836f9@mailin1.us2.mcsv.net?subject=unsubscribe>, <http://philenews.us2.list-manage.com/unsubscribe?u=84e8c0ea4dc808b59204e2171&id=13cea9817b&e=b4828836f9&c=07dda52c9f> 
+Sender: "Phileleftheros Newsletter" <newsletter=phileleftheros.com@mail45.us1.rsgsv.net> 
+x-mcda: FALSE 
+--------------------------------------
+Trouble viewing this email?[1]Click Here
+    Links:
+      1. http://us2.campaign-archive2.com/?u=84e8c0ea4dc808b59204e2171&id=07dda52c9f&e=b4828836f9
+
+  right logo _ΠΑΡΑΣΚΕΥΗ
+  18 ΝΟΕΜΒΡΙΟΥ 2011_
+  Philenews
+
+  left logo
+  _[2]www.philenews.com
+  [3]www.sentragoal.com.cy _
+  line
+    Links:
+      2. http://www.philenews.com
+      3. http://www.sentragoal.com.cy
+
+ΠΡΩΤΟ ΘΕΜΑ
+
+  [4]Συντηρούν την ένταση
+  με τουρκικά γυμνάσια ανοικτά Λεμεσού-Μόρφου
+    Links:
+      4. http://www.philenews.com/el-gr/New-Homepage-With-Slider/4995/86425
+
+  Τεντώνει το σχοινί η Άγκυρα και φαίνεται να το τραβά στα άκρα,
+  χρησιμοποιώντας το θέμα του φυσικού αερίου από τη μια και την αναβάθμιση
+  του ψευδοκράτους από την άλλη.
+
+"Φ" ΑΠΟΚΛΕΙΣΤΙΚΟ
+
+  [5]Έστειλαν λογαριασμό νοσοκομείου σε θύμα του Μαρί
+    Links:
+      5. http://www.philenews.com/el-gr/Eidiseis-Kypros/22/86424
+
+  Για τη νοσηλεία του 28χρονου ειδικού αστυφύλακα Χριστόδουλου Αντωνίου στο
+  νοσοκομείο, η οικογένεια του έλαβε λογαριασμό €833. Μετά την έκρηξη στο
+  Μαρί, ο 28χρονος νοσηλεύτηκε στην εντατική με πολύ σοβαρά τραύματα και
+  υποβλήθηκε σε σωρεία χειρουργικών επεμβάσεων σε Κύπρο και εξωτερικό.
+
+  [6]Πόρισμα καίει αστυνομικούς για τα θάνατο Ρωσίδας
+    Links:
+      6. http://www.philenews.com/el-gr/Eidiseis-Kypros/22/86423
+
+  Δέκα χρόνια μετά τον μυστηριώδη θάνατο της 22χρονης Ρωσίδας Οξάνα Ράντσιεβα
+  ο φάκελος ξανανοίγει. Πόρισμα των ποινικών ανακριτών, που έκαναν έρευνα
+  μετά από απόφαση του ΕΔΑΔ, επιρρίπτει ευθύνες στην Αστυνομική Διεύθυνση
+  Λεμεσού για τον χειρισμό της υπόθεσης και παρέδωσε τον φάκελο στον Γενικό
+  Εισαγγελέας.
+
+ΟΙΚΟΝΟΜΙΑ
+
+  [7]Μέτρα σε ακανθώδες σκηνικό
+    Links:
+      7. http://www.philenews.com/el-gr/Oikonomia-Kypros-XAK/3353/86421
+
+  Ενώ τα χρονικά περιθώρια για μέτρα που θα αντιμετωπίσουν τα προβλήματα της
+  οικονομίας  στενεύουν όλο και περισσότερο, την ίδια στιγμή το περιβάλλον
+  επιβαρύνεται επικίνδυνα αυξάνοντας τα εμπόδια που πρέπει η Κυβέρνηση να
+  προσπελάσει.
+
+  [8]Ένα βήμα πριν το Μηχανισμό
+    Links:
+      8. http://www.philenews.com/el-gr/Oikonomia-Kypros-XAK/3353/86422
+
+  Οι νέες προειδοποιήσεις του Όλι Ρεν μέσω του «Φ» δεν πρέπει να περάσουν
+  απαρατήρητες. Κόμματα καλούν την Κυβέρνηση να αποτολμήσει ουσιαστικά μέτρα.
+  Όχι «μιλλοσφοντζίσματα».
+
+  [9]Από βδομάδας η απόφαση
+    Links:
+      9. http://www.sentragoal.com.cy/article.asp?catid=19169&subid=2&pubid=128854496
+
+  Ολοκληρώθηκε λίγο μετά τις 21:00 η συνεδρία της Δικαστικής Επιτροπής για το
+  πολύκροτο θέμα της παραπομπής του τεχνικού της Ομόνοιας Νεόφυτου Λάρκου και
+  του προέδρου Μιλτιάδη Νεοφύτου από τον διαιτητή Χρίστο Ηλία.
+
+ΕΝΔΙΑΦΕΡΟΥΝ ΚΙ' ΑΥΤΑ
+
+  [10]Aσυνήθιστα επίπεδα ραδιενεργού ιωδίου σε χώρες της Ευρώπης
+    Links:
+      10. http://www.philenews.com/el-gr/Eidiseis-Perivallon-Epistimi/5139/86338/paramenoun-ta-chamila--alla-asynithista--epipeda-radienergou-iodiou-se-chores-tis-evropis
+
+  H IAEA ανακοίνωσε ότι τα χαμηλά (αλλά ασυνήθιστα) επίπεδα του ραδιενεργού
+  ιωδίου παραμένουν πάνω από επτά ευρωπαϊκές χώρες. Οι χώρες αυτές είναι:
+  Τσεχία, Αυστρία, Σλοβακία, Γερμανία, Σουηδία, Γαλλία και Πολωνία.
+
+  [11]Super foods καταπολεμούν τις ιώσεις
+    Links:
+      11. http://www.philenews.com/el-gr/Ygeia/1152/86393
+
+  Καθώς το θερμόμετρο εξακολουθεί να παίζει με τα νεύρα μας, αφήνει ανοιχτό
+  το  πεδίο για να δράσουν οι ιοί και τα μικρόβια που είναι ικανά να μας
+  ρίξουν στο κρεβάτι. Εάν δεν θέλετε, λοιπόν, απρόσκλητους επισκέπτες να
+  κλωνίζουν την υγεία σας, προετοιμάστε σωστά τον οργανισμό σας και θα τους
+  αποφύγετε μια για πάντα.
+
+  _ΕΛΛΑΔΑ_
+
+  [12]«Δέχομαι  επιθέσεις  λόγω  της  δημοφιλίας  μου» δηλώνει ο Γιώργος
+  Καρατζαφέρης
+    Links:
+      12. http://www.philenews.com/el-gr/Eidiseis-Ellada/23/86401/dechomai-epitheseis-logo-tis-dimofilias-mou-dilonei-o-giorgos-karatzaferis
+
+  [13]Μπαράζ επαφών Παπαδήμου σε Βρυξέλλες-Λουξεμβούργο από τη Δευτέρα
+    Links:
+      13. http://www.philenews.com/el-gr/Eidiseis-Ellada/23/86399/mparaz-epafon-papadimou-se-vryxelles-louxemvourgo-apo-ti-deftera
+
+  _ΚΟΣΜΟΣ_
+
+  [14]Νομικά μέτρα κατά της Benetton αποφάσισε να λάβει το Βατικανό
+  [15]«Ειδικού σκοπού» θέλει την κυβέρνηση Μόντι ο Σίλβιο Μπερλουσκόνι
+    Links:
+      14. http://www.philenews.com/el-gr/Eidiseis-Kosmos/25/86415/nomika-metra-kata-tis-benetton-apofasise-na-lavei-to-vatikano
+      15. http://www.philenews.com/el-gr/Eidiseis-Kosmos/25/86409/eidikou-skopou-thelei-tin-kyvernisi-monti-o-silvio-berlouskoni
+
+  _ΑΘΛΗΤΙΚΑ ΝΕΑ_
+
+  _ ΚΥΠΡΟΣ_
+
+  [16]Ιβάν: «Οι παίκτες μου σκέφτονται τον πρωταθλητισμό»
+    Links:
+      16. http://www.sentragoal.com.cy/article.asp?catid=19171&subid=2&pubid=128854246
+
+  [17]Λέβι:«Σαν να είναι το πιο σημαντικό της χρονιάς»
+    Links:
+      17. http://www.sentragoal.com.cy/article.asp?catid=19170&subid=2&pubid=128854351
+
+  [18]ΑΕΛ: Οι σκέψεις για ενδεκάδα
+    Links:
+      18. http://www.sentragoal.com.cy/article.asp?catid=19173&subid=2&pubid=128854415
+
+  _ ΕΛΛΑΔΑ & ΚΟΣΜΟΣ_
+
+  [19]ΠΑΟ: Αντίο στην πρωτιά, χαστούκι ενόψει ντέρμπι
+    Links:
+      19. http://www.sentragoal.com.cy/article.asp?catid=18726&subid=2&pubid=128854389
+
+  [20]Το πιο τέλειο ντέρμπι... ever!
+    Links:
+      20. http://www.sentragoal.com.cy/article.asp?catid=18650&subid=2&pubid=128854312
+
+  [21]Απάντηση Ολυμπιακού στον Τσάκα!
+    Links:
+      21. http://www.sentragoal.com.cy/article.asp?catid=18679&subid=2&pubid=128854503
+
+  [22]ΑΕΚ: Περιμένοντας τα πετροδόλαρα από το Κατάρ
+    Links:
+      22. http://www.sentragoal.com.cy/article.asp?catid=18673&subid=2&pubid=128854508
+
+  _ΧΡΗΣΙΜΑ_
+
+  Γιορτάζουν σήμερα:
+
+  Πλάτωνας, Πλατωνία
+
+  [23]Αεροπορικές πτήσεις
+    Links:
+      23. http://www.philenews.com/el-gr/Aeroporikes-Ptiseis
+
+  [24]Φαρμακεία
+    Links:
+      24. http://www.philenews.com/el-gr/Farmakeia
+
+  [25]Λιμάνια
+    Links:
+      25. http://www.philenews.com/el-gr/Limeniki-Kinisi
+
+  [26]Τηλέφωνα
+    Links:
+      26. http://www.philenews.com/el-gr/Tilefwna
+
+  [27]Κληρώσεις /[28]Λαχεία
+    Links:
+      27. http://www.philenews.com/el-gr/Klirwseis-OPAP
+      28. http://www.philenews.com/el-gr/Klirwseis-OPAP
+
+  Copyright © 2011 Phileleftheros, All rights reserved.
+
+  [29]Unsubscribe from this list | [30]Update subscription preferences
+    Links:
+      29. http://philenews.us2.list-manage.com/unsubscribe?u=84e8c0ea4dc808b59204e2171&id=13cea9817b&e=b4828836f9&c=07dda52c9f
+      30. http://philenews.us2.list-manage.com/profile?u=84e8c0ea4dc808b59204e2171&id=13cea9817b&e=b4828836f9
+
+  [31]Αν επιθυμείτε να κάνετε εγγραφή στο newsletter κάντε κλικ εδώ
+    Links:
+      31. http://eepurl.com/getzb
+
+  To ensure future delivery of our e-mails,
+  please add newsletter@phileleftheros.com to your contacts.

@@ -1,0 +1,207 @@
+# isMultivalued -- Either an array or a set. In the latter case what is really stored in the attribute is the OID of a tuple in the xo_proc catalog. The xo_proc tuple contains the query string that defines this set - i.e., the query to run to get the set. So the type (see above) refers to the type returned by this query, but the actual length of this attribute is the length (size) of an oid. --- At least this is the theory. All this is probably quite broken these days.
+
+# isLocal -- This attribute is defined locally in the object. Note that an attribute may be locally defined and inherited simultaneously.
+
+Class Attribute -parameter {
+    {name            "[namespace tail [self]]"}
+    {dbname          "[string tolower [string map {: _} [namespace tail [self]]]]"}
+    {dom             "[[my info parent] info parent]"}
+    {isHidden        "no"}
+    {isUnique        "no"}
+    {isStored        "yes"}
+    {isProxy         "no"}
+    {label           ""}
+    {default         ""}
+    {acc_method      "BTREE"}
+    {datatype        "[string toupper [string trimleft [my info class] :]]"}
+
+    {type            ""}
+    {isNullable      "no"}
+    {isMultiple      "no"}
+    {isMultivalued   "no"}
+    {isLocal         "yes"}
+
+
+}
+
+Attribute instproc get_conf {} {
+    my instvar name
+    set result "[my info class] ${name}"
+    foreach varname {isNullable isUnique} {
+	my instvar ${varname}
+	if {[info exists ${varname}]} {
+	    append result " -${varname} [set ${varname}]"
+	}
+    }
+    return ${result}
+
+}
+
+Attribute instproc asNULL {} {
+
+    return "NULL::[my datatype] as [my dbname]"
+}
+
+Attribute instproc autovalue {pathexp} {
+    return [my default]
+}
+
+
+Attribute instproc default_value {o} {
+    my instvar default
+    if {[exists_and_not_null default]} {
+	return ${default}
+    } else {
+	return NULL
+    }
+}
+
+Attribute instproc getValue {o} {
+
+    my instvar name
+
+    if { [${o} exists ${name}] } {
+	set value [${o} set ${name}]
+	if {[string equal ${value} {}]} {
+	    set result [my default_value ${o}]
+	} else {
+	    set result [ns_dbquotevalue ${value}]
+	}
+    } else {
+	set result [my default_value ${o}]
+    }
+    
+    ## Why not 'regsub -all {\\} ${str} {\\\\} str' ?
+    # Michael Cleverly wrote: In Tcl 8.4+ 'string map' is faster 
+    # (because, iirc, 'string map' now gets byte-code compiled).  
+    # On the other hand, in Tcl 8.3 & earlier 'regsub'
+    # (for this type of case) is quicker.
+   
+    return [string map {\\ \\\\} ${result}]
+
+}
+
+Attribute instproc get_column_def { ns } {
+    return "[my dbname] [my datatype] [aux::decode [my isNullable] yes {} no { NOT NULL}]"
+
+    set comment {[aux::decode [my isUnique] no {} yes { UNIQUE}]}
+}
+
+Class Boolean  -superclass "Attribute"
+Class Integer  -superclass "Attribute"
+Class Intarray  -superclass "Attribute" -parameter {{datatype {integer\[\]}} {acc_method {gist}}}
+Class Decimal -superclass "Attribute"
+Class Double -superclass "Attribute" -parameter {{datatype {double precision}}}
+Class Smallint -superclass "Integer"
+Class Bigint   -superclass "Integer"
+Class String   -superclass "Attribute" -parameter {{maxlen ""}}
+Class TSearch2_Vector -superclass "Attribute" -parameter {{datatype {tsvector}}}
+
+String instproc init {} {
+    if { [my maxlen] > 1000 || [string equal [my maxlen] ""] } { 
+	my datatype "VARCHAR" 
+    } else { 
+	my datatype "VARCHAR([my maxlen])"
+    }
+}
+
+Class Timestamptz -superclass Attribute -parameter {
+    {default "timestamp 'now'"}
+    {datatype "timestamp with time zone"}
+}
+
+
+
+
+
+Class Timestamp -superclass Attribute -parameter {
+    {default "timestamp 'now'"}
+    {datatype "timestamp without time zone"}
+}
+
+Class Interval -superclass Attribute -parameter {
+    {datatype "INTERVAL"}
+}
+
+Class LTree -superclass Attribute -parameter {
+    {acc_method "GIST"}
+}
+
+Class BLOB -superclass "Attribute"
+
+Class Image -superclass "BLOB"
+
+
+Class Serial -superclass "Attribute"
+
+Class OID -superclass "Integer" -parameter {
+    {isNullable "no"}
+    {isUnique "yes"}
+    {isHidden "yes"}
+    {datatype "INTEGER"}
+}
+
+OID instproc init {} {
+
+    [my dom] key [my name]
+
+    set sequence_spec "Sequence [my name]"
+    [my dom] sequence [list $sequence_spec]
+
+}
+
+OID instproc default_value {o} {
+    return "xo__nextval([ns_dbquotevalue [${o} info.db.sequence]])"
+}
+
+OID instproc autovalue {pathexp} {
+
+    set ns [my dbNamespace ${pathexp}]
+
+    set pool [my dbPool ${ns}]
+
+    set conn [DB_Connection new -volatile -pool ${pool}]
+
+    if {![${conn} exists [my pdl.schema.exists ${ns}]]} {
+        try { ${conn} do [my pdl.schema.create ${ns}] }
+    }
+
+    if {![${conn} exists [my pdl.sequence.exists ${ns}]]} {
+        try { ${conn} do [my pdl.sequence.create ${ns}] }
+    }
+
+    return [${conn} getvalue [my pdl.sequence.nextvalue ${ns}]]
+}
+
+
+
+
+Class FKey -superclass "Attribute" -parameter {
+    {ref ""}
+    {refkey ""}
+    {onUpdateAction ""}
+    {onDeleteAction ""}
+}
+
+
+FKey instproc init {} {    
+    if { [string equal [my refkey] ""] } {
+	my refkey [[my ref] key]
+    }
+    my datatype "[[my ref]::attribute::[my refkey] datatype]"
+}
+
+FKey instproc get_column_def { ns } {
+    return "[next] references ${ns}.xo__[string map {: _} [string trimleft [my ref] {:}]]([my refkey]) [ad_decode [my onDeleteAction] "" "" "on delete [my onDeleteAction]"]"
+}
+
+FKey instproc relmap {} {
+    if { [[self] isMultiple] } {
+	set table [my ref]
+    } else {
+	set table [[my info parent] name]
+    }
+    return [list ${table}]
+}
+
+Class SK

@@ -1,0 +1,7 @@
+#!/bin/sh
+#
+# TEST: Deny-list addition:             
+
+$PROG -d $BACKEND:$TESTDB -ymme test@Test.com
+$PROG -d $BACKEND:$TESTDB -yte test@test.com
+$PROG -d $BACKEND:$TESTDB -yte TeSt@TEST.com

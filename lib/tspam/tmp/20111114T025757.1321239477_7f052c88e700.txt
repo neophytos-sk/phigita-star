@@ -1,0 +1,8 @@
+Received: from 110.53.27.131 (HELO YCBGKVBK); Mon, 14 Nov 2011 10:56:06 +0800 
+Message-ID: <20111114105539725386@tuiguang.net> 
+From: =?gb2312?B?zfXM/cTP?= <service@tuiguang.net> 
+To:  
+Subject: =?gb2312?B?M0XQvdfKyei8xtPr0L2z6rncwO28vMfJLS0tLc31zP3Ezw==?= 
+Date: Mon, 14 Nov 2011 10:55:29 +0800 
+X-mailer: Malzjtu 5 
+Whoops!  What is a 'application/vnd.ms-excel'?

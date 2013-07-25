@@ -1,0 +1,190 @@
+body
+{
+}
+
+
+#container { position: relative; }
+#imageView { border: 1px solid #000; cursor: crosshair }
+
+
+
+
+
+
+
+#divPrivateChats
+{
+height:50px;
+background-color : Yellow ;
+text-align : right ;
+
+float: both;
+}
+
+.mainTable
+{
+
+background-color : #E0E0E0   ;
+border-style: solid;
+border-width:1pt ;
+border-color: Gray;
+
+}
+
+
+.chattd
+{
+	border-style: solid;
+	border-color: Gray;
+	border-width: 1pt;
+	vertical-align: bottom;
+	background-color: #FAFAFA;
+	width: 100%;
+	vertical-align: bottom;
+	height: 200px;
+}
+
+.chatInputtd
+{
+	border-style: solid;
+	border-color: Gray;
+	border-width: 1pt;
+	vertical-align: bottom;
+	background-color: #FAFAFA;
+	width: 100%;
+	vertical-align: bottom;
+ 
+}
+
+
+.chatarea
+{
+	height: 200px;
+	padding-left: 6px;
+	overflow: auto;
+	padding-bottom: 4pt;
+}
+
+
+.participants
+{
+	border-width: 1pt;
+	border-style: solid;
+	border-color: Gray;
+	height: 200px;
+	background-color : #F8F8F8  ;
+	padding-left : 3pt ;
+	padding-top : 2pt ;
+}
+
+
+.message
+{
+padding-left : 2pt ;
+	width: 95%;
+	color: Black;
+	font-family:Arial ;
+}
+
+.participant
+{
+	font-family: Arial;
+	color: Black;
+	padding-left: 12pt;
+	cursor: pointer;
+	background-image:url('GreenDot.png');
+	background-repeat:no-repeat;
+	background-position-x : left ;
+	background-position-y : bottom;
+	 
+}
+
+.inactiveParticipant
+{
+	background-color: Yellow;
+}
+
+.tt
+{
+background-color:blue;
+margin-bottom : 0px ;
+}
+.chatbox
+{
+
+
+padding:2px;
+position:fixed;
+border-left:1px solid #cccccc;
+border-top:1px solid #cccccc;
+/*right:0;*/
+/*z-index : -1 ;*/
+bottom:30px;
+width:200px;
+text-decoration:none;
+height:300px;
+padding-right : 10px ;
+margin-bottom : 0px ;
+/*padding-bottom : 30px ;*/
+float:right;
+background-color : #F0F0F0  ;
+overflow:hidden;
+
+
+}
+
+#bottomBar
+{
+
+position:fixed;
+height:30px;
+bottom:0;
+right:0;
+left:0;
+border-top:#cccccc 1px solid;
+/*padding-right:30px;*/
+text-align : right ;
+}
+
+.chatBoxControlBox
+{
+display: inline-block ;
+width:100%;
+}
+
+.closeClass
+{
+display: block ;
+/*background-color : Yellow  ;*/
+	background-image:url('closeX.gif');
+	background-repeat:no-repeat;
+	background-position-x : right ;
+	background-position-y : bottom;
+	float : right ;
+}
+
+.closeClass:hover, .minClass:hover, .userName:hover
+{
+cursor : pointer ;
+}
+
+
+.minClass
+{
+	float : right ;
+display: block ;
+/*background-color : Yellow  ;*/
+	background-image:url('minus.gif');
+	background-repeat:no-repeat;
+	background-position-x : left ;
+	background-position-y : bottom;
+}
+
+.userName
+{
+
+float : left ;
+padding-left : 7px ;
+text-decoration : underline ;
+
+}

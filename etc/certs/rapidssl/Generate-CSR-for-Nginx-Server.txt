@@ -1,0 +1,61 @@
+
+
+
+_B_a_c_k
+_H_o_m_e > _S_u_p_p_o_r_t >  Solution Details
+************ SSoolluuttiioonn ************
+Generate CSR for Nginx Server
+
+SSoolluuttiioonn IIDD::    SO17666
+    VVeerrssiioonn::    1.0
+  PPuubblliisshheedd::    07/31/2009
+******** RReessoolluuttiioonn ********
+Login to your server via your terminal client (ssh). At the prompt, type:
+ooppeennssssll rreeqq --nneeww --nnooddeess --kkeeyyoouutt sseerrvveerr..kkeeyy --oouutt sseerrvveerr..ccssrr
+where server is the name of your server.
+This will begin the process of generating two files: the PPrriivvaattee--KKeeyy file for
+the decryption of your SSL Certificate, and a certificate signing request (CCSSRR)
+file used to apply for your SSL Certificate. This command will prompt for the
+following X.509 attributes of the certificate:
+    * CCoouunnttrryy NNaammee ((CC)):: Use the two-letter code without punctuation for
+      country, for example: US or CA.
+    * SSttaattee oorr PPrroovviinnccee ((SS)):: Spell out the state completely; do not abbreviate
+      the state or province name, for example: California.
+    * LLooccaalliittyy oorr CCiittyy ((LL)):: The Locality field is the city or town name, for
+      example: Berkeley.
+    * OOrrggaanniizzaattiioonn ((OO)):: If your company or department has an &, @, or any other
+      symbol using the shift key in its name, you must spell out the symbol or
+      omit it to enroll, for example: XY & Z Corporation would be XYZ
+      Corportation or XY and Z Corportation.
+    * OOrrggaanniizzaattiioonnaall UUnniitt ((OOUU)):: This field is the name of the department or
+      organization unit making the request.
+    * CCoommmmoonn NNaammee ((CCNN)):: The Common Name is the Host + Domain Name. It looks
+      like "www.company.com" or "company.com".
+       
+Please do not enter your email address, challenge password or an optional
+company name when generating the CSR.
+Your .csr file will then be created.
+******** DDiissccllaaiimmeerr:: ********
+RapidSSL has made efforts to ensure the accuracy and completeness of the
+information in this document. However, RapidSSL makes no warranties of any kind
+(whether express, implied or statutory) with respect to the information
+contained herein. RapidSSL assumes no liability to any party for any loss or
+damage (whether direct or indirect) caused by any errors, omissions, or
+statements of any kind contained in this document.  Further, RapidSSL assumes
+no liability arising from the application or use of the product or service
+described herein and specifically disclaims any representation that the
+products or services described herein do not infringe upon any existing or
+future intellectual property rights. Nothing herein grants the reader any
+license to make, use, or sell equipment or products constructed in accordance
+with this document. Finally, all rights and privileges related to any
+intellectual property right described herein are vested in the patent,
+trademark, or service mark owner, and no other person may exercise such rights
+without express permission, authority, or license secured from the patent,
+trademark, or service mark owner. RapidSSL reserves the right to make changes
+to any information herein without further notice.
+_A_b_o_u_t_ _U_s|_L_e_g_a_l|_C_o_n_t_a_c_t_ _U_s|_S_i_t_e_ _M_a_p|_F_r_e_e_S_S_L_ _C_e_r_t_i_f_i_c_a_t_e_s
+©  RapidSSL. RapidSSL is a leading certificate authority, enabling secure
+socket layer (SSL) encryption trusted by over 99% of browsers and customers
+worldwide for web site security. We specialize in fast issuance of low cost and
+free SSL certificates and wildcard SSL certificates. _R_a_p_i_d_S_S_L_ _C_e_r_t_i_f_i_c_a_t_e_s,
+_R_a_p_i_d_S_S_L_ _W_i_l_d_c_a_r_d_ _C_e_r_t_i_f_i_c_a_t_e_s and _F_r_e_e_S_S_L_[_T_M_]_ _C_e_r_t_i_f_i_c_a_t_e_s.

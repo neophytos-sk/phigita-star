@@ -1,0 +1,43 @@
+ad_page_contract {
+	@author Neophytos Demetriou
+} {
+	id:integer,notnull
+	part:notnull,trim
+	{m:trim ""}
+	{username:trim,notnull "k2pts"}
+}
+
+
+
+if { -1 == [lsearch "webmaster k2pts" $username] } {
+        doc_return 200 text/plain "wrong username"
+        return
+}
+
+
+
+#set mailid [ns_imap open -mailbox [format {{localhost/ssl/novalidate-cert}%s} [join "INBOX ${m}" .]] -user ${username} -password 662051]
+set mailid [ns_imap open -mailbox [format {{127.0.0.1/ssl/novalidate-cert}%s} [join "INBOX ${m}" .]] -user ${username} -password 662051]
+
+set comment {set mailid [ns_imap open -mailbox {{localhost/ssl/novalidate-cert}} -user ${username} -password 662051]}
+
+ns_imap struct $mailid $id -array struct -flags UID
+
+##### validate: part < struct(part.count)
+
+ns_imap bodystruct $mailid $id $part -array bodystruct -flags UID
+
+ns_imap body $mailid $id $part -return -flags UID
+
+set comment {
+ns_write "HTTP/1.0 200 OK
+MIME-Version: 1.0
+Content-Type:  $bodystruct(type)/$bodystruct(subtype)
+pragma: no-cache
+
+[ns_imap body $mailid $id $part -decode -flags UID]"
+
+}
+ns_imap close $mailid
+
+

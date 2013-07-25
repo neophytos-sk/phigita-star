@@ -1,0 +1,733 @@
+2011-05-29 22:08  bodanker
+
+	* [r110] tests/unitTests/runit.TTR.Misc.R,
+	  tests/unitTests/runit.TTR.Volatility.R,
+	  tests/unitTests/runit.TTR.Volume.R:
+	  - Changes to unit tests to avoid errors (these really need some love)
+
+2011-05-29 21:59  bodanker
+
+	* [r109] R/priceBands.R, man/priceBands.Rd:
+	  - Clean up PBands function and documentation
+
+2011-05-28 20:32  bodanker
+
+	* [r108] R/volatility.R, man/volatility.Rd:
+	  - Corrected close-to-close volatility (thanks to James Toll)
+
+2011-03-26 04:04  bodanker
+
+	* [r107] NAMESPACE:
+	  - Exported DVI indicator
+
+2011-03-08 04:31  bodanker
+
+	* [r106] R/DVI.R, man/DVI.Rd, src/moving_averages.c, src/wilderSum.c:
+	  - Cleaned up C code for moving average functions
+	  - Initalized 'sum' in wilderSum.c
+	  - Added DVI indicator and documentation
+
+2011-01-17 17:13  bodanker
+
+	* [r105] DESCRIPTION, man/TTR.Rd, src/wilderSum.c,
+	  tests/unitTests/output.runFun.rda, tests/unitTests/output.trend.rda:
+	  - Fix wilderSum to seed initial value with raw sum. Thanks to Mahesh.
+	  - Updated wilderSum and ADX unit test data.
+	  - Increase version to 0.20-3
+
+2010-11-16 13:19  bodanker
+
+	* [r104] R/priceBands.R, man/priceBands.Rd:
+	  - Added Brian Peterson's PBands function
+
+2010-10-09 23:36  bodanker
+
+	* [r103] NAMESPACE, R/MovingAverages.R, man/MovingAverages.Rd,
+	  src/moving_averages.c, tests/unitTests/output.overlays.rda:
+	  - Adjusted unit test data for BBands to be consistent with r102
+	  - Added variable-length MA function and documentation
+
+2010-07-04 19:32  jryan
+
+	* [r102] R/bollingerBands.R:
+	  o fixed sd calculation to use population statistic
+	  instead of sample statistic. This is consistent
+	  with Bollinger Band literature
+
+2010-05-20 00:57  bodanker
+
+	* [r101] R/WebData.R, R/adjRatios.R:
+	  - Added PACKAGE="TTR" arg to .Call to adjRatios
+	  - Fixed stockSymbols() for nasdaq.com changes
+
+2010-03-24 02:42  bodanker
+
+	* [r99] CHANGES, DESCRIPTION, man/TTR.Rd,
+	  tests/unitTests/runit.TTR.MovingAverages.R:
+	  - Housekeeping before submitting to CRAN.
+
+2010-03-11 21:45  jryan
+
+	* [r98] R/MovingAverages.R:
+	  added check for missing n when ratio is specified to EMA. If missing,
+	  converts n to approx. "correct" value given ratio
+
+2010-02-26 05:32  bodanker
+
+	* [r97] R/MovingAverages.R, src/adjRatios.c, src/moving_averages.c,
+	  src/sar.c, src/wilderSum.c:
+	  - Fixed bug in EMA when n < NROW(x), thanks to Douglas Hobbs
+	  - Converted C++ style comments to C style
+
+2010-01-15 01:35  bodanker
+
+	* [r96] R/MovingAverages.R, man/MovingAverages.Rd:
+	  - Added v-factor generalization to DEMA; thanks to John Gavin
+
+2010-01-09 20:59  bodanker
+
+	* [r95] R/ADX.R, R/ATR.R, R/CCI.R, R/CLV.R, R/CMF.R, R/CMO.R, R/DPO.R,
+	  R/DonchianChannel.R, R/EMV.R, R/GMMA.R, R/KST.R, R/MACD.R, R/MFI.R,
+	  R/MovingAverages.R, R/OBV.R, R/RSI.R, R/SAR.R, R/TDI.R, R/TRIX.R,
+	  R/TTRtools.R, R/VHF.R, R/WPR.R, R/WebData.R, R/ZigZag.R,
+	  R/adjRatios.R, R/aroon.R, R/bollingerBands.R, R/chaikinAD.R,
+	  R/chaikinVolatility.R, R/changes.R, R/runFun.R, R/stochastics.R,
+	  R/volatility.R, R/williamsAD.R, src/adjRatios.c, src/movingAverages.f,
+	  src/moving_averages.c, src/runFun.f, src/sar.c, src/sar.f,
+	  src/wilderSum.c, src/zigzag.f:
+	  - Updated Copyright date to include 2010
+	  - Moved SAR to .Call and used xts:::naCheck
+
+2009-12-13 21:29  bodanker
+
+	* [r94] R/MovingAverages.R, R/runFun.R, src/moving_averages.c,
+	  src/wilderSum.c:
+	  - Moved wilderSum and EVWMA to .Call and used xts:::naCheck
+
+2009-12-03 03:02  bodanker
+
+	* [r93] R/MovingAverages.R, R/RSI.R, src/moving_averages.c:
+	  - Moved EMA from .Fortran to .Call and used xts:::naCheck
+	  - RSI up/down momentum now faster with xts, thanks to Jeff Ryan
+
+2009-10-17 15:31  bodanker
+
+	* [r92] R/stochastics.R:
+	  - Fix to stoch() when maType is a list and 'n' is not set
+	  in the list's 3rd element (thanks goes to Wind)
+	  - Fixed fastK in stoch() when smooth != 1
+
+2009-09-30 01:20  bodanker
+
+	* [r91] NAMESPACE, R/MovingAverages.R, R/volatility.R,
+	  man/MovingAverages.Rd:
+	  - Added VWAP and VWMA for Brian
+	  - Fixed volatility() fix (sigh)
+
+2009-09-30 00:55  bodanker
+
+	* [r90] R/volatility.R, man/volatility.Rd:
+	  - Updated volatility() to handle univariate case of
+	  calc='close', thanks to Cedrick Johnson
+
+2009-08-28 03:32  bodanker
+
+	* [r88] CHANGES, DESCRIPTION, R/VHF.R, man/TTR.Rd, man/VHF.Rd:
+	  - Removed fmlabs.com references for VHF, since their formulas are
+	  wrong.
+	  - Housekeeping before submitting to CRAN.
+
+2009-08-22 01:37  bodanker
+
+	* [r87] R/VHF.R, tests/unitTests/output.trend.rda:
+	  - Fixed VHF bug and updated unit test output. Thanks to
+	  Jürgen Wurzer for the report!
+
+2009-08-07 22:12  bodanker
+
+	* [r86] DESCRIPTION, R/ATR.R, R/CMO.R, R/DPO.R, R/DonchianChannel.R,
+	  R/EMV.R, R/GMMA.R, R/KST.R, R/MACD.R, R/MovingAverages.R, R/RSI.R,
+	  R/TDI.R, R/TRIX.R, R/aroon.R, R/bollingerBands.R, R/stochastics.R,
+	  man/MovingAverages.Rd, man/TTR.Rd:
+	  - Updated version in DESCRIPTION and man/TTR.Rd.
+	  - Fixed bug in WMA, EVWMA, ZLEMA, and GMMA; results were not being
+	  reclassed back to their original class.
+	  - Updated CMO, DPO, DonchianChannel, RSI, and TDI to *explicitly*
+	  use xts internally.
+	  - Set colnames after cbind call in the following functions: ADX,
+	  aroon,
+	  ATR, BBands, DonchianChannel, EMV, KST, MACD, stoch, SMI, TDI, TRIX.
+
+2009-07-30 03:59  bodanker
+
+	* [r84] CHANGES, DESCRIPTION, man/TTR.Rd:
+	  - Housekeeping before submitting to CRAN.
+
+2009-07-29 00:20  bodanker
+
+	* [r83] R/stochastics.R, man/stochastics.Rd:
+	  - Moved stoch() 'smooth' arg to end of arg list to not disrupt arg
+	  matching by order (not just by name).
+
+2009-07-22 01:20  bodanker
+
+	* [r82] R/KST.R, R/MACD.R, R/TRIX.R, R/stochastics.R, R/zzz.R,
+	  man/adjRatios.Rd:
+	  - Removed message from .onLoad()
+	  - Corrected the logic that populated 'n' for each MA in maType,
+	  in the case maType is a list.
+	  - Corrected spelling mistake in adjRatios.Rd
+
+2009-07-18 23:35  bodanker
+
+	* [r81] R/runFun.R, man/runFun.Rd, src/runFun.f,
+	  tests/unitTests/runit.TTR.runFun.R:
+	  - Added from inception capability to all "runFun" functions via
+	  the "cumulative" argument.
+	  - Added y=NULL argument to runVar() to be consistent with
+	  stats::var() (and updated unit tests).
+	  - Changed default value of runMAD() "center" argument to NULL to
+	  handle new cumulative argument. For runMAD(..., cumulative=TRUE)
+	  to return expected results, center=runMedian(x,n,cumulative=TRUE)
+	  is necessary.
+
+2009-06-14 05:26  bodanker
+
+	* [r80] R/stochastics.R, man/stochastics.Rd:
+	  - Added internal smoothing to stochastic calculation;
+	  thanks to Stanley Neo for the suggestion!
+
+2009-06-03 03:43  bodanker
+
+	* [r79] R/runFun.R, R/zzz.R, man/runFun.Rd:
+	  - Replaced cat() with message() in .onLoad()
+	  - Added fixed-start capability to runSum, runMin, runMax, runMean
+
+2009-05-28 04:01  bodanker
+
+	* [r78] DESCRIPTION:
+	  - \/\/\/ It helps to do what you put in the log \/\/\/
+	  - Updated version to 0.20-0 (to fix version issues...)
+
+2009-05-28 03:59  bodanker
+
+	* [r77] NAMESPACE, R/WebData.R, R/adjRatios.R, R/adjSplitDiv.R,
+	  man/adjRatios.Rd, man/adjSplitDiv.Rd, src/adjRatios.c,
+	  src/adjSplitDiv.c:
+	  - Changed all instances of "adjSplitDiv" to "adjRatios"
+	  - Updated version to 0.20-0 (to fix version issues...)
+
+2009-05-26 05:24  bodanker
+
+	* [r76] DESCRIPTION, man/ADX.Rd, man/ATR.Rd, man/CCI.Rd, man/CLV.Rd,
+	  man/CMF.Rd, man/CMO.Rd, man/DPO.Rd, man/DonchianChannel.Rd,
+	  man/EMV.Rd, man/GMMA.Rd, man/KST.Rd, man/MACD.Rd, man/MFI.Rd,
+	  man/MovingAverages.Rd, man/OBV.Rd, man/RSI.Rd, man/SAR.Rd, man/TDI.Rd,
+	  man/TRIX.Rd, man/TTR.Rd, man/TTRtools.Rd, man/VHF.Rd, man/WPR.Rd,
+	  man/WebData.Rd, man/ZigZag.Rd, man/adjSplitDiv.Rd, man/aroon.Rd,
+	  man/bollingerBands.Rd, man/chaikinAD.Rd, man/chaikinVolatility.Rd,
+	  man/changes.Rd, man/runFun.Rd, man/stochastics.Rd, man/volatility.Rd,
+	  man/williamsAD.Rd:
+	  - Changed all instances of "Josh" to "Joshua"
+
+2009-05-26 05:10  bodanker
+
+	* [r75] R/KST.R, R/MACD.R, R/RSI.R, R/TRIX.R, R/stochastics.R,
+	  man/KST.Rd, man/MACD.Rd, man/TRIX.Rd, man/stochastics.Rd:
+	  - Added check to the following functions to ensure
+	  'maType' has the correct number of elements if it
+	  is a list: RSI, KST, MACD, stoch, TRIX.
+	  - Updated Examples section of documentation for
+	  each of the above functions.
+
+2009-05-24 07:27  bodanker
+
+	* [r74] R/WebData.R, R/adjSplitDiv.R:
+	  - Corrected logic in adjSplitDiv.R when checking for all NA split,
+	  dividend, or close values.
+	  - getYahooData() now sets 's.ratio=rep(1,nrow)' when there's no
+	  split data. Was getting errors when calling adjSplitDiv().
+
+2009-05-10 03:48  bodanker
+
+	* [r73] DESCRIPTION, R/WebData.R, R/adjSplitDiv.R, man/ADX.Rd,
+	  man/CCI.Rd, man/VHF.Rd, man/adjSplitDiv.Rd, man/aroon.Rd:
+	  - Fixed adjSplitDiv() to work if no splits/dividends exist
+	  - Fixed getYahooData() when no splits/dividends exist
+	  - Corrected some LaTeX errors in Rd files
+
+2009-03-24 02:54  bodanker
+
+	* [r72] DESCRIPTION, R/WebData.R:
+	  - Removed unnecessary 'format' argument in as.POSIXct call in
+	  getYahooData() (thanks to Gary Funck for discovering this)
+
+2009-03-15 14:06  bodanker
+
+	* [r71] NAMESPACE, R/WebData.R, R/adjSplitDiv.R, man/adjSplitDiv.Rd,
+	  src/adjSplitDiv.c:
+	  - New C routine to create split and dividend adjustment ratios,
+	  which can be accessed through adjSplitDiv() R function.
+	  - getYahooData now uses adjSplitDiv()
+
+2009-02-20 04:29  bodanker
+
+	* [r70] DESCRIPTION, NAMESPACE, R/GMMA.R, man/ADX.Rd, man/CCI.Rd,
+	  man/GMMA.Rd, man/TDI.Rd, man/VHF.Rd, man/aroon.Rd:
+	  - Added Guppy Multiple Moving Average function - GMMA() - and
+	  related documentation.
+	  - Added GMMA to 'See Also' section of documentation for other trend
+	  detection/strength indicators.
+
+2009-02-19 05:25  bodanker
+
+	* [r69] CHANGES, DESCRIPTION, R/volatility.R, man/TTR.Rd,
+	  man/volatility.Rd:
+	  - Added Garman and Klass (Yang Zhang) and Yang Zhang calculations
+	  to the volatility function and updated documentation
+
+2009-02-11 06:06  bodanker
+
+	* [r66] DESCRIPTION, R/zzz.R, man/TTR.Rd:
+	  - Updated 'Date' in DESCRIPTION and man/TTR.Rd
+	  - Updated .onLoad() function to only print one line
+
+2009-02-11 05:40  bodanker
+
+	* [r65] CHANGES, DESCRIPTION, NAMESPACE, R/ATR.R, R/CCI.R, R/CLV.R,
+	  R/CMF.R, R/CMO.R, R/DPO.R, R/EMV.R, R/KST.R, R/MACD.R, R/MFI.R,
+	  R/MovingAverages.R, R/OBV.R, R/RSI.R, R/SAR.R, R/TDI.R, R/TRIX.R,
+	  R/TTRtools.R, R/VHF.R, R/WPR.R, R/aroon.R, R/bollingerBands.R,
+	  R/chaikinAD.R, R/chaikinVolatility.R, R/changes.R, R/runFun.R,
+	  R/stochastics.R, R/volatility.R, R/williamsAD.R, THANKS, WISHLIST,
+	  man/CCI.Rd, man/CLV.Rd, man/CMF.Rd, man/CMO.Rd, man/DPO.Rd,
+	  man/DonchianChannel.Rd, man/EMV.Rd, man/KST.Rd, man/MACD.Rd,
+	  man/MFI.Rd, man/MovingAverages.Rd, man/OBV.Rd, man/SAR.Rd,
+	  man/TRIX.Rd, man/TTR.Rd, man/TTRtools.Rd, man/VHF.Rd, man/WPR.Rd,
+	  man/WebData.Rd, man/ZigZag.Rd, man/aroon.Rd, man/bollingerBands.Rd,
+	  man/chaikinAD.Rd, man/chaikinVolatility.Rd, man/runFun.Rd,
+	  man/ttrc.Rd, man/volatility.Rd, man/williamsAD.Rd:
+	  - Updated CHANGES file for CRAN release
+	  - Removed CR from all EOL characters in all files
+
+2009-01-29 03:35  bodanker
+
+	* [r64] man/ADX.Rd, man/ATR.Rd, man/CCI.Rd, man/CLV.Rd, man/CMF.Rd,
+	  man/CMO.Rd, man/DPO.Rd, man/DonchianChannel.Rd, man/EMV.Rd,
+	  man/KST.Rd, man/MACD.Rd, man/MFI.Rd, man/MovingAverages.Rd,
+	  man/OBV.Rd, man/RSI.Rd, man/SAR.Rd, man/TDI.Rd, man/TRIX.Rd,
+	  man/VHF.Rd, man/WPR.Rd, man/ZigZag.Rd, man/aroon.Rd,
+	  man/bollingerBands.Rd, man/chaikinAD.Rd, man/chaikinVolatility.Rd,
+	  man/changes.Rd, man/runFun.Rd, man/stochastics.Rd, man/volatility.Rd,
+	  man/williamsAD.Rd:
+	  - Updated documentation (value) for xts changes
+
+2009-01-12 02:15  bodanker
+
+	* [r63] DESCRIPTION, R/DonchianChannel.R, man/ADX.Rd, man/ATR.Rd,
+	  man/CCI.Rd, man/CLV.Rd, man/CMF.Rd, man/CMO.Rd, man/DPO.Rd,
+	  man/DonchianChannel.Rd, man/EMV.Rd, man/KST.Rd, man/MACD.Rd,
+	  man/MFI.Rd, man/MovingAverages.Rd, man/OBV.Rd, man/RSI.Rd, man/SAR.Rd,
+	  man/TDI.Rd, man/TRIX.Rd, man/TTRtools.Rd, man/VHF.Rd, man/WPR.Rd,
+	  man/WebData.Rd, man/ZigZag.Rd, man/aroon.Rd, man/bollingerBands.Rd,
+	  man/chaikinAD.Rd, man/chaikinVolatility.Rd, man/changes.Rd,
+	  man/runFun.Rd, man/stochastics.Rd, man/volatility.Rd,
+	  man/williamsAD.Rd, tests/unitTests/runit.TTR.Trend.R:
+	  - Updated documentation (arguments) for xts changes
+	  - Corrected 'Value' section of Donchian Channel documentation
+	  - Updated DonchianChannel to accept univariate series
+	  - Changed unit tests for TDI and VHF to for matrix use
+
+2009-01-11 18:55  bodanker
+
+	* [r62] DESCRIPTION, man/SAR.Rd, man/runFun.Rd:
+	  - Make changes to Rd files to pass R CMD check on R-devel (2.9.0)
+	  - Added dependency on newest xts (with as.xts.numeric, et al.)
+
+2009-01-11 00:44  bodanker
+
+	* [r61] R/ADX.R, R/ATR.R, R/CCI.R, R/CLV.R, R/CMF.R, R/CMO.R, R/DPO.R,
+	  R/DonchianChannel.R, R/EMV.R, R/KST.R, R/MACD.R, R/MFI.R,
+	  R/MovingAverages.R, R/OBV.R, R/RSI.R, R/SAR.R, R/TDI.R, R/TRIX.R,
+	  R/TTRtools.R, R/VHF.R, R/WPR.R, R/WebData.R, R/ZigZag.R, R/aroon.R,
+	  R/bollingerBands.R, R/chaikinAD.R, R/chaikinVolatility.R, R/changes.R,
+	  R/runFun.R, R/stochastics.R, R/volatility.R, R/williamsAD.R,
+	  src/movingAverages.f, src/runFun.f, src/sar.f, src/zigzag.f,
+	  tests/unitTests/runit.TTR.Misc.R:
+	  - Convert function inputs to matrix if they're not xtsible
+	  - Fix CMF to work when both inputs are xts (stupid mistake)
+	  - Updated license at top of each file
+
+2009-01-03 03:07  bodanker
+
+	* [r59] DESCRIPTION, R/zzz.R, man/TTR.Rd:
+	  Updated version and moved 'tags' folder
+
+2008-12-29 02:09  bodanker
+
+	* [r58] DESCRIPTION, R/ADX.R, R/CCI.R, R/WPR.R, R/bollingerBands.R,
+	  R/stochastics.R, tests/unitTests/output.trend.rda,
+	  tests/unitTests/runit.TTR.MovingAverages.R,
+	  tests/unitTests/runit.TTR.Oscillators.R,
+	  tests/unitTests/runit.TTR.Overlays.R,
+	  tests/unitTests/runit.TTR.Trend.R, tests/unitTests/runit.TTR.runFun.R:
+	  - Update unit tests to check attributes
+	  - Added colnames to ADX output
+	  - Corrected BBands and CCI for rowMeans use on xts objects
+	  - Added rownames to unit test output:
+	  - ADX
+	  - aroon
+	  - Changed CCI unit test output class from 'numeric' to 'matrix'
+
+2008-12-20 22:03  bodanker
+
+	* [r57] DESCRIPTION, R/WebData.R:
+	  - getYahooData returns an xts object
+
+2008-12-19 03:50  bodanker
+
+	* [r56] DESCRIPTION, R/SAR.R, R/WPR.R, R/ZigZag.R, R/stochastics.R,
+	  tests/unitTests/runit.TTR.Overlays.R:
+	  - SAR, stoch, SMI, WPR, and ZigZag are xts-aware
+	  - volatility and williamsAD have been xts-aware
+	  - The functions below are xts-aware via changes
+	  in other functions:
+	  - TDI, TRIX, VHF
+	  - Changed SAR and ZigZag unit tests to return
+	  non-xts object
+
+2008-12-18 05:05  bodanker
+
+	* [r55] DESCRIPTION, R/EMV.R, R/KST.R, R/MFI.R, R/OBV.R,
+	  tests/unitTests/output.volume.rda:
+	  - Made EMV, KST, and MFI xts-aware
+	  - The functions below are xts-aware via changes
+	  in other functions:
+	  - MACD, RSI
+	  - Updated MFI unit test output to account for
+	  leading NA
+
+2008-12-18 03:32  bodanker
+
+	* [r54] DESCRIPTION, R/CLV.R, R/EMV.R, tests/unitTests/output.misc.rda,
+	  tests/unitTests/runit.TTR.Misc.R:
+	  - Updated EMV result to include colnames
+	  - Updated CLV result to include colnames for xts objects
+	  - Removed 'names' attribute from CLV unit test output
+	  - Changed Misc unit tests:
+	  - Added checkEquals test on object attributes (checkIdentical
+	  would do this, but runs into precision issues)
+	  - Separated ROC continuous/discrete cases
+
+2008-12-15 03:59  bodanker
+
+	* [r53] DESCRIPTION, NAMESPACE, R/CCI.R, R/CLV.R, R/CMF.R,
+	  R/DonchianChannel.R, R/bollingerBands.R, R/chaikinAD.R,
+	  man/DonchianChannel.Rd, tests/unitTests/runit.TTR.Misc.R:
+	  - Made BBands, CCI, chaikinAD, and CLV xts-aware
+	  - CMF is now xts-aware (via changes in other functions)
+	  - Changed CLV unit test input to matrix
+	  - Exported DonchianChannel and added documentation
+
+2008-12-14 05:00  bodanker
+
+	* [r52] DESCRIPTION, R/VHF.R, R/chaikinVolatility.R, R/changes.R,
+	  R/williamsAD.R, man/TDI.Rd, man/changes.Rd,
+	  tests/unitTests/output.trend.rda, tests/unitTests/output.volume.rda,
+	  tests/unitTests/runit.TTR.Volatility.R,
+	  tests/unitTests/runit.TTR.Volume.R:
+	  - Made VHF, williamsAD, and chaikinVolatility xts-aware
+	  - Changed VHF() unit test output data to account for the
+	  NA in the 28th element
+	  - Corrected williamsAD: AD=0 if C(t)=C(t-1) and updated
+	  unit test data
+	  - Corrected ROC with type='discrete' for non-xts objects
+
+2008-12-08 02:45  bodanker
+
+	* [r51] DESCRIPTION, R/ADX.R, R/ATR.R, tests/unitTests/output.trend.rda:
+	  - Added xts/non-xts logic to ATR
+	  - Made ADX xts-aware and changed internals to run on xts
+	  and non-xts objects
+	  - Changed unit test output data to account for the first-element
+	  NAs from the momentum() function
+
+2008-11-24 03:23  bodanker
+
+	* [r50] DESCRIPTION, R/ATR.R, R/aroon.R,
+	  tests/unitTests/output.trend.rda, tests/unitTests/runit.TTR.Trend.R:
+	  - Made the following functions xts-aware:
+	  - aroon
+	  - ATR
+	  - Changed internals of aroon(), so the same code can run on xts
+	  and non-xts objects
+	  - aroon() calculation starts at period n+1, instead of n
+	  - Changed aroon() and ATR() output in unit test data to account
+	  for the above change
+	  - Added NA to first element of closeLag of ATR() and changed
+	  unit tests to account for this change
+
+2008-11-03 03:49  bodanker
+
+	* [r49] DESCRIPTION, R/EMV.R, R/KST.R, R/RSI.R, R/TDI.R, R/TRIX.R,
+	  R/VHF.R, R/changes.R, R/williamsAD.R, man/TDI.Rd, man/changes.Rd:
+	  - Removed 'na' arg from ROC and added 'na.pad' arg and created
+	  xts/non-xts logic
+	  - Corrected ROC() discrete logic
+	  - Updated 'na.pad' args in functions using ROC() and momentum()
+	  - Added 'multiple' arg to TDI, to allow more user control
+
+2008-10-31 05:55  bodanker
+
+	* [r48] DESCRIPTION, R/changes.R, man/changes.Rd, src/movingAverages.f:
+	  - Reverted to revision 45 (prior to any dup=TRUE changes)
+	  - Removed 'na' arg from momentum and added 'na.pad' arg and created
+	  xts/non-xts logic
+
+2008-09-05 19:40  bodanker
+
+	* [r47] R/MovingAverages.R:
+	  - WMA and ZLEMA failed unit tests with DUP = FALSE
+	  reverted both back to DUP = TRUE
+
+2008-09-05 19:22  bodanker
+
+	* [r46] R/MovingAverages.R, R/SAR.R, R/ZigZag.R, R/runFun.R:
+	  - Set DUP = FALSE for all .Fortran calls
+
+2008-07-14 02:02  bodanker
+
+	* [r45] R/TTRtools.R, tests/unitTests/output.MA.rda,
+	  tests/unitTests/output.misc.rda, tests/unitTests/output.runFun.rda,
+	  tests/unitTests/output.trend.rda,
+	  tests/unitTests/output.volatility.rda,
+	  tests/unitTests/output.volume.rda, tests/unitTests/runit.TTR.Misc.R,
+	  tests/unitTests/runit.TTR.Trend.R,
+	  tests/unitTests/runit.TTR.Volatility.R,
+	  tests/unitTests/runit.TTR.Volume.R:
+	  - naCheck now has default 'n=0' and returns invisibly
+	  - Added RUnit 'tests' for:
+	  volume
+	  trend
+	  miscellaneous
+
+2008-07-10 02:41  bodanker
+
+	* [r44] R/MovingAverages.R, R/SAR.R, R/TTRtools.R, R/ZigZag.R,
+	  tests/doRUnit.R, tests/unitTests/output.overlays.rda,
+	  tests/unitTests/output.volatility.rda,
+	  tests/unitTests/runit.TTR.MovingAverages.R,
+	  tests/unitTests/runit.TTR.Oscillators.R,
+	  tests/unitTests/runit.TTR.Overlays.R,
+	  tests/unitTests/runit.TTR.Volatility.R,
+	  tests/unitTests/runit.TTR.runFun.R:
+	  - Fixed EMA output vector initialization
+	  - naCheck now accepts both univariate and multivariate inputs
+	  - Added NA handling to ZigZag
+	  - Added NA handling to SAR
+	  - Added RUnit 'tests' for:
+	  volatility
+	  overlays
+
+2008-07-07 04:15  bodanker
+
+	* [r43] R/CMO.R, tests/unitTests/output.MA.rda,
+	  tests/unitTests/output.Oscillators.rda,
+	  tests/unitTests/output.runFun.rda,
+	  tests/unitTests/runit.TTR.MovingAverages.R,
+	  tests/unitTests/runit.TTR.Oscillators.R,
+	  tests/unitTests/runit.TTR.runFun.R:
+	  - momentum() in CMO() no longer sets na=100
+	  - Added RUnit 'tests' for:
+	  Moving Averages
+	  Oscillators
+	  runFun
+
+2008-07-06 02:25  bodanker
+
+	* [r42] R/MovingAverages.R, R/TTRtools.R, tests, tests/doRUnit.R,
+	  tests/unitTests, tests/unitTests/Makefile,
+	  tests/unitTests/runit.TTR.MovingAverages.R:
+	  - Added naCheck() and used it in MA functions
+	  - Added RUnit 'tests' directory structure
+
+2008-06-21 04:18  bodanker
+
+	* [r41] NAMESPACE, R/ADX.R, R/ATR.R, R/CCI.R, R/DPO.R, R/EMV.R, R/KST.R,
+	  R/MACD.R, R/RSI.R, R/TRIX.R, R/bollingerBands.R,
+	  R/chaikinVolatility.R, R/stochastics.R, man/ADX.Rd, man/ATR.Rd,
+	  man/CCI.Rd, man/DPO.Rd, man/EMV.Rd, man/KST.Rd, man/MACD.Rd,
+	  man/MFI.Rd, man/RSI.Rd, man/TRIX.Rd, man/bollingerBands.Rd,
+	  man/chaikinVolatility.Rd, man/stochastics.Rd:
+	  - Added 'bounded' arg to stoch() and SMI()
+	  
+	  - Moved maType default values from function formals to function body,
+	  Updated code and documentation for below functions:
+	  ADX, ATR, CCI, DPO, EMV, KST, MACD, RSI, TRIX,
+	  BBands, chaikinVolatility, stoch, SMI
+
+2008-06-20 02:27  bodanker
+
+	* [r40] R/DonchianChannel.R:
+	  - added DonchianChannel for Jeff
+
+2008-05-27 02:50  bodanker
+
+	* [r39] R/runFun.R:
+	  - runFuns use try.xts instead of use.xts
+
+2008-05-26 18:24  bodanker
+
+	* [r38] R/runFun.R:
+	  - runFuns no longer change the input variable(s), in order to use the
+	  match.to functionality of reclass().
+
+2008-05-22 04:13  bodanker
+
+	* [r37] R/changes.R, R/runFun.R, R/volatility.R:
+	  - Converted ROC, momentum, volatility to use xts
+	  - Moved NA replacement in runFuns to *after* reclass
+
+2008-05-17 05:33  bodanker
+
+	* [r36] DESCRIPTION, R/runFun.R:
+	  - Converted runSum, wilderSum, runMin, runMax, runMedian, runMAD to
+	  use xts
+	  - Removed 'x <- na.omit(x)' from the above functions to aviod input
+	  attributes,
+	  which would be passed to result object via 'reclass(result,
+	  match.to=x)'
+	  - Added 'Depends: xts' to DESCRIPTION file
+
+2008-04-28 02:13  bodanker
+
+	* [r35] R/MFI.R, man/MFI.Rd:
+	  - Added Money Flow Index function and documentation.
+
+2008-04-20 14:26  bodanker
+
+	* [r34] NAMESPACE, R/volatility.R, man/volatility.Rd:
+	  - Added volatility estimators/indicators and documentation.
+
+2008-04-14 06:03  bodanker
+
+	* [r33] R/ZigZag.R, man/ZigZag.Rd, src/zigzag.f:
+	  - Corrected ZigZag to go to top of loop at signal change
+
+2008-04-11 03:49  bodanker
+
+	* [r32] R/runFun.R, man/runFun.Rd:
+	  - Corrected runMedian and runMAD. The arg controlling which
+	  type of median to calculate for even-numbered samples wasn't
+	  being passed to the Fortran routine.
+
+2008-04-03 05:21  bodanker
+
+	* [r31] R/ZigZag.R, R/zzz.R, src/zigzag.f:
+	  - Removed .First.lib function and added .onLoad with package version.
+	  - Make the following changes to ZigZag:
+	  - added lastExtreme T/F arg
+	  - added retrace T/F arg
+	  - added percent T/F arg (affects the change arg)
+	  - added change arg (formerly named 'retrace')
+
+2008-03-13 23:07  bodanker
+
+	* [r30] R/CLV.R:
+	  - Corrected NaN replacement in CLV
+
+2008-03-07 00:46  bodanker
+
+	* [r29] src/zigzag.f:
+	  - Added code to set last two values of the Zig Zag series
+
+2008-03-04 04:14  bodanker
+
+	* [r28] NAMESPACE, R/TTRtools.R, R/ZigZag.R, R/stochastics.R,
+	  src/zigzag.f:
+	  - Added ZigZag indicator (without documentation)
+
+2008-02-24 19:02  bodanker
+
+	* [r27] R/changes.R:
+	  - Revert ROC function to previous version
+
+2008-01-24 04:10  bodanker
+
+	* [r26] CHANGES, DESCRIPTION, man/TTR.Rd:
+	  Updated DESCRIPTION, CHANGES, and man/TTR.Rd files prior
+	  to submitting to CRAN.
+
+2008-01-23 17:04  jryan
+
+	* [r25] R/DPO.R:
+	  fixed trailing 0s to trailing NAs
+
+2008-01-22 18:43  jryan
+
+	* [r24] R/changes.R:
+	  match.arg(type) in ROC changed to simple subsetting of type
+
+2008-01-19 18:44  bodanker
+
+	* [r23] NAMESPACE, R/KST.R, R/MACD.R, R/RSI.R, R/TRIX.R,
+	  R/bollingerBands.R, R/stochastics.R, man/ADX.Rd, man/ATR.Rd,
+	  man/CCI.Rd, man/DPO.Rd, man/EMV.Rd, man/KST.Rd, man/MACD.Rd,
+	  man/RSI.Rd, man/TRIX.Rd, man/TTR.Rd, man/TTRtools.Rd,
+	  man/bollingerBands.Rd, man/chaikinVolatility.Rd, man/stochastics.Rd:
+	  Changed MA-type args and updated documentation for TRIX, MACD,
+	  and KST.
+	  
+	  Corrected SMI code and documentation for incorrect MA-type arg
+	  change.
+	  
+	  Corrected TRIX, stoch, and SMI documentation for 'maType'.
+	  
+	  Renamed 'bollingerBands()' to 'BBands()'.
+	  
+	  Added NAMESPACE.
+
+2008-01-17 03:48  bodanker
+
+	* [r22] R/CCI.R, R/DPO.R, R/EMV.R, R/bollingerBands.R,
+	  R/chaikinVolatility.R, R/stochastics.R, WISHLIST, man/ADX.Rd,
+	  man/ATR.Rd, man/CCI.Rd, man/DPO.Rd, man/EMV.Rd, man/RSI.Rd,
+	  man/bollingerBands.Rd, man/chaikinVolatility.Rd, man/stochastics.Rd:
+	  Changed MA-type args and updated documentation for DPO, EMV, RSI,
+	  bollingerBands, chaikinVolatility, stoch, SMI.
+
+2008-01-15 03:50  bodanker
+
+	* [r21] R/ADX.R, R/ATR.R, R/CCI.R, man/ADX.Rd, man/ATR.Rd, man/CCI.Rd:
+	  - Changed MA-type args and updated documentation for
+	  ADX, ATR, CCI.
+
+2008-01-13 15:08  bodanker
+
+	* [r20] CHANGES, DESCRIPTION, R/ADX.R, R/ATR.R, R/CCI.R, R/CLV.R,
+	  R/CMF.R, R/CMO.R, R/DPO.R, R/EMV.R, R/KST.R, R/MACD.R,
+	  R/MovingAverages.R, R/OBV.R, R/RSI.R, R/SAR.R, R/TDI.R, R/TRIX.R,
+	  R/TTRtools.R, R/VHF.R, R/WPR.R, R/WebData.R, R/aroon.R,
+	  R/bollingerBands.R, R/chaikinAD.R, R/chaikinVolatility.R, R/changes.R,
+	  R/runFun.R, R/stochastics.R, R/williamsAD.R, R/zzz.R, THANKS,
+	  WISHLIST, data, man/ADX.Rd, man/ATR.Rd, man/CCI.Rd, man/CLV.Rd,
+	  man/CMF.Rd, man/CMO.Rd, man/DPO.Rd, man/EMV.Rd, man/KST.Rd,
+	  man/MACD.Rd, man/MovingAverages.Rd, man/OBV.Rd, man/RSI.Rd,
+	  man/SAR.Rd, man/TDI.Rd, man/TRIX.Rd, man/TTR.Rd, man/TTRtools.Rd,
+	  man/VHF.Rd, man/WPR.Rd, man/WebData.Rd, man/aroon.Rd,
+	  man/bollingerBands.Rd, man/chaikinAD.Rd, man/chaikinVolatility.Rd,
+	  man/changes.Rd, man/runFun.Rd, man/stochastics.Rd, man/ttrc.Rd,
+	  man/williamsAD.Rd, src, trunk:
+	  _Correctly_ move TTR/trunk from old repository to pkg/ in r-forge
+	  repository
+
+2008-01-13 02:51  bodanker
+
+	* [r19] trunk:
+	  Move TTR/trunk from old repository to pkg/ in r-forge repository
+
+2007-06-25 10:38  stefan7th
+
+	* [r1] ., R, man:
+	  Email in Readme changed
+

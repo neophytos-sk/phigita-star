@@ -1,0 +1,533 @@
+2011-08-22  Konrad Rieck <konrad.rieck@tu-berlin.de>
+
+  * src/input/input_fasta.c: fixed nasty bug in fasta module
+
+  * compile: minor changes
+
+2011-08-16  Konrad Rieck <konrad.rieck@tu-berlin.de>
+
+  * bootstrap: removed annoying -x in bootstrap script
+
+2011-07-12  Konrad Rieck <konrad.rieck@tu-berlin.de>
+
+  * src/output/output_text.c: fixed annoying bug in feature output (credits to
+  t. krueger)
+
+2011-07-10  Konrad Rieck <konrad.rieck@tu-berlin.de>
+
+  * CHANGES: sync
+
+2011-07-09  Konrad Rieck <konrad.rieck@tu-berlin.de>
+
+  * doc/sally.pod: further comments about run-time behavior
+
+  * doc/sally.cfg, doc/sally.pod: added note about dimensionality
+
+2011-07-05  Konrad Rieck <konrad.rieck@tu-berlin.de>
+
+  * configure.in: version change
+
+  * src/output/output_cluto.c: minor bug fix in output module
+
+  * .gitignore, CHANGES, compile, doc/sally.cfg, doc/sally.pod,
+  src/output/Makefile.am, src/output/output.c, src/output/output_cluto.c,
+  src/output/output_cluto.h: first version of output module for cluto
+
+2011-04-01  Konrad Rieck <konrad.rieck@tu-berlin.de>
+
+  * CHANGES, README, TODO, configure.in, doc/Makefile.am, src/fvec/fhash.c:
+  added missing config file
+
+2011-03-09  Konrad Rieck <konrad.rieck@tu-berlin.de>
+
+  * doc/sally.pod: minor fix
+
+2011-02-21  Konrad Rieck <konrad.rieck@tu-berlin.de>
+
+  * CHANGES: final release
+
+  * doc/sally.pod: minor typos fixed
+
+  * configure.in, src/sally.c: new release approaching
+
+  * doc/sally.pod: further extended man page
+
+  * doc/sally.pod: extended man page
+
+2011-01-17  Konrad Rieck <konrad.rieck@tu-berlin.de>
+
+  * src/Makefile.am, src/input/input_lines.c, src/sally.c: linux fixes
+
+2011-01-11  Konrad Rieck <konrad.rieck@tu-berlin.de>
+
+  * src/sally.c: fixed bug in command line arguments
+
+2011-01-06  Konrad Rieck <konrad.rieck@tu-berlin.de>
+
+  * src/sally.c: fixed minor bugs in config parsing
+
+  * src/sally.c: additional check of config
+
+  * .gitignore: filter for auto-generated header
+
+  * doc/Makefile.am, doc/example.cfg, doc/sally.cfg, src/Makefile.am,
+  src/fvec/embed.c, src/sally.c, src/sally.h, src/sally.h.in,
+  tests/test_embed.c: added support for global configuration and command line
+  options
+
+2011-01-04  Konrad Rieck <konrad.rieck@tu-berlin.de>
+
+  * src/sally.c: updated help screen. longopts code will follow tommorrow.
+
+  * doc/example.cfg, doc/sally.pod, src/sally.c, src/sconfig.c: changed names
+  of format parameters
+
+  * src/input/input_lines.c: removed minor memory leak
+
+  * doc/example.cfg, src/input/input_fasta.c, src/input/input_lines.c: fixed
+  regex matching
+
+  * src/input/input_fasta.c, src/input/input_lines.c: fixed regex code
+
+  * CHANGES, doc/example.cfg, src/input/input_fasta.c, src/input/input_lines.c,
+  src/sconfig.c: added support for labels in text lines
+
+2011-01-02  Konrad Rieck <konrad.rieck@tu-berlin.de>
+
+  * doc/sally.pod: started to update the man pagee
+
+  * doc/Makefile.am, doc/example.cfg, src/sconfig.c: extended example
+  configuration
+
+2010-12-21  Konrad Rieck <konrad.rieck@tu-berlin.de>
+
+  * contrib/sally_sparsematrix.r: important fix: added newline to eof
+
+  * contrib/sally_sparsematrix.r: fixed wrong skip lines
+
+2010-12-17  Konrad Rieck <konrad.rieck@tu-berlin.de>
+
+  * .gitignore, CHANGES, contrib/Makefile.am, contrib/sally_sparsematrix.r,
+  contrib/sally_struct2mat.m: sanitized contributions directory
+
+  * contrib/sally_sparsematrix.r, contrib/sally_struct2mat.m: new contrib
+
+2010-12-10  Konrad Rieck <konrad.rieck@tu-berlin.de>
+
+  * src/input/input_lines.c: removed space from src field of line module
+
+2010-10-08  Konrad Rieck <konrad.rieck@tu-berlin.de>
+
+  * CHANGES, doc/latex-post.inc, doc/latex-pre.inc.in: missing latex templates
+
+  * CHANGES, MANPAGE, Makefile.am, doc/Makefile.am: added support to generate
+  PDF manual
+
+2010-10-07  Konrad Rieck <konrad.rieck@tu-berlin.de>
+
+  * CHANGES, MANPAGE, configure.in: new release 0.5.2
+
+2010-10-05  Konrad Rieck <konrad.rieck@tu-berlin.de>
+
+  * Makefile.am, contrib/Makefile.am, contrib/sally_struct2mat.m: added contrib
+  directory and simple matlab function
+
+2010-10-01  Konrad Rieck <konrad.rieck@tu-berlin.de>
+
+  * doc/sally.pod: updated manpage
+
+  * doc/example.cfg, src/fvec/fmath.c, src/fvec/fmath.h, src/fvec/fvec.c,
+  src/sconfig.c: removed trim functionality as it badly interfers with
+  normalization and tfidf
+
+  * doc/example.cfg, src/fvec/fmath.c, src/fvec/fmath.h, src/fvec/fvec.c,
+  src/sconfig.c: support to trim min. and max. of dimensions
+
+  * CHANGES, configure.in, doc/Makefile.am: new minor update
+
+  * doc/example.cfg, src/output/output_matlab.c: support for exporting features
+  to matlab
+
+  * src/output/output_matlab.c, src/output/output_matlab.h: added label to
+  matlab struct
+
+  * compile, doc/example.cfg, src/output/output_matlab.c, src/sconfig.c:
+  feature vectors are now converted to matlab structs
+
+  * doc/doxygen.cfg, src/input/input_arc.c, src/input/input_dir.c,
+  src/input/input_fasta.c, src/input/input_lines.c, src/output/output_libsvm.c,
+  src/output/output_matlab.c, src/output/output_text.c: improved documentation
+  of output and input modules
+
+  * src/output/output_matlab.c: started rewrite of matlab module
+
+2010-09-30  Konrad Rieck <konrad.rieck@tu-berlin.de>
+
+  * CHANGES, MANPAGE, Makefile.am, README, TODO, configure.in, doc/Makefile.am,
+  doc/git2changes.py: updated documentation
+
+  * src/input/input_fasta.c: replaced strlcat with strncat for compatibility.
+  got a bad feeling now
+
+2010-09-29  Konrad Rieck <konrad.rieck@tu-berlin.de>
+
+  * README: update to README
+
+  * doc/sally.pod: spell fixes in manual
+
+  * configure.in, doc/example.cfg: release version 0.5.0
+
+2010-09-28  Konrad Rieck <konrad.rieck@tu-berlin.de>
+
+  * README, doc/sally.pod: another minor fix to manual
+
+  * README, doc/sally.pod: further extensions to manual
+
+  * README, doc/sally.pod: minor fix to manual
+
+  * TODO: new TODOs
+
+2010-09-23  Konrad Rieck <konrad.rieck@tu-berlin.de>
+
+  * doc/example.cfg, src/input/input_fasta.c, src/sconfig.c: added support to
+  extract labels from FASTA descriptions
+
+  * .gitignore, doc/example.cfg, src/fvec/embed.c, src/input/Makefile.am,
+  src/input/input.c, src/util.c, src/util.h: fixes for new module
+
+  * src/input/input_fasta.c, src/input/input_fasta.h: new input module for
+  fasta files
+
+2010-09-18  Konrad Rieck <konrad.rieck@tu-berlin.de>
+
+  * configure.in, src/common.h, src/input/input_lines.c,
+  src/output/output_libsvm.c, src/util.c, src/util.h: support for
+  gzip-compressed files
+
+2010-09-17  Konrad Rieck <konrad.rieck@tu-berlin.de>
+
+  * src/util.c, tests/Makefile.am, tests/test.in, tests/test_embed.c: added
+  test case for TFIDF
+
+  * doc/example.cfg, src/fvec/embed.c, src/fvec/fmath.c, src/fvec/fmath.h,
+  src/output/output.c, src/sally.c: first version of TF-IDF weighting
+
+  * configure.in, doc/example.cfg, src/Makefile.am, src/fhash.c, src/fhash.h,
+  src/fmath.c, src/fmath.h, src/fvec.c, src/fvec.h, src/fvec/Makefile.am,
+  src/fvec/embed.c, src/fvec/embed.h, src/fvec/fhash.c, src/fvec/fhash.h,
+  src/fvec/fmath.c, src/fvec/fmath.h, src/fvec/fvec.c, src/fvec/fvec.h,
+  src/fvec/norm.c, src/fvec/norm.h, src/input/Makefile.am, src/input/input.c,
+  src/input/input.h, src/output/Makefile.am, src/output/output.c,
+  src/output/output.h, src/sally.c, src/sconfig.c, tests/Makefile.am,
+  tests/test_fhash.c, tests/test_fvec.c: changed layout of project
+
+  * doc/example.cfg, doc/sally.pod: updated manual
+
+  * configure.in, m4/pkg.m4, src/fmath.c, src/fmath.h: added code from Cujo
+  project
+
+2010-09-14  Konrad Rieck <konrad.rieck@tu-berlin.de>
+
+  * src/fmath.c: fixed bug
+
+2010-09-07  Konrad Rieck <konrad.rieck@tu-berlin.de>
+
+  * README, doc/doxygen.cfg, doc/sally.pod: extended documentation
+
+  * configure.in: new version with matlab support
+
+  * doc/sally.pod: spell fixes in man page
+
+  * README, doc/sally.pod: updated documentation
+
+  * doc/example.cfg, src/input/input_lines.c, src/output/output_libsvm.c,
+  src/output/output_matlab.c, src/output/output_matlab.h,
+  src/output/output_text.c, src/sally.c, src/sally.h: sync
+
+  * doc/example.cfg, src/output/output_libsvm.c, src/output/output_matlab.c,
+  src/output/output_matlab.h, src/output/output_text.c, src/sally.c,
+  src/sally.h: first version of matlab export
+
+  * src/output/Makefile.am, src/output/output.c, src/output/output_matlab.c,
+  src/output/output_matlab.h: template for matlab support
+
+  * src/fmath.c: commented clone function
+
+2010-09-04  Konrad Rieck <konrad.rieck@tu-berlin.de>
+
+  * .gitignore, src/sally.c: added some comments and code beautification
+
+  * .gitignore, compile, src/sally.c: tested netbeans for development
+
+2010-09-03  Konrad Rieck <konrad.rieck@tu-berlin.de>
+
+  * README, doc/sally.pod: sync
+
+  * README, doc/sally.pod: added docs
+
+  * README, doc/Makefile.am: no color
+
+  * README, doc/Makefile.am: color?
+
+  * README, doc/sally.pod, src/output/Makefile.am, src/output/output.c,
+  src/output/output_list.c, src/output/output_list.h, src/output/output_text.c,
+  src/output/output_text.h: sync
+
+2010-09-02  Konrad Rieck <konrad.rieck@tu-berlin.de>
+
+  * configure.in, src/fvec.c, src/sally.c, src/sconfig.c, src/util.c,
+  src/util.h: fixed new libconfig functions and added getline clone
+
+  * README, doc/sally.pod: sync
+
+2010-08-27  Konrad Rieck <rieck@node19.ml.tu-berlin.de>
+
+  * src/common.h, src/input/input_dir.c: added patch for filesystems that do
+  not return d_type
+
+  * src/common.h: enabled GNU libc functions
+
+  * compile, src/fvec.c, src/input/input_dir.c, tests/test_fvec.c: fixes to
+  disable all openmp directives
+
+2010-08-27  Konrad Rieck <konrad@mlsec.org>
+
+  * configure.in, doc/example.cfg, src/output/output_list.c: next alpha release
+
+  * src/sally.c: removed openmp in main loop
+
+  * doc/example.cfg, src/fvec.c, src/input/input_dir.c,
+  src/input/input_lines.c, src/sally.c, src/util.c, src/util.h: minor fixes and
+  openmp testing
+
+  * src/input/input.c, src/input/input_arc.c, src/input/input_dir.c,
+  src/input/input_lines.c, src/output/output.c, src/output/output_libsvm.c,
+  src/output/output_list.c: fixed documentation, again
+
+  * doc/example.cfg, src/fvec.c, src/input/input.c, src/input/input_arc.c,
+  src/input/input_dir.c, src/input/input_lines.c, src/input/input_lines.h,
+  src/sally.c: fixed line module and some memory leaks
+
+  * src/input/input_lines.c, src/input/input_lines.h: templates for input
+  module
+
+  * compile, doc/doxygen.cfg, src/fhash.c, src/fmath.c, src/fvec.c,
+  src/input/Makefile.am, src/input/input.c, src/input/input_arc.c,
+  src/input/input_dir.c, src/sally.c: improved documentation
+
+2010-08-26  Konrad Rieck <rieck@ubuntu.(none)>
+
+  * doc/example.cfg, src/sally.c, src/sconfig.c: change naming to chunks
+
+  * compile, doc/example.cfg, src/input/input_arc.c: fixed bug in archive
+  routines
+
+  * doc/example.cfg, src/output/output_libsvm.c, src/output/output_list.c,
+  src/sally.c: added support for blocksize of 1
+
+  * compile, src/fhash.c, src/fvec.c, tests/test_fhash.c, tests/test_fvec.c:
+  fixed problem with broken gzprintf
+
+2010-08-26  Konrad Rieck <konrad.rieck@tu-berlin.de>
+
+  * tests/test_fvec.c: forgot test files
+
+  * doc/example.cfg, src/fmath.c, src/sally.c: updated documentation
+
+  * doc/example.cfg, src/fhash.c, src/fhash.h, src/fvec.c,
+  src/output/Makefile.am, src/output/output.c, src/output/output_libsvm.c,
+  src/output/output_list.c, src/output/output_list.h, src/util.c: added support
+  for exporting list of features
+
+2010-08-20  Konrad Rieck <konrad.rieck@tu-berlin.de>
+
+  * src/sally.c: added info messages
+
+  * src/sally.c: fixed nasty bug in exportmake
+
+  * compile, src/fhash.c, src/fmath.c, src/fvec.c, src/input/input_arc.c,
+  src/output/output_libsvm.c, src/sally.c: fixed nasty bug in export
+
+2010-08-17  Konrad Rieck <konrad.rieck@tu-berlin.de>
+
+  * doc/example.cfg, src/input/input_arc.c, src/input/input_dir.c,
+  src/output/output.c, src/output/output_libsvm.c, src/sally.c: removed openmp
+  temporary
+
+  * src/Makefile.am, src/fhash.c, src/fhash.h, src/fvec.c,
+  src/input/Makefile.am, src/input/input.c, src/input/input.h,
+  src/input/input_arc.c, src/input/input_dir.c, src/output/output.c,
+  src/output/output.h, src/output/output_libsvm.c, src/sally.c, src/sconfig.c:
+  started to build first working version
+
+  * configure.in, src/Makefile.am, src/fhash.c, src/fhash.h, src/fvec.c,
+  src/input/README, src/input/input.c, src/input/input.h,
+  src/input/input_arc.c, src/input/input_arc.h, src/input/input_dir.c,
+  src/input/input_dir.h, src/output/Makefile.am, src/output/README,
+  src/output/output.c, src/output/output.h, src/output/output_libsvm.c,
+  src/output/output_libsvm.h: sanitized input and added output module
+
+2010-08-16  Konrad Rieck <konrad.rieck@tu-berlin.de>
+
+  * doc/sally.pod, src/Makefile.am, src/input/Makefile.am, tests/Makefile.am:
+  removed libtool dependency
+
+  * src/Makefile.am, src/sally.c, src/sally.h, src/tool.c, src/tool.h:
+  simplified design of tool
+
+  * src/fvec.c, src/sally.c, src/sconfig.c: changed config names
+
+  * configure.in, pedantic, src/fhash.c, src/fhash.h, src/fmath.c, src/fmath.h,
+  src/fvec.c, src/fvec.h, src/sally.c, src/sally.h, src/sconfig.c, src/tool.c,
+  tests/Makefile.am, tests/test_fhash.c, tests/tests.h: first version with
+  global config_t configuration
+
+  * src/Makefile.am, src/common.h, src/fvec.c, src/fvec.h, src/sally.c,
+  src/sally.h, src/tool.c: removed sally_t configuration
+
+  * src/sconfig.c, src/sconfig.h: configuration stuff
+
+  * configure.in: added checks for libconfig, libm and libz
+
+  * src/input/input_arc.c, src/input/input_dir.c: minor fixes
+
+  * src/input/README: input format
+
+  * src/input/README, src/input/input.c, src/input/input_arc.c,
+  src/input/input_dir.c: added short tutorial on how to develop input modules
+
+  * src/fmath.c, src/fvec.c, src/input/README, src/input/input.c,
+  src/input/input.h, src/input/input_arc.c, src/input/input_dir.c, src/sally.c:
+  improved interfaces
+
+2010-08-15  Konrad Rieck <konrad@mlsec.org>
+
+  * TODO: added TODO file with new formats
+
+  * src/input/README, src/input/input.h: improved interface
+
+2010-08-15  Konrad Rieck <konrad.rieck@tu-berlin.de>
+
+  * configure.in, src/Makefile.am, src/in_arc.c, src/in_arc.h, src/in_dir.c,
+  src/in_dir.h, src/input/Makefile.am, src/input/README, src/input/input.c,
+  src/input/input.h, src/input/input_arc.c, src/input/input_arc.h,
+  src/input/input_dir.c, src/input/input_dir.h, src/tool.c: added interface for
+  input modules
+
+2010-08-14  Konrad Rieck <konrad.rieck@tu-berlin.de>
+
+  * src/Makefile.am, src/fvec.c, src/fvec.h, src/in_arc.c, src/in_arc.h,
+  src/in_dir.c, src/in_dir.h, src/tool.c: changed label to float type
+
+2010-08-13  Konrad Rieck <konrad.rieck@tu-berlin.de>
+
+  * src/in_arc.c, src/in_arc.h: support for reading archives on-line
+
+  * src/in_dir.c: fixed concurrency problem
+
+  * src/Makefile.am, src/in_dir.c, src/in_dir.h, src/tool.c: splitted input
+  code to modules
+
+  * src/Makefile.am, src/farray.c, src/farray.h, src/sally.c, src/tool.c:
+  removed feature vector arrays. this is the wrong concept for online
+  processing
+
+  * compile, configure.in, src/farray.c: added support for libarchive
+  (untested)
+
+  * src/Makefile.am, src/export.c, src/export.h, src/farray.c, src/farray.h,
+  src/import.c, src/import.h, src/sally.c, src/tool.c, src/util.c, src/util.h:
+  incorporated feature vector array
+
+  * doc/sally.pod: forgot pod file
+
+  * Makefile.am, README, configure.in, doc/Makefile.am, src/Makefile.am,
+  src/common.h, src/export.c, src/export.h, src/fhash.c, src/fhash.h,
+  src/fmath.c, src/fmath.h, src/fvec.c, src/fvec.h, src/import.c, src/import.h,
+  src/sally.c, src/sally.h, src/tool.c, src/tool.h, src/util.c, src/util.h,
+  tests/Makefile.am, tests/test_fhash.c, tests/tests.c, tests/tests.h: changed
+  description again :)
+
+  * Makefile.am, README, configure.in, doc/Makefile.am, doc/sally.pod,
+  src/Makefile.am, src/common.h, src/export.c, src/export.h, src/fhash.c,
+  src/fhash.h, src/fmath.c, src/fmath.h, src/fvec.c, src/fvec.h, src/sally.c,
+  src/sally.h, src/tool.c, src/tool.h, src/util.c, src/util.h,
+  tests/Makefile.am, tests/test_fhash.c, tests/tests.c, tests/tests.h: changed
+  scope and description of project
+
+  * src/import.h: added import templates
+
+  * src/import.c: added import templates
+
+  * src/export.c, src/fvec.c, src/fvec.h: added support for src field in
+  feature vector
+
+  * src/Makefile.am, src/export.c, src/export.h, src/fhash.c, src/fhash.h,
+  src/fvec.c, src/fvec.h, src/sally.c, src/sally.h, src/tool.c: added first
+  export routines
+
+  * src/fvec.c, src/sally.c, src/sally.h, src/tool.c: made delimiters field
+  opaque to user
+
+  * src/fhash.c, src/sally.c, src/tool.c, tests/test_fhash.c, tests/tests.h:
+  fixed hash table test cases
+
+  * doc/doxygen.cfg, src/fhash.c, src/fhash.h, src/fmath.c, src/fmath.h,
+  src/fvec.c, src/fvec.h, src/sally.c, src/sally.h: code cleanup after making
+  feature hash a field of Sally struct
+
+2010-08-11  Konrad Rieck <konrad.rieck@tu-berlin.de>
+
+  * src/fhash.c, src/fhash.h, src/fvec.c, src/sally.c, src/sally.h, src/tool.c:
+  improved hash interface and configuration of sally
+
+  * src/fhash.c, tests/Makefile.am, tests/test_fhash.c, tests/test_fmap.c,
+  tests/tests.h: added test cases for fhash and fvec
+
+  * src/fvec.c, src/fvec.h, tests/test_fhash.c: added load/save functions
+
+  * src/Makefile.am, src/farray.c, src/farray.h, src/fhash.c, src/fhash.h,
+  src/fmap.c, src/fmap.h, src/fmath.c, src/fmath.h, src/fvec.c, src/sally.c,
+  src/sally.h, src/tool.c: rearranged files
+
+  * src/farray.c, src/farray.h: arrays of feature vectors
+
+  * src/tool.c: added parsing of options
+
+  * src/Makefile.am, src/fvec.c, src/fvec.h, src/sally.c, src/sally.h,
+  src/tool.h: added feature arrays
+
+  * .gitignore: added test files
+
+  * src/common.h, tests/test_fmap.c, tests/tests.h: fixed nasty bug: wrong
+  definition of FALSE
+
+  * src/fmap.c, src/fmap.h, tests/Makefile.am, tests/test_fmap.c,
+  tests/tests.c, tests/tests.h: added test case and fixed fmap
+
+2010-08-07  Konrad Rieck <konrad.rieck@tu-berlin.de>
+
+  * configure.in, src/Makefile.am, src/common.h, src/fmap.c, src/fmap.h,
+  src/fvec.c, src/fvec.h, src/md5.c, src/md5.h, src/murmur.c, src/sally.c,
+  src/sally.h, src/uthash.h: migrated code from project Cujo
+
+  * .gitignore, doc/Makefile.am, doc/doxygen.cfg, src/Makefile.am, src/tool.c,
+  src/util.c: sync
+
+  * src/Makefile.am, src/common.h, src/murmur.c, src/murmur.h, src/util.c,
+  src/util.h: utility and hash functions added
+
+  * .gitignore, compile, src/Makefile.am, src/common.h, src/sally.c,
+  src/sally.h, src/tool.c, src/tool.h: added templates for library and tool
+
+  * doc/sally.pod: smallest possible change to a repository
+
+  * .gitignore: updated ignored files
+
+  * .gitignore: git ignore file added
+
+  * Makefile.am, README, bootstrap, configure.in, doc/Makefile.am,
+  doc/sally.pod, m4/ac_openmp.m4, src/Makefile.am, tests/Makefile.am: added
+  autotools setup
+
+  * COPYING, README: added GPL license file

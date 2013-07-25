@@ -1,0 +1,1932 @@
+<html><head><title>Element.js</title><link rel="stylesheet" type="text/css" href="../resources/style.css" media="screen"/></head><body><h1>Element.js</h1><pre class="highlighted"><code><i>/**
+ * @class YAHOO.ext.Element
+ * Wraps around a DOM element and provides convenient access to Yahoo 
+ * UI library functionality (and more).&lt;br&gt;&lt;br&gt;
+ * Usage:&lt;br&gt;
+ * &lt;pre&gt;&lt;code&gt;
+ * <b>var</b> el = YAHOO.ext.Element.get('myElementId');
+ * <i>// or the shorter</i>
+ * <b>var</b> el = getEl('myElementId');
+ * &lt;/code&gt;&lt;/pre&gt;
+ * Using YAHOO.ext.Element.get() instead of calling the constructor directly ensures you get the same object 
+ * each call instead of constructing a <b>new</b> one.&lt;br&gt;&lt;br&gt;
+ * For working <b>with</b> collections of Elements, see &lt;a href=&quot;YAHOO.ext.CompositeElement.html&quot;&gt;YAHOO.ext.CompositeElement&lt;/a&gt;
+ * @requires YAHOO.util.Dom
+ * @requires YAHOO.util.Event
+ * @requires YAHOO.util.CustomEvent 
+ * @requires YAHOO.util.Anim (optional) to support animation
+ * @requires YAHOO.util.Motion (optional) to support animation
+ * @requires YAHOO.util.Easing (optional) to support animation
+ * @constructor Create a <b>new</b> Element directly.
+ * @param {String/HTMLElement} element
+ * @param {&lt;i&gt;Boolean&lt;/i&gt;} forceNew (optional) By <b>default</b> the constructor checks to see <b>if</b> there is already an instance of <b>this</b> element <b>in</b> the cache and <b>if</b> there is it returns the same instance. This will skip that check (useful <b>for</b> extending <b>this</b> class).
+ */</i>
+YAHOO.ext.Element = <b>function</b>(element, forceNew){
+    <b>var</b> dom = YAHOO.util.Dom.get(element);
+    <b>if</b>(!dom){ <i>// invalid id/element</i>
+        <b>return</b> null;
+    }
+    <b>if</b>(!forceNew &amp;&amp; YAHOO.ext.Element.cache[dom.id]){ <i>// element object already exists</i>
+        <b>return</b> YAHOO.ext.Element.cache[dom.id];
+    }
+    <i>/**
+     * The DOM element
+     * @type HTMLElement
+     */</i>
+    <b>this</b>.dom = dom;
+    
+    <i>/**
+     * The DOM element ID
+     * @type String
+     */</i>
+    <b>this</b>.id = <b>this</b>.dom.id;
+    <i>/**
+     * @private the current visibility mode
+     */</i>
+    <b>this</b>.visibilityMode = YAHOO.ext.Element.VISIBILITY;
+    
+    
+    <i>/**
+     * The element's <b>default</b> display mode @type String
+     */</i>
+    <b>this</b>.originalDisplay = YAHOO.util.Dom.getStyle(<b>this</b>.dom, 'display') || '';
+    <b>if</b>(this.autoDisplayMode){
+        <b>if</b>(this.originalDisplay == 'none'){
+            <b>this</b>.setVisibilityMode(YAHOO.ext.Element.DISPLAY);
+        }
+    }
+    <b>if</b>(this.originalDisplay == 'none'){
+        <b>this</b>.originalDisplay = '';
+    }
+    
+    <i>/**
+     * The <b>default</b> unit to append to CSS values where a unit isn't provided (Defaults to px).
+     * @type String
+     */</i>
+    <b>this</b>.defaultUnit = 'px';
+}
+
+YAHOO.ext.Element.prototype = {    
+    <i>/**
+     * Sets the elements visibility mode. When setVisible() is called it
+     * will use <b>this</b> to determine whether to set the visibility or the display property.
+     * @param visMode Element.VISIBILITY or Element.DISPLAY
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+    setVisibilityMode : <b>function</b>(visMode){
+        <b>this</b>.visibilityMode = visMode;
+        <b>return</b> this;
+    },
+    
+    <i>/**
+     * Convenience method <b>for</b> setVisibilityMode(Element.DISPLAY)
+     * @param {String} display (optional) What to set display to when visible
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+    enableDisplayMode : <b>function</b>(display){
+        <b>this</b>.setVisibilityMode(YAHOO.ext.Element.DISPLAY);
+        <b>if</b>(typeof display != 'undefined') <b>this</b>.originalDisplay = display;
+        <b>return</b> this;
+    },
+    
+    <i>/**
+     * Perform Yahoo UI animation on <b>this</b> element. 
+     * @param {Object} args The YUI animation control args
+     * @param {&lt;i&gt;Float&lt;/i&gt;} duration (optional) How long the animation lasts. (Defaults to .35 seconds)
+     * @param {&lt;i&gt;Function&lt;/i&gt;} onComplete (optional) Function to call when animation completes.
+     * @param {&lt;i&gt;Function&lt;/i&gt;} easing (optional) YAHOO.util.Easing method to use. (Defaults to YAHOO.util.Easing.easeBoth)
+     * @param {&lt;i&gt;Function&lt;/i&gt;} animType (optional) YAHOO.util.Anim subclass to use. For example: YAHOO.util.Motion
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+    animate : <b>function</b>(args, duration, onComplete, easing, animType){
+        <b>this</b>.anim(args, duration, onComplete, easing, animType);
+        <b>return</b> this;
+    },
+    
+    <i>/**
+     * @private Internal animation call
+     */</i>
+    anim : <b>function</b>(args, duration, onComplete, easing, animType){
+        animType = animType || YAHOO.util.Anim;
+        <b>var</b> anim = <b>new</b> animType(<b>this</b>.dom, args, duration || .35, 
+                easing || YAHOO.util.Easing.easeBoth);
+        <b>if</b>(onComplete){
+            <b>if</b>(!(onComplete instanceof Array)){
+                anim.onComplete.subscribe(onComplete, <b>this</b>, true);
+            }<b>else</b>{
+                <b>for</b>(var i = 0; i &lt; onComplete.length; i++){
+                    <b>var</b> fn = onComplete[i];
+                    <b>if</b>(fn) anim.onComplete.subscribe(fn, <b>this</b>, true);
+                }
+            }
+        }
+        anim.animate();
+    },
+    
+    <i>/**
+     * Scrolls <b>this</b> element into view within the passed container.
+     * @param {&lt;i&gt;String/HTMLElement/Element&lt;/i&gt;} container (optional) The container element to scroll (defaults to document.body)
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+    scrollIntoView : <b>function</b>(container){
+        <b>var</b> c = getEl(container || document.body, true);
+        <b>var</b> cp = c.getStyle('position');
+        <b>var</b> restorePos = false;
+        <b>if</b>(cp != 'relative' &amp;&amp; cp != 'absolute'){
+            c.setStyle('position', 'relative');
+            restorePos = true;
+        }
+        <b>var</b> el = <b>this</b>.dom;
+        <b>var</b> childTop = parseInt(el.offsetTop, 10);
+        <b>var</b> childBottom = childTop + el.offsetHeight;
+        <b>var</b> containerTop = parseInt(c.scrollTop, 10); <i>// parseInt <b>for</b> safari bug</i>
+        <b>var</b> containerBottom = containerTop + c.clientHeight;
+        <b>if</b>(childTop &lt; containerTop){
+        	c.scrollTop = childTop;
+        }<b>else</b> if(childBottom &gt; containerBottom){
+            c.scrollTop = childBottom-c.clientHeight;
+        }
+        <b>if</b>(restorePos){
+            c.setStyle('position', cp);
+        }
+        <b>return</b> this;
+    },
+        
+    <i>/** 
+     * Measures the elements content height and updates height to match. Note, <b>this</b> function uses setTimeout and 
+     * the <b>new</b> height may not be available immediately.
+     * @param {&lt;i&gt;Boolean&lt;/i&gt;} animate (optional) Animate the transition (Default is false)
+     * @param {&lt;i&gt;Float&lt;/i&gt;} duration (optional) Length of the animation. (Defaults to .35 seconds)
+     * @param {&lt;i&gt;Function&lt;/i&gt;} onComplete (optional) Function to call when animation completes.
+     * @param {&lt;i&gt;Function&lt;/i&gt;} easing (optional) YAHOO.util.Easing method to use. (Defaults to YAHOO.util.Easing.easeOut <b>for</b> hiding or YAHOO.util.Easing.easeIn <b>for</b> showing)
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+    autoHeight : <b>function</b>(animate, duration, onComplete, easing){
+        <b>var</b> oldHeight = <b>this</b>.getHeight();
+        <b>this</b>.clip();
+        <b>this</b>.setHeight(1); <i>// force clipping</i>
+        setTimeout(<b>function</b>(){
+            <b>var</b> height = parseInt(<b>this</b>.dom.scrollHeight, 10); <i>// parseInt <b>for</b> Safari</i>
+            <b>if</b>(!animate){
+                <b>this</b>.setHeight(height);
+                <b>this</b>.unclip();
+                <b>if</b>(typeof onComplete == '<b>function</b>'){
+                    onComplete();
+                }
+            }<b>else</b>{
+                <b>this</b>.setHeight(oldHeight); <i>// restore original height</i>
+                <b>this</b>.setHeight(height, animate, duration, <b>function</b>(){
+                    <b>this</b>.unclip();
+                    <b>if</b>(typeof onComplete == '<b>function</b>') onComplete();
+                }.createDelegate(<b>this</b>), easing);
+            }
+        }.createDelegate(<b>this</b>), 0);
+        <b>return</b> this;
+    },
+    
+    <i>/**
+     * Checks whether the element is currently visible using both visibility and display properties.
+     * @param {&lt;i&gt;Boolean&lt;/i&gt;} deep True to walk the dom and see <b>if</b> parent elements are hidden.
+     * @<b>return</b> {Boolean} true <b>if</b> the element is currently visible 
+     */</i>
+    isVisible : <b>function</b>(deep) {
+        <b>var</b> vis = YAHOO.util.Dom.getStyle(<b>this</b>.dom, 'visibility') != 'hidden' 
+               &amp;&amp; YAHOO.util.Dom.getStyle(<b>this</b>.dom, 'display') != 'none';
+        <b>if</b>(!deep || !vis){
+            <b>return</b> vis;
+        }
+        <b>var</b> p = <b>this</b>.dom.parentNode;
+        <b>while</b>(p &amp;&amp; p.tagName.toLowerCase() != 'body'){
+            <b>if</b>(YAHOO.util.Dom.getStyle(p, 'visibility') == 'hidden' || YAHOO.util.Dom.getStyle(p, 'display') == 'none'){
+                <b>return</b> false;
+            }
+            p = p.parentNode;
+        }
+        <b>return</b> true;
+    },
+    
+    <i>/**
+     * Selects child nodes based on the passed CSS selector (the selector should not contain an id)
+     * @param {String} selector The CSS selector
+     * @param {Boolean} unique true to create a unique YAHOO.ext.Element <b>for</b> each child (defaults to a shared flyweight object)
+     * @<b>return</b> {CompositeElement/CompositeElementLite} The composite element
+     */</i>
+    select : <b>function</b>(selector, unique){
+        <b>return</b> YAHOO.ext.Element.select('#' + <b>this</b>.dom.id + ' ' + selector, unique);  
+    },
+    
+    <i>/**
+     * Initializes a YAHOO.util.DD object <b>for</b> this element.
+     * @param {String} group The group the DD object is member of
+     * @param {Object} config The DD config object
+     * @param {Object} overrides An object containing methods to override/implement on the DD object
+     * @<b>return</b> {YAHOO.util.DD} The DD object
+     */</i>
+    initDD : <b>function</b>(group, config, overrides){
+        <b>var</b> dd = <b>new</b> YAHOO.util.DD(YAHOO.util.Dom.generateId(<b>this</b>.dom), group, config);
+        <b>return</b> YAHOO.ext.util.Config.apply(dd, overrides);
+    },
+   
+    <i>/**
+     * Initializes a YAHOO.util.DDProxy object <b>for</b> this element.
+     * @param {String} group The group the DDProxy object is member of
+     * @param {Object} config The DDProxy config object
+     * @param {Object} overrides An object containing methods to override/implement on the DDProxy object
+     * @<b>return</b> {YAHOO.util.DDProxy} The DDProxy object
+     */</i>
+    initDDProxy : <b>function</b>(group, config, overrides){
+        <b>var</b> dd = <b>new</b> YAHOO.util.DDProxy(YAHOO.util.Dom.generateId(<b>this</b>.dom), group, config);
+        <b>return</b> YAHOO.ext.util.Config.apply(dd, overrides);
+    },
+   
+    <i>/**
+     * Initializes a YAHOO.util.DDTarget object <b>for</b> this element.
+     * @param {String} group The group the DDTarget object is member of
+     * @param {Object} config The DDTarget config object
+     * @param {Object} overrides An object containing methods to override/implement on the DDTarget object
+     * @<b>return</b> {YAHOO.util.DDTarget} The DDTarget object
+     */</i>
+    initDDTarget : <b>function</b>(group, config, overrides){
+        <b>var</b> dd = <b>new</b> YAHOO.util.DDTarget(YAHOO.util.Dom.generateId(<b>this</b>.dom), group, config);
+        <b>return</b> YAHOO.ext.util.Config.apply(dd, overrides);
+    },
+   
+    <i>/**
+     * Sets the visibility of the element (see details). If the visibilityMode is set to Element.DISPLAY, it will use 
+     * the display property to hide the element, otherwise it uses visibility. The <b>default</b> is to hide and show using the visibility property.
+     * @param {Boolean} visible Whether the element is visible
+     * @param {&lt;i&gt;Boolean&lt;/i&gt;} animate (optional) Fade the element <b>in</b> or out (Default is false)
+     * @param {&lt;i&gt;Float&lt;/i&gt;} duration (optional) How long the fade effect lasts. (Defaults to .35 seconds)
+     * @param {&lt;i&gt;Function&lt;/i&gt;} onComplete (optional) Function to call when animation completes.
+     * @param {&lt;i&gt;Function&lt;/i&gt;} easing (optional) YAHOO.util.Easing method to use. (Defaults to YAHOO.util.Easing.easeOut <b>for</b> hiding or YAHOO.util.Easing.easeIn <b>for</b> showing)
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+     setVisible : <b>function</b>(visible, animate, duration, onComplete, easing){
+        <i>//<b>if</b>(this.isVisible() == visible) <b>return</b>; // nothing to <b>do</b></i>
+        <b>if</b>(!animate || !YAHOO.util.Anim){
+            <b>if</b>(this.visibilityMode == YAHOO.ext.Element.DISPLAY){
+                <b>this</b>.setDisplayed(visible);
+            }<b>else</b>{
+                YAHOO.util.Dom.setStyle(<b>this</b>.dom, 'visibility', visible ? 'visible' : 'hidden');
+            }
+        }<b>else</b>{
+            <i>// make sure they can see the transition</i>
+            <b>this</b>.setOpacity(visible?0:1);
+            YAHOO.util.Dom.setStyle(<b>this</b>.dom, 'visibility', 'visible');
+            <b>if</b>(this.visibilityMode == YAHOO.ext.Element.DISPLAY){
+                <b>this</b>.setDisplayed(true);
+            }
+            <b>var</b> args = {opacity: { from: (visible?0:1), to: (visible?1:0) }};
+            <b>var</b> anim = <b>new</b> YAHOO.util.Anim(<b>this</b>.dom, args, duration || .35, 
+                easing || (visible ? YAHOO.util.Easing.easeIn : YAHOO.util.Easing.easeOut));
+            anim.onComplete.subscribe((<b>function</b>(){
+                <b>if</b>(this.visibilityMode == YAHOO.ext.Element.DISPLAY){
+                    <b>this</b>.setDisplayed(visible);
+                }<b>else</b>{
+                    YAHOO.util.Dom.setStyle(<b>this</b>.dom, 'visibility', visible ? 'visible' : 'hidden');
+                }
+            }).createDelegate(<b>this</b>));
+            <b>if</b>(onComplete){
+                anim.onComplete.subscribe(onComplete);
+            }
+            anim.animate();
+        }
+        <b>return</b> this;
+    },
+    
+    <i>/**
+     * Returns true <b>if</b> display is not &quot;none&quot;
+     * @<b>return</b> {Boolean}
+     */</i>
+    isDisplayed : <b>function</b>() {
+        <b>return</b> YAHOO.util.Dom.getStyle(<b>this</b>.dom, 'display') != 'none';
+    },
+    
+    <i>/**
+     * Toggles the elements visibility or display, depending on visibility mode.
+     * @param {&lt;i&gt;Boolean&lt;/i&gt;} animate (optional) Fade the element <b>in</b> or out (Default is false)
+     * @param {&lt;i&gt;float&lt;/i&gt;} duration (optional) How long the fade effect lasts. (Defaults to .35 seconds)
+     * @param {&lt;i&gt;Function&lt;/i&gt;} onComplete (optional) Function to call when animation completes.
+     * @param {&lt;i&gt;Function&lt;/i&gt;} easing (optional) YAHOO.util.Easing method to use. (Defaults to YAHOO.util.Easing.easeOut <b>for</b> hiding or YAHOO.util.Easing.easeIn <b>for</b> showing)
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+    toggle : <b>function</b>(animate, duration, onComplete, easing){
+        <b>this</b>.setVisible(!<b>this</b>.isVisible(), animate, duration, onComplete, easing);
+        <b>return</b> this;
+    },
+    
+    <i>/**
+     * Sets the css display. Uses originalDisplay <b>if</b> value is a boolean true.
+     * @param {Boolean} value Boolean to display the element using it's <b>default</b> display or a string to set the display directly
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+    setDisplayed : <b>function</b>(value) {
+        <b>if</b>(typeof value == 'boolean'){
+           value = value ? <b>this</b>.originalDisplay : 'none';
+        }
+        YAHOO.util.Dom.setStyle(<b>this</b>.dom, 'display', value);
+        <b>return</b> this;
+    },
+    
+    <i>/**
+     * Tries to focus the element. Any exceptions are caught.
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+    focus : <b>function</b>() {
+        try{
+            <b>this</b>.dom.focus();
+        }catch(e){}
+        <b>return</b> this;
+    },
+    
+    <i>/**
+     * Tries to blur the element. Any exceptions are caught.
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+    blur : <b>function</b>() {
+        try{
+            <b>this</b>.dom.blur();
+        }catch(e){}
+        <b>return</b> this;
+    },
+    
+    <i>/**
+     * Add a CSS class to the element.
+     * @param {String/Array} className The CSS class to add or an array of classes
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+    addClass : <b>function</b>(className){
+        <b>if</b>(className instanceof Array){
+            <b>for</b>(var i = 0, len = className.length; i &lt; len; i++) {
+            	<b>this</b>.addClass(className[i]);
+            }
+        }<b>else</b>{
+            <b>if</b>(!<b>this</b>.hasClass(className)){
+                <b>this</b>.dom.className = <b>this</b>.dom.className + ' ' + className;
+            }
+        }
+        <b>return</b> this;
+    },
+    
+    <i>/**
+     * Adds the passed className to <b>this</b> element and removes the class from all siblings
+     * @param {String} className The className to add
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+    radioClass : <b>function</b>(className){
+        <b>var</b> siblings = <b>this</b>.dom.parentNode.childNodes;
+        <b>for</b>(var i = 0; i &lt; siblings.length; i++) {
+        	<b>var</b> s = siblings[i];
+        	<b>if</b>(s.nodeType == 1){
+        	    YAHOO.util.Dom.removeClass(s, className);
+        	}
+        }
+        <b>this</b>.addClass(className);
+        <b>return</b> this;
+    },
+    <i>/**
+     * Removes a CSS class from the element.
+     * @param {String/Array} className The CSS class to remove or an array of classes
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+    removeClass : <b>function</b>(className){
+        <b>if</b>(className instanceof Array){
+            <b>for</b>(var i = 0, len = className.length; i &lt; len; i++) {
+            	<b>this</b>.removeClass(className[i]);
+            }
+        }<b>else</b>{
+            <b>var</b> re = <b>new</b> RegExp('(?:^|\\s+)' + className + '(?:\\s+|$)', 'g');
+            <b>var</b> c = <b>this</b>.dom.className;
+            <b>if</b>(re.test(c)){
+                <b>this</b>.dom.className = c.replace(re, ' ');
+            }
+        }
+        <b>return</b> this;
+    },
+    
+    <i>/**
+     * Toggles (adds or removes) the passed class.
+     * @param {String} className
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+    toggleClass : <b>function</b>(className){
+        <b>if</b>(this.hasClass(className)){
+            <b>this</b>.removeClass(className);
+        }<b>else</b>{
+            <b>this</b>.addClass(className);
+        }
+        <b>return</b> this;
+    },
+    
+    <i>/**
+     * Checks <b>if</b> a CSS class is <b>in</b> use by the element.
+     * @param {String} className The CSS class to check
+     * @<b>return</b> {Boolean} true or false
+     */</i>
+    hasClass : <b>function</b>(className){
+        <b>var</b> re = <b>new</b> RegExp('(?:^|\\s+)' + className + '(?:\\s+|$)');
+        <b>return</b> re.test(<b>this</b>.dom.className);
+    },
+    
+    <i>/**
+     * Replaces a CSS class on the element <b>with</b> another.
+     * @param {String} oldClassName The CSS class to replace
+     * @param {String} newClassName The replacement CSS class
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+    replaceClass : <b>function</b>(oldClassName, newClassName){
+        <b>this</b>.removeClass(oldClassName);
+        <b>this</b>.addClass(newClassName);
+        <b>return</b> this;
+    },
+    
+    <i>/**
+       * Normalizes currentStyle and ComputedStyle.
+       * @param {String} property The style property whose value is returned.
+       * @<b>return</b> {String} The current value of the style property <b>for</b> this element.
+       */</i>
+    getStyle : <b>function</b>(name){
+        <b>return</b> YAHOO.util.Dom.getStyle(<b>this</b>.dom, name);
+    },
+    
+    <i>/**
+       * Wrapper <b>for</b> setting style properties, also takes single object parameter of multiple styles
+       * @param {String/Object} property The style property to be set or an object of multiple styles.
+       * @param {String} val (optional) The value to apply to the given property or null <b>if</b> an object was passed.
+       * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+    setStyle : <b>function</b>(name, value){
+        <b>if</b>(typeof name == 'string'){
+            YAHOO.util.Dom.setStyle(<b>this</b>.dom, name, value);
+        }<b>else</b>{
+            <b>var</b> D = YAHOO.util.Dom;
+            <b>for</b>(var style <b>in</b> name){
+                <b>if</b>(typeof name[style] != '<b>function</b>'){
+                   D.setStyle(<b>this</b>.dom, style, name[style]);
+                }
+            }
+        }
+        <b>return</b> this;
+    },
+    
+    <i>/**
+     * More flexible version of {@link #setStyle} <b>for</b> setting style properties.
+     * @param {String/Object/Function} styles A style specification string eg &quot;width:100px&quot;, or object <b>in</b> the form {width:&quot;100px&quot;}, or
+     * a <b>function</b> which returns such a specification.
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+    applyStyles : <b>function</b>(style){
+       YAHOO.ext.DomHelper.applyStyles(<b>this</b>.dom, style);
+    },
+    
+    <i>/**
+       * Gets the current X position of the element based on page coordinates.  Element must be part of the DOM tree to have page coordinates (display:none or elements not appended <b>return</b> false).
+       @ <b>return</b> {Number} The X position of the element
+       */</i>
+    getX : <b>function</b>(){
+        <b>return</b> YAHOO.util.Dom.getX(<b>this</b>.dom);
+    },
+    
+    <i>/**
+       * Gets the current Y position of the element based on page coordinates.  Element must be part of the DOM tree to have page coordinates (display:none or elements not appended <b>return</b> false).
+       @ <b>return</b> {Number} The Y position of the element
+       */</i>
+    getY : <b>function</b>(){
+        <b>return</b> YAHOO.util.Dom.getY(<b>this</b>.dom);
+    },
+    
+    <i>/**
+       * Gets the current position of the element based on page coordinates.  Element must be part of the DOM tree to have page coordinates (display:none or elements not appended <b>return</b> false).
+       @ <b>return</b> {Array} The XY position of the element
+       */</i>
+    getXY : <b>function</b>(){
+        <b>return</b> YAHOO.util.Dom.getXY(<b>this</b>.dom);
+    },
+    
+    <i>/**
+       * Sets the X position of the element based on page coordinates.  Element must be part of the DOM tree to have page coordinates (display:none or elements not appended <b>return</b> false).
+       @param {Number} The X position of the element
+      * @param {&lt;i&gt;Boolean&lt;/i&gt;} animate (optional) Animate the transition (Default is false)
+     * @param {&lt;i&gt;float&lt;/i&gt;} duration (optional) How long the animation lasts. (Defaults to .35 seconds)
+     * @param {&lt;i&gt;Function&lt;/i&gt;} onComplete (optional) Function to call when animation completes.
+     * @param {&lt;i&gt;Function&lt;/i&gt;} easing (optional) YAHOO.util.Easing method to use. (Defaults to YAHOO.util.Easing.easeBoth)
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+    setX : <b>function</b>(x, animate, duration, onComplete, easing){
+        <b>if</b>(!animate || !YAHOO.util.Anim){
+            YAHOO.util.Dom.setX(<b>this</b>.dom, x);
+        }<b>else</b>{
+            <b>this</b>.setXY([x, <b>this</b>.getY()], animate, duration, onComplete, easing);
+        }
+        <b>return</b> this;
+    },
+    
+    <i>/**
+       * Sets the Y position of the element based on page coordinates.  Element must be part of the DOM tree to have page coordinates (display:none or elements not appended <b>return</b> false).
+       @param {Number} The Y position of the element
+      * @param {&lt;i&gt;Boolean&lt;/i&gt;} animate (optional) Animate the transition (Default is false)
+     * @param {&lt;i&gt;float&lt;/i&gt;} duration (optional) How long the animation lasts. (Defaults to .35 seconds)
+     * @param {&lt;i&gt;Function&lt;/i&gt;} onComplete (optional) Function to call when animation completes.
+     * @param {&lt;i&gt;Function&lt;/i&gt;} easing (optional) YAHOO.util.Easing method to use. (Defaults to YAHOO.util.Easing.easeBoth)
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+      */</i>
+    setY : <b>function</b>(y, animate, duration, onComplete, easing){
+        <b>if</b>(!animate || !YAHOO.util.Anim){
+            YAHOO.util.Dom.setY(<b>this</b>.dom, y);
+        }<b>else</b>{
+            <b>this</b>.setXY([<b>this</b>.getX(), y], animate, duration, onComplete, easing);
+        }
+        <b>return</b> this;
+    },
+    
+    <i>/**
+     * Set the element's left position directly using CSS style (instead of setX())
+     * @param {String} left The left CSS property value
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+    setLeft : <b>function</b>(left){
+        YAHOO.util.Dom.setStyle(<b>this</b>.dom, 'left', <b>this</b>.addUnits(left));
+        <b>return</b> this;
+    },
+    
+    <i>/**
+     * Set the element's top position directly using CSS style (instead of setY())
+     * @param {String} top The top CSS property value
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+    setTop : <b>function</b>(top){
+        YAHOO.util.Dom.setStyle(<b>this</b>.dom, 'top', <b>this</b>.addUnits(top));
+        <b>return</b> this;
+    },
+    
+    <i>/**
+     * Set the element's css right style
+     * @param {String} right The right CSS property value
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+    setRight : <b>function</b>(right){
+        YAHOO.util.Dom.setStyle(<b>this</b>.dom, 'right', <b>this</b>.addUnits(right));
+        <b>return</b> this;
+    },
+    
+    <i>/**
+     * Set the element's css bottom style
+     * @param {String} bottom The bottom CSS property value
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+    setBottom : <b>function</b>(bottom){
+        YAHOO.util.Dom.setStyle(<b>this</b>.dom, 'bottom', <b>this</b>.addUnits(bottom));
+        <b>return</b> this;
+    },
+    
+    <i>/**
+     * Set the position of the element <b>in</b> page coordinates, regardless of how the element is positioned.
+     * The element must be part of the DOM tree to have page coordinates (display:none or elements not appended <b>return</b> false).
+     * @param {Array} pos Contains X &amp; Y [x, y] values <b>for</b> new position (coordinates are page-based)
+     * @param {&lt;i&gt;Boolean&lt;/i&gt;} animate (optional) Animate the transition (Default is false)
+     * @param {&lt;i&gt;float&lt;/i&gt;} duration (optional) How long the animation lasts. (Defaults to .35 seconds)
+     * @param {&lt;i&gt;Function&lt;/i&gt;} onComplete (optional) Function to call when animation completes.
+     * @param {&lt;i&gt;Function&lt;/i&gt;} easing (optional) YAHOO.util.Easing method to use. (Defaults to YAHOO.util.Easing.easeBoth)
+      * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+       */</i>
+    setXY : <b>function</b>(pos, animate, duration, onComplete, easing){
+        <b>if</b>(!animate || !YAHOO.util.Anim){
+            YAHOO.util.Dom.setXY(<b>this</b>.dom, pos);
+        }<b>else</b>{
+            <b>this</b>.anim({points: {to: pos}}, duration, onComplete, easing, YAHOO.util.Motion);
+        }
+        <b>return</b> this;
+    },
+    
+    <i>/**
+     * Set the position of the element <b>in</b> page coordinates, regardless of how the element is positioned.
+     * The element must be part of the DOM tree to have page coordinates (display:none or elements not appended <b>return</b> false).
+     * @param {Number} x X value <b>for</b> new position (coordinates are page-based)
+     * @param {Number} y Y value <b>for</b> new position (coordinates are page-based)
+     * @param {&lt;i&gt;Boolean&lt;/i&gt;} animate (optional) Animate the transition (Default is false)
+     * @param {&lt;i&gt;float&lt;/i&gt;} duration (optional) How long the animation lasts. (Defaults to .35 seconds)
+     * @param {&lt;i&gt;Function&lt;/i&gt;} onComplete (optional) Function to call when animation completes.
+     * @param {&lt;i&gt;Function&lt;/i&gt;} easing (optional) YAHOO.util.Easing method to use. (Defaults to YAHOO.util.Easing.easeBoth)
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+    setLocation : <b>function</b>(x, y, animate, duration, onComplete, easing){
+        <b>this</b>.setXY([x, y], animate, duration, onComplete, easing);
+        <b>return</b> this;
+    },
+    
+    <i>/**
+     * Set the position of the element <b>in</b> page coordinates, regardless of how the element is positioned.
+     * The element must be part of the DOM tree to have page coordinates (display:none or elements not appended <b>return</b> false).
+     * @param {Number} x X value <b>for</b> new position (coordinates are page-based)
+     * @param {Number} y Y value <b>for</b> new position (coordinates are page-based)
+     * @param {&lt;i&gt;Boolean&lt;/i&gt;} animate (optional) Animate the transition (Default is false)
+     * @param {&lt;i&gt;float&lt;/i&gt;} duration (optional) How long the animation lasts. (Defaults to .35 seconds)
+     * @param {&lt;i&gt;Function&lt;/i&gt;} onComplete (optional) Function to call when animation completes.
+     * @param {&lt;i&gt;Function&lt;/i&gt;} easing (optional) YAHOO.util.Easing method to use. (Defaults to YAHOO.util.Easing.easeBoth)
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+    moveTo : <b>function</b>(x, y, animate, duration, onComplete, easing){
+        <i>//YAHOO.util.Dom.setStyle(<b>this</b>.dom, 'left', <b>this</b>.addUnits(x));</i>
+        <i>//YAHOO.util.Dom.setStyle(<b>this</b>.dom, 'top', <b>this</b>.addUnits(y));</i>
+        <b>this</b>.setXY([x, y], animate, duration, onComplete, easing);
+        <b>return</b> this;
+    },
+    
+    <i>/**
+       * Returns the region of the given element.
+       * The element must be part of the DOM tree to have a region (display:none or elements not appended <b>return</b> false).
+       * @<b>return</b> {Region} A YAHOO.util.Region containing &quot;top, left, bottom, right&quot; member data.
+       */</i>
+    getRegion : <b>function</b>(){
+        <b>return</b> YAHOO.util.Dom.getRegion(<b>this</b>.dom);
+    },
+    
+    <i>/**
+     * Returns the offset height of the element
+     * @param {Boolean} contentHeight (optional) true to get the height minus borders and padding
+     * @<b>return</b> {Number} The element's height
+     */</i>
+    getHeight : <b>function</b>(contentHeight){
+        <b>var</b> h = <b>this</b>.dom.offsetHeight;
+        <b>return</b> contentHeight !== true ? h : h-<b>this</b>.getBorderWidth('tb')-<b>this</b>.getPadding('tb');
+    },
+    
+    <i>/**
+     * Returns the offset width of the element
+     * @param {Boolean} contentWidth (optional) true to get the width minus borders and padding
+     * @<b>return</b> {Number} The element's width
+     */</i>
+    getWidth : <b>function</b>(contentWidth){
+        <b>var</b> w = <b>this</b>.dom.offsetWidth;
+        <b>return</b> contentWidth !== true ? w : w-<b>this</b>.getBorderWidth('lr')-<b>this</b>.getPadding('lr');
+    },
+    
+    <i>/**
+     * Returns the size of the element
+     * @param {Boolean} contentSize (optional) true to get the width/size minus borders and padding
+     * @<b>return</b> {Object} An object containing the element's size {width: (element width), height: (element height)}
+     */</i>
+    getSize : <b>function</b>(contentSize){
+        <b>return</b> {width: <b>this</b>.getWidth(contentSize), height: <b>this</b>.getHeight(contentSize)};
+    },
+    
+    <i>/** @private */</i>
+    adjustWidth : <b>function</b>(width){
+        <b>if</b>(typeof width == 'number'){
+            <b>if</b>(this.autoBoxAdjust &amp;&amp; !<b>this</b>.isBorderBox()){
+               width -= (<b>this</b>.getBorderWidth('lr') + <b>this</b>.getPadding('lr'));
+            }
+            <b>if</b>(width &lt; 0){
+                width = 0;
+            }
+        }
+        <b>return</b> width;
+    },
+    
+    <i>/** @private */</i>
+    adjustHeight : <b>function</b>(height){
+        <b>if</b>(typeof height == 'number'){
+           <b>if</b>(this.autoBoxAdjust &amp;&amp; !<b>this</b>.isBorderBox()){
+               height -= (<b>this</b>.getBorderWidth('tb') + <b>this</b>.getPadding('tb'));
+           }
+           <b>if</b>(height &lt; 0){
+               height = 0;
+           }
+        }
+        <b>return</b> height;
+    },
+    
+    <i>/**
+     * Set the width of the element
+     * @param {Number} width The <b>new</b> width
+     * @param {&lt;i&gt;Boolean&lt;/i&gt;} animate (optional) Animate the transition (Default is false)
+     * @param {&lt;i&gt;float&lt;/i&gt;} duration (optional) How long the animation lasts. (Defaults to .35 seconds)
+     * @param {&lt;i&gt;Function&lt;/i&gt;} onComplete (optional) Function to call when animation completes.
+     * @param {&lt;i&gt;Function&lt;/i&gt;} easing (optional) YAHOO.util.Easing method to use. (Defaults to YAHOO.util.Easing.easeOut <b>if</b> width is larger or YAHOO.util.Easing.easeIn <b>if</b> it is smaller)
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+    setWidth : <b>function</b>(width, animate, duration, onComplete, easing){
+        width = <b>this</b>.adjustWidth(width);
+        <b>if</b>(!animate || !YAHOO.util.Anim){
+            YAHOO.util.Dom.setStyle(<b>this</b>.dom, 'width', <b>this</b>.addUnits(width));
+        }<b>else</b>{
+            <b>this</b>.anim({width: {to: width}}, duration, onComplete, 
+                easing || (width &gt; <b>this</b>.getWidth() ? YAHOO.util.Easing.easeOut : YAHOO.util.Easing.easeIn));
+        }
+        <b>return</b> this;
+    },
+    
+    <i>/**
+     * Set the height of the element
+     * @param {Number} height The <b>new</b> height
+     * @param {&lt;i&gt;Boolean&lt;/i&gt;} animate (optional) Animate the transition (Default is false)
+     * @param {&lt;i&gt;float&lt;/i&gt;} duration (optional) How long the animation lasts. (Defaults to .35 seconds)
+     * @param {&lt;i&gt;Function&lt;/i&gt;} onComplete (optional) Function to call when animation completes.
+     * @param {&lt;i&gt;Function&lt;/i&gt;} easing (optional) YAHOO.util.Easing method to use. (Defaults to YAHOO.util.Easing.easeOut <b>if</b> height is larger or YAHOO.util.Easing.easeIn <b>if</b> it is smaller)
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+     setHeight : <b>function</b>(height, animate, duration, onComplete, easing){
+        height = <b>this</b>.adjustHeight(height);
+        <b>if</b>(!animate || !YAHOO.util.Anim){
+            YAHOO.util.Dom.setStyle(<b>this</b>.dom, 'height', <b>this</b>.addUnits(height));
+        }<b>else</b>{
+            <b>this</b>.anim({height: {to: height}}, duration, onComplete,  
+                   easing || (height &gt; <b>this</b>.getHeight() ? YAHOO.util.Easing.easeOut : YAHOO.util.Easing.easeIn));
+        }
+        <b>return</b> this;
+    },
+    
+    <i>/**
+     * Set the size of the element. If animation is true, both width an height will be animated concurrently.
+     * @param {Number} width The <b>new</b> width
+     * @param {Number} height The <b>new</b> height
+     * @param {&lt;i&gt;Boolean&lt;/i&gt;} animate (optional) Animate the transition (Default is false)
+     * @param {&lt;i&gt;float&lt;/i&gt;} duration (optional) How long the animation lasts. (Defaults to .35 seconds)
+     * @param {&lt;i&gt;Function&lt;/i&gt;} onComplete (optional) Function to call when animation completes.
+     * @param {&lt;i&gt;Function&lt;/i&gt;} easing (optional) YAHOO.util.Easing method to use. (Defaults to YAHOO.util.Easing.easeBoth)
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+     setSize : <b>function</b>(width, height, animate, duration, onComplete, easing){
+        <b>if</b>(!animate || !YAHOO.util.Anim){
+            <b>this</b>.setWidth(width);
+            <b>this</b>.setHeight(height);
+        }<b>else</b>{
+            width = <b>this</b>.adjustWidth(width); height = <b>this</b>.adjustHeight(height);
+            <b>this</b>.anim({width: {to: width}, height: {to: height}}, duration, onComplete, easing);
+        }
+        <b>return</b> this;
+    },
+    
+    <i>/**
+     * Sets the element's position and size <b>in</b> one shot. If animation is true then width, height, x and y will be animated concurrently.
+     * @param {Number} x X value <b>for</b> new position (coordinates are page-based)
+     * @param {Number} y Y value <b>for</b> new position (coordinates are page-based)
+     * @param {Number} width The <b>new</b> width
+     * @param {Number} height The <b>new</b> height
+     * @param {&lt;i&gt;Boolean&lt;/i&gt;} animate (optional) Animate the transition (Default is false)
+     * @param {&lt;i&gt;float&lt;/i&gt;} duration (optional) How long the animation lasts. (Defaults to .35 seconds)
+     * @param {&lt;i&gt;Function&lt;/i&gt;} onComplete (optional) Function to call when animation completes.
+     * @param {&lt;i&gt;Function&lt;/i&gt;} easing (optional) YAHOO.util.Easing method to use. (Defaults to YAHOO.util.Easing.easeBoth)
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+    setBounds : <b>function</b>(x, y, width, height, animate, duration, onComplete, easing){
+        <b>if</b>(!animate || !YAHOO.util.Anim){
+            <b>this</b>.setWidth(width);
+            <b>this</b>.setHeight(height);
+            <b>this</b>.setLocation(x, y);
+        }<b>else</b>{
+            width = <b>this</b>.adjustWidth(width); height = <b>this</b>.adjustHeight(height);
+            <b>this</b>.anim({points: {to: [x, y]}, width: {to: width}, height: {to: height}}, duration, onComplete, easing, YAHOO.util.Motion);
+        }
+        <b>return</b> this;
+    },
+    
+    <i>/**
+     * Sets the element's position and size the the specified region. If animation is true then width, height, x and y will be animated concurrently.
+     * @param {YAHOO.util.Region} region The region to fill
+     * @param {&lt;i&gt;Boolean&lt;/i&gt;} animate (optional) Animate the transition (Default is false)
+     * @param {&lt;i&gt;float&lt;/i&gt;} duration (optional) How long the animation lasts. (Defaults to .35 seconds)
+     * @param {&lt;i&gt;Function&lt;/i&gt;} onComplete (optional) Function to call when animation completes.
+     * @param {&lt;i&gt;Function&lt;/i&gt;} easing (optional) YAHOO.util.Easing method to use. (Defaults to YAHOO.util.Easing.easeBoth)
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+    setRegion : <b>function</b>(region, animate, duration, onComplete, easing){
+        <b>this</b>.setBounds(region.left, region.top, region.right-region.left, region.bottom-region.top, animate, duration, onComplete, easing);
+        <b>return</b> this;
+    },
+    
+    <i>/**
+     * Appends an event handler to <b>this</b> element
+     * @param {String}   eventName     The type of event to listen <b>for</b>
+     * @param {Function} handler        The method the event invokes
+     * @param {&lt;i&gt;Object&lt;/i&gt;}   scope  (optional)  An arbitrary object that will be 
+     *                             passed as a parameter to the handler
+     * @param {&lt;i&gt;boolean&lt;/i&gt;}  override (optional) If true, the obj passed <b>in</b> becomes
+     *                             the execution scope of the listener
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+    addListener : <b>function</b>(eventName, handler, scope, override){
+        YAHOO.util.Event.addListener(<b>this</b>.dom, eventName, handler, scope || <b>this</b>, true);
+        <b>return</b> this;
+    },
+    <i>/**
+     * Appends an event handler to <b>this</b> element that is buffered. If the event is triggered more than once
+     * <b>in</b> the specified time-frame, only the last one actually fires.
+     * @param {String}   eventName     The type of event to listen <b>for</b>
+     * @param {Function} handler        The method the event invokes
+     * @param {&lt;i&gt;Object&lt;/i&gt;}   scope  (optional) The scope (<b>this</b> object) <b>for</b> the handler
+     * @param {&lt;i&gt;Number&lt;/i&gt;}  millis (optional) The number of milliseconds to buffer (defaults to 250)
+     * @<b>return</b> {Function} The wrapped <b>function</b> that was created (can be used to remove the listener)
+     */</i>
+    bufferedListener : <b>function</b>(eventName, fn, scope, millis){
+        <b>var</b> task = <b>new</b> YAHOO.ext.util.DelayedTask();
+        scope = scope || <b>this</b>;
+        <b>var</b> newFn = <b>function</b>(){
+            task.delay(millis || 250, fn, scope, Array.prototype.slice.call(arguments, 0));
+        }
+        <b>this</b>.addListener(eventName, newFn);
+        <b>return</b> newFn;
+    },
+    
+    
+    <i>/**
+     * Appends an event handler to <b>this</b> element. The difference between <b>this</b> function and addListener is <b>this</b>
+     * <b>function</b> prevents the <b>default</b> action, and <b>if</b> set stops propagation (bubbling) as well
+     * @param {String}   eventName     The type of event to listen <b>for</b>
+     * @param {Boolean}   stopPropagation     Whether to also stopPropagation (bubbling) 
+     * @param {Function} handler        The method the event invokes
+     * @param {&lt;i&gt;Object&lt;/i&gt;}   scope  (optional)  An arbitrary object that will be 
+     *                             passed as a parameter to the handler
+     * @param {&lt;i&gt;boolean&lt;/i&gt;}  override (optional) If true, the obj passed <b>in</b> becomes
+     *                             the execution scope of the listener
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+    addHandler : <b>function</b>(eventName, stopPropagation, handler, scope, override){
+        <b>var</b> fn = YAHOO.ext.Element.createStopHandler(stopPropagation, handler, scope || <b>this</b>, true);
+        YAHOO.util.Event.addListener(<b>this</b>.dom, eventName, fn);
+        <b>return</b> this;
+    },
+    
+    <i>/**
+     * Appends an event handler to <b>this</b> element (Same as addListener)
+     * @param {String}   eventName     The type of event to listen <b>for</b>
+     * @param {Function} handler        The method the event invokes
+     * @param {&lt;i&gt;Object&lt;/i&gt;}   scope (optional)   An arbitrary object that will be 
+     *                             passed as a parameter to the handler
+     * @param {&lt;i&gt;boolean&lt;/i&gt;}  override (optional) If true, the obj passed <b>in</b> becomes
+     *                             the execution scope of the listener
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+    on : <b>function</b>(eventName, handler, scope, override){
+        YAHOO.util.Event.addListener(<b>this</b>.dom, eventName, handler, scope || <b>this</b>, true);
+        <b>return</b> this;
+    },
+    
+    <i>/**
+     * Append a managed listener - See {@link YAHOO.ext.EventObject} <b>for</b> more details. Use mon() <b>for</b> a shorter version.
+     * @param {String}   eventName     The type of event to listen <b>for</b>
+     * @param {Function} fn        The method the event invokes
+     * @param {&lt;i&gt;Object&lt;/i&gt;}   scope  (optional)  An arbitrary object that will be 
+     *                             passed as a parameter to the handler
+     * @param {&lt;i&gt;boolean&lt;/i&gt;}  override (optional) If true, the obj passed <b>in</b> becomes
+     *                             the execution scope of the listener
+     * @<b>return</b> {Function} The EventManager wrapped <b>function</b> that can be used to remove the listener
+     */</i>
+    addManagedListener : <b>function</b>(eventName, fn, scope, override){
+        <b>return</b> YAHOO.ext.EventManager.on(<b>this</b>.dom, eventName, fn, scope || <b>this</b>, true);
+    },
+    
+    <i>/** 
+     * Append a managed listener (shorthanded <b>for</b> {@link #addManagedListener}) 
+     * @param {String}   eventName     The type of event to listen <b>for</b>
+     * @param {Function} fn        The method the event invokes
+     * @param {&lt;i&gt;Object&lt;/i&gt;}   scope  (optional)  An arbitrary object that will be 
+     *                             passed as a parameter to the handler
+     * @param {&lt;i&gt;boolean&lt;/i&gt;}  override (optional) If true, the obj passed <b>in</b> becomes
+     *                             the execution scope of the listener
+     * @<b>return</b> {Function} The EventManager wrapped <b>function</b> that can be used to remove the listener
+     */</i>
+    mon : <b>function</b>(eventName, fn, scope, override){
+        <b>return</b> YAHOO.ext.EventManager.on(<b>this</b>.dom, eventName, fn, scope || <b>this</b>, true);
+    },
+    <i>/**
+     * Removes an event handler from <b>this</b> element
+     * @param {String} sType the type of event to remove
+     * @param {Function} fn the method the event invokes
+     * @param {Object} scope
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+    removeListener : <b>function</b>(eventName, handler, scope){
+        YAHOO.util.Event.removeListener(<b>this</b>.dom, eventName, handler);
+        <b>return</b> this;
+    },
+    
+    <i>/**
+     * Removes all previous added listeners from <b>this</b> element
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+    removeAllListeners : <b>function</b>(){
+        YAHOO.util.Event.purgeElement(<b>this</b>.dom);
+        <b>return</b> this;
+    },
+    
+    
+    <i>/**
+     * Set the opacity of the element
+     * @param {Float} opacity The <b>new</b> opacity. 0 = transparent, .5 = 50% visibile, 1 = fully visible, etc
+     * @param {&lt;i&gt;Boolean&lt;/i&gt;} animate (optional) Animate (fade) the transition (Default is false)
+     * @param {&lt;i&gt;Float&lt;/i&gt;} duration (optional) How long the animation lasts. (Defaults to .35 seconds)
+     * @param {&lt;i&gt;Function&lt;/i&gt;} onComplete (optional) Function to call when animation completes.
+     * @param {&lt;i&gt;Function&lt;/i&gt;} easing (optional) YAHOO.util.Easing method to use. (Defaults to YAHOO.util.Easing.easeOut <b>if</b> height is larger or YAHOO.util.Easing.easeIn <b>if</b> it is smaller)
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+     setOpacity : <b>function</b>(opacity, animate, duration, onComplete, easing){
+        <b>if</b>(!animate || !YAHOO.util.Anim){
+            YAHOO.util.Dom.setStyle(<b>this</b>.dom, 'opacity', opacity);
+        }<b>else</b>{
+            <b>this</b>.anim({opacity: {to: opacity}}, duration, onComplete, easing);
+        }
+        <b>return</b> this;
+    },
+    
+    <i>/**
+     * Gets the left X coordinate
+     * @param {Boolean} local True to get the local css position instead of page coordinate
+     * @<b>return</b> {Number}
+     */</i>
+    getLeft : <b>function</b>(local){
+        <b>if</b>(!local){
+            <b>return</b> this.getX();
+        }<b>else</b>{
+            <b>return</b> parseInt(<b>this</b>.getStyle('left'), 10) || 0;
+        }
+    },
+    
+    <i>/**
+     * Gets the right X coordinate of the element (element X position + element width)
+     * @param {Boolean} local True to get the local css position instead of page coordinate
+     * @<b>return</b> {Number}
+     */</i>
+    getRight : <b>function</b>(local){
+        <b>if</b>(!local){
+            <b>return</b> this.getX() + <b>this</b>.getWidth();
+        }<b>else</b>{
+            <b>return</b> (<b>this</b>.getLeft(true) + <b>this</b>.getWidth()) || 0;
+        }
+    },
+    
+    <i>/**
+     * Gets the top Y coordinate
+     * @param {Boolean} local True to get the local css position instead of page coordinate
+     * @<b>return</b> {Number}
+     */</i>
+    getTop : <b>function</b>(local) {
+        <b>if</b>(!local){
+            <b>return</b> this.getY();
+        }<b>else</b>{
+            <b>return</b> parseInt(<b>this</b>.getStyle('top'), 10) || 0;
+        }
+    },
+    
+    <i>/**
+     * Gets the bottom Y coordinate of the element (element Y position + element height)
+     * @param {Boolean} local True to get the local css position instead of page coordinate
+     * @<b>return</b> {Number}
+     */</i>
+    getBottom : <b>function</b>(local){
+        <b>if</b>(!local){
+            <b>return</b> this.getY() + <b>this</b>.getHeight();
+        }<b>else</b>{
+            <b>return</b> (<b>this</b>.getTop(true) + <b>this</b>.getHeight()) || 0;
+        }
+    },
+    
+    <i>/**
+    * Set the element as absolute positioned <b>with</b> the specified z-index
+    * @param {&lt;i&gt;Number&lt;/i&gt;} zIndex (optional)
+    * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+    setAbsolutePositioned : <b>function</b>(zIndex){
+        <b>this</b>.setStyle('position', 'absolute');
+        <b>if</b>(zIndex){
+            <b>this</b>.setStyle('z-index', zIndex);
+        }
+        <b>return</b> this;
+    },
+    
+    <i>/**
+    * Set the element as relative positioned <b>with</b> the specified z-index
+    * @param {&lt;i&gt;Number&lt;/i&gt;} zIndex (optional)
+    * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+    setRelativePositioned : <b>function</b>(zIndex){
+        <b>this</b>.setStyle('position', 'relative');
+        <b>if</b>(zIndex){
+            <b>this</b>.setStyle('z-index', zIndex);
+        }
+        <b>return</b> this;
+    },
+    
+    <i>/**
+    * Clear positioning back to the <b>default</b> when the document was loaded
+    * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+    clearPositioning : <b>function</b>(){
+        <b>this</b>.setStyle('position', '');
+        <b>this</b>.setStyle('left', '');
+        <b>this</b>.setStyle('right', '');
+        <b>this</b>.setStyle('top', '');
+        <b>this</b>.setStyle('bottom', '');
+        <b>return</b> this;
+    },
+    
+    <i>/**
+    * Gets an object <b>with</b> all CSS positioning properties. Useful along <b>with</b> setPostioning to get 
+    * snapshot before performing an update and then restoring the element.
+    * @<b>return</b> {Object} 
+    */</i>
+    getPositioning : <b>function</b>(){
+        <b>return</b> {
+            'position' : <b>this</b>.getStyle('position'),
+            'left' : <b>this</b>.getStyle('left'),
+            'right' : <b>this</b>.getStyle('right'),
+            'top' : <b>this</b>.getStyle('top'),
+            'bottom' : <b>this</b>.getStyle('bottom')
+        };
+    },
+    
+    <i>/**
+     * Gets the width of the border(s) <b>for</b> the specified side(s)
+     * @param {String} side Can be t, l, r, b or any combination of those to add multiple values. For example, 
+     * passing lr would get the border (l)eft width + the border (r)ight width.
+     * @<b>return</b> {Number} The width of the sides passed added together
+     */</i>
+    getBorderWidth : <b>function</b>(side){
+        <b>return</b> this.addStyles(side, YAHOO.ext.Element.borders);
+    },
+    
+    <i>/**
+     * Gets the width of the padding(s) <b>for</b> the specified side(s)
+     * @param {String} side Can be t, l, r, b or any combination of those to add multiple values. For example, 
+     * passing lr would get the padding (l)eft + the padding (r)ight.
+     * @<b>return</b> {Number} The padding of the sides passed added together
+     */</i>
+    getPadding : <b>function</b>(side){
+        <b>return</b> this.addStyles(side, YAHOO.ext.Element.paddings);
+    },
+    
+    <i>/**
+    * Set positioning <b>with</b> an object returned by getPositioning().
+    * @param {Object} posCfg
+    * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+    setPositioning : <b>function</b>(positionCfg){
+        <b>if</b>(positionCfg.position)<b>this</b>.setStyle('position', positionCfg.position);
+        <b>if</b>(positionCfg.left)<b>this</b>.setLeft(positionCfg.left);
+        <b>if</b>(positionCfg.right)<b>this</b>.setRight(positionCfg.right);
+        <b>if</b>(positionCfg.top)<b>this</b>.setTop(positionCfg.top);
+        <b>if</b>(positionCfg.bottom)<b>this</b>.setBottom(positionCfg.bottom);
+        <b>return</b> this;
+    },
+    
+    
+    <i>/**
+     * Quick set left and top adding <b>default</b> units
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+     setLeftTop : <b>function</b>(left, top){
+        <b>this</b>.dom.style.left = <b>this</b>.addUnits(left);
+        <b>this</b>.dom.style.top = <b>this</b>.addUnits(top);
+        <b>return</b> this;
+    },
+    
+    <i>/**
+     * Move <b>this</b> element relative to it's current position.
+     * @param {String} direction Possible values are: 'l','left' - 'r','right' - 't','top','up' - 'b','bottom','down'.
+     * @param {Number} distance How far to move the element <b>in</b> pixels
+     * @param {&lt;i&gt;Boolean&lt;/i&gt;} animate (optional) Animate the movement (Default is false)
+     * @param {&lt;i&gt;Float&lt;/i&gt;} duration (optional) How long the animation lasts. (Defaults to .35 seconds)
+     * @param {&lt;i&gt;Function&lt;/i&gt;} onComplete (optional) Function to call when animation completes.
+     * @param {&lt;i&gt;Function&lt;/i&gt;} easing (optional) YAHOO.util.Easing method to use. 
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+     move : <b>function</b>(direction, distance, animate, duration, onComplete, easing){
+        <b>var</b> xy = <b>this</b>.getXY();
+        direction = direction.toLowerCase();
+        <b>switch</b>(direction){
+            <b>case</b> 'l':
+            <b>case</b> 'left':
+                <b>this</b>.moveTo(xy[0]-distance, xy[1], animate, duration, onComplete, easing);
+                <b>break</b>;
+           <b>case</b> 'r':
+           <b>case</b> 'right':
+                <b>this</b>.moveTo(xy[0]+distance, xy[1], animate, duration, onComplete, easing);
+                <b>break</b>;
+           <b>case</b> 't':
+           <b>case</b> 'top':
+           <b>case</b> 'up':
+                <b>this</b>.moveTo(xy[0], xy[1]-distance, animate, duration, onComplete, easing);
+                <b>break</b>;
+           <b>case</b> 'b':
+           <b>case</b> 'bottom':
+           <b>case</b> 'down':
+                <b>this</b>.moveTo(xy[0], xy[1]+distance, animate, duration, onComplete, easing);
+                <b>break</b>;
+        }
+        <b>return</b> this;
+    },
+    
+    <i>/**
+     *  Store the current overflow setting and clip overflow on the element - use {@link #unclip} to remove
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+    clip : <b>function</b>(){
+        <b>if</b>(!<b>this</b>.isClipped){
+           <b>this</b>.isClipped = true;
+           <b>this</b>.originalClip = {
+               'o': <b>this</b>.getStyle('overflow'), 
+               'x': <b>this</b>.getStyle('overflow-x'),
+               'y': <b>this</b>.getStyle('overflow-y')
+           };
+           <b>this</b>.setStyle('overflow', 'hidden');
+           <b>this</b>.setStyle('overflow-x', 'hidden');
+           <b>this</b>.setStyle('overflow-y', 'hidden');
+        }
+        <b>return</b> this;
+    },
+    
+    <i>/**
+     *  Return clipping (overflow) to original clipping before clip() was called
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+    unclip : <b>function</b>(){
+        <b>if</b>(this.isClipped){
+            <b>this</b>.isClipped = false;
+            <b>var</b> o = <b>this</b>.originalClip;
+            <b>if</b>(o.o){<b>this</b>.setStyle('overflow', o.o);}
+            <b>if</b>(o.x){<b>this</b>.setStyle('overflow-x', o.x);}
+            <b>if</b>(o.y){<b>this</b>.setStyle('overflow-y', o.y);}
+        }
+        <b>return</b> this;
+    },
+    
+    <i>/**
+     * Align <b>this</b> element <b>with</b> another element.
+     * @param {String/HTMLElement/YAHOO.ext.Element} element The element to align to.
+     * @param {String} position The position to align to. Possible values are 'tl' - top left, 'tr' - top right, 'bl' - bottom left, and 'br' - bottom right. 
+     * @param {&lt;i&gt;Array&lt;/i&gt;} offsets (optional) Offset the positioning by [x, y]
+     * @param {&lt;i&gt;Boolean&lt;/i&gt;} animate (optional) Animate the movement (Default is false)
+     * @param {&lt;i&gt;Float&lt;/i&gt;} duration (optional) How long the animation lasts. (Defaults to .35 seconds)
+     * @param {&lt;i&gt;Function&lt;/i&gt;} onComplete (optional) Function to call when animation completes.
+     * @param {&lt;i&gt;Function&lt;/i&gt;} easing (optional) YAHOO.util.Easing method to use. 
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+     alignTo : <b>function</b>(element, position, offsets, animate, duration, onComplete, easing){
+        <b>var</b> otherEl = getEl(element);
+        <b>if</b>(!otherEl){
+            <b>return</b> this; <i>// must not exist</i>
+        }
+        offsets = offsets || [0, 0];
+        <b>var</b> r = otherEl.getRegion();
+        position = position.toLowerCase();
+        <b>switch</b>(position){
+           <b>case</b> 'bl':
+                <b>this</b>.moveTo(r.left + offsets[0], r.bottom + offsets[1], 
+                            animate, duration, onComplete, easing);
+                <b>break</b>;
+           <b>case</b> 'br':
+                <b>this</b>.moveTo(r.right + offsets[0], r.bottom + offsets[1], 
+                            animate, duration, onComplete, easing);
+                <b>break</b>;
+           <b>case</b> 'tl':
+                <b>this</b>.moveTo(r.left + offsets[0], r.top + offsets[1], 
+                            animate, duration, onComplete, easing);
+                <b>break</b>;
+           <b>case</b> 'tr':
+                <b>this</b>.moveTo(r.right + offsets[0], r.top + offsets[1], 
+                            animate, duration, onComplete, easing);
+                <b>break</b>;
+        }
+        <b>return</b> this;
+    },
+    
+    <i>/**
+    * Clears any opacity settings from <b>this</b> element. Required <b>in</b> some cases <b>for</b> IE.
+    * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+    clearOpacity : <b>function</b>(){
+        <b>if</b> (window.ActiveXObject) {
+            <b>this</b>.dom.style.filter = '';
+        } <b>else</b> {
+            <b>this</b>.dom.style.opacity = '';
+            <b>this</b>.dom.style['-moz-opacity'] = '';
+            <b>this</b>.dom.style['-khtml-opacity'] = '';
+        }
+        <b>return</b> this;
+    },
+    
+    <i>/**
+    * Hide <b>this</b> element - Uses display mode to determine whether to use &quot;display&quot; or &quot;visibility&quot;. See {@link #setVisible}.
+    * @param {&lt;i&gt;Boolean&lt;/i&gt;} animate (optional) Animate (fade) the transition (Default is false)
+     * @param {&lt;i&gt;Float&lt;/i&gt;} duration (optional) How long the animation lasts. (Defaults to .35 seconds)
+     * @param {&lt;i&gt;Function&lt;/i&gt;} onComplete (optional) Function to call when animation completes.
+     * @param {&lt;i&gt;Function&lt;/i&gt;} easing (optional) YAHOO.util.Easing method to use. (Defaults to YAHOO.util.Easing.easeBoth)
+    * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+      */</i>
+    hide : <b>function</b>(animate, duration, onComplete, easing){
+        <b>this</b>.setVisible(false, animate, duration, onComplete, easing);
+        <b>return</b> this;
+    },
+    
+    <i>/**
+    * Show <b>this</b> element - Uses display mode to determine whether to use &quot;display&quot; or &quot;visibility&quot;. See {@link #setVisible}.
+    * @param {&lt;i&gt;Boolean&lt;/i&gt;} animate (optional) Animate (fade <b>in</b>) the transition (Default is false)
+     * @param {&lt;i&gt;Float&lt;/i&gt;} duration (optional) How long the animation lasts. (Defaults to .35 seconds)
+     * @param {&lt;i&gt;Function&lt;/i&gt;} onComplete (optional) Function to call when animation completes.
+     * @param {&lt;i&gt;Function&lt;/i&gt;} easing (optional) YAHOO.util.Easing method to use. (Defaults to YAHOO.util.Easing.easeBoth)
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+    show : <b>function</b>(animate, duration, onComplete, easing){
+        <b>this</b>.setVisible(true, animate, duration, onComplete, easing);
+        <b>return</b> this;
+    },
+    
+    <i>/**
+     * @private Test <b>if</b> size has a unit, otherwise appends the <b>default</b> 
+     */</i>
+    addUnits : <b>function</b>(size){
+        <b>if</b>(size === '' || size == 'auto' || <b>typeof</b> size == 'undefined'){
+            <b>return</b> size;
+        }
+        <b>if</b>(typeof size == 'number' || !YAHOO.ext.Element.unitPattern.test(size)){
+            <b>return</b> size + <b>this</b>.defaultUnit;
+        }
+        <b>return</b> size;
+    },
+    
+    <i>/**
+     * Temporarily enables offsets (width,height,x,y) <b>for</b> an element <b>with</b> display:none, use endMeasure() when done.
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+    beginMeasure : <b>function</b>(){
+        <b>var</b> el = <b>this</b>.dom;
+        <b>if</b>(el.offsetWidth || el.offsetHeight){
+            <b>return</b> this; <i>// offsets work already</i>
+        }
+        <b>var</b> changed = [];
+        <b>var</b> p = <b>this</b>.dom; <i>// start <b>with</b> this element</i>
+        <b>while</b>((!el.offsetWidth &amp;&amp; !el.offsetHeight) &amp;&amp; p &amp;&amp; p.tagName &amp;&amp; p.tagName.toLowerCase() != 'body'){
+            <b>if</b>(YAHOO.util.Dom.getStyle(p, 'display') == 'none'){
+                changed.push({el: p, visibility: YAHOO.util.Dom.getStyle(p, 'visibility')});
+                p.style.visibility = 'hidden';
+                p.style.display = 'block';
+            }
+            p = p.parentNode;
+        }
+        <b>this</b>._measureChanged = changed;
+        <b>return</b> this;
+               
+    },
+    
+    <i>/**
+     * Restores displays to before beginMeasure was called
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+    endMeasure : <b>function</b>(){
+        <b>var</b> changed = <b>this</b>._measureChanged;
+        <b>if</b>(changed){
+            <b>for</b>(var i = 0, len = changed.length; i &lt; len; i++) {
+            	<b>var</b> r = changed[i];
+            	r.el.style.visibility = r.visibility;
+                r.el.style.display = 'none';
+            }
+            <b>this</b>._measureChanged = null;
+        }
+        <b>return</b> this;
+    },
+    
+    <i>/**
+    * Update the innerHTML of <b>this</b> element, optionally searching <b>for</b> and processing scripts
+    * @param {String} html The <b>new</b> HTML
+    * @param {&lt;i&gt;Boolean&lt;/i&gt;} loadScripts (optional) true to look <b>for</b> and process scripts
+    * @param {Function} callback For async script loading you can be noticed when the update completes
+    * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+    update : <b>function</b>(html, loadScripts, callback){
+        <b>if</b>(typeof html == 'undefined'){
+            html = '';
+        }
+        <b>if</b>(loadScripts !== true){
+            <b>this</b>.dom.innerHTML = html;
+            <b>if</b>(typeof callback == '<b>function</b>'){
+                callback();
+            }
+            <b>return</b> this;
+        }
+        <b>var</b> id = YAHOO.util.Dom.generateId();
+        <b>var</b> dom = <b>this</b>.dom;
+        
+        html += '&lt;span id=&quot;' + id + '&quot;&gt;&lt;/span&gt;';
+        
+        YAHOO.util.Event.onAvailable(id, <b>function</b>(){
+            <b>var</b> hd = document.getElementsByTagName(&quot;head&quot;)[0];
+            <b>var</b> re = /(?:&lt;script.*?&gt;)((\n|\r|.)*?)(?:&lt;\/script&gt;)/img; 
+            <b>var</b> srcRe = /\ssrc=([\'\&quot;])(.*?)\1/i;
+            <b>var</b> match;
+            <b>while</b>(match = re.exec(html)){
+                <b>var</b> srcMatch = match[0].match(srcRe);
+                <b>if</b>(srcMatch &amp;&amp; srcMatch[2]){
+                   <b>var</b> s = document.createElement(&quot;script&quot;);
+                   s.src = srcMatch[2];
+                   hd.appendChild(s);
+                }<b>else</b> if(match[1] &amp;&amp; match[1].length &gt; 0){
+                   eval(match[1]);
+                }                     
+            }
+            <b>var</b> el = document.getElementById(id);
+            <b>if</b>(el){el.parentNode.removeChild(el);}
+            <b>if</b>(typeof callback == '<b>function</b>'){
+                callback();
+            }
+        });
+        dom.innerHTML = html.replace(/(?:&lt;script.*?&gt;)((\n|\r|.)*?)(?:&lt;\/script&gt;)/img, '');
+        <b>return</b> this;
+    },
+    
+    <i>/**
+     * Direct access to the UpdateManager update() method (takes the same parameters).
+     * @param {String/Function} url The url <b>for</b> this request or a <b>function</b> to call to get the url
+     * @param {&lt;i&gt;String/Object&lt;/i&gt;} params (optional) The parameters to pass as either a url encoded string &quot;param1=1&amp;amp;param2=2&quot; or an object {param1: 1, param2: 2}
+     * @param {&lt;i&gt;Function&lt;/i&gt;} callback (optional) Callback when transaction is complete - called <b>with</b> signature (oElement, bSuccess)
+     * @param {&lt;i&gt;Boolean&lt;/i&gt;} discardUrl (optional) By <b>default</b> when you execute an update the defaultUrl is changed to the last used url. If true, it will not store the url.
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+    load : <b>function</b>(){
+        <b>var</b> um = <b>this</b>.getUpdateManager();
+        um.update.apply(um, arguments);
+        <b>return</b> this;
+    },
+    
+    <i>/**
+    * Gets <b>this</b> elements UpdateManager
+    * @<b>return</b> {YAHOO.ext.UpdateManager} The UpdateManager
+    */</i>
+    getUpdateManager : <b>function</b>(){
+        <b>if</b>(!<b>this</b>.updateManager){
+            <b>this</b>.updateManager = <b>new</b> YAHOO.ext.UpdateManager(<b>this</b>);
+        }
+        <b>return</b> this.updateManager;
+    },
+    
+    <i>/**
+     * Disables text selection <b>for</b> this element (normalized across browsers)
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+    unselectable : <b>function</b>(){
+        <b>this</b>.dom.unselectable = 'on';
+        <b>this</b>.swallowEvent('selectstart', true);
+        <b>this</b>.applyStyles('-moz-user-select:none;-khtml-user-select:none;');
+        <b>return</b> this;
+    },
+    
+    <i>/**
+    * Calculates the x, y to center <b>this</b> element on the screen
+    * @param {Boolean} offsetScroll True to offset the documents current scroll position
+    * @<b>return</b> {Array} The x, y values [x, y]
+    */</i>
+    getCenterXY : <b>function</b>(offsetScroll){
+        <b>var</b> centerX = Math.round((YAHOO.util.Dom.getViewportWidth()-<b>this</b>.getWidth())/2);
+        <b>var</b> centerY = Math.round((YAHOO.util.Dom.getViewportHeight()-<b>this</b>.getHeight())/2);
+        <b>if</b>(!offsetScroll){
+            <b>return</b> [centerX, centerY];
+        }<b>else</b>{
+            <b>var</b> scrollX = document.documentElement.scrollLeft || document.body.scrollLeft || 0;
+            <b>var</b> scrollY = document.documentElement.scrollTop || document.body.scrollTop || 0;
+            <b>return</b>[centerX + scrollX, centerY + scrollY];
+        }
+    },
+    
+    <i>/**
+    * Centers the Element <b>in</b> either the viewport, or another Element.
+    * @param {String/HTMLElement/YAHOO.ext.Element} centerIn (optional) The element <b>in</b> which to center the element.
+    */</i>
+    center : <b>function</b>(centerIn) {
+        <b>if</b>(!centerIn){
+            <b>this</b>.setXY(<b>this</b>.getCenterXY(true));
+        }<b>else</b>{
+            <b>var</b> box = YAHOO.ext.Element.get(centerIn).getBox();
+            <b>this</b>.setXY([box.x + (box.width / 2) - (<b>this</b>.getWidth() / 2),
+                   box.y + (box.height / 2) - (<b>this</b>.getHeight() / 2)]);
+        }
+        <b>return</b> this;
+    },
+
+    <i>/**
+    * Gets an array of child YAHOO.ext.Element objects by tag name
+    * @param {String} tagName
+    * @<b>return</b> {Array} The children
+    */</i>
+    getChildrenByTagName : <b>function</b>(tagName){
+        <b>var</b> children = <b>this</b>.dom.getElementsByTagName(tagName);
+        <b>var</b> len = children.length;
+        <b>var</b> ce = <b>new</b> Array(len);
+        <b>for</b>(var i = 0; i &lt; len; ++i){
+            ce[i] = YAHOO.ext.Element.get(children[i], true);
+        }
+        <b>return</b> ce;
+    },
+    
+    <i>/**
+    * Gets an array of child YAHOO.ext.Element objects by class name and optional tagName
+    * @param {String} className
+    * @param {&lt;i&gt;String&lt;/i&gt;} tagName (optional)
+    * @<b>return</b> {Array} The children
+    */</i>
+    getChildrenByClassName : <b>function</b>(className, tagName){
+        <b>var</b> children = YAHOO.util.Dom.getElementsByClassName(className, tagName, <b>this</b>.dom);
+        <b>var</b> len = children.length;
+        <b>var</b> ce = <b>new</b> Array(len);
+        <b>for</b>(var i = 0; i &lt; len; ++i){
+            ce[i] = YAHOO.ext.Element.get(children[i], true);
+        }
+        <b>return</b> ce;
+    },
+    
+    <i>/**
+     * Tests various css rules/browsers to determine <b>if</b> this element uses a border box
+     * @<b>return</b> {Boolean}
+     */</i>
+    isBorderBox : <b>function</b>(){
+        <b>if</b>(typeof <b>this</b>.bbox == 'undefined'){
+            <b>var</b> el = <b>this</b>.dom;
+            <b>var</b> b = YAHOO.ext.util.Browser;
+            <b>var</b> strict = YAHOO.ext.Strict;
+            <b>this</b>.bbox = ((b.isIE &amp;&amp; !strict &amp;&amp; el.style.boxSizing != 'content-box') || 
+               (b.isGecko &amp;&amp; YAHOO.util.Dom.getStyle(el, &quot;-moz-box-sizing&quot;) == 'border-box') || 
+               (!b.isSafari &amp;&amp; YAHOO.util.Dom.getStyle(el, &quot;box-sizing&quot;) == 'border-box'));
+        }
+        <b>return</b> this.bbox; 
+    },
+    
+    <i>/**
+     * Return a box {x, y, width, height} that can be used to set another elements
+     * size/location to match <b>this</b> element. 
+     * @param {Boolean} contentBox (optional) If true a box <b>for</b> the content of the element is returned. 
+     * @param {Boolean} local (optional) If true the element's left and top are returned instead of page x/y.
+     * @<b>return</b> {Object}
+     */</i>
+    getBox : <b>function</b>(contentBox, local){
+        <b>var</b> xy;
+        <b>if</b>(!local){
+            xy = <b>this</b>.getXY();
+        }<b>else</b>{
+            <b>var</b> left = parseInt(YAHOO.util.Dom.getStyle('left'), 10) || 0;
+            <b>var</b> top = parseInt(YAHOO.util.Dom.getStyle('top'), 10) || 0;
+            xy = [left, top];
+        }
+        <b>var</b> el = <b>this</b>.dom;
+        <b>var</b> w = el.offsetWidth;
+        <b>var</b> h = el.offsetHeight;
+        <b>if</b>(!contentBox){
+            <b>return</b> {x: xy[0], y: xy[1], width: w, height: h};
+        }<b>else</b>{
+            <b>var</b> l = <b>this</b>.getBorderWidth('l')+<b>this</b>.getPadding('l');
+            <b>var</b> r = <b>this</b>.getBorderWidth('r')+<b>this</b>.getPadding('r');
+            <b>var</b> t = <b>this</b>.getBorderWidth('t')+<b>this</b>.getPadding('t');
+            <b>var</b> b = <b>this</b>.getBorderWidth('b')+<b>this</b>.getPadding('b');
+            <b>return</b> {x: xy[0]+l, y: xy[1]+t, width: w-(l+r), height: h-(t+b)};
+        }
+    },
+    
+    <i>/**
+     * Sets the element's box. Use getBox() on another element to get a box obj. If animate is true then width, height, x and y will be animated concurrently.
+     * @param {Object} box The box to fill {x, y, width, height}
+     * @param {&lt;i&gt;Boolean&lt;/i&gt;} adjust (optional) Whether to adjust <b>for</b> box-model issues automatically
+     * @param {&lt;i&gt;Boolean&lt;/i&gt;} animate (optional) Animate the transition (Default is false)
+     * @param {&lt;i&gt;float&lt;/i&gt;} duration (optional) How long the animation lasts. (Defaults to .35 seconds)
+     * @param {&lt;i&gt;Function&lt;/i&gt;} onComplete (optional) Function to call when animation completes.
+     * @param {&lt;i&gt;Function&lt;/i&gt;} easing (optional) YAHOO.util.Easing method to use. (Defaults to YAHOO.util.Easing.easeBoth)
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+    setBox : <b>function</b>(box, adjust, animate, duration, onComplete, easing){
+        <b>var</b> w = box.width, h = box.height;
+        <b>if</b>((adjust &amp;&amp; !<b>this</b>.autoBoxAdjust) &amp;&amp; !<b>this</b>.isBorderBox()){
+           w -= (<b>this</b>.getBorderWidth('lr') + <b>this</b>.getPadding('lr'));
+           h -= (<b>this</b>.getBorderWidth('tb') + <b>this</b>.getPadding('tb'));
+        }
+        <b>this</b>.setBounds(box.x, box.y, w, h, animate, duration, onComplete, easing);
+        <b>return</b> this;
+    },
+    
+    <i>/**
+     * Forces the browser to repaint <b>this</b> element
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+     repaint : <b>function</b>(){
+        <b>var</b> dom = <b>this</b>.dom;
+        YAHOO.util.Dom.addClass(dom, 'yui-ext-repaint');
+        setTimeout(<b>function</b>(){
+            YAHOO.util.Dom.removeClass(dom, 'yui-ext-repaint');
+        }, 1);
+        <b>return</b> this;
+    },
+    
+    <i>/**
+     * Returns an object <b>with</b> properties top, left, right and bottom representing the margins of <b>this</b> element unless sides is passed, 
+     * then it returns the calculated width of the sides (see getPadding)
+     * @param {String} sides (optional) Any combination of l, r, t, b to get the sum of those sides
+     * @<b>return</b> {Object/Number}
+     */</i>
+    getMargins : <b>function</b>(side){
+        <b>if</b>(!side){
+            <b>return</b> {
+                top: parseInt(<b>this</b>.getStyle('margin-top'), 10) || 0,
+                left: parseInt(<b>this</b>.getStyle('margin-left'), 10) || 0,
+                bottom: parseInt(<b>this</b>.getStyle('margin-bottom'), 10) || 0,
+                right: parseInt(<b>this</b>.getStyle('margin-right'), 10) || 0
+            };
+        }<b>else</b>{
+            <b>return</b> this.addStyles(side, YAHOO.ext.Element.margins);
+         }
+    },
+    
+    addStyles : <b>function</b>(sides, styles){
+        <b>var</b> val = 0;
+        <b>for</b>(var i = 0, len = sides.length; i &lt; len; i++){
+             <b>var</b> w = parseInt(<b>this</b>.getStyle(styles[sides.charAt(i)]), 10);
+             <b>if</b>(!isNaN(w)) val += w;
+        }
+        <b>return</b> val;
+    },
+    
+    <i>/**
+     * Creates a proxy element of <b>this</b> element
+     * @param {String/Object} config The class name of the proxy element or a DomHelper config object
+     * @param {&lt;i&gt;String/HTMLElement&lt;/i&gt;} renderTo (optional) The element or element id to render the proxy to (defaults to document.body)
+     * @param {&lt;i&gt;Boolean&lt;/i&gt;} matchBox (optional) True to align and size the proxy to <b>this</b> element now (defaults to false)
+     * @<b>return</b> {YAHOO.ext.Element} The <b>new</b> proxy element
+     */</i>
+    createProxy : <b>function</b>(config, renderTo, matchBox){
+        <b>if</b>(renderTo){
+            renderTo = YAHOO.util.Dom.get(renderTo);
+        }<b>else</b>{
+            renderTo = document.body;
+        }
+        config = <b>typeof</b> config == 'object' ? 
+            config : {tag : 'div', cls: config};
+        <b>var</b> proxy = YAHOO.ext.DomHelper.append(renderTo, config, true);
+        <b>if</b>(matchBox){
+           proxy.setBox(<b>this</b>.getBox());
+        }
+        <b>return</b> proxy;
+    },
+    
+    <i>/**
+     * Creates an iframe shim <b>for</b> this element to keep selects and other windowed objects from
+     * showing through.
+     * @<b>return</b> {YAHOO.ext.Element} The <b>new</b> shim element
+     */</i>
+    createShim : <b>function</b>(){
+        <b>var</b> config = {
+            tag : 'iframe', 
+            frameBorder:'no', 
+            cls: 'yiframe-shim', 
+            style: 'position:absolute;visibility:hidden;left:0;top:0;overflow:hidden;', 
+            src: YAHOO.ext.SSL_SECURE_URL
+        };
+        <b>var</b> shim = YAHOO.ext.DomHelper.append(<b>this</b>.dom.parentNode, config, true);
+        shim.setBox(<b>this</b>.getBox());
+        <b>return</b> shim;
+    },
+    
+    <i>/**
+     * Removes <b>this</b> element from the DOM and deletes it from the cache
+     */</i>
+    remove : <b>function</b>(){
+        <b>this</b>.dom.parentNode.removeChild(<b>this</b>.dom);
+        <b>delete</b> YAHOO.ext.Element.cache[<b>this</b>.dom.id];
+    },
+    
+    <i>/**
+     * Sets up event handlers to add and remove a css class when the mouse is over <b>this</b> element
+     * @param {String} className
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+    addClassOnOver : <b>function</b>(className){
+        <b>this</b>.on('mouseover', <b>function</b>(){
+            <b>this</b>.addClass(className);
+        }, <b>this</b>, true);
+        <b>this</b>.on('mouseout', <b>function</b>(){
+            <b>this</b>.removeClass(className);
+        }, <b>this</b>, true);
+        <b>return</b> this;
+    },
+    
+    <i>/**
+     * Stops the specified event from bubbling and optionally prevent's the <b>default</b> action
+     * @param {String} eventName
+     * @param {Boolean} preventDefault (optional) true to prevent the <b>default</b> action too
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+    swallowEvent : <b>function</b>(eventName, preventDefault){
+        <b>var</b> fn = <b>function</b>(e){
+            e.stopPropagation();
+            <b>if</b>(preventDefault){
+                e.preventDefault();
+            }
+        };
+        <b>this</b>.mon(eventName, fn);
+        <b>return</b> this;
+    },
+    
+    <i>/**
+     * Sizes <b>this</b> element to it's parent element's dimensions performing 
+     * neccessary box adjustments. 
+     * @param {Boolean} monitorResize (optional) If true maintains the fit when the browser window is resized.
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+    fitToParent : <b>function</b>(monitorResize){
+        <b>var</b> p = getEl(<b>this</b>.dom.parentNode, true);
+        p.beginMeasure(); <i>// <b>in</b> case parent is display:none</i>
+        <b>var</b> box = p.getBox(true, true);
+        p.endMeasure();
+        <b>this</b>.setSize(box.width, box.height);
+        <b>if</b>(monitorResize === true){
+            YAHOO.ext.EventManager.onWindowResize(<b>this</b>.fitToParent, <b>this</b>, true);
+        }
+        <b>return</b> this;
+    },
+    
+    <i>/**
+     * Gets the next sibling, skipping text nodes
+     * @<b>return</b> {HTMLElement} The next sibling or null
+	 */</i>
+    getNextSibling : <b>function</b>(){
+        <b>var</b> n = <b>this</b>.dom.nextSibling;
+        <b>while</b>(n &amp;&amp; n.nodeType != 1){
+            n = n.nextSibling;
+        }
+        <b>return</b> n;
+    },
+    
+    <i>/**
+     * Gets the previous sibling, skipping text nodes
+     * @<b>return</b> {HTMLElement} The previous sibling or null
+	 */</i>
+    getPrevSibling : <b>function</b>(){
+        <b>var</b> n = <b>this</b>.dom.previousSibling;
+        <b>while</b>(n &amp;&amp; n.nodeType != 1){
+            n = n.previousSibling;
+        }
+        <b>return</b> n;
+    },
+    
+    
+    <i>/**
+     * Appends the passed element(s) to <b>this</b> element
+     * @param {String/HTMLElement/Array/Element/CompositeElement} el
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+    appendChild: <b>function</b>(el){
+        el = getEl(el);
+        el.appendTo(<b>this</b>);
+        <b>return</b> this;
+    },
+    
+    <i>/**
+     * Creates the passed DomHelper config and appends it to <b>this</b> element or optionally inserts it before the passed child element.
+     * @param {Object} config DomHelper element config object
+     * @param {&lt;i&gt;HTMLElement&lt;/i&gt;} insertBefore (optional) a child element of <b>this</b> element
+     * @<b>return</b> {YAHOO.ext.Element} The <b>new</b> child element
+     */</i>
+    createChild: <b>function</b>(config, insertBefore){
+        <b>var</b> c;
+        <b>if</b>(insertBefore){
+            c = YAHOO.ext.DomHelper.insertBefore(insertBefore, config, true);
+        }<b>else</b>{
+            c = YAHOO.ext.DomHelper.append(<b>this</b>.dom, config, true);
+        }
+        <b>return</b> c;
+    },
+    
+    <i>/**
+     * Appends <b>this</b> element to the passed element
+     * @param {String/HTMLElement/Element} el The <b>new</b> parent element
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+    appendTo: <b>function</b>(el){
+        <b>var</b> node = getEl(el).dom;
+        node.appendChild(<b>this</b>.dom);
+        <b>return</b> this;
+    },
+    
+    <i>/**
+     * Inserts <b>this</b> element before the passed element <b>in</b> the DOM
+     * @param {String/HTMLElement/Element} el The element to insert before
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+    insertBefore: <b>function</b>(el){
+        <b>var</b> node = getEl(el).dom;
+        node.parentNode.insertBefore(<b>this</b>.dom, node);
+        <b>return</b> this;
+    },
+    
+    <i>/**
+     * Inserts <b>this</b> element after the passed element <b>in</b> the DOM
+     * @param {String/HTMLElement/Element} el The element to insert after
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+    insertAfter: <b>function</b>(el){
+        <b>var</b> node = getEl(el).dom;
+        node.parentNode.insertBefore(<b>this</b>.dom, node.nextSibling);
+        <b>return</b> this;
+    },
+    
+    <i>/**
+     * Creates and wraps <b>this</b> element <b>with</b> another element
+     * @param {Object} config (optional) DomHelper element config object <b>for</b> the wrapper element or null <b>for</b> an empty div
+     * @<b>return</b> {Element} The newly created wrapper element
+     */</i>
+    wrap: <b>function</b>(config){
+        <b>if</b>(!config){
+            config = {tag: 'div'};
+        }
+        <b>var</b> newEl = YAHOO.ext.DomHelper.insertBefore(<b>this</b>.dom, config, true);
+        newEl.dom.appendChild(<b>this</b>.dom);
+        <b>return</b> newEl;
+    },
+    
+    <i>/**
+     * Replaces the passed element <b>with</b> this element
+     * @param {String/HTMLElement/Element} el The element to replace
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+    replace: <b>function</b>(el){
+        el = getEl(el);
+        <b>this</b>.insertBefore(el);
+        el.remove();
+        <b>return</b> this;
+    },
+    
+    <i>/**
+     * Inserts an html fragment into <b>this</b> element
+     * @param {String} where Where to insert the html <b>in</b> relation to the <b>this</b> element - beforeBegin, afterBegin, beforeEnd, afterEnd.
+     * @param {String} html The HTML fragment
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+    insertHtml : <b>function</b>(where, html){
+        YAHOO.ext.DomHelper.insertHtml(where, <b>this</b>.dom, html);
+        <b>return</b> this;
+    },
+    
+    <i>/**
+     * Sets the passed attributes as attributes of <b>this</b> element (a style attribute can be a string, object or <b>function</b>)
+     * @param {Object} o The object <b>with</b> the attributes
+     * @<b>return</b> {YAHOO.ext.Element} <b>this</b>
+     */</i>
+    set : <b>function</b>(o){
+        <b>var</b> el = <b>this</b>.dom;
+        <b>var</b> useSet = el.setAttribute ? true : false;
+        <b>for</b>(var attr <b>in</b> o){
+            <b>if</b>(attr == 'style' || <b>typeof</b> o[attr] == '<b>function</b>') <b>continue</b>;
+            <b>if</b>(attr=='cls'){
+                el.className = o['cls'];
+            }<b>else</b>{
+                <b>if</b>(useSet) el.setAttribute(attr, o[attr]);
+                <b>else</b> el[attr] = o[attr];
+            }
+        }
+        YAHOO.ext.DomHelper.applyStyles(el, o.style);
+        <b>return</b> this;
+    },
+    
+    <i>/**
+     * Convenience method <b>for</b> constructing a KeyMap
+     * @param {Number/Array/Object/String} key Either a string <b>with</b> the keys to listen <b>for</b>, the numeric key code, array of key codes or an object <b>with</b> the following options: 
+     *                                  {key: (number or array), shift: (true/false), ctrl: (true/false), alt: (true/false)}
+     * @param {Function} fn The <b>function</b> to call
+     * @param {Object} scope (optional) The scope of the <b>function</b>
+     * @<b>return</b> {YAHOO.ext.KeyMap} The KeyMap created
+     */</i>
+    addKeyListener : <b>function</b>(key, fn, scope){
+        <b>var</b> config;
+        <b>if</b>(typeof key != 'object' || key instanceof Array){
+            config = {
+                key: key,
+                fn: fn,
+                scope: scope 
+            };
+        }<b>else</b>{
+            config = {
+                key : key.key,
+                shift : key.shift,
+                ctrl : key.ctrl,
+                alt : key.alt,
+                fn: fn,
+                scope: scope
+            };
+        }
+        <b>var</b> map = <b>new</b> YAHOO.ext.KeyMap(<b>this</b>, config);
+        <b>return</b> map; 
+    },
+    
+    <i>/**
+     * Creates a KeyMap <b>for</b> this element
+     * @param {Object} config The KeyMap config. See {@link YAHOO.ext.KeyMap} <b>for</b> more details
+     * @<b>return</b> {YAHOO.ext.KeyMap} The KeyMap created
+     */</i>
+    addKeyMap : <b>function</b>(config){
+        <b>return</b> new YAHOO.ext.KeyMap(<b>this</b>, config);
+    }
+};
+
+<i>/**
+ * true to automatically adjust width and height settings <b>for</b> box-model issues (<b>default</b> to true)
+ */</i>
+YAHOO.ext.Element.prototype.autoBoxAdjust = true;
+<i>/**
+ * true to automatically detect display mode and use display instead of visibility <b>with</b> show()/hide() (defaults to false).
+ * To enable <b>this</b> globally:&lt;pre&gt;&lt;code&gt;YAHOO.ext.Element.prototype.autoDisplayMode = true;&lt;/code&gt;&lt;/pre&gt;
+ */</i>
+YAHOO.ext.Element.prototype.autoDisplayMode = true;
+
+YAHOO.ext.Element.unitPattern = /\d+(px|em|%|en|ex|pt|<b>in</b>|cm|mm|pc)$/i;
+<i>/**
+ * Visibility mode constant - Use visibility to hide element
+ * @static
+ * @type Number
+ */</i>
+YAHOO.ext.Element.VISIBILITY = 1;
+<i>/**
+ * Visibility mode constant - Use display to hide element
+ * @static
+ * @type Number
+ */</i>
+YAHOO.ext.Element.DISPLAY = 2;
+
+YAHOO.ext.Element.blockElements = /^(?:address|blockquote|center|dir|div|dl|fieldset|form|h\d|hr|isindex|menu|ol|ul|p|pre|table|dd|dt|li|tbody|tr|td|thead|tfoot|iframe)$/i;
+YAHOO.ext.Element.borders = {l: 'border-left-width', r: 'border-right-width', t: 'border-top-width', b: 'border-bottom-width'};
+YAHOO.ext.Element.paddings = {l: 'padding-left', r: 'padding-right', t: 'padding-top', b: 'padding-bottom'};
+YAHOO.ext.Element.margins = {l: 'margin-left', r: 'margin-right', t: 'margin-top', b: 'margin-bottom'};
+        
+<i>/**
+ * @private Call out to here so we make minimal closure
+ */</i>
+YAHOO.ext.Element.createStopHandler = <b>function</b>(stopPropagation, handler, scope, override){
+    <b>return</b> function(e){
+        <b>if</b>(e){
+            <b>if</b>(stopPropagation){
+                YAHOO.util.Event.stopEvent(e);
+            }<b>else</b> {
+                YAHOO.util.Event.preventDefault(e);
+            }
+        }
+        handler.call(override &amp;&amp; scope ? scope : window, e, scope);
+    };
+};
+
+<i>/**
+ * @private
+ */</i>
+YAHOO.ext.Element.cache = {};
+
+<i>/**
+ * Static method to retreive Element objects. Uses simple caching to consistently <b>return</b> the same object. 
+ * Automatically fixes <b>if</b> an object was recreated <b>with</b> the same id via AJAX or DOM.
+ * @param {String/HTMLElement/Element} el The id of the element or the element to wrap (must have an id). If you pass <b>in</b> an element, it is returned
+ * @param {&lt;i&gt;Boolean&lt;/i&gt;} autoGenerateId (optional) Set <b>this</b> flag to true <b>if</b> you are passing an element without an id (like document.body). It will auto generate an id <b>if</b> one isn't present. 
+ * @<b>return</b> {Element} The element object
+ * @static
+ */</i>
+YAHOO.ext.Element.get = <b>function</b>(el, autoGenerateId){
+    <b>if</b>(!el){ <b>return</b> null; }
+    autoGenerateId = true; <i>// now generates id by <b>default</b></i>
+    <b>if</b>(el instanceof YAHOO.ext.Element){
+        el.dom = YAHOO.util.Dom.get(el.id); <i>// refresh dom element <b>in</b> case no longer valid</i>
+        YAHOO.ext.Element.cache[el.id] = el; <i>// <b>in</b> case it was created directly <b>with</b> Element(), let's cache it</i>
+        <b>return</b> el;
+    }<b>else</b> if(el.isComposite){
+        <b>return</b> el;
+    }<b>else</b> if(el instanceof Array){
+        <b>return</b> YAHOO.ext.Element.select(el);
+    }<b>else</b> if(el === document){
+        <i>// create a bogus element object representing the document object</i>
+        <b>if</b>(!YAHOO.ext.Element.cache['__ydocument']){
+            <b>var</b> docEl = <b>function</b>(){};
+            docEl.prototype = YAHOO.ext.Element.prototype;
+            <b>var</b> o = <b>new</b> docEl();
+            o.dom = document;
+            YAHOO.ext.Element.cache['__ydocument'] = o;
+        }
+        <b>return</b> YAHOO.ext.Element.cache['__ydocument'];
+    }
+    <b>var</b> key = el;
+    <b>if</b>(typeof el != 'string'){ <i>// must be an element</i>
+        <b>if</b>(!el.id &amp;&amp; !autoGenerateId){ <b>return</b> null; }
+        YAHOO.util.Dom.generateId(el, 'elgen-');
+        key = el.id;
+    }
+    <b>var</b> element = YAHOO.ext.Element.cache[key];
+    <b>if</b>(!element){
+        element = <b>new</b> YAHOO.ext.Element(key);
+        <b>if</b>(!element.dom) <b>return</b> null;
+        YAHOO.ext.Element.cache[key] = element;
+    }<b>else</b>{
+        element.dom = YAHOO.util.Dom.get(key);
+    }
+    <b>return</b> element;
+};
+
+<i>/**
+ * Shorthand <b>function</b> for YAHOO.ext.Element.get()
+ */</i>
+<b>var</b> getEl = YAHOO.ext.Element.get;
+
+<i>// clean up refs</i>
+YAHOO.util.Event.addListener(window, 'unload', <b>function</b>(){ 
+    YAHOO.ext.Element.cache = null;
+});
+
+</code></pre><hr><div style="font-size:10px;text-align:center;color:gray;">yui-ext - Copyright &copy; 2006 Jack Slocum.  |
+    Yahoo! UI - Copyright &copy; 2006 Yahoo! Inc.<br />All rights reserved.</div>
+    </body></html>

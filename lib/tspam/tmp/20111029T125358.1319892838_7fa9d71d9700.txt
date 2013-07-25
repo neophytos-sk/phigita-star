@@ -1,0 +1,23 @@
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.jobmet.com (Postfix) with ESMTP id 31691645249;
+	Sat, 29 Oct 2011 20:24:24 +0800 (CST) from mail.jobmet.com ([127.0.0.1])
+	by localhost (mail.jobmet.com [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id lKjmlN9E41q2; Sat, 29 Oct 2011 20:24:15 +0800 (CST) from zlsref (unknown [115.63.11.109])
+	by mail.jobmet.com (Postfix) with ESMTP id B7C4E6C4260;
+	Sat, 29 Oct 2011 20:24:06 +0800 (CST) 
+X-Virus-Scanned: amavisd-new at 
+X-Spam-Flag: NO 
+X-Spam-Score: 13.641 
+X-Spam-Level: ************* 
+X-Spam-Status: No, score=13.641 tagged_above=-10 required=15 tests=[AWL=0.518,
+	BAYES_99=3.5, FH_DATE_PAST_20XX=3.188, HTML_MESSAGE=0.001,
+	MIME_BASE64_TEXT=1.753, MIME_HTML_ONLY=1.457, RCVD_IN_PBL=0.905,
+	RDNS_NONE=0.1, TVD_SPACE_RATIO=2.219] 
+Message-ID: <20111029205327847258@china-easyjob.com> 
+From: "czqswym" <sandy@china-easyjob.com> 
+To:  
+Subject: =?gb2312?B?dHNiIM/6pLLK26W31velvLncpckgMWc5dGt1bw==?=
+	=?gb2312?B?Yg==?= 
+Date: Sat, 29 Oct 2011 20:53:18 +0800 
+X-mailer: Frxrwwdqq 6 
+Whoops!  What is a 'application/vnd.ms-excel'?

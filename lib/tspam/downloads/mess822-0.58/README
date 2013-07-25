@@ -1,0 +1,15 @@
+mess822 0.58, alpha.
+19980904
+Copyright 1998
+D. J. Bernstein, djb@pobox.com
+http://pobox.com/~djb/mess822.html
+
+mess822 is a library for parsing Internet mail messages. See BLURB for a
+more detailed advertisement.
+
+INSTALL says how to set up mess822.
+
+The rest of this file is a list of systypes where various versions of
+mess822 have been reported to work.
+
+0.55: bsd.os-2.0.1-:i386-:-:pentium-:-

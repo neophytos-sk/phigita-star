@@ -1,0 +1,39 @@
+X-Mailer: Lyris ListManager Web Interface 
+Date: Mon, 21 Nov 2011 06:50:00 -0800 
+Subject: Alertbox: Accuracy vs. Insights in Quantitative Usability 
+To: "Alertbox Announcement List" <alertbox@laser.sparklist.com> 
+From: alertbox@nngroup.com (Jakob Nielsen) 
+Reply-To: bounce-alertbox-10707705@laser.sparklist.com 
+Message-Id: <SPARKLIST-10707705-19574198-2011.11.21-06.50.02--k2pts#phigita.net@laser.sparklist.com> 
+--------------------------------------
+Better to accept a wider margin of error in usability metrics than to
+spend the entire budget learning too few things with extreme precision.
+
+Jakob Nielsen's Alertbox for November 21:
+  > http://www.useit.com/alertbox/study-accuracy-confidence.html
+
+----------------------------------
+
+Usability Week 2011/2012 conference
+
+  * Las Vegas: December 4-9
+  * New York City: Feb. 26 Â March 2
+  * Edinburgh, Scotland: March 19-23
+  * Amsterdam, The Netherlands: April 23-27
+
+Full program:
+  > http://www.nngroup.com/events
+
+DEADLINE to save $200 on Las Vegas advance registration:
+  * NEXT FRIDAY, December 2
+  > http://www.nngroup.com/events/las_vegas/agenda.html
+
+
+---
+Nielsen Norman Group, 48105 Warm Springs Blvd, Fremont, CA 94539 USA
+To subscribe send blank email to join-alertbox@laser.sparklist.com 
+To unsubscribe send blank email to leave-alertbox-10707705R@laser.sparklist.com
+[You are currently subscribed as k2pts@phigita.net]
+
+
+

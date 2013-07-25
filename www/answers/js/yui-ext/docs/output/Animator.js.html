@@ -1,0 +1,485 @@
+<html><head><title>Animator.js</title><link rel="stylesheet" type="text/css" href="../resources/style.css" media="screen"/></head><body><h1>Animator.js</h1><pre class="highlighted"><code><i>/**
+ * @class YAHOO.ext.Animator
+ * Provides support <b>for</b> syncing animations <b>for</b> multiple {@link YAHOO.ext.Actor}s.&lt;br&gt;&lt;br&gt;
+* &lt;br&gt;&lt;br&gt;This example can be seen <b>in</b> action &lt;a href=&quot;http:<i>//www.jackslocum.com/yui/2006/08/19/a-splitbar-component-<b>for</b>-yahoo-ui/&quot; target=&quot;_new&quot;&gt;here&lt;/a&gt; </i>
+* by clicking on &quot;Click here and I will point it out&quot; at the end of the first paragraph.&lt;br&gt;
+ * &lt;pre&gt;&lt;code&gt;
+<b>var</b> animator = <b>new</b> YAHOO.ext.Animator();
+<b>var</b> cursor = <b>new</b> YAHOO.ext.Actor('cursor-img', animator);
+<b>var</b> click = <b>new</b> YAHOO.ext.Actor('click-img', animator);
+<b>var</b> resize = <b>new</b> YAHOO.ext.Actor('resize-img', animator);
+
+<i>// start capturing</i>
+animator.startCapture();
+
+<i>// these animations will be run <b>in</b> sequence</i>
+cursor.show();
+cursor.moveTo(500,400);
+cursor.moveTo(20, getEl('navbar').getY()+10, true, .75);
+click.show();
+click.alignTo(cursor, 'tl', [-4, -4]);
+
+<i>// Add an async <b>function</b> call, pass callback to argument 1</i>
+animator.addAsyncCall(Blog.navbar.undockDelegate, 1);
+
+<i>// pause .5 seconds</i>
+animator.pause(.5);
+
+<i>// again, these animations will be run <b>in</b> sequence</i>
+click.hide(true, .7);
+cursor.alignTo('splitter', 'tr', [0, +100], true, 1);
+resize.alignTo('splitter', 'tr', [-12, +100]);
+
+<i>// start sync block: these animations will run at the same time</i>
+animator.beginSync();
+cursor.hide();
+resize.show();
+animator.endSync();
+
+<i>// play the captured animation sequences, call myCallback when done</i>
+animator.play(myCallback);
+ * &lt;/code&gt;&lt;/pre&gt;
+ * @requires YAHOO.ext.Element
+ * @requires YAHOO.util.Dom
+ * @requires YAHOO.util.Event
+ * @requires YAHOO.util.CustomEvent 
+ * @requires YAHOO.util.Anim
+ * @requires YAHOO.util.ColorAnim
+ * @requires YAHOO.util.Motion
+ * @constructor
+ * @param {String/HTMLElement} el The dom element or element id 
+ * @param {&lt;i&gt;YAHOO.ext.Animator&lt;/i&gt;} animator (optional) The Animator that will capture <b>this</b> Actor's actions
+ * @param {&lt;i&gt;Boolean&lt;/i&gt;} selfCapture (optional) Whether <b>this</b> actor should capture it's own actions to support self playback without an animator (defaults to false)
+ */</i> 
+ YAHOO.ext.Animator = <b>function</b>(<i>/*Actors...*/</i>){
+    <b>this</b>.actors = [];
+    <b>this</b>.playlist = <b>new</b> YAHOO.ext.Animator.AnimSequence();
+    <b>this</b>.captureDelegate = <b>this</b>.capture.createDelegate(<b>this</b>);
+    <b>this</b>.playDelegate = <b>this</b>.play.createDelegate(<b>this</b>);
+    <b>this</b>.syncing = false;
+    <b>this</b>.stopping = false;
+    <b>this</b>.playing = false;
+    <b>for</b>(var i = 0; i &lt; arguments.length; i++){
+        <b>this</b>.addActor(arguments[i]);
+    }
+ };
+ 
+ YAHOO.ext.Animator.prototype = {
+ 
+     capture : <b>function</b>(actor, action){
+        <b>if</b>(this.syncing){
+            <b>if</b>(!<b>this</b>.syncMap[actor.id]){
+                <b>this</b>.syncMap[actor.id] = <b>new</b> YAHOO.ext.Animator.AnimSequence();
+            }
+            <b>this</b>.syncMap[actor.id].add(action);
+        }<b>else</b>{
+            <b>this</b>.playlist.add(action);
+        }
+    },
+    
+    <i>/**
+      * Add an actor. The actor is also set to capturing = true.
+      * @param {YAHOO.ext.Actor} actor
+      */</i>
+     addActor : <b>function</b>(actor){
+        actor.onCapture.subscribe(<b>this</b>.captureDelegate);
+        <b>this</b>.actors.push(actor);
+    },
+    
+    
+    <i>/**
+      * Start capturing actions on the added actors. 
+      * @param {&lt;i&gt;Boolean&lt;/i&gt;} clearPlaylist Whether to also create a <b>new</b> playlist
+      */</i>
+     startCapture : <b>function</b>(clearPlaylist){
+        <b>for</b>(var i = 0; i &lt; <b>this</b>.actors.length; i++){
+            <b>var</b> a = <b>this</b>.actors[i];
+            <b>if</b>(!<b>this</b>.isCapturing(a)){
+                a.onCapture.subscribe(<b>this</b>.captureDelegate);
+            }
+            a.capturing = true;
+        }
+        <b>if</b>(clearPlaylist){
+            <b>this</b>.playlist = <b>new</b> YAHOO.ext.Animator.AnimSequence();
+        }
+     },
+     
+     <i>/**
+      * Checks whether <b>this</b> animator is listening to a specific actor.
+      * @param {YAHOO.ext.Actor} actor
+      */</i>
+     isCapturing : <b>function</b>(actor){
+        <b>var</b> subscribers = actor.onCapture.subscribers;
+        <b>if</b>(subscribers){
+            <b>for</b>(var i = 0; i &lt; subscribers.length; i++){
+                <b>if</b>(subscribers[i] &amp;&amp; subscribers[i].contains(<b>this</b>.captureDelegate)){
+                    <b>return</b> true;
+                }
+            }
+        }
+        <b>return</b> false;
+     },
+     
+     <i>/**
+      * Stop capturing on all added actors.
+      */</i>
+     stopCapture : <b>function</b>(){
+         <b>for</b>(var i = 0; i &lt; <b>this</b>.actors.length; i++){
+            <b>var</b> a = <b>this</b>.actors[i];
+            a.onCapture.unsubscribe(<b>this</b>.captureDelegate);
+            a.capturing = false;
+         }
+     },
+     
+     <i>/**
+     * Start a multi-actor sync block. By <b>default</b> all animations are run <b>in</b> sequence. While <b>in</b> the sync block
+     * each actor's own animations will still be sequenced, but all actors will animate at the same time. 
+     */</i>
+    beginSync : <b>function</b>(){
+        <b>this</b>.syncing = true;
+        <b>this</b>.syncMap = {};
+     },
+     
+     <i>/**
+     * End the multi-actor sync block
+     */</i>
+    endSync : <b>function</b>(){
+         <b>this</b>.syncing = false;
+         <b>var</b> composite = <b>new</b> YAHOO.ext.Animator.CompositeSequence();
+         <b>for</b>(key <b>in</b> this.syncMap){
+             <b>if</b>(typeof <b>this</b>.syncMap[key] != '<b>function</b>'){
+                composite.add(<b>this</b>.syncMap[key]);
+             }
+         }
+         <b>this</b>.playlist.add(composite);
+         <b>this</b>.syncMap = null;
+     },
+     
+    <i>/**
+     * Starts playback of the playlist, also stops any capturing. To start capturing again call {@link #startCapture}.
+     * @param {&lt;i&gt;Function&lt;/i&gt;} oncomplete (optional) Callback to execute when playback has completed
+     */</i>
+    play : <b>function</b>(oncomplete){
+        <b>if</b>(this.playing) <b>return</b>; <i>// can't play the same animation twice at once</i>
+        <b>this</b>.stopCapture();
+        <b>this</b>.playlist.play(oncomplete);
+    },
+    
+    <i>/**
+     * Stop at the next available stopping point
+     */</i>
+    stop : <b>function</b>(){
+        <b>this</b>.playlist.stop();
+    },
+    
+    <i>/**
+     * Check <b>if</b> this animator is currently playing
+     */</i>
+    isPlaying : <b>function</b>(){
+        <b>return</b> this.playlist.isPlaying();
+    },
+    <i>/**
+     * Clear the playlist
+     */</i>
+    clear : <b>function</b>(){
+        <b>this</b>.playlist = <b>new</b> YAHOO.ext.Animator.AnimSequence();
+     },
+     
+    <i>/**
+     * Add a <b>function</b> call to the playlist.
+     * @param {Function} fcn The <b>function</b> to call
+     * @param {&lt;i&gt;Array&lt;/i&gt;} args The arguments to call the <b>function</b> with
+     * @param {&lt;i&gt;Object&lt;/i&gt;} scope (optional) The scope of the <b>function</b>
+     */</i>
+     addCall : <b>function</b>(fcn, args, scope){
+        <b>this</b>.playlist.add(<b>new</b> YAHOO.ext.Actor.Action(scope, fcn, args || []));
+     },
+     
+     <i>/**
+     * Add an async <b>function</b> call to the playlist.
+     * @param {Function} fcn The <b>function</b> to call
+     * @param {Number} callbackIndex The index of the callback parameter on the passed <b>function</b>. A CALLBACK IS REQUIRED.
+     * @param {&lt;i&gt;Array&lt;/i&gt;} args The arguments to call the <b>function</b> with
+     * @param {&lt;i&gt;Object&lt;/i&gt;} scope (optional) The scope of the <b>function</b>
+     */</i>
+    addAsyncCall : <b>function</b>(fcn, callbackIndex, args, scope){
+        <b>this</b>.playlist.add(<b>new</b> YAHOO.ext.Actor.AsyncAction(scope, fcn, args || [], callbackIndex));
+     },
+     
+     <i>/**
+     * Add a pause to the playlist (<b>in</b> seconds)
+     * @param {Number} seconds The number of seconds to pause.
+     */</i>
+    pause : <b>function</b>(seconds){
+        <b>this</b>.playlist.add(<b>new</b> YAHOO.ext.Actor.PauseAction(seconds));
+     }
+     
+  };
+<i>/**
+ * Static <b>function</b> to build a AnimatorComposite from a css selector (requires YAHOO.ext.Element.selectorFunction be defined)
+ * @param {String/Array} selector The css selector or an array of nodes to animate
+ * @method @static
+ */</i>
+YAHOO.ext.Animator.select = <b>function</b>(selector){
+    <b>var</b> els;
+    <b>if</b>(typeof selector == 'string'){
+        els = YAHOO.ext.Element.selectorFunction(selector);
+    }<b>else</b> if(selector instanceof Array){
+        els = selector;
+    }<b>else</b>{
+        throw 'Invalid selector';
+    }
+    <b>return</b> new YAHOO.ext.AnimatorComposite(els);
+};
+<b>var</b> getActors = YAHOO.ext.Animator.select;
+
+<i>/**
+ * @class YAHOO.ext.AnimatorComposite
+ * Composite class <b>with</b> synchronized animations. This is the class returned by getActors(selector) or YAHOO.ext.Animator.select().
+ */</i>
+YAHOO.ext.AnimatorComposite = <b>function</b>(els){
+    <b>this</b>.animator = <b>new</b> YAHOO.ext.Animator();
+    <b>this</b>.addElements(els);
+    <b>this</b>.syncAnims = true;
+};
+YAHOO.ext.AnimatorComposite.prototype = {
+    isComposite: true,
+    <i>/**
+    * Adds elements to <b>this</b> composite.
+    * @param {Array} els An array of elements to add
+    * @<b>return</b> {AnimatorComposite} <b>this</b>
+    */</i>
+    addElements : <b>function</b>(els){
+        <b>if</b>(!els) <b>return</b> this;
+        <b>var</b> anim = <b>this</b>.animator;
+        <b>for</b>(var i = 0, len = els.length; i &lt; len; i++) {
+        	anim.addActor(<b>new</b> YAHOO.ext.Actor(els[i]));
+        }
+        anim.startCapture();
+        <b>return</b> this;
+    },
+    <i>/**
+    * Operations called after sequence() will be performed one by one on each element <b>in</b> this composite.
+    * @<b>return</b> {AnimatorComposite} <b>this</b>
+    */</i>
+    sequence : <b>function</b>(){
+        <b>this</b>.syncAnims = false;
+        <b>return</b> this;
+    },
+    <i>/**
+    * Operations called after sync() will be performed at the same time on each element <b>in</b> this composite.
+    * @<b>return</b> {AnimatorComposite} <b>this</b>
+    */</i>
+    sync : <b>function</b>(){
+        <b>this</b>.syncAnims = true;
+        <b>return</b> this;
+    },
+    invoke : <b>function</b>(fn, args){
+        <b>var</b> els = <b>this</b>.animator.actors;
+        <b>if</b>(this.syncAnims) <b>this</b>.animator.beginSync();
+        <b>for</b>(var i = 0, len = els.length; i &lt; len; i++) {
+            YAHOO.ext.Actor.prototype[fn].apply(els[i], args);
+        }
+        <b>if</b>(this.syncAnims) <b>this</b>.animator.endSync();
+        <b>return</b> this;
+    },
+    <i>/**
+    * Play the actions queued <b>in</b> this composite.
+    * @param {Function} callback (optional) callback is called when all animations have compelted
+    * @<b>return</b> {AnimatorComposite} <b>this</b>
+    */</i>
+    play : <b>function</b>(callback){
+        <b>this</b>.animator.play(callback);
+        <b>return</b> this;
+    },
+    <i>/**
+    * Clear all actions <b>in</b> the queue.
+    * @param {Function} callback (optional) callback is called when all animations have compelted
+    * @<b>return</b> {AnimatorComposite} <b>this</b>
+    */</i>
+    reset : <b>function</b>(callback){
+        <b>this</b>.animator.startCapture(true);
+        <b>return</b> this;
+    },
+    <i>/**
+     * Add a pause
+     * @param {Number} seconds
+    * @<b>return</b> {AnimatorComposite} <b>this</b>
+     */</i>
+    pause : <b>function</b>(seconds){
+        <b>this</b>.animator.pause(seconds);
+        <b>return</b> this;
+    },
+    <i>/**
+    * Get the YAHOO.ext.Animator that controls the animations <b>for</b> this composite.
+    * @<b>return</b> {YAHOO.ext.Animator}
+    */</i>
+    getAnimator : <b>function</b>(){
+        <b>return</b> this.animator;
+    },
+    <i>/**
+    * Calls the passed <b>function</b> passing (el, <b>this</b>, index) <b>for</b> each element <b>in</b> this composite.
+    * @param {Function} fn The <b>function</b> to call
+    * @param {Object} scope (optional) The &lt;i&gt;<b>this</b>&lt;/i&gt; object (defaults to the element)
+    * @<b>return</b> {AnimatorComposite} <b>this</b>
+    */</i>
+    each : <b>function</b>(fn, scope){
+        <b>var</b> els = <b>this</b>.animator.actors;
+        <b>if</b>(this.syncAnims) <b>this</b>.animator.beginSync();
+        <b>for</b>(var i = 0, len = els.length; i &lt; len; i++){
+            fn.call(scope || els[i], els[i], <b>this</b>, i);
+        }
+        <b>if</b>(this.syncAnims) <b>this</b>.animator.endSync();
+        <b>return</b> this;
+    },
+    <i>/**
+     * Add a <b>function</b> call to the playlist.
+     * @param {Function} fcn The <b>function</b> to call
+     * @param {&lt;i&gt;Array&lt;/i&gt;} args (optional) The arguments to call the <b>function</b> with
+     * @param {&lt;i&gt;Object&lt;/i&gt;} scope (optional) The scope of the <b>function</b>
+     * @<b>return</b> {AnimatorComposite} <b>this</b>
+     */</i>
+     addCall : <b>function</b>(fcn, args, scope){
+        <b>this</b>.animator.addCall(fcn, args, scope);
+        <b>return</b> this;
+    },
+    <i>/**
+     * Add an async <b>function</b> call to the playlist.
+     * @param {Function} fcn The <b>function</b> to call
+     * @param {Number} callbackIndex The index of the callback parameter on the passed <b>function</b>. &lt;b&gt;A CALLBACK IS REQUIRED&lt;/b&gt;.
+     * @param {&lt;i&gt;Array&lt;/i&gt;} args (optional) The arguments to call the <b>function</b> with
+     * @param {&lt;i&gt;Object&lt;/i&gt;} scope (optional) The scope of the <b>function</b>
+     * @<b>return</b> {AnimatorComposite} <b>this</b>
+    */</i>
+    addAsyncCall : <b>function</b>(fcn, callbackIndex, args, scope){
+        <b>this</b>.animator.addAsyncCall(fcn, callbackIndex, args, scope);
+        <b>return</b> this;
+    }
+};
+<b>for</b>(var fnName <b>in</b> YAHOO.ext.Actor.prototype){
+    <b>if</b>(typeof YAHOO.ext.Actor.prototype[fnName] == '<b>function</b>'){
+        YAHOO.ext.CompositeElement.createCall(YAHOO.ext.AnimatorComposite.prototype, fnName);
+    }
+}
+
+
+YAHOO.ext.Animator.AnimSequence = <b>function</b>(){
+    <b>this</b>.actions = [];
+    <b>this</b>.nextDelegate = <b>this</b>.next.createDelegate(<b>this</b>);
+    <b>this</b>.playDelegate = <b>this</b>.play.createDelegate(<b>this</b>);
+    <b>this</b>.oncomplete = null;
+    <b>this</b>.playing = false;
+    <b>this</b>.stopping = false;
+    <b>this</b>.actionIndex = -1;
+ };
+ 
+ YAHOO.ext.Animator.AnimSequence.prototype = {
+ 
+    add : <b>function</b>(action){
+        <b>this</b>.actions.push(action);
+    },
+    
+    next : <b>function</b>(){
+        <b>if</b>(this.stopping){
+            <b>this</b>.playing = false;
+            <b>if</b>(this.oncomplete){
+                <b>this</b>.oncomplete(<b>this</b>, false);
+            }
+            <b>return</b>;
+        }
+        <b>var</b> nextAction = <b>this</b>.actions[++<b>this</b>.actionIndex];
+        <b>if</b>(nextAction){
+            nextAction.play(<b>this</b>.nextDelegate);
+        }<b>else</b>{
+            <b>this</b>.playing = false;
+            <b>if</b>(this.oncomplete){
+                <b>this</b>.oncomplete(<b>this</b>, true);
+            }
+        }
+    },
+    
+    play : <b>function</b>(oncomplete){
+        <b>if</b>(this.playing) <b>return</b>; <i>// can't play the same sequence twice at once</i>
+        <b>this</b>.oncomplete = oncomplete;
+        <b>this</b>.stopping = false;
+        <b>this</b>.playing = true;
+        <b>this</b>.actionIndex = -1;
+        <b>this</b>.next();
+    },
+    
+    stop : <b>function</b>(){
+        <b>this</b>.stopping = true;
+    },
+    
+    isPlaying : <b>function</b>(){
+        <b>return</b> this.playing;
+    },
+    
+    clear : <b>function</b>(){
+        <b>this</b>.actions = [];
+    },
+     
+    addCall : <b>function</b>(fcn, args, scope){
+        <b>this</b>.actions.push(<b>new</b> YAHOO.ext.Actor.Action(scope, fcn, args || []));
+     },
+     
+     addAsyncCall : <b>function</b>(fcn, callbackIndex, args, scope){
+        <b>this</b>.actions.push(<b>new</b> YAHOO.ext.Actor.AsyncAction(scope, fcn, args || [], callbackIndex));
+     },
+     
+     pause : <b>function</b>(seconds){
+        <b>this</b>.actions.push(<b>new</b> YAHOO.ext.Actor.PauseAction(seconds));
+     }
+     
+  };
+
+YAHOO.ext.Animator.CompositeSequence = <b>function</b>(){
+    <b>this</b>.sequences = [];
+    <b>this</b>.completed = 0;
+    <b>this</b>.trackDelegate = <b>this</b>.trackCompletion.createDelegate(<b>this</b>);
+}
+
+YAHOO.ext.Animator.CompositeSequence.prototype = {
+    add : <b>function</b>(sequence){
+        <b>this</b>.sequences.push(sequence);
+    },
+    
+    play : <b>function</b>(onComplete){
+        <b>this</b>.completed = 0;
+        <b>if</b>(this.sequences.length &lt; 1){
+            <b>if</b>(onComplete)onComplete();
+            <b>return</b>;
+        }
+        <b>this</b>.onComplete = onComplete;
+        <b>for</b>(var i = 0; i &lt; <b>this</b>.sequences.length; i++){
+            <b>this</b>.sequences[i].play(<b>this</b>.trackDelegate);
+        }
+    },
+    
+    trackCompletion : <b>function</b>(){
+        ++<b>this</b>.completed;
+        <b>if</b>(this.completed &gt;= <b>this</b>.sequences.length &amp;&amp; <b>this</b>.onComplete){
+            <b>this</b>.onComplete();
+        }
+    },
+    
+    stop : <b>function</b>(){
+        <b>for</b>(var i = 0; i &lt; <b>this</b>.sequences.length; i++){
+            <b>this</b>.sequences[i].stop();
+        }
+    },
+    
+    isPlaying : <b>function</b>(){
+        <b>for</b>(var i = 0; i &lt; <b>this</b>.sequences.length; i++){
+            <b>if</b>(this.sequences[i].isPlaying()){
+                <b>return</b> true;
+            }
+        }
+        <b>return</b> false;
+    }
+};
+
+
+</code></pre><hr><div style="font-size:10px;text-align:center;color:gray;">yui-ext - Copyright &copy; 2006 Jack Slocum.  |
+    Yahoo! UI - Copyright &copy; 2006 Yahoo! Inc.<br />All rights reserved.</div>
+    </body></html>

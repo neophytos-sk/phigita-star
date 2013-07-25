@@ -1,0 +1,13 @@
+grep bogo /proc/cpuinfo
+bogomips	: 3333.57
+bogomips	: 3333.36
+bogomips	: 3333.40
+bogomips	: 3503.28
+livecd ~ # hdparm -tT /dev/sda
+
+/dev/sda:
+ Timing cached reads:   1692 MB in  2.00 seconds = 845.63 MB/sec
+ Timing buffered disk reads: 510 MB in  3.01 seconds = 169.71 MB/sec
+livecd ~ # # grep MemTotal /proc/meminfo
+livecd ~ # grep MemTotal /proc/meminfo
+MemTotal:        4038148 kB

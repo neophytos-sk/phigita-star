@@ -1,0 +1,27 @@
+% Computer Modern Variable-Width Blackboard Typewriter Text
+%
+% font v ?.? 29/03/1993, sauterised v1.0 15/11/1995
+%
+% Author :         Gilles F. ROBERT
+% sauterisation : Hubert HOLIN
+
+if unknown blbbase: input blbbase fi
+
+font_identifier:="CMBBVTT"; font_size design_size * pt#;
+
+% This font is a simple modification of CMTT.
+
+input c-cmtt;
+
+ligs:=             % level of ligatures to be included
+    2;
+
+monospace:=        % should all characters have the same width?
+    false;
+
+interspace#:=jut#;    % space between the doubled bars
+
+cap_interspace#:= cap_jut#;   % same for uppercase letters
+
+generate blbord      % switch to the driver file
+

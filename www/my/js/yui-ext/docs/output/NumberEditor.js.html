@@ -1,0 +1,168 @@
+<html><head><title>NumberEditor.js</title><link rel="stylesheet" type="text/css" href="../resources/style.css" media="screen"/></head><body><h1>NumberEditor.js</h1><pre class="highlighted"><code><i>/**
+ * @class YAHOO.ext.grid.NumberEditor
+ * @extends YAHOO.ext.grid.CellEditor
+Provides a masked editor <b>for</b> numeric values. Invalid keys are ignored. It supports the following configuration options:
+&lt;ul class=&quot;list&quot;&gt;
+&lt;li&gt;&lt;i&gt;allowDecimals&lt;/i&gt; - True <b>if</b> the cell can have decimal values.&lt;/li&gt;
+&lt;li&gt;&lt;i&gt;decimalSeparator&lt;/i&gt; - Character(s) to allow as the decimal separator.&lt;/li&gt;
+&lt;li&gt;&lt;i&gt;decimalPrecision&lt;/i&gt; - Set the maximum decimal precision.&lt;/li&gt;
+&lt;li&gt;&lt;i&gt;decimalPrecisionFcn&lt;/i&gt; - Define the <b>function</b> to call to remove extra precision (ie. Math.floor, Math.round, Math.ceil or your own <b>function</b>).&lt;/li&gt;
+&lt;li&gt;&lt;i&gt;allowNegative&lt;/i&gt; - True <b>if</b> the cell allows negative values.&lt;/li&gt;
+&lt;li&gt;&lt;i&gt;selectOnFocus&lt;/i&gt; - True to select the text when the editor is activated.&lt;/li&gt;
+&lt;li&gt;&lt;i&gt;minValue&lt;/i&gt; - The minimum value the cell will allow.&lt;/li&gt;
+&lt;li&gt;&lt;i&gt;maxValue&lt;/i&gt; - The maximum value the cell will allow.&lt;/li&gt;
+&lt;li&gt;&lt;i&gt;minText&lt;/i&gt; - The tooltip to display when the value <b>in</b> the cell is below the minimum.&lt;/li&gt;
+&lt;li&gt;&lt;i&gt;maxText&lt;/i&gt; - The tooltip to display when the value <b>in</b> the cell is above the maximum.&lt;/li&gt;
+&lt;li&gt;&lt;i&gt;nanText&lt;/i&gt; - The tooltip to display when the value <b>in</b> the cell is not a valid number (<b>for</b> example, negatives are allowed and the value <b>in</b> the cell is just &quot;-&quot; <b>with</b> no numbers).&lt;/li&gt;
+&lt;li&gt;&lt;i&gt;allowBlank&lt;/i&gt; - True <b>if</b> the cell is allowed to be empty.&lt;/li&gt;
+&lt;li&gt;&lt;i&gt;blankText&lt;/i&gt; - The tooltip (error message) to display when the cell is empty and is not allowed to be.&lt;/li&gt;
+&lt;li&gt;&lt;i&gt;validator&lt;/i&gt; - Any custom validation <b>function</b> you want called. The <b>function</b> must <b>return</b> true <b>if</b> the data is valid or an error message otherwise.&lt;/li&gt;
+&lt;li&gt;&lt;i&gt;validationDelay&lt;/i&gt; - The delay <b>in</b> milliseconds <b>for</b> validation. Each time the user types something the field is validated after a specified delay, setting <b>this</b> value allows you to customize that delay (<b>for</b> example, <b>if</b> your custom validation routine is slow).&lt;/li&gt;
+&lt;/ul&gt;
+For more information on using <b>this</b> editor, see &lt;a href=&quot;http:<i>//www.jackslocum.com/yui/2006/09/10/adding-built-<b>in</b>-editing-support-to-the-yahoo-ui-extensions-grid/&quot;&gt;<b>this</b> blog post&lt;/a&gt;.</i>
+* @constructor
+* Create a <b>new</b> NumberEditor
+* @param {Object} config
+ */</i>
+YAHOO.ext.grid.NumberEditor = <b>function</b>(config){
+    <b>var</b> element = document.createElement('input');
+    element.type = 'text';
+    element.className = 'ygrid-editor ygrid-num-editor';
+    element.setAttribute('autocomplete', 'off');
+    document.body.appendChild(element);
+    YAHOO.ext.grid.NumberEditor.superclass.constructor.call(<b>this</b>, element);
+    YAHOO.ext.util.Config.apply(<b>this</b>, config);
+};
+YAHOO.extendX(YAHOO.ext.grid.NumberEditor, YAHOO.ext.grid.CellEditor);
+
+YAHOO.ext.grid.NumberEditor.prototype.initEvents = <b>function</b>(){
+    <b>var</b> stopOnEnter = <b>function</b>(e){
+        <b>if</b>(e.browserEvent.keyCode == e.RETURN){
+            <b>this</b>.stopEditing(true);
+        }<b>else</b> if(e.browserEvent.keyCode == e.ESC){
+            <b>this</b>.setValue(<b>this</b>.originalValue);
+            <b>this</b>.stopEditing(true);
+        }
+    };
+    
+    <b>var</b> allowed = &quot;0123456789&quot;;
+    <b>if</b>(this.allowDecimals){
+        allowed += <b>this</b>.decimalSeparator;
+    }
+    <b>if</b>(this.allowNegative){
+        allowed += '-';
+    }
+    <b>var</b> keyPress = <b>function</b>(e){
+        <b>var</b> c = e.getCharCode();
+        <b>if</b>(c != e.BACKSPACE &amp;&amp; allowed.indexOf(String.fromCharCode(c)) === -1){
+            e.stopEvent();
+        }
+    };
+    <b>this</b>.element.mon('keydown', stopOnEnter, <b>this</b>, true);
+    <b>var</b> vtask = <b>new</b> YAHOO.ext.util.DelayedTask(<b>this</b>.validate, <b>this</b>);
+    <b>this</b>.element.mon('keyup', vtask.delay.createDelegate(vtask, [<b>this</b>.validationDelay]));
+    <b>this</b>.element.mon('keypress', keyPress, <b>this</b>, true);
+    <b>this</b>.element.on('blur', <b>this</b>.stopEditing, <b>this</b>, true);
+};
+
+YAHOO.ext.grid.NumberEditor.prototype.validate = <b>function</b>(){
+    <b>var</b> dom = <b>this</b>.element.dom;
+    <b>var</b> value = dom.value;
+    <b>if</b>(value.length &lt; 1){ <i>// <b>if</b> it's blank</i>
+         <b>if</b>(this.allowBlank){
+             dom.title = '';
+             <b>this</b>.element.removeClass('ygrid-editor-invalid');
+             <b>return</b> true;
+         }<b>else</b>{
+             dom.title = <b>this</b>.blankText;
+             <b>this</b>.element.addClass('ygrid-editor-invalid');
+             <b>return</b> false;
+         }
+    }
+    <b>if</b>(value.search(/\d+/) === -1){
+        dom.title = <b>this</b>.nanText.replace('%0', value);
+        <b>this</b>.element.addClass('ygrid-editor-invalid');
+        <b>return</b> false;
+    }
+    <b>var</b> num = <b>this</b>.parseValue(value);
+    <b>if</b>(num &lt; <b>this</b>.minValue){
+        dom.title = <b>this</b>.minText.replace('%0', <b>this</b>.minValue);
+        <b>this</b>.element.addClass('ygrid-editor-invalid');
+        <b>return</b> false;
+    }
+    <b>if</b>(num &gt; <b>this</b>.maxValue){
+        dom.title = <b>this</b>.maxText.replace('%0', <b>this</b>.maxValue);
+        <b>this</b>.element.addClass('ygrid-editor-invalid');
+        <b>return</b> false;
+    }
+    <b>var</b> msg = <b>this</b>.validator(value);
+    <b>if</b>(msg !== true){
+        dom.title = msg;
+        <b>this</b>.element.addClass('ygrid-editor-invalid');
+        <b>return</b> false;
+    }
+    dom.title = '';
+    <b>this</b>.element.removeClass('ygrid-editor-invalid');
+    <b>return</b> true;
+};
+
+YAHOO.ext.grid.NumberEditor.prototype.show = <b>function</b>(){
+    <b>this</b>.element.dom.title = '';
+    YAHOO.ext.grid.NumberEditor.superclass.show.call(<b>this</b>);
+    <b>if</b>(this.selectOnFocus){
+        try{
+            <b>this</b>.element.dom.select();
+        }catch(e){}
+    }
+    <b>this</b>.validate(<b>this</b>.element.dom.value);
+};
+
+YAHOO.ext.grid.NumberEditor.prototype.getValue = <b>function</b>(){
+   <b>if</b>(!<b>this</b>.validate()){
+       <b>return</b> this.originalValue;
+   }<b>else</b>{
+       <b>var</b> value = <b>this</b>.element.dom.value;
+       <b>if</b>(value.length &lt; 1){
+           <b>return</b> value;
+       } <b>else</b>{
+           <b>return</b> this.fixPrecision(<b>this</b>.parseValue(value));
+       }
+   }   
+};
+YAHOO.ext.grid.NumberEditor.prototype.parseValue = <b>function</b>(value){
+    <b>return</b> parseFloat(<b>new</b> String(value).replace(<b>this</b>.decimalSeparator, '.'));
+};
+
+YAHOO.ext.grid.NumberEditor.prototype.fixPrecision = <b>function</b>(value){
+   <b>if</b>(!<b>this</b>.allowDecimals || <b>this</b>.decimalPrecision == -1 || isNaN(value) || value == 0 || !value){
+       <b>return</b> value;
+   }
+   <i>// <b>this</b> should work but doesn't due to precision error <b>in</b> JS</i>
+   <i>// <b>var</b> scale = Math.pow(10, <b>this</b>.decimalPrecision);</i>
+   <i>// <b>var</b> fixed = <b>this</b>.decimalPrecisionFcn(value * scale);</i>
+   <i>// <b>return</b> fixed / scale;</i>
+   <i>//</i>
+   <i>// so here's our workaround:</i>
+   <b>var</b> scale = Math.pow(10, <b>this</b>.decimalPrecision+1);
+   <b>var</b> fixed = <b>this</b>.decimalPrecisionFcn(value * scale);
+   fixed = <b>this</b>.decimalPrecisionFcn(fixed/10);
+   <b>return</b> fixed / (scale/10);
+};
+
+YAHOO.ext.grid.NumberEditor.prototype.allowBlank = true;
+YAHOO.ext.grid.NumberEditor.prototype.allowDecimals = true;
+YAHOO.ext.grid.NumberEditor.prototype.decimalSeparator = '.';
+YAHOO.ext.grid.NumberEditor.prototype.decimalPrecision = 2;
+YAHOO.ext.grid.NumberEditor.prototype.decimalPrecisionFcn = Math.floor;
+YAHOO.ext.grid.NumberEditor.prototype.allowNegative = true;
+YAHOO.ext.grid.NumberEditor.prototype.selectOnFocus = true;
+YAHOO.ext.grid.NumberEditor.prototype.minValue = Number.NEGATIVE_INFINITY;
+YAHOO.ext.grid.NumberEditor.prototype.maxValue = Number.MAX_VALUE;
+YAHOO.ext.grid.NumberEditor.prototype.minText = 'The minimum value <b>for</b> this field is %0';
+YAHOO.ext.grid.NumberEditor.prototype.maxText = 'The maximum value <b>for</b> this field is %0';
+YAHOO.ext.grid.NumberEditor.prototype.blankText = 'This field cannot be blank';
+YAHOO.ext.grid.NumberEditor.prototype.nanText = '%0 is not a valid number';
+YAHOO.ext.grid.NumberEditor.prototype.validationDelay = 100;
+YAHOO.ext.grid.NumberEditor.prototype.validator = <b>function</b>(){<b>return</b> true;};</code></pre><hr><div style="font-size:10px;text-align:center;color:gray;">yui-ext - Copyright &copy; 2006 Jack Slocum.  |
+    Yahoo! UI - Copyright &copy; 2006 Yahoo! Inc.<br />All rights reserved.</div>
+    </body></html>

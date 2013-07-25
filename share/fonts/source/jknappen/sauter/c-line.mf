@@ -1,0 +1,4 @@
+% Compute parameters for the LINE font.
+qqs#=0.04 * nominal_width * design_size * pt#;%width of lines
+qqh#=design_size * pt#;                       %height of vertical stroke.
+qqw#=design_size * pt#;                       %length of horizontal stroke.

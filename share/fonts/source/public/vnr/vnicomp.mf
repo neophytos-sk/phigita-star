@@ -1,0 +1,18 @@
+% define [iI]-based accented letters
+
+vnchar casename "i with acute";
+define_vnchar(i, acute_);
+
+vnchar casename "i with grave";
+define_vnchar(i, grave_);
+
+vnchar casename "i with hook";
+define_vnchar(i, hook_);
+
+vnchar casename "i with tilde";
+define_vnchar(i, tilde_);
+
+vnchar casename "i with dot";
+define_vnchar_dot(i);
+
+endinput;

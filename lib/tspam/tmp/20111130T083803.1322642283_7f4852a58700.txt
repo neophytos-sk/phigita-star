@@ -1,0 +1,35 @@
+Received: from apache by amx.com with local (Exim 4.63)
+	(envelope-from <strongholds@ilchildcare.org>)
+	id 9IONVF-38KXGR-60
+	for <k2pts@phigita.net>; Wed, 30 Nov 2011 09:37:54 +0100 
+To: <k2pts@phigita.net> 
+Subject: Rejected Federal Tax transfer 
+Date: Wed, 30 Nov 2011 09:37:54 +0100 
+From: <Alma_Travis@irs.gov> 
+Message-ID: <97A80FCDBE73FDC05F067618E8B5463F@mfoondomkcmcnobnueocacmcns.amx.com> 
+X-Priority: 3 
+X-Mailer: PHPMailer 5.1 (phpmailer.sourceforge.net) 
+--------------------------------------
+Internal Revenue Service United States Department of the Treasury
+
+
+Your  federal  Tax  transaction (ID: 482652653002), recently  from your  checking account was  rejected by the  your Bank. 
+
+ Rejected Tax  transaction
+Tax Transaction ID: 482652653002
+ Rejection Reason : See details in the report below
+
+  Tax Transaction Report:
+http://ellihossi.pochta.ru/pemisefo.html
+
+
+Using the Electronic Filing PIN After you get your Electronic Filing PIN, enter it in the ÂElectronic Filing PINÂ field when filing your return.  The Electronic Filing PIN is a temporary PIN used by the IRS to verify your identity when you e-file.  Keep a copy of your signed tax return for your records.  Note: If you have trouble while using this application, verify system availability and specific browser and system requirements.
+
+
+
+ Internal Revenue Service, 
+ Metro Plex 1, 
+ 8401 Corporate Drive, Suite 300, 
+ Landover, MD  20785
+
+

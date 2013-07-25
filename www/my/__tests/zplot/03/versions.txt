@@ -1,0 +1,20 @@
+01
+   basic drawing program is working
+   but, need to do better abstraction of drawing area (a drawable)
+     note: drawables can overlap, allowing multiple axes on same area, 
+           little blowups, etc.
+   (there can be more than one on a canvas)
+   also, axes are just decoration, should be possible
+     to easily plant more than one, decorate differently, etc.
+  
+02
+   initial versions of most everything
+   missing: labels! 
+     can't think of elegant way to incorporate this into each PlotXXX routine
+     basically, just want some "example" of how to draw something, but this is 
+     a pain given lots of different styles of drawing, filling, etc.
+   really, what is needed is the ability to 
+     draw a single bar
+     draw a single point
+     etc.
+   in the correct "style"

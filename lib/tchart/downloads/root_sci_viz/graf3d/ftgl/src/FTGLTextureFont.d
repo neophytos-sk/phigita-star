@@ -1,0 +1,1 @@
+  graf3d/ftgl/src/FTGLTextureFont.o graf3d/ftgl/src/FTGLTextureFont.d: $(wildcard include/FTGLTextureFont.h include/FTFont.h include/FTFace.h include/FTGL.h include/FTPoint.h include/FTSize.h include/FTVector.h include/FTTextureGlyph.h include/FTGlyph.h include/FTBBox.h)

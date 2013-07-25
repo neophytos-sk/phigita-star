@@ -1,0 +1,11 @@
+Received: from lmjptqonb (unknown [110.52.6.205])
+	by relay.cmail.sogou.com (Postfix) with ESMTPA id 11EA180237D
+	for <neophytos@phigita.net>; Sun, 20 Nov 2011 05:53:34 +0800 (CST) 
+Message-ID: <20111120055217583734@vip.sohu.net> 
+From: =?gb2312?B?t+vR87vh?= <rabbit0683@vip.sohu.net> 
+To: <neophytos@phigita.net> 
+Subject: =?gb2312?B?tNN8fLy8yvV8fNffz/J8fLncwO0tLS0tt+vR87vh?= 
+Date: Sun, 20 Nov 2011 05:52:09 +0800 
+X-mailer: Dhebcspux 4 
+X-SOHU-Antispam-Bayes: 0 
+Whoops!  What is a 'application/vnd.ms-excel'?

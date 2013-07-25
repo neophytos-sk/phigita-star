@@ -1,0 +1,258 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+  <title>SMS messages and the PDU format</title>
+<META name="description" content="SMS messages and the PDU format"> 
+<META name="keywords" content="Lars Pettersson SICS SMS PDU GSM ETSI OTA provisioning settings configuration"> 
+</head>
+
+<body bgcolor="white">
+<img align=sd src="gsmlogo.gif"/>
+<br>
+<br>
+<h1>SMS and the PDU format</h1>
+<br>
+<h3>Introduction</h3>
+The SMS message, as specified by the <a href="http://www.etsi.org">Etsi</a>
+organization (documents GSM 03.40 and GSM 03.38), can be up to 160 characters 
+long, where each character is 7 bits according to the 
+<a href="default_alphabet.html"><i> 7-bit default alphabet</i></a>.
+Eight-bit messages (max 140 characters) are usually not viewable by the phones as 
+text messages; instead they are used for data in e.g. smart messaging
+(images and ringing tones) and <a href="http://www.3glab.org/ota.html"> OTA provisioning of WAP settings.</a> 16-bit messages (max 70 characters) are used for Unicode 
+(UCS2) text messages, viewable by most phones. A 16-bit text message of 
+class 0 will on some phones appear as a <a href="alert.html">Flash SMS</a> (aka blinking SMS or 
+alert SMS).
+<br>
+<br>
+<br>
+<h3>The PDU format</h3>
+There are two ways of sending and receiving SMS messages: by text mode and 
+by PDU (protocol description unit) mode. The text mode (unavailable on some phones) is just an 
+encoding of the bit stream represented by the PDU mode. Alphabets may
+differ and there are several encoding alternatives when displaying an SMS 
+message. The most common options are "PCCP437", "PCDN", "8859-1", "IRA" and
+"GSM". These are all set by the <a
+href="http://www.fastlogic.co.za/faq59.htm">at-command</a> AT+CSCS, when
+you read the message in a computer application. If you read the message
+on your phone, the phone will choose a proper encoding.
+An application capable of reading incoming SMS messages, can thus use text 
+mode or PDU mode. If text mode is used, the application is bound to (or
+limited by) the set of preset encoding options. In some cases, that's just 
+not good enough. If PDU mode is used, any encoding can be implemented. 
+<br>
+<h3>Receiving a message in the PDU mode</h3>
+The PDU string contains not only the message, but also a lot of 
+meta-information about the sender, his SMS service center, the
+time stamp etc. It is all in the form of hexa-decimal <i>octets</i> or decimal <i>semi-octets</i>.
+The following string is what I received <i>on a <a href=http://www.nokia.com/phones/6110/index.html>Nokia 6110</a></i> when sending the message containing 
+"hellohello" from <a href=http://www.mtn.co.za>www.mtn.co.za</a>.
+<br>
+<br>
+
+<table>
+<td bgcolor="yellow">07</td><td bgcolor="cyan">917283010010F5</td><td>040BC87238880900F10000993092516195800AE8329BFD4697D9EC37</td>
+</table>
+<br>
+This octet sequence consists of three parts: An initial octet indicating the length of the SMSC information ("07"), the SMSC information itself ("917283010010F5"), and the SMS_DELIVER part (specified by ETSI in GSM 03.40).
+<br>
+<br>
+<i>Note: on some phones (e.g. Ericssson 888?) the first three (colored) parts are omitted when showing the message in PDU mode!</i>
+<br>
+<br>
+<table border=1>
+<tr>
+<th>Octet(s)</th><th>Description</th><tr></b>
+<td bgcolor="yellow">07</td><td>Length of the SMSC information (in this case 7 octets)</td><tr>
+<td bgcolor="cyan">91</td><td><a
+href="type_of_address.html">Type-of-address</a>  of the SMSC. (91 means international format of
+the phone number)</td><tr>
+<td bgcolor="cyan">72 83 01 00 10 F5</td><td>Service center number(in decimal
+semi-octets). The length of the phone number is odd (11), so a trailing F has
+been added to form proper octets. The phone number of this service center is "+27381000015". See below.</td><tr>
+<td>04</td><td><a href="deliver_fo.html">First octet of this SMS-DELIVER message</a>.</td><tr>
+<td>0B</td><td>Address-Length. Length of the sender number (0B hex = 11 dec)</td><tr>
+<td>C8</td><td><a href="type_of_address.html">Type-of-address</a> of the sender
+number</td><tr>
+<td>72 38 88 09 00 F1</td><td>Sender number (decimal semi-octets), with a trailing F</td><tr>
+<td>00</td><td>TP-PID. <a href="pid.html">Protocol identifier</a>.</td><tr>
+<td>00</td><td>TP-DCS <a href="dcs.html">Data coding scheme</a></td><tr>
+<td>99 30 92 51 61 95 80</td><td>TP-SCTS. <a href="scts.html">Time stamp</a> (semi-octets)</td><tr>
+<td>0A</td><td>TP-UDL. User data length, length of message. The TP-DCS field indicated 7-bit data,
+so the length here is the number of septets (10). If the TP-DCS field were set
+to indicate 8-bit data or Unicode, the length would be the number of octets (9). </td><tr>
+<td>E8329BFD4697D9EC37</td><td>TP-UD. <a href="hello.html">Message
+"hellohello"</a> , 8-bit octets representing 7-bit data.</td><tr>
+</table>
+<br>
+All the octets above are hexa-decimal 8-bit octets, except the Service center
+number, the sender number and the timestamp; they are decimal semi-octets.
+The message part in the end of the PDU string consists of hexa-decimal 8-bit 
+octets, but these octets represent 7-bit data (see below).
+<br>
+<br>
+The semi-octets are decimal, and e.g. the sender number 
+is obtained by performing internal swapping within the semi-octets 
+from "72 38 88 09 00 F1"
+to "27 83 88 90 00 1F". The length of the phone number is odd, so 
+a proper octet sequence cannot be formed by this number. This is the
+reason why the trailing F has been added.
+
+The time stamp, when parsed, equals "99 03 29 15 16 59 08", where
+the 6 first characters represent date, the following 6 represents
+time, and the last two represents time-zone related to GMT. 
+<br>
+<br>
+
+<h3>Interpreting 8-bit octets as 7-bit messages</h3>
+This transformation is described in detail in GSM 03.38, and an <a
+href="hello.html"> example of the
+"hellohello" transformation is shown here</a>. The
+transformation is based on the <a href="default_alphabet.html">7 bit default
+alphabet</a> , but an application
+built on the PDU mode can use any character encoding.
+
+<h3>Sending a message in the PDU mode</h3>
+The following example shows how to send the message "hellohello"
+in the PDU mode from a Nokia 6110.<br><br>
+
+<XMP>
+AT+CMGF=0    //Set PDU mode          
+AT+CSMS=0    //Check if modem supports SMS commands          
+AT+CMGS=23  //Send message, 23 octets (excluding the two initial zeros) 
+>0011000B916407281553F80000AA0AE8329BFD4697D9EC37<ctrl-z> 
+</XMP>
+
+There are 23 octets in this message (46 'characters'). The 
+first octet ("00") doesn't count, it is only an indicator of the length of the 
+SMSC information supplied (0).
+The PDU string consists of the following:<br>
+<br>
+
+<table border="1">
+<tr>
+<th>Octet(s)</th>
+<th>Description</td>
+</tr>
+
+<tr>
+<td bgcolor="yellow">
+00
+</td>
+<td>
+Length of SMSC information. Here the length is 0, which means that the SMSC stored in the phone should be used. <i>Note: This octet is optional. On some phones this octet should be omitted! (Using the SMSC stored in phone is thus implicit)</i>
+</td>
+</tr>
+
+<tr>
+<td>
+11
+</td>
+<td>
+<a href="submit_fo.html">First octet of the SMS-SUBMIT message</a>. 
+</td>
+</tr>
+
+<tr>
+<td>
+00
+</td>
+<td>
+TP-Message-Reference. The "00" value here lets the phone set the message reference number itself.
+</td>
+</tr>
+
+<tr>
+<td>
+0B
+</td>
+<td>
+Address-Length. Length of phone number (11)
+</td>
+</tr>
+
+<tr>
+<td>
+91
+</td>
+<td>
+<a href="type_of_address.html">Type-of-Address.</a> (91 indicates international format of the
+phone number).
+</td>
+</tr>
+
+<tr>
+<td>
+6407281553F8
+</td>
+<td>
+The phone number in semi octets (46708251358). The length of the phone 
+number is odd (11), therefore a trailing F has been added, as if
+the phone number were "46708251358F". Using the unknown format (i.e. the
+Type-of-Address 81 instead of 91) would yield the phone number octet sequence
+7080523185 (0708251358). Note that this has the length 10 (A), which is even.
+</td>
+</tr>
+
+<tr>
+<td>
+00
+</td>
+<td>
+TP-PID. <a href="pid.html">Protocol identifier</a>
+</td>
+</tr>
+
+<tr>
+<td>
+00
+</td>
+<td>
+TP-DCS. <a href="dcs.html">Data coding scheme</a>.This message is coded according to the 7bit default alphabet. Having "04" instead of "00" here, would indicate that the TP-User-Data field of this message should be interpreted as 8bit rather than 7bit (used in e.g. smart messaging, OTA provisioning etc).  
+</td>
+</tr>
+
+<tr>
+<td>
+AA
+</td>
+<td>
+<a href="vp.html">TP-Validity-Period</a>. "AA" means 4 days. <i>Note: This octet is optional, see bits 4 and 3 of the <a href="submit_fo.html">first octet</a></i>
+</td>
+</tr>
+
+<tr>
+<td>
+0A
+</td>
+<td>
+TP-User-Data-Length. Length of message. The TP-DCS field indicated 7-bit data,
+so the length here is the number of septets (10). If the TP-DCS field were set
+to 8-bit data or Unicode, the length would be the number of octets. 
+</td>
+</tr>
+
+<tr>
+<td>
+E8329BFD4697D9EC37
+</td>
+<td>
+TP-User-Data. These octets represent the message "hellohello". 
+How to do the transformation from 7bit septets into octets is shown <a href="hello.html">here</a>
+<td>
+</tr>
+</table>
+<br>
+
+<h2>Links</h2>
+<ul>
+<li><a href="cms_error.html">CMS error codes</a></li>
+<li><a href="http://www.nobbi.com/sms_pdu.htm">Versenden von Kurznachrichten mittels PDU</a></li>
+<li><a href="http://www.etsi.org">Etsi</a></li>
+</ul>
+
+<br>
+<font size=2><address>This page has been visited [an error occurred while processing this directive] times and is written and maintained by Lars Pettersson
+(<a href=mailto:lars.pettersson@email.nu>lars.pettersson@email.nu</a>).</address></font></p>     
+</body>
+</html>

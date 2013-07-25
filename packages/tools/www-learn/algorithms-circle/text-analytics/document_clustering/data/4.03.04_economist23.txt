@@ -1,0 +1,265 @@
+Venture capital 
+
+After the drought
+
+Apr 1st 2004 
+From The Economist print edition
+
+
+ 
+ 
+ 
+
+ 
+
+After three difficult years, money is again flowing to the
+venture-capital industry. Can it curb its exuberance this time?
+
+IT SEEMS like only yesterday that start-up companies, preferably doing
+something internet-related, and the sleek-suited venture capitalists
+who funded them, were all the rage. They could scarcely be less trendy
+now. Since the dotcom craze collapsed, many of the firms born during
+the boom years have died, or else stagger on as shadows of their
+former selves. Martin Pichinson, an insolvency specialist who has
+built a reputation as th e of America's Silicon Valley, recently said
+that around 7,000 companies are still waiting for the receivers to
+arrive. Not surprisingly, the money available for investments in
+start-up companies slowed to a trickle after the bubble burst.
+
+For venture capitalists everywhere, the result has been painful. They
+make their money by investing in start-ups and very young companies
+and then selling these investments on, either to other firms through
+so-calle d or to other investors through a stockmarket flotation. When
+opportunities for start-ups, and the appetite to invest in them, both
+fell abruptly, the businesses of venture capitalists shrivelled. One
+example is Britain's 3i, one of Europe's biggest venture firms. Its
+boss, Brian Larcombe, said last month he will leave in July, just as
+the company announced that it had finally reversed the nasty losses of
+the past few years. Many other firms disappeared altogether.
+
+The downturn has been more intensely felt because the venture-capital
+(VC) industry enjoyed an extraordinary period of easy money during the
+bubble. In 1999, the last full year of VC bullishness, buoyant
+stockmarkets made it absurdly easy to float companies, the most
+lucrative exit route for early-stage investors. For 1999 annual VC
+returns, comprising realised profits and the rise in the value of
+retained holdings, reached an unsustainable 146%. By contrast, in the
+year to September 2003 the average American VC firm showed  a of minus
+17.8%.
+
+Now, however, there are signs of revival. In the fourth quarter of
+last year start-ups in Silicon Valley received $1.6 billion of VC
+money, $300m more than in the third quarter, according to VentureOne,
+a research company. Perhaps more importantly, for the first time in a
+while venture capitalists say they are spending more time looking at
+new business plans than nursing their ailing start-ups. In Europe, VC
+firms say write-offs of troubled technology investments fell by half
+in 2003 from the year before. Start-ups are still going bust, but more
+are surviving.
+
+That is reassuring investors, for whom the allure of venture capital
+is the good long-term returns that should come from betting on a
+portfolio of young, mostly technology-related, companies. Over the
+past 20 years, even including the recent downturn, VC investments have
+yielded an average 15.7% per year, according to Thomson Venture
+Economics. That is higher than the returns from most other
+investments. It also looks particularly attractive today, when
+valuations of both shares and bonds are stretched and when other
+so-called alternative investments are looking dodgy. Hedge funds, for
+instance, have been flooded with new money, and returns are bound to
+suffer.
+
+If only venture capital can avoid the excesses of the late 1990s, it
+could be one of the last few sources of above-average returns. In
+fact, a new boom is the last thing the industry wants, for fear of an
+inevitable bust. But can it avoid one? The investment climate looks
+more favourable than at any time in the past four years. One factor is
+the improved mood of investorsl $135 billion (some of which has yet to
+be investedireless communication. It raised $165m last month,
+handsomely rewarding the venture capitalists who invested in the
+company in late 2001, in the depths of the VC depression.
+
+Two upcoming flotations in America are likely to cause even more
+joy. Google, an internet search engine that was funded with $25m from
+Sequoia Capital, and Kleiner Perkins Caufield & Byers, two of
+California's most venerable VC names, is expected to float in the
+coming months. Some analysts reckon the company will sport a market
+value of up to $15 billion. Even before Google goes public, the IPO of
+salesforce.com might bring a smile to venture capitalists. Its has
+healthy annual revenues and turns a profit on the
+customer-relationship-management software it sells. If these offerings
+fulfil expectations and markets remain steady, then more VC-led
+offerings should follow.
+
+Venture capitalists have typically concentrated their investing in two
+broad areas: technology and health care. During the enthusiasm of the
+bubble years, the ter m was stretched to include any dotcom, even if
+it aimed to sell pet-food or to deliver groceries in a white
+van. Today VC firms have mostly returned to genuine technology
+ventures, and notably to companies developing software applications
+for corporate customers. That has coincided with a rebound in company
+spending on IT projects.
+
+One computing area that has continued to attract VC investments is
+open-source softwareftware companies a fee for the privilege of using
+their programs. Instead they charge customers for service and support
+functions. Red Hat, one of the firms in his portfolio, has done this
+so successfully that it leads its market and is nicely profitablets
+that the sector risks being saturated wit h companies, in the same way
+that hundreds of online retailers sprang up in 1999. Similarly, a
+growing number of start-ups' names are sporting the wor d, bidding to
+exploit the rush of interest in nanotechnology.
+
+For an even more troubling echo of the boom years, look at the growing
+ranks of VC-funded start-ups devoted to something calle d. This refers
+mostly to websites that cater to people who share the same interests
+and want to meet and chat online. In so far as there is  a VC sector,
+this is it. Friendster.com runs perhaps the best known such
+website. Last October it received a $13m joint investment from Kleiner
+Perkins Caufield & Byers and Benchmark Capital. LinkedIn, another
+social-networking start-up, received around $5m from Sequoia last
+November. Another half doze n start-ups have been funded or are in the
+works. 
+
+Although the money being handed out is nowhere close to that given to
+dotcoms during the boom, it should worry investors that even the most
+experienced venture capitalists are showing such herd-like instincts
+today. Profits from social-networking firms may prove to be elusive as
+those from most online-retailing ventures. Venture capitalists are
+hoping, however, that the few winners will win so conclusively that
+their eventual value will justify several initial investments.
+
+Besides, say leading VC firms in their own defence, standards are much
+more exacting today than they were a few years ago. Venture
+capitalists are reluctant to fritter money away, so have become
+stingier. The average technology deal nowadays on either side of the
+Atlantic is about one-fifth of the size of deals done at the peak. In
+addition, entrepreneurs are called far more closely to account.
+
+Mr Harvey of Benchmark Capital says that the bust years have helped
+weed out the entrepreneurs who were merely greedy, rather than
+passionate, about building a company : Nearly all
+information-technology new-business plans include some element of
+offshoring, notes Peter Wagner, a partner at Accel Partners. Doing
+software-development work in India seems like a perfect fit when
+start-ups are receiving smaller amounts of money at wider
+intervals. It is especially sensible in Silicon Valley, where housing
+costs alone mean that even mediocre software engineers are several
+times more expensive than their equivalents in Bangalore. Some
+start-ups can exist in the more sober funding climate only thanks to
+cheap foreign programmers.
+
+
+
+Healthy scepticism
+While technology investing is becoming fashionable again, VCs never
+lost their fondness for health-care start-ups. The lure of
+biotechnology and drug development has always proved irresistible,
+even though returns, so far, have been disappointing. But as the drug
+industry has changed, so too has the way VC firms invest. Increasingly
+they have to compete not just with each other but with new entrantsce
+specialised in only the biggest buy-out deals, but which are now
+willing to invest in start-ups as well.
+
+Take Kohlberg Kravis Roberts (KKR), which achieved fame with its
+mammoth leveraged buy-out of RJR Nabisco, a food conglomerate, in the
+1980s. Earlier last month, KKR made its first biotech investment in an
+American company called Jazz Pharmaceuticals, which develops drugs for
+psychiatric diseases. That represents a big departure from its
+traditional strategy of investing in more mature firms.
+
+Unlike their technology equivalents, VC investments in biotech have
+become bigger in recent years. The typical investment in 1997, for
+example, was less than $10m. Nowadays, funding rounds of between $20m
+to $25m are more common. Drug-development costs have risen steadily,
+but so have the rewards . says Nick Galakatos, a partner with MPM
+Capital, a Boston-based firm which raised a $900m fund in 2002.
+
+There are good reasons why biotech deals might make long-term
+sense. The new-product pipelines of the world's biggest drug firms
+have recently been running dry. They are increasingly relying on much
+smaller start-up and VC-backed firms to provide them with a flow of
+new drugs. The idea is that start-ups will focus on research, passing
+promising molecules on to bigger companies that are capable of
+handling late-stage clinical trials and marketing, the costs of which
+can run into the hundreds of millions of dollars. If a biotech
+start-up succeeds, the big drug companies also sometimes like to buy
+the entire firm, rather than just its products.
+
+MPM, for example, homes in on potential treatments for diseases of the
+central nervous system. One of its portfolio companies, Hypnion, is
+trying to find a better sleeping pill. Mr Galakatos points to
+America's rich and ageing population: only one-quarter of people who
+have sleeping difficulties take any drug, he says. Hypnion is
+searching for the gene or genes that control sleep, so that it can
+target a drug more effectively to the disorder. So far, MPM has helped
+Hypnion to raise $47m.
+
+Like American venture capitalists, European firms are returning to
+better days, although they never suffered as big a bust. Europe
+remains a series of largely national markets for venture capital, and
+European start-ups tend to aim to conquer these rather than to dream
+of storming global markets. Further, Europe lacks a cluster with the
+clout of Silicon Valley ., near Cambridge in Britain, is about as big
+and successful as any, and it has seen a sharp slowdown in recent
+years. Universities are becoming more reluctant to let academic
+research, whether in biology or in engineering, mingle freely with
+commerce. Disputes over the fruits of intellectual property are
+becoming more common, and that is proving a barrier to VC investment.
+
+European venture capitalists also seem more risk-averse than their
+American competitors. That is partly because banks and corporations
+still dominate early-stage investing. Industrial investors are more
+interested in technologies that will help their established businesses
+than in market-changing innovations.
+
+ 
+ 
+ 
+
+ 
+In a new study, Thomas Hellman of Stanford Business School, Laura
+Bottazzi of Bocconi University in Italy, and Marco Da Rin of the
+University of Turin, argue that European venture capital is becoming
+less parochial. The academics studied changes over the past five
+years. Nowadays, it turns out, over half of European venture
+capitalists have either an office or a partnership outside their home
+country. That said, European VC funds are still hamstrung by tax rules
+and regulations. For example, many pension funds are not allowed to
+invest in assets that are deemed too riskyacle to many start-ups,
+which often need the freedom to hire and fire staff at short notice
+and cheaply just to survive. High taxes on capital gains also make it
+less rewarding for entrepreneurs to incorporate in such countries,
+which in turn puts off VC investors.
+
+That could change. Britain is giving greater tax breaks to VC
+investments. Gordon Brown, Britain's finance minister, recently
+announced a doubling of the tax credit for VC trusts in his annual
+budget. A few high-flyers have smelled profits. Paul Harvey recently
+left a job as a technology investment banker with Goldman Sachs in
+London to start Abbey Road Venture Partners. He reportedly wants to
+raise $150m to invest in new technologies.
+
+The European approach is certainly distinctive. European VC funds are
+more likely to spend their time building or refining technologies,
+rather than trying to develop an international brand or a company that
+has its own global salesforce and marketing operations. That means the
+Europeans are more likely to have a number of smalle r, rather than a
+big American-styl e.
+
+Anne Glover of Amadeus Capital Partners in London thinks that venture
+capitalists will increasingly fund start-ups using a portfolio
+approach in which individual VC firms team up with peers in order to
+pool risks. For instance, the recently floated Cambridge Silicon Radio
+had only three investors in its earliest funding rounds. More than a
+dozen firms took part in its third round, in which it raised $25m.
+
+But the real question facing the VC industry is whether, in better
+times, it can maintain discipline. Experienced venture capitalists
+recall that during the boom they received more new-business proposals
+than they could read, let alone evaluate sensibly. If their post-boxes
+begin to groan again, they should remember the days when a flood of
+money caused them to drop their guard. With far less cash to play with
+these days, they will have only themselves to blame for any future
+debacle.
+

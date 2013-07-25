@@ -1,0 +1,82 @@
+Received: by web1.extjs.com (Postfix, from userid 33)
+	id 427EC6C1F6; Wed, 23 Nov 2011 00:02:03 +0000 (UTC) 
+To: k2pts@phigita.net 
+Subject: "Ext: Open Discussion" update 
+X-PHP-Originating-Script: 1000:class_mail.php 
+From: "Foros Sencha Forum" <admin@sencha.com> 
+Auto-Submitted: auto-generated 
+Message-ID: <20111123000203.663b25d55adc@www.sencha.com> 
+X-Priority: 3 
+X-Mailer: vBulletin Mail via PHP 
+Date: Wed, 23 Nov 2011 00:02:03 +0000 (UTC) 
+--------------------------------------
+Dear k2pts,
+
+You are subscribed to the forum Ext: Open Discussion, there have been 5 new thread(s) and 3 updated thread(s).
+http://www.sencha.com/forum/forumdisplay.php?6-Ext-Open-Discussion
+
+The following threads are new:
+************
+Duplicate button on Row Grid?
+http://www.sencha.com/forum/showthread.php?156678-Duplicate-button-on-Row-Grid
+In forum: Ext: Open Discussion
+Started by: shaoen01
+Last post: 22 Nov 2011 12:45 PM
+************
+PhoneGap + Sencha Touch: about the return of the value of the functions (plugins)
+http://www.sencha.com/forum/showthread.php?156609-PhoneGap-Sencha-Touch-about-the-return-of-the-value-of-the-functions-(plugins)
+In forum: Ext: Open Discussion
+Started by: bifusion
+Last post: 22 Nov 2011 6:46 PM
+************
+Unable to configure CK Editor with ExtJS4.0
+http://www.sencha.com/forum/showthread.php?156701-Unable-to-configure-CK-Editor-with-ExtJS4.0
+In forum: Ext: Open Discussion
+Started by: allampraveen
+Last post: 22 Nov 2011 10:19 PM
+************
+How to apply single line property to Label
+http://www.sencha.com/forum/showthread.php?156706-How-to-apply-single-line-property-to-Label
+In forum: Ext: Open Discussion
+Started by: Kuntal Sinha
+Last post: 22 Nov 2011 10:48 PM
+************
+How to place tooltip on Label component
+http://www.sencha.com/forum/showthread.php?156709-How-to-place-tooltip-on-Label-component
+In forum: Ext: Open Discussion
+Started by: Kuntal Sinha
+Last post: 22 Nov 2011 11:07 PM
+
+
+The following threads have been updated:
+************
+What is the largest app which uses ExtJS as presentation layer
+http://www.sencha.com/forum/showthread.php?150345-What-is-the-largest-app-which-uses-ExtJS-as-presentation-layer
+In forum: Ext: Open Discussion
+Started by: jenkins
+Last post: 22 Nov 2011 5:30 AM
+************
+Ext JS 4 book
+http://www.sencha.com/forum/showthread.php?141185-Ext-JS-4-book
+In forum: Ext: Open Discussion
+Started by: loiane
+Last post: 22 Nov 2011 4:21 PM
+************
+Need an honest opinion
+http://www.sencha.com/forum/showthread.php?154286-Need-an-honest-opinion
+In forum: Ext: Open Discussion
+Started by: healthformula
+Last post: 22 Nov 2011 4:24 PM
+
+
+All the best,
+Sencha Forum
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Unsubscription information:
+
+To unsubscribe from this forum, please visit this page:
+http://www.sencha.com/forum/subscription.php?do=removesubscription&type=forum&subscriptionid=63&auth=e23de5f6387a31c5573cf4993e28e47f
+
+
+

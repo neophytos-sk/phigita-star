@@ -1,0 +1,272 @@
+set base http://remarks.phigita.net/
+set limit 10
+set limit_plus_one [expr {1+${limit}}]
+
+contract {
+    param -id "tag" -check "notnull" -optional "1"
+    param -id "offset" -check "naturalnum" -default "0" -optional "1"
+}
+
+val -id context_user_id { return [ad_conn ctx_uid] }
+val -id limit "return ${limit}"
+
+datastore \
+    -id userdata \
+    -singleton true \
+    -select {
+	screen_name
+	{first_names || ' ' || last_name as full_name}
+    } \
+    -from_class ::CC_Users \
+    -where [list "user_id=:context_user_id"] \
+    -limit 1
+
+datastore \
+    -id linkdata \
+    -scope context_user \
+    -order "ubm.sharing_start_date desc" \
+    -from_class [db::Inner_Join new \
+		     -join_condition {swu.url = ubm.url} \
+		     -rhs [db::Set new \
+			       -alias swu \
+			       -select {
+				   url 
+				   url_sha1
+				   last_comment
+				   cnt_comment
+				   cnt_shared 
+			       } -type ::sw::agg::Url] \
+		     -lhs [db::Set new \
+			       -scope context_user \
+			       -alias ubm \
+			       -limit ${limit_plus_one} \
+			       -offset @{offset} \
+			       -select {
+				   {bm.*}
+				   {bmlmarr.label_id_arr}
+				   {bmlmarr.label_text_agg}
+			       } -type [db::Left_Outer_Join new \
+					    -lhs [db::Set new \
+						      -scope context_user \
+						      -type ::bm::Bookmark \
+						      -alias bm \
+						      -order {creation_date desc} \
+						      -where "shared_p"] \
+					    -rhs [db::Set new \
+						      -alias bmlmarr \
+						      -select {
+							  {bookmark_id}
+							  {int_array_aggregate(label_id) as label_id_arr}
+							  {trim(xo__concatenate_aggregate(name || '|'),'|') as label_text_agg}
+						      } -type [db::Right_Outer_Join new \
+								   -lhs [db::Set new \
+									     -scope context_user \
+									     -alias bmlm \
+									     -type ::bm::Label_Map] \
+								   -rhs [db::Set new \
+									     -scope context_user \
+									     -alias bmla \
+									     -type ::bm::Label] \
+								   -join_condition {bmla.id=bmlm.label_id}] \
+						      -group bmlm.bookmark_id] \
+					    -join_condition {bmlmarr.bookmark_id = bm.id}] \
+			       -order "sharing_start_date desc"]] \
+    -extend {
+	set description [::xo::structured_text::minitext_to_html $description]
+	set age_pretty [::util::age_pretty -timestamp_ansi $last_update -sysdate_ansi [dt_systime]]
+
+	if { $cnt_comment != 0 } {
+	    set comment_screen_name [dict get $last_comment screen_name]
+	    set commentContent [::xo::structured_text::minitext_to_html [dict get $last_comment content]]
+	}
+
+	if { $preview_p  } {
+	    set jsImgArr [::bm::getJSImageArray [dict get $extra preview]]
+	    set rownum [incr bm_counter]
+	} else {
+	    set jsImgArr \[\]
+	}
+
+	array set uri [::uri::split $url]
+	set domain [::util::domain_from_host $uri(host)]
+	set host $uri(host)
+
+	if { $video_p } {
+	    if { [catch {
+		set video_id [dict get $extra video_id]
+		set href http://video.phigita.net/${video_id}
+	    } errMsg] } {
+		set video_p 0
+		ns_log notice "includelet-recent-shared-links: video_p check, possibly missing video_id in extra: errMsg=$errMsg"
+	    }
+	}
+    }
+
+val -id prev_url { 
+    set offset [expr { @{offset} - @{limit} }]
+    if { $offset <= 0 } { set offset "" }
+    export_vars -url -base "." -no_empty offset  
+}
+
+val -id next_url { 
+    set offset [expr { @{offset} + @{limit} }]
+    export_vars -url -base "." -no_empty offset 
+}
+
+# for includelet
+val -id selectedtab { return "linklog" }
+
+
+# ---------------------------------------------------------------------------------------------
+
+css {
+
+    .host_tag {color: #060;}
+
+    .bm_details small {
+	display: block;
+	line-height: 20px;
+	color: #999999;
+    }
+
+    .bm_details small a { color: #666; }
+    .bm_details small:before {
+	content: '-- ';
+    }
+
+    .bm_comment {
+	margin: 0 0 10px 20px;
+	padding: 0 0 0 10px;
+	border-left: 1px dashed #aaa;
+    }
+
+    .bm_comment small {
+	display: block;
+	line-height: 20px;
+	color: #999999;
+    }
+
+    .bm_comment small a { color: #666; }
+
+    .bm_preview {
+	display:inline-block;
+	background:url(/graphics/bg_preview.png);
+	width:10px;
+	height:10px;
+	margin:0 3px;
+	cursor:pointer;
+    }
+    .bm_header {
+	background:#f2dee5;padding:2px 0px;height:1.5em;
+	color:#865A69;
+    }
+    .bm_header strong {
+	font-size: 16px;
+	margin-left:5px;
+    }
+    .bm_action {
+	width:40px;
+    }
+}
+
+
+master -src "/templates/www-shared.master.inc" -title "Shared Bookmarks - @{object_get.userdata.full_name}" {
+    include -src "/templates/www-shared.tabs.inc"
+
+    h3 { b { t "Shared Bookmarks" } }
+
+    tpl -if "@{linkdata:rowcount}" {
+	tpl -for "linkdata" -limit ${limit} {
+	    dl {
+		dt {
+		    a -href "@{url}" -target _blank {
+			t "@{title}"
+		    }
+		    tpl -if { @{video_p} } {
+			a -href "@{href}" -style "text-decoration:none;border:0;" {
+			    img -src "//www.phigita.net/graphics/icon_video.gif" -width 19 -height 12 -alt {video}
+			}
+		    }
+		    tpl -if { @{preview_p} } {
+			div -class "bm_preview" -onclick "bmTP(this,'bm_pr_{rownum}',@{jsImgArr});"
+		    }
+		}
+		dd {
+		    tpl -if { @{description} ne {} } {
+			div -class bm_remark {
+			    t "@{description:noquote}"
+			}
+		    }
+		    div -class "bm_details" {
+			small {
+			    a -class "permalink" -href "http://remarks.phigita.net/url/@{url_sha1}" {
+				t "@{age_pretty}"
+			    }
+			    nt " &#183; "
+			    a -class "host_tag" -href "${base}/host/@{host}" {
+				t "#@{domain}"
+			    }
+			    tpl -if @{val.registered_p} {
+				nt " &#183; "
+				span {
+				    a -href "http://remarks.phigita.net/url/@{url_sha1}" {
+					t "comment"
+				    }
+				}
+			    }
+			}
+		    }
+		    tpl -if @{cnt_comment} {
+			div -class "bm_comment" {
+			    small {
+				a -href "http://remarks.phigita.net/url/@{url_sha1}" {
+				    t @{cnt_comment}
+				    t " "
+				    tpl -if "@{cnt_comment} == 1" { t "comment" }
+				    tpl -if "@{cnt_comment} > 1" { t "comments" }
+				}
+				tpl -if { @{cnt_comment} == 1 } { t " by " }
+				tpl -if { @{cnt_comment} > 1 } { t ", last by " }
+				span -class user {
+				    a -href "/~@{comment_screen_name}/" { t @{comment_screen_name} }
+				    t ": "
+				}
+			    }
+			    div {
+				t @{commentContent:noquote}
+			    }
+			}
+		    }
+		}
+	    }
+	}
+    }
+    tpl -else "" {
+	t "None Yet"
+    }
+
+    div -x-master-renderTo "sidebar" {
+	p
+	div -style "text-align:center;" {
+	    tpl -if "@{offset} > 0 || @{linkdata:rowcount} == ${limit_plus_one}" {
+		div -class "sidebar-heading" {
+		    t "Navigate" 
+		}
+		p
+		span -style "background:#ccc;padding:2px;" {
+		    tpl -if "@{offset} > 0" {
+			a -href "@{prev_url}" { nt "&laquo; Newer" }
+		    }
+		    tpl -if "@{offset} > 0 && @{linkdata:rowcount} == ${limit_plus_one}" {
+			t " | "
+		    }
+		    tpl -if "@{linkdata:rowcount} == ${limit_plus_one}" {
+			a -href "@{next_url}" { nt "Older &raquo;" }
+		    }
+		}
+	    }
+	}
+    }
+
+}
+

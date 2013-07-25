@@ -1,0 +1,165 @@
+Received: from ut1.glassdoor.com (localhost [127.0.0.1])
+	by rsmail.glassdoor.com (Postfix) with ESMTP id DABCD1AE8316
+	for <k2pts@phigita.net>; Mon, 28 Nov 2011 10:51:11 -0800 (PST) 
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=glassdoor.com;
+	s=default; t=1322506271;
+	bh=4wcAwkWSwRyQI/lv0I1igFL1ISDDLhptiFbwuZTFRCU=;
+	h=Date:From:Sender:Reply-To:To:Message-ID:Subject:MIME-Version:
+	 Content-Type;
+	b=rJjWIHS8bXxbg4rLfS5TR3F1w+Uqr2N8Lojg29zS4fRsvGQW8hPPnr4MV+uAHeHLb
+	 bqtclLE/xrE3IMQKVflgxpmi8BhmXl4vQATRBn69Xch+Z5cgOfQ2HZie5nZ/UYITnE
+	 lvhDMX/JJ3s/7nCzGQiRDWp8cp2gveXcMWR2x8QY= 
+Date: Mon, 28 Nov 2011 10:51:11 -0800 (PST) 
+From: Glassdoor <reply@glassdoor-email.com> 
+Sender: reply@glassdoor.com 
+Reply-To: Glassdoor <reply@glassdoor-email.com> 
+To: k2pts@phigita.net 
+Message-ID: <1665639535.124671322506271894.JavaMail.tomcat@ut1.glassdoor.com> 
+Subject: Your Glassdoor Updates - Oct 29 - Nov 28, 2011 
+--------------------------------------
+Your Glassdoor Updates -- Oct 29 - Nov 28, 2011
+
+Every day more and more employees are posting to Glassdoor. Based
+on your activity, we've pulled a few posts from the last month you
+might find interesting. Enjoy!
+-----------------------------------------------------------------
+	
+FEATURED JOBS UPDATES
+Senior Software Development Engineer  
+ http://www.glassdoor.com/partner/jobListing.htm?pos=101&ao=2343&s=154&site=GLASSDOOR&t=FJ&extid=151&exst=&ist=OL&ast=OL&guid=00000133eb841aceac73b51bebb1dea6&cb=00000133eb841e19ac17f35513a487fe&jobListingId=113672963&utm_medium=email&utm_source=watcher&utm_campaign=watch-s&utm_content=wat-s-fj-E-S-Yahoo new
+Yahoo - Sunnyvale, CA
+We are looking for an experienced, self-motivated, and quality-focused Senior Software Engineer for Yahoo's Membership Team. Membership Team is responsible for managing... 
+From Yahoo - September 22, 2011
+..................................................................			
+Software Engineer - Mobile Developer  
+ http://www.glassdoor.com/partner/jobListing.htm?pos=102&ao=2098&s=154&site=GLASSDOOR&t=FJ&extid=151&exst=&ist=OL&ast=OL&guid=00000133eb841aceac73b51bebb1dea6&cb=00000133eb841e19bd9cc6c1c9bfb278&jobListingId=58127331&utm_medium=email&utm_source=watcher&utm_campaign=watch-s&utm_content=wat-s-fj-E-S-Yelp new
+Yelp - San Francisco, CA
+• Command of your favorite modern programming language: Python, Ruby, Java, C++, etc.
+ • Test-driven Development
+ • Excitement about the challenges of... 
+From Yelp - October 11, 2011
+
+-----------------------------------------------------------------
+	
+SALARY UPDATES
+
+
+
+17 new Google salaries, including a Software Development Engineer
+salary.
+
+	
+Google Software Development Engineer   1 new	
+			http://www.glassdoor.com/Salary/Google-Software-Development-Engineer-Salaries-E9079_D_KO7,36.htm?utm_medium=email&utm_source=watcher&utm_campaign=watch-s&utm_content=wat-s-salary
+..................................................................
+
+
+6 new Collaborative Software industry salaries, including a salary
+in San Jose, CA.
+
+	
+Lithium Technologies Sales Director   1 new	
+			http://www.glassdoor.com/Salary/Lithium-Technologies-Sales-Director-Salaries-E226605_D_KO21,35.htm?utm_medium=email&utm_source=watcher&utm_campaign=watch-s&utm_content=wat-s-salary
+..................................................................
+
+
+43 new Internet Search & Navigation Services industry salaries, including:
+
+	
+Google Software Engineer   4 new	
+			http://www.glassdoor.com/Salary/Google-Software-Engineer-Salaries-E9079_D_KO7,24.htm?utm_medium=email&utm_source=watcher&utm_campaign=watch-s&utm_content=wat-s-salary
+Yahoo Senior Software Engineer (Ic4)   2 new	
+			http://www.glassdoor.com/Salary/Yahoo-Senior-Software-Engineer-Ic4-Salaries-E5807_DAO.htm?filter.jobTitleExact=Senior+Software+Engineer+%28Ic4%29&utm_medium=email&utm_source=watcher&utm_campaign=watch-s&utm_content=wat-s-salary
+Marchex Director of Operations   1 new	
+			http://www.glassdoor.com/Salary/Marchex-Director-of-Operations-Salaries-E34719_D_KO8,30.htm?utm_medium=email&utm_source=watcher&utm_campaign=watch-s&utm_content=wat-s-salary
+Baidu.com Developer   1 new	
+			http://www.glassdoor.com/Salary/Baidu-com-Developer-US-Salaries-EJI_IE35325.0,9_KO10,19_IL.20,22_IN1.htm?utm_medium=email&utm_source=watcher&utm_campaign=watch-s&utm_content=wat-s-salary
+
+-----------------------------------------------------------------
+	
+INTERVIEW QUESTION AND REVIEW UPDATES		
+
+
+16 new Software Development Engineer interview questions and reviews,
+including an interview question and review for the Internet Search
+& Navigation Services industry.
+
+		
+Interview Question for Software Development Engineer at Google:
+Given a a new dictionary of words in English alphabets but the ordering
+of the alphabets are not necessarily as the English alphabets, that
+is, say c comes a in the new alphabet...			
+			
+View Answers (1) or Answer the Question			
+http://www.glassdoor.com/Interview/Given-a-a-new-dictionary-of-words-in-English-alphabets-but-the-ordering-of-the-alphabets-are-not-necessarily-as-the-English-QTN_204385.htm?utm_medium=email&utm_source=watcher&utm_campaign=watch-s&utm_content=wat-s-interview		
+		
+Software Development Engineer interview questions and reviews at Google			
+http://www.glassdoor.com/Interview/Google-Software-Development-Engineer-Interview-Questions-EI_IE9079.0,6_KO7,36.htm?utm_medium=email&utm_source=watcher&utm_campaign=watch-s&utm_content=wat-s-interview			
+			
+	
+
+-----------------------------------------------------------------	
+	
+REVIEW UPDATES		
+					
+4 new Software Development Engineer reviews, including reviews for
+Canon India and Zillow.		
+				
+From a Software Development Engineer at Canon India		
+"Good place to enhance your skills , as total freedom given for R
+& D" (Rating: 4 out of 5)				
+http://www.glassdoor.com/Reviews/Employee-Review-Canon-India-RVW1204521.htm
+						
+.................................................................. 		
+					
+17 new Collaborative Software industry reviews, including reviews
+for Lithium Technologies in San Jose, CA.		
+				
+From a Sales Director in San Jose, CA at Lithium Technologies		
+"Great Company - Great Product - Great People" (Rating: 5 out of 5)				
+http://www.glassdoor.com/Reviews/Employee-Review-Lithium-Technologies-RVW1209714.htm
+						
+.................................................................. 		
+					
+17 new Google reviews.		
+				
+From an anonymous reviewer in Chicago, IL at Google		
+"Great Company. Team REALLY matters" (Rating: 5 out of 5)				
+http://www.glassdoor.com/Reviews/Employee-Review-Google-RVW1210641.htm
+						
+
+-----------------------------------------------------------------
+ 
+Too much email?  To change how often you receive your Glassdoor Updates
+email, edit your email preferences in Account Settings.
+
+Account Settings
+http://www.glassdoor.com/member/account/settings_input.htm
+
+-----------------------------------------------------------------
+
+This message was sent to k2pts@phigita.net by Glassdoor. To ensure
+you receive emails from Glassdoor, please add dev-noreply@glassdoor.com
+to your address book or contact list. Or if you no longer wish to
+receive our emails, you may unsubscribe at any time.						
+
+Unsubscribe
+This message was sent to k2pts@phigita.net by Glassdoor.  To ensure you
+receive emails from Glassdoor, please add reply@glassdoor-email.com to your
+address book or contact list.  Or if you no longer wish to receive our
+emails, you may click the 'unsubscribe' link below:
+https://www.glassdoor.com/profile/editMemberSubscription_input.htm?key=Ooyg:uk15EcbmCKmGGVWcgs4AGg&messageId=23174104
+
+Glassdoor Inc. | 1 Harbor Drive Suite 300 | Sausalito, CA  94965
+http://www.glassdoor.com/
+
+Privacy Policy:
+http://www.glassdoor.com/about/privacy.htm
+
+Privacy Policy
+http://www.glassdoor.com/about/privacy.htm
+
+Glassdoor
+3 Harbor Drive, Suite 211
+Sausalito, CA 94965
+http://www.glassdoor.com

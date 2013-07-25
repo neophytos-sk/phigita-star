@@ -1,0 +1,18 @@
+Received-SPF: None 
+	client-ip="110.53.24.148" envelope-from="hants@hec.co.kr" 
+Received: from [110.53.24.148] ([110.53.24.148]) 
+          by mail.hec.co.kr ([112.175.225.100]) 
+          with ESMTP id 1319605522.763049.3086834576.mail
+          for <>; 
+          Wed, 26 Oct 2011 14:05:22 +0900 (KST) 
+Message-ID: <20111026131803853627@hec.co.kr> 
+From: "mirw" <hants@hec.co.kr> 
+To:  
+Subject: =?gb2312?B?cXV0IM/6pLLK26W31velvLncpckgdWdxY254ZQ==?= 
+X-TERRACE-DUMMYSUBJECT: Terrace Spam system                                  * 
+Date: Wed, 26 Oct 2011 13:17:58 +0800 
+X-mailer: Ycmb 3 
+X-TERRACE-SPAMMARK: NO       (SR:12.46)                     
+  (by Terrace) 
+X-TERRACE-SCANRST: Terrace Spam system 
+Whoops!  What is a 'application/vnd.ms-excel'?

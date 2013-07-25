@@ -1,0 +1,10 @@
+01
+   basic drawing program is working
+   but, need to do better abstraction of drawing area (a drawable)
+     note: drawables can overlap, allowing multiple axes on same area, 
+           little blowups, etc.
+   (there can be more than one on a canvas)
+   also, axes are just decoration, should be possible
+     to easily plant more than one, decorate differently, etc.
+  
+

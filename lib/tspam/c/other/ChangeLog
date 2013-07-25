@@ -1,0 +1,95 @@
+Revision history for bmf:
+
+0.9.4: 20 Oct 2002
+	* Remove X-RBL-Warning from ignored headers.
+
+0.9.4pre7: 20 Oct 2002
+	* Update documentation.
+
+0.9.4pre6: 20 Oct 2002
+	* Move Bayes stuff into its own file.
+
+0.9.4pre5: 20 Oct 2002
+	* Fix NaN exception: if list is empty, use zero for probability.
+	* Make extrema array (keepers) variable size.  Needs more work.
+
+0.9.4pre4: 19 Oct 2002
+	* Add configure section for Darwin.
+	* Don't use file locking on Darwin, it is not supported.
+
+0.9.4pre3: 19 Oct 2002
+	* Fixup configure script for OSF1.
+	* which(1) always returns 0 on OSF1, use type(1) instead.
+	* Add SYSLIBS to the makefile.
+	* Fix gcc-ism in dbg.c (ptr arithmetic on void*).
+	* Fix off-by-one in html tag check.
+	* Fix unaligned access in libdb.
+
+0.9.4pre2: 18 Oct 2002
+	* Fix bug in -d handling for text and libdb.
+	  (Found by Björn Kalkbrenn)
+
+0.9.4pre1: 17 Oct 2002
+	* Autodetect mailbox type and deprecate the -m option.
+
+0.9.3: 14 Oct 2002
+	* Ditch the builtin libdb locks, use fcntl instead.
+	* Fix memory leak in dbtext.
+	* Fix some trivial issues with the lexer:
+	  - Be more strict about recognizing IP addresses.
+	  - Do case-insensitive header name comparisons.
+	* Fix multiple database closure with mbox format.
+	* Fix a bogus assert in passthrough.
+	* Add verbose flag (no functionality yet).
+	* Add heap checking in debug mode.
+	* Fix bug in -N mode which made it act the same as -S.
+	* Add X-RBL-Warning to ignored headers.
+	* Support maildir style folders.
+
+0.9.2: 12 Oct 2002
+	* Fix bug in multiple message registration.
+
+0.9.1: 12 Oct 2002
+	* Improve error reporting and clarify some messages.
+	* Package preformatted manpage instead of XML.
+	* Remove single message per invocation restriction.
+
+0.84: 09 Oct 2002
+	* Fix linker flags for autodetected libdb 4.1 in /usr/local on BSD.
+
+0.84pre3: 07 Oct 2002
+	* Yet another libdb api fix.  DB->open() in 4.0 is the same as 3.x.
+
+0.84pre2: 07 Oct 2002
+	* Fix bug in dbdb (v1 only) that prevented file locking on FreeBSD.
+
+0.84pre1: 07 Oct 2002
+	* Fix bug in dbtext that caused segfault searching an empty list.
+
+0.83: 07 Oct 2002
+	* Fix bug preventing creation of libdb files when using -n or -s.
+	* Fix bug in libdb unmergeclose function logic.  Users are strongly
+	  encouraged to delete and rebuild word lists if possible.  If not
+	  possible, at least export to text and remove entries
+	  that represent unsigned underflow (eg. 4.2 billion).
+
+0.82: 06 Oct 2002
+	* Support GNU style --with-package=path options.
+          (copied from autoconf output)
+	* Use mysql_config in configure script.
+	* Support libdb v1 and v4.
+	* Find and use BerkeleyDB 4.1 in *BSD.
+	  (thanks to ted@php.net)
+	* Clarify and robustify argument handling (fixes pr618875).
+
+0.81: 03 Oct 2002
+	* Add configure script and conditionally compile libdb and mysql.
+	* Add manpage for bmfconv.
+	* Cleanup manpage for bmf.
+	* Rearrange makefile a bit.
+	* Remove -f text options in bmfconv, it is not supported.
+	* Fix mysql typo that prevented linking.
+	* Tweak X-Spam headers a bit.
+
+0.80: 02 Oct 2002
+	* Initial release.

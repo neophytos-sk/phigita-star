@@ -1,0 +1,10 @@
+set path_info [ad_conn path_info]
+
+if { [string trim $path_info] ne {} } {
+    rp_form_put url_host $path_info
+    rp_form_put vuh_p 1
+} else {
+    rp_returnnotfound
+    return
+}
+rp_internal_redirect /packages/bookmarks/www-global/index

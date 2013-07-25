@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<queryset>
+
+<fullquery name="ad_acs_kernel_id.acs_kernel_id_get">      
+      <querytext>
+      
+	select package_id from apm_packages
+	where package_key = 'core-platform'
+    
+      </querytext>
+</fullquery>
+
+ 
+<fullquery name="ad_acs_kernel_id.acs_admin_id_get">      
+      <querytext>
+      
+        select package_id from apm_packages
+        where package_key = 'control-panel'
+    
+      </querytext>
+</fullquery>
+
+<fullquery name="root_of_host.node_id">
+      <querytext>
+
+        select node_id 
+	from host_node_map
+	where host = :host
+
+      </querytext>
+</fullquery>
+
+ 
+</queryset>

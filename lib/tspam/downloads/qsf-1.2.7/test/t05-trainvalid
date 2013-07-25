@@ -1,0 +1,17 @@
+#!/bin/sh
+#
+# TEST: Validity of trained database:   
+
+for SPAM in 1 12 3 7 9; do
+	ISSPAM=0
+	./mboxsplit $SPAM < .test-spam \
+	| $PROG -d $BACKEND:$TESTDB -t || ISSPAM=1
+	test $ISSPAM -eq 1 || exit 1
+done
+
+for NONSPAM in 5 13 2 8 14; do
+	ISSPAM=0
+	./mboxsplit $NONSPAM < .test-non-spam \
+	| $PROG -d $BACKEND:$TESTDB -t || ISSPAM=1
+	test $ISSPAM -eq 0 || exit 1
+done

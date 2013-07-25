@@ -1,0 +1,14 @@
+Received: from  (192.168.1.147) by nacha.org (109.91.34.239) with Microsoft SMTP Server id 8.0.685.24; Tue, 29 Nov 2011 09:40:41 +0100 
+Message-ID: <4ED49A5A.708050@nacha.org> 
+Date: Tue, 29 Nov 2011 09:40:41 +0100 
+From: "The Electronic Payments Association" <transfers@nacha.org> 
+User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.2.9) Gecko/20101112 Thunderbird/3.1.4 
+To: <k2pts@phigita.net> 
+Subject: ACH transfer rejected 
+--------------------------------------
+The ACH  transaction (ID: 499847330105), recently  sent from your bank account (by you or any other person), was   rejected by the  other financial institution.        Rejected transaction  
+      Transaction ID:     499847330105  
+       Reason for rejection    See details in the report below   
+      Transaction Report     report_499847330105.doc (Microsoft Word Document)   
+  13450 Sunrise Valley Drive, Suite 100Herndon, VA 201712011 NACHA - The Electronic Payments Association
+Whoops!  What is a 'image/gif'?

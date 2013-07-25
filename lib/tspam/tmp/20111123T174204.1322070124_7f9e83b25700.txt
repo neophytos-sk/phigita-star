@@ -1,0 +1,12 @@
+Received: from owsrbwu [110.52.7.75] by clivia.com.cn with ESMTP
+  (SMTPD-8.22) id A05E0340; Thu, 24 Nov 2011 01:41:50 +0800 
+Sender: wangxinggao@clivia.com.cn 
+Message-ID: <20111124014420578106@clivia.com.cn> 
+From: "2011-11-24 01:44:19" <mlduj@tqupie.com> 
+To:  
+Subject: =?gb2312?B?xPq6w6OsxPq1xMXz09G4+MT6wLTQxcHLo6EgtMvTyrz+ysfP3sqx?=
+	=?gb2312?B?08q8/qOsvavU2jI5ODQ4NcPruvPX1Lavyb6z/aOsx+u8sA==?=
+	=?gb2312?B?yrHUxLbBo6E=?= 
+Date: Thu, 24 Nov 2011 01:44:13 +0800 
+X-mailer: Zapz 2 
+Whoops!  What is a 'application/vnd.ms-excel'?

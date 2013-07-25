@@ -1,0 +1,26 @@
+Before releasing a new version, go through this checklist:
+
+  - bump doc/VERSION
+  - bump doc/lsm.in
+  - check doc/NEWS is up to date
+  - check doc/spec.in is up to date (changelog)
+  - check manual is up to date
+  - make indent indentclean
+  - make test
+  - make memtest
+  - commit to CVS
+  - consult with Debian packager (bump debian/changelog)
+  - commit any post-packaging changes to CVS
+  - wipe build directory, re-run generate.sh and configure
+  - make release
+  - make manhtml | tidy -asxhtml | sed -e '1,/<body>/d' -e '/<\/body>/,$d'
+  - update HTML for todo and news
+  - copy and sign tar.gz to HTML directory
+  - upload package to SourceForge
+  - create a new release on SourceForge
+  - submit new release to Freshmeat
+  - upload HTML
+  - check validator results for project page and manual
+  - send notice to mailing list
+  - cvs tag vVERSION (eg cvs tag v1_0_0)
+

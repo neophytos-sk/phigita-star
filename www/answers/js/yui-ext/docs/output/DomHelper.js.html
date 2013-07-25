@@ -1,0 +1,416 @@
+<html><head><title>DomHelper.js</title><link rel="stylesheet" type="text/css" href="../resources/style.css" media="screen"/></head><body><h1>DomHelper.js</h1><pre class="highlighted"><code><i>/**
+ * @class YAHOO.ext.DomHelper
+ * Utility class <b>for</b> working <b>with</b> DOM and/or Templates. It transparently supports using HTML fragments or DOM. 
+ * For more information see &lt;a href=&quot;http:<i>//www.jackslocum.com/yui/2006/10/06/domhelper-create-elements-using-dom-html-fragments-or-templates/&quot;&gt;<b>this</b> blog post <b>with</b> examples&lt;/a&gt;.</i>
+ * @singleton
+ */</i>
+YAHOO.ext.DomHelper = <b>new</b> function(){
+    <i>/**@private*/</i>
+    <b>var</b> d = document;
+    <b>var</b> tempTableEl = null;
+    <i>/** True to force the use of DOM instead of html fragments @type Boolean */</i>
+    <b>this</b>.useDom = false;
+    <b>var</b> emptyTags = /^(?:base|basefont|br|frame|hr|img|input|isindex|link|meta|nextid|range|spacer|wbr|audioscope|area|param|keygen|col|limittext|spot|tab|over|right|left|choose|atop|of)$/i;
+    <i>/**
+     * Applies a style specification to an element
+     * @param {String/HTMLElement} el The element to apply styles to
+     * @param {String/Object/Function} styles A style specification string eg &quot;width:100px&quot;, or object <b>in</b> the form {width:&quot;100px&quot;}, or
+     * a <b>function</b> which returns such a specification.
+     */</i>
+    <b>this</b>.applyStyles = <b>function</b>(el, styles){
+        <b>if</b>(styles){
+           <b>var</b> D = YAHOO.util.Dom;
+           <b>if</b> (<b>typeof</b> styles == &quot;string&quot;){
+               <b>var</b> re = /\s?([a-z\-]*)\:([^;]*);?/gi;
+               <b>var</b> matches;
+               <b>while</b> ((matches = re.exec(styles)) != null){
+                   D.setStyle(el, matches[1], matches[2]);
+               }
+           }<b>else</b> if (<b>typeof</b> styles == &quot;object&quot;){
+               <b>for</b> (<b>var</b> style <b>in</b> styles){
+                  D.setStyle(el, style, styles[style]);
+               }
+           }<b>else</b> if (<b>typeof</b> styles == &quot;<b>function</b>&quot;){
+                YAHOO.ext.DomHelper.applyStyles(el, styles.call());
+           }
+        }
+    }; 
+    
+    <i>// build as innerHTML where available</i>
+    <i>/** @ignore */</i>
+    <b>var</b> createHtml = <b>function</b>(o){
+        <b>var</b> b = '';
+        b += '&lt;' + o.tag;
+        <b>for</b>(var attr <b>in</b> o){
+            <b>if</b>(attr == 'tag' || attr == 'children' || attr == 'html' || <b>typeof</b> o[attr] == '<b>function</b>') <b>continue</b>;
+            <b>if</b>(attr == 'style'){
+                <b>var</b> s = o['style'];
+                <b>if</b>(typeof s == '<b>function</b>'){
+                    s = s.call();
+                }
+                <b>if</b>(typeof s == 'string'){
+                    b += ' style=&quot;' + s + '&quot;';
+                }<b>else</b> if(<b>typeof</b> s == 'object'){
+                    b += ' style=&quot;';
+                    <b>for</b>(var key <b>in</b> s){
+                        <b>if</b>(typeof s[key] != '<b>function</b>'){
+                            b += key + ':' + s[key] + ';';
+                        }
+                    }
+                    b += '&quot;';
+                }
+            }<b>else</b>{
+                <b>if</b>(attr == 'cls'){
+                    b += ' class=&quot;' + o['cls'] + '&quot;';
+                }<b>else</b> if(attr == 'htmlFor'){
+                    b += ' <b>for</b>=&quot;' + o['htmlFor'] + '&quot;';
+                }<b>else</b>{
+                    b += ' ' + attr + '=&quot;' + o[attr] + '&quot;';
+                }
+            }
+        }
+        <b>if</b>(emptyTags.test(o.tag)){
+            b += ' /&gt;';
+        }<b>else</b>{
+            b += '&gt;';
+            <b>if</b>(o.children){
+                <b>for</b>(var i = 0, len = o.children.length; i &lt; len; i++) {
+                    b += createHtml(o.children[i], b);
+                }
+            }
+            <b>if</b>(o.html){
+                b += o.html;
+            }
+            b += '&lt;/' + o.tag + '&gt;';
+        }
+        <b>return</b> b;
+    }
+    
+    <i>// build as dom</i>
+    <i>/** @ignore */</i>
+    <b>var</b> createDom = <b>function</b>(o, parentNode){
+        <b>var</b> el = d.createElement(o.tag);
+        <b>var</b> useSet = el.setAttribute ? true : false; <i>// In IE some elements don't have setAttribute</i>
+        <b>for</b>(var attr <b>in</b> o){
+            <b>if</b>(attr == 'tag' || attr == 'children' || attr == 'html' || attr == 'style' || <b>typeof</b> o[attr] == '<b>function</b>') <b>continue</b>;
+            <b>if</b>(attr=='cls'){
+                el.className = o['cls'];
+            }<b>else</b>{
+                <b>if</b>(useSet) el.setAttribute(attr, o[attr]);
+                <b>else</b> el[attr] = o[attr];
+            }
+        }
+        YAHOO.ext.DomHelper.applyStyles(el, o.style);
+        <b>if</b>(o.children){
+            <b>for</b>(var i = 0, len = o.children.length; i &lt; len; i++) {
+             	createDom(o.children[i], el);
+            }
+        }
+        <b>if</b>(o.html){
+            el.innerHTML = o.html;
+        }
+        <b>if</b>(parentNode){
+           parentNode.appendChild(el);
+        }
+        <b>return</b> el;
+    };
+    
+    <i>/**
+     * @ignore
+     * Nasty code <b>for</b> IE's broken table implementation 
+     */</i>
+    <b>var</b> insertIntoTable = <b>function</b>(tag, where, el, html){
+        <b>if</b>(!tempTableEl){
+            tempTableEl = document.createElement('div');
+        }
+        <b>var</b> node;
+        <b>if</b>(tag == 'table' || tag == 'tbody'){
+           tempTableEl.innerHTML = '&lt;table&gt;&lt;tbody&gt;'+html+'&lt;/tbody&gt;&lt;/table&gt;';
+           node = tempTableEl.firstChild.firstChild.firstChild;
+        }<b>else</b>{
+           tempTableEl.innerHTML = '&lt;table&gt;&lt;tbody&gt;&lt;tr&gt;'+html+'&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;';
+           node = tempTableEl.firstChild.firstChild.firstChild.firstChild;
+        }
+        <b>if</b>(where == 'beforebegin'){
+            el.parentNode.insertBefore(node, el);
+            <b>return</b> node;
+        }<b>else</b> if(where == 'afterbegin'){
+            el.insertBefore(node, el.firstChild);
+            <b>return</b> node;
+        }<b>else</b> if(where == 'beforeend'){
+            el.appendChild(node);
+            <b>return</b> node;
+        }<b>else</b> if(where == 'afterend'){
+            el.parentNode.insertBefore(node, el.nextSibling);
+            <b>return</b> node;
+        }
+    } 
+    
+    <i>/**
+     * Inserts an HTML fragment into the Dom
+     * @param {String} where Where to insert the html <b>in</b> relation to el - beforeBegin, afterBegin, beforeEnd, afterEnd.
+     * @param {HTMLElement} el The context element
+     * @param {String} html The HTML fragmenet
+     * @<b>return</b> {HTMLElement} The <b>new</b> node
+     */</i>
+    <b>this</b>.insertHtml = <b>function</b>(where, el, html){
+        where = where.toLowerCase();
+        <b>if</b>(el.insertAdjacentHTML){
+            <b>var</b> tag = el.tagName.toLowerCase();
+            <b>if</b>(tag == 'table' || tag == 'tbody' || tag == 'tr'){
+               <b>return</b> insertIntoTable(tag, where, el, html);
+            }
+            <b>switch</b>(where){
+                <b>case</b> 'beforebegin':
+                    el.insertAdjacentHTML(where, html);
+                    <b>return</b> el.previousSibling;
+                <b>case</b> 'afterbegin':
+                    el.insertAdjacentHTML(where, html);
+                    <b>return</b> el.firstChild;
+                <b>case</b> 'beforeend':
+                    el.insertAdjacentHTML(where, html);
+                    <b>return</b> el.lastChild;
+                <b>case</b> 'afterend':
+                    el.insertAdjacentHTML(where, html);
+                    <b>return</b> el.nextSibling;
+            }
+            throw 'Illegal insertion point -&gt; &quot;' + where + '&quot;';
+        }
+        <b>var</b> range = el.ownerDocument.createRange();
+        <b>var</b> frag;
+        <b>switch</b>(where){
+             <b>case</b> 'beforebegin':
+                range.setStartBefore(el);
+                frag = range.createContextualFragment(html);
+                el.parentNode.insertBefore(frag, el);
+                <b>return</b> el.previousSibling;
+             <b>case</b> 'afterbegin':
+                <b>if</b>(el.firstChild){ <i>// faster</i>
+                    range.setStartBefore(el.firstChild);
+                }<b>else</b>{
+                    range.selectNodeContents(el);
+                    range.collapse(true);
+                }
+                frag = range.createContextualFragment(html);
+                el.insertBefore(frag, el.firstChild);
+                <b>return</b> el.firstChild;
+            <b>case</b> 'beforeend':
+                <b>if</b>(el.lastChild){
+                    range.setStartAfter(el.lastChild); <i>// faster</i>
+                }<b>else</b>{
+                    range.selectNodeContents(el);
+                    range.collapse(false);
+                }
+                frag = range.createContextualFragment(html);
+                el.appendChild(frag);
+                <b>return</b> el.lastChild;
+            <b>case</b> 'afterend':
+                range.setStartAfter(el);
+                frag = range.createContextualFragment(html);
+                el.parentNode.insertBefore(frag, el.nextSibling);
+                <b>return</b> el.nextSibling;
+            }
+            throw 'Illegal insertion point -&gt; &quot;' + where + '&quot;';
+    };
+    
+    <i>/**
+     * Creates <b>new</b> Dom element(s) and inserts them before el
+     * @param {HTMLElement} el The context element
+     * @param {Object} o The Dom object spec (and children)
+     * @param {&lt;i&gt;Boolean&lt;/i&gt;} returnElement (optional) true to <b>return</b> a YAHOO.ext.Element
+     * @<b>return</b> {HTMLElement} The <b>new</b> node
+     */</i>
+    <b>this</b>.insertBefore = <b>function</b>(el, o, returnElement){
+        el = YAHOO.util.Dom.get(el);
+        <b>var</b> newNode;
+        <b>if</b>(this.useDom){
+            newNode = createDom(o, null);
+            el.parentNode.insertBefore(newNode, el);
+        }<b>else</b>{
+            <b>var</b> html = createHtml(o);
+            newNode = <b>this</b>.insertHtml('beforeBegin', el, html);
+        }
+        <b>return</b> returnElement ? YAHOO.ext.Element.get(newNode, true) : newNode;
+    };
+    
+    <i>/**
+     * Creates <b>new</b> Dom element(s) and inserts them after el
+     * @param {HTMLElement} el The context element
+     * @param {Object} o The Dom object spec (and children)
+     * @param {&lt;i&gt;Boolean&lt;/i&gt;} returnElement (optional) true to <b>return</b> a YAHOO.ext.Element
+     * @<b>return</b> {HTMLElement} The <b>new</b> node
+     */</i>
+    <b>this</b>.insertAfter = <b>function</b>(el, o, returnElement){
+        el = YAHOO.util.Dom.get(el);
+        <b>var</b> newNode;
+        <b>if</b>(this.useDom){
+            newNode = createDom(o, null);
+            el.parentNode.insertBefore(newNode, el.nextSibling);
+        }<b>else</b>{
+            <b>var</b> html = createHtml(o);
+            newNode = <b>this</b>.insertHtml('afterEnd', el, html);
+        }
+        <b>return</b> returnElement ? YAHOO.ext.Element.get(newNode, true) : newNode;
+    };
+    
+    <i>/**
+     * Creates <b>new</b> Dom element(s) and appends them to el
+     * @param {HTMLElement} el The context element
+     * @param {Object} o The Dom object spec (and children)
+     * @param {&lt;i&gt;Boolean&lt;/i&gt;} returnElement (optional) true to <b>return</b> a YAHOO.ext.Element
+     * @<b>return</b> {HTMLElement} The <b>new</b> node
+     */</i>
+    <b>this</b>.append = <b>function</b>(el, o, returnElement){
+        el = YAHOO.util.Dom.get(el);
+        <b>var</b> newNode;
+        <b>if</b>(this.useDom){
+            newNode = createDom(o, null);
+            el.appendChild(newNode);
+        }<b>else</b>{
+            <b>var</b> html = createHtml(o);
+            newNode = <b>this</b>.insertHtml('beforeEnd', el, html);
+        }
+        <b>return</b> returnElement ? YAHOO.ext.Element.get(newNode, true) : newNode;
+    };
+    
+    <i>/**
+     * Creates <b>new</b> Dom element(s) and overwrites the contents of el <b>with</b> them
+     * @param {HTMLElement} el The context element
+     * @param {Object} o The Dom object spec (and children)
+     * @param {&lt;i&gt;Boolean&lt;/i&gt;} returnElement (optional) true to <b>return</b> a YAHOO.ext.Element
+     * @<b>return</b> {HTMLElement} The <b>new</b> node
+     */</i>
+    <b>this</b>.overwrite = <b>function</b>(el, o, returnElement){
+        el = YAHOO.util.Dom.get(el);
+        el.innerHTML = createHtml(o);
+        <b>return</b> returnElement ? YAHOO.ext.Element.get(el.firstChild, true) : el.firstChild;
+    };
+    
+    <i>/**
+     * Creates a <b>new</b> YAHOO.ext.DomHelper.Template from the Dom object spec 
+     * @param {Object} o The Dom object spec (and children)
+     * @<b>return</b> {YAHOO.ext.DomHelper.Template} The <b>new</b> template
+     */</i>
+    <b>this</b>.createTemplate = <b>function</b>(o){
+        <b>var</b> html = createHtml(o);
+        <b>return</b> new YAHOO.ext.DomHelper.Template(html);
+    };
+}();
+
+<i>/**
+* @class YAHOO.ext.DomHelper.Template
+* Represents an HTML fragment template.
+* For more information see &lt;a href=&quot;http:<i>//www.jackslocum.com/yui/2006/10/06/domhelper-create-elements-using-dom-html-fragments-or-templates/&quot;&gt;<b>this</b> blog post <b>with</b> examples&lt;/a&gt;. </i>
+* &lt;br&gt;
+* &lt;b&gt;This class is also available as YAHOO.ext.Template&lt;/b&gt;.
+* @constructor
+* @param {String} html The HTML fragment
+*/</i>
+YAHOO.ext.DomHelper.Template = <b>function</b>(html){
+    <i>/**@private*/</i>
+    <b>this</b>.html = html;
+};
+YAHOO.ext.DomHelper.Template.prototype = {
+    <i>/**
+     * Returns an HTML fragment of <b>this</b> template <b>with</b> the specified values applied
+     * @param {Object} values The template values. Can be an array <b>if</b> your params are numeric (i.e. {0}) or an object (i.e. {foo: 'bar'})
+     * @<b>return</b> {String}
+     */</i>
+    applyTemplate : <b>function</b>(values){
+        <b>if</b>(this.compiled){
+            <b>return</b> this.compiled(values);
+        }
+        <b>var</b> empty = '';
+        <b>var</b> fn = <b>function</b>(match, index){
+            <b>if</b>(typeof values[index] != 'undefined'){
+                <b>return</b> values[index];
+            }<b>else</b>{
+                <b>return</b> empty;
+            }
+        }
+        <b>return</b> this.html.replace(<b>this</b>.re, fn);
+    },
+    
+    <i>/**
+    * The regular expression used to match template variables 
+    * @type RegExp
+    * @property 
+    */</i>
+    re : /\{(\w+)\}/g,
+    
+    <i>/**
+     * Compiles the template into an internal <b>function</b>, eliminating the RegEx overhead
+     */</i>
+    compile : <b>function</b>(){
+        <b>var</b> html = <b>this</b>.html;
+        <b>var</b> re = <b>this</b>.re;
+        <b>var</b> body = [];
+        body.push(&quot;<b>this</b>.compiled = <b>function</b>(values){ <b>return</b> [&quot;);
+        <b>var</b> result;
+        <b>var</b> lastMatchEnd = 0;
+        <b>while</b> ((result = re.exec(html)) != null){
+            body.push(&quot;'&quot;, html.substring(lastMatchEnd, result.index), &quot;', &quot;);
+            body.push(&quot;values['&quot;, html.substring(result.index+1,re.lastIndex-1), &quot;'], &quot;);
+            lastMatchEnd = re.lastIndex;
+        }
+        body.push(&quot;'&quot;, html.substr(lastMatchEnd), &quot;'].join('');};&quot;);
+        eval(body.join(''));
+    },
+   
+    <i>/**
+     * Applies the supplied values to the template and inserts the <b>new</b> node(s) before el
+     * @param {HTMLElement} el The context element
+     * @param {Object} values The template values. Can be an array <b>if</b> your params are numeric (i.e. {0}) or an object (i.e. {foo: 'bar'})
+     * @param {&lt;i&gt;Boolean&lt;/i&gt;} returnElement (optional) true to <b>return</b> a YAHOO.ext.Element
+     * @<b>return</b> {HTMLElement} The <b>new</b> node
+     */</i>
+    insertBefore: <b>function</b>(el, values, returnElement){
+        el = YAHOO.util.Dom.get(el);
+        <b>var</b> newNode = YAHOO.ext.DomHelper.insertHtml('beforeBegin', el, <b>this</b>.applyTemplate(values));
+        <b>return</b> returnElement ? YAHOO.ext.Element.get(newNode, true) : newNode;
+    },
+    
+    <i>/**
+     * Applies the supplied values to the template and inserts the <b>new</b> node(s) after el
+     * @param {HTMLElement} el The context element
+     * @param {Object} values The template values. Can be an array <b>if</b> your params are numeric (i.e. {0}) or an object (i.e. {foo: 'bar'})
+     * @param {&lt;i&gt;Boolean&lt;/i&gt;} returnElement (optional) true to <b>return</b> a YAHOO.ext.Element
+     * @<b>return</b> {HTMLElement} The <b>new</b> node
+     */</i>
+    insertAfter : <b>function</b>(el, values, returnElement){
+        el = YAHOO.util.Dom.get(el);
+        <b>var</b> newNode = YAHOO.ext.DomHelper.insertHtml('afterEnd', el, <b>this</b>.applyTemplate(values));
+        <b>return</b> returnElement ? YAHOO.ext.Element.get(newNode, true) : newNode;
+    },
+    
+    <i>/**
+     * Applies the supplied values to the template and append the <b>new</b> node(s) to el
+     * @param {HTMLElement} el The context element
+     * @param {Object} values The template values. Can be an array <b>if</b> your params are numeric (i.e. {0}) or an object (i.e. {foo: 'bar'})
+     * @param {&lt;i&gt;Boolean&lt;/i&gt;} returnElement (optional) true to <b>return</b> a YAHOO.ext.Element
+     * @<b>return</b> {HTMLElement} The <b>new</b> node
+     */</i>
+    append : <b>function</b>(el, values, returnElement){
+        el = YAHOO.util.Dom.get(el);
+        <b>var</b> newNode = YAHOO.ext.DomHelper.insertHtml('beforeEnd', el, <b>this</b>.applyTemplate(values));
+        <b>return</b> returnElement ? YAHOO.ext.Element.get(newNode, true) : newNode;
+    },
+    
+    <i>/**
+     * Applies the supplied values to the template and overwrites the content of el <b>with</b> the <b>new</b> node(s)
+     * @param {HTMLElement} el The context element
+     * @param {Object} values The template values. Can be an array <b>if</b> your params are numeric (i.e. {0}) or an object (i.e. {foo: 'bar'})
+     * @param {&lt;i&gt;Boolean&lt;/i&gt;} returnElement (optional) true to <b>return</b> a YAHOO.ext.Element
+     * @<b>return</b> {HTMLElement} The <b>new</b> node
+     */</i>
+    overwrite : <b>function</b>(el, values, returnElement){
+        el = YAHOO.util.Dom.get(el);
+        el.innerHTML = '';
+        <b>var</b> newNode = YAHOO.ext.DomHelper.insertHtml('beforeEnd', el, <b>this</b>.applyTemplate(values));
+        <b>return</b> returnElement ? YAHOO.ext.Element.get(newNode, true) : newNode;
+    }
+};
+
+YAHOO.ext.Template = YAHOO.ext.DomHelper.Template;</code></pre><hr><div style="font-size:10px;text-align:center;color:gray;">yui-ext - Copyright &copy; 2006 Jack Slocum.  |
+    Yahoo! UI - Copyright &copy; 2006 Yahoo! Inc.<br />All rights reserved.</div>
+    </body></html>

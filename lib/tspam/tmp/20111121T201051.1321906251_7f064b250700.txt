@@ -1,0 +1,9 @@
+Received: from [110.52.7.72]; Tue, 22 Nov 2011 03:42:39 +0800 
+Message-ID: <20111122040427611612@thunder.com.cn> 
+From: "" <chenxiaoliang@thunder.com.cn> 
+To:  
+Subject: =?gb2312?B?oba8qCDQpyC/vCC6y6G3xPogaG9sZCDXoSDByyA=?=
+	=?gb2312?B?wvCjvw==?= 
+Date: Tue, 22 Nov 2011 04:04:20 +0800 
+X-mailer: Iupdhlzy 7 
+Whoops!  What is a 'application/vnd.ms-excel'?

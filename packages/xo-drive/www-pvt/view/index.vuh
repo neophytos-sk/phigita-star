@@ -1,0 +1,65 @@
+
+foreach {__dummy__ id} [split [ad_conn extra_url] /] break
+if { $__dummy__ eq {view} } {
+    rp_form_put id $id
+} else {
+    rp_returnnotfound
+    return
+}
+
+ad_page_contract {
+    @author Neophytos Demetriou
+} {
+    id:integer
+    {size:integer 500}
+    {p:integer 1}
+}
+
+
+set pathexp [list "User [ad_conn user_id]"]
+set object_id $id
+set list ""
+foreach item $pathexp {
+    foreach {className instance_id} $item break
+    lappend list [$className set id]-${instance_id}
+}
+
+set directory /web/data/storage/
+append directory [join $list .]/ ;# [User set id]-[ad_conn user_id]
+append directory $object_id
+set previewdir ${directory}/preview/
+
+
+set targetFile [file normalize ${previewdir}/c-${id}_p-${p}-s${size}.jpg]
+ns_log notice targetFile=$targetFile
+
+if { ![file exists $targetFile] } {
+
+    set GS /usr/bin/gs
+    #set dpi 120
+    set dpi 300
+    #set dpi 150
+    exec -- /bin/sh -c "${GS} -q -dQUIET -dSAFER -dPARANOIDSAFE -dBATCH -dNOPAUSE -dNOPROMPT -dAlignToPixels=0 -dGridFitTT=0 \"-sDEVICE=png16m\" -dTextAlphaBits=4 -dGraphicsAlphaBits=4 -r${dpi} -dFirstPage=${p} -dLastPage=${p} \"-sOutputFile=${previewdir}/c-${object_id}_p-${p}.png\" \"${directory}/c-${object_id}.pdf\" || exit 0" 2> /dev/null
+
+
+
+    foreach border_size {1 1 1 1} max_image_size {120 240 500 800} pointsize {4 5 6 7} {
+
+	set image_size [expr {$max_image_size -2*$border_size}]
+
+	set geometry ${image_size}x ;# ${image_size}
+
+	set border_geometry ${border_size}x${border_size}
+
+	set input_file ${previewdir}/c-${object_id}_p-${p}.png
+	set target_file ${previewdir}/c-${object_id}_p-${p}-s${max_image_size}.jpg
+	exec -- /bin/sh -c "/usr/bin/convert -quiet -strip -scale $geometry -bordercolor black -border ${border_geometry} png:${input_file} png:$target_file || exit 0" 2> /dev/null
+
+    }
+}
+
+#ns_log notice "targetFile=$targetFile"
+
+ns_returnfile 200 image/jpeg $targetFile
+
+

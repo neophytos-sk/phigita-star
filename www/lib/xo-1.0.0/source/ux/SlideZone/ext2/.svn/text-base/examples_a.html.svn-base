@@ -1,0 +1,177 @@
+<html>
+ <head>
+	<link type="text/css" rel="stylesheet" href="../ext-2.0/resources/css/ext-all.css"/>
+	<link type="text/css" rel="stylesheet" href="../ext-2.0/resources/css/xtheme-gray.css"/>
+	<link type="text/css" rel="stylesheet" href="../common/ext-ux-slidezone.css"/>
+	<script type="text/javascript" src="../ext-2.0/adapter/prototype/prototype.js"></script>
+	<script type="text/javascript" src="../ext-2.0/adapter/ext/ext-base.js"></script>
+	<script type="text/javascript" src="../ext-2.0/ext-all.js"></script>
+	<script type="text/javascript" src="Ext.ux.SlideZone.js"></script>	
+	
+	
+  <script type="text/javascript" language="JavaScript">
+
+
+Ext.onReady(function() {
+
+	Test = {};
+
+
+	Test.zone1 = new Ext.ux.SlideZone('zone1', {  
+		type: 'area',
+		size: [100,100], 
+		sliderWidth: 16,
+		sliderHeight: 16,
+		maxValue: [100,100],
+		minValue: [0,0],
+		sliderSnap: [1, 20],
+		sliders: [{ value: [50,50],  
+					name: '1_1'
+					}]
+
+		 });
+	Test.zone1.getSlider('1_1').on('drag',
+		function() {
+				$('slider_1_1_value').innerHTML = this.value.toString();
+				$('slider_1_1_percent').innerHTML = this.percent.toString();
+				}
+	)
+	$('slider_1_1_value').innerHTML = parseInt(Test.zone1.getSlider('1_1').value.toString());
+	$('slider_1_1_percent').innerHTML = Test.zone1.getSlider('1_1').percent.toString();
+
+	Test.slideZone6 = new Ext.ux.SlideZone('zone2', {  
+		type: 'area',
+		size: [500,500], 
+		sliderHeight: 12,
+		maxValue: [1000,1000],
+		minValue: [0,0],
+		sliderSnap: [20,20],
+		allowSliderCrossing: false
+		 });
+	
+	var rs1 = new Ext.ux.RangeSlider({
+			// [[horizontal:low,horizontal:high],[vertical:low,vertical:high]]
+			value: [[100,300], [200,400]],
+			name: '2_1'
+			});
+	var rs3 = new Ext.ux.RangeSlider({
+			value: [[600,800], [700,900]],
+			name: '2_3',
+			cls: 'custom_slider_class'
+			});
+
+			
+	Test.slideZone6.add(rs3);
+	Test.slideZone6.add(rs1);		
+	
+	$('slider_2_left').innerHTML = Test.slideZone6.el.getX();
+	$('slider_2_right').innerHTML = Test.slideZone6.el.getRight();
+	
+	Test.slideZone6.getSlider('2_1').on('drag',
+		function() {
+				$('slider_2_1_value').innerHTML = this.value.toString();
+				$('slider_2_1_percent').innerHTML = this.percent.toString();
+				}
+	)
+	$('slider_2_1_value').innerHTML = Test.slideZone6.getSlider('2_1').value.toString()
+	$('slider_2_1_percent').innerHTML = Test.slideZone6.getSlider('2_1').percent.toString();
+				
+	Test.slideZone6.getSlider('2_3').on('drag',
+		function() {
+				$('slider_2_3_value').innerHTML = this.value.toString();
+				$('slider_2_3_percent').innerHTML = this.percent.toString();	
+				}
+	)
+	$('slider_2_3_value').innerHTML = Test.slideZone6.getSlider('2_3').value.toString()
+	$('slider_2_3_percent').innerHTML = Test.slideZone6.getSlider('2_3').percent.toString();
+
+	$('eventLog').value = '';
+
+	$('enableLogging').checked = false;
+	});
+	
+function enableLogging(cb) {
+	var ssEvts = $A(['mouseover', 'mouseout', 'dragstart', 'drag', 'dragend']);
+	for(s in Test) {
+		var ss = Test[s];
+		ss.sliders.each( function(slider) {
+			ssEvts.each(
+				function(evt) {
+					if(cb.checked) {
+						slider.on(evt, function() {
+							$('eventLog').value = this.name + ', ' + evt + ', ' + this.value + "\n" + $('eventLog').value;
+						})
+					} else {
+						slider.purgeListeners();
+					}
+				}
+			)		
+		})
+	}			
+}
+
+</script>
+</head>
+<body>
+	
+	<h1>Area slider examples</h1>
+	<p></p>
+	<a href="examples_h.html">Horizontal sliders</a> |
+	<a href="examples_v.html">Vertical sliders</a> 
+	</p>
+	
+	<div style="float: right; width: 250px">
+		<h4>Event Log</h4>
+		<input type="checkbox" id="enableLogging" onclick="enableLogging(this);" />
+		<label for="enableLogging">Enable Logging</label><br/>
+		<label for="eventLog">Slider, event, value</label>
+		<textarea id="eventLog" style="width: 250px; height: 600px; font-size: 10px;"></textarea>
+		<button onclick="$('eventLog').value = '';">Clear log</button>
+	</div>
+
+
+	<h4>Example 5 - thumb area slider</h4>	
+	<div id="zone1" ></div> 
+
+	<div id="output5" >
+		<table>
+			<tr>
+				<th>Slider</th>
+				<th>Percent</th>
+				<th>Value</th>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td id="slider_1_1_percent"></td>
+				<td id="slider_1_1_value"></td>
+			</tr>
+		</table>
+	</div>
+	
+	<h4>Example 2 - range area slider</h4>
+	<div id="zone2" ></div> 
+	<div>
+		<div>Slide Zone Left: <span id="slider_2_left" style="font-weight: bold;"></span></div>
+		<div>Slide Zone Right: <span id="slider_2_right" style="font-weight: bold;"></span></div>
+	</div>
+	<div id="output6" >
+		<table>
+			<tr>
+				<th>Slider</th>
+				<th>Percent</th>
+				<th>Value</th>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td id="slider_2_1_percent"></td>
+				<td id="slider_2_1_value"></td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td id="slider_2_3_percent"></td>
+				<td id="slider_2_3_value"></td>
+			</tr>
+		</table>
+	</div>
+</body>
+</html>

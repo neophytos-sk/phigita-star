@@ -1,0 +1,11 @@
+Received: from uwg (110.53.31.36) by R710.home-made.net.cn (192.168.1.11) with
+ Microsoft SMTP Server id 8.2.255.0; Tue, 1 Nov 2011 14:00:13 +0800 
+Message-ID: <20111101140122342566@home-made.net.cn> 
+From: =?gb2312?B?sNfm67q9?= <rr@home-made.net.cn> 
+To:  
+Subject: =?gb2312?B?z/ouytsu1vcuudwuMi7M7C4xLtK5Lse/LruvLg==?=
+	=?gb2312?B?0bUuwbcu06otLS0tsNfm67q9?= 
+Date: Tue, 1 Nov 2011 14:01:12 +0800 
+X-mailer: Rantvx 1 
+Return-Path: rr@home-made.net.cn 
+Whoops!  What is a 'application/vnd.ms-excel'?

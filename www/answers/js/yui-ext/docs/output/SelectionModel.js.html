@@ -1,0 +1,446 @@
+<html><head><title>SelectionModel.js</title><link rel="stylesheet" type="text/css" href="../resources/style.css" media="screen"/></head><body><h1>SelectionModel.js</h1><pre class="highlighted"><code><i>/**
+ @class YAHOO.ext.grid.DefaultSelectionModel
+ * @extends YAHOO.ext.util.Observable
+ * The <b>default</b> SelectionModel used by {@link YAHOO.ext.grid.Grid}. 
+ It supports multiple selections and keyboard selection/navigation. &lt;br&gt;&lt;br&gt;
+ @constructor
+ */</i>
+YAHOO.ext.grid.DefaultSelectionModel = <b>function</b>(){
+    <b>this</b>.selectedRows = [];
+    <b>this</b>.selectedRowIds = [];
+    <b>this</b>.lastSelectedRow = null;
+    
+    <b>this</b>.onRowSelect = <b>new</b> YAHOO.util.CustomEvent('SelectionTable.rowSelected');
+    <b>this</b>.onSelectionChange = <b>new</b> YAHOO.util.CustomEvent('SelectionTable.selectionChanged');
+    
+    <b>this</b>.events = {
+        <i>/**
+	     * @event selectionchange
+	     * Fires when the selection changes 
+	     * @param {SelectionModel} <b>this</b>
+	     * @param {Array} rows Array of row elements that are selected
+	     * @param {String} ids Array of ids that are selected
+	     */</i>
+	    'selectionchange' : <b>this</b>.onSelectionChange,
+        <i>/**
+	     * @event rowselect
+	     * Fires when a row is selected or deselected
+	     * @param {SelectionModel} <b>this</b>
+	     * @param {HTMLElement} row The row element
+	     * @param {Boolean} selected true <b>if</b> the row was selected, false <b>if</b> deselected
+	     */</i>
+	    'rowselect' : <b>this</b>.onRowSelect
+    };
+    
+    <b>this</b>.locked = false;
+};
+
+YAHOO.ext.grid.DefaultSelectionModel.prototype = {
+    <i>/** @ignore Called by the grid automatically. Do not call directly. */</i>
+    init : <b>function</b>(grid){
+        <b>this</b>.grid = grid;
+        <b>this</b>.initEvents();
+    },
+    
+    <i>/**
+     * Lock the selections
+     */</i>
+    lock : <b>function</b>(){
+        <b>this</b>.locked = true;
+    },
+    
+    <i>/**
+     * Unlock the selections
+     */</i>
+    unlock : <b>function</b>(){
+        <b>this</b>.locked = false;  
+    },
+    
+    <i>/**
+     * Returns true <b>if</b> the selections are locked
+     * @<b>return</b> {Boolean}
+     */</i>
+    isLocked : <b>function</b>(){
+        <b>return</b> this.locked;    
+    },
+    
+    <i>/** @ignore */</i>
+    initEvents : <b>function</b>(){
+        <b>if</b>(this.grid.trackMouseOver){
+        	<b>this</b>.grid.addListener(&quot;mouseover&quot;, <b>this</b>.handleOver, <b>this</b>, true);
+        	<b>this</b>.grid.addListener(&quot;mouseout&quot;, <b>this</b>.handleOut, <b>this</b>, true);
+        }
+        <b>this</b>.grid.addListener(&quot;rowclick&quot;, <b>this</b>.rowClick, <b>this</b>, true);
+        <b>this</b>.grid.addListener(&quot;keydown&quot;, <b>this</b>.keyDown, <b>this</b>, true);
+    },
+    
+    fireEvent : YAHOO.ext.util.Observable.prototype.fireEvent,
+    on : YAHOO.ext.util.Observable.prototype.on,
+    addListener : YAHOO.ext.util.Observable.prototype.addListener,
+    delayedListener : YAHOO.ext.util.Observable.prototype.delayedListener,
+    removeListener : YAHOO.ext.util.Observable.prototype.removeListener,
+    purgeListeners : YAHOO.ext.util.Observable.prototype.purgeListeners,
+    
+    <i>/** @ignore Syncs selectedRows <b>with</b> the correct row by looking it up by id. 
+      Used after a sort moves data around. */</i>
+    syncSelectionsToIds : <b>function</b>(){
+        <b>if</b>(this.getCount() &gt; 0){
+            <b>var</b> ids = <b>this</b>.selectedRowIds.concat();
+            <b>this</b>.clearSelections();
+            <b>this</b>.selectRowsById(ids, true);
+        }
+    },
+    
+    <i>/**
+     * Set the selected rows by their ID(s). IDs must match what is returned by the DataModel getRowId(index).
+     * @param {String/Array} id The id(s) to select 
+     * @param {&lt;i&gt;Boolean&lt;/i&gt;} keepExisting (optional) True to retain existing selections 
+     */</i>
+    selectRowsById : <b>function</b>(id, keepExisting){
+        <b>var</b> rows = <b>this</b>.grid.getRowsById(id);
+        <b>if</b> (!(rows instanceof Array)){
+            <b>this</b>.selectRow(rows, keepExisting);
+            <b>return</b>;
+        }
+        <b>this</b>.selectRows(rows, keepExisting);
+    },
+    
+    <i>/**
+     * Gets the number of selected rows.
+     * @<b>return</b> {Number}
+     */</i>
+    getCount : <b>function</b>(){
+        <b>return</b> this.selectedRows.length;
+    },
+    
+    <i>/**
+     * Selects the first row <b>in</b> the grid.
+     */</i>
+    selectFirstRow : <b>function</b>(){
+        <b>for</b>(var j = 0; j &lt; <b>this</b>.grid.rows.length; j++){
+            <b>if</b>(this.isSelectable(<b>this</b>.grid.rows[j])){
+            	<b>this</b>.focusRow(<b>this</b>.grid.rows[j]);
+                <b>this</b>.setRowState(<b>this</b>.grid.rows[j], true);
+                <b>return</b>;
+            }
+        }
+    },
+    
+    <i>/**
+     * Selects the row immediately following the last selected row.
+     * @param {&lt;i&gt;Boolean&lt;/i&gt;} keepExisting (optional) True to retain existing selections
+     */</i>
+    selectNext : <b>function</b>(keepExisting){
+        <b>if</b>(this.lastSelectedRow){
+            <b>for</b>(var j = (<b>this</b>.lastSelectedRow.rowIndex+1); j &lt; <b>this</b>.grid.rows.length; j++){
+                <b>var</b> row = <b>this</b>.grid.rows[j];
+                <b>if</b>(this.isSelectable(row)){
+                    <b>this</b>.focusRow(row);
+                    <b>this</b>.setRowState(row, true, keepExisting);
+                    <b>return</b>;
+                }
+            }
+        }
+    },
+    
+    <i>/**
+     * Selects the row that precedes the last selected row.
+     * @param {&lt;i&gt;Boolean&lt;/i&gt;} keepExisting (optional) True to retain existing selections 
+     */</i>
+    selectPrevious : <b>function</b>(keepExisting){
+        <b>if</b>(this.lastSelectedRow){
+            <b>for</b>(var j = (<b>this</b>.lastSelectedRow.rowIndex-1); j &gt;= 0; j--){
+                <b>var</b> row = <b>this</b>.grid.rows[j];
+                <b>if</b>(this.isSelectable(row)){
+                    <b>this</b>.focusRow(row);
+                    <b>this</b>.setRowState(row, true, keepExisting);
+                    <b>return</b>;
+                }
+            }
+        }
+    },
+    
+    <i>/**
+     * Returns the selected rows.
+     * @<b>return</b> {Array} Array of DOM row elements
+     */</i>
+    getSelectedRows : <b>function</b>(){
+        <b>return</b> this.selectedRows;
+    },
+    
+    <i>/**
+     * Returns the selected row ids.
+     * @<b>return</b> {Array} Array of String ids
+     */</i>
+    getSelectedRowIds : <b>function</b>(){
+        <b>return</b> this.selectedRowIds;
+    },
+    
+    <i>/**
+     * Clears all selections.
+     */</i>
+    clearSelections : <b>function</b>(){
+        <b>if</b>(this.isLocked()) <b>return</b>;
+        <b>var</b> oldSelections = <b>this</b>.selectedRows.concat();
+        <b>for</b>(var j = 0; j &lt; oldSelections.length; j++){
+            <b>this</b>.setRowState(oldSelections[j], false);
+        }
+        <b>this</b>.selectedRows = [];
+        <b>this</b>.selectedRowIds = [];
+    },
+    
+        
+    <i>/**
+     * Selects all rows.
+     */</i>
+    selectAll : <b>function</b>(){
+        <b>if</b>(this.isLocked()) <b>return</b>;
+        <b>this</b>.selectedRows = [];
+        <b>this</b>.selectedRowIds = [];
+        <b>for</b>(var j = 0, len = <b>this</b>.grid.rows.length; j &lt; len; j++){
+            <b>this</b>.setRowState(<b>this</b>.grid.rows[j], true, true);
+        }
+    },
+    
+    <i>/**
+     * Returns True <b>if</b> there is a selection.
+     * @<b>return</b> {Boolean}
+     */</i>
+    hasSelection : <b>function</b>(){
+        <b>return</b> this.selectedRows.length &gt; 0;
+    },
+    
+    <i>/**
+     * Returns True <b>if</b> the specified row is selected.
+     * @param {HTMLElement} row The row to check
+     * @<b>return</b> {Boolean}
+     */</i>
+    isSelected : <b>function</b>(row){
+        <b>return</b> row &amp;&amp; (row.selected === true || row.getAttribute('selected') == 'true');
+    },
+    
+    <i>/**
+     * Returns True <b>if</b> the specified row is selectable.
+     * @param {HTMLElement} row The row to check
+     * @<b>return</b> {Boolean}
+     */</i>
+    isSelectable : <b>function</b>(row){
+        <b>return</b> row &amp;&amp; row.getAttribute('selectable') != 'false';
+    },
+    
+    <i>/** @ignore */</i>
+    rowClick : <b>function</b>(grid, rowIndex, e){
+        <b>if</b>(this.isLocked()) <b>return</b>;
+        <b>var</b> row = grid.getRow(rowIndex);
+        <b>if</b>(this.isSelectable(row)){
+            <b>if</b>(e.shiftKey &amp;&amp; <b>this</b>.lastSelectedRow){
+                <b>var</b> lastIndex = <b>this</b>.lastSelectedRow.rowIndex;
+                <b>this</b>.selectRange(<b>this</b>.lastSelectedRow, row, e.ctrlKey);
+                <b>this</b>.lastSelectedRow = <b>this</b>.grid.el.dom.rows[lastIndex];
+            }<b>else</b>{
+                <b>this</b>.focusRow(row);
+                <b>var</b> rowState = e.ctrlKey ? !<b>this</b>.isSelected(row) : true;
+                <b>this</b>.setRowState(row, rowState, e.hasModifier());
+            }
+        }
+    },
+    
+    <i>/**
+     * Deprecated. Tries to focus the row and scroll it into view - Use grid.scrollTo or grid.getView().focusRow() instead.
+     * @deprecated
+     * @param {HTMLElement} row The row to focus
+     */</i>
+    focusRow : <b>function</b>(row){
+    	<b>this</b>.grid.view.focusRow(row);
+    },
+
+    <i>/**
+     * Selects a row.
+     * @param {Number/HTMLElement} row The row or index of the row to select
+     * @param {&lt;i&gt;Boolean&lt;/i&gt;} keepExisting (optional) True to retain existing selections 
+     */</i>
+    selectRow : <b>function</b>(row, keepExisting){
+        <b>this</b>.setRowState(<b>this</b>.getRow(row), true, keepExisting);
+    },
+    
+    <i>/**
+     * Selects multiple rows.
+     * @param {Array} rows Array of the rows or indexes of the row to select
+     * @param {&lt;i&gt;Boolean&lt;/i&gt;} keepExisting (optional) True to retain existing selections 
+     */</i>
+    selectRows : <b>function</b>(rows, keepExisting){
+        <b>if</b>(!keepExisting){
+            <b>this</b>.clearSelections();
+        }
+        <b>for</b>(var i = 0; i &lt; rows.length; i++){
+            <b>this</b>.selectRow(rows[i], true);
+        }
+    },
+    
+    <i>/**
+     * Deselects a row.
+     * @param {Number/HTMLElement} row The row or index of the row to deselect
+     */</i>
+    deselectRow : <b>function</b>(row){
+        <b>this</b>.setRowState(<b>this</b>.getRow(row), false);
+    },
+    
+    <i>/** @ignore */</i>
+    getRow : <b>function</b>(row){
+        <b>if</b>(typeof row == 'number'){
+            row = <b>this</b>.grid.rows[row];
+        }
+        <b>return</b> row;
+    },
+    
+    <i>/**
+     * Selects a range of rows. All rows <b>in</b> between startRow and endRow are also selected.
+     * @param {Number/HTMLElement} startRow The row or index of the first row <b>in</b> the range
+     * @param {Number/HTMLElement} endRow The row or index of the last row <b>in</b> the range
+     * @param {&lt;i&gt;Boolean&lt;/i&gt;} keepExisting (optional) True to retain existing selections 
+     */</i>
+    selectRange : <b>function</b>(startRow, endRow, keepExisting){
+        startRow = <b>this</b>.getRow(startRow);
+        endRow = <b>this</b>.getRow(endRow);
+        <b>this</b>.setRangeState(startRow, endRow, true, keepExisting);
+    },
+    
+    <i>/**
+     * Deselects a range of rows. All rows <b>in</b> between startRow and endRow are also deselected.
+     * @param {Number/HTMLElement} startRow The row or index of the first row <b>in</b> the range
+     * @param {Number/HTMLElement} endRow The row or index of the last row <b>in</b> the range
+     */</i>
+    deselectRange : <b>function</b>(startRow, endRow){
+        startRow = <b>this</b>.getRow(startRow);
+        endRow = <b>this</b>.getRow(endRow);
+        <b>this</b>.setRangeState(startRow, endRow, false, true);
+    },
+    
+    <i>/** @ignore */</i>
+    setRowStateFromChild : <b>function</b>(childEl, selected, keepExisting){
+        <b>var</b> row = <b>this</b>.grid.getRowFromChild(childEl);
+        <b>this</b>.setRowState(row, selected, keepExisting);
+    },
+    
+    <i>/** @ignore */</i>
+    setRangeState : <b>function</b>(startRow, endRow, selected, keepExisting){
+        <b>if</b>(this.isLocked()) <b>return</b>;
+        <b>if</b>(!keepExisting){
+            <b>this</b>.clearSelections();
+        }
+        <b>var</b> curRow = startRow;
+        <b>while</b>(curRow.rowIndex != endRow.rowIndex){
+            <b>this</b>.setRowState(curRow, selected, true);
+            curRow = (startRow.rowIndex &lt; endRow.rowIndex ? 
+                        <b>this</b>.grid.getRowAfter(curRow) : <b>this</b>.grid.getRowBefore(curRow))
+        }
+        <b>this</b>.setRowState(endRow, selected, true);
+    },
+    
+    <i>/** @ignore */</i>
+    setRowState : <b>function</b>(row, selected, keepExisting){
+        <b>if</b>(this.isLocked()) <b>return</b>;
+        <b>if</b>(this.isSelectable(row)){
+            <b>if</b>(selected){
+                <b>if</b>(!keepExisting){
+                    <b>this</b>.clearSelections();
+                }
+                <b>this</b>.setRowClass(row, 'selected');
+                row.selected = true;
+                <b>this</b>.selectedRows.push(row);
+                <b>this</b>.selectedRowIds.push(<b>this</b>.grid.dataModel.getRowId(row.rowIndex));
+                <b>this</b>.lastSelectedRow = row;
+            }<b>else</b>{
+                <b>this</b>.setRowClass(row, '');
+                row.selected = false;
+                <b>this</b>._removeSelected(row);
+            }
+            <b>this</b>.fireEvent('rowselect', <b>this</b>, row, selected);
+            <b>this</b>.fireEvent('selectionchange', <b>this</b>, <b>this</b>.selectedRows, <b>this</b>.selectedRowIds);
+        }
+    },
+
+    <i>/** @ignore */</i>
+    handleOver : <b>function</b>(e){
+        <b>var</b> row = <b>this</b>.grid.getRowFromChild(e.getTarget());
+        <b>if</b>(this.isSelectable(row) &amp;&amp; !<b>this</b>.isSelected(row)){
+            <b>this</b>.setRowClass(row, 'over');
+        }
+    },
+    
+    <i>/** @ignore */</i>
+    handleOut : <b>function</b>(e){
+        <b>var</b> row = <b>this</b>.grid.getRowFromChild(e.getTarget());
+        <b>if</b>(this.isSelectable(row) &amp;&amp; !<b>this</b>.isSelected(row)){
+            <b>this</b>.setRowClass(row, '');
+        }
+    },
+    
+    <i>/** @ignore */</i>
+    keyDown : <b>function</b>(e){
+        <b>if</b>(e.browserEvent.keyCode == e.DOWN){
+            <b>this</b>.selectNext(e.shiftKey);
+            e.preventDefault();
+        }<b>else</b> if(e.browserEvent.keyCode == e.UP){
+            <b>this</b>.selectPrevious(e.shiftKey);
+            e.preventDefault();
+        }
+    },
+
+    <i>/** @ignore */</i>
+    setRowClass : <b>function</b>(row, cssClass){
+        <b>if</b>(this.isSelectable(row)){
+            <b>if</b>(cssClass == 'selected'){
+                YAHOO.util.Dom.removeClass(row, 'ygrid-row-over');
+                YAHOO.util.Dom.addClass(row, 'ygrid-row-selected');
+            }<b>else</b> if(cssClass == 'over'){
+                YAHOO.util.Dom.removeClass(row, 'ygrid-row-selected');
+                YAHOO.util.Dom.addClass(row, 'ygrid-row-over');
+            }<b>else</b> if(cssClass == ''){
+                YAHOO.util.Dom.removeClass(row, 'ygrid-row-selected');
+                YAHOO.util.Dom.removeClass(row, 'ygrid-row-over');
+            }
+        }
+    },
+    
+    <i>/** @ignore */</i>
+    _removeSelected : <b>function</b>(row){
+        <b>var</b> sr = <b>this</b>.selectedRows;
+        <b>for</b> (<b>var</b> i = 0; i &lt; sr.length; i++) {
+          <b>if</b> (sr[i] === row){
+              <b>this</b>.selectedRows.splice(i, 1);
+              <b>this</b>.selectedRowIds.splice(i, 1);
+              <b>return</b>;
+          }
+        }
+    }
+};
+
+<i>/**
+ @class YAHOO.ext.grid.SingleSelectionModel
+ @extends YAHOO.ext.grid.DefaultSelectionModel
+ Allows only one row to be selected at a time.
+ @constructor
+ * Create <b>new</b> SingleSelectionModel
+ */</i>
+YAHOO.ext.grid.SingleSelectionModel = <b>function</b>(){
+    YAHOO.ext.grid.SingleSelectionModel.superclass.constructor.call(<b>this</b>);
+};
+
+YAHOO.extendX(YAHOO.ext.grid.SingleSelectionModel, YAHOO.ext.grid.DefaultSelectionModel);
+
+<i>/** @ignore */</i>
+YAHOO.ext.grid.SingleSelectionModel.prototype.setRowState = <b>function</b>(row, selected){
+    YAHOO.ext.grid.SingleSelectionModel.superclass.setRowState.call(<b>this</b>, row, selected, false);
+};
+
+YAHOO.ext.grid.DisableSelectionModel = <b>function</b>(){
+    YAHOO.ext.grid.DisableSelectionModel.superclass.constructor.call(<b>this</b>);
+};
+
+YAHOO.extendX(YAHOO.ext.grid.DisableSelectionModel, YAHOO.ext.grid.DefaultSelectionModel);
+
+YAHOO.ext.grid.DisableSelectionModel.prototype.initEvents = <b>function</b>(){
+};</code></pre><hr><div style="font-size:10px;text-align:center;color:gray;">yui-ext - Copyright &copy; 2006 Jack Slocum.  |
+    Yahoo! UI - Copyright &copy; 2006 Yahoo! Inc.<br />All rights reserved.</div>
+    </body></html>

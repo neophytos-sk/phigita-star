@@ -1,0 +1,89 @@
+X-Env-Sender: alexia.stournara@emimusic.com 
+X-Msg-Ref: server-16.tower-134.messagelabs.com!1322676084!282238!1 
+X-Originating-IP: [195.225.81.22] 
+X-StarScan-Version: 6.3.6; banners=emimusic.com,-,- 
+X-VirusChecked: Checked 
+Received: (qmail 13816 invoked from network); 30 Nov 2011 18:01:25 -0000 from unknown (HELO slonp136e.eur.emigrp.com) (195.225.81.22)
+  by server-16.tower-134.messagelabs.com with SMTP; 30 Nov 2011 18:01:25 -0000 from SLONP143EEX3.eur.emigrp.com ([167.229.222.146]) by slonp136e.eur.emigrp.com with Microsoft SMTPSVC(6.0.3790.4675);
+	 Wed, 30 Nov 2011 18:01:09 +0000 
+X-MimeOLE: Produced By Microsoft Exchange V6.5 
+Content-class: urn:content-classes:message 
+Subject: =?ISO-8859-7?B?1snLydDQz9Mg0MvJwdTTycrB0yAtINDP1SDNwSDQwczFIC0gzcU=?=
+	=?ISO-8859-7?B?zyDU0cHDz9XEyQ==?= 
+Date: Wed, 30 Nov 2011 18:00:13 -0000 
+Message-ID: <9A8E58A98ED3DD49BC6C0173FEF95A66020F7358@SLONP143EEX3.eur.emigrp.com> 
+X-MS-Has-Attach:  
+X-MS-TNEF-Correlator:  
+Thread-Topic: =?ISO-8859-7?B?1snLydDQz9Mg0MvJwdTTycrB0yAtINDP1SDNwSDQwczFIC0gzcU=?=
+	=?ISO-8859-7?B?zyDU0cHDz9XEyQ==?= 
+Thread-Index: AcyqtaY6e7mNZomSSwmVIvc8L/4z2QAA6n3QAABG+LAAAtvzoAEw+Taw 
+X-Priority: 1 
+Priority: Urgent 
+Importance: high 
+From: "Stournara, Alexia" <alexia.stournara@emimusic.com> 
+Bcc:  
+Return-Path: alexia.stournara@emimusic.com 
+X-OriginalArrivalTime: 30 Nov 2011 18:01:09.0075 (UTC) FILETIME=[09BED230:01CCAF8A] 
+--------------------------------------
+ΦΙΛΙΠΠΟΣ ΠΛΙΑΤΣΙΚΑΣ
+
+ΝΕΟ ΤΡΑΓΟΥΔΙ
+
+«ΠΟΥ ΝΑ ΠΑΜΕ»
+
+ 
+
+Το «Που να πάμε», σε δύο εκδοχές(πλήρη και ακουστική), είναι η αναγνωριστική πτήση του νέου άλμπουμ του Φίλιππου Πλιάτσικα, που αναμένεται να κυκλοφορήσει μέσα στους πρώτους μήνες του2012. 
+
+ 
+
+Καλή ακρόαση.
+
+ 
+
+Στο παρακάτω link θα βρείτε το τραγούδι σε μορφή wav και την ακουστική εκδοχή του σε mp3 και wav: http://www.sendspace.com/file/29tu0e
+
+ 
+
+Παρακαλώ πολύ για δημοσίευση και ένταξη του τραγουδιού στο air-play του σταθμού σας. 
+
+Σας ευχαριστώ πολύ εκ των προτέρων! J
+
+Είμαι στη διάθεση σας για κάθε διευκρίνηση και συμπληρωματική πληροφορία.
+
+Με φιλικούς χαιρετισμούς, 
+
+ 
+
+Αλεξία Στουρνάρα
+
+EMI Music Greece 
+
+245 Mesogeion Avenue
+Neo Psychiko, Athens, 15451
+
+Tel. : +30 210 6792500, +30 210.6792565
+Mob.: +30 6932.467906
+
+ 
+
+
+ ---------------------------------------------------------------------
+
+
+
+
+Music from EMI 
+
+This e-mail including any attachments is confidential and may be legally privileged. If you have received it in error please advise the sender immediately by return email and then delete it from your system. The unauthorised use, distribution, copying or alteration of this email is strictly forbidden. If you need assistance please contact us on +44 20 7795 7000. 
+
+This email is from a unit or subsidiary of EMI Group Limited. 
+
+Registered Office: 27 Wrights Lane, London W8 5SW 
+
+Registered in England No 229231.
+
+
+ ---------------------------------------------------------------------Whoops!  What is a 'audio/mpeg'?--------------------------------------
+ content-type=application/octet-stream part-token=::mime::198-3--------------------------------------
+ content-type=image/jpeg part-token=::mime::198-4

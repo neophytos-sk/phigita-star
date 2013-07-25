@@ -1,0 +1,7 @@
+DB_Class Note -attribute {
+
+    {OID id}
+    {String content}
+}
+
+# Add folder

@@ -1,0 +1,5 @@
+gensize:=12;
+input vnbase;
+input ectt;
+bye.
+relax;

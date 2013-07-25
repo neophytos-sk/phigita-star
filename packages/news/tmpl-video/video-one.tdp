@@ -1,0 +1,91 @@
+contract {
+    param -id url -check "notnull"
+    param -id video_id -check "notnull"
+}
+
+
+
+
+val -id videodata { 
+    set vo ""
+    lassign [::xo::buzz::getVideo @{video_id}] found_p vo
+    return ${vo}
+ }
+
+
+guard {
+
+    set vo @{videodata}
+
+    if { ${vo} eq {} } {
+	rp_returnnotfound
+	return 0
+    } else {
+	set duration [${vo} set duration]
+	if { $duration eq {} || $duration == 0 } {
+	    rp_returnnotfound
+	    return 0
+	}
+    }
+
+    return 1
+}
+
+val -id duration { 
+    set duration [@{videodata} set duration]
+    return [VideoDuration $duration] 
+}
+
+val -id advertisement_bottom { ::xo::google::adsense::get_slot_html 1434441091 468 60 }
+
+val -id context_bar { return [::xo::kit::context_bar "One Video"] }
+
+# keep css classes and tags used by context_bar
+::xo::tdp::excludeClassesFromRenaming {breadcrumb divider ul li active}
+
+
+val -id video_html { 
+
+    set video_id @{video_id}
+    set doc [dom createDocument "div"]
+
+    $doc appendFromScript {
+	if {[catch {
+	    ::xo::buzz::videoEmbed $video_id $vo
+	} errmsg]} {
+	    ns_log notice "videoEmbed video_id=$video_id errmsg=$errmsg"
+	    return
+	}
+    }
+
+    set html [$doc asHTML]
+    $doc delete
+    return $html
+
+}
+
+val -id title -with videodata { return @{title} } 
+
+master -title "@{title} - Video Buzz" {
+    nt @{context_bar:noquote}
+
+    h1 { t @{title} }
+
+    t "Duration: @{duration}"
+
+    br
+
+    nt @{video_html:noquote}
+
+
+    br
+#    t "Views: $view_count | Comments: $comment_count | Duration: $duration seconds" 
+    div {
+	nt @{advertisement_bottom:noquote}
+    }
+
+
+
+}
+
+

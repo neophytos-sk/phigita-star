@@ -1,0 +1,6 @@
+% Support for QuasiTimes font family (based on URW fonts) in Type1 format
+% Available from CTAN:fonts/psfonts/polish/qfonts
+qtmr QuasiTimes-Regular "encqtm ReEncodeFont" <qtm.enc <qtmr.pfb
+qtmri QuasiTimes-Italic "encqtm ReEncodeFont" <qtm.enc <qtmri.pfb
+qtmb QuasiTimes-Bold "encqtm ReEncodeFont" <qtm.enc <qtmb.pfb
+qtmbi QuasiTimes-BoldItalic "encqtm ReEncodeFont" <qtm.enc <qtmbi.pfb

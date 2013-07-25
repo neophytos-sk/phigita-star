@@ -1,0 +1,10 @@
+# -*- mode: makefile -*-
+#
+# Makefile compiler definitions included by the top Makefile.
+# Used to override the compilers specified in the architecture
+# specific Makefiles.
+
+CC    = gcc
+CXX   = g++
+F77   = gfortran
+LD    = g++

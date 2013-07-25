@@ -1,0 +1,112 @@
+#val -id pretend_user_id { ::xo::kit::pretend_user 814 }
+
+guard -id require_secure_conn { ::xo::kit::require_secure_conn }
+guard -id require_registration { ::xo::kit::require_registration }
+
+datastore \
+    -id ds_files \
+    -scope "user" \
+    -from_class ::Content_Item \
+    -limit 100 \
+    -select {
+	* 
+	{extra->'XO.File.Type' as content_type}
+	{extra->'XO.File.Extension' as extension}
+    } \
+    -order "creation_date desc"
+
+
+val -id context_bar { return [::xo::kit::context_bar] }
+
+# keep css classes and tags used by context_bar
+::xo::tdp::excludeClassesFromRenaming {breadcrumb divider ul li active}
+
+
+js {
+    function check(msg) {
+	return confirm("Are you sure you want to " + msg + " this file?");
+    }
+}
+
+master -title "Your MediaBox - Private Area" {
+    layout_row {
+	layout_col -class span1 
+	layout_col -class span11 {
+	    nt @{context_bar:noquote}
+	}
+    }
+
+    layout_row {
+	layout_col -class span1
+	layout_col -class span11 {
+	    # and in the master denote the placholder by "slave"
+
+	    #toolbar {
+	    #    item -type button -text "Create New Collection"
+	    #}
+
+	    # current controller, i.e. -controller ""
+	    #anchor -text "Get Data" -target "ds_files" -action "test"
+	    #t " - "
+	    #anchor -text "Upload" -href "upload-file"
+
+	    form -method "post" -action "file-upload" -enctype "multipart/form-data" {
+		input -id "upload_file" -type "file" -name "upload_file" -style "display:none;"
+		input -id "upload_file_name" -name "upload_file_name" -class "input-large" -type "text"
+		a -class "btn" -id "browse_btn" {
+		    t "Browse"
+		}
+		button -type "submit" -class "btn" { t "upload" }
+	    }
+	    js -deps {
+		kernel/lib/base.js	
+	    } -names {
+		upload_file upload_file_name browse_btn
+	    } {
+
+		window.onload = function() {
+		    $('browse_btn').onclick=function(){
+			$('upload_file').click();
+		    }
+
+		    $('upload_file').onchange=function(){
+			$('upload_file_name').value=this.value;
+		    }
+		}
+
+	    }
+
+	    grid -store ds_files -use "fancy" {
+
+		column \
+		    -text "ID" \
+		    -dataIndex {id}
+
+		column \
+		    -template {<a target="_blank" href="download/@{id}/@{title}@{extension}"><img alt="download" src="//www.phigita.net/graphics/dl_arrow.gif" /></a>}
+
+		column \
+		    -text "Type" \
+		    -dataIndex {content_type}
+
+		column \
+		    -text "File" \
+		    -template {<a target="_blank" href="content/@{id}/">@{title}</a>}
+
+		column \
+		    -text "Date" \
+		    -renderer "format_date" \
+		    -format "%b %d" \
+		    -dataIndex "creation_date"
+
+		column \
+		    -text "Actions" \
+		    -template {
+			<a onclick="return check('delete')" href="delete?id=@{id}">Delete</a>
+		    }
+
+	    }
+
+	}
+    }
+}

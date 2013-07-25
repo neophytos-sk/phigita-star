@@ -1,0 +1,347 @@
+SNoW revision history
+
+This report is intended to be useful to users as well as SNoW's developers.
+For questions or bug reports, contact Nick Rizzolo (rizzolo@cs.uiuc.edu)
+
+10/6/99 
+  - initial SNoW release (v2.0)
+
+11/10/99 (v2.0.1)
+  - fixed bug in train/test mode that miscounted the number of examples and
+    misreported accuracy as a result.  this only affected the -T option.
+
+2/10/00 (v2.0.2)
+  - fixed bugs with online learning mode:
+    - when an eligibility threshold of 1 was used, a garbage example was
+      presented to the network for training due to a file i/o bug
+    - when an eligibility threshold of 2 or greater was used, no new features
+      were added to the network because the active feature counts were not being
+      updated properly 
+
+3/23/00 (v2.0.3)
+  - added "base activation" output to allactivations and allboth output modes.
+    in addition to the normalized activation, the "true" activation of the
+    target concepts are output.
+
+9/18/00 (v2.0.4)
+  - fixed bugs in the counts of positive examples and active features in the
+    network file output
+  - fixed a bug in the activation output where not enough space was given to
+    output extreme activations
+
+1/22/01 (v2.1.0)
+  - added "percentage eligibility" feature pruning (use '-e percent:x')
+  - count-based eligibility threshold is now specified with '-e count:x' rather
+    than '-e x' - some old scripts may break as a result
+  - added conjunction generation option (see -g flag)
+  - added option for Winnow and Perceptron to calculate the default weight
+    parameter using information from the training data.  to use, omit the
+    default weight from the algorithm definition.
+  - fixed a bug where the fixed feature was added to targets even if no positive
+    examples were seen for that target, which caused the target to have higher
+    activation than it should
+  - the Makefile now specifies the -O2 flag for optimizations, which gives a
+    substantial increase in performance in some cases.  if this causes problems,
+    simply remove the flag.  
+  - fixed a bug that caused segfaults when NaiveBayes networks had targets which
+    never saw positive examples during training.  this caused segfaults when
+    that network was used for testing.
+  - fixed a bug in the 'winners' output mode where an endline was missing  
+
+7/5/02 (v3.0.0)
+  - thoroughly revamped Usage.h, the file in which SNoW's "manpage" resides.  it
+    is dumped to STDOUT when SNoW is executed with no command line parameters.
+
+  - bug fixes:
+    - fixed a bug in the example parsing function ReadLabeled() in which the
+      first feature in the example was not dealt with appropriately.
+    - fixed a bug involving target IDs in full (as opposed to sparse) network
+      mode.  target IDs were treated as features by other targets.
+    - SNoW's internal representation of a target used to store the number of
+      features linked to that target in a member variable.  this member variable
+      had no discernable function, and was written to the network anyway.
+      meanwhile, another important internal variable, the non-active count of
+      the target itself, was not being written to the network, and this caused
+      incorrect behavior in incremental learning ('-i +').  SNoW now writes the
+      non-active count where the useless active feature count used to be.  this
+      new network specification is completely compatible with the old one.
+
+  - performance improvements:
+    - SNoW's internal representation of an example now stores a simple array of
+      features instead of the STL <map> it used to.  this way, examples take up
+      less memory, and SNoW runs much faster in training and testing.
+    - during testing, time was taken to find any targets that used Naive Bayes
+      as their learning algorithm.  for any such targets, PrepareToRank() was
+      called.  as it turns out, PrepareToRank() does nothing in the Naive Bayes
+      code.  so, the code that finds Naive Bayes targets and calls
+      PrepareToRank() was removed.
+    - SNoW no longer checks for duplicated features as examples are read in.
+    - check out the new '-M' command line parameter for storing examples in
+      memory.
+
+  - added the '-server' mode to which clients can connect to get their examples
+    tested.  the main advantage to running a server is that the network doesn't
+    have to be reloaded every time another example (or file full of examples)
+    needs to be tested.
+
+  - new algorithms:
+    - the thick separater training algorithm has been added.  the network is now
+      updated when the activation of a positive example is less than <threshold>
+      + <thickness>, and when the activation of a negative example is greater
+      than <threshold> - <thickness>.  to set <thickness>, specify
+      '-S <thickness>' on the command line.  the default is 0.
+    - the threshold relative algorithm has been added.  when in use with Winnow,
+      either alpha or beta (depending on if a mistake was made on a positive or
+      negative example) is multiplied by <threshold> / <activation>.  when in
+      use with Perceptron, <learning_rate> is multiplied by
+      (<threshold> - <activation>).  specify '-t +' to enable it.  the default
+      is '-t -'.
+    - the constraint classification training algorithm has been added.  in the
+      code, it is referred to as "ordered targets mode."  to enable it, specify
+      '-O +' on the command line.  the default is '-O -'.
+    - added sequential model functionality.  there is no command line parameter
+      associated with it; just a new example format, fully compatible with the
+      old one.  a normal example lists features separated by commas (with
+      optional strengths in parenthases) and ends with a colon.  now, you can
+      put a semi-colon after the last feature and list target IDs thereafter,
+      all before the terminating colon.  the example (before the semi-colon)
+      will be presented to only those target IDs listed after the semi-colon.
+      if there is no semi-colon, or if there are no targets listed thereafter,
+      the example is presented to all targets, as usual.
+
+  - algorithmic modifications:
+    - changed the Perceptron update rule.  it used to be w_i += learning_rate.
+      now it is w_i += learning_rate * strength_i.
+    - changed the Winnow update rule.  it used to be w_i *= alpha. now it is
+      w_i *= pow(alpha, strength_i).
+
+  - new command line parameters:
+    - added the '-a' command line parameter.  previously, pending features were
+      not written to the network.  now, specifying '-a +' in train mode will
+      cause all non-discarded features that have been encountered at least once
+      by a target to be written to the network.  the default is '-a -'.
+    - modified the functionality of the '-e' parameter so that features' active
+      counts are checked against the eligibility theshold as they are read in
+      from the network file in testing mode, and their discard states are set to
+      pending or active as indicated.
+    - added the fixed feature command line parameter.  to suppress creation of
+      the fixed feature in each example, specify '-f -' on the command line.
+      the default is '-f +'.
+    - added the '-M' command line parameter for training mode.  previously, the
+      internal representation of an example was discarded after that example had
+      been trained on.  when a new cycle began, the input stream was rewound,
+      and examples were parsed all over again.  now, specifying '-M +' forces
+      all examples to be stored internally, which can greatly reduce execution
+      time when running many cycles (> 10).  the default is '-M -'.
+    - added the '-z' command line parameter which enables "conventional" or
+      "raw" mode.  this mode is intended to adhere to the most traditional
+      definitions of the learning algorithms used.  the network is full instead
+      of sparse, features are immediately linked to all targets, activations are
+      not normalized, and several alternate defaults are set for other command
+      line parameters.  the default is '-'.
+
+  - output related modifications:
+    - redirected all the output created by output modes > VERBOSE_MIN to the
+      file specified in the '-R' parameter, if one is specified.
+    - redirected the output in evaluation mode to the file specified by the '-R'
+      parameter, if one is specified.
+    - SNoW now reports the number of cycles run after training is complete if
+      the network got 100% of the training examples correct in one cycle, thus
+      ending the training process early.
+    - changed the '-c <interval>' learning curve parameter.  it used to write a
+      new network file after every <interval> examples of training.  now, it
+      must be specified in conjunction with the '-T <test file>' parameter.
+      after every <interval> training examples, it tests the network with
+      <test file> and outputs results.  the network is only written at the end
+      of training.  it does not test during the first cycle if '-u -' is also
+      specified.
+
+11/23/02 (v3.0.1)
+  - updated the booleanexample/ and tutorial/ directories.
+  - made small change to the makefile.
+  - added "percentage eligibility" feature pruning to the Perceptron algorithm.
+    (use '-e percent:x')
+
+1/15/03 (v3.0.2)
+  - the '-m' flag default setting has been changed from '-' to '+'.  this will
+    not affect any aspect of SNoW's performance on training data with no more
+    than one target ID per example.
+  - the setting of the '-m' flag can now affect testing and evaluation when used
+    in conjunction with a non-zero smoothing parameter.  when set to '-', a
+    given target will treat all other target IDs as features, and previously
+    unseen features are smoothed during testing and evaluation.  users who have
+    never changed this flag's setting in the past will not see any differences
+    as a result of this modification if the flag is left set to its new default
+    ('+').
+  - SNoW is now more robust towards target IDs in examples.  during testing, an
+    example's label will now always be recognized as a label no matter where in
+    the example it appears.  previously, it had to be the first feature in the
+    example.  during testing and training, SNoW performs more efficiently,
+    regardless of how many labels are placed in an example or where they are
+    found.
+  - when evaluating performance, SNoW will now consider its prediction correct
+    if it finds the target ID it predicted anywhere in the example.  previously,
+    the label had to be the first feature ID in the example, and additional
+    labels beyond that were ignored.
+  - a significant memory consumption optimization affecting the way examples are
+    stored in memory has been implemented.  it's not very noticeable with '-M -'
+    (which is the default), but it's very noticeable with '-M +'.
+  - a small performance optimization affecting training has also been
+    implemented.  when reading a labeled example, target IDs are automatically
+    moved to the beginning of the example.  this way, when determining if a
+    given target ID is active in the example during training, only the beginning
+    of the example needs to be searched.
+  - the '-S' thick separator parameter now takes two arguments in the form '-S
+    <p>[,<n>]' where p and n are floating point values.  a target node's
+    prediction is correct if its ID is active and its activation is greater than
+    or equal to threshold + p.  it is also correct if the ID is not active and
+    the activation is less than threshold - n.  if n is not specified, it is set
+    equal to p.
+
+  - bug fixes:
+    - the constraint classification algorithm (a.k.a. "ordered targets mode",
+      '-O +') was not operating correctly in conjunction with '-M +' (when all
+      examples are stored in memory).  now it is.
+    - '-test' mode was not handling the '-e percent:<k>' flag correctly (or at
+      all).  now it is.
+    - there were various bugs in the network specification parsing algorithm.
+      these bugs did not affect the way properly structured network
+      specifications were parsed.  however, now that the bugs are fixed, SNoW
+      handles improperly structured network specifications more gracefully (ie.
+      it doesn't seg fault).
+    - well, maybe it's not really a bug, but i think it's better for percentage
+      eligibility to declare features 'pending' instead of 'discarded' when
+      pruning after the first cycle.  that way, setting '-a +' can still have
+      meaning.
+
+2/28/03 (v3.0.3)
+  - fixed a bug in average example size calculation: the fixed feature should
+    not be counted, but it was being counted.
+  - added support for a single target.  testing output will report "positive" to
+    indicate an activation larger than the threshold, and "negative" to indicate
+    an activation smaller than the threshold.
+
+5/19/03 (v3.0.4)
+  - got rid of the dynamic casting in Network::TrainingComplete() which was
+    fussy in MSVC++.  in order to get rid of it, it was necessary to make
+    ClearTotalPrior() a virtual function and add it to all learning algorithms.
+  - the '-m' multipleLabels flag was not affecting -test mode correctly.  when
+    set to '-', it now only counts an example as correct if the predicted
+    target is the first target found in the example.  the default setting ('+')
+    was not changed.
+
+5/21/03 (v3.0.5)
+  - fixed a bug in the '-m' bug fix from v3.0.4.  this bug could potentially
+    cause an out of bounds array access when testing an example that contains
+    only target IDs.  examples that contained at least one feature ID that is
+    not a target were unaffected.
+
+1/6/04 (v3.1.0)
+  - the suffix added to the conjunction output file has been changed from
+    '.blowup' to '.conjunctions'.  (see the -g command line parameter.)
+  - added the '-L' command line parameter for limiting the amount of target
+    IDs displayed during output with various '-o' settings.
+
+  - algorithmic additions and modifications:
+    - the gradient descent algorithm has been added.  specify '-G +' on the
+      command line to enable it in conjunction with either perceptron or
+      winnow.
+    - the Perceptron threshold relative update rule (see the '-t' command line
+      parameter) has been changed to:
+        w_i += (learning_rate + threshold - activation)
+               / #_of_active_features_in_example
+      which more closely resembles the concept behind the Winnow threshold
+      relative update rule.
+    - the naive Bayes sigmoid function (which previously made no sense and
+      didn't even work as intended anyway because of a bug discussed below)
+      has been changed to simply return the activation of the target.
+    - the target confidence update formula has been changed to:
+        confidence = confidence / (1 + 2 / (100 + mistakes))
+      we feel this formula is better than the old formula because it does not
+      depend on the amount of examples seen so far; only the number of
+      mistakes.
+    - confidence is no longer normalized after every 1000 examples during
+      training, since the new confidence formula won't make confidences get
+      too small too quickly.
+
+  - compilation related changes:
+    - added precompiler directives in Target.h to make SNoW's hash_maps work
+      with GCC 3.0 and higher.
+    - rewrote the Makefile to improve its flexibility and ease of maintenance.
+      a user can now simply type 'gmake CXX=mycplusplus' to force compilation
+      with a particular compiler and 'gmake SERVER=1' to include server
+      functionality in the build.  a developer can now simply type 'gmake
+      dist' to create the SNoW_vX.X.X.tar.gz distribution tarball in the
+      parent directory.
+
+  - bug fixes:
+    - the Winnow and Perceptron threshold relative update rules were
+      incorrectly dependent on feature strengths.  now, neither involves a
+      feature strength (although strengths are still used to calculate dot
+      products regardless of the update rule).
+    - the feature discarding routines weren't actually discarding any
+      features.  now they do it as advertised.
+    - the "threshold" variable in the LearningAlgorithm class used to be used
+      by the NaiveBayes class to store the result of a calculation based on a
+      target's prior probability.  since each target has a different prior
+      probability, there should have been one NaiveBayes object instantiated
+      for each target learned by Naive Bayes, but there wasn't.
+
+      in case you're interested, the calculation whose result was stored
+      in that "threshold" variable was related to the Naive Bayes sigmoid
+      function, which used to be (2 * activation / prior).  it used to be the
+      case that this "prior" variable took the same setting during every
+      target's sigmoid activation calculation (which isn't such a big deal,
+      but it also wasn't the intended behavior).  but it's all a mute point in
+      this version of the code, since we've finally decided to eliminate
+      sigmoid activations in naive Bayes (see the algorithmic modification
+      bullet above).
+
+  - performance improvements:
+    - the target confidence calculation in the Winnow and Perceptron Update()
+      functions is now only performed on targets that are not alone in their
+      cloud.  users who use more than one target per cloud will actually see a
+      performance penalty of one comparison per call to Update(), but we
+      believe users ignore SNoW's cloud mechanism much more often than not.
+    - wherever post-increment appeared in the code and was found to be
+      semantically equivalent to pre-increment, it was replaced with
+      pre-increment.  this isn't such a big deal for scalars, but it can save
+      a lot of time for STL iterators.
+    - removed the ClearTotalPrior() function from all LearningAlgorithm
+      classes, since it was called in a loop but didn't serve any discernibly
+      useful purpose.
+
+1/30/04 (v3.1.1)
+  - bug fix: an important line of code in the procedure that reads a target
+    representation from a network file was mistakenly removed while updating
+    the code for the prior release.  this caused a segmentation fault when
+    testing a network that contains more than one target running the same
+    learning algorithm.
+
+3/7/04 (v3.1.2)
+  - bug fix: an improper use of ostrstream caused some garbage in the error
+    file output after the prediction of each example.
+  - by popular demand, the new winnow sigmoid function has been removed, and
+    the old, more standard sigmoid function is back.
+
+4/1/04 (v3.1.3)
+  - bug fix: the -z "raw mode" command line parameter was not behaving as the
+    user's manual says it would (which is how it was intended to behave).  now
+    it works just as advertised.
+
+6/21/04 (v3.1.4)
+  - added the softmax normalization option to snow's output during testing.
+    there is both a new output mode called '-o softmax' on the command line,
+    and a new column of output in the '-o allactivations' output mode.
+  - added a conservative version of the constraint classification algorithm.
+    in this version of the algorithm, a maximum of one update per example is
+    made.  if first label in the example does not agree with the target with
+    highest activation, then the latter will be demoted and the former will be
+    promoted.
+  - a new "interactive" mode has been added to snow in which the user is given
+    precise control over the promotion and demotion decisions for each
+    example.
+  - bug fix: when the user does not specify any algorithms on the command
+    line, a default algorithm is supposed to be instantiated and use for all
+    targets.  this wasn't working correctly.
+

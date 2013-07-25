@@ -1,0 +1,2 @@
+GET /           controllers.Files.showAll
+GET /file/:id   controllers.Files.show(id: Long)

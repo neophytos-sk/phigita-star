@@ -1,0 +1,83 @@
+<h3>Plugin overview</h3>
+
+<blockquote>"Captchas are used to prevent bots from using various types of computing services. Applications include preventing bots from taking part in online polls, registering for free email accounts (which may then be used to send spam), and, more recently, preventing bot-generated spam by requiring that the (unrecognized) sender successfully pass a captcha test before the email message is delivered." [<a href="http://en.wikipedia.org/wiki/Captcha">Wikipedia: Captcha</a>]</blockquote>
+
+<p>Captcha challenges can be solved by most people, but most bots are currently unable to do so. The NP_Captcha plugin adds challenges in three places:</p>
+
+<ol>
+  <li>Comment forms (when presented to unregistered site members)</li>
+  <li>Member contact forms (when presented to unregistered site members)</li>
+  <li>Member account activation forms (when registering, the new member is first sent an e-mail with an activation link. At that page, the user can choose a password, and is presented with the captcha challenge)</li>
+</ol>
+
+
+<h3>Uninstall</h3>
+
+<p>To uninstall the NP_Captcha plugin, take these steps:</p>
+
+<ol>
+  <li>On the plugin overview page, uninstall the plugin.</li>
+  <li>Delete the <code>NP_Captcha.php</code> file and the <code>captcha</code> directory from the <code>plugins/</code> directory on your server.</li>
+</ol>
+
+<h3>Options</h3>
+
+<p>The <code>NP_Captcha</code> plugin provides some global options:</p>
+
+<table><tr>
+	<th>Option</th>
+	<th>Description</th>
+</tr><tr>
+	<td>Quality of images</td>
+	<td>The amount of compression that must be used when outputting a generated image. It's a number between 0 and 100, defaulting to 75. 100 means excellent image quality, but creates large images. A quality of 0 is the lowest possible quality. The default setting generates images of about 3KB in size.</td>
+</tr><tr>
+	<td>Minimum characters in image</td>
+	<td>The minimum amount of characters to appear in an image. No image will be generated with less characters (an error image will be displayed in that case, and the captcha challenge will never be able to succeed)</td>
+</tr><tr>
+	<td>Fonts to use</td>
+	<td>A series of font-files, separated using semicolons. The font-files need to be TrueType fonts, and they need to be present in the <code>plugins/captcha</code> folder. The names are case-sensitive on most servers, so beware. When no font can be found, an error image will be generated. When multiple fonts are present, different characters in the image will use different fonts.</td>
+</tr><tr>
+	<td>Web Safe colors only?</td>
+	<td>When <code>Yes</code>, only the 216 colors that are supposed to be web-safe will be used in the image. By default, this is <code>Off</code>.</td>
+</tr><tr>
+	<td>Type of background?</td>
+	<td>By default, this is set to <code>Noise Characters</code>. It adds a bunch of random characters in the background. When set to <code>Grid</code>, a grid is added instead of noise.</td>
+</tr><tr>
+	<td>Cleanup entries older than X minutes</td>
+	<td>For each captcha image that is generated, some bookkeeping is done. Since not all generated captcha images will be answered, old entries are deleted. By default, all entries that have been generated more than 30 minutes ago will be destroyed. Note that this implies that a comment form is visited and it takes someone 31 minutes to formulate a new comment, the challenge will fail. (luckily, a new challenge will be presented in that case)</td>
+</tr><tr>
+	<td>Error message</td>
+	<td>Error message to display when an incorrect answer was given for the captcha challenge.</td>
+</tr><tr>
+	<td>Activation Form Template</td>
+	<td>HTML code to generate inside an account activation form. <code>&lt;%imgHtml%&gt;</code> inserts the captcha image, <code>&lt;%key%&gt;</code> inserts the public key.</td>
+</tr><tr>
+	<td>Comment Form Template</td>
+	<td>HTML code to generate inside a comment form. <code>&lt;%imgHtml%&gt;</code> inserts the captcha image, <code>&lt;%key%&gt;</code> inserts the public key.</td>
+</tr><tr>
+	<td>Mail Form Template</td>
+	<td>HTML code to generate inside an member mail form. <code>&lt;%imgHtml%&gt;</code> inserts the captcha image, <code>&lt;%key%&gt;</code> inserts the public key.</td>
+</tr></table>
+
+<h3>Support and Bug reports</h3>
+
+<p>For additional support and/or bug reports please visit the <a href="http://forum.nucleuscms.org/">Nucleus Support Forum</a>.</p>
+
+<h3>Version History</h3>
+
+<p>To check for new versions, please check the <a href="http://wiki.nucleuscms.org/Captcha">NP_Captcha</a> page on the Nucleus Wiki.</p>
+
+<ul>
+	<li>Version 1.2: problems with GD version detection [2005-02-26 dekarma]</li>
+	<li>Version 1.1: added templates as options [2004-08-13 dekarma]</li>
+	<li>Version 1.0: initial release [2004-08-12 dekarma]</li>
+</ul>
+
+<h3>Thanks!</h3>
+
+<p>This plugin would not have been possible without these two people:</p>
+
+<ul>
+  <li>Horst Nogajski, for his <a href="http://www.phpclasses.org/browse/package/1569.html">hn_captcha</a> class.</li>
+  <li>Dustin Norlande, for his <a href="http://www.dustismo.com/">dustismo</a> font.</li>
+</ul>

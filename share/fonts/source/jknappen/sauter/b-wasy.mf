@@ -1,0 +1,19 @@
+% WASY, additional symbols for math, physics, astronomy and other fields
+if unknown cmbase: input cmbase fi
+
+font_identifier:="WASY"; font_size design_size*pt#;
+
+input c-cmr;
+
+% WASY5 ONLY:
+if design_size < 5.5:
+   %if write_white > 0: %% CS: replaced this line by the following:
+   if known write_white:
+      beak#:=25/36pt#;      % "WRITE WHITE" ONLY!
+      else: beak#:=35/36pt#;fi %vertical protrusion of beak serifs
+   fi
+
+math_spread:=0;      % extra openness of math symbols
+ligs:=2;      % level of ligatures to be included
+
+generate wasy

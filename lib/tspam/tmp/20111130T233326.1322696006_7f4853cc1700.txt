@@ -1,0 +1,109 @@
+DomainKey-Signature: q=dns; a=rsa-sha1; c=nofws;
+	s=prod; d=linkedin.com;
+	h=DKIM-Signature:Sender:Date:From:To:Message-ID:Subject:MIME-Version:Content-Type:X-LinkedIn-Template:X-LinkedIn-Class:X-LinkedIn-fbl;
+	b=TSAhqUmtaskIrL0xyvKelxqlIohPYZbe1wOtESWRuRyl3Xu+knYK0o2QsquIN1ov
+	ajaN8+SCvRT8XYjqQ2g9pRGc40iSxRoNzfHygsYoMkIF0ScOy/nULfDA/E/HOtk3 
+DKIM-Signature: v=1; a=rsa-sha1; d=linkedin.com; s=proddkim; c=relaxed/relaxed;
+	q=dns/txt; i=@linkedin.com; t=1322695995;
+	h=From:Subject:Date:To:MIME-Version:Content-Type:X-LinkedIn-Class:X-LinkedIn-fbl:
+	X-LinkedIn-Template;
+	bh=AJvp7LPWJ8HGQLP5ZJwmHRAEhjU=;
+	b=rDoFiQN0hekrVitULlL/Rs4EQqhNFlYB9zHCv/oTSbmRX7WbovCHDqHoj5k/aQUN
+	QrD+q0w5Sen8X0Ob1p0jwAMlc5bfFuWOvNDdI421CLyuOR71JNkjPfyM/n5CHX07; 
+Sender: messages-noreply@bounce.linkedin.com 
+Date: Wed, 30 Nov 2011 23:33:15 +0000 (UTC) 
+From: "Big Data, Low Latency Group Members" <group-digests@linkedin.com> 
+To: Neophytos Demetriou <k2pts@phigita.net> 
+Message-ID: <1975483766.23713961.1322695995229.JavaMail.app@ela4-app0105.prod> 
+Subject: [1] manager's choice, [3] new discussions and [16] new jobs on
+ LinkedIn 
+X-LinkedIn-Template: anet_digest_type 
+X-LinkedIn-Class: GROUPDIGEST 
+X-LinkedIn-fbl: m-V1ELTJP3qvvYLWBcpD0G7BxM84FiCcKcys3CTEfekzejMNN_ya9fbq_ 
+--------------------------------------
+Big Data, Low Latency
+  Latest discussions from Big Data, Low Latency group members.  Change the frequency of this digest:
+  http://www.linkedin.com/e/-1ht5d5-gvmz1lpf-6v/ahs/3638279/EMLt_anet_settings/?hs=false&tok=2f7BasBlQ5ol01
+
+
+
+
+Send me an email for each new discussion &#187; http://www.linkedin.com/e/-1ht5d5-gvmz1lpf-6v/snp/3638279/true/grp_email_subscribe_new_posts/?hs=false&tok=05MWnnEnc5ol01
+
+    Manager's Choice
+  1 Terabyte of Text in 7 Seconds (24)
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvmz1lpf-6v/ava/80987388/3638279/EMLt_anet_qa_ttle/?hs=false&tok=0J8AM9TrY5ol01
+
+
+Discussions
+ * Trish  McCall HPCC Systems Data Delivery Engine Now Available on Amazon Web...
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvmz1lpf-6v/ava/82799005/3638279/EMLt_anet_qa_ttle/?hs=false&tok=0vOEylN805ol01
+
+
+ * Christopher  Borg Hibernia -  New Low-Latent Route between 165 Halsey  - 1400 Federal will be available in several weeks.  Sub 240 ms RTD Guaranteed.  Please contact me to discuss. Limited Availability.
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvmz1lpf-6v/ava/82578057/3638279/EMLt_anet_qa_ttle/?hs=false&tok=3s6D6IOqM5ol01
+
+
+ * Ewa  Kucharczyk Hi All, Remeber about NoSQL Road Show? 1 Dec. in London! I may provide you some discount code !
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvmz1lpf-6v/ava/82042595/3638279/EMLt_anet_qa_ttle/?hs=false&tok=2_G8mws-A5ol01
+
+
+Weekly Job Postings * Derek  Fettig: API Team - Market Data Delivery - C++, High Performance Computing
+  API Team - Market Data Delivery - C++, High Performance Computing (0)
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvmz1lpf-6v/ava/82654325/3638279/EMLt_anet_qa_ttle/?hs=false&tok=2w9lbXnjg5ol01
+
+ * Daniel  Kim: Hulu is looking for a Hadoop Architect
+  Hulu is looking for a Hadoop Architect (0)
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvmz1lpf-6v/ava/82645367/3638279/EMLt_anet_qa_ttle/?hs=false&tok=3fHVj2y6Q5ol01
+
+ * Derek  Fettig: Senior MSG Scraping Engineer for Financial Instrument Pricing (C++/Python), NYC
+Providing quality pricing for Over the Counter financial instruments – AI and Machine Learning experience needed.
+  Senior MSG Scraping Engineer for Financial Instrument Pricing (C++/Python), NYC
+Providing quality pricing for Over the Counter financial instruments – AI and Machine Learning experience needed. (0)
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvmz1lpf-6v/ava/82609485/3638279/EMLt_anet_qa_ttle/?hs=false&tok=0MK8TePCo5ol01
+
+ * William  Citrano: Equities OMS Tech Support Engineer & Hands-On Manager - VP $140-$160k NYC
+  Equities OMS Tech Support Engineer & Hands-On Manager - VP $140-$160k NYC (0)
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvmz1lpf-6v/ava/82442624/3638279/EMLt_anet_qa_ttle/?hs=false&tok=1-RagWdoA5ol01
+
+ * Tara  Gowland: Growing Seattle based tech startup (well funded and profitable) is recruiting a Sr Developer with both FE and BE experience, exposure to high volume and has a flair for managing others..
+  Growing Seattle based tech startup (well funded and profitable) is recruiting a Sr Developer with both FE and BE experience, exposure to high volume and has a flair for managing others.. (0)
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvmz1lpf-6v/ava/82426172/3638279/EMLt_anet_qa_ttle/?hs=false&tok=0PVwlwwcU5ol01
+
+ * Paige  Edwards: High Frequency Trading Operations Specialist
+  High Frequency Trading Operations Specialist (0)
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvmz1lpf-6v/ava/82400667/3638279/EMLt_anet_qa_ttle/?hs=false&tok=2KQ93Bke85ol01
+
+ * Paige  Edwards: Trading Operations Specialist
+  Trading Operations Specialist (0)
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvmz1lpf-6v/ava/82376374/3638279/EMLt_anet_qa_ttle/?hs=false&tok=36NI0zLOk5ol01
+
+ * Paige  Edwards: Trading Operations Engineer - QA, KSH, SQL
+  Trading Operations Engineer - QA, KSH, SQL (0)
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvmz1lpf-6v/ava/82376061/3638279/EMLt_anet_qa_ttle/?hs=false&tok=21VuNG67o5ol01
+
+ * Paige  Edwards: Associate Trading Operations Specialist
+  Associate Trading Operations Specialist (0)
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvmz1lpf-6v/ava/82375426/3638279/EMLt_anet_qa_ttle/?hs=false&tok=1HFIveBqE5ol01
+
+ * Zoe  Cho: Senior C++ Developer | Prop Trading House | City, London | Competitive Salary
+  Senior C++ Developer | Prop Trading House | City, London | Competitive Salary (0)
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvmz1lpf-6v/ava/82251840/3638279/EMLt_anet_qa_ttle/?hs=false&tok=13nwX4_h45ol01
+
+ * Zoe  Cho: C++ on UNIX Software developers required for London based Hedge Fund. 90k + Bonus, Real time and Low Latency.
+  C++ on UNIX Software developers required for London based Hedge Fund. 90k + Bonus, Real time and Low Latency. (0)
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvmz1lpf-6v/ava/82251545/3638279/EMLt_anet_qa_ttle/?hs=false&tok=265HHnbB85ol01
+
+ * Dave  Freireich: A new approach-use a motivated agent to find your next trading systems software dev role, NYC, Chicago, DC, etc.
+  A new approach-use a motivated agent to find your next trading systems software dev role, NYC, Chicago, DC, etc. (0)
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvmz1lpf-6v/ava/82099087/3638279/EMLt_anet_qa_ttle/?hs=false&tok=1wedTv9pc5ol01
+
+ * Dave  Freireich: Reverse engineering standard software development job search. Better for you.  NYC, Chicago, DC, etc.
+  Reverse engineering standard software development job search. Better for you.  NYC, Chicago, DC, etc. (0)
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvmz1lpf-6v/ava/81848723/3638279/EMLt_anet_qa_ttle/?hs=false&tok=0Ok1HYr4U5ol01
+
+
+

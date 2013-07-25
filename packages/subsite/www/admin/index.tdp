@@ -1,0 +1,41 @@
+contract \
+    -require_secure_conn "1" \
+    -require_registration "1" \
+    -accept_proto "https" \
+    -accept_method "get"
+
+val -id context_bar { return [::xo::kit::context_bar] }
+
+# keep css classes and tags used by context_bar
+::xo::tdp::excludeClassesFromRenaming {breadcrumb divider ul li active}
+
+
+master -title "Sitewide Administration" {
+
+    nt @{context_bar:noquote}
+
+    ul {
+	li { a -href "monitor/" { t "Monitoring" } }
+	li { a -href "mail/" { t "Mail" } }
+	li { a -href "wiki/" { t "Wiki" } }
+	li { a -href "users/" { t "User Management" } }
+	li { a -href "g11n/" { t "Globalization" } }
+	li { a -href "permissions/" { t "Permissions" } }
+	li { a -href "site-map/" { t "Site Map" } }
+	li { a -href "doc/" { t "Documentation" } }
+	li { a -href "package-manager/" { t "Package Manager" } }
+	li { a -href "dns/" { t "DNS" } }
+	li { a -href "host-node-map/" { t "Host Node Map" } }
+	li { a -href "dev/" { t "Developer" } }
+	p
+
+	
+	li { a -href "bannerideas/" { t "Banner Ideas" } }
+
+	p
+
+	li { a -href "web-server-restart" { t "Restart the Web Server" } }
+
+    }
+
+}

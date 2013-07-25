@@ -1,0 +1,704 @@
+<html><head><title>TemplateView.js</title><link rel="stylesheet" type="text/css" href="../resources/style.css" media="screen"/></head><body><h1>TemplateView.js</h1><pre class="highlighted"><code><i>/**
+ * @class YAHOO.ext.View
+ * @extends YAHOO.ext.util.Observable
+ * Create a &quot;View&quot; <b>for</b> an element based on a data model or UpdateManager and the supplied DomHelper template. 
+ * This class also supports single and multi selection modes. &lt;br&gt;
+ * Create a data model bound view:
+&lt;pre&gt;&lt;code&gt;
+<b>var</b> dataModel = <b>new</b> YAHOO.ext.grid.XMLDataModel(...);
+<b>var</b> view = <b>new</b> YAHOO.ext.View('my-element', 
+           '&amp;lt;div id=&quot;{0}&quot;&amp;gt;{2} - {1}&amp;lt;/div&amp;gt;', <i>// auto create template</i>
+           dataModel, { 
+              singleSelect: true, 
+              selectedClass: 'ydataview-selected'
+           });
+
+<i>// listen <b>for</b> node click?</i>
+view.on('click', <b>function</b>(vw, index, node, e){
+    alert('Node &quot;' + node.id + '&quot; at index: ' + index + ' was clicked.');
+});
+
+<i>// load XML data</i>
+dataModel.load('foobar.xml');
+&lt;/code&gt;&lt;/pre&gt;
+For an example of creating a JSON/UpdateManager view, see {@link YAHOO.ext.JsonView}.
+ * &lt;br&gt;&lt;br&gt;
+ * &lt;b&gt;Note: The root of your template must be a single node. Table/row implementations may work but are not supported due to
+ * IE's limited insertion support <b>with</b> tables and Opera's faulty event bubbling.&lt;/b&gt;
+ * @constructor
+ * Create a <b>new</b> View
+ * @param {String/HTMLElement/Element} container The container element where the view is to be rendered.
+ * @param {String/DomHelper.Template} tpl The rendering template or a string to create a template <b>with</b>
+ * @param {DataModel} dataModel The bound data model
+ * @param {Object} config The config object
+*/</i>
+YAHOO.ext.View = <b>function</b>(container, tpl, dataModel, config){
+    <b>this</b>.el = getEl(container, true);
+    <b>this</b>.nodes = <b>this</b>.el.dom.childNodes;
+    <b>if</b>(typeof tpl == 'string'){
+        tpl = <b>new</b> YAHOO.ext.Template(tpl);
+    }
+    tpl.compile();
+    <i>/**
+     * The template used by <b>this</b> View
+     * @type {YAHOO.ext.DomHelper.Template}
+     */</i>
+    <b>this</b>.tpl = tpl;
+    <b>this</b>.setDataModel(dataModel);
+    <b>var</b> CE = YAHOO.util.CustomEvent;
+	<i>/** @private */</i>
+	<b>this</b>.events = {
+	    <i>/**
+         * @event click
+         * Fires when a template node is clicked.
+         * @param {YAHOO.ext.View} <b>this</b>
+         * @param {Number} index The index of the target node
+         * @param {HTMLElement} node The target node
+         * @param {YAHOO.ext.EventObject} e The raw event object
+         */</i>
+        'click' : true,
+	    <i>/**
+         * @event dblclick
+         * Fires when a template node is double clicked.
+         * @param {YAHOO.ext.View} <b>this</b>
+         * @param {Number} index The index of the target node
+         * @param {HTMLElement} node The target node
+         * @param {YAHOO.ext.EventObject} e The raw event object
+         */</i>
+        'dblclick' : true,
+	    <i>/**
+         * @event contextmenu
+         * Fires when a template node is right clicked.
+         * @param {YAHOO.ext.View} <b>this</b>
+         * @param {Number} index The index of the target node
+         * @param {HTMLElement} node The target node
+         * @param {YAHOO.ext.EventObject} e The raw event object
+         */</i>
+        'contextmenu' : true,
+	    <i>/**
+         * @event selectionchange
+         * Fires when the selected nodes change.
+         * @param {YAHOO.ext.View} <b>this</b>
+         * @param {Array} selections Array of the selected nodes
+         */</i>
+        'selectionchange' : true,
+        
+        <i>/**
+         * @event beforeselect
+         * Fires before a selection is made. If any handlers <b>return</b> false, the selection is cancelled.
+         * @param {YAHOO.ext.View} <b>this</b>
+         * @param {HTMLElement} node The node to be selected
+         * @param {Array} selections Array of currently selected nodes
+         */</i>
+        'beforeselect' : true
+	};
+	<b>this</b>.el.mon(&quot;click&quot;, <b>this</b>.onClick, <b>this</b>, true);
+    <b>this</b>.el.mon(&quot;dblclick&quot;, <b>this</b>.onDblClick, <b>this</b>, true);
+    <b>this</b>.el.mon(&quot;contextmenu&quot;, <b>this</b>.onContextMenu, <b>this</b>, true);
+    
+    <i>/**
+     * The css class to add to selected nodes
+     * @type {YAHOO.ext.DomHelper.Template}
+     */</i>
+    <b>this</b>.selectedClass = 'ydataview-selected';
+    
+    <b>this</b>.emptyText = '';
+    
+    <b>this</b>.selections = [];
+    <b>this</b>.lastSelection = null;
+    
+    <i>/**
+     * The root property <b>in</b> the loaded json object that contains the data
+     * @type {String}
+     */</i>
+    <b>this</b>.jsonRoot = null;
+    YAHOO.ext.util.Config.apply(<b>this</b>, config);
+    <b>if</b>(this.renderUpdates || <b>this</b>.jsonRoot){
+        <b>var</b> um = <b>this</b>.el.getUpdateManager();
+        um.setRenderer(<b>this</b>);
+    }
+};
+
+YAHOO.extendX(YAHOO.ext.View, YAHOO.ext.util.Observable, {
+    <i>/**
+     * Returns the element <b>this</b> view is bound to.
+     * @<b>return</b> {YAHOO.ext.Element}
+     */</i>
+    getEl : <b>function</b>(){
+        <b>return</b> this.el;  
+    },
+    
+    render : <b>function</b>(el, response){
+        <b>this</b>.clearSelections();
+        <b>this</b>.el.update('');
+        <b>var</b> o;
+        try{
+            o = YAHOO.ext.util.JSON.decode(response.responseText);
+            <b>if</b>(this.jsonRoot){
+                o = eval('o.' + <b>this</b>.jsonRoot);
+            }
+        }catch(e){}
+        <i>/**
+         * The current json data or null
+         */</i>
+        <b>this</b>.jsonData = o;
+        <b>this</b>.beforeRender();
+        <b>this</b>.refresh();
+    },
+    
+    beforeRender : <b>function</b>(){
+        
+    },
+    
+    <i>/**
+     * Refreshes the view. 
+     */</i>
+     refresh : <b>function</b>(){
+        <b>this</b>.clearSelections();
+        <b>this</b>.el.update('');
+        <b>this</b>.html = [];
+        <b>if</b>(this.renderUpdates || <b>this</b>.jsonRoot){
+            <b>var</b> o = <b>this</b>.jsonData;
+            <b>if</b>(o){
+                <b>for</b>(var i = 0, len = o.length; i &lt; len; i++) {
+                	<b>this</b>.renderEach(o[i]);
+                }
+            }
+        }<b>else</b>{
+           <b>this</b>.dataModel.each(<b>this</b>.renderEach, <b>this</b>);
+        }
+        <b>var</b> strHtml;
+        <b>if</b>(this.html.length &gt; 0){
+            strHtml = <b>this</b>.html.join('');
+        }<b>else</b>{
+            strHtml = <b>this</b>.emptyText;
+        }
+        <b>this</b>.el.update(strHtml);
+        <b>this</b>.html = null;
+        <b>this</b>.nodes = <b>this</b>.el.dom.childNodes;
+        <b>this</b>.updateIndexes(0);
+    },
+    
+    <i>/**
+     * Function to override to reformat the data that is sent to 
+     * the template <b>for</b> each node.
+     * @param {Array/Object} data The raw data (array of colData <b>for</b> a data model bound view or 
+     * a JSON object <b>for</b> an UpdateManager bound view).
+     * @param {Number} index The index of the data within the data model 
+     */</i>
+    prepareData : <b>function</b>(data, index){
+        <b>return</b> data;  
+    },
+    
+    renderEach : <b>function</b>(data){
+        <b>this</b>.html[<b>this</b>.html.length] = <b>this</b>.tpl.applyTemplate(<b>this</b>.prepareData(data));
+    },
+    
+    <i>/**
+     * Refresh an individual node.
+     * @param {Number} index 
+     */</i>
+    refreshNode : <b>function</b>(index){
+        <b>this</b>.refreshNodes(index, index);
+    },
+    
+    refreshNodes : <b>function</b>(dm, startIndex, endIndex){
+        <b>this</b>.clearSelections();
+        <b>var</b> dm = <b>this</b>.dataModel;
+        <b>var</b> ns = <b>this</b>.nodes;
+        <b>for</b>(var i = startIndex; i &lt;= endIndex; i++){
+            <b>var</b> d = <b>this</b>.prepareData(dm.getRow(i), i);
+            <b>if</b>(i &lt; ns.length-1){
+                <b>var</b> old = ns[i];
+                <b>this</b>.tpl.insertBefore(old, d);
+                <b>this</b>.el.dom.removeChild(old);
+            }<b>else</b>{
+                <b>this</b>.tpl.append(<b>this</b>.el.dom, d);
+            }
+        }
+        <b>this</b>.updateIndexes(startIndex, endIndex);
+    },
+    
+    deleteNodes : <b>function</b>(dm, startIndex, endIndex){
+        <b>this</b>.clearSelections();
+        <b>if</b>(startIndex == 0 &amp;&amp; endIndex &gt;= <b>this</b>.nodes.length-1){
+            <b>this</b>.el.update('');
+        }<b>else</b>{
+            <b>var</b> el = <b>this</b>.el.dom;
+            <b>for</b>(var i = startIndex; i &lt;= endIndex; i++){
+                el.removeChild(<b>this</b>.nodes[startIndex]);
+            }
+            <b>this</b>.updateIndexes(startIndex);
+        }
+    },
+    
+    insertNodes : <b>function</b>(dm, startIndex, endIndex){
+        <b>if</b>(this.nodes.length == 0){
+            <b>this</b>.refresh();
+        }<b>else</b>{
+            <b>this</b>.clearSelections();
+            <b>var</b> t = <b>this</b>.tpl;
+            <b>var</b> before = <b>this</b>.nodes[startIndex];
+            <b>var</b> dm = <b>this</b>.dataModel;
+            <b>if</b>(before){
+                <b>for</b>(var i = startIndex; i &lt;= endIndex; i++){
+                    t.insertBefore(before, <b>this</b>.prepareData(dm.getRow(i), i));
+                }
+            }<b>else</b>{
+                <b>var</b> el = <b>this</b>.el.dom;
+                <b>for</b>(var i = startIndex; i &lt;= endIndex; i++){
+                    t.append(el, <b>this</b>.prepareData(dm.getRow(i), i));
+                }
+            }
+            <b>this</b>.updateIndexes(startIndex);
+        }
+    },
+    
+    updateIndexes : <b>function</b>(dm, startIndex, endIndex){
+        <b>var</b> ns = <b>this</b>.nodes;
+        startIndex = startIndex || 0;
+        endIndex = endIndex || ns.length-1;
+        <b>for</b>(var i = startIndex; i &lt;= endIndex; i++){
+            ns[i].nodeIndex = i;
+        }
+    },
+    
+    <i>/**
+     * Changes the data model <b>this</b> view uses and refresh the view.
+     * @param {DataModel} dataModel 
+     */</i>
+     setDataModel : <b>function</b>(dm){
+        <b>if</b>(!dm) <b>return</b>;
+        <b>this</b>.unplugDataModel(<b>this</b>.dataModel);
+        <b>this</b>.dataModel = dm;
+        dm.on('cellupdated', <b>this</b>.refreshNode, <b>this</b>, true);
+        dm.on('datachanged', <b>this</b>.refresh, <b>this</b>, true);
+        dm.on('rowsdeleted', <b>this</b>.deleteNodes, <b>this</b>, true);
+        dm.on('rowsinserted', <b>this</b>.insertNodes, <b>this</b>, true);
+        dm.on('rowsupdated', <b>this</b>.refreshNodes, <b>this</b>, true);
+        dm.on('rowssorted', <b>this</b>.refresh, <b>this</b>, true);
+        <b>this</b>.refresh();
+    },
+    
+    <i>/**
+     * Unplug the data model and stop updates.
+     * @param {DataModel} dataModel 
+     */</i>
+    unplugDataModel : <b>function</b>(dm){
+        <b>if</b>(!dm) <b>return</b>;
+        dm.removeListener('cellupdated', <b>this</b>.refreshNode, <b>this</b>);
+        dm.removeListener('datachanged', <b>this</b>.refresh, <b>this</b>);
+        dm.removeListener('rowsdeleted', <b>this</b>.deleteNodes, <b>this</b>);
+        dm.removeListener('rowsinserted', <b>this</b>.insertNodes, <b>this</b>);
+        dm.removeListener('rowsupdated', <b>this</b>.refreshNodes, <b>this</b>);
+        dm.removeListener('rowssorted', <b>this</b>.refresh, <b>this</b>);
+        <b>this</b>.dataModel = null;
+    },
+    
+    <i>/**
+     * Returns the template node the passed child belongs to or null <b>if</b> it doesn't belong to one.
+     * @param {HTMLElement} node
+     * @<b>return</b> {HTMLElement} The template node 
+     */</i>
+    findItemFromChild : <b>function</b>(node){
+        <b>var</b> el = <b>this</b>.el.dom;
+        <b>if</b>(!node || node.parentNode == el){
+		    <b>return</b> node;
+	    }
+	    <b>var</b> p = node.parentNode;
+	    <b>while</b>(p &amp;&amp; p != el){
+            <b>if</b>(p.parentNode == el){
+            	<b>return</b> p;
+            }
+            p = p.parentNode;
+        }
+	    <b>return</b> null;
+    },
+    
+    <i>/** @ignore */</i>
+    onClick : <b>function</b>(e){
+        <b>var</b> item = <b>this</b>.findItemFromChild(e.getTarget());
+        <b>if</b>(item){
+            <b>var</b> index = <b>this</b>.indexOf(item);
+            <b>this</b>.onItemClick(item, index, e);
+            <b>this</b>.fireEvent('click', <b>this</b>, index, item, e);
+        }<b>else</b>{
+            <b>this</b>.clearSelections();
+        }
+    },
+
+    <i>/** @ignore */</i>
+    onContextMenu : <b>function</b>(e){
+        <b>var</b> item = <b>this</b>.findItemFromChild(e.getTarget());
+        <b>if</b>(item){
+            <b>this</b>.fireEvent('contextmenu', <b>this</b>, <b>this</b>.indexOf(item), item, e);
+        }
+    },
+
+    <i>/** @ignore */</i>
+    onDblClick : <b>function</b>(e){
+        <b>var</b> item = <b>this</b>.findItemFromChild(e.getTarget());
+        <b>if</b>(item){
+            <b>this</b>.fireEvent('dblclick', <b>this</b>, <b>this</b>.indexOf(item), item, e);
+        }
+    },
+    
+    onItemClick : <b>function</b>(item, index, e){
+        <b>if</b>(this.multiSelect || <b>this</b>.singleSelect){
+            <b>if</b>(this.multiSelect &amp;&amp; e.shiftKey &amp;&amp; <b>this</b>.lastSelection){
+                <b>this</b>.select(<b>this</b>.getNodes(<b>this</b>.indexOf(<b>this</b>.lastSelection), index), false);
+            }<b>else</b>{
+                <b>this</b>.select(item, <b>this</b>.multiSelect &amp;&amp; e.ctrlKey);
+                <b>this</b>.lastSelection = item;
+            }
+        }
+    },
+    
+    <i>/**
+     * Get the number of selected nodes.
+     * @<b>return</b> {Number}
+     */</i>
+     getSelectionCount : <b>function</b>(){
+        <b>return</b> this.selections.length;
+    },
+    
+    <i>/**
+     * Get the currently selected nodes.
+     * @<b>return</b> {Array} An array of HTMLElements
+     */</i>
+    getSelectedNodes : <b>function</b>(){
+        <b>return</b> this.selections;
+    },
+    
+    <i>/**
+     * Get the indexes of the selected nodes.
+     * @<b>return</b> {Array}
+     */</i>
+    getSelectedIndexes : <b>function</b>(){
+        <b>var</b> indexes = [];
+        <b>for</b>(var i = 0, len = <b>this</b>.selections.length; i &lt; len; i++) {
+        	indexes.push(<b>this</b>.selections[i].nodeIndex);
+        }
+        <b>return</b> indexes;
+    },
+    
+    <i>/**
+     * Clear all selections
+     * @param {Boolean} suppressEvent (optional) true to skip firing of the selectionchange event
+     */</i>
+    clearSelections : <b>function</b>(suppressEvent){
+        <b>if</b>(this.multiSelect || <b>this</b>.singleSelect){
+            YAHOO.util.Dom.removeClass(<b>this</b>.selections, <b>this</b>.selectedClass);
+            <b>this</b>.selections = [];
+            <b>if</b>(!suppressEvent){
+                <b>this</b>.fireEvent('selectionchange', <b>this</b>, <b>this</b>.selections);
+            }
+        }
+    },
+    
+    <i>/**
+     * Selects nodes.
+     * @param {Array/HTMLElement/String/Number} nodeInfo An HTMLElement template node, index of a template node, id of a template node or an array of any of those to select
+     * @param {Boolean} keepExisting (optional) true to keep existing selections
+     * @param {Boolean} suppressEvent (optional) true to skip firing of the selectionchange vent
+     */</i>
+    select : <b>function</b>(nodeInfo, keepExisting, suppressEvent){
+        <b>if</b>(!keepExisting){
+            <b>this</b>.clearSelections(true);
+        }
+        <b>if</b>(nodeInfo instanceof Array){
+            <b>for</b>(var i = 0, len = nodeInfo.length; i &lt; len; i++) {
+            	<b>this</b>.select(nodeInfo[i], true, true);
+            }
+        }<b>else</b>{
+            <b>var</b> node = <b>this</b>.getNode(nodeInfo);
+            <b>if</b>(node){
+                <b>if</b>(this.fireEvent('beforeselect', <b>this</b>, node, <b>this</b>.selections) !== false){
+                    YAHOO.util.Dom.addClass(node, <b>this</b>.selectedClass);
+                    <b>this</b>.selections.push(node);
+                }
+            }
+        }
+        <b>if</b>(!suppressEvent){
+            <b>this</b>.fireEvent('selectionchange', <b>this</b>, <b>this</b>.selections);
+        }
+    },
+    
+    <i>/**
+     * Gets a template node.
+     * @param {HTMLElement/String/Number} nodeInfo An HTMLElement template node, index of a template node or the id of a template node
+     * @<b>return</b> {HTMLElement} The node or null <b>if</b> it wasn't found
+     */</i>
+     getNode : <b>function</b>(nodeInfo){
+        <b>if</b>(typeof nodeInfo == 'object'){
+            <b>return</b> nodeInfo;
+        }<b>else</b> if(<b>typeof</b> nodeInfo == 'string'){
+            <b>return</b> document.getElementById(nodeInfo);
+        }<b>else</b> if(<b>typeof</b> nodeInfo == 'number'){
+            <b>return</b> this.nodes[nodeInfo];
+        }
+        <b>return</b> null;
+    },
+    
+    <i>/**
+     * Gets a range template nodes.
+     * @param {Number} startIndex
+     * @param {Number} endIndex
+     * @<b>return</b> {Array} An array of nodes
+     */</i>
+    getNodes : <b>function</b>(start, end){
+        <b>var</b> ns = <b>this</b>.nodes;
+        startIndex = startIndex || 0;
+        endIndex = <b>typeof</b> endIndex == 'undefined' ? ns.length-1 : endIndex;
+        <b>var</b> nodes = [];
+        <b>for</b>(var i = start; i &lt;= end; i++) {
+        	nodes.push(ns[i]);
+        }
+        <b>return</b> nodes;
+    },
+    
+    <i>/**
+     * Finds the index of the passed node
+     * @param {HTMLElement/String/Number} nodeInfo An HTMLElement template node, index of a template node or the id of a template node
+     * @<b>return</b> {Number} The index of the node or -1
+     */</i>
+     indexOf : <b>function</b>(node){
+        node = <b>this</b>.getNode(node);
+        <b>if</b>(typeof node.nodeIndex == 'number'){
+            <b>return</b> node.nodeIndex;
+        }
+        <b>var</b> ns = <b>this</b>.nodes;
+        <b>for</b>(var i = 0, len = ns.length; i &lt; len; i++) {
+        	<b>if</b>(ns[i] == node){
+        	    <b>return</b> i;
+        	}
+        }
+        <b>return</b> -1;
+    }
+});
+
+<i>/**
+ * @class YAHOO.ext.JsonView
+ * @extends YAHOO.ext.View
+ * Shortcut class to create a JSON + UpdateManager template view. Usage:
+&lt;pre&gt;&lt;code&gt;
+<b>var</b> view = <b>new</b> YAHOO.ext.JsonView('my-element', 
+           '&amp;lt;div id=&quot;{id}&quot;&amp;gt;{foo} - {bar}&amp;lt;/div&amp;gt;', <i>// auto create template</i>
+           { multiSelect: true, jsonRoot: 'data' });
+
+<i>// listen <b>for</b> node click?</i>
+view.on('click', <b>function</b>(vw, index, node, e){
+    alert('Node &quot;' + node.id + '&quot; at index: ' + index + ' was clicked.');
+});
+
+<i>// direct load of JSON data</i>
+view.load('foobar.php');
+
+
+<i>// Example from my blog list</i>
+<b>var</b> tpl = <b>new</b> YAHOO.ext.Template(
+    '&amp;lt;div class=&quot;entry&quot;&amp;gt;' + 
+       '&amp;lt;a class=&quot;entry-title&quot; href=&quot;{link}&quot;&amp;gt;{title}&amp;lt;/a&amp;gt;' +
+       '&amp;lt;h4&amp;gt;{date} by {author} | {comments} Comments&amp;lt;/h4&amp;gt;{description}' +
+    '&amp;lt;/div&amp;gt;&amp;lt;hr /&amp;gt;'
+);
+
+<b>var</b> moreView = <b>new</b> YAHOO.ext.JsonView('entry-list', tpl, {
+   jsonRoot: 'posts'
+});
+moreView.on('beforerender', <b>this</b>.sortEntries, <b>this</b>, true);
+moreView.load({
+    url:'/blog/get-posts.php', 
+    params: 'allposts=true',
+    text:'Loading Blog Entries...'
+});
+&lt;/code&gt;&lt;/pre&gt;
+ * @constructor
+ * Create a <b>new</b> JsonView
+ * @param {String/HTMLElement/Element} container The container element where the view is to be rendered.
+ * @param {DomHelper.Template} tpl The rendering template
+ * @param {Object} config The config object
+ */</i> 
+YAHOO.ext.JsonView = <b>function</b>(container, tpl, config){
+    <b>var</b> cfg = config || {};
+    cfg.renderUpdates = true;
+    YAHOO.ext.JsonView.superclass.constructor.call(<b>this</b>, container, tpl, null, cfg);        
+    <i>/**
+     * @event beforerender
+     * Fires before rendering of the downloaded json data.
+     * @param {YAHOO.ext.View} <b>this</b>
+     * @param {Object} data The json data loaded
+     */</i>
+     <b>this</b>.events['beforerender'] = true;
+     <i>/**
+     * @event load
+     * Fires when data is loaded.
+     * @param {YAHOO.ext.View} <b>this</b>
+     * @param {Object} data The json data loaded
+     * @param {Object} response The raw Connect response object
+     */</i>
+     <b>this</b>.events['load'] = true;
+     <i>/**
+     * @event loadexception
+     * Fires when loading fails.
+     * @param {YAHOO.ext.View} <b>this</b>
+     * @param {Object} response The raw Connect response object
+     */</i>
+     <b>this</b>.events['loadexception'] = true;
+     <b>this</b>.el.getUpdateManager().on('update', <b>this</b>.onLoad, <b>this</b>, true);
+     <b>this</b>.el.getUpdateManager().on('failure', <b>this</b>.onLoadException, <b>this</b>, true);
+};
+YAHOO.extendX(YAHOO.ext.JsonView, YAHOO.ext.View, {
+    <i>/**
+     * Performs an async request, loading the JSON from the response. If params are specified it uses POST, otherwise it uses GET.
+     * @param {Object/String/Function} url The url <b>for</b> this request or a <b>function</b> to call to get the url or a config object containing any of the following options:
+&lt;pre&gt;&lt;code&gt;
+view.load({
+    url: 'your-url.php',&lt;br/&gt;
+    params: {param1: 'foo', param2: 'bar'}, <i>// or a URL encoded string&lt;br/&gt;</i>
+    callback: yourFunction,&lt;br/&gt;
+    scope: yourObject, <i>//(optional scope)  &lt;br/&gt;</i>
+    discardUrl: false, &lt;br/&gt;
+    nocache: false,&lt;br/&gt;
+    text: 'Loading...',&lt;br/&gt;
+    timeout: 30,&lt;br/&gt;
+    scripts: false&lt;br/&gt;
+});   
+&lt;/code&gt;&lt;/pre&gt;
+     * The only required property is url. The optional properties nocache, text and scripts 
+     * are shorthand <b>for</b> disableCaching, indicatorText and loadScripts and are used to set their associated property on <b>this</b> UpdateManager instance.
+     * @param {&lt;i&gt;String/Object&lt;/i&gt;} params (optional) The parameters to pass as either a url encoded string &quot;param1=1&amp;amp;param2=2&quot; or an object {param1: 1, param2: 2}
+     * @param {&lt;i&gt;Function&lt;/i&gt;} callback (optional) Callback when transaction is complete - called <b>with</b> signature (oElement, bSuccess)
+     * @param {&lt;i&gt;Boolean&lt;/i&gt;} discardUrl (optional) By <b>default</b> when you execute an update the defaultUrl is changed to the last used url. If true, it will not store the url.
+     */</i>
+    load : <b>function</b>(){
+        <b>var</b> um = <b>this</b>.el.getUpdateManager();
+        um.update.apply(um, arguments);
+    },
+    
+    <i>/**
+     * Get the number of records <b>in</b> the current JSON dataset
+     * @<b>return</b> {Number}
+     */</i>
+    getCount : <b>function</b>(){
+        <b>return</b> this.jsonData ? <b>this</b>.jsonData.length : 0;  
+    },
+    
+    beforeRender : <b>function</b>(){
+        <b>this</b>.snapshot = <b>this</b>.jsonData;    
+        <b>if</b>(this.sortInfo){
+            <b>this</b>.sort.apply(<b>this</b>, <b>this</b>.sortInfo);    
+        }
+        <b>this</b>.fireEvent('beforerender', <b>this</b>, <b>this</b>.jsonData);
+    },
+    
+    onLoad : <b>function</b>(el, o){
+       <b>this</b>.fireEvent('load', <b>this</b>, <b>this</b>.jsonData, o);
+    },
+    
+    onLoadException : <b>function</b>(el, o){
+       <b>this</b>.fireEvent('loadexception', <b>this</b>, o);
+    },
+    
+    <i>/**
+     * Filter the data by a specific property.
+     * @param {String} property A property on your JSON objects
+     * @param {String/RegExp} value Either string that the property values 
+     * should start <b>with</b> or a RegExp to test against the property
+     */</i>
+    filter : <b>function</b>(property, value){
+        <b>if</b>(this.jsonData){
+            <b>var</b> data = [];
+            <b>var</b> ss = <b>this</b>.snapshot;
+            <b>if</b>(typeof value == 'string'){
+                <b>var</b> vlen = value.length;
+                <b>if</b>(vlen == 0){
+                    <b>this</b>.clearFilter();
+                    <b>return</b>;
+                }
+                <b>for</b>(var i = 0, len = ss.length; i &lt; len; i++){
+    				<b>var</b> o = ss[i];
+    				<b>if</b>(o[property].substr(0, vlen) == value){
+    					data.push(o);
+    				}
+    			}
+            }<b>else</b> if(value.exec){ <i>// regex?</i>
+                <b>for</b>(var i = 0, len = ss.length; i &lt; len; i++){
+    				<b>var</b> o = ss[i];
+    				<b>if</b>(value.test(o[property])){
+    					data.push(o);
+    				}
+    			}
+            }<b>else</b>{
+                <b>return</b>;
+            }
+            <b>this</b>.jsonData = data;
+    		<b>this</b>.refresh();
+        }
+	},
+    
+    <i>/**
+     * Filter by a <b>function</b>. The passed <b>function</b> will be called <b>with</b> each 
+     * object <b>in</b> the current dataset. If the <b>function</b> returns true, the value is kept 
+     * otherwise it is filtered.
+     * @param {Function} fn The
+     * @param {Object} scope (optional) The scope of the <b>function</b> (defaults to <b>this</b> JsonView) 
+     */</i>
+    filterBy : <b>function</b>(fn, scope){
+        <b>if</b>(this.jsonData){
+            <b>var</b> data = [];
+            <b>var</b> ss = <b>this</b>.snapshot;
+            <b>for</b>(var i = 0, len = ss.length; i &lt; len; i++){
+    			<b>var</b> o = ss[i];
+    			<b>if</b>(fn.call(scope|| <b>this</b>, o)){
+    				data.push(o);
+    			}
+    		}
+    		<b>this</b>.jsonData = data;
+    		<b>this</b>.refresh();
+        }
+    },
+    
+    <i>/**
+     * Clears the current filter.
+     */</i>
+    clearFilter : <b>function</b>(){
+        <b>if</b>(this.snapshot &amp;&amp; <b>this</b>.jsonData != <b>this</b>.snapshot){
+            <b>this</b>.jsonData = <b>this</b>.snapshot;
+            <b>this</b>.refresh();
+        }   
+    },
+    
+    
+    <i>/**
+     * Sorts the data <b>for</b> this view and refreshes it.
+     * @param {String} property A property on your JSON objects to sort on
+     * @param {String} direction (optional) desc or asc (defaults to asc) 
+     * @param {Function} sortType (optional) A <b>function</b> to call to convert the data to a sortable value.
+     */</i>
+    sort : <b>function</b>(property, dir, sortType){
+        <b>this</b>.sortInfo = Array.prototype.slice.call(arguments, 0);
+        <b>if</b>(this.jsonData){
+            <b>var</b> p = property;
+            <b>var</b> dsc = dir &amp;&amp; dir.toLowerCase() == 'desc';
+            <b>var</b> f = <b>function</b>(o1, o2){
+            	<b>var</b> v1 = sortType ? sortType(o1[p]) : o1[p];
+            	<b>var</b> v2 = sortType ? sortType(o2[p]) : o2[p];;
+            	<b>if</b>(v1 &lt; v2){
+        			<b>return</b> dsc ? +1 : -1;
+        		}<b>else</b> if(v1 &gt; v2){
+        			<b>return</b> dsc ? -1 : +1;
+                }<b>else</b>{
+        	    	<b>return</b> 0;
+                }
+            };
+            <b>this</b>.jsonData.sort(f);
+            <b>this</b>.refresh();
+            <b>if</b>(this.jsonData != <b>this</b>.snapshot){
+            	<b>this</b>.snapshot.sort(f);
+            }
+        }
+    }
+});</code></pre><hr><div style="font-size:10px;text-align:center;color:gray;">yui-ext - Copyright &copy; 2006 Jack Slocum.  |
+    Yahoo! UI - Copyright &copy; 2006 Yahoo! Inc.<br />All rights reserved.</div>
+    </body></html>

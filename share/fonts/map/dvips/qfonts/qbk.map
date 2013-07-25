@@ -1,0 +1,6 @@
+% Support for QuasiBookman font family (based on URW fonts) in Type1 format
+% Available from CTAN:fonts/psfonts/polish/qfonts
+qbkr QuasiBookman-Regular "encqbk ReEncodeFont" <qbk.enc <qbkr.pfb
+qbkb QuasiBookman-Bold "encqbk ReEncodeFont" <qbk.enc <qbkb.pfb
+qbkri QuasiBookman-RegularItalic "encqbk ReEncodeFont" <qbk.enc <qbkri.pfb
+qbkbi QuasiBookman-BoldItalic "encqbk ReEncodeFont" <qbk.enc <qbkbi.pfb

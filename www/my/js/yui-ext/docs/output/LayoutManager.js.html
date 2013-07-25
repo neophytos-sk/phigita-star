@@ -1,0 +1,133 @@
+<html><head><title>LayoutManager.js</title><link rel="stylesheet" type="text/css" href="../resources/style.css" media="screen"/></head><body><h1>LayoutManager.js</h1><pre class="highlighted"><code><i>/**
+ * @class YAHOO.ext.LayoutManager
+ * @extends YAHOO.ext.util.Observable
+ * Base class <b>for</b> layout managers.
+ */</i>
+YAHOO.ext.LayoutManager = <b>function</b>(container){
+    YAHOO.ext.LayoutManager.superclass.constructor.call(<b>this</b>);
+    <b>this</b>.el = getEl(container, true);
+    <b>this</b>.id = <b>this</b>.el.id;
+    <b>this</b>.el.addClass('ylayout-container');
+    <i>/** false to disable window resize monitoring @type Boolean */</i>
+    <b>this</b>.monitorWindowResize = true;
+    <b>this</b>.regions = {};
+    <b>this</b>.events = {
+        <i>/**
+         * @event layout
+         * Fires when a layout is performed. 
+         * @param {YAHOO.ext.LayoutManager} <b>this</b>
+         */</i>
+        'layout' : <b>new</b> YAHOO.util.CustomEvent(),
+        <i>/**
+         * @event regionresized
+         * Fires when the user resizes a region. 
+         * @param {YAHOO.ext.LayoutRegion} region
+         * @param {Number} newSize The <b>new</b> size (width <b>for</b> east/west, height <b>for</b> north/south)
+         */</i>
+        'regionresized' : <b>new</b> YAHOO.util.CustomEvent(),
+        <i>/**
+         * @event regioncollapsed
+         * Fires when a region is collapsed. 
+         * @param {YAHOO.ext.LayoutRegion} region
+         */</i>
+        'regioncollapsed' : <b>new</b> YAHOO.util.CustomEvent(),
+        <i>/**
+         * @event regionexpanded
+         * Fires when a region is expanded.  
+         * @param {YAHOO.ext.LayoutRegion} region
+         */</i>
+        'regionexpanded' : <b>new</b> YAHOO.util.CustomEvent()
+    };
+    <b>this</b>.updating = false;
+    YAHOO.ext.EventManager.onWindowResize(<b>this</b>.onWindowResize, <b>this</b>, true);
+};
+
+YAHOO.extendX(YAHOO.ext.LayoutManager, YAHOO.ext.util.Observable, {
+    <i>/**
+     * Returns true <b>if</b> this layout is currently being updated
+     * @<b>return</b> {Boolean}
+     */</i>
+    isUpdating : <b>function</b>(){
+        <b>return</b> this.updating; 
+    },
+    
+    <i>/**
+     * Suspend the LayoutManager from doing auto-layouts <b>while</b>
+     * making multiple add or remove calls
+     */</i>
+    beginUpdate : <b>function</b>(){
+        <b>this</b>.updating = true;    
+    },
+    
+    <i>/**
+     * Restore auto-layouts and optionally disable the manager from performing a layout
+     * @param {Boolean} noLayout true to disable a layout update 
+     */</i>
+    endUpdate : <b>function</b>(noLayout){
+        <b>this</b>.updating = false;
+        <b>if</b>(!noLayout){
+            <b>this</b>.layout();
+        }    
+    },
+    
+    layout: <b>function</b>(){
+        
+    },
+    
+    onRegionResized : <b>function</b>(region, newSize){
+        <b>this</b>.fireEvent('regionresized', region, newSize);
+        <b>this</b>.layout();
+    },
+    
+    onRegionCollapsed : <b>function</b>(region){
+        <b>this</b>.fireEvent('regioncollapsed', region);
+    },
+    
+    onRegionExpanded : <b>function</b>(region){
+        <b>this</b>.fireEvent('regionexpanded', region);
+    },
+        
+    <i>/**
+     * Returns the size of the current view, This method normalizes document.body and element embedded layouts and
+     * performs box-model adjustments.
+     * @<b>return</b> {Object} The size as an object {width: (the width), height: (the height)}
+     */</i>
+    getViewSize : <b>function</b>(){
+        <b>var</b> size;
+        <b>if</b>(this.el.dom != document.body){
+            <b>this</b>.el.beginMeasure();
+            size = <b>this</b>.el.getSize();
+            <b>this</b>.el.endMeasure();
+        }<b>else</b>{
+            size = {width: YAHOO.util.Dom.getViewportWidth(), height: YAHOO.util.Dom.getViewportHeight()};
+        }
+        size.width -= <b>this</b>.el.getBorderWidth('lr')-<b>this</b>.el.getPadding('lr');
+        size.height -= <b>this</b>.el.getBorderWidth('tb')-<b>this</b>.el.getPadding('tb');
+        <b>return</b> size;
+    },
+    
+    <i>/**
+     * Returns the element <b>this</b> layout is bound to.
+     * @<b>return</b> {YAHOO.ext.Element}
+     */</i>
+    getEl : <b>function</b>(){
+        <b>return</b> this.el;
+    },
+    
+    <i>/**
+     * Returns the specified region.
+     * @param {String} target The region key
+     * @<b>return</b> {YAHOO.ext.LayoutRegion}
+     */</i>
+    getRegion : <b>function</b>(target){
+        <b>return</b> this.regions[target.toLowerCase()];
+    },
+    
+    onWindowResize : <b>function</b>(){
+        <b>if</b>(this.monitorWindowResize){
+            <b>this</b>.layout();
+        }
+    }
+});</code></pre><hr><div style="font-size:10px;text-align:center;color:gray;">yui-ext - Copyright &copy; 2006 Jack Slocum.  |
+    Yahoo! UI - Copyright &copy; 2006 Yahoo! Inc.<br />All rights reserved.</div>
+    </body></html>

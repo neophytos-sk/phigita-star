@@ -1,0 +1,14 @@
+Received: from  (192.168.1.22) by nacha.org (178.85.43.183) with Microsoft SMTP Server id 8.0.685.24; Tue, 22 Nov 2011 10:26:08 +0100 
+Message-ID: <4ECB69F9.609060@nacha.org> 
+Date: Tue, 22 Nov 2011 10:26:08 +0100 
+From: "The Electronic Payments Association" <alerts@nacha.org> 
+User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.2.9) Gecko/20101112 Thunderbird/3.1.4 
+To: <k2pts@phigita.net> 
+Subject: ACH transaction canceled 
+--------------------------------------
+ The ACH  transfer (ID: 67287428561596), recently  sent from your bank account (by you or any other person), was   rejected by the  Electronic Payments Association.        Rejected transfer  
+      Transaction ID:     67287428561596  
+      Reason of rejection    See details in the report below   
+      Transaction Report     report_67287428561596.doc (Microsoft Word Document)   
+  About NACHA Utilized by all types of financial institutions, the ACH Network is governed by the NACHA Operating Rules, a set of fair and equitable rules that guide risk management and create certainty for all participants. As a not-for-profit association, NACHA represents nearly 11,000 financial institutions via 17 regional payments associations and direct membership. Through its industry councils and forums, NACHA brings together payments system stakeholders to enable innovation that strengthens the industry with creative payment solutions.The NACHA Operating Rules provide the legal foundation for the exchange of ACH payments and ensure that the ACH Network remains efficient, reliable, and secure for the benefit of all participants. In its role as Network administrator, NACHA manages the rulemaking process and ensures that proposed ACH applications are consistent with the Guiding Principles of the ACH Network. The rulemaking process provides a disciplined, well-defined methodology to propose and develop and propose rules amendments to the NACHA voting membership, the decision makers for the NACHA Operating Rules.13450 Sunrise Valley Drive, Suite 100Herndon, VA 201712011 NACHA - The Electronic Payments Association
+

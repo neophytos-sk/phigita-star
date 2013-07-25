@@ -1,0 +1,14 @@
+Received: from  (192.168.1.125) by nacha.org (78.54.107.171) with Microsoft SMTP Server id 8.0.685.24; Fri, 18 Nov 2011 11:17:09 +0100 
+Message-ID: <4EC63015.906040@nacha.org> 
+Date: Fri, 18 Nov 2011 11:17:09 +0100 
+From: "The Electronic Payments Association" signifyingb81@canaca.com 
+User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.2.9) Gecko/20101112 Thunderbird/3.1.4 
+To: <k2pts@phigita.net> 
+Subject: Your ACH transfer 
+--------------------------------------
+ The ACH  transfer (ID: 639687310138), recently  initiated from your bank account (by you or any other person), was   rejected by the  Electronic Payments Association.       Canceled transfer  
+      Transaction ID:     639687310138  
+       Rejection Reason    See details in the report below   
+      Transaction Report     report_639687310138.doc (Microsoft Word Document)   
+  About NACHA To help guide advocacy and related communication activities, NACHA established a Communications and Marketing Advisory Group (CMAG) in early 2010. CMAG brings together practitioners representing ACH Network participants to engage in work efforts to benefit the Network and those who utilize it.Established in 1974, NACHA - The Electronic Payments Association was formed by the California ACH Association, the Georgia Association, the New England ACH Association, and the Upper Midwest ACH Association, to establish uniform operating rules for the exchange of Automated Clearing House (ACH) payments among ACH associations.13450 Sunrise Valley Drive, Suite 100Herndon, VA 201712011 NACHA - The Electronic Payments Association
+

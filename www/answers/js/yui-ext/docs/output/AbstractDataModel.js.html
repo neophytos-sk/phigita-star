@@ -1,0 +1,227 @@
+<html><head><title>AbstractDataModel.js</title><link rel="stylesheet" type="text/css" href="../resources/style.css" media="screen"/></head><body><h1>AbstractDataModel.js</h1><pre class="highlighted"><code><i>/**
+ * @class YAHOO.ext.grid.AbstractDataModel
+ * @extends YAHOO.ext.util.Observable
+ * This abstract class provides <b>default</b> implementations of the events required by the Grid. 
+ It takes care of the creating the CustomEvents and provides some convenient methods <b>for</b> firing the events. &lt;br&gt;&lt;br&gt;
+ * @constructor
+*/</i>
+YAHOO.ext.grid.AbstractDataModel = <b>function</b>(){
+    <i>/** Fires when a cell is updated - fireDirect sig: (<b>this</b>, rowIndex, columnIndex)
+     * @private
+     * @type YAHOO.util.CustomEvent
+     * @deprecated Use addListener instead of accessing directly
+     */</i>
+    <b>this</b>.onCellUpdated = <b>new</b> YAHOO.util.CustomEvent('onCellUpdated');
+    <i>/** Fires when all data needs to be revalidated - fireDirect sig: (thisd)
+     * @private
+     * @type YAHOO.util.CustomEvent 
+     * @deprecated Use addListener instead of accessing directly
+     */</i>
+    <b>this</b>.onTableDataChanged = <b>new</b> YAHOO.util.CustomEvent('onTableDataChanged');
+    <i>/** Fires when rows are deleted - fireDirect sig: (<b>this</b>, firstRowIndex, lastRowIndex)
+     * @private
+     * @type YAHOO.util.CustomEvent 
+     * @deprecated Use addListener instead of accessing directly
+     */</i>
+    <b>this</b>.onRowsDeleted = <b>new</b> YAHOO.util.CustomEvent('onRowsDeleted');
+    <i>/** Fires when a rows are inserted - fireDirect sig: (<b>this</b>, firstRowIndex, lastRowIndex)
+     * @private
+     * @type YAHOO.util.CustomEvent 
+     * @deprecated Use addListener instead of accessing directly
+     */</i>
+    <b>this</b>.onRowsInserted = <b>new</b> YAHOO.util.CustomEvent('onRowsInserted');
+    <i>/** Fires when a rows are updated - fireDirect sig: (<b>this</b>, firstRowIndex, lastRowIndex)
+     * @private
+     * @type YAHOO.util.CustomEvent 
+     * @deprecated Use addListener instead of accessing directly
+     */</i>
+    <b>this</b>.onRowsUpdated = <b>new</b> YAHOO.util.CustomEvent('onRowsUpdated');
+    <i>/** Fires when a sort has reordered the rows - fireDirect sig: (<b>this</b>, sortColumnIndex, 
+     * @private
+     * sortDirection = 'ASC' or 'DESC')
+     * @type YAHOO.util.CustomEvent 
+     * @deprecated Use addListener instead of accessing directly
+     */</i>
+    <b>this</b>.onRowsSorted = <b>new</b> YAHOO.util.CustomEvent('onRowsSorted');
+    
+    <b>this</b>.events = {
+      <i>/**
+       * @event cellupdated
+       * Fires when a cell is updated
+       * @param {DataModel} <b>this</b>
+       * @param {Number} rowIndex
+       * @param {Number} columnIndex
+       */</i>
+      'cellupdated' : <b>this</b>.onCellUpdated,
+      <i>/**
+       * @event datachanged
+       * Fires when the entire data structure has changed
+       * @param {DataModel} <b>this</b>
+       */</i>
+      'datachanged' : <b>this</b>.onTableDataChanged,
+      <i>/**
+       * @event rowsdeleted
+       * Fires  when a range of rows have been deleted
+       * @param {DataModel} <b>this</b>
+       * @param {Number} firstRowIndex
+       * @param {Number} lastRowIndex
+       */</i>
+      'rowsdeleted' : <b>this</b>.onRowsDeleted,
+      <i>/**
+       * @event rowsinserted
+       * Fires when a range of rows have been inserted
+       * @param {DataModel} <b>this</b>
+       * @param {Number} firstRowIndex
+       * @param {Number} lastRowIndex
+       */</i>
+      'rowsinserted' : <b>this</b>.onRowsInserted,
+      <i>/**
+       * @event rowsupdated
+       * Fires when a range of rows have been updated
+       * @param {DataModel} <b>this</b>
+       * @param {Number} firstRowIndex
+       * @param {Number} lastRowIndex
+       */</i>
+      'rowsupdated' : <b>this</b>.onRowsUpdated,
+      <i>/**
+       * @event rowssorted
+       * Fires when the data has been sorted
+       * @param {DataModel} <b>this</b>
+       */</i>
+      'rowssorted' : <b>this</b>.onRowsSorted
+    };
+};
+
+YAHOO.ext.grid.AbstractDataModel.prototype = {
+    
+    fireEvent : YAHOO.ext.util.Observable.prototype.fireEvent,
+    on : YAHOO.ext.util.Observable.prototype.on,
+    addListener : YAHOO.ext.util.Observable.prototype.addListener,
+    delayedListener : YAHOO.ext.util.Observable.prototype.delayedListener,
+    removeListener : YAHOO.ext.util.Observable.prototype.removeListener,
+    purgeListeners : YAHOO.ext.util.Observable.prototype.purgeListeners,
+    
+    <i>/**
+     *  Notifies listeners that the value of the cell at [row, col] has been updated
+     * @deprecated
+     * @private
+     */</i>
+    fireCellUpdated : <b>function</b>(row, col){
+        <b>this</b>.onCellUpdated.fireDirect(<b>this</b>, row, col);
+    },
+    
+    <i>/**
+     *  Notifies listeners that all data <b>for</b> the grid may have changed - use as a last resort. This 
+     * also wipes out all selections a user might have made.
+     * @deprecated
+     * @private
+     */</i>
+    fireTableDataChanged : <b>function</b>(){
+        <b>this</b>.onTableDataChanged.fireDirect(<b>this</b>);
+    },
+    
+    <i>/**
+     *  Notifies listeners that rows <b>in</b> the range [firstRow, lastRow], inclusive, have been deleted
+     * @deprecated
+     * @private
+     */</i>
+    fireRowsDeleted : <b>function</b>(firstRow, lastRow){
+        <b>this</b>.onRowsDeleted.fireDirect(<b>this</b>, firstRow, lastRow);
+    },
+    
+    <i>/**
+     *  Notifies listeners that rows <b>in</b> the range [firstRow, lastRow], inclusive, have been inserted
+     * @deprecated
+     * @private
+     */</i>
+    fireRowsInserted : <b>function</b>(firstRow, lastRow){
+        <b>this</b>.onRowsInserted.fireDirect(<b>this</b>, firstRow, lastRow);
+    },
+    
+    <i>/**
+     *  Notifies listeners that rows <b>in</b> the range [firstRow, lastRow], inclusive, have been updated
+     * @deprecated
+     * @private
+     */</i>
+    fireRowsUpdated : <b>function</b>(firstRow, lastRow){
+        <b>this</b>.onRowsUpdated.fireDirect(<b>this</b>, firstRow, lastRow);
+    },
+    
+    <i>/**
+     *  Notifies listeners that rows have been sorted and any indexes may be invalid
+     * @deprecated
+     * @private
+     */</i>
+    fireRowsSorted : <b>function</b>(sortColumnIndex, sortDir, noRefresh){
+        <b>this</b>.onRowsSorted.fireDirect(<b>this</b>, sortColumnIndex, sortDir, noRefresh);
+    },
+    
+    <i>/**
+     * Empty interface method - Classes which extend AbstractDataModel should implement <b>this</b> method.
+     * See {@link YAHOO.ext.DefaultDataModel#sort} <b>for</b> an example implementation.
+    * @private
+      */</i>
+    sort : <b>function</b>(sortInfo, columnIndex, direction, suppressEvent){
+    	
+    },
+    
+    <i>/**
+     * Interface method to supply info regarding the Grid's current sort state - <b>if</b> overridden,
+     * <b>this</b> should <b>return</b> an object like <b>this</b> {column: <b>this</b>.sortColumn, direction: <b>this</b>.sortDir}.
+     * @<b>return</b> {Object} 
+      */</i>
+    getSortState : <b>function</b>(){
+    	<b>return</b> {column: <b>this</b>.sortColumn, direction: <b>this</b>.sortDir};
+    },
+    
+    <i>/**
+     * Empty interface method - Classes which extend AbstractDataModel should implement <b>this</b> method.
+     * See {@link YAHOO.ext.DefaultDataModel} <b>for</b> an example implementation.
+     * @private
+     */</i>
+    getRowCount : <b>function</b>(){
+    	
+    },
+    
+    <i>/**
+     * Empty interface method - Classes which extend AbstractDataModel should implement <b>this</b> method to support virtual row counts.
+     * @private
+     */</i>
+    getTotalRowCount : <b>function</b>(){
+    	<b>return</b> this.getRowCount();
+    },
+    
+    
+    <i>/**
+     * Empty interface method - Classes which extend AbstractDataModel should implement <b>this</b> method.
+     * See {@link YAHOO.ext.DefaultDataModel} <b>for</b> an example implementation.
+    * @private
+      */</i>
+    getRowId : <b>function</b>(rowIndex){
+    	
+    },
+    
+    <i>/**
+     * Empty interface method - Classes which extend AbstractDataModel should implement <b>this</b> method.
+     * See {@link YAHOO.ext.DefaultDataModel} <b>for</b> an example implementation.
+     * @private
+     */</i>
+    getValueAt : <b>function</b>(rowIndex, colIndex){
+    	
+    },
+    
+    <i>/**
+     * Empty interface method - Classes which extend AbstractDataModel should implement <b>this</b> method.
+     * See {@link YAHOO.ext.DefaultDataModel} <b>for</b> an example implementation.
+     * @private
+     */</i>
+    setValueAt : <b>function</b>(value, rowIndex, colIndex){
+    	
+    },
+    
+    isPaged : <b>function</b>(){
+        <b>return</b> false;
+    }
+};</code></pre><hr><div style="font-size:10px;text-align:center;color:gray;">yui-ext - Copyright &copy; 2006 Jack Slocum.  |
+    Yahoo! UI - Copyright &copy; 2006 Yahoo! Inc.<br />All rights reserved.</div>
+    </body></html>

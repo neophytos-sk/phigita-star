@@ -1,0 +1,136 @@
+contract {
+    param -id page_id -check "integer notnull"
+    param -id offset -check "naturalnum" -optional 1 -default 0
+}
+
+datastore \
+    -id pagedata \
+    -scope user \
+    -from_class ::wiki::Page \
+    -where [list "id=:page_id"]
+
+guard { return @{pagedata:rowcount} }
+
+val -id live_revision_id -with pagedata { return @{live_revision_id} }
+
+set limit 50
+set limit_plus_one [expr {1+${limit}}]
+val -id limit "return ${limit}"
+
+
+
+datastore \
+    -id revisiondata \
+    -scope user \
+    -select {page_id id title creation_user creation_date last_update} \
+    -from_class ::wiki::Page_Revision \
+    -where [list "page_id=:page_id"] \
+    -limit ${limit_plus_one} \
+    -order "last_update desc" \
+    -extend {
+	set pretty_last_update [lc_time_fmt $last_update "%b %d, %Y"]
+    }
+
+
+val -id title { return "Revisions for page #@{page_id}" }
+
+val -id context_bar { 
+    return [::xo::kit::context_bar @{title}]
+}
+
+# keep css classes and tags used by context_bar
+::xo::tdp::excludeClassesFromRenaming {breadcrumb divider ul li active}
+
+
+master -title @{title} {
+
+    nt @{context_bar:noquote}
+
+    p
+    
+    div -id "revisiondata" {
+
+	h1 { t @{title} }
+	
+	p
+	
+	table -width 100% {
+	    tr {
+		th -width "5%" {
+		    t "Rev"
+		}
+		th -width "5%" {
+		    t ""
+		}
+		th -width "70%" {
+		    t "Title"
+		}
+		th -nowrap "" { t "Date" }
+		th -nowrap "" {
+		    t "Live Revision"
+		}
+		th -colspan 2 {
+		    t "Options"
+		}
+	    }
+
+	    tpl -for revisiondata -limit ${limit} {
+		tr {
+		    td {
+			t "r@{id}"
+		    }
+		    td {
+			tpl -if { @{val.live_revision_id} ne @{id} } {
+			    a -href "diff?page_id=@{param.page_id}&revision_id=@{val.live_revision_id}&compare_revision_id=@{id}" {
+				t "diff"
+			    }
+			}
+		    }
+		    td -valign top {
+			a -href "@{val.page_id}?revision_id=@{id}" {
+			    t @{title}
+			}
+		    }
+		    td -nowrap "" { t @{pretty_last_update} }
+		    td -align "center" {
+			a -href "make-live-revision?page_id=@{val.page_id}&revision_id=@{id}" {
+
+			    tpl -if { @{val.live_revision_id} eq @{id} } {
+				input \
+				    -name "live_revision_id" \
+				    -type "radio" \
+				    -value @{id} \
+				    -checked checked
+			    }
+			    tpl -else "" {
+				input \
+				    -name "live_revision_id" \
+				    -type "radio" \
+				    -value @{id}
+			    }
+			}
+		    }
+		    td -width "5%" -align center -nowrap "" {
+			a \
+			    -class "btn btn-mini btn-warning" \
+			    -href "revision-edit?id=@{id}" {
+
+				t "Edit" 
+			    }
+		    }
+		    td -width "5%" -align center -nowrap "" {
+			tpl -if { @{val.live_revision_id} ne @{id} } {
+			    a \
+				-class "btn btn-mini btn-danger" \
+				-href "revision-delete?page_id=@{val.page_id}&revision_id=@{id}"\
+				-onclick "return confirm('Are you sure you want to delete this wiki item?');" { 
+				    t "Delete" 
+				}
+			}
+		    }
+		}
+	    }
+	}
+
+    }
+}

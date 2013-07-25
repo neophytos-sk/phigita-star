@@ -1,0 +1,11 @@
+Received: from lkyrbr ([42.49.133.76])
+	by WEB3
+	; Sat, 29 Oct 2011 16:39:04 +0800 
+Message-ID: <20111029164004723584@91.cn> 
+From: =?gb2312?B?y7PT7vbOtefX09PQz965q8u+?= <service@91.cn> 
+To:  
+Subject: =?gb2312?B?wcu94tfUztKjrMXg0fjV/ci3tcTQxMyso6zX9rrPuPHB7LW81d+jrA==?=
+	=?gb2312?B?LS0tLcK9w8/G8A==?= 
+Date: Sat, 29 Oct 2011 16:39:59 +0800 
+X-mailer: Agjhxgojrq 7 
+Whoops!  What is a 'application/vnd.ms-excel'?

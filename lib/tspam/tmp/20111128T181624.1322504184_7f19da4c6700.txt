@@ -1,0 +1,10 @@
+Received: from 182.185.42.216 by mail.messaging.microsoft.com; Mon, 28 Nov 2011 23:15:35 +0500 
+Date: Mon, 28 Nov 2011 23:15:35 +0500 
+From: =?koi8-r?B?98HS18HSwSDlxsnNz9fOwQ==?= <barrettec7@pyrosequencing.com> 
+X-Mailer: The Bat! (v3.60.07) Educational 
+Reply-To: barrettec7@pyrosequencing.com 
+X-Priority: 3 (Normal) 
+Message-ID: <077459662.45523260936012@pyrosequencing.com> 
+To: webmaster@phigita.net 
+Subject: =?koi8-r?B?zc/FINDMwdTYxQ==?= 
+

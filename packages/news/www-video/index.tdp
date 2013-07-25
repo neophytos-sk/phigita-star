@@ -1,0 +1,66 @@
+# -pool newsdb
+
+datastore \
+    -id videodata \
+    -from_class ::Video \
+    -order "last_update desc" \
+    -limit 64 \
+    -extend {
+	lassign [::xo::buzz::getThumbnailDetails [self]] thumbnail_url thumbnail_width thumbnail_height
+    }
+
+css {
+    .video_wrap {width:100px;height:150px;float:left;text-align:center;}
+    p.video {color:#949494;font-size:10px;font-weight:normal;line-height:11px;margin:0;padding:0 12px 0 0;}   
+    p.video a {color:#004276;text-decoration:none;}
+}
+
+val -id advertistement_right { ::xo::google::adsense::get_slot_html 5014637820 160 600 }
+
+val -id advertisement_left { ::xo::google::adsense::get_slot_html 1150766718 125 125 }
+
+
+val -id context_bar { return [::xo::kit::context_bar] }
+
+# keep css classes and tags used by context_bar
+::xo::tdp::excludeClassesFromRenaming {breadcrumb divider ul li active}
+
+
+master -title "Video Buzz" {
+    
+    nt @{context_bar:noquote}
+
+    div -style "float:right;" {
+	nt @{advertisement_right:noquote}
+    }
+
+    div -style "float:left;padding:5px;" {
+	nt @{advertisement_left:noquote}
+    }
+
+
+    tpl -for videodata {
+	div -class video_wrap {
+
+	    a -href "@{ref_video_id}.@{provider}" {
+		img \
+		    -src "@{thumbnail_url}" \
+		    -width "@{thumbnail_width}" \
+		    -height "@{thumbnail_height}" \
+		    -style "margin:1px;"
+	    }
+	    br
+	    p -class video {
+		a -href "@{ref_video_id}.@{provider}" {
+		    t @{title}
+		}
+	    }
+	}
+    }
+    
+
+    div -style "float:left;padding:5px;" {
+	nt @{advertisement_left:noquote}
+    }
+
+}

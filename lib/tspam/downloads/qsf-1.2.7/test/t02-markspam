@@ -1,0 +1,22 @@
+#!/bin/sh
+#
+# TEST: Spam mark readback:             
+
+rm -f $TESTDB
+./mboxsplit 1 < .test-spam | $PROG -d $BACKEND:$TESTDB -m -w 2
+ISSPAM=0
+./mboxsplit 1 < .test-spam | $PROG -d $BACKEND:$TESTDB -t || ISSPAM=1
+test $ISSPAM -eq 1
+
+test $BACKEND = MySQL && exit 0
+test $BACKEND = mysql && exit 0
+
+if test "$BACKEND" != "obtree"; then
+	UPDATECOUNT1=`$PROG -d $BACKEND:$TESTDB -D | sed -n 's/^COUNT-UPDATES //p'`
+	./mboxsplit 1 < .test-spam | $PROG -d $BACKEND:$TESTDB -m
+	./mboxsplit 2 < .test-spam | $PROG -d $BACKEND:$TESTDB -m
+	./mboxsplit 3 < .test-spam | $PROG -d $BACKEND:$TESTDB -m
+	UPDATECOUNT2=`$PROG -d $BACKEND:$TESTDB -D | sed -n 's/^COUNT-UPDATES //p'`
+	DIFFERENCE=`expr $UPDATECOUNT2 - $UPDATECOUNT1`
+	test $DIFFERENCE -eq 3
+fi

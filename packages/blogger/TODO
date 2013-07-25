@@ -1,0 +1,17 @@
+* Categories
+
+* Comments
+
+* Help: Formatting rules 
+
+* Blogroll (see also, random faceroll in Joi Ito's website)
+
+* Trackback
+
+* Special STX tag for blog entries: "this is a blog entry":blog:814-325
+
+  Motivation for using the STX tag for blog entries instead of ''http': our system will be able to add an icon to add it to the browsing user's clipboard or other interesting stuff.
+
+* Moblog
+
+* Linklog (relate with bookmarks)

@@ -1,0 +1,485 @@
+
+# macros / constants 
+
+set imageDir "/web/data/news/images"
+set limit 24
+set limit_plus_one [expr { 1+${limit} }]
+set image_host "http://i00-books.phigita.net"
+
+
+set extend {
+    set category [lindex ${categories} 0]
+    set subject [string trim [lindex [split ${category} {|}] 0]]
+    set url "@{base}/isbn/${ean13}"
+    set subject_for_url [string map {{ } {_}} ${subject}]
+
+    set author [::util::coalesce [join ${authorlist} {,}] ${author}]
+    if { ${author} eq {} } {
+	set author [mc Unknown_Author "Unknown Author"]
+    }
+
+}
+
+
+# page logic
+contract {
+    param -id "offset" -check "naturalnum" -default 0 -optional 1
+    param -id "q" -optional 1 -default ""
+    param -id "subject" -check "notnull" -optional 1 -default ""
+    param -id "vuh_p" -check "boolean notnull" -default "0" -optional 1
+
+    # pragma -id debug -value 1
+}
+
+
+val -id base { 
+    if { @{vuh_p} } {
+	set base ..
+    } else {
+	set base .
+    }
+    return ${base}
+}
+
+guard -id offset_upto_120 {
+    
+    if { @{offset} > 120 } {
+	set q @{q}
+	set subject @{subject}
+	set count 120
+	set url [export_vars -no_empty -base @{base} -override [list [list offset ${count}]] {q subject}]
+	ns_returnmoved ${url}
+	return 0
+    }
+    return 1
+}
+
+
+val -id limit "return ${limit}"
+val -id limit_plus_one "return ${limit_plus_one}"
+
+
+set c1 [::xo::db::qualifier id in {
+    1769 390 2823 3065 1975 3122 2068 2123 3186 4557 690 9 717 3886 4546
+}]
+
+datastore \
+    -id subjectdata \
+    -cache "BOOKS_SUBJECTS" \
+    -pool bookdb \
+    -select name \
+    -from_class ::Book::Subject \
+    -where [list $c1] \
+    -order "length(name) desc,name" \
+    -extend {
+	set subject_for_url [string map {{ } {_}} ${name}]
+    }
+
+
+val -id query_for_form {
+    if { @{subject} ne {} } {
+	return "subject:[::util::doublequote @{subject}] @{q}"
+    } else {
+	return @{q}
+    }
+}
+
+val -id tsQuery { 
+    if { @{query_for_form:trim} ne {} } {
+	set tsquery [::ttext::analysis::plain_to_tsquery @{query_for_form}]
+	return $tsquery
+    }
+    return ""
+}
+
+dataview {
+
+    tpl -if { @{tsQuery} eq {} } {
+
+	val -id book_offset -cache_timeout "3600" {expr { int(50000*rand()) }}
+
+	datastore \
+	    -id browsedata \
+	    -name bookdata \
+	    -pool bookdb \
+	    -from_class ::Book \
+	    -where [list "image_p"] \
+	    -offset @{book_offset} \
+	    -limit ${limit} \
+	    -order "ean13" \
+	    -extend ${extend}
+
+    }
+    tpl -else "" {
+
+	val -id default_text_search_config { return [default_text_search_config] }
+
+	datastore \
+	    -id searchdata \
+	    -name bookdata \
+	    -pool bookdb \
+	    -select {
+		*
+		isbn 
+		rank
+		{ts_headline('@{default_text_search_config}',title,@{tsQuery}) as title} 
+	    } \
+	    -from_class [::db::Set new \
+			     -pool bookdb \
+			     -select "* {ts_rank(ts_vector,@{tsQuery}) as rank}" \
+			     -type ::Book \
+			     -where [list "ts_vector @@ @{tsQuery}"] \
+			     -order "rank desc" \
+			     -offset @{offset} \
+			     -limit ${limit_plus_one}] \
+	    -order "rank desc" \
+	    -extend ${extend}
+
+
+    }
+}
+
+
+
+val -id queryTitle { 
+    set queryTitle ""
+
+    if { @{subject} ne {} } {
+	append queryTitle "@{subject} - "
+    }
+    if { @{q} ne {} } {
+	append queryTitle "@{q} - "
+    }
+
+    return ${queryTitle}
+}
+
+val -id currentBase {
+    if { @{subject} ne {} } {
+	return "../subject/@{subject}"
+    } else {
+	return "."
+    }
+}
+
+val -id subject_for_url {
+    return [string map {{ } {_}} @{subject}]
+}
+
+#val -id advertisement_top_right { return [::xo::google::adsense::get_slot_html 9651140707 250 250] }
+
+
+val -id advertisement_bottom { 
+    return [::xo::google::adsense::get_slot_html 0399036976 468 60] 
+}
+val -id advertisement_right { 
+    return [::xo::amazon::kindle_in_html] ;# 120x240
+}
+
+val -id context_bar { 
+    if { @{queryTitle} ne {} } {
+	return [::xo::kit::context_bar [string trimright @{queryTitle} {- }]] 
+    } else {
+	return [::xo::kit::context_bar] 
+    }
+}
+# keep css classes and tags used by context_bar
+::xo::tdp::excludeClassesFromRenaming {breadcrumb divider ul li active}
+
+# -------------------------------------------------------------------------------------------
+
+
+css {
+    .e{
+	margin-top:.5em;
+	margin-bottom: .5em;
+    }
+    .big {
+	font-size:1.2em;
+    }
+    .cover{
+	border-style:solid; border-color:#a0a0a0;border-width:1px 1px 1px 2px;
+    }
+    .lim{
+	color:#99522e;
+    }
+    .covertd{
+	padding: 0px 8px 0px 0px; 
+	text-align:center;
+	width:75px; 
+	vertical-align:top;
+    }
+    .book {
+	float:left;
+	width:275px;
+	height:120px;
+	overflow:hidden;
+	padding-top:15px;
+    }
+    .book a {
+	text-decoration:none;
+    }
+    .title {
+	font-weight:bold;
+	color:#468;
+    }
+    .subject {
+	font-size:small;
+	color:#864;
+	font-weight:bold;
+    }
+    .book a:hover {
+	text-decoration:underline;
+    }
+    .book_details {
+	font-size:small;
+	color:#888;
+    }
+    .navigation {
+	background-color:#f0f0f0;
+	padding:3px;
+	height:20px;
+    }
+    .ddc_subject {
+	background:#fcfcfc;
+	border:1px solid #f0f0f0;
+	padding:5 0 5 0;
+	margin-top:2px;
+    }
+}
+
+# -------------------------------------------------------------------------------------------
+
+set src "/templates/phigita.net/books/www-global.master.inc"
+set title "@{queryTitle} Books in Greek"
+set keywords "greek, books, publishers, authors, writers, literature, livanis, kastaniotis, kedros, kaktos, greece, cyprus, bookshop, bookstore, best sellers"
+
+master -src ${src} -title ${title} -keywords ${keywords} -search_query @{query_for_form} {
+
+    nt @{context_bar:noquote}
+
+    tpl -if { @{tsQuery} ne {} && @{bookdata:rowcount} == 0 } {
+	div -class "alert" { 
+	    nt "Search for &#147; "
+	    b { 
+		t @{q} 
+	    }
+	    nt " &#148; returned no results." 
+	}
+    } 
+    tpl -else "" {
+
+	tpl -if { @{query_for_form} ne {} } {
+
+	    div -class "alert" { 
+		nt "Showing books ";
+
+		tpl -if { @{q} ne {} } {
+		    nt " for &#147;"
+		    a -href "@{base}/?q=@{q}" { 
+			b { 
+			    t @{q} 
+			} 
+		    }
+		    nt "&#148;"
+		}
+
+		tpl -if { @{subject} ne {} } {
+		    nt " in subject &#147;" 
+		    a -href "@{base}/subject/@{subject_for_url}" { 
+			b { 
+			    t @{subject} 
+			} 
+		    }
+		    nt "&#148;"
+		}
+		nt ". "
+		nt "\[&nbsp;"
+		a -href @{base} { t "Books Home" } 
+		nt "&nbsp;\]"
+	    }
+	}
+
+
+	h2 { t "Books" }
+
+
+	tpl -if { @{subjectdata:rowcount} } {
+	    ul -class "thumbnails" {
+		tpl -for subjectdata {
+		    li {
+			div -class ddc_subject {
+			    a -href "@{val.base}/subject/@{subject_for_url}" {
+				tpl -if { @{param.subject} eq @{name} } {
+				    b { t @{name} }
+				} 
+				tpl -else "" {
+				    t @{name}
+				}
+			    }
+			}
+		    }
+		}
+	    }
+	}
+
+	tpl -for bookdata -limit ${limit} {
+
+	    div -class "book" {
+		table {
+		    tr {
+			td -class "covertd" {
+			    table -border 0 -cellpadding 0 -cellspacing 0 {
+				tr {
+				    td
+				    td {
+					a -href "@{url}" {
+					    img -src "http://www.phigita.net/graphics/pages.gif" -border 0 -height 7 -width 100% 
+					}
+				    }
+				    td -width 11 {
+					a -href "@{url}" {
+					    img -src "http://www.phigita.net/graphics/p_edge.gif" -border 0 -height 7 -width 11
+					}
+				    }
+				}
+				tr {
+				    td -valign bottom {
+					img -src "http://www.phigita.net/graphics/shadow.gif" -border 0 
+				    }
+				    td -colspan 2 {
+					a -href "@{url}" {
+					    tpl -if { @{image_p} } {
+						img -class "cover" -src "${image_host}/s@{ean13}-x80.jpg" -border 0 -height 80
+					    } 
+					    tpl -else "" {
+						img -class "cover" -src "http://www.phigita.net/graphics/nobook.gif" -border 0 -height 80
+					    }
+					}
+				    }
+				}
+			    }
+			}
+			td -valign top {
+			    tpl -if { @{subject} ne {} } {
+				a -class subject -href "@{val.base}/subject/@{subject_for_url}" {
+				    t @{subject}
+				}
+				br
+			    }
+			    a -class title -href "@{url}" {
+				nt @{title}
+			    }
+			    div -class book_details {
+				t @{author}
+				t ", @{year}"
+				tpl -if { @{pages} ne {} } {
+				    t " - @{pages} pages"
+				}
+			    }
+			}
+		    }
+		}
+	    }
+	}
+    }
+    i -class clearfix
+
+    div -class navigation {
+	div -class "pull-right" {
+	    tpl -if { @{offset} > 0 } {
+
+		val -id prev_url {
+
+		    set q @{q}
+		    set prev_offset [expr { @{offset}-@{limit} }]
+
+		    if { ${prev_offset} <= 0 } {
+			set override_script [list]
+		    } else {
+			set override_script [list [list offset ${prev_offset}]]
+		    }
+
+		    return [export_vars \
+				-url \
+				-base  @{currentBase} \
+				-no_empty \
+				-override ${override_script} {q}]
+
+		}
+
+		a -href @{currentBase} {
+		    t "First Page"
+		}
+		nt " &nbsp; "
+		a -href @{prev_url} {
+		    nt "&#171; Prev"
+		}
+	    }
+
+ 	    val -id viewing_from { expr {1+@{offset}} }
+	    val -id viewing_to { expr {@{offset}+@{limit}} }
+
+	    span { 
+		nt " (&nbsp;@{viewing_from}&#150;@{viewing_to}&nbsp;) " 
+	    }
+
+	    tpl if { @{bookdata:rowcount} == @{limit_plus_one} } {
+
+		val -id next_url {
+		    set q @{q}
+		    return [export_vars  \
+				-url \
+				-base @{currentBase} \
+				-no_empty \
+				-override {{offset {[expr { @{offset}+@{limit} }]}}} {q}]
+		}
+
+		a -href @{next_url} {
+		    nt "Next &#187;"
+		}
+	    }
+	}
+    }
+    i -class clearfix
+    p
+    layout_row {
+	layout_col -class span2 {
+	    b { t "Send Feedback: " }
+	    br
+	    img -src /graphics/53dab96f0fd8087a4110eb0174b4cfbb.png
+	}
+	layout_col -class span6 {
+	    nt @{advertisement_bottom:noquote}
+	}
+	layout_col -class span4 {
+	    nt @{advertisement_right:noquote}
+	}
+    }
+
+}
+
+
+
+
+return
+
+
+
+
+
+
+
+
+set previous_offset $offset
+
+
+		#<!-- YOUR NAVIGATION GOES HERE -->
+		p
+		p
+
+
+	    }
+	}
+
+

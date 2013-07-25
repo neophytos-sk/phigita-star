@@ -1,0 +1,390 @@
+contract -require_registration "1" -require_secure_conn "1" {
+    param -id "id" -check "naturalnum notnull"
+}
+
+#::xo::structured_text::init_css 
+#::xo::html::cssList {main sidebar comment-list commentList comment}
+#set cssList [list destBox NewFol]
+
+### PRIVATE - PRIVATE - PRIVATE ONLY
+#set current_root_of_hierarchy [User set id]-[ad_conn user_id]
+
+#set ctx_uid [ad_conn user_id]
+#set screen_name [db_string get_screen_name "select screen_name from users where user_id=:ctx_uid"]
+#set pathexp [list "User $ctx_uid"]
+
+
+datastore \
+    -id postdata \
+    -singleton true \
+    -scope user \
+    -from_class ::Blog_Item \
+    -where [list "id = :id"] \
+    -extend {
+	set screen_name [ad_conn screen_name]
+	set pretty_date [lc_time_fmt $entry_date %Q]
+	set pretty_time [lc_time_fmt $entry_date %r]
+
+	array set config [list \
+			      root [User set id]-[ad_conn user_id] \
+			      container_object_id "X" \
+			      image_prefix "image/"]
+
+	set content_in_html ""
+	::xo::structured_text::stx_to_html config body content_in_html
+
+	set ac_toggle_msg [ad_decode $shared_p f publish privatize]
+	set ac_inverse_shared_p [ad_decode $shared_p f t f]
+
+    }
+
+guard { return @{postdata:rowcount} }
+
+datastore \
+    -id post_labeldata \
+    -scope user \
+    -select {
+	label_id
+	name
+    } -from_class [db::Left_Outer_Join new \
+		       -lhs [db::Set new \
+				 -alias m \
+				 -scope user \
+				 -type ::Blog_Item_Label_Map \
+				 -where [list "object_id=:id"]] \
+		       -rhs [db::Set new \
+				 -alias l \
+				 -scope user \
+				 -type ::Blog_Item_Label] \
+		       -join_condition {l.id=m.label_id}]
+
+
+datastore \
+    -id commentdata \
+    -select {
+	c.*
+	u.screen_name
+	u.first_names
+	u.last_name
+    } -from_class [::db::Inner_Join new \
+		     -lhs [::db::Set new \
+			       -alias c \
+			       -scope user \
+			       -type ::Blog_Item_Comment \
+			       -where [list "parent_id=:id"]] \
+		     -rhs [::db::Set new \
+			       -alias u \
+			       -type ::CC_Users] \
+		     -join_condition {c.creation_user = u.user_id}] \
+    -order "creation_date" \
+    -extend {
+	set pretty_date [lc_time_fmt ${creation_date} %q]
+	set commentator_full_name "${first_names} ${last_name}"
+
+	set commentator_root_of_hierarchy [User set id]-${creation_user}
+	array set config [list \
+			      root ${commentator_root_of_hierarchy} \
+			      container_object_id "X" \
+			      image_prefix "/~${screen_name}/media/preview/"]
+
+	set content_in_html ""
+	::xo::structured_text::stx_to_html config comment content_in_html
+
+    }
+
+datastore \
+    -id blog_labeldata \
+    -scope user \
+    -from_class ::Blog_Item_Label
+
+
+datastore \
+    -id blog_labeldata \
+    -scope context_user \
+    -from_class ::Blog_Item_Label
+
+
+datastore \
+    -id prev_blogdata \
+    -scope user \
+    -from_class ::Blog_Item \
+    -where [list "entry_date < \[ns_dbquotevalue @{object_get.postdata.entry_date}\]" "title is not null"] \
+    -order "entry_date desc" \
+    -limit 5
+
+datastore \
+    -id next_blogdata \
+    -scope user \
+    -from_class ::Blog_Item \
+    -where [list "entry_date > \[ns_dbquotevalue @{object_get.postdata.entry_date}\]" "title is not null"] \
+    -order "entry_date" \
+    -limit 5
+
+val -id "next_blogdata" { lreverse @{next_blogdata} }
+
+
+val -id prev_post -x-value-from prev_blogdata { lindex @{prev_blogdata} 0 }
+val -id next_post -x-value-from next_blogdata { lindex @{next_blogdata} end }
+
+val -id context_bar { return [::xo::kit::context_bar "One Post"] }
+
+# keep css classes and tags used by context_bar
+::xo::tdp::excludeClassesFromRenaming {breadcrumb divider ul li active}
+
+
+val -id title -with postdata { return [::util::coalesce @{title} "Entry \#@{id}"] }
+
+
+# -------------------------------------------------------------------------------------------
+
+css {
+    #buttonbar {margin-top:10px;background:#ffffcc;padding:10px;border:1px dashed;} 
+}
+
+
+js {
+    (function(){
+	function check(func,msg){
+	    var i;
+	    if (func==0) {
+		return confirm("Are you sure you want to " + msg + " this blog item?");
+	    }
+	    return true;
+	}
+
+	function apply_label() {
+	    var destEl = document.getElementById("destBox");
+	    var destBox = destEl.value;
+	    if (destBox == 0) {
+		var label_name = prompt("Please enter a new label name:");
+		if (!label_name || label_name == '') {
+		    return false;
+		} else {
+		    var newEl = document.getElementById("NewFol");
+		    newEl.value = label_name;
+		}
+	    }
+	}
+	window['check'] = check;
+	window['apply_label'] = apply_label;
+    })();
+}
+
+
+master -title "@{title} - Private Blog Area" {
+    layout_row {
+	layout_col -class span1 
+	layout_col -class span11 {
+	    nt @{context_bar:noquote}
+	}
+    }
+
+    layout_row {
+	layout_col -class span1
+	layout_col -class span8 {
+
+	    # labels
+	    tpl -if @{post_labeldata:rowcount} {
+		div -class "post_labels" {
+		    span -class "cs" { t "Labels:" }
+		    tpl -for post_labeldata {
+			t " "
+			a -class "label label-success" -href "./?label_id=@{label_id}" {
+			    t @{name}
+			}
+			nt "\["
+			a -href "labels/one-unapply?label_id=@{label_id}&object_id=@{param.id}" -title "Remove label from entry" {
+			    t "x"
+			}
+			t "\]"
+		    }
+		}
+	    }
+
+	    # action area
+	    div -id "buttonbar" {
+
+		tpl -with postdata {
+		    b { t "Actions: " }
+		    a -class "btn btn-mini btn-warning" -href "post-edit?id=@{id}" { t "Edit" }
+		    t " - "
+		    a -class "btn btn-mini btn-danger" -href "one-delete?id=@{id}" -onclick "return check(0,'delete')" { t "Delete" }
+		    tpl -if @{shared_p} {
+			t " - "
+			a -href "http://www.phigita.net/~@{screen_name}/blog/@{id}" {
+			    t "Jump to Public View"
+			}
+		    }
+
+		    p
+
+		    b { t "Sharing: " }
+		    tpl -if @{shared_p} {
+			t "Everyone (public)"
+		    }
+		    tpl -else "" {
+			t "Only Me (Private)"
+		    } 
+		    t " - "
+		    a -href "entry-ac-set?id=@{id}&shared_p=@{ac_inverse_shared_p}&return_url=@{id}" -onClick "return check(0,'@{ac_toggle_msg}')" {
+			tpl -if @{shared_p} {
+			    t "Only Me (Private)"
+			}
+			tpl -else "" {
+			    t "Everyone (public)"
+			}
+		    }
+		    p
+		    b { t "Allow New Comments: " }
+		    tpl -if @{allow_comments_p} {
+			t "Yes"
+		    }
+		    tpl -else "" {
+			t "No"
+		    }
+		}
+		p
+		form -action "labels/one-apply" -method "post" -onsubmit "return apply_label()" {
+		    input -type "hidden" -name "id" -value "@{id}"
+		    input -id "NewFol" -type "hidden" -name "NewFol" -value ""
+		    
+		    div -class "input-append" {
+			select -id destBox -name destBox {
+			    option -value "0" {
+				t "\[New Label\]"
+			    }
+			    tpl -for blog_labeldata {
+				option -value @{id} { t @{name} }
+			    }
+			}
+			button -type "submit" -id "applylabel" -class "btn" -title "Apply label to blog entry." {
+			    t "Apply Label"
+			}
+		    }
+		}
+	    }
+
+	    # blog post
+	    tpl -with postdata {
+		h3 { t @{title} }
+		p
+		t @{content_in_html:noquote}
+		p
+		small {
+		    t "posted at "
+		    t "@{pretty_date} @{pretty_time}"
+		}
+	    }
+
+	    # showing comments
+	    tpl -if @{commentdata:rowcount} {
+		center {
+		    h2 {
+			t "Reader's Comments"
+		    }
+		}
+		tpl -for commentdata {
+		    tpl -if "not @{shared_p}" {
+			div -style "color: red;" { 
+			    i { 
+				t "-- Hidden!.. " 
+			    } 
+			}
+		    }
+		    t @{content_in_html:noquote}
+
+		    t "-- "
+		    a -href "/~@{screen_name}/" {
+			t @{commentator_full_name}
+		    }
+		    t ", @{pretty_date}"
+		    p
+		}
+	    }
+	    br
+	    br
+
+	    # comment form
+	    tpl -with postdata {
+		p
+		form -action comment-add-2 -method post {
+		    input -type hidden -name parent_id -value "@{param.id}"
+
+		    div -class "control-group" {
+			label -for comment_body { t "Enter your comment below: " }
+			div -class "controls" {
+			    textarea \
+				-id "comment_body" \
+				-class "input-block-level" \
+				-name "comment" \
+				-rows "10" \
+				-wrap "soft"
+			}
+		    }
+		    div -class "form-actions" {
+			button -id "btnPostComment" -type submit -class "btn btn-warning" {
+			    t "Post Comment"
+			}
+		    }
+		}
+	    }
+	}
+	layout_col -class span3 {
+	    # nearby blog posts
+	    h3 {
+		t "Nearby"
+	    }
+	    tpl -if { @{next_post} ne {} } {
+		tpl -with next_post {
+		    a -href @{id} {
+			nt "&laquo; newer"
+		    }
+		    t " | "
+		}
+	    }
+	    a -href "./" {
+		t "up"
+	    }
+	    tpl -if { @{prev_post} ne {} } {
+		tpl -with prev_post {
+		    t " | "
+		    a -href @{id} {
+			nt "older &raquo;"
+		    }
+		}
+	    }
+	    p
+	    tpl -for next_blogdata {
+		nt "&#183;&nbsp;"
+		small {
+		    a -href @{id} {
+			t @{title}
+		    }
+		}
+		br
+	    }
+	    tpl -with postdata {
+		small {
+		    tpl -if {@{title} ne {} } {
+			t @{title}
+		    }
+		    tpl -else "" {
+			font -color "red" {
+			    t "Untitled: This Entry"
+			}
+		    }
+		}
+	    }
+	    br
+	    tpl -for prev_blogdata {
+		nt "&#183;&nbsp;"
+		small {
+		    a -href @{id} {
+			t @{title}
+		    }
+		}
+		br
+	    }
+	}
+    }
+}

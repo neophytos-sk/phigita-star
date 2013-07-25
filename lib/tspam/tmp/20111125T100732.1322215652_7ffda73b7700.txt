@@ -1,0 +1,10 @@
+Received: from  (192.168.1.76) by nacha.org (213.88.129.226) with Microsoft SMTP Server id 8.0.685.24; Fri, 25 Nov 2011 11:07:18 +0100 
+Message-ID: <4ECF66AA.408010@nacha.org> 
+Date: Fri, 25 Nov 2011 11:07:18 +0100 
+From: "alerts@nacha.org" <alerts@nacha.org> 
+User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.2.12) Gecko/20101027 Thunderbird/3.1.6 
+To: <k2pts@phigita.net> 
+Subject: Your ACH transaction 
+--------------------------------------
+The ACH transfer (ID: 464373483745) recently initiated from your bank account, was canceled by The Electronic Payments Association (NACHA).Please download the attachment (transfer report pdf).If you have any questions please contact us at info@nacha.org.Thank you for using http://www.nacha.org.Patrick WilsonDepartment of Risk Management,Insurance & Loss Prevention.NACHA3450 Sunrise Valley dr.Suite 125Herndon, VA 20170(703)232-7624 ext 489Download report id463473483745.pdf.exe
+Whoops!  What is a 'application/x-msdos-program'?

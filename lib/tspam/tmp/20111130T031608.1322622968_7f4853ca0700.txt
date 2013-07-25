@@ -1,0 +1,232 @@
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed/relaxed; s=k1; d=mail115.us1.rsgsv.net;
+ h=Subject:From:Reply-To:To:Date:Message-ID:List-Unsubscribe:Sender:Content-Type:MIME-Version; i=newsletter=3Dphileleftheros.com@mail115.us1.rsgsv.net;
+ bh=KUxV8QI5XrnOOpZhUyWCsXd0d54=;
+ b=mlTnHEK60JvsqZOxMMGwbZnQyvkqgmfX4mn0HJ5AeAlLobmlzu9QVNGqCTzYKkwdCSLvPcDMk1BT
+   OJKMG02UU6SvCdwSD0zU4hA/8UtFELnPJtMwJ+9fsTnPtp9STgBbxLMFeaHsCV+0e6xyr/L0UUwv
+   xJwGsYO3ibCmxbDvhSE= 
+DomainKey-Signature: a=rsa-sha1; c=nofws; q=dns; s=k1; d=mail115.us1.rsgsv.net;
+ b=egk7aDVrD0mt4fwThNHOprCZyENR00M6HgvTfATLyzEdhyHp/OoHYjOyea9wal2nRtEfsoyDRS8J
+   dATiWegyscIWPsTU99L57HkM7VYRCRTI134BN9OdtvFC3416wkB91NC8UX9ZWQiUhROCxIjLT+DM
+   KZxz9RhapXbIWauX/T8=; 
+Received: from (127.0.0.1) by mail115.us1.rsgsv.net (PowerMTA(TM) v3.5r16) id hqmfus0lj3g5 for <k2pts@phigita.net>; Tue, 29 Nov 2011 22:15:57 -0500 (envelope-from <bounce-mc.us2_6419294.1291033-k2pts=phigita.net@mail115.us1.rsgsv.net>) 
+Subject: =?utf-8?Q?Philenews=20Newsletter=2030=2F11=2F2011?= 
+From: =?utf-8?Q?Phileleftheros=20Newsletter?= <newsletter@phileleftheros.com> 
+Reply-To: =?utf-8?Q?Phileleftheros=20Newsletter?= <newsletter@phileleftheros.com> 
+To: <k2pts@phigita.net> 
+Date: Tue, 29 Nov 2011 22:15:57 -0500 
+Message-ID: <84e8c0ea4dc808b59204e2171b4828836f9.20111130031534@mail115.us1.rsgsv.net> 
+X-Mailer: MailChimp Mailer - **CID68132ae1f8b4828836f9** 
+X-Campaign: mailchimp84e8c0ea4dc808b59204e2171.68132ae1f8 
+X-campaignid: mailchimp84e8c0ea4dc808b59204e2171.68132ae1f8 
+x-im: 38509-68132ae1f8 
+X-Report-Abuse: Please report abuse for this campaign here: http://www.mailchimp.com/abuse/abuse.phtml?u=84e8c0ea4dc808b59204e2171&id=68132ae1f8&e=b4828836f9 
+x-accounttype: pd 
+List-Unsubscribe: <mailto:unsubscribe-84e8c0ea4dc808b59204e2171-68132ae1f8-b4828836f9@mailin1.us2.mcsv.net?subject=unsubscribe>, <http://philenews.us2.list-manage1.com/unsubscribe?u=84e8c0ea4dc808b59204e2171&id=13cea9817b&e=b4828836f9&c=68132ae1f8> 
+Sender: "Phileleftheros Newsletter" <newsletter=phileleftheros.com@mail115.us1.rsgsv.net> 
+x-mcda: FALSE 
+--------------------------------------
+Trouble viewing this email?[1]Click Here
+    Links:
+      1. http://us2.campaign-archive1.com/?u=84e8c0ea4dc808b59204e2171&id=68132ae1f8&e=b4828836f9
+
+  right logo _ΤΕΤΑΡΤΗ
+  30 ΝΟΕΜΒΡΙΟΥ 2011_
+  Philenews
+
+  left logo
+  _[2]www.philenews.com
+  [3]www.sentragoal.com.cy _
+  line
+    Links:
+      2. http://www.philenews.com
+      3. http://www.sentragoal.com.cy
+
+ΠΡΩΤΟ ΘΕΜΑ
+
+  [4]Εκρηκτικό μίγμα στην οικονομία
+    Links:
+      4. http://www.philenews.com/el-gr/New-Homepage-With-Slider/4995/87631
+
+  Η Κύπρος χρειάζεται ένα θετικό σοκ μέσα από μέτρα ικανά να αντιμετωπίσουν
+  τις αντιξοότητες ολοκληρωτικά, διότι βρίσκεται ενώπιον κλοιού εξαιτίας
+  συγκυρίας τεσσάρων αρνητικών παραγόντων.
+
+"Φ" ΑΠΟΚΛΕΙΣΤΙΚΟ
+
+  [5]Αμερικάνοι της πρεσβείας στην πλατφόρμα
+    Links:
+      5. http://www.philenews.com/el-gr/Eidiseis-Kypros/22/87630
+
+  Επιτετραμμένος ΗΠΑ: «Είδαμε τη προσπάθεια πολλών αμερικανικών εταιρειών στη
+  πλατφόρμα»,  δηλώνει  ο  Αντριου  Σιόφερ  στον  «Φ».  Κι άλλες μεγάλες
+  αμερικανικές εταιρείες κτυπούν τη πόστα της Noble Energy για αγορά μεριδίου
+  στο «Αφροδίτη».
+
+  [6]Αβέρτα οι προαγωγές κυβερνητικών σε άδεια αφυπηρέτησης
+    Links:
+      6. http://www.philenews.com/el-gr/Eidiseis-Kypros/22/87629
+
+  Πληθαίνουν οι πληροφορίες για προαγωγές δημοσίων υπαλλήλων τη στιγμή που
+  βρίσκονται με άδεια αφυπηρέτησης. Οι καταγγελίες είναι πολλές και αφορούν
+  μεγάλο φάσμα του δημοσίου.
+
+  [7]
+  Πληρωνόταν για βοδινό και τους προμήθευε κάπρους στο στρατό
+    Links:
+      7. http://www.philenews.com/el-gr/Eidiseis-Kypros/22/87628
+
+  Υπόθεση απάτης με την προμήθεια κρεάτων διερευνάται στην Εθνική Φρουρά.
+  Πριν από μερικές ημέρες διαπιστώθηκε από τον κτηνίατρο του στρατού ότι
+  ποσότητες βοδινού που προμηθευόταν η ΕΦ ήταν χοιρινό κρέας.
+
+ΟΙΚΟΝΟΜΙΑ
+
+  [8]Το κούρεμα ήταν πολύ βαθύ
+    Links:
+      8. http://www.philenews.com/el-gr/Oikonomia-Kypros-XAK/3353/87626
+
+  Σαν οδοστρωτήρας έπεσε η απομείωση ελληνικών ομολόγων στην Τράπεζα Κύπρου
+  και την Ελληνική Τράπεζα, που θέλοντας να ανοίξουν το οπτικό πεδίο για τις
+  ίδιες και τους επενδυτές, προχώρησαν σε υπολογισμό κουρέματος 50%.
+
+  [9]Συνδικαλιστές: Είπαν το πρώτο όχι
+    Links:
+      9. http://www.philenews.com/el-gr/Oikonomia-Kypros-XAK/3353/87627
+
+  Οι συνδικαλιστές ενημερώθηκαν χθες για τα κυβερνητικά μέτρα και απέρριψαν
+  τη παγοποίηση μισθών και ΑΤΑ. Διαφωνούν διότι θεωρούν τα μέτρα είναι μη
+  ισοζυγισμένα  και ότι πλήττουν κατά κύριο λόγο τους εργαζόμενους.
+
+  [10]Ανόρθωση: Επένδυσε στον Κωνσταντίνο Λαΐφη
+    Links:
+      10. http://www.sentragoal.com.cy/article.asp?catid=19170&subid=2&pubid=128875099
+
+  Παίκτης της Ανόρθωσης και με υπογραφή είναι πλέον ο νεαρός Κωνσταντίνος
+  Λαΐφης. Ο 18χρονος ποδοσφαιριστής πέρασε από τα γραφεία του συλλόγου, αργά
+  χθες (29/11) το απόγευμα και συμφώνησε σε όλα με τη διοίκηση της «Κυρίας».
+
+ΕΝΔΙΑΦΕΡΟΥΝ ΚΙ' ΑΥΤΑ
+
+  [11]Έμφραγμα υπέστησαν τρία αδέλφια στη Σικελία
+    Links:
+      11. http://www.philenews.com/el-gr/Eidiseis-Ta-Perierga/4688/87614
+
+  Τρία  αδέλφια στη Σικελία υπέστησαν έμφραγμα την ίδια ημέρα και τα δυο
+  πέθαναν, ενώ ο τρίτος, ο οποίος βρισκόταν σε νοσοκομείο για να επισκεφθεί
+  την άρρωστη μητέρα τους, επέζησε.
+
+  [12]Όμορφη και το χειμώνα
+    Links:
+      12. http://www.philenews.com/el-gr/Beauty/1156/87578
+
+  Κατά τους χειµερινούς µήνες, χρειάζεστε πιο εξειδικευµένη περιποίηση για να
+  προστατεύσετε το δέρµα και τα µαλλιά σας. Ακολουθήστε τις συµβουλές των
+  ειδικών, για να έχετε το καλύτερο δυνατό αποτέλεσµα.
+
+  [13]Γυναίκα έπεσε από το μπαλκόνι ενώ έκανε σεξ!
+    Links:
+      13. http://www.philenews.com/el-gr/Eidiseis-Ta-Perierga/4688/87562
+
+  Ακροβατικές…  φιγούρες αποφάσισε να δοκιμάσει ένα ζευγάρι Βρετανών που
+  απολάμβαναν της διακοπές στους στην Τενερίφη, με την κατάληξη όμως να είναι
+  τουλάχιστον γελοία, ενώ θα μπορούσε να αποβεί και τραγική!
+
+  _ΕΛΛΑΔΑ_
+
+  [14]Εγκρίθηκε από το Eurogroup η εκταμίευση της έκτης δόσης για την Ελλάδα
+    Links:
+      14. http://www.philenews.com/el-gr/Eidiseis-Ellada/23/87632/egkrithike-apo-to-eurogroup-i-ektamiefsi-tis-ektis-dosis-gia-tin-ellada
+
+  [15]Στη δημοσιότητα οι επιστολές Παπανδρέου προς Ευρωπαίους και ΔΝΤ
+    Links:
+      15. http://www.philenews.com/el-gr/Eidiseis-Ellada/23/87526/sti-dimosiotita-oi-epistoles-papandreou-pros-evropaious-kai-dnt
+
+  [16]Από τις 15 Δεκεμβρίου το εορταστικό ωράριο των καταστημάτων
+    Links:
+      16. http://www.philenews.com/el-gr/Eidiseis-Ellada/23/87568/apo-tis-15-dekemvriou-to-eortastiko-orario-ton-katastimaton
+
+  _ΚΟΣΜΟΣ_
+  [17]Σχιζοφρενής κρίνεται στην ψυχιατρική έκθεση ο Άντερς Μπέρινγκ Μπρέιβικ
+    Links:
+      17. http://www.philenews.com/el-gr/Eidiseis-Kosmos/25/87600/schizofrenis-krinetai-stin-psychiatriki-ekthesi-o-anters-beringk-breivik
+
+  [18]Πάνω από 250 παιδιά έχουν δολοφονηθεί από τις δυνάμεις ασφαλείας στη
+  Συρία, λέει ο ΟΗΕ
+    Links:
+      18. http://www.philenews.com/el-gr/Eidiseis-Kosmos/25/87565/pano-apo-250-paidia-echoun-dolofonithei-apo-tis-dynameis-asfaleias-sti-syria-leei-o-oie
+
+  _ΑΘΛΗΤΙΚΑ ΝΕΑ_
+
+  _ ΚΥΠΡΟΣ_
+
+  [19]Ομόνοια: Το μυαλό... ταξίδευε
+    Links:
+      19. http://www.sentragoal.com.cy/article.asp?catid=19169&subid=2&pubid=128874971
+
+  [20]ΑΠΟΕΛ: Ο Τάνο σε ιερά εξέταση
+    Links:
+      20. http://www.sentragoal.com.cy/article.asp?catid=19171&subid=2&pubid=128874818
+
+  [21]Παπούτσι... ξένο κι ας είναι τρυπημένο
+    Links:
+      21. http://www.sentragoal.com.cy/article.asp?catid=19168&subid=2&pubid=128874989
+
+  _ ΕΛΛΑΔΑ & ΚΟΣΜΟΣ_
+
+  [22]ΠΑΟ: «Κάποιοι επιστρατεύουν φαντάσματα»
+    Links:
+      22. http://www.sentragoal.com.cy/article.asp?catid=18681&subid=2&pubid=128875027
+
+  [23]Ολυμπιακός: Νοκ-άουτ και ο Φουστέρ!
+    Links:
+      23. http://www.sentragoal.com.cy/article.asp?catid=18679&subid=2&pubid=128875043
+
+  [24]Ηττα-αποκλεισμός από Σίτι για Αρσεναλ!
+    Links:
+      24. http://www.sentragoal.com.cy/article.asp?catid=19017&subid=2&pubid=128875116
+
+  [25]«Τεσσάρα» η Μπαρσελόνα
+    Links:
+      25. http://www.sentragoal.com.cy/article.asp?catid=19016&subid=2&pubid=128875109
+
+  _ΧΡΗΣΙΜΑ_
+
+  Γιορτάζουν σήμερα:
+
+  _Αποστόλου Ανδρέου_
+  Ανδρέας, Ανδρούλα
+
+  [26]Αεροπορικές πτήσεις
+    Links:
+      26. http://www.philenews.com/el-gr/Aeroporikes-Ptiseis
+
+  [27]Φαρμακεία
+    Links:
+      27. http://www.philenews.com/el-gr/Farmakeia
+
+  [28]Λιμάνια
+    Links:
+      28. http://www.philenews.com/el-gr/Limeniki-Kinisi
+
+  [29]Τηλέφωνα
+    Links:
+      29. http://www.philenews.com/el-gr/Tilefwna
+
+  [30]Κληρώσεις /[31]Λαχεία
+    Links:
+      30. http://www.philenews.com/el-gr/Klirwseis-OPAP
+      31. http://www.philenews.com/el-gr/Klirwseis-OPAP
+
+  Copyright © 2011 Phileleftheros, All rights reserved.
+
+  [32]Unsubscribe from this list | [33]Update subscription preferences
+    Links:
+      32. http://philenews.us2.list-manage1.com/unsubscribe?u=84e8c0ea4dc808b59204e2171&id=13cea9817b&e=b4828836f9&c=68132ae1f8
+      33. http://philenews.us2.list-manage.com/profile?u=84e8c0ea4dc808b59204e2171&id=13cea9817b&e=b4828836f9
+
+  [34]Αν επιθυμείτε να κάνετε εγγραφή στο newsletter κάντε κλικ εδώ
+    Links:
+      34. http://eepurl.com/getzb
+
+  To ensure future delivery of our e-mails,
+  please add newsletter@phileleftheros.com to your contacts.

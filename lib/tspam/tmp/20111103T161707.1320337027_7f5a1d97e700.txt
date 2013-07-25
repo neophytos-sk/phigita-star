@@ -1,0 +1,22 @@
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Received:Message-ID:From:To:Subject:Date:
+	MIME-Version:Content-Type; bh=8z+ISJRHRGySRk5ejipvQt0zMW/c1gNUhs
+	SP5nm0zNU=; b=Ow+nVY0L3cZCV6wfmNtmKmwsvbAOvRpypCMmjBHoeq6IFDjtur
+	9eHHkhNrEcfpzG8wMURlPT6yCvICwVTdLSwyMDQJ8gHBWKC58Iblh19/Ikto/MzM
+	zdwDouyyhkg4i4HrZ2UVzhGr4i00+u/3ExjSOoe+P7FfOs/N+HBiORFeo= 
+Received: from pgkwsatn (unknown [110.53.27.102])
+	by smtp8 (Coremail) with SMTP id DMCowGApv0pvvrJOKNTTAA--.53044S2;
+	Fri, 04 Nov 2011 00:16:49 +0800 (CST) 
+X-Coremail-DSSMTP: 110.53.27.102 
+Message-ID: <20111104001809680223@163.com> 
+From: =?gb2312?B?0MW1wrSssrC7+tC109DP3rmry74=?= <53216461@163.com> 
+To:  
+Subject: =?gb2312?B?IDkxMDQ4IMr919bSsrvhy7W7sKO/o78=?= 
+Date: Fri, 4 Nov 2011 00:17:55 +0800 
+X-mailer: Dbtbbnq 5 
+X-CM-TRANSID: DMCowGApv0pvvrJOKNTTAA--.53044S2 
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxU6KZGDUUUU 
+X-CM-SenderInfo: ivtsilquwrqiywtou0bp/1tbiJATsnT-6ZC0m1gAAst 
+--------------------------------------
+ content-type=application/msword part-token=::mime::1811-2

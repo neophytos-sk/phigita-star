@@ -1,0 +1,107 @@
+
+An unexpected exception has been detected in native code outside the VM.
+Unexpected Signal : 11 occurred at PC=0x0
+Function=[Unknown.]
+Library=(N/A)
+
+NOTE: We are unable to locate the function name symbol for the error
+      just occurred. Please refer to release documentation for possible
+      reason and solutions.
+
+
+Current Java thread:
+
+Dynamic libraries:
+08048000-08131000 r-xp 00000000 03:02 1589830    /usr/local/aolserver/bin/nsd8x
+08131000-0813a000 rw-p 000e9000 03:02 1589830    /usr/local/aolserver/bin/nsd8x
+40000000-40012000 r-xp 00000000 03:02 3686402    /lib/ld-2.2.93.so
+40012000-40013000 rw-p 00012000 03:02 3686402    /lib/ld-2.2.93.so
+40024000-4002b000 r-xp 00000000 03:02 1589828    /usr/local/aolserver/bin/postgres.so
+4002b000-4002c000 rw-p 00007000 03:02 1589828    /usr/local/aolserver/bin/postgres.so
+4002d000-4002f000 r-xp 00000000 03:02 3686415    /lib/libdl-2.2.93.so
+4002f000-40030000 rw-p 00001000 03:02 3686415    /lib/libdl-2.2.93.so
+40031000-4003e000 r-xp 00000000 03:02 4800518    /lib/i686/libpthread-0.10.so
+4003e000-40041000 rw-p 0000d000 03:02 4800518    /lib/i686/libpthread-0.10.so
+40061000-40082000 r-xp 00000000 03:02 4800516    /lib/i686/libm-2.2.93.so
+40082000-40083000 rw-p 00021000 03:02 4800516    /lib/i686/libm-2.2.93.so
+40083000-4008c000 r-xp 00000000 03:02 3686435    /lib/libnss_files-2.2.93.so
+4008c000-4008d000 rw-p 00008000 03:02 3686435    /lib/libnss_files-2.2.93.so
+4008d000-40090000 r-xp 00000000 03:02 1589832    /usr/local/aolserver/bin/nssock.so
+40090000-40091000 rw-p 00002000 03:02 1589832    /usr/local/aolserver/bin/nssock.so
+40091000-40094000 r-xp 00000000 03:02 1589833    /usr/local/aolserver/bin/nslog.so
+40094000-40095000 rw-p 00002000 03:02 1589833    /usr/local/aolserver/bin/nslog.so
+40095000-40098000 r-xp 00000000 03:02 1589836    /usr/local/aolserver/bin/nssha1.so
+40098000-40099000 rw-p 00002000 03:02 1589836    /usr/local/aolserver/bin/nssha1.so
+40099000-4009c000 r-xp 00000000 03:02 1589834    /usr/local/aolserver/bin/nscache.so
+4009c000-4009d000 rw-p 00003000 03:02 1589834    /usr/local/aolserver/bin/nscache.so
+4009d000-4009e000 r-xp 00000000 03:02 1589835    /usr/local/aolserver/bin/nsrewrite.so
+4009e000-4009f000 rw-p 00000000 03:02 1589835    /usr/local/aolserver/bin/nsrewrite.so
+4009f000-400a5000 r-xp 00000000 03:02 3424606    /usr/local/aolserver/bin/xcmds.so
+400a5000-400a6000 rw-p 00005000 03:02 3424606    /usr/local/aolserver/bin/xcmds.so
+400a7000-400b9000 r-xp 00000000 03:02 362013     /usr/lib/libpq.so.2.2
+400b9000-400ba000 rw-p 00011000 03:02 362013     /usr/lib/libpq.so.2.2
+400ba000-400e7000 r-xp 00000000 03:02 3686479    /lib/libssl.so.0.9.6b
+400e7000-400ea000 rw-p 0002d000 03:02 3686479    /lib/libssl.so.0.9.6b
+400ea000-401af000 r-xp 00000000 03:02 3686478    /lib/libcrypto.so.0.9.6b
+401af000-401bb000 rw-p 000c5000 03:02 3686478    /lib/libcrypto.so.0.9.6b
+401be000-40219000 r-xp 00000000 03:02 4407310    /usr/kerberos/lib/libkrb5.so.3.1
+40219000-4021b000 rw-p 0005b000 03:02 4407310    /usr/kerberos/lib/libkrb5.so.3.1
+4021b000-4022a000 r-xp 00000000 03:02 4407305    /usr/kerberos/lib/libk5crypto.so.3.0
+4022a000-4022b000 rw-p 0000f000 03:02 4407305    /usr/kerberos/lib/libk5crypto.so.3.0
+4022b000-4022c000 r-xp 00000000 03:02 4407300    /usr/kerberos/lib/libcom_err.so.3.0
+4022c000-4022d000 rw-p 00001000 03:02 4407300    /usr/kerberos/lib/libcom_err.so.3.0
+4022d000-40232000 r-xp 00000000 03:02 3686413    /lib/libcrypt-2.2.93.so
+40232000-40233000 rw-p 00004000 03:02 3686413    /lib/libcrypt-2.2.93.so
+4025a000-40269000 r-xp 00000000 03:02 3686447    /lib/libresolv-2.2.93.so
+40269000-4026a000 rw-p 0000e000 03:02 3686447    /lib/libresolv-2.2.93.so
+4026c000-4027e000 r-xp 00000000 03:02 3686419    /lib/libnsl-2.2.93.so
+4027e000-4027f000 rw-p 00012000 03:02 3686419    /lib/libnsl-2.2.93.so
+40a81000-40b09000 r-xp 00000000 03:02 1589817    /usr/local/aolserver/bin/tdom.so
+40b09000-40b0e000 rw-p 00088000 03:02 1589817    /usr/local/aolserver/bin/tdom.so
+40b0f000-40b11000 r-xp 00000000 03:02 1590151    /usr/local/aolserver/bin/nsreturnz.so
+40b11000-40b12000 rw-p 00001000 03:02 1590151    /usr/local/aolserver/bin/nsreturnz.so
+40b12000-40b15000 r-xp 00000000 03:02 1589829    /usr/local/aolserver/bin/dqd_utils.so
+40b15000-40b16000 rw-p 00002000 03:02 1589829    /usr/local/aolserver/bin/dqd_utils.so
+40b16000-40b2b000 r-xp 00000000 03:02 1589838    /usr/local/aolserver/bin/libnsjava.so
+40b2b000-40b2c000 rw-p 00014000 03:02 1589838    /usr/local/aolserver/bin/libnsjava.so
+40b2c000-40b38000 r-xp 00000000 03:02 360572     /usr/lib/libz.so.1.1.4
+40b38000-40b3a000 rw-p 0000b000 03:02 360572     /usr/lib/libz.so.1.1.4
+40b3a000-40b55000 r-xp 00000000 03:02 1818761    /usr/local/aolserver/bin/xotcl.so
+40b55000-40b58000 rw-p 0001a000 03:02 1818761    /usr/local/aolserver/bin/xotcl.so
+40b58000-40b79000 r-xp 00000000 03:02 1343749    /usr/local/j2sdk1.4.1_01/jre/lib/i386/libjava.so
+40b79000-40b7b000 rw-p 00020000 03:02 1343749    /usr/local/j2sdk1.4.1_01/jre/lib/i386/libjava.so
+40b7b000-40b84000 r-xp 00000000 03:02 1343742    /usr/local/j2sdk1.4.1_01/jre/lib/i386/native_threads/libhpi.so
+40b84000-40b85000 rw-p 00008000 03:02 1343742    /usr/local/j2sdk1.4.1_01/jre/lib/i386/native_threads/libhpi.so
+40b86000-40e9e000 r-xp 00000000 03:02 3539096    /usr/local/j2sdk1.4.1_01/jre/lib/i386/client/libjvm.so
+40e9e000-41052000 rw-p 00317000 03:02 3539096    /usr/local/j2sdk1.4.1_01/jre/lib/i386/client/libjvm.so
+41062000-41072000 r-xp 00000000 03:02 1343748    /usr/local/j2sdk1.4.1_01/jre/lib/i386/libverify.so
+41072000-41074000 rw-p 0000f000 03:02 1343748    /usr/local/j2sdk1.4.1_01/jre/lib/i386/libverify.so
+41874000-41889000 r-xp 00000000 03:02 1343751    /usr/local/j2sdk1.4.1_01/jre/lib/i386/libzip.so
+41889000-4188b000 rw-p 00014000 03:02 1343751    /usr/local/j2sdk1.4.1_01/jre/lib/i386/libzip.so
+418ce000-418e5000 r--s 00000000 03:02 1343772    /usr/local/j2sdk1.4.1_01/jre/lib/sunrsasign.jar
+418e5000-41956000 r--s 00000000 03:02 1343774    /usr/local/j2sdk1.4.1_01/jre/lib/jsse.jar
+41956000-41969000 r--s 00000000 03:02 1343773    /usr/local/j2sdk1.4.1_01/jre/lib/jce.jar
+41969000-41c25000 r--s 00000000 03:02 1343790    /usr/local/j2sdk1.4.1_01/jre/lib/charsets.jar
+41fd2000-41fef000 r--s 00000000 03:02 2146900    /usr/local/j2sdk1.4.1_01/jre/lib/ext/sunjce_provider.jar
+41fef000-41ff2000 r--s 00000000 03:02 2146901    /usr/local/j2sdk1.4.1_01/jre/lib/ext/dnsns.jar
+41ff2000-42000000 r--s 00000000 03:02 2146903    /usr/local/j2sdk1.4.1_01/jre/lib/ext/ldapsec.jar
+42000000-42126000 r-xp 00000000 03:02 4800514    /lib/i686/libc-2.2.93.so
+42126000-4212b000 rw-p 00126000 03:02 4800514    /lib/i686/libc-2.2.93.so
+4212f000-437fd000 r--s 00000000 03:02 1343792    /usr/local/j2sdk1.4.1_01/jre/lib/rt.jar
+4d902000-4d9a1000 r--s 00000000 03:02 2146902    /usr/local/j2sdk1.4.1_01/jre/lib/ext/localedata.jar
+4d9a1000-4d9c8000 r--s 00000000 03:02 1589839    /usr/local/aolserver/bin/nsjava.jar
+4d9c8000-4da61000 r--s 00000000 03:02 2998391    /web/phigitanet/packages/search/java/googleapi.jar
+4da61000-4da71000 r-xp 00000000 03:02 1343754    /usr/local/j2sdk1.4.1_01/jre/lib/i386/libnet.so
+4da71000-4da73000 rw-p 0000f000 03:02 1343754    /usr/local/j2sdk1.4.1_01/jre/lib/i386/libnet.so
+4da8d000-4da98000 r-xp 00000000 03:02 3686443    /lib/libnss_nisplus-2.2.93.so
+4da98000-4da99000 rw-p 0000a000 03:02 3686443    /lib/libnss_nisplus-2.2.93.so
+4da99000-4da9c000 r-xp 00000000 03:02 3686432    /lib/libnss_dns-2.2.93.so
+4da9c000-4da9d000 rw-p 00002000 03:02 3686432    /lib/libnss_dns-2.2.93.so
+
+Local Time = Sun Jan  4 20:37:08 2004
+Elapsed Time = 348485
+#
+# The exception above was detected in native code outside the VM
+#
+# Java VM: Java HotSpot(TM) Client VM (1.4.1_01-b01 mixed mode)
+#

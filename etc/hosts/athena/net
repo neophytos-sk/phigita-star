@@ -1,0 +1,5 @@
+config_eth0="192.168.200.210 netmask 255.255.255.0"
+routes_eth0="default via 192.168.200.1"
+dns_servers_eth0="192.168.200.1"
+
+

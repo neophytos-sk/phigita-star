@@ -1,0 +1,13 @@
+# attachment_name = ad_conn urlv end
+ad_page_contract {
+    @author Neophytos Demetriou
+} {
+    attachment_id:trim,notnull
+    attachment_type:trim,notnull
+}
+
+
+set maildir [::xo::mail::maildir]
+set filename [file join $maildir attachment $attachment_id]
+
+ad_returnfile_background 200 $attachment_type $filename

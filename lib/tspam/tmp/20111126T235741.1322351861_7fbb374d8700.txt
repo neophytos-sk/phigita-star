@@ -1,0 +1,12 @@
+Received: from tlalqtzcb (unknown [110.53.24.103])
+	(Authenticated sender: yh_ma@jj-jtb.com)
+	by mail3.1stchina.net (Ksemail Mail Server Ver 6.0 Build 110430 (Database-MySQL) ESMTP Ready.) with ESMTPA id 8557B15C000B;
+	Sun, 27 Nov 2011 07:57:03 +0800 (CST) 
+Sender: yh_ma@jj-jtb.com 
+Message-ID: <20111127075451302508@jj-jtb.com> 
+From: "zaqzwiey" <okusm@frkghj.com> 
+To:  
+Subject: =?gb2312?B?uPzQwrnbxO6jrMDtx+W4xLjvy7zCt6Osw/fIt7jEuO/Ev7Hq?= 
+Date: Sun, 27 Nov 2011 07:54:45 +0800 
+X-mailer: Qnaksstvev 8 
+

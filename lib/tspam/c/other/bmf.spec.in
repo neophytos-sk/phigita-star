@@ -1,0 +1,64 @@
+Name: bmf
+Version: VERSION
+Release: 1
+URL: http://www.sourceforge.net/projects/bmf
+Source0: %{name}-%{version}.tar.gz
+License: GPL
+Group: Applications/Internet
+Summary: fast anti-spam filtering by Bayesian statistical analysis
+Buildroot: %{_tmppath}/%{name}-%{version}-root
+
+%description
+bmf is a Bayesian mail filter.  It takes an email message or other text on
+stdin, does a statistical check against lists of "good" and "spam" words,
+and returns a status code indicating whether or not the message is spam. 
+bmf is efficient, small, and self-contained.
+
+%prep
+
+%setup
+
+%build
+./configure --with-libdb --without-mysql
+make
+
+%install
+[ -n "$RPM_BUILD_ROOT" -a "$RPM_BUILD_ROOT" != / ] && rm -rf $RPM_BUILD_ROOT
+make DESTDIR=${RPM_BUILD_ROOT} install
+gzip $RPM_BUILD_ROOT/%{_mandir}/*/*.?
+
+
+%files
+%{_bindir}/bmf
+%{_mandir}/man1/bmf.1.gz
+%{_bindir}/bmfconv
+%{_mandir}/man1/bmfconv.1.gz
+%doc README LICENSE
+
+%changelog
+* Mon Oct 14 2002 Tom Marshall <tommy@tig-grr.com>
+- Update to version 0.9.3.
+
+* Sat Oct 12 2002 Tom Marshall <tommy@tig-grr.com>
+- Update to version 0.9.2.
+
+* Sat Oct 12 2002 Tom Marshall <tommy@tig-grr.com>
+- Update to version 0.9.1.
+
+* Wed Oct 09 2002 Tom Marshall <tommy@tig-grr.com>
+- Update to version 0.84.
+
+* Mon Oct 07 2002 Tom Marshall <tommy@tig-grr.com>
+- Update to version 0.83.
+
+* Sat Oct 05 2002 Tom Marshall <tommy@tig-grr.com>
+- Update to version 0.82.
+
+* Thu Oct 03 2002 Tom Marshall <tommy@tig-grr.com>
+- Update to version 0.81.
+- Add bmfconv.
+- Use new configure script.
+
+* Fri Sep 27 2002 Tom Marshall <tommy@tig-grr.com>
+- Initial build.
+

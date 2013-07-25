@@ -1,0 +1,20 @@
+Received: from hqvech ([222.246.86.46])
+	(authenticated bits=0)
+	by lmars.whu.edu.cn (8.13.8/8.13.8) with ESMTP id p9P82jX1010502;
+	Tue, 25 Oct 2011 16:02:46 +0800 
+Message-ID: <20111025152459453575@lmars.whu.edu.cn> 
+From: "pkmugna" <xuchan@lmars.whu.edu.cn> 
+To:  
+Subject: {Spam?} =?gb2312?B?p6e5yaHKyKihyrykocrA+G1oZXptZWNtNg==?= 
+Date: Tue, 25 Oct 2011 15:24:47 +0800 
+X-mailer: Yxpdmmvmfm 0 
+X-LIESMARS-MailScanner-Information: Please contact the ISP for more information 
+X-LIESMARS-MailScanner-ID: p9P82jX1010502 
+X-LIESMARS-MailScanner: Found to be clean 
+X-LIESMARS-MailScanner-SpamCheck: spam, SpamAssassin (not cached, score=7.13,
+	required 7, ALL_TRUSTED -1.80, BAYES_99 3.50, HTML_MESSAGE 0.00,
+	MIME_BASE64_TEXT 1.75, MIME_HTML_ONLY 1.46, TVD_SPACE_RATIO 2.22) 
+X-LIESMARS-MailScanner-SpamScore: sssssss 
+X-LIESMARS-MailScanner-From: xuchan@lmars.whu.edu.cn 
+X-Spam-Status: Yes 
+Whoops!  What is a 'application/vnd.ms-excel'?

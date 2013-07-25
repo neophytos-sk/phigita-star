@@ -1,0 +1,4 @@
+Library.TFFTComplex:                        libFFTW.so
+Library.TFFTComplexReal:                    libFFTW.so
+Library.TFFTRealComplex:                    libFFTW.so
+Library.TFFTReal:                           libFFTW.so

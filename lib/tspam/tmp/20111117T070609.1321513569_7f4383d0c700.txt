@@ -1,0 +1,17 @@
+Return-path: <webmaster@phigita.net> 
+Received: from [113.179.17.173] (port=9152 helo=PC2011041116MZD)
+	by mail.webachats.com with asmtp 
+	id 6227FB-0002E7-81
+	for <webmaster@phigita.net>; Thu, 17 Nov 2011 15:03:59 +0800 
+Message-ID: <6962C923CB8D46E3ACE91C563735B7B7@PC2011041116MZD> 
+From: =?koi8-r?B?IuvXwdLUwczYztnFIMvBzMXOxMHSySI=?= <hostesses2@webachats.com> 
+To: <webmaster@phigita.net> 
+Subject: =?koi8-r?B?8M/EwdLP3s7ZxSDL18HS1MHM2M7ZxSDLwczFzsTB0skgOTkg0tXCzMXK?=
+	=?koi8-r?B?INrBINvU1cvV?= 
+Date: Thu, 17 Nov 2011 15:03:59 +0800 
+X-Priority: 3 
+X-MSMail-Priority: Normal 
+X-Mailer: Microsoft Windows Mail 6.0.6001.18000 
+X-MimeOLE: Produced By Microsoft MimeOLE V6.0.6001.18049 
+X-Spam: Not detected 
+X-Mras: Ok 

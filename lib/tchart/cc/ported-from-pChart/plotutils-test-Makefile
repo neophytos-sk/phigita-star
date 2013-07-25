@@ -1,0 +1,6 @@
+all:
+	g++ -o test test.cc -lplotter
+
+clean:
+	rm -f *.o test a.out
+

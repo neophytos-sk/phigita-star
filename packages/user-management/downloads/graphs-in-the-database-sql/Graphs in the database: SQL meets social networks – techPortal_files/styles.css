@@ -1,0 +1,694 @@
+
+/* ################################################### */
+/* # version:   1.0                                  # */
+/* # author:    A. Kaasschieter | Ibuildings.nl      # */
+/* # e-mail:    info@ibuildings.nl                   # */
+/* # website:   http://www.ibuildings.nl             # */
+/* ################################################### */
+
+
+
+/* GLOBAL RESET */
+/* ################################################### */
+
+html, body                          { width: 100%; height: 100%; }
+body,div,dl,dt,dd,ul,ol,li,
+h1,h2,h3,h4,h5,h6,
+pre,form,fieldset,input,textarea,
+p,blockquote
+{  
+  margin: 0; 
+  padding: 0; 
+} 
+*                                   { line-height: 160%; }
+li, dd                              { margin-left: 8%; }
+fieldset                            { padding: .5em; }
+
+* html div, * html li
+{
+  zoom:1;
+}
+
+
+/* CONTAINERS */
+/* ################################################### */
+
+
+html
+{
+  background: #FFFFFF url(../img/body.jpg) repeat-x top left;
+  color: #444444;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.8em;
+}
+
+body
+{
+  background: url(../img/background.jpg) no-repeat center 62px;
+}
+
+#page
+{
+  position: relative;
+  width: 100%;
+  text-align: left;
+  min-height: 100%; 
+  height: auto !important; 
+  height: 100%; /* for IE */
+  line-height: 100%;
+}
+
+#header
+{
+  position: relative;
+  margin: 0px auto;
+  width: 980px;
+  height: 205px;
+}
+
+#container
+{
+  position: relative;
+  margin: 0px auto;
+  width: 980px;
+  padding: 0 0 99px 0;
+}
+
+#container:after
+{
+  clear: both;
+  display: block;
+  height: 0;
+  visibility: hidden;
+}
+
+#content
+{
+  position: relative;
+  float: left;
+  width: 550px;
+}
+
+.contentfull #content
+{
+  position: relative;
+  float: left;
+  width: 750px;
+}
+
+#header .ibuildings
+{
+  display: block;
+  position: absolute;
+  width: 154px;
+  height: 39px;
+  top: 150px;
+  right: 0px;
+  background: url(../img/ibuildings.jpg) no-repeat left top;
+}
+
+#header .ibuildings span
+{
+  display: none;
+}
+
+#container-footer
+{
+  width: 100%;
+  position: absolute;
+  bottom: 0 !important;
+  bottom: -1px; /* for certain IE widths */
+  height: 77px;
+  background: #A50013;
+}
+
+#container-footer #trademark
+{
+  width: 980px;
+  text-align: right;
+  color: #FFFFFF;
+  font-size: 0.9em;
+  margin: 18px auto;
+}
+
+/* POSTS */
+/* ################################################### */
+
+
+.post
+{
+  position: relative;
+  padding: 0 18px 28px 20px;
+  margin: 0 0 20px 0;
+  min-height: 110px;
+  background: url(../img/post.jpg) no-repeat center bottom;
+}
+
+.contentfull #content .post
+{
+  background: url(../img/postfull.jpg) no-repeat center bottom;
+}
+
+* html .post
+{
+  height: 120px;
+}
+
+.post a.readmore
+{
+  display: inline;
+  background: #a40013;
+  color: #FFFFFF;
+  padding: 0px 3px 0px 3px;
+  border: 1px solid #db99a1;
+}
+
+.post a.readmore:hover
+{
+  text-decoration: none;
+  background: none;
+  color: #a40013;
+  border: none;
+}
+
+.post .authorpic
+{
+  display: block;
+  float: left;
+  margin: 0 6px 0 0;
+}
+
+.postdetails
+{
+  margin: 0 !important;
+  padding: 2px 0 0 0; 
+  line-height: 100% ;
+  float: left;
+  color: #aaaaaa;
+}
+
+.by,
+.date,
+.comments-link
+{
+  font-size: 0.85em;
+}
+
+.entry-content,
+.full-content
+{
+  padding: 3px 0 0 0;
+  clear: both;
+}
+
+.entry-content p,
+.full-content p
+{
+  margin: 0 0 12px 0;
+}
+
+.entry-content span.monospace
+{
+  font-family: "Courier New", Courier, monospace !important;
+}
+
+#comments
+{
+  margin: 0 0 0 20px;
+  padding: 20px 0 0 0;
+}
+
+#comment-form
+{
+  display: block;
+  padding: 20px 0 0 0;
+}
+
+#comments .comment
+{
+  padding: 0 0 5px 0;
+  background: url(../img/dots_horizontal.gif) repeat-x scroll center bottom;
+}
+
+#comments #comment-form-comment
+{
+  padding: 0 0 10px 0;
+}
+
+#comments .section
+{
+  padding: 0 0 5px 0;
+}
+
+#comments .section label
+{
+  width: 140px;
+  display: block;
+  float: left;
+}
+
+#comments .actions
+{
+  margin: 0 0 0 140px; 
+  padding: 20px 0 0 0;
+}
+
+#comments .comments-list li
+{
+  margin: 10px 0 0 3%;
+}
+
+ol.pings-list cite,
+ol.pings-list address
+{
+  font-size: 1.1em;
+  font-style: normal;
+  display: inline;
+}
+
+ol.pings-list .info div.date
+{
+  display: inline;
+}
+
+ol.pings-list address .said
+{
+  font-weight: normal;
+}
+
+ol.pings-list cite a
+{
+  font-weight: bold;
+}
+
+ol.pings-list cite span.linked-to-this-post
+{
+  font-weight: normal;
+}
+
+ol.pings-list li 
+{
+  margin:10px 0 0 3%;
+}
+
+
+
+/* SIDEBAR */
+/* ################################################### */
+
+
+#sidebar
+{
+  position: relative;
+  float: right;
+  width: 415px;
+}
+
+#sidebar .screen-reader-text
+{
+  display: none;
+}
+
+.contentfull #sidebar
+{
+  width: 200px;
+}
+
+#primary-sidebar
+{
+  position: relative;
+  float: left;
+  width: 194px;
+}
+
+#secondary-sidebar
+{
+  position: relative;
+  float: right;
+  width: 194px;
+}
+
+#sidebar .customlinks
+{
+  position: relative;
+  margin: 0;
+  padding: 0 0 5px 0 !important;
+}
+
+#sidebar .widget
+{
+  position: relative;
+  padding: 0 0 15px 0;
+  margin: 0 0 15px 0;
+  background: url(../img/dots_horizontal.gif) repeat-x bottom;
+}
+
+#sidebar .banner
+{
+  background: none;
+  margin: 0;
+}
+
+#sidebar .widget_search .text, #s
+{
+  width: 100px;
+}
+
+#sidebar .widget_search .submit, #searchsubmit
+{
+  background: #a40013;
+  color: #FFFFFF;
+  padding: 0px 3px 0px 3px;
+  border: 1px solid #db99a1;  
+}
+
+#sidebar .feed a
+{
+  line-height: 140% !important;
+}
+
+#sidebar .feed li
+{
+  display: block;
+  padding: 0 0 0 15px;
+  margin: 0;
+  min-height: 10px;
+  background: url(../img/listitem.gif) no-repeat 2px 5px;
+}
+
+#sidebar .widget_flickrRSS
+{
+  clear: both;
+  height: 350px;
+  overflow: hidden;
+}
+
+#sidebar .widget_flickrRSS a 
+{
+  display: block;
+  float: left;
+  margin: 0 5px 5px 0;
+  min-height: 75px;
+  position: relative;
+}
+
+#sidebar a#ibCareers
+{
+  display: block;
+  position: relative;
+  width: 194px;
+  height: 218px;
+  margin: 0 0 10px 0;
+  padding: 0;
+  background: url(../img/ib_careers2.png) no-repeat left top;
+}
+
+#sidebar a#ibCareers span
+{
+  display: none;
+}
+
+#sidebar a#ibWhitepapers
+{
+  display: block;
+  position: relative;
+  width: 194px;
+  height: 117px;
+  margin: 0 0 10px 0;
+  padding: 0;
+  background: url(../img/ib_whitepapers.png) no-repeat left top;
+}
+
+#sidebar a#ibWhitepapers span
+{
+  display: none;
+}
+
+
+/* HEADERS and OTHER TYPOGRAPHY */
+/* ################################################### */
+
+
+h1, h2, h3, h4, h5, .entry-title
+{
+  font-family: "Lucida Sans", "Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif;
+  letter-spacing: -1px;
+}
+
+h1.logo
+{
+  display: block;
+  position: absolute;
+  top: 47px;
+  width: 305px;
+  height: 120px;
+  margin: 0 0 0 -10px;
+  text-indent: -9999px;
+  z-index: 10;
+  background: url(../img/techportal_logo.jpg) no-repeat left top;
+}
+
+h1.logo a
+{
+  display: block;
+  width: 305px;
+  height: 120px;
+}
+
+.entry-title,
+h1.full-title,
+h2.comments
+{
+  font-size: 1.6em;
+  font-weight: bold;
+  color: #777777;
+  padding: 0 0 5px 0;
+}
+
+h1.full-title
+{
+  width: 430px;
+}
+
+.contentfull h1.full-title,
+.contentfull h2.comments
+{
+  width: auto !important;
+}
+
+.page-title
+{
+  font-size: 2em;
+  padding: 0 0 20px 0;
+}
+
+h1.entry-title a,
+h1.full-title a
+{
+  color: #777777;
+  padding: 0;
+  line-height: 100%;
+}
+
+h2
+{
+  color: #444444;
+  font-size: 1.4em;
+  font-weight: normal;
+  line-height: 100%;
+  padding: 0 0 10px 0;
+}
+
+h2.title a
+{
+  color: #444444;
+}
+
+h2#blog-description
+{
+  display: block;
+  position: absolute;
+  top: 85px;
+  left: 340px;
+  z-index: 10;
+  font-family: Lucida Sans, Lucida Grande, Lucid Sans Unicode, Arial, Helvetica, sans-serif;
+  font-size: 2em;
+  letter-spacing: -1px;
+  color: #a7a7a7;
+}
+
+h3.pings
+{
+  color: #777777;
+  font-size: 1.6em;
+  font-weight: bold;
+  padding: 0 0 5px;
+  margin: 20px 0 0 0;
+}
+
+a
+{
+  color: #a40013;
+  text-decoration: none;
+}
+
+a:hover
+{
+  text-decoration: underline;
+}
+
+.twitterlink
+{
+  display: block;
+  margin: 0 0 0 5px;
+  padding: 3px 0 0 38px;
+  height: 35px;
+  font-size: 0.9em;
+  background: url(../img/twitter.gif) no-repeat left top;
+}
+
+.rsslink
+{
+  display: block;
+  margin: 0 0 0 7px;
+  padding: 3px 0 0 35px;
+  height: 32px;
+  font-size: 0.9em;
+  background: url(../img/rss.gif) no-repeat left top;
+}
+
+.ipadlink
+{
+  display: block;
+  margin: 0 0 0 7px;
+  padding: 3px 0 0 35px;
+  height: 32px;
+  font-size: 0.9em;
+  background: url(../img/ipad_icon.png) no-repeat left top;
+}
+
+/* GLOBAL FORM */
+/* ################################################### */
+
+
+form 
+{
+  margin: 0;
+  padding: 0;
+  display: inline;
+}
+ 
+input, select, textarea 
+{
+  font: 1em arial, helvetica, sans-serif;
+}
+ 
+textarea 
+{
+  line-height: 1.25;
+}
+ 
+label 
+{
+  cursor: pointer;
+}
+
+
+/* NAVIGATION */
+/* ################################################### */
+
+
+#navigation
+{
+  display: block;
+  position: absolute;
+  top: 18px;
+  left: 332px;
+  width: 620px;
+  font-family: Lucida Sans, Lucida Grande, Lucid Sans Unicode, Arial, Helvetica, sans-serif;
+  font-size: 1em;
+}
+
+#navigation li
+{
+  display: block;
+  float: left;
+  margin: 0 10px 0 0;
+  color: #FFFFFF;
+}
+
+#navigation li a
+{
+  display: block;
+  color: #FFFFFF;
+  padding: 2px 8px 3px 8px;
+}
+
+#navigation li a:hover
+{
+  background: #82000e;
+  text-decoration: none;
+}
+
+
+/* GLOBAL CLASSES */
+/* ################################################### */
+
+
+.clearfix:after 
+{
+  content: ".";
+  display: block;
+  clear: both;
+  visibility: hidden;
+  line-height: 0;
+  height: 0;
+}
+
+.clearfix 
+{
+  display: inline-block;
+}
+
+html[xmlns] .clearfix 
+{
+  display: block;
+}
+
+* html .clearfix 
+{
+  height: 1%;
+}
+
+.clear        { clear: both; }
+.floatleft    { float: left; }
+.floatright   { float: right; }
+ 
+.textleft     { text-align: left; }
+.textright    { text-align: right; }
+.textcenter   { text-align: center; }
+.textjustify  { text-align: justify; }
+ 
+.bold         { font-weight: bold; }
+.italic       { font-style: italic; }
+.underline    { border-bottom: 1px solid; }
+.highlight    { background: #ffc; }
+
+a img         { border: none; } 
+.imgleft      { float: left; margin: 4px 10px 4px 0; }
+.imgright     { float: right; margin: 4px 0 4px 10px; }
+ 
+.noindent     { margin-left: 0; padding-left: 0; }
+.nobullet     { list-style: none; list-style-image: none; }
+li.nobullet   { margin-left: 0 !important;}
+
+#atk_debugging_div
+{
+  clear: both;
+  margin: 0 0 0 25px;  
+}
+
+.hidden
+{
+  display: none;
+}

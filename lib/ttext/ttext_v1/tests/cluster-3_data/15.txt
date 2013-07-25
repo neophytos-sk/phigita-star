@@ -1,0 +1,107 @@
+Robots
+
+Robots, start your engines
+
+Mar 11th 2004 
+From The Economist print edition
+
+
+ 
+ 
+ 
+
+ 
+
+Innovation: Could a robot race funded by a military-research
+organisation help to advance the development of autonomous fighting
+vehicles?
+
+AMONG government organisations, America's Defence Advanced Research
+Projects Agency (DARPA) has always been somewhat unusual. As the
+research arm of the Department of Defence, it is akin to a high-stakes
+venture capitalist, gambling large sums of money (its estimated 2004
+budget is $3 billion) on risky technologies that will probably fail,
+but could pay off in a big way. It has had some stupendous successes,
+such as the internet, the Saturn rocket and micro-electro-mechanical
+systems (tiny machines that work at the scale of a human cell). There
+have also been some resounding duds, such as the Total Information
+Awareness project, a Big Brotherish plan to spot terrorists by combing
+through databases of personal information, which was swiftly
+abandoned.
+
+But what is arguably DARPA's most outlandish scheme yet will start
+rolling on March 13th, when a gaggle of strange-looking vehicles will
+line up in Barstow, California to make a wild run across 250 miles of
+scrub and desert. They will be heading, fittingly, towards Las Vegas,
+where gambling and high stakes are as common as hotel-buffet
+specials. DARPA calls this race the Grand Challenge. What makes the
+race so grand, and so much of a challenge? The lack of humans.
+
+
+Not a single person is permitted to be at the wheel (or remote
+control) of any of the racing contraptions. Each machine in the
+contest must reach the finish line unaided, within ten hours, or die
+trying. The first vehicle to cross the finish line within the allotted
+time will win its human creators a cool $1m the idea and quickly began
+to explore technologies that might be prize-worthy. After much
+discussion, Anthony Tether, DARPA's director, decided in 2002 that the
+first DARPA prize should challenge researchers to solve the stubborn
+problem of building land vehicles that navigate and drive themselves.
+
+There were good reasons to do this. For one thing, Congress has
+decreed that by 2015, one-third of America's combat ground-vehicles
+must be autonomous. Furthermore, engineers and scientists have spent
+years, and millions of dollars, grappling with this problem without
+success. Driving through rough, unpredictable terrain requires
+machines with sensors and computational capabilities that no one has
+been able to devise. So DARPA's staff worked out the format for the
+competition, the prize money was put on the table and the Grand
+Challenge was born . Dr Tether said when he announced the prize.
+
+That was the idea, at least: to fire up the enthusiasts, geeks and
+robot evangelists huddled away in the American hinterlands, and give
+them a shot at applying their collective genius to problems normally
+left to corporate giants such as Lockheed, General Dynamics and
+Boeing. But DARPA was far from certain that the citizen inventors were
+actually out there . says Jan Walker, a DARPA spokeswoman. 
+
+Enthusiasm, however, was not a problem. By early 2003, 106 teams had
+emerged from the ranks of university students, robot clubs and
+off-road-vehicle enthusiasts. Of these, 86 presented scientific papers
+containing the detailed technical specifications DARPA required, and
+19 were accepted to participate in a four-da y (QID) to be held five
+days before the race. Another 26 entrants were judge d. To quell
+grumbling among these teams, DARPA offered each one a visit before
+making a final decision. This offer was accepted by 19 teams, six of
+which made the cut. However, says Ms Walker, any or all of the teams
+could be wiped out in the QID.
+
+Teams of every stripe have been formed, from Alaska to Lafayette,
+Louisiana. One group from Palos Verdes, California, consists mostly of
+high-school students, but is not to be underestimated, because many of
+the students' parents work in the aerospace industry. Another group,
+Team Phantasm, is based in St Louis and consists of an inveterate
+tinkerer and a semi-retired computer programmer who have big plans but
+shallow pockets. Despite meagre resources, the duo have devised a
+creative flower-petal design that will right their vehicle if it flips
+over during the race, in much the same way that an insect gets back on
+its feet when turned over.
+
+Insiders suspect that three teamsion, a truck-maker). The Mojave is
+filled with cactus plants, boulders, ravines and ruts . Dr Whittaker
+says with a grin ,
+
+Who will win? Probably no one this time around, although the agency is
+more optimistic than it was a year ago that one of the teams might
+manage to claim the prize, according to Ms Walker. But even without an
+outright winner, there may be rewards of other kinds for those who
+compete. There are plenty of people in industry and the military who
+want to solve the autonomous-vehicle problem, says Ms Walker, and they
+will be watching the race closely.
+
+Besides, says Dr Whittaker, the race is not really about the money. It
+is about doing something that's never been done before . he
+says. Which is somewhat ironic, when you consider that the race is for
+robots only. 
+
+

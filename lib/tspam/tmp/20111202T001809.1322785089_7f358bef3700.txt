@@ -1,0 +1,45 @@
+Received: from tori.wu-wien.ac.at (tori.wu-wien.ac.at [137.208.3.25])
+	by freddie.wu-wien.ac.at (Postfix) with ESMTP id 075EC26F2A
+	for <k2pts@phigita.net>; Fri,  2 Dec 2011 01:17:59 +0100 (CET) from milter1.wu-wien.ac.at (milter1.wu-wien.ac.at [137.208.8.132])
+	by tori.wu-wien.ac.at (Postfix) with ESMTP id EE84026F02
+	for <neophytos.demetriou@wu-wien.ac.at>; Fri,  2 Dec 2011 01:17:58 +0100 (CET) from tori.wu-wien.ac.at ([137.208.3.25])
+	by milter1.wu-wien.ac.at (milter1.wu-wien.ac.at [137.208.8.132]) (amavisd-new, port 10024)
+	with ESMTP id 3GuPLQpSd5aO for <neophytos.demetriou@wu-wien.ac.at>;
+	Fri,  2 Dec 2011 01:17:57 +0100 (CET) from wilmottbulletin.com (static.88-198-65-67.clients.your-server.de [88.198.65.67])
+	by tori.wu-wien.ac.at (Postfix) with SMTP id DF13326EFF
+	for <neophytos.demetriou@wu-wien.ac.at>; Fri,  2 Dec 2011 01:17:56 +0100 (CET) from Wilmott ([109.75.160.33])
+	by wilmottbulletin.com
+	; Fri, 2 Dec 2011 01:17:55 +0100 
+X-Virus-Scanned: Debian amavisd-new at milter1.wu.ac.at 
+X-Spam-Flag: NO 
+X-Spam-Score: 1.398 
+X-Spam-Level: * 
+X-Spam-Status: No, score=1.398 tagged_above=-999 required=6.31
+	tests=[BAYES_00=-1.9, EXCUSE_REMOVE=3.299, HTML_MESSAGE=0.001,
+	SPF_HELO_PASS=-0.001, SPF_PASS=-0.001] autolearn=no 
+X-policyd-weight: using cached result; rate: -7.1 
+Message-ID: <1665009.1322785081033.JavaMail.SYSTEM@Wilmott> 
+Date: Fri, 2 Dec 2011 00:18:01 +0000 (GMT) 
+From: mailinglist@wilmottbulletin.com 
+Reply-To: mailinglist@wilmottbulletin.com 
+To: neophytos.demetriou@wu-wien.ac.at 
+Subject: New Article On Wilmott.com 
+X-Mailer: Admin Pro Tools Email List Manager 2.5 Enterprise 
+X-AntiVirus: checked by Avira MailGate (version: 3.2.1.26; AVE: 8.2.6.128; VDF: 7.11.18.175; host: milter2); id=2290-bdvAS7 
+X-WU-spfcheck-wumi: pass (status=250 'sender SPF authorized' ip='88.198.65.67' envfrom='mailinglist@wilmottbulletin.com')  inserted by ethel 
+X-WU-wumi-status: ok ethel 
+--------------------------------------
+New Article On Wilmott.com
+
+Life Settlements and Viaticals: Wilmott
+Magazine Article
+
+Paul Wilmott
+http://www.wilmott.com/detail.cfm?articleID=371
+
+This is taken from the
+Second Edition of Paul Wilmott On Quantitative Finance, published by John
+Wiley & Sons 2006. 
+
+You must be logged on to view this article.
+

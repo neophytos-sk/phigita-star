@@ -1,0 +1,5 @@
+ip nat inside source list 1 interface Ethernet1 overload
+ip nat inside source static tcp 192.168.200.204 80 interface Ethernet1 80
+ip nat inside source static tcp 192.168.200.204 443 interface Ethernet1 443
+ip nat inside source static tcp 192.168.200.204 22 interface Ethernet1 2200
+ip nat inside source static tcp 192.168.200.201 25 interface Ethernet1 25

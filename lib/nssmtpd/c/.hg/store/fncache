@@ -1,0 +1,5 @@
+data/LICENSE.i
+data/Makefile.i
+data/README.i
+data/nssmtpd.c.i
+data/nssmtpd_procs.tcl.i

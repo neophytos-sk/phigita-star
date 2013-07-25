@@ -1,0 +1,6 @@
+[0m[[0minfo[0m] [0m[32mFunSetSuite:[0m[0m
+[0m[[0minfo[0m] [0m[32m- string take[0m[0m
+[0m[[0minfo[0m] [0m[32m- adding ints[0m[0m
+[0m[[0minfo[0m] [0m[32m- contains is implemented[0m[0m
+[0m[[0minfo[0m] [0m[33m- singletonSet(1) contains 1 !!! IGNORED !!![0m[0m
+[0m[[0minfo[0m] [0m[33m- union contains all elements !!! IGNORED !!![0m[0m

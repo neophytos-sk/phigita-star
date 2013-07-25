@@ -1,0 +1,133 @@
+Received: by vbbfs19 with SMTP id fs19sf1122271vbb.26
+        for <k2pts@phigita.net>; Wed, 30 Nov 2011 10:26:18 -0800 (PST) by 10.52.15.230 with SMTP id a6mr1060425vdd.2.1322677572171;
+        Wed, 30 Nov 2011 10:26:12 -0800 (PST) by 10.220.81.139 with SMTP id x11ls5185069vck.5.gmail; Wed, 30 Nov
+ 2011 10:24:59 -0800 (PST) by 10.52.67.145 with SMTP id n17mr4510046vdt.0.1322677499636;
+        Wed, 30 Nov 2011 10:24:59 -0800 (PST) by 10.224.137.16 with SMTP id u16msqat;
+        Wed, 30 Nov 2011 10:20:09 -0800 (PST) by 10.52.90.36 with SMTP id bt4mr4446635vdb.7.1322677208780;
+        Wed, 30 Nov 2011 10:20:08 -0800 (PST) by 10.52.90.36 with SMTP id bt4mr4446279vdb.7.1322677204005;
+        Wed, 30 Nov 2011 10:20:04 -0800 (PST) from mail-vx0-f202.google.com (mail-vx0-f202.google.com [209.85.220.202])
+        by gmr-mx.google.com with ESMTPS id en7si1228187vdb.1.2011.11.30.10.20.02
+        (version=TLSv1/SSLv3 cipher=OTHER);
+        Wed, 30 Nov 2011 10:20:03 -0800 (PST) by vcbfl11 with SMTP id fl11so96513vcb.5
+        for <inside-adsense@googlegroups.com>; Wed, 30 Nov 2011 10:20:01 -0800 (PST) by 10.236.190.200 with SMTP id e48mr5891491yhn.5.1322677201557; Wed,
+ 30 Nov 2011 10:20:01 -0800 (PST) 
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlegroups.com; s=beta;
+        h=x-beenthere:received-spf:mime-version:x-bloggermail:message-id:date
+         :subject:from:to:x-original-sender:x-original-authentication-results
+         :reply-to:precedence:mailing-list:list-id:x-google-group-id
+         :list-post:list-help:list-archive:sender:list-subscribe
+         :list-unsubscribe:content-type;
+        bh=63v58EUBfAXLUrCOSPY9Y5B39o4OpZkmrr0vPctvFjI=;
+        b=0WWXRs2CwOfZxAP5auF+fgtHveigDjvW6vCUfDXnkgiS8yI8WUqJHfXnIN/fSjwGSk
+         mp94FoIlQhvRq6UjjC6xkK0NBvJTdr4Lp1wY2DdVeTUJO2KTLc6ZdxV4W75NMupS9VRz
+         ZlhZFH6gJLTbkotNxfHBfu005h2RYzkz09txc= 
+X-BeenThere: inside-adsense@googlegroups.com 
+Received-SPF: pass (google.com: domain of 30XPWTg4KAI405A0vw-svAw5Awy66y3w.u64@blogger.bounces.google.com designates 209.85.220.202 as permitted sender) client-ip=209.85.220.202; 
+X-BloggerMail: 8d2a8e8ca87dc2060d077dc8ff65ec509446c7d7 
+Message-ID: <20cf3054a095c05ee404b2f7c88a@google.com> 
+Date: Wed, 30 Nov 2011 18:20:01 +0000 
+Subject: [Inside AdSense] Top 5 Things You Should Know About Invalid Clicks 
+From: Inside AdSense Team <inside-adsense@google.com> 
+To: inside-adsense@googlegroups.com 
+X-Original-Sender: inside-adsense@google.com 
+X-Original-Authentication-Results: gmr-mx.google.com; spf=pass (google.com:
+ domain of 30XPWTg4KAI405A0vw-svAw5Awy66y3w.u64@blogger.bounces.google.com
+ designates 209.85.220.202 as permitted sender) smtp.mail=30XPWTg4KAI405A0vw-svAw5Awy66y3w.u64@blogger.bounces.google.com;
+ dkim=pass header.i=@google.com 
+Reply-To: inside-adsense+owners@googlegroups.com 
+Precedence: list 
+Mailing-list: list inside-adsense@googlegroups.com; contact inside-adsense+owners@googlegroups.com 
+List-ID: <inside-adsense.googlegroups.com> 
+X-Google-Group-Id: 933049293311 
+List-Post: <http://groups.google.com/group/inside-adsense/post?hl=en_US>, <mailto:inside-adsense@googlegroups.com> 
+List-Help: <http://groups.google.com/support/?hl=en_US>, <mailto:inside-adsense+help@googlegroups.com> 
+List-Archive: <http://groups.google.com/group/inside-adsense?hl=en_US> 
+Sender: inside-adsense@googlegroups.com 
+List-Subscribe: <http://groups.google.com/group/inside-adsense/subscribe?hl=en_US>,
+ <mailto:inside-adsense+subscribe@googlegroups.com> 
+List-Unsubscribe: <http://groups.google.com/group/inside-adsense/subscribe?hl=en_US>,
+ <mailto:inside-adsense+unsubscribe@googlegroups.com> 
+--------------------------------------
+During the AdSense team's recent policy webinars, a number of publishers  
+posted questions on our Google Moderator page about invalid click activity  
+and the resources available to help them protect their accounts. We've  
+brought in experts from the Ad Traffic Quality team to address your top  
+questions about invalid clicks here in this post today.
+
+As a quick introduction, our responsibility on the Ad Traffic Quality team  
+is to monitor traffic across Google's ad network and prevent advertisers  
+from paying for invalid traffic. We've recently launched an in-depth Ad  
+Traffic Quality Resource Center, a site designed for both advertisers and  
+publishers to learn more about invalid clicks. This site also aggregates  
+various resources that help you learn about invalid clicks and maintain a  
+successful AdWords or AdSense account. Please note that the resource center  
+is currently only in English, but will be available in all languages  
+shortly.
+
+Now, onto the top 5 topics that publishers most frequently ask about, and  
+some guidance from our team:
+
+1. Monitoring your ad traffic
+There's a lot that you can and should do to monitor your site's traffic and  
+prevent it from receiving invalid activity. You can find all of our  
+suggestions and best practices listed in our Help Center. If at any time  
+you'd like to report something suspicious, feel free to contact us using  
+this form.
+
+
+2. Returning earnings to our advertisers
+Protecting our advertisers' interests by monitoring invalid click activity  
+is one of the key ways we strive to keep the network a balanced ecosystem  
+where users, publishers, and advertisers can all grow and thrive together.  
+To protect the integrity of our advertising environment, we return earnings  
+from disabled AdSense accounts to affected advertisers, as stated in our  
+Disabled Account FAQ.
+
+3. Our mechanisms catch on to trends
+Google uses real-time detection and filtering systems to examine each click  
+on an AdWords ad. We look at numerous data points for each click, including  
+the time of the click, any duplicate clicks, and various other click  
+patterns. Our system then analyzes these factors to isolate and filter out  
+potentially invalid clicks before they ever reach your account reports. Our  
+engineers are constantly improving our monitoring technology, enhancing  
+filters, and examining a growing set of signals.
+
+In addition to our automated click protection techniques, we have a team  
+that uses specialized tools and techniques to examine individual instances  
+of invalid clicks. When our system detects potentially invalid clicks, a  
+member of this team examines the affected account to glean important  
+information about the source of the potentially invalid clicks.
+
+4. How we determine sabotage
+Sabotage, which some publishers refer to as 'click bombing', is an act  
+committed by a third party to generate invalid activity on a publisher's  
+ads without their knowledge or permission. Although this topic often comes  
+up on our forums and in the questions we've received, we've found that  
+click bombing represents only a small fraction of invalid activity. As  
+mentioned in point #3, we're constantly improving our detection systems to  
+identify these patterns of sabotage and filter them as invalid. We're  
+committed to protecting our publishers as well as our advertisers, as our  
+goal is to grow the network while continuing to ensure that it is safe and  
+enjoyable for all.
+
+5. You can contact us if you feel your account was wrongfully disabled
+We want to work with you and provide you as many resources as we can to  
+resolve issues you may have. If your account has been disabled and you feel  
+that the decision was made in error, we have a process for appealing the  
+decision in your account. For more information, see our Help Center.
+
+Posted by the Ad Traffic Quality Team
+
+
+
+--
+Posted By Inside AdSense Team to Inside AdSense at 11/30/2011 10:20:00 AM
+
+-- 
+Unable to view the links or images in the message above? Want to comment on this post? Visit http://adsense.blogspot.com/ .
+
+You received this message because you are subscribed to the Google Groups "Inside AdSense" group.
+To unsubscribe from this group, send email to Inside-AdSense+unsubscribe@googlegroups.com
+For more options, visit this group at http://groups.google.com/group/Inside-AdSense
+

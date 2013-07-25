@@ -1,0 +1,70 @@
+Received: by web1.extjs.com (Postfix, from userid 33)
+	id 477ED6C1A6; Tue, 29 Nov 2011 00:02:05 +0000 (UTC) 
+To: k2pts@phigita.net 
+Subject: "Ext: Open Discussion" update 
+X-PHP-Originating-Script: 1000:class_mail.php 
+From: "Sencha Forum" <admin@sencha.com> 
+Auto-Submitted: auto-generated 
+Message-ID: <20111129000205.7fe5850c3c02@www.sencha.com> 
+X-Priority: 3 
+X-Mailer: vBulletin Mail via PHP 
+Date: Tue, 29 Nov 2011 00:02:05 +0000 (UTC) 
+--------------------------------------
+Dear k2pts,
+
+You are subscribed to the forum Ext: Open Discussion, there have been 4 new thread(s) and 2 updated thread(s).
+http://www.sencha.com/forum/forumdisplay.php?6-Ext-Open-Discussion
+
+The following threads are new:
+************
+Question on UI virtualization and Scheduler control
+http://www.sencha.com/forum/showthread.php?157834-Question-on-UI-virtualization-and-Scheduler-control
+In forum: Ext: Open Discussion
+Started by: evhtmldemo
+Last post: 28 Nov 2011 11:18 AM
+************
+loading directly xml response in Store
+http://www.sencha.com/forum/showthread.php?157966-loading-directly-xml-response-in-Store
+In forum: Ext: Open Discussion
+Started by: shreyasrale
+Last post: 28 Nov 2011 3:28 PM
+************
+Siesta 1.0 available  (Ext JS unit testing)
+http://www.sencha.com/forum/showthread.php?157938-Siesta-1.0-available-(Ext-JS-unit-testing)
+In forum: Ext: Open Discussion
+Started by: mankz
+Last post: 28 Nov 2011 6:41 PM
+************
+Question to DatePickerForm if you clicked the field
+http://www.sencha.com/forum/showthread.php?157927-Question-to-DatePickerForm-if-you-clicked-the-field
+In forum: Ext: Open Discussion
+Started by: Flipfine
+Last post: 28 Nov 2011 7:45 PM
+
+
+The following threads have been updated:
+************
+reconfiguring plugins after grid reconfigure in gridpanel
+http://www.sencha.com/forum/showthread.php?144752-reconfiguring-plugins-after-grid-reconfigure-in-gridpanel
+In forum: Ext: Open Discussion
+Started by: Vamsi KP
+Last post: 28 Nov 2011 12:49 PM
+************
+ExtJs release notes?
+http://www.sencha.com/forum/showthread.php?145972-ExtJs-release-notes
+In forum: Ext: Open Discussion
+Started by: ngd
+Last post: 28 Nov 2011 5:28 PM
+
+
+All the best,
+Sencha Forum
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Unsubscription information:
+
+To unsubscribe from this forum, please visit this page:
+http://www.sencha.com/forum/subscription.php?do=removesubscription&type=forum&subscriptionid=63&auth=e23de5f6387a31c5573cf4993e28e47f
+
+
+

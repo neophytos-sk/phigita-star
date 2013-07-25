@@ -1,0 +1,410 @@
+<html><head><title>Date.js</title><link rel="stylesheet" type="text/css" href="../resources/style.css" media="screen"/></head><body><h1>Date.js</h1><pre class="highlighted"><code><i>/*
+ * All the Date functions below are the excellent work of Baron Schwartz
+ * They generate precompiled functions from date formats instead of parsing and processing
+ * the format everytime you <b>do</b> something <b>with</b> a date.
+ */</i>
+<i>// holder</i>
+<i>/** @ignore */</i>
+Date.parseFunctions = {count:0};
+<i>/** @ignore */</i>
+Date.parseRegexes = [];
+<i>/** @ignore */</i>
+Date.formatFunctions = {count:0};
+
+<i>/**
+ * Formats a date given to the supplied format - the format syntax is the same as &lt;a href=&quot;http:<i>//www.php.net/date&quot;&gt;PHP's date() <b>function</b>&lt;/a&gt;.</i>
+ */</i>
+Date.prototype.dateFormat = <b>function</b>(format) {
+    <b>if</b> (Date.formatFunctions[format] == null) {
+        Date.createNewFormat(format);
+    }
+    <b>var</b> func = Date.formatFunctions[format];
+    <b>return</b> this[func]();
+};
+
+<i>/**
+ * Same as {@link #dateFormat}
+ */</i>
+Date.prototype.format = Date.prototype.dateFormat;
+
+<i>/** @ignore */</i>
+Date.createNewFormat = <b>function</b>(format) {
+    <b>var</b> funcName = &quot;format&quot; + Date.formatFunctions.count++;
+    Date.formatFunctions[format] = funcName;
+    <b>var</b> code = &quot;Date.prototype.&quot; + funcName + &quot; = <b>function</b>(){<b>return</b> &quot;;
+    <b>var</b> special = false;
+    <b>var</b> ch = '';
+    <b>for</b> (<b>var</b> i = 0; i &lt; format.length; ++i) {
+        ch = format.charAt(i);
+        <b>if</b> (!special &amp;&amp; ch == &quot;\\&quot;) {
+            special = true;
+        }
+        <b>else</b> if (special) {
+            special = false;
+            code += &quot;'&quot; + String.escape(ch) + &quot;' + &quot;;
+        }
+        <b>else</b> {
+            code += Date.getFormatCode(ch);
+        }
+    }
+    eval(code.substring(0, code.length - 3) + &quot;;}&quot;);
+};
+
+<i>/** @ignore */</i>
+Date.getFormatCode = <b>function</b>(character) {
+    <b>switch</b> (character) {
+    <b>case</b> &quot;d&quot;:
+        <b>return</b> &quot;String.leftPad(<b>this</b>.getDate(), 2, '0') + &quot;;
+    <b>case</b> &quot;D&quot;:
+        <b>return</b> &quot;Date.dayNames[<b>this</b>.getDay()].substring(0, 3) + &quot;;
+    <b>case</b> &quot;j&quot;:
+        <b>return</b> &quot;<b>this</b>.getDate() + &quot;;
+    <b>case</b> &quot;l&quot;:
+        <b>return</b> &quot;Date.dayNames[<b>this</b>.getDay()] + &quot;;
+    <b>case</b> &quot;S&quot;:
+        <b>return</b> &quot;<b>this</b>.getSuffix() + &quot;;
+    <b>case</b> &quot;w&quot;:
+        <b>return</b> &quot;<b>this</b>.getDay() + &quot;;
+    <b>case</b> &quot;z&quot;:
+        <b>return</b> &quot;<b>this</b>.getDayOfYear() + &quot;;
+    <b>case</b> &quot;W&quot;:
+        <b>return</b> &quot;<b>this</b>.getWeekOfYear() + &quot;;
+    <b>case</b> &quot;F&quot;:
+        <b>return</b> &quot;Date.monthNames[<b>this</b>.getMonth()] + &quot;;
+    <b>case</b> &quot;m&quot;:
+        <b>return</b> &quot;String.leftPad(<b>this</b>.getMonth() + 1, 2, '0') + &quot;;
+    <b>case</b> &quot;M&quot;:
+        <b>return</b> &quot;Date.monthNames[<b>this</b>.getMonth()].substring(0, 3) + &quot;;
+    <b>case</b> &quot;n&quot;:
+        <b>return</b> &quot;(<b>this</b>.getMonth() + 1) + &quot;;
+    <b>case</b> &quot;t&quot;:
+        <b>return</b> &quot;<b>this</b>.getDaysInMonth() + &quot;;
+    <b>case</b> &quot;L&quot;:
+        <b>return</b> &quot;(<b>this</b>.isLeapYear() ? 1 : 0) + &quot;;
+    <b>case</b> &quot;Y&quot;:
+        <b>return</b> &quot;<b>this</b>.getFullYear() + &quot;;
+    <b>case</b> &quot;y&quot;:
+        <b>return</b> &quot;('' + <b>this</b>.getFullYear()).substring(2, 4) + &quot;;
+    <b>case</b> &quot;a&quot;:
+        <b>return</b> &quot;(<b>this</b>.getHours() &lt; 12 ? 'am' : 'pm') + &quot;;
+    <b>case</b> &quot;A&quot;:
+        <b>return</b> &quot;(<b>this</b>.getHours() &lt; 12 ? 'AM' : 'PM') + &quot;;
+    <b>case</b> &quot;g&quot;:
+        <b>return</b> &quot;((<b>this</b>.getHours() %12) ? <b>this</b>.getHours() % 12 : 12) + &quot;;
+    <b>case</b> &quot;G&quot;:
+        <b>return</b> &quot;<b>this</b>.getHours() + &quot;;
+    <b>case</b> &quot;h&quot;:
+        <b>return</b> &quot;String.leftPad((<b>this</b>.getHours() %12) ? <b>this</b>.getHours() % 12 : 12, 2, '0') + &quot;;
+    <b>case</b> &quot;H&quot;:
+        <b>return</b> &quot;String.leftPad(<b>this</b>.getHours(), 2, '0') + &quot;;
+    <b>case</b> &quot;i&quot;:
+        <b>return</b> &quot;String.leftPad(<b>this</b>.getMinutes(), 2, '0') + &quot;;
+    <b>case</b> &quot;s&quot;:
+        <b>return</b> &quot;String.leftPad(<b>this</b>.getSeconds(), 2, '0') + &quot;;
+    <b>case</b> &quot;O&quot;:
+        <b>return</b> &quot;<b>this</b>.getGMTOffset() + &quot;;
+    <b>case</b> &quot;T&quot;:
+        <b>return</b> &quot;<b>this</b>.getTimezone() + &quot;;
+    <b>case</b> &quot;Z&quot;:
+        <b>return</b> &quot;(<b>this</b>.getTimezoneOffset() * -60) + &quot;;
+    <b>default</b>:
+        <b>return</b> &quot;'&quot; + String.escape(character) + &quot;' + &quot;;
+    };
+};
+
+<i>/**
+ * Parses a date given the supplied format - the format syntax is the same as &lt;a href=&quot;http:<i>//www.php.net/date&quot;&gt;PHP's date() <b>function</b>&lt;/a&gt;.</i>
+ */</i>
+Date.parseDate = <b>function</b>(input, format) {
+    <b>if</b> (Date.parseFunctions[format] == null) {
+        Date.createParser(format);
+    }
+    <b>var</b> func = Date.parseFunctions[format];
+    <b>return</b> Date[func](input);
+};
+
+<i>/** @ignore */</i>
+Date.createParser = <b>function</b>(format) {
+    <b>var</b> funcName = &quot;parse&quot; + Date.parseFunctions.count++;
+    <b>var</b> regexNum = Date.parseRegexes.length;
+    <b>var</b> currentGroup = 1;
+    Date.parseFunctions[format] = funcName;
+
+    <b>var</b> code = &quot;Date.&quot; + funcName + &quot; = <b>function</b>(input){\n&quot;
+        + &quot;<b>var</b> y = -1, m = -1, d = -1, h = -1, i = -1, s = -1;\n&quot;
+        + &quot;<b>var</b> d = <b>new</b> Date();\n&quot;
+        + &quot;y = d.getFullYear();\n&quot;
+        + &quot;m = d.getMonth();\n&quot;
+        + &quot;d = d.getDate();\n&quot;
+        + &quot;<b>var</b> results = input.match(Date.parseRegexes[&quot; + regexNum + &quot;]);\n&quot;
+        + &quot;<b>if</b> (results &amp;&amp; results.length &gt; 0) {&quot;
+    <b>var</b> regex = &quot;&quot;;
+
+    <b>var</b> special = false;
+    <b>var</b> ch = '';
+    <b>for</b> (<b>var</b> i = 0; i &lt; format.length; ++i) {
+        ch = format.charAt(i);
+        <b>if</b> (!special &amp;&amp; ch == &quot;\\&quot;) {
+            special = true;
+        }
+        <b>else</b> if (special) {
+            special = false;
+            regex += String.escape(ch);
+        }
+        <b>else</b> {
+            obj = Date.formatCodeToRegex(ch, currentGroup);
+            currentGroup += obj.g;
+            regex += obj.s;
+            <b>if</b> (obj.g &amp;&amp; obj.c) {
+                code += obj.c;
+            }
+        }
+    }
+
+    code += &quot;<b>if</b> (y &gt; 0 &amp;&amp; m &gt;= 0 &amp;&amp; d &gt; 0 &amp;&amp; h &gt;= 0 &amp;&amp; i &gt;= 0 &amp;&amp; s &gt;= 0)\n&quot;
+        + &quot;{<b>return</b> new Date(y, m, d, h, i, s);}\n&quot;
+        + &quot;<b>else</b> if (y &gt; 0 &amp;&amp; m &gt;= 0 &amp;&amp; d &gt; 0 &amp;&amp; h &gt;= 0 &amp;&amp; i &gt;= 0)\n&quot;
+        + &quot;{<b>return</b> new Date(y, m, d, h, i);}\n&quot;
+        + &quot;<b>else</b> if (y &gt; 0 &amp;&amp; m &gt;= 0 &amp;&amp; d &gt; 0 &amp;&amp; h &gt;= 0)\n&quot;
+        + &quot;{<b>return</b> new Date(y, m, d, h);}\n&quot;
+        + &quot;<b>else</b> if (y &gt; 0 &amp;&amp; m &gt;= 0 &amp;&amp; d &gt; 0)\n&quot;
+        + &quot;{<b>return</b> new Date(y, m, d);}\n&quot;
+        + &quot;<b>else</b> if (y &gt; 0 &amp;&amp; m &gt;= 0)\n&quot;
+        + &quot;{<b>return</b> new Date(y, m);}\n&quot;
+        + &quot;<b>else</b> if (y &gt; 0)\n&quot;
+        + &quot;{<b>return</b> new Date(y);}\n&quot;
+        + &quot;}<b>return</b> null;}&quot;;
+
+    Date.parseRegexes[regexNum] = <b>new</b> RegExp(&quot;^&quot; + regex + &quot;$&quot;);
+    eval(code);
+};
+
+<i>/** @ignore */</i>
+Date.formatCodeToRegex = <b>function</b>(character, currentGroup) {
+    <b>switch</b> (character) {
+    <b>case</b> &quot;D&quot;:
+        <b>return</b> {g:0,
+        c:null,
+        s:&quot;(?:Sun|Mon|Tue|Wed|Thu|Fri|Sat)&quot;};
+    <b>case</b> &quot;j&quot;:
+    <b>case</b> &quot;d&quot;:
+        <b>return</b> {g:1,
+            c:&quot;d = parseInt(results[&quot; + currentGroup + &quot;], 10);\n&quot;,
+            s:&quot;(\\d{1,2})&quot;};
+    <b>case</b> &quot;l&quot;:
+        <b>return</b> {g:0,
+            c:null,
+            s:&quot;(?:&quot; + Date.dayNames.join(&quot;|&quot;) + &quot;)&quot;};
+    <b>case</b> &quot;S&quot;:
+        <b>return</b> {g:0,
+            c:null,
+            s:&quot;(?:st|nd|rd|th)&quot;};
+    <b>case</b> &quot;w&quot;:
+        <b>return</b> {g:0,
+            c:null,
+            s:&quot;\\d&quot;};
+    <b>case</b> &quot;z&quot;:
+        <b>return</b> {g:0,
+            c:null,
+            s:&quot;(?:\\d{1,3})&quot;};
+    <b>case</b> &quot;W&quot;:
+        <b>return</b> {g:0,
+            c:null,
+            s:&quot;(?:\\d{2})&quot;};
+    <b>case</b> &quot;F&quot;:
+        <b>return</b> {g:1,
+            c:&quot;m = parseInt(Date.monthNumbers[results[&quot; + currentGroup + &quot;].substring(0, 3)], 10);\n&quot;,
+            s:&quot;(&quot; + Date.monthNames.join(&quot;|&quot;) + &quot;)&quot;};
+    <b>case</b> &quot;M&quot;:
+        <b>return</b> {g:1,
+            c:&quot;m = parseInt(Date.monthNumbers[results[&quot; + currentGroup + &quot;]], 10);\n&quot;,
+            s:&quot;(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)&quot;};
+    <b>case</b> &quot;n&quot;:
+    <b>case</b> &quot;m&quot;:
+        <b>return</b> {g:1,
+            c:&quot;m = parseInt(results[&quot; + currentGroup + &quot;], 10) - 1;\n&quot;,
+            s:&quot;(\\d{1,2})&quot;};
+    <b>case</b> &quot;t&quot;:
+        <b>return</b> {g:0,
+            c:null,
+            s:&quot;\\d{1,2}&quot;};
+    <b>case</b> &quot;L&quot;:
+        <b>return</b> {g:0,
+            c:null,
+            s:&quot;(?:1|0)&quot;};
+    <b>case</b> &quot;Y&quot;:
+        <b>return</b> {g:1,
+            c:&quot;y = parseInt(results[&quot; + currentGroup + &quot;], 10);\n&quot;,
+            s:&quot;(\\d{4})&quot;};
+    <b>case</b> &quot;y&quot;:
+        <b>return</b> {g:1,
+            c:&quot;<b>var</b> ty = parseInt(results[&quot; + currentGroup + &quot;], 10);\n&quot;
+                + &quot;y = ty &gt; Date.y2kYear ? 1900 + ty : 2000 + ty;\n&quot;,
+            s:&quot;(\\d{1,2})&quot;};
+    <b>case</b> &quot;a&quot;:
+        <b>return</b> {g:1,
+            c:&quot;<b>if</b> (results[&quot; + currentGroup + &quot;] == 'am') {\n&quot;
+                + &quot;<b>if</b> (h == 12) { h = 0; }\n&quot;
+                + &quot;} <b>else</b> { <b>if</b> (h &lt; 12) { h += 12; }}&quot;,
+            s:&quot;(am|pm)&quot;};
+    <b>case</b> &quot;A&quot;:
+        <b>return</b> {g:1,
+            c:&quot;<b>if</b> (results[&quot; + currentGroup + &quot;] == 'AM') {\n&quot;
+                + &quot;<b>if</b> (h == 12) { h = 0; }\n&quot;
+                + &quot;} <b>else</b> { <b>if</b> (h &lt; 12) { h += 12; }}&quot;,
+            s:&quot;(AM|PM)&quot;};
+    <b>case</b> &quot;g&quot;:
+    <b>case</b> &quot;G&quot;:
+    <b>case</b> &quot;h&quot;:
+    <b>case</b> &quot;H&quot;:
+        <b>return</b> {g:1,
+            c:&quot;h = parseInt(results[&quot; + currentGroup + &quot;], 10);\n&quot;,
+            s:&quot;(\\d{1,2})&quot;};
+    <b>case</b> &quot;i&quot;:
+        <b>return</b> {g:1,
+            c:&quot;i = parseInt(results[&quot; + currentGroup + &quot;], 10);\n&quot;,
+            s:&quot;(\\d{2})&quot;};
+    <b>case</b> &quot;s&quot;:
+        <b>return</b> {g:1,
+            c:&quot;s = parseInt(results[&quot; + currentGroup + &quot;], 10);\n&quot;,
+            s:&quot;(\\d{2})&quot;};
+    <b>case</b> &quot;O&quot;:
+        <b>return</b> {g:0,
+            c:null,
+            s:&quot;[+-]\\d{4}&quot;};
+    <b>case</b> &quot;T&quot;:
+        <b>return</b> {g:0,
+            c:null,
+            s:&quot;[A-Z]{3}&quot;};
+    <b>case</b> &quot;Z&quot;:
+        <b>return</b> {g:0,
+            c:null,
+            s:&quot;[+-]\\d{1,5}&quot;};
+    <b>default</b>:
+        <b>return</b> {g:0,
+            c:null,
+            s:String.escape(character)};
+    }
+};
+
+Date.prototype.getTimezone = <b>function</b>() {
+    <b>return</b> this.toString().replace(
+        /^.*? ([A-Z]{3}) [0-9]{4}.*$/, &quot;$1&quot;).replace(
+        /^.*?\(([A-Z])[a-z]+ ([A-Z])[a-z]+ ([A-Z])[a-z]+\)$/, &quot;$1$2$3&quot;);
+};
+
+Date.prototype.getGMTOffset = <b>function</b>() {
+    <b>return</b> (<b>this</b>.getTimezoneOffset() &gt; 0 ? &quot;-&quot; : &quot;+&quot;)
+        + String.leftPad(Math.floor(<b>this</b>.getTimezoneOffset() / 60), 2, &quot;0&quot;)
+        + String.leftPad(<b>this</b>.getTimezoneOffset() % 60, 2, &quot;0&quot;);
+};
+
+Date.prototype.getDayOfYear = <b>function</b>() {
+    <b>var</b> num = 0;
+    Date.daysInMonth[1] = <b>this</b>.isLeapYear() ? 29 : 28;
+    <b>for</b> (<b>var</b> i = 0; i &lt; <b>this</b>.getMonth(); ++i) {
+        num += Date.daysInMonth[i];
+    }
+    <b>return</b> num + <b>this</b>.getDate() - 1;
+};
+
+Date.prototype.getWeekOfYear = <b>function</b>() {
+    <i>// Skip to Thursday of <b>this</b> week</i>
+    <b>var</b> now = <b>this</b>.getDayOfYear() + (4 - <b>this</b>.getDay());
+    <i>// Find the first Thursday of the year</i>
+    <b>var</b> jan1 = <b>new</b> Date(<b>this</b>.getFullYear(), 0, 1);
+    <b>var</b> then = (7 - jan1.getDay() + 4);
+    <b>return</b> String.leftPad(((now - then) / 7) + 1, 2, &quot;0&quot;);
+};
+
+Date.prototype.isLeapYear = <b>function</b>() {
+    <b>var</b> year = <b>this</b>.getFullYear();
+    <b>return</b> ((year &amp; 3) == 0 &amp;&amp; (year % 100 || (year % 400 == 0 &amp;&amp; year)));
+};
+
+Date.prototype.getFirstDayOfMonth = <b>function</b>() {
+    <b>var</b> day = (<b>this</b>.getDay() - (<b>this</b>.getDate() - 1)) % 7;
+    <b>return</b> (day &lt; 0) ? (day + 7) : day;
+};
+
+Date.prototype.getLastDayOfMonth = <b>function</b>() {
+    <b>var</b> day = (<b>this</b>.getDay() + (Date.daysInMonth[<b>this</b>.getMonth()] - <b>this</b>.getDate())) % 7;
+    <b>return</b> (day &lt; 0) ? (day + 7) : day;
+};
+
+Date.prototype.getDaysInMonth = <b>function</b>() {
+    Date.daysInMonth[1] = <b>this</b>.isLeapYear() ? 29 : 28;
+    <b>return</b> Date.daysInMonth[<b>this</b>.getMonth()];
+};
+
+<i>/** @ignore */</i>
+Date.prototype.getSuffix = <b>function</b>() {
+    <b>switch</b> (<b>this</b>.getDate()) {
+        <b>case</b> 1:
+        <b>case</b> 21:
+        <b>case</b> 31:
+            <b>return</b> &quot;st&quot;;
+        <b>case</b> 2:
+        <b>case</b> 22:
+            <b>return</b> &quot;nd&quot;;
+        <b>case</b> 3:
+        <b>case</b> 23:
+            <b>return</b> &quot;rd&quot;;
+        <b>default</b>:
+            <b>return</b> &quot;th&quot;;
+    }
+};
+
+<i>/** @ignore */</i>
+Date.daysInMonth = [31,28,31,30,31,30,31,31,30,31,30,31];
+
+<i>/**
+ * Override these values <b>for</b> international dates, <b>for</b> example...
+ * Date.monthNames = ['JanInYourLang', 'FebInYourLang', ...];
+ */</i>
+Date.monthNames =
+   [&quot;January&quot;,
+    &quot;February&quot;,
+    &quot;March&quot;,
+    &quot;April&quot;,
+    &quot;May&quot;,
+    &quot;June&quot;,
+    &quot;July&quot;,
+    &quot;August&quot;,
+    &quot;September&quot;,
+    &quot;October&quot;,
+    &quot;November&quot;,
+    &quot;December&quot;];
+    
+<i>/**
+ * Override these values <b>for</b> international dates, <b>for</b> example...
+ * Date.dayNames = ['SundayInYourLang', 'MondayInYourLang', ...];
+ */</i>
+Date.dayNames =
+   [&quot;Sunday&quot;,
+    &quot;Monday&quot;,
+    &quot;Tuesday&quot;,
+    &quot;Wednesday&quot;,
+    &quot;Thursday&quot;,
+    &quot;Friday&quot;,
+    &quot;Saturday&quot;];
+
+<i>/** @ignore */</i>
+Date.y2kYear = 50;
+
+<i>/** @ignore */</i>
+Date.monthNumbers = {
+    Jan:0,
+    Feb:1,
+    Mar:2,
+    Apr:3,
+    May:4,
+    Jun:5,
+    Jul:6,
+    Aug:7,
+    Sep:8,
+    Oct:9,
+    Nov:10,
+    Dec:11};</code></pre><hr><div style="font-size:10px;text-align:center;color:gray;">yui-ext - Copyright &copy; 2006 Jack Slocum.  |
+    Yahoo! UI - Copyright &copy; 2006 Yahoo! Inc.<br />All rights reserved.</div>
+    </body></html>

@@ -1,0 +1,319 @@
+MAP
+  NAME "Testing"
+  IMAGETYPE PNG
+  EXTENT 32.273087 34.563511 34.597919 35.701538 #30.404949 31.082815 34.609241 36.797260 # 30.091137 31.344246 30.129898 31.373552 # 
+  SIZE 384 256 # 1600 1200 # 9000 9000 # 1280 1024 #800 600 #256 256  #400 300 # 640 480 #1024 760 #800 600 # 400 300
+  SHAPEPATH "/usr/local/src/mapserver-4.6.1/tests/data-cyprus"
+  IMAGECOLOR 156 178 205
+  UNITS dd
+  FONTSET "fonts.txt"
+  #SYMBOLSET "symbols.txt"  
+
+
+  PROJECTION
+    "init=epsg:4326"
+  END
+
+  REFERENCE
+    STATUS ON
+    IMAGE refmap.png
+    SIZE 250 150
+    EXTENT 32.273087 34.563511 34.597919 35.701538 
+    COLOR -1 -1 -1
+    OUTLINECOLOR 255 0 0
+  END
+
+
+  SCALEBAR
+    STATUS OFF # EMBED
+    POSTLABELCACHE TRUE
+    INTERVALS 1
+    STYLE 1
+    UNITS kilometers
+    SIZE 100 3
+    POSITION LR
+    TRANSPARENT TRUE
+    COLOR 0 0 0
+    IMAGECOLOR 242 255 195
+    BACKGROUNDCOLOR 255 255 255
+    LABEL
+      TYPE BITMAP
+      SIZE TINY
+      COLOR 0 0 0
+      POSITION UR
+      BUFFER 10
+    END
+  END
+
+
+  SYMBOL
+    NAME "circle"
+    TYPE ELLIPSE
+    POINTS 1 1 END
+    FILLED TRUE
+  END
+
+
+  LAYER
+    NAME ponet
+    DATA "ponet"
+    STATUS OFF
+    TYPE POLYGON
+
+    PROJECTION
+      "init=epsg:4326"
+    END
+
+    #MAXSCALE 100000
+    #LABELITEM NAME_EN
+    #LABELMAXSCALE 100000
+    CLASS
+        COLOR 250 0 0
+        OUTLINECOLOR 210 210 210 #246 238 238
+    END
+  END
+
+  LAYER
+    NAME coastline
+    DATA "scale50k/coastline"
+    STATUS ON
+    TYPE POLYGON
+
+    PROJECTION
+      "init=epsg:4326"
+    END
+
+    #MAXSCALE 100000
+    #LABELITEM NAME_EN
+    #LABELMAXSCALE 100000
+    CLASS
+        COLOR 250 250 250
+        OUTLINECOLOR 210 210 210 #246 238 238
+    END
+  END
+
+
+  LAYER
+    NAME districts_polygon
+    DATA "scale50k/districts_polygon"
+    STATUS ON
+    TYPE POLYGON
+
+    PROJECTION
+      "init=epsg:4326"
+    END
+
+    #MAXSCALE 100000
+    #LABELITEM CODE
+    #LABELMAXSCALE 100000
+    CLASS
+        COLOR 250 250 250 #-1 -1 -1
+        OUTLINECOLOR 210 210 210 #246 238 238
+	LABEL
+	  SIZE TINY
+	  TYPE bitmap
+	  BUFFER 3
+	  POSITION cc
+	  PARTIALS FALSE
+	  ENCODING UTF8
+	  COLOR 40 40 40
+          OUTLINECOLOR 250 250 250 #246 238 238
+	END
+    END
+  END
+
+
+  LAYER
+    NAME boundaries
+    DATA "scale100k/boundaries"
+    STATUS ON
+    TYPE POLYGON
+
+    PROJECTION
+      "init=epsg:4326"
+    END
+
+    #MAXSCALE 150000
+    LABELITEM NAME_EN
+    LABELMAXSCALE 150000
+    CLASS
+        COLOR 250 250 250
+        OUTLINECOLOR 210 210 210 #246 238 238
+	LABEL
+	  SIZE TINY
+	  TYPE bitmap
+	  BUFFER 3
+	  POSITION cc
+	  PARTIALS FALSE
+	  ENCODING UTF8
+	  COLOR 40 40 40
+          OUTLINECOLOR 250 250 250 #246 238 238
+	END
+    END
+  END
+
+
+  LAYER
+    NAME buffer_line_polyline
+    DATA "scale50k/buffer_line_polyline"
+    STATUS ON
+    TYPE LINE
+
+    PROJECTION
+      "init=epsg:4326"
+    END
+
+    #MAXSCALE 100000
+    #LABELITEM NAME_EN
+    #LABELMAXSCALE 100000
+    CLASS
+	SYMBOL "circle"
+	SIZE 3
+        COLOR -1 -1 -1
+        OUTLINECOLOR 210 0 0 #246 238 238
+    END
+  END
+
+  LAYER
+    NAME sba_polyline
+    DATA "scale50k/sba_polyline"
+    STATUS ON
+    TYPE LINE
+
+    PROJECTION
+      "init=epsg:4326"
+    END
+
+    #MAXSCALE 100000
+    #LABELITEM NAME_EN
+    #LABELMAXSCALE 100000
+    CLASS
+	SYMBOL "circle"
+	SIZE 3
+        COLOR -1 -1 -1
+        OUTLINECOLOR 153 153 153 #246 238 238
+    END
+  END
+
+  LAYER
+    NAME roads_ts
+    DATA "scale50k/roads_ts"
+    STATUS ON
+    TYPE LINE
+
+    PROJECTION
+      "init=epsg:4326"
+    END
+
+    #MAXSCALE 100000
+    LABELITEM COMPCODE
+    LABELMAXSCALE 50000
+    CLASS
+        COLOR -1 -1 -1
+        OUTLINECOLOR 246 0 0
+	LABEL
+  	  ANGLE AUTO
+	  SIZE TINY
+	  TYPE bitmap
+	  BUFFER 3
+	  POSITION cc
+	  PARTIALS FALSE
+	  ENCODING UTF8
+	  COLOR 40 40 40
+          OUTLINECOLOR 250 250 250 #246 238 238
+	END
+    END
+  END
+
+  LAYER
+    NAME roads_ds
+    DATA "scale50k/roads_ds"
+    STATUS ON
+    TYPE LINE
+
+    PROJECTION
+      "init=epsg:4326"
+    END
+
+    #MAXSCALE 100000
+    LABELITEM STREETNAME
+    LABELMAXSCALE 50000
+    CLASS
+        COLOR -1 -1 -1
+        OUTLINECOLOR 0 246 0
+	LABEL
+	  SIZE TINY
+	  TYPE bitmap
+	  BUFFER 3
+	  POSITION cc
+	  PARTIALS FALSE
+	  ENCODING UTF8
+	  COLOR 40 40 40
+          OUTLINECOLOR 250 250 250 #246 238 238
+	END
+    END
+  END
+
+  LAYER
+    NAME Airport_region
+    DATA "scale50k/Airport_region"
+    STATUS ON
+    TYPE POLYGON
+
+    PROJECTION
+      "init=epsg:4326"
+    END
+
+    #MAXSCALE 100000
+    #LABELITEM NAME
+    #LABELMAXSCALE 50000
+    CLASS
+        COLOR 210 210 210
+        OUTLINECOLOR 210 210 210
+	LABEL
+	  SIZE TINY
+	  TYPE bitmap
+	  BUFFER 3
+	  POSITION cc
+	  PARTIALS FALSE
+	  ENCODING UTF8
+	  COLOR 40 40 40
+          OUTLINECOLOR 250 250 250 #246 238 238
+	END
+    END
+  END
+
+  LAYER
+    NAME bldup
+    DATA "scale50k/bldup"
+    STATUS OFF
+    TYPE POLYGON
+
+    PROJECTION
+      "init=epsg:4326"
+    END
+
+    #MAXSCALE 100000
+    LABELITEM VIL_ROMAN_
+    LABELMAXSCALE 50000
+    CLASS
+        COLOR 210 210 210
+        OUTLINECOLOR 210 210 210
+	LABEL
+	  SIZE TINY
+	  TYPE bitmap
+	  BUFFER 3
+	  POSITION cc
+	  PARTIALS FALSE
+	  ENCODING UTF8
+	  COLOR 40 40 40
+          OUTLINECOLOR 250 250 250 #246 238 238
+	END
+    END
+  END
+
+
+  # End of LAYER DEFINITIONS
+
+END # end of map file/object
+

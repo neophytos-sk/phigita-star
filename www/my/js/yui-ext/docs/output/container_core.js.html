@@ -1,0 +1,2886 @@
+<html><head><title>container_core.js</title><link rel="stylesheet" type="text/css" href="../resources/style.css" media="screen"/></head><body><h1>container_core.js</h1><pre class="highlighted"><code><i>/*
+Copyright (c) 2006, Yahoo! Inc. All rights reserved.
+Code licensed under the BSD License:
+http:<i>//developer.yahoo.net/yui/license.txt</i>
+version 0.12.0
+*/</i>
+<i>// holder</i>
+<i>/**
+* Config is a utility used within an Object to allow the implementer to maintain a list of local configuration properties and listen <b>for</b> changes to those properties dynamically using CustomEvent. The initial values are also maintained so that the configuration can be reset at any given point to its initial state.
+* @class YAHOO.util.Config
+* @constructor
+* @param {Object}	owner	The owner Object to which <b>this</b> Config Object belongs
+*/</i>
+YAHOO.util.Config = <b>function</b>(owner) {
+	<b>if</b> (owner) {
+		<b>this</b>.init(owner);
+	}
+};
+
+YAHOO.util.Config.prototype = {
+
+	<i>/**
+	* Object reference to the owner of <b>this</b> Config Object
+	* @property owner
+	* @type Object
+	*/</i>
+	owner : null,
+
+	<i>/**
+	* Boolean flag that specifies whether a queue is currently being executed
+	* @property queueInProgress
+	* @type Boolean
+	*/</i>
+	queueInProgress : false,
+
+
+	<i>/**
+	* Validates that the value passed <b>in</b> is a Boolean.
+	* @method checkBoolean
+	* @param	{Object}	val	The value to validate
+	* @<b>return</b>	{Boolean}	true, <b>if</b> the value is valid
+	*/</i>
+	checkBoolean: <b>function</b>(val) {
+		<b>if</b> (<b>typeof</b> val == 'boolean') {
+			<b>return</b> true;
+		} <b>else</b> {
+			<b>return</b> false;
+		}
+	},
+
+	<i>/**
+	* Validates that the value passed <b>in</b> is a number.
+	* @method checkNumber
+	* @param	{Object}	val	The value to validate
+	* @<b>return</b>	{Boolean}	true, <b>if</b> the value is valid
+	*/</i>
+	checkNumber: <b>function</b>(val) {
+		<b>if</b> (isNaN(val)) {
+			<b>return</b> false;
+		} <b>else</b> {
+			<b>return</b> true;
+		}
+	}
+};
+
+
+<i>/**
+* Initializes the configuration Object and all of its local members.
+* @method init
+* @param {Object}	owner	The owner Object to which <b>this</b> Config Object belongs
+*/</i>
+YAHOO.util.Config.prototype.init = <b>function</b>(owner) {
+
+	<b>this</b>.owner = owner;
+
+	<i>/**
+	* Object reference to the owner of <b>this</b> Config Object
+	* @event configChangedEvent
+	*/</i>
+	<b>this</b>.configChangedEvent = <b>new</b> YAHOO.util.CustomEvent(&quot;configChanged&quot;);
+
+	<b>this</b>.queueInProgress = false;
+
+	<i>/* Private Members */</i>
+<i>// holder</i>
+<i>/**
+	* Maintains the local collection of configuration property objects and their specified values
+	* @property config
+	* @private
+	* @type Object
+	*/</i>
+	<b>var</b> config = {};
+
+	<i>/**
+	* Maintains the local collection of configuration property objects as they were initially applied.
+	* This object is used when resetting a property.
+	* @property initialConfig
+	* @private
+	* @type Object
+	*/</i>
+	<b>var</b> initialConfig = {};
+
+	<i>/**
+	* Maintains the local, normalized CustomEvent queue
+	* @property eventQueue
+	* @private
+	* @type Object
+	*/</i>
+	<b>var</b> eventQueue = [];
+
+	<i>/**
+	* Fires a configuration property event using the specified value.
+	* @method fireEvent
+	* @private
+	* @param {String}	key			The configuration property's name
+	* @param {value}	Object		The value of the correct type <b>for</b> the property
+	*/</i>
+	<b>var</b> fireEvent = <b>function</b>( key, value ) {
+		key = key.toLowerCase();
+
+		<b>var</b> property = config[key];
+
+		<b>if</b> (<b>typeof</b> property != 'undefined' &amp;&amp; property.event) {
+			property.event.fire(value);
+		}
+	};
+	<i>/* End Private Members */</i>
+<i>// holder</i>
+<i>/**
+	* Adds a property to the Config Object's private config hash.
+	* @method addProperty
+	* @param {String}	key	The configuration property's name
+	* @param {Object}	propertyObject	The Object containing all of <b>this</b> property's arguments
+	*/</i>
+	<b>this</b>.addProperty = <b>function</b>( key, propertyObject ) {
+		key = key.toLowerCase();
+
+		config[key] = propertyObject;
+
+		propertyObject.event = <b>new</b> YAHOO.util.CustomEvent(key);
+		propertyObject.key = key;
+
+		<b>if</b> (propertyObject.handler) {
+			propertyObject.event.subscribe(propertyObject.handler, <b>this</b>.owner, true);
+		}
+
+		<b>this</b>.setProperty(key, propertyObject.value, true);
+
+		<b>if</b> (! propertyObject.suppressEvent) {
+			<b>this</b>.queueProperty(key, propertyObject.value);
+		}
+	};
+
+	<i>/**
+	* Returns a key-value configuration map of the values currently set <b>in</b> the Config Object.
+	* @method getConfig
+	* @<b>return</b> {Object} The current config, represented <b>in</b> a key-value map
+	*/</i>
+	<b>this</b>.getConfig = <b>function</b>() {
+		<b>var</b> cfg = {};
+
+		<b>for</b> (<b>var</b> prop <b>in</b> config) {
+			<b>var</b> property = config[prop];
+			<b>if</b> (<b>typeof</b> property != 'undefined' &amp;&amp; property.event) {
+				cfg[prop] = property.value;
+			}
+		}
+
+		<b>return</b> cfg;
+	};
+
+	<i>/**
+	* Returns the value of specified property.
+	* @method getProperty
+	* @param {String} key	The name of the property
+	* @<b>return</b> {Object}		The value of the specified property
+	*/</i>
+	<b>this</b>.getProperty = <b>function</b>(key) {
+		key = key.toLowerCase();
+
+		<b>var</b> property = config[key];
+		<b>if</b> (<b>typeof</b> property != 'undefined' &amp;&amp; property.event) {
+			<b>return</b> property.value;
+		} <b>else</b> {
+			<b>return</b> undefined;
+		}
+	};
+
+	<i>/**
+	* Resets the specified property's value to its initial value.
+	* @method resetProperty
+	* @param {String} key	The name of the property
+	* @<b>return</b> {Boolean} True is the property was reset, false <b>if</b> not
+	*/</i>
+	<b>this</b>.resetProperty = <b>function</b>(key) {
+		key = key.toLowerCase();
+
+		<b>var</b> property = config[key];
+		<b>if</b> (<b>typeof</b> property != 'undefined' &amp;&amp; property.event) {
+			<b>if</b> (initialConfig[key] &amp;&amp; initialConfig[key] != 'undefined')	{
+				<b>this</b>.setProperty(key, initialConfig[key]);
+			}
+			<b>return</b> true;
+		} <b>else</b> {
+			<b>return</b> false;
+		}
+	};
+
+	<i>/**
+	* Sets the value of a property. If the silent property is passed as true, the property's event will not be fired.
+	* @method setProperty
+	* @param {String} key		The name of the property
+	* @param {String} value		The value to set the property to
+	* @param {Boolean} silent	Whether the value should be set silently, without firing the property event.
+	* @<b>return</b> {Boolean}			True, <b>if</b> the set was successful, false <b>if</b> it failed.
+	*/</i>
+	<b>this</b>.setProperty = <b>function</b>(key, value, silent) {
+		key = key.toLowerCase();
+
+		<b>if</b> (<b>this</b>.queueInProgress &amp;&amp; ! silent) {
+			<b>this</b>.queueProperty(key,value); <i>// Currently running through a queue...</i>
+			<b>return</b> true;
+		} <b>else</b> {
+			<b>var</b> property = config[key];
+			<b>if</b> (<b>typeof</b> property != 'undefined' &amp;&amp; property.event) {
+				<b>if</b> (property.validator &amp;&amp; ! property.validator(value)) { <i>// validator</i>
+					<b>return</b> false;
+				} <b>else</b> {
+					property.value = value;
+					<b>if</b> (! silent) {
+						fireEvent(key, value);
+						<b>this</b>.configChangedEvent.fire([key, value]);
+					}
+					<b>return</b> true;
+				}
+			} <b>else</b> {
+				<b>return</b> false;
+			}
+		}
+	};
+
+	<i>/**
+	* Sets the value of a property and queues its event to execute. If the event is already scheduled to execute, it is
+	* moved from its current position to the end of the queue.
+	* @method queueProperty
+	* @param {String} key	The name of the property
+	* @param {String} value	The value to set the property to
+	* @<b>return</b> {Boolean}		true, <b>if</b> the set was successful, false <b>if</b> it failed.
+	*/</i>
+	<b>this</b>.queueProperty = <b>function</b>(key, value) {
+		key = key.toLowerCase();
+
+		<b>var</b> property = config[key];
+
+		<b>if</b> (<b>typeof</b> property != 'undefined' &amp;&amp; property.event) {
+			<b>if</b> (<b>typeof</b> value != 'undefined' &amp;&amp; property.validator &amp;&amp; ! property.validator(value)) { <i>// validator</i>
+				<b>return</b> false;
+			} <b>else</b> {
+
+				<b>if</b> (<b>typeof</b> value != 'undefined') {
+					property.value = value;
+				} <b>else</b> {
+					value = property.value;
+				}
+
+				<b>var</b> foundDuplicate = false;
+
+				<b>for</b> (<b>var</b> i=0;i&lt;eventQueue.length;i++) {
+					<b>var</b> queueItem = eventQueue[i];
+
+					<b>if</b> (queueItem) {
+						<b>var</b> queueItemKey = queueItem[0];
+						<b>var</b> queueItemValue = queueItem[1];
+
+						<b>if</b> (queueItemKey.toLowerCase() == key) {
+							<i>// found a dupe... push to end of queue, null current item, and <b>break</b></i>
+							eventQueue[i] = null;
+							eventQueue.push([key, (<b>typeof</b> value != 'undefined' ? value : queueItemValue)]);
+							foundDuplicate = true;
+							<b>break</b>;
+						}
+					}
+				}
+
+				<b>if</b> (! foundDuplicate &amp;&amp; <b>typeof</b> value != 'undefined') { <i>// <b>this</b> is a refire, or a <b>new</b> property <b>in</b> the queue</i>
+					eventQueue.push([key, value]);
+				}
+			}
+
+			<b>if</b> (property.supercedes) {
+				<b>for</b> (<b>var</b> s=0;s&lt;property.supercedes.length;s++) {
+					<b>var</b> supercedesCheck = property.supercedes[s];
+
+					<b>for</b> (<b>var</b> q=0;q&lt;eventQueue.length;q++) {
+						<b>var</b> queueItemCheck = eventQueue[q];
+
+						<b>if</b> (queueItemCheck) {
+							<b>var</b> queueItemCheckKey = queueItemCheck[0];
+							<b>var</b> queueItemCheckValue = queueItemCheck[1];
+
+							<b>if</b> ( queueItemCheckKey.toLowerCase() == supercedesCheck.toLowerCase() ) {
+								eventQueue.push([queueItemCheckKey, queueItemCheckValue]);
+								eventQueue[q] = null;
+								<b>break</b>;
+							}
+						}
+					}
+				}
+			}
+
+			<b>return</b> true;
+		} <b>else</b> {
+			<b>return</b> false;
+		}
+	};
+
+	<i>/**
+	* Fires the event <b>for</b> a property using the property's current value.
+	* @method refireEvent
+	* @param {String} key	The name of the property
+	*/</i>
+	<b>this</b>.refireEvent = <b>function</b>(key) {
+		key = key.toLowerCase();
+
+		<b>var</b> property = config[key];
+		<b>if</b> (<b>typeof</b> property != 'undefined' &amp;&amp; property.event &amp;&amp; <b>typeof</b> property.value != 'undefined') {
+			<b>if</b> (<b>this</b>.queueInProgress) {
+				<b>this</b>.queueProperty(key);
+			} <b>else</b> {
+				fireEvent(key, property.value);
+			}
+		}
+	};
+
+	<i>/**
+	* Applies a key-value Object literal to the configuration, replacing any existing values, and queueing the property events.
+	* Although the values will be set, fireQueue() must be called <b>for</b> their associated events to execute.
+	* @method applyConfig
+	* @param {Object}	userConfig	The configuration Object literal
+	* @param {Boolean}	init		When set to true, the initialConfig will be set to the userConfig passed <b>in</b>, so that calling a reset will reset the properties to the passed values.
+	*/</i>
+	<b>this</b>.applyConfig = <b>function</b>(userConfig, init) {
+		<b>if</b> (init) {
+			initialConfig = userConfig;
+		}
+		<b>for</b> (<b>var</b> prop <b>in</b> userConfig) {
+			<b>this</b>.queueProperty(prop, userConfig[prop]);
+		}
+	};
+
+	<i>/**
+	* Refires the events <b>for</b> all configuration properties using their current values.
+	* @method refresh
+	*/</i>
+	<b>this</b>.refresh = <b>function</b>() {
+		<b>for</b> (<b>var</b> prop <b>in</b> config) {
+			<b>this</b>.refireEvent(prop);
+		}
+	};
+
+	<i>/**
+	* Fires the normalized list of queued property change events
+	* @method fireQueue
+	*/</i>
+	<b>this</b>.fireQueue = <b>function</b>() {
+		<b>this</b>.queueInProgress = true;
+		<b>for</b> (<b>var</b> i=0;i&lt;eventQueue.length;i++) {
+			<b>var</b> queueItem = eventQueue[i];
+			<b>if</b> (queueItem) {
+				<b>var</b> key = queueItem[0];
+				<b>var</b> value = queueItem[1];
+
+				<b>var</b> property = config[key];
+				property.value = value;
+
+				fireEvent(key,value);
+			}
+		}
+
+		<b>this</b>.queueInProgress = false;
+		eventQueue = [];
+	};
+
+	<i>/**
+	* Subscribes an external handler to the change event <b>for</b> any given property.
+	* @method subscribeToConfigEvent
+	* @param {String}	key			The property name
+	* @param {Function}	handler		The handler <b>function</b> to use subscribe to the property's event
+	* @param {Object}	obj			The Object to use <b>for</b> scoping the event handler (see CustomEvent documentation)
+	* @param {Boolean}	override	Optional. If true, will override &quot;<b>this</b>&quot; within the handler to map to the scope Object passed into the method.
+	* @<b>return</b> {Boolean}				True, <b>if</b> the subscription was successful, otherwise false.
+	*/</i>
+	<b>this</b>.subscribeToConfigEvent = <b>function</b>(key, handler, obj, override) {
+		key = key.toLowerCase();
+
+		<b>var</b> property = config[key];
+		<b>if</b> (<b>typeof</b> property != 'undefined' &amp;&amp; property.event) {
+			<b>if</b> (! YAHOO.util.Config.alreadySubscribed(property.event, handler, obj)) {
+				property.event.subscribe(handler, obj, override);
+			}
+			<b>return</b> true;
+		} <b>else</b> {
+			<b>return</b> false;
+		}
+	};
+
+	<i>/**
+	* Unsubscribes an external handler from the change event <b>for</b> any given property.
+	* @method unsubscribeFromConfigEvent
+	* @param {String}	key			The property name
+	* @param {Function}	handler		The handler <b>function</b> to use subscribe to the property's event
+	* @param {Object}	obj			The Object to use <b>for</b> scoping the event handler (see CustomEvent documentation)
+	* @<b>return</b> {Boolean}				True, <b>if</b> the unsubscription was successful, otherwise false.
+	*/</i>
+	<b>this</b>.unsubscribeFromConfigEvent = <b>function</b>(key, handler, obj) {
+		key = key.toLowerCase();
+
+		<b>var</b> property = config[key];
+		<b>if</b> (<b>typeof</b> property != 'undefined' &amp;&amp; property.event) {
+			<b>return</b> property.event.unsubscribe(handler, obj);
+		} <b>else</b> {
+			<b>return</b> false;
+		}
+	};
+
+	<i>/**
+	* Returns a string representation of the Config object
+	* @method toString
+	* @<b>return</b> {String}	The Config object <b>in</b> string format.
+	*/</i>
+	<b>this</b>.toString = <b>function</b>() {
+		<b>var</b> output = &quot;Config&quot;;
+		<b>if</b> (<b>this</b>.owner) {
+			output += &quot; [&quot; + <b>this</b>.owner.toString() + &quot;]&quot;;
+		}
+		<b>return</b> output;
+	};
+
+	<i>/**
+	* Returns a string representation of the Config object's current CustomEvent queue
+	* @method outputEventQueue
+	* @<b>return</b> {String}	The string list of CustomEvents currently queued <b>for</b> execution
+	*/</i>
+	<b>this</b>.outputEventQueue = <b>function</b>() {
+		<b>var</b> output = &quot;&quot;;
+		<b>for</b> (<b>var</b> q=0;q&lt;eventQueue.length;q++) {
+			<b>var</b> queueItem = eventQueue[q];
+			<b>if</b> (queueItem) {
+				output += queueItem[0] + &quot;=&quot; + queueItem[1] + &quot;, &quot;;
+			}
+		}
+		<b>return</b> output;
+	};
+};
+
+<i>/**
+* Checks to determine <b>if</b> a particular <b>function</b>/Object pair are already subscribed to the specified CustomEvent
+* @method YAHOO.util.Config.alreadySubscribed
+* @static
+* @param {YAHOO.util.CustomEvent} evt	The CustomEvent <b>for</b> which to check the subscriptions
+* @param {Function}	fn	The <b>function</b> to look <b>for</b> in the subscribers list
+* @param {Object}	obj	The execution scope Object <b>for</b> the subscription
+* @<b>return</b> {Boolean}	true, <b>if</b> the <b>function</b>/Object pair is already subscribed to the CustomEvent passed <b>in</b>
+*/</i>
+YAHOO.util.Config.alreadySubscribed = <b>function</b>(evt, fn, obj) {
+	<b>for</b> (<b>var</b> e=0;e&lt;evt.subscribers.length;e++) {
+		<b>var</b> subsc = evt.subscribers[e];
+		<b>if</b> (subsc &amp;&amp; subsc.obj == obj &amp;&amp; subsc.fn == fn) {
+			<b>return</b> true;
+		}
+	}
+	<b>return</b> false;
+};
+
+<i>/**
+*  The Container family of components is designed to enable developers to create different kinds of content-containing modules on the web. Module and Overlay are the most basic containers, and they can be used directly or extended to build custom containers. Also part of the Container family are four UI controls that extend Module and Overlay: Tooltip, Panel, Dialog, and SimpleDialog.
+* @module Container
+* @requires yahoo,dom,event,dragdrop,animation
+*/</i>
+<i>// holder</i>
+<i>/**
+* Module is a JavaScript representation of the Standard Module Format. Standard Module Format is a simple standard <b>for</b> markup containers where child nodes representing the header, body, and footer of the content are denoted using the CSS classes &quot;hd&quot;, &quot;bd&quot;, and &quot;ft&quot; respectively. Module is the base class <b>for</b> all other classes <b>in</b> the YUI Container package.
+* @class Module
+* @namespace YAHOO.widget
+* @constructor
+* @param {String} el			The element ID representing the Module &lt;em&gt;OR&lt;/em&gt;
+* @param {HTMLElement} el		The element representing the Module
+* @param {Object} userConfig	The configuration Object literal containing the configuration that should be set <b>for</b> this module. See configuration documentation <b>for</b> more details.
+*/</i>
+YAHOO.widget.Module = <b>function</b>(el, userConfig) {
+	<b>if</b> (el) {
+		<b>this</b>.init(el, userConfig);
+	}
+};
+
+<i>/**
+* Constant representing the prefix path to use <b>for</b> non-secure images
+* @property YAHOO.widget.Module.IMG_ROOT
+* @static
+* @final
+* @type String
+*/</i>
+YAHOO.widget.Module.IMG_ROOT = &quot;http:<i>//us.i1.yimg.com/us.yimg.com/i/&quot;;</i>
+
+<i>/**
+* Constant representing the prefix path to use <b>for</b> securely served images
+* @property YAHOO.widget.Module.IMG_ROOT_SSL
+* @static
+* @final
+* @type String
+*/</i>
+YAHOO.widget.Module.IMG_ROOT_SSL = &quot;https:<i>//a248.e.akamai.net/sec.yimg.com/i/&quot;;</i>
+
+<i>/**
+* Constant <b>for</b> the <b>default</b> CSS class name that represents a Module
+* @property YAHOO.widget.Module.CSS_MODULE
+* @static
+* @final
+* @type String
+*/</i>
+YAHOO.widget.Module.CSS_MODULE = &quot;module&quot;;
+
+<i>/**
+* Constant representing the module header
+* @property YAHOO.widget.Module.CSS_HEADER
+* @static
+* @final
+* @type String
+*/</i>
+YAHOO.widget.Module.CSS_HEADER = &quot;hd&quot;;
+
+<i>/**
+* Constant representing the module body
+* @property YAHOO.widget.Module.CSS_BODY
+* @static
+* @final
+* @type String
+*/</i>
+YAHOO.widget.Module.CSS_BODY = &quot;bd&quot;;
+
+<i>/**
+* Constant representing the module footer
+* @property YAHOO.widget.Module.CSS_FOOTER
+* @static
+* @final
+* @type String
+*/</i>
+YAHOO.widget.Module.CSS_FOOTER = &quot;ft&quot;;
+
+<i>/**
+* Constant representing the url <b>for</b> the &quot;src&quot; attribute of the iframe used to monitor changes to the browser's base font size
+* @property YAHOO.widget.Module.RESIZE_MONITOR_SECURE_URL
+* @static
+* @final
+* @type String
+*/</i>
+YAHOO.widget.Module.RESIZE_MONITOR_SECURE_URL = &quot;javascript:false;&quot;;
+
+YAHOO.widget.Module.prototype = {
+	<i>/**
+	* The class's constructor <b>function</b>
+	* @property contructor
+	* @type Function
+	*/</i>
+	constructor : YAHOO.widget.Module,
+
+	<i>/**
+	* The main module element that contains the header, body, and footer
+	* @property element
+	* @type HTMLElement
+	*/</i>
+	element : null,
+
+	<i>/**
+	* The header element, denoted <b>with</b> CSS class &quot;hd&quot;
+	* @property header
+	* @type HTMLElement
+	*/</i>
+	header : null,
+
+	<i>/**
+	* The body element, denoted <b>with</b> CSS class &quot;bd&quot;
+	* @property body
+	* @type HTMLElement
+	*/</i>
+	body : null,
+
+	<i>/**
+	* The footer element, denoted <b>with</b> CSS class &quot;ft&quot;
+	* @property footer
+	* @type HTMLElement
+	*/</i>
+	footer : null,
+
+	<i>/**
+	* The id of the element
+	* @property id
+	* @type String
+	*/</i>
+	id : null,
+
+	<i>/**
+	* The String representing the image root
+	* @property imageRoot
+	* @type String
+	*/</i>
+	imageRoot : YAHOO.widget.Module.IMG_ROOT,
+
+	<i>/**
+	* Initializes the custom events <b>for</b> Module which are fired automatically at appropriate times by the Module class.
+	* @method initEvents
+	*/</i>
+	initEvents : <b>function</b>() {
+
+		<i>/**
+		* CustomEvent fired prior to class initalization.
+		* @event beforeInitEvent
+		* @param {class} classRef	class reference of the initializing class, such as <b>this</b>.beforeInitEvent.fire(YAHOO.widget.Module)
+		*/</i>
+		<b>this</b>.beforeInitEvent = <b>new</b> YAHOO.util.CustomEvent(&quot;beforeInit&quot;);
+
+		<i>/**
+		* CustomEvent fired after class initalization.
+		* @event initEvent
+		* @param {class} classRef	class reference of the initializing class, such as <b>this</b>.beforeInitEvent.fire(YAHOO.widget.Module)
+		*/</i>
+		<b>this</b>.initEvent = <b>new</b> YAHOO.util.CustomEvent(&quot;init&quot;);
+
+		<i>/**
+		* CustomEvent fired when the Module is appended to the DOM
+		* @event appendEvent
+		*/</i>
+		<b>this</b>.appendEvent = <b>new</b> YAHOO.util.CustomEvent(&quot;append&quot;);
+
+		<i>/**
+		* CustomEvent fired before the Module is rendered
+		* @event beforeRenderEvent
+		*/</i>
+		<b>this</b>.beforeRenderEvent = <b>new</b> YAHOO.util.CustomEvent(&quot;beforeRender&quot;);
+
+		<i>/**
+		* CustomEvent fired after the Module is rendered
+		* @event renderEvent
+		*/</i>
+		<b>this</b>.renderEvent = <b>new</b> YAHOO.util.CustomEvent(&quot;render&quot;);
+
+		<i>/**
+		* CustomEvent fired when the header content of the Module is modified
+		* @event changeHeaderEvent
+		* @param {String/HTMLElement} content	String/element representing the <b>new</b> header content
+		*/</i>
+		<b>this</b>.changeHeaderEvent = <b>new</b> YAHOO.util.CustomEvent(&quot;changeHeader&quot;);
+
+		<i>/**
+		* CustomEvent fired when the body content of the Module is modified
+		* @event changeBodyEvent
+		* @param {String/HTMLElement} content	String/element representing the <b>new</b> body content
+		*/</i>
+		<b>this</b>.changeBodyEvent = <b>new</b> YAHOO.util.CustomEvent(&quot;changeBody&quot;);
+
+		<i>/**
+		* CustomEvent fired when the footer content of the Module is modified
+		* @event changeFooterEvent
+		* @param {String/HTMLElement} content	String/element representing the <b>new</b> footer content
+		*/</i>
+		<b>this</b>.changeFooterEvent = <b>new</b> YAHOO.util.CustomEvent(&quot;changeFooter&quot;);
+
+		<i>/**
+		* CustomEvent fired when the content of the Module is modified
+		* @event changeContentEvent
+		*/</i>
+		<b>this</b>.changeContentEvent = <b>new</b> YAHOO.util.CustomEvent(&quot;changeContent&quot;);
+
+		<i>/**
+		* CustomEvent fired when the Module is destroyed
+		* @event destroyEvent
+		*/</i>
+		<b>this</b>.destroyEvent = <b>new</b> YAHOO.util.CustomEvent(&quot;destroy&quot;);
+
+		<i>/**
+		* CustomEvent fired before the Module is shown
+		* @event beforeShowEvent
+		*/</i>
+		<b>this</b>.beforeShowEvent = <b>new</b> YAHOO.util.CustomEvent(&quot;beforeShow&quot;);
+
+		<i>/**
+		* CustomEvent fired after the Module is shown
+		* @event showEvent
+		*/</i>
+		<b>this</b>.showEvent = <b>new</b> YAHOO.util.CustomEvent(&quot;show&quot;);
+
+		<i>/**
+		* CustomEvent fired before the Module is hidden
+		* @event beforeHideEvent
+		*/</i>
+		<b>this</b>.beforeHideEvent = <b>new</b> YAHOO.util.CustomEvent(&quot;beforeHide&quot;);
+
+		<i>/**
+		* CustomEvent fired after the Module is hidden
+		* @event hideEvent
+		*/</i>
+		<b>this</b>.hideEvent = <b>new</b> YAHOO.util.CustomEvent(&quot;hide&quot;);
+	},
+
+	<i>/**
+	* String representing the current user-agent platform
+	* @property platform
+	* @type String
+	*/</i>
+	platform : <b>function</b>() {
+					<b>var</b> ua = navigator.userAgent.toLowerCase();
+					<b>if</b> (ua.indexOf(&quot;windows&quot;) != -1 || ua.indexOf(&quot;win32&quot;) != -1) {
+						<b>return</b> &quot;windows&quot;;
+					} <b>else</b> if (ua.indexOf(&quot;macintosh&quot;) != -1) {
+						<b>return</b> &quot;mac&quot;;
+					} <b>else</b> {
+						<b>return</b> false;
+					}
+				}(),
+
+	<i>/**
+	* String representing the current user-agent browser
+	* @property browser
+	* @type String
+	*/</i>
+	browser : <b>function</b>() {
+			<b>var</b> ua = navigator.userAgent.toLowerCase();
+				  <b>if</b> (ua.indexOf('opera')!=-1) { <i>// Opera (check first <b>in</b> case of spoof)</i>
+					 <b>return</b> 'opera';
+				  } <b>else</b> if (ua.indexOf('msie 7')!=-1) { <i>// IE7</i>
+					 <b>return</b> 'ie7';
+				  } <b>else</b> if (ua.indexOf('msie') !=-1) { <i>// IE</i>
+					 <b>return</b> 'ie';
+				  } <b>else</b> if (ua.indexOf('safari')!=-1) { <i>// Safari (check before Gecko because it includes &quot;like Gecko&quot;)</i>
+					 <b>return</b> 'safari';
+				  } <b>else</b> if (ua.indexOf('gecko') != -1) { <i>// Gecko</i>
+					 <b>return</b> 'gecko';
+				  } <b>else</b> {
+					 <b>return</b> false;
+				  }
+			}(),
+
+	<i>/**
+	* Boolean representing whether or not the current browsing context is secure (https)
+	* @property isSecure
+	* @type Boolean
+	*/</i>
+	isSecure : <b>function</b>() {
+		<b>if</b> (window.location.href.toLowerCase().indexOf(&quot;https&quot;) === 0) {
+			<b>return</b> true;
+		} <b>else</b> {
+			<b>return</b> false;
+		}
+	}(),
+
+	<i>/**
+	* Initializes the custom events <b>for</b> Module which are fired automatically at appropriate times by the Module class.
+	*/</i>
+	initDefaultConfig : <b>function</b>() {
+		<i>// Add properties //</i>
+
+		<i>/**
+		* Specifies whether the Module is visible on the page.
+		* @config visible
+		* @type Boolean
+		* @<b>default</b> true
+		*/</i>
+		<b>this</b>.cfg.addProperty(&quot;visible&quot;, { value:true, handler:<b>this</b>.configVisible, validator:<b>this</b>.cfg.checkBoolean } );
+
+		<i>/**
+		* Object or array of objects representing the ContainerEffect classes that are active <b>for</b> animating the container.
+		* @config effect
+		* @type Object
+		* @<b>default</b> null
+		*/</i>
+		<b>this</b>.cfg.addProperty(&quot;effect&quot;, { suppressEvent:true, supercedes:[&quot;visible&quot;] } );
+
+		<i>/**
+		* Specifies whether to create a special proxy iframe to monitor <b>for</b> user font resizing <b>in</b> the document
+		* @config monitorresize
+		* @type Boolean
+		* @<b>default</b> true
+		*/</i>
+		<b>this</b>.cfg.addProperty(&quot;monitorresize&quot;, { value:true, handler:<b>this</b>.configMonitorResize } );
+	},
+
+	<i>/**
+	* The Module class's initialization method, which is executed <b>for</b> Module and all of its subclasses. This method is automatically called by the constructor, and  sets up all DOM references <b>for</b> pre-existing markup, and creates required markup <b>if</b> it is not already present.
+	* @method init
+	* @param {String}	el	The element ID representing the Module &lt;em&gt;OR&lt;/em&gt;
+	* @param {HTMLElement}	el	The element representing the Module
+	* @param {Object}	userConfig	The configuration Object literal containing the configuration that should be set <b>for</b> this module. See configuration documentation <b>for</b> more details.
+	*/</i>
+	init : <b>function</b>(el, userConfig) {
+
+		<b>this</b>.initEvents();
+
+		<b>this</b>.beforeInitEvent.fire(YAHOO.widget.Module);
+
+		<i>/**
+		* The Module's Config object used <b>for</b> monitoring configuration properties.
+		* @property cfg
+		* @type YAHOO.util.Config
+		*/</i>
+		<b>this</b>.cfg = <b>new</b> YAHOO.util.Config(<b>this</b>);
+
+		<b>if</b> (<b>this</b>.isSecure) {
+			<b>this</b>.imageRoot = YAHOO.widget.Module.IMG_ROOT_SSL;
+		}
+
+		<b>if</b> (<b>typeof</b> el == &quot;string&quot;) {
+			<b>var</b> elId = el;
+
+			el = document.getElementById(el);
+			<b>if</b> (! el) {
+				el = document.createElement(&quot;DIV&quot;);
+				el.id = elId;
+			}
+		}
+
+		<b>this</b>.element = el;
+
+		<b>if</b> (el.id) {
+			<b>this</b>.id = el.id;
+		}
+
+		<b>var</b> childNodes = <b>this</b>.element.childNodes;
+
+		<b>if</b> (childNodes) {
+			<b>for</b> (<b>var</b> i=0;i&lt;childNodes.length;i++) {
+				<b>var</b> child = childNodes[i];
+				<b>switch</b> (child.className) {
+					<b>case</b> YAHOO.widget.Module.CSS_HEADER:
+						<b>this</b>.header = child;
+						<b>break</b>;
+					<b>case</b> YAHOO.widget.Module.CSS_BODY:
+						<b>this</b>.body = child;
+						<b>break</b>;
+					<b>case</b> YAHOO.widget.Module.CSS_FOOTER:
+						<b>this</b>.footer = child;
+						<b>break</b>;
+				}
+			}
+		}
+
+		<b>this</b>.initDefaultConfig();
+
+		YAHOO.util.Dom.addClass(<b>this</b>.element, YAHOO.widget.Module.CSS_MODULE);
+
+		<b>if</b> (userConfig) {
+			<b>this</b>.cfg.applyConfig(userConfig, true);
+		}
+
+		<i>// Subscribe to the fireQueue() method of Config so that any queued configuration changes are</i>
+		<i>// excecuted upon render of the Module</i>
+		<b>if</b> (! YAHOO.util.Config.alreadySubscribed(<b>this</b>.renderEvent, <b>this</b>.cfg.fireQueue, <b>this</b>.cfg)) {
+			<b>this</b>.renderEvent.subscribe(<b>this</b>.cfg.fireQueue, <b>this</b>.cfg, true);
+		}
+
+		<b>this</b>.initEvent.fire(YAHOO.widget.Module);
+	},
+
+	<i>/**
+	* Initialized an empty IFRAME that is placed out of the visible area that can be used to detect text resize.
+	* @method initResizeMonitor
+	*/</i>
+	initResizeMonitor : <b>function</b>() {
+
+        <b>if</b>(this.browser != &quot;opera&quot;) {
+
+            <b>var</b> resizeMonitor = document.getElementById(&quot;_yuiResizeMonitor&quot;);
+
+            <b>if</b> (! resizeMonitor) {
+
+                resizeMonitor = document.createElement(&quot;iframe&quot;);
+
+                <b>var</b> bIE = (<b>this</b>.browser.indexOf(&quot;ie&quot;) === 0);
+
+                <b>if</b>(this.isSecure &amp;&amp;
+                   YAHOO.widget.Module.RESIZE_MONITOR_SECURE_URL &amp;&amp;
+                   bIE) {
+
+                  resizeMonitor.src =
+                       YAHOO.widget.Module.RESIZE_MONITOR_SECURE_URL;
+
+                }
+
+                resizeMonitor.id = &quot;_yuiResizeMonitor&quot;;
+                resizeMonitor.style.visibility = &quot;hidden&quot;;
+
+                document.body.appendChild(resizeMonitor);
+
+                resizeMonitor.style.width = &quot;10em&quot;;
+                resizeMonitor.style.height = &quot;10em&quot;;
+                resizeMonitor.style.position = &quot;absolute&quot;;
+
+                <b>var</b> nLeft = -1 * resizeMonitor.offsetWidth,
+                    nTop = -1 * resizeMonitor.offsetHeight;
+
+                resizeMonitor.style.top = nTop + &quot;px&quot;;
+                resizeMonitor.style.left =  nLeft + &quot;px&quot;;
+                resizeMonitor.style.borderStyle = &quot;none&quot;;
+                resizeMonitor.style.borderWidth = &quot;0&quot;;
+                YAHOO.util.Dom.setStyle(resizeMonitor, &quot;opacity&quot;, &quot;0&quot;);
+
+                resizeMonitor.style.visibility = &quot;visible&quot;;
+
+                <b>if</b>(!bIE) {
+
+                    <b>var</b> doc = resizeMonitor.contentWindow.document;
+
+                    doc.open();
+                    doc.close();
+
+                }
+
+            }
+
+            <b>if</b>(resizeMonitor &amp;&amp; resizeMonitor.contentWindow) {
+
+                <b>this</b>.resizeMonitor = resizeMonitor;
+
+                YAHOO.util.Event.addListener(<b>this</b>.resizeMonitor.contentWindow, &quot;resize&quot;, <b>this</b>.onDomResize, <b>this</b>, true);
+
+            }
+
+        }
+
+	},
+
+	<i>/**
+	* Event handler fired when the resize monitor element is resized.
+	* @method onDomResize
+	* @param {DOMEvent} e	The DOM resize event
+	* @param {Object} obj	The scope object passed to the handler
+	*/</i>
+	onDomResize : <b>function</b>(e, obj) {
+
+        <b>var</b> nLeft = -1 * <b>this</b>.resizeMonitor.offsetWidth,
+            nTop = -1 * <b>this</b>.resizeMonitor.offsetHeight;
+
+        <b>this</b>.resizeMonitor.style.top = nTop + &quot;px&quot;;
+        <b>this</b>.resizeMonitor.style.left =  nLeft + &quot;px&quot;;
+
+	},
+
+	<i>/**
+	* Sets the Module's header content to the HTML specified, or appends the passed element to the header. If no header is present, one will be automatically created.
+	* @method setHeader
+	* @param {String}	headerContent	The HTML used to set the header &lt;em&gt;OR&lt;/em&gt;
+	* @param {HTMLElement}	headerContent	The HTMLElement to append to the header
+	*/</i>
+	setHeader : <b>function</b>(headerContent) {
+		<b>if</b> (! <b>this</b>.header) {
+			<b>this</b>.header = document.createElement(&quot;DIV&quot;);
+			<b>this</b>.header.className = YAHOO.widget.Module.CSS_HEADER;
+		}
+
+		<b>if</b> (<b>typeof</b> headerContent == &quot;string&quot;) {
+			<b>this</b>.header.innerHTML = headerContent;
+		} <b>else</b> {
+			<b>this</b>.header.innerHTML = &quot;&quot;;
+			<b>this</b>.header.appendChild(headerContent);
+		}
+
+		<b>this</b>.changeHeaderEvent.fire(headerContent);
+		<b>this</b>.changeContentEvent.fire();
+	},
+
+	<i>/**
+	* Appends the passed element to the header. If no header is present, one will be automatically created.
+	* @method appendToHeader
+	* @param {HTMLElement}	element	The element to append to the header
+	*/</i>
+	appendToHeader : <b>function</b>(element) {
+		<b>if</b> (! <b>this</b>.header) {
+			<b>this</b>.header = document.createElement(&quot;DIV&quot;);
+			<b>this</b>.header.className = YAHOO.widget.Module.CSS_HEADER;
+		}
+
+		<b>this</b>.header.appendChild(element);
+		<b>this</b>.changeHeaderEvent.fire(element);
+		<b>this</b>.changeContentEvent.fire();
+	},
+
+	<i>/**
+	* Sets the Module's body content to the HTML specified, or appends the passed element to the body. If no body is present, one will be automatically created.
+	* @method setBody
+	* @param {String}	bodyContent	The HTML used to set the body &lt;em&gt;OR&lt;/em&gt;
+	* @param {HTMLElement}	bodyContent	The HTMLElement to append to the body
+	*/</i>
+	setBody : <b>function</b>(bodyContent) {
+		<b>if</b> (! <b>this</b>.body) {
+			<b>this</b>.body = document.createElement(&quot;DIV&quot;);
+			<b>this</b>.body.className = YAHOO.widget.Module.CSS_BODY;
+		}
+
+		<b>if</b> (<b>typeof</b> bodyContent == &quot;string&quot;)
+		{
+			<b>this</b>.body.innerHTML = bodyContent;
+		} <b>else</b> {
+			<b>this</b>.body.innerHTML = &quot;&quot;;
+			<b>this</b>.body.appendChild(bodyContent);
+		}
+
+		<b>this</b>.changeBodyEvent.fire(bodyContent);
+		<b>this</b>.changeContentEvent.fire();
+	},
+
+	<i>/**
+	* Appends the passed element to the body. If no body is present, one will be automatically created.
+	* @method appendToBody
+	* @param {HTMLElement}	element	The element to append to the body
+	*/</i>
+	appendToBody : <b>function</b>(element) {
+		<b>if</b> (! <b>this</b>.body) {
+			<b>this</b>.body = document.createElement(&quot;DIV&quot;);
+			<b>this</b>.body.className = YAHOO.widget.Module.CSS_BODY;
+		}
+
+		<b>this</b>.body.appendChild(element);
+		<b>this</b>.changeBodyEvent.fire(element);
+		<b>this</b>.changeContentEvent.fire();
+	},
+
+	<i>/**
+	* Sets the Module's footer content to the HTML specified, or appends the passed element to the footer. If no footer is present, one will be automatically created.
+	* @method setFooter
+	* @param {String}	footerContent	The HTML used to set the footer &lt;em&gt;OR&lt;/em&gt;
+	* @param {HTMLElement}	footerContent	The HTMLElement to append to the footer
+	*/</i>
+	setFooter : <b>function</b>(footerContent) {
+		<b>if</b> (! <b>this</b>.footer) {
+			<b>this</b>.footer = document.createElement(&quot;DIV&quot;);
+			<b>this</b>.footer.className = YAHOO.widget.Module.CSS_FOOTER;
+		}
+
+		<b>if</b> (<b>typeof</b> footerContent == &quot;string&quot;) {
+			<b>this</b>.footer.innerHTML = footerContent;
+		} <b>else</b> {
+			<b>this</b>.footer.innerHTML = &quot;&quot;;
+			<b>this</b>.footer.appendChild(footerContent);
+		}
+
+		<b>this</b>.changeFooterEvent.fire(footerContent);
+		<b>this</b>.changeContentEvent.fire();
+	},
+
+	<i>/**
+	* Appends the passed element to the footer. If no footer is present, one will be automatically created.
+	* @method appendToFooter
+	* @param {HTMLElement}	element	The element to append to the footer
+	*/</i>
+	appendToFooter : <b>function</b>(element) {
+		<b>if</b> (! <b>this</b>.footer) {
+			<b>this</b>.footer = document.createElement(&quot;DIV&quot;);
+			<b>this</b>.footer.className = YAHOO.widget.Module.CSS_FOOTER;
+		}
+
+		<b>this</b>.footer.appendChild(element);
+		<b>this</b>.changeFooterEvent.fire(element);
+		<b>this</b>.changeContentEvent.fire();
+	},
+
+	<i>/**
+	* Renders the Module by inserting the elements that are not already <b>in</b> the main Module into their correct places. Optionally appends the Module to the specified node prior to the render's execution. NOTE: For Modules without existing markup, the appendToNode argument is REQUIRED. If <b>this</b> argument is ommitted and the current element is not present <b>in</b> the document, the <b>function</b> will <b>return</b> false, indicating that the render was a failure.
+	* @method render
+	* @param {String}	appendToNode	The element id to which the Module should be appended to prior to rendering &lt;em&gt;OR&lt;/em&gt;
+	* @param {HTMLElement}	appendToNode	The element to which the Module should be appended to prior to rendering
+	* @param {HTMLElement}	moduleElement	OPTIONAL. The element that represents the actual Standard Module container.
+	* @<b>return</b> {Boolean} Success or failure of the render
+	*/</i>
+	render : <b>function</b>(appendToNode, moduleElement) {
+		<b>this</b>.beforeRenderEvent.fire();
+
+		<b>if</b> (! moduleElement) {
+			moduleElement = <b>this</b>.element;
+		}
+
+		<b>var</b> me = <b>this</b>;
+		<b>var</b> appendTo = <b>function</b>(element) {
+			<b>if</b> (<b>typeof</b> element == &quot;string&quot;) {
+				element = document.getElementById(element);
+			}
+
+			<b>if</b> (element) {
+				element.appendChild(me.element);
+				me.appendEvent.fire();
+			}
+		};
+
+		<b>if</b> (appendToNode) {
+			appendTo(appendToNode);
+		} <b>else</b> { <i>// No node was passed <b>in</b>. If the element is not pre-marked up, <b>this</b> fails</i>
+			<b>if</b> (! YAHOO.util.Dom.inDocument(<b>this</b>.element)) {
+				<b>return</b> false;
+			}
+		}
+
+		<i>// Need to get everything into the DOM <b>if</b> it isn't already</i>
+
+		<b>if</b> (<b>this</b>.header &amp;&amp; ! YAHOO.util.Dom.inDocument(<b>this</b>.header)) {
+			<i>// There is a header, but it's not <b>in</b> the DOM yet... need to add it</i>
+			<b>var</b> firstChild = moduleElement.firstChild;
+			<b>if</b> (firstChild) { <i>// Insert before first child <b>if</b> exists</i>
+				moduleElement.insertBefore(<b>this</b>.header, firstChild);
+			} <b>else</b> { <i>// Append to empty body because there are no children</i>
+				moduleElement.appendChild(<b>this</b>.header);
+			}
+		}
+
+		<b>if</b> (<b>this</b>.body &amp;&amp; ! YAHOO.util.Dom.inDocument(<b>this</b>.body)) {
+			<i>// There is a body, but it's not <b>in</b> the DOM yet... need to add it</i>
+			<b>if</b> (<b>this</b>.footer &amp;&amp; YAHOO.util.Dom.isAncestor(<b>this</b>.moduleElement, <b>this</b>.footer)) { <i>// Insert before footer <b>if</b> exists <b>in</b> DOM</i>
+				moduleElement.insertBefore(<b>this</b>.body, <b>this</b>.footer);
+			} <b>else</b> { <i>// Append to element because there is no footer</i>
+				moduleElement.appendChild(<b>this</b>.body);
+			}
+		}
+
+		<b>if</b> (<b>this</b>.footer &amp;&amp; ! YAHOO.util.Dom.inDocument(<b>this</b>.footer)) {
+			<i>// There is a footer, but it's not <b>in</b> the DOM yet... need to add it</i>
+			moduleElement.appendChild(<b>this</b>.footer);
+		}
+
+		<b>this</b>.renderEvent.fire();
+		<b>return</b> true;
+	},
+
+	<i>/**
+	* Removes the Module element from the DOM and sets all child elements to null.
+	* @method destroy
+	*/</i>
+	destroy : <b>function</b>() {
+		<b>if</b> (<b>this</b>.element) {
+			<b>var</b> parent = <b>this</b>.element.parentNode;
+		}
+		<b>if</b> (parent) {
+			parent.removeChild(<b>this</b>.element);
+		}
+
+		<b>this</b>.element = null;
+		<b>this</b>.header = null;
+		<b>this</b>.body = null;
+		<b>this</b>.footer = null;
+
+		<b>this</b>.destroyEvent.fire();
+	},
+
+	<i>/**
+	* Shows the Module element by setting the visible configuration property to true. Also fires two events: beforeShowEvent prior to the visibility change, and showEvent after.
+	* @method show
+	*/</i>
+	show : <b>function</b>() {
+		<b>this</b>.cfg.setProperty(&quot;visible&quot;, true);
+	},
+
+	<i>/**
+	* Hides the Module element by setting the visible configuration property to false. Also fires two events: beforeHideEvent prior to the visibility change, and hideEvent after.
+	* @method hide
+	*/</i>
+	hide : <b>function</b>() {
+		<b>this</b>.cfg.setProperty(&quot;visible&quot;, false);
+	},
+
+	<i>// BUILT-IN EVENT HANDLERS FOR MODULE //</i>
+
+	<i>/**
+	* Default event handler <b>for</b> changing the visibility property of a Module. By <b>default</b>, <b>this</b> is achieved by switching the &quot;display&quot; style between &quot;block&quot; and &quot;none&quot;.
+	* This method is responsible <b>for</b> firing showEvent and hideEvent.
+	* @param {String} type	The CustomEvent type (usually the property name)
+	* @param {Object[]}	args	The CustomEvent arguments. For configuration handlers, args[0] will equal the newly applied value <b>for</b> the property.
+	* @param {Object} obj	The scope object. For configuration handlers, <b>this</b> will usually equal the owner.
+	* @method configVisible
+	*/</i>
+	configVisible : <b>function</b>(type, args, obj) {
+		<b>var</b> visible = args[0];
+		<b>if</b> (visible) {
+			<b>this</b>.beforeShowEvent.fire();
+			YAHOO.util.Dom.setStyle(<b>this</b>.element, &quot;display&quot;, &quot;block&quot;);
+			<b>this</b>.showEvent.fire();
+		} <b>else</b> {
+			<b>this</b>.beforeHideEvent.fire();
+			YAHOO.util.Dom.setStyle(<b>this</b>.element, &quot;display&quot;, &quot;none&quot;);
+			<b>this</b>.hideEvent.fire();
+		}
+	},
+
+	<i>/**
+	* Default event handler <b>for</b> the &quot;monitorresize&quot; configuration property
+	* @param {String} type	The CustomEvent type (usually the property name)
+	* @param {Object[]}	args	The CustomEvent arguments. For configuration handlers, args[0] will equal the newly applied value <b>for</b> the property.
+	* @param {Object} obj	The scope object. For configuration handlers, <b>this</b> will usually equal the owner.
+	* @method configMonitorResize
+	*/</i>
+	configMonitorResize : <b>function</b>(type, args, obj) {
+		<b>var</b> monitor = args[0];
+		<b>if</b> (monitor) {
+			<b>this</b>.initResizeMonitor();
+		} <b>else</b> {
+			YAHOO.util.Event.removeListener(<b>this</b>.resizeMonitor, &quot;resize&quot;, <b>this</b>.onDomResize);
+			<b>this</b>.resizeMonitor = null;
+		}
+	}
+};
+
+<i>/**
+* Returns a String representation of the Object.
+* @method toString
+* @<b>return</b> {String}	The string representation of the Module
+*/</i>
+YAHOO.widget.Module.prototype.toString = <b>function</b>() {
+	<b>return</b> &quot;Module &quot; + <b>this</b>.id;
+};
+
+<i>/**
+* Overlay is a Module that is absolutely positioned above the page flow. It has convenience methods <b>for</b> positioning and sizing, as well as options <b>for</b> controlling zIndex and constraining the Overlay's position to the current visible viewport. Overlay also contains a dynamicly generated IFRAME which is placed beneath it <b>for</b> Internet Explorer 6 and 5.x so that it will be properly rendered above SELECT elements.
+* @class Overlay
+* @namespace YAHOO.widget
+* @extends YAHOO.widget.Module
+* @param {String}	el	The element ID representing the Overlay &lt;em&gt;OR&lt;/em&gt;
+* @param {HTMLElement}	el	The element representing the Overlay
+* @param {Object}	userConfig	The configuration object literal containing 10/23/2006the configuration that should be set <b>for</b> this Overlay. See configuration documentation <b>for</b> more details.
+* @constructor
+*/</i>
+YAHOO.widget.Overlay = <b>function</b>(el, userConfig) {
+	YAHOO.widget.Overlay.superclass.constructor.call(<b>this</b>, el, userConfig);
+};
+
+YAHOO.extend(YAHOO.widget.Overlay, YAHOO.widget.Module);
+
+<i>/**
+* The URL that will be placed <b>in</b> the iframe
+* @property YAHOO.widget.Overlay.IFRAME_SRC
+* @static
+* @final
+* @type String
+*/</i>
+YAHOO.widget.Overlay.IFRAME_SRC = &quot;javascript:false;&quot;
+
+<i>/**
+* Constant representing the top left corner of an element, used <b>for</b> configuring the context element alignment
+* @property YAHOO.widget.Overlay.TOP_LEFT
+* @static
+* @final
+* @type String
+*/</i>
+YAHOO.widget.Overlay.TOP_LEFT = &quot;tl&quot;;
+
+<i>/**
+* Constant representing the top right corner of an element, used <b>for</b> configuring the context element alignment
+* @property YAHOO.widget.Overlay.TOP_RIGHT
+* @static
+* @final
+* @type String
+*/</i>
+YAHOO.widget.Overlay.TOP_RIGHT = &quot;tr&quot;;
+
+<i>/**
+* Constant representing the top bottom left corner of an element, used <b>for</b> configuring the context element alignment
+* @property YAHOO.widget.Overlay.BOTTOM_LEFT
+* @static
+* @final
+* @type String
+*/</i>
+YAHOO.widget.Overlay.BOTTOM_LEFT = &quot;bl&quot;;
+
+<i>/**
+* Constant representing the bottom right corner of an element, used <b>for</b> configuring the context element alignment
+* @property YAHOO.widget.Overlay.BOTTOM_RIGHT
+* @static
+* @final
+* @type String
+*/</i>
+YAHOO.widget.Overlay.BOTTOM_RIGHT = &quot;br&quot;;
+
+<i>/**
+* Constant representing the <b>default</b> CSS class used <b>for</b> an Overlay
+* @property YAHOO.widget.Overlay.CSS_OVERLAY
+* @static
+* @final
+* @type String
+*/</i>
+YAHOO.widget.Overlay.CSS_OVERLAY = &quot;overlay&quot;;
+
+<i>/**
+* The Overlay initialization method, which is executed <b>for</b> Overlay and all of its subclasses. This method is automatically called by the constructor, and  sets up all DOM references <b>for</b> pre-existing markup, and creates required markup <b>if</b> it is not already present.
+* @method init
+* @param {String}	el	The element ID representing the Overlay &lt;em&gt;OR&lt;/em&gt;
+* @param {HTMLElement}	el	The element representing the Overlay
+* @param {Object}	userConfig	The configuration object literal containing the configuration that should be set <b>for</b> this Overlay. See configuration documentation <b>for</b> more details.
+*/</i>
+YAHOO.widget.Overlay.prototype.init = <b>function</b>(el, userConfig) {
+	YAHOO.widget.Overlay.superclass.init.call(<b>this</b>, el<i>/*, userConfig*/</i>);  <i>// Note that we don't pass the user config <b>in</b> here yet because we only want it executed once, at the lowest subclass level</i>
+
+	<b>this</b>.beforeInitEvent.fire(YAHOO.widget.Overlay);
+
+	YAHOO.util.Dom.addClass(<b>this</b>.element, YAHOO.widget.Overlay.CSS_OVERLAY);
+
+	<b>if</b> (userConfig) {
+		<b>this</b>.cfg.applyConfig(userConfig, true);
+	}
+
+	<b>if</b> (<b>this</b>.platform == &quot;mac&quot; &amp;&amp; <b>this</b>.browser == &quot;gecko&quot;) {
+		<b>if</b> (! YAHOO.util.Config.alreadySubscribed(<b>this</b>.showEvent,<b>this</b>.showMacGeckoScrollbars,<b>this</b>)) {
+			<b>this</b>.showEvent.subscribe(<b>this</b>.showMacGeckoScrollbars,<b>this</b>,true);
+		}
+		<b>if</b> (! YAHOO.util.Config.alreadySubscribed(<b>this</b>.hideEvent,<b>this</b>.hideMacGeckoScrollbars,<b>this</b>)) {
+			<b>this</b>.hideEvent.subscribe(<b>this</b>.hideMacGeckoScrollbars,<b>this</b>,true);
+		}
+	}
+
+	<b>this</b>.initEvent.fire(YAHOO.widget.Overlay);
+};
+
+<i>/**
+* Initializes the custom events <b>for</b> Overlay which are fired automatically at appropriate times by the Overlay class.
+* @method initEvents
+*/</i>
+YAHOO.widget.Overlay.prototype.initEvents = <b>function</b>() {
+	YAHOO.widget.Overlay.superclass.initEvents.call(<b>this</b>);
+
+	<i>/**
+	* CustomEvent fired before the Overlay is moved.
+	* @event beforeMoveEvent
+	* @param {Number} x	x coordinate
+	* @param {Number} y	y coordinate
+	*/</i>
+	<b>this</b>.beforeMoveEvent = <b>new</b> YAHOO.util.CustomEvent(&quot;beforeMove&quot;, <b>this</b>);
+
+	<i>/**
+	* CustomEvent fired after the Overlay is moved.
+	* @event moveEvent
+	* @param {Number} x	x coordinate
+	* @param {Number} y	y coordinate
+	*/</i>
+	<b>this</b>.moveEvent = <b>new</b> YAHOO.util.CustomEvent(&quot;move&quot;, <b>this</b>);
+};
+
+<i>/**
+* Initializes the class's configurable properties which can be changed using the Overlay's Config object (cfg).
+* @method initDefaultConfig
+*/</i>
+YAHOO.widget.Overlay.prototype.initDefaultConfig = <b>function</b>() {
+	YAHOO.widget.Overlay.superclass.initDefaultConfig.call(<b>this</b>);
+
+	<i>// Add overlay config properties //</i>
+
+	<i>/**
+	* The absolute x-coordinate position of the Overlay
+	* @config x
+	* @type Number
+	* @<b>default</b> null
+	*/</i>
+	<b>this</b>.cfg.addProperty(&quot;x&quot;, { handler:<b>this</b>.configX, validator:<b>this</b>.cfg.checkNumber, suppressEvent:true, supercedes:[&quot;iframe&quot;] } );
+
+	<i>/**
+	* The absolute y-coordinate position of the Overlay
+	* @config y
+	* @type Number
+	* @<b>default</b> null
+	*/</i>
+	<b>this</b>.cfg.addProperty(&quot;y&quot;, { handler:<b>this</b>.configY, validator:<b>this</b>.cfg.checkNumber, suppressEvent:true, supercedes:[&quot;iframe&quot;] } );
+
+	<i>/**
+	* An array <b>with</b> the absolute x and y positions of the Overlay
+	* @config xy
+	* @type Number[]
+	* @<b>default</b> null
+	*/</i>
+	<b>this</b>.cfg.addProperty(&quot;xy&quot;,{ handler:<b>this</b>.configXY, suppressEvent:true, supercedes:[&quot;iframe&quot;] } );
+
+	<i>/**
+	* The array of context arguments <b>for</b> context-sensitive positioning. The format is: [id or element, element corner, context corner]. For example, setting <b>this</b> property to [&quot;img1&quot;, &quot;tl&quot;, &quot;bl&quot;] would align the Overlay's top left corner to the context element's bottom left corner.
+	* @config context
+	* @type Array
+	* @<b>default</b> null
+	*/</i>
+	<b>this</b>.cfg.addProperty(&quot;context&quot;,	{ handler:<b>this</b>.configContext, suppressEvent:true, supercedes:[&quot;iframe&quot;] } );
+
+	<i>/**
+	* True <b>if</b> the Overlay should be anchored to the center of the viewport.
+	* @config fixedcenter
+	* @type Boolean
+	* @<b>default</b> false
+	*/</i>
+	<b>this</b>.cfg.addProperty(&quot;fixedcenter&quot;, { value:false, handler:<b>this</b>.configFixedCenter, validator:<b>this</b>.cfg.checkBoolean, supercedes:[&quot;iframe&quot;,&quot;visible&quot;] } );
+
+	<i>/**
+	* CSS width of the Overlay.
+	* @config width
+	* @type String
+	* @<b>default</b> null
+	*/</i>
+	<b>this</b>.cfg.addProperty(&quot;width&quot;, { handler:<b>this</b>.configWidth, suppressEvent:true, supercedes:[&quot;iframe&quot;] } );
+
+	<i>/**
+	* CSS height of the Overlay.
+	* @config height
+	* @type String
+	* @<b>default</b> null
+	*/</i>
+	<b>this</b>.cfg.addProperty(&quot;height&quot;, { handler:<b>this</b>.configHeight, suppressEvent:true, supercedes:[&quot;iframe&quot;] } );
+
+	<i>/**
+	* CSS z-index of the Overlay.
+	* @config zIndex
+	* @type Number
+	* @<b>default</b> null
+	*/</i>
+	<b>this</b>.cfg.addProperty(&quot;zIndex&quot;, { value:null, handler:<b>this</b>.configzIndex } );
+
+	<i>/**
+	* True <b>if</b> the Overlay should be prevented from being positioned out of the viewport.
+	* @config constraintoviewport
+	* @type Boolean
+	* @<b>default</b> false
+	*/</i>
+	<b>this</b>.cfg.addProperty(&quot;constraintoviewport&quot;, { value:false, handler:<b>this</b>.configConstrainToViewport, validator:<b>this</b>.cfg.checkBoolean, supercedes:[&quot;iframe&quot;,&quot;x&quot;,&quot;y&quot;,&quot;xy&quot;] } );
+
+	<i>/**
+	* True <b>if</b> the Overlay should have an IFRAME shim (<b>for</b> correcting the select z-index bug <b>in</b> IE6 and below).
+	* @config iframe
+	* @type Boolean
+	* @<b>default</b> true <b>for</b> IE6 and below, false <b>for</b> all others
+	*/</i>
+	<b>this</b>.cfg.addProperty(&quot;iframe&quot;, { value:(<b>this</b>.browser == &quot;ie&quot; ? true : false), handler:<b>this</b>.configIframe, validator:<b>this</b>.cfg.checkBoolean, supercedes:[&quot;zIndex&quot;] } );
+};
+
+<i>/**
+* Moves the Overlay to the specified position. This <b>function</b> is identical to calling <b>this</b>.cfg.setProperty(&quot;xy&quot;, [x,y]);
+* @method moveTo
+* @param {Number}	x	The Overlay's <b>new</b> x position
+* @param {Number}	y	The Overlay's <b>new</b> y position
+*/</i>
+YAHOO.widget.Overlay.prototype.moveTo = <b>function</b>(x, y) {
+	<b>this</b>.cfg.setProperty(&quot;xy&quot;,[x,y]);
+};
+
+<i>/**
+* Adds a special CSS class to the Overlay when Mac/Gecko is <b>in</b> use, to work around a Gecko bug where
+* scrollbars cannot be hidden. See https:<i>//bugzilla.mozilla.org/show_bug.cgi?id=187435</i>
+* @method hideMacGeckoScrollbars
+*/</i>
+YAHOO.widget.Overlay.prototype.hideMacGeckoScrollbars = <b>function</b>() {
+	YAHOO.util.Dom.removeClass(<b>this</b>.element, &quot;show-scrollbars&quot;);
+	YAHOO.util.Dom.addClass(<b>this</b>.element, &quot;hide-scrollbars&quot;);
+};
+
+<i>/**
+* Removes a special CSS class from the Overlay when Mac/Gecko is <b>in</b> use, to work around a Gecko bug where
+* scrollbars cannot be hidden. See https:<i>//bugzilla.mozilla.org/show_bug.cgi?id=187435</i>
+* @method showMacGeckoScrollbars
+*/</i>
+YAHOO.widget.Overlay.prototype.showMacGeckoScrollbars = <b>function</b>() {
+	YAHOO.util.Dom.removeClass(<b>this</b>.element, &quot;hide-scrollbars&quot;);
+	YAHOO.util.Dom.addClass(<b>this</b>.element, &quot;show-scrollbars&quot;);
+};
+
+<i>// BEGIN BUILT-IN PROPERTY EVENT HANDLERS //</i>
+
+<i>/**
+* The <b>default</b> event handler fired when the &quot;visible&quot; property is changed. This method is responsible <b>for</b> firing showEvent and hideEvent.
+* @method configVisible
+* @param {String} type	The CustomEvent type (usually the property name)
+* @param {Object[]}	args	The CustomEvent arguments. For configuration handlers, args[0] will equal the newly applied value <b>for</b> the property.
+* @param {Object} obj	The scope object. For configuration handlers, <b>this</b> will usually equal the owner.
+*/</i>
+YAHOO.widget.Overlay.prototype.configVisible = <b>function</b>(type, args, obj) {
+	<b>var</b> visible = args[0];
+
+	<b>var</b> currentVis = YAHOO.util.Dom.getStyle(<b>this</b>.element, &quot;visibility&quot;);
+
+	<b>if</b> (currentVis == &quot;inherit&quot;) {
+		<b>var</b> e = <b>this</b>.element.parentNode;
+		<b>while</b> (e.nodeType != 9 &amp;&amp; e.nodeType != 11) {
+			currentVis = YAHOO.util.Dom.getStyle(e, &quot;visibility&quot;);
+			<b>if</b> (currentVis != &quot;inherit&quot;) { <b>break</b>; }
+			e = e.parentNode;
+		}
+		<b>if</b> (currentVis == &quot;inherit&quot;) {
+			currentVis = &quot;visible&quot;;
+		}
+	}
+
+	<b>var</b> effect = <b>this</b>.cfg.getProperty(&quot;effect&quot;);
+
+	<b>var</b> effectInstances = [];
+	<b>if</b> (effect) {
+		<b>if</b> (effect instanceof Array) {
+			<b>for</b> (<b>var</b> i=0;i&lt;effect.length;i++) {
+				<b>var</b> eff = effect[i];
+				effectInstances[effectInstances.length] = eff.effect(<b>this</b>, eff.duration);
+			}
+		} <b>else</b> {
+			effectInstances[effectInstances.length] = effect.effect(<b>this</b>, effect.duration);
+		}
+	}
+
+	<b>var</b> isMacGecko = (<b>this</b>.platform == &quot;mac&quot; &amp;&amp; <b>this</b>.browser == &quot;gecko&quot;);
+
+	<b>if</b> (visible) { <i>// Show</i>
+		<b>if</b> (isMacGecko) {
+			<b>this</b>.showMacGeckoScrollbars();
+		}
+
+		<b>if</b> (effect) { <i>// Animate <b>in</b></i>
+			<b>if</b> (visible) { <i>// Animate <b>in</b> if not showing</i>
+				<b>if</b> (currentVis != &quot;visible&quot; || currentVis === &quot;&quot;) {
+					<b>this</b>.beforeShowEvent.fire();
+					<b>for</b> (<b>var</b> j=0;j&lt;effectInstances.length;j++) {
+						<b>var</b> ei = effectInstances[j];
+						<b>if</b> (j === 0 &amp;&amp; ! YAHOO.util.Config.alreadySubscribed(ei.animateInCompleteEvent,<b>this</b>.showEvent.fire,<b>this</b>.showEvent)) {
+							ei.animateInCompleteEvent.subscribe(<b>this</b>.showEvent.fire,<b>this</b>.showEvent,true); <i>// Delegate showEvent until end of animateInComplete</i>
+						}
+						ei.animateIn();
+					}
+				}
+			}
+		} <b>else</b> { <i>// Show</i>
+			<b>if</b> (currentVis != &quot;visible&quot; || currentVis === &quot;&quot;) {
+				<b>this</b>.beforeShowEvent.fire();
+				YAHOO.util.Dom.setStyle(<b>this</b>.element, &quot;visibility&quot;, &quot;visible&quot;);
+				<b>this</b>.cfg.refireEvent(&quot;iframe&quot;);
+				<b>this</b>.showEvent.fire();
+			}
+		}
+
+	} <b>else</b> { <i>// Hide</i>
+		<b>if</b> (isMacGecko) {
+			<b>this</b>.hideMacGeckoScrollbars();
+		}
+
+		<b>if</b> (effect) { <i>// Animate out <b>if</b> showing</i>
+			<b>if</b> (currentVis == &quot;visible&quot;) {
+				<b>this</b>.beforeHideEvent.fire();
+				<b>for</b> (<b>var</b> k=0;k&lt;effectInstances.length;k++) {
+					<b>var</b> h = effectInstances[k];
+					<b>if</b> (k === 0 &amp;&amp; ! YAHOO.util.Config.alreadySubscribed(h.animateOutCompleteEvent,<b>this</b>.hideEvent.fire,<b>this</b>.hideEvent)) {
+						h.animateOutCompleteEvent.subscribe(<b>this</b>.hideEvent.fire,<b>this</b>.hideEvent,true); <i>// Delegate hideEvent until end of animateOutComplete</i>
+					}
+					h.animateOut();
+				}
+			} <b>else</b> if (currentVis === &quot;&quot;) {
+				YAHOO.util.Dom.setStyle(<b>this</b>.element, &quot;visibility&quot;, &quot;hidden&quot;);
+			}
+		} <b>else</b> { <i>// Simple hide</i>
+			<b>if</b> (currentVis == &quot;visible&quot; || currentVis === &quot;&quot;) {
+				<b>this</b>.beforeHideEvent.fire();
+				YAHOO.util.Dom.setStyle(<b>this</b>.element, &quot;visibility&quot;, &quot;hidden&quot;);
+				<b>this</b>.cfg.refireEvent(&quot;iframe&quot;);
+				<b>this</b>.hideEvent.fire();
+			}
+		}
+	}
+};
+
+<i>/**
+* Center event handler used <b>for</b> centering on scroll/resize, but only <b>if</b> the Overlay is visible
+* @method doCenterOnDOMEvent
+*/</i>
+YAHOO.widget.Overlay.prototype.doCenterOnDOMEvent = <b>function</b>() {
+	<b>if</b> (<b>this</b>.cfg.getProperty(&quot;visible&quot;)) {
+		<b>this</b>.center();
+	}
+};
+
+<i>/**
+* The <b>default</b> event handler fired when the &quot;fixedcenter&quot; property is changed.
+* @method configFixedCenter
+* @param {String} type	The CustomEvent type (usually the property name)
+* @param {Object[]}	args	The CustomEvent arguments. For configuration handlers, args[0] will equal the newly applied value <b>for</b> the property.
+* @param {Object} obj	The scope object. For configuration handlers, <b>this</b> will usually equal the owner.
+*/</i>
+YAHOO.widget.Overlay.prototype.configFixedCenter = <b>function</b>(type, args, obj) {
+	<b>var</b> val = args[0];
+
+	<b>if</b> (val) {
+		<b>this</b>.center();
+
+		<b>if</b> (! YAHOO.util.Config.alreadySubscribed(<b>this</b>.beforeShowEvent, <b>this</b>.center, <b>this</b>)) {
+			<b>this</b>.beforeShowEvent.subscribe(<b>this</b>.center, <b>this</b>, true);
+		}
+
+		<b>if</b> (! YAHOO.util.Config.alreadySubscribed(YAHOO.widget.Overlay.windowResizeEvent, <b>this</b>.doCenterOnDOMEvent, <b>this</b>)) {
+			YAHOO.widget.Overlay.windowResizeEvent.subscribe(<b>this</b>.doCenterOnDOMEvent, <b>this</b>, true);
+		}
+
+		<b>if</b> (! YAHOO.util.Config.alreadySubscribed(YAHOO.widget.Overlay.windowScrollEvent, <b>this</b>.doCenterOnDOMEvent, <b>this</b>)) {
+			YAHOO.widget.Overlay.windowScrollEvent.subscribe( <b>this</b>.doCenterOnDOMEvent, <b>this</b>, true);
+		}
+	} <b>else</b> {
+		YAHOO.widget.Overlay.windowResizeEvent.unsubscribe(<b>this</b>.doCenterOnDOMEvent, <b>this</b>);
+		YAHOO.widget.Overlay.windowScrollEvent.unsubscribe(<b>this</b>.doCenterOnDOMEvent, <b>this</b>);
+	}
+};
+
+<i>/**
+* The <b>default</b> event handler fired when the &quot;height&quot; property is changed.
+* @method configHeight
+* @param {String} type	The CustomEvent type (usually the property name)
+* @param {Object[]}	args	The CustomEvent arguments. For configuration handlers, args[0] will equal the newly applied value <b>for</b> the property.
+* @param {Object} obj	The scope object. For configuration handlers, <b>this</b> will usually equal the owner.
+*/</i>
+YAHOO.widget.Overlay.prototype.configHeight = <b>function</b>(type, args, obj) {
+	<b>var</b> height = args[0];
+	<b>var</b> el = <b>this</b>.element;
+	YAHOO.util.Dom.setStyle(el, &quot;height&quot;, height);
+	<b>this</b>.cfg.refireEvent(&quot;iframe&quot;);
+};
+
+<i>/**
+* The <b>default</b> event handler fired when the &quot;width&quot; property is changed.
+* @method configWidth
+* @param {String} type	The CustomEvent type (usually the property name)
+* @param {Object[]}	args	The CustomEvent arguments. For configuration handlers, args[0] will equal the newly applied value <b>for</b> the property.
+* @param {Object} obj	The scope object. For configuration handlers, <b>this</b> will usually equal the owner.
+*/</i>
+YAHOO.widget.Overlay.prototype.configWidth = <b>function</b>(type, args, obj) {
+	<b>var</b> width = args[0];
+	<b>var</b> el = <b>this</b>.element;
+	YAHOO.util.Dom.setStyle(el, &quot;width&quot;, width);
+	<b>this</b>.cfg.refireEvent(&quot;iframe&quot;);
+};
+
+<i>/**
+* The <b>default</b> event handler fired when the &quot;zIndex&quot; property is changed.
+* @method configzIndex
+* @param {String} type	The CustomEvent type (usually the property name)
+* @param {Object[]}	args	The CustomEvent arguments. For configuration handlers, args[0] will equal the newly applied value <b>for</b> the property.
+* @param {Object} obj	The scope object. For configuration handlers, <b>this</b> will usually equal the owner.
+*/</i>
+YAHOO.widget.Overlay.prototype.configzIndex = <b>function</b>(type, args, obj) {
+	<b>var</b> zIndex = args[0];
+
+	<b>var</b> el = <b>this</b>.element;
+
+	<b>if</b> (! zIndex) {
+		zIndex = YAHOO.util.Dom.getStyle(el, &quot;zIndex&quot;);
+		<b>if</b> (! zIndex || isNaN(zIndex)) {
+			zIndex = 0;
+		}
+	}
+
+	<b>if</b> (<b>this</b>.iframe) {
+		<b>if</b> (zIndex &lt;= 0) {
+			zIndex = 1;
+		}
+		YAHOO.util.Dom.setStyle(<b>this</b>.iframe, &quot;zIndex&quot;, (zIndex-1));
+	}
+
+	YAHOO.util.Dom.setStyle(el, &quot;zIndex&quot;, zIndex);
+	<b>this</b>.cfg.setProperty(&quot;zIndex&quot;, zIndex, true);
+};
+
+<i>/**
+* The <b>default</b> event handler fired when the &quot;xy&quot; property is changed.
+* @method configXY
+* @param {String} type	The CustomEvent type (usually the property name)
+* @param {Object[]}	args	The CustomEvent arguments. For configuration handlers, args[0] will equal the newly applied value <b>for</b> the property.
+* @param {Object} obj	The scope object. For configuration handlers, <b>this</b> will usually equal the owner.
+*/</i>
+YAHOO.widget.Overlay.prototype.configXY = <b>function</b>(type, args, obj) {
+	<b>var</b> pos = args[0];
+	<b>var</b> x = pos[0];
+	<b>var</b> y = pos[1];
+
+	<b>this</b>.cfg.setProperty(&quot;x&quot;, x);
+	<b>this</b>.cfg.setProperty(&quot;y&quot;, y);
+
+	<b>this</b>.beforeMoveEvent.fire([x,y]);
+
+	x = <b>this</b>.cfg.getProperty(&quot;x&quot;);
+	y = <b>this</b>.cfg.getProperty(&quot;y&quot;);
+
+	<b>this</b>.cfg.refireEvent(&quot;iframe&quot;);
+	<b>this</b>.moveEvent.fire([x,y]);
+};
+
+<i>/**
+* The <b>default</b> event handler fired when the &quot;x&quot; property is changed.
+* @method configX
+* @param {String} type	The CustomEvent type (usually the property name)
+* @param {Object[]}	args	The CustomEvent arguments. For configuration handlers, args[0] will equal the newly applied value <b>for</b> the property.
+* @param {Object} obj	The scope object. For configuration handlers, <b>this</b> will usually equal the owner.
+*/</i>
+YAHOO.widget.Overlay.prototype.configX = <b>function</b>(type, args, obj) {
+	<b>var</b> x = args[0];
+	<b>var</b> y = <b>this</b>.cfg.getProperty(&quot;y&quot;);
+
+	<b>this</b>.cfg.setProperty(&quot;x&quot;, x, true);
+	<b>this</b>.cfg.setProperty(&quot;y&quot;, y, true);
+
+	<b>this</b>.beforeMoveEvent.fire([x,y]);
+
+	x = <b>this</b>.cfg.getProperty(&quot;x&quot;);
+	y = <b>this</b>.cfg.getProperty(&quot;y&quot;);
+
+	YAHOO.util.Dom.setX(<b>this</b>.element, x, true);
+
+	<b>this</b>.cfg.setProperty(&quot;xy&quot;, [x, y], true);
+
+	<b>this</b>.cfg.refireEvent(&quot;iframe&quot;);
+	<b>this</b>.moveEvent.fire([x, y]);
+};
+
+<i>/**
+* The <b>default</b> event handler fired when the &quot;y&quot; property is changed.
+* @method configY
+* @param {String} type	The CustomEvent type (usually the property name)
+* @param {Object[]}	args	The CustomEvent arguments. For configuration handlers, args[0] will equal the newly applied value <b>for</b> the property.
+* @param {Object} obj	The scope object. For configuration handlers, <b>this</b> will usually equal the owner.
+*/</i>
+YAHOO.widget.Overlay.prototype.configY = <b>function</b>(type, args, obj) {
+	<b>var</b> x = <b>this</b>.cfg.getProperty(&quot;x&quot;);
+	<b>var</b> y = args[0];
+
+	<b>this</b>.cfg.setProperty(&quot;x&quot;, x, true);
+	<b>this</b>.cfg.setProperty(&quot;y&quot;, y, true);
+
+	<b>this</b>.beforeMoveEvent.fire([x,y]);
+
+	x = <b>this</b>.cfg.getProperty(&quot;x&quot;);
+	y = <b>this</b>.cfg.getProperty(&quot;y&quot;);
+
+	YAHOO.util.Dom.setY(<b>this</b>.element, y, true);
+
+	<b>this</b>.cfg.setProperty(&quot;xy&quot;, [x, y], true);
+
+	<b>this</b>.cfg.refireEvent(&quot;iframe&quot;);
+	<b>this</b>.moveEvent.fire([x, y]);
+};
+
+<i>/**
+* Shows the iframe shim, <b>if</b> it has been enabled
+* @method showIframe
+*/</i>
+YAHOO.widget.Overlay.prototype.showIframe = <b>function</b>() {
+	<b>if</b> (<b>this</b>.iframe) {
+		<b>this</b>.iframe.style.display = &quot;block&quot;;
+	}
+};
+
+<i>/**
+* Hides the iframe shim, <b>if</b> it has been enabled
+* @method hideIframe
+*/</i>
+YAHOO.widget.Overlay.prototype.hideIframe = <b>function</b>() {
+	<b>if</b> (<b>this</b>.iframe) {
+		<b>this</b>.iframe.style.display = &quot;none&quot;;
+	}
+};
+
+<i>/**
+* The <b>default</b> event handler fired when the &quot;iframe&quot; property is changed.
+* @method configIframe
+* @param {String} type	The CustomEvent type (usually the property name)
+* @param {Object[]}	args	The CustomEvent arguments. For configuration handlers, args[0] will equal the newly applied value <b>for</b> the property.
+* @param {Object} obj	The scope object. For configuration handlers, <b>this</b> will usually equal the owner.
+*/</i>
+YAHOO.widget.Overlay.prototype.configIframe = <b>function</b>(type, args, obj) {
+
+	<b>var</b> val = args[0];
+
+	<b>if</b> (val) { <i>// IFRAME shim is enabled</i>
+
+		<b>if</b> (! YAHOO.util.Config.alreadySubscribed(<b>this</b>.showEvent, <b>this</b>.showIframe, <b>this</b>)) {
+			<b>this</b>.showEvent.subscribe(<b>this</b>.showIframe, <b>this</b>, true);
+		}
+		<b>if</b> (! YAHOO.util.Config.alreadySubscribed(<b>this</b>.hideEvent, <b>this</b>.hideIframe, <b>this</b>)) {
+			<b>this</b>.hideEvent.subscribe(<b>this</b>.hideIframe, <b>this</b>, true);
+		}
+
+		<b>var</b> x = <b>this</b>.cfg.getProperty(&quot;x&quot;);
+		<b>var</b> y = <b>this</b>.cfg.getProperty(&quot;y&quot;);
+
+		<b>if</b> (! x || ! y) {
+			<b>this</b>.syncPosition();
+			x = <b>this</b>.cfg.getProperty(&quot;x&quot;);
+			y = <b>this</b>.cfg.getProperty(&quot;y&quot;);
+		}
+
+		<b>if</b> (! isNaN(x) &amp;&amp; ! isNaN(y)) {
+			<b>if</b> (! <b>this</b>.iframe) {
+				<b>this</b>.iframe = document.createElement(&quot;iframe&quot;);
+				<b>if</b> (<b>this</b>.isSecure) {
+					<b>this</b>.iframe.src = <b>this</b>.imageRoot + YAHOO.widget.Overlay.IFRAME_SRC;
+				}
+
+				<b>var</b> parent = <b>this</b>.element.parentNode;
+				<b>if</b> (parent) {
+					parent.appendChild(<b>this</b>.iframe);
+				} <b>else</b> {
+					document.body.appendChild(<b>this</b>.iframe);
+				}
+
+				YAHOO.util.Dom.setStyle(<b>this</b>.iframe, &quot;position&quot;, &quot;absolute&quot;);
+				YAHOO.util.Dom.setStyle(<b>this</b>.iframe, &quot;border&quot;, &quot;none&quot;);
+				YAHOO.util.Dom.setStyle(<b>this</b>.iframe, &quot;margin&quot;, &quot;0&quot;);
+				YAHOO.util.Dom.setStyle(<b>this</b>.iframe, &quot;padding&quot;, &quot;0&quot;);
+				YAHOO.util.Dom.setStyle(<b>this</b>.iframe, &quot;opacity&quot;, &quot;0&quot;);
+				<b>if</b> (<b>this</b>.cfg.getProperty(&quot;visible&quot;)) {
+					<b>this</b>.showIframe();
+				} <b>else</b> {
+					<b>this</b>.hideIframe();
+				}
+			}
+
+			<b>var</b> iframeDisplay = YAHOO.util.Dom.getStyle(<b>this</b>.iframe, &quot;display&quot;);
+
+			<b>if</b> (iframeDisplay == &quot;none&quot;) {
+				<b>this</b>.iframe.style.display = &quot;block&quot;;
+			}
+
+			YAHOO.util.Dom.setXY(<b>this</b>.iframe, [x,y]);
+
+			<b>var</b> width = <b>this</b>.element.clientWidth;
+			<b>var</b> height = <b>this</b>.element.clientHeight;
+
+			YAHOO.util.Dom.setStyle(<b>this</b>.iframe, &quot;width&quot;, (width+2) + &quot;px&quot;);
+			YAHOO.util.Dom.setStyle(<b>this</b>.iframe, &quot;height&quot;, (height+2) + &quot;px&quot;);
+
+			<b>if</b> (iframeDisplay == &quot;none&quot;) {
+				<b>this</b>.iframe.style.display = &quot;none&quot;;
+			}
+		}
+	} <b>else</b> {
+		<b>if</b> (<b>this</b>.iframe) {
+			<b>this</b>.iframe.style.display = &quot;none&quot;;
+		}
+		<b>this</b>.showEvent.unsubscribe(<b>this</b>.showIframe, <b>this</b>);
+		<b>this</b>.hideEvent.unsubscribe(<b>this</b>.hideIframe, <b>this</b>);
+	}
+};
+
+
+<i>/**
+* The <b>default</b> event handler fired when the &quot;constraintoviewport&quot; property is changed.
+* @method configConstrainToViewport
+* @param {String} type	The CustomEvent type (usually the property name)
+* @param {Object[]}	args	The CustomEvent arguments. For configuration handlers, args[0] will equal the newly applied value <b>for</b> the property.
+* @param {Object} obj	The scope object. For configuration handlers, <b>this</b> will usually equal the owner.
+*/</i>
+YAHOO.widget.Overlay.prototype.configConstrainToViewport = <b>function</b>(type, args, obj) {
+	<b>var</b> val = args[0];
+	<b>if</b> (val) {
+		<b>if</b> (! YAHOO.util.Config.alreadySubscribed(<b>this</b>.beforeMoveEvent, <b>this</b>.enforceConstraints, <b>this</b>)) {
+			<b>this</b>.beforeMoveEvent.subscribe(<b>this</b>.enforceConstraints, <b>this</b>, true);
+		}
+	} <b>else</b> {
+		<b>this</b>.beforeMoveEvent.unsubscribe(<b>this</b>.enforceConstraints, <b>this</b>);
+	}
+};
+
+<i>/**
+* The <b>default</b> event handler fired when the &quot;context&quot; property is changed.
+* @method configContext
+* @param {String} type	The CustomEvent type (usually the property name)
+* @param {Object[]}	args	The CustomEvent arguments. For configuration handlers, args[0] will equal the newly applied value <b>for</b> the property.
+* @param {Object} obj	The scope object. For configuration handlers, <b>this</b> will usually equal the owner.
+*/</i>
+YAHOO.widget.Overlay.prototype.configContext = <b>function</b>(type, args, obj) {
+	<b>var</b> contextArgs = args[0];
+
+	<b>if</b> (contextArgs) {
+		<b>var</b> contextEl = contextArgs[0];
+		<b>var</b> elementMagnetCorner = contextArgs[1];
+		<b>var</b> contextMagnetCorner = contextArgs[2];
+
+		<b>if</b> (contextEl) {
+			<b>if</b> (<b>typeof</b> contextEl == &quot;string&quot;) {
+				<b>this</b>.cfg.setProperty(&quot;context&quot;, [document.getElementById(contextEl),elementMagnetCorner,contextMagnetCorner], true);
+			}
+
+			<b>if</b> (elementMagnetCorner &amp;&amp; contextMagnetCorner) {
+				<b>this</b>.align(elementMagnetCorner, contextMagnetCorner);
+			}
+		}
+	}
+};
+
+
+<i>// END BUILT-IN PROPERTY EVENT HANDLERS //</i>
+
+<i>/**
+* Aligns the Overlay to its context element using the specified corner points (represented by the constants TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, and BOTTOM_RIGHT.
+* @method align
+* @param {String} elementAlign		The String representing the corner of the Overlay that should be aligned to the context element
+* @param {String} contextAlign		The corner of the context element that the elementAlign corner should stick to.
+*/</i>
+YAHOO.widget.Overlay.prototype.align = <b>function</b>(elementAlign, contextAlign) {
+	<b>var</b> contextArgs = <b>this</b>.cfg.getProperty(&quot;context&quot;);
+	<b>if</b> (contextArgs) {
+		<b>var</b> context = contextArgs[0];
+
+		<b>var</b> element = <b>this</b>.element;
+		<b>var</b> me = <b>this</b>;
+
+		<b>if</b> (! elementAlign) {
+			elementAlign = contextArgs[1];
+		}
+
+		<b>if</b> (! contextAlign) {
+			contextAlign = contextArgs[2];
+		}
+
+		<b>if</b> (element &amp;&amp; context) {
+			<b>var</b> elementRegion = YAHOO.util.Dom.getRegion(element);
+			<b>var</b> contextRegion = YAHOO.util.Dom.getRegion(context);
+
+			<b>var</b> doAlign = <b>function</b>(v,h) {
+				<b>switch</b> (elementAlign) {
+					<b>case</b> YAHOO.widget.Overlay.TOP_LEFT:
+						me.moveTo(h,v);
+						<b>break</b>;
+					<b>case</b> YAHOO.widget.Overlay.TOP_RIGHT:
+						me.moveTo(h-element.offsetWidth,v);
+						<b>break</b>;
+					<b>case</b> YAHOO.widget.Overlay.BOTTOM_LEFT:
+						me.moveTo(h,v-element.offsetHeight);
+						<b>break</b>;
+					<b>case</b> YAHOO.widget.Overlay.BOTTOM_RIGHT:
+						me.moveTo(h-element.offsetWidth,v-element.offsetHeight);
+						<b>break</b>;
+				}
+			};
+
+			<b>switch</b> (contextAlign) {
+				<b>case</b> YAHOO.widget.Overlay.TOP_LEFT:
+					doAlign(contextRegion.top, contextRegion.left);
+					<b>break</b>;
+				<b>case</b> YAHOO.widget.Overlay.TOP_RIGHT:
+					doAlign(contextRegion.top, contextRegion.right);
+					<b>break</b>;
+				<b>case</b> YAHOO.widget.Overlay.BOTTOM_LEFT:
+					doAlign(contextRegion.bottom, contextRegion.left);
+					<b>break</b>;
+				<b>case</b> YAHOO.widget.Overlay.BOTTOM_RIGHT:
+					doAlign(contextRegion.bottom, contextRegion.right);
+					<b>break</b>;
+			}
+		}
+	}
+};
+
+<i>/**
+* The <b>default</b> event handler executed when the moveEvent is fired, <b>if</b> the &quot;constraintoviewport&quot; is set to true.
+* @method enforceConstraints
+* @param {String} type	The CustomEvent type (usually the property name)
+* @param {Object[]}	args	The CustomEvent arguments. For configuration handlers, args[0] will equal the newly applied value <b>for</b> the property.
+* @param {Object} obj	The scope object. For configuration handlers, <b>this</b> will usually equal the owner.
+*/</i>
+YAHOO.widget.Overlay.prototype.enforceConstraints = <b>function</b>(type, args, obj) {
+	<b>var</b> pos = args[0];
+
+	<b>var</b> x = pos[0];
+	<b>var</b> y = pos[1];
+
+	<b>var</b> offsetHeight = <b>this</b>.element.offsetHeight;
+	<b>var</b> offsetWidth = <b>this</b>.element.offsetWidth;
+
+	<b>var</b> viewPortWidth = YAHOO.util.Dom.getViewportWidth();
+	<b>var</b> viewPortHeight = YAHOO.util.Dom.getViewportHeight();
+
+	<b>var</b> scrollX = document.documentElement.scrollLeft || document.body.scrollLeft;
+	<b>var</b> scrollY = document.documentElement.scrollTop || document.body.scrollTop;
+
+	<b>var</b> topConstraint = scrollY + 10;
+	<b>var</b> leftConstraint = scrollX + 10;
+	<b>var</b> bottomConstraint = scrollY + viewPortHeight - offsetHeight - 10;
+	<b>var</b> rightConstraint = scrollX + viewPortWidth - offsetWidth - 10;
+
+	<b>if</b> (x &lt; leftConstraint) {
+		x = leftConstraint;
+	} <b>else</b> if (x &gt; rightConstraint) {
+		x = rightConstraint;
+	}
+
+	<b>if</b> (y &lt; topConstraint) {
+		y = topConstraint;
+	} <b>else</b> if (y &gt; bottomConstraint) {
+		y = bottomConstraint;
+	}
+
+	<b>this</b>.cfg.setProperty(&quot;x&quot;, x, true);
+	<b>this</b>.cfg.setProperty(&quot;y&quot;, y, true);
+	<b>this</b>.cfg.setProperty(&quot;xy&quot;, [x,y], true);
+};
+
+<i>/**
+* Centers the container <b>in</b> the viewport.
+* @method center
+*/</i>
+YAHOO.widget.Overlay.prototype.center = <b>function</b>() {
+	<b>var</b> scrollX = document.documentElement.scrollLeft || document.body.scrollLeft;
+	<b>var</b> scrollY = document.documentElement.scrollTop || document.body.scrollTop;
+
+	<b>var</b> viewPortWidth = YAHOO.util.Dom.getClientWidth();
+	<b>var</b> viewPortHeight = YAHOO.util.Dom.getClientHeight();
+
+	<b>var</b> elementWidth = <b>this</b>.element.offsetWidth;
+	<b>var</b> elementHeight = <b>this</b>.element.offsetHeight;
+
+	<b>var</b> x = (viewPortWidth / 2) - (elementWidth / 2) + scrollX;
+	<b>var</b> y = (viewPortHeight / 2) - (elementHeight / 2) + scrollY;
+
+	<b>this</b>.cfg.setProperty(&quot;xy&quot;, [parseInt(x, 10), parseInt(y, 10)]);
+
+	<b>this</b>.cfg.refireEvent(&quot;iframe&quot;);
+};
+
+<i>/**
+* Synchronizes the Panel's &quot;xy&quot;, &quot;x&quot;, and &quot;y&quot; properties <b>with</b> the Panel's position <b>in</b> the DOM. This is primarily used to update position information during drag &amp; drop.
+* @method syncPosition
+*/</i>
+YAHOO.widget.Overlay.prototype.syncPosition = <b>function</b>() {
+	<b>var</b> pos = YAHOO.util.Dom.getXY(<b>this</b>.element);
+	<b>this</b>.cfg.setProperty(&quot;x&quot;, pos[0], true);
+	<b>this</b>.cfg.setProperty(&quot;y&quot;, pos[1], true);
+	<b>this</b>.cfg.setProperty(&quot;xy&quot;, pos, true);
+};
+
+<i>/**
+* Event handler fired when the resize monitor element is resized.
+* @method onDomResize
+* @param {DOMEvent} e	The resize DOM event
+* @param {Object} obj	The scope object
+*/</i>
+YAHOO.widget.Overlay.prototype.onDomResize = <b>function</b>(e, obj) {
+	YAHOO.widget.Overlay.superclass.onDomResize.call(<b>this</b>, e, obj);
+	<b>var</b> me = <b>this</b>;
+	setTimeout(<b>function</b>() {
+		me.syncPosition();
+		me.cfg.refireEvent(&quot;iframe&quot;);
+		me.cfg.refireEvent(&quot;context&quot;);
+	}, 0);
+};
+
+<i>/**
+* Removes the Overlay element from the DOM and sets all child elements to null.
+* @method destroy
+*/</i>
+YAHOO.widget.Overlay.prototype.destroy = <b>function</b>() {
+	<b>if</b> (<b>this</b>.iframe) {
+		<b>this</b>.iframe.parentNode.removeChild(<b>this</b>.iframe);
+	}
+
+	<b>this</b>.iframe = null;
+
+	YAHOO.widget.Overlay.superclass.destroy.call(<b>this</b>);
+};
+
+<i>/**
+* Returns a String representation of the object.
+* @method toString
+* @<b>return</b> {String} The string representation of the Overlay.
+*/</i>
+YAHOO.widget.Overlay.prototype.toString = <b>function</b>() {
+	<b>return</b> &quot;Overlay &quot; + <b>this</b>.id;
+};
+
+<i>/**
+* A singleton CustomEvent used <b>for</b> reacting to the DOM event <b>for</b> window scroll
+* @event YAHOO.widget.Overlay.windowScrollEvent
+*/</i>
+YAHOO.widget.Overlay.windowScrollEvent = <b>new</b> YAHOO.util.CustomEvent(&quot;windowScroll&quot;);
+
+<i>/**
+* A singleton CustomEvent used <b>for</b> reacting to the DOM event <b>for</b> window resize
+* @event YAHOO.widget.Overlay.windowResizeEvent
+*/</i>
+YAHOO.widget.Overlay.windowResizeEvent = <b>new</b> YAHOO.util.CustomEvent(&quot;windowResize&quot;);
+
+<i>/**
+* The DOM event handler used to fire the CustomEvent <b>for</b> window scroll
+* @method YAHOO.widget.Overlay.windowScrollHandler
+* @static
+* @param {DOMEvent} e The DOM scroll event
+*/</i>
+YAHOO.widget.Overlay.windowScrollHandler = <b>function</b>(e) {
+	<b>if</b> (YAHOO.widget.Module.prototype.browser == &quot;ie&quot; || YAHOO.widget.Module.prototype.browser == &quot;ie7&quot;) {
+		<b>if</b> (! window.scrollEnd) {
+			window.scrollEnd = -1;
+		}
+		clearTimeout(window.scrollEnd);
+		window.scrollEnd = setTimeout(<b>function</b>() { YAHOO.widget.Overlay.windowScrollEvent.fire(); }, 1);
+	} <b>else</b> {
+		YAHOO.widget.Overlay.windowScrollEvent.fire();
+	}
+};
+
+<i>/**
+* The DOM event handler used to fire the CustomEvent <b>for</b> window resize
+* @method YAHOO.widget.Overlay.windowResizeHandler
+* @static
+* @param {DOMEvent} e The DOM resize event
+*/</i>
+YAHOO.widget.Overlay.windowResizeHandler = <b>function</b>(e) {
+	<b>if</b> (YAHOO.widget.Module.prototype.browser == &quot;ie&quot; || YAHOO.widget.Module.prototype.browser == &quot;ie7&quot;) {
+		<b>if</b> (! window.resizeEnd) {
+			window.resizeEnd = -1;
+		}
+		clearTimeout(window.resizeEnd);
+		window.resizeEnd = setTimeout(<b>function</b>() { YAHOO.widget.Overlay.windowResizeEvent.fire(); }, 100);
+	} <b>else</b> {
+		YAHOO.widget.Overlay.windowResizeEvent.fire();
+	}
+};
+
+<i>/**
+* A boolean that indicated whether the window resize and scroll events have already been subscribed to.
+* @property YAHOO.widget.Overlay._initialized
+* @private
+* @type Boolean
+*/</i>
+YAHOO.widget.Overlay._initialized = null;
+
+<b>if</b> (YAHOO.widget.Overlay._initialized === null) {
+	YAHOO.util.Event.addListener(window, &quot;scroll&quot;, YAHOO.widget.Overlay.windowScrollHandler);
+	YAHOO.util.Event.addListener(window, &quot;resize&quot;, YAHOO.widget.Overlay.windowResizeHandler);
+
+	YAHOO.widget.Overlay._initialized = true;
+}
+
+<i>/**
+* OverlayManager is used <b>for</b> maintaining the focus status of multiple Overlays.* @namespace YAHOO.widget
+* @namespace YAHOO.widget
+* @class OverlayManager
+* @constructor
+* @param {Array}	overlays	Optional. A collection of Overlays to register <b>with</b> the manager.
+* @param {Object}	userConfig		The object literal representing the user configuration of the OverlayManager
+*/</i>
+YAHOO.widget.OverlayManager = <b>function</b>(userConfig) {
+	<b>this</b>.init(userConfig);
+};
+
+<i>/**
+* The CSS class representing a focused Overlay
+* @property YAHOO.widget.OverlayManager.CSS_FOCUSED
+* @static
+* @final
+* @type String
+*/</i>
+YAHOO.widget.OverlayManager.CSS_FOCUSED = &quot;focused&quot;;
+
+YAHOO.widget.OverlayManager.prototype = {
+	<i>/**
+	* The class's constructor <b>function</b>
+	* @property contructor
+	* @type Function
+	*/</i>
+	constructor : YAHOO.widget.OverlayManager,
+
+	<i>/**
+	* The array of Overlays that are currently registered
+	* @property overlays
+	* @type YAHOO.widget.Overlay[]
+	*/</i>
+	overlays : null,
+
+	<i>/**
+	* Initializes the <b>default</b> configuration of the OverlayManager
+	* @method initDefaultConfig
+	*/</i>
+	initDefaultConfig : <b>function</b>() {
+		<i>/**
+		* The collection of registered Overlays <b>in</b> use by the OverlayManager
+		* @config overlays
+		* @type YAHOO.widget.Overlay[]
+		* @<b>default</b> null
+		*/</i>
+		<b>this</b>.cfg.addProperty(&quot;overlays&quot;, { suppressEvent:true } );
+
+		<i>/**
+		* The <b>default</b> DOM event that should be used to focus an Overlay
+		* @config focusevent
+		* @type String
+		* @<b>default</b> &quot;mousedown&quot;
+		*/</i>
+		<b>this</b>.cfg.addProperty(&quot;focusevent&quot;, { value:&quot;mousedown&quot; } );
+	},
+
+	<i>/**
+	* Initializes the OverlayManager
+	* @method init
+	* @param {YAHOO.widget.Overlay[]}	overlays	Optional. A collection of Overlays to register <b>with</b> the manager.
+	* @param {Object}	userConfig		The object literal representing the user configuration of the OverlayManager
+	*/</i>
+	init : <b>function</b>(userConfig) {
+		<i>/**
+		* The OverlayManager's Config object used <b>for</b> monitoring configuration properties.
+		* @property cfg
+		* @type YAHOO.util.Config
+		*/</i>
+		<b>this</b>.cfg = <b>new</b> YAHOO.util.Config(<b>this</b>);
+
+		<b>this</b>.initDefaultConfig();
+
+		<b>if</b> (userConfig) {
+			<b>this</b>.cfg.applyConfig(userConfig, true);
+		}
+		<b>this</b>.cfg.fireQueue();
+
+		<i>/**
+		* The currently activated Overlay
+		* @property activeOverlay
+		* @private
+		* @type YAHOO.widget.Overlay
+		*/</i>
+		<b>var</b> activeOverlay = null;
+
+		<i>/**
+		* Returns the currently focused Overlay
+		* @method getActive
+		* @<b>return</b> {YAHOO.widget.Overlay}	The currently focused Overlay
+		*/</i>
+		<b>this</b>.getActive = <b>function</b>() {
+			<b>return</b> activeOverlay;
+		};
+
+		<i>/**
+		* Focuses the specified Overlay
+		* @method focus
+		* @param {YAHOO.widget.Overlay} overlay	The Overlay to focus
+		* @param {String} overlay	The id of the Overlay to focus
+		*/</i>
+		<b>this</b>.focus = <b>function</b>(overlay) {
+			<b>var</b> o = <b>this</b>.find(overlay);
+			<b>if</b> (o) {
+				<b>this</b>.blurAll();
+				activeOverlay = o;
+				YAHOO.util.Dom.addClass(activeOverlay.element, YAHOO.widget.OverlayManager.CSS_FOCUSED);
+				<b>this</b>.overlays.sort(<b>this</b>.compareZIndexDesc);
+				<b>var</b> topZIndex = YAHOO.util.Dom.getStyle(<b>this</b>.overlays[0].element, &quot;zIndex&quot;);
+				<b>if</b> (! isNaN(topZIndex) &amp;&amp; <b>this</b>.overlays[0] != overlay) {
+					activeOverlay.cfg.setProperty(&quot;zIndex&quot;, (parseInt(topZIndex, 10) + 2));
+				}
+				<b>this</b>.overlays.sort(<b>this</b>.compareZIndexDesc);
+			}
+		};
+
+		<i>/**
+		* Removes the specified Overlay from the manager
+		* @method remove
+		* @param {YAHOO.widget.Overlay}	overlay	The Overlay to remove
+		* @param {String} overlay	The id of the Overlay to remove
+		*/</i>
+		<b>this</b>.remove = <b>function</b>(overlay) {
+			<b>var</b> o = <b>this</b>.find(overlay);
+			<b>if</b> (o) {
+				<b>var</b> originalZ = YAHOO.util.Dom.getStyle(o.element, &quot;zIndex&quot;);
+				o.cfg.setProperty(&quot;zIndex&quot;, -1000, true);
+				<b>this</b>.overlays.sort(<b>this</b>.compareZIndexDesc);
+				<b>this</b>.overlays = <b>this</b>.overlays.slice(0, <b>this</b>.overlays.length-1);
+				o.cfg.setProperty(&quot;zIndex&quot;, originalZ, true);
+
+				o.cfg.setProperty(&quot;manager&quot;, null);
+				o.focusEvent = null;
+				o.blurEvent = null;
+				o.focus = null;
+				o.blur = null;
+			}
+		};
+
+		<i>/**
+		* Removes focus from all registered Overlays <b>in</b> the manager
+		* @method blurAll
+		*/</i>
+		<b>this</b>.blurAll = <b>function</b>() {
+			activeOverlay = null;
+			<b>for</b> (<b>var</b> o=0;o&lt;<b>this</b>.overlays.length;o++) {
+				YAHOO.util.Dom.removeClass(<b>this</b>.overlays[o].element, YAHOO.widget.OverlayManager.CSS_FOCUSED);
+			}
+		};
+
+		<b>var</b> overlays = <b>this</b>.cfg.getProperty(&quot;overlays&quot;);
+
+		<b>if</b> (! <b>this</b>.overlays) {
+			<b>this</b>.overlays = [];
+		}
+
+		<b>if</b> (overlays) {
+			<b>this</b>.register(overlays);
+			<b>this</b>.overlays.sort(<b>this</b>.compareZIndexDesc);
+		}
+	},
+
+	<i>/**
+	* Registers an Overlay or an array of Overlays <b>with</b> the manager. Upon registration, the Overlay receives functions <b>for</b> focus and blur, along <b>with</b> CustomEvents <b>for</b> each.
+	* @method register
+	* @param {YAHOO.widget.Overlay}	overlay		An Overlay to register <b>with</b> the manager.
+	* @param {YAHOO.widget.Overlay[]}	overlay		An array of Overlays to register <b>with</b> the manager.
+	* @<b>return</b>	{Boolean}	True <b>if</b> any Overlays are registered.
+	*/</i>
+	register : <b>function</b>(overlay) {
+		<b>if</b> (overlay instanceof YAHOO.widget.Overlay) {
+			overlay.cfg.addProperty(&quot;manager&quot;, { value:<b>this</b> } );
+
+			overlay.focusEvent = <b>new</b> YAHOO.util.CustomEvent(&quot;focus&quot;);
+			overlay.blurEvent = <b>new</b> YAHOO.util.CustomEvent(&quot;blur&quot;);
+
+			<b>var</b> mgr=<b>this</b>;
+
+			overlay.focus = <b>function</b>() {
+				mgr.focus(<b>this</b>);
+				<b>this</b>.focusEvent.fire();
+			};
+
+			overlay.blur = <b>function</b>() {
+				mgr.blurAll();
+				<b>this</b>.blurEvent.fire();
+			};
+
+			<b>var</b> focusOnDomEvent = <b>function</b>(e,obj) {
+				overlay.focus();
+			};
+
+			<b>var</b> focusevent = <b>this</b>.cfg.getProperty(&quot;focusevent&quot;);
+			YAHOO.util.Event.addListener(overlay.element,focusevent,focusOnDomEvent,<b>this</b>,true);
+
+			<b>var</b> zIndex = YAHOO.util.Dom.getStyle(overlay.element, &quot;zIndex&quot;);
+			<b>if</b> (! isNaN(zIndex)) {
+				overlay.cfg.setProperty(&quot;zIndex&quot;, parseInt(zIndex, 10));
+			} <b>else</b> {
+				overlay.cfg.setProperty(&quot;zIndex&quot;, 0);
+			}
+
+			<b>this</b>.overlays.push(overlay);
+			<b>return</b> true;
+		} <b>else</b> if (overlay instanceof Array) {
+			<b>var</b> regcount = 0;
+			<b>for</b> (<b>var</b> i=0;i&lt;overlay.length;i++) {
+				<b>if</b> (<b>this</b>.register(overlay[i])) {
+					regcount++;
+				}
+			}
+			<b>if</b> (regcount &gt; 0) {
+				<b>return</b> true;
+			}
+		} <b>else</b> {
+			<b>return</b> false;
+		}
+	},
+
+	<i>/**
+	* Attempts to locate an Overlay by instance or ID.
+	* @method find
+	* @param {YAHOO.widget.Overlay}	overlay		An Overlay to locate within the manager
+	* @param {String}	overlay		An Overlay id to locate within the manager
+	* @<b>return</b>	{YAHOO.widget.Overlay}	The requested Overlay, <b>if</b> found, or null <b>if</b> it cannot be located.
+	*/</i>
+	find : <b>function</b>(overlay) {
+		<b>if</b> (overlay instanceof YAHOO.widget.Overlay) {
+			<b>for</b> (<b>var</b> o=0;o&lt;<b>this</b>.overlays.length;o++) {
+				<b>if</b> (<b>this</b>.overlays[o] == overlay) {
+					<b>return</b> this.overlays[o];
+				}
+			}
+		} <b>else</b> if (<b>typeof</b> overlay == &quot;string&quot;) {
+			<b>for</b> (<b>var</b> p=0;p&lt;<b>this</b>.overlays.length;p++) {
+				<b>if</b> (<b>this</b>.overlays[p].id == overlay) {
+					<b>return</b> this.overlays[p];
+				}
+			}
+		}
+		<b>return</b> null;
+	},
+
+	<i>/**
+	* Used <b>for</b> sorting the manager's Overlays by z-index.
+	* @method compareZIndexDesc
+	* @private
+	* @<b>return</b> {Number}	0, 1, or -1, depending on where the Overlay should fall <b>in</b> the stacking order.
+	*/</i>
+	compareZIndexDesc : <b>function</b>(o1, o2) {
+		<b>var</b> zIndex1 = o1.cfg.getProperty(&quot;zIndex&quot;);
+		<b>var</b> zIndex2 = o2.cfg.getProperty(&quot;zIndex&quot;);
+
+		<b>if</b> (zIndex1 &gt; zIndex2) {
+			<b>return</b> -1;
+		} <b>else</b> if (zIndex1 &lt; zIndex2) {
+			<b>return</b> 1;
+		} <b>else</b> {
+			<b>return</b> 0;
+		}
+	},
+
+	<i>/**
+	* Shows all Overlays <b>in</b> the manager.
+	* @method showAll
+	*/</i>
+	showAll : <b>function</b>() {
+		<b>for</b> (<b>var</b> o=0;o&lt;<b>this</b>.overlays.length;o++) {
+			<b>this</b>.overlays[o].show();
+		}
+	},
+
+	<i>/**
+	* Hides all Overlays <b>in</b> the manager.
+	* @method hideAll
+	*/</i>
+	hideAll : <b>function</b>() {
+		<b>for</b> (<b>var</b> o=0;o&lt;<b>this</b>.overlays.length;o++) {
+			<b>this</b>.overlays[o].hide();
+		}
+	},
+
+
+	<i>/**
+	* Returns a string representation of the object.
+	* @method toString
+	* @<b>return</b> {String}	The string representation of the OverlayManager
+	*/</i>
+	toString : <b>function</b>() {
+		<b>return</b> &quot;OverlayManager&quot;;
+	}
+
+};
+
+<i>/**
+* KeyListener is a utility that provides an easy interface <b>for</b> listening <b>for</b> keydown/keyup events fired against DOM elements.
+* @namespace YAHOO.util
+* @class KeyListener
+* @constructor
+* @param {HTMLElement}	attachTo	The element or element ID to which the key event should be attached
+* @param {String}	attachTo	The element or element ID to which the key event should be attached
+* @param {Object}	keyData		The object literal representing the key(s) to detect. Possible attributes are shift(boolean), alt(boolean), ctrl(boolean) and keys(either an int or an array of ints representing keycodes).
+* @param {Function}	handler		The CustomEvent handler to fire when the key event is detected
+* @param {Object}	handler		An object literal representing the handler.
+* @param {String}	event		Optional. The event (keydown or keyup) to listen <b>for</b>. Defaults automatically to keydown.
+*/</i>
+YAHOO.util.KeyListener = <b>function</b>(attachTo, keyData, handler, event) {
+	<b>if</b> (! event) {
+		event = YAHOO.util.KeyListener.KEYDOWN;
+	}
+
+	<i>/**
+	* The CustomEvent fired internally when a key is pressed
+	* @event keyEvent
+	* @private
+	* @param {Object}	keyData		The object literal representing the key(s) to detect. Possible attributes are shift(boolean), alt(boolean), ctrl(boolean) and keys(either an int or an array of ints representing keycodes).
+	*/</i>
+	<b>var</b> keyEvent = <b>new</b> YAHOO.util.CustomEvent(&quot;keyPressed&quot;);
+
+	<i>/**
+	* The CustomEvent fired when the KeyListener is enabled via the enable() <b>function</b>
+	* @event enabledEvent
+	* @param {Object}	keyData		The object literal representing the key(s) to detect. Possible attributes are shift(boolean), alt(boolean), ctrl(boolean) and keys(either an int or an array of ints representing keycodes).
+	*/</i>
+	<b>this</b>.enabledEvent = <b>new</b> YAHOO.util.CustomEvent(&quot;enabled&quot;);
+
+	<i>/**
+	* The CustomEvent fired when the KeyListener is disabled via the disable() <b>function</b>
+	* @event disabledEvent
+	* @param {Object}	keyData		The object literal representing the key(s) to detect. Possible attributes are shift(boolean), alt(boolean), ctrl(boolean) and keys(either an int or an array of ints representing keycodes).
+	*/</i>
+	<b>this</b>.disabledEvent = <b>new</b> YAHOO.util.CustomEvent(&quot;disabled&quot;);
+
+	<b>if</b> (<b>typeof</b> attachTo == 'string') {
+		attachTo = document.getElementById(attachTo);
+	}
+
+	<b>if</b> (<b>typeof</b> handler == '<b>function</b>') {
+		keyEvent.subscribe(handler);
+	} <b>else</b> {
+		keyEvent.subscribe(handler.fn, handler.scope, handler.correctScope);
+	}
+
+	<i>/**
+	* Handles the key event when a key is pressed.
+	* @method handleKeyPress
+	* @param {DOMEvent} e	The keypress DOM event
+	* @param {Object}	obj	The DOM event scope object
+	* @private
+	*/</i>
+	<b>function</b> handleKeyPress(e, obj) {
+		<b>if</b> (! keyData.shift) {
+			keyData.shift = false;
+		}
+		<b>if</b> (! keyData.alt) {
+			keyData.alt = false;
+		}
+		<b>if</b> (! keyData.ctrl) {
+			keyData.ctrl = false;
+		}
+
+		<i>// check held down modifying keys first</i>
+		<b>if</b> (e.shiftKey == keyData.shift &amp;&amp;
+			e.altKey   == keyData.alt &amp;&amp;
+			e.ctrlKey  == keyData.ctrl) { <i>// <b>if</b> we pass <b>this</b>, all modifiers match</i>
+
+			<b>var</b> dataItem;
+			<b>var</b> keyPressed;
+
+			<b>if</b> (keyData.keys instanceof Array) {
+				<b>for</b> (<b>var</b> i=0;i&lt;keyData.keys.length;i++) {
+					dataItem = keyData.keys[i];
+
+					<b>if</b> (dataItem == e.charCode ) {
+						keyEvent.fire(e.charCode, e);
+						<b>break</b>;
+					} <b>else</b> if (dataItem == e.keyCode) {
+						keyEvent.fire(e.keyCode, e);
+						<b>break</b>;
+					}
+				}
+			} <b>else</b> {
+				dataItem = keyData.keys;
+
+				<b>if</b> (dataItem == e.charCode ) {
+					keyEvent.fire(e.charCode, e);
+				} <b>else</b> if (dataItem == e.keyCode) {
+					keyEvent.fire(e.keyCode, e);
+				}
+			}
+		}
+	}
+
+	<i>/**
+	* Enables the KeyListener by attaching the DOM event listeners to the target DOM element
+	* @method enable
+	*/</i>
+	<b>this</b>.enable = <b>function</b>() {
+		<b>if</b> (! <b>this</b>.enabled) {
+			YAHOO.util.Event.addListener(attachTo, event, handleKeyPress);
+			<b>this</b>.enabledEvent.fire(keyData);
+		}
+		<i>/**
+		* Boolean indicating the enabled/disabled state of the Tooltip
+		* @property enabled
+		* @type Boolean
+		*/</i>
+		<b>this</b>.enabled = true;
+	};
+
+	<i>/**
+	* Disables the KeyListener by removing the DOM event listeners from the target DOM element
+	* @method disable
+	*/</i>
+	<b>this</b>.disable = <b>function</b>() {
+		<b>if</b> (<b>this</b>.enabled) {
+			YAHOO.util.Event.removeListener(attachTo, event, handleKeyPress);
+			<b>this</b>.disabledEvent.fire(keyData);
+		}
+		<b>this</b>.enabled = false;
+	};
+
+	<i>/**
+	* Returns a String representation of the object.
+	* @method toString
+	* @<b>return</b> {String}	The string representation of the KeyListener
+	*/</i>
+	<b>this</b>.toString = <b>function</b>() {
+		<b>return</b> &quot;KeyListener [&quot; + keyData.keys + &quot;] &quot; + attachTo.tagName + (attachTo.id ? &quot;[&quot; + attachTo.id + &quot;]&quot; : &quot;&quot;);
+	};
+
+};
+
+<i>/**
+* Constant representing the DOM &quot;keydown&quot; event.
+* @property YAHOO.util.KeyListener.KEYDOWN
+* @static
+* @final
+* @type String
+*/</i>
+YAHOO.util.KeyListener.KEYDOWN = &quot;keydown&quot;;
+
+<i>/**
+* Constant representing the DOM &quot;keyup&quot; event.
+* @property YAHOO.util.KeyListener.KEYUP
+* @static
+* @final
+* @type String
+*/</i>
+YAHOO.util.KeyListener.KEYUP = &quot;keyup&quot;;
+
+<i>/**
+* ContainerEffect encapsulates animation transitions that are executed when an Overlay is shown or hidden.
+* @namespace YAHOO.widget
+* @class ContainerEffect
+* @constructor
+* @param {YAHOO.widget.Overlay}	overlay		The Overlay that the animation should be associated <b>with</b>
+* @param {Object}	attrIn		The object literal representing the animation arguments to be used <b>for</b> the animate-<b>in</b> transition. The arguments <b>for</b> this literal are: attributes(object, see YAHOO.util.Anim <b>for</b> description), duration(Number), and method(i.e. YAHOO.util.Easing.easeIn).
+* @param {Object}	attrOut		The object literal representing the animation arguments to be used <b>for</b> the animate-out transition. The arguments <b>for</b> this literal are: attributes(object, see YAHOO.util.Anim <b>for</b> description), duration(Number), and method(i.e. YAHOO.util.Easing.easeIn).
+* @param {HTMLElement}	targetElement	Optional. The target element that should be animated during the transition. Defaults to overlay.element.
+* @param {class}	Optional. The animation class to instantiate. Defaults to YAHOO.util.Anim. Other options include YAHOO.util.Motion.
+*/</i>
+YAHOO.widget.ContainerEffect = <b>function</b>(overlay, attrIn, attrOut, targetElement, animClass) {
+	<b>if</b> (! animClass) {
+		animClass = YAHOO.util.Anim;
+	}
+
+	<i>/**
+	* The overlay to animate
+	* @property overlay
+	* @type YAHOO.widget.Overlay
+	*/</i>
+	<b>this</b>.overlay = overlay;
+	<i>/**
+	* The animation attributes to use when transitioning into view
+	* @property attrIn
+	* @type Object
+	*/</i>
+	<b>this</b>.attrIn = attrIn;
+	<i>/**
+	* The animation attributes to use when transitioning out of view
+	* @property attrOut
+	* @type Object
+	*/</i>
+	<b>this</b>.attrOut = attrOut;
+	<i>/**
+	* The target element to be animated
+	* @property targetElement
+	* @type HTMLElement
+	*/</i>
+	<b>this</b>.targetElement = targetElement || overlay.element;
+	<i>/**
+	* The animation class to use <b>for</b> animating the overlay
+	* @property animClass
+	* @type class
+	*/</i>
+	<b>this</b>.animClass = animClass;
+};
+
+<i>/**
+* Initializes the animation classes and events.
+* @method init
+*/</i>
+YAHOO.widget.ContainerEffect.prototype.init = <b>function</b>() {
+	<b>this</b>.beforeAnimateInEvent = <b>new</b> YAHOO.util.CustomEvent(&quot;beforeAnimateIn&quot;);
+	<b>this</b>.beforeAnimateOutEvent = <b>new</b> YAHOO.util.CustomEvent(&quot;beforeAnimateOut&quot;);
+
+	<b>this</b>.animateInCompleteEvent = <b>new</b> YAHOO.util.CustomEvent(&quot;animateInComplete&quot;);
+	<b>this</b>.animateOutCompleteEvent = <b>new</b> YAHOO.util.CustomEvent(&quot;animateOutComplete&quot;);
+
+	<b>this</b>.animIn = <b>new</b> this.animClass(<b>this</b>.targetElement, <b>this</b>.attrIn.attributes, <b>this</b>.attrIn.duration, <b>this</b>.attrIn.method);
+	<b>this</b>.animIn.onStart.subscribe(<b>this</b>.handleStartAnimateIn, <b>this</b>);
+	<b>this</b>.animIn.onTween.subscribe(<b>this</b>.handleTweenAnimateIn, <b>this</b>);
+	<b>this</b>.animIn.onComplete.subscribe(<b>this</b>.handleCompleteAnimateIn, <b>this</b>);
+
+	<b>this</b>.animOut = <b>new</b> this.animClass(<b>this</b>.targetElement, <b>this</b>.attrOut.attributes, <b>this</b>.attrOut.duration, <b>this</b>.attrOut.method);
+	<b>this</b>.animOut.onStart.subscribe(<b>this</b>.handleStartAnimateOut, <b>this</b>);
+	<b>this</b>.animOut.onTween.subscribe(<b>this</b>.handleTweenAnimateOut, <b>this</b>);
+	<b>this</b>.animOut.onComplete.subscribe(<b>this</b>.handleCompleteAnimateOut, <b>this</b>);
+};
+
+<i>/**
+* Triggers the <b>in</b>-animation.
+* @method animateIn
+*/</i>
+YAHOO.widget.ContainerEffect.prototype.animateIn = <b>function</b>() {
+	<b>this</b>.beforeAnimateInEvent.fire();
+	<b>this</b>.animIn.animate();
+};
+
+<i>/**
+* Triggers the out-animation.
+* @method animateOut
+*/</i>
+YAHOO.widget.ContainerEffect.prototype.animateOut = <b>function</b>() {
+	<b>this</b>.beforeAnimateOutEvent.fire();
+	<b>this</b>.animOut.animate();
+};
+
+<i>/**
+* The <b>default</b> onStart handler <b>for</b> the <b>in</b>-animation.
+* @method handleStartAnimateIn
+* @param {String} type	The CustomEvent type
+* @param {Object[]}	args	The CustomEvent arguments
+* @param {Object} obj	The scope object
+*/</i>
+YAHOO.widget.ContainerEffect.prototype.handleStartAnimateIn = <b>function</b>(type, args, obj) { };
+<i>/**
+* The <b>default</b> onTween handler <b>for</b> the <b>in</b>-animation.
+* @method handleTweenAnimateIn
+* @param {String} type	The CustomEvent type
+* @param {Object[]}	args	The CustomEvent arguments
+* @param {Object} obj	The scope object
+*/</i>
+YAHOO.widget.ContainerEffect.prototype.handleTweenAnimateIn = <b>function</b>(type, args, obj) { };
+<i>/**
+* The <b>default</b> onComplete handler <b>for</b> the <b>in</b>-animation.
+* @method handleCompleteAnimateIn
+* @param {String} type	The CustomEvent type
+* @param {Object[]}	args	The CustomEvent arguments
+* @param {Object} obj	The scope object
+*/</i>
+YAHOO.widget.ContainerEffect.prototype.handleCompleteAnimateIn = <b>function</b>(type, args, obj) { };
+
+<i>/**
+* The <b>default</b> onStart handler <b>for</b> the out-animation.
+* @method handleStartAnimateOut
+* @param {String} type	The CustomEvent type
+* @param {Object[]}	args	The CustomEvent arguments
+* @param {Object} obj	The scope object
+*/</i>
+YAHOO.widget.ContainerEffect.prototype.handleStartAnimateOut = <b>function</b>(type, args, obj) { };
+<i>/**
+* The <b>default</b> onTween handler <b>for</b> the out-animation.
+* @method handleTweenAnimateOut
+* @param {String} type	The CustomEvent type
+* @param {Object[]}	args	The CustomEvent arguments
+* @param {Object} obj	The scope object
+*/</i>
+YAHOO.widget.ContainerEffect.prototype.handleTweenAnimateOut = <b>function</b>(type, args, obj) { };
+<i>/**
+* The <b>default</b> onComplete handler <b>for</b> the out-animation.
+* @method handleCompleteAnimateOut
+* @param {String} type	The CustomEvent type
+* @param {Object[]}	args	The CustomEvent arguments
+* @param {Object} obj	The scope object
+*/</i>
+YAHOO.widget.ContainerEffect.prototype.handleCompleteAnimateOut = <b>function</b>(type, args, obj) { };
+
+<i>/**
+* Returns a string representation of the object.
+* @method toString
+* @<b>return</b> {String}	The string representation of the ContainerEffect
+*/</i>
+YAHOO.widget.ContainerEffect.prototype.toString = <b>function</b>() {
+	<b>var</b> output = &quot;ContainerEffect&quot;;
+	<b>if</b> (<b>this</b>.overlay) {
+		output += &quot; [&quot; + <b>this</b>.overlay.toString() + &quot;]&quot;;
+	}
+	<b>return</b> output;
+};
+
+<i>/**
+* A pre-configured ContainerEffect instance that can be used <b>for</b> fading an overlay <b>in</b> and out.
+* @method FADE
+* @static
+* @param {Overlay}	The Overlay object to animate
+* @param {Number}	The duration of the animation
+* @<b>return</b> {ContainerEffect}	The configured ContainerEffect object
+*/</i>
+YAHOO.widget.ContainerEffect.FADE = <b>function</b>(overlay, dur) {
+	<b>var</b> fade = <b>new</b> YAHOO.widget.ContainerEffect(overlay, { attributes:{opacity: {from:0, to:1}}, duration:dur, method:YAHOO.util.Easing.easeIn }, { attributes:{opacity: {to:0}}, duration:dur, method:YAHOO.util.Easing.easeOut}, overlay.element );
+
+	fade.handleStartAnimateIn = <b>function</b>(type,args,obj) {
+		YAHOO.util.Dom.addClass(obj.overlay.element, &quot;hide-select&quot;);
+
+		<b>if</b> (! obj.overlay.underlay) {
+			obj.overlay.cfg.refireEvent(&quot;underlay&quot;);
+		}
+
+		<b>if</b> (obj.overlay.underlay) {
+			obj.initialUnderlayOpacity = YAHOO.util.Dom.getStyle(obj.overlay.underlay, &quot;opacity&quot;);
+			obj.overlay.underlay.style.filter = null;
+		}
+
+		YAHOO.util.Dom.setStyle(obj.overlay.element, &quot;visibility&quot;, &quot;visible&quot;);
+		YAHOO.util.Dom.setStyle(obj.overlay.element, &quot;opacity&quot;, 0);
+	};
+
+	fade.handleCompleteAnimateIn = <b>function</b>(type,args,obj) {
+		YAHOO.util.Dom.removeClass(obj.overlay.element, &quot;hide-select&quot;);
+
+		<b>if</b> (obj.overlay.element.style.filter) {
+			obj.overlay.element.style.filter = null;
+		}
+
+		<b>if</b> (obj.overlay.underlay) {
+			YAHOO.util.Dom.setStyle(obj.overlay.underlay, &quot;opacity&quot;, obj.initialUnderlayOpacity);
+		}
+
+		obj.overlay.cfg.refireEvent(&quot;iframe&quot;);
+		obj.animateInCompleteEvent.fire();
+	};
+
+	fade.handleStartAnimateOut = <b>function</b>(type, args, obj) {
+		YAHOO.util.Dom.addClass(obj.overlay.element, &quot;hide-select&quot;);
+
+		<b>if</b> (obj.overlay.underlay) {
+			obj.overlay.underlay.style.filter = null;
+		}
+	};
+
+	fade.handleCompleteAnimateOut =  <b>function</b>(type, args, obj) {
+		YAHOO.util.Dom.removeClass(obj.overlay.element, &quot;hide-select&quot;);
+		<b>if</b> (obj.overlay.element.style.filter) {
+			obj.overlay.element.style.filter = null;
+		}
+		YAHOO.util.Dom.setStyle(obj.overlay.element, &quot;visibility&quot;, &quot;hidden&quot;);
+		YAHOO.util.Dom.setStyle(obj.overlay.element, &quot;opacity&quot;, 1);
+
+		obj.overlay.cfg.refireEvent(&quot;iframe&quot;);
+
+		obj.animateOutCompleteEvent.fire();
+	};
+
+	fade.init();
+	<b>return</b> fade;
+};
+
+
+<i>/**
+* A pre-configured ContainerEffect instance that can be used <b>for</b> sliding an overlay <b>in</b> and out.
+* @method SLIDE
+* @static
+* @param {Overlay}	The Overlay object to animate
+* @param {Number}	The duration of the animation
+* @<b>return</b> {ContainerEffect}	The configured ContainerEffect object
+*/</i>
+YAHOO.widget.ContainerEffect.SLIDE = <b>function</b>(overlay, dur) {
+	<b>var</b> x = overlay.cfg.getProperty(&quot;x&quot;) || YAHOO.util.Dom.getX(overlay.element);
+	<b>var</b> y = overlay.cfg.getProperty(&quot;y&quot;) || YAHOO.util.Dom.getY(overlay.element);
+
+	<b>var</b> clientWidth = YAHOO.util.Dom.getClientWidth();
+	<b>var</b> offsetWidth = overlay.element.offsetWidth;
+
+	<b>var</b> slide = <b>new</b> YAHOO.widget.ContainerEffect(overlay, {
+															attributes:{ points: { to:[x, y] } },
+															duration:dur,
+															method:YAHOO.util.Easing.easeIn
+														},
+														{
+															attributes:{ points: { to:[(clientWidth+25), y] } },
+															duration:dur,
+															method:YAHOO.util.Easing.easeOut
+														},
+														overlay.element,
+														YAHOO.util.Motion);
+
+
+	slide.handleStartAnimateIn = <b>function</b>(type,args,obj) {
+		obj.overlay.element.style.left = (-25-offsetWidth) + &quot;px&quot;;
+		obj.overlay.element.style.top  = y + &quot;px&quot;;
+	};
+
+	slide.handleTweenAnimateIn = <b>function</b>(type, args, obj) {
+
+
+		<b>var</b> pos = YAHOO.util.Dom.getXY(obj.overlay.element);
+
+		<b>var</b> currentX = pos[0];
+		<b>var</b> currentY = pos[1];
+
+		<b>if</b> (YAHOO.util.Dom.getStyle(obj.overlay.element, &quot;visibility&quot;) == &quot;hidden&quot; &amp;&amp; currentX &lt; x) {
+			YAHOO.util.Dom.setStyle(obj.overlay.element, &quot;visibility&quot;, &quot;visible&quot;);
+		}
+
+		obj.overlay.cfg.setProperty(&quot;xy&quot;, [currentX,currentY], true);
+		obj.overlay.cfg.refireEvent(&quot;iframe&quot;);
+	};
+
+	slide.handleCompleteAnimateIn = <b>function</b>(type, args, obj) {
+		obj.overlay.cfg.setProperty(&quot;xy&quot;, [x,y], true);
+		obj.startX = x;
+		obj.startY = y;
+		obj.overlay.cfg.refireEvent(&quot;iframe&quot;);
+		obj.animateInCompleteEvent.fire();
+	};
+
+	slide.handleStartAnimateOut = <b>function</b>(type, args, obj) {
+		<b>var</b> vw = YAHOO.util.Dom.getViewportWidth();
+
+		<b>var</b> pos = YAHOO.util.Dom.getXY(obj.overlay.element);
+
+		<b>var</b> yso = pos[1];
+
+		<b>var</b> currentTo = obj.animOut.attributes.points.to;
+		obj.animOut.attributes.points.to = [(vw+25), yso];
+	};
+
+	slide.handleTweenAnimateOut = <b>function</b>(type, args, obj) {
+		<b>var</b> pos = YAHOO.util.Dom.getXY(obj.overlay.element);
+
+		<b>var</b> xto = pos[0];
+		<b>var</b> yto = pos[1];
+
+		obj.overlay.cfg.setProperty(&quot;xy&quot;, [xto,yto], true);
+		obj.overlay.cfg.refireEvent(&quot;iframe&quot;);
+	};
+
+	slide.handleCompleteAnimateOut = <b>function</b>(type, args, obj) {
+		YAHOO.util.Dom.setStyle(obj.overlay.element, &quot;visibility&quot;, &quot;hidden&quot;);
+
+		obj.overlay.cfg.setProperty(&quot;xy&quot;, [x,y]);
+		obj.animateOutCompleteEvent.fire();
+	};
+
+	slide.init();
+	<b>return</b> slide;
+};</code></pre><hr><div style="font-size:10px;text-align:center;color:gray;">yui-ext - Copyright &copy; 2006 Jack Slocum.  |
+    Yahoo! UI - Copyright &copy; 2006 Yahoo! Inc.<br />All rights reserved.</div>
+    </body></html>

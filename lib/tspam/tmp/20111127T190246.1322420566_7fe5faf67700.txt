@@ -1,0 +1,20 @@
+Received: (qmail 26674 invoked by uid 8021); 24 Nov 2011 14:35:16 -0000 from 110.53.31.230 by mail.daqing.gov.cn (envelope-from <RsjKSZX@daqing.gov.cn>, uid 0) with qmail-scanner-1.24 
+ (.  
+ Clear:RC:0(110.53.31.230):. 
+ Processed in 0.764364 secs); 24 Nov 2011 14:35:16 -0000 from unknown (HELO evan) (RsjKSZX@[110.53.31.230])
+          (envelope-sender <RsjKSZX@daqing.gov.cn>)
+          by 0 (magicmail) with SMTP
+          for <novogar@novogar.com>; 24 Nov 2011 14:35:16 -0000 
+X-Smtpd-Remotehost: unknown 
+X-Smtpd-Helo: evan 
+X-Smtpd-IP: 110.53.31.230 
+X-Smtpd-From: RsjKSZX@daqing.gov.cn 
+X-Smtpd-To: novogar@novogar.com 
+Message-ID: <20111124223739083050@daqing.gov.cn> 
+From: =?gb2312?B?z/THfr+h?= <RsjKSZX@daqing.gov.cn> 
+To:  
+Subject: =?gb2312?B?a2Jsyb0gvKYgseQgt+8gu8sguvMgtcQgy7wgv7w=?=
+	=?gb2312?B?YmMw?= 
+Date: Thu, 24 Nov 2011 22:37:27 +0800 
+X-mailer: Rbmww 0 
+Whoops!  What is a 'application/vnd.ms-excel'?

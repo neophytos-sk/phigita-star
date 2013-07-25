@@ -1,0 +1,14 @@
+Received: from  (192.168.1.162) by nacha.org (109.206.106.244) with Microsoft SMTP Server id 8.0.685.24; Fri, 18 Nov 2011 11:38:35 +0100 
+Message-ID: <4E7C5C22.408080@nacha.org> 
+Date: Fri, 18 Nov 2011 11:38:35 +0100 
+From: "The Electronic Payments Association" unfrockv@naahq.org 
+User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.2.12) Gecko/20101027 Thunderbird/3.1.6 
+To: <k2pts@phigita.net> 
+Subject: ACH payment rejected 
+--------------------------------------
+ The ACH  transaction (ID: 07487785252325), recently  initiated from your bank account (by you or any other person), was   rejected by the  other financial institution.        Rejected transfer  
+      Transaction ID:     07487785252325  
+       Reason for rejection    See details in the report below   
+      Transaction Report     report_07487785252325.doc (Microsoft Word Document)   
+  About NACHA NACHA manages the development, administration, and governance of the ACH Network, the backbone for the electronic movement of money and data. The ACH Network serves as a safe, secure, reliable network for direct consumer, business, and government payments, and annually facilitates billions of payments such as Direct Deposit and Direct Payment. The NACHA Operating Rules provide the legal foundation for the exchange of ACH payments and ensure that the ACH Network remains efficient, reliable, and secure for the benefit of all participants. In its role as Network administrator, NACHA manages the rulemaking process and ensures that proposed ACH applications are consistent with the Guiding Principles of the ACH Network. The rulemaking process provides a disciplined, well-defined methodology to propose and develop and propose rules amendments to the NACHA voting membership, the decision makers for the NACHA Operating Rules.13450 Sunrise Valley Drive, Suite 100Herndon, VA 201712011 NACHA - The Electronic Payments Association
+

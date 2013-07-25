@@ -1,0 +1,265 @@
+
+<html>
+ <head>
+	<link type="text/css" rel="stylesheet" href="../ext-1.1.1/resources/css/ext-all.css"/>
+	<link type="text/css" rel="stylesheet" href="../ext-1.1.1/resources/css/xtheme-vista.css"/>
+	<link type="text/css" rel="stylesheet" href="../common/ext-ux-slidezone.css"/>
+	<script type="text/javascript" src="../ext-1.1.1/adapter/prototype/prototype.js"></script>
+	<script type="text/javascript" src="../ext-1.1.1/adapter/ext/ext-base.js"></script>
+	<script type="text/javascript" src="../ext-1.1.1/ext-all.js"></script>
+	<script type="text/javascript" src="Ext.ux.SlideZone.js"></script>	
+	
+	
+  <script type="text/javascript" language="JavaScript">
+
+
+Ext.onReady(function() {
+
+	Test = {};
+	twoWeeksAgo = 1000*60*60*24*14;
+
+	Test.slideZone1 = new Ext.ux.SlideZone('slider1', {  
+		type: 'horizontal',
+		size: 500, 
+		sliderWidth: 18,
+		sliderHeight: 21,
+		maxValue: 1000,
+		minValue: 0,
+		sliderSnap: 1,
+		sliders: [{ value: 500,  
+					name: 'start1_1'
+					}]
+		 });
+	
+	Test.slideZone1.getSlider('start1_1').on('drag',
+		function() {
+				$('slider_1_1_value').innerHTML = parseInt(this.value);
+				$('slider_1_1_percent').innerHTML = this.percent.toFixed(2);
+				$('slider_1_1_position').innerHTML = this.el.getX() +
+						1/2 * Test.slideZone1.sliderWidth;	
+				}
+	)
+	$('slider_1_1_value').innerHTML = parseInt(Test.slideZone1.getSlider('start1_1').value);
+	$('slider_1_1_percent').innerHTML = Test.slideZone1.getSlider('start1_1').percent.toFixed(2);	
+	$('slider_1_1_position').innerHTML = Test.slideZone1.getSlider('start1_1').el.getX() +
+			1/2 * Test.slideZone1.sliderWidth;	
+	
+	
+	Test.zone2 = new Ext.ux.SlideZone('slider2', {  
+					type: 'horizontal',
+					size: 700, 
+					sliderWidth: 18,
+					sliderHeight: 21,
+					allowSliderCrossing: false,
+					sliderSnap: 20,
+					maxValue: new Date().getTime(),
+					minValue: new Date().getTime() - (twoWeeksAgo)
+					});
+	var slider2_1 = new Ext.ux.ThumbSlider({
+				value: new Date().getTime() - twoWeeksAgo + twoWeeksAgo * 1/4 ,  
+				name: 'start2'
+				});
+	var slider2_2 = new Ext.ux.ThumbSlider({
+			value: new Date().getTime() - twoWeeksAgo + twoWeeksAgo * 1/2,  
+			name: 'middle2'
+			}); 
+
+	var slider2_3 = new Ext.ux.ThumbSlider({
+			value: new Date().getTime() - twoWeeksAgo + twoWeeksAgo * 3/4,  
+			name: 'stop2'
+			});
+
+	slider2_1.on('drag',function() {
+			$('slider_2_1_value').innerHTML = this.value + ' ' + new Date(this.value).toString();
+			$('slider_2_1_percent').innerHTML = this.percent.toFixed(2);
+			})
+	slider2_2.on('drag',function() {
+			$('slider_2_2_value').innerHTML = this.value + ' ' + new Date(this.value).toString();
+			$('slider_2_2_percent').innerHTML = this.percent.toFixed(2);
+			})
+	slider2_3.on('drag',function() {
+			$('slider_2_3_value').innerHTML = this.value + ' ' + new Date(this.value).toString();
+			$('slider_2_3_percent').innerHTML = this.percent.toFixed(2);
+			})
+	Test.zone2.add(slider2_1); 
+	Test.zone2.add(slider2_2); 
+	Test.zone2.add(slider2_3); 
+
+	//sliders can be accessed only after added
+	$('slider_2_1_value').innerHTML = Test.zone2.getSlider('start2').value + ' ' + 
+				new Date(Test.zone2.getSlider('start2').value).toString();
+	$('slider_2_1_percent').innerHTML = Test.zone2.getSlider('start2').percent.toFixed(2);
+	$('slider_2_2_value').innerHTML = Test.zone2.getSlider('middle2').value + ' ' + 
+				new Date(Test.zone2.getSlider('middle2').value).toString();
+	$('slider_2_2_percent').innerHTML = Test.zone2.getSlider('middle2').percent.toFixed(2);
+	$('slider_2_3_value').innerHTML = Test.zone2.getSlider('stop2').value + ' ' + 
+				new Date(Test.zone2.getSlider('stop2').value).toString();
+	$('slider_2_3_percent').innerHTML = Test.zone2.getSlider('stop2').percent.toFixed(2);
+
+
+	Test.zone3 = new Ext.ux.SlideZone('slider3', {  
+		type: 'horizontal',
+		size: 500, 
+		sliderHeight: 12,
+		maxValue: 1000,
+		minValue: 0,
+		sliderSnap: 1,
+		allowSliderCrossing: true
+		 });
+	
+	var rs1 = new Ext.ux.RangeSlider({
+			value: [100,500],  
+			name: '3_1',
+			cls: 'top'
+			});
+
+	var rs2 = new Ext.ux.RangeSlider({
+			value: [200,600],  
+			name: '3_2',
+			cls: 'bottom'
+			});
+			
+	Test.zone3.add(rs1);	
+	Test.zone3.add(rs2);		
+
+	Test.zone3.getSlider('3_1').on('drag',
+		function() {
+				$('slider_3_1_value').innerHTML = parseInt(this.value[0]) + "|" + parseInt(this.value[1]);
+				$('slider_3_1_percent').innerHTML = parseInt(this.percent[0]) + "|" + parseInt(this.percent[1]);	
+				}
+	)
+	$('slider_3_1_value').innerHTML  = parseInt(Test.zone3.getSlider('3_1').value[0]) + "|" + parseInt(Test.zone3.getSlider('3_1').value[1]);
+	$('slider_3_1_percent').innerHTML = parseInt(Test.zone3.getSlider('3_1').percent[0]) + "|" + parseInt(Test.zone3.getSlider('3_1').percent[1]);
+			
+	Test.zone3.getSlider('3_2').on('drag',
+		function() {
+				$('slider_3_2_value').innerHTML = parseInt(this.value[0]) + "|" + parseInt(this.value[1]);
+				$('slider_3_2_percent').innerHTML = parseInt(this.percent[0]) + "|" + parseInt(this.percent[1]);	
+				}
+	)
+	$('slider_3_2_value').innerHTML  = parseInt(Test.zone3.getSlider('3_2').value[0]) + "|" + parseInt(Test.zone3.getSlider('3_2').value[1]);
+	$('slider_3_2_percent').innerHTML = parseInt(Test.zone3.getSlider('3_2').percent[0]) + "|" + parseInt(Test.zone3.getSlider('3_2').percent[1]);
+
+
+	$('eventLog').value = '';
+
+	$('enableLogging').checked = false;
+	});
+
+function enableLogging(cb) {
+	var ssEvts = $A(['mouseover', 'mouseout', 'dragstart', 'drag', 'dragend']);
+	for(s in Test) {
+		var ss = Test[s];
+		ss.sliders.each( function(slider) {
+			ssEvts.each(
+				function(evt) {
+					if(cb.checked) {
+						slider.on(evt, function() {
+							$('eventLog').value = this.name + ', ' + evt + ', ' + this.value + "\n" + $('eventLog').value;
+						})
+					} else {
+						slider.purgeListeners();
+					}
+				}
+			)		
+		})
+	}			
+}
+
+</script>
+</head>
+<body>
+	
+	<h1>Horizontal slider examples</h1>
+	<p></p>
+	<a href="examples_v.html">Vertical sliders</a>  |
+	<a href="examples_a.html">Area sliders</a> 
+	</p>
+
+	<div style="float: right; width: 250px">
+		<h4>Event Log</h4>
+		<input type="checkbox" id="enableLogging" onclick="enableLogging(this);" />
+		<label for="enableLogging">Enable Logging</label><br/>
+		<label for="eventLog">Slider, event, value</label>
+		<textarea id="eventLog" style="width: 250px; height: 600px; font-size: 10px;"></textarea>
+		<button onclick="$('eventLog').value = '';">Clear log</button>
+	</div>
+	<h4>Example 1 - single slider</h4>
+	<div id="slider1" ></div> 
+
+	<div id="output1" >
+		<table>
+			<tr>
+				<th>Slider</th>
+				<th>Percent</th>
+				<th>Value</th>
+				<th>Position</th>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td id="slider_1_1_percent"></td>
+				<td id="slider_1_1_value"></td>
+				<td id="slider_1_1_position"></td>
+			</tr>
+		</table>
+	</div>
+	
+	<h4>Example 2 - triple thumb sliders</h4>	
+	<div id="slider2" ></div> 
+	<div >
+		<input type="checkbox" name="slider2Crossing" onClick="if(this.checked) { Test.zone2.enableCrossing(); } else {Test.zone2.disableCrossing();};">
+		<label for="slider2Crossing">Allow sliders to cross</label>
+	</div>
+	<div id="output2" >
+		<table>
+			<tr>
+				<th>Slider</th>
+				<th>Percent</th>
+				<th>Value</th>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td id="slider_2_1_percent"></td>
+				<td id="slider_2_1_value"></td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td id="slider_2_2_percent"></td>
+				<td id="slider_2_2_value"></td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td id="slider_2_3_percent"></td>
+				<td id="slider_2_3_value"></td>
+			</tr>
+		</table>
+	</div>
+
+	<h4>Example 3 - double sliders</h4>	
+	<div id="slider3" ></div> 
+	<div >
+		<input type="checkbox" name="slider3Crossing" checked onClick="if(this.checked) { Test.zone3.enableCrossing(); } else {Test.zone3.disableCrossing();};">
+		<label for="slider3Crossing">Allow sliders to cross</label>
+	</div>
+	<div id="output3" >
+		<table>
+			<tr>
+				<th>Slider</th>
+				<th>Percent</th>
+				<th>Value</th>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td id="slider_3_1_percent"></td>
+				<td id="slider_3_1_value"></td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td id="slider_3_2_percent"></td>
+				<td id="slider_3_2_value"></td>
+			</tr>
+		</table>
+	</div>
+
+</body>
+</html>

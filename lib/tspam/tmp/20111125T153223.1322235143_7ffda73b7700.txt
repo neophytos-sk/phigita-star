@@ -1,0 +1,33 @@
+Received: from panas.otenet.gr (panas.otenet.gr [83.235.67.31])
+	by sphinx.otenet.gr (ESMTP) with ESMTPS
+	for <webmaster@phigita.net>; Fri, 25 Nov 2011 17:32:11 +0200 (EET) from galanis (athedsl-81410.home.otenet.gr [87.203.71.80])
+	(authenticated bits=0)
+	by panas.otenet.gr (8.13.8/8.13.8) with ESMTP id pAPFVrRW007196
+	for <webmaster@phigita.net>; Fri, 25 Nov 2011 17:31:58 +0200 
+Message-ID: <848981321B5F46699574924A515A2843@galanis> 
+From: "Vasilis Galanis" <vgalanis@medcollege.edu.gr> 
+To: <webmaster@phigita.net> 
+Subject: =?iso-8859-7?B?wfDv9OXr3fPs4fThIMLp+ezh9Onq7/0gxfHj4fP05/Hf7/Ug2PX37+jl?=
+	=?iso-8859-7?B?8eHw5d/h8i3F8Onz9Ofs7+3p6twg0/Xs8OXx3PPs4fTh?= 
+Date: Fri, 25 Nov 2011 17:31:50 +0200 
+X-Priority: 3 
+X-MSMail-Priority: Normal 
+X-Mailer: Microsoft Outlook Express 6.00.2900.5931 
+X-MimeOLE: Produced By Microsoft MimeOLE V6.00.2900.6157 
+--------------------------------------
+
+Βασίλης Γαλάνης
+Marketing Director
+Mediterranean College
+Τ: 210 8899 603
+F: 211 7709 450
+E: vgalanis@medcollege.edu.gr
+U: www.medcollege.edu.gr   
+
+--------------------------------------
+ content-type=application/msword part-token=::mime::623-2--------------------------------------
+ content-type=image/jpeg part-token=::mime::623-3--------------------------------------
+ content-type=image/jpeg part-token=::mime::623-4--------------------------------------
+ content-type=image/jpeg part-token=::mime::623-5--------------------------------------
+ content-type=image/jpeg part-token=::mime::623-6--------------------------------------
+ content-type=image/jpeg part-token=::mime::623-7

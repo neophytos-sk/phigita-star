@@ -1,0 +1,1 @@
+  core/base/src/Stringio.o core/base/src/Stringio.d: $(wildcard include/Riostream.h include/RConfig.h include/RVersion.h include/TString.h include/TRefCnt.h include/Rtypes.h include/DllImport.h include/Rtypeinfo.h include/snprintf.h include/strlcpy.h include/TGenericClassInfo.h include/TSchemaHelper.h include/Riosfwd.h include/TMathBase.h)

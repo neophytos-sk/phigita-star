@@ -1,0 +1,362 @@
+/**** Layouts ****/
+ 
+html { 
+	min-width: 700px;
+}
+
+
+body {
+	font-family: "Lucida Grande", "Trebuchet MS", "Bitstream Vera Sans", Verdana, Helvetica, sans-serif;
+	background: url("/images/theme/bfts/top.png") no-repeat;
+	margin: 0 0 0 0;
+}
+
+
+#container {
+	margin: 210px auto;
+	padding: 0;
+	text-align: left;
+}
+
+
+#making-of {
+	position: absolute;
+	top: 15px;
+	left: 21px;
+}
+
+
+#search {
+	margin-bottom: 10px;
+}
+
+
+#search label {
+	margin: 0 10px 0 0;
+}
+
+
+#search input {
+	padding: 4px;
+	border: 1px solid #ccc;
+}
+
+#subscribe input.flat {
+        padding: 4px;
+	border: 1px solid #ccc;
+	margin-bottom: 5px;
+}
+
+
+
+#header {
+	display: none;
+}
+
+
+#main {
+	width: 500px;
+	margin-left: 15px;
+	margin-right: 85px;
+	margin-bottom: 15px;
+	padding-bottom: 15px;
+}
+
+#main .blueblk{
+	margin: 40px 0 0 0;
+}
+
+
+.post
+{
+	padding-bottom: 40px;
+}
+
+#sidebar {
+	position: absolute;
+	top: 290px;
+	left: 560px;
+	text-align: left;
+	/*border-left: 1px dashed #ccc;*/
+	padding: 20px;
+}
+
+
+#sidebar #search-results {
+	border-bottom: 1px dashed #ccc;
+	margin-bottom: 20px;
+}
+
+
+#homelink {
+	border-bottom: 1px dashed #ccc;
+	margin-bottom: 20px;
+	padding-bottom: 20px;
+}
+
+.sidebarContent {
+        border-bottom: 1px dashed #ccc;
+        margin-bottom: 20px;
+        padding-bottom: 20px;
+}
+
+#commentList {
+	margin: 20px 0 40px 0;
+	padding-left: 0px;
+}
+
+
+#commentList li {
+	list-style: none;
+	margin: 20px 0 20px 0;	
+	border: 1px dashed #ccc;
+	padding: 20px
+}
+
+#trackbackList {
+	margin: 20px 0 40px 0;
+	padding-left: 0px;
+}
+
+
+#trackbackList li {
+	list-style: none;
+	margin: 20px 0 20px 0;	
+	border: 1px dashed #ccc;
+	padding: 20px
+}
+
+
+#preview {
+	list-style: none;
+	margin: 20px 0 20px 0;	
+	border: 1px dashed #ccc;
+	padding: 20px
+}
+
+#footer {
+	margin-left: 170px
+}
+
+
+.typocode
+{
+	margin-left: 20px;
+	margin-right: 20px;
+	padding: 5px;
+	border: 1px solid #cccccc;
+	background: #eeeeee;
+}
+
+/**** Colors/Fonts ****/
+
+#making-of {
+	font-size: 22px;
+	color: #708299;
+}
+
+
+#making-of a {
+	color: #8dbc86;
+	text-decoration: none;
+	margin-left: 5px;
+	border-bottom: 3px solid #8dbc86;
+}
+
+
+#search {
+	font-size: 11px
+}
+
+
+#search input {
+	font-size: 11px;
+}
+
+#subscribe {
+	font-size: 11px;
+}
+
+#subscribe input {
+	font-size: 11px;
+}
+
+
+#main {
+	color: #454545;
+	font-size: 11px;
+	border-bottom: 1px dashed #ccc;
+}
+
+
+#main h2 {
+font-size: 28px;
+margin: 0;
+}
+
+
+#main h2 a {
+	color: #374f72;
+	text-decoration: none;
+	font-size: 28px;
+}
+
+
+#main a {
+	color: #708299;
+}
+
+
+#main h4.blueblk{
+	font-size: 16px;
+}
+
+#sidebar {
+	font-size: 11px;
+}
+
+
+#sidebar a {
+	color: #708299;
+	text-decoration: none;
+}
+
+
+#sidebar h3 {
+	font-size: 11px;
+	font-weight: bold;
+}
+
+
+#sidebar li {
+	list-style: none;
+	margin-left: -25px;
+}
+
+
+#sidebar img {
+	border: 0;
+	margin: 0 0 10px 5px;
+}
+
+
+#search img {
+	border: 0;
+	margin: 0;
+}
+
+
+#homelink a {
+	font-size: 16px;
+	font-weight: bold;
+	padding-bottom: 5px;
+}
+
+
+#footer {
+	font-size: 10px;
+}
+
+
+#footer a {
+	color: #708299;
+}
+
+#commentList li.author_comment {
+	background: #eee;
+}
+
+#commentList li div {
+margin-bottom: 10px;
+}
+
+#commentList li div a.admintools {
+	padding: 4px;
+	margin-right: 5px;
+	border: 1px solid #000;
+	background: #8dbc86;
+	color: #fff;
+}
+
+#commentList li img {
+	float: right;
+	padding-left: 10px;
+}
+
+
+#commentList li cite {
+	font-size: 12px;
+	font-weight: bold;
+	margin: 0 1px 0 0;
+	font-style: normal;
+}
+
+
+#commentList li cite a{
+	text-decoration: none;
+}
+
+
+#trackbackList li div {
+	margin-bottom: 10px;
+}
+
+
+#trackbackList li div a.admintools {
+	padding: 4px;
+	margin-right: 5px;
+	border: 1px solid #000;
+	background: #8dbc86;
+color: #fff;
+}
+
+
+#trackbackList li cite {
+	font-size: 12px;
+	font-weight: bold;
+	margin: 0 1px 0 0;
+font-style: normal;
+}
+
+
+#trackbackList li cite a{
+text-decoration: none;
+}
+
+
+#preview .author_comment {
+	background: #eee;
+}
+
+#preview div {
+	margin-bottom: 10px;
+}
+
+#preview img {
+float: right;
+	padding-left: 10px;
+}
+
+
+#preview cite {
+	font-size: 12px;
+	font-weight: bold;
+	margin: 0 1px 0 0;
+	font-style: normal;
+}
+
+
+#preview li cite a{
+	text-decoration: none;
+}
+
+
+#footer img {
+	border: 0;
+}
+
+
+.TNR
+{
+	font-family: "Courier New"
+}

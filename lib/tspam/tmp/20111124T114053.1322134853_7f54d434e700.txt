@@ -1,0 +1,16 @@
+Return-path: <webmaster@phigita.net> 
+Received: from [111.94.23.220] (port=3954 helo=prindojaya)
+	by mx1.jamelaftershow.com with asmtp 
+	id 8A8C6C-000526-70
+	for <webmaster@phigita.net>; Thu, 24 Nov 2011 18:40:34 +0700 
+Message-ID: <58EB3DB158D44F288018600DB1D9A51A@prindojaya> 
+From: =?koi8-r?B?IvDSydfP2iDJINLB09TBzc/Wy8Ei?= <rowbz3@jamelaftershow.com> 
+To: <webmaster@phigita.net> 
+Subject: =?koi8-r?B?88/L0sHdwcXNINrB1NLB1NkgzsEgzM/HydPUz9c=?= 
+Date: Thu, 24 Nov 2011 18:40:34 +0700 
+X-Priority: 3 
+X-MSMail-Priority: Normal 
+X-Mailer: Microsoft Windows Mail 6.0.6001.18000 
+X-MimeOLE: Produced By Microsoft MimeOLE V6.0.6001.18049 
+X-Spam: Not detected 
+X-Mras: Ok 

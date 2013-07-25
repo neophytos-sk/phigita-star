@@ -1,0 +1,11 @@
+Received: from rqsz (unknown [110.52.6.246])
+	by ns1.wellpie.net (Postfix) with ESMTP
+	id 46EB43E47C2; Sat, 19 Nov 2011 04:31:50 +0800 (CST) 
+Message-ID: <20111119043353867757@tcdaye.com> 
+From: "" <dy@tcdaye.com> 
+To:  
+Subject: =?gb2312?B?ob7P+iDK2yC+qyDToiC88iDWsSCyuyDKxyChsMjLobE=?=
+	=?gb2312?B?o6zKxyChsMnxIMjLobGhvw==?= 
+Date: Sat, 19 Nov 2011 04:33:48 +0800 
+X-mailer: Gyenuw 5 
+Whoops!  What is a 'application/vnd.ms-excel'?

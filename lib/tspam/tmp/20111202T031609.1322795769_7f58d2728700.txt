@@ -1,0 +1,221 @@
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed/relaxed; s=k1; d=mail53.us2.mcsv.net;
+ h=Subject:From:Reply-To:To:Date:Message-ID:List-Unsubscribe:Sender:Content-Type:MIME-Version; i=newsletter=3Dphileleftheros.com@mail53.us2.mcsv.net;
+ bh=3YLbCNyCHdSoIaqsHjRKPiUlnxA=;
+ b=ke8FCoteRg/KktSx7GOlyz8PotcsDMg24T5x7KP+B6y1MuWdyL26PI8O4p6rgxxYO2adf0779DST
+   7sYKWsP9SCegYqWdtq08svxI7xUUT9jeTQ00uyYoClM8XAfFq7/A9nXRr8A/X2cbWIA7o1fNJ/HA
+   mGhDirzOOylrCPf+N98= 
+DomainKey-Signature: a=rsa-sha1; c=nofws; q=dns; s=k1; d=mail53.us2.mcsv.net;
+ b=yeuPiFDKAH0mnY5q7L/3io858PiUWW/SkKj5d9jJxy0SSQX8iJn1WMFEdfwfGQzDfsniq2KKMvkh
+   xiRQaGqoC8v3Z5xb0EEN5T4W0fjhGYqEYkwciDYb3HmbEeKnIVysDOdpEUa+E67DNJdqtL6eXUWO
+   dXA6bOA+Eplsl0XUFxU=; 
+Received: from (127.0.0.1) by mail53.us2.mcsv.net (PowerMTA(TM) v3.5r16) id hr11eq0ik18h for <k2pts@phigita.net>; Thu, 1 Dec 2011 22:15:55 -0500 (envelope-from <bounce-mc.us2_6419294.1294093-k2pts=phigita.net@mail53.us2.mcsv.net>) 
+Subject: =?utf-8?Q?Philenews=20Newsletter=202=2F12=2F2011?= 
+From: =?utf-8?Q?Phileleftheros=20Newsletter?= <newsletter@phileleftheros.com> 
+Reply-To: =?utf-8?Q?Phileleftheros=20Newsletter?= <newsletter@phileleftheros.com> 
+To: <k2pts@phigita.net> 
+Date: Thu, 1 Dec 2011 22:15:55 -0500 
+Message-ID: <84e8c0ea4dc808b59204e2171b4828836f9.20111202031534@mail53.us2.mcsv.net> 
+X-Mailer: MailChimp Mailer - **CID5bb8c0c327b4828836f9** 
+X-Campaign: mailchimp84e8c0ea4dc808b59204e2171.5bb8c0c327 
+X-campaignid: mailchimp84e8c0ea4dc808b59204e2171.5bb8c0c327 
+x-im: 38509-5bb8c0c327 
+X-Report-Abuse: Please report abuse for this campaign here: http://www.mailchimp.com/abuse/abuse.phtml?u=84e8c0ea4dc808b59204e2171&id=5bb8c0c327&e=b4828836f9 
+x-accounttype: pd 
+List-Unsubscribe: <mailto:unsubscribe-84e8c0ea4dc808b59204e2171-5bb8c0c327-b4828836f9@mailin1.us2.mcsv.net?subject=unsubscribe>, <http://philenews.us2.list-manage.com/unsubscribe?u=84e8c0ea4dc808b59204e2171&id=13cea9817b&e=b4828836f9&c=5bb8c0c327> 
+Sender: "Phileleftheros Newsletter" <newsletter=phileleftheros.com@mail53.us2.mcsv.net> 
+x-mcda: FALSE 
+--------------------------------------
+Trouble viewing this email?[1]Click Here
+    Links:
+      1. http://us2.campaign-archive2.com/?u=84e8c0ea4dc808b59204e2171&id=5bb8c0c327&e=b4828836f9
+
+  right logo _ΠΑΡΑΣΚΕΥΗ
+  2 ΔΕΚΕΜΒΡΙΟΥ 2011_
+  Philenews
+
+  left logo
+  _[2]www.philenews.com
+  [3]www.sentragoal.com.cy _
+  line
+    Links:
+      2. http://www.philenews.com
+      3. http://www.sentragoal.com.cy
+
+ΠΡΩΤΟ ΘΕΜΑ
+
+  [4]Ώρα μηδέν στο Προεδρικό για οικονομία
+    Links:
+      4. http://www.philenews.com/el-gr/New-Homepage-With-Slider/4995/87835
+
+  Σήμερα στο Προεδρικό οι μεγάλες αποφάσεις για την τύχη της οικονομίας. Η
+  συνάντηση του Προέδρου με τους αρχηγούς των κομμάτων κρίνει την ένταξη ή
+  όχι της Κύπρου στο Μηχανισμό Στήριξης.
+
+"Φ" ΑΠΟΚΛΕΙΣΤΙΚΟ
+
+  [5]Πληρώνουμε €20 εκατ. για νερό που δεν πίνουμε
+    Links:
+      5. http://www.philenews.com/el-gr/Eidiseis-Kypros/22/87834
+
+  Μέσα στον πανικό των περικοπών και της μεταφοράς πόσιμου νερού από την
+  Ελλάδα με πλοία, κάποιοι εκμεταλλεύτηκαν την κατάσταση και αποφάσισαν να
+  υλοποιήσουν πρόταση για κατασκευή μονάδας αφαλάτωσης στην Πάφο, που δεν
+  άγγιξε ποτέ η λειψυδρία.
+
+  [6]Δεν έβρισκαν μεγαλοδικηγόρους της Λευκωσίας
+    Links:
+      6. http://www.philenews.com/el-gr/Eidiseis-Kypros/22/87833
+
+  Για περισσότερο από ενάμιση χρόνο οι επιδότες μάταια αναζητούσαν (!) τρεις
+  μεγαλοδικηγόρους της πρωτεύουσας, για να τους επιδώσουν δικαστική κλήση για
+  φοροδιαφυγή.
+
+  [7]Οι δάσκαλοι, οι γιορτές και ο έρανος
+    Links:
+      7. http://www.philenews.com/el-gr/Eidiseis-Kypros/22/87832
+
+  Τις χριστουγεννιάτικες γιορτές στα Δημοτικά, ούτως ή άλλως ξεχάστε τις.
+  Εκείνο που μελετούν, τώρα, οι δάσκαλοι είναι με ποιο τρόπο θα στείλουν το
+  δικό τους… χριστουγεννιάτικο μήνυμα.
+
+ΟΙΚΟΝΟΜΙΑ
+
+  [8]Πουπανοπρίτζιν αύξηση επιτοκίων
+    Links:
+      8. http://www.philenews.com/el-gr/Oikonomia-Kypros-XAK/3353/87830
+
+  Ένας ακόμη βραχνάς, αυτός της αύξησης των επιτοκίων, έρχεται να επιβαρύνει
+  την  τσέπη  των πολιτών αλλά και το βαρύ κλίμα στην οικονομία. Πρώτη η
+  Ελληνική Τράπεζα ανακοίνωσε αύξηση δανειστικών της επιτοκίων.
+
+  [9]Να μην παίζουμε με τη φωτιά
+    Links:
+      9. http://www.philenews.com/el-gr/Oikonomia-Kypros-XAK/3353/87829
+
+  Τα  κόμματα χθες επανέλαβαν στο υψηλότερο επίπεδο ότι σήμερα πρέπει να
+  παρθούν αποφάσεις. Δεν πρέπει να παίζουμε με τη φωτιά, είναι το μήνυμα που
+  στέλνουν και προς τις συντεχνίες αλλά και προς τον Πρόεδρο Χριστόφια, που
+  χθες άφησε ένα παράθυρο 2-3 ημερών για πιθανή πρόσθετη διαβούλευση.
+
+  [10]Για σένα ΑΕΚαρα ανασταίνομαι!
+    Links:
+      10. http://www.sentragoal.com.cy/article.asp?catid=19181&subid=2&pubid=128881161
+
+  Με μεγάλους πρωταγωνιστές τους Γκαρσία και Πιντάδο η ΑΕΚ νίκησε με 2-1 την
+  Μακάμπι και παραμένει ζωντανή στην υπόθεση πρόκριση.
+
+ΕΝΔΙΑΦΕΡΟΥΝ ΚΙ' ΑΥΤΑ
+
+  [11]Άνδρας στη Βρετανία απέκτησε 16 παιδιά με 14 διαφορετικές γυναίκες
+    Links:
+      11. http://www.philenews.com/el-gr/Eidiseis-Ta-Perierga/4688/87757
+
+  Ο  Jamie  Cumming  μπορεί να παραμένει άνεργος, ωστόσο αυτό δεν θα τον
+  εμποδίσει να γίνει πατέρας σήμερα για 16η φορά. Στα 34 του χρόνια, ο πιο
+  καρπερός  άνδρας  της  Μ.  Βρετανίας  έχει  αποκτήσει  16 παιδιά με 14
+  διαφορετικές γυναίκες.
+
+  [12]Τρώτε σωστά για να μείνετε νέοι
+    Links:
+      12. http://www.philenews.com/el-gr/Diatrofi/1154/87803/trote-sosta-gia-na-meinete-neoi
+
+  Το  ξέρετε  ότι τα φρούτα, τα λαχανικά και τα ψάρια είναι οι καλύτεροι
+  σύμμαχοι σας στη μάχη ενάντια στον χρόνο; Εμείς, συγκεντρώσαμε όλες τις
+  απαραίτητες… συστάσεις, που θα σας κάνουν να πειστείτε να τα συμπεριλάβετε
+  στο καθημερινό σας διαιτολόγιο, για να κάνετε το lifting σας μέσα στο πιάτο
+  σας!
+
+  _ΕΛΛΑΔΑ_
+
+  [13]Λιποθυμία μαθητή από ασιτία, σύμφωνα με μαρτυρία της μητέρας του
+    Links:
+      13. http://www.philenews.com/el-gr/Eidiseis-Ellada/23/87812/lipothymia-mathiti-apo-asitia-symfona-me-martyria-tis-miteras-tou
+
+  [14]Μαζική η συμμετοχή στα συλλαλητήρια της ΓΣΕΕ - ΑΔΕΔΥ και του ΠΑΜΕ
+    Links:
+      14. http://www.philenews.com/el-gr/Eidiseis-Ellada/23/87768/maziki-i-symmetochi-sta-syllalitiria-tis-gsee-adedy-kai-tou-pame
+
+  _ΚΟΣΜΟΣ_
+  [15]Για  εμφύλιο πόλεμο στη Συρία μιλά ο ΟΗΕ - Ξεπερνούν τους 4.000 οι
+  νεκροί
+    Links:
+      15. http://www.philenews.com/el-gr/Eidiseis-Kosmos/25/87810/gia-emfylio-polemo-sti-syria-mila-o-oie-xepernoun-tous-4000-oi-nekroi
+
+  [16]Υπό εξέταση το πετρελαϊκό εμπάργκο, νέες κυρώσεις από την ΕΕ κατά Ιράν
+    Links:
+      16. http://www.philenews.com/el-gr/Eidiseis-Kosmos/25/87798/ypo-exetasi-to-petrelaiko-empargko-nees-kyroseis-apo-tin-ee-kata-iran
+
+  _ΑΘΛΗΤΙΚΑ ΝΕΑ_
+
+  _ ΚΥΠΡΟΣ_
+
+  [17]Ομόνοια: Λάρκου παρόντος στο Παραλίμνι!
+    Links:
+      17. http://www.sentragoal.com.cy/article.asp?catid=19169&subid=2&pubid=128881123
+
+  [18]Ιβάν: «Υπάρχει πρόβλημα με τον Αΐλτον»
+    Links:
+      18. http://www.sentragoal.com.cy/article.asp?catid=19171&subid=2&pubid=128880908
+
+  [19]Λεβί: «Ψυχολογία και ομαδικότητα για τη νίκη»
+    Links:
+      19. http://www.sentragoal.com.cy/article.asp?catid=19170&subid=2&pubid=128881138
+
+  _ ΕΛΛΑΔΑ & ΚΟΣΜΟΣ_
+
+  [20]Το μεγαλείο της «αιώνιας» γραφικότητας!
+    Links:
+      20. http://www.sentragoal.com.cy/article.asp?catid=18679&subid=2&pubid=128881243
+
+  [21]Εθνική Ελλάδας: Βουνά, βατοί και... τεφαρίκια
+    Links:
+      21. http://www.sentragoal.com.cy/article.asp?catid=18655&subid=2&pubid=128860199
+
+  [22]Νέο σενάριο με Σισέ και Παναθηναϊκό!»
+    Links:
+      22. http://www.sentragoal.com.cy/article.asp?catid=18681&subid=2&pubid=128881235
+
+  [23]Ο Ολυμπιακός σε νέες περιπέτειες...
+    Links:
+      23. http://www.sentragoal.com.cy/article.asp?catid=18725&subid=2&pubid=128881097
+
+  _ΧΡΗΣΙΜΑ_
+
+  Γιορτάζουν σήμερα:
+
+  Μερόπη, Σόλων
+
+  [24]Αεροπορικές πτήσεις
+    Links:
+      24. http://www.philenews.com/el-gr/Aeroporikes-Ptiseis
+
+  [25]Φαρμακεία
+    Links:
+      25. http://www.philenews.com/el-gr/Farmakeia
+
+  [26]Λιμάνια
+    Links:
+      26. http://www.philenews.com/el-gr/Limeniki-Kinisi
+
+  [27]Τηλέφωνα
+    Links:
+      27. http://www.philenews.com/el-gr/Tilefwna
+
+  [28]Κληρώσεις /[29]Λαχεία
+    Links:
+      28. http://www.philenews.com/el-gr/Klirwseis-OPAP
+      29. http://www.philenews.com/el-gr/Klirwseis-OPAP
+
+  Copyright © 2011 Phileleftheros, All rights reserved.
+
+  [30]Unsubscribe from this list | [31]Update subscription preferences
+    Links:
+      30. http://philenews.us2.list-manage.com/unsubscribe?u=84e8c0ea4dc808b59204e2171&id=13cea9817b&e=b4828836f9&c=5bb8c0c327
+      31. http://philenews.us2.list-manage.com/profile?u=84e8c0ea4dc808b59204e2171&id=13cea9817b&e=b4828836f9
+
+  [32]Αν επιθυμείτε να κάνετε εγγραφή στο newsletter κάντε κλικ εδώ
+    Links:
+      32. http://eepurl.com/getzb
+
+  To ensure future delivery of our e-mails,
+  please add newsletter@phileleftheros.com to your contacts.

@@ -1,0 +1,12 @@
+Received: from [100.84.112.2] (account unboltedlbf09@rfast.com HELO utgbgccfjcnlnj.mtzlh.ua)
+	by telesp.net.br (CommuniGate Pro SMTP 5.2.3)
+	with ESMTPA id 870896005 for webmaster@phigita.net; Tue, 29 Nov 2011 11:03:52 -0300 
+Date: Tue, 29 Nov 2011 11:03:52 -0300 
+From: =?koi8-r?B?Iu3B0svF1MnOxyDQzyDFLc3Fyswi?= 
+	<gazettesm9@pip.com.au> 
+X-Mailer: The Bat! (v3.71.04) Home 
+X-Priority: 3 (Normal) 
+Message-ID: <6913025192.C0G16U14118532@werdhtct.dcsxt.ru> 
+To: <webmaster@phigita.net> 
+Subject: =?koi8-r?B?NSDSwdPT2czPyyDawSAxMCAwMDAgLSDtxdPRwyDawSAyMCAwMDA=?= 
+

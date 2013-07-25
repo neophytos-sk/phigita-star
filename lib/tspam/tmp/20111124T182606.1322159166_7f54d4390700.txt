@@ -1,0 +1,82 @@
+Received: by eaac10 with SMTP id c10so415732eaa.8
+        for <k2pts@phigita.net>; Thu, 24 Nov 2011 10:25:52 -0800 (PST) by 10.180.19.42 with SMTP id b10mr36255034wie.39.1322159152482;
+        Thu, 24 Nov 2011 10:25:52 -0800 (PST) by 10.180.84.234 with SMTP id c10cs192946wiz;
+        Thu, 24 Nov 2011 10:25:50 -0800 (PST) by 10.68.28.66 with SMTP id z2mr19497285pbg.8.1322159148357;
+        Thu, 24 Nov 2011 10:25:48 -0800 (PST) from diego.dreamhost.com (diego.dreamhost.com. [66.33.216.104])
+        by mx.google.com with ESMTP id p1si8675036pbk.134.2011.11.24.10.25.46;
+        Thu, 24 Nov 2011 10:25:48 -0800 (PST) from diego.dreamhost.com (localhost [127.0.0.1])
+	by diego.dreamhost.com (Postfix) with ESMTP id 7462B4800E;
+	Thu, 24 Nov 2011 10:25:46 -0800 (PST) from homiemail-mx21.g.dreamhost.com (caibbdcaaaaf.dreamhost.com
+	[208.113.200.5])
+	by diego.dreamhost.com (Postfix) with ESMTP id 03EBA48003
+	for <cylug-main@lists.cylug.org>; Thu, 24 Nov 2011 10:25:45 -0800 (PST) from fusion.bpweb.net (fusion.bpweb.net [83.223.106.9])
+	(using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	(No client certificate requested)
+	by homiemail-mx21.g.dreamhost.com (Postfix) with ESMTPS id 855D06D82B2
+	for <cylug-main@cylug.org>; Thu, 24 Nov 2011 10:25:44 -0800 (PST) from [192.168.1.21] ([213.140.201.14]) (authenticated bits=0)
+	by fusion.bpweb.net (8.13.1/8.13.1) with ESMTP id pAOIPe4e017603
+	for <cylug-main@cylug.org>; Thu, 24 Nov 2011 18:25:41 GMT 
+X-Forwarded-To: k2pts@phigita.net 
+X-Forwarded-For: avgoustinos@gmail.com k2pts@phigita.net 
+Delivered-To: avgoustinos@gmail.com 
+Return-Path: <cylug-main-bounces@lists.cylug.org> 
+Received-SPF: neutral (google.com: 66.33.216.104 is neither permitted nor denied by best guess record for domain of cylug-main-bounces@lists.cylug.org) client-ip=66.33.216.104; 
+Authentication-Results: mx.google.com; spf=neutral (google.com: 66.33.216.104 is neither permitted nor denied by best guess record for domain of cylug-main-bounces@lists.cylug.org) smtp.mail=cylug-main-bounces@lists.cylug.org 
+X-Original-To: cylug-main@lists.cylug.org 
+From: "Andreas Constantinides (MegaHz)" <megahz@megahz.org> 
+In-Reply-To: <CAJQqpGBobfSjjAf8rknAMh+poDkqeSwSkbfWLeNOGrYrdKOTOA@mail.gmail.com> 
+Date: Thu, 24 Nov 2011 20:25:35 +0200 
+Message-Id: <C440359A-B534-452A-AA57-AA7B560B0B08@megahz.org> 
+References: <CAJQqpGBobfSjjAf8rknAMh+poDkqeSwSkbfWLeNOGrYrdKOTOA@mail.gmail.com> 
+To: Cyprus Linux User Group <cylug-main@cylug.org> 
+X-Mailer: Apple Mail (2.1251.1) 
+X-BpTo: <cylug-main@cylug.org> 
+Subject: Re: [Cylug-Main] Transfer of domain 
+X-BeenThere: cylug-main@lists.cylug.org 
+X-Mailman-Version: 2.1.14 
+Precedence: list 
+List-Id: <cylug-main-cylug.org> 
+List-Unsubscribe: <http://lists.cylug.org/options.cgi/cylug-main-cylug.org>,
+	<mailto:cylug-main-request@lists.cylug.org?subject=unsubscribe> 
+List-Archive: <http://lists.cylug.org/private.cgi/cylug-main-cylug.org> 
+List-Post: <mailto:cylug-main@lists.cylug.org> 
+List-Help: <mailto:cylug-main-request@lists.cylug.org?subject=help> 
+List-Subscribe: <http://lists.cylug.org/listinfo.cgi/cylug-main-cylug.org>,
+	<mailto:cylug-main-request@lists.cylug.org?subject=subscribe> 
+Errors-To: cylug-main-bounces@lists.cylug.org 
+Sender: cylug-main-bounces@lists.cylug.org 
+--------------------------------------
+great idea.
+
+
+On 13,Nov 2011, at 10:07 AM, Dimitris Glezos wrote:
+
+> Hey all,
+> 
+> Passing the torch to newer and active Linux guys, I'd like to transfer
+> the domain cylug.org to Theodotos' hands, if there are no objections.
+> Most of you probably know him already through his involvement with
+> ubuntu-cy, which is nowadays synonymous with Linux in Cyprus.
+> 
+> -d
+> 
+> 
+> -- 
+> Dimitris Glezos
+> Founder and CEO, Transifex
+> US Tel: +1.650.440.2308
+> 
+> Social Localization Crowdsourcing
+> http://www.transifex.com/ -- http://angel.co/transifex
+> _______________________________________________
+> Cylug-Main mailing list
+> Cylug-Main@lists.cylug.org
+> http://lists.cylug.org/listinfo.cgi/cylug-main-cylug.org
+
+_______________________________________________
+Cylug-Main mailing list
+Cylug-Main@lists.cylug.org
+http://lists.cylug.org/listinfo.cgi/cylug-main-cylug.org
+
+
+

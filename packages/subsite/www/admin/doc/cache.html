@@ -1,0 +1,106 @@
+<html><head><title>API Specification for AOL Server Cache Module</title></head>
+<body bgcolor="white">
+<h2>API Specification for AOL Server Cache Module</h2>
+by <a href="mailto:pmcneill@arsdigita.com">Patrick McNeill</a>
+<p>
+</p><h3>The Big Picture</h3>
+<p>
+One of the largest performance bottlenecks in the ACS is that so many queries
+are redundant.  Consider the bboard pages: many of these pages do not change,
+or do not change frequently.  However, the database is queried several times 
+for each page generation.  This doesn't make sense.  The obvious solution is
+to use a caching system.
+</p><p>
+Fortunately for us, AOL Server has a built-in cache system.  Unfortunately for
+us, the interface to the majority of this system is only available to people
+using C.
+</p><p>
+</p><h3>The API</h3>
+<p>
+As stated above, AOL Server provides a caching system.  So we just need 
+to make it available to the Tcl interpreter.
+</p><p>
+</p><ul>
+<b><code>ns_cache create</code></b> [ -maxsize <i>maxsize</i> ] <i>cache_name</i><br>
+Creates a cache named <i>cache_name</i> with a maximum size of <i>maxsize</i>
+bytes.  If maxsize is not provided, a default of 100000 bytes will be used.
+If the cache already exists, the function will do nothing. <font color="red">
+Complete.</font>
+<p>
+<b><code>ns_cache set</code></b> <i>cache_name</i> <i>entry_name</i> <i>value</i><br>
+This will create an entry, called <i>entry_name</i>, in the cache named 
+<i>cache_name</i>.  If the named cache does not exist, it will be created
+with the default size.
+If there is a prior entry of the same name, that entry will be overwritten.
+This function cannot fail unless the system is out of memory (in which case
+AOL Server will restart itself).  <font color="red">Complete.</font>
+</p><p>
+<b><code>ns_cache exists</code></b> <i>cache_name</i> <i>entry_name</i><br>
+</p><p>
+This function will return 1 if there is an entry <i>entry_name</i> in cache
+<i>cache_name</i>.  Otherwise, it returns 0.  <font color="red">Complete.</font>
+</p><p>
+<b><code>ns_cache get</code></b> <i>cache_name</i> <i>entry_name</i><br>
+This function will access the cache <i>cache_name</i> and try to retrieve
+the entry <i>entry_name</i>.  The retrieved value will be returned, or, if the
+entry is not present, an error will be thrown.  <font color="red">Complete.</font>
+</p><p>
+<b><code>ns_cache unset</code></b> <i>cache_name</i> <i>entry_name</i><br>
+This function will remove <i>entry_name</i> from <i>cache_name</i>.  It is
+an alias for ns_cache flush. <font color="red">Complete.</font>
+</p><p>
+<b><code>ns_cache flush</code></b> <i>cache_name</i><br>
+This function will clear all of the entries out of the cache <i>cache_name</i>.
+Again, this function cannot fail.  If the cache doesn't exist, the function
+does nothing.  Otherwise, the cache will be empty after this call. <font color="red">Complete.</font>
+</p><p>
+<b><code>ns_cache entries</code></b> <i>cache_name</i><br>
+This function will return a list of all of the entries in <i>cache_name</i>.
+It is identical to <code>ns_cache names</code>, except it returns entries, not
+caches. <font color="red">Complete.</font>
+</p></ul>
+<p>
+Some other stuff I've noticed:
+</p><ul>
+<li>Cache names <b>cannot</b> be longer than 31 characters.  This is an 
+upper limit set in cache.c.  I've put some enforcement
+for this rule whereever a cache may be created by an ns_cache command.  If 
+the name is too long, an error will be thrown and the cache will not be
+created.
+</li></ul>
+<p>
+</p><h3>Using the API</h3>
+<p>
+The first step to using the API is to install it.  I did all of the development
+with AOL Server version 3.0ad6.  In the /nsd directory, you need to replace 
+the following files: <a href="http://templeton.gt.ed.net/%7Epmcneill/arsdigita/cache.c">cache.c</a>, 
+<a href="http://templeton.gt.ed.net/%7Epmcneill/arsdigita/tclcmds.c">tclcmds.c</a>, and <a href="http://templeton.gt.ed.net/%7Epmcneill/arsdigita/nsd.h">nsd.h</a>.
+</p><p>
+Use of the API should be straight-forward.  However, to achieve the goal of 
+caching dynamic web pages, some more work needs to be done.  The majority
+of this work is deciding how to indicate what to cache, and how to intercept
+the data stream to cache it.  Once those two problems have been solved, a 
+cache system should be very easy to create.  Here's some sample code:
+</p><p>
+</p><ul>
+<pre>ad_proc cache_this_page { {} cache_name entry_name } {
+    Caches the rest of whatever page called this function.
+} {
+    if { [ns_cache exists $cache_name $entry_name ] } {
+        ns_write [ns_cache get $cache_name $entry_name]
+
+        return
+    }
+
+    # Capture the data here...
+
+    set data_to_cache [.....]
+
+    ns_cache set $cache_name $entry_name $data_to_cache
+}
+</pre>
+</ul>
+
+<hr>
+<a href="mailto:pmcneill@arsdigita.com"><address>pmcneill@arsdigita.com</address></a>
+</body></html>

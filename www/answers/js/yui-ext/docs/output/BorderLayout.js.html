@@ -1,0 +1,282 @@
+<html><head><title>BorderLayout.js</title><link rel="stylesheet" type="text/css" href="../resources/style.css" media="screen"/></head><body><h1>BorderLayout.js</h1><pre class="highlighted"><code><i>/**
+ * @class YAHOO.ext.BorderLayout
+ * @extends YAHOO.ext.LayoutManager
+ * This class represents a common layout manager used <b>in</b> desktop applications. For screenshots and more details,
+ * please see: &lt;br&gt;&lt;br&gt;
+ * &lt;a href=&quot;http:<i>//www.jackslocum.com/yui/2006/10/19/cross-browser-web-20-layouts-<b>with</b>-yahoo-ui/&quot;&gt;Cross Browser Layouts - Part 1&lt;/a&gt;&lt;br&gt;</i>
+ * &lt;a href=&quot;http:<i>//www.jackslocum.com/yui/2006/10/28/cross-browser-web-20-layouts-part-2-ajax-feed-viewer-20/&quot;&gt;Cross Browser Layouts - Part 2&lt;/a&gt;&lt;br&gt;&lt;br&gt;</i>
+ * Example:
+ &lt;pre&gt;&lt;code&gt;
+ <b>var</b> layout = <b>new</b> YAHOO.ext.BorderLayout(document.body, {
+    north: {
+        initialSize: 25,
+        titlebar: false
+    },
+    west: {
+        split:true,
+        initialSize: 200,
+        minSize: 175,
+        maxSize: 400,
+        titlebar: true,
+        collapsible: true
+    },
+    east: {
+        split:true,
+        initialSize: 202,
+        minSize: 175,
+        maxSize: 400,
+        titlebar: true,
+        collapsible: true
+    },
+    south: {
+        split:true,
+        initialSize: 100,
+        minSize: 100,
+        maxSize: 200,
+        titlebar: true,
+        collapsible: true
+    },
+    center: {
+        titlebar: true,
+        autoScroll:true,
+        resizeTabs: true,
+        minTabWidth: 50,
+        preferredTabWidth: 150
+    }
+});
+
+<i>// shorthand</i>
+<b>var</b> CP = YAHOO.ext.ContentPanel;
+
+layout.beginUpdate();
+layout.add('north', <b>new</b> CP('north', 'North'));
+layout.add('south', <b>new</b> CP('south', {title: 'South', closable: true}));
+layout.add('west', <b>new</b> CP('west', {title: 'West'}));
+layout.add('east', <b>new</b> CP('autoTabs', {title: 'Auto Tabs', closable: true}));
+layout.add('center', <b>new</b> CP('center1', {title: 'Close Me', closable: true}));
+layout.add('center', <b>new</b> CP('center2', {title: 'Center Panel', closable: false}));
+layout.getRegion('center').showPanel('center1');
+layout.endUpdate();
+&lt;/code&gt;&lt;/pre&gt;
+* @constructor
+* Create a <b>new</b> BorderLayout
+* @param {String/HTMLElement/Element} container The container <b>this</b> layout is bound to
+* @param {Object} config Configuration options
+ */</i>
+YAHOO.ext.BorderLayout = <b>function</b>(container, config){
+    YAHOO.ext.BorderLayout.superclass.constructor.call(<b>this</b>, container);
+    <b>this</b>.factory = config.factory || YAHOO.ext.BorderLayout.RegionFactory;
+    <i>/** 
+     * True to hide the center panel <b>while</b> performing layouts. This helps when the center region contains 
+     * heavy components such as a yui-ext grid. 
+     * @type Boolean
+     */</i>
+    <b>this</b>.hideOnLayout = config.hideOnLayout || false;
+    <b>for</b>(var i = 0, len = <b>this</b>.factory.validRegions.length; i &lt; len; i++) {
+    	<b>var</b> target = <b>this</b>.factory.validRegions[i];
+    	<b>if</b>(config[target]){
+    	    <b>this</b>.addRegion(target, config[target]);
+    	}
+    }
+    <i>//<b>this</b>.dragOverDelegate = YAHOO.ext.EventManager.wrap(<b>this</b>.onDragOver, <b>this</b>, true);</i>
+};
+
+YAHOO.extendX(YAHOO.ext.BorderLayout, YAHOO.ext.LayoutManager, {
+    <i>/**
+     * Creates and adds a <b>new</b> region <b>if</b> it doesn't already exist.
+     * @param {String} target The target region key (north, south, east, west or center).
+     * @param {Object} config The regions config object
+     * @<b>return</b> {BorderLayoutRegion} The <b>new</b> region
+     */</i>
+    addRegion : <b>function</b>(target, config){
+        <b>if</b>(!<b>this</b>.regions[target]){
+            <b>var</b> r = <b>this</b>.factory.create(target, <b>this</b>, config);
+    	    <b>this</b>.regions[target] = r;
+    	    r.on('visibilitychange', <b>this</b>.layout, <b>this</b>, true);
+            r.on('paneladded', <b>this</b>.layout, <b>this</b>, true);
+            r.on('panelremoved', <b>this</b>.layout, <b>this</b>, true);
+            r.on('invalidated', <b>this</b>.layout, <b>this</b>, true);
+            r.on('resized', <b>this</b>.onRegionResized, <b>this</b>, true);
+            r.on('collapsed', <b>this</b>.onRegionCollapsed, <b>this</b>, true);
+            r.on('expanded', <b>this</b>.onRegionExpanded, <b>this</b>, true);
+        }
+        <b>return</b> this.regions[target];
+    },
+    
+    <i>/**
+     * Performs a layout update.
+     */</i>
+    layout : <b>function</b>(){
+        <b>if</b>(this.updating) <b>return</b>;
+        <i>//<b>var</b> bench = <b>new</b> YAHOO.ext.util.Bench();</i>
+	    <i>//bench.start('Layout...');</i>
+        <b>var</b> size = <b>this</b>.getViewSize();
+        <b>var</b> w = size.width, h = size.height;
+        <b>var</b> centerW = w, centerH = h, centerY = 0, centerX = 0;
+        <b>var</b> x = 0, y = 0;
+        
+        <b>var</b> rs = <b>this</b>.regions;
+        <b>var</b> n = rs['north'], s = rs['south'], west = rs['west'], e = rs['east'], c = rs['center'];
+        <b>if</b>(this.hideOnLayout){
+            c.el.setStyle('display', 'none');
+        }
+        <b>if</b>(n &amp;&amp; n.isVisible()){
+            <b>var</b> b = n.getBox();
+            <b>var</b> m = n.getMargins();
+            b.width = w - (m.left+m.right);
+            b.x = m.left;
+            b.y = m.top;
+            centerY = b.height + b.y + m.bottom;
+            centerH -= centerY;
+            n.updateBox(<b>this</b>.safeBox(b));
+        }
+        <b>if</b>(s &amp;&amp; s.isVisible()){
+            <b>var</b> b = s.getBox();
+            <b>var</b> m = s.getMargins();
+            b.width = w - (m.left+m.right);
+            b.x = m.left;
+            <b>var</b> totalHeight = (b.height + m.top + m.bottom);
+            b.y = h - totalHeight + m.top;
+            centerH -= totalHeight;
+            s.updateBox(<b>this</b>.safeBox(b));
+        }
+        <b>if</b>(west &amp;&amp; west.isVisible()){
+            <b>var</b> b = west.getBox();
+            <b>var</b> m = west.getMargins();
+            b.height = centerH - (m.top+m.bottom);
+            b.x = m.left;
+            b.y = centerY + m.top;
+            <b>var</b> totalWidth = (b.width + m.left + m.right);
+            centerX += totalWidth;
+            centerW -= totalWidth;
+            west.updateBox(<b>this</b>.safeBox(b));
+        }
+        <b>if</b>(e &amp;&amp; e.isVisible()){
+            <b>var</b> b = e.getBox();
+            <b>var</b> m = e.getMargins();
+            b.height = centerH - (m.top+m.bottom);
+            <b>var</b> totalWidth = (b.width + m.left + m.right);
+            b.x = w - totalWidth + m.left;
+            b.y = centerY + m.top;
+            centerW -= totalWidth;
+            e.updateBox(<b>this</b>.safeBox(b));
+        }
+        <b>if</b>(c){
+            <b>var</b> m = c.getMargins();
+            <b>var</b> centerBox = {
+                x: centerX + m.left,
+                y: centerY + m.top,
+                width: centerW - (m.left+m.right),
+                height: centerH - (m.top+m.bottom)
+            };
+            <b>if</b>(this.hideOnLayout){
+                c.el.setStyle('display', 'block');
+            }
+            c.updateBox(<b>this</b>.safeBox(centerBox));
+        }
+        <b>this</b>.el.repaint();
+        <b>this</b>.fireEvent('layout', <b>this</b>);
+        <i>//bench.stop();</i>
+	    <i>//alert(bench.toString());</i>
+    },
+    
+    safeBox : <b>function</b>(box){
+        box.width = Math.max(0, box.width);
+        box.height = Math.max(0, box.height);
+        <b>return</b> box;
+    },
+    
+    <i>/**
+     * Adds a ContentPanel (or subclass) to <b>this</b> layout.
+     * @param {String} target The target region key (north, south, east, west or center).
+     * @param {YAHOO.ext.ContentPanel} panel The panel to add
+     * @<b>return</b> {YAHOO.ext.ContentPanel} The added panel
+     */</i>
+    add : <b>function</b>(target, panel){
+        target = target.toLowerCase();
+        <b>return</b> this.regions[target].add(panel);
+    },
+    
+    <i>/**
+     * Adds a ContentPanel (or subclass) to <b>this</b> layout.
+     * @param {String} target The target region key (north, south, east, west or center).
+     * @param {Number/String/YAHOO.ext.ContentPanel} panel The index, id or panel to remove
+     * @<b>return</b> {YAHOO.ext.ContentPanel} The removed panel
+     */</i>
+    remove : <b>function</b>(target, panel){
+        target = target.toLowerCase();
+        <b>return</b> this.regions[target].remove(panel);
+    },
+    
+    <i>/**
+     * Searches all regions <b>for</b> a panel <b>with</b> the specified id
+     * @param {String} panelId
+     * @<b>return</b> {YAHOO.ext.ContentPanel} The panel or null <b>if</b> it wasn't found
+     */</i>
+    findPanel : <b>function</b>(panelId){
+        <b>var</b> rs = <b>this</b>.regions;
+        <b>for</b>(var target <b>in</b> rs){
+            <b>if</b>(typeof rs[target] != '<b>function</b>'){
+                <b>var</b> p = rs[target].getPanel(panelId);
+                <b>if</b>(p){
+                    <b>return</b> p;
+                }
+            }
+        }
+        <b>return</b> null;
+    },
+    
+    <i>/**
+     * Searches all regions <b>for</b> a panel <b>with</b> the specified id and activates (shows) it.
+     * @param {String/ContentPanel} panelId The panels id or the panel itself
+     * @<b>return</b> {YAHOO.ext.ContentPanel} The shown panel or null
+     */</i>
+    showPanel : <b>function</b>(panelId) {
+      <b>var</b> rs = <b>this</b>.regions;
+      <b>for</b>(var target <b>in</b> rs){
+         <b>var</b> r = rs[target];
+         <b>if</b>(typeof r != '<b>function</b>'){
+            <b>if</b>(r.hasPanel(panelId)){
+               <b>return</b> r.showPanel(panelId);
+            }
+         }
+      }
+      <b>return</b> null;
+   },
+   
+   <i>/**
+     * Restores <b>this</b> layouts state using YAHOO.ext.state.Manager or the state provided by the passed provider.
+     * @param {YAHOO.ext.state.Provider} provider (optional) An alternate state provider
+     */</i>
+    restoreState : <b>function</b>(provider){
+        <b>if</b>(!provider){
+            provider = YAHOO.ext.state.Manager;
+        }
+        <b>var</b> sm = <b>new</b> YAHOO.ext.LayoutStateManager();
+        sm.init(<b>this</b>, provider);
+    }
+});
+
+YAHOO.ext.BorderLayout.RegionFactory = {};
+YAHOO.ext.BorderLayout.RegionFactory.validRegions = ['north','south','east','west','center'];
+YAHOO.ext.BorderLayout.RegionFactory.create = <b>function</b>(target, mgr, config){
+    <b>if</b>(config.lightweight){
+        <b>return</b> new YAHOO.ext.LayoutRegionLite(mgr, config);
+    }
+    target = target.toLowerCase();
+    <b>switch</b>(target){
+        <b>case</b> 'north':
+            <b>return</b> new YAHOO.ext.NorthLayoutRegion(mgr, config);
+        <b>case</b> 'south':
+            <b>return</b> new YAHOO.ext.SouthLayoutRegion(mgr, config);
+        <b>case</b> 'east':
+            <b>return</b> new YAHOO.ext.EastLayoutRegion(mgr, config);
+        <b>case</b> 'west':
+            <b>return</b> new YAHOO.ext.WestLayoutRegion(mgr, config);
+        <b>case</b> 'center':
+            <b>return</b> new YAHOO.ext.CenterLayoutRegion(mgr, config);
+    }
+    throw 'Layout region &quot;'+target+'&quot; not supported.';
+};</code></pre><hr><div style="font-size:10px;text-align:center;color:gray;">yui-ext - Copyright &copy; 2006 Jack Slocum.  |
+    Yahoo! UI - Copyright &copy; 2006 Yahoo! Inc.<br />All rights reserved.</div>
+    </body></html>

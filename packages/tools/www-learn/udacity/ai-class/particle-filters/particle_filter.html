@@ -1,0 +1,81 @@
+<!DOCTYPE HTML>
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+
+
+  <link rel="stylesheet" href="particle_filter_files/style.css" type="text/css" media="screen">
+  <script type="text/javascript" src="particle_filter_files/prototype.js"></script>
+  <script type="text/javascript" src="particle_filter_files/particle_filter.js"></script>
+  <style type="text/css">
+  
+    a.button:hover 
+    {
+      border: 1px solid #111;
+      color: #000;
+      background-color: #FFF;
+    }
+    
+    a.button 
+    {
+      border: 1px solid #222;
+      border-radius: 3px 3px 3px 3px;
+      background-color: #EEE;
+      padding: 0 3px;
+      text-decoration: none;
+      color: #222;
+    }
+    
+    a.button.disabled
+    {
+      border: 1px solid #444;
+      background-color: #BBB;
+      color: #444;
+    }
+    
+    div.main
+    {
+      width: 800px;
+      padding-top:20px;
+      padding-left:100px;
+    }
+    
+    p
+    {
+      padding-top: 5px;
+    }
+    
+  </style>
+</head><body onload="filter = new particleFilter( 'particle-filter.png', 4000 );">
+<div class="main">
+  <canvas id="pfcanvas" width="800" height="354"></canvas>
+  <canvas id="particles_canvas" width="800" height="354" style="position: absolute; left: 100px; top: 20px; z-index: 1;"></canvas>
+  <canvas id="robot_canvas" width="800" height="354" style="position: absolute; left: 100px; top: 20px; z-index: 2;"></canvas>
+  <canvas id="move_canvas" width="800" height="354" style="position: absolute; left: 100px; top: 20px; z-index: 3; opacity: 0;"></canvas>
+ <div>
+   <a class="button" href="#" id="respawn" onclick="filter.robot.randomPosition( ); return false;">Respawn Robot</a>
+   <a class="button" href="#" id="stop" onclick="toggleRobotMove( filter.robot ); return false;">Pause</a>
+   <a class="button" href="#" id="startProbing" onclick="startProbing( filter ); return false;">Start Probing</a> every <input id="steps" value="30" type="text"> moves with <input id="numParticles" value="4000" type="text"> particles.</div>
+   <a class="button" href="#" id="moveTrace" onclick="toggleMoveTrace( filter )">Show Debug Move Trace</a>
+   <div>
+     <p>So, what's the story? A robot is spawned on some territory. No 
+idea where. But it has a map! But also very crippled observation  means,
+ 
+        being only able to scan the distance to the closest wall along a
+ small set of directions (right, left, up, down). So it is using 
+Particle Filter
+        to guess where is the most probable place it can actually be.
+     </p>
+     <p><b>Modus Operandi: </b>Robot wanders around. Click <b>Start Probing</b>
+ to generate particles. The more particles on an area, the most likely 
+the robot 
+          it thinks it's actually there. The robot is probing its 
+environment every X step, each step being a one pixel move. You can 
+modify the number of steps
+          and also the total number of particles.</p>
+     <p>To know more about Particle Filter, go see the Stanford <a href="http://www.claudeonthe.net/ai/particle_filter/www.ai-class.com">ai-class.com</a> course taught by Sebastian Thrun and Peter Norvig. 
+     Thanks so much for a great course!</p>
+     <p>For more info, the code is document: <a href="http://www.claudeonthe.net/ai/particle_filter/particle_filter.js">particle_filter.js</a></p>  
+     <p>Developped on Firefox, quickly tested on Chrome (much faster!).</p>
+   </div>
+</div>
+</body></html>

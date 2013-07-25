@@ -1,0 +1,120 @@
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed/relaxed; d=email.waterstones.com;
+	s=20111007; t=1321620157; x=1337344957;
+	bh=TM27NS+BaLC73gZpjhRMReE3mb0=; h=From:Reply-To;
+	b=d+2L3aizr35+Jc0oRr+oM6oaPaANnlVTLoK0mPwaKs/WBOrFwaer7hBYuMvERC/jw
+	 J9dJD7ybiOMOW1XeuRbMuEeDqs36UQyl7kv2ZvWXcz6Dlg8qNGUJZ7Xfszv1kRbuob
+	 +e+fD7vlORQQ+Pnot9rk/EarfIIttSlfS5zCTh24= 
+Date: Fri, 18 Nov 2011 12:42:37 -0000 
+Message-ID: <bwkmvf0akhzmzcau70cr4dftsygeh3.2719141403.3226@mta805.email.waterstones.com> 
+List-Unsubscribe: <mailto:rm-0bwkmvf0akhzmzcau70cr4dftsygeh3@email.waterstones.com> 
+From: "Waterstone's Card" <team@email.waterstones.com> 
+To: k2pts@phigita.net 
+Subject: Cardholder Christmas treat Â double points on Waterstones.com now! 
+Reply-To: "Waterstone's Card" <support-bwkmvf0akhzmzcau70cr4dftsygeh3@email.waterstones.com> 
+--------------------------------------
+ 
+Festive treats from the Waterstone's Card
+If you have trouble viewing this email, please
+click here. : http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link34?t_params=EMAIL%3Dk2pts%2540phigita.net%26FNAME%3DNeophytos%26PASSWORD%3DAk5gWjCiEs4bBOxlIiTc1DQ2B7EZiA 
+
+
+
+waterstone's http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link41 
+
+Our shops : http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link45 |Help : http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link55 |My account : http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link46 |Home : http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link41 |Preferences : http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link36?password=Ak5gWjCiEs4bBOxlIiTc1DQ2B7EZiA 
+
+Competitions : http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link67 
+
+ Read and Review : http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link62 
+
+ Recipe cards : http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link61 
+
+ Genre guides : http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link65 
+
+ Exclusive extras : http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link60 
+
+ Points offers : http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link63 
+
+Get more from your Christmas shopping! Buy once. Earn twice. Double points on waterstones.com this weekend http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link53 
+
+Hello Neophytos,
+
+If you haven't begun your Christmas shopping yet, now is the perfect time - pick up your Christmas gifts at Waterstones.com : http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link41  and we'll double every point you earn : http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link53  for the next 3 days! Our fantastic recipe cards : http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link61  from Gordon Ramsay : http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link40  and Gino D'Acampo : http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link39  and a Sarah Raven Christmas flowers course : http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link66  also bring the festive mood home.
+There is also a range of new titles for you to read and review : http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link62  as well as a chance to win original signed Mackenzie Crook artwork : http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link64  to celebrate his debut title, The Windvale Spites : http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link70 . Finally don't forget to check what wonderful events : http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link50  are going on near you.
+Happy reading, 
+The Waterstone's Card Team
+
+Christmas recipe cards http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link61 
+
+Christmas with Gordan by Gordon Ramsay http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link40 
+
+Roast potatoes with chilli and turmeric http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link61 
+
+Buy the book http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link69 
+
+Free recipe http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link40 
+
+Italian Home Baking by Gino D'Acampo http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link39 
+
+Panettone classico http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link61 
+
+Buy the book http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link68 
+
+Free recipe http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link39 
+
+Read and review before they're published http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link62 
+
+Read and review http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link62 
+
+Cardholder competitions http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link67 
+
+Win original signed Mackenzie Crook artwork http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link64 
+
+Cardholder exclusive extras http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link60 
+
+Wild Flowers by Sarah Raven http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link66 
+
+http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link66 
+
+http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link66 
+
+Sarah RavenChristmas flowers courseFancy making your own Christmas wreaths, table centres and floral decorations this year?
+
+http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link66 
+
+Find out more http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link66 
+
+http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link66 
+
+What's on at Waterstone's http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link50 
+
+One of our favourite author-illustrators and multi-million-copy bestseller, Lauren Child, will be joining us for a Ruby Redfort-tastic book signing of her latest book, Look into my Eyes. : http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link48  Find out more >. : http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link44 
+
+Brandon Sanderson is back by popular demand as he discusses his latest addition to the Mistborn series, The Alloy of Law. : http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link47  Find out more >. : http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link43 
+Waterstone's will be welcoming journalist, presenter, broadcaster, husband, father and vigorous all-rounder - Alan Partridge, as he will be signing copies of his latest biography, I Partridge: We Need to Talk About Alan. : http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link49  Find out more >. : http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link42 
+For more events in your area or to book tickets for any of the events mentioned, please see the events section of Waterstones.com : http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link50  or contact your local shop. : http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link45 
+
+FREE DELIVERY http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link54 
+
+More info:
+
+About Waterstone's : http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link51 
+ Delivery information : http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link58 
+ Privacy policy : http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link57 
+ Terms and Conditions : http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link59 
+ Contact us : http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link52 
+
+facebook http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link37 
+
+twitter http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link38 
+
+YouTube http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link71 
+
+waterstone's app http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link56 
+
+*This offer does not apply to eReaders as these can only be sent to your credit card billing address via Courier delivery. There are also certain high value books excluded from this offer. This is to ensure that your order is fully trackable and to help us prevent fraud. The information page for eReaders and excluded books will display a message informing customers that the 'COURIER' shipping option will be automatically applied when ordering these products.
+^This offer works in conjunction with the conditions of The Waterstone's Card Scheme. Click here : http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link53  for full terms and conditions of the offer.
+If you would like to unsubscribe from Waterstone's emails please click here. : http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link33?email=k2pts@phigita.net  
+Please don't reply to this email, as it doesn't accept any incoming mail. If you've got any questions, contact us on 0845 217 2920. We're open from 9am - 5.30pm, Monday to Friday. Or drop us an email at cardenquiries@waterstones.com. : mailto:cardenquiries@waterstones.com  You might also find the answer on our Help pages : http://email.waterstones.com/a/tBOxlIiAk5gWjB8eb5YCiEs4bzS/link55  
+All prices on Waterstones.com are online only and may differ from Waterstone's shops. Prices in ROI/Amsterdam/Brussels shops will be in Euros; due to sales tax and distribution costs, prices in Amsterdam and Brussels shops may be higher than elsewhere. Prices and titles correct at the time of sending, and are subject to availability. Copyright 2011 Waterstone's Booksellers Limited. All rights reserved. Registered Office Address: Capital Court, Capital Interchange Way, Brentford, Middlesex TW8 OEX. Registered in England, Registration No:610095.
+

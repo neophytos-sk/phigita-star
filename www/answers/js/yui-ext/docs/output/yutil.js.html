@@ -1,0 +1,658 @@
+<html><head><title>yutil.js</title><link rel="stylesheet" type="text/css" href="../resources/style.css" media="screen"/></head><body><h1>yutil.js</h1><pre class="highlighted"><code>YAHOO.namespace('ext', 'ext.util', 'ext.grid');
+YAHOO.ext.Strict = (document.compatMode == 'CSS1Compat');
+YAHOO.ext.SSL_SECURE_URL = 'javascript:false';
+<i>// <b>for</b> old browsers</i>
+window.undefined = undefined;
+<i>/**
+ * @class Function
+ */</i>
+ <i>//</i>
+ <i>/**
+ * Creates a callback that passes arguments[0], arguments[1], arguments[2], ...
+ * Call directly on any <b>function</b>. Example: &lt;code&gt;myFunction.createCallback(myarg, myarg2)&lt;/code&gt;
+ * Will create a <b>function</b> that is bound to those 2 args.
+ * @<b>return</b> {Function} The <b>new</b> function
+*/</i>
+Function.prototype.createCallback = <b>function</b>(<i>/*args...*/</i>){
+    <i>// make args available, <b>in</b> function below</i>
+    <b>var</b> args = arguments;
+    <b>var</b> method = <b>this</b>;
+    <b>return</b> function() {
+        <b>return</b> method.apply(window, args);
+    };
+};
+
+<i>/**
+ * Creates a delegate (callback) that sets the scope to obj.
+ * Call directly on any <b>function</b>. Example: &lt;code&gt;<b>this</b>.myFunction.createDelegate(<b>this</b>)&lt;/code&gt;
+ * Will create a <b>function</b> that is automatically scoped to <b>this</b>.
+ * @param {Object} obj (optional) The object <b>for</b> which the scope is set
+ * @param {&lt;i&gt;Array&lt;/i&gt;} args (optional) Overrides arguments <b>for</b> the call. (Defaults to the arguments passed by the caller)
+ * @param {&lt;i&gt;Boolean/Number&lt;/i&gt;} appendArgs (optional) <b>if</b> True args are appended to call args instead of overriding, 
+ *                                             <b>if</b> a number the args are inserted at the specified position
+ * @<b>return</b> {Function} The <b>new</b> function
+ */</i>
+Function.prototype.createDelegate = <b>function</b>(obj, args, appendArgs){
+    <b>var</b> method = <b>this</b>;
+    <b>return</b> function() {
+        <b>var</b> callArgs = args || arguments;
+        <b>if</b>(appendArgs === true){
+            callArgs = Array.prototype.slice.call(arguments, 0);
+            callArgs = callArgs.concat(args);
+        }<b>else</b> if(<b>typeof</b> appendArgs == 'number'){
+            callArgs = Array.prototype.slice.call(arguments, 0); <i>// copy arguments first</i>
+            <b>var</b> applyArgs = [appendArgs, 0].concat(args); <i>// create method call params</i>
+            Array.prototype.splice.apply(callArgs, applyArgs); <i>// splice them <b>in</b></i>
+        }
+        <b>return</b> method.apply(obj || window, callArgs);
+    };
+};
+
+<i>/**
+ * Calls <b>this</b> function after the number of millseconds specified.
+ * @param {Number} millis The number of milliseconds <b>for</b> the setTimeout call
+ * @param {Object} obj (optional) The object <b>for</b> which the scope is set
+ * @param {&lt;i&gt;Array&lt;/i&gt;} args (optional) Overrides arguments <b>for</b> the call. (Defaults to the arguments passed by the caller)
+ * @param {&lt;i&gt;Boolean/Number&lt;/i&gt;} appendArgs (optional) <b>if</b> True args are appended to call args instead of overriding, 
+ *                                             <b>if</b> a number the args are inserted at the specified position
+ * @<b>return</b> {Number} The timeout id that can be used <b>with</b> clearTimeout
+ */</i>
+Function.prototype.defer = <b>function</b>(millis, obj, args, appendArgs){
+    <b>return</b> setTimeout(<b>this</b>.createDelegate(obj, args, appendArgs), millis);
+};
+<i>/**
+ * Create a combined <b>function</b> call sequence of the original <b>function</b> + the passed <b>function</b>.
+ * The resulting <b>function</b> returns the results of the original <b>function</b>.
+ * The passed fcn is called <b>with</b> the parameters of the original <b>function</b>
+ * @param {Function} fcn The <b>function</b> to sequence
+ * @param {&lt;i&gt;Object&lt;/i&gt;} scope (optional) The scope of the passed fcn (Defaults to scope of original <b>function</b> or window)
+ * @<b>return</b> {Function} The <b>new</b> function
+ */</i>
+Function.prototype.createSequence = <b>function</b>(fcn, scope){
+    <b>if</b>(typeof fcn != '<b>function</b>'){
+        <b>return</b> this;
+    }
+    <b>var</b> method = <b>this</b>;
+    <b>return</b> function() {
+        <b>var</b> retval = method.apply(<b>this</b> || window, arguments);
+        fcn.apply(scope || <b>this</b> || window, arguments);
+        <b>return</b> retval;
+    };
+};
+
+<i>/**
+ * IE will leak <b>if</b> this isn't here
+ */</i>
+YAHOO.util.Event.on(window, 'unload', <b>function</b>(){
+    <b>delete</b> Function.prototype.createSequence;
+    <b>delete</b> Function.prototype.defer;
+    <b>delete</b> Function.prototype.createDelegate;
+    <b>delete</b> Function.prototype.createCallback;
+    <b>delete</b> Function.prototype.createInterceptor;
+});
+
+<i>/**
+ * Creates an interceptor <b>function</b>. The passed fcn is called before the original one. If it returns false, the original one is not called.
+ * The resulting <b>function</b> returns the results of the original <b>function</b>.
+ * The passed fcn is called <b>with</b> the parameters of the original <b>function</b>.
+ * @addon
+ * @param {Function} fcn The <b>function</b> to call before the original
+ * @param {&lt;i&gt;Object&lt;/i&gt;} scope (optional) The scope of the passed fcn (Defaults to scope of original <b>function</b> or window)
+ * @<b>return</b> {Function} The <b>new</b> function
+ */</i>
+Function.prototype.createInterceptor = <b>function</b>(fcn, scope){
+    <b>if</b>(typeof fcn != '<b>function</b>'){
+        <b>return</b> this;
+    }
+    <b>var</b> method = <b>this</b>;
+    <b>return</b> function() {
+        fcn.target = <b>this</b>;
+        fcn.method = method;
+        <b>if</b>(fcn.apply(scope || <b>this</b> || window, arguments) === false){
+            <b>return</b>;
+        }
+        <b>return</b> method.apply(<b>this</b> || window, arguments);;
+    };
+};
+
+<i>/**
+ * @class YAHOO.ext.util.Browser
+ * @singleton
+ */</i>
+YAHOO.ext.util.Browser = <b>new</b> function(){
+	<b>var</b> ua = navigator.userAgent.toLowerCase();
+	<i>/** @type Boolean */</i>
+	<b>this</b>.isOpera = (ua.indexOf('opera') &gt; -1);
+   	<i>/** @type Boolean */</i>
+	<b>this</b>.isSafari = (ua.indexOf('webkit') &gt; -1);
+   	<i>/** @type Boolean */</i>
+	<b>this</b>.isIE = (window.ActiveXObject);
+   	<i>/** @type Boolean */</i>
+	<b>this</b>.isIE7 = (ua.indexOf('msie 7') &gt; -1);
+   	<i>/** @type Boolean */</i>
+	<b>this</b>.isGecko = !<b>this</b>.isSafari &amp;&amp; (ua.indexOf('gecko') &gt; -1);
+	
+	<b>if</b>(ua.indexOf(&quot;windows&quot;) != -1 || ua.indexOf(&quot;win32&quot;) != -1){
+	    <i>/** @type Boolean */</i>
+	    <b>this</b>.isWindows = true;
+	}<b>else</b> if(ua.indexOf(&quot;macintosh&quot;) != -1){
+		<i>/** @type Boolean */</i>
+	    <b>this</b>.isMac = true;
+	}
+	<b>if</b>(this.isIE &amp;&amp; !<b>this</b>.isIE7){
+        try{
+            document.execCommand(&quot;BackgroundImageCache&quot;, false, true);
+        }catch(e){}
+    }
+}();
+
+YAHOO.print = <b>function</b>(arg1, arg2, etc){
+    <b>if</b>(!YAHOO.ext._console){
+        <b>var</b> cs = YAHOO.ext.DomHelper.insertBefore(document.body.firstChild,
+        {tag: 'div',style:'width:250px;height:350px;overflow:auto;border:3px solid #c3daf9;' +
+                'background:white;position:absolute;right:5px;top:5px;' +
+                'font:normal 8pt arial,verdana,helvetica;z-index:50000;padding:5px;'}, true);
+        <b>new</b> YAHOO.ext.Resizable(cs, {
+            transparent:true,
+            handles: 'all',
+            pinned:true, 
+            adjustments: [0,0], 
+            wrap:true, 
+            draggable:(YAHOO.util.DD ? true : false)
+        });
+        cs.on('dblclick', cs.hide);
+        YAHOO.ext._console = cs;
+    }
+    <b>var</b> msg = '';
+    <b>for</b>(var i = 0, len = arguments.length; i &lt; len; i++) {
+    	msg += arguments[i] + '&lt;hr noshade style=&quot;color:#eeeeee;&quot; size=&quot;1&quot;&gt;';
+    }
+    YAHOO.ext._console.dom.innerHTML = msg + YAHOO.ext._console.dom.innerHTML;
+    YAHOO.ext._console.dom.scrollTop = 0;
+    YAHOO.ext._console.show();
+};
+
+YAHOO.printf = <b>function</b>(format, arg1, arg2, etc){
+    <b>var</b> args = Array.prototype.slice.call(arguments, 1);
+    YAHOO.print(format.replace(
+      /\{\{[^{}]*\}\}|\{(\d+)(,\s*([\w.]+))?\}/g,
+      <b>function</b>(m, a1, a2, a3) {
+        <b>if</b> (m.chatAt == '{') {
+          <b>return</b> m.slice(1, -1);
+        }
+        <b>var</b> rpl = args[a1];
+        <b>if</b> (a3) {
+          <b>var</b> f = eval(a3);
+          rpl = f(rpl);
+        }
+        <b>return</b> rpl ? rpl : '';
+      }));
+}
+
+ <i>/**
+ * Enable custom handler signature and event cancelling. Using fireDirect() instead of fire() calls the subscribed event handlers 
+ * <b>with</b> the exact parameters passed to fireDirect, instead of the usual (eventType, args[], obj). IMO <b>this</b> is more intuitive 
+ * and promotes cleaner code. Also, <b>if</b> an event handler returns false, it is returned by fireDirect and no other handlers will be called.&lt;br&gt;
+ * Example:&lt;br&gt;&lt;br&gt;&lt;pre&gt;&lt;code&gt;
+ * <b>if</b>(beforeUpdateEvent.fireDirect(myArg, myArg2) !== false){
+ *     <i>// <b>do</b> update</i>
+ * }&lt;/code&gt;&lt;/pre&gt;
+ */</i>
+YAHOO.util.CustomEvent.prototype.fireDirect = <b>function</b>(){
+    <b>var</b> len=<b>this</b>.subscribers.length;
+    <b>for</b> (<b>var</b> i=0; i&lt;len; ++i) {
+        <b>var</b> s = <b>this</b>.subscribers[i];
+        <b>if</b>(s){
+            <b>var</b> scope = (s.override) ? s.obj : <b>this</b>.scope;
+            <b>if</b>(s.fn.apply(scope, arguments) === false){
+                <b>return</b> false;
+            }
+        }
+    }
+    <b>return</b> true;
+};
+
+YAHOO.extendX = <b>function</b>(subclass, superclass, overrides){
+    YAHOO.extend(subclass, superclass);
+    subclass.override = <b>function</b>(o){
+        YAHOO.override(subclass, o);
+    };
+    <b>if</b>(!subclass.prototype.override){
+        subclass.prototype.override = <b>function</b>(o){
+            <b>for</b>(var method <b>in</b> o){
+                <b>this</b>[method] = o[method];
+            }  
+        };
+    }
+    <b>if</b>(overrides){
+        subclass.override(overrides);
+    }
+};
+
+YAHOO.override = <b>function</b>(origclass, overrides){
+    <b>if</b>(overrides){
+        <b>var</b> p = origclass.prototype;
+        <b>for</b>(var method <b>in</b> overrides){
+            p[method] = overrides[method];
+        }
+    }
+};
+
+<i>/**
+ * @class YAHOO.ext.util.DelayedTask
+ * Provides a convenient method of performing setTimeout where a <b>new</b>
+ * timeout cancels the old timeout. An example would be performing validation on a keypress.
+ * You can use <b>this</b> class to buffer
+ * the keypress events <b>for</b> a certain number of milliseconds, and perform only <b>if</b> they stop
+ * <b>for</b> that amount of time.
+ * @constructor The parameters to <b>this</b> constructor serve as defaults and are not required.
+ * @param {&lt;i&gt;Function&lt;/i&gt;} fn (optional) The <b>default</b> function to timeout
+ * @param {&lt;i&gt;Object&lt;/i&gt;} scope (optional) The <b>default</b> scope of that timeout
+ * @param {&lt;i&gt;Array&lt;/i&gt;} args (optional) The <b>default</b> Array of arguments
+ */</i>
+YAHOO.ext.util.DelayedTask = <b>function</b>(fn, scope, args){
+    <b>var</b> timeoutId = null;
+    
+    <i>/**
+     * Cancels any pending timeout and queues a <b>new</b> one
+     * @param {Number} delay The milliseconds to delay
+     * @param {Function} newFn (optional) Overrides <b>function</b> passed to constructor
+     * @param {Object} newScope (optional) Overrides scope passed to constructor
+     * @param {Array} newArgs (optional) Overrides args passed to constructor
+     */</i>
+    <b>this</b>.delay = <b>function</b>(delay, newFn, newScope, newArgs){
+        <b>if</b>(timeoutId){
+            clearTimeout(timeoutId);
+        }
+        fn = newFn || fn;
+        scope = newScope || scope;
+        args = newArgs || args;
+        timeoutId = setTimeout(fn.createDelegate(scope, args), delay);
+    };
+    
+    <i>/**
+     * Cancel the last queued timeout
+     */</i>
+    <b>this</b>.cancel = <b>function</b>(){
+        <b>if</b>(timeoutId){
+            clearTimeout(timeoutId);
+            timeoutId = null;
+        }
+    };
+};
+
+<i>/**
+ * @class YAHOO.ext.KeyMap
+ * Handles mapping keys to actions <b>for</b> an element. One key map can be used <b>for</b> multiple actions. 
+ * A KeyMap can also handle a string representation of keys.&lt;br /&gt;
+ * Usage:
+ &lt;pre&gt;&lt;code&gt;
+ <i>// map one key by key code</i>
+ <b>var</b> map = <b>new</b> YAHOO.ext.KeyMap('my-element', {
+     key: 13,
+     fn: myHandler,
+     scope: myObject
+ });
+ 
+ <i>// map multiple keys to one action by string</i>
+ <b>var</b> map = <b>new</b> YAHOO.ext.KeyMap('my-element', {
+     key: &quot;a\r\n\t&quot;,
+     fn: myHandler,
+     scope: myObject
+ });
+ 
+ <i>// map multiple keys to multiple actions by strings and array of codes</i>
+ <b>var</b> map = <b>new</b> YAHOO.ext.KeyMap('my-element', [
+    {
+        key: [10,13],
+        fn: <b>function</b>(){ alert('Return was pressed'); }
+    }, {
+        key: &quot;abc&quot;,
+        fn: <b>function</b>(){ alert('a, b or c was pressed'); }
+    }, {
+        key: &quot;\t&quot;,
+        ctrl:true,
+        shift:true,
+        fn: <b>function</b>(){ alert('Control + shift + tab was pressed.'); }
+    }
+]);
+ &lt;/code&gt;&lt;/pre&gt;
+* &lt;b&gt;Note: A KepMap starts enabled&lt;/b&gt;
+* @constructor
+* @param {String/HTMLElement/YAHOO.ext.Element} el The element to bind to
+* @param {Object} config The config
+* @param {String} eventName (optional) The event to bind to (Defaults to &quot;keydown&quot;).
+ */</i>
+YAHOO.ext.KeyMap = <b>function</b>(el, config, eventName){
+    <b>this</b>.el  = getEl(el);
+    <b>this</b>.eventName = eventName || 'keydown';
+    <b>this</b>.bindings = [];
+    <b>if</b>(config instanceof Array){
+	    <b>for</b>(var i = 0, len = config.length; i &lt; len; i++){
+	        <b>this</b>.addBinding(config[i]);
+	    }
+    }<b>else</b>{
+        <b>this</b>.addBinding(config);
+    }
+    <b>this</b>.keyDownDelegate = YAHOO.ext.EventManager.wrap(<b>this</b>.handleKeyDown, <b>this</b>, true);
+    <b>this</b>.enable();
+}
+
+YAHOO.ext.KeyMap.prototype = {
+    <i>/**
+     * Add a <b>new</b> binding to <b>this</b> KeyMap
+     * @param {Object} config A single KeyMap config
+     */</i>
+	addBinding : <b>function</b>(config){
+        <b>var</b> keyCode = config.key, 
+            shift = config.shift, 
+            ctrl = config.ctrl, 
+            alt = config.alt,
+            fn = config.fn,
+            scope = config.scope;
+        <b>if</b>(typeof keyCode == 'string'){
+            <b>var</b> ks = [];
+            <b>var</b> keyString = keyCode.toUpperCase();
+            <b>for</b>(var j = 0, len = keyString.length; j &lt; len; j++){
+                ks.push(keyString.charCodeAt(j));
+            }
+            keyCode = ks;
+        }        
+        <b>var</b> keyArray = keyCode instanceof Array;
+        <b>var</b> handler = <b>function</b>(e){
+            <b>if</b>((!shift || e.shiftKey) &amp;&amp; (!ctrl || e.ctrlKey) &amp;&amp;  (!alt || e.altKey)){
+                <b>var</b> k = e.getKey();
+                <b>if</b>(keyArray){
+                    <b>for</b>(var i = 0, len = keyCode.length; i &lt; len; i++){
+                        <b>if</b>(keyCode[i] == k){
+                          fn.call(scope || window, k, e);
+                          <b>return</b>;
+                        }
+                    }
+                }<b>else</b>{
+                    <b>if</b>(k == keyCode){
+                        fn.call(scope || window, k, e);
+                    }
+                }
+            }
+        };
+        <b>this</b>.bindings.push(handler);  
+	},
+	
+	handleKeyDown : <b>function</b>(e){
+	    <b>if</b>(this.enabled){ <i>//just <b>in</b> case</i>
+    	    <b>var</b> b = <b>this</b>.bindings;
+    	    <b>for</b>(var i = 0, len = b.length; i &lt; len; i++){
+    	        b[i](e);
+    	    }
+	    }
+	},
+	
+	<i>/**
+	 * Returns true <b>if</b> this KepMap is enabled
+	 * @<b>return</b> {Boolean} 
+	 */</i>
+	isEnabled : <b>function</b>(){
+	    <b>return</b> this.enabled;  
+	},
+	
+	<i>/**
+	 * Enable <b>this</b> KeyMap
+	 */</i>
+	enable: <b>function</b>(){
+		<b>if</b> (!<b>this</b>.enabled){
+	        <b>this</b>.el.on(<b>this</b>.eventName, <b>this</b>.keyDownDelegate);
+		    <b>this</b>.enabled = true;
+		}
+	},
+
+	<i>/**
+	 * Disable <b>this</b> KeyMap
+	 */</i>
+	disable: <b>function</b>(){
+		<b>if</b> (<b>this</b>.enabled){
+			<b>this</b>.el.removeListener(<b>this</b>.eventName, <b>this</b>.keyDownDelegate);
+		    <b>this</b>.enabled = false;
+		}
+	}
+};
+
+<i>/**
+ * @class YAHOO.ext.util.Observable
+ * Abstract base class that provides a common interface <b>for</b> publishing events. Subclasses are expected to 
+ * to have a property &quot;events&quot; <b>with</b> all the events defined.&lt;br&gt;
+ * For example:
+ * &lt;pre&gt;&lt;code&gt;
+ <b>var</b> Employee = <b>function</b>(name){
+    <b>this</b>.name = name;
+    <b>this</b>.events = {
+        'fired' : <b>new</b> YAHOO.util.CustomEvent('fired'),
+        'quit' : true <i>// lazy initialize the CustomEvent</i>
+    }
+ }
+ YAHOO.extend(Employee, YAHOO.ext.util.Observable);
+&lt;/code&gt;&lt;/pre&gt;
+ */</i>
+YAHOO.ext.util.Observable = <b>function</b>(){};
+YAHOO.ext.util.Observable.prototype = {
+    <i>/**
+     * Fires the specified event <b>with</b> the passed parameters (minus the event name).
+     * @param {String} eventName
+     * @param {Object...} args Variable number of parameters are passed to handlers
+     * @<b>return</b> {Boolean} returns false <b>if</b> any of the handlers <b>return</b> false otherwise it returns true
+     */</i>
+    fireEvent : <b>function</b>(){
+        <b>var</b> ce = <b>this</b>.events[arguments[0].toLowerCase()];
+        <b>if</b>(typeof ce == 'object'){
+            <b>return</b> ce.fireDirect.apply(ce, Array.prototype.slice.call(arguments, 1));
+        }<b>else</b>{
+            <b>return</b> true;
+        }
+    },
+    <i>/**
+     * Appends an event handler to <b>this</b> component
+     * @param {String}   eventName     The type of event to listen <b>for</b>
+     * @param {Function} handler        The method the event invokes
+     * @param {&lt;i&gt;Object&lt;/i&gt;}   scope  (optional) The scope (<b>this</b> object) <b>for</b> the handler
+     * @param {&lt;i&gt;boolean&lt;/i&gt;}  override (optional) If true, scope becomes the scope
+     */</i>
+    addListener : <b>function</b>(eventName, fn, scope, override){
+        eventName = eventName.toLowerCase();
+        <b>var</b> ce = <b>this</b>.events[eventName];
+        <b>if</b>(!ce){
+            <i>// added <b>for</b> a better message when subscribing to wrong event</i>
+            throw 'You are trying to listen <b>for</b> an event that does not exist: &quot;' + eventName + '&quot;.';
+        }
+        <b>if</b>(typeof ce == 'boolean'){
+            ce = <b>new</b> YAHOO.util.CustomEvent(eventName);
+            <b>this</b>.events[eventName] = ce;
+        }
+        ce.subscribe(fn, scope, override);
+    },
+    
+    <i>/**
+     * Appends an event handler to <b>this</b> component that is delayed the specified number of milliseconds. This
+     * is useful <b>for</b> events that modify the DOM and need to wait <b>for</b> the browser to catch up.
+     * @param {String}   eventName     The type of event to listen <b>for</b>
+     * @param {Function} handler        The method the event invokes
+     * @param {&lt;i&gt;Object&lt;/i&gt;}   scope  (optional) The scope (<b>this</b> object) <b>for</b> the handler
+     * @param {&lt;i&gt;Number&lt;/i&gt;}  delay (optional) The number of milliseconds to delay (defaults to 1 millisecond)
+     * @<b>return</b> {Function} The wrapped <b>function</b> that was created (can be used to remove the listener)
+     */</i>
+    delayedListener : <b>function</b>(eventName, fn, scope, delay){
+        <b>var</b> newFn = <b>function</b>(){
+            setTimeout(fn.createDelegate(scope, arguments), delay || 1);
+        }
+        <b>this</b>.addListener(eventName, newFn);
+        <b>return</b> newFn;
+    },
+    
+    <i>/**
+     * Appends an event handler to <b>this</b> component that is buffered. If the event is triggered more than once
+     * <b>in</b> the specified time-frame, only the last one actually fires.
+     * @param {String}   eventName     The type of event to listen <b>for</b>
+     * @param {Function} handler        The method the event invokes
+     * @param {&lt;i&gt;Object&lt;/i&gt;}   scope  (optional) The scope (<b>this</b> object) <b>for</b> the handler
+     * @param {&lt;i&gt;Number&lt;/i&gt;}  millis (optional) The number of milliseconds to buffer (defaults to 250)
+     * @<b>return</b> {Function} The wrapped <b>function</b> that was created (can be used to remove the listener)
+     */</i>
+    bufferedListener : <b>function</b>(eventName, fn, scope, millis){
+        <b>var</b> task = <b>new</b> YAHOO.ext.util.DelayedTask();
+        <b>var</b> newFn = <b>function</b>(){
+            task.delay(millis || 250, fn, scope, Array.prototype.slice.call(arguments, 0));
+        }
+        <b>this</b>.addListener(eventName, newFn);
+        <b>return</b> newFn;
+    },
+    
+    <i>/**
+     * Removes a listener
+     * @param {String}   eventName     The type of event to listen <b>for</b>
+     * @param {Function} handler        The handler to remove
+     * @param {&lt;i&gt;Object&lt;/i&gt;}   scope  (optional) The scope (<b>this</b> object) <b>for</b> the handler
+     */</i>
+    removeListener : <b>function</b>(eventName, fn, scope){
+        <b>var</b> ce = <b>this</b>.events[eventName.toLowerCase()];
+        <b>if</b>(typeof ce == 'object'){
+            ce.unsubscribe(fn, scope);
+        }
+    },
+    
+    <i>/**
+     * Removes all listeners <b>for</b> this object
+     */</i>
+    purgeListeners : <b>function</b>(){
+        <b>for</b>(var evt <b>in</b> this.events){
+            <b>if</b>(typeof <b>this</b>.events[evt] == 'object'){
+                 <b>this</b>.events[evt].unsubscribeAll();
+            }
+        }
+    }
+};
+<i>/**
+ * Appends an event handler to <b>this</b> element (shorthand <b>for</b> addListener)
+ * @param {String}   eventName     The type of event to listen <b>for</b>
+ * @param {Function} handler        The method the event invokes
+ * @param {&lt;i&gt;Object&lt;/i&gt;}   scope  (optional) The scope (<b>this</b> object) <b>for</b> the handler
+ * @param {&lt;i&gt;boolean&lt;/i&gt;}  override (optional) If true, scope becomes the scope
+ * @method
+ */</i>
+YAHOO.ext.util.Observable.prototype.on = YAHOO.ext.util.Observable.prototype.addListener;
+
+<i>/**
+ * @class YAHOO.ext.util.Config
+ * Class <b>with</b> one useful method
+ * @singleton
+ */</i>
+YAHOO.ext.util.Config = {
+    <i>/**
+     * Copies all the properties of config to obj.
+     * @param {Object} obj The receiver of the properties
+     * @param {Object} config The source of the properties
+     * @param {Object} defaults A different object that will also be applied <b>for</b> default values
+     * @<b>return</b> {Object} returns obj
+     */</i>
+    apply : <b>function</b>(obj, config, defaults){
+        <b>if</b>(defaults){
+            <b>this</b>.apply(obj, defaults);
+        }
+        <b>if</b>(config){
+            <b>for</b>(var prop <b>in</b> config){
+                obj[prop] = config[prop];
+            }
+        }
+        <b>return</b> obj;
+    }
+};
+
+<b>if</b>(!String.escape){
+    String.escape = <b>function</b>(string) {
+        <b>return</b> string.replace(/('|\\)/g, &quot;\\$1&quot;);
+    };
+};
+
+String.leftPad = <b>function</b> (val, size, ch) {
+    <b>var</b> result = <b>new</b> String(val);
+    <b>if</b> (ch == null) {
+        ch = &quot; &quot;;
+    }
+    <b>while</b> (result.length &lt; size) {
+        result = ch + result;
+    }
+    <b>return</b> result;
+};
+
+<i>// workaround <b>for</b> Safari 1.3 not supporting hasOwnProperty</i>
+<b>if</b>(YAHOO.util.Connect){
+    YAHOO.util.Connect.setHeader = <b>function</b>(o){
+		<b>for</b>(var prop <b>in</b> this._http_header){
+		    <i>// <b>if</b>(this._http_header.hasOwnProperty(prop)){</i>
+			<b>if</b>(typeof <b>this</b>._http_header[prop] != '<b>function</b>'){
+				o.conn.setRequestHeader(prop, <b>this</b>._http_header[prop]);
+			}
+		}
+		<b>delete</b> this._http_header;
+		<b>this</b>._http_header = {};
+		<b>this</b>._has_http_headers = false;
+	};   
+}
+<i>/**
+ * A simple enhancement to drag drop that allows you to constrain the movement of the
+ * DD or DDProxy object to a particular element.&lt;br /&gt;&lt;br /&gt;
+ * 
+ * Usage:
+ &lt;pre&gt;&lt;code&gt;
+ <b>var</b> dd = <b>new</b> YAHOO.util.DDProxy(&quot;dragDiv1&quot;, &quot;proxytest&quot;,  
+                { dragElId: &quot;existingProxyDiv&quot; });
+ dd.startDrag = <b>function</b>(){
+     <b>this</b>.constrainTo('parent-id');
+ }; 
+ &lt;/code&gt;&lt;/pre&gt;
+ * Or you can initalize it using the {@link YAHOO.ext.Element} object:
+ &lt;pre&gt;&lt;code&gt;
+ getEl('dragDiv1').initDDProxy('proxytest', {dragElId: &quot;existingProxyDiv&quot;}, {
+     startDrag : <b>function</b>(){
+         <b>this</b>.constrainTo('parent-id');
+     }
+ });
+ &lt;/code&gt;&lt;/pre&gt;
+ */</i>
+<b>if</b>(YAHOO.util.DragDrop){
+    <i>/**
+     * Provides <b>default</b> constraint padding to &quot;constrainTo&quot; elements (defaults to {left: 0, right:0, top:0, bottom:0}).
+     * @type Object
+     */</i>
+    YAHOO.util.DragDrop.prototype.defaultPadding = {left:0, right:0, top:0, bottom:0};
+    
+    <i>/**
+     * Initializes the drag drop object's constraints to restrict movement to a certain element.
+     * @param {String/HTMLElement/Element} constrainTo The element to constrain to.
+     * @param {Object/Number} pad (optional) Pad provides a way to specify &quot;padding&quot; of the constraints, 
+     * and can be either a number <b>for</b> symmetrical padding (4 would be equal to {left:4, right:4, top:4, bottom:4}) or
+     * an object containing the sides to pad. For example: {right:10, bottom:10}
+     * @param {Boolean} inContent (optional) Constrain the draggable <b>in</b> the content box of the element (inside padding and borders)
+     */</i>
+    YAHOO.util.DragDrop.prototype.constrainTo = <b>function</b>(constrainTo, pad, inContent){
+        <b>if</b>(typeof pad == 'number'){
+            pad = {left: pad, right:pad, top:pad, bottom:pad};
+        }
+        pad = pad || <b>this</b>.defaultPadding;
+        <b>var</b> b = getEl(<b>this</b>.getEl()).getBox();
+        <b>var</b> ce = getEl(constrainTo);
+        <b>var</b> c = ce.dom == document.body ? { x: 0, y: 0,
+                width: YAHOO.util.Dom.getViewportWidth(),
+                height: YAHOO.util.Dom.getViewportHeight()} : ce.getBox(inContent || false);
+        <b>var</b> topSpace = b.y - c.y;
+        <b>var</b> leftSpace = b.x - c.x;
+
+        <b>this</b>.resetConstraints();
+        <b>this</b>.setXConstraint(leftSpace - (pad.left||0), <i>// left</i>
+                c.width - leftSpace - b.width - (pad.right||0) <i>//right</i>
+        );
+        <b>this</b>.setYConstraint(topSpace - (pad.top||0), <i>//top</i>
+                c.height - topSpace - b.height - (pad.bottom||0) <i>//bottom</i>
+        );
+    } 
+}</code></pre><hr><div style="font-size:10px;text-align:center;color:gray;">yui-ext - Copyright &copy; 2006 Jack Slocum.  |
+    Yahoo! UI - Copyright &copy; 2006 Yahoo! Inc.<br />All rights reserved.</div>
+    </body></html>

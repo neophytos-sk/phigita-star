@@ -1,0 +1,1 @@
+  graf3d/gl/src/TGLStopwatch.o graf3d/gl/src/TGLStopwatch.d: $(wildcard include/TGLStopwatch.h include/Rtypes.h include/RConfig.h include/RVersion.h include/DllImport.h include/Rtypeinfo.h include/snprintf.h include/strlcpy.h include/TGenericClassInfo.h include/TSchemaHelper.h include/TGLIncludes.h include/GL/glew.h)

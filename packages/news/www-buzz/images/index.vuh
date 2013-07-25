@@ -1,0 +1,9 @@
+set filename [web_root_dir]/data/news/images/[lindex [ad_conn urlv] end]-sample-80x80.jpg
+
+if { [file exists $filename] } {
+    ad_returnfile_background 200 [ns_guesstype ${filename}] ${filename}
+} else {
+#	doc_return 200 text/html [file exists $filename]-${filename}
+    set notfound [acs_root_dir]/www/graphics/nophoto.gif
+    ad_returnfile_background 200 [ns_guesstype ${notfound}] ${notfound}
+}

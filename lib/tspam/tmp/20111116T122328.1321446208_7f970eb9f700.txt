@@ -1,0 +1,16 @@
+Return-path: <webmaster@phigita.net> 
+Received: from [200.42.215.167] (port=5838 helo=SCALMSU01)
+	by forestridge.com with asmtp 
+	id 8A286E-0002F9-17
+	for <webmaster@phigita.net>; Wed, 16 Nov 2011 08:23:06 -0400 
+Message-ID: <DA348AF5CAA6406084AA8ACBC916872B@SCALMSU01> 
+From: =?koi8-r?B?IuHMxcvTwc7E0iI=?= <gospelso71@forestridge.com> 
+To: <webmaster@phigita.net> 
+Subject: =?koi8-r?B?R1NNINPJx87BzMnawcPJ0SDCxdogwcLPztDMwdTZ?= 
+Date: Wed, 16 Nov 2011 08:23:06 -0400 
+X-Priority: 3 
+X-MSMail-Priority: Normal 
+X-Mailer: Microsoft Windows Mail 6.0.6001.18000 
+X-MimeOLE: Produced By Microsoft MimeOLE V6.0.6001.18049 
+X-Spam: Not detected 
+X-Mras: Ok 

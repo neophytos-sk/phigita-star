@@ -1,0 +1,28 @@
+#!/bin/sh
+#
+# TEST: Automatic database pruning (2): 
+
+case `echo "testing\c"; echo 1,2,3`,`echo -n testing; echo 1,2,3` in
+  *c*,-n*) ECHO_N= ECHO_C='
+' ECHO_T='	' ;;
+  *c*,*  ) ECHO_N=-n ECHO_C= ECHO_T= ;;
+  *)       ECHO_N= ECHO_C='\c' ECHO_T= ;;
+esac
+
+if test "$BACKEND" != "obtree"; then
+	$PROG -d $BACKEND:$TESTDB -D > /dev/null
+	echo $ECHO_N "SKIPPED $ECHO_C"
+	exit 0
+fi
+
+$PROG -d $BACKEND:$TESTDB -D | sed 's/SINCEPRUNE.*/SINCEPRUNE 1/' \
+ | grep SINCEPRUNE > .testdump-b
+$PROG -d $BACKEND:$TESTDB -D | sed 's/SINCEPRUNE.*/SINCEPRUNE 500/' > .testdump-a
+$PROG -d $BACKEND:$TESTDB -R < .testdump-a
+./mboxsplit 1 < .test-non-spam \
+ | $PROG -d $BACKEND:$TESTDB -m >/dev/null
+./mboxsplit 1 < .test-non-spam \
+ | $PROG -d $BACKEND:$TESTDB -m >/dev/null
+$PROG -d $BACKEND:$TESTDB -D | grep SINCEPRUNE > .testdump-a
+cmp -s .testdump-a .testdump-b
+rm -f .testdump-a .testdump-b

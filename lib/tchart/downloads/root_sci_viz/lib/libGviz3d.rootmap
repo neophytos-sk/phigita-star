@@ -1,0 +1,5 @@
+Library.TStructViewerGUI:                   libGviz3d.so libGui.so libGed.so libGpad.so libGraf3d.so libGraf.so libGeom.so libRGL.so
+Library.TStructNode:                        libGviz3d.so libGui.so libGed.so libGpad.so libGraf3d.so libGraf.so libGeom.so libRGL.so
+Library.TStructViewer:                      libGviz3d.so libGui.so libGed.so libGpad.so libGraf3d.so libGraf.so libGeom.so libRGL.so
+Library.TStructNodeProperty:                libGviz3d.so libGui.so libGed.so libGpad.so libGraf3d.so libGraf.so libGeom.so libRGL.so
+Library.TStructNodeEditor:                  libGviz3d.so libGui.so libGed.so libGpad.so libGraf3d.so libGraf.so libGeom.so libRGL.so

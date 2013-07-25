@@ -1,0 +1,1 @@
+  math/mathmore/src/Polynomial.o math/mathmore/src/Polynomial.d: $(wildcard include/Math/Polynomial.h include/Math/ParamFunction.h include/Math/IParamFunction.h include/Math/IFunction.h include/Math/IFunctionfwd.h include/Math/IParamFunctionfwd.h include/Math/Util.h /web/servers/service-phgt-0/lib/sci_visualization/downloads/root_sci_viz/math/mathmore/src/complex_quartic.h)

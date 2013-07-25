@@ -1,0 +1,1 @@
+  gui/ged/src/HelpSMText.o gui/ged/src/HelpSMText.d: $(wildcard include/HelpSMText.h include/Rtypes.h include/RConfig.h include/RVersion.h include/DllImport.h include/Rtypeinfo.h include/snprintf.h include/strlcpy.h include/TGenericClassInfo.h include/TSchemaHelper.h)

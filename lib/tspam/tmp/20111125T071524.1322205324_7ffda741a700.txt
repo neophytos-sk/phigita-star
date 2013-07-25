@@ -1,0 +1,9 @@
+Received: (qmail 24118 invoked by uid 0); 21 Nov 2011 00:35:56 -0000 from unknown (HELO gmuy) (postmaster@whmj.org@110.53.31.208)
+  by 0 with SMTP; 21 Nov 2011 00:35:56 -0000 
+Message-ID: <20111121094853648362@whmj.org> 
+From: =?gb2312?B?vs/Q+bvb?= <postmaster@whmj.org> 
+To:  
+Subject: =?gb2312?B?s8kuuaYutcQusvouxrcuvq0uwO0tLS0tvs/Q+bvb?= 
+Date: Mon, 21 Nov 2011 09:48:44 +0800 
+X-mailer: Netoycg 5 
+Whoops!  What is a 'application/vnd.ms-excel'?

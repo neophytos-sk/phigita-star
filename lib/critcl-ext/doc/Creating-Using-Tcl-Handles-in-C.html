@@ -1,0 +1,412 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang='en'>
+<head>
+<title>Creating and Using Tcl Handles in C Extensions</title>
+
+	<link rel='stylesheet' href='/css/wikit_screen.css' media='screen' type='text/css' title='With TOC'>
+	<link rel='alternate stylesheet' href='/css/wikit_screen_notoc.css' media='screen' type='text/css' title='Without TOC'>
+	<link rel='stylesheet' href='/css/wikit_print.css' media='print' type='text/css'>
+	<link rel='stylesheet' href='/css/wikit_handheld.css' media='handheld' type='text/css'>
+	<link rel='stylesheet' href='/css/tooltips.css' type='text/css'>
+	
+	<link rel='alternate' type='application/rss+xml' title='RSS' href='/rss.xml'>
+	<!--[if lte IE 6]>
+	<style type='text/css' media='all'>@import '/css/ie6.css';</style>
+	<![endif]-->
+	<!--[if gte IE 7]>
+	<style type='text/css' media='all'>@import '/css/ie7.css';</style>
+	<![endif]-->
+	<script type='text/javascript'>/* <![CDATA[ */
+
+	    function init() {
+		// quit if this function has already been called
+		if (arguments.callee.done) return;
+		
+		// flag this function so we don't do the same thing twice
+		arguments.callee.done = true;
+		
+		try {
+		    if (typeof(creole_content) != "undefined")
+		    render_creole_in_id('content', creole_content, creole_transclude, creole_categories);
+		}
+		catch (e){}
+
+		try {
+		    document.getElementById("googletxt").value;
+		    googleQuery();
+		}
+		catch (e){}
+
+		//try {
+		    //    checkTOC();
+		    //} catch (err) {
+			//    /* nothing */
+			//}
+	    };
+
+	    /* for Mozilla */
+	    if (document.addEventListener) {
+		document.addEventListener("DOMContentLoaded", init, false);
+	    }
+	    
+	    /* for Internet Explorer */
+	    /*@cc_on @*/
+	    /*@if (@_win32)
+	    document.write("<script defer src='//script/ie_onload1.JS'><\/script>");
+	    /*@end @*/
+	    
+	    /* for other browsers */
+	    window.onload = init;
+	
+/* ]]> */
+</script>
+	<meta name="verify-v1" content="89v39Uh9xwxtWiYmK2JcYDszlGjUVT1Tq0QX+7H8AD0=">
+    </head>
+<body>
+
+	<div class='container'>
+	<div class='header'>
+	    <div class='logo'><a href='/' class='logo'>wiki.tcl.tk</a></div>
+	    <div id='title' class='title'><a href='/_/ref?N=13881' title='click to see reference to this page'>Creating and Using Tcl Handles in C Extensions</a></div>
+	    <div id='updated' class='updated'>Updated 2007-09-23 01:33:38 by <a href='/22862'>venks</a> <a href='/_/diff?N=13881#diff0' class='delta'>▲</a></div>
+	</div>
+    
+	    
+	    <div id='wrapper'><div id='content'><p></p>This page describes a common method used by extension developers for creating <a href="/1089">Tcl handles</a> that refer to larger sets of data in C.  This method is commonly used for things like <a href="/9312">file handle</a>s, object handles, sockets, fonts, images, and other types of <a href="/9313">handle</a>s.<pre> /*
+  * Tcl Handles --
+  *
+  * Handles in Tcl are commonly used as a small string that represents
+  * a larger set of data in a program.  Tcl uses these for things like
+  * file handles, sockets and the like.  Tk uses them for fonts, images
+  * and even widgets.
+  *
+  * Handles allow an extension to return a small string to the caller
+  * that is usually held in a variable for later use.  File handles
+  * at the Tcl level look like 'file1'.  All the caller need care about
+  * is that little string to get to their handle.  Internally, that little
+  * 'file1' handle points to a much larger set of data.
+  *
+  * The standard method for handles in C extensions is to create a struct
+  * that defines the data for your handle that also contains some very
+  * basic information about the handle's origins and locations.  When we
+  * create a new handle, we also store the string representation in a
+  * Tcl hash table so that we can look it up later if we're given just the
+  * handle string.
+  *
+  * Let's assume we are creating an extension called Foo.  The main
+  * component in our extension that uses handles are Bars, and we are
+  * storing data from an external source (another library, perhaps).
+  * So, we need to create handler functions for Foo to create and use
+  * handles for Bars.
+  *
+  */
+
+ /* Define a simple macro for getting our handles and returning
+  * an error if we don't find one.  Foo_GetBar will set the error
+  * result in Tcl for us if we fail to find the handle.
+  */
+ #define GETBAR( obj, ptr ) \
+ if( (ptr = Foo_GetBar( interp, obj )) == NULL ) return TCL_ERROR;
+
+ /* Define a new Tcl object type that we will use for our handles.
+  * We define our own object type because we want to store pointers
+  * to our information within it.  This way, if our object shimmers
+  * to another object type (like a string or int), we will be able
+  * to recognize it and shimmer back.
+  */
+
+ static Tcl_ObjType Foo_BarType = {
+     &quot;foobar&quot;,
+     NULL,
+     NULL,
+     NULL,
+     NULL
+ };
+
+ /* Initialize two variables that we'll use to keep track of our
+  * handle counts.  We increment the count variable everytime we
+  * create a new handle, so that we never re-use a handle name.
+  *
+  * The epoch variable is incremented anytime a handle is deleted.
+  * We increment the epoch because our handle can end up with many
+  * relationships that we don't keep track of.  For example:
+  *
+  * set bar [create bar handle]
+  * set myBar $bar
+  *
+  * We now have two variables that point to our object.  The problem
+  * occurs when we do this:
+  *
+  * delete bar $bar
+  *
+  * Now, myBar points to an object that still thinks it is a Bar handle,
+  * but we deleted the struct when we deleted the $bar handle.  By tracking
+  * the epoch, we can tell that something has been deleted, and our data may
+  * no longer be valid.  So, we're forced to go check the hash table for our
+  * data.  If we don't find it, our handle was deleted, and we return with
+  * an error.
+  *
+  * All this basically means that you don't have to keep track of what people
+  * are doing with your handles.  The code will simply take care of cleaning
+  * up useless objects as handles are deleted.
+  */
+
+ static int barCount = 0;
+ static int barEpoch = 0;
+
+ /* Create our Tcl hash table to store our handle look-ups.
+  * We keep track of all of our handles in a hash table so that
+  * we can always go back to something and look up our data should
+  * we lose the pointer to our struct.
+  */
+
+ static Tcl_HashTable bars;
+
+ /* Now, we want to define a struct that will hold our data.  The first
+  * three fields are Tcl-related and make it really easy for us to circle
+  * back and find our related pieces.
+  */
+
+ typedef struct Foo_Bar {
+     Tcl_Interp    *interp;  /* The Tcl interpreter where we were created.  */
+     Tcl_Obj       *objPtr;  /* The object that contains our string rep.    */
+     Tcl_HashEntry *hashPtr; /* The pointer to our entry in the hash table. */
+     Bar           *bar;     /* Our native data.                            */
+ } Foo_Bar;
+
+ /*
+  *----------------------------------------------------------------------
+  * Foo_NewBar --
+  *
+  *      Create a new Bar object.
+  *
+  * Results:
+  *       Returns a pointer to the new object or NULL if an error occurred.
+  *
+  * Side effects:
+  *       Allocates enough memory to hold our structure and stores
+  *       the new object in a hash table.
+  *
+  *----------------------------------------------------------------------
+  */
+
+ static Foo_Bar *
+ Foo_NewBar( Tcl_Interp *interp, Bar *bar )
+ {
+     int new;
+     char handleName[16 + TCL_INTEGER_SPACE];
+     Tcl_Obj *handleObj;
+     Tcl_HashEntry *entryPtr;
+     Foo_Bar *barStruct;
+
+     /* Allocate enough memory for our struct. */
+     barStruct = (Foo_Bar *)ckalloc( sizeof(Foo_Bar) );
+
+     /* Create our handle string. */
+     sprintf( handleName, &quot;bar%d&quot;, barCount++ );
+
+     /* Create our Tcl object and store pointers to our
+        information in the internalRep.
+      */
+     handleObj = Tcl_NewStringObj( handleName, -1 );
+     handleObj-&gt;typePtr = &amp;Foo_BarType;
+     handleObj-&gt;internalRep.twoPtrValue.ptr1 = barStruct;
+     handleObj-&gt;internalRep.twoPtrValue.ptr2 = (void *)barEpoch;
+
+     /* Setup our structure. */
+     barStruct-&gt;interp  = interp;
+     barStruct-&gt;objPtr  = handleObj;
+     barStruct-&gt;bar     = bar;
+
+     /* Store our information in the hash table. */
+     entryPtr = Tcl_CreateHashEntry( &amp;bars, handleName, &amp;new );
+     Tcl_SetHashValue( entryPtr, barStruct );
+
+     /* Store a pointer to our hash entry. */
+     barStruct-&gt;hashPtr = entryPtr;
+
+     /* Set the Tcl object result so that our caller can just return
+        the new handle as the Tcl result.
+      */
+     Tcl_SetObjResult( interp, handleObj );
+
+     /* Return a pointer to the new struct. */
+     return barStruct;
+ }
+
+ /*
+  *----------------------------------------------------------------------
+  * Foo_GetBar --
+  *
+  *      Get a pointer to a Foo_Bar object.
+  *
+  * Results:
+  *       Returns a pointer to the object.
+  *
+  * Side effects:
+  *       None
+  *
+  *----------------------------------------------------------------------
+  */
+
+ static Foo_Bar *
+ Foo_GetBar( Tcl_Interp *interp, Tcl_Obj *objPtr )
+ {
+     /* Check to see if this object is our type and has the
+        same epoch as the current epoch.  If either of these
+        is false, we need to go out to the hash table to find
+        our data.
+      */
+     if( objPtr-&gt;typePtr != &amp;Foo_BarType
+         || (int)objPtr-&gt;internalRep.twoPtrValue.ptr2 != barEpoch ) {
+         char *name;
+         Foo_Bar *bar;
+         Tcl_HashEntry *entryPtr;
+
+         name = Tcl_GetString( objPtr );
+         entryPtr = Tcl_FindHashEntry( &amp;barss, name );
+
+         if( !entryPtr ) {
+             if( interp ) {
+                 Tcl_Obj *resultObj = Tcl_GetObjResult( interp );
+
+                 Tcl_AppendStringsToObj( resultObj, &quot;invalid bar &quot;,
+                         name, (char *)NULL );
+             }
+
+             return NULL;
+         }
+
+         bar = Tcl_GetHashValue( entryPtr );
+
+         objPtr-&gt;typePtr = &amp;Foo_BarType;
+         objPtr-&gt;internalRep.twoPtrValue.ptr1 = bar;
+         objPtr-&gt;internalRep.twoPtrValue.ptr2 = (void *)barEpoch;
+     }
+
+     return (Foo_Bar *)objPtr-&gt;internalRep.twoPtrValue.ptr1;
+ }
+
+ /*
+  *----------------------------------------------------------------------
+  * Foo_FreeBar --
+  *
+  *      Free a Foo_Bar object and all of its related pieces.
+  *
+  * Results:
+  *       Returns TCL_OK on success or TCL_ERROR on failure.
+  *
+  * Side effects:
+  *       Frees all the memory associated with the object as well
+  *       as delete the entry from the hash table.
+  *
+  *----------------------------------------------------------------------
+  */
+
+ int
+ Foo_FreeBar( Tcl_Interp *interp, Foo_Bar *bar )
+ {
+     /* Free up the native data. */
+     FreeBarFunction( bar-&gt;bar );
+
+     /* Delete our entry from the hash table. */
+     Tcl_DeleteHashEntry( bar-&gt;hashPtr );
+
+     /* Free the memory we allocated for the struct. */
+     ckfree( (char *)bar );
+
+     /* Increment the epoch. */
+     barEpoch++;
+
+     return TCL_OK;
+ }
+
+ /*
+  *----------------------------------------------------------------------
+  * Foo_Init --
+  *
+  *      Initialize the Foo extension.
+  *
+  * Results:
+  *       Returns TCL_OK on success or TCL_ERROR on failure.
+  *
+  * Side effects:
+  *       None
+  *
+  *----------------------------------------------------------------------
+  */
+
+ static int
+ Foo_Init( Tcl_Interp *interp )
+ {
+     /* Initialize our hash table. */
+     Tcl_InitHashTable( &amp;bars, TCL_STRING_KEYS );
+
+     /* The rest of the initialization for our extension would go here. */
+ }</pre><hr><p></p>Notice that the Foo_BarType record uses NULL for all the methods. There's no <i>freeIntRepProc</i>, since freeing the internal rep is a no-op -- deleting a Tcl_Obj * that points to a Bar doesn't delete the Bar, only the reference to the Bar. There's no <i>updateStringProc</i> because every object of this type always has a string rep. There's no <i>setFromAnyProc</i> because we never call <i>Tcl_ConvertToType</i> with <i>typePtr = Foo_BarType</i> -- and nobody else can either, since <i>Foo_BarType</i> is static and we never register it with <i>Tcl_RegisterObjType</i>. And there's no <i>dupIntRepProc</i> because Tcl's default implementation (a bitwise copy of <i>objPtr-&gt;internalRep</i>) does the right thing for this object type.<p></p>So the only thing the <i>Foo_BarType</i> record is used for is to identify whether or not a Tcl_Obj * is one of &quot;our&quot; Tcl_Objs.<hr><p></p><a href="/638">George Peter Staplin</a> May 18, 2005 - I suggest that you check the result of new when creating the hash entry, because integer overflow could occur and result in clobbering an existing object.   A better behavior is to repeat the key/handle creation (with an increment of barCount) until new is true.  The barCount overflow would be an issue in applications that create many handles, or run for long periods of time.<p></p>Thanks for sharing this code.  I found it useful. :)<hr><p></p>Q: What the heck is this epoch stuff and do I really need it?<p></p>A: Primarily a mechanism for keeping track of whether cached data is still valid, or might need to be looked up again. You can do without it if you in Foo_GetBar always take the long route (calling Tcl_FindHashEntry etc.).<p></p>Thank you.  I will do without it because I simply can't grok all this.  Does anyone have a simple example that uses handle0, handle1, and has a structure that keeps track of application specific pointers?<hr><p></p><a href="/638">George Peter Staplin</a> 2007.09.21 I believe this code has a leak.  I originally used it as an example.  I found that this pattern was needed to fully eliminate leaks:<pre> (void)Tcl_GetString (obj);
+
+ if (obj-&gt;typePtr &amp;&amp; obj-&gt;typePtr-&gt;freeIntRepProc) {
+  obj-&gt;typePtr-&gt;freeIntRepProc (obj);
+ }
+
+ /* Now you can safely replace the Tcl_ObjType pointer */</pre><hr><p></p>2007-09-21 <a href="/8740">VI</a> Adding another field and a subtype table will allow for storing void * pointers with a subtype.  On the extract the subtype can be checked before converting back. See the tcl plugin in pidgin (tcl_ref.c) for an idea of what I'm talking about<hr><p></p><a href="/3122">Category Tutorial</a></div></div>
+	
+	<div id='menu_area'><div id='wiki_menu'><ul id='menu'>
+<li><a href='/'>Home</a></li><li><a href='/_/recent'>Recent changes</a></li><li><a href='/Help'>Help</a></li><li><a href='/_/whoami'>WhoAmI</a>/<a href='/_/logout'>Logout</a></li><li><a href='/_/new'>Create new page</a></li><li><br></li><li><a href='/_/edit?N=13881&amp;A=1'>Add comments</a></li><li><a href='/_/edit?N=13881'>Edit</a></li><li><a href='/_/history?N=13881'>History</a></li><li><a href='/_/summary?N=13881'>Edit summary</a></li><li><a href='/_/ref?N=13881'>References</a></li></ul></div>
+	<form method='post' action='/_/search' id='searchform'><input id='searchtxt' onfocus='clearSearch();' onblur='setSearch();' name='S' type='text' value='Search in titles' tabindex='1'>
+	    <input name='_charset_' type='hidden' value='' tabindex='2' id='_charset_'></form>
+	
+	    <form method='get' action='/_/gsearch' id='gsearchform'><input id='googletxt' onfocus='clearGoogle();' onblur='setGoogle();' name='S' type='text' value='Search in pages' tabindex='1'>
+		<input name='_charset_' type='hidden' value='' tabindex='1' id='_charset_'></form>
+	
+    <div class='navigation'><div id='page_toc'></div></div><div class='extra'><div id='wiki_toc'><div class='toc1'>Getting started
+<div class='toc2'><a class='toc' href='/299'>What is Tcl?</a></div>
+<div class='toc2'><a class='toc' href='/487'>What is Tk?</a></div>
+<div class='toc2'><a class='toc' href='/20786'>Getting Tcl/Tk</a></div>
+<div class='toc2'><a class='toc' href='/20788'>Getting help</a></div>
+<div class='toc2'><a class='toc' href='/20789'>Learning Tcl</a></div>
+<div class='toc2'><a class='toc' href='/20790'>The Tcl Dev Xchange</a></div>
+<div class='toc3'><a class='toc' href='/20791'>About the Wiki</a></div>
+</div>
+<div class='toc1'>Community
+<div class='toc2'><a class='toc' href='/590'>Advocacy</a></div>
+<div class='toc2'><a class='toc' href='/828'>Conferences</a></div>
+<div class='toc2'><a class='toc' href='/20792'>Chat, news, lists</a></div>
+<div class='toc2'><a class='toc' href='/20794'>History</a></div>
+<div class='toc2'><a class='toc' href='/17182'>Humor</a></div>
+<div class='toc2'><a class='toc' href='/10681'>People</a></div>
+<div class='toc3'><a class='toc' href='/20810'>Tcl websites</a></div>
+</div>
+<div class='toc1'>Reference
+<div class='toc2'><a class='toc' href='/1887'>Companies</a></div>
+<div class='toc2'><a class='toc' href='/20788'>Getting help</a></div>
+<div class='toc2'><a class='toc' href='/20795'>Online books</a></div>
+<div class='toc2'><a class='toc' href='/20796'>Online tutorials</a></div>
+<div class='toc2'><a class='toc' href='/3109'>Manual pages</a></div>
+<div class='toc2'><a class='toc' href='/20797'>Tcl roadmap</a></div>
+<div class='toc3'><a class='toc' href='/49'>Acronyms</a></div>
+</div>
+<div class='toc1'>Tcl software
+<div class='toc2'><a class='toc' href='/20798'>Applications</a></div>
+<div class='toc2'><a class='toc' href='/20799'>The Tcl core</a></div>
+<div class='toc2'><a class='toc' href='/20800'>Development tools</a></div>
+<div class='toc2'><a class='toc' href='/11485'>Documentation</a></div>
+<div class='toc2'><a class='toc' href='/940'>Extensions</a></div>
+<div class='toc3'><a class='toc' href='/20801'>Toys and games</a></div>
+</div>
+<div class='toc1'>Tcl in the wild
+<div class='toc2'><a class='toc' href='/20802'>Major applications</a></div>
+<div class='toc2'><a class='toc' href='/20803'>Businesses</a></div>
+<div class='toc2'><a class='toc' href='/20804'>Education</a></div>
+<div class='toc2'><a class='toc' href='/20805'>Engineering</a></div>
+<div class='toc2'><a class='toc' href='/20806'>Government</a></div>
+<div class='toc2'><a class='toc' href='/20811'>Medical</a></div>
+<div class='toc3'><a class='toc' href='/20809'>Other</a></div>
+</div>
+</div></div></div>
+    
+	<div class='footer'><p id='footer'><a href='/'>Home</a> &bull; <a href='/_/recent'>Recent changes</a> &bull; <a href='/Help'>Help</a> &bull; <a href='/_/new'>Create new page</a> &bull; <a href='/_/searchp'>Search</a> &bull; <a href='/_/edit?N=13881&amp;A=1'>Add comments</a> &bull; <a href='/_/edit?N=13881'>Edit</a></p></div>
+    </div>
+    <div class='generated'>Generated in 61ms</div><script type='text/javascript' src='/script/wiki.js'></script>
+</body>
+</html>

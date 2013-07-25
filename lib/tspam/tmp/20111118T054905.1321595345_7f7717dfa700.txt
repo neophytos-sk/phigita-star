@@ -1,0 +1,12 @@
+Received: from hscs (unknown [42.49.128.228])
+	by websmtp.sohu.com (Postfix) with ESMTPA id 2E31D3A5E7F2;
+	Fri, 18 Nov 2011 10:38:43 +0800 (CST) 
+Message-ID: <20111118104012451106@sohu.com> 
+From: =?gb2312?B?s8y+/dTZ?= <shuiqinying0j7wb@sohu.com> 
+To:  
+Subject: =?gb2312?B?0NAu1f4uuaQu1/cuzbMus+8uudwuwO0uuN8uvLYu?=
+	=?gb2312?B?0dAu0N4usOAtLS0ts8y+/dTZ?= 
+Date: Fri, 18 Nov 2011 10:40:02 +0800 
+X-mailer: Sqavdziqml 5 
+X-SOHU-Antispam-Bayes: 0 
+Whoops!  What is a 'application/vnd.ms-excel'?

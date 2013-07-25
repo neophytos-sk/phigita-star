@@ -1,0 +1,533 @@
+html {
+  background-color: #FFF;
+  }
+
+body {
+	background-color:white; 
+	border:20px solid #a9a9a9; 
+	margin:0; font-family: "Arial","Verdana","Helvetica","Geneva","sans-serif"; 
+	font-size:12px; 
+	color:black;
+}
+
+.header-blank {background-color:white;}
+.header-quadrat {background-color:#587D91;}
+.header-zufall {background-color:#003B53;}
+.header-text { 
+	font-size:17px; 
+	background-color:#003B53; 
+	width:90%; 
+	color:#A1A1A1; 
+	font-family: arial, helvetica, sans-serif; 
+	white-space:nowrap; 
+	font-weight: bold; 
+	padding:20px 8px;
+}
+
+#header-logo {
+  float: right;
+  margin: 5px 5px 15px 0;
+  }
+
+.header-text table {position:relative; top:27px;}
+.header-text td {text-align:right; border-right:1px solid white; padding:5px 15px} /*height:30px;*/
+.header-text a:link {font-weight:normal; color:white; text-decoration:none;}
+.header-text a:visited {color:#CCC; text-decoration:none;}
+.header-text a:active {color:white; text-decoration:underline;}
+.header-text a:hover {color:white; text-decoration:underline;}
+
+.footer { background-color:white; padding:6px; text-align:right;}
+.footer a:link {color:#666; text-decoration:none; border: 0; padding:8px; }
+.footer a:visited {color:#999; text-decoration:none;}
+.footer a:active {color:#666; text-decoration:underline;}
+.footer a:hover {color:#666; text-decoration:underline;}
+
+.navbar-all {border-top:1px solid #CCC; border-bottom:1px solid #CCC; text-align:center; border-right:1px solid #CCC; background-color:white; color:#666; text-decoration:none; font-weight: bold;}
+.bt {border-top:1px solid #CCC; border-bottom:1px solid #CCC; text-align:left; border-right:1px solid #CCC; background-color:white; color:#666; text-decoration:none; font-weight: bold;font-size:14px;}
+.Pulldown {background-color:#6B96AD; color:white;}
+.Gate { padding:5px 15px;}
+H1 {font-size:16px; color:#999; margin:10px;}
+H2 {font-size:14px; color:#999; margin:10px; font-weight:bold;}
+H3 {font-size:14px; color:#999; margin:10px;}
+
+.element {border-bottom:1px solid #CCC; margin:20px 0 0 20px; width:95%;}
+
+.element-header-text {border-bottom:1px solid #CCC;font-size:14px; font-weight:bold; color:#999; margin:0;}
+.element-header-buttons { BACKGROUND: white; COLOR: #003366; WHITE-SPACE: nowrap;}
+.element-header-button {BACKGROUND: #003366; COLOR: #003366;}
+
+.element-content {padding:4px 0; font-size:11px; background-color:#EFF5F9;}
+.element-content a:link {color:black; text-decoration:none; padding-left:5px;}
+.element-content a:visited {color:#333; text-decoration:none}
+.element-content a:active {color:black; text-decoration:underline}
+.element-content a:hover {color:black; text-decoration:underline}
+.element-content H2 {font-size:12px; font-weight: bold; color:#999; margin:0; margin-left: 5px; }
+.element-content H3 {font-size:12px; color:#999; margin:0; margin-left: 5px; }
+
+.element-text {padding:4px 0; font-size:11px; background-color:#EFF5F9;}
+.element-text a:link {color:black; text-decoration:none; padding-left:5px;}
+.element-text a:visited {color:#333; text-decoration:none}
+.element-text a:active {color:black; text-decoration:underline}
+.element-text a:hover {color:black; text-decoration:underline}
+.element-text H2 {font-size:12px; font-weight: bold; color:#999; margin:0; margin-left: 5px; }
+.element-text H3 {font-size:12px; color:#999; margin:0; margin-left: 5px; }
+
+.table-content-header-standard {background-color:#587D91; text-align:left;}
+
+.table-content {padding:4px 0; font-size:11px; background-color:#EFF5F9;}
+
+.element-text a:link {color:black; text-decoration:none; padding-left:5px;}
+.element-text a:visited {color:#333; text-decoration:none}
+.element-text a:active {color:black; text-decoration:underline}
+.element-text a:hover {color:black; text-decoration:underline}
+.element-text H2 {font-size:12px; font-weight: bold; color:#999; margin:0; margin-left: 5px; }
+.element-text H3 {font-size:12px; color:#999; margin:0; margin-left: 5px; }
+
+.dark-line {}
+.light-line {}
+
+STRONG.table-header {BACKGROUND: #6DB2C9; FONT-SIZE: small; FONT-FAMILY: Arial, Helvetica, sans-serif; }
+TR.table-header {BACKGROUND: #6DB2C9; COLOR: white; FONT-FAMILY: Arial, Helvetica, sans-serif; FONT-SIZE: small;}
+.selected {BACKGROUND: #003366; COLOR: white; FONT-FAMILY: Arial, Helvetica, sans-serif; font-weight: bold;BORDER-RIGHT: medium none; BORDER-TOP: medium none; BORDER-LEFT: medium none; BORDER-BOTTOM: medium none;}
+.z_light {BACKGROUND: #EAF0F2;}
+.z_dark {BACKGROUND: #C9D7DC;}
+.main_color {COLOR: #003366;}
+.table-title {BACKGROUND: #C9D7DC;}
+.cal-week {BACKGROUND: #EAF0F2;VALIGN: top;}
+.cal-table-header { BACKGROUND: #DDEEFF; color: #000000; margin: 0px; padding: 0px; font-weight: bold; }
+.cal-week-event {BACKGROUND: #C9D7DC;}
+.cal-month {font-weight: bold; background-color: #C9D7DC; text-align: center; line-height: 160%;}
+.cal-month-day {BACKGROUND: #C9D7DC; BORDER: 1px c0c0c0 solid; padding-top: 1px; padding-right: 1px; padding-bottom: 1px; padding-left: 1px ;}
+.cal-month-today {BACKGROUND: #003366; BORDER-RIGHT: grey 1px solid; BORDER-TOP: grey 1px solid; BORDER-LEFT: grey 1px solid; BORDER-BOTTOM: grey 1px solid;}
+.table-display {BORDER-RIGHT: #003366 1px solid; BORDER-TOP: #003366 1px solid; BORDER-LEFT: #003366 1px solid;BORDER-BOTTOM: #003366 1px solid;}
+.portal-page-config {BACKGROUND: #C9D7DC; WIDTH: 700px; CELLPADDING: 5;}
+.bottom-border {BORDER-Bottom: #003366 1px solid;}
+.center {ALIGN: center;}
+
+.portletSchmal {margin:20px 0 0 20px; width:95%;}
+.portletBreit {margin:20px 0 0 20px; width:95%}
+.portletTitelZeile {border-bottom:1px solid #CCC;}
+	.portletTitelZeile H1, .portletInhalt H1 {font-size:14px; color:#999; margin:0; }
+.portletInhalt {padding:4px 0; font-size:11px; background-color:#EFF5F9;}
+	.portletInhalt a:link {color:black; text-decoration:none; padding-left:5px;}
+	.portletInhalt a:visited {color:#333; text-decoration:none}
+	.portletInhalt a:active {color:black; text-decoration:underline}
+	.portletInhalt a:hover {color:black; text-decoration:underline}
+	.portletInhalt H2 {font-size:12px; font-weight: bold; color:#999; margin:0; margin-left: 5px; }
+	.portletInhalt H3 {font-size:12px; color:#999; margin:0; margin-left: 5px; }
+.portlet td {vertical-align:middle;}
+.portletBottomZeile {border-top:1px solid #CCC;}
+.portlet-button {background-color:#A2BFCF;margin-left:5px;}
+.odd {background-color:#D4E2EA;}
+.even {background-color:#EAF0F2;}
+.zeit-tabelle {width:100%;}
+.zeit-tabelle td {padding:2px 5px}
+.bt {padding:4px 0; font-size:13px; background-color:#EFF5F9;}
+	.bt a:link {color:black; text-decoration:none; padding-left:5px;}
+	.bt a:visited {color:#333; text-decoration:none}
+	.bt a:active {color:black; text-decoration:underline}
+	.bt a:hover {color:black; text-decoration:underline}
+	.bt H2 {font-size:13px; font-weight: bold; color:#999; margin:0; margin-left: 5px; }
+	.bt H3 {font-size:13px; color:#999; margin:0; margin-left: 5px; }
+#head-area, #head-area a, #footer-area, #footer-area a {font-family: arial, helvetica, sans-serif; font-size:11px; }
+#head-area td, #footer-area td {vertical-align:middle}
+
+/* dotlrn-overrides of standard CSS nodes */
+
+a:link, a:visited {
+  text-decoration: none;
+  border-bottom: 1px solid #003366;
+  color: #003366;
+  }
+
+/* This messes up the tabs in IE6 -- they unpredictably jump up and
+   down by 1 pixel depending as you hover over different links on the page.
+   Uncomment when we figure out how to fix.
+  
+a:hover {
+  text-decoration: none;
+  border-bottom: 1px solid #6DB2C9;
+  color: #6DB2C9;
+  }
+
+*/
+
+a:active {
+  text-decoration: none;
+  border-bottom: 1px solid #003366;
+  color: #003366;
+  }
+
+
+/* Global Page Elements */
+
+h1 {
+  font-size: 180%;
+  font-weight: normal;
+  color: #003366;
+  margin: 3px 0px;
+  }
+
+#system-name {
+  font-size: 180%;
+  font-weight: bold;
+  color: #C9D7DC;
+  float: right;
+  padding-right: 5px;
+  }
+
+#breadcrumbs {
+  margin: 0;
+  padding: 0;
+  font-size: 80%;
+  float: left;
+  padding-bottom: 5px;
+  margin-left: 5px;
+  }
+
+#breadcrumbs li {
+  display: inline;
+  list-style: none;
+  color: #003366;
+  }
+
+#breadcrumbs a {
+  color: #003366;
+  }
+
+#login-status {
+  font-size: 80%;
+  color: #003366;
+  float: right;
+  margin-right: 5px;
+  }
+
+#login-status a {
+  color: #003366;
+  }
+
+#main-navigation {
+  font-size: 110%;
+  clear: both;
+  float: left;
+  width: 100%;
+  background: url("/resources/dotlrn/tab-passive-bottom.gif") repeat-x bottom;
+  }
+  
+#main-navigation ul {
+  margin: 0;
+  padding: 0px 0px 0px 5px;
+  list-style: none;
+  }
+  
+#main-navigation li {
+  float: left;
+  background: url("/resources/dotlrn/tab-passive-right-myspace.gif") no-repeat right top;
+  margin: 0px 2px;
+  padding: 0;
+  }
+  
+#main-navigation a {
+  float: left;
+  border: none;
+  color: #6DB2C9;
+  font-weight: bold;
+  display: block;
+  background: url("/resources/dotlrn/tab-passive-left-myspace.gif") no-repeat left top;
+  padding: 3px 10px 2px;
+  }
+/* Commented Backslash Hack
+     hides rule from IE5-Mac \*/
+  #main-navigation a {float:none;}
+  /* End IE5-Mac hack */
+  
+#main-navigation a:hover {
+  color: #003366;
+  }
+  
+#main-navigation li.current {
+  background-image: url("/resources/dotlrn/tab-active-right-myspace.gif");
+}
+  
+#main-navigation li.current a {
+  border: none;
+  color: #003366;
+  font-weight: bold;
+  background-image: url("/resources/dotlrn/tab-active-left-myspace.gif");
+  padding-bottom: 3px;
+  }
+  
+#main-container {
+  border-top: 5px solid #6DB2C9;
+  border-bottom: 1px solid #6DB2C9;
+  padding: 14px 10px 24px 10px;
+  clear: both;
+  background: #C9D7DC;
+  }
+
+/* IE 6 Hack - see http://css-discuss.incutio.com/?page=StarHtmlHack */
+* html #main-container {
+  margin-top: -3px;
+  }
+
+/* IE 6 "Holly Hack" - see http://www.positioniseverything.net/articles/hollyhack.html */
+* html #main-container {
+  height: 1%;
+  }
+
+
+#message-bar {
+  background: url("/resources/dotlrn/message-bar-icon.png") no-repeat left;
+  padding: 2px 5px 2px 25px;
+  margin: 0px 0 5px 0;
+  color: #FFF;
+  font-weight: bold;
+  background-color: #E35203;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #F2AF8A #94471E #94471E #F2AF8A;
+  }
+#message-bar p {
+  margin-left: 39px;
+  }
+  
+.left {
+  width: 49%;
+  padding: 5px;
+  float: left;
+  }
+.right {
+  width: 49%;  
+  float: right;
+  padding-top: 5px;
+  }
+
+#footer {
+  float: right;
+  list-style: none;
+  font-size: 80%;
+  margin: 5px 5px 15px 0;
+  }
+#footer li {
+  display: inline;
+  color: #C9D7DC;
+  }
+#locale {
+  float: left;
+  list-style: none;
+  padding: 0;
+  font-size: 80%;
+  margin: 5px 0 0 5px;
+  }
+#locale li {
+  display: inline;
+  color: #C9D7DC;
+  }
+#locale .current {
+  font-weight: bold;
+  color: #003366;
+  }
+
+
+.portlet-wrap-shadow, .portlet-wrap-bl, .portlet-wrap-tr {
+  display: inline-table;
+  /* \*/display:block;/**/
+  }
+
+
+.portlet-wrap-shadow {
+  background:url("/resources/dotlrn/shadow.png") right bottom no-repeat;
+  margin-bottom: 10px;
+  }
+.portlet-wrap-bl {
+  background:url("/resources/dotlrn/corner-bl.png") left bottom no-repeat;
+  }
+.portlet-wrap-tr {
+  padding: 0 3px 3px 0;
+  background:url("/resources/dotlrn/corner-tr.png") right top no-repeat;
+  }
+
+/* IE 6 Hack - see http://css-discuss.incutio.com/?page=StarHtmlHack */
+/* We can't find a way to make drop-shadows work on IE 6 */
+* html .portlet-wrap-shadow {
+  background: none;
+  }
+* html .portlet-wrap-bl {
+  background: none;
+  }
+* html .portlet-wrap-tr {
+  background: none;
+  }
+
+.portlet {
+  background-color: #FFF;
+  padding-bottom: 1px;
+  }
+
+
+
+.portlet h2 {
+  font-weight: bold;
+  font-size: 110%;
+  color: #003366;
+  background-color: #6DB2C9;
+  text-transform: uppercase;
+  padding: 1px 5px;
+  border-top: 1px solid #003366;
+  border-bottom: 1px solid #003366;
+  margin: 0;
+  } 
+    
+.portlet h3 {
+  font-size: 140%;
+  color: #977632;
+  font-weight: normal;
+  margin: 0;
+  }
+  
+.portlet .poster {
+  color: #6DB2C9;
+  margin: 3px 0px 5px 0px;
+  font-weight: normal;
+  }
+  
+.portlet ul {
+  padding-left: 15px;
+  }
+  
+.portlet ul li {
+  font-weight: bold;
+  color: #6DB2C9;
+  margin-top: 3px;
+  }
+  
+.portlet ul ul li {
+  font-weight: normal;
+  color: #003366;
+  font-size: 100%;
+  }
+  
+
+  
+.actions {
+  list-style: none;
+  list-style: disc url("/resources/dotlrn/action-bullet.png");
+  }
+  
+.actions li {
+  }
+  
+.actions a {
+  border-bottom: 1px solid #6DB2C9;
+  color: #6DB2C9;
+}
+
+.actions a:hover {
+  border-bottom: 1px solid #6DB2C9;
+  color: #6DB2C9;
+}
+
+.portlet .actions {
+  text-align: right;
+  margin-right: 10px;
+}
+
+
+
+/* Local Page Elements */
+
+
+.portlet h3 {
+  margin: 10px 0 0 10px;
+  }
+
+.portlet ul {
+  padding: 0 0 0 15px;
+  margin-left: 10px;
+  }
+  
+.calendar-week-summary {
+  border-collapse: collapse;
+  margin: 10px 0px;
+  width: 100%;
+  }
+  
+.calendar-week-summary th {
+  text-transform: uppercase;
+  text-align: left;
+  vertical-align: top;
+  color: #977632;
+  padding: 5px 10px;
+  }
+  
+.calendar-week-summary td {
+  padding: 2px 5px;
+  color: #6DB2C9;
+  }
+  
+.calendar-week-summary td.title {
+  font-weight: bold;
+  }
+  
+.calendar-week-summary .odd {
+  background-color: #DDEBF5;
+  }
+
+#system-name  {
+  display: none;
+}
+
+a.file-type-icon:link,
+a.file-type-icon:hover,
+a.file-type-icon:visited,
+a.file-type-icon:active {
+  text-decoration: none;
+  border-bottom: 0;
+}
+
+.system-name {
+  display: none;
+}
+
+#site-header {
+  background-color: white;
+}
+
+#site-header .action-list a {
+  color: #036;
+  border: 0;
+}
+
+#site-header .action-list a:hover { 
+  background-color: #aaa;
+  border: 0;
+}
+
+#page-body {
+  clear: both;
+  border-top: 1px solid #C9D7DC;
+  border-bottom: 1px solid #C9D7DC;
+  padding: 5px 5px 24px 5px;
+  background-color: #DDEBF5;
+}
+
+/* This fixes an IE 6 bug - see http://www.dracos.co.uk/web/css/ie6floatbug/ */
+#page-body {
+  line-height: 1.2;
+}
+
+/* Hide this.  .LRN will display its own admin URL */
+#oacs-admin-url {
+  display: none;
+}
+
+/* unima-nm */
+.subnavempty {background-image:url(/subnavempty.gif); height: 7px;}
+.subnavtable {background-color:#003b53;}
+.subnavbar   {background-color:#587d91; width:130px; padding-top:15px; padding-left:30px;}
+.subnavitem  {background-color:#003b53; width:130px;}
+.subnavitem a:link{ color: #bbbbbb;font-size: 11px; text-decoration:none; }
+.subnavitem a:visited {color: #bbbbbb;font-size: 11px; text-decoration:none;}
+.subnavitem a:active { color: #ffffff;font-size: 11px;text-decoration:underline; }
+.subnavitem a:hover { color: #ffffff;font-size:
+11px;text-decoration:underline; }

@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<link rel=stylesheet type="text/css" href="diagram.css" />
+<SCRIPT Language="JavaScript">if ((document.layers)&&(history.length==1)) location.href=location.href+"#";</SCRIPT>
+<SCRIPT Language="JavaScript" src="diagram.js"></SCRIPT>
+</head>
+<body>
+<DIV STYLE="position:absolute; top:0px"></DIV>
+<form>
+<input type="checkbox" checked onClick="Show(0,this.checked)">Apples
+<input type="checkbox" checked onClick="Show(1,this.checked)">Oranges
+<input type="checkbox" checked onClick="Show(2,this.checked)">Bananas
+</form>
+<SCRIPT Language="JavaScript">
+document.open();
+var D2=new Diagram();
+D2.SetFrame(90, 70, 500, 260);
+D2.SetBorder(Date.UTC(2001,11,1,0,0,0), Date.UTC(2001,11,17,0,0,0), 0, 80);
+D2.XScale=2;
+D2.YScale=" $";
+D2.SetText("","", "<B>prices of some selected goods</B>");
+D2.SetGridColor("#DDDDFF");
+D2.Draw("#C0C0FF", "#004080", false);
+Color=new Array("#FF0000","#FF8000","#FFFF00");
+Price=new Array(3);
+L=new Array(3);
+for (i=0; i<3; i++) 
+{ Price[i]=new Array(); 
+  L[i]=new Array(); 
+}
+for (i=0; i<3; i++)
+{ Price[i][0]=50-20*i+random(5);
+  for (j=0; j<16; j++)
+  { Price[i][j+1]=Price[i][j]+random(10)-4+2*i-random(2*i+2);
+    L[i][j]=new Line(D2.ScreenX(Date.UTC(2001,11,j+1,0,0,0)), D2.ScreenY(Price[i][j]),
+                  D2.ScreenX(Date.UTC(2001,11,j+2,0,0,0)), D2.ScreenY(Price[i][j+1]),
+                  Color[i], 2);
+  }
+}
+new Bar(520, 120, 600, 140, Color[0], "apples", "#000000");
+new Bar(520, 160, 600, 180, Color[1], "oranges", "#000000");
+new Bar(520, 200, 600, 220, Color[2], "bananas", "#000000");
+
+function random(vv)
+{ return(Math.floor(Math.random()*vv));
+}
+
+function Show(ii,vv)
+{ for (var jj=0; jj<L[ii].length; jj++) L[ii][jj].SetVisibility(vv);
+}
+</SCRIPT>
+</body>
+</html>

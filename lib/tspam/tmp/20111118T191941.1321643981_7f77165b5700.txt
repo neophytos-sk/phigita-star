@@ -1,0 +1,17 @@
+Received: from localhost (localhost [127.0.0.1])
+	by mail.granlogia.cl (Postfix) with ESMTP id 4BA982DE8;
+	Fri, 18 Nov 2011 16:20:22 -0300 (CLST) from mail.granlogia.cl ([127.0.0.1])
+	by localhost (sarastro.granlogia.cl [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id OvmnM1GtvlaL; Fri, 18 Nov 2011 16:20:21 -0300 (CLST) from iq (unknown [115.63.9.255])
+	by mail.granlogia.cl (Postfix) with ESMTPA id C7F612DE7;
+	Fri, 18 Nov 2011 16:20:11 -0300 (CLST) 
+X-Virus-Scanned: Debian amavisd-new at mail.granlogia.cl 
+Sender: rcinfor@granlogia.cl 
+Message-ID: <20111119031928873735@granlogia.cl> 
+From: "ccftq" <iyrgh@kaijnt.com> 
+To:  
+Subject: =?gb2312?B?ODgx1tC5+s/zxuXW0LXEudzA7dXc0adlcXo=?= 
+Date: Sat, 19 Nov 2011 03:19:14 +0800 
+X-mailer: Pliojy 5 
+--------------------------------------
+ content-type=application/msword part-token=::mime::932-2

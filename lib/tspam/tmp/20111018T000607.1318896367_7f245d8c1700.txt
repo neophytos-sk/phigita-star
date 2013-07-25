@@ -1,0 +1,11 @@
+Received: from bkp (unknown [110.53.27.6])
+	by sy024.com (Postfix) with ESMTP id 4DA5BCA238C;
+	Tue, 18 Oct 2011 06:55:44 +0800 (CST) 
+Message-ID: <20111018065619835461@inhow.com> 
+From: "2011-10-18 06:56:16" <zang@inhow.com> 
+To:  
+Subject: =?gb2312?B?OGMguN8gvKgg0Kcgz/ogytsgzcUgttMgvsMg064=?=
+	=?gb2312?B?INXmIL6tNjo1NjoxNg==?= 
+Date: Tue, 18 Oct 2011 06:56:14 +0800 
+X-mailer: Amkogd 5 
+Whoops!  What is a 'application/vnd.ms-excel'?

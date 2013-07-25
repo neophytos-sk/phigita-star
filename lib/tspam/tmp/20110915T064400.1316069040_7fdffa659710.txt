@@ -1,0 +1,16 @@
+Return-path: <webmaster@phigita.net> 
+Received: from [178.243.141.25] (port=8144 helo=CREAA54F5B153F)
+	by inbound.nileassociates.com.netsolmail.net with asmtp 
+	id 3B306F-0001A3-99
+	for <webmaster@phigita.net>; Thu, 15 Sep 2011 11:44:02 +0200 
+Message-ID: <65F642BF094B4828B92909FA5EFE3245@CREAA54F5B153F> 
+From: =?koi8-r?B?IvHCzM/Lzy3U1dQi?= <diviners043@nileassociates.com> 
+To: <webmaster@phigita.net> 
+Subject: =?koi8-r?B?SXBob25lIDNHcyDawSAxNjUwMCDS1cIg8sHT0NLPxMHWwSDTy8zBxME=?= 
+Date: Thu, 15 Sep 2011 11:44:02 +0200 
+X-Priority: 3 
+X-MSMail-Priority: Normal 
+X-Mailer: Microsoft Windows Mail 6.0.6001.18000 
+X-MimeOLE: Produced By Microsoft MimeOLE V6.0.6001.18049 
+X-Spam: Not detected 
+X-Mras: Ok 

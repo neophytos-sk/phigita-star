@@ -1,0 +1,12 @@
+Received: from ns ([110.53.25.33]) by cesi.work.com with Microsoft SMTPSVC(6.0.3790.1830);
+	 Wed, 26 Oct 2011 12:17:31 +0800 
+Message-ID: <20111026121622821172@tanoho.com> 
+From: "pcqgvai" <hr@tanoho.com> 
+To:  
+Subject: =?gb2312?B?ZWli0dC3oqGjyMvUsaGjtcS/vKGjusvT67ykoaPA+C50Zg==?=
+	=?gb2312?B?dnR3dTRw?= 
+Date: Wed, 26 Oct 2011 12:16:16 +0800 
+X-mailer: Shzmhhe 1 
+Return-Path: hr@tanoho.com 
+X-OriginalArrivalTime: 26 Oct 2011 04:17:31.0812 (UTC) FILETIME=[2E4DA640:01CC9396] 
+Whoops!  What is a 'application/vnd.ms-excel'?

@@ -1,0 +1,16 @@
+Return-path: <webmaster@phigita.net> 
+Received: from [94.97.126.52] (port=2952 helo=4d2c2f0c8ce1d1)
+	by mail.desertrabbits.com with asmtp 
+	id 661AC4-000192-90
+	for <webmaster@phigita.net>; Mon, 22 Aug 2011 21:41:40 +0300 
+Message-ID: <8E211D1970704BDC8488BD134A360764@4d2c2f0c8ce1d1> 
+From: =?koi8-r?B?IuXMxc7BIg==?= <castleskls7@desertrabbits.com> 
+To: <webmaster@phigita.net> 
+Subject: =?koi8-r?B?y9XEwSDQ0s/QwczJ?= 
+Date: Mon, 22 Aug 2011 21:41:40 +0300 
+X-Priority: 3 
+X-MSMail-Priority: Normal 
+X-Mailer: Microsoft Windows Mail 6.0.6001.18000 
+X-MimeOLE: Produced By Microsoft MimeOLE V6.0.6001.18049 
+X-Spam: Not detected 
+X-Mras: Ok 

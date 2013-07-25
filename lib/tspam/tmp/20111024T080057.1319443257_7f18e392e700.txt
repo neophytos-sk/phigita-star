@@ -1,0 +1,24 @@
+X-Spam-Checker-Version: SpamAssassin 3.1.8 (2007-02-13) on spam.swenc.com 
+X-Spam-Status: score=3.1 required=5.0 
+X-Spam-Report: 0.3 TO_EMPTY               To: is empty
+  0.0 UNPARSEABLE_RELAY      Informational: message has unparseable relay lines
+  1.4 HTML_OBFUSCATE_05_10   BODY: Message is 5% to 10% HTML obfuscation
+  1.0 BAYES_60               BODY: Bayesian spam probability is 60 to 80%
+                             [score: 0.7596]
+  0.0 HTML_MESSAGE           BODY: HTML included in message
+  0.0 MIME_HTML_ONLY         BODY: Message only has text/html MIME parts
+  0.2 MIME_BASE64_NO_NAME    RAW: base64 attachment does not have a file name
+  0.1 TO_CC_NONE             No To: or Cc: header 
+X-User: susie_sun 
+Received: from voazsmfa [(42.49.128.230)] by spam.swenc.com
+	(envelope-from <susie_sun@swenc.com>)
+	(Cellopoint E-mail Firewall v3.9.4 Build 1220)
+	with ESMTP id 440357006; Mon, 24 Oct 2011 16:00:45 +0800 
+Message-ID: <20111024160334727883@swenc.com> 
+From: "puy" <susie_sun@swenc.com> 
+To:  
+Subject: =?gb2312?B?cHk3bW9xbyC6zyC48SC1xCC53CDA7SDV3yA=?=
+	=?gb2312?B?IDE2OjAzOjMy?= 
+Date: Mon, 24 Oct 2011 16:03:28 +0800 
+X-mailer: Hjcnd 8 
+Whoops!  What is a 'application/vnd.ms-excel'?

@@ -1,0 +1,91 @@
+StartFontMetrics 2.0
+Comment CreationDate: Sun Jun 30 20:29:03 1996
+Comment RevisionDate: Tue Jul 13 11:09:42 1996
+Comment RevisionDate: Sat Aug 03 09:08:05 1996
+Comment VMusage 1024 25169
+Version 1.000
+Notice Copyright (c) 1996 Michael Spivak.  Hinting Copyright (c) 1996 Y&Y, Inc.
+FullName MTMSB
+FamilyName MathTime
+Weight Bold
+IsFixedPitch false
+ItalicAngle 0
+UnderlinePosition -133
+UnderlineThickness 20
+FontName MTMSB
+Comment UniqueID 5087362
+FontBBox 27 -236 1127 779
+CapHeight 685
+XHeight 462
+Ascender 726
+Descender -229
+EncodingScheme FontSpecific
+StartCharMetrics 66
+C 32 ; WX 333 ; N space ; B 0 0 0 0 ;
+C 42 ; WX 0 ; N asterisknull ; B 0 0 0 0 ;
+C 48 ; WX 744 ; N A1 ; B 58 -18 689 685 ;
+C 49 ; WX 858 ; N E1 ; B 42 -18 883 685 ;
+C 50 ; WX 844 ; N G1 ; B 52 -18 799 685 ;
+C 51 ; WX 591 ; N G2 ; B 40 -18 591 685 ;
+C 52 ; WX 610 ; N I1 ; B 93 -18 635 685 ;
+C 53 ; WX 855 ; N L1 ; B 60 -18 785 685 ;
+C 54 ; WX 821 ; N Q1 ; B 133 -18 757 685 ;
+C 55 ; WX 558 ; N S1 ; B 64 -18 534 685 ;
+C 56 ; WX 567 ; N r1 ; B 28 -12 517 498 ;
+C 57 ; WX 564 ; N z1 ; B 36 -229 506 447 ;
+C 65 ; WX 946 ; N A ; B 64 -18 882 688 ;
+C 66 ; WX 861 ; N B ; B 64 -18 839 685 ;
+C 67 ; WX 708 ; N C ; B 64 -18 684 685 ;
+C 68 ; WX 957 ; N D ; B 64 -18 918 685 ;
+C 69 ; WX 615 ; N E ; B 75 -18 631 685 ;
+C 70 ; WX 775 ; N F ; B 64 -18 950 685 ;
+C 71 ; WX 707 ; N G ; B 74 -229 643 685 ;
+C 72 ; WX 946 ; N H ; B 66 -18 982 685 ;
+C 73 ; WX 691 ; N I ; B 77 -18 620 685 ;
+C 74 ; WX 667 ; N J ; B 66 -229 623 685 ;
+C 75 ; WX 1008 ; N K ; B 66 -18 1004 685 ;
+C 76 ; WX 856 ; N L ; B 60 -18 785 685 ;
+C 77 ; WX 1177 ; N M ; B 64 -18 1127 685 ;
+C 78 ; WX 985 ; N N ; B 68 -18 1103 685 ;
+C 79 ; WX 776 ; N O ; B 64 -18 724 685 ;
+C 80 ; WX 787 ; N P ; B 64 -18 848 685 ;
+C 81 ; WX 831 ; N Q ; B 64 -18 767 685 ;
+C 82 ; WX 963 ; N R ; B 64 -18 908 685 ;
+C 83 ; WX 575 ; N S ; B 56 -18 546 685 ;
+C 84 ; WX 635 ; N T ; B 66 -18 833 685 ;
+C 85 ; WX 982 ; N U ; B 87 -18 925 685 ;
+C 86 ; WX 818 ; N V ; B 66 -17 813 685 ;
+C 87 ; WX 1071 ; N W ; B 96 -18 1117 685 ;
+C 88 ; WX 951 ; N X ; B 85 -18 929 685 ;
+C 89 ; WX 804 ; N Y ; B 61 -229 740 685 ;
+C 90 ; WX 808 ; N Z ; B 54 -18 746 685 ;
+C 97 ; WX 725 ; N a ; B 40 -12 667 462 ;
+C 98 ; WX 718 ; N b ; B 40 -12 692 727 ;
+C 99 ; WX 626 ; N c ; B 40 -12 568 462 ;
+C 100 ; WX 773 ; N d ; B 40 -18 715 726 ;
+C 101 ; WX 610 ; N e ; B 40 -12 559 462 ;
+C 102 ; WX 522 ; N f ; B 67 -230 552 698 ;
+C 103 ; WX 658 ; N g ; B 71 -236 600 462 ;
+C 104 ; WX 736 ; N h ; B 41 -12 677 727 ;
+C 105 ; WX 492 ; N i ; B 27 -12 434 685 ;
+C 106 ; WX 558 ; N j ; B 30 -236 500 685 ;
+C 107 ; WX 746 ; N k ; B 41 -12 689 727 ;
+C 108 ; WX 540 ; N l ; B 54 -12 482 726 ;
+C 109 ; WX 956 ; N m ; B 40 -12 898 462 ;
+C 110 ; WX 719 ; N n ; B 40 -12 661 462 ;
+C 111 ; WX 611 ; N o ; B 48 -12 611 453 ;
+C 112 ; WX 837 ; N p ; B 59 -229 779 462 ;
+C 113 ; WX 667 ; N q ; B 60 -230 609 462 ;
+C 114 ; WX 657 ; N r ; B 40 0 599 462 ;
+C 115 ; WX 623 ; N s ; B 57 -18 565 498 ;
+C 116 ; WX 456 ; N t ; B 40 -12 428 594 ;
+C 117 ; WX 723 ; N u ; B 40 -12 665 462 ;
+C 118 ; WX 665 ; N v ; B 40 -12 665 462 ;
+C 119 ; WX 896 ; N w ; B 40 -12 896 462 ;
+C 120 ; WX 680 ; N x ; B 34 -12 620 462 ;
+C 121 ; WX 749 ; N y ; B 39 -236 691 462 ;
+C 122 ; WX 590 ; N z ; B 39 -12 591 462 ;
+C 123 ; WX 492 ; N dotlessi ; B 27 -12 434 462 ;
+C 124 ; WX 558 ; N dotlessj ; B 30 -236 500 462 ;
+EndCharMetrics
+EndFontMetrics

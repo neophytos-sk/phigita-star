@@ -1,0 +1,216 @@
+#Prompt the user for email and password.
+
+contract {
+    param -id "email" -optional 1 -default ""
+    param -id "return_url" -optional 1 -default "[ad_pvt_home]"
+}
+
+val -id is_sidebar_p { return  [string match {*/bookmarks/sidebar*} @{return_url}] }
+
+# One common problem with login is that people can hit the back button
+# after a user logs out and relogin by using the cached password in
+# the browser. We generate a unique hashed timestamp so that users
+# cannot use the back button.
+
+
+val -id time { return [ns_time] }
+val -id token_id { return [sec_get_random_cached_token_id] }
+val -id token { return [sec_get_token @{token_id}] }
+
+val -id hash { 
+    set time @{time}
+    set token_id @{token_id}
+    set token @{token}
+    return [ns_sha1 "$time$token_id$token"] 
+}
+
+val -id protocol { return [ad_conn protocol] }
+
+val id secure_mode_url {
+    return "https://[ad_host][ad_conn url][ad_decode [ad_conn query] "" "" "?[ad_conn query]"]"
+}
+
+val -id standard_mode_url {
+    return "http://[ad_host][ad_conn url][ad_decode [ad_conn query] "" "" "?[ad_conn query]"]"
+}
+
+
+
+if {0} {
+    if { } {
+	::xo::html::add_style {
+	    img {border:0;}
+	    body {font-size:12px;background:url(/graphics/sidebar_back.png) repeat-y;}
+	    #container {margin:auto;width:355px;}
+	    #header {position: fixed; top: 0; right: 0;width: 355px; padding: 20px 0 0 25px; background: url('/graphics/sidebar_top.png') no-repeat 0px 0px; }
+	    #container_inner {position: fixed; top: 55px; right: 10px; width: 343px; height: 86%; margin-bottom:20px; padding: 0px 10px 30px; overflow-x: hidden; overflow-y: scroll; background-color: #fff;  }
+	    #_b_close {position:absolute;right:8px;top:12px;}
+	    .logo {padding:0;}
+	    #title {font-size:10px;float:left;}
+	    #legal {position:absolute;left:50px;top:550px;}
+
+	}
+	a -id "_b_close" -href "javascript:void(null);" -title "Close sidebar" {
+	    img -alt "Close sidebar" -src "/graphics/close_button.gif"
+	}
+
+    } 
+
+}
+
+val -id "copyright_year" -cache_timeout 3600 { clock format [clock seconds] -format %Y }
+
+css -src "/www/resources/bootstrap/css/phigita.bootstrap.css"
+
+css {
+    #footer .info {color: #666;}
+}
+
+# ------------------------------------------------------------------------------------------------
+
+js -deps {
+    account-manager/lib/rgb_password.js
+} -tags {
+    public
+} {
+    function login_init() {
+	rgb_password_init({"applyTo":"password"});
+	document.getElementById("email").focus();
+    }
+    window["login_init"] = login_init;
+}
+
+css {
+    .signin {
+	float:right;
+	width:335px;
+    }
+    .signin-box {
+	background: none repeat scroll 0 0 #F1F1F1;
+	border: 1px solid #E5E5E5;
+	margin: 12px 0 0;
+	padding: 20px 25px 15px;
+    }
+
+    strong { 
+	color:#222;
+    }
+
+    h2 {
+	color: #222222;
+	font-size: 1.54em;
+	font-weight: normal;
+	line-height: 24px;
+	margin: 0 0 0.46em;
+    }
+
+    .signin-box h2 {
+	font-size: 16px;
+	line-height: 17px;
+    }
+
+    .signin-box .remember-label {
+	-moz-user-select: none;
+	color: #666666;
+	font-weight: normal;
+	line-height: 0;
+    }
+
+    .signin-box .remember {
+	display: inline-block;
+	margin-left: 10px;
+	vertical-align: top;
+    }
+
+    .signin-box .remember input[type="checkbox"] {
+	vertical-align: top;
+    }
+
+    input[type="email"], input[type="number"], input[type="password"], input[type="tel"], input[type="text"], input[type="url"] {
+	-moz-border-bottom-colors: none;
+	-moz-border-left-colors: none;
+	-moz-border-right-colors: none;
+	-moz-border-top-colors: none;
+	-moz-box-sizing: border-box;
+	background: none repeat scroll 0 0 #FFFFFF;
+	border-color: #C0C0C0 #D9D9D9 #D9D9D9;
+	border-image: none;
+	border-radius: 1px 1px 1px 1px;
+	border-right: 1px solid #D9D9D9;
+	border-style: solid;
+	border-width: 1px;
+	display: inline-block;
+	height: 29px;
+	margin: 0;
+	padding: 0 8px;
+    }
+
+    .info {margin:5px;}
+    #password {float:left;}
+    #password_hash {float:left;margin-left:5px;width:20px;}
+    #one, #two, #three {width: 10px;height:4px;background:#fff;border:1px solid #999;padding:2px;margin-top:1px;}
+}
+
+# ------------------------------------------------------------------------------------------------
+
+set title "Sign in Using Your Account"
+
+
+master -src "/templates/blank-master.inc" -title ${title} -onload "login_init();" {
+
+    tpl -if @{is_sidebar_p} {
+	div -style "width:350px;" {
+	    div -class "pull-right" {
+		a -href "http://www.phigita.net/" -target "_blank" {
+		    img -width 135 -height 40 -src //www.phigita.net/graphics/logo-v2.png
+		}
+	    }
+	    i -class "clearfix" 
+	    include -src "/packages/account-manager/tmpl/includelet-signin-form.inc" -return_url @{return_url}
+	}
+    }
+    tpl -else "" {
+
+	div -class "container" {
+	    a -href "http://www.phigita.net/" {
+		img -width 135 -height 40 -src //www.phigita.net/graphics/logo-v2.png
+	    }
+	    p
+
+	    div -class "alert" {
+		b { t ${title} }
+	    }
+
+	    div -class row {
+		div -class "span7" {
+		    b { t "Already a member?" }
+		    div -class info {
+			t "Please enter your username (or email) and password to login."
+		    }
+
+		    b { t "How do I join phigita.net?" }
+		    div -class info {
+			t " phigita.net is a trusted community. In order to join, you need to receive an invitation."
+		    }
+		    p
+		    b { t "I forgot my password, what should I do?" }
+		    div -class info {
+			nt "Simply click <a href=\"forgotten-password\">here</a>, enter your email address and we will send your password to you."
+		    }
+		}
+
+		div -class "span5" {
+		    
+		    include -src "/packages/account-manager/tmpl/includelet-signin-form.inc" -return_url @{return_url}
+		}
+	    }
+
+	    hr
+
+	    div -id "footer" {
+		small { nt "Copyright &copy; 2000-@{copyright_year} <strong>phigita</strong>. All rights reserved." }
+	    }
+
+	}
+    }
+}

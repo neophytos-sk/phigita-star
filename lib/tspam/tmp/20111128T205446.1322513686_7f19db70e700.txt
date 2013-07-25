@@ -1,0 +1,54 @@
+Received: from alice.wu.wien.ac.at (localhost.localdomain [127.0.0.1])
+	by alice.wu-wien.ac.at (8.14.5/8.14.4) with ESMTP id pASKsIVF018735;
+	Mon, 28 Nov 2011 21:54:20 +0100 from mail-vx0-f171.google.com (mail-vx0-f171.google.com
+ [209.85.220.171])
+ by alice.wu-wien.ac.at (8.14.5/8.14.4) with ESMTP id pASKsFNd018726
+ for <xotcl@alice.wu-wien.ac.at>; Mon, 28 Nov 2011 21:54:15 +0100 by vcbfo1 with SMTP id fo1so6686574vcb.30
+ for <xotcl@alice.wu-wien.ac.at>; Mon, 28 Nov 2011 12:54:16 -0800 (PST) by 10.52.27.131 with SMTP id t3mr45703082vdg.29.1322513656088; Mon,
+ 28 Nov 2011 12:54:16 -0800 (PST) by 10.52.34.130 with HTTP; Mon, 28 Nov 2011 12:53:35 -0800 (PST) 
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=googlemail.com; s=gamma;
+ h=mime-version:from:date:message-id:subject:to:content-type;
+ bh=0KQ6Ld4sBWCFGoV0sg0zXph7qKzEVmXCff18iRuSzRo=;
+ b=yD44XlecEsBUeUgZccq8qUq+pNFOxFc+WyVTe5h2Tx4d37uB1PIAkswH1PGaR35cVl
+ MihaHBTV2kIbBGK59UIfkqPX8zWK7rrLweIDDgqSvOHH57SSesEp/fZMVPUrZlYB1YSX
+ Jqta5Ho957cysDQ6jgPkZq3Hl6TOatT/eTEHI= 
+From: Arthur Schreiber <schreiber.arthur@googlemail.com> 
+Date: Mon, 28 Nov 2011 21:53:35 +0100 
+Message-ID: <CAFDpLf1Du6RWYjodWn4Xae3WHHyc7Qo89fQesNxtyt7b359MBg@mail.gmail.com> 
+To: xotcl@alice.wu-wien.ac.at 
+X-Spam-Status: No, score=-1.7 required=5.0 tests=AWL,BAYES_00,
+	DKIM_ADSP_CUSTOM_MED,DKIM_SIGNED,FREEMAIL_FROM,RCVD_IN_DNSWL_LOW,
+	T_DKIM_INVALID autolearn=unavailable version=3.3.2 
+X-Spam-Checker-Version: SpamAssassin 3.3.2 (2011-06-06) on alice.wu-wien.ac.at 
+X-Content-Filtered-By: Mailman/MimeDel 2.1.14 
+Subject: [Xotcl] [NX] Passing arguments to an object's constructor 
+X-BeenThere: xotcl@alice.wu-wien.ac.at 
+X-Mailman-Version: 2.1.14 
+Precedence: list 
+List-Id: <xotcl.alice.wu-wien.ac.at> 
+List-Unsubscribe: <http://alice.wu-wien.ac.at/mailman/options/xotcl>,
+ <mailto:xotcl-request@alice.wu-wien.ac.at?subject=unsubscribe> 
+List-Archive: <http://alice.wu-wien.ac.at/pipermail/xotcl/> 
+List-Post: <mailto:xotcl@alice.wu-wien.ac.at> 
+List-Help: <mailto:xotcl-request@alice.wu-wien.ac.at?subject=help> 
+List-Subscribe: <http://alice.wu-wien.ac.at/mailman/listinfo/xotcl>,
+ <mailto:xotcl-request@alice.wu-wien.ac.at?subject=subscribe> 
+Errors-To: xotcl-bounces@alice.wu-wien.ac.at 
+Sender: xotcl-bounces@alice.wu-wien.ac.at 
+--------------------------------------
+Hello everyone,
+
+Is there any way to pass arguments to the init method in NX (as in XOTcl)?
+Or is using object parameters on initialization the preferred way in NX
+to initialize an objects instance variables?
+
+Thanks,
+Arthur
+_______________________________________________
+Xotcl mailing list
+Xotcl@alice.wu-wien.ac.at
+http://alice.wu-wien.ac.at/mailman/listinfo/xotcl
+
+
+

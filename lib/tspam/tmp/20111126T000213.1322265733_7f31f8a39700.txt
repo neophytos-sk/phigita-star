@@ -1,0 +1,52 @@
+Received: by web1.extjs.com (Postfix, from userid 33)
+	id C117B6C287; Sat, 26 Nov 2011 00:02:03 +0000 (UTC) 
+To: k2pts@phigita.net 
+Subject: "Ext: Examples and Extras" update 
+X-PHP-Originating-Script: 1000:class_mail.php 
+From: "Sencha Forum" <admin@sencha.com> 
+Auto-Submitted: auto-generated 
+Message-ID: <20111126000203.d508b9b58403@www.sencha.com> 
+X-Priority: 3 
+X-Mailer: vBulletin Mail via PHP 
+Date: Sat, 26 Nov 2011 00:02:03 +0000 (UTC) 
+--------------------------------------
+Dear k2pts,
+
+You are subscribed to the forum Ext: Examples and Extras, there have been 1 new thread(s) and 2 updated thread(s).
+http://www.sencha.com/forum/forumdisplay.php?7-Ext-Examples-and-Extras
+
+The following threads are new:
+************
+Ext Js with Java
+http://www.sencha.com/forum/showthread.php?157160-Ext-Js-with-Java
+In forum: Ext: Examples and Extras
+Started by: luka_gorgadze
+Last post: 25 Nov 2011 2:23 PM
+
+
+The following threads have been updated:
+************
+SEXY CRM
+http://www.sencha.com/forum/showthread.php?156508-SEXY-CRM
+In forum: Ext: Examples and Extras
+Started by: ajaxvador
+Last post: 25 Nov 2011 10:11 AM
+************
+Copy grid cell contents to clipboard
+http://www.sencha.com/forum/showthread.php?13340-Copy-grid-cell-contents-to-clipboard
+In forum: Ext: Examples and Extras
+Started by: peaquino
+Last post: 25 Nov 2011 10:35 PM
+
+
+All the best,
+Sencha Forum
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Unsubscription information:
+
+To unsubscribe from this forum, please visit this page:
+http://www.sencha.com/forum/subscription.php?do=removesubscription&type=forum&subscriptionid=66&auth=3a25e442e8ac3bf8d89a6f9b6eb4f810
+
+
+

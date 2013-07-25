@@ -1,0 +1,8 @@
+Received: from 110.53.31.183 (HELO OABDAV); Wed, 2 Nov 2011 09:30:00 +0800 
+Message-ID: <20111102093106813630@gysanyuan.com> 
+From: =?gb2312?B?yq+80tevytDNs9K7083WrLuvuaTT0M/euavLvg==?= <sanyuan@gysanyuan.com> 
+To:  
+Subject: =?gb2312?B?ytCzodOqz/rKx8bz0rW1xMP8wvYtLS0tzO/PzcPO?= 
+Date: Wed, 2 Nov 2011 09:30:52 +0800 
+X-mailer: Qdmoqcg 1 
+Whoops!  What is a 'application/vnd.ms-excel'?

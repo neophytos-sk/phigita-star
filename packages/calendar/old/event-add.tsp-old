@@ -1,0 +1,242 @@
+ad_page_contract {
+	@author Neophytos Demetriou
+}
+
+tmpl::master {
+
+
+    link -rel "stylesheet" -type "text/css" -href "css/forms.css" -media "all"
+    link -rel "stylesheet" -type "text/css" -href "css/calendar.css" -media "all"
+    script -type "text/javascript" -src "js/calendar.js" -language "javascript"
+
+
+
+	t -disableOutputEscaping {
+	    <table style="background-color: rgb(255, 255, 255);" border="0" cellpadding="0" cellspacing="0" width="100%">
+	    <tbody><tr valign="top">
+	    <td>
+	    <img src="graphics/cleardot" alt="" align="left" border="0" height="450" width="1">
+							
+
+
+<script language="JavaScript">
+    function TimePChanged(elm) {
+      var form_name = "cal_item";
+
+      if (elm == null) return;
+      if (document.forms == null) return;
+      if (document.forms[form_name] == null) return;
+
+      if (elm.value == 0) {
+          
+            document.forms[form_name].elements["start_time.hours"].disabled = true;
+            document.forms[form_name].elements["end_time.hours"].disabled = true;
+          
+            document.forms[form_name].elements["start_time.minutes"].disabled = true;
+            document.forms[form_name].elements["end_time.minutes"].disabled = true;
+          
+      } else {
+          
+            document.forms[form_name].elements["start_time.hours"].disabled = false;
+            document.forms[form_name].elements["end_time.hours"].disabled = false;
+          
+            document.forms[form_name].elements["start_time.minutes"].disabled = false;
+            document.forms[form_name].elements["end_time.minutes"].disabled = false;
+
+      }
+  }
+</script>
+
+
+
+
+  <div id="events">   
+    <form name="cal_item" method="post" action="event-add-2">
+          <table border="0" cellpadding="2" cellspacing="2">
+  <tbody><tr class="form-element">
+
+            
+                
+                  <td class="form-label">
+                
+              
+                What (Event Name)
+                <span class="form-required-mark">*</span>
+               </td>
+            
+                
+                  <td class="form-widget">
+                <input name="title" size="60" type="text">
+              
+
+            </td>
+          </tr>
+
+
+          <tr class="form-element">
+
+            
+                
+                  <td class="form-label">
+                
+              
+                Where
+                <span class="form-required-mark">*</span>                
+               </td>
+            
+                
+                  <td class="form-widget">
+                <input name="venue" size="60" type="text">
+
+            </td>
+          </tr>
+        
+          <tr class="form-element">
+
+            
+                
+                  <td class="form-label">
+                
+              
+                When (Date)
+                <span class="form-required-mark">*</span>
+               </td>
+            
+                
+                  <td class="form-widget">
+                <input name="date" value="" id="sel1" type="text"> <input value=" ... " onclick="return showCalendar('sel1', 'y-m-d');" type="reset"> [YYYY-MM-DD]
+              
+
+            </td>
+          </tr>
+
+
+        
+          <tr class="form-element">
+
+            
+                
+                  <td class="form-label">
+                
+              
+                Start Time
+                
+               </td>
+            
+                
+                  <td class="form-widget">
+                <!-- date start_time begin -->
+<table border="0" cellpadding="0" cellspacing="2">
+<tbody><tr><td nowrap="nowrap"><select style="visibility: visible;" name="start_time.hours"><option value="">--</option><option value="0">00</option><option value="1">01</option><option value="2">02</option><option value="3">03</option><option value="4">04</option><option value="5">05</option><option value="6">06</option><option value="7">07</option><option value="8" selected="selected">08</option><option value="9">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option></select>:</td>
+<td nowrap="nowrap"><select style="visibility: visible;" name="start_time.minutes"><option value="">--</option><option value="0" selected="selected">00</option><option value="5">05</option><option value="10">10</option><option value="15">15</option><option value="20">20</option><option value="25">25</option><option value="30">30</option><option value="35">35</option><option value="40">40</option><option value="45">45</option><option value="50">50</option><option value="55">55</option></select>&nbsp;</td>
+</tr>
+</tbody></table>
+<!-- date start_time end -->
+              
+
+            </td>
+          </tr>
+
+        
+          <tr class="form-element">
+
+            
+                
+                  <td class="form-label">
+                
+              
+                Type of Event
+               </td>
+            
+                
+                  <td class="form-widget">
+
+              <select name="event_type_id" id="event_type_id" class="answer">
+          <option value=""></option>
+        <option value="1">Music (Concerts, nightlife, raves)</option>
+<option value="2">Performing Arts (Theatre, dance, opera, comedy)</option>
+<option value="3">Media (Film, book readings)</option>
+<option value="4">Social (Rallies, gatherings, user groups)</option>
+
+<option value="5">Education (Lectures, workshops)</option>
+<option value="6">Commercial (Conventions, expos, flea markets)</option>
+<option value="7">Festivals (Big events, often multiple days)</option>
+<option value="8">Sports (Sporting events, recreation)</option>
+<option value="9">Visual Arts (Art exhibitions, photography)</option>
+      </select>
+
+            </td>
+          </tr>
+
+
+
+          <tr class="form-element">
+
+            
+                
+                  <td class="form-label">
+                
+              
+                Description
+                
+               </td>
+            
+                
+                  <td class="form-widget">
+                <textarea name="description" cols="60" wrap="soft" rows="3"></textarea>              
+
+            </td>
+          </tr>
+
+          <tr class="form-element">
+
+            
+                
+                  <td class="form-label">
+                
+              	<input type=hidden name=captcha.id value=AEE9U8>
+                <img src=captcha?id=A3E9U8>
+                <span class="form-required-mark">*</span>
+                
+               </td>
+            
+                
+                  <td class="form-widget">
+                <input type=text name=captcha.code>              
+
+            </td>
+          </tr>
+
+        
+
+        
+          <tr class="form-element">
+            <td colspan="2" align="left">
+              <input name="formbutton:ok" value="       OK       " type="submit">
+            </td>
+          </tr>
+        
+
+</tbody></table>
+
+
+       <span class="form-required-mark">*</span> required </form>
+  </div>
+
+
+<script language="JavaScript">
+  TimePChanged();
+</script>
+
+
+
+						</td>
+					</tr>
+				</tbody></table>
+
+
+
+
+}
+	
+}

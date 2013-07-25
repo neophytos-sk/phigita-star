@@ -1,0 +1,175 @@
+contract {
+    param -id "id" -check "naturalnum notnull"
+}
+
+val -id user_id { return [ad_conn user_id] }
+val -id context_user_id { return [ad_conn ctx_uid] }
+
+datastore \
+    -id userdata \
+    -singleton true \
+    -select {
+	screen_name
+	{first_names || ' ' || last_name as full_name}
+    } \
+    -from_class ::CC_Users \
+    -where [list "user_id=:context_user_id"] \
+    -limit 1
+
+datastore \
+    -id echodata \
+    -scope context_user \
+    -from_class ::echo::Message \
+    -where [list "id=:id"] \
+    -where_if {
+	"@{user_id} == 0" => "public_p='t'"
+    } \
+    -limit 1 \
+    -extend {
+	set content [::xo::structured_text::minitext_to_html $content]
+	set pretty_date [::util::age_pretty \
+			       -timestamp_ansi $creation_date \
+			       -sysdate_ansi [clock_to_ansi [clock seconds]]]
+    }
+
+guard { return @{echodata:rowcount} }
+
+datastore \
+    -id commentdata \
+    -scope context_user \
+    -from_class ::echo::Message_Comment \
+    -where [list "parent_id=:id"] \
+    -order "creation_date" \
+    -extend {
+	set pretty_date [::util::age_pretty \
+			       -timestamp_ansi $creation_date \
+			       -sysdate_ansi [clock_to_ansi [clock seconds]]]
+
+	set content_in_html [::xo::structured_text::minitext_to_html $content]
+    }
+
+# for includelet
+val -id selectedtab { return "echo-post" }
+
+# ---------------------------------------------------------------------------------------------
+
+css { 
+    .special_tag {color: #600;}
+    #echo-header {color: #660;}
+    #echo_file_0 {margin-top:5px;}
+    #echo_file_0 a {color: #666; }
+    .echo-message {
+	padding:0;
+	display:block;
+	font-family:georgia;
+	font-size:2em;
+	font-weight:bold;
+	line-height:1.25em;
+    }
+
+    .echo-date {
+	display: block;
+	line-height: 20px;
+	color: #999999;
+	font-size:small;
+    }
+    .echo-date small:before {
+	content: '-- ';
+    }
+    .echo-date small a { color: #666; }
+    .echo-comment {margin: 0 0 10px 20px;padding: 0 0 0 10px;border-left: 1px dashed #aaa;}
+    .echo-comment a { color: #666; }
+    .echo_action {
+	width:40px;
+    }
+
+    #btnAddComment {font-variant:small-caps;}
+
+}
+
+
+master -src "/templates/www-shared.master.inc" -title "echo - @{object_get.userdata.full_name}" {
+    include -src "/templates/www-shared.tabs.inc"
+
+    tpl -with "echodata" {
+
+	div -class "well" {
+	    div -class "echo-message" {
+		nt @{content:noquote}
+	    }
+	    div -class "echo-date" {
+		small {
+		    t "@{pretty_date} via @{device}"
+		    tpl -if "@{public_p}" {
+			nt " &#183; "
+			span -class "special_tag" {
+			    t "#public"
+			}
+		    }
+		    tpl -if "@{val.user_id} == @{creation_user}" {
+			nt " &#183; "
+			a -href "http://echo.phigita.net/message-remove?id=@{id}&return_url=http://www.phigita.net" -onclick "return confirm('Sure you want to delete this update? There is NO undo!');" {
+			    t "remove"
+			}
+		    }
+		}
+	    }
+	}
+    }
+
+
+    h3 {
+	i {
+	    tpl -if "@{commentdata:rowcount} == 1" {
+		t "showing 1 comment"
+	    }
+	    tpl -if "@{commentdata:rowcount} > 1 " {
+		t "showing all @{commentdata:rowcount} comments"
+	    }
+	}
+    }
+    tpl -for commentdata {
+	blockquote {
+	    t @{content_in_html:noquote}
+	    br
+	    small {
+		a -href "/~@{screen_name}/" {
+		    t @{screen_name}
+		}
+		t ", @{pretty_date}"
+	    }
+	}
+    }
+
+    span -id cbox_@{id}	
+
+    # comment form
+    tpl -if @{val.registered_p} {
+	set action_comment_add "http://echo.phigita.net/comment-add"
+	div -id echo_comment_box {
+	    form -action ${action_comment_add} -method "post" {
+		input -id echo_parent_id -type "hidden" -name parent_id -value @{param.id}
+		div -class "control-group" {
+		    label -for echo_comment_text { t "Enter your comment below" }
+		    div -class "controls" {
+			textarea \
+			    -id echo_comment_text \
+			    -class "input-block-level" \
+			    -name content \
+			    -rows "2" \
+			    -wrap soft
+		    }
+		}
+		div -class "form-actions" {
+		    button -id btnAddComment -type submit -class "btn btn-warning" { t "Add Comment" }
+		}
+	    }
+	}
+    }
+
+    div -x-master-renderTo "sidebar" {
+	# TODO: if allow_ads_p
+    }
+
+}
+

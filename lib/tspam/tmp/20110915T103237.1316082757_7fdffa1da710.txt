@@ -1,0 +1,16 @@
+Return-path: <webmaster@phigita.net> 
+Received: from [117.211.11.47] (port=5927 helo=MMCCOFFICE)
+	by vmx.terra.com with asmtp 
+	id 6377B3-0003C4-80
+	for <webmaster@phigita.net>; Thu, 15 Sep 2011 18:02:23 +0530 
+Message-ID: <A81C28BEC1094B05B1D25DA1381A8070@MMCCOFFICE> 
+From: =?koi8-r?B?IvHCzM/Lzy3U1dQi?= <blentnzp1@satlink.com> 
+To: <webmaster@phigita.net> 
+Subject: =?koi8-r?B?SXBob25lIDNHcyDawSAxNjUwMCDS1cIg8sHT0NLPxMHWwSDTy8zBxME=?= 
+Date: Thu, 15 Sep 2011 18:02:23 +0530 
+X-Priority: 3 
+X-MSMail-Priority: Normal 
+X-Mailer: Microsoft Windows Mail 6.0.6001.18000 
+X-MimeOLE: Produced By Microsoft MimeOLE V6.0.6001.18049 
+X-Spam: Not detected 
+X-Mras: Ok 

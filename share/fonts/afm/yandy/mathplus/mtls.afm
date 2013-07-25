@@ -1,0 +1,92 @@
+StartFontMetrics 2.0
+Comment CreationDate: Mon Jan 20 22:03:09 1997
+Comment MS-WindowsName MTLS-O
+Comment MacIntoshName MTLS-O
+Version 1.000
+Notice Copyright (c) 1997 Publish or Perish, Inc.  Hinting Copyright (c) 1997 Y&Y, Inc.  All Rights Reserved.
+FullName MTLS
+FamilyName MathTime
+Weight Normal
+IsFixedPitch false
+ItalicAngle 0
+UnderlinePosition -133
+UnderlineThickness 20
+FontName MTLS
+Comment UniqueID 5092749
+FontBBox 30 -237 977 710
+CapHeight 666
+XHeight 441
+Ascender 710
+Descender -237
+EncodingScheme FontSpecific
+StartCharMetrics 68
+C 32 ; WX 333 ; N space ; B 0 0 0 0 ;
+C 42 ; WX 0 ; N asterisknull ; B 0 0 0 0 ;
+C 48 ; WX 722 ; N A1 ; B 58 -18 667 666 ;
+C 49 ; WX 820 ; N E1 ; B 42 -18 858 666 ;
+C 50 ; WX 803 ; N G1 ; B 52 -18 738 666 ;
+C 51 ; WX 590 ; N G2 ; B 40 -18 591 666 ;
+C 52 ; WX 560 ; N I1 ; B 93 -18 579 666 ;
+C 53 ; WX 810 ; N L1 ; B 60 -18 740 666 ;
+C 54 ; WX 812 ; N Q1 ; B 144 -18 750 666 ;
+C 55 ; WX 529 ; N S1 ; B 64 -18 525 666 ;
+C 56 ; WX 540 ; N r1 ; B 40 -10 482 457 ;
+C 57 ; WX 524 ; N z1 ; B 36 -237 466 428 ;
+C 65 ; WX 842 ; N A ; B 64 -18 778 666 ;
+C 66 ; WX 820 ; N B ; B 64 -18 798 666 ;
+C 67 ; WX 669 ; N C ; B 64 -18 645 666 ;
+C 68 ; WX 871 ; N D ; B 64 -18 873 666 ;
+C 69 ; WX 553 ; N E ; B 69 -18 568 666 ;
+C 70 ; WX 700 ; N F ; B 64 -18 858 666 ;
+C 71 ; WX 642 ; N G ; B 73 -229 578 666 ;
+C 72 ; WX 890 ; N H ; B 66 -18 926 666 ;
+C 73 ; WX 575 ; N I ; B 66 -18 505 666 ;
+C 74 ; WX 642 ; N J ; B 74 -229 605 666 ;
+C 75 ; WX 933 ; N K ; B 66 -18 929 666 ;
+C 76 ; WX 810 ; N L ; B 60 -18 739 666 ;
+C 77 ; WX 1013 ; N M ; B 64 -18 977 666 ;
+C 78 ; WX 805 ; N N ; B 68 -18 923 666 ;
+C 79 ; WX 745 ; N O ; B 64 -18 693 666 ;
+C 80 ; WX 745 ; N P ; B 64 -18 806 666 ;
+C 81 ; WX 800 ; N Q ; B 64 -18 736 666 ;
+C 82 ; WX 880 ; N R ; B 64 -18 825 666 ;
+C 83 ; WX 571 ; N S ; B 54 -18 539 666 ;
+C 84 ; WX 560 ; N T ; B 67 -18 758 666 ;
+C 85 ; WX 902 ; N U ; B 87 -18 845 666 ;
+C 86 ; WX 728 ; N V ; B 65 -18 723 666 ;
+C 87 ; WX 914 ; N W ; B 94 -18 954 666 ;
+C 88 ; WX 902 ; N X ; B 85 -18 844 666 ;
+C 89 ; WX 724 ; N Y ; B 91 -229 672 666 ;
+C 90 ; WX 757 ; N Z ; B 54 -18 698 666 ;
+C 97 ; WX 667 ; N a ; B 40 -10 609 441 ;
+C 98 ; WX 630 ; N b ; B 40 -10 604 710 ;
+C 99 ; WX 577 ; N c ; B 40 -10 519 441 ;
+C 100 ; WX 694 ; N d ; B 40 -10 636 710 ;
+C 101 ; WX 580 ; N e ; B 40 -10 521 441 ;
+C 102 ; WX 466 ; N f ; B 66 -237 455 710 ;
+C 103 ; WX 604 ; N g ; B 71 -237 546 441 ;
+C 104 ; WX 670 ; N h ; B 41 -10 611 710 ;
+C 105 ; WX 430 ; N i ; B 35 -10 372 654 ;
+C 106 ; WX 542 ; N j ; B 30 -237 484 655 ;
+C 107 ; WX 676 ; N k ; B 41 -10 618 710 ;
+C 108 ; WX 495 ; N l ; B 54 -10 437 710 ;
+C 109 ; WX 929 ; N m ; B 40 -10 871 441 ;
+C 110 ; WX 704 ; N n ; B 40 -10 646 441 ;
+C 111 ; WX 613 ; N o ; B 44 -10 613 441 ;
+C 112 ; WX 738 ; N p ; B 59 -237 680 441 ;
+C 113 ; WX 606 ; N q ; B 60 -237 548 441 ;
+C 114 ; WX 638 ; N r ; B 40 0 580 441 ;
+C 115 ; WX 584 ; N s ; B 64 -10 526 481 ;
+C 116 ; WX 446 ; N t ; B 40 -10 388 549 ;
+C 117 ; WX 704 ; N u ; B 40 -10 646 441 ;
+C 118 ; WX 660 ; N v ; B 40 -10 660 441 ;
+C 119 ; WX 890 ; N w ; B 40 -10 889 441 ;
+C 120 ; WX 605 ; N x ; B 37 -10 548 441 ;
+C 121 ; WX 665 ; N y ; B 40 -237 607 441 ;
+C 122 ; WX 550 ; N z ; B 39 -10 502 441 ;
+C 123 ; WX 430 ; N dotlessi ; B 35 -10 372 441 ;
+C 124 ; WX 542 ; N dotlessj ; B 30 -237 484 441 ;
+C 129 ; WX 600 ; N yandy ; B 50 -52 575 779 ;
+C -1 ; WX 333 ; N nbspace ; B 0 0 0 0 ;
+EndCharMetrics
+EndFontMetrics

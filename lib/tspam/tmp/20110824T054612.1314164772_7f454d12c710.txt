@@ -1,0 +1,16 @@
+Return-path: <webmaster@phigita.net> 
+Received: from [86.98.144.191] (port=7840 helo=ALFUTAIMBM)
+	by aspmx.l.google.com with asmtp 
+	id 123DFC-000230-10
+	for <webmaster@phigita.net>; Wed, 24 Aug 2011 09:46:17 +0400 
+Message-ID: <F9A1FA34E6884476B90F4BA1AD4FBA54@ALFUTAIMBM> 
+From: =?koi8-r?B?IuXMxc7BIg==?= <barricadesxr8513@expertwitness.com> 
+To: <webmaster@phigita.net> 
+Subject: =?koi8-r?B?y9XEwSDQ0s/QwczJ?= 
+Date: Wed, 24 Aug 2011 09:46:17 +0400 
+X-Priority: 3 
+X-MSMail-Priority: Normal 
+X-Mailer: Microsoft Windows Mail 6.0.6001.18000 
+X-MimeOLE: Produced By Microsoft MimeOLE V6.0.6001.18049 
+X-Spam: Not detected 
+X-Mras: Ok 

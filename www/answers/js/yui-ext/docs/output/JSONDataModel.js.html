@@ -1,0 +1,83 @@
+<html><head><title>JSONDataModel.js</title><link rel="stylesheet" type="text/css" href="../resources/style.css" media="screen"/></head><body><h1>JSONDataModel.js</h1><pre class="highlighted"><code>
+<i>/**
+ * @class YAHOO.ext.grid.JSONDataModel
+ * This is an implementation of a DataModel used by the Grid. It works 
+ * <b>with</b> JSON data.
+ * &lt;br&gt;Example schema:
+ * &lt;pre&gt;&lt;code&gt;
+ * <b>var</b> schema = {
+ *     root: 'Results.Result',
+ *     id: 'ASIN',
+ *     fields: ['Author', 'Title', 'Manufacturer', 'ProductGroup']
+ * };
+ * &lt;/code&gt;&lt;/pre&gt;
+ * @extends YAHOO.ext.grid.LoadableDataModel
+ * @constructor
+*/</i>
+YAHOO.ext.grid.JSONDataModel = <b>function</b>(schema){
+    YAHOO.ext.grid.JSONDataModel.superclass.constructor.call(<b>this</b>, YAHOO.ext.grid.LoadableDataModel.JSON);
+    <i>/**@private*/</i>
+    <b>this</b>.schema = schema;
+};
+YAHOO.extendX(YAHOO.ext.grid.JSONDataModel, YAHOO.ext.grid.LoadableDataModel, {
+    <i>/**
+     * Overrides loadData <b>in</b> LoadableDataModel to process JSON data
+     * @param {Object} data The JSON object to load
+     * @param {Function} callback
+     */</i>
+    loadData : <b>function</b>(data, callback, keepExisting){
+    	<b>var</b> idField = <b>this</b>.schema.id;
+    	<b>var</b> fields = <b>this</b>.schema.fields;
+    	try{
+        	<b>if</b>(this.schema.totalProperty){
+                <b>var</b> v = parseInt(eval('data.' + <b>this</b>.schema.totalProperty), 10);
+                <b>if</b>(!isNaN(v)){
+                    <b>this</b>.totalCount = v;
+                }
+            }
+        	<b>var</b> rowData = [];
+    	    <b>var</b> root = eval('data.' + <b>this</b>.schema.root);
+    	    <b>for</b>(var i = 0; i &lt; root.length; i++){
+    			<b>var</b> node = root[i];
+    			<b>var</b> colData = [];
+    			colData.node = node;
+    			colData.id = (<b>typeof</b> node[idField] != 'undefined' &amp;&amp; node[idField] !== '' ? node[idField] : String(i));
+    			<b>for</b>(var j = 0; j &lt; fields.length; j++) {
+    			    <b>var</b> val = node[fields[j]];
+    			    <b>if</b>(typeof val == 'undefined'){
+    			        val = '';
+    			    }
+    	            <b>if</b>(this.preprocessors[j]){
+    	                val = <b>this</b>.preprocessors[j](val);
+    	            }
+    	            colData.push(val);
+    	        }
+    	        rowData.push(colData);
+    		}
+    		<b>if</b>(keepExisting !== true){
+    		  <b>this</b>.removeAll();
+    		}
+            <b>this</b>.addRows(rowData);
+        	<b>if</b>(typeof callback == '<b>function</b>'){
+    	    	callback(<b>this</b>, true);
+    	    }
+          	<b>this</b>.fireLoadEvent();
+    	}catch(e){
+    		<b>this</b>.fireLoadException(e, null);
+    		<b>if</b>(typeof callback == '<b>function</b>'){
+    	    	callback(<b>this</b>, false);
+    	    }
+    	}
+    },
+    
+    <i>/**
+     * Overrides getRowId <b>in</b> DefaultDataModel to <b>return</b> the ID value of the specified node. 
+     * @param {Number} rowIndex
+     * @<b>return</b> {Number}
+     */</i>
+    getRowId : <b>function</b>(rowIndex){
+        <b>return</b> this.data[rowIndex].id;
+    }
+});</code></pre><hr><div style="font-size:10px;text-align:center;color:gray;">yui-ext - Copyright &copy; 2006 Jack Slocum.  |
+    Yahoo! UI - Copyright &copy; 2006 Yahoo! Inc.<br />All rights reserved.</div>
+    </body></html>

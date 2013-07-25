@@ -1,0 +1,46 @@
+01
+   basic drawing program is working
+   but, need to do better abstraction of drawing area (a drawable)
+     note: drawables can overlap, allowing multiple axes on same area, 
+           little blowups, etc.
+   (there can be more than one on a canvas)
+   also, axes are just decoration, should be possible
+     to easily plant more than one, decorate differently, etc.
+  
+02
+   initial versions of most everything
+   missing: labels! 
+     can't think of elegant way to incorporate this into each PlotXXX routine
+     basically, just want some "example" of how to draw something, but this is 
+     a pain given lots of different styles of drawing, filling, etc.
+   really, what is needed is the ability to 
+     draw a single bar
+     draw a single point
+     etc.
+   in the correct "style"
+
+03
+   added namespaces
+   working on Axis2 (simple unified axis command)
+   working on PsPolygon (generic fillable polygon)
+
+04
+   rudimentary simple AxisTicsLabels command
+   added PsPolygon
+   added '-fill' option to PlotLines (allowed for filled underlines)
+   added '-file' option to PsRender
+   added better pattern support for all Ps* commands (including polygon)
+   added more demo scripts: make-filled make-linespoints
+
+05
+   added a bunch of stuff, I can't even remember what
+   fixed PlotLines to avoid having to gather up a long list of points and then plot them
+   plot:  added PlotFunction, PlotVerticalIntervals, PlotVerticalFill (moving some of this out of PlotLines)
+   table: added routines to compute mean, add columns, do math over a column, and so forth
+   <<what else?>>
+   scripts: do 'ls -l 04/make*.tcl' and 'ls -l 05/make*.tcl' 
+     and marvel at the difference
+
+
+
+

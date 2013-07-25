@@ -1,0 +1,13 @@
+Received: from zpwfj([110.52.6.88]) by heinfo.net(AIMC 3.1.0.0)
+	with SMTP id jm184ea83d3b; Thu, 27 Oct 2011 00:51:24 +0800 
+Message-ID: <20111027004509360555@heinfo.net> 
+From: =?gb2312?B?zO/Uz8DW?= <xijing@heinfo.net> 
+To:  
+Subject: =?gb2312?B?tNOhsLrPuPGhsbW9obDTxdDjobGjrLPJzqrAz7DltcTX87Dy09Kx2w==?=
+	=?gb2312?B?LS0tLczv1M/A1g==?= 
+Date: Thu, 27 Oct 2011 00:45:04 +0800 
+X-mailer: Wzjpmick 5 
+X-AIMC-AUTH: xijing 
+X-AIMC-MAILFROM: xijing@heinfo.net 
+X-AIMC-Msg-ID: KpShGT1B 
+Whoops!  What is a 'application/vnd.ms-excel'?

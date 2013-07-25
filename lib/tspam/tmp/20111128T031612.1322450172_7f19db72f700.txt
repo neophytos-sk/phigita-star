@@ -1,0 +1,201 @@
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed/relaxed; s=k1; d=mail74.us1.rsgsv.net;
+ h=Subject:From:Reply-To:To:Date:Message-ID:List-Unsubscribe:Sender:Content-Type:MIME-Version; i=newsletter=3Dphileleftheros.com@mail74.us1.rsgsv.net;
+ bh=yug6ngClta82gKOftUeXPzigG5g=;
+ b=VLIqPmLSo09BZOyY2Pj5H/F7qo6cIwZA4V2Ss8sORnHEhlqMfiEcffYKHpniiQPK7VkLAs9Mg01E
+   lejdD2XO736dwoLqCbo5wqfW8/UvUobhXP+hPyqBbCOrS3uL0L07RkxualEuQIRp+XuGFb9OScG0
+   zdWDpZlzm0f+L2Pkls4= 
+DomainKey-Signature: a=rsa-sha1; c=nofws; q=dns; s=k1; d=mail74.us1.rsgsv.net;
+ b=O3o6XVFF6T0seiGNjGTbJMm6IR0ca1667C6FgLlBFWdqRv9FTDp5HU8BpQhnY3YQqwz3EPdL+k8h
+   GTkLZlqjaNW45tQoKzQ4/2hgavTTCE597eNOlPKb8trh4Z8UImu0lrvOkz58QeIB1o45L5dZYuUt
+   cQjpeT/+RQi3fcvtmus=; 
+Received: from (127.0.0.1) by mail74.us1.rsgsv.net (PowerMTA(TM) v3.5r16) id hqbuf40lj3g0 for <k2pts@phigita.net>; Sun, 27 Nov 2011 22:16:01 -0500 (envelope-from <bounce-mc.us2_6419294.1287869-k2pts=phigita.net@mail74.us1.rsgsv.net>) 
+Subject: =?utf-8?Q?Philenews=20Newsletter=2028=2F11=2F2011?= 
+From: =?utf-8?Q?Phileleftheros=20Newsletter?= <newsletter@phileleftheros.com> 
+Reply-To: =?utf-8?Q?Phileleftheros=20Newsletter?= <newsletter@phileleftheros.com> 
+To: <k2pts@phigita.net> 
+Date: Sun, 27 Nov 2011 22:16:01 -0500 
+Message-ID: <84e8c0ea4dc808b59204e2171b4828836f9.20111128031538@mail74.us1.rsgsv.net> 
+X-Mailer: MailChimp Mailer - **CID29c291942cb4828836f9** 
+X-Campaign: mailchimp84e8c0ea4dc808b59204e2171.29c291942c 
+X-campaignid: mailchimp84e8c0ea4dc808b59204e2171.29c291942c 
+x-im: 38509-29c291942c 
+X-Report-Abuse: Please report abuse for this campaign here: http://www.mailchimp.com/abuse/abuse.phtml?u=84e8c0ea4dc808b59204e2171&id=29c291942c&e=b4828836f9 
+x-accounttype: pd 
+List-Unsubscribe: <mailto:unsubscribe-84e8c0ea4dc808b59204e2171-29c291942c-b4828836f9@mailin1.us2.mcsv.net?subject=unsubscribe>, <http://philenews.us2.list-manage.com/unsubscribe?u=84e8c0ea4dc808b59204e2171&id=13cea9817b&e=b4828836f9&c=29c291942c> 
+Sender: "Phileleftheros Newsletter" <newsletter=phileleftheros.com@mail74.us1.rsgsv.net> 
+x-mcda: FALSE 
+--------------------------------------
+Trouble viewing this email?[1]Click Here
+    Links:
+      1. http://us2.campaign-archive2.com/?u=84e8c0ea4dc808b59204e2171&id=29c291942c&e=b4828836f9
+
+  right logo _ΔΕΥΤΕΡΑ
+  28 ΝΟΕΜΒΡΙΟΥ 2011_
+  Philenews
+
+  left logo
+  _[2]www.philenews.com
+  [3]www.sentragoal.com.cy _
+  line
+    Links:
+      2. http://www.philenews.com
+      3. http://www.sentragoal.com.cy
+
+ΠΡΩΤΟ ΘΕΜΑ
+
+  [4]Δεκάδες οικογένειες στα όρια της ανέχειας
+    Links:
+      4. http://www.philenews.com/el-gr/New-Homepage-With-Slider/4995/87385
+
+  Στα όρια της ανέχειας οδηγούνται ολοένα και περισσότερες οικογένειες, οι
+  οποίες αδυνατούν να καλύψουν ακόμα και τις βασικές ανάγκες διατροφής τους.
+  Οι επιπτώσεις της οικονομικής δυσπραγίας αρχίζουν να γίνονται ολοένα και
+  πιο έντονες.
+
+"Φ" ΑΠΟΚΛΕΙΣΤΙΚΟ
+
+  [5]Μουρμούρα για τις απλήρωτες υπερωρίες
+    Links:
+      5. http://www.philenews.com/el-gr/Eidiseis-Kypros/22/87384
+
+  Η αποζημίωση υπερωριών με… μέρες ανάπαυσης, ελλείψει χρημάτων, προκαλεί τη
+  δυσαρέσκεια μελών της Αστυνομίας στις επαρχίες Αμμοχώστου και Λάρνακας.
+
+  [6]Εργολάβοι έχασαν τον ύπνο τους
+    Links:
+      6. http://www.philenews.com/el-gr/Eidiseis-Kypros/22/87383
+
+  Έχασαν  τον  ύπνο  τους  εργολάβοι  και γενικά όσοι ασχολούνται με την
+  οικοδομική  βιομηχανία  με  την  ανεξέλεγκτη  δράση  ληστών μεταλλικών
+  αντικειμένων. Το τελευταίο διάστημα παρατηρείται έξαρση του φαινομένου, και
+  οι ζημιές ανέρχονται σε χιλιάδες ευρώ.
+
+ΟΙΚΟΝΟΜΙΑ
+
+  [7]Ασφυκτικό πρέσινγκ για την οικονομία
+    Links:
+      7. http://www.philenews.com/el-gr/Oikonomia-Kypros-XAK/3353/87388
+
+  Εντείνονται  οι  πολιτικές  ζυμώσεις για την οικονομία, σε μια από τις
+  κρίσιμες  εβδομάδες,  υπό  το  βάρος της Κομισιόν, των αξιολογητών που
+  τοποθετούν την Κύπρο ένα σκαλοπάτι πριν τα «σκουπίδα», των ξένων πιστωτών
+  και το ενδεχόμενο για ένταξη της Κύπρου στο Μηχανισμό Στήριξης.
+
+  [8]Πολλά εμπόδια πρέπει να περάσουν οι τράπεζες
+    Links:
+      8. http://www.philenews.com/el-gr/Oikonomia-Kypros-XAK/3353/87389
+
+  Σε  τεντωμένο σκοινί βρίσκονται οι ισολογισμοί των τραπεζών ενόψει του
+  τρίτου τριμήνου που έκλεισε και του τέταρτου που ολοκληρώνεται μέχρι τέλος
+  του έτους και θα ανακοινωθεί τον Φεβρουάριο του 2012.
+
+  [9]ΑΠΟΕΛ: Δύσκολη νίκη, «μαγικά» γκολ!
+    Links:
+      9. http://www.sentragoal.com.cy/article.asp?catid=19168&subid=2&pubid=128866137
+
+  Αυτή τη φορά ο ΑΠΟΕΛ δεν σκόνταψε κόντρα στο σκληροτράχηλο Παραλίμνι και
+  πήρε μια δύσκολή, αλλά σημαντική νίκη με 2-0. Μαρσίνιο και Πίντο πέτυχαν
+  δύο όμορφα σε εκτέλεση γκολ...
+
+ΕΝΔΙΑΦΕΡΟΥΝ ΚΙ' ΑΥΤΑ
+
+  [10]Κλαίει και δακρύζει… πέτρες!
+    Links:
+      10. http://www.philenews.com/el-gr/Eidiseis-Ta-Perierga/4688/87325
+
+  Ανησυχία προκαλεί στους γιατρούς ένα 7χρονο κορίτσι καθώς τα μάτια της
+  δακρύζουν… πέτρες! Ο λόγος για την Kura Nitya που κατάγεται από ένα χωριό
+  κοντά στο Hyderabad της Ινδίας.
+
+  [11]Τώρα το κολλαγόνο πίνεται
+    Links:
+      11. http://www.philenews.com/el-gr/Beauty/1156/87296
+
+  Mέχρι  τώρα ξέρατε για το ενέσιμο κολλαγόνο. Τώρα, οι ειδικοί λένε πως
+  πίνεται, και μάλιστα υποστηρίζουν ότι σας ομορφαίνει... Πως; Απλά, πίνετε
+  μια γουλιά και πέφτετε για ύπνο. Τα υπόλοιπα τα κάνει μόνος του οργανισμός
+  σας.
+
+  _ΕΛΛΑΔΑ_
+
+  [12]Εισιτήριο εξόδου από τη Δευτέρα για 16.000 δημοσίους υπαλλήλους
+    Links:
+      12. http://www.philenews.com/el-gr/Eidiseis-Ellada/23/87382/eisitirio-exodou-apo-ti-deftera-gia-16000-dimosious-ypallilous
+
+  [13]Έκανα  λάθη,  παραδέχεται  σε συνέντευξή του στο Spiegel ο Γιώργος
+  Παπανδρέου
+    Links:
+      13. http://www.philenews.com/el-gr/Eidiseis-Ellada/23/87381/ekana-lathi-paradechetai-se-synentefxi-tou-sto-spiegel-o-giorgos-papandreou
+
+  _ΚΟΣΜΟΣ_
+  [14]Η υποβάθμιση του Βελγίου από την S&P άνοιξε το δρόμο για σχηματισμό
+  κυβέρνησης
+    Links:
+      14. http://www.philenews.com/el-gr/Eidiseis-Kosmos/25/87378/i-ypovathmisi-tou-velgiou-apo-tin-sp-anoixe-to-dromo-gia-schimatismo-kyvernisis
+
+  _ΑΘΛΗΤΙΚΑ ΝΕΑ_
+
+  _ ΚΥΠΡΟΣ_
+
+  [15]Άρης - Απόλλων: Ο Άη... Βασιλείου με τα δώρα!
+    Links:
+      15. http://www.sentragoal.com.cy/article.asp?catid=19168&subid=2&pubid=128866162
+
+  [16]Ομόνοια: Νίκη για χίλιους δυο λόγους!
+    Links:
+      16. http://www.sentragoal.com.cy/article.asp?catid=19169&subid=2&pubid=128865296
+
+  [17]ΑΕΛ: Θέλει τον Ονουάτσι της...
+    Links:
+      17. http://www.sentragoal.com.cy/article.asp?catid=19173&subid=2&pubid=128866183
+
+  _ ΕΛΛΑΔΑ & ΚΟΣΜΟΣ_
+
+  [18]ΟΣΦΠ: Επεσε στο -5 βλέποντας... αστεράκια!
+    Links:
+      18. http://www.sentragoal.com.cy/article.asp?catid=18650&subid=2&pubid=128866155
+
+  [19]ΠΑΟ: Ουσιαστικός και πρωτοπόρος! (vds)
+    Links:
+      19. http://www.sentragoal.com.cy/article.asp?catid=18681&subid=2&pubid=128866201
+
+  _ΧΡΗΣΙΜΑ_
+
+  Γιορτάζουν σήμερα:
+
+  Καμία γιορτή
+
+  [20]Αεροπορικές πτήσεις
+    Links:
+      20. http://www.philenews.com/el-gr/Aeroporikes-Ptiseis
+
+  [21]Φαρμακεία
+    Links:
+      21. http://www.philenews.com/el-gr/Farmakeia
+
+  [22]Λιμάνια
+    Links:
+      22. http://www.philenews.com/el-gr/Limeniki-Kinisi
+
+  [23]Τηλέφωνα
+    Links:
+      23. http://www.philenews.com/el-gr/Tilefwna
+
+  [24]Κληρώσεις /[25]Λαχεία
+    Links:
+      24. http://www.philenews.com/el-gr/Klirwseis-OPAP
+      25. http://www.philenews.com/el-gr/Klirwseis-OPAP
+
+  Copyright © 2011 Phileleftheros, All rights reserved.
+
+  [26]Unsubscribe from this list | [27]Update subscription preferences
+    Links:
+      26. http://philenews.us2.list-manage.com/unsubscribe?u=84e8c0ea4dc808b59204e2171&id=13cea9817b&e=b4828836f9&c=29c291942c
+      27. http://philenews.us2.list-manage1.com/profile?u=84e8c0ea4dc808b59204e2171&id=13cea9817b&e=b4828836f9
+
+  [28]Αν επιθυμείτε να κάνετε εγγραφή στο newsletter κάντε κλικ εδώ
+    Links:
+      28. http://eepurl.com/getzb
+
+  To ensure future delivery of our e-mails,
+  please add newsletter@phileleftheros.com to your contacts.

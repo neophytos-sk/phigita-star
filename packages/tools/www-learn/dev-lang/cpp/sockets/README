@@ -1,0 +1,4 @@
+start server with "./simple-server localhost 80"
+then you can connect as a client using "telnet localhost 80"
+write something, e.g. "this is a test" press enter, then ctrl+] and quit
+the server will echo the message and then print "beep :)"

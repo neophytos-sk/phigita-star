@@ -1,0 +1,27 @@
+#global __no_cache
+#set __no_cache 0
+
+set extra_url [ad_conn extra_url]
+
+set action ""
+set token ""
+lassign [split ${extra_url} -] action id payload
+
+switch -exact -- ${action} {
+	a {
+	    set page join-1
+	}
+	c {
+	    set page join-2
+        }
+	u {	
+	    set page join-check
+	}
+	default {
+	    set page notfound
+	    rp_returnnotfound
+	}
+}
+
+rp_form_put token ${id}-${payload}
+rp_internal_redirect /packages/account-manager/tmpl/${page}

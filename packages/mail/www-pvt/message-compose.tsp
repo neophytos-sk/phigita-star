@@ -1,0 +1,16 @@
+::xo::kit::require_secure_conn
+
+tmpl::master {
+    form -action message-compose-2 -method post {
+	button -type submit { t "SEND" }
+	p -class sep
+	t "To: "
+	input -type text -name "to"
+	p -class sep
+	t "Subject: "
+	input -type text -name "subject"
+	p -class sep
+	textarea -name "content" -rows 10 -cols 80
+
+    }
+}

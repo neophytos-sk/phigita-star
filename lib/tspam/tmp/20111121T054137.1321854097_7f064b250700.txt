@@ -1,0 +1,17 @@
+Return-path: <webmaster@phigita.net> 
+Received: from [196.20.202.141] (port=0771 helo=BFM04)
+	by absfl.com with asmtp 
+	id 374F81-000062-56
+	for <webmaster@phigita.net>; Mon, 21 Nov 2011 09:39:22 +0400 
+Message-ID: <45A1538C1A7244C0A5F62C6478F30678@BFM04> 
+From: =?koi8-r?B?IuLPztPByiDHwczF0sXRIg==?= <satyrs86@absfl.com> 
+To: <webmaster@phigita.net> 
+Subject: =?koi8-r?B?8sHT0NLPxMHWwSDR0M/O08vJyCDCz87TwcouIPDPxMHSz8sgzsEgxM/M?=
+	=?koi8-r?B?x8nFIMfPxNk=?= 
+Date: Mon, 21 Nov 2011 09:39:22 +0400 
+X-Priority: 3 
+X-MSMail-Priority: Normal 
+X-Mailer: Microsoft Windows Mail 6.0.6001.18000 
+X-MimeOLE: Produced By Microsoft MimeOLE V6.0.6001.18049 
+X-Spam: Not detected 
+X-Mras: Ok 

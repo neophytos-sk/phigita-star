@@ -1,0 +1,6 @@
+http://www.udacity.com/ajax?{%22data%22:{%22path%22:%22%23Course/cs373/CourseRev/feb2012%22},%22method%22:%22course.get%22}
+http://www.udacity.com/ajax?{%22data%22:{%22path%22:%22%23Course/cs101/CourseRev/feb2012%22},%22method%22:%22course.get%22}
+http://www.udacity.com/ajax?{%22data%22:{%22path%22:%22%23Course/cs212/CourseRev/apr2012%22},%22method%22:%22course.get%22}
+http://www.udacity.com/ajax?{%22data%22:{%22path%22:%22%23Course/cs253/CourseRev/apr2012%22},%22method%22:%22course.get%22}
+http://www.udacity.com/ajax?{%22data%22:{%22path%22:%22%23Course/cs262/CourseRev/apr2012%22},%22method%22:%22course.get%22}
+http://www.udacity.com/ajax?{%22data%22:{%22path%22:%22%23Course/cs387/CourseRev/apr2012%22},%22method%22:%22course.get%22}

@@ -1,0 +1,102 @@
+DomainKey-Signature: q=dns; a=rsa-sha1; c=nofws;
+	s=prod; d=linkedin.com;
+	h=DKIM-Signature:Sender:Date:From:To:Message-ID:Subject:MIME-Version:Content-Type:X-LinkedIn-Template:X-LinkedIn-Class:X-LinkedIn-fbl;
+	b=cwTynkZOYLFXL46L/zptjIarJ1oInwSUR1MX3SPrTjdYXdZtWHkMZ5+wtyEIPsIk
+	d1WSVr1wno0rvMn2lUF3djavpewIwhdv5orWKkU+MWDIevX+0rkolUnlJ6mez6mh 
+DKIM-Signature: v=1; a=rsa-sha1; d=linkedin.com; s=proddkim; c=relaxed/relaxed;
+	q=dns/txt; i=@linkedin.com; t=1322095448;
+	h=From:Subject:Date:To:MIME-Version:Content-Type:X-LinkedIn-Class:X-LinkedIn-fbl:
+	X-LinkedIn-Template;
+	bh=/ETDR/oHe2CiJ86o9Pw66HTY/fQ=;
+	b=k2z6ZsUhYr2RuLX3m18EV1BMOMPrMJQ76FVGIcdD5bkKJ6asUmyrgcRiSP4MBMWe
+	pvfQe3y91JpbjAbxnnZl74tVFO72GBU689TiUsdwGr26KyKiUFqtdmPow5eVmz3L; 
+Sender: messages-noreply@bounce.linkedin.com 
+Date: Thu, 24 Nov 2011 00:44:08 +0000 (UTC) 
+From: "Global Quants (Quant Analysts, Developers, Risk - Systematic, Electronic, Algo Trading) Group Members" <group-digests@linkedin.com> 
+To: Neophytos Demetriou <k2pts@phigita.net> 
+Message-ID: <687755815.245753896.1322095448365.JavaMail.app@ela4-app0104.prod> 
+Subject: [8] new discussions and [7] new jobs on LinkedIn 
+X-LinkedIn-Template: anet_digest_type 
+X-LinkedIn-Class: GROUPDIGEST 
+X-LinkedIn-fbl: m-AoU3eFkki2mcNJWDY6TJSC2Fpp7N949DZ7UW5mtutyD9oBJlZcwhPFA 
+--------------------------------------
+Global Quants (Quant Analysts, Developers, Risk - Systematic, Electronic, Algo Trading)
+  Latest discussions from Global Quants (Quant Analysts, Developers, Risk - Systematic, Electronic, Algo Trading) group members.  Change the frequency of this digest:
+  http://www.linkedin.com/e/-1ht5d5-gvd1hst6-4v/ahs/1615777/EMLt_anet_settings/?hs=false&tok=0-WCEWzqzIel01
+
+
+
+
+Send me an email for each new discussion &#187; http://www.linkedin.com/e/-1ht5d5-gvd1hst6-4v/snp/1615777/true/grp_email_subscribe_new_posts/?hs=false&tok=11U9jf7XPIel01
+
+
+
+Discussions
+ * AlgoTrading  India Order Book Based HFT Trading for NSE India.
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd1hst6-4v/ava/81743941/1615777/EMLt_anet_qa_ttle/?hs=false&tok=0Q7CWLZaPIel01
+
+
+ * Jeff  Bonaventura CQF - Certficate in Quant Finance Webinar - Nov 29th & Dec 6th
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd1hst6-4v/ava/81698679/1615777/EMLt_anet_qa_ttle/?hs=false&tok=3EOVyfawrIel01
+
+
+ * Andrew  Jardine LONDON: FPGA Engineers - looking to break into High Frequency Trading?
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd1hst6-4v/ava/81677997/1615777/EMLt_anet_qa_ttle/?hs=false&tok=3rtbAbbGLIel01
+
+
+ * Tom  McDonald C#/C++ Developer - Hedge Fund - High Frequency - Credit Developer, NY
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd1hst6-4v/ava/81535570/1615777/EMLt_anet_qa_ttle/?hs=false&tok=17Q7omOxzIel01
+
+
+ * Flavio  Eslava, CQF Great statistic about Latin American Professionals in IFC ...
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd1hst6-4v/ava/81277699/1615777/EMLt_anet_qa_ttle/?hs=false&tok=22ExBqVojIel01
+
+
+ * Edgar  Perez Hot Mexico Boosting Its Position As Paradise for High-Speed Traders
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd1hst6-4v/ava/81258583/1615777/EMLt_anet_qa_ttle/?hs=false&tok=0A9MlgjRjIel01
+
+
+ * Kavery  Naik (LION) 1600+ Connections Immediate Requirement for Quant Faculty/Aptitude Trainers-0-5yrs Experience for Freelancing, Bangalore
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd1hst6-4v/ava/81079811/1615777/EMLt_anet_qa_ttle/?hs=false&tok=1igDRVrpXIel01
+
+
+ * Kavery  Naik (LION) 1600+ Connections Immediate Requirement for Quant Faculty/Aptitude Trainers-0-5yrs Experience for Freelancing, Bangalore
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd1hst6-4v/ava/81079657/1615777/EMLt_anet_qa_ttle/?hs=false&tok=2sNH5pSPnIel01
+
+
+Weekly Job Postings * Kane  Pushong (0207 025 0186): Urgent Requirement - C++ Quantitative Analyst/Developer – Long term Contract based in London. Send your CV to kane@intelectplc.com or call me on 0161 237 0010
+  Urgent Requirement - C++ Quantitative Analyst/Developer – Long term Contract based in London. Send your CV to kane@intelectplc.com or call me on 0161 237 0010 (3)
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd1hst6-4v/ava/81576176/1615777/EMLt_anet_qa_ttle/?hs=false&tok=1H_20_y1rIel01
+
+ * Stephanie  Wheeler: Associate Tech Partner-Hi-Tech Hedge Fund-Connecticut location with Relocation Assistance available (This position is only open to candidates that are authorized to work in the U.S.)
+  Associate Tech Partner-Hi-Tech Hedge Fund-Connecticut location with Relocation Assistance available (This position is only open to candidates that are authorized to work in the U.S.) (0)
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd1hst6-4v/ava/81497716/1615777/EMLt_anet_qa_ttle/?hs=false&tok=35v3NfGYfIel01
+
+ * Colin  Rowat: student sought for funded PhD position in endogenous risk/macroprudential risk management
+  student sought for funded PhD position in endogenous risk/macroprudential risk management (0)
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd1hst6-4v/ava/81241790/1615777/EMLt_anet_qa_ttle/?hs=false&tok=2uL8CY_hTIel01
+
+ * Brunie  Portalatin: COMPUTER LANGUAGE: C++ or C  OVERSEAS OPPORTUNITIES:  
+QUANTITATIVE RESEARCH SCIENTISTS!!!
+  COMPUTER LANGUAGE: C++ or C  OVERSEAS OPPORTUNITIES:  
+QUANTITATIVE RESEARCH SCIENTISTS!!! (1)
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd1hst6-4v/ava/80987870/1615777/EMLt_anet_qa_ttle/?hs=false&tok=0ktkeyft_Iel01
+
+ * Andrew  Jardine: Pioneers of Open Source technologies and passionate C/C++ coders – I want to hear from you!
+  Pioneers of Open Source technologies and passionate C/C++ coders – I want to hear from you! (0)
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd1hst6-4v/ava/81091356/1615777/EMLt_anet_qa_ttle/?hs=false&tok=3u0Al_7LzIel01
+
+ * Kavery  Naik (LION) 1600+ Connections: Immediate Requirement for Quant Faculty/Aptitude Trainers-0-5yrs Experience for Freelancing, Bangalore
+  Immediate Requirement for Quant Faculty/Aptitude Trainers-0-5yrs Experience for Freelancing, Bangalore (0)
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvd1hst6-4v/ava/81079824/1615777/EMLt_anet_qa_ttle/?hs=false&tok=24vBCMV43Iel01
+
+
+

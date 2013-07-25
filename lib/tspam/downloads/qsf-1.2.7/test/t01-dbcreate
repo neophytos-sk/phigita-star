@@ -1,0 +1,9 @@
+#!/bin/sh
+#
+# TEST: Database creation:              
+
+rm -f $TESTDB
+./mboxsplit 1 < .test-spam | $PROG -d $BACKEND:$TESTDB -m -w 2
+test $BACKEND = MySQL && exit 0
+test $BACKEND = mysql && exit 0
+cat $TESTDB >/dev/null 2>&1

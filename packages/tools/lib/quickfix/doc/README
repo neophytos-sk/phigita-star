@@ -1,0 +1,7 @@
+ In general, FIX message represents a sequence of fields whose values are associated with unique numbers (tags).
+
+A common way of presenting FIX message is called the tag-value FIX message format. In such a format all fields are presented as tag=value pairs and are delimited by special <SOH> symbol.
+
+The following image depicts the structure of FIX message in tag-value format:
+
+FIX message structure [image]

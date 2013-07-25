@@ -1,0 +1,7 @@
+#!/bin/sh
+#
+# TEST: Allow-list addition:            
+
+$PROG -d $BACKEND:$TESTDB -Me test@Test.com
+$PROG -d $BACKEND:$TESTDB -te test@test.com
+$PROG -d $BACKEND:$TESTDB -te TeSt@TEST.com

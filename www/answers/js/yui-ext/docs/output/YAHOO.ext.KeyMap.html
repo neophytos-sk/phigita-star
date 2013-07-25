@@ -1,0 +1,202 @@
+<!doctype html public "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <title>YAHOO.ext.KeyMap</title>
+        <link rel="stylesheet" type="text/css" href="../resources/reset.css"/>
+        <link rel="stylesheet" type="text/css" href="../resources/style.css" media="screen"/>
+        <link rel="stylesheet" type="text/css" href="../resources/print.css" media="print">
+    </head>
+    <body>
+        <div class="body-wrap">
+        <div class="top-tools"><img src="../resources/print.gif" width="16" height="16" align="absmiddle">&nbsp;<a href="YAHOO.ext.KeyMap.html" target="_blank">Print Friendly</a></div>
+        <h1>Class YAHOO.ext.KeyMap</h1>
+        <table cellspacing="0">
+            <tr><td class="label">Package:</td><td>YAHOO.ext</td></tr>
+            <tr><td class="label">Class:</td><td>KeyMap</td></tr>
+                        <tr><td class="label">Extends:</td><td>Object</td></tr>
+                                    <tr><td class="label">Defined In:</td><td><a href="yutil.js.html">yutil.js</a></td></tr>
+        </table>
+        <div class="description">
+            Handles mapping keys to actions for an element. One key map can be used for multiple actions. 
+A KeyMap can also handle a string representation of keys.<br />
+Usage:
+ <pre class="highlighted"><code><i>// map one key by key code</i>
+ <b>var</b> map = <b>new</b> YAHOO.ext.KeyMap('my-element', {
+     key: 13,
+     fn: myHandler,
+     scope: myObject
+ });
+ 
+ <i>// map multiple keys to one action by string</i>
+ <b>var</b> map = <b>new</b> YAHOO.ext.KeyMap('my-element', {
+     key: "a\r\n\t",
+     fn: myHandler,
+     scope: myObject
+ });
+ 
+ <i>// map multiple keys to multiple actions by strings and array of codes</i>
+ <b>var</b> map = <b>new</b> YAHOO.ext.KeyMap('my-element', [
+    {
+        key: [10,13],
+        fn: <b>function</b>(){ alert('Return was pressed'); }
+    }, {
+        key: "abc",
+        fn: <b>function</b>(){ alert('a, b or c was pressed'); }
+    }, {
+        key: "\t",
+        ctrl:true,
+        shift:true,
+        fn: <b>function</b>(){ alert('Control + shift + tab was pressed.'); }
+    }
+]);</code></pre>
+<b>Note: A KepMap starts enabled</b>        </div>
+        <hr />
+                <a name="properties"></a>
+        <h2>Public Properties</h2>
+        <div class="no-members">This class has no public properties.</div>        <a name="methods"></a>
+        <h2>Public Methods</h2>
+                <table cellspacing="0" class="member-table">
+            <tr>
+                <th class="sig-header" colspan="2">Method</th>
+                <th class="msource-header">Defined By</th>
+            </tr>
+                <tr>
+        <td class="micon" rowspan="2">&nbsp;</td>
+        <td class="sig"><a class="mlink" href="#KeyMap">KeyMap</a>(<code>String/HTMLElement/YAHOO.ext.Element el</code>, <code>Object config</code>, <span class="optional" title="Optional">[<code>String eventName</code>]</span>)</td>
+        <td class="msource" rowspan="2">KeyMap</td>
+    </tr>
+    <tr>
+        <td class="mdesc"></td>
+    </tr>
+        <tr class="alt">
+        <td class="micon" rowspan="2">&nbsp;</td>
+        <td class="sig"><a class="mlink" href="#addBinding">addBinding</a>(<code>Object config</code>) : void</td>
+        <td class="msource" rowspan="2">KeyMap</td>
+    </tr>
+    <tr class="alt">
+        <td class="mdesc">Add a new binding to this KeyMap</td>
+    </tr>
+        <tr>
+        <td class="micon" rowspan="2">&nbsp;</td>
+        <td class="sig"><a class="mlink" href="#disable">disable</a>() : void</td>
+        <td class="msource" rowspan="2">KeyMap</td>
+    </tr>
+    <tr>
+        <td class="mdesc">Disable this KeyMap</td>
+    </tr>
+        <tr class="alt">
+        <td class="micon" rowspan="2">&nbsp;</td>
+        <td class="sig"><a class="mlink" href="#enable">enable</a>() : void</td>
+        <td class="msource" rowspan="2">KeyMap</td>
+    </tr>
+    <tr class="alt">
+        <td class="mdesc">Enable this KeyMap</td>
+    </tr>
+        <tr>
+        <td class="micon" rowspan="2">&nbsp;</td>
+        <td class="sig"><a class="mlink" href="#isEnabled">isEnabled</a>() : Boolean</td>
+        <td class="msource" rowspan="2">KeyMap</td>
+    </tr>
+    <tr>
+        <td class="mdesc">Returns true if this KepMap is enabled</td>
+    </tr>
+            </table>
+                <a name="events"></a>
+        <h2>Public Events</h2>
+        <div class="no-members">This class has no public events.</div>                
+                
+                    <a name="KeyMap"></a>
+            <h2 class="mdetail-head">Constructor Details</h2>
+            <div class="detail-wrap">
+                <div class="mdetail">
+                <h3>KeyMap</i></h3>
+                <code>public function KeyMap(<code>String/HTMLElement/YAHOO.ext.Element el</code>, <code>Object config</code>, <span class="optional" title="Optional">[<code>String eventName</code>]</span>)</code>
+                <div class="mdetail-desc">
+                                <div class="mdetail-params">
+                    <strong>Parameters:</strong>
+                    <ul><li><code>el</code> : String/HTMLElement/YAHOO.ext.Element<div class="sub-desc">The element to bind to</div></li><li><code>config</code> : Object<div class="sub-desc">The config</div></li><li><code>eventName</code> : String<div class="sub-desc">(optional) The event to bind to (Defaults to "keydown").</div></li>                    </ul>
+                </div>
+                </div>
+                </div>
+            </div>
+                 
+                    <h2 class="mdetail-head">Method Details</h2>
+            <div class="detail-wrap">
+                            <a name="addBinding"></a>
+                <div class="mdetail">
+                <h3>addBinding</i></h3>
+                <code>public function addBinding(<code>Object config</code>)</code>
+                <div class="mdetail-desc">
+                    Add a new binding to this KeyMap                
+                <div class="mdetail-params">
+                    <strong>Parameters:</strong>
+                    <ul><li><code>config</code> : Object<div class="sub-desc">A single KeyMap config</div></li>                    </ul>
+                    <strong>Returns:</strong>
+                    <ul>
+                        <li><code>void</code></li>
+                    </ul>
+                </div>
+                </div>
+                <div class="mdetail-def">This method is defined by KeyMap.</div>
+                </div>
+                            <a name="disable"></a>
+                <div class="mdetail alt">
+                <h3>disable</i></h3>
+                <code>public function disable()</code>
+                <div class="mdetail-desc">
+                    Disable this KeyMap                
+                <div class="mdetail-params">
+                    <strong>Parameters:</strong>
+                    <ul><li>None.</li>                    </ul>
+                    <strong>Returns:</strong>
+                    <ul>
+                        <li><code>void</code></li>
+                    </ul>
+                </div>
+                </div>
+                <div class="mdetail-def">This method is defined by KeyMap.</div>
+                </div>
+                            <a name="enable"></a>
+                <div class="mdetail">
+                <h3>enable</i></h3>
+                <code>public function enable()</code>
+                <div class="mdetail-desc">
+                    Enable this KeyMap                
+                <div class="mdetail-params">
+                    <strong>Parameters:</strong>
+                    <ul><li>None.</li>                    </ul>
+                    <strong>Returns:</strong>
+                    <ul>
+                        <li><code>void</code></li>
+                    </ul>
+                </div>
+                </div>
+                <div class="mdetail-def">This method is defined by KeyMap.</div>
+                </div>
+                            <a name="isEnabled"></a>
+                <div class="mdetail alt">
+                <h3>isEnabled</i></h3>
+                <code>public function isEnabled()</code>
+                <div class="mdetail-desc">
+                    Returns true if this KepMap is enabled                
+                <div class="mdetail-params">
+                    <strong>Parameters:</strong>
+                    <ul><li>None.</li>                    </ul>
+                    <strong>Returns:</strong>
+                    <ul>
+                        <li><code>Boolean</code></li>
+                    </ul>
+                </div>
+                </div>
+                <div class="mdetail-def">This method is defined by KeyMap.</div>
+                </div>
+                        </div>
+                    
+                </div>
+    <hr>
+    <div style="font-size:10px;text-align:center;color:gray;">yui-ext - Copyright &copy; 2006 Jack Slocum.  |
+    Yahoo! UI - Copyright &copy; 2006 Yahoo! Inc.<br />All rights reserved.</div>
+    
+    </body>
+</html>
+    

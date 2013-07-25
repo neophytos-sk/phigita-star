@@ -1,0 +1,19 @@
+Received: from etthq ([110.53.27.119])
+	(authenticated bits=0)
+	by smsc.sh.cn (8.13.8/8.12.11) with ESMTP id pAQ9rH0H027425;
+	Sat, 26 Nov 2011 17:53:54 +0800 
+Sender: wanggl@smsc.sh.cn 
+Date: Sat, 26 Nov 2011 17:59:33 +0800 
+From: =?gb2312?B?y9W/rdLj?= <mslyi@geowqe.com> 
+To: <fengyuan86@163.com>, <wrx@dqpi.edu.cn>, <neophytos@phigita.net>,
+        <fengyuanhelen@163.com>, <fengyuanhua0619@163.com>,
+        <fengyuanjdyp@163.com>, <1078570235@qq.com>, <dongxiangshi@eyou.com>,
+        <fengyuanjianan@163.com> 
+Subject: =?gb2312?B?zajWqg==?= 
+Message-ID: <20111126175947007441@smsc.sh.cn> 
+X-mailer: Foxmail 6, 13, 102, 15 [cn] 
+X-sh_cn-MailScanner-Information: Please contact the ISP for more information 
+X-sh_cn-MailScanner: Found to be clean 
+X-sh_cn-MailScanner-From: wanggl@smsc.sh.cn 
+X-Spam-Status: No 
+

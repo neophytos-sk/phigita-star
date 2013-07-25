@@ -1,0 +1,45 @@
+1  env-update && source /etc/profile
+    2  cp /usr/share/zoneinfo/UTC /etc/localtime 
+    3  date
+    4  nano -w /etc/hosts
+    5  nano -w /etc/conf.d/hostname
+    6  hostname -f
+    7  hostname castalia
+    8  hostname -f
+    9  time emerge gentoo-sources
+   10  cd /usr/src/linux
+   11  make menuconfig
+   12  time make -j2
+   13  make modules_install
+   14  cp arch/i386/boot/bzImage /boot/kernel
+   15  ls ..
+   16  cp arch/i386/boot/bzImage /boot/kernel
+   17  cp arch/x86_64/boot/bzImage /boot/kernel-3.0.6-gentoo
+   18  nano -w /etc/fstab 
+   19  /web/bin/ssh-node.sh atlas
+   20  nano -w /etc/fstab 
+   21  less /etc/fstab 
+   22  rc-update add net.eth0 default
+   23  ls /etc/init.d/
+   24  history | grep
+   25  history | less
+   26  nano -w /etc/conf.d/net
+   27  cd /etc/init.d/
+   28  ln -sf net.lo net.eth0
+   29  nano -w /etc/conf.d/hostname 
+   30  rc-update add net.eth0 default
+   31  rc-update add sshd default
+   32  less /etc/ssh/sshd_config 
+   33  passwd
+   34  time emerge syslog-ng vixie-cron
+   35  rc-update add syslog-ng default
+   36  rc-update add vixie-cron default
+   37  emerge dhcpcd
+   38  time emerge grub
+   39  grub
+   40  nano -w /boot/grub/grub.conf 
+   41  ls /usr/src/
+   42  ls /boot/
+   43  nano -w /boot/grub/grub.conf 
+   44  exit
+   45  history

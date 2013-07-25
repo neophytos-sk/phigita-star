@@ -1,0 +1,59 @@
+#!/bin/sh
+#
+# TEST: Tokenising HTML attachments:    
+
+rm -f $TESTDB
+
+MALLOC_CHECK_=2
+export MALLOC_CHECK_
+
+cat > $TESTDB <<EOF
+From: someone@somewhere.com
+To: someoneelse@somewhereelse.com
+Subject: something
+Date: Thu, 18 Aug 2005 21:00:36 +0100
+MIME-Version: 1.0
+Content-Type: multipart/mixed;
+	boundary="----=_NextPart_000_0010_F36F3E41.30B01A95"
+
+This is a multi-part message in MIME format.
+
+------=_NextPart_000_0010_F36F3E41.30B01A95
+Content-Type: text/plain;
+	charset="Windows-1252"
+Content-Transfer-Encoding: 7bit
+
+The message contains Unicode characters and has been sent as a binary attachment.
+
+
+------=_NextPart_000_0010_F36F3E41.30B01A95
+Content-Type: Text/HTML;
+  name="warning.htm";
+  charset="utf-8"
+Content-Disposition: attachment;
+  Filename="warning.htm"
+Content-Description: Replacement for objectionable content
+Content-Transfer-Encoding: base64
+X-NAIMIME-Modified: 1
+
+PEhUTUw+DQo8TUVUQSBIVFRQLUVRVUlWPSJDb250ZW50LVR5cGUiIENPTlRFTlQ9InRleHQvaHRt
+bDsgY2hhcnNldD11dGYtOCI+DQo8Qk9EWT4NCg0KICA8aDE+PGZvbnQgY29sb3I9IiNGRjAwMDAi
+PkJMT0NLRUQgRklMRSBBTEVSVDwvZm9udD48L2gxPiA8cD5BIGZpbGUgaGFzIGJlZW4gYmxvY2tl
+ZCBkdWUgdG8gdGhlICdBdHRhY2htZW50IEJsb2NraW5nJyBydWxlLiA8L3A+PHA+Q29udGV4dDog
+J3RleHQuemlwJzxCUj4gRGlzYWxsb3dlZCBkdWUgdG8gZmlsZW5hbWU8L3A+ICANCjxwPlNlZSB5
+b3VyIHN5c3RlbSBhZG1pbmlzdHJhdG9yIGZvciBmdXJ0aGVyIGluZm9ybWF0aW9uLjwvcD48cD5D
+b3B5cmlnaHQgJmNvcHk7IDE5OTMtMjAwNCBOZXR3b3JrcyBBc3NvY2lhdGVzIFRlY2hub2xvZ3ks
+IEluYy48YnI+QWxsIFJpZ2h0cyBSZXNlcnZlZC48YnI+IDxhIGhyZWY9Imh0dHA6Ly93d3cubWNh
+ZmVlc2VjdXJpdHkuY29tIj5odHRwOi8vd3d3Lm1jYWZlZXNlY3VyaXR5LmNvbTwvYT48L3A+DQo8
+L0JPRFk+DQo8L0hUTUw+DQoK
+
+------=_NextPart_000_0010_F36F3E41.30B01A95--
+EOF
+
+COUNT=`$PROG -O < $TESTDB | wc -l | tr -d ' '`
+rm -f "$TESTDB"
+
+test "$COUNT" -gt 10 && exit 0
+exit 1
+
+# EOF

@@ -1,0 +1,217 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>JavaScript Diagram Builder - PHP & ASP versions</title>
+<link rel=stylesheet type="text/css" href="diagram.css" />
+</head>
+<body>
+<TABLE NOBORDER CELLPADDING=2 CELLSPACING=2 WIDTH=720><TR><TD>
+<H3>LT Diagram Builder - <a href="#php">PHP</a> & <a href="#asp">ASP</a> versions</H3>
+</TD></TR><TR><TD>
+Since version 3.0 you can generate images of coordinate diagrams (resp. charts or graphs)  at serverside (using PHP or ASP)
+and save it as file or send it back as a stream. These 2 versions are independent from the clientside JavaScript version
+of the script. The method calls of the 2 scripts are very similar to the method calls of the JavaScript version.
+However, the methods for changing the properties of objects (MoveTo, ResizeTo, SetColor, etc.) are not available,
+because it is not possible to change these properties after the image has been created. Because of this, the bar, box, dot, 
+pixel, line, area, arrow and pie objects in the JavaScript version, are methods of the diagram object in the PHP and ASP version.
+The usage of the script versions is shown in the following table:<br />
+<br />
+
+<table border=0 cellpadding=2 cellspacing=1 bgcolor="#808080">
+<tr bgcolor="#cccccc"><td colspan=2>Include the script file</td></tr>
+<tr bgcolor="#ffffff"><td>JavaScript</td><td>&lt;SCRIPT Language="JavaScript" src="diagram.js"&gt;&lt;/SCRIPT&gt;</td></tr>
+<tr bgcolor="#ffffff"><td>PHP</td><td>include ("diagram.php");</td></tr>
+<tr bgcolor="#ffffff"><td>ASP</td><td>&lt;!--#include file="diagram.asp"--&gt;</td></tr>
+
+<tr bgcolor="#cccccc"><td colspan=2>Generate a new diagram</td></tr>
+<tr bgcolor="#ffffff"><td>JavaScript</td><td>
+//_DiagramTarget=window; //only necessary, if the target is not the current window<br />
+D=new Diagram();</td></tr>
+<tr bgcolor="#ffffff"><td>PHP</td><td>$D=new Diagram(); <br />
+$D->Img=@ImageCreate(480, 320) or die("Cannot create a new GD image.");<br />
+ImageColorAllocate($D->Img, 255, 255, 255); //background color</td></tr>
+<tr bgcolor="#ffffff"><td>ASP</td><td>
+Set D=New Diagram<br />
+Set D.Img=CreateObject("gdImage.Images.1")<br />
+D.Img.ImageCreate 480, 320<br />
+D.Img.ImageColorAllocate 0,255,255,255 'Background Color
+</td></tr>
+
+<tr bgcolor="#cccccc"><td colspan=2>Add a bar, box, dot, etc...</td></tr>
+<tr bgcolor="#ffffff"><td>JavaScript</td><td>
+new Bar(10, 20, 80, 40, "#ff0000", "This is Text", "#000000", "This is TooltipText", "alert(\"This is onClick event.\")");</td></tr>
+<tr bgcolor="#ffffff"><td>PHP</td><td>
+$D->Bar(10, 20, 80, 40, "#ff0000", "This is Text", "#000000", "This is TooltipText", "alert(\"This is onClick event.\")");</td></tr>
+<tr bgcolor="#ffffff"><td>ASP</td><td>
+D.Bar 10, 20, 80, 40, "#ff0000", "This is Text", "#000000", "This is TooltipText", "alert(""This is onClick event."")"</td></tr>
+</td></tr>
+
+<tr bgcolor="#cccccc"><td colspan=2>Save the image as file</td></tr>
+<tr bgcolor="#ffffff"><td>JavaScript</td><td>//not available and not necessary</td>
+<tr bgcolor="#ffffff"><td>PHP</td><td>
+ImagePng($D->Img, "my_image.png");<br />
+ImageDestroy($D->Img);</td></tr>
+<tr bgcolor="#ffffff"><td>ASP</td><td>
+D.Img.ImagePng 0, Server.mappath("my_image.png")<br />
+D.Img.ImageDestroy 0<br />
+Set D.Img=Nothing</td></tr>
+
+<tr bgcolor="#cccccc"><td colspan=2>Send the image from the server back to the client as a stream</td></tr>
+<tr bgcolor="#ffffff"><td>JavaScript</td><td>//not available and not necessary</td>
+<tr bgcolor="#ffffff"><td>PHP</td><td>
+header("Content-type: image/png");<br />
+ImagePng($D->Img);<br />
+ImageDestroy($D->Img);</td></tr>
+<tr bgcolor="#ffffff"><td>ASP</td><td>
+'There is no direct support but you can get it working this way:<br />
+Set objFS=Server.CreateObject("Scripting.FileSystemObject")<br />
+FN = objFS.GetTempName()<br />
+FN=Server.mappath(FN)<br />
+D.Img.ImagePng 0, FN<br />
+Set objStream = Server.CreateObject("ADODB.Stream")<br />
+objStream.Charset = "x-ansi"<br />
+objStream.Type = 2<br />
+objStream.Open<br />
+objStream.LoadFromFile FN<br />
+Response.ContentType = "image/png"<br />
+Response.AddHeader "Content-Disposition","filename=image.png"<br />
+objStream.Position = 0<br />
+objStream.Type = 1<br />
+Response.BinaryWrite objStream.Read()<br />
+objStream.Close<br />
+Set objStream = Nothing<br /> 
+objFS.DeleteFile FN, false<br />
+Set objFS=Nothing<br />
+D.Img.ImageDestroy 0<br />
+Set D.Img=Nothing</td></tr>
+</table> 
+
+<H3>Differences between <font style="background-color:#cccccc">JavaScript</font> version and 
+<font style="background-color:#ffccff">PHP</font>/<font style="background-color:#ffffcc">ASP</font> version</H3>
+In JavaScript you can use code like<br />
+<font style="background-color:#cccccc">
+D.Font="font-family:Verdana;font-weight:normal;font-size:10pt;line-height:13pt;";<br />
+_BFont="font-family:Verdana;font-weight:bold;font-size:10pt;line-height:13pt;";<br />
+</font>
+to set the font for the Diagram object or the Bar/Box object.<br />
+In <font bgcolor="#ffccff">PHP</font> <font bgcolor="#ffffcc">(ASP)</font> you will use code like<br />
+<font style="background-color:#ffccff">$D->Font=4;</font> <font style="background-color:#ffffcc">D.Font=4</font><br />
+<font style="background-color:#ffccff">$D->BFont=5;</font> <font style="background-color:#ffffcc">D.BFont=5</font><br />
+to set the font(1..5) for the Diagram object or the Bar/Box object.<br />
+You can set the <B>font of the bar and box</B> object <I>BFont</I> to <B>-1..-5</B> for <B>vertical text</B>.<br />
+For <B>vertical text of the X-axis</B> use a <I>Font</I> value from <B>-1..-5</B>.<br />
+<br />
+In JavaScript you can use the result of the predefined JavaScript function<br />
+<font style="background-color:#cccccc">Date.UTC(2001,0,1,0,0,0);</font> //date/time: year, month(0..11), day, hour, min, sec<br />
+as argument for the SetBorder method of a diagram with date/time scale.<br />
+In PHP (ASP) you can use the function<br />
+<font style="background-color:#ffccff">UTC(2001,1,1,0,0,0);</font> <font style="background-color:#ffffcc">UTC(2001,1,1,0,0,0)</font> //date/time: year, month(1..12), day, hour, min, sec<br />
+which is defined in the script file <font style="background-color:#ffccff">diagram.php</font> <font style="background-color:#ffffcc">diagram.asp</font>.<br />
+Take care with the difference in the argument for the month!
+
+<hr />
+<a name="php"></a><H3>PHP version</H3>
+<B>You can use the following methods:</B>
+<UL>
+<LI><B>$D=new Diagram()</B> //Constructor</LI>
+<LI><B>$D->SetFrame($theLeft, $theTop, $theRight, $theBottom)</B> //Screen</LI>
+<LI><B>$D->SetBorder($theLeftX, $theRightX, $theBottomY, $theTopY)</B> //World</LI>
+<LI><B>$D->SetText($theScaleX, $theScaleY, $theTitle)</B> //Labels (optional)</LI>
+<LI><B>$D->ScreenX($theRealX)</B> //Coordinate transformation world->screen</LI>
+<LI><B>$D->ScreenY($theRealY)</B> //Coordinate transformation world->screen</LI>
+<LI><B>$D->RealX($theScreenX)</B> //Coordinate transformation screen->world</LI>
+<LI><B>$D->RealY($theScreenY)</B> //Coordinate transformation screen->world</LI>
+<LI><B>$D->GetXGrid()</B> //returns array, which contains min, delta and max of the X grid</LI>
+<LI><B>$D->GetYGrid()</B> //returns array, which contains min, delta and max of the Y grid</LI>
+<LI><B>$D->SetGridColor($theGridColor[, $theSubGridColor])</B> //Colors of X and Y grid lines</LI>
+<LI><B>$D->SetXGridColor($theGridColor[, $theSubGridColor])</B> //Colors of X grid lines</LI>
+<LI><B>$D->SetYGridColor($theGridColor[, $theSubGridColor])</B> //Colors of Y grid lines</LI>
+<LI><B>$D->Draw($theDrawColor, $theTextColor, $isScaleText[, $theTooltipText[, $theOnClickAction[, $theOnMouseoverAction[, $theOnMouseoutAction]]]])</B> //Display</LI>
+</UL>
+<B>Before drawing, you can set the following properties:</B>
+<UL>
+<LI><B>$D->XScale</B> // 0 = no scale; 1 = numeric (default); 2, 3, ... = date/time; string = numeric+unit
+<BR />"function <I>FunctionName</I>" = <I>FunctionName</I>(ScaleValue)</LI>
+<LI><B>$D->YScale</B> // 0 = no scale; 1 = numeric (default); 2, 3, ... = date/time; string = numeric+unit
+<BR />"function <I>FunctionName</I>" = <I>FunctionName</I>(ScaleValue)</LI>
+<LI><B>$D->XScalePosition</B> // "bottom" (default), "botom-left", "bottom-right", "top", "top-left", "top-right"</LI>
+<LI><B>$D->YScalePosition</B> // "left" (default), "left-top", "left-bottom", "right", "right-top", "right-bottom"</LI>
+<LI><B>$D->XGridDelta</B> //Grid interval in X-direction, if it is 0 (default) it will be detected automatically</LI>
+<LI><B>$D->YGridDelta</B> //Grid interval in Y-direction, if it is 0 (default) it will be detected automatically</LI>
+<LI><B>$D->XSubGrids</B> //Number of Sub-Grid intervals within one Grid interval in X-direction, if it is 0 (default) it will be detected automatically, if it is -1 then a logarithmic Sub-Grid will be drawn</LI>
+<LI><B>$D->YSubGrids</B> //Number of Sub-Grid intervals within one Grid interval in Y-direction, if it is 0 (default) it will be detected automatically, if it is -1 then a logarithmic Sub-Grid will be drawn</LI>
+<LI><B>$D->Font</B> //Text style for scale text (1..5), default=4</LI>
+<LI><B>$D->BFont</B> //Text style for bar and box text (1..5), default=5</LI>
+</UL>
+<B>After calling $D->GetXGrid() / $D->GetYGrid() you can read:</B>
+<UL>
+<LI><B>$D->XGrid[0]</B>, <B>$D->XGrid[1]</B> and <B>$D->XGrid[2]</B> // min, delta and max of the X grid</LI>
+<LI><B>$D->YGrid[0]</B>, <B>$D->YGrid[1]</B> and <B>$D->YGrid[2]</B> // min, delta and max of the Y grid</LI>
+</UL>
+<B>For the display of data you can use the following methods:</B>
+<UL>
+<LI><B>$D->Bar($theLeft, $theTop, $theRight, $theBottom, $theDrawColor[, $theText[, $theTextColor[, $theTooltipText[, $theOnClickAction[, $theOnMouseoverAction[, $theOnMouseoutAction]]]]]])</B></LI>
+<LI><B>$D->Box($theLeft, $theTop, $theRight, $theBottom, $theDrawColor[, $theText[, $theTextColor[, $theBorderWidth[, $theBorderColor[, $theTooltipText[, $theOnClickAction[, $theOnMouseoverAction[, $theOnMouseoutAction]]]]]]]])</B></LI>
+<LI><B>$D->Dot($theX, $theY, $theSize, $theType, $theColor[, $theTooltipText[, $theOnClickAction[, $theOnMouseoverAction[, $theOnMouseoutAction]]]])</B></LI>
+<LI><B>$D->Pixel($theX, $theY, $theColor)</B></LI>
+<LI><B>$D->Line($theX0, $theY0, $theX1, $theY1, $theColor[, $theSize[, $theTooltipText[, $theOnClickAction[, $theOnMouseoverAction[, $theOnMouseoutAction]]]]])</B></LI>
+<LI><B>$D->Area($theX0, $theY0, $theX1, $theY1, $theColor[, $theBase[, $theTooltipText[, $theOnClickAction[, $theOnMouseoverAction[, $theOnMouseoutAction]]]]])</B></LI>
+<LI><B>$D->Arrow($theX0, $theY0, $theX1, $theY1, $theColor[, $theSize[, $theTooltipText[, $theOnClickAction[, $theOnMouseoverAction[, $theOnMouseoutAction]]]]])</B></LI>
+<LI><B>$D->Pie($theXCenter, $theYCenter, $theOffset, $theRadius, $theAngle0, $theAngle1, $theColor[, $theTooltipText[, $theOnClickAction[, $theOnMouseoverAction[, $theOnMouseoutAction]]]])</B></LI>
+</UL>
+
+<hr />
+<a name="asp"></a><H3>ASP version - VBScript language</H3>
+<B>You can use the following methods:</B>
+<UL>
+<LI><B>D=New Diagram</B> 'Constructor</LI>
+<LI><B>D.SetFrame theLeft, theTop, theRight, theBottom</B> 'Screen</LI>
+<LI><B>D.SetBorder theLeftX, theRightX, theBottomY, theTopY</B> 'World</LI>
+<LI><B>D.SetText theScaleX, theScaleY, theTitle</B> 'Labels (optional)</LI>
+<LI><B>D.ScreenX(theRealX)</B> 'Coordinate transformation world->screen</LI>
+<LI><B>D.ScreenY(theRealY)</B> 'Coordinate transformation world->screen</LI>
+<LI><B>D.RealX(theScreenX)</B> 'Coordinate transformation screen->world</LI>
+<LI><B>D.RealY(theScreenY)</B> 'Coordinate transformation screen->world</LI>
+<LI><B>D.GetXGrid</B> 'returns array, which contains min, delta and max of the X grid</LI>
+<LI><B>D.GetYGrid</B> 'returns array, which contains min, delta and max of the Y grid</LI>
+<LI><B>D.SetGridColor theGridColor, theSubGridColor</B> 'Colors of X and Y grid lines</LI>
+<LI><B>D.SetXGridColor theGridColor, theSubGridColor</B> 'Colors of X grid lines</LI>
+<LI><B>D.SetYGridColor theGridColor, theSubGridColor</B> 'Colors of Y grid lines</LI>
+<LI><B>D.Draw theDrawColor, theTextColor, isScaleText, theTooltipText, theEventActions</B> 'Display</LI>
+</UL>
+<B>Before drawing, you can set the following properties:</B>
+<UL>
+<LI><B>D.XScale</B> ' 0 = no scale; 1 = numeric (default); 2, 3, ... = date/time; string = numeric+unit
+<BR />"function <I>FunctionName</I>" = <I>FunctionName</I>(ScaleValue)</LI>
+<LI><B>D.YScale</B> ' 0 = no scale; 1 = numeric (default); 2, 3, ... = date/time; string = numeric+unit
+<BR />"function <I>FunctionName</I>" = <I>FunctionName</I>(ScaleValue)</LI>
+<LI><B>D.XScalePosition</B> // "bottom" (default), "botom-left", "bottom-right", "top", "top-left", "top-right"</LI>
+<LI><B>D.YScalePosition</B> // "left" (default), "left-top", "left-bottom", "right", "right-top", "right-bottom"</LI>
+<LI><B>D.XGridDelta</B> 'Grid interval in X-direction, if it is 0 (default) it will be detected automatically</LI>
+<LI><B>D.YGridDelta</B> 'Grid interval in Y-direction, if it is 0 (default) it will be detected automatically</LI>
+<LI><B>D.XSubGrids</B> 'Number of Sub-Grid intervals within one Grid interval in X-direction, if it is 0 (default) it will be detected automatically, if it is -1 then a logarithmic Sub-Grid will be drawn</LI>
+<LI><B>D.YSubGrids</B> 'Number of Sub-Grid intervals within one Grid interval in Y-direction, if it is 0 (default) it will be detected automatically, if it is -1 then a logarithmic Sub-Grid will be drawn</LI>
+<LI><B>D.Font</B> 'Text style for scale text (1..5), default=4</LI>
+<LI><B>D.BFont</B> 'Text style bar and box text (1..5), default=5</LI>
+</UL>
+<B>After calling D.GetXGrid / D.GetYGrid you can read:</B>
+<UL>
+<LI><B>D.XGrid(0)</B>, <B>D.XGrid(1)</B> and <B>D.XGrid(2)</B> ' min, delta and max of the X grid</LI>
+<LI><B>D.YGrid(0)</B>, <B>D.YGrid(1)</B> and <B>D.YGrid(2)</B> ' min, delta and max of the Y grid</LI>
+</UL>
+<B>For the display of data you can use the following methods:</B>
+<UL>
+<LI><B>D.Bar theLeft, theTop, theRight, theBottom, theDrawColor, theText, theTextColor, theTooltipText, theEventActions</B></LI>
+<LI><B>D.Box theLeft, theTop, theRight, theBottom, theDrawColor, theText, theTextColor, theBorderWidth, theBorderColor, theTooltipText, theEventActions</B></LI>
+<LI><B>D.Dot theX, theY, theSize, theType, theColor, theTooltipText, theEventActions</B></LI>
+<LI><B>D.Pixel theX, theY, theColor</B></LI>
+<LI><B>D.Line theX0, theY0, theX1, theY1, theColor, theSize, theTooltipText, theEventActions</B></LI>
+<LI><B>D.Area theX0, theY0, theX1, theY1, theColor, theBase, theTooltipText, theEventActions</B></LI>
+<LI><B>D.Arrow theX0, theY0, theX1, theY1, theColor, theSize, theTooltipText, theEventActions</B></LI>
+<LI><B>D.Pie theXCenter, theYCenter, theOffset, theRadius, theAngle0, theAngle1, theColor, theTooltipText, theEventActions</B></LI>
+</UL>
+<B>For theEventActions use either theOnClickAction or<BR />
+Array(theOnClickAction, theOnMouseoverAction, theOnMouseoutAction)</B>
+</TD></TR></TABLE>
+</body>
+</html>

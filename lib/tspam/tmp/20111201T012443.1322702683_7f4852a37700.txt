@@ -1,0 +1,39 @@
+Received: (qmail 1925 invoked from network); 30 Nov 2011 20:24:31 -0500 from unknown (HELO dot78.prod.topcoder.com) (192.168.12.78)
+  by mailer.topcoder.com with SMTP; 30 Nov 2011 20:24:31 -0500 
+Message-ID: <1347523429.1322702671606.JavaMail.web@192.168.10.51> 
+Date: Wed, 30 Nov 2011 20:24:31 -0500 (EST) 
+From: TopCoder Competitions <no-reply@topcoder.com> 
+To: k2pts@phigita.net 
+Subject: The $50,000 USPTO Innovation Challenge has Arrived! 
+--------------------------------------
+Hello k2pts,
+
+Are you ready for another fun, exciting NTL challenge?!  Announcing the $50,000 USPTO Innovation Challenge!
+
+The US Patent and Trademark Office, together with the NASA Tournament Lab (NTL), have launched a contest to develop new algorithms to aid in patent examination.
+
+The USPTO is inviting software developers, academics, and the TopCoder community to develop specialized algorithms to help bring the seven million patents presently in the patent archive into the digital age. The contest will require advanced knowledge of text recognition, image analysis, and the construction of bounding boxes. 
+
+This experimental contest has a prize purse of $50,000 with $10,000 going to the first place team!  Plus everyone's favorite, t-shirts!
+
+Registration is open now until December 5, 2011 and the contest starts on December 16, 2011.  Register for the competition now and read all about the details here:
+
+http://www.topcoder.com/uspto
+
+Best of luck to you!
+
+- The NTL and TopCoder Competitions Team 
+
+===================================================================
+You have received this email because you indicated in your TopCoder profile that you want to be notified of TopCoder Competitions. If you no longer wish to receive these emails, you may update your preferences at http://www.topcoder.com/tc?module=EditNotifications 
+
+www.topcoder.com
+TopCoder, Inc.
+95 Glastonbury Blvd
+Glastonbury, CT 06033
+Phone: 1-866-867-2633
+
+
+
+
+

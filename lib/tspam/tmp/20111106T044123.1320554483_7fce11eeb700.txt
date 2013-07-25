@@ -1,0 +1,11 @@
+Received: from mvjewxv (unknown [88.186.81.212])
+	by hijpttcly with SMTP id r9ZqElnbCirW06dA.1
+	for <neophytos@phigita.net>; Sun, 06 Nov 2011 12:41:17 +0800 
+Date: Sun, 6 Nov 2011 12:41:06 +0800 
+From: =?gb2312?B?va3Rx+bC?= <tqwedqls@hijpttcly.org> 
+To: <neophytos@phigita.net> 
+Subject: =?gb2312?B?xOMg0Ogg0qog16gg0rUgu68gtcQg0NAg1f4g1vog?=
+	=?gb2312?B?wO0gwvAgo78=?= 
+Message-ID: <20111106124117155155@hijpttcly.org> 
+X-mailer: Foxmail 6, 13, 102, 15 [cn] 
+

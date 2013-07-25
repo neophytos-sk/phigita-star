@@ -1,0 +1,16 @@
+Return-path: <webmaster@phigita.net> 
+Received: from [183.191.26.146] (port=4098 helo=201111171414)
+	by grey-area.mailhostingserver.com with asmtp 
+	id 049619-000098-32
+	for <webmaster@phigita.net>; Thu, 24 Nov 2011 14:56:00 +0800 
+Message-ID: <E44210AA97554B6A8C30DD035FFF79FA@201111171414> 
+From: =?koi8-r?B?IvPF0tTJxsnLwcPJ0SI=?= <pretentiousvdn48@edarttruck.com> 
+To: <webmaster@phigita.net> 
+Subject: =?koi8-r?B?88XS1MnGycvBw8nRINDSz8TVy8PJySDJIM/Cz9LVxM/Xwc7J0Q==?= 
+Date: Thu, 24 Nov 2011 14:56:00 +0800 
+X-Priority: 3 
+X-MSMail-Priority: Normal 
+X-Mailer: Microsoft Windows Mail 6.0.6001.18000 
+X-MimeOLE: Produced By Microsoft MimeOLE V6.0.6001.18049 
+X-Spam: Not detected 
+X-Mras: Ok 

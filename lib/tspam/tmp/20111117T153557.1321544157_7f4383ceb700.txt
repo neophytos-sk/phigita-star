@@ -1,0 +1,38 @@
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws;
+	s=good; d=advertise-bz.net;
+	h=Message-ID:Date:From:User-Agent:MIME-Version:To:Subject:Content-Type;
+	b=uOEKk+srMi8LgwQxSazx0zYvzIQzArGsRcr/zMMzdpSTy4SO6uu8+fyUkFw/zGHpVmlnVuxFaCUJbNI0ZPHlPOX3pv20vc0S1PCDEdLtvZO+sIZq6XWp2dAhq1mSkU4APTxQwagCmuGLJpWYdyZTmVjqhaHUnHq8I9xlemLBIAw=; 
+Message-ID: <78D4DCD2.86F4BB22@advertise-bz.net> 
+Date: Thu, 17 Nov 2011 07:35:47 -0800 
+From: "Blog Marketing" <admin@advertise-bz.net> 
+User-Agent: The Bat! (v3.95.6) Professional 
+To: <k2pts@phigita.net> 
+Subject: Post your ads where people read them! 
+--------------------------------------
+We have developed a software that automatically
+places your ad on millions of blogs.
+
+You will receive thousands of targeted hits to 
+your website as Blog Blaster places your ad on 
+blogs that match your ad's category. 
+
+This method has never been released to the public 
+before. Very few, if anyone has implemented this.
+
+For Full Details please read the attached .html file
+
+
+
+
+
+
+
+
+
+
+
+To Unsubscribe please read the attached Unsubscribe.txt file
+
+--------------------------------------
+ content-type=application/octet-stream part-token=::mime::1293-2--------------------------------------
+ content-type=application/octet-stream part-token=::mime::1293-3

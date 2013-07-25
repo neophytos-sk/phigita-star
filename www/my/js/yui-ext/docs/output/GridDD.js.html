@@ -1,0 +1,103 @@
+<html><head><title>GridDD.js</title><link rel="stylesheet" type="text/css" href="../resources/style.css" media="screen"/></head><body><h1>GridDD.js</h1><pre class="highlighted"><code>
+<i>// kill dependency issue</i>
+<b>if</b>(YAHOO.util.DDProxy){
+<i>/**
+ * @class YAHOO.ext.grid.GridDD
+ * Custom implementation of YAHOO.util.DDProxy used internally by the grid
+ * @extends YAHOO.util.DDProxy
+ */</i>
+YAHOO.ext.grid.GridDD = <b>function</b>(grid, bwrap){
+    <b>this</b>.grid = grid;
+    <b>var</b> ddproxy = document.createElement('div');
+    ddproxy.id = grid.container.id + '-ddproxy';
+    ddproxy.className = 'ygrid-drag-proxy';
+    document.body.insertBefore(ddproxy, document.body.firstChild);
+    YAHOO.util.Dom.setStyle(ddproxy, 'opacity', .80);
+    <b>var</b> ddicon = document.createElement('span');
+    ddicon.className = 'ygrid-drop-icon ygrid-drop-nodrop';
+    ddproxy.appendChild(ddicon);
+    <b>var</b> ddtext = document.createElement('span');
+    ddtext.className = 'ygrid-drag-text';
+    ddtext.innerHTML = &quot;&amp;#160;&quot;;
+    ddproxy.appendChild(ddtext);
+    
+    <b>this</b>.ddproxy = ddproxy;
+    <b>this</b>.ddtext = ddtext;
+    <b>this</b>.ddicon = ddicon;
+    YAHOO.util.Event.on(bwrap, 'click', <b>this</b>.handleClick, <b>this</b>, true);
+    YAHOO.ext.grid.GridDD.superclass.constructor.call(<b>this</b>, bwrap.id, 'GridDD', 
+          {dragElId : ddproxy.id, resizeFrame: false});
+          
+    <b>this</b>.unlockDelegate = grid.selModel.unlock.createDelegate(grid.selModel);
+};
+YAHOO.extendX(YAHOO.ext.grid.GridDD, YAHOO.util.DDProxy);
+
+YAHOO.ext.grid.GridDD.prototype.handleMouseDown = <b>function</b>(e){
+    <b>var</b> row = <b>this</b>.grid.getRowFromChild(YAHOO.util.Event.getTarget(e));
+    <b>if</b>(!row) <b>return</b>;
+    <b>if</b>(this.grid.selModel.isSelected(row)){
+        YAHOO.ext.grid.GridDD.superclass.handleMouseDown.call(<b>this</b>, e);
+    }<b>else</b> {
+        <b>this</b>.grid.selModel.unlock();
+        YAHOO.ext.EventObject.setEvent(e);
+        <b>this</b>.grid.selModel.rowClick(<b>this</b>.grid, row.rowIndex, YAHOO.ext.EventObject);
+        YAHOO.ext.grid.GridDD.superclass.handleMouseDown.call(<b>this</b>, e);
+        <b>this</b>.grid.selModel.lock();
+    }
+};
+
+YAHOO.ext.grid.GridDD.prototype.handleClick = <b>function</b>(e){
+    <b>if</b>(this.grid.selModel.isLocked()){
+         setTimeout(<b>this</b>.unlockDelegate, 1);
+         YAHOO.util.Event.stopEvent(e);
+    }
+};
+
+<i>/**
+ * Updates the DD visual element to allow/not allow a drop
+ * @param {Boolean} dropStatus True <b>if</b> drop is allowed on the target
+ */</i>
+YAHOO.ext.grid.GridDD.prototype.setDropStatus = <b>function</b>(dropStatus){
+    <b>if</b>(dropStatus === true){
+        YAHOO.util.Dom.replaceClass(<b>this</b>.ddicon, 'ygrid-drop-nodrop', 'ygrid-drop-ok');
+    }<b>else</b>{
+        YAHOO.util.Dom.replaceClass(<b>this</b>.ddicon, 'ygrid-drop-ok', 'ygrid-drop-nodrop');
+    }
+};
+
+YAHOO.ext.grid.GridDD.prototype.startDrag = <b>function</b>(e){
+    <b>this</b>.ddtext.innerHTML = <b>this</b>.grid.getDragDropText();
+    <b>this</b>.setDropStatus(false);
+    <b>this</b>.grid.selModel.lock();
+    <b>this</b>.grid.fireEvent('startdrag', <b>this</b>.grid, <b>this</b>, e);
+};
+       
+YAHOO.ext.grid.GridDD.prototype.endDrag = <b>function</b>(e){
+    YAHOO.util.Dom.setStyle(<b>this</b>.ddproxy, 'visibility', 'hidden');
+    <b>this</b>.grid.fireEvent('enddrag', <b>this</b>.grid, <b>this</b>, e);
+};
+
+YAHOO.ext.grid.GridDD.prototype.autoOffset = <b>function</b>(iPageX, iPageY) {
+    <b>this</b>.setDelta(-12, -20);
+};
+
+YAHOO.ext.grid.GridDD.prototype.onDragEnter = <b>function</b>(e, id) {
+    <b>this</b>.setDropStatus(true);
+    <b>this</b>.grid.fireEvent('dragenter', <b>this</b>.grid, <b>this</b>, id, e);
+};
+
+YAHOO.ext.grid.GridDD.prototype.onDragDrop = <b>function</b>(e, id) {
+    <b>this</b>.grid.fireEvent('dragdrop', <b>this</b>.grid, <b>this</b>, id, e);
+};
+
+YAHOO.ext.grid.GridDD.prototype.onDragOver = <b>function</b>(e, id) {
+    <b>this</b>.grid.fireEvent('dragover', <b>this</b>.grid, <b>this</b>, id, e);
+};
+
+YAHOO.ext.grid.GridDD.prototype.onDragOut = <b>function</b>(e, id) {
+    <b>this</b>.setDropStatus(false);
+    <b>this</b>.grid.fireEvent('dragout', <b>this</b>.grid, <b>this</b>, id, e);
+};
+};</code></pre><hr><div style="font-size:10px;text-align:center;color:gray;">yui-ext - Copyright &copy; 2006 Jack Slocum.  |
+    Yahoo! UI - Copyright &copy; 2006 Yahoo! Inc.<br />All rights reserved.</div>
+    </body></html>

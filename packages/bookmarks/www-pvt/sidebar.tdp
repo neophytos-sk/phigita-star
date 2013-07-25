@@ -1,0 +1,374 @@
+
+# the following (auto-run) also checks for session state variables
+# upon a valid session state variable, it will set ad_conn user_id
+# ad_maybe_redirect_for_registration
+
+
+
+contract {
+    param -id u -name url -check "url" -transform "::uri::canonicalize"
+    param -id t -name title -optional 1
+    param -id s -name snippet -optional 1
+    param -id feed -optional 1
+
+    # TODO: referrer must go but we still have deps in sw_agg_url_user
+    param -id referrer -optional 1 -transform "::uri::canonicalize"
+}
+
+
+
+
+
+set v_feed ""
+if {[exists_and_not_null feed]} {
+    set v_feed [uri::resolve ${v_url} ${feed}]
+}
+
+datastore \
+    -id labeldata \
+    -scope user \
+    -from_class ::bm::Label \
+    -order "name"
+
+datastore \
+    -id bookmarkdata \
+    -singleton true \
+    -scope user \
+    -from_class ::bm::Bookmark \
+    -where [list "url=:url"]
+
+
+val -id buttonText { 
+    if { @{bookmarkdata:rowcount} } {
+	return "Edit"
+    } else {
+	return "Save"
+    }
+}
+
+
+
+# ------------------------------------------------------------------------------------------
+
+js -deps {
+    kernel/lib/base.js
+    kernel/lib/event.js
+    kernel/lib/ajax.js
+    kernel/lib/JSON.js
+    bookmarks/lib/sidebar-url-add.js
+} -names {
+    select_label errMsgDiv sb attachone
+} {
+    xo.onDocumentReady(BM.init);
+}
+
+css {
+    #contentbuttonbartop option {width:125px;}
+
+    .errMsg {display:none;padding:2px 7px;background: #FAD163;font-size:small;font-weight:bold;border-radius:1em;-moz-border-radius:1em;} 
+    #labelmap li {color:#063; border: 1px solid #20ff40; background:#c0ffd0;padding: 1px;margin: 0px 0px 3px 0px; font-size:14px; 	  line-height:28px;  	  list-style: none;	  display: inline;	}
+    #labelmap a {	  color:blue;text-decoration:underline;	}
+    #bmmd th {	  background:#cccccc;	}
+    #bmmd td {	  background:#f3eefb;	}
+    #u { color:#66e; }
+    #f { color:#36a; }
+    #s { color:#e5dc5c;}
+    #x { color:#666; }
+    #i {color:dc5ce5;}
+    .fl {color:#7777CC;text-decoration:underline;cursor:pointer;display:inline;}
+    .input_label {font-size:10px;padding-top:5px;color:#666;}
+    .full_width {width:95%;padding:5px;}
+    img {border:0;}
+    body,td,font,a {font-family:Verdana,"Arial Unicode MS",Arial,helvetica,sans-serif;}
+    body {font-size:12px;color:#333;background:transparent;}
+    #sidebar_container {position: fixed;top: 8px;right: 0;width: 380px;height: 100%;background: url('/graphics/sidebar_back.png') repeat-y; }
+    #sidebar_header {position: fixed; top: 0; right: 0;width: 355px; padding: 20px 0 0 25px; background: url('/graphics/sidebar_top.png') no-repeat 0px 0px; }
+    #sidebar_container_inner {position: fixed; top: 36px; right: 10px; width: 343px; height: 86%; margin-bottom:20px; padding: 0px 10px 30px; overflow-x: hidden; overflow-y: scroll; background-color: #fff;  }
+    #_b_close {position:absolute;right:8px;top:12px;}
+    #logo {width:250px;height:26px;position:absolute;top:7px;left:20px;}
+    .submitButtonBackground {border:0;background:url(/graphics/share_blue_button.png) no-repeat 0 0;width:65px;height:20px;font-size:14px;color:white;cursor:pointer;overflow:hidden;text-indent:0;display:block;}
+    #sidebarOuterBento {width:330px;position:relative;}
+    .attachone {float:left;width:80px;height:80px;margin:2px;}
+    .attachone img {border:0;margin:0;padding:0;}
+}
+
+
+# ------------------------------------------------------------------------------------------
+
+master -src "/templates/blank-master.inc" -title "Add URL - Your Bookmarks" {
+
+    script { 
+	t {
+	    function jsonp_call(url) {
+		var scriptEl = document.createElement("script");
+		scriptEl.src = url;
+		document.body.appendChild(scriptEl);
+	    }
+	    function callback_create_new_collection(label_id,label_name) {
+		var selectEl = document.getElementById("select_label");
+		var selectedIndex = -1;
+		var num_of_options = selectEl.options.length;
+		for(var i=2;i<num_of_options;i++) {
+						   optionEl = selectEl.options[i];
+						   if (optionEl.value == label_id) {
+						       selectedIndex = i;
+						       break;
+						   }
+					       }
+
+		if (selectedIndex == -1) {
+		    var optionEl = document.createElement("option");
+		    var textEl = document.createTextNode(label_name);
+		    optionEl.appendChild(textEl);
+		    optionEl.value = label_id;
+		    selectEl.appendChild(optionEl);
+		    selectedIndex = num_of_options;
+		}
+
+		selectEl.selectedIndex = selectedIndex;
+	    }
+	    function create_new_collection() {
+		var selectEl = document.getElementById("select_label");
+		if (selectEl.value == 0) {
+		    var label_name = prompt("Please enter a new collection name:");
+		    jsonp_call("labels/one-create?callback=callback_create_new_collection&name=" + encodeURIComponent(label_name));
+		}
+	    }
+	}
+    }
+
+
+
+}
+
+dataview {
+    div -id sidebar_container {
+	div -id sidebar_container_inner {
+	    div -id sidebar_header {
+		a -id "_b_close" -href "javascript:void(null);" -title "Close sidebar" {
+		    img -alt "Close sidebar" -src "/graphics/close_button.gif"
+		}
+		div -id logo {
+		    div -style "float:left;text-align:right;font-size:16px;margin-left:5px;color:#606;" { nt "reMark&nbsp;" }
+		    div -style "text-align:left;font-size:10px;letter-spacing:1px;color:#606;" {
+			t "human judgment first"
+			br
+			t "computer power second"
+		    }
+		}
+	    }
+	    form -name "url-add-form" -method "post" -onsubmit "BM.saveURL();return false;" {
+		input -type hidden -name edit_p -value @{bookmarkdata:rowcount}
+		# input -type hidden -name feed -value ${v_feed}
+		# input -type hidden -name referrer -value ${v_referrer}
+
+		table -width "100%" -border "0" -cellpadding "4" -cellspacing "0" {
+		    tr -style "background:#eef3fb;" {
+			td -align "left" { 
+			    div -id "errMsgDiv" -class "errMsg" { nt "&nbsp;" } 
+			}
+			td -align "right" { button -class submitButtonBackground -type "submit" -id "sb" -name "sb" { t @{buttonText} } }
+		    }
+		}
+		p
+		div -style "background:#f3fbee;padding:5px;" {
+		    div { 
+			div -class input_label { t "URL" }
+			input \
+			    -class full_width \
+			    -name "url" \
+			    -type "text" \
+			    -value @{param.url} 
+		    }
+		    div { 
+			div -class input_label { t "Note" }
+			textarea \
+			    -class full_width \
+			    -name description \
+			    -rows 4 \
+			    -x-bind {
+				value_if "@{bookmarkdata:rowcount} => @{bookmarkdata.description}"
+			    } { 
+				t @{param.snippet} 
+			    } 
+		    }
+		    div { 
+			div -class input_label { t "Title" }
+			input \
+			    -class full_width \
+			    -type "text" \
+			    -id "title" \
+			    -name "title" \
+			    -value @{param.title} \
+			    -maxlength "255" \
+			    -x-bind {
+				value_if "@{bookmarkdata:rowcount} => @{bookmarkdata.title}"
+			    }
+
+		    }
+		}
+		font -size "-3" { br }
+		table -id "bmmd" -cellpadding "2" -cellspacing "2" -align "center" -width "100%" {
+		    tr {
+			th {
+			    b { t "Access" }
+			}
+			th {
+			    b { nt "Flags" }
+			}
+			th -width "100%" -align "center" -valign "top" {
+			    b { nt "Collection" }
+			}
+		    }
+		    tr {
+			td -valign "top" -nowrap "" {
+			    small {
+
+				input \
+				    -type "radio" \
+				    -name "shared_p" \
+				    -value "f" \
+				    -size "40" \
+				    -id "shared_p:f" \
+				    -x-bind { 
+					checked "!@{bookmarkdata:rowcount} || !@{bookmarkdata.shared_p}"
+				    }
+
+				label -for "shared_p:f" { 
+				    t "Private" 
+				}
+
+				br
+
+				input \
+				    -type "radio" \
+				    -name "shared_p" \
+				    -value "t" \
+				    -size "40" \
+				    -id "shared_p:t" \
+				    -x-bind { 
+					checked "@{bookmarkdata:rowcount} && @{bookmarkdata.shared_p}"
+				    }
+
+				label -for "shared_p:t" { 
+				    t "Public" 
+				}
+
+			    }
+			}
+			td -align "left" -valign "top" -nowrap "" {
+			    small {
+				#input -type checkbox -name "unread_p" -id "unread_p" -value "t"
+				#label -for "unread_p" { nt "toread \[ <strong>U</strong> \]" }
+				#br
+				input \
+				    -type checkbox \
+				    -name "favorite_p" \
+				    -id "favorite_p" \
+				    -value "t" \
+				    -x-bind {
+					checked "@{bookmarkdata:rowcount} && @{bookmarkdata.starred_p}"
+				    }
+
+				label -for "favorite_p" { 
+				    nt "starred \[ <strong>&#9733;</strong> \]" 
+				}
+				br
+				#input -type checkbox -name "interesting_p" -id "interesting_p" -value "t"
+				#label -for "interesting_p" { nt "interesting \[&nbsp;<b id=i>I</b>&nbsp;]" }
+				#br
+				input \
+				    -type checkbox \
+				    -name "sticky_p" \
+				    -id "sticky_p" \
+				    -value "t" \
+				    -x-bind {
+					checked "@{bookmarkdata:rowcount} && @{bookmarkdata.sticky_p}"
+				    }
+
+				label -for "sticky_p" -title "check if you visit often" { 
+				    nt "sticky link \[ <strong>+</strong> \]"
+				}
+				br
+				input \
+				    -type checkbox \
+				    -name "adult_p" \
+				    -id "adult_p" \
+				    -value "t" \
+				    -x-bind {
+					checked "@{bookmarkdata:rowcount} && @{bookmarkdata.adult_p}"
+				    }
+
+				label -for "adult_p" -title "Not Safe For Work" { 
+				    nt "NSFW  \[ <strong>X</strong> \]"
+				}	       
+				br
+				input -type hidden -name "subscribe_p" -id "subscribe_p" -value "t"
+				# [ad_decode @{feed} "" {-disabled ""} ""]
+				# label -for "subscribe_p" { t "subscribe to feed" }
+				br
+				input -type hidden -name "cache_p" -id "cache_p" -value "t"
+				# label -for "cache_p" { t "cache text" }
+			    }
+			}
+			td -id "labelmap" -valign "top" {
+			    div -style "margin:0" {
+				input -type "hidden" -name "NewFol" -value ""
+			    }
+			    div -id "contentbuttonbartop" -class "contentbuttonbar" {
+				select -id select_label -name label -style "width:125px;" -count @{labeldata:rowcount} {
+				    option -value "" { t "----" }
+				    option -value "0" -onclick "create_new_collection()" { t "\[ New Label \]" }
+				    tpl -for labeldata {
+					option -value @{id} {
+					    t @{name}
+					}
+				    }
+				}
+			    }
+			}
+		    }
+		}
+		div -id attachments
+		div -style "clear:both;" {
+		    button -onclick "return HandleCapture(this);" { t "Capture Images" }
+		}
+
+		if {0} {
+		    if { $bm ne {} } {
+			if { [$bm set shared_p] } {
+			    $public_node setAttribute checked "checked"
+			} else {
+			    $private_node setAttribute checked "checked"
+			}
+			if { [$bm set starred_p] } {
+			    $starred_node setAttribute checked "checked"
+			}
+			if { [$bm set sticky_p] } {
+			    $sticky_node setAttribute checked "checked"
+			}
+			if { [$bm set adult_p] } {
+			    $adult_node setAttribute checked "checked"
+			}
+			set init_js ""
+			$bm instvar extra
+			set preview ""
+			dict with extra {
+			    foreach attachment $preview {
+				lassign $attachment mediaType  mediaUrl imgSha1 imgWidth imgHeight
+				append init_js "AM([::util::jsquotevalue mediaType],[::util::jsquotevalue $mediaUrl],1,[::util::jsquotevalue $imgSha1],$imgWidth,$imgHeight);"
+			    }
+			}
+			if { $init_js ne {} } {
+			    script { nt $init_js }
+			}
+		    } else {
+			$private_node setAttribute checked "checked"
+		    }
+		}
+
+	    }
+
+	}
+    }
+}

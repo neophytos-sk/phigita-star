@@ -1,0 +1,10 @@
+access-list 103 permit udp any eq domain any
+access-list 103 permit udp any eq ntp any
+access-list 103 permit udp any any eq ntp
+access-list 103 permit udp host 195.14.130.220 any
+access-list 103 permit tcp any any established
+access-list 103 permit tcp any any eq www
+access-list 103 permit tcp any any eq smtp
+access-list 103 permit tcp any any eq 443
+access-list 103 permit tcp any any eq domain
+access-list 103 deny   ip any any

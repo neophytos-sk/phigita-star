@@ -1,0 +1,1 @@
+/usr/bin/c++    -g -Wall -O0 -pg   -pg CMakeFiles/gmm.dir/gmm_main.cpp.o  -o ../../../../bin/gmm -rdynamic ../../../../lib/libmlpack.so.1.0.0 -larmadillo -llapack -lblas -lboost_math_c99 -lboost_program_options -lxml2 -Wl,-rpath,/web/service-phgt-0/lib/mlpack/mlpack-1.0.0/build/lib 

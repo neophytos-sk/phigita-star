@@ -1,0 +1,24 @@
+Message-ID: <003001ccb06f$00e16372$0a0a010a@ZAPFE_DESKTOP> 
+From: "Postal Service" <information@usps.com> 
+To: <webmaster@phigita.net> 
+Bcc: <tuvets@bellsouth.net>,
+	<retack@pwc.utc.com> 
+Subject: USPS service. Get your parcel NO#3301 
+Date: Thu, 01 Dec 2011  15:20:08 -0500 
+X-Priority: 3 
+X-MSMail-Priority: Normal 
+X-Mailer: Microsoft Outlook Express 6.00.2900.2180 
+X-MimeOLE: Produced By Microsoft MimeOLE V6.00.2900.2180 
+--------------------------------------
+ Dear customer,
+
+   Your parcel has arrived at the post office on November 22.
+   We were not able to deliver your package to your address.
+   To receive a parcel you must go to the nearest USPS office and show
+   your post label.
+   The post label is attached to this letter.
+
+   Thank you.
+   USPS Customer Services.
+
+Whoops!  What is a 'application/x-zip-compressed'?

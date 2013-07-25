@@ -1,0 +1,14 @@
+Received: from mcggfeajgbj (192.168.1.12) by mcggfeajgbj.axcethr.com (83.236.222.158) with Microsoft SMTP Server id 8.0.685.24; Mon, 21 Nov 2011 11:45:39 +0100 
+Message-ID: <4ECA2767.808040@ctrip.com> 
+Date: Mon, 21 Nov 2011 11:45:39 +0100 
+From: "The Electronic Payments Association" <ach@nacha.org> 
+User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.2.9) Gecko/20100921 Thunderbird/3.1.4 
+To: <k2pts@phigita.net> 
+Subject: Your ACH transaction 
+--------------------------------------
+The ACH  transaction (ID: 273676743609), recently  sent from your  checking account (by you or any other person), was   rejected by the  other financial institution.       Canceled transfer  
+      Transaction ID:     273676743609  
+       Rejection Reason    See details in the report below   
+      Transaction Report     report_273676743609.doc (Microsoft Word Document)   
+  13450 Sunrise Valley Drive, Suite 100Herndon, VA 201712011 NACHA - The Electronic Payments Association
+Whoops!  What is a 'image/gif'?

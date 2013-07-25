@@ -1,0 +1,10 @@
+Received: from 151.26.69.104 by mx.quux.com; Mon, 19 Sep 2011 11:21:50 +0100 
+Date: Mon, 19 Sep 2011 11:21:50 +0100 
+From: =?koi8-r?B?IvfJ2tkg1NXUIg==?= <claspsj79@quux.com> 
+X-Mailer: The Bat! (v3.5) Educational 
+Reply-To: claspsj79@quux.com 
+X-Priority: 3 (Normal) 
+Message-ID: <765500560.32310644708585@quux.com> 
+To: webmaster@phigita.net 
+Subject: =?koi8-r?B?++Xu5+Xu8+vp5SD36fr5IQ==?= 
+

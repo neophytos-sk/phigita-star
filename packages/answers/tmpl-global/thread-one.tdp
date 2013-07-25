@@ -1,0 +1,150 @@
+
+contract \
+    -accept_proto "http" \
+    -accept_method "get" \
+    -require_secure_conn "false" \
+    -require_registration "false" {
+
+	param -id "id" -check "naturalnum notnull"
+}
+
+datastore -id questiondata \
+    -singleton true \
+    -from_class [::db::Inner_Join new \
+		     -lhs [::db::Set new \
+			       -scope {subsite} \
+			       -alias q \
+			       -type ::Question \
+			       -where [list "id=:id" "kind=0"]] \
+		     -rhs [::db::Set new \
+			       -alias u \
+			       -select {screen_name user_id first_names last_name} \
+			       -type ::CC_Users] \
+		     -join_condition {q.creation_user = u.user_id}] \
+    -extend {
+
+	set pretty_creation_date [lc_time_fmt ${creation_date} "%Q"]
+
+	array set config [list root "[User set id]-${creation_user}" container_object_id @{id} image_prefix "http://www.phigita.net/~${screen_name}/media/preview/"]
+
+	if { [catch {::xo::structured_text::stx_to_html config body content_in_html} errmsg] } {
+	    ns_log notice "caught error in questiondata extend: errmsg=$errmsg"
+	    set content_in_html "<div>(<font color=red>+</font>) ${body}</div>"
+	}
+
+    }
+
+
+guard -id check_if_question_found {
+
+    if { @{questiondata:rowcount} == 0 } {
+	rp_returnnotfound
+	return false
+    }
+    return true
+}
+
+guard -id require_registration { ::xo::kit::require_registration }
+
+datastore -id answerdata \
+    -from_class [::db::Inner_Join new \
+		     -lhs [::db::Set new \
+			       -scope {subsite} \
+			       -alias q \
+			       -type ::Answer \
+			       -where [list parent_id=@{id}]] \
+		     -rhs [::db::Set new \
+			       -alias u \
+			       -select {screen_name user_id first_names last_name} \
+			       -type ::CC_Users] \
+		     -join_condition {q.creation_user = u.user_id}] \
+    -order "creation_date" \
+    -extend {
+	set pretty_creation_date [lc_time_fmt $creation_date %q]
+	array set config [list root "[User set id]-${creation_user}" container_object_id "X" image_prefix "http://www.phigita.net/~${screen_name}/media/preview/"]
+
+	if { [catch {::xo::structured_text::stx_to_html config body content_in_html} errmsg] } {
+	    ns_log notice "caught error in questiondata extend: errmsg=$errmsg"
+	    set content_in_html "<div>(<font color=red>+</font>) ${body}</div>"
+	}
+
+    }
+
+val -id title { 
+    set subject [@{questiondata} set subject]
+    return "${subject} - Answers" 
+}
+
+#-------------------------------
+
+master -title @{title} {
+
+    tpl -with "questiondata" {
+	div -style "background:#c2bddd;padding:4px;" {
+	    b { t "Question" }
+	}
+	
+	div -style "background:#eeeeee;padding:4px;" {
+	    t "Posted: "; b { t @{pretty_creation_date} }
+	    tpl -if "@{cnt_answers}" {
+		br
+		t "Number of answers: "; b { t @{cnt_answers} }
+	    }
+	}
+
+	div {
+	    h2 {
+		t @{subject}
+	    }
+	    p
+	    
+	    nt @{content_in_html:noquote}
+	}
+	
+	tpl -if { not @{anonymous_p} } {
+	    t "-- "
+	    a -href "http://www.phigita.net/~@{screen_name}/" {
+		t "@{first_names} @{last_name}"
+	    }
+	    t " "
+	    sub {
+		t "~@{screen_name}"
+	    }
+	}
+    }
+
+
+    tpl -if "@{answerdata:rowcount}" {
+	center {
+	    h2 {
+		t "Reader's Answers"
+	    }
+	}
+	tpl -for "answerdata" {
+	    div -id @{id} {
+		nt @{content_in_html:noquote}
+		t "-- " 
+		a -href "http://www.phigita.net/~@{screen_name}/" {
+		    t "@{first_names} @{last_name}"
+		}
+		t " "
+		sub {
+		    t "~@{screen_name}"
+		}
+		t ", @{pretty_creation_date}"
+		p
+	    }
+	    br
+	    br
+	}
+    }
+
+    p
+    form -action "answer-add" -method "get" {
+	input -type "hidden" -name "parent_id" -value "@{id}"
+	center {
+	    input -type "submit" -value "Contribute an answer"
+	}
+    }
+    p
+}

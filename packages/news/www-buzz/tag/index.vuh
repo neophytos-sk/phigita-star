@@ -1,0 +1,37 @@
+ad_page_contract {
+    @author Neophytos Demetriou
+} {
+    {output:trim "html"}
+    {host:trim ""}
+}
+
+set split_extra_url [split [ad_conn extra_url] /]
+set tag [join [lrange $split_extra_url 1 end]]
+
+#doc_return 200 text/html $tag
+
+if { $tag ne {} } {
+
+    set normalized_tag [string trim [join [regsub -all -- {(_){2,}} [string map {{ } {_} {"} {_} {'} {_} {!} {_} {/} {} {(} {_} {)} {_} {:} {_} {-} {_} {&} {_} {;} {_}} [string totitle [::util::dequotehtml [::ttext::unac utf-8 $tag]]]] {_}]] { _\{\}}]
+
+
+    if { $normalized_tag ne $tag } {
+	ns_returnmoved [export_vars -no_empty -base /tag/$normalized_tag {host}]
+	return
+    }
+    
+    rp_form_put tag $tag
+    if { ${output} eq {html} || ${output} eq {rss} } {
+	rp_internal_redirect /packages/news/tmpl-buzz/index-${output}
+	return
+    } else {
+	rp_returnnotfound
+	return
+    }
+
+} else {
+
+    rp_internal_redirect /packages/news/tmpl-buzz/tag-cloud
+
+}
+

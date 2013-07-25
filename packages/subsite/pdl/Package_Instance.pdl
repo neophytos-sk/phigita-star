@@ -1,0 +1,4 @@
+DB_Class Package_Instance -shorthand "pkg" -attribute {
+    {OID id}
+    {String key}
+}

@@ -1,0 +1,279 @@
+1.2.7 - 28 August 2007
+  - license change to Artistic 2.0
+  - pointless option "-l" removed
+
+1.2.6 - 4 February 2007
+  - bugfix (reversion): removed locking from MySQL as it makes it too slow
+
+1.2.5 - 21 January 2007
+  - bugfix: fixed random token deletion in list backend
+  - bugfix: added table locking to MySQL backend to maintain integrity
+  - bugfix: fixed MySQL database type autodetection for files
+  - cleanup: rpmlint fixes to spec file
+
+1.2.1 - 25 October 2006
+  - bugfix: concurrent updates now work properly on all backends
+  - developers: "make bigbenchmark" generates graph data for gnuplot
+
+1.2.0 - 2 October 2006
+  - new default backend database "list" (better than btree)
+  - new option "-H" to set value of X-Spam header (Michal Vitecek)
+  - new option "-P" to keep a plaintext mapping of hashes to tokens
+  - new option "-y" to use a deny-list as well as an allow-list
+  - new allow/deny-list syntax "@domain" to list whole domains
+
+1.1.13 - 15 August 2006
+  - bugfix: patch from Michal Vitecek to fix segfault in btree backend
+  - bugfix: fixed MD5 problem on 64-bit systems (eg AMD64)
+  - bugfix: fixed mmap problem with btree on OpenBSD
+  - cleanup: better compilation on Solaris
+  - cleanup: use snprintf more and strcpy/strcat less
+  - cleanup: fixed problems spotted by Tommy Pettersson
+
+1.1.7 - 8 April 2006
+  - check Return-Path: header against allow-list as well as From:
+
+1.1.6 - 2 February 2006
+  - cosmetic fixes to prevent compilation warnings with GCC 4.x
+  - bugfix: improved MySQL detection when running configure script
+  - bugfix: if a URL is the first thing in the body it is now still found
+  - bugfix: handle message/* nested attachments
+
+1.1.2 - 7 July 2005
+  - allow list matching is now case insensitive
+  - new btree database mtime is updated after any modification
+  - spec file fix for FC4
+
+1.1.0 - 12 May 2005
+  - per-user databases are now given 10x the weighting of global databases
+  - improved the pruning algorithm to take token "age" into account
+  - new number-of-updates counter; each token now has a "last updated" time
+  - the internal binary tree database is much faster on systems with mmap()
+  - "make test", "make benchmark", and "qsf -B" now support the MySQL backend
+  - token for words beginning with non-alphanumeric characters
+  - token for words with more than 3 hyphens or underscores
+  - token for words between 31 and 59 characters long
+  - token for FONT tags
+  - replaced image token with "external image" token
+  - bugfix: fixed hard-to-trigger SQLite crash after multiple db prunes
+
+1.0.31 - 4 March 2005
+  - put all internal binary tree db code into a single file
+  - allow more than one backend to be compiled in at once
+  - check for gdbm_fdesc, some systems don't have it
+  - check for mysql_real_escape_string (if absent, MySQL is too old)
+  - code cleanup
+  - configure option "--enable-static" to allow static linking against libs
+  - developers: new "make benchmark" benchmarks available backends
+  - developers: benchmarking ("-B") now reports more information
+  - packagers: RPM options are now just plain and "static"
+
+1.0.22 - 28 February 2005
+  - optional argument to "-D" documented in man page
+  - bugfix: if "-D" is given a filename, check it won't overwrite a database
+  - bugfix: don't output >512kb messages in mark/non-filter mode
+  - developers: in "-vv" (very verbose) mode, report which backend is in use
+
+1.0.18 - 19 February 2005
+  - new option "-Q" to pass through messages containing insufficient tokens
+  - new option "-X" to set a limit on how many tokens can be pruned at once
+  - filter now adds tokens for more attachment types (DOC, XLS, PDF, images)
+    as well as for single and multiple images
+
+1.0.15 - 5 February 2005
+  - fixed bug in RPM spec file when looking for MySQL libraries
+  - fixed bug in "make rpm" and "make srpm" build targets
+  - updated spec file to use "--with" options (gdbm, mysql, sqlite)
+
+1.0.14 - 26 September 2004
+  - decode email headers that are expressed in alternate encodings
+  - minor cleanup of option parsing code
+  - added "memtest" Makefile target for testing with valgrind
+  - option "-e" now automatically enables "-a"
+  - more tests for "make test"; tests no longer depend on "formail"
+
+1.0.9 - 22 September 2004
+  - added new SQLite backend
+  - added "-sqlite" package to RPM spec file for "qsf-sqlite" package
+  - added "--with-sqlite" option to configure script
+
+1.0.6 - 22 June 2004
+  - added "-v" option to add logging headers to email
+  - added "-A" option to add "X-Spam-Level" header, like SpamAssassin
+  - use "-e MSG" to update/query allow list using address read from an email
+  - included Postfix filtering HOWTO from M. Kölbl
+
+1.0.2 - 28 April 2004
+  - added tokenisation details and a troubleshooting section to the manual
+  - added "srpm" and "release" Makefile targets
+
+1.0.1 - 15 March 2004
+  - corrected default per-user database name back to ~/.qsfdb
+
+1.0.0 - 12 March 2004
+  - added mailstats.sh to the new "extra/" source directory
+  - added statstable.sh to the new "extra/" source directory
+  - scripts from extra/ are installed as documentation in the RPM
+  - code cleanup using RATS to check for potential problems
+  - portability fixes in the build process
+  - word-wrapping in "--help" output
+  - abort with an error if superfluous command line arguments are given
+  - abort with an error if an invalid database is supplied
+  - keyboard interrupt signals blocked during critical db writing parts
+  - new option "-N" to prevent automatic pruning
+  - both "-R" and "-D" can take a filename instead of stdin/stdout
+  - filter to check for gibberish in the sender address
+  - filter now adds extra tokens for the hostname part of URLs
+  - filter now checks URL-encoded hostnames (http://%6d%6e%3f/)
+  - filter now checks for integer hostnames (http://1234567890/)
+  - filter to look for <img> tags
+
+0.9.25 - 16 January 2004
+  - new option "-e" to query and update the allow-list directly
+  - new option "-L" to change the spam threshold level
+  - option to allow "-g" to be used twice, for two global databases
+  - removed locks from procmail examples
+  - added information on using qsf with qmail
+  - MySQL option allows dynamic linking
+  - bugfix: prevent memory hogging by limiting number of tokens in one prune
+
+0.9.18 - 6 January 2004
+  - allow a combination of "-r" "-t" to just output the spam score
+  - tokeniser improvement: strip multiple spaces/newlines
+  - tokeniser improvement: add URLs to tokeniser
+  - filter to add URLs as tokens, with and without "@" parts
+  - filter for numeric IP addresses in URLs
+  - filter for .vbs, .vba, .lnk, .com, .bat file extensions
+
+0.9.12 - 1 January 2004
+  - minor cosmetic fixes for non-Linux systems
+  - speedup: replaced stdio with low-level read/write in btree db backend
+  - bugfix in "make index" (only of interest to developers)
+
+0.9.9 - 29 November 2003
+  - fixed outdated information in the README
+  - fixed memory management bug in MySQL backend
+  - minor fixes to "make test" and "make leaktest"
+  - some speedups in the binary tree database backend
+
+0.9.6 - 15 November 2003
+  - added MySQL database backend
+  - added "--global" to change default global database
+  - added qsf-mysql RPM package using optional MySQL backend
+
+0.9.4 - 21 October 2003
+  - switched from RPM_BUILD_ROOT to DESTDIR in "make install"
+  - added locking to binary tree database backend
+  - data corruption bugfix in binary tree database backend
+  - dropped support for Berkeley DB
+  - made the internal binary tree database the default (not GDBM)
+  - documented the new filters
+
+0.9.0 - 29 August 2003
+  - switched spam rating calculation to Robinson method
+  - removed shifting weighting from training (--train)
+  - removed the "-o" (--add-tokens) option, as it is now redundant
+  - added support for multiple extra tests/token adding rules
+  - new rule: GTUBE (see http://www.spamassassin.org/gtube/)
+  - new rules: detect if an attachment ends in .scr, .pif, .exe
+  - new rules: detect runs of multiple consonants / vowels
+  - new rule: detect HTML comments in the middle of words
+  - changed automatic pruning to only prune after every 500 updates
+  - added "--enable-profiling" to configure script
+  - added new --subject-marker option to set subject line
+  - added token pairing to match pairs of words
+
+0.8.1 - 21 August 2003
+  - added more documentation, with examples, to the manual
+  - changed "-a -T" to behave exactly as manual specifies
+  - some minor (cosmetic) cleanups in the build process
+
+0.7.8 - 18 August 2003
+  - added "--allowlist" for email address whitelisting
+
+0.7.7 - 31 July 2003
+  - added automatic database pruning after every 100 updates
+
+0.7.6 - 23 July 2003
+  - added "--merge" option to merge two databases together
+  - added C fakemail replacement to speed up "make test"
+
+0.7.4 - 8 July 2003
+  - increased max HTML tag length from 100 to 500 characters
+  - decode HTML entities like &nbsp; and &quot;
+  - increased minimum token size to 3 characters from 2
+  - bugfix in header addition
+
+0.7.0 - 5 July 2003
+  - added logarithmic probability scaling
+  - changed X-Spam-Rating: values to range from 0 to 100 (>90=spam)
+  - fixed bug in --prune that forced you to specify your database
+  - new option to add X-Spam-Token: headers (mainly for debugging)
+  - added new --benchmark option for developers
+  - stopped looking at the Received: header (causes too much skew)
+  - added "Sender:" to the list of headers we look at
+  - prune function now throws away tokens with <4 counts
+  - added new database-independent storage backend
+  - exclamation marks now allowed in tokens
+  - moved upper/lower probability cap back to 3 decimal places, not 4
+  - new developer option "make indent" to reformat source code
+  - extra code to allow compilation under MinGW (Windows)
+
+0.5.9 - 27 June 2003
+  - replaced MD5 code with a public domain version
+  - binary attachments now have their MD5 checksum used as a token
+  - maximum token length increased to 34
+  - bug fixes in mailbox parser (extra null message, missing last message)
+  - bug fix in shifting weighting code
+
+0.5.4 - 4 June 2003
+  - improved training method of --train using shifting weightings
+  - removed GNU getopt code from source tree
+  - replaced test spam/nonspam mail folders with test token lists
+
+0.5.1 - 11 May 2003
+  - minor bugfix in --restore
+
+0.5.0 - 10 May 2003
+  - tokens now stored as MD5 hashes for privacy
+  - added new "--add-rating" (-r) option to add X-Spam-Rating header
+  - added new "--prune" (-p) option to prune redundant database entries
+  - tokeniser now strips HTML where appropriate
+  - tokeniser now only allows . ' and - when not at start or end (i.e. URLs)
+  - added support for Berkeley DB 1.85 and 4
+  - now seems to build and test OK on Mac OS X
+  - added "debian" directory from Tom Parker
+  - added "make rpm" and "make deb" targets to build RPM and Debian packages
+  - fixed buffer handling mistake in message parser
+  - build fixes and cleanups, added tests
+
+0.3.1 - 22 January 2003
+  - allow the use of per-user databases and a system-wide database together
+  - added variable weighting to the training algorithm
+  - improved parsing of multipart messages / attachments
+  - removed use of tolower(), which was causing glibc version problems (!)
+  - added X-Spam: NO header to non-spam email
+  - moved all database calls to a wrapper for future portability
+  - split up message parser for better readability
+  - split up spam checking functions for better readability
+  - split up mailbox parsing functions for better readability
+
+0.2.2 - 19 January 2003
+  - worked around procmail bug: now always exit 0 when filtering
+
+0.2.1 - 17 January 2003
+  - removed dependency on fmemopen(), which isn't standard
+  - found and documented bug in handling with procmail
+
+0.2.0 - 15 January 2003
+  - non-textual attachments are now skipped
+  - added --train option
+  - checked for memory leaks
+  - tested --train on big mailboxes (around 28000 messages in total)
+
+0.1.0 - 14 January 2003
+  - first working version
+
+0.0.1 - 11 January 2003
+  - package created
+  - first draft of man page written

@@ -1,0 +1,208 @@
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed/relaxed; s=k1; d=mail37.us1.rsgsv.net;
+ h=Subject:From:Reply-To:To:Date:Message-ID:List-Unsubscribe:Sender:Content-Type:MIME-Version; i=newsletter=3Dphileleftheros.com@mail37.us1.rsgsv.net;
+ bh=6TpPv5lgThiw+tR+V27z7gRlnZM=;
+ b=D2ls6NQAQIFPPOTCeaot1pFh6Ko+3XGOl4mxMkLOa33ltDFwLWr4FSIYRqjDPt3rXhElcOSmNNPU
+   yzvApa2EubL6b3FxhELZmesXyKNqcYw3Q6vNntk4b75NSqsEKDk0peGBqsT+1VDxk/vbFONQynDX
+   +71D8ZF8NbiBtnj2iJo= 
+DomainKey-Signature: a=rsa-sha1; c=nofws; q=dns; s=k1; d=mail37.us1.rsgsv.net;
+ b=Y+nf7OSYfOX0YeEZsn/IEeOYKthGWiiyqthAeDjxy2qRtyGQe4TfYq5Q/1wbzltY+B1sBFEe0ezP
+   PIvaB+Sks2zx6eH2RAzOl9Utewygl5QgWs2FpTlAzlOIQe7lMJSr6z8wjFkO+xZCzR54Tzu6nK5m
+   RPUHZlZmmfPXx6zvN98=; 
+Received: from (127.0.0.1) by mail37.us1.rsgsv.net (PowerMTA(TM) v3.5r16) id hpc9tu0lj3gr for <k2pts@phigita.net>; Mon, 21 Nov 2011 22:15:39 -0500 (envelope-from <bounce-mc.us2_6419294.1280929-k2pts=phigita.net@mail37.us1.rsgsv.net>) 
+Subject: =?utf-8?Q?Philenews=20Newsletter=2022=2F11=2F2011?= 
+From: =?utf-8?Q?Phileleftheros=20Newsletter?= <newsletter@phileleftheros.com> 
+Reply-To: =?utf-8?Q?Phileleftheros=20Newsletter?= <newsletter@phileleftheros.com> 
+To: <k2pts@phigita.net> 
+Date: Mon, 21 Nov 2011 22:15:39 -0500 
+Message-ID: <84e8c0ea4dc808b59204e2171b4828836f9.20111122031518@mail37.us1.rsgsv.net> 
+X-Mailer: MailChimp Mailer - **CID2e9706c9b2b4828836f9** 
+X-Campaign: mailchimp84e8c0ea4dc808b59204e2171.2e9706c9b2 
+X-campaignid: mailchimp84e8c0ea4dc808b59204e2171.2e9706c9b2 
+x-im: 38509-2e9706c9b2 
+X-Report-Abuse: Please report abuse for this campaign here: http://www.mailchimp.com/abuse/abuse.phtml?u=84e8c0ea4dc808b59204e2171&id=2e9706c9b2&e=b4828836f9 
+x-accounttype: pd 
+List-Unsubscribe: <mailto:unsubscribe-84e8c0ea4dc808b59204e2171-2e9706c9b2-b4828836f9@mailin1.us2.mcsv.net?subject=unsubscribe>, <http://philenews.us2.list-manage.com/unsubscribe?u=84e8c0ea4dc808b59204e2171&id=13cea9817b&e=b4828836f9&c=2e9706c9b2> 
+Sender: "Phileleftheros Newsletter" <newsletter=phileleftheros.com@mail37.us1.rsgsv.net> 
+x-mcda: FALSE 
+--------------------------------------
+Trouble viewing this email?[1]Click Here
+    Links:
+      1. http://us2.campaign-archive2.com/?u=84e8c0ea4dc808b59204e2171&id=2e9706c9b2&e=b4828836f9
+
+  right logo _ΤΡΙΤΗ
+  22 ΝΟΕΜΒΡΙΟΥ 2011_
+  Philenews
+
+  left logo
+  _[2]www.philenews.com
+  [3]www.sentragoal.com.cy _
+  line
+    Links:
+      2. http://www.philenews.com
+      3. http://www.sentragoal.com.cy
+
+ΠΡΩΤΟ ΘΕΜΑ
+
+  [4]Απορρίπτονται τα μέτρα Kαζαμία
+    Links:
+      4. http://www.philenews.com/el-gr/New-Homepage-With-Slider/4995/86804
+
+  Πέντε όχι από εργοδοτικές οργανώσεις και συντεχνίες εισέπραξε χτες ο
+  υπουργός Οικονομικών για τις τελευταίες προτάσεις του, με αποτέλεσμα η
+  κρίση της οικονομίας να μην φαίνεται να έχει διέξοδο.
+
+"Φ" ΑΠΟΚΛΕΙΣΤΙΚΟ
+
+  [5]Πήρε προαγωγή ενώ είναι με άδεια αφυπηρέτησης
+    Links:
+      5. http://www.philenews.com/el-gr/Eidiseis-Kypros/22/86802
+
+  Το  άκρον  άωτον  της σπατάλης και του βολέματος στη δημόσια υπηρεσία:
+  Λειτουργός του Τμήματος Δημόσιας Διοίκησης και Προσωπικού, ενώ βρίσκεται σε
+  άδεια αφυπηρέτησης, πήρε προαγωγή. Αποτέλεσμα, αυξημένη σύνταξη και εφάπαξ.
+
+  [6]Δικαστήριο υπέρ ελεύθερων ξεπουλημάτων
+    Links:
+      6. http://www.philenews.com/el-gr/Eidiseis-Kypros/22/86800
+
+  Δικαστική  απόφαση  υπέρ  των  ελεύθερων ξεπουλημάτων και εναντίον των
+  διαταγμάτων, που απαγορεύουν τα ξεπουλήματα εκτός από ορισμένες περιόδους.
+  Τα καταστήματα μπορούν να προσφέρουν ξεπουλήματα όποτε κρίνουν σωστό, όπως
+  προκύπτει από την απόφαση Δικαστηρίου, που εκδόθηκε αθωώνοντας την εταιρεία
+  Ermes Department Stores Plc, μέλος του Ομίλου Σιακόλα.
+
+ΟΙΚΟΝΟΜΙΑ
+
+  [7]Ούτε λόγος για νέες ασφάλειες
+    Links:
+      7. http://www.philenews.com/el-gr/Oikonomia-Kypros-XAK/3353/86801
+
+  Ενώ  προς το παρόν ο κλάδος ασφαλιστικών εταιρειών δεν είδε μια μαζική
+  ακύρωση  ασφαλιστικών  συμβολαίων, ούτε και θα δει αύξησή τους. Έρευνα
+  καταδεικνύει  ότι  μόνο  2% των καταναλωτών προτίθεται να  συνάψει νέα
+  συμβόλαια.
+
+  [8]Απειλούν να φύγουν από Κύπρο
+    Links:
+      8. http://www.philenews.com/el-gr/Oikonomia-Kypros-XAK/3353/86803
+
+  Το  ρευστό τοπίο όσο αφορά τη φορολόγηση εταιρειών, τρομάζει τις ξένες
+  τράπεζες. Προειδοποιούν με πιθανή αποχώρηση από την Κύπρο σε περίπτωση
+  επιβολής νέων φορολογιών.
+
+  [9]ΑΕΛ: Οι φετινοί ακραίοι, είναι... πιο ωραίοι!
+    Links:
+      9. http://www.sentragoal.com.cy/article.asp?catid=19173&subid=2&pubid=128859096
+
+  Εντμάρ και Μοντέιρο κάνουν εξαιρετική δουλειά, με την προσφορά τους να
+  απέχει κατά πολύ από τους προκατόχους τους, Βάργκας και Ρόκε...
+
+ΕΝΔΙΑΦΕΡΟΥΝ ΚΙ' ΑΥΤΑ
+
+  [10]«Γαστρονόμοι» οι σχεδιαστές;
+    Links:
+      10. http://www.philenews.com/el-gr/Diatrofi/1154/86761/gastronomoi-oi-schediastes
+
+  Όλα τα κάνουν, όλα τα προτείνουν, και μας παρακινούν στην πολυτέλεια με τις
+  design υπογραφές τους. Εν καιρώ κρίσης, μεγάλοι σχεδιαστές μόδας σχεδιάζουν
+  για κρασιά, νερά, αλλά και γλυκά για το φινάλε ενός επίλεκτου δείπνου.
+  Ποιοι είναι;
+
+  [11]Παγάκια που δεν λιώνουν ποτέ!
+    Links:
+      11. http://www.philenews.com/el-gr/Eidiseis-Ta-Perierga/4688/86788/pagakia-apo-anoxeidoto-atsali-pou-den-lionoun-pote
+
+  Πόσες φορές δεν έχεις γίνει έξαλλος όταν το ποτό ή ο καφές σου δεν είναι
+  πια όσο κρύος θέλεις επειδή έλιωσαν τα παγάκια! Κι όμως υπάρχει τρόπος να
+  πίνεις ποτό, μπύρα, καφέ ή αναψυκτικό και να είναι διαρκώς παγωμένα.
+
+  _ΕΛΛΑΔΑ_
+
+  [12]Στους  πολιτικούς  αρχηγούς  παραπέμπει για τις εγγυήσεις ο Λουκάς
+  Παπαδήμος
+    Links:
+      12. http://www.philenews.com/el-gr/Eidiseis-Ellada/23/86785/stous-politikous-archigous-parapempei-gia-tis-engyiseis-o-loukas-papadimos
+
+  [13]Με  διαγραφή  απειλεί όποιον ρίξει λάδι στην εσωκομματική κόντρα ο
+  Αντ.Σαμαράς
+    Links:
+      13. http://www.philenews.com/el-gr/Eidiseis-Ellada/23/86751/me-diagrafi-apeilei-opoion-rixei-ladi-stin-esokommatiki-kontra-o-ant.samaras
+
+  _ΚΟΣΜΟΣ_
+
+  [14]Τις 720.000 φτάνει η στρατιωτική δύναμη της Τουρκίας
+  [15]Εμπόλεμη ζώνη η πλατεία Ταχρίρ στο Κάιρο
+    Links:
+      14. http://www.philenews.com/el-gr/Eidiseis-Kosmos/25/86798/tis-720.000-ftanei-i-stratiotiki-dynami-tis-tourkias
+      15. http://www.philenews.com/el-gr/New-Homepage-With-Slider/4995/86782/empolemi-zoni-i-plateia-tachrir-sto-kairo
+
+  _ΑΘΛΗΤΙΚΑ ΝΕΑ_
+
+  _ ΚΥΠΡΟΣ_
+
+  [16]ΑΠΟΕΛ: «Διάβασε» στους παίκτες τη Ζενίτ
+    Links:
+      16. http://www.sentragoal.com.cy/article.asp?catid=19171&subid=2&pubid=128858924
+
+  [17]Ανόρθωση: Τους έβαλε σε τάξη!
+    Links:
+      17. http://www.sentragoal.com.cy/article.asp?catid=19170&subid=2&pubid=128858115
+
+  [18]Ομόνοια: Η επίθεση φέρνει φίλους και η άμυνα δίνει... τίτλους!
+    Links:
+      18. http://www.sentragoal.com.cy/article.asp?catid=19169&subid=2&pubid=128859031
+
+  _ ΕΛΛΑΔΑ & ΚΟΣΜΟΣ_
+
+  [19]Ολυμπιακός: Σπαζοκεφαλιά για Ερνέστο
+    Links:
+      19. http://www.sentragoal.com.cy/article.asp?catid=18679&subid=2&pubid=128859207
+
+  [20]ΠΑΟ: Τσάκας: «Πλανώνται όσοι δημιουργούν προβλήματα»
+    Links:
+      20. http://www.sentragoal.com.cy/article.asp?catid=18650&subid=2&pubid=128857973
+
+  [21]Αγγλία: Ξεμπούκωσε ο Αντεμπαγιόρ, τρίτη η Τότεναμ!
+    Links:
+      21. http://www.sentragoal.com.cy/article.asp?catid=19017&subid=2&pubid=128859210
+
+  _ΧΡΗΣΙΜΑ_
+
+  Γιορτάζουν σήμερα:
+
+  Βαλέριος, Βαλέρια, Σεσίλια, Κεκίλια, Φιλήμων
+
+  [22]Αεροπορικές πτήσεις
+    Links:
+      22. http://www.philenews.com/el-gr/Aeroporikes-Ptiseis
+
+  [23]Φαρμακεία
+    Links:
+      23. http://www.philenews.com/el-gr/Farmakeia
+
+  [24]Λιμάνια
+    Links:
+      24. http://www.philenews.com/el-gr/Limeniki-Kinisi
+
+  [25]Τηλέφωνα
+    Links:
+      25. http://www.philenews.com/el-gr/Tilefwna
+
+  [26]Κληρώσεις /[27]Λαχεία
+    Links:
+      26. http://www.philenews.com/el-gr/Klirwseis-OPAP
+      27. http://www.philenews.com/el-gr/Klirwseis-OPAP
+
+  Copyright © 2011 Phileleftheros, All rights reserved.
+
+  [28]Unsubscribe from this list | [29]Update subscription preferences
+    Links:
+      28. http://philenews.us2.list-manage.com/unsubscribe?u=84e8c0ea4dc808b59204e2171&id=13cea9817b&e=b4828836f9&c=2e9706c9b2
+      29. http://philenews.us2.list-manage.com/profile?u=84e8c0ea4dc808b59204e2171&id=13cea9817b&e=b4828836f9
+
+  [30]Αν επιθυμείτε να κάνετε εγγραφή στο newsletter κάντε κλικ εδώ
+    Links:
+      30. http://eepurl.com/getzb
+
+  To ensure future delivery of our e-mails,
+  please add newsletter@phileleftheros.com to your contacts.

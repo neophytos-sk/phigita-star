@@ -1,0 +1,270 @@
+<html><head><title>DateEditor.js</title><link rel="stylesheet" type="text/css" href="../resources/style.css" media="screen"/></head><body><h1>DateEditor.js</h1><pre class="highlighted"><code><i>/**
+ * @class YAHOO.ext.grid.DateEditor
+ * @extends YAHOO.ext.grid.CellEditor
+Provides a date editor field, and optionally a DatePicker. The DateEditor provides a method to override (showCalendar) <b>if</b> you don't want to use the built <b>in</b> DatePicker control. The reason I chose to use my own DatePicker control rather than the nice YUI Calendar component is my control was very easy to override events to make it work well <b>with</b> the grid. It's also only 5k compressed, <b>while</b> the YUI Calendar is 40k compressed. The DatePicker supports left/right keys to move months, up/down keys to move years and the mouse wheel to quickly go through the months. The DateEditor supports the following configuration options:
+&lt;ul class=&quot;list&quot;&gt;
+&lt;li&gt;&lt;i&gt;format&lt;/i&gt; - The date format <b>for</b> the editor. The format is identical to &lt;a href=&quot;http:<i>//www.php.net/date&quot;&gt;PHP date()&lt;/a&gt; and text is allowed. Credit <b>for</b> that goes to &lt;a style=&quot;font-weight:normal;&quot; href=&quot;http://www.xaprb.com/blog/2006/05/14/javascript-date-formatting-benchmarks/&quot;&gt;<b>this</b> fantastic date library&lt;/a&gt;. This format is <b>for</b> the editor only and doesn't affect the rendering of the cell when not <b>in</b> edit mode. Your rendering <b>function</b> can use any date format it wants.&lt;/li&gt;</i>
+&lt;li&gt;&lt;i&gt;minValue&lt;/i&gt; - The minimum allowed date. Can be either a Javascript date object or a string date <b>in</b> the specified format.&lt;/li&gt;
+&lt;li&gt;&lt;i&gt;maxValue&lt;/i&gt; - The maximum allowed date. Can be either a Javascript date object or a string date <b>in</b> the specified format.&lt;/li&gt;
+&lt;li&gt;&lt;i&gt;minText&lt;/i&gt; - The tooltip to display when the date <b>in</b> the cell is before minValue.&lt;/li&gt;
+&lt;li&gt;&lt;i&gt;maxText&lt;/i&gt; - The tooltip to display when the date <b>in</b> the cell is after maxValue.&lt;/li&gt;
+&lt;li&gt;&lt;i&gt;invalidText&lt;/i&gt; - The text to display when the date <b>in</b> the field is invalid (<b>for</b> example: 02/31/06)&lt;/li&gt;
+&lt;li&gt;&lt;i&gt;disabledDays&lt;/i&gt; - An array of days to disable, 0 based. For example, [0, 6] disables Sunday and Saturday.&lt;/li&gt;
+&lt;li&gt;&lt;i&gt;disabledDaysText&lt;/i&gt; - The tooltip to display when the date <b>in</b> the cell (or DatePicker) falls on a disabled day.&lt;/li&gt;
+&lt;li&gt;&lt;i&gt;disabledDates&lt;/i&gt; - An array of &quot;dates&quot; to disable, as strings. These strings will be used to build a dynamic regular expression so they are very powerful. For example, [&quot;03/08/2003&quot;, &quot;09/16/2003&quot;] would disable those dates, but [&quot;03/08&quot;, &quot;09/16&quot;] would disable them <b>for</b> every year. If you are using short years, you will want to use ^ to tell the regular expression to only match the beginning like [&quot;^03/08&quot;]. To disable March of 2006: [&quot;03/../2006&quot;] or every March [&quot;^03&quot;]. In order to support regular expressions, <b>if</b> you are using a date format that has &quot;.&quot; <b>in</b> it, you will have to  escape the dot when restricting dates. For example: [&quot;03\\.08\\.03&quot;].&lt;/li&gt;
+&lt;li&gt;&lt;i&gt;disabledDatesText&lt;/i&gt; - The tooltip to display when the date <b>in</b> the cell (or DatePicker) falls on a disabled date.&lt;/li&gt;
+&lt;li&gt;&lt;i&gt;allowBlank&lt;/i&gt; - True <b>if</b> the cell is allowed to be empty.&lt;/li&gt;
+&lt;li&gt;&lt;i&gt;blankText&lt;/i&gt; - The tooltip (error message) to display when the cell is empty and is not allowed to be.&lt;/li&gt;
+&lt;li&gt;&lt;i&gt;validator&lt;/i&gt; - Any custom validation <b>function</b> you want called. The <b>function</b> must <b>return</b> true <b>if</b> the data is valid or an error message otherwise.&lt;/li&gt;
+&lt;li&gt;&lt;i&gt;validationDelay&lt;/i&gt; - The delay <b>in</b> milliseconds <b>for</b> validation. Each time the user types something the field is validated after a specified delay, setting <b>this</b> value allows you to customize that delay (<b>for</b> example, <b>if</b> your custom validation routine is slow).&lt;/li&gt;
+&lt;/ul&gt;
+For more information on using <b>this</b> editor, see &lt;a href=&quot;http:<i>//www.jackslocum.com/yui/2006/09/10/adding-built-<b>in</b>-editing-support-to-the-yahoo-ui-extensions-grid/&quot;&gt;<b>this</b> blog post&lt;/a&gt;.</i>
+* @constructor
+* Create a <b>new</b> DateEditor
+* @param {Object} config
+ */</i>
+YAHOO.ext.grid.DateEditor = <b>function</b>(config){
+    <b>var</b> div = document.createElement('span');
+    div.className = 'ygrid-editor ygrid-editor-container';
+    
+    <b>var</b> element = document.createElement('input');
+    element.type = 'text';
+    element.tabIndex = 1;
+    element.setAttribute('autocomplete', 'off');
+    div.appendChild(element);
+    
+    <b>var</b> pick = document.createElement('span');
+    pick.className = 'pick-button';
+    div.appendChild(pick);
+    
+    document.body.appendChild(div);
+    
+    <b>this</b>.div = getEl(div, true);
+    <b>this</b>.element = getEl(element, true);
+    <b>this</b>.pick = getEl(pick, true);
+    
+    <b>this</b>.colIndex = null;
+    <b>this</b>.rowIndex = null;
+    <b>this</b>.grid = null;
+    <b>this</b>.editing = false;
+    <b>this</b>.originalValue = null;
+    <b>this</b>.initialized = false;
+    <b>this</b>.callback = null;
+    
+    <b>this</b>.cal = null;
+    <b>this</b>.mouseDownHandler = YAHOO.ext.EventManager.wrap(<b>this</b>.handleMouseDown, <b>this</b>, true);
+    
+    YAHOO.ext.util.Config.apply(<b>this</b>, config);
+    <b>if</b>(typeof <b>this</b>.minValue == 'string') <b>this</b>.minValue = <b>this</b>.parseDate(<b>this</b>.minValue);
+    <b>if</b>(typeof <b>this</b>.maxValue == 'string') <b>this</b>.maxValue = <b>this</b>.parseDate(<b>this</b>.maxValue);
+    <b>this</b>.ddMatch = /ddnone/;
+    <b>if</b>(this.disabledDates){
+        <b>var</b> dd = <b>this</b>.disabledDates;
+        <b>var</b> re = &quot;(?:&quot;;
+        <b>for</b>(var i = 0; i &lt; dd.length; i++){
+            re += dd[i];
+            <b>if</b>(i != dd.length-1) re += &quot;|&quot;;
+        }
+        <b>this</b>.ddMatch = <b>new</b> RegExp(re + &quot;)&quot;);
+    }
+};
+
+YAHOO.ext.grid.DateEditor.prototype = {
+    init : <b>function</b>(grid, bodyElement, callback){
+        <b>if</b>(this.initialized) <b>return</b>;
+        
+        <b>this</b>.initialized = true;
+        <b>this</b>.callback = callback;
+        <b>this</b>.grid = grid;
+        bodyElement.appendChild(<b>this</b>.div.dom);
+        <b>this</b>.initEvents();
+    },
+    
+    initEvents : <b>function</b>(){
+         <b>var</b> stopOnEnter = <b>function</b>(e){
+            <b>if</b>(e.browserEvent.keyCode == e.RETURN){
+                <b>this</b>.stopEditing(true);
+            }<b>else</b> if(e.browserEvent.keyCode == e.ESC){
+                <b>this</b>.setValue(<b>this</b>.originalValue);
+                <b>this</b>.stopEditing(true);
+            }
+        }
+        <b>this</b>.element.mon('keydown', stopOnEnter, <b>this</b>, true);
+        <b>var</b> vtask = <b>new</b> YAHOO.ext.util.DelayedTask(<b>this</b>.validate, <b>this</b>);
+        <b>this</b>.element.mon('keyup', vtask.delay.createDelegate(vtask, [<b>this</b>.validationDelay]));
+        <b>this</b>.pick.on('click', <b>this</b>.showCalendar, <b>this</b>, true);
+    },
+    
+    startEditing : <b>function</b>(value, row, cell){
+        <b>this</b>.originalValue = value;
+        <b>this</b>.rowIndex = row.rowIndex;
+        <b>this</b>.colIndex = cell.columnIndex;
+        <b>this</b>.cell = cell;
+        <b>this</b>.setValue(value);
+        <b>this</b>.validate();
+        <b>var</b> cellbox = getEl(cell, true).getBox();
+        <b>this</b>.div.setBox(cellbox, true);
+        <b>this</b>.element.setWidth(cellbox.width-<b>this</b>.pick.getWidth());
+        <b>this</b>.editing = true;
+        YAHOO.util.Event.on(document, &quot;mousedown&quot;, <b>this</b>.mouseDownHandler);
+        <b>this</b>.show();
+    },
+     
+     stopEditing : <b>function</b>(focusCell){
+         <b>if</b>(this.editing){
+             YAHOO.util.Event.removeListener(document, &quot;mousedown&quot;, <b>this</b>.mouseDownHandler);
+             <b>this</b>.editing = false;
+             <b>var</b> newValue = <b>this</b>.getValue();
+             <b>this</b>.hide();
+             <i>//<b>if</b>(focusCell){try{<b>this</b>.cell.focus();}catch(e){}}// try to give the cell focus so keyboard nav still works</i>
+             <b>if</b>(this.originalValue != newValue){
+                <b>this</b>.callback(newValue, <b>this</b>.rowIndex, <b>this</b>.colIndex);
+             }
+         }
+     },
+    
+    setValue : <b>function</b>(value){
+        <b>this</b>.element.dom.value = <b>this</b>.formatDate(value);
+        <b>this</b>.validate();
+    },
+    
+    getValue : <b>function</b>(){
+        <b>if</b>(!<b>this</b>.validate()){
+           <b>return</b> this.originalValue;
+       }<b>else</b>{
+           <b>var</b> value = <b>this</b>.element.dom.value;
+           <b>if</b>(value.length &lt; 1){
+               <b>return</b> value;
+           } <b>else</b>{
+               <b>return</b> this.parseDate(value);
+           }
+       }   
+    },
+    
+    show : <b>function</b>() {
+        <b>this</b>.div.show();
+        <b>this</b>.element.focus();
+        <b>this</b>.validate();
+    },
+    
+    hide : <b>function</b>(){
+        try{
+            <b>this</b>.element.dom.blur();
+        }catch(e){}
+        <b>this</b>.div.hide();
+    },
+    
+    validate : <b>function</b>(){
+        <b>var</b> dom = <b>this</b>.element.dom;
+        <b>var</b> value = dom.value;
+        <b>if</b>(value.length &lt; 1){ <i>// <b>if</b> it's blank</i>
+             <b>if</b>(this.allowBlank){
+                 dom.title = '';
+                 <b>this</b>.element.removeClass('ygrid-editor-invalid');
+                 <b>return</b> true;
+             }<b>else</b>{
+                 dom.title = <b>this</b>.blankText;
+                 <b>this</b>.element.addClass('ygrid-editor-invalid');
+                 <b>return</b> false;
+             }
+        }
+        value = <b>this</b>.parseDate(value);
+        <b>if</b>(!value){
+            dom.title = <b>this</b>.invalidText.replace('%0', dom.value).replace('%1', <b>this</b>.format);
+            <b>this</b>.element.addClass('ygrid-editor-invalid');
+            <b>return</b> false;
+        }
+        <b>var</b> time = value.getTime();
+        <b>if</b>(this.minValue &amp;&amp; time &lt; <b>this</b>.minValue.getTime()){
+            dom.title = <b>this</b>.minText.replace('%0', <b>this</b>.formatDate(<b>this</b>.minValue));
+            <b>this</b>.element.addClass('ygrid-editor-invalid');
+            <b>return</b> false;
+        }
+        <b>if</b>(this.maxValue &amp;&amp; time &gt; <b>this</b>.maxValue.getTime()){
+            dom.title = <b>this</b>.maxText.replace('%0', <b>this</b>.formatDate(<b>this</b>.maxValue));
+            <b>this</b>.element.addClass('ygrid-editor-invalid');
+            <b>return</b> false;
+        }
+        <b>if</b>(this.disabledDays){
+            <b>var</b> day = value.getDay();
+            <b>for</b>(var i = 0; i &lt; <b>this</b>.disabledDays.length; i++) {
+            	<b>if</b>(day === <b>this</b>.disabledDays[i]){
+            	    dom.title = <b>this</b>.disabledDaysText;
+                    <b>this</b>.element.addClass('ygrid-editor-invalid');
+                    <b>return</b> false;
+            	}
+            }
+        }
+        <b>var</b> fvalue = <b>this</b>.formatDate(value);
+        <b>if</b>(this.ddMatch.test(fvalue)){
+            dom.title = <b>this</b>.disabledDatesText.replace('%0', fvalue);
+            <b>this</b>.element.addClass('ygrid-editor-invalid');
+            <b>return</b> false;
+        }
+        <b>var</b> msg = <b>this</b>.validator(value);
+        <b>if</b>(msg !== true){
+            dom.title = msg;
+            <b>this</b>.element.addClass('ygrid-editor-invalid');
+            <b>return</b> false;
+        }
+        dom.title = '';
+        <b>this</b>.element.removeClass('ygrid-editor-invalid');
+        <b>return</b> true;
+    },
+    
+    handleMouseDown : <b>function</b>(e){
+        <b>var</b> t = e.getTarget();
+        <b>var</b> dom = <b>this</b>.div.dom;
+        <b>if</b>(t != dom &amp;&amp; !YAHOO.util.Dom.isAncestor(dom, t)){
+            <b>this</b>.stopEditing();
+        }
+    },
+    
+    showCalendar : <b>function</b>(value){
+        <b>if</b>(this.cal == null){
+            <b>this</b>.cal = <b>new</b> YAHOO.ext.DatePicker(<b>this</b>.div.dom.parentNode.parentNode);
+        }
+        <b>this</b>.cal.minDate = <b>this</b>.minValue;
+        <b>this</b>.cal.maxDate = <b>this</b>.maxValue;
+        <b>this</b>.cal.disabledDatesRE = <b>this</b>.ddMatch;
+        <b>this</b>.cal.disabledDatesText = <b>this</b>.disabledDatesText;
+        <b>this</b>.cal.disabledDays = <b>this</b>.disabledDays;
+        <b>this</b>.cal.disabledDaysText = <b>this</b>.disabledDaysText;
+        <b>this</b>.cal.format = <b>this</b>.format;
+        <b>if</b>(this.minValue){
+            <b>this</b>.cal.minText = <b>this</b>.minText.replace('%0', <b>this</b>.formatDate(<b>this</b>.minValue));
+        }
+        <b>if</b>(this.maxValue){
+            <b>this</b>.cal.maxText = <b>this</b>.maxText.replace('%0', <b>this</b>.formatDate(<b>this</b>.maxValue));
+        }
+        <b>var</b> r = <b>this</b>.div.getRegion();
+        <b>this</b>.cal.show(r.left, r.bottom, <b>this</b>.getValue(), <b>this</b>.setValue.createDelegate(<b>this</b>));
+    },
+    
+    parseDate : <b>function</b>(value){
+        <b>if</b>(!value || value instanceof Date) <b>return</b> value;
+        <b>return</b> Date.parseDate(value, <b>this</b>.format);
+    },
+    
+    formatDate : <b>function</b>(date){
+        <b>if</b>(!date || !(date instanceof Date)) <b>return</b> date;
+        <b>return</b> date.format(<b>this</b>.format);
+    }
+};
+
+YAHOO.ext.grid.DateEditor.prototype.format = 'm/d/y';
+YAHOO.ext.grid.DateEditor.prototype.disabledDays = null;
+YAHOO.ext.grid.DateEditor.prototype.disabledDaysText = '';
+YAHOO.ext.grid.DateEditor.prototype.disabledDates = null;
+YAHOO.ext.grid.DateEditor.prototype.disabledDatesText = '';
+YAHOO.ext.grid.DateEditor.prototype.allowBlank = true;
+YAHOO.ext.grid.DateEditor.prototype.minValue = null;
+YAHOO.ext.grid.DateEditor.prototype.maxValue = null;
+YAHOO.ext.grid.DateEditor.prototype.minText = 'The date <b>in</b> this field must be after %0';
+YAHOO.ext.grid.DateEditor.prototype.maxText = 'The date <b>in</b> this field must be before %0';
+YAHOO.ext.grid.DateEditor.prototype.blankText = 'This field cannot be blank';
+YAHOO.ext.grid.DateEditor.prototype.invalidText = '%0 is not a valid date - it must be <b>in</b> the format %1';
+YAHOO.ext.grid.DateEditor.prototype.validationDelay = 200;
+YAHOO.ext.grid.DateEditor.prototype.validator = <b>function</b>(){<b>return</b> true;};</code></pre><hr><div style="font-size:10px;text-align:center;color:gray;">yui-ext - Copyright &copy; 2006 Jack Slocum.  |
+    Yahoo! UI - Copyright &copy; 2006 Yahoo! Inc.<br />All rights reserved.</div>
+    </body></html>

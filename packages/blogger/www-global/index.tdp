@@ -1,0 +1,138 @@
+set base "http://www.phigita.net"
+
+set title "Blogs in Greek"
+set description "A blog is a web-based publication consisting primarily of periodic articles normally, but not always, in reverse chronological order."
+set keywords "Greek, Blogs, Cyprus, Greece"
+set limit 25
+set limit_plus_one [expr 1+${limit}]
+
+
+contract {
+    param -id "offset" -check "integer" -default 0 -optional 1
+}
+
+
+val -id limit { return 25 }
+
+val -id prev_url { 
+    set offset [expr { @{offset} - @{limit} }]
+    if { $offset <= 0 } { set offset "" }
+    export_vars -url -base "." -no_empty offset  
+}
+val -id next_url { 
+    set offset [expr { @{offset} + @{limit} }]
+    export_vars -url -base "." -no_empty offset 
+}
+
+datastore \
+    -id blogdata \
+    -from_class [db::Inner_Join new \
+		     -lhs [db::Set new \
+			       -alias bl \
+			       -select {
+				   bs.*
+				   cc.screen_name
+				   {first_names || ' ' || last_name as full_name}
+			       } -type [db::Inner_Join new \
+					    -lhs [db::Set new \
+						      -alias bs \
+						      -type ::sw::agg::Blog_Stats \
+						      -order "last_shared_entry desc" \
+						      -where [list "last_shared_entry is not null"]] \
+					    -rhs [db::Set new \
+						      -type CC_Users \
+						      -alias cc] \
+					    -join_condition {bs.user_id = cc.user_id}]] \
+		     -rhs [db::Set new \
+			       -alias mro \
+			       -select {
+				   * 
+				   {substring(content from 0 for 300) as snippet}
+			       } \
+			       -type ::sw::agg::Most_Recent_Objects \
+			       -where [list \
+					   "class_id=[Blog_Item set id]" \
+					   "root_class_id=[User set id]" \
+					   "shared_p"] \
+			       -order "sharing_start_date desc"] \
+		     -join_condition {bl.user_id=mro.root_object_id}] \
+    -order "sharing_start_date desc" \
+    -offset @{offset} \
+    -limit ${limit_plus_one}
+
+
+#css -src "/www/resources/bootstrap/css/phigita.bootstrap.css"
+
+
+css {
+    .blogs_header {
+	background:#dee5f2;padding:2px 0px;height:1.5em;
+	color:#5A6986;
+    }
+    .blogs_header strong {
+	font-size: 16px;
+	margin-left:5px;
+    }
+    .blogs_action {
+	width:40px;
+    }
+}
+
+master -title $title -description $description -keywords $keywords -noindex true {
+
+    layout_row {
+	layout_col -class span2 {
+	    b { t "Send Feedback:" }
+	    br
+	    img -src /graphics/53dab96f0fd8087a4110eb0174b4cfbb.png
+	    p
+	    div -style "margin:17px;" {
+		#::xo::google::adsense::slot 5419027028 125 125
+	    }
+	    p
+	    #::xo::google::adsense::slot 4077266081 160 600
+	}
+	layout_col -class span6 {
+
+	    div -style "float:right;background:#ccc;padding:2px;" {
+		tpl -if "@{offset} > 0" {
+		    a -href "@{prev_url}" { nt "&laquo; Newer" }
+		}
+		tpl -if "@{offset} > 0 && @{blogdata:rowcount} == ${limit_plus_one}" {
+		    t " | "
+		}
+		tpl -if "@{blogdata:rowcount} == ${limit_plus_one}" {
+		    a -href "@{next_url}" { nt "Older &raquo;" }
+		}
+	    }
+	    div -class "blogs_header" {
+		strong { t "Blogs" }
+	    }
+	    p
+	    i -class "clearfix"
+
+	    div {
+		tpl -for "blogdata" -limit 25 {
+		    div {
+			strong { a -href "${base}/~@{screen_name}/blog/@{object_id}" { t @{title} } }
+			blockquote {
+			    t @{snippet:noquote}
+			    small {
+				a -href "${base}/~@{screen_name}/" { t @{full_name}	}
+				t " (~@{screen_name})"
+			    }
+			}
+		    }
+		}
+	    }
+	}
+	layout_col -class span4 {
+	    b { t "What is a blog?" }
+	    p
+	    t {A blog is a collection of articles posted on the internet. Blog posts are typically displayed in reverse chronological order with the latest posts at the top. Many blogs allow readers to comment, which can create a sense of community and encourage discussion.}
+	    p
+	    a -href "http://blogs.phigita.net/opml/" { t "OPML" }
+	}
+    }
+
+}

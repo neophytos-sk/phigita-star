@@ -1,0 +1,97 @@
+Received: from localhost ([127.0.0.1] helo=sfs-ml-3.v29.ch3.sourceforge.com)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <quickfix-developers-bounces@lists.sourceforge.net>)
+	id 1RW6Kq-0007p9-BL; Thu, 01 Dec 2011 13:05:56 +0000 from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <Johannes.Grimm@die-software.com>) id 1RW6Ko-0007ou-MT
+	for quickfix-developers@lists.sourceforge.net;
+	Thu, 01 Dec 2011 13:05:54 +0000 from mail.die-software.com ([212.185.96.93])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1RW6Ki-0003Hr-Kg for quickfix-developers@lists.sourceforge.net;
+	Thu, 01 Dec 2011 13:05:54 +0000 from mail1.die-software.com (replicator.dsw.local [211.10.10.10]) by
+	novir01.dsw.local (Clearswift SMTPRS 5.4.1) with ESMTP id
+	<Ta1065ac0c7d30a0a02c80@novir01.dsw.local> for
+	<quickfix-developers@lists.sourceforge.net>; 
+	Thu, 1 Dec 2011 14:05:45 +0100 
+X-ACL-Warn:  
+To: quickfix-developers@lists.sourceforge.net 
+X-Mailer: Lotus Notes Release 8.5.2 August 10, 2010 
+Message-ID: <OFA4BF08A4.EBD2508B-ONC1257959.00474E93-C1257959.0047EEB1@die-software.com> 
+From: Johannes.Grimm@die-software.com 
+Date: Thu, 1 Dec 2011 14:05:41 +0100 
+X-MIMETrack: Serialize by Router on REPLICATOR/DIE SOFTWARE Peter Fitzon
+	GmbH/GE(Release 6.5.3|September 14, 2004) at 01.12.2011 14:13:03,
+	Serialize complete at 01.12.2011 14:13:03 
+X-Spam-Score: -0.2 (/) 
+X-Spam-Report: Spam Filtering performed by mx.sourceforge.net.
+	See http://spamassassin.org/tag/ for more details.
+	-1.2 RP_MATCHES_RCVD Envelope sender domain matches handover relay
+	domain 1.0 HTML_MESSAGE           BODY: HTML included in message 
+X-Headers-End: 1RW6Ki-0003Hr-Kg 
+Subject: [Quickfix-developers] threaded C++ FIX-application 
+X-BeenThere: quickfix-developers@lists.sourceforge.net 
+X-Mailman-Version: 2.1.9 
+Precedence: list 
+List-Id: <quickfix-developers.lists.sourceforge.net> 
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/quickfix-developers>,
+	<mailto:quickfix-developers-request@lists.sourceforge.net?subject=unsubscribe> 
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=quickfix-developers> 
+List-Post: <mailto:quickfix-developers@lists.sourceforge.net> 
+List-Help: <mailto:quickfix-developers-request@lists.sourceforge.net?subject=help> 
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/quickfix-developers>,
+	<mailto:quickfix-developers-request@lists.sourceforge.net?subject=subscribe> 
+Errors-To: quickfix-developers-bounces@lists.sourceforge.net 
+--------------------------------------
+QuickFIX Documentation: http://www.quickfixengine.org/quickfix/doc/html/index.html
+QuickFIX Support: http://www.quickfixengine.org/services.html
+
+--------------------------------------
+Hi QuickFix-developers,
+
+has anybody ever coded a threaded FIX-application in C++, i.e. one thread 
+per FIX-Session.
+I am wondering whether to use the thread_spawn, etc..... methods or to use 
+the boost-library?
+
+Any example code-snippets would be highly appreciated.
+
+Thanks,
+Hannes
+
+
+
+Johannes Grimm
+--------------------------------------------------------------------------------------
+DIE SOFTWARE Peter Fitzon GmbH
+Im Klosterbauhof 3
+85560 Ebersberg
+
+Deutschland
+Tel.-Zentrale:    +49 (0) 80 92 / 86 17 - 0
+Tel.-Durchwahl: +49 (0) 80 92 / 86 17 - 173
+Fax: +49 (0) 80 92 / 86 17  - 373
+
+Schweiz
+Tel.-Zentrale: +41 (0) 43 / 48 83 - 000
+Tel.-Durchwahl: +41 (0) 43 / 48 83 - 173
+Fax: +41 (0) 43 / 48 83 - 373
+
+mailto:johannes.grimm@die-software.com
+Internet: http://www.die-software.com
+
+Geschäftsführer: Peter Fitzon, Klaus J. Friese
+Registergericht: Amtsgericht München, HRB 101848
+--------------------------------------------------------------------------------------
+
+--------------------------------------
+------------------------------------------------------------------------------
+All the data continuously generated in your IT infrastructure 
+contains a definitive record of customers, application performance, 
+security threats, fraudulent activity, and more. Splunk takes this 
+data and makes sense of it. IT sense. And common sense.
+http://p.sf.net/sfu/splunk-novd2d--------------------------------------
+_______________________________________________
+Quickfix-developers mailing list
+Quickfix-developers@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/quickfix-developers

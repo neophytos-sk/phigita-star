@@ -1,0 +1,26 @@
+Like any other piece of software (and information generally), mess822
+comes with NO WARRANTY.
+
+
+Things you have to decide before starting:
+
+* The mess822 home directory, normally /usr/local. To change this
+directory, edit conf-home now.
+
+* The qmail home directory, normally /var/qmail. new-inject and ofmipd
+need to know where qmail is so that they can send mail. To change this
+directory, edit conf-qmail now.
+
+
+How to install:
+
+ 1. Compile the programs and create the formatted man pages:
+       % make
+
+ 2. Install the programs and man pages:
+       # make setup check
+
+
+That's it! To report success:
+       % ( echo 'First M. Last'; cat `cat SYSDEPS` ) | mail djb-qst@cr.yp.to
+Replace First M. Last with your name.

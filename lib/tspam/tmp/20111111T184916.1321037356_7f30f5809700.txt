@@ -1,0 +1,12 @@
+Received: from prkly (unknown [110.53.24.10])
+	by linux.zsepc.com (Postfix) with ESMTP
+	id 9ED644E042; Sat, 12 Nov 2011 01:00:20 +0800 (CST) 
+Sender: gyf@zsepc.com.cn 
+Message-ID: <20111112024510806123@zsepc.com.cn> 
+From: "yiz" <eucbp@vtxwja.com> 
+To:  
+Subject: =?gb2312?B?ajQ0z/ogytsg1vcgudwgNXh3NQ==?= 
+Date: Sat, 12 Nov 2011 02:44:59 +0800 
+X-mailer: Hma 9 
+--------------------------------------
+ content-type=application/msword part-token=::mime::1391-2

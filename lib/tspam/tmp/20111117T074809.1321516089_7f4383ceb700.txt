@@ -1,0 +1,16 @@
+Return-path: <webmaster@phigita.net> 
+Received: from [123.28.200.136] (port=2000 helo=TANBAVINH)
+	by mx1.webminders.com with asmtp 
+	id 1D9BCC-000747-20
+	for <webmaster@phigita.net>; Thu, 17 Nov 2011 15:47:51 +0800 
+Message-ID: <E387585D5871453783F00ACF60AF0D1D@TANBAVINH> 
+From: =?koi8-r?B?IvDSydfP2svBIMkg0sHT1MHNz9bLwSI=?= <antitheticallypii232@elaineandrews.com> 
+To: <webmaster@phigita.net> 
+Subject: =?koi8-r?B?88/L0sHdwcXNINrB1NLB1NkgzsEgzM/HydPUz9c=?= 
+Date: Thu, 17 Nov 2011 15:47:51 +0800 
+X-Priority: 3 
+X-MSMail-Priority: Normal 
+X-Mailer: Microsoft Windows Mail 6.0.6001.18000 
+X-MimeOLE: Produced By Microsoft MimeOLE V6.0.6001.18049 
+X-Spam: Not detected 
+X-Mras: Ok 

@@ -1,0 +1,17 @@
+Received: by site.sgpnet.com.br (Postfix, from userid 1002)
+	id CF187EFB595; Sat, 29 Oct 2011 15:35:45 -0200 (BRDT) from epqdb (unknown [110.52.7.56])
+	by site.sgpnet.com.br (Postfix) with ESMTPA id 8CF05EFB55A;
+	Sat, 29 Oct 2011 15:35:30 -0200 (BRDT) 
+X-Spam-Checker-Version: SpamAssassin 3.3.1 (2010-03-16) on site.sgpnet.com.br 
+X-Spam-Level:  
+X-Spam-Status: No, score=-101.9 required=3.0 tests=ALL_TRUSTED,BAYES_00,
+	HTML_MESSAGE,HTML_OBFUSCATE_05_10,MIME_HTML_ONLY,USER_IN_WHITELIST
+	autolearn=no version=3.3.1 
+Message-ID: <20111030013330802548@sgpnet.com.br> 
+From: =?gb2312?B?0MK9rr3ws8/QxcXEwvTT0M/e1PDIzrmry74=?= <cocktail@sgpnet.com.br> 
+To:  
+Subject: =?gb2312?B?cGlscjBjdjJsIMvNIMjLIMO1ILnlIMrWIA==?=
+	=?gb2312?B?wfQg0+Agz+MganAwd2RkcXZ1?= 
+Date: Sun, 30 Oct 2011 01:33:20 +0800 
+X-mailer: Ilqmauet 6 
+Whoops!  What is a 'application/vnd.ms-excel'?

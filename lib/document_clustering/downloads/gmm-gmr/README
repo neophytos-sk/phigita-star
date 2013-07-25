@@ -1,0 +1,34 @@
+#####
+hahaha Copyright (c) 2008 Florent D'halluin , Sylvain Calinon, 
+LASA Lab, EPFL, CH-1015 Lausanne, Switzerland, 
+http://www.calinon.ch, http://lasa.epfl.ch
+
+The program is free for non-commercial academic use. 
+Please acknowledge the authors in any academic publications that have 
+made use of this code or part of it. Please use this BibTex reference: 
+ 
+@article{Calinon06SMC,
+  title="On Learning, Representing and Generalizing a Task in a Humanoid 
+  Robot",
+  author="S. Calinon and F. Guenter and A. Billard",
+  journal="IEEE Transactions on Systems, Man and Cybernetics, Part B. 
+  Special issue on robot learning by observation, demonstration and 
+  imitation",
+  year="2007",
+  volume="37",
+  number="2",
+  pages="286--298"
+}
+
+
+####################
+# GMM regression   #
+####################
+
+To test the program, just do a 'make', then run the 'main_test' executable, 
+which performs an EM learning to find the GMM parameters, and then do a 
+regression on the data stored in data/test*.csv. 
+
+The resulting parameters are stored in files *.dat and *.gmm that can then 
+be plotted in Matlab/Octave using the plotall.m script in the 'matlab_src' 
+folder.

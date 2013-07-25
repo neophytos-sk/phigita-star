@@ -1,0 +1,56 @@
+:: TODO :: 
+
+logplots
+
+styles
+    a way to talk about the "style" used for each of a set of lines/bars/etc.
+    and then an easy way to use this exact info in the legend
+
+axis
+    better interface and arguments -- after all, it is just a line
+    logscale and other things like that
+
+tics
+    simpler interface to get the "default" behavior
+
+database
+    student-t when doing devs, etc.
+
+:: DONE ::
+
+scaling/translating
+    needs to be fixed (doesn't work for non-zero mins)
+
+labels
+    more flexible label service
+    (subsumes, title, xlabel, ylabel)
+
+text placement
+    need to better understand offsets for vertical positioning
+    (especially when text is rotated, for example)
+
+legend
+    basic legend service (horizontal, vertical, etc.)
+    placement control
+
+plots
+    lineplots: need a simple way to make these, and a bunch of styles if
+        points are used (and legend interaction)
+    boxplots
+    all sorts of styles of plots
+
+database
+    more ability to manipulate data
+    standard deviations
+    mins, maxes
+
+axis
+    autosetting based on table values
+
+bar styles
+    more bar styles, including circles, boxes, stars, diag lines, ...
+    generic fill service, used by boxes, circles, polyshapes, etc.
+    labeled bars: easy way to add numbers to the top of the bars
+
+
+

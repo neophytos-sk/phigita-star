@@ -1,0 +1,13 @@
+Received: from xyx (unknown [110.53.27.98])
+	by mail172.gzonet.com (Postfix) with ESMTP
+	id DA5B9488157; Sun, 13 Nov 2011 00:56:40 +0800 (CST) 
+X-Reject: 450 <service@fyplay.com>: Recipient address rejected: Domain not found 
+Message-ID: <20111113005428175552@hglang.com> 
+From: =?gb2312?B?tqGzybH8?= <hglang@hglang.com> 
+To:  
+Subject: =?gb2312?B?NDkyIMjnus7X9srQs6HQvdfKtfey6aOsytCzodC918q197Lp?=
+	=?gb2312?B?tcSx373nuMPU9cO0yLe2qKOh?= 
+Date: Sun, 13 Nov 2011 00:54:18 +0800 
+X-mailer: Jdh 3 
+--------------------------------------
+ content-type=application/msword part-token=::mime::1363-2

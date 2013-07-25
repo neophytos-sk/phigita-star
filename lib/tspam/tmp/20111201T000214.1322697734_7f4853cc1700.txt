@@ -1,0 +1,64 @@
+Received: by web1.extjs.com (Postfix, from userid 33)
+	id E95106C37F; Thu,  1 Dec 2011 00:02:03 +0000 (UTC) 
+To: k2pts@phigita.net 
+Subject: "Ext: Examples and Extras" update 
+X-PHP-Originating-Script: 1000:class_mail.php 
+From: "Sencha Forum" <admin@sencha.com> 
+Auto-Submitted: auto-generated 
+Message-ID: <20111201000203.d6ddc4ba4ef7@www.sencha.com> 
+X-Priority: 3 
+X-Mailer: vBulletin Mail via PHP 
+Date: Thu,  1 Dec 2011 00:02:03 +0000 (UTC) 
+--------------------------------------
+Dear k2pts,
+
+You are subscribed to the forum Ext: Examples and Extras, there have been 2 new thread(s) and 3 updated thread(s).
+http://www.sencha.com/forum/forumdisplay.php?7-Ext-Examples-and-Extras
+
+The following threads are new:
+************
+New To ExtJS
+http://www.sencha.com/forum/showthread.php?158385-New-To-ExtJS
+In forum: Ext: Examples and Extras
+Started by: nilimapgawade
+Last post: 30 Nov 2011 10:32 PM
+************
+Display inline data into Grid
+http://www.sencha.com/forum/showthread.php?158387-Display-inline-data-into-Grid
+In forum: Ext: Examples and Extras
+Started by: nilimapgawade
+Last post: 30 Nov 2011 10:37 PM
+
+
+The following threads have been updated:
+************
+Ext JS - step by step phonebook application tutorial
+http://www.sencha.com/forum/showthread.php?158005-Ext-JS-step-by-step-phonebook-application-tutorial
+In forum: Ext: Examples and Extras
+Started by: LordMX
+Last post: 30 Nov 2011 12:50 AM
+************
+Extjs 4 + PHP + MYSQL
+http://www.sencha.com/forum/showthread.php?153059-Extjs-4-PHP-MYSQL
+In forum: Ext: Examples and Extras
+Started by: mahmutdur
+Last post: 30 Nov 2011 5:32 PM
+************
+Synchronous Ajax Call
+http://www.sencha.com/forum/showthread.php?10857-Synchronous-Ajax-Call
+In forum: Ext: Examples and Extras
+Started by: Nullity
+Last post: 30 Nov 2011 11:31 PM
+
+
+All the best,
+Sencha Forum
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Unsubscription information:
+
+To unsubscribe from this forum, please visit this page:
+http://www.sencha.com/forum/subscription.php?do=removesubscription&type=forum&subscriptionid=66&auth=3a25e442e8ac3bf8d89a6f9b6eb4f810
+
+
+

@@ -1,0 +1,9 @@
+#!/bin/sh
+#
+# TEST: GTUBE:                          
+
+echo > .testdump-a
+echo 'XJS*C4JDBQADN1.NSBN3*2IDNEN*GTUBE-STANDARD-ANTI-UBE-TEST-EMAIL*C.34X' >> .testdump-a
+$PROG -d $BACKEND:$TESTDB -s < .testdump-a > .testdump-b
+grep SPAM .testdump-b >/dev/null
+rm -f .testdump-a .testdump-b

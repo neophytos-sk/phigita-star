@@ -1,0 +1,212 @@
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed/relaxed; s=k1; d=mail7.us2.mcsv.net;
+ h=Subject:From:Reply-To:To:Date:Message-ID:List-Unsubscribe:Sender:Content-Type:MIME-Version; i=newsletter=3Dphileleftheros.com@mail7.us2.mcsv.net;
+ bh=qWy6goJLjAuAF7bvONFqsKe4q60=;
+ b=XagUT8YXuCXYgOWKZnluPMGUKULD6/s4i5Jnt+ftxcfr/jHPmgYmaPN2+WBU7bztxtd5mPrx/xyX
+   KDu2Me3zPgGNL4Hh0bwThHZIXPAc4S+pZO9D4vDlPN5z0jSIwxfwklKQul8cbdd7jLH2OaQcmX5o
+   Uy1Z6iuAsPZjfjX5pLM= 
+DomainKey-Signature: a=rsa-sha1; c=nofws; q=dns; s=k1; d=mail7.us2.mcsv.net;
+ b=VhdLk3D/SNUDIJEiNSKW4lqOTLVig3oF6/0uxtn1Krx+NpsvcJgvFMXO5UDP1hmZ0JGKUb3mNkbo
+   ZvxT5Yzflv5RA1i5gBfx5hvH6VEQY5mUC3vwe6/tr/YTHOS9jwrHn2sKB14iqNXxE0c7K57e2Wty
+   V10HgUoaFVSSOYVnt9k=; 
+Received: from (127.0.0.1) by mail7.us2.mcsv.net (PowerMTA(TM) v3.5r16) id hps45o0ik182 for <k2pts@phigita.net>; Thu, 24 Nov 2011 22:15:37 -0500 (envelope-from <bounce-mc.us2_6419294.1285449-k2pts=phigita.net@mail7.us2.mcsv.net>) 
+Subject: =?utf-8?Q?Philenews=20Newsletter=2025=2F11=2F2011?= 
+From: =?utf-8?Q?Phileleftheros=20Newsletter?= <newsletter@phileleftheros.com> 
+Reply-To: =?utf-8?Q?Phileleftheros=20Newsletter?= <newsletter@phileleftheros.com> 
+To: <k2pts@phigita.net> 
+Date: Thu, 24 Nov 2011 22:15:37 -0500 
+Message-ID: <84e8c0ea4dc808b59204e2171b4828836f9.20111125031517@mail7.us2.mcsv.net> 
+X-Mailer: MailChimp Mailer - **CID9908ce0171b4828836f9** 
+X-Campaign: mailchimp84e8c0ea4dc808b59204e2171.9908ce0171 
+X-campaignid: mailchimp84e8c0ea4dc808b59204e2171.9908ce0171 
+x-im: 38509-9908ce0171 
+X-Report-Abuse: Please report abuse for this campaign here: http://www.mailchimp.com/abuse/abuse.phtml?u=84e8c0ea4dc808b59204e2171&id=9908ce0171&e=b4828836f9 
+x-accounttype: pd 
+List-Unsubscribe: <mailto:unsubscribe-84e8c0ea4dc808b59204e2171-9908ce0171-b4828836f9@mailin1.us2.mcsv.net?subject=unsubscribe>, <http://philenews.us2.list-manage.com/unsubscribe?u=84e8c0ea4dc808b59204e2171&id=13cea9817b&e=b4828836f9&c=9908ce0171> 
+Sender: "Phileleftheros Newsletter" <newsletter=phileleftheros.com@mail7.us2.mcsv.net> 
+x-mcda: FALSE 
+--------------------------------------
+Trouble viewing this email?[1]Click Here
+    Links:
+      1. http://us2.campaign-archive2.com/?u=84e8c0ea4dc808b59204e2171&id=9908ce0171&e=b4828836f9
+
+  right logo _ΠΑΡΑΣΚΕΥΗ
+  25 ΝΟΕΜΒΡΙΟΥ 2011_
+  Philenews
+
+  left logo
+  _[2]www.philenews.com
+  [3]www.sentragoal.com.cy _
+  line
+    Links:
+      2. http://www.philenews.com
+      3. http://www.sentragoal.com.cy
+
+ΠΡΩΤΟ ΘΕΜΑ
+
+  [4]Μόνος δρόμος η παγοποίηση μισθών
+    Links:
+      4. http://www.philenews.com/el-gr/New-Homepage-With-Slider/4995/87190
+
+  Σχεδόν βέβαιη θεωρείται η παγοποίηση μισθών, προσαυξήσεων και ΑΤΑ για
+  διάστημα τουλάχιστον δύο ετών, μετά και την επεξεργασία αρκετών σεναρίων
+  για το πακέτο μέτρων που ετοιμάζει το υπουργείο Οικονομικών.
+
+"Φ" ΑΠΟΚΛΕΙΣΤΙΚΟ
+
+  [5]Πολεμικά τεσσάρων χωρών ζώνουν τα οικόπεδα
+    Links:
+      5. http://www.philenews.com/el-gr/Eidiseis-Kypros/22/87189
+
+  Πολεμικά πλοία από τέσσερις χώρες στη θαλάσσια περιοχή νοτίως της Κύπρου.
+  Κύπρος,  Ελλάδα  και  Ισραήλ  προχωρούν σ’ ένα ακόμα αποφασιστικό βήμα
+  συνεργασίας.
+
+  [6]Σύλληψη Λάμπρου Χριστοφή για 1022 οικόπεδα
+    Links:
+      6. http://www.philenews.com/el-gr/Eidiseis-Kypros/22/87188
+
+  Ο γνωστός επιχειρηματίας και ενός συνεργάτη του, συνελήφθησαν μετά από
+  καταγγελία εργολάβου οικοδομών για εξαπάτηση του σε σχέση με την πώληση
+  οικοπέδων στη Ρουμανία αξίας €25 εκατομμυρίων.
+
+  [7]Ποινικοποίηση δημόσιας ζωής η δίωξη Λιλλήκα
+    Links:
+      7. http://www.philenews.com/el-gr/Eidiseis-Kypros/22/87187
+
+  Με την απόφαση της Νομικής Υπηρεσίας να εμπλέξει τον πρώην Υπουργό Εμπορίου
+  Γιώργο  Λιλλήκα  στη  διαμάχη  που  έχει η Κυπριακή Δημοκρατία με τους
+  αγελαδοτρόφους, ανοίγει πλέον ο δρόμος για ποινικοποίηση της δημόσιας ζωής,
+  εκτιμούν νομικοί και πολιτικοί.
+
+ΟΙΚΟΝΟΜΙΑ
+
+  [8]Παράλληλος στόχος η ανάπτυξη
+    Links:
+      8. http://www.philenews.com/el-gr/Oikonomia-Kypros-XAK/3353/87185
+
+  Κούρσα με το χρόνο αφορά για την ανάπτυξη. Kίκης Καζαμίας και Συλικιώτης
+  εξέτασαν   σε   απογευματινή   συνάντηση   τρόπους  απεγκλωβισμού  από
+  γραφειοκρατικές διαδικασίες.
+
+  [9]Μίνι φορολογική αμνηστία
+    Links:
+      9. http://www.philenews.com/el-gr/Oikonomia-Kypros-XAK/3353/87186
+
+  Η Βουλή ενέκρινε στην χθεσινή ολομέλεια, κατά πλειοψηφία ΔΗΣΥ, ΑΚΕΛ και
+  ΕΔΕΚ, πρόταση νόμου που προβλέπει τη διευθέτηση φορολογικών εκκρεμοτήτων
+  μέχρι το φορολογικό έτος 2008.
+
+  [10]Παράταση στην παράταση και πάλι παράταση!
+    Links:
+      10. http://www.sentragoal.com.cy/article.asp?catid=19169&subid=2&pubid=128862150
+
+  Ούτε χθες είχαμε την απόφαση της Δικαστικής Επιτροπής για τις καταγγελίες
+  εις  βάρος  των  Νεόφυτου  Λάρκου και Μιλτιάδη Νεοφύτου. Η απόφαση στο
+  πολύκροτο πλέον θέμα θα δοθεί τελικά σήμερα.
+
+ΕΝΔΙΑΦΕΡΟΥΝ ΚΙ' ΑΥΤΑ
+
+  [11]Ξεχασιάρης άφησε βαλίτσα με ένα εκατ. δολάρια σε καφετέρια
+    Links:
+      11. http://www.philenews.com/el-gr/Eidiseis-Ta-Perierga/4688/87155
+
+  Στην Αυστραλία, κάποιος «ξέχασε» μια βαλίτσα με... ένα εκατομμύριο δολάρια
+  σε  καφετέρια! Όσο κι αν ακούγεται απίστευτο, είναι όμως πέρα για πέρα
+  αληθινό. Τρεις μέρες τώρα έχουν «οργώσει» το Σίδνεϊ οι Αρχές, προκειμένου
+  να τον εντοπίσουν.
+
+  [12]Απόλυτη αρμονία για το σώμα και το πνεύμα σας[13]
+    Links:
+      12. http://www.philenews.com/el-gr/Ygeia/1152/87119
+      13. http://www.philenews.com/el-gr/Ygeia/1152/87018/trote-ygieina-kata-ti-diarkeia-ton-nisteion
+
+  Αποβάλετε την ένταση, αναδείξτε την ομορφιά σας, τονώστε τον οργανισμό σας
+  και ζήστε σε απόλυτη αρμονία με το σώμα και το πνεύμα σας... Πως; Το μόνο
+  που χρειάζεται είναι να ... βάλετε στο πρόγραμμα επισκέψεις σε ένα spa!
+
+  _ΕΛΛΑΔΑ_
+
+  [14]Οι επιθέσεις κατά της Ελλάδας δυσκολεύουν την έξοδο από την κρίση,
+  εκτιμά το ΥΠΕΞ
+    Links:
+      14. http://www.philenews.com/el-gr/Eidiseis-Ellada/23/87152/oi-epitheseis-kata-tis-elladas-dyskoleyoun-tin-exodo-apo-tin-krisi-ektima-to-ypex
+
+  [15]Νέες αυξήσεις στα τιμολόγια της ΔΕΗ από την 1η Ιανουαρίου
+    Links:
+      15. http://www.philenews.com/el-gr/Eidiseis-Ellada/23/87067/nees-afxiseis-sta-timologia-tis-dei-apo-tin-1i-ianouariou
+
+  _ΚΟΣΜΟΣ_
+
+  [16]Απεργία στην Πορτογαλία σε ένδειξη διαμαρτυρίας για τα μέτρα λιτότητας
+  [17]Γαλλική πρόταση για «ανθρωπιστικούς διαδρόμους» στη Συρία
+    Links:
+      16. http://www.philenews.com/el-gr/Eidiseis-Kosmos/25/87078/apergia-stin-portogalia-se-endeixi-diamartyrias-gia-ta-metra-litotitas
+      17. http://www.philenews.com/el-gr/Eidiseis-Kosmos/25/87158/galliki-protasi-gia-anthropistikous-diadromous-sti-syria
+
+  _ΑΘΛΗΤΙΚΑ ΝΕΑ_
+
+  _ ΚΥΠΡΟΣ_
+
+  [18]ΑΠΟΕΛ: «Όλοι θέλουν Μπαρσελόνα, Ρεάλ ή Μίλαν για αντίπαλο»
+    Links:
+      18. http://www.sentragoal.com.cy/article.asp?catid=19171&subid=2&pubid=128861914
+
+  [19]Λέβι: «Παιχνίδι με πολλές ιδιαιτερότητες»
+    Links:
+      19. http://www.sentragoal.com.cy/article.asp?catid=19170&subid=2&pubid=128862166
+
+  [20]Πάμπος: «Παίζουμε πιο επιθετικά από τις άλλες ομάδες»
+    Links:
+      20. http://www.sentragoal.com.cy/article.asp?catid=19173&subid=2&pubid=128861854
+
+  _ ΕΛΛΑΔΑ & ΚΟΣΜΟΣ_
+
+  [21]ΠΑΟ: Ο Εξάστερος και ο... Χρυσοδάχτυλος!
+    Links:
+      21. http://www.sentragoal.com.cy/article.asp?catid=18726&subid=2&pubid=128862144
+
+  [22]Οταν η Αρσεναλ πάει για τουρισμό...
+    Links:
+      22. http://www.sentragoal.com.cy/article.asp?catid=18670&subid=2&pubid=128862199
+
+  _ΧΡΗΣΙΜΑ_
+
+  Γιορτάζουν σήμερα:
+
+  _Αικατερίνης Μεγαλομάρτυρος_
+  Κατερίνα, Μερκούριος
+
+  [23]Αεροπορικές πτήσεις
+    Links:
+      23. http://www.philenews.com/el-gr/Aeroporikes-Ptiseis
+
+  [24]Φαρμακεία
+    Links:
+      24. http://www.philenews.com/el-gr/Farmakeia
+
+  [25]Λιμάνια
+    Links:
+      25. http://www.philenews.com/el-gr/Limeniki-Kinisi
+
+  [26]Τηλέφωνα
+    Links:
+      26. http://www.philenews.com/el-gr/Tilefwna
+
+  [27]Κληρώσεις /[28]Λαχεία
+    Links:
+      27. http://www.philenews.com/el-gr/Klirwseis-OPAP
+      28. http://www.philenews.com/el-gr/Klirwseis-OPAP
+
+  Copyright © 2011 Phileleftheros, All rights reserved.
+
+  [29]Unsubscribe from this list | [30]Update subscription preferences
+    Links:
+      29. http://philenews.us2.list-manage.com/unsubscribe?u=84e8c0ea4dc808b59204e2171&id=13cea9817b&e=b4828836f9&c=9908ce0171
+      30. http://philenews.us2.list-manage.com/profile?u=84e8c0ea4dc808b59204e2171&id=13cea9817b&e=b4828836f9
+
+  [31]Αν επιθυμείτε να κάνετε εγγραφή στο newsletter κάντε κλικ εδώ
+    Links:
+      31. http://eepurl.com/getzb
+
+  To ensure future delivery of our e-mails,
+  please add newsletter@phileleftheros.com to your contacts.

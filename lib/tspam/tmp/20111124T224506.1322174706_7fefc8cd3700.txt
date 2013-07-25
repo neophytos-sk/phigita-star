@@ -1,0 +1,54 @@
+DomainKey-Signature: q=dns; a=rsa-sha1; c=nofws;
+	s=prod; d=linkedin.com;
+	h=DKIM-Signature:Sender:Date:From:To:Message-ID:Subject:MIME-Version:Content-Type:X-LinkedIn-Template:X-LinkedIn-Class:X-LinkedIn-fbl;
+	b=O0ihWm0r2FICYF1W1ndNddea7Na4JGJM8n3xr7jDiBqBQjOo9NACf6onjUvRw/Tp
+	ZIzVncWzmOktrYoJttacHBkXf1SFz1lIkvNH6yOP0aJPNQQTabT24ii9BspicjhD 
+DKIM-Signature: v=1; a=rsa-sha1; d=linkedin.com; s=proddkim; c=relaxed/relaxed;
+	q=dns/txt; i=@linkedin.com; t=1322174695;
+	h=From:Subject:Date:To:MIME-Version:Content-Type:X-LinkedIn-Class:X-LinkedIn-fbl:
+	X-LinkedIn-Template;
+	bh=GX6wbzMucUSh4p+EF3K9MLRT1yw=;
+	b=BO9HD1kTVakfTehKpjrq3kv7lmBjdx1utJDGHWP37EzEL/7/4h5aRU94MMjeQ6Ps
+	EgB0P42ucN7f57vkSK4nRDuT9J6o6LzKH+LlVMkYcmLV5z+J/yrhkTWPrLTnfewP; 
+Sender: messages-noreply@bounce.linkedin.com 
+Date: Thu, 24 Nov 2011 22:44:55 +0000 (UTC) 
+From: Cassandra NoSQL Group Members <group-digests@linkedin.com> 
+To: Neophytos Demetriou <k2pts@phigita.net> 
+Message-ID: <650548299.279966967.1322174695983.JavaMail.app@ela4-app0105.prod> 
+Subject: [2] new discussions and [2] new jobs on LinkedIn 
+X-LinkedIn-Template: anet_digest_type 
+X-LinkedIn-Class: GROUPDIGEST 
+X-LinkedIn-fbl: m-k36zPYgmdsZpxxOcBPLXY3BkNEwVleUcvSnFPfbrfLEhwSv_vOl0D2h 
+--------------------------------------
+Cassandra NoSQL
+  Latest discussions from Cassandra NoSQL group members.  Change the frequency of this digest:
+  http://www.linkedin.com/e/-1ht5d5-gvecocoa-70/ahs/2822930/EMLt_anet_settings/?hs=false&tok=3VwC_hifIkfR01
+
+
+
+
+Send me an email for each new discussion &#187; http://www.linkedin.com/e/-1ht5d5-gvecocoa-70/snp/2822930/true/grp_email_subscribe_new_posts/?hs=false&tok=3PAw3QNwckfR01
+
+
+
+Discussions
+ * Mukesh  Kumar How Do You Develop A Marketing Communications Plan?
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvecocoa-70/ava/81798959/2822930/EMLt_anet_qa_ttle/?hs=false&tok=1xBkth1WUkfR01
+
+
+ * David  Boney Organization Meeting - Austin Hackers Dojo - Big Data Machine Learning
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvecocoa-70/ava/81487173/2822930/EMLt_anet_qa_ttle/?hs=false&tok=1j0ot8tMkkfR01
+
+
+Weekly Job Postings * Kimberly  Owen: VP of Engineering with a Big Data Background -Downtown SF
+  VP of Engineering with a Big Data Background -Downtown SF (0)
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvecocoa-70/ava/81503869/2822930/EMLt_anet_qa_ttle/?hs=false&tok=3Aot9sUaskfR01
+
+ * Jason  Stiles: Senior LAMP - PHP, NoSQL (Cassandra + Hadoop {learn or utilise}) - London UK - Backend / Frontend Developers, QA / Testers, Sys Admin / Engineers
+  Senior LAMP - PHP, NoSQL (Cassandra + Hadoop {learn or utilise}) - London UK - Backend / Frontend Developers, QA / Testers, Sys Admin / Engineers (0)
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gvecocoa-70/ava/81162253/2822930/EMLt_anet_qa_ttle/?hs=false&tok=12Es647jokfR01
+
+
+

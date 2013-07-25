@@ -1,0 +1,2858 @@
+<html xmlns:v="urn:schemas-microsoft-com:vml"
+xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:w="urn:schemas-microsoft-com:office:word"
+xmlns:dt="uuid:C2F41010-65B3-11d1-A29F-00AA00C14882"
+xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+<meta name=ProgId content=Word.Document>
+<meta name=Generator content="Microsoft Word 9">
+<meta name=Originator content="Microsoft Word 9">
+<link rel=File-List href="./regressionTest_files/filelist.xml">
+<link rel=Preview href="./regressionTest_files/preview.wmf">
+<link rel=Edit-Time-Data href="./regressionTest_files/editdata.mso">
+<!--[if !mso]>
+<style>
+v\:* {behavior:url(#default#VML);}
+o\:* {behavior:url(#default#VML);}
+w\:* {behavior:url(#default#VML);}
+.shape {behavior:url(#default#VML);}
+</style>
+<![endif]-->
+<title>Regression Test</title>
+<!--[if gte mso 9]><xml>
+ <o:DocumentProperties>
+  <o:Author>Charles Mok</o:Author>
+  <o:Template>Thesis.dot</o:Template>
+  <o:LastAuthor>Charles Mok</o:LastAuthor>
+  <o:Revision>2</o:Revision>
+  <o:TotalTime>1</o:TotalTime>
+  <o:LastPrinted>2001-10-23T00:05:00Z</o:LastPrinted>
+  <o:Created>2001-11-02T12:22:00Z</o:Created>
+  <o:LastSaved>2001-11-02T12:22:00Z</o:LastSaved>
+  <o:Pages>4</o:Pages>
+  <o:Words>885</o:Words>
+  <o:Characters>5045</o:Characters>
+  <o:Bytes>62976</o:Bytes>
+  <o:Lines>42</o:Lines>
+  <o:Paragraphs>10</o:Paragraphs>
+  <o:CharactersWithSpaces>6195</o:CharactersWithSpaces>
+  <o:Version>9.2720</o:Version>
+ </o:DocumentProperties>
+ <o:CustomDocumentProperties>
+  <o:UseDefaultLanguage dt:dt="boolean">1</o:UseDefaultLanguage>
+  <o:Version dt:dt="float">99022200</o:Version>
+  <o:LCID dt:dt="float">1033</o:LCID>
+ </o:CustomDocumentProperties>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <w:WordDocument>
+  <w:ActiveWritingStyle Lang="EN-US" VendorID="8" DLLVersion="513" NLCheck="0">3</w:ActiveWritingStyle>
+  <w:AttachedTemplate
+   HRef="C:\Program Files\Microsoft Office\Templates\1033\Thesis.dot"></w:AttachedTemplate>
+  <w:DrawingGridHorizontalSpacing>9.35 pt</w:DrawingGridHorizontalSpacing>
+  <w:DrawingGridVerticalSpacing>9.35 pt</w:DrawingGridVerticalSpacing>
+  <w:UseMarginsForDrawingGridOrigin/>
+  <w:DrawingGridHorizontalOrigin>84.95 pt</w:DrawingGridHorizontalOrigin>
+  <w:DrawingGridVerticalOrigin>99.35 pt</w:DrawingGridVerticalOrigin>
+  <w:Compatibility>
+   <w:WW6BorderRules/>
+   <w:FootnoteLayoutLikeWW8/>
+   <w:ShapeLayoutLikeWW8/>
+   <w:AlignTablesRowByRow/>
+   <w:ForgetLastTabAlignment/>
+   <w:LayoutRawTableWidth/>
+  </w:Compatibility>
+ </w:WordDocument>
+</xml><![endif]-->
+<style>
+<!--
+ /* Font Definitions */
+@font-face
+	{font-family:Courier;
+	panose-1:0 0 0 0 0 0 0 0 0 0;
+	mso-font-charset:0;
+	mso-generic-font-family:modern;
+	mso-font-format:other;
+	mso-font-pitch:fixed;
+	mso-font-signature:3 0 0 0 1 0;}
+@font-face
+	{font-family:Wingdings;
+	panose-1:5 0 0 0 0 0 0 0 0 0;
+	mso-font-charset:2;
+	mso-generic-font-family:auto;
+	mso-font-pitch:variable;
+	mso-font-signature:0 268435456 0 0 -2147483648 0;}
+@font-face
+	{font-family:"Comic Sans MS";
+	panose-1:3 15 7 2 3 3 2 2 2 4;
+	mso-font-charset:0;
+	mso-generic-font-family:script;
+	mso-font-pitch:variable;
+	mso-font-signature:647 0 0 0 159 0;}
+@font-face
+	{font-family:Garamond;
+	panose-1:2 2 4 4 3 3 1 1 8 3;
+	mso-font-charset:0;
+	mso-generic-font-family:roman;
+	mso-font-pitch:variable;
+	mso-font-signature:647 0 0 0 159 0;}
+ /* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{mso-style-parent:"";
+	margin:0cm;
+	margin-bottom:.0001pt;
+	text-align:justify;
+	mso-pagination:widow-orphan;
+	tab-stops:right 432.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	letter-spacing:-.1pt;}
+h1
+	{mso-style-next:"Body Text";
+	margin-top:14.0pt;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:0cm;
+	margin-bottom:.0001pt;
+	text-align:center;
+	line-height:150%;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:1;
+	tab-stops:right 432.0pt;
+	font-size:14.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	letter-spacing:-.1pt;
+	mso-font-kerning:0pt;
+	font-weight:normal;
+	mso-bidi-font-weight:bold;}
+h2
+	{mso-style-next:"Body Text";
+	margin:0cm;
+	margin-bottom:.0001pt;
+	line-height:150%;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:2;
+	tab-stops:right 432.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	letter-spacing:-.1pt;
+	mso-font-kerning:14.0pt;
+	font-weight:bold;
+	mso-bidi-font-weight:normal;}
+h3
+	{mso-style-next:"Body Text";
+	margin:0cm;
+	margin-bottom:.0001pt;
+	line-height:150%;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:3;
+	tab-stops:right 432.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-font-kerning:14.0pt;
+	font-weight:normal;
+	font-style:italic;
+	mso-bidi-font-style:normal;}
+h4
+	{mso-style-next:"Body Text";
+	margin:0cm;
+	margin-bottom:.0001pt;
+	line-height:150%;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:4;
+	tab-stops:right 432.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-font-kerning:14.0pt;
+	font-weight:normal;
+	font-style:italic;
+	mso-bidi-font-style:normal;}
+h5
+	{mso-style-next:"Body Text";
+	margin:0cm;
+	margin-bottom:.0001pt;
+	text-align:center;
+	line-height:150%;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:5;
+	tab-stops:right 432.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-font-kerning:14.0pt;
+	font-weight:normal;
+	font-style:italic;
+	mso-bidi-font-style:normal;}
+h6
+	{mso-style-next:"Body Text";
+	margin-top:6.0pt;
+	margin-right:0cm;
+	margin-bottom:4.0pt;
+	margin-left:0cm;
+	text-align:center;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:6;
+	tab-stops:right 432.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	font-variant:small-caps;
+	letter-spacing:1.0pt;
+	mso-font-kerning:14.0pt;
+	font-weight:normal;}
+p.MsoHeading7, li.MsoHeading7, div.MsoHeading7
+	{mso-style-next:"Body Text";
+	margin-top:4.0pt;
+	margin-right:0cm;
+	margin-bottom:3.0pt;
+	margin-left:0cm;
+	text-align:justify;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:7;
+	tab-stops:right 432.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	text-transform:uppercase;
+	mso-font-kerning:14.0pt;}
+p.MsoHeading8, li.MsoHeading8, div.MsoHeading8
+	{mso-style-next:"Body Text";
+	margin:0cm;
+	margin-bottom:.0001pt;
+	text-align:center;
+	line-height:150%;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:8;
+	tab-stops:right 432.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	letter-spacing:-.1pt;
+	mso-font-kerning:14.0pt;}
+p.MsoHeading9, li.MsoHeading9, div.MsoHeading9
+	{mso-style-next:"Body Text";
+	margin:0cm;
+	margin-bottom:.0001pt;
+	line-height:150%;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:9;
+	tab-stops:right 432.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	letter-spacing:-.1pt;
+	mso-font-kerning:14.0pt;}
+p.MsoIndex1, li.MsoIndex1, div.MsoIndex1
+	{margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:36.0pt;
+	margin-bottom:.0001pt;
+	text-indent:-36.0pt;
+	mso-pagination:widow-orphan;
+	tab-stops:right dotted 198.0pt blank 432.0pt;
+	font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	letter-spacing:-.1pt;}
+p.MsoIndex2, li.MsoIndex2, div.MsoIndex2
+	{margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:45.0pt;
+	margin-bottom:.0001pt;
+	text-indent:-36.0pt;
+	mso-pagination:widow-orphan;
+	tab-stops:right dotted 198.0pt blank 432.0pt;
+	font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	letter-spacing:-.1pt;}
+p.MsoIndex3, li.MsoIndex3, div.MsoIndex3
+	{margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:54.0pt;
+	margin-bottom:.0001pt;
+	text-align:justify;
+	text-indent:-36.0pt;
+	mso-pagination:widow-orphan;
+	tab-stops:right dotted 198.0pt blank 432.0pt;
+	font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";}
+p.MsoIndex4, li.MsoIndex4, div.MsoIndex4
+	{margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:54.0pt;
+	margin-bottom:.0001pt;
+	text-align:justify;
+	text-indent:-36.0pt;
+	mso-pagination:widow-orphan;
+	tab-stops:right dotted 198.0pt blank 432.0pt;
+	font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	font-style:italic;
+	mso-bidi-font-style:normal;}
+p.MsoIndex5, li.MsoIndex5, div.MsoIndex5
+	{margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:54.0pt;
+	margin-bottom:.0001pt;
+	text-align:justify;
+	text-indent:-36.0pt;
+	mso-pagination:widow-orphan;
+	tab-stops:right dotted 198.0pt blank 432.0pt;
+	font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	font-style:italic;
+	mso-bidi-font-style:normal;}
+p.MsoToc1, li.MsoToc1, div.MsoToc1
+	{margin-top:6.0pt;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:0cm;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	mso-bidi-font-size:14.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	letter-spacing:-.1pt;
+	font-weight:bold;
+	font-style:italic;}
+p.MsoToc2, li.MsoToc2, div.MsoToc2
+	{margin-top:6.0pt;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:12.0pt;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	mso-bidi-font-size:13.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	letter-spacing:-.1pt;
+	font-weight:bold;}
+p.MsoToc3, li.MsoToc3, div.MsoToc3
+	{margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:24.0pt;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	letter-spacing:-.1pt;}
+p.MsoToc4, li.MsoToc4, div.MsoToc4
+	{margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:36.0pt;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	letter-spacing:-.1pt;}
+p.MsoToc5, li.MsoToc5, div.MsoToc5
+	{margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:48.0pt;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	letter-spacing:-.1pt;}
+p.MsoToc6, li.MsoToc6, div.MsoToc6
+	{mso-style-update:auto;
+	mso-style-next:Normal;
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:60.0pt;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	letter-spacing:-.1pt;}
+p.MsoToc7, li.MsoToc7, div.MsoToc7
+	{mso-style-update:auto;
+	mso-style-next:Normal;
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:72.0pt;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	letter-spacing:-.1pt;}
+p.MsoToc8, li.MsoToc8, div.MsoToc8
+	{mso-style-update:auto;
+	mso-style-next:Normal;
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:84.0pt;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	letter-spacing:-.1pt;}
+p.MsoToc9, li.MsoToc9, div.MsoToc9
+	{mso-style-update:auto;
+	mso-style-next:Normal;
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:96.0pt;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	letter-spacing:-.1pt;}
+p.MsoFootnoteText, li.MsoFootnoteText, div.MsoFootnoteText
+	{mso-style-parent:"Footnote Base";
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:6.0pt;
+	margin-left:9.35pt;
+	text-align:justify;
+	text-indent:-9.35pt;
+	line-height:11.0pt;
+	mso-line-height-rule:exactly;
+	mso-pagination:widow-orphan;
+	tab-stops:9.35pt right 432.0pt;
+	font-size:9.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	letter-spacing:-.1pt;}
+p.MsoCommentText, li.MsoCommentText, div.MsoCommentText
+	{margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:6.0pt;
+	margin-left:9.35pt;
+	text-align:justify;
+	text-indent:-9.35pt;
+	line-height:11.0pt;
+	mso-line-height-rule:exactly;
+	mso-pagination:widow-orphan;
+	tab-stops:9.35pt right 432.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	letter-spacing:-.1pt;}
+p.MsoHeader, li.MsoHeader, div.MsoHeader
+	{margin:0cm;
+	margin-bottom:.0001pt;
+	text-align:center;
+	mso-pagination:widow-orphan lines-together;
+	tab-stops:center 216.0pt right 432.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	letter-spacing:-.1pt;}
+p.MsoFooter, li.MsoFooter, div.MsoFooter
+	{margin:0cm;
+	margin-bottom:.0001pt;
+	text-align:center;
+	mso-pagination:widow-orphan lines-together;
+	tab-stops:center 216.0pt right 432.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	letter-spacing:-.1pt;}
+p.MsoIndexHeading, li.MsoIndexHeading, div.MsoIndexHeading
+	{mso-style-next:"Index 1";
+	margin-top:14.0pt;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:0cm;
+	margin-bottom:.0001pt;
+	text-align:justify;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	tab-stops:right 432.0pt;
+	font-size:13.5pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	letter-spacing:-.1pt;
+	mso-font-kerning:14.0pt;}
+p.MsoCaption, li.MsoCaption, div.MsoCaption
+	{mso-style-next:"Body Text";
+	margin-top:0cm;
+	margin-right:96.0pt;
+	margin-bottom:28.0pt;
+	margin-left:96.0pt;
+	text-align:justify;
+	mso-pagination:widow-orphan;
+	tab-stops:right 432.0pt;
+	font-size:9.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";}
+p.MsoTof, li.MsoTof, div.MsoTof
+	{margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:36.0pt;
+	margin-bottom:.0001pt;
+	text-align:justify;
+	text-indent:-36.0pt;
+	mso-pagination:widow-orphan;
+	tab-stops:right dotted 432.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	letter-spacing:-.1pt;}
+span.MsoFootnoteReference
+	{mso-style-parent:"";
+	vertical-align:super;}
+span.MsoCommentReference
+	{mso-style-parent:"";
+	mso-ansi-font-size:8.0pt;}
+span.MsoEndnoteReference
+	{mso-style-parent:"";
+	vertical-align:super;}
+p.MsoEndnoteText, li.MsoEndnoteText, div.MsoEndnoteText
+	{margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:6.0pt;
+	margin-left:9.35pt;
+	text-align:justify;
+	text-indent:-9.35pt;
+	line-height:11.0pt;
+	mso-line-height-rule:exactly;
+	mso-pagination:widow-orphan;
+	tab-stops:9.35pt right 432.0pt;
+	font-size:9.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	letter-spacing:-.1pt;}
+p.MsoToa, li.MsoToa, div.MsoToa
+	{margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:18.0pt;
+	margin-bottom:.0001pt;
+	text-align:justify;
+	text-indent:-18.0pt;
+	mso-pagination:widow-orphan;
+	tab-stops:right dotted 432.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	letter-spacing:-.1pt;}
+p.MsoMacroText, li.MsoMacroText, div.MsoMacroText
+	{mso-style-parent:"Body Text";
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:6.0pt;
+	margin-left:0cm;
+	text-align:justify;
+	mso-pagination:widow-orphan;
+	tab-stops:right 432.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:"Courier New";
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	letter-spacing:-.1pt;}
+p.MsoToaHeading, li.MsoToaHeading, div.MsoToaHeading
+	{mso-style-next:"Table of Authorities";
+	margin-top:14.0pt;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:0cm;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan lines-together;
+	page-break-after:avoid;
+	tab-stops:right 432.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	letter-spacing:-.1pt;
+	mso-font-kerning:14.0pt;
+	font-weight:bold;
+	mso-bidi-font-weight:normal;}
+p.MsoList, li.MsoList, div.MsoList
+	{mso-style-parent:"Body Text";
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:4.0pt;
+	margin-left:36.0pt;
+	text-align:justify;
+	text-indent:-18.0pt;
+	line-height:150%;
+	mso-pagination:widow-orphan;
+	tab-stops:36.0pt right 432.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	letter-spacing:-.1pt;}
+p.MsoListNumber, li.MsoListNumber, div.MsoListNumber
+	{mso-style-parent:List;
+	margin:0cm;
+	margin-bottom:.0001pt;
+	text-align:justify;
+	text-indent:0cm;
+	line-height:150%;
+	mso-pagination:widow-orphan;
+	tab-stops:right dotted 372.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	letter-spacing:-.1pt;}
+p.MsoList2, li.MsoList2, div.MsoList2
+	{mso-style-parent:List;
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:4.0pt;
+	margin-left:54.0pt;
+	text-align:justify;
+	text-indent:-18.0pt;
+	line-height:150%;
+	mso-pagination:widow-orphan;
+	tab-stops:54.0pt right 432.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	letter-spacing:-.1pt;}
+p.MsoList3, li.MsoList3, div.MsoList3
+	{mso-style-parent:List;
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:4.0pt;
+	margin-left:72.0pt;
+	text-align:justify;
+	text-indent:-18.0pt;
+	line-height:150%;
+	mso-pagination:widow-orphan;
+	tab-stops:72.0pt right 432.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	letter-spacing:-.1pt;}
+p.MsoList4, li.MsoList4, div.MsoList4
+	{mso-style-parent:List;
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:4.0pt;
+	margin-left:90.0pt;
+	text-align:justify;
+	text-indent:-18.0pt;
+	line-height:150%;
+	mso-pagination:widow-orphan;
+	tab-stops:90.0pt right 432.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	letter-spacing:-.1pt;}
+p.MsoList5, li.MsoList5, div.MsoList5
+	{mso-style-parent:List;
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:4.0pt;
+	margin-left:108.0pt;
+	text-align:justify;
+	text-indent:-18.0pt;
+	line-height:150%;
+	mso-pagination:widow-orphan;
+	tab-stops:108.0pt right 432.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	letter-spacing:-.1pt;}
+p.MsoListNumber2, li.MsoListNumber2, div.MsoListNumber2
+	{mso-style-parent:"List Number";
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:18.0pt;
+	margin-bottom:.0001pt;
+	text-align:justify;
+	text-indent:0cm;
+	line-height:150%;
+	mso-pagination:widow-orphan;
+	tab-stops:right dotted 372.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	letter-spacing:-.1pt;}
+p.MsoListNumber3, li.MsoListNumber3, div.MsoListNumber3
+	{mso-style-parent:"List Number";
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:36.0pt;
+	margin-bottom:.0001pt;
+	text-align:justify;
+	text-indent:0cm;
+	line-height:150%;
+	mso-pagination:widow-orphan;
+	tab-stops:right dotted 372.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	letter-spacing:-.1pt;}
+p.MsoListNumber4, li.MsoListNumber4, div.MsoListNumber4
+	{mso-style-parent:"List Number";
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:54.0pt;
+	margin-bottom:.0001pt;
+	text-align:justify;
+	text-indent:0cm;
+	line-height:150%;
+	mso-pagination:widow-orphan;
+	tab-stops:right dotted 372.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	letter-spacing:-.1pt;}
+p.MsoListNumber5, li.MsoListNumber5, div.MsoListNumber5
+	{mso-style-parent:"List Number";
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:72.0pt;
+	margin-bottom:.0001pt;
+	text-align:justify;
+	text-indent:0cm;
+	line-height:150%;
+	mso-pagination:widow-orphan;
+	tab-stops:right dotted 372.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	letter-spacing:-.1pt;}
+p.MsoTitle, li.MsoTitle, div.MsoTitle
+	{mso-style-parent:"Heading Base";
+	mso-style-next:Subtitle;
+	margin-top:0cm;
+	margin-right:96.0pt;
+	margin-bottom:14.0pt;
+	margin-left:96.0pt;
+	text-align:center;
+	mso-pagination:widow-orphan lines-together;
+	page-break-after:avoid;
+	tab-stops:right 432.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	text-transform:uppercase;
+	letter-spacing:-.1pt;
+	mso-font-kerning:14.0pt;}
+p.MsoBodyText, li.MsoBodyText, div.MsoBodyText
+	{margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:14.0pt;
+	margin-left:0cm;
+	text-align:justify;
+	line-height:150%;
+	mso-pagination:widow-orphan;
+	tab-stops:right 432.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	letter-spacing:-.1pt;}
+p.MsoBodyTextIndent, li.MsoBodyTextIndent, div.MsoBodyTextIndent
+	{mso-style-parent:"Body Text";
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:18.0pt;
+	margin-bottom:.0001pt;
+	text-indent:-18.0pt;
+	mso-pagination:widow-orphan;
+	tab-stops:right 432.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	letter-spacing:-.1pt;}
+p.MsoListContinue, li.MsoListContinue, div.MsoListContinue
+	{mso-style-parent:List;
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:8.0pt;
+	margin-left:36.0pt;
+	text-align:justify;
+	text-indent:-18.0pt;
+	line-height:150%;
+	mso-pagination:widow-orphan;
+	tab-stops:right 432.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	letter-spacing:-.1pt;}
+p.MsoListContinue2, li.MsoListContinue2, div.MsoListContinue2
+	{mso-style-parent:"List Continue";
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:8.0pt;
+	margin-left:54.0pt;
+	text-align:justify;
+	text-indent:-18.0pt;
+	line-height:150%;
+	mso-pagination:widow-orphan;
+	tab-stops:right 432.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	letter-spacing:-.1pt;}
+p.MsoListContinue3, li.MsoListContinue3, div.MsoListContinue3
+	{mso-style-parent:"List Continue";
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:8.0pt;
+	margin-left:72.0pt;
+	text-align:justify;
+	text-indent:-18.0pt;
+	line-height:150%;
+	mso-pagination:widow-orphan;
+	tab-stops:right 432.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	letter-spacing:-.1pt;}
+p.MsoListContinue4, li.MsoListContinue4, div.MsoListContinue4
+	{mso-style-parent:"List Continue";
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:8.0pt;
+	margin-left:90.0pt;
+	text-align:justify;
+	text-indent:-18.0pt;
+	line-height:150%;
+	mso-pagination:widow-orphan;
+	tab-stops:right 432.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	letter-spacing:-.1pt;}
+p.MsoListContinue5, li.MsoListContinue5, div.MsoListContinue5
+	{mso-style-parent:"List Continue";
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:8.0pt;
+	margin-left:108.0pt;
+	text-align:justify;
+	text-indent:-18.0pt;
+	line-height:150%;
+	mso-pagination:widow-orphan;
+	tab-stops:right 432.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	letter-spacing:-.1pt;}
+p.MsoSubtitle, li.MsoSubtitle, div.MsoSubtitle
+	{mso-style-parent:Title;
+	mso-style-next:"Body Text";
+	margin-top:0cm;
+	margin-right:96.0pt;
+	margin-bottom:0cm;
+	margin-left:96.0pt;
+	margin-bottom:.0001pt;
+	text-align:center;
+	line-height:200%;
+	mso-pagination:widow-orphan lines-together;
+	page-break-after:avoid;
+	tab-stops:right 432.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	letter-spacing:-.1pt;
+	mso-font-kerning:14.0pt;}
+p.MsoDate, li.MsoDate, div.MsoDate
+	{mso-style-parent:"Body Text";
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:28.0pt;
+	margin-left:0cm;
+	text-align:center;
+	line-height:150%;
+	mso-pagination:widow-orphan;
+	tab-stops:right 432.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	letter-spacing:-.1pt;}
+p.MsoBodyText2, li.MsoBodyText2, div.MsoBodyText2
+	{margin:0cm;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	tab-stops:right 432.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	letter-spacing:-.1pt;}
+p.MsoBodyText3, li.MsoBodyText3, div.MsoBodyText3
+	{margin-top:14.0pt;
+	margin-right:36.0pt;
+	margin-bottom:28.0pt;
+	margin-left:0cm;
+	mso-pagination:widow-orphan;
+	tab-stops:right lined 372.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	letter-spacing:-.1pt;}
+a:link, span.MsoHyperlink
+	{color:blue;
+	text-decoration:underline;
+	text-underline:single;}
+a:visited, span.MsoHyperlinkFollowed
+	{color:purple;
+	text-decoration:underline;
+	text-underline:single;}
+strong
+	{mso-bidi-font-weight:normal;
+	font-style:italic;}
+em
+	{mso-style-parent:"";
+	mso-bidi-font-style:normal;}
+p
+	{margin-right:0cm;
+	mso-margin-top-alt:auto;
+	mso-margin-bottom-alt:auto;
+	margin-left:0cm;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+address
+	{margin:0cm;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	font-style:italic;}
+pre
+	{margin:0cm;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt;
+	font-size:10.0pt;
+	font-family:"Courier New";
+	mso-fareast-font-family:"Courier New";}
+tt
+	{mso-ansi-font-size:7.5pt;
+	mso-bidi-font-size:7.5pt;
+	mso-ascii-font-family:Courier;
+	mso-fareast-font-family:"Courier New";
+	mso-hansi-font-family:Courier;
+	mso-bidi-font-family:"Courier New";
+	color:black;}
+p.Author, li.Author, div.Author
+	{mso-style-name:Author;
+	mso-style-parent:"Body Text";
+	margin:0cm;
+	margin-bottom:.0001pt;
+	text-align:center;
+	line-height:200%;
+	mso-pagination:widow-orphan;
+	tab-stops:right 432.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	letter-spacing:-.1pt;}
+p.BlockQuotation, li.BlockQuotation, div.BlockQuotation
+	{mso-style-name:"Block Quotation";
+	mso-style-parent:"Body Text";
+	margin-top:0cm;
+	margin-right:36.0pt;
+	margin-bottom:8.0pt;
+	margin-left:36.0pt;
+	text-align:justify;
+	line-height:200%;
+	mso-pagination:widow-orphan lines-together;
+	tab-stops:right 432.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	letter-spacing:-.1pt;
+	font-style:italic;
+	mso-bidi-font-style:normal;}
+p.BodyTextKeep, li.BodyTextKeep, div.BodyTextKeep
+	{mso-style-name:"Body Text Keep";
+	mso-style-parent:"Body Text";
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:14.0pt;
+	margin-left:0cm;
+	text-align:justify;
+	line-height:150%;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	tab-stops:right 432.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	letter-spacing:-.1pt;}
+p.ChapterLabel, li.ChapterLabel, div.ChapterLabel
+	{mso-style-name:"Chapter Label";
+	mso-style-next:Normal;
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:28.0pt;
+	margin-left:0cm;
+	text-align:center;
+	page-break-before:always;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	tab-stops:right 432.0pt;
+	font-size:11.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	letter-spacing:3.5pt;
+	font-style:italic;
+	mso-bidi-font-style:normal;}
+p.ChapterSubtitle, li.ChapterSubtitle, div.ChapterSubtitle
+	{mso-style-name:"Chapter Subtitle";
+	mso-style-next:"Body Text";
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:14.0pt;
+	margin-left:0cm;
+	text-align:center;
+	mso-pagination:widow-orphan lines-together;
+	page-break-after:avoid;
+	tab-stops:right 432.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	letter-spacing:.1pt;
+	mso-font-kerning:14.0pt;}
+p.ChapterTitle, li.ChapterTitle, div.ChapterTitle
+	{mso-style-name:"Chapter Title";
+	mso-style-next:"Chapter Subtitle";
+	margin-top:28.0pt;
+	margin-right:0cm;
+	margin-bottom:28.0pt;
+	margin-left:0cm;
+	text-align:center;
+	mso-pagination:widow-orphan lines-together;
+	page-break-after:avoid;
+	tab-stops:right 432.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	text-transform:uppercase;
+	letter-spacing:.1pt;
+	mso-font-kerning:14.0pt;}
+p.FooterEven, li.FooterEven, div.FooterEven
+	{mso-style-name:"Footer Even";
+	mso-style-parent:Footer;
+	margin:0cm;
+	margin-bottom:.0001pt;
+	text-align:center;
+	mso-pagination:widow-orphan lines-together;
+	tab-stops:center 216.0pt right 432.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	letter-spacing:-.1pt;}
+p.FooterFirst, li.FooterFirst, div.FooterFirst
+	{mso-style-name:"Footer First";
+	mso-style-parent:Footer;
+	margin:0cm;
+	margin-bottom:.0001pt;
+	text-align:center;
+	mso-pagination:widow-orphan lines-together;
+	tab-stops:center 216.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	letter-spacing:-.1pt;}
+p.FooterOdd, li.FooterOdd, div.FooterOdd
+	{mso-style-name:"Footer Odd";
+	mso-style-parent:Footer;
+	margin:0cm;
+	margin-bottom:.0001pt;
+	text-align:center;
+	mso-pagination:widow-orphan lines-together;
+	tab-stops:right 0cm center 216.0pt right 432.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	letter-spacing:-.1pt;}
+p.FootnoteBase, li.FootnoteBase, div.FootnoteBase
+	{mso-style-name:"Footnote Base";
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:9.35pt;
+	margin-bottom:.0001pt;
+	text-align:justify;
+	text-indent:-9.35pt;
+	line-height:11.0pt;
+	mso-line-height-rule:exactly;
+	mso-pagination:widow-orphan;
+	tab-stops:9.35pt right 432.0pt;
+	font-size:9.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	letter-spacing:-.1pt;}
+p.GlossaryDefinition, li.GlossaryDefinition, div.GlossaryDefinition
+	{mso-style-name:"Glossary Definition";
+	mso-style-parent:"Body Text";
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:14.0pt;
+	margin-left:0cm;
+	text-align:justify;
+	mso-pagination:widow-orphan;
+	tab-stops:right 432.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	letter-spacing:-.1pt;}
+span.GlossaryEntry
+	{mso-style-name:"Glossary Entry";
+	mso-style-parent:"";
+	font-weight:bold;}
+p.HeaderBase, li.HeaderBase, div.HeaderBase
+	{mso-style-name:"Header Base";
+	margin:0cm;
+	margin-bottom:.0001pt;
+	text-align:center;
+	mso-pagination:widow-orphan lines-together;
+	tab-stops:center 216.0pt right 432.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	letter-spacing:-.1pt;}
+p.HeaderEven, li.HeaderEven, div.HeaderEven
+	{mso-style-name:"Header Even";
+	mso-style-parent:Header;
+	margin:0cm;
+	margin-bottom:.0001pt;
+	text-align:center;
+	mso-pagination:widow-orphan lines-together;
+	tab-stops:center 216.0pt right 432.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	letter-spacing:-.1pt;}
+p.HeaderFirst, li.HeaderFirst, div.HeaderFirst
+	{mso-style-name:"Header First";
+	mso-style-parent:Header;
+	margin:0cm;
+	margin-bottom:.0001pt;
+	text-align:center;
+	mso-pagination:widow-orphan lines-together;
+	tab-stops:center 216.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	letter-spacing:-.1pt;}
+p.HeaderOdd, li.HeaderOdd, div.HeaderOdd
+	{mso-style-name:"Header Odd";
+	mso-style-parent:Header;
+	margin:0cm;
+	margin-bottom:.0001pt;
+	text-align:center;
+	mso-pagination:widow-orphan lines-together;
+	tab-stops:right 0cm center 216.0pt right 432.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	letter-spacing:-.1pt;}
+p.HeadingBase, li.HeadingBase, div.HeadingBase
+	{mso-style-name:"Heading Base";
+	mso-style-next:"Body Text";
+	margin:0cm;
+	margin-bottom:.0001pt;
+	line-height:150%;
+	mso-pagination:widow-orphan lines-together;
+	page-break-after:avoid;
+	tab-stops:right 432.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	letter-spacing:-.1pt;
+	mso-font-kerning:14.0pt;
+	font-weight:bold;
+	mso-bidi-font-weight:normal;}
+p.IndexBase, li.IndexBase, div.IndexBase
+	{mso-style-name:"Index Base";
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:36.0pt;
+	margin-bottom:.0001pt;
+	text-align:justify;
+	text-indent:-36.0pt;
+	mso-pagination:widow-orphan;
+	tab-stops:right dotted 198.0pt blank 432.0pt;
+	font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";}
+span.Lead-inEmphasis
+	{mso-style-name:"Lead-in Emphasis";
+	mso-style-parent:"";
+	text-transform:uppercase;
+	letter-spacing:0pt;}
+p.Name, li.Name, div.Name
+	{mso-style-name:Name;
+	mso-style-parent:"Body Text";
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:14.0pt;
+	margin-left:0cm;
+	text-align:center;
+	line-height:150%;
+	mso-pagination:widow-orphan;
+	tab-stops:right 432.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	letter-spacing:-.1pt;}
+p.Picture, li.Picture, div.Picture
+	{mso-style-name:Picture;
+	mso-style-parent:"Body Text";
+	mso-style-next:Caption;
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:14.0pt;
+	margin-left:0cm;
+	text-align:center;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	tab-stops:right 432.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	letter-spacing:-.1pt;}
+p.SectionLabel, li.SectionLabel, div.SectionLabel
+	{mso-style-name:"Section Label";
+	mso-style-parent:"Heading Base";
+	mso-style-next:"Body Text";
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:35.0pt;
+	margin-left:0cm;
+	text-align:center;
+	line-height:150%;
+	page-break-before:always;
+	mso-pagination:widow-orphan lines-together;
+	page-break-after:avoid;
+	tab-stops:right 432.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	text-transform:uppercase;
+	letter-spacing:.5pt;
+	mso-font-kerning:14.0pt;}
+p.SubtitleCover, li.SubtitleCover, div.SubtitleCover
+	{mso-style-name:"Subtitle Cover";
+	mso-style-next:"Body Text";
+	margin-top:0cm;
+	margin-right:90.0pt;
+	margin-bottom:28.0pt;
+	margin-left:90.0pt;
+	text-align:center;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	tab-stops:right 432.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	letter-spacing:-.1pt;}
+span.Superscript
+	{mso-style-name:Superscript;
+	mso-style-parent:"";
+	vertical-align:super;}
+p.TitleCover, li.TitleCover, div.TitleCover
+	{mso-style-name:"Title Cover";
+	mso-style-parent:"Heading Base";
+	mso-style-next:"Subtitle Cover";
+	margin-top:39.0pt;
+	margin-right:96.0pt;
+	margin-bottom:21.0pt;
+	margin-left:96.0pt;
+	text-align:center;
+	mso-pagination:widow-orphan lines-together;
+	page-break-after:avoid;
+	tab-stops:right 432.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	text-transform:uppercase;
+	letter-spacing:.25pt;
+	mso-font-kerning:14.0pt;}
+p.TOCBase, li.TOCBase, div.TOCBase
+	{mso-style-name:"TOC Base";
+	margin:0cm;
+	margin-bottom:.0001pt;
+	text-align:justify;
+	mso-pagination:widow-orphan;
+	tab-stops:right dotted 432.0pt;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Garamond;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	letter-spacing:-.1pt;}
+@page Section1
+	{size:21.0cm 841.95pt;
+	margin:2.0cm 2.0cm 2.0cm 2.0cm;
+	mso-header-margin:2.0cm;
+	mso-footer-margin:2.0cm;
+	mso-page-numbers:1;
+	mso-page-numbers-chapter-style:header-1;
+	mso-even-footer:url("./regressionTest_files/header.htm") ef1;
+	mso-footer:url("./regressionTest_files/header.htm") f1;
+	mso-first-footer:url("./regressionTest_files/header.htm") ff1;
+	mso-paper-source:0;}
+div.Section1
+	{page:Section1;}
+ /* List Definitions */
+@list l0
+	{mso-list-id:-2;
+	mso-list-type:simple;
+	mso-list-template-ids:-1;}
+@list l0:level1
+	{mso-level-start-at:0;
+	mso-level-text:*;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	margin-left:0cm;
+	text-indent:0cm;}
+@list l1
+	{mso-list-id:36783450;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-1812153666 -2102089340 -1130064028 2100064884 1152647812 -1049053658 1979738846 853155288 1851450582 -1774154900;}
+@list l1:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	mso-ansi-font-size:10.0pt;
+	font-family:Symbol;}
+@list l1:level2
+	{mso-level-number-format:bullet;
+	mso-level-text:o;
+	mso-level-tab-stop:72.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	mso-ansi-font-size:10.0pt;
+	font-family:"Courier New";
+	mso-bidi-font-family:"Times New Roman";}
+@list l2
+	{mso-list-id:37703308;
+	mso-list-type:simple;
+	mso-list-template-ids:507572600;}
+@list l2:level1
+	{mso-level-number-format:none;
+	mso-level-text:"";
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:18.0pt;
+	mso-level-legacy-space:0cm;
+	margin-left:108.0pt;
+	text-indent:-18.0pt;}
+@list l3
+	{mso-list-id:65500982;
+	mso-list-type:hybrid;
+	mso-list-template-ids:1647483252 267677704 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l3:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:18.0pt;
+	mso-level-number-position:left;
+	margin-left:18.0pt;
+	text-indent:-18.0pt;
+	mso-ansi-font-size:9.0pt;
+	font-family:Symbol;}
+@list l4
+	{mso-list-id:116030224;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-1366118576 267677704 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l4:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	mso-ansi-font-size:9.0pt;
+	font-family:Symbol;}
+@list l5
+	{mso-list-id:140392471;
+	mso-list-type:hybrid;
+	mso-list-template-ids:574023932 67698703 67698713 67698715 67698703 67698713 67698715 67698703 67698713 67698715;}
+@list l5:level1
+	{mso-level-tab-stop:18.0pt;
+	mso-level-number-position:left;
+	margin-left:18.0pt;
+	text-indent:-18.0pt;}
+@list l6
+	{mso-list-id:168179378;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-74659064 1860618806 -299355024 614642078 -1950304226 -179953940 -1144094074 -187279260 1960471472 -1072561850;}
+@list l6:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	mso-ansi-font-size:10.0pt;
+	font-family:Symbol;}
+@list l7
+	{mso-list-id:171998024;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-1391017138 1108630442 571099230 -795971294 -1645952006 -25016682 1623199206 -1274537126 -1354330582 1334890414;}
+@list l7:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	mso-ansi-font-size:10.0pt;
+	font-family:Symbol;}
+@list l8
+	{mso-list-id:180709117;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-1745318882 67698689 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l8:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:18.0pt;
+	mso-level-number-position:left;
+	margin-left:18.0pt;
+	text-indent:-18.0pt;
+	font-family:Symbol;}
+@list l9
+	{mso-list-id:239605659;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-2141158014 267677704 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l9:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	mso-ansi-font-size:9.0pt;
+	font-family:Symbol;}
+@list l10
+	{mso-list-id:257639118;
+	mso-list-type:hybrid;
+	mso-list-template-ids:1525212926 67698689 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l10:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:-49.05pt;
+	mso-level-number-position:left;
+	margin-left:-49.05pt;
+	text-indent:-18.0pt;
+	font-family:Symbol;}
+@list l10:level2
+	{mso-level-number-format:bullet;
+	mso-level-text:o;
+	mso-level-tab-stop:-13.05pt;
+	mso-level-number-position:left;
+	margin-left:-13.05pt;
+	text-indent:-18.0pt;
+	font-family:"Courier New";
+	mso-bidi-font-family:"Times New Roman";}
+@list l10:level3
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0A7;
+	mso-level-tab-stop:22.95pt;
+	mso-level-number-position:left;
+	margin-left:22.95pt;
+	text-indent:-18.0pt;
+	font-family:Wingdings;}
+@list l10:level4
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:58.95pt;
+	mso-level-number-position:left;
+	margin-left:58.95pt;
+	text-indent:-18.0pt;
+	font-family:Symbol;}
+@list l11
+	{mso-list-id:345862694;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-716563944 267677704 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l11:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:18.0pt;
+	mso-level-number-position:left;
+	margin-left:18.0pt;
+	text-indent:-18.0pt;
+	mso-ansi-font-size:9.0pt;
+	font-family:Symbol;}
+@list l12
+	{mso-list-id:351616127;
+	mso-list-type:hybrid;
+	mso-list-template-ids:1525212926 67698689 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l12:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:24.0pt;
+	mso-level-number-position:left;
+	margin-left:24.0pt;
+	text-indent:-18.0pt;
+	font-family:Symbol;}
+@list l12:level2
+	{mso-level-number-format:bullet;
+	mso-level-text:o;
+	mso-level-tab-stop:60.0pt;
+	mso-level-number-position:left;
+	margin-left:60.0pt;
+	text-indent:-18.0pt;
+	font-family:"Courier New";
+	mso-bidi-font-family:"Times New Roman";}
+@list l12:level3
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0A7;
+	mso-level-tab-stop:96.0pt;
+	mso-level-number-position:left;
+	margin-left:96.0pt;
+	text-indent:-18.0pt;
+	font-family:Wingdings;}
+@list l12:level4
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:132.0pt;
+	mso-level-number-position:left;
+	margin-left:132.0pt;
+	text-indent:-18.0pt;
+	font-family:Symbol;}
+@list l13
+	{mso-list-id:382096110;
+	mso-list-type:hybrid;
+	mso-list-template-ids:1362409274 -688508472 1109401346 27154268 -664615928 173164702 662984446 -1224290174 -1979048044 -1291665298;}
+@list l13:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	mso-ansi-font-size:10.0pt;
+	font-family:Symbol;}
+@list l14
+	{mso-list-id:390158448;
+	mso-list-type:simple;
+	mso-list-template-ids:570174494;}
+@list l14:level1
+	{mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:18.0pt;
+	mso-level-legacy-space:0cm;
+	text-indent:-18.0pt;}
+@list l15
+	{mso-list-id:402527299;
+	mso-list-type:hybrid;
+	mso-list-template-ids:693907456 -868200186 -1273606166 710843224 -330274290 450767378 1515357334 -242549024 -1689645246 -1602469706;}
+@list l15:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	mso-ansi-font-size:10.0pt;
+	font-family:Symbol;}
+@list l16
+	{mso-list-id:587663390;
+	mso-list-type:hybrid;
+	mso-list-template-ids:1189644054 67698689 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l16:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	font-family:Symbol;}
+@list l17
+	{mso-list-id:846939789;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-1718560888 67698689 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l17:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	font-family:Symbol;}
+@list l18
+	{mso-list-id:855197025;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-894266954 1607383316 -1431939928 327180176 -1404899054 -91225482 -684272668 1756803012 -1606544692 1783924770;}
+@list l18:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	mso-ansi-font-size:10.0pt;
+	font-family:Symbol;}
+@list l19
+	{mso-list-id:895355094;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-1616578368 67698689 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l19:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	font-family:Symbol;}
+@list l20
+	{mso-list-id:964502476;
+	mso-list-type:simple;
+	mso-list-template-ids:67698689;}
+@list l20:level1
+	{mso-level-start-at:0;
+	mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:18.0pt;
+	mso-level-number-position:left;
+	margin-left:18.0pt;
+	text-indent:-18.0pt;
+	font-family:Symbol;}
+@list l21
+	{mso-list-id:973098509;
+	mso-list-type:hybrid;
+	mso-list-template-ids:356787956 67698689 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l21:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	font-family:Symbol;}
+@list l22
+	{mso-list-id:988903919;
+	mso-list-type:hybrid;
+	mso-list-template-ids:1454689668 67698689 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l22:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:21.8pt;
+	mso-level-number-position:left;
+	margin-left:21.8pt;
+	text-indent:-18.0pt;
+	font-family:Symbol;}
+@list l22:level2
+	{mso-level-number-format:bullet;
+	mso-level-text:o;
+	mso-level-tab-stop:57.8pt;
+	mso-level-number-position:left;
+	margin-left:57.8pt;
+	text-indent:-18.0pt;
+	font-family:"Courier New";
+	mso-bidi-font-family:"Times New Roman";}
+@list l23
+	{mso-list-id:1030032093;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-165479532 67698689 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l23:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:-49.05pt;
+	mso-level-number-position:left;
+	margin-left:-49.05pt;
+	text-indent:-18.0pt;
+	font-family:Symbol;}
+@list l24
+	{mso-list-id:1090154803;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-195285040 267677704 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l24:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	mso-ansi-font-size:9.0pt;
+	font-family:Symbol;}
+@list l25
+	{mso-list-id:1090389244;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-1422621976 -2003936740 1560982710 1452152260 1149791590 1451666590 -1487998990 -1247487786 951606600 408588028;}
+@list l25:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	mso-ansi-font-size:10.0pt;
+	font-family:Symbol;}
+@list l26
+	{mso-list-id:1129398413;
+	mso-list-type:hybrid;
+	mso-list-template-ids:1112412814 267677704 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l26:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	mso-ansi-font-size:9.0pt;
+	font-family:Symbol;}
+@list l27
+	{mso-list-id:1137455543;
+	mso-list-type:hybrid;
+	mso-list-template-ids:288252356 67698689 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l27:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	font-family:Symbol;}
+@list l28
+	{mso-list-id:1185821204;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-883540906 67698689 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l28:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	font-family:Symbol;}
+@list l29
+	{mso-list-id:1250232364;
+	mso-list-type:hybrid;
+	mso-list-template-ids:1888005086 -612196340 1391621166 1700444396 -409836864 -332121438 -789559508 -755353680 -1500486320 1162277152;}
+@list l29:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	mso-ansi-font-size:10.0pt;
+	font-family:Symbol;}
+@list l30
+	{mso-list-id:1270628472;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-251488648 67698689 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l30:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	font-family:Symbol;}
+@list l31
+	{mso-list-id:1340698648;
+	mso-list-type:hybrid;
+	mso-list-template-ids:1269366322 267677704 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l31:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	mso-ansi-font-size:9.0pt;
+	font-family:Symbol;}
+@list l32
+	{mso-list-id:1400397063;
+	mso-list-type:simple;
+	mso-list-template-ids:755109020;}
+@list l32:level1
+	{mso-level-number-format:none;
+	mso-level-text:"";
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:18.0pt;
+	mso-level-legacy-space:0cm;
+	margin-left:90.0pt;
+	text-indent:-18.0pt;}
+@list l33
+	{mso-list-id:1560287565;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-1380054944 267677704 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l33:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	mso-ansi-font-size:9.0pt;
+	font-family:Symbol;}
+@list l34
+	{mso-list-id:1561360966;
+	mso-list-type:hybrid;
+	mso-list-template-ids:955004660 67698689 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l34:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	font-family:Symbol;}
+@list l35
+	{mso-list-id:1642149335;
+	mso-list-type:hybrid;
+	mso-list-template-ids:1709612176 -604237300 -996483196 1199058306 648570714 -2110241946 -318476338 -1028626548 -413619530 1967322508;}
+@list l35:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	mso-ansi-font-size:10.0pt;
+	font-family:Symbol;}
+@list l36
+	{mso-list-id:1667972102;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-21311360 1656800250 -450698948 1166839984 443296296 -919690116 -592007168 -1820011314 -1579810814 -1242931586;}
+@list l36:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	mso-ansi-font-size:10.0pt;
+	font-family:Symbol;}
+@list l36:level2
+	{mso-level-number-format:bullet;
+	mso-level-text:o;
+	mso-level-tab-stop:72.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	mso-ansi-font-size:10.0pt;
+	font-family:"Courier New";
+	mso-bidi-font-family:"Times New Roman";}
+@list l37
+	{mso-list-id:1705016562;
+	mso-list-type:hybrid;
+	mso-list-template-ids:1392010066 -983682266 -1877597572 1430563496 1728502930 1693341896 1795335180 -544040150 128994222 -1165308782;}
+@list l37:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	mso-ansi-font-size:10.0pt;
+	font-family:Symbol;}
+@list l38
+	{mso-list-id:1714042771;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-1687512172 267677704 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l38:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:18.0pt;
+	mso-level-number-position:left;
+	margin-left:18.0pt;
+	text-indent:-18.0pt;
+	mso-ansi-font-size:9.0pt;
+	font-family:Symbol;}
+@list l39
+	{mso-list-id:1726444162;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-1903807182 267677704 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l39:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	mso-ansi-font-size:9.0pt;
+	font-family:Symbol;}
+@list l40
+	{mso-list-id:1785685498;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-640642654 267677704 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l40:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	mso-ansi-font-size:9.0pt;
+	font-family:Symbol;}
+@list l41
+	{mso-list-id:1793471805;
+	mso-list-type:hybrid;
+	mso-list-template-ids:1689029500 -2000787520 -800147668 -917219250 878218958 531935282 -575350004 -724278724 -35249388 396253536;}
+@list l41:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	mso-ansi-font-size:10.0pt;
+	font-family:Symbol;}
+@list l42
+	{mso-list-id:1814521244;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-1141473246 1080033904 -594525572 466110390 -1958315450 1513418218 -1459706382 -462405116 -184417878 596920958;}
+@list l42:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	mso-ansi-font-size:10.0pt;
+	font-family:Symbol;}
+@list l43
+	{mso-list-id:1816215340;
+	mso-list-type:hybrid;
+	mso-list-template-ids:1543567532 -1782154226 -2015968454 49439696 -1229816798 -1261428280 1125131028 5660308 -1291656362 -21077862;}
+@list l43:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	mso-ansi-font-size:10.0pt;
+	font-family:Symbol;}
+@list l44
+	{mso-list-id:1832796277;
+	mso-list-type:simple;
+	mso-list-template-ids:67698703;}
+@list l44:level1
+	{mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:18.0pt;
+	mso-level-legacy-space:0cm;
+	margin-left:18.0pt;
+	text-indent:-18.0pt;}
+@list l45
+	{mso-list-id:1861703506;
+	mso-list-type:simple;
+	mso-list-template-ids:1217706842;}
+@list l45:level1
+	{mso-level-number-format:none;
+	mso-level-text:"";
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:18.0pt;
+	mso-level-legacy-space:0cm;
+	margin-left:54.0pt;
+	text-indent:-18.0pt;}
+@list l46
+	{mso-list-id:1878084471;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-969645862 267677704 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l46:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	mso-ansi-font-size:9.0pt;
+	font-family:Symbol;}
+@list l47
+	{mso-list-id:1906649648;
+	mso-list-type:simple;
+	mso-list-template-ids:1829639570;}
+@list l47:level1
+	{mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:18.0pt;
+	mso-level-legacy-space:0cm;
+	text-indent:-18.0pt;}
+@list l48
+	{mso-list-id:1916355723;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-1806146648 67698689 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l48:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:18.0pt;
+	mso-level-number-position:left;
+	margin-left:18.0pt;
+	text-indent:-18.0pt;
+	font-family:Symbol;}
+@list l49
+	{mso-list-id:1956477178;
+	mso-list-type:simple;
+	mso-list-template-ids:-1416843388;}
+@list l49:level1
+	{mso-level-number-format:none;
+	mso-level-text:"";
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:18.0pt;
+	mso-level-legacy-space:0cm;
+	text-indent:-18.0pt;}
+@list l50
+	{mso-list-id:1962572539;
+	mso-list-type:hybrid;
+	mso-list-template-ids:1620725196 213786370 -502642642 -1617663854 949915704 1096218310 -1105411058 -393811110 -1924085200 388930850;}
+@list l50:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	mso-ansi-font-size:10.0pt;
+	font-family:Symbol;}
+@list l51
+	{mso-list-id:1977103391;
+	mso-list-type:hybrid;
+	mso-list-template-ids:1838823850 -1922689684 1489922314 -66176638 -2100626690 2015505346 -50066660 -1919381710 -64702112 912437470;}
+@list l51:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	mso-ansi-font-size:10.0pt;
+	font-family:Symbol;}
+@list l52
+	{mso-list-id:2021544566;
+	mso-list-type:simple;
+	mso-list-template-ids:1506420614;}
+@list l52:level1
+	{mso-level-number-format:none;
+	mso-level-text:"";
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:18.0pt;
+	mso-level-legacy-space:0cm;
+	margin-left:72.0pt;
+	text-indent:-18.0pt;}
+@list l53
+	{mso-list-id:2046905324;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-1616578368 67698689 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l53:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	font-family:Symbol;}
+@list l44:level1 lfo2
+	{mso-level-numbering:continue;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:18.0pt;
+	mso-level-legacy-space:0cm;
+	margin-left:18.0pt;
+	text-indent:-18.0pt;}
+@list l44:level1 lfo3
+	{mso-level-numbering:continue;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:18.0pt;
+	mso-level-legacy-space:0cm;
+	margin-left:18.0pt;
+	text-indent:-18.0pt;}
+@list l44:level1 lfo4
+	{mso-level-numbering:continue;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:18.0pt;
+	mso-level-legacy-space:0cm;
+	margin-left:18.0pt;
+	text-indent:-18.0pt;}
+@list l44:level1 lfo5
+	{mso-level-numbering:continue;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:18.0pt;
+	mso-level-legacy-space:0cm;
+	margin-left:18.0pt;
+	text-indent:-18.0pt;}
+@list l44:level1 lfo6
+	{mso-level-numbering:continue;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:18.0pt;
+	mso-level-legacy-space:0cm;
+	margin-left:18.0pt;
+	text-indent:-18.0pt;}
+@list l44:level1 lfo7
+	{mso-level-numbering:continue;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:18.0pt;
+	mso-level-legacy-space:0cm;
+	margin-left:18.0pt;
+	text-indent:-18.0pt;}
+@list l44:level1 lfo8
+	{mso-level-numbering:continue;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:18.0pt;
+	mso-level-legacy-space:0cm;
+	margin-left:18.0pt;
+	text-indent:-18.0pt;}
+@list l44:level1 lfo9
+	{mso-level-numbering:continue;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:18.0pt;
+	mso-level-legacy-space:0cm;
+	margin-left:18.0pt;
+	text-indent:-18.0pt;}
+@list l44:level1 lfo10
+	{mso-level-numbering:continue;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:18.0pt;
+	mso-level-legacy-space:0cm;
+	margin-left:18.0pt;
+	text-indent:-18.0pt;}
+@list l0:level1 lfo11
+	{mso-level-start-at:1;
+	mso-level-number-format:bullet;
+	mso-level-numbering:continue;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:18.0pt;
+	mso-level-legacy-space:0cm;
+	text-indent:-18.0pt;
+	font-family:Symbol;}
+@list l14:level1 lfo18
+	{mso-level-numbering:continue;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:18.0pt;
+	mso-level-legacy-space:0cm;
+	margin-left:54.0pt;
+	text-indent:-18.0pt;}
+@list l14:level1 lfo19
+	{mso-level-numbering:continue;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:18.0pt;
+	mso-level-legacy-space:0cm;
+	margin-left:72.0pt;
+	text-indent:-18.0pt;}
+@list l14:level1 lfo20
+	{mso-level-numbering:continue;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:18.0pt;
+	mso-level-legacy-space:0cm;
+	margin-left:90.0pt;
+	text-indent:-18.0pt;}
+@list l14:level1 lfo21
+	{mso-level-numbering:continue;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:18.0pt;
+	mso-level-legacy-space:0cm;
+	margin-left:108.0pt;
+	text-indent:-18.0pt;}
+@list l47:level1 lfo23
+	{mso-level-numbering:continue;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:18.0pt;
+	mso-level-legacy-space:0cm;
+	text-indent:-18.0pt;}
+@list l47:level1 lfo24
+	{mso-level-numbering:continue;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:18.0pt;
+	mso-level-legacy-space:0cm;
+	text-indent:-18.0pt;}
+@list l47:level1 lfo25
+	{mso-level-numbering:continue;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:18.0pt;
+	mso-level-legacy-space:0cm;
+	text-indent:-18.0pt;}
+@list l47:level1 lfo26
+	{mso-level-numbering:continue;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:18.0pt;
+	mso-level-legacy-space:0cm;
+	text-indent:-18.0pt;}
+@list l47:level1 lfo27
+	{mso-level-numbering:continue;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:18.0pt;
+	mso-level-legacy-space:0cm;
+	text-indent:-18.0pt;}
+@list l47:level1 lfo28
+	{mso-level-numbering:continue;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:18.0pt;
+	mso-level-legacy-space:0cm;
+	text-indent:-18.0pt;}
+@list l47:level1 lfo29
+	{mso-level-numbering:continue;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:18.0pt;
+	mso-level-legacy-space:0cm;
+	text-indent:-18.0pt;}
+@list l47:level1 lfo30
+	{mso-level-numbering:continue;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:18.0pt;
+	mso-level-legacy-space:0cm;
+	text-indent:-18.0pt;}
+@list l47:level1 lfo31
+	{mso-level-numbering:continue;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:18.0pt;
+	mso-level-legacy-space:0cm;
+	text-indent:-18.0pt;}
+ol
+	{margin-bottom:0cm;}
+ul
+	{margin-bottom:0cm;}
+-->
+</style>
+<!--[if gte mso 9]><xml>
+ <o:shapedefaults v:ext="edit" spidmax="2050">
+  <o:colormenu v:ext="edit" fillcolor="none" strokecolor="black"/>
+ </o:shapedefaults></xml><![endif]--><!--[if gte mso 9]><xml>
+ <o:shapelayout v:ext="edit">
+  <o:idmap v:ext="edit" data="1"/>
+  <o:regrouptable v:ext="edit">
+   <o:entry new="1" old="0"/>
+   <o:entry new="2" old="0"/>
+   <o:entry new="3" old="0"/>
+   <o:entry new="4" old="3"/>
+   <o:entry new="5" old="0"/>
+   <o:entry new="6" old="3"/>
+   <o:entry new="7" old="3"/>
+   <o:entry new="8" old="3"/>
+   <o:entry new="9" old="3"/>
+   <o:entry new="10" old="3"/>
+   <o:entry new="11" old="3"/>
+   <o:entry new="12" old="11"/>
+   <o:entry new="13" old="0"/>
+   <o:entry new="14" old="13"/>
+   <o:entry new="15" old="0"/>
+   <o:entry new="16" old="15"/>
+   <o:entry new="17" old="0"/>
+   <o:entry new="18" old="0"/>
+   <o:entry new="19" old="0"/>
+   <o:entry new="20" old="0"/>
+   <o:entry new="21" old="0"/>
+   <o:entry new="22" old="0"/>
+   <o:entry new="23" old="22"/>
+   <o:entry new="24" old="0"/>
+   <o:entry new="25" old="0"/>
+   <o:entry new="26" old="0"/>
+   <o:entry new="27" old="0"/>
+   <o:entry new="28" old="0"/>
+   <o:entry new="29" old="0"/>
+   <o:entry new="30" old="29"/>
+   <o:entry new="31" old="0"/>
+  </o:regrouptable>
+ </o:shapelayout></xml><![endif]-->
+</head>
+
+<body lang=EN-AU link=blue vlink=purple style='tab-interval:6.0pt'>
+
+<div class=Section1>
+
+<p class=ChapterLabel><span style='font-size:14.0pt;mso-bidi-font-size:10.0pt'>Chapter
+5<o:p></o:p></span></p>
+
+<h1><a name="_Toc529036955"><b style='mso-bidi-font-weight:normal'>REGRESSION
+TEST</b></a><b style='mso-bidi-font-weight:normal'><o:p></o:p></b></h1>
+
+<p class=MsoBodyText style='margin-right:-2.25pt;tab-stops:list 0cm right 432.0pt'>Regression
+testing is the process of validating modified parts of the software, hoping
+that the modification does not introduce errors that were not exists before the
+modification. An important different between regression testing and development
+testing is that during the process of the regression test, a set of established
+tests can be reused. Regression test cases is a set of test case aiming at
+testing the core function or procedure of the software; core function means
+where procedure call with known input is made and the output of the function
+will be compare with output the developer expect. The set of test cases will
+then be reused for later development as incremental process, as development
+gets progress the size of the regression test will also be increase. In other
+word, the regression test result in greater test coverage, having greater
+coverage will eliminate the amount of errors/bugs in the end product, which is
+the ultimate goal of having test cases. Another advantage of the regression
+test is that all the tests are automated; all the test cases that gather before
+will be run all together without manually inputting date and comparing the
+output. These can significantly increase the efficiency of the testing process
+in developing a software product.</p>
+
+<p class=MsoBodyText style='margin-right:-2.25pt;tab-stops:list -14.2pt right 432.0pt'>The
+simplest regression test strategy is <i>retest all</i>,<i> </i>when regression
+test is started it re-run all the test cases that the test suite have, having
+this approach comes in a huge cost in terms of time. In a commercial software
+source code can reach up to several millions lines of source code and several
+hundred thousands of procedure, having a set of test testing all of these
+procedures each time when there is a modification of the software may require
+unexpected amount of time. An alternative approach is to have <i>regression
+test selection, </i>unlike <i>retest all</i> use all the test cases where as
+this approach will use some selection techniques to select a set of test case
+to be used. Using this regression test technique, time can be save but having
+this approach will also have some negative aspects, for example, the cost of
+regression test technique can be high if sophisticate technique were used,
+where as low cost with a low quality technique, and the selection may discard
+test cases that could expose errors, in other word reducing the fault detection
+effectiveness.<span style="mso-spacerun: yes">  </span></p>
+
+<p class=MsoBodyText style='margin-right:-2.25pt;tab-stops:list -14.2pt right 432.0pt'>Before
+discussing the techniques for regression test selection, we should notice that
+during the development process specification of the software may be change, if
+the specification has changed it is necessary to remove those test cases that
+were reflecting the old specification from the test suite before perform
+regression test selection. This is important because if we cannot correctly
+determine the test case is out of date or not, we cannot correctly determine
+the correctness of the test cases.</p>
+
+<p class=MsoBodyText style='margin-right:-2.25pt;tab-stops:list -14.2pt right 432.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoBodyText style='margin-right:-2.25pt;tab-stops:list -14.2pt right 432.0pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<h2><a name="_Toc529036956"><u>Regression Test Selection Technique</u></a><u><o:p></o:p></u></h2>
+
+<p class=MsoBodyText style='margin-right:-41.3pt;tab-stops:list 0cm right 432.0pt'>Before
+discussing some different types of techniques, it is helpful to have some
+notation defined first:</p>
+
+<p class=MsoBodyText style='margin-right:-2.25pt;tab-stops:list 0cm right 432.0pt'><i>Let
+P be a procedure or program; let P’ be a modified version of P; and let T be a
+test suite for P. T’ is a subset of T, and set of test cases to execute on P’</i></p>
+
+<p class=MsoBodyText style='margin-right:-2.25pt;tab-stops:list 0cm left 256.5pt'>These
+techniques discuss below has been discuss in [2]<span style='mso-tab-count:
+1'>  </span></p>
+
+<p class=MsoBodyText style='margin-top:0cm;margin-right:-2.25pt;margin-bottom:
+14.0pt;margin-left:36.0pt;text-indent:-18.0pt;mso-list:l4 level1 lfo74;
+tab-stops:list 36.0pt left 256.5pt'><![if !supportLists]><span lang=EN-US
+style='font-size:9.0pt;mso-bidi-font-size:10.0pt;font-family:Symbol;color:black;
+mso-ansi-language:EN-US'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]><span lang=EN-US style='mso-ansi-language:EN-US'>Minimization
+Techniques: This technique involve selecting a minimal set of test cases from T
+which cover the modified section of P, P'. In a sample scene, it require T' to
+at least one test case to cover those area where modification had made.</span><span
+lang=EN-US style='font-family:"Comic Sans MS";color:black;mso-ansi-language:
+EN-US'><o:p></o:p></span></p>
+
+<p class=MsoBodyText style='margin-top:0cm;margin-right:-2.25pt;margin-bottom:
+14.0pt;margin-left:36.0pt;text-indent:-18.0pt;mso-list:l4 level1 lfo74;
+tab-stops:list 36.0pt left 256.5pt'><![if !supportLists]><span lang=EN-US
+style='font-size:9.0pt;mso-bidi-font-size:10.0pt;font-family:Symbol;color:black;
+mso-ansi-language:EN-US'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]><span lang=EN-US style='mso-ansi-language:EN-US'>Dataflow
+Techniques: This technique select test case that exercise data interaction that
+have been affected by the modifications.</span><span lang=EN-US
+style='font-family:"Comic Sans MS";color:black;mso-ansi-language:EN-US'><o:p></o:p></span></p>
+
+<p class=MsoBodyText style='margin-top:0cm;margin-right:-2.25pt;margin-bottom:
+14.0pt;margin-left:36.0pt;text-indent:-18.0pt;mso-list:l4 level1 lfo74;
+tab-stops:list 36.0pt left 256.5pt'><![if !supportLists]><span lang=EN-US
+style='font-size:9.0pt;mso-bidi-font-size:10.0pt;font-family:Symbol;mso-ansi-language:
+EN-US'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]><span lang=EN-US style='mso-ansi-language:EN-US'>Safe
+Techniques: Most regression test selection is considered to be not safe; not
+safe means that the selection fail to select those test cases that would reveal
+a error in the modified program. With safe regression test selection
+techniques, it is guarantee that the selection T' (subset of T) would contain
+all the test case in the original test suite T that able to reveal errors in
+P'.<o:p></o:p></span></p>
+
+<p class=MsoBodyText style='margin-top:0cm;margin-right:-2.25pt;margin-bottom:
+14.0pt;margin-left:36.0pt;text-indent:-18.0pt;mso-list:l4 level1 lfo74;
+tab-stops:list 36.0pt left 256.5pt'><![if !supportLists]><span lang=EN-US
+style='font-size:9.0pt;mso-bidi-font-size:10.0pt;font-family:Symbol;mso-ansi-language:
+EN-US;mso-bidi-font-weight:bold'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]><span lang=EN-US style='mso-ansi-language:EN-US'>Random
+Techniques: As the name shown, test cases is randomly select from T.<b><u><o:p></o:p></u></b></span></p>
+
+<p class=MsoBodyText style='margin-top:0cm;margin-right:-2.25pt;margin-bottom:
+14.0pt;margin-left:36.0pt;text-indent:-18.0pt;mso-list:l4 level1 lfo74;
+tab-stops:list 36.0pt left 256.5pt'><![if !supportLists]><span lang=EN-US
+style='font-size:9.0pt;mso-bidi-font-size:10.0pt;font-family:Symbol;mso-ansi-language:
+EN-US;mso-bidi-font-weight:bold'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]><span lang=EN-US style='mso-ansi-language:EN-US'>Retest
+All Techniques: The Retest All techniques simply re-use all the test case
+against P'.<b><u><o:p></o:p></u></b></span></p>
+
+<h2><a name="_Toc529036957"><u><span lang=EN-US style='mso-ansi-language:EN-US'>Regression
+Test on OpenACS Calendar</span></u></a><u><span lang=EN-US style='mso-ansi-language:
+EN-US'><o:p></o:p></span></u></h2>
+
+<p class=MsoBodyText style='margin-right:-2.25pt;tab-stops:list 0cm right 432.0pt'><span
+lang=EN-US style='mso-ansi-language:EN-US'>The regression test selection
+techniques that have chosen is <i>Retest All</i>, the main disadvantage of this
+technique is that if it run against large software having several thousands
+functions, the time it needs to complete the test is enoumes and the computing
+power it needs is very expensive. But in terms of coverage <i>Retest All</i>
+provide the maximum coverage out of those techniques discuss in the previous
+section; again, having better coverage means the tested software will more
+likely to discover errors before the software go into production. With OpenACS
+Calendar, it is a relative small program with less than 50 functions and less
+than 3000 lines of source code, therefore it is crucial to use the <i>Retest
+All</i> technique in order to achieve the best possible result; to find errors
+as many as possible during the test phase. As we have discuss in the beginning
+of this chapter regression test should be automated, one of the tools provided
+in OpenACS called <i>aa-test </i>[5], it is a tool kit which allow developer to
+register test cases (this require developer to program how to test a piece of
+code and the expected result, the expected result will be compare against the
+actual result) with the system, this tool will build up all the test cases that
+registered, then developer have choice to run all test case in once or select
+individual test case.<span style="mso-spacerun: yes">  </span>Result will be
+available to view on the browser and result statistics will also be logged. We
+have chose to use this automated test tool as out regression test tool. A
+sample regression test case is shown below in Figure 10. A complete regression
+test source code on OpenACS Calendar is attached in the Appendix C. <o:p></o:p></span></p>
+
+<p class=MsoBodyText><!--[if gte vml 1]><v:group id="_x0000_s1668" style='position:absolute;
+ left:0;text-align:left;margin-left:.2pt;margin-top:33.5pt;width:467.5pt;
+ height:233.6pt;z-index:1' coordorigin="1325,5406" coordsize="9350,4672">
+ <v:shapetype id="_x0000_t202" coordsize="21600,21600" o:spt="202" path="m0,0l0,21600,21600,21600,21600,0xe">
+  <v:stroke joinstyle="miter"/>
+  <v:path gradientshapeok="t" o:connecttype="rect"/>
+ </v:shapetype><v:shape id="_x0000_s1669" type="#_x0000_t202" style='position:absolute;
+  left:1512;top:5590;width:8983;height:4313' strokecolor="white">
+  <v:textbox style='mso-next-textbox:#_x0000_s1669'>
+   <![if !mso]>
+   <table cellpadding=0 cellspacing=0 width="100%">
+    <tr>
+     <td><![endif]>
+     <div>
+     <p class=MsoNormal>ad_proc cal_item_create { start_date</p>
+     <p class=MsoNormal><span style="mso-spacerun:
+     yes">                          </span>end_date</p>
+     <p class=MsoNormal><span style="mso-spacerun:
+     yes">                          </span>name</p>
+     <p class=MsoNormal><span style="mso-spacerun:
+     yes">                          </span>description</p>
+     <p class=MsoNormal><span style="mso-spacerun:
+     yes">                          </span>on_which_calendar<span
+     style="mso-spacerun: yes">                     </span><span
+     style="mso-spacerun: yes">        </span>#list of input parameters</p>
+     <p class=MsoNormal><span style="mso-spacerun:
+     yes">                          </span>creation_ip</p>
+     <p class=MsoNormal><span style="mso-spacerun:
+     yes">                          </span>creation_user</p>
+     <p class=MsoNormal>} {</p>
+     <p class=MsoNormal><span style="mso-spacerun: yes">  </span>create a new
+     cal_item for this version</p>
+     <p class=MsoNormal>} {</p>
+     <p class=MsoNormal><span style="mso-spacerun: yes">         </span>#
+     actual source code goes here, the complete source is in Appendix A </p>
+     <p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+     <p class=MsoNormal><span style='mso-tab-count:1'>                                                                                                                                                </span></p>
+     <p class=MsoNormal><span style="mso-spacerun: yes">         </span>return
+     $cal_item_id<span style="mso-spacerun: yes">                    
+     </span>#return a integer indicate the id of this cal-item</p>
+     <p class=BodyTextKeep style='margin-bottom:0cm;margin-bottom:.0001pt;
+     line-height:normal;page-break-after:auto'>}</p>
+     <p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+     </div>
+     <![if !mso]></td>
+    </tr>
+   </table>
+   <![endif]></v:textbox>
+ </v:shape><v:rect id="_x0000_s1670" style='position:absolute;left:1325;top:5406;
+  width:9350;height:4672' filled="f"/>
+</v:group><![endif]--><![if !vml]><span style='mso-ignore:vglayout'>
+
+<table cellpadding=0 cellspacing=0 align=left>
+ <tr>
+  <td width=0 height=45></td>
+ </tr>
+ <tr>
+  <td></td>
+  <td><img width=625 height=312 src="./regressionTest_files/image001.gif"
+  v:shapes="_x0000_s1668 _x0000_s1669 _x0000_s1670"></td>
+ </tr>
+</table>
+
+</span><![endif]><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoBodyText><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoBodyText><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoBodyText><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoBodyText><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoBodyText><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoBodyText><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoCaption><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<br style='mso-ignore:vglayout' clear=ALL>
+
+<p class=MsoCaption align=center style='text-align:center'>Figure <span
+style='mso-field-code:"SEQ Figure \\* ARABIC"'>1</span><span
+style="mso-spacerun: yes">  </span>the input arguments and return of function <i>cal_item_create<o:p></o:p></i></p>
+
+<p class=MsoBodyText><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoBodyText><span lang=EN-US style='mso-ansi-language:EN-US'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoBodyText><span lang=EN-US style='mso-ansi-language:EN-US'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoBodyText><span lang=EN-US style='mso-ansi-language:EN-US'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoBodyText><span lang=EN-US style='mso-ansi-language:EN-US'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoBodyText><span lang=EN-US style='mso-ansi-language:EN-US'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoBodyText><span lang=EN-US style='mso-ansi-language:EN-US'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoBodyText><span lang=EN-US style='mso-ansi-language:EN-US'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoBodyText><!--[if gte vml 1]><v:group id="_x0000_s1711" style='position:absolute;
+ left:0;text-align:left;margin-left:-9.15pt;margin-top:30.15pt;width:504.9pt;
+ height:467.5pt;z-index:2' coordorigin="951,2007" coordsize="10098,9350">
+ <v:shape id="_x0000_s1063" type="#_x0000_t202" style='position:absolute;
+  left:1138;top:2183;width:9724;height:8998' o:regroupid="25" stroked="f">
+  <v:textbox style='mso-next-textbox:#_x0000_s1063'>
+   <![if !mso]>
+   <table cellpadding=0 cellspacing=0 width="100%">
+    <tr>
+     <td><![endif]>
+     <div>
+     <p class=MsoNormal style='margin-right:1.8pt;tab-stops:right 467.8pt'>aa_register_case
+     &quot;aa_cal_item_create&quot; {</p>
+     <p class=MsoNormal style='margin-right:1.8pt;tab-stops:right 467.8pt'><span
+     style="mso-spacerun: yes">        </span>Testing cal_item_create, this
+     will create cal-item</p>
+     <p class=MsoNormal style='margin-right:1.8pt;tab-stops:right 467.8pt'>} {</p>
+     <p class=MsoNormal style='margin-right:1.8pt;tab-stops:right 467.8pt'><span
+     style="mso-spacerun: yes">        </span>global cal_id start_date end_date
+     name</p>
+     <p class=MsoNormal style='margin-right:1.8pt;tab-stops:right 467.8pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+     <p class=MsoNormal style='margin-right:1.8pt;tab-stops:right 467.8pt'><span
+     style="mso-spacerun: yes">        </span>set start_date &quot;2001-09-26
+     16:24:51+10&quot;<span style="mso-spacerun: yes">                       
+     </span>#set up input/output start date</p>
+     <p class=MsoNormal style='margin-right:1.8pt;tab-stops:right 467.8pt'><span
+     style="mso-spacerun: yes">    </span><span style="mso-spacerun:
+     yes">    </span>set end_date &quot;2001-09-26 17:24:51+10&quot;<span
+     style="mso-spacerun: yes">                         </span>#set up
+     input/output end date</p>
+     <p class=MsoNormal style='margin-right:1.8pt;tab-stops:right 467.8pt'><span
+     style="mso-spacerun: yes">        </span>set name &quot;testing&quot;<span
+     style="mso-spacerun:
+     yes">                                                          
+     </span>#set up the name of cal-item</p>
+     <p class=MsoNormal style='margin-right:1.8pt;tab-stops:right 467.8pt'><span
+     style="mso-spacerun: yes">        </span>set description
+     &quot;description&quot;<span style="mso-spacerun: yes">         </span><span
+     style="mso-spacerun: yes">                                  </span>#set up
+     the description of cal-item</p>
+     <p class=MsoNormal style='margin-right:1.8pt;tab-stops:right 467.8pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+     <p class=MsoNormal style='margin-right:1.8pt;tab-stops:right 467.8pt'><span
+     style="mso-spacerun: yes">        </span>set user_id
+     [ad_verify_and_get_user_id]<span style="mso-spacerun:
+     yes">                         </span>#find out the current user</p>
+     <p class=MsoNormal style='margin-right:1.8pt;tab-stops:right 467.8pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+     <p class=MsoNormal style='margin-right:1.8pt;tab-stops:right 467.8pt'><span
+     style="mso-spacerun: yes">        </span>db_0or1row get_which_calendar
+     {<span style="mso-spacerun: yes">                                
+     </span>#find out which calendar this user is</p>
+     <p class=MsoNormal style='margin-right:1.8pt;tab-stops:right 467.8pt'><span
+     style="mso-spacerun: yes">                </span>select calendar_id as
+     which_calendar<span style="mso-spacerun: yes">                     
+     </span>#belong to </p>
+     <p class=MsoNormal style='margin-right:1.8pt;tab-stops:right 467.8pt'><span
+     style="mso-spacerun: yes">                </span>from calendars</p>
+     <p class=MsoNormal style='margin-right:1.8pt;tab-stops:right 467.8pt'><span
+     style="mso-spacerun: yes">                </span>where owner_id = :user_id</p>
+     <p class=MsoNormal style='margin-right:1.8pt;tab-stops:right 467.8pt'><span
+     style="mso-spacerun: yes">        </span>}</p>
+     <p class=MsoNormal style='margin-right:1.8pt;tab-stops:right 467.8pt'><span
+     style="mso-spacerun: yes">        </span>set creation_ip
+     &quot;129.78.8.148&quot;</p>
+     <p class=MsoNormal style='margin-right:1.8pt;tab-stops:right 467.8pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+     <p class=MsoNormal style='margin-right:1.8pt;tab-stops:right 467.8pt'><span
+     style="mso-spacerun: yes">        </span>set cal_id [cal_item_create
+     $start_date $end_date $name $description $which_calendar $creation_ip
+     $user_id]<span style="mso-spacerun:
+     yes">                                                             
+     </span># call the function that we want to test</p>
+     <p class=MsoNormal style='margin-right:1.8pt;tab-stops:right 467.8pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+     <p class=MsoNormal style='margin-right:1.8pt;tab-stops:right 467.8pt'><span
+     style="mso-spacerun: yes">        </span>db_0or1row get_cal_id {<span
+     style="mso-spacerun: yes">                            </span><span
+     style="mso-spacerun: yes">                      </span>#check out whether
+     this item is created</p>
+     <p class=BodyTextKeep style='margin-top:0cm;margin-right:1.8pt;margin-bottom:
+     0cm;margin-left:0cm;margin-bottom:.0001pt;line-height:normal;page-break-after:
+     auto;tab-stops:right 467.8pt'><span style="mso-spacerun:
+     yes">                </span>select count(*) as result<span
+     style="mso-spacerun: yes">                                            
+     </span>#or not, should only be 1 row in the db</p>
+     <p class=MsoNormal style='margin-right:1.8pt;tab-stops:right 467.8pt'><span
+     style="mso-spacerun: yes">                </span>from acs_events<span
+     style="mso-spacerun: yes">                                     </span><span
+     style="mso-spacerun: yes">                    </span></p>
+     <p class=MsoNormal style='margin-right:1.8pt;tab-stops:right 467.8pt'><span
+     style="mso-spacerun: yes">                </span>where event_id = :cal_id</p>
+     <p class=MsoNormal style='margin-right:1.8pt;tab-stops:right 467.8pt'><span
+     style="mso-spacerun: yes">        </span>}</p>
+     <p class=MsoNormal style='margin-right:1.8pt;tab-stops:right 467.8pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+     <p class=MsoNormal style='margin-right:1.8pt;tab-stops:right 467.8pt'><span
+     style="mso-spacerun: yes">        </span>aa_equals &quot;Test for
+     cal-item-create&quot; $result 1<span style="mso-spacerun:
+     yes">                    </span>#compare the computed result with </p>
+     <p class=MsoNormal style='margin-right:1.8pt;tab-stops:right 467.8pt'><span
+     style="mso-spacerun:
+     yes">                                                                         
+     </span><span style="mso-spacerun:
+     yes">                        </span>#expected result<span
+     style='mso-tab-count:1'>                                </span></p>
+     <p class=MsoNormal style='tab-stops:right 467.8pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+     <p class=MsoNormal style='tab-stops:right 467.8pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+     </div>
+     <![if !mso]></td>
+    </tr>
+   </table>
+   <![endif]></v:textbox>
+ </v:shape><v:rect id="_x0000_s1064" style='position:absolute;left:951;top:2007;
+  width:10098;height:9350' o:regroupid="25" filled="f"/>
+</v:group><![endif]--><![if !vml]><span style='mso-ignore:vglayout;position:
+relative;z-index:3;left:-12px;top:40px;width:674px;height:665px'><img
+width=674 height=625 src="./regressionTest_files/image002.gif" v:shapes="_x0000_s1711 _x0000_s1063 _x0000_s1064"></span><![endif]><span
+lang=EN-US style='mso-ansi-language:EN-US'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoBodyText><span lang=EN-US style='mso-ansi-language:EN-US'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoBodyText><span lang=EN-US style='mso-ansi-language:EN-US'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoBodyText><span lang=EN-US style='mso-ansi-language:EN-US'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoBodyText><span lang=EN-US style='mso-ansi-language:EN-US'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoBodyText><span lang=EN-US style='mso-ansi-language:EN-US'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoCaption align=center style='margin-left:48.0pt;text-align:center'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoCaption align=center style='margin-left:48.0pt;text-align:center'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoCaption align=center style='margin-left:48.0pt;text-align:center'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoCaption align=center style='margin-left:48.0pt;text-align:center'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoCaption align=center style='margin-left:48.0pt;text-align:center'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoCaption align=center style='margin-left:48.0pt;text-align:center'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoCaption align=center style='margin-left:48.0pt;text-align:center'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoCaption align=center style='margin-left:48.0pt;text-align:center'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<br style='mso-ignore:vglayout' clear=ALL>
+
+<p class=MsoCaption align=center style='margin-left:90.0pt;text-align:center'>Figure
+<span style='mso-field-code:"SEQ Figure \\* ARABIC"'>2</span>. regression test
+case for testing function <i>cal_item_create<o:p></o:p></i></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+</div>
+
+</body>
+
+</html>

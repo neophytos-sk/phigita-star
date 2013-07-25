@@ -1,0 +1,14 @@
+Received: from 87.207.139.101 by rko-cpas.com.s8a2.psmtp.com; Tue, 8 Nov 2011 20:15:30 +0100 
+Date: Tue, 8 Nov 2011 20:15:30 +0100 
+From: =?koi8-r?B?Iu3P08vXwSI=?= <dentedb3@rko-cpas.com> 
+X-Mailer: The Bat! (v3.80.03) Professional 
+Reply-To: dentedb3@rko-cpas.com 
+X-Priority: 3 (Normal) 
+Message-ID: <624101859.24260279302198@rko-cpas.com> 
+To: webmaster@phigita.net 
+Subject: =?koi8-r?B?IOfk5SD3+SDl/eUg7uHq5OX05SD04evp5SD3+efv5O755SDj5e75IO7h?=
+	=?koi8-r?B?IPDv7Onn8uHm6eA/?= 
+X-Antivirus: avast! (VPS 100831-1, 2010-08-31), Outbound message 
+X-Antivirus-Status: Not-Tested 
+--------------------------------------
+ content-type=image/jpeg part-token=::mime::1604-2

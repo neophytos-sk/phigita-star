@@ -1,0 +1,69 @@
+<html>
+
+<head>
+
+<title>
+Calendar Package Permissions
+</title>
+
+</head>
+
+
+
+<body>
+<h3> Calendar Package Permissions </h3>
+
+author: <a href=mailto:gjin@arsdigita.com> Gary Jin </a>
+<hr>
+<p> Note: This document will be rolled into the Design Doc in the very near future.
+
+<p>
+First, the cal_item permissions:
+<ol>
+<li> <b>read:</b> can view the item
+<li> <b>write:</b> can add and edit the item
+<li> <b>delete:</b> can delete the item
+<li> <b>invite:</b> can allow other parties to see the item
+</ol>
+
+<p>
+Second the calendar permissions:
+<ol>
+<li> <b>public:</b>  everyone have read permission, and can see the items, registered and un-reg-ed users alike. This implies applying read privilege to
+group "Public."
+<li> <b>private:</b>  only the member of the party can see the items. This implies granting read privilege to the owner group. I would say read only
+'cause it might be undesirable for group members to edit or delete items.
+</ol>
+
+<p>
+There three conditions for a calendar:
+<ol>
+<li> by default, all items are public
+<li> by default, all items are private
+<li> by default, no conditions defined.
+</ol>
+
+<p>
+The major assumption here is that the Permissions of the Cal_item can overwrite the Permissions of the Calendar.
+
+<p>
+Under the first two conditions, when a new cal_item is generated, it will by default inherit either public or private.
+If there are no default conditions (3), then the user would need to define what kinda of permission is going to be associated with the
+cal_item.
+
+<p>
+In generation, the owner of the calendar would need to:
+<ol>
+<li> assign calendar admin. This implies granting read, write, delete, invite permissions to some party.
+<li> assign default calendar permissions (optional).
+</ol>
+
+<p>
+The calendar admin can grant or any combinations of read, write, delete and invite) to other member of the party which uses the particular
+calendar on a item specific basis and on a calendar level. Once more, permisssion assigned to specific items can overwrite those of the
+calendar.
+</body>
+
+<hr>
+Last Modificed: $Id: permissions.html,v 1.1.1.1 2001/04/23 23:09:38 donb Exp $
+</html>

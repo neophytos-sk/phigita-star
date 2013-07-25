@@ -1,0 +1,10 @@
+Received: from ruyd (unknown [110.52.7.207])
+	by ns.vimgate.net (Postfix) with ESMTP
+	id 589EF6805E6; Thu,  3 Nov 2011 04:14:13 +0800 (CST) 
+Message-ID: <20111103054041484406@gd-hckj.com> 
+From: =?gb2312?B?0NzA9ujl?= <sales@gd-hckj.com> 
+To:  
+Subject: =?gb2312?B?M0XQvdfKyei8xtPr0L2z6rncwO28vMfJLS0tLdDcwPbo5Q==?= 
+Date: Thu, 3 Nov 2011 05:40:31 +0800 
+X-mailer: Ebsh 9 
+Whoops!  What is a 'application/vnd.ms-excel'?

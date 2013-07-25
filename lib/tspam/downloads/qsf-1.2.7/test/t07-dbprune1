@@ -1,0 +1,12 @@
+#!/bin/sh
+#
+# TEST: Automatic database pruning (1): 
+
+$PROG -d $BACKEND:$TESTDB -D > .testdump-a
+$PROG -d $BACKEND:$TESTDB -D | grep SINCEPRUNE > .testdump-b
+./mboxsplit 1 < .test-non-spam \
+ | $PROG -d $BACKEND:$TESTDB -m >/dev/null
+$PROG -d $BACKEND:$TESTDB -D | grep SINCEPRUNE > .testdump-c
+bash -c "if cmp -s .testdump-a .testdump-b; then exit 1; fi; exit 0"
+$PROG -d $BACKEND:$TESTDB -R < .testdump-a
+rm -f .testdump-a .testdump-b .testdump-c

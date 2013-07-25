@@ -1,0 +1,15 @@
+Received: from localhost (unknown [192.168.0.2])
+	by maximusconfessor.all2all.org (Postfix) with ESMTP id 15FBEA04C685;
+	Sat, 26 Nov 2011 21:21:44 +0100 (CET) from maximusconfessor.all2all.org ([192.168.0.1])
+	by localhost (maximusconfessor.all2all.org [192.168.0.2]) (amavisd-new, port 10024)
+	with ESMTP id WsvB4UByh+jY; Sat, 26 Nov 2011 21:00:17 +0100 (CET) from dlfisiu (unknown [110.52.7.181])
+	by maximusconfessor.all2all.org (Postfix) with ESMTPA id 6E954A04C663;
+	Sat, 26 Nov 2011 21:21:22 +0100 (CET) 
+Message-ID: <20111127042314230136@idearts.com> 
+From: =?gb2312?B?yfLR9LGxzLy158ui1sbU7NPQz965q8u+?= <redaction@idearts.com> 
+To:  
+Subject: =?gb2312?B?uN+8tsPYyumhotb6wO26zdDQ1f7Iy9SxvLzE3MzhuN/RtcG306ot?=
+	=?gb2312?B?LS0tts7TotK7?= 
+Date: Sun, 27 Nov 2011 04:23:02 +0800 
+X-mailer: Ufuhcylwg 7 
+Whoops!  What is a 'application/vnd.ms-excel'?

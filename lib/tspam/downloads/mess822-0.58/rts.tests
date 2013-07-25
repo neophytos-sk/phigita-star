@@ -1,0 +1,672 @@
+# not tested:
+
+# ofmipd works
+# ofmipd fills things in roughly the same way as inject
+# ofmipd handles various forms of SMTP garbage
+
+# ofmipname works
+# 822header works
+# 822field works
+# 822date works
+# 822received works
+# 822print works
+
+# mess822 handles multiple _begin() properly
+
+# inject runs qmail-queue properly
+# inject exits 111 if qmail-queue fails temporarily
+# inject exits 100 if qmail-queue fails permanently
+
+# inject uses defaultdomain, defaulthost, plusdomain controls
+# inject uses idhost control
+# inject uses me as default for other controls
+# inject exits 111 if it cannot read controls
+# inject exits 111 if it runs out of memory
+
+# inject creates Date
+# inject creates Message-ID
+# inject uses incoming date for Message-ID
+# inject removes incoming Message-ID with -I or QMAILINJECT=I
+# inject creates per-message VERP with -M or QMAILINJECT=M
+# inject removes incoming From with -F or QMAILINJECT=F
+
+# inject uses incoming envelope-sender field properly
+# inject uses incoming envelope-recipient field properly
+
+
+QMAILMFTFILE=rts.mft
+export QMAILMFTFILE
+
+QMAILREWRITEFILE=rts.rw
+export QMAILREWRITEFILE
+
+QMAILMFTFILE=rts.mft
+export QMAILMFTFILE
+
+QMAILIDHOST=IH
+export QMAILIDHOST
+
+
+echo '--- quote handles simple address'
+quote God heaven.af.mil; echo $?
+
+echo '--- quote handles simple address with name'
+quote God heaven.af.mil 'The Boss'; echo $?
+
+echo '--- quote handles domain ending with dot'
+quote God heaven.af.mil. 'The Boss'; echo $?
+
+echo '--- quote handles domain containing double dot'
+quote God heaven..af.mil 'The Boss'; echo $?
+
+echo '--- quote handles domain starting with dot'
+quote God .heaven.af.mil 'The Boss'; echo $?
+
+echo '--- quote handles address without domain'
+quote 'local' '' 'Local User'; echo $?
+
+echo '--- quote handles empty address'
+quote '' ''; echo $?
+
+echo '--- quote handles empty address with name'
+quote '' '' 'Mail Delivery Subsystem'; echo $?
+
+echo '--- quote handles double-bounce address'
+quote '#' '[]' 'Trash'; echo $?
+
+echo '--- quote handles domain literal'
+quote 'root' '[127.0.0.1]'; echo $?
+
+echo '--- quote handles nasty domain literal'
+quote 'root' '[[][]:;"\\]'; echo $?
+
+echo '--- quote handles empty box at domain'
+quote '' heaven.af.mil; echo $?
+
+echo '--- quote handles \n->\0 in box'
+quote '
+' heaven.af.mil; echo $?
+
+echo '--- quote handles control-A in box'
+quote `echo x | tr x '\001'` heaven.af.mil; echo $?
+
+echo '--- quote handles space in box'
+quote ' ' heaven.af.mil; echo $?
+
+echo '--- quote handles < in box'
+quote '<' heaven.af.mil; echo $?
+
+echo '--- quote handles > in box'
+quote '>' heaven.af.mil; echo $?
+
+echo '--- quote handles ( in box'
+quote '(' heaven.af.mil; echo $?
+
+echo '--- quote handles ) in box'
+quote ')' heaven.af.mil; echo $?
+
+echo '--- quote handles [ in box'
+quote '[' heaven.af.mil; echo $?
+
+echo '--- quote handles ] in box'
+quote ']' heaven.af.mil; echo $?
+
+echo '--- quote handles \ in box'
+quote '\' heaven.af.mil; echo $?
+
+echo '--- quote handles " in box'
+quote '"' heaven.af.mil; echo $?
+
+echo '--- quote handles , in box'
+quote ',' heaven.af.mil; echo $?
+
+echo '--- quote handles ; in box'
+quote ';' heaven.af.mil; echo $?
+
+echo '--- quote handles : in box'
+quote ':' heaven.af.mil; echo $?
+
+echo '--- quote handles @ in box'
+quote '@' heaven.af.mil; echo $?
+
+echo '--- quote handles . in box'
+quote '.' heaven.af.mil; echo $?
+
+echo '--- quote handles box starting with dot'
+quote '.dot' heaven.af.mil 'Starting dot'; echo $?
+
+echo '--- quote handles box ending with dot'
+quote 'dot.' heaven.af.mil 'Ending dot'; echo $?
+
+echo '--- quote handles box with double dot'
+quote 'dot..dot' heaven.af.mil 'Double dot'; echo $?
+
+echo '--- quote handles box with single dot'
+quote 'dot.dot' heaven.af.mil 'Single dot'; echo $?
+
+echo '--- quote handles nasty box with @'
+quote '@at@' heaven.af.mil; echo $?
+
+echo '--- quote handles nasty box with "'
+quote 'a"quote' heaven.af.mil; echo $?
+
+echo '--- quote handles nasty box with space'
+quote 'The Almighty.One' heaven.af.mil; echo $?
+
+echo '--- iftocc notices To recipient'
+echo 'to: fred@home' | iftocc fred@home; echo $?
+
+echo '--- iftocc notices Cc recipient'
+echo 'cc: fred@home' | iftocc fred@home; echo $?
+
+echo '--- iftocc does not notice Apparently-To recipient'
+echo 'apparently-to: fred@home' | iftocc fred@home; echo $?
+
+echo '--- iftocc notices second recipient in To line'
+echo 'to: bill, fred@home, bob' | iftocc fred@home; echo $?
+
+echo '--- iftocc notices recipient in second To line'
+echo 'to: bill
+to: fred@home
+to: bob' | iftocc fred@home; echo $?
+
+echo '--- iftocc handles multiple recipients on command line'
+echo 'to: bill
+to: fred@home
+to: bob' | iftocc doug fred@home dave; echo $?
+
+echo '--- iftocc ignores $RECIPIENT if it has arguments'
+echo 'to: bill
+to: fred@home
+to: bob' | env RECIPIENT=fred@home iftocc doug dave; echo $?
+
+echo '--- iftocc uses $RECIPIENT if it does not have arguments'
+echo 'to: bill
+to: fred@home
+to: bob' | env RECIPIENT=fred@home iftocc; echo $?
+
+echo '--- iftocc does not notice recipient in body'
+echo '
+to: fred@home' | iftocc fred@home; echo $?
+
+echo '--- inject converts year 0 to year 2000'
+echo 'date: 1 jan 0 0:0:0 jst
+message-id: skip' | new-inject -n; echo $?
+
+echo '--- inject converts year 1 to year 2001'
+echo 'date: 1 jan 1 0:0:0 ist
+message-id: skip' | new-inject -n; echo $?
+
+echo '--- inject converts year 10 to year 2010'
+echo 'date: 1 jan 10 0:0:0 met dst
+message-id: skip' | new-inject -n; echo $?
+
+echo '--- inject converts year 70 to year 1970'
+echo 'date: 1 jan 70 0:0:0 pst
+message-id: skip' | new-inject -n; echo $?
+
+echo '--- inject converts year 100 to year 2000'
+echo 'date: 1 jan 100 0:0:0 gmt
+message-id: skip' | new-inject -n; echo $?
+
+echo '--- inject handles year 1000'
+echo 'date: 1 jan 1000 0:0:0 ut
+message-id: skip' | new-inject -n; echo $?
+
+echo '--- inject handles year 2000'
+echo 'date: 29 feb 2000 0:0:0 est
+message-id: skip' | new-inject -n; echo $?
+
+echo '--- inject handles year 10000'
+echo 'date: 1 jan 10000 0:0:0 cst
+message-id: skip' | new-inject -n; echo $?
+
+echo '--- inject rewrites addresses'
+echo 'date: 15 aug 1998 13:32:12 cdt
+message-id: skip
+reply-to: a123456789012345678901234567890.b (DH.DD)
+reply-to: a123456789012345678901234567890.b@ (DH.DD)
+reply-to: a123456789012345678901234567890.b@. (DH.DD)
+reply-to: a123456789012345678901234567890.b@Here (Here.DD)
+reply-to: a123456789012345678901234567890.b@Here. (Here.DD)
+reply-to: a123456789012345678901234567890.b@Here+ (Here.PD)
+reply-to: a123456789012345678901234567890.b@Here+. (Here.PD)
+reply-to: a123456789012345678901234567890.b@[1.2.3.4] ([1.2.3.4])
+reply-to: a123456789012345678901234567890.b@[1.2.3.4]. ([1.2.3.4])
+reply-to: a123456789012345678901234567890.b@Local (My.Dom)
+reply-to: a123456789012345678901234567890.b@Local. (My.Dom)
+reply-to: a123456789012345678901234567890.b@Local+ (Local.PD)
+reply-to: a123456789012345678901234567890.b@Local+. (Local.PD)
+reply-to: a123456789012345678901234567890.b@Here.Local (Here.My.Dom)
+reply-to: a123456789012345678901234567890.b@Here.Local. (Here.My.Dom)
+reply-to: a123456789012345678901234567890.b@X.Y.Local (X.Y.My.Dom)
+sender: <> (<>), <@> (<>)' | new-inject -n; echo $?
+
+echo '--- inject finds recipients in To'
+echo 'date: 15 aug 1998 13:32:12 cdt
+message-id: skip
+to: Right@Here.Local' | new-inject -n; echo $?
+
+echo '--- inject finds recipients in Cc'
+echo 'date: 15 aug 1998 13:32:12 cdt
+message-id: skip
+cc: Right@Here.Local' | new-inject -n; echo $?
+
+echo '--- inject finds recipients in Bcc'
+echo 'date: 15 aug 1998 13:32:12 cdt
+message-id: skip
+bcc: Right@Here.Local' | new-inject -n; echo $?
+
+echo '--- inject finds recipients in Apparently-To'
+echo 'date: 15 aug 1998 13:32:12 cdt
+message-id: skip
+apparently-to: Right@Here.Local' | new-inject -n; echo $?
+
+echo '--- inject ignores header recipients when arguments are supplied'
+echo 'date: 15 aug 1998 13:32:12 cdt
+message-id: skip
+to: Wrong' | new-inject -n Right@Here.Local; echo $?
+
+echo '--- inject -h ignores argument recipients'
+echo 'date: 15 aug 1998 13:32:12 cdt
+message-id: skip
+to: Right@Here.Local' | new-inject -n -h Wrong; echo $?
+
+echo '--- inject -a ignores header recipients'
+echo 'date: 15 aug 1998 13:32:12 cdt
+message-id: skip
+to: Wrong' | new-inject -n -a; echo $?
+
+echo '--- inject -a uses argument recipients'
+echo 'date: 15 aug 1998 13:32:12 cdt
+message-id: skip
+to: Wrong' | new-inject -n -a Right@Here.Local; echo $?
+
+echo '--- inject -a uses multiple argument recipients'
+echo 'date: 15 aug 1998 13:32:12 cdt
+message-id: skip
+to: Wrong' | new-inject -n -a Right@Here.Local Right2; echo $?
+
+echo '--- inject -f sets sender'
+echo 'date: 15 aug 1998 13:32:12 cdt
+message-id: skip
+to: Right@Here.Local' | new-inject -n -f Sender; echo $?
+
+echo '--- inject -f sets sender with host'
+echo 'date: 15 aug 1998 13:32:12 cdt
+message-id: skip
+to: Right@Here.Local' | new-inject -n -f Sender@Host; echo $?
+
+echo '--- inject -f sets bounce sender'
+echo 'date: 15 aug 1998 13:32:12 cdt
+message-id: skip
+to: Right@Here.Local' | new-inject -n -f ''; echo $?
+
+echo '--- inject sets sender from Return-Path'
+echo 'date: 15 aug 1998 13:32:12 cdt
+message-id: skip
+return-path: Sender
+to: Right@Here.Local' | new-inject -n; echo $?
+
+echo '--- inject -S discards Return-Path'
+echo 'date: 15 aug 1998 13:32:12 cdt
+message-id: skip
+return-path: Sender
+to: Right@Here.Local' | new-inject -n -S; echo $?
+
+echo '--- inject treats QMAILINJECT=S same way as -S'
+echo 'date: 15 aug 1998 13:32:12 cdt
+message-id: skip
+return-path: Sender
+to: Right@Here.Local' | env QMAILINJECT=xSy new-inject -n; echo $?
+
+echo '--- inject handles QMAILINJECT=s for compatibility'
+echo 'date: 15 aug 1998 13:32:12 cdt
+message-id: skip
+return-path: Sender
+to: Right@Here.Local' | env QMAILINJECT=xsy new-inject -n; echo $?
+
+echo '--- inject -f overrides Return-Path'
+echo 'date: 15 aug 1998 13:32:12 cdt
+message-id: skip
+return-path: Wrong
+to: Right@Here.Local' | new-inject -n -f Sender@Host; echo $?
+
+echo '--- inject completes partial line at end of header'
+echo -n 'date: 15 aug 1998 13:32:12 cdt
+message-id: skip' | new-inject -n; echo $?
+
+echo '--- inject does not add blank line to header-only message'
+echo 'date: 15 aug 1998 13:32:12 cdt
+message-id: skip' | new-inject -n; echo $?
+
+echo '--- inject inserts blank line in front of body'
+echo 'date: 15 aug 1998 13:32:12 cdt
+message-id: skip
+body' | new-inject -n; echo $?
+
+echo '--- inject does not insert blank line if one is present'
+echo 'date: 15 aug 1998 13:32:12 cdt
+message-id: skip
+
+body' | new-inject -n; echo $?
+
+echo '--- inject completes partial line at end of body'
+echo -n 'date: 15 aug 1998 13:32:12 cdt
+message-id: skip
+
+body' | new-inject -n; echo $?
+
+echo '--- inject inserts blank line in front of partial-line body'
+echo -n 'date: 15 aug 1998 13:32:12 cdt
+message-id: skip
+body' | new-inject -n; echo $?
+
+echo '--- inject wraps properly'
+echo 'date: 15 aug 1998 13:32:12 cdt
+message-id: skip
+Cc: x@x.x,
+  x@x.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx77,
+  x@x.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx78,
+  x@x.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx79,
+  x@x.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx80,
+  x@x.xxxxxxxxxxxxxxxxxxxxxxxxxxxx, x@x.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx78,
+  x@x.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx,
+  x@x.xxxxxxxxxxxxxxxxxxxxxxxxxxxx, x@x.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx79,
+  x@x.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx,
+  x@x.xxxxxxxxx, x@x.xxxxxxxxxxxxx, x@x.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx78,
+  x@x.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx,
+  x@x.xxxxxxxxx, x@x.xxxxxxxxxxxxx, x@x.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx79,
+  x@x.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx,
+  x@x.xxxxxxxxxxxxx, x@x.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx78,
+  x@x.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx,
+  x@x.xxxxxxxxxxxxx, x@x.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx79,
+  x@x.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+body' | new-inject -n; echo $?
+
+echo '--- inject handles basic address list parsing'
+echo 'date: 15 aug 1998 13:32:12 cdt
+message-id: skip
+Cc: 
+Cc: <>
+Cc: (comment)
+Cc: me@home.com
+Cc: me@home.com (comment)
+Cc: me@home.com (comment (nested (deeply\))))
+Cc: <me@home.com>
+Cc: a phrase <me@home.com>
+Cc: mailing list: ;
+Cc: mailing list: me@home.com ;
+Cc: mailing list: me@home.com, you@work.com, them@play.com ;
+Cc: mailing list: route <me@home.com>, you@work.com, them@play.com ;
+Cc: mailing list: route two <me@home.com>, you@work.com, them@play.com ;
+Cc: mailing list: me@home.com, route <you@work.com>, them@play.com ;
+Cc: mailing list: me@home.com, route two <you@work.com>, them@play.com ;
+Cc: mailing list: ,,me@home.com,,, you@work.com,, ;
+Cc: mailing list: ; illegal@work.com
+Cc: a phrase <me@home.com> illegal@work.com
+Cc: me@home.com, you@work.com
+Cc: me@home.com you@work.com
+Cc: "quoted address"@home.com, you@work.com
+Cc: a phrase <me@home.com>, you@work.com
+Cc: me@home.com, a phrase <you@work.com>
+Cc: mailing list: ,,me@home.com,,, you@work.com,, ;,them@play.com
+body' | new-inject -n; echo $?
+
+echo '--- inject handles RFC 822 examples'
+echo 'date: 15 aug 1998 13:32:12 cdt
+message-id: skip
+Cc: "Joe & J. Harvey" <ddd@org>, JJV@BBN
+Cc: ":sysmail"@  Some-Group.
+          Some-Org, Muhammed.(I am  the greatest) Ali @(the)Vegas.WBA
+Cc: "George, Ted" <Shared@Group.Arpanet>
+Cc: Wilt . (the  Stilt) Chamberlain@NBA.US
+Cc: Gourmets:  Pompous Person <WhoZiWhatZit@Cordon-Bleu>,
+  Childs@WGBH.Boston, "Galloping Gourmet"@
+  ANT.Down-Under (Australian National Television),
+  Cheapie@Discount-Liquors;, Cruisers:  Port@Portugal,
+  Jones@SEA;, Another@Somewhere.SomeOrg
+Cc:    Important folk: Tom Softwood <Balsa@Tree.Root>,
+  "Sam Irving"@Other-Host;, Standard Distribution:
+  /main/davis/people/standard@Other-Host,
+  "<Jones>standard.dist.3"@Tops-20-Host;
+body' | new-inject -n; echo $?
+
+echo '--- inject disallows field name bytes below 33'
+echo 'date: 15 aug 1998 13:32:12 cdt
+message-id: skip
+x: y' | tr x '\037' | new-inject -n; echo $?
+
+echo '--- inject disallows field name bytes above 126'
+echo 'date: 15 aug 1998 13:32:12 cdt
+message-id: skip
+x: y' | tr x '\177' | new-inject -n; echo $?
+
+echo '--- inject handles source routes'
+echo 'date: 15 aug 1998 13:32:12 cdt
+message-id: skip
+cc: <@host:God@heaven.af.mil>' | new-inject -n; echo $?
+
+echo '--- inject handles double source routes'
+echo 'date: 15 aug 1998 13:32:12 cdt
+message-id: skip
+cc: <@host1,@host2:God@heaven.af.mil>' | new-inject -n; echo $?
+
+echo '--- inject handles triple source routes'
+echo 'date: 15 aug 1998 13:32:12 cdt
+message-id: skip
+cc: <@host1,@host2,@host3:God@heaven.af.mil>' | new-inject -n; echo $?
+
+echo '--- inject rewrites Sender'
+echo 'date: 15 aug 1998 13:32:12 cdt
+message-id: skip
+sender: a @ b . c' | new-inject -n; echo $?
+
+echo '--- inject does not rewrite Random'
+echo 'date: 15 aug 1998 13:32:12 cdt
+message-id: skip
+random: a @ b . c' | new-inject -n; echo $?
+
+echo '--- inject rewrites Reply-To'
+echo 'date: 15 aug 1998 13:32:12 cdt
+message-id: skip
+reply-to: a @ b . c' | new-inject -n; echo $?
+
+echo '--- inject does not rewrite Errors-To'
+echo 'date: 15 aug 1998 13:32:12 cdt
+message-id: skip
+errors-to: a @ b . c' | new-inject -n; echo $?
+
+echo '--- inject discards Content-Length'
+echo 'date: 15 aug 1998 13:32:12 cdt
+message-id: skip
+content-length: a @ b . c' | new-inject -n; echo $?
+
+echo '--- inject adds From line using QMAILUSER, QMAILHOST, QMAILNAME'
+echo 'date: 15 aug 1998 13:32:12 cdt
+message-id: skip' \
+| env QMAILUSER=MU QMAILHOST=M.H QMAILNAME=MN new-inject -n; echo $?
+
+echo '--- inject understands QMAILSUSER, QMAILSHOST'
+echo 'date: 15 aug 1998 13:32:12 cdt
+message-id: skip' \
+| env QMAILSUSER=SMU QMAILSHOST=SM.H QMAILUSER=MU QMAILHOST=M.H QMAILNAME=MN new-inject -n; echo $?
+
+echo '--- inject -R creates per-recipient VERP'
+echo 'date: 15 aug 1998 13:32:12 cdt
+message-id: skip' \
+| new-inject -n -R; echo $?
+
+echo '--- inject treats QMAILINJECT=R same way as -R'
+echo 'date: 15 aug 1998 13:32:12 cdt
+message-id: skip' \
+| env QMAILINJECT=xRy new-inject -n; echo $?
+
+echo '--- inject handles QMAILINJECT=r for compatibility'
+echo 'date: 15 aug 1998 13:32:12 cdt
+message-id: skip' \
+| env QMAILINJECT=xry new-inject -n; echo $?
+
+echo '--- inject can use USER, MAILHOST, NAME'
+echo 'date: 15 aug 1998 13:32:12 cdt
+message-id: skip' \
+| env USER=MU MAILHOST=M.H NAME=MN new-inject -n; echo $?
+
+echo '--- inject can use LOGNAME'
+echo 'date: 15 aug 1998 13:32:12 cdt
+message-id: skip' \
+| env LOGNAME=MU new-inject -n; echo $?
+
+echo '--- inject uses MAILUSER, MAILNAME over USER, NAME'
+echo 'date: 15 aug 1998 13:32:12 cdt
+message-id: skip' \
+| env MAILUSER=MU USER=X MAILHOST=M.H MAILNAME=MN NAME=Y new-inject -n; echo $?
+
+echo '--- inject quotes spaces in MAILUSER'
+echo 'date: 15 aug 1998 13:32:12 cdt
+message-id: skip' \
+| env MAILUSER='a space' new-inject -n; echo $?
+
+echo '--- inject quotes backslashes in MAILNAME'
+echo 'date: 15 aug 1998 13:32:12 cdt
+message-id: skip' \
+| env MAILNAME='\\\' new-inject -n; echo $?
+
+echo '--- inject rewrites atom with backslash in From'
+echo 'date: 15 aug 1998 13:32:12 cdt
+message-id: skip
+from: back\\slash' | new-inject -n; echo $?
+
+echo '--- inject rewrites atom with frivolous backslash in From'
+echo 'date: 15 aug 1998 13:32:12 cdt
+message-id: skip
+from: back\slash' | new-inject -n; echo $?
+
+echo '--- inject understands QMAILMFTFILE'
+echo 'date: 15 aug 1998 13:32:12 cdt
+message-id: skip
+to: God@heaven.af.mil
+cc: Root@Heaven.AF.Mil' | new-inject -n; echo $?
+
+echo '--- tokenize handles basic examples'
+echo 'heaven	"heaven"	"h\e\ave\n"
+\\ \
+"\\\\" \\\
+[127.0.0.1] [\1\2\7\.\0\.\0\.\1]
+[FF02::3492:A98F]
+(by way of J. Q. Public <redir@my.org>) (\)\\)
+(comment (nested (deeply)) (and (oh no!) again))
+":sysmail"@  group. org, Muhammed.(the greatest) Ali @(the)Vegas.WBA
+God@heaven. af.mil' | tokenize; echo $?
+
+echo '--- addrlist handles basic examples'
+echo '"\\slash" . "and space" @[]  (dot).[\\].yp.  to
+  "\\slash.and space"@[].[\\].yp.to    (Might work)
+  <@gateway.af.mil:God@heaven.af.mil>
+  @proxy.research.att.com:God@heaven.af.mil   (WRONG)
+  < innocent.user@heaven.af.mil >  (spotted in 1998)
+  "The Boss" <God@heaven.af.mil>
+  God@heaven.af.mil (The Boss)
+  The Boss <God@heaven.af.mil>, angels@heaven.af.mil
+  God@heaven.af.mil angels@heaven.af.mil      (WRONG)
+  the gang: angels@heaven.af.mil, saints@heaven.af.mil;
+  people who asked: ;, other people who should know: ;
+
+(comment)
+<>
+""
+""@host
+<box>
+<box@>
+<"box@">
+<box@@>
+me@home.com
+me@home.com (comment)
+me@home.com (comment (nested (deeply\))))
+<me@home.com>
+me@home.com, you@work.com
+me@home.com you@work.com
+me@home."com"you@work.com
+me <you> <them>
+a phrase <me@home.com>
+mailing list: ;
+mailing list: me@home.com ;
+mailing list: me@home.com, you@work.com, them@play.com ;
+mailing list: route <me@home.com>, you@work.com, them@play.com ;
+mailing list: route two <me@home.com>, you@work.com, them@play.com ;
+mailing list: me@home.com, route <you@work.com>, them@play.com ;
+mailing list: me@home.com, route two <you@work.com>, them@play.com ;
+mailing list: ,,me@home.com,,, you@work.com,, ;
+mailing list: ; illegal@work.com
+a phrase <me@home.com> illegal@work.com
+"quoted address"@home.com, you@work.com
+a phrase <me@home.com>, you@work.com
+me@home.com, a phrase <you@work.com>
+mailing list: ,,me@home.com,,, you@work.com,, ;,them@play.com
+"Joe & J. Harvey" <ddd@org>, JJV@BBN
+":sysmail"@  Some-Group.  Some-Org, Muhammed.(I am  the greatest) Ali @(the)Vegas.WBA
+"George, Ted" <Shared@Group.Arpanet>
+Wilt . (the  Stilt) Chamberlain@NBA.US
+Gourmets:  Pompous Person <WhoZiWhatZit@Cordon-Bleu>, Childs@WGBH.Boston, "Galloping Gourmet"@ ANT.Down-Under (Australian National Television), Cheapie@Discount-Liquors;, Cruisers:  Port@Portugal, Jones@SEA;, Another@Somewhere.SomeOrg
+   Important folk: Tom Softwood <Balsa@Tree.Root>, "Sam Irving"@Other-Host;, Standard Distribution: /main/davis/people/standard@Other-Host, "<Jones>standard.dist.3"@Tops-20-Host;' | addrlist; echo $?
+
+echo '--- parsedate handles basic examples'
+echo '2 Jan 1998 09:00 BST (WRONG)
+2 Jan 1998 09:00 CDT
+2 Jan 1998 09:00 CET (WRONG)
+2 Jan 1998 09:00 CST
+2 Jan 1998 09:00 EDT
+2 Jan 1998 09:00 EET (WRONG)
+2 Jan 1998 09:00 EST
+2 Jan 1998 09:00 GMT
+2 Jan 1998 09:00 HKT (WRONG)
+2 Jan 1998 09:00 IST (WRONG)
+2 Jan 1998 09:00 JST (WRONG)
+2 Jan 1998 09:00 MDT
+2 Jan 1998 09:00 MET (WRONG)
+2 Jan 1998 09:00 MET DST (WRONG)
+2 Jan 1998 09:00 METDST (WRONG)
+2 Jan 1998 09:00 MST
+2 Jan 1998 09:00 PDT
+2 Jan 1998 09:00 PST
+2 Jan 1998 09:00 PST DST (WRONG)
+2 Jan 1998 09:00 UT
+2 Jan 1998 09:00 -1111
+2 Jan 1998 09:00 -0111
+2 Jan 1998 09:00 -0011
+2 Jan 1998 09:00 -0001
+2 Jan 1998 09:00 -0000
+2 Jan 1998 09:00 +0000
+2 Jan 1998 09:00 +0001
+2 Jan 1998 09:00 +0011
+2 Jan 1998 09:00 +0111
+2 Jan 1998 09:00 +1111
+
+01 Jan 1000 12:04:37 -0000
+31 Dec 1799 23:59:59 -0000
+01 Jan 1900 00:00:00 -0000
+31 Dec 1969 23:59:49 -0000
+31 Dec 1969 23:59:59 -0000
+01 Jan 1970 00:00:00 -0000
+01 Jan 1970 00:00:01 -0000
+30 Jun 1972 23:59:58 -0000
+30 Jun 1972 23:59:59 -0000
+30 Jun 1972 23:59:60 -0000
+01 Jul 1972 00:00:00 -0000
+01 Jan 10000 17:42:15 -0000
+
+2 Jan 98 09:00 EST (WRONG)
+2 Jan 99 09:00 EST (WRONG)
+2 Jan 0 09:00 EST (WRONG)
+2 Jan 01 09:00 EST (WRONG)
+2 Jan 102 09:00 EST (WRONG)
+2 jAN 103 09:00 eSt (WRONG)
+
+23 Dec 1995 19:25:43 -0000
+Sun, 31 Mar 1996 15:53:10 +0200
+31 Mar 1996 15:53:10 +0200
+     Mon (Lundi), 4(quatre)May (Mai) 1998(1998-05-04)03 : 04 : 12 +0000
+Mon, 30 Mar 1998 17:30:39 +1000 (EST)
+' | parsedate; echo $?
+
+exit 0

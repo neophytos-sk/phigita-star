@@ -1,0 +1,24 @@
+% Computer Modern Blackboard Sans Serif Quotation Style Slanted
+%
+% font v ?.? 29/03/1993, sauterised v1.0 15/11/1995
+%
+% Author :         Gilles F. ROBERT
+% sauterisation : Hubert HOLIN
+
+if unknown blbbase: input blbbase fi
+
+font_identifier:="CMBBSSQI"; font_size design_size * pt#;
+
+% This font's parameters are a simple modification of the parameters
+% of Computer Modern Sans Serif Quotation Style.
+
+input c-cmssq;
+
+slant:=sind 12/cosd 12;    % tilt ratio $(\Delta x/\Delta y)$
+
+interspace#:=cap_hair#;    % space between the doubled bars
+
+cap_interspace#:=cap_stem#;   % same for uppercase letters
+
+generate blbord      % switch to the driver file
+

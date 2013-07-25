@@ -1,0 +1,55 @@
+<Storage>
+   <ClusterName>Test Cluster</ClusterName>
+   <HashingStrategy>RANDOM</HashingStrategy>
+   <RackAware>false</RackAware>
+   <MulticastChannel>230.0.0.1</MulticastChannel>
+   <ReplicationFactor>3</ReplicationFactor>
+   <ZookeeperAddress></ZookeeperAddress>
+   <RpcTimeoutInMillis>5000</RpcTimeoutInMillis>
+
+   <JobTrackerHost>tdsearch001.sf2p.facebook.com</JobTrackerHost>
+   <JobJarFileLocation>/var/cassandra/Cassandra-Nexus</JobJarFileLocation>
+
+   <StoragePort>7000</StoragePort>
+   <ControlPort>7001</ControlPort>
+   <ColumnIndexSizeInKB>256</ColumnIndexSizeInKB>
+   <HttpPort>7002</HttpPort>
+
+   <MemtableSizeInMB>32</MemtableSizeInMB>
+   <MemtableObjectCountInMillions>1</MemtableObjectCountInMillions>
+   <MemtableLifetimeInDays>3</MemtableLifetimeInDays>
+
+   <MetadataDirectory>/var/cassandra/system</MetadataDirectory>
+
+   <CommitLogDirectory>/var/cassandra/d4/commitlog</CommitLogDirectory>
+   <CommitLogRotationThresholdInMB>128</CommitLogRotationThresholdInMB>
+
+   <GangliaServers>
+     <GangliaServer>127.0.0.1:9800</GangliaServer>
+   </GangliaServers>
+
+   <DataFileDirectories>
+     <DataFileDirectory>/var/cassandra/d1/data</DataFileDirectory>
+     <DataFileDirectory>/var/cassandra/d2/data</DataFileDirectory>
+     <DataFileDirectory>/var/cassandra/d3/data</DataFileDirectory>
+   </DataFileDirectories>
+
+   <CalloutLocation>/var/cassandra/callouts</CalloutLocation>
+
+   <BootstrapFileDirectory>/var/cassandra/bootstrap</BootstrapFileDirectory>
+   <StagingFileDirectory>/var/cassandra/staging</StagingFileDirectory>
+   <CommitLogFastSync>false</CommitLogFastSync>
+
+   <Tables>
+      <Table Name="BT">
+          <ColumnFamily ColumnSort="Name" Name="title" />
+          <ColumnFamily ColumnSort="Name" Name="content" />
+          <ColumnFamily ColumnType="Super" ColumnSort="Name" Name="tag"></ColumnFamily>
+          <ColumnFamily ColumnType="Super" ColumnSort="Name" Name="FTS"></ColumnFamily>
+      </Table>
+   </Tables>
+
+   <Seeds>
+     <Seed>prometheus</Seed>
+   </Seeds>
+</Storage>

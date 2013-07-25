@@ -1,0 +1,13 @@
+% SliTeX Sans-Serif Slanted invisible, derived from 
+% Computer Modern Sans Serif Quotation Style Slanted
+% by Pierre A. MacKay, 19 August, 1986
+if unknown cmbase: input cmbase fi
+
+font_identifier:="ILCMSSI"; font_size design_size*pt#;
+
+input c-cmssq;
+slant:=sind 12/cosd 12;    % tilt ratio $(\Delta x/\Delta y)$
+
+extra_endchar := extra_endchar & "clearit";
+
+generate sroman      % switch to the SliTeX driver file.

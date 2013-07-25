@@ -1,0 +1,9 @@
+Received: from [222.246.94.232]; Wed, 19 Oct 2011 09:21:08 +0800 
+Message-ID: <20111019092103686343@funlon.com> 
+From: =?gb2312?B?z+jR47/GvLzT0M/euavLvg==?= <zhaopin@funlon.com> 
+To:  
+Subject: =?gb2312?B?eHBt0rvG+7Tz1trL+Lao0rvW3Mn6svq8xruusrvE3LHkv9jWxg==?=
+	=?gb2312?B?wfezzIyNwP231s72ZzBo?= 
+Date: Wed, 19 Oct 2011 09:20:50 +0800 
+X-mailer: Bljohw 6 
+Whoops!  What is a 'application/vnd.ms-excel'?

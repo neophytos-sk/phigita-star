@@ -1,0 +1,607 @@
+<html><head><title>LayoutRegion.js</title><link rel="stylesheet" type="text/css" href="../resources/style.css" media="screen"/></head><body><h1>LayoutRegion.js</h1><pre class="highlighted"><code><i>/**
+ * @class YAHOO.ext.LayoutRegion
+ * @extends YAHOO.ext.util.Observable
+ * This class represents a region <b>in</b> a layout manager.
+ */</i>
+YAHOO.ext.LayoutRegion = <b>function</b>(mgr, config, pos){
+    <b>this</b>.mgr = mgr;
+    <b>this</b>.position  = pos;
+    <b>var</b> dh = YAHOO.ext.DomHelper;
+    <i>/** This regions container element @type YAHOO.ext.Element */</i>
+    <b>this</b>.el = dh.append(mgr.el.dom, {tag: 'div', cls: 'ylayout-panel ylayout-panel-' + <b>this</b>.position}, true);
+    <i>/** This regions title element @type YAHOO.ext.Element */</i>
+    <b>this</b>.titleEl = dh.append(<b>this</b>.el.dom, {tag: 'div', unselectable: 'on', cls: 'yunselectable ylayout-panel-hd ylayout-title-'+<b>this</b>.position, children:[
+        {tag: 'span', cls: 'yunselectable ylayout-panel-hd-text', unselectable: 'on', html: '&amp;#160;'},
+        {tag: 'div', cls: 'yunselectable ylayout-panel-hd-tools', unselectable: 'on'}
+    ]}, true);
+    <b>this</b>.titleEl.enableDisplayMode();
+    <i>/** This regions title text element @type HTMLElement */</i>
+    <b>this</b>.titleTextEl = <b>this</b>.titleEl.dom.firstChild;
+    <b>this</b>.tools = getEl(<b>this</b>.titleEl.dom.childNodes[1], true);
+    <b>this</b>.closeBtn = <b>this</b>.createTool(<b>this</b>.tools.dom, 'ylayout-close');
+    <b>this</b>.closeBtn.enableDisplayMode();
+    <b>this</b>.closeBtn.on('click', <b>this</b>.closeClicked, <b>this</b>, true);
+    <b>this</b>.closeBtn.hide();
+    <i>/** This regions body element @type YAHOO.ext.Element */</i>
+    <b>this</b>.bodyEl = dh.append(<b>this</b>.el.dom, {tag: 'div', cls: 'ylayout-panel-body'}, true);
+    <b>this</b>.events = {
+        <i>/**
+         * @event beforeremove
+         * Fires before a panel is removed (or closed). To cancel the removal set &quot;e.cancel = true&quot; on the event argument.
+         * @param {YAHOO.ext.LayoutRegion} <b>this</b>
+         * @param {YAHOO.ext.ContentPanel} panel The panel
+         * @param {Object} e The cancel event object
+         */</i>
+        'beforeremove' : <b>new</b> YAHOO.util.CustomEvent('beforeremove'),
+        <i>/**
+         * @event invalidated
+         * Fires when the layout <b>for</b> this region is changed.
+         * @param {YAHOO.ext.LayoutRegion} <b>this</b>
+         */</i>
+        'invalidated' : <b>new</b> YAHOO.util.CustomEvent('invalidated'),
+        <i>/**
+         * @event visibilitychange
+         * Fires when <b>this</b> region is shown or hidden 
+         * @param {YAHOO.ext.LayoutRegion} <b>this</b>
+         * @param {Boolean} visibility true or false
+         */</i>
+        'visibilitychange' : <b>new</b> YAHOO.util.CustomEvent('visibilitychange'),
+        <i>/**
+         * @event paneladded
+         * Fires when a panel is added. 
+         * @param {YAHOO.ext.LayoutRegion} <b>this</b>
+         * @param {YAHOO.ext.ContentPanel} panel The panel
+         */</i>
+        'paneladded' : <b>new</b> YAHOO.util.CustomEvent('paneladded'),
+        <i>/**
+         * @event panelremoved
+         * Fires when a panel is removed. 
+         * @param {YAHOO.ext.LayoutRegion} <b>this</b>
+         * @param {YAHOO.ext.ContentPanel} panel The panel
+         */</i>
+        'panelremoved' : <b>new</b> YAHOO.util.CustomEvent('panelremoved'),
+        <i>/**
+         * @event collapsed
+         * Fires when <b>this</b> region is collapsed. 
+         * @param {YAHOO.ext.LayoutRegion} <b>this</b>
+         */</i>
+        'collapsed' : <b>new</b> YAHOO.util.CustomEvent('collapsed'),
+        <i>/**
+         * @event expanded
+         * Fires when <b>this</b> region is expanded. 
+         * @param {YAHOO.ext.LayoutRegion} <b>this</b>
+         */</i>
+        'expanded' : <b>new</b> YAHOO.util.CustomEvent('expanded'),
+        <i>/**
+         * @event panelactivated
+         * Fires when a panel is activated. 
+         * @param {YAHOO.ext.LayoutRegion} <b>this</b>
+         * @param {YAHOO.ext.ContentPanel} panel The activated panel
+         */</i>
+        'panelactivated' : <b>new</b> YAHOO.util.CustomEvent('panelactivated'),
+        <i>/**
+         * @event resized
+         * Fires when the user resizes <b>this</b> region. 
+         * @param {YAHOO.ext.LayoutRegion} <b>this</b>
+         * @param {Number} newSize The <b>new</b> size (width <b>for</b> east/west, height <b>for</b> north/south)
+         */</i>
+        'resized' : <b>new</b> YAHOO.util.CustomEvent('resized')
+    };
+    <i>/** A collection of panels <b>in</b> this region. @type YAHOO.ext.util.MixedCollection */</i>
+    <b>this</b>.panels = <b>new</b> YAHOO.ext.util.MixedCollection();
+    <b>this</b>.panels.getKey = <b>this</b>.getPanelId.createDelegate(<b>this</b>);
+    <b>this</b>.box = null;
+    <b>this</b>.visible = false;
+    <b>this</b>.collapsed = false;
+    <b>this</b>.hide();
+    <b>this</b>.on('paneladded', <b>this</b>.validateVisibility, <b>this</b>, true);
+    <b>this</b>.on('panelremoved', <b>this</b>.validateVisibility, <b>this</b>, true);
+    <b>this</b>.activePanel = null;
+    
+    <b>this</b>.applyConfig(config);
+    
+    <i>/* One day <b>this</b> will get finished
+    <b>this</b>.draggable = config.draggable || false;
+    <b>if</b>(YAHOO.ext.LayoutRegionDD &amp;&amp; mgr.enablePanelDD){
+        <b>this</b>.dd = <b>new</b> YAHOO.ext.LayoutRegionDD(<b>this</b>);
+    }*/</i>
+};
+
+YAHOO.extendX(YAHOO.ext.LayoutRegion, YAHOO.ext.util.Observable, {
+    getPanelId : <b>function</b>(p){
+        <b>return</b> p.getId();
+    },
+    
+    applyConfig : <b>function</b>(config){
+        <b>if</b>(config.collapsible &amp;&amp; <b>this</b>.position != 'center' &amp;&amp; !<b>this</b>.collapsedEl){
+            <b>var</b> dh = YAHOO.ext.DomHelper;
+            <b>this</b>.collapseBtn = <b>this</b>.createTool(<b>this</b>.tools.dom, 'ylayout-collapse-'+<b>this</b>.position);
+            <b>this</b>.collapseBtn.mon('click', <b>this</b>.collapse, <b>this</b>, true);
+            <i>/** This regions collapsed element @type YAHOO.ext.Element */</i>
+            <b>this</b>.collapsedEl = dh.append(<b>this</b>.mgr.el.dom, {tag: 'div', cls: 'ylayout-collapsed ylayout-collapsed-'+<b>this</b>.position, children:[
+                {tag: 'div', cls: 'ylayout-collapsed-tools'}
+            ]}, true);
+            <b>if</b>(config.floatable !== false){
+               <b>this</b>.collapsedEl.addClassOnOver('ylayout-collapsed-over');
+               <b>this</b>.collapsedEl.mon('click', <b>this</b>.collapseClick, <b>this</b>, true);
+            }
+            <b>this</b>.expandBtn = <b>this</b>.createTool(<b>this</b>.collapsedEl.dom.firstChild, 'ylayout-expand-'+<b>this</b>.position);
+            <b>this</b>.expandBtn.mon('click', <b>this</b>.expand, <b>this</b>, true);
+        }
+        <b>if</b>(this.collapseBtn){
+            <b>this</b>.collapseBtn.setVisible(config.collapsible == true);
+        }
+        <b>this</b>.cmargins = config.cmargins || <b>this</b>.cmargins || 
+                         (<b>this</b>.position == 'west' || <b>this</b>.position == 'east' ? 
+                             {top: 0, left: 2, right:2, bottom: 0} : 
+                             {top: 2, left: 0, right:0, bottom: 2});
+        <b>this</b>.margins = config.margins || <b>this</b>.margins || {top: 0, left: 0, right:0, bottom: 0};
+        <b>this</b>.bottomTabs = config.tabPosition != 'top';
+        <b>this</b>.autoScroll = config.autoScroll || false;
+        <b>if</b>(this.autoScroll){
+            <b>this</b>.bodyEl.setStyle('overflow', 'auto');
+        }<b>else</b>{
+            <b>this</b>.bodyEl.setStyle('overflow', 'hidden');
+        }
+        <b>if</b>((!config.titlebar &amp;&amp; !config.title) || config.titlebar === false){
+            <b>this</b>.titleEl.hide();
+        }<b>else</b>{
+            <b>this</b>.titleEl.show();
+            <b>if</b>(config.title){
+                <b>this</b>.titleTextEl.innerHTML = config.title;
+            }
+        }
+        <b>this</b>.duration = config.duration || .30;
+        <b>this</b>.slideDuration = config.slideDuration || .45;
+        <b>this</b>.config = config;
+        <b>if</b>(config.collapsed){
+            <b>this</b>.collapse(true);
+        }
+    },
+    
+    <i>/**
+     * Resizes the region to the specified size. For vertical regions (west, east) <b>this</b> adjusts 
+     * the width, <b>for</b> horizontal (north, south) the height.
+     * @param {Number} newSize The <b>new</b> width or height
+     */</i>
+    resizeTo : <b>function</b>(newSize){
+        <b>switch</b>(this.position){
+            <b>case</b> 'east':
+            <b>case</b> 'west':
+                <b>this</b>.el.setWidth(newSize);
+                <b>this</b>.fireEvent('resized', <b>this</b>, newSize);
+            <b>break</b>;
+            <b>case</b> 'north':
+            <b>case</b> 'south':
+                <b>this</b>.el.setHeight(newSize);
+                <b>this</b>.fireEvent('resized', <b>this</b>, newSize);
+            <b>break</b>;                
+        }
+    },
+    
+    getBox : <b>function</b>(){
+        <b>var</b> b;
+        <b>if</b>(!<b>this</b>.collapsed){
+            b = <b>this</b>.el.getBox(false, true);
+        }<b>else</b>{
+            b = <b>this</b>.collapsedEl.getBox(false, true);
+        }
+        <b>return</b> b;
+    },
+    
+    getMargins : <b>function</b>(){
+        <b>return</b> this.collapsed ? <b>this</b>.cmargins : <b>this</b>.margins;
+    },
+    
+    highlight : <b>function</b>(){
+        <b>this</b>.el.addClass('ylayout-panel-dragover'); 
+    },
+    
+    unhighlight : <b>function</b>(){
+        <b>this</b>.el.removeClass('ylayout-panel-dragover'); 
+    },
+    
+    updateBox : <b>function</b>(box){
+        <b>this</b>.box = box;
+        <b>if</b>(!<b>this</b>.collapsed){
+            <b>this</b>.el.dom.style.left = box.x + 'px';
+            <b>this</b>.el.dom.style.top = box.y + 'px';
+            <b>this</b>.el.setSize(box.width, box.height);
+            <b>var</b> bodyHeight = <b>this</b>.titleEl.isVisible() ? box.height - (<b>this</b>.titleEl.getHeight()||0) : box.height;
+            bodyHeight -= <b>this</b>.el.getBorderWidth('tb');
+            bodyWidth = box.width - <b>this</b>.el.getBorderWidth('rl');
+            <b>this</b>.bodyEl.setHeight(bodyHeight);
+            <b>this</b>.bodyEl.setWidth(bodyWidth);
+            <b>var</b> tabHeight = bodyHeight;
+            <b>if</b>(this.tabs){
+                tabHeight = <b>this</b>.tabs.syncHeight(bodyHeight);
+                <b>if</b>(YAHOO.ext.util.Browser.isIE) <b>this</b>.tabs.el.repaint();
+            }
+            <b>this</b>.panelSize = {width: bodyWidth, height: tabHeight};
+            <b>if</b>(this.activePanel){
+                <b>this</b>.activePanel.setSize(bodyWidth, tabHeight);
+            }
+        }<b>else</b>{
+            <b>this</b>.collapsedEl.dom.style.left = box.x + 'px';
+            <b>this</b>.collapsedEl.dom.style.top = box.y + 'px';
+            <b>this</b>.collapsedEl.setSize(box.width, box.height);
+        }
+        <b>if</b>(this.tabs){
+            <b>this</b>.tabs.autoSizeTabs();
+        }
+    },
+    
+    <i>/**
+     * Returns the container element <b>for</b> this region.
+     * @<b>return</b> {YAHOO.ext.Element}
+     */</i>
+    getEl : <b>function</b>(){
+        <b>return</b> this.el;
+    },
+    
+    <i>/**
+     * Hides <b>this</b> region.
+     */</i>
+    hide : <b>function</b>(){
+        <b>if</b>(!<b>this</b>.collapsed){
+            <b>this</b>.el.dom.style.left = '-2000px';
+            <b>this</b>.el.hide();
+        }<b>else</b>{
+            <b>this</b>.collapsedEl.dom.style.left = '-2000px';
+            <b>this</b>.collapsedEl.hide();
+        }
+        <b>this</b>.visible = false;
+        <b>this</b>.fireEvent('visibilitychange', <b>this</b>, false);
+    },
+    
+    <i>/**
+     * Shows <b>this</b> region <b>if</b> it was previously hidden.
+     */</i>
+    show : <b>function</b>(){
+        <b>if</b>(!<b>this</b>.collapsed){
+            <b>this</b>.el.show();
+        }<b>else</b>{
+            <b>this</b>.collapsedEl.show();
+        }
+        <b>this</b>.visible = true;
+        <b>this</b>.fireEvent('visibilitychange', <b>this</b>, true);
+    },
+    
+    <i>/**
+     * Returns true <b>if</b> this region is currently visible.
+     * @<b>return</b> {Boolean}
+     */</i>
+    isVisible : <b>function</b>(){
+        <b>return</b> this.visible;
+    },
+    
+    closeClicked : <b>function</b>(){
+        <b>if</b>(this.activePanel){
+            <b>this</b>.remove(<b>this</b>.activePanel);
+        }
+    },
+    
+    collapseClick : <b>function</b>(e){
+       <b>if</b>(this.isSlid){
+           e.stopPropagation();
+           <b>this</b>.slideIn();
+       }<b>else</b>{
+           e.stopPropagation();
+           <b>this</b>.slideOut();
+       }   
+    },
+    
+    <i>/**
+     * Collapses <b>this</b> region.
+     * @param {Boolean} skipAnim (optional) true to collapse the element without animation (<b>if</b> animate is true)
+     */</i>
+    collapse : <b>function</b>(skipAnim){
+        <b>if</b>(this.collapsed) <b>return</b>;
+        <b>this</b>.collapsed = true;
+        <b>if</b>(this.split){
+            <b>this</b>.split.el.hide();
+        }
+        <b>if</b>(this.config.animate &amp;&amp; skipAnim !== true){
+            <b>this</b>.fireEvent('invalidated', <b>this</b>);    
+            <b>this</b>.animateCollapse();
+        }<b>else</b>{
+            <b>this</b>.el.setLocation(-20000,-20000);
+            <b>this</b>.el.hide();
+            <b>this</b>.collapsedEl.show();
+            <b>this</b>.fireEvent('collapsed', <b>this</b>);
+            <b>this</b>.fireEvent('invalidated', <b>this</b>); 
+        }
+    },
+    
+    animateCollapse : <b>function</b>(){
+        <i>// overridden</i>
+    },
+    
+    <i>/**
+     * Expand <b>this</b> region <b>if</b> it was previously collapsed.
+     * @param {YAHOO.ext.EventObject} e The event that triggered the expand (or null <b>if</b> calling manually)
+     * @param {Boolean} skipAnim (optional) true to expand the element without animation (<b>if</b> animate is true)
+     */</i>
+    expand : <b>function</b>(e, skipAnim){
+        <b>if</b>(e) e.stopPropagation();
+        <b>if</b>(!<b>this</b>.collapsed) <b>return</b>;
+        <b>if</b>(this.isSlid){
+            <b>this</b>.slideIn(<b>this</b>.expand.createDelegate(<b>this</b>));
+            <b>return</b>;
+        }
+        <b>this</b>.collapsed = false;
+        <b>this</b>.el.show();
+        <b>if</b>(this.config.animate &amp;&amp; skipAnim !== true){
+            <b>this</b>.animateExpand();
+        }<b>else</b>{
+            <b>if</b>(this.split){
+                <b>this</b>.split.el.show();
+            }
+            <b>this</b>.collapsedEl.setLocation(-2000,-2000);
+            <b>this</b>.collapsedEl.hide();
+            <b>this</b>.fireEvent('invalidated', <b>this</b>);
+            <b>this</b>.fireEvent('expanded', <b>this</b>);
+        }
+    },
+    
+    animateExpand : <b>function</b>(){
+        <i>// overridden</i>
+    },
+    
+    initTabs : <b>function</b>(){
+        <b>this</b>.bodyEl.setStyle('overflow', 'hidden');
+        <b>var</b> ts = <b>new</b> YAHOO.ext.TabPanel(<b>this</b>.bodyEl.dom, <b>this</b>.bottomTabs);
+        <b>this</b>.tabs = ts;
+        ts.resizeTabs = <b>this</b>.config.resizeTabs === true;
+        ts.minTabWidth = <b>this</b>.config.minTabWidth || 40;
+        ts.maxTabWidth = <b>this</b>.config.maxTabWidth || 250;
+        ts.preferredTabWidth = <b>this</b>.config.preferredTabWidth || 150;
+        ts.monitorResize = false;
+        ts.bodyEl.setStyle('overflow', <b>this</b>.config.autoScroll ? 'auto' : 'hidden');
+        <b>this</b>.panels.each(<b>this</b>.initPanelAsTab, <b>this</b>);
+    },
+    
+    initPanelAsTab : <b>function</b>(panel){
+        <b>var</b> ti = <b>this</b>.tabs.addTab(panel.getEl().id, panel.getTitle(), null, 
+                    <b>this</b>.config.closeOnTab &amp;&amp; panel.isClosable());
+        ti.on('activate', <b>function</b>(){ 
+              <b>this</b>.setActivePanel(panel); 
+        }, <b>this</b>, true);
+        <b>if</b>(this.config.closeOnTab){
+            ti.on('beforeclose', <b>function</b>(t, e){
+                e.cancel = true;
+                <b>this</b>.remove(panel);
+            }, <b>this</b>, true);
+        }
+        <b>return</b> ti;
+    },
+    
+    updatePanelTitle : <b>function</b>(panel, title){
+        <b>if</b>(this.activePanel == panel){
+            <b>this</b>.updateTitle(title);
+        }
+        <b>if</b>(this.tabs){
+            <b>this</b>.tabs.getTab(panel.getEl().id).setText(title);
+        }
+    },
+    
+    updateTitle : <b>function</b>(title){
+        <b>if</b>(this.titleTextEl &amp;&amp; !<b>this</b>.config.title){
+            <b>this</b>.titleTextEl.innerHTML = (<b>typeof</b> title != 'undefined' &amp;&amp; title.length &gt; 0 ? title : &quot;&amp;#160;&quot;);
+        }
+    },
+    
+    setActivePanel : <b>function</b>(panel){
+        panel = <b>this</b>.getPanel(panel);
+        <b>if</b>(this.activePanel &amp;&amp; <b>this</b>.activePanel != panel){
+            <b>this</b>.activePanel.setActiveState(false);
+        }
+        <b>this</b>.activePanel = panel;
+        panel.setActiveState(true);
+        <b>if</b>(this.panelSize){
+            panel.setSize(<b>this</b>.panelSize.width, <b>this</b>.panelSize.height);
+        }
+        <b>this</b>.closeBtn.setVisible(!<b>this</b>.config.closeOnTab &amp;&amp; !<b>this</b>.isSlid &amp;&amp; panel.isClosable());
+        <b>this</b>.updateTitle(panel.getTitle());
+        <b>this</b>.fireEvent('panelactivated', <b>this</b>, panel);
+        <i>/*
+        <b>if</b>(this.dd &amp;&amp; !panel.enableDD){
+            <b>this</b>.dd.lock();
+        }*/</i>
+    },
+    
+    <i>/**
+     * Show the specified panel.
+     * @param {Number/String/ContentPanel} panelId The panels index, id or the panel itself
+     * @<b>return</b> {YAHOO.ext.ContentPanel} The shown panel or null
+     */</i>
+    showPanel : <b>function</b>(panel){
+        <b>if</b>(panel = <b>this</b>.getPanel(panel)){
+            <b>if</b>(this.tabs){
+                <b>this</b>.tabs.activate(panel.getEl().id);
+            }<b>else</b>{
+                <b>this</b>.setActivePanel(panel);
+            }
+        }
+        <b>return</b> panel;
+    },
+    
+    <i>/**
+     * Get the active panel <b>for</b> this region.
+     * @<b>return</b> {YAHOO.ext.ContentPanel} The active panel or null
+     */</i>
+    getActivePanel : <b>function</b>(){
+        <b>return</b> this.activePanel;
+    },
+    
+    validateVisibility : <b>function</b>(){
+        <b>if</b>(this.panels.getCount() &lt; 1){
+            <b>this</b>.updateTitle('&amp;#160;');
+            <b>this</b>.closeBtn.hide();
+            <b>this</b>.hide();
+        }<b>else</b>{
+            <b>if</b>(!<b>this</b>.isVisible()){
+                <b>this</b>.show();
+            }
+        }
+    },
+    
+    <i>/**
+     * Add the passed ContentPanel(s)
+     * @param {ContentPanel...} panel The ContentPanel(s) to add (you can pass more than one)
+     * @<b>return</b> {YAHOO.ext.ContentPanel} The panel added (<b>if</b> only one was added)
+     */</i>
+    add : <b>function</b>(panel){
+        <b>if</b>(arguments.length &gt; 1){
+            <b>for</b>(var i = 0, len = arguments.length; i &lt; len; i++) {
+            	<b>this</b>.add(arguments[i]);
+            }
+            <b>return</b> null;
+        }
+        <b>if</b>(this.hasPanel(panel)){
+            <b>this</b>.showPanel(panel);
+            <b>return</b> panel;
+        }
+        panel.setRegion(<b>this</b>);
+        <b>this</b>.panels.add(panel);
+        <b>if</b>(this.panels.getCount() == 1 &amp;&amp; !<b>this</b>.config.alwaysShowTabs){
+            <b>this</b>.bodyEl.dom.appendChild(panel.getEl().dom);
+            <b>this</b>.setActivePanel(panel);
+            <b>this</b>.fireEvent('paneladded', <b>this</b>, panel);
+            <b>return</b> panel;
+        }
+        <b>if</b>(!<b>this</b>.tabs){
+            <b>this</b>.initTabs();
+        }<b>else</b>{
+            <b>this</b>.initPanelAsTab(panel);
+        }
+        <b>this</b>.tabs.activate(panel.getEl().id);
+        <b>this</b>.fireEvent('paneladded', <b>this</b>, panel);
+        <b>return</b> panel;
+    },
+    
+    <i>/**
+     * Returns true <b>if</b> the panel is <b>in</b> this region.
+     * @param {Number/String/ContentPanel} panel The panels index, id or the panel itself
+     * @<b>return</b> {Boolean}
+     */</i>
+    hasPanel : <b>function</b>(panel){
+        <b>if</b>(typeof panel == 'object'){ <i>// must be panel obj</i>
+            panel = panel.getId();
+        }
+        <b>return</b> this.getPanel(panel) ? true : false;
+    },
+    
+    <i>/**
+     * Hides the tab <b>for</b> the specified panel.
+     * @param {Number/String/ContentPanel} panel The panels index, id or the panel itself
+     */</i>
+    hidePanel : <b>function</b>(panel){
+        <b>if</b>(this.tabs &amp;&amp; (panel = <b>this</b>.getPanel(panel))){
+            <b>this</b>.tabs.hideTab(panel.getEl().id);
+        }
+    },
+    
+    <i>/**
+     * Unhides the tab <b>for</b> a previously hidden panel.
+     * @param {Number/String/ContentPanel} panel The panels index, id or the panel itself
+     */</i>
+    unhidePanel : <b>function</b>(panel){
+        <b>if</b>(this.tabs &amp;&amp; (panel = <b>this</b>.getPanel(panel))){
+            <b>this</b>.tabs.unhideTab(panel.getEl().id);
+        }
+    },
+    
+    clearPanels : <b>function</b>(){
+        <b>while</b>(this.panels.getCount() &gt; 0){
+             <b>this</b>.remove(<b>this</b>.panels.first());
+        }
+    },
+    
+    <i>/**
+     * Removes the specified panel. If preservePanel is not true (either here or <b>in</b> the config), the panel is destroyed.
+     * @param {Number/String/ContentPanel} panel The panels index, id or the panel itself
+     * @param {Boolean} preservePanel Overrides the config preservePanel option
+     * @<b>return</b> {YAHOO.ext.ContentPanel} The panel that was removed
+     */</i>
+    remove : <b>function</b>(panel, preservePanel){
+        panel = <b>this</b>.getPanel(panel);
+        <b>if</b>(!panel){
+            <b>return</b> null;
+        }
+        <b>var</b> e = {};
+        <b>this</b>.fireEvent('beforeremove', <b>this</b>, panel, e);
+        <b>if</b>(e.cancel === true){
+            <b>return</b> null;
+        }
+        preservePanel = (<b>typeof</b> preservePanel != 'undefined' ? preservePanel : (<b>this</b>.config.preservePanels === true || panel.preserve === true));
+        <b>var</b> panelId = panel.getId();
+        <b>this</b>.panels.removeKey(panelId);
+        <b>if</b>(preservePanel){
+            document.body.appendChild(panel.getEl().dom);
+        }
+        <b>if</b>(this.tabs){
+            <b>this</b>.tabs.removeTab(panel.getEl().id);
+        }<b>else</b> if (!preservePanel){
+            <b>this</b>.bodyEl.dom.removeChild(panel.getEl().dom);
+        }
+        <b>if</b>(this.panels.getCount() == 1 &amp;&amp; <b>this</b>.tabs &amp;&amp; !<b>this</b>.config.alwaysShowTabs){
+            <b>var</b> p = <b>this</b>.panels.first();
+            <b>var</b> tempEl = document.createElement('span'); <i>// temp holder to keep IE from deleting the node</i>
+            tempEl.appendChild(p.getEl().dom);
+            <b>this</b>.bodyEl.update('');
+            <b>this</b>.bodyEl.dom.appendChild(p.getEl().dom);
+            tempEl = null;
+            <b>this</b>.updateTitle(p.getTitle());
+            <b>this</b>.tabs = null;
+            <b>this</b>.bodyEl.setStyle('overflow', <b>this</b>.config.autoScroll ? 'auto' : 'hidden');
+            <b>this</b>.setActivePanel(p);
+        }
+        panel.setRegion(null);
+        <b>if</b>(this.activePanel == panel){
+            <b>this</b>.activePanel = null;
+        }
+        <b>if</b>(this.config.autoDestroy !== false &amp;&amp; preservePanel !== true){
+            try{panel.destroy();}catch(e){}
+        }
+        <b>this</b>.fireEvent('panelremoved', <b>this</b>, panel);
+        <b>return</b> panel;
+    },
+    
+    <i>/**
+     * Returns the TabPanel component used by <b>this</b> region
+     * @<b>return</b> {YAHOO.ext.TabPanel}
+     */</i>
+    getTabs : <b>function</b>(){
+        <b>return</b> this.tabs;    
+    },
+    
+    <i>/**
+     * Returns the panel specified or null <b>if</b> it's not <b>in</b> this region.
+     * @param {Number/String/ContentPanel} panel The panels index, id or the panel itself
+     * @<b>return</b> {YAHOO.ext.ContentPanel}
+     */</i>
+    getPanel : <b>function</b>(id){
+        <b>if</b>(typeof id == 'object'){ <i>// must be panel obj</i>
+            <b>return</b> id;
+        }
+        <b>return</b> this.panels.get(id);
+    },
+    
+    <i>/**
+     * Returns <b>this</b> regions position (north/south/east/west/center).
+     * @<b>return</b> {String} 
+     */</i>
+    getPosition: <b>function</b>(){
+        <b>return</b> this.position;    
+    },
+    
+    createTool : <b>function</b>(parentEl, className){
+        <b>var</b> btn = YAHOO.ext.DomHelper.append(parentEl, {tag: 'div', cls: 'ylayout-tools-button', 
+            children: [{tag: 'div', cls: 'ylayout-tools-button-inner ' + className, html: '&amp;#160;'}]}, true);
+        btn.addClassOnOver('ylayout-tools-button-over');
+        <b>return</b> btn;
+    }
+});</code></pre><hr><div style="font-size:10px;text-align:center;color:gray;">yui-ext - Copyright &copy; 2006 Jack Slocum.  |
+    Yahoo! UI - Copyright &copy; 2006 Yahoo! Inc.<br />All rights reserved.</div>
+    </body></html>

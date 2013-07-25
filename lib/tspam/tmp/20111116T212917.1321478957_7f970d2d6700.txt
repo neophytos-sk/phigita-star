@@ -1,0 +1,15 @@
+Received: from vjxk (unknown [110.52.7.163])
+	by websmtp.sohu.com (Postfix) with ESMTPA id 97D1F3A5A1AB;
+	Thu, 17 Nov 2011 04:49:56 +0800 (CST) 
+Message-ID: <20111117044858230351@sohu.com> 
+From: =?gb2312?B?0aawst3m?= <shaopanu49n0@sohu.com> 
+To:  
+Subject: =?gb2312?B?yKsuxNwu0M0us7UuvOQu1vcuyM4uyrUu1b0uvLwu?=
+	=?gb2312?B?xNwu0bUuwbctLS0t0aawst3m?= 
+Date: Thu, 17 Nov 2011 04:48:44 +0800 
+X-mailer: Hepiufycdc 8 
+X-CMAE-Analysis: cmae content reject 
+X-DSPAM-Analysis: dspam content reject 
+X-SOHU-Antispam-Language: 1 
+X-SOHU-Antispam-Bayes: 999 
+Whoops!  What is a 'application/vnd.ms-excel'?

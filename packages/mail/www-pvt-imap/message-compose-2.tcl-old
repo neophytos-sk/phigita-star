@@ -1,0 +1,41 @@
+ad_page_contract {
+    @author Neophytos Demetriou (k2pts@phigita.net)
+} {
+    form_compose.to
+    form_compose.cc
+    form_compose.bcc
+    form_compose.subject
+    form_compose.body
+    {reply_to ""}
+    {rr ""}
+}
+
+#set mailhost [ns_config ns/parameters mailhost]
+
+
+set from "k2pts@phigita.net"
+foreach varname {to cc bcc subject body} {
+    set $varname [set form_compose.$varname]
+}
+
+set Version "Squanti Mail 0.1d" 
+set hdrs [ns_set new]
+ns_set put $hdrs X-Mailer $Version
+ns_set put $hdrs "MIME-Version" "1.0"
+if { $reply_to != "" } { ns_set update $hdrs Reply-To $reply_to }
+# Message return receipt
+if { $rr != "" } { ns_set put $hdrs Disposition-Notification-To $from }
+
+set text $body
+
+if { [catch { ns_sendmail $to \
+		  $from \
+		  $subject \
+		  $text \
+		  $hdrs \
+		  $bcc} errMsg] } {
+    error "Unable to send message: $errMsg"
+}
+
+
+doc_return 200 text/html "Message Sent"

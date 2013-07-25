@@ -1,0 +1,24 @@
+% Computer Modern Blackboard Slanted Typewriter Text
+%
+% font v ?.? 29/03/1993, sauterised v1.0 15/11/1995
+%
+% Author :         Gilles F. ROBERT
+% sauterisation : Hubert HOLIN
+
+if unknown blbbase: input blbbase fi
+
+font_identifier:="CMBBSLTT"; font_size design_size * pt#;
+
+% This font is a modification of Computer Modern Typewriter Text.
+
+input c-cmtt;
+
+slant:=             % tilt ratio $(\Delta x/\Delta y)$
+    1/6;
+
+interspace#:=jut#;    % space between the doubled bars
+
+cap_interspace#:= cap_jut#;   % same for uppercase letters
+
+generate blbord      % switch to the driver file
+

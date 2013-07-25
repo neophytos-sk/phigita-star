@@ -1,0 +1,10 @@
+Received: from 186.82.53.64 by added-value.com.s200b1.psmtp.com; Tue, 23 Aug 2011 09:53:16 -0500 
+Date: Tue, 23 Aug 2011 09:53:16 -0500 
+From: =?koi8-r?B?IvPPwtPU18XOzsnLIg==?= <gallegosm9@added-value.com> 
+X-Mailer: The Bat! (v3.51) Educational 
+Reply-To: gallegosm9@added-value.com 
+X-Priority: 3 (Normal) 
+Message-ID: <539949622.40364604484532@added-value.com> 
+To: webmaster@phigita.net 
+Subject: =?koi8-r?B?8NLRzcHRIMHSxc7EwSDPxsnTz9chIO3F1NLPIC0g7cHS2MnOwSDyz93B?= 
+

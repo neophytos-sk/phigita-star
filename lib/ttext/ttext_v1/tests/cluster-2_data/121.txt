@@ -1,0 +1,66 @@
+Microsoft 
+
+Different strokes
+
+Mar 25th 2004 
+From The Economist print edition
+
+
+Is the EU ruling against Microsoft merely a case of history repeating
+itself? Actually, no
+AP 
+ 
+ 
+
+ 
+STOP us if you've heard this one before. Microsoft, the world's
+largest software company, has been found guilty of abusing its
+monopoly. Its crime was to stifle competition by including( ) another
+of its programs with every copy of its Windows operating system, which
+is installed on over 90% of PCsbiquity of Microsoft's program, and
+squeezing out its main rival. Regulators have proposed remedies to
+punish Microsoft; the company plans to appeal; the case will probably
+drag on for several more years.
+
+All of this was true four years ago, and all of it is true again
+today. Last time around, Microsoft fell foul of American trustbusters
+when it used its monopoly to crush Netscape, a maker of web-browsing
+software. This time the ruling has come from Europe's competition
+authorities, after Microsoft used the same trick against RealNetworks,
+a maker of media-playback software. In the American case, the judge
+ordered Microsoft to be broken up. This punishment was overturned on
+appeal in 2001, in effect allowing Microsoft to continue to do
+business as usual. In Europe, the European Commission has imposed
+ashows that it is deeply worried that it might work.
+
+That highlights the key difference between the American and European
+cases. The eventual settlement in America was deliberately
+backward-looking, though it came too late to save Netscape. In the
+case of media-playback software, things are not quite so far advanced:
+RealNetworks has been overtaken by Microsoft, but is still alive and
+kicking. Mr Monti, however, is less interested in righting past wrongs
+than in preventing future ones. During settlement talks, he tried to
+get Microsoft to agree to a set of rules about which bits of Windows
+can be unbundled in future. It was failure to agree on this point that
+derailed the talks last week, and led to this week's ruling.
+
+
+
+The next best thing
+Microsoft's position is that software is such a complicated and
+fast-moving business that no set of rules on unbundling could possibly
+work. Instead, say company officials, each case should be treated
+individually. This, of course, conveniently allows Microsoft to
+continue to do as it pleases: it takes years for each case to work its
+way through the courts, and by then Microsoft's bundling has achieved
+the desired effect. The European Commission has realised this, and has
+tried to fashion a remedy that deals with the causes, rather than just
+the symptoms, of Microsoft's monopolistic practices. 
+
+A break-up of the entire firm would have been cleaner. Mr Monti's
+unbundling remedy will be difficult to apply, it may not survive an
+appeal, and it may not slow the Microsoft juggernaut even if it
+does. And yet, if competition is to be preserved and encouraged in the
+software industry, it is definitely worth a try. 
+
+

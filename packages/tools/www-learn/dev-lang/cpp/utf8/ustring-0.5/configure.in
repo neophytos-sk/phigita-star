@@ -1,0 +1,79 @@
+dnl Process this file with autoconf to produce a configure script.
+AC_INIT(WString.cc)
+
+dnl Checks for programs.
+AC_PROG_CC
+AC_PROG_RANLIB
+
+dnl Checks for libraries.
+
+dnl Checks for header files.
+AC_CHECK_HEADER(stdint.h, AC_DEFINE(HAVE_STDINT_H))
+
+dnl Checks for typedefs, structures, and compiler characteristics.
+AC_C_CONST
+AC_C_INLINE
+AC_TYPE_SIZE_T
+AC_C_BIGENDIAN
+AC_CHECK_SIZEOF(unsigned short int, 2)
+AC_CHECK_SIZEOF(unsigned long int, 4)
+AC_PROG_INSTALL
+
+dnl Checks for library functions.
+AC_CHECK_FUNCS(strtol)
+AC_CHECK_FUNCS(iconv)
+AC_CHECK_FUNCS(ntohs)
+
+dnl misc
+ucs4=no
+AC_ARG_ENABLE(UCS4, --enable-UCS4 : Use 32-bit wide char instead of 16-bit (using twice the memory)., AC_DEFINE(USE_UCS4) ucs4=yes)
+
+if test $ucs4 = yes; then
+ AC_DEFINE(INTERNAL_ICONV_TYPE_UCS4)
+ ucs=4
+fi
+if test $ucs4 = no; then
+ AC_DEFINE(INTERNAL_ICONV_TYPE_UCS2)
+  ucs=2
+fi
+
+dnl
+dnl
+dnl
+AC_MSG_CHECKING([whether iconv supports UCS-$ucs conversion])
+AC_TRY_RUN([#include <iconv.h>
+int main()
+{
+  iconv_t enc = iconv_open("ISO-8859-1", "UCS-$ucs");
+  if (enc == (iconv_t)-1)
+    exit(1);
+  iconv_close(enc); 
+  enc = iconv_open("UCS-$ucs", "ISO-8859-1");
+  if (enc == (iconv_t)-1)
+    exit(1);
+  iconv_close(enc); 
+  exit(0);
+}], AC_MSG_RESULT(yes), AC_MSG_RESULT(no) ; AC_MSG_ERROR([Your local iconv implementation does not support the UCS-$ucs encoding. Please check the documentation for information on how to fix this.]),
+echo NOT SUPPORTED WHILE CROSS-COMPILING)
+
+dnl
+dnl
+dnl
+AC_MSG_CHECKING([whether iconv supports UTF-8 conversion])
+AC_TRY_RUN([#include <iconv.h>
+int main()
+{
+  iconv_t enc = iconv_open("UTF-8", "UCS-$ucs");
+  if (enc == (iconv_t)-1)
+    exit(1);
+  iconv_close(enc); 
+  enc = iconv_open("UCS-$ucs", "UTF-8");
+  if (enc == (iconv_t)-1)
+    exit(1);
+  iconv_close(enc); 
+  exit(0);
+}], AC_MSG_RESULT(yes), AC_MSG_RESULT(no) ; AC_MSG_WARN([Your local iconv implementation does not support the UTF-8 encoding. 
+Please check the documentation for information on how to fix this.]), echo NOT SUPPORTED WHILE CROSS-COMPILING)
+
+
+AC_OUTPUT(Makefile tests/Makefile)

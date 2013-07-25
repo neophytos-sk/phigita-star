@@ -1,0 +1,19 @@
+Return-path: <webmaster@phigita.net> 
+Received: from [89.179.73.155] (port=8811 helo=LEONENKOVA)
+	by rcifire.com with asmtp 
+	id 06904B-000054-44
+	for <webmaster@phigita.net>; Mon, 21 Nov 2011 13:35:06 +0300 
+Message-ID: <7CA4787353A243F1A0ECB5C7701DC680@LEONENKOVA> 
+From: =?koi8-r?B?IuLPztPByiDHwczF0sXRIg==?= <begrudgesx66@rcifire.com> 
+To: <webmaster@phigita.net> 
+Subject: =?koi8-r?B?8sHT0NLPxMHWwSDR0M/O08vJyCDCz87TwcouIPDPxMHSz8sgzsEgxM/M?=
+	=?koi8-r?B?x8nFIMfPxNk=?= 
+Date: Mon, 21 Nov 2011 13:35:06 +0300 
+X-Priority: 3 
+X-MSMail-Priority: Normal 
+X-Mailer: Microsoft Windows Mail 6.0.6001.18000 
+X-MimeOLE: Produced By Microsoft MimeOLE V6.0.6001.18049 
+X-Spam: Not detected 
+X-Mras: Ok 
+X-Antivirus: avast! (VPS 111121-0, 21.11.2011), Outbound message 
+X-Antivirus-Status: Clean 

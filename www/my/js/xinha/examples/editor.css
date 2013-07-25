@@ -1,0 +1,29 @@
+body,td,font,.p,p,.stx,a{font-family:"Arial Unicode MS",Arial,helvetica,sans-serif;}
+
+pre {
+	font-family:"Arial Unicode MS",Arial; 
+	padding: 1em; 
+	border: 1px solid #8cacbb; 
+	color: black; 
+	background-color: #dee7ec;
+	white-space:normal;
+}
+
+code, h6 {
+    background-color: rgb(224, 224, 224);
+    color: rgb(128, 32, 32);
+    font-weight: bold;
+    font-family: monospace;
+    font-size: 1.25em;
+    white-space: pre;
+    overflow-x: auto;
+    overflow-y: auto;
+}
+
+highlight
+{
+    font-size: 120%;
+    color: Black;
+    background-color: rgb(222, 231, 236);
+    white-space: pre;
+}

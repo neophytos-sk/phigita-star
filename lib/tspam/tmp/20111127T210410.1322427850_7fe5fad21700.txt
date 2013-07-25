@@ -1,0 +1,10 @@
+Received: from qu([110.52.6.192])
+  by cnpt-mail[192.1.10.2](Aerofox Mail Server 1.1.0.1) with SMTP; Mon, 28 Nov 2011 4:57:47 +0800 
+Sender: gping@cnpt.com.cn 
+Message-ID: <20111128050012336203@cnpt.com.cn> 
+From: =?gb2312?B?zrrDwOW2?= <jsaun@qxrpln.com> 
+To:  
+Subject: =?gb2312?B?s8mplrmmqZa1xKmWsvqplsa3qZa+ramWwO01NjI2MjE=?= 
+Date: Mon, 28 Nov 2011 04:59:59 +0800 
+X-mailer: Krqwc 1 
+

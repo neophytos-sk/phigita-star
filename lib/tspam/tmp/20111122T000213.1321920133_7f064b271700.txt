@@ -1,0 +1,82 @@
+Received: by web2.extjs.com (Postfix, from userid 33)
+	id 6F29D6C1F2; Tue, 22 Nov 2011 00:02:04 +0000 (UTC) 
+To: k2pts@phigita.net 
+Subject: "Ext: Open Discussion" update 
+X-PHP-Originating-Script: 1000:class_mail.php 
+From: "Sencha Forum" <admin@sencha.com> 
+Auto-Submitted: auto-generated 
+Message-ID: <20111122000204.1b1d7c363806@www.sencha.com> 
+X-Priority: 3 
+X-Mailer: vBulletin Mail via PHP 
+Date: Tue, 22 Nov 2011 00:02:04 +0000 (UTC) 
+--------------------------------------
+Dear k2pts,
+
+You are subscribed to the forum Ext: Open Discussion, there have been 4 new thread(s) and 4 updated thread(s).
+http://www.sencha.com/forum/forumdisplay.php?6-Ext-Open-Discussion
+
+The following threads are new:
+************
+How to get values from database??
+http://www.sencha.com/forum/showthread.php?156415-How-to-get-values-from-database
+In forum: Ext: Open Discussion
+Started by: roymj88
+Last post: 21 Nov 2011 9:34 AM
+************
+How to get a clue about "c is not a constructor"
+http://www.sencha.com/forum/showthread.php?156370-How-to-get-a-clue-about-quot-c-is-not-a-constructor-quot
+In forum: Ext: Open Discussion
+Started by: jpss
+Last post: 21 Nov 2011 1:31 PM
+************
+How to load additional records into the store/keep previous while loading new ones
+http://www.sencha.com/forum/showthread.php?156466-How-to-load-additional-records-into-the-store-keep-previous-while-loading-new-ones
+In forum: Ext: Open Discussion
+Started by: ItDepends
+Last post: 21 Nov 2011 7:22 PM
+************
+How to get a clue about "reader.read is not a function"?
+http://www.sencha.com/forum/showthread.php?156383-How-to-get-a-clue-about-quot-reader.read-is-not-a-function-quot
+In forum: Ext: Open Discussion
+Started by: jpss
+Last post: 21 Nov 2011 10:44 PM
+
+
+The following threads have been updated:
+************
+i18n in ExtJS-based Apps
+http://www.sencha.com/forum/showthread.php?36570-i18n-in-ExtJS-based-Apps
+In forum: Ext: Open Discussion
+Started by: sam.ds.chen
+Last post: 21 Nov 2011 6:19 AM
+************
+Ext.data.Model unary one2many associations?
+http://www.sencha.com/forum/showthread.php?156355-Ext.data.Model-unary-one2many-associations
+In forum: Ext: Open Discussion
+Started by: dpishchukhin
+Last post: 21 Nov 2011 7:07 AM
+************
+loading content longer than viewport/condor's page scroll method
+http://www.sencha.com/forum/showthread.php?90739-loading-content-longer-than-viewport-condor-s-page-scroll-method
+In forum: Ext: Open Discussion
+Started by: smokeman
+Last post: 21 Nov 2011 9:31 PM
+************
+Need an honest opinion
+http://www.sencha.com/forum/showthread.php?154286-Need-an-honest-opinion
+In forum: Ext: Open Discussion
+Started by: healthformula
+Last post: 21 Nov 2011 10:17 PM
+
+
+All the best,
+Sencha Forum
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Unsubscription information:
+
+To unsubscribe from this forum, please visit this page:
+http://www.sencha.com/forum/subscription.php?do=removesubscription&type=forum&subscriptionid=63&auth=e23de5f6387a31c5573cf4993e28e47f
+
+
+

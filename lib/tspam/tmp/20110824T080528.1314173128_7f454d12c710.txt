@@ -1,0 +1,17 @@
+Return-path: <webmaster@phigita.net> 
+Received: from [119.234.133.36] (port=7128 helo=PADMAN)
+	by smtp.secureserver.net with asmtp 
+	id 920D6F-000551-71
+	for <webmaster@phigita.net>; Wed, 24 Aug 2011 16:04:32 +0800 
+Message-ID: <EF1A78C435C643DF84359534B3373773@PADMAN> 
+From: =?koi8-r?B?IuvBzcnO2SDJIPDF3ski?= <pompousnessqf@mbs-intl.com> 
+To: <webmaster@phigita.net> 
+Subject: =?koi8-r?B?8MXeyS3Lwc3JztksIMLB0sLFy8AsIM/Uz9DJ1MXM2M7PLdfB0s/eztnF?=
+	=?koi8-r?B?INDF3sksIMTZzc/Iz8TZLCDczMXL1NLJ3sXTy8nFIMvBzcnO2Q==?= 
+Date: Wed, 24 Aug 2011 16:04:32 +0800 
+X-Priority: 3 
+X-MSMail-Priority: Normal 
+X-Mailer: Microsoft Windows Mail 6.0.6001.18000 
+X-MimeOLE: Produced By Microsoft MimeOLE V6.0.6001.18049 
+X-Spam: Not detected 
+X-Mras: Ok 

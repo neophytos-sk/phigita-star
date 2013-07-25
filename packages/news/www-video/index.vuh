@@ -1,0 +1,28 @@
+ad_page_contract {
+    @author Neophytos Demetriou
+}
+
+#set video_id [join [lrange [split [ad_conn extra_url] /] 1 end]]
+#set video_id [lindex $video_id end]
+
+set video_id [ad_conn extra_url]
+ns_log notice "peeraddr=[ad_conn peeraddr] video_id=$video_id"
+
+set url http://www.youtube.com/v/$video_id
+
+if { $video_id ne {}  } {
+
+    rp_form_put url $url
+    rp_form_put video_id $video_id
+    if { 1 } {
+	rp_internal_redirect /packages/news/tmpl-video/video-one
+    } else {
+	rp_returnnotfound
+    }
+
+
+} else {
+
+    rp_internal_redirect /packages/news/tmpl-video/video-list
+
+}

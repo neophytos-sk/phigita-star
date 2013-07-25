@@ -1,0 +1,206 @@
+set limit 10
+set limit_plus_one [expr {1+${limit}}]
+
+contract {
+    param -id "tag" -check "notnull" -optional "1"
+    param -id "offset" -check "naturalnum" -default "0" -optional "1"
+}
+
+val -id user_id { return [ad_conn user_id] }
+val -id context_user_id { return [ad_conn ctx_uid] }
+val -id limit "return ${limit}"
+
+datastore \
+    -id userdata \
+    -singleton true \
+    -select {
+	screen_name
+	{first_names || ' ' || last_name as full_name}
+    } \
+    -from_class ::CC_Users \
+    -where [list "user_id=:context_user_id"] \
+    -limit 1
+
+datastore \
+    -id echodata \
+    -scope context_user \
+    -from_class ::echo::Message \
+    -where_if {
+	"@{user_id} == 0" => "public_p='t'"
+    } \
+    -order "creation_date desc" \
+    -offset @{offset} \
+    -limit ${limit_plus_one} \
+    -extend {
+	set content_in_html [::xo::structured_text::minitext_to_html $content]
+	set pretty_date [::util::age_pretty \
+			       -timestamp_ansi $creation_date \
+			       -sysdate_ansi [clock_to_ansi [clock seconds]]]
+
+	set last_comment__content ""
+	set last_comment__screen_name ""
+	if { $last_comment ne {} } {
+	    array set last_comment_arr $last_comment
+	    set last_comment__content [::xo::structured_text::minitext_to_html \
+					   $last_comment_arr(content)]
+	    set last_comment__screen_name $last_comment_arr(screen_name)
+	}
+    }
+
+
+val -id prev_url { 
+    set offset [expr { @{offset} - @{limit} }]
+    if { $offset <= 0 } { set offset "" }
+    export_vars -url -base "." -no_empty offset  
+}
+
+val -id next_url { 
+    set offset [expr { @{offset} + @{limit} }]
+    export_vars -url -base "." -no_empty offset 
+}
+
+# for includelet
+val -id selectedtab { return "echo" }
+
+# ---------------------------------------------------------------------------------------------
+
+css { 
+    .special_tag {color: #600;}
+    #echo-header {color: #660;}
+    #echo_file_0 {margin-top:5px;}
+    #echo_file_0 a {color: #666; }
+    .echo-message {margin: 0 0 7px;padding: 0 0 0 5px;font-size:small;background:#eee;}
+    .echo-message small {
+	display: block;
+	line-height: 20px;
+	color: #999999;
+    }
+    .echo-message small:before {
+	content: '-- ';
+    }
+    .echo-message small a { color: #666; }
+    .echo-comment {margin: 0 0 10px 20px;padding: 0 0 0 10px;border-left: 1px dashed #aaa;}
+    .echo-comment a { color: #666; }
+    .echo_action {
+	width:40px;
+    }
+
+}
+
+js -deps {
+    kernel/lib/base.js
+    kernel/lib/event.js
+    kernel/lib/dom.js
+    kernel/lib/DomHelper.js
+    xo-messaging/lib/echo2.js
+} -names {
+    ch-cnt-neg ch-cnt-pos
+}
+
+
+master -src "/templates/www-shared.master.inc" -title "echo - @{object_get.userdata.full_name}" {
+    include -src "/templates/www-shared.tabs.inc"
+
+    tpl -if "@{echodata:rowcount}" {
+	tpl -for "echodata" -limit ${limit} {
+
+	    div -class "echo-message" {
+		nt @{content_in_html:noquote}
+		small {
+		    a -href "/~@{object_get.userdata.screen_name}/echo/@{id}" {
+			t "@{pretty_date} via @{device}"
+		    }
+		    tpl -if "@{public_p}" {
+			nt " &#183; "
+			span -class "special_tag" {
+			    t "#public"
+			}
+		    }
+		    tpl -if "@{val.registered_p}" {
+			nt " &#183; "
+			a -href "#" -onclick "return echo.cbox(@{id})" {
+			    t "comment"
+			}
+		    }
+		    tpl -if "@{val.user_id} == @{creation_user}" {
+			nt " &#183; "
+			a -href "http://echo.phigita.net/message-remove?id=@{id}&return_url=http://www.phigita.net" -onclick "return confirm('Sure you want to delete this update? There is NO undo!');" {
+			    t "remove"
+			}
+		    }
+		}
+	    }
+	    tpl -if "@{cnt_comment}>0" {
+		div -class "echo-comment" {
+		    small {
+			tpl -if "@{cnt_comment} == 1" { 
+			    a -href "/~@{object_get.userdata.screen_name}/echo/@{id}" {
+				t "@{cnt_comment} comment"
+			    }
+			    t ", by " 
+			}
+			tpl -if "@{cnt_comment} > 1" {
+			    a -href "/~@{object_get.userdata.screen_name}/echo/@{id}" {
+				t "@{cnt_comment} comments"
+			    }
+			    t ", last by " 
+			}
+			a -href "/~@{last_comment__screen_name}/" { 
+			    t @{last_comment__screen_name}
+			}
+		    }
+		    div {
+			nt @{last_comment__content:noquote}
+		    }
+		}
+	    }
+	    span -id cbox_@{id}	
+	}
+
+	# comment form
+	set action_comment_add "http://echo.phigita.net/comment-add"
+	div -id echo_comment_box -style "display:none;" {
+	    form -action ${action_comment_add} -method "post" {
+		input -id echo_parent_id -type "hidden" -name parent_id -value ""
+		textarea -id echo_comment_text -name content -rows "2" -wrap soft  -style "width:95%;line-height:1.15em;overflow:hidden;font-size:1.15em;border:1px solid #aaa;"
+		div {
+		    button -type submit -style "font-size:10px;" { t "Add Comment" }
+		    t " "
+		    a -class "fl xs" -href "#" -title "Hide" -onclick "return echo.hide('echo_comment_box');" { 
+			t "\[x\]"
+		    }
+		}
+	    }
+	}
+
+
+    }
+    tpl -else "" {
+	t "None Yet"
+    }
+
+    div -x-master-renderTo "sidebar" {
+	p
+	div -style "text-align:center;" {
+	    tpl -if "@{offset} > 0 || @{echodata:rowcount} == ${limit_plus_one}" {
+		div -class "sidebar-heading" {
+		    t "Navigate" 
+		}
+		p
+		span -style "background:#ccc;padding:2px;" {
+		    tpl -if "@{offset} > 0" {
+			a -href "@{prev_url}" { nt "&laquo; Newer" }
+		    }
+		    tpl -if "@{offset} > 0 && @{echodata:rowcount} == ${limit_plus_one}" {
+			t " | "
+		    }
+		    tpl -if "@{echodata:rowcount} == ${limit_plus_one}" {
+			a -href "@{next_url}" { nt "Older &raquo;" }
+		    }
+		}
+	    }
+	}
+    }
+
+}
+

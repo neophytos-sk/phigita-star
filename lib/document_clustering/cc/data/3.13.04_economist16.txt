@@ -1,0 +1,80 @@
+Digital Devide
+
+Beyond the digital divide
+
+Mar 11th 2004 
+From The Economist print edition
+
+
+Development: Amid much worthy talk o f, technology firms have realised
+that fostering the adoption of information technology in the
+developing world would not just benefit locals, but is in vendors'
+best interests as well
+
+AFP 
+ 
+ 
+Aggregated buying power in action
+ 
+
+
+THE gleaming Indian headquarters of Hewlett-Packard, an American
+computing giant, are testament to India's technology-led boom. The
+glass-panelled tower, located on a busy Bangalore thoroughfare, swarms
+with a new breed of well-heeled urban professionals. But inside the
+building, in a warren of cubicles on the second floor, a rather
+different customer is being targeted. Engineers and programmers at HP
+Labs, the company's research arm, are working on low-cost devices for
+the three-quarters of Indians who still live in the countryside. In
+one room, a cheap e-mail device that allows messages to be sent in
+local languages is on display; in another sits a tablet-shaped PC that
+lets users fill out government forms in Indian scripts.
+
+These technologies are part of HP's ambitious plans to sell to the 4
+billion poorest people at the bottom of the global economic
+pyramid. In addition to work being done at the HP Labs, the company
+has also invested resources in it s initiative, a project designed to
+set u p an d around the worldvestments. Several centresell
+airtime. And the Indian Institute of Technology (IIT) in Chennai
+recently unveiled a stripped-down cash-dispenser that it plans to take
+to the masses in partnership with private-sector banks. 
+
+Of course, the idea that the poor constitute an untapped market is
+hardly new. Hindustan Lever, a subsidiary of Unilever, pioneered the
+idea years ago, marketing its shampoos and detergents in single-use
+sachets rather than larger (and more expensive) bottles. But the
+increasing ubiquityrd Business Review in 2002, C. K. Prahalad of the
+University of Michigan and Allen Hammond of the World Resources
+Institute, an environmental think-tank, pointed out that the
+collective buying power of the poor in Rio de Janeiro is $1.2
+billion. Ashok Jhunjhunwala of IIT-Chennai, who has been instrumental
+in bringing several technologies to rural markets, points out that
+there are 600,000 villages in India alone . he says. 
+
+While such numbers are indeed striking, and heartening to would-be
+rural entrepreneurs, the challenge lies in the implementation. Mike
+Best of the Massachusetts Institute of Technology, who has worked in
+rural markets in Africa and Asia, points out that many developing
+countries (he cites Ghana as an example) lack the requisite
+connectivity. In addition, aggregated demand in, say, Madagascar, with
+a population of 17m, is unlikely to yield the same economies of scale
+as in India. And with its multitude of languages and cultures, even
+India poses difficulties. 
+
+Some of the difficulties may have technical solutions. To deal with
+the problem of multiple languages, HP is devising
+character-recognition systems capable of recognising a variety of
+scripts. The engineers at IIT-Chennai are implementing a
+fingerprint-recognition system in their cash dispensersthat would save
+the (often illiterate) villagers from having to remember a personal
+identification number.
+
+But perhaps the best reason to be optimistic is that the companies in
+question are driven by a powerful motivator that is lacking in
+donor-led rural programmes: profit. Mr Tawker, for example, happily
+characterises HP's efforts as a long-term strategic response to
+saturation and slower growth in the company's traditional
+markets. Now, the technologists just have to devise the technological
+equivalent of shampoo sachets. 
+
+

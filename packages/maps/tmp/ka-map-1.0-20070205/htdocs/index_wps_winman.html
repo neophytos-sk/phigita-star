@@ -1,0 +1,236 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--
+/**********************************************************************
+ *
+ * $Id: index_wps_winman.html,v 1.2 2006/12/12 18:44:29 lbecchi Exp $
+ *
+ * purpose: This is the sample ka-Map interface.  Feel free to use it 
+ *          as the basis for your own applications or just to find out
+ *          how ka-Map works.
+ *
+ * author: Paul Spencer (pspencer@dmsolutions.ca)
+ *
+ **********************************************************************
+ *
+ * Copyright (c) 2005, DM Solutions Group Inc.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
+ * DEALINGS IN THE SOFTWARE.
+ *
+ **********************************************************************/
+-->
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>ka-Map!</title>
+<!-- use this to load a compressed version of the api - up to 8 times smaller -->
+<!-- -->
+<script type="text/javascript" src="getcjs.php?name=DHTMLapi.js,xhr.js,kaMap.js,kaKeymap.js,kaLegend.js,kaTool.js,kaQuery.js,scalebar/scalebar.js,tools/rubberzoom/kaRubberZoom.js"></script>
+<!-- -->
+
+<!-- window manager related scripts -->
+<script type="text/javascript" src="tools/winman/dom-drag.js"></script>
+<script type="text/javascript" src="tools/winman/kaWinManager.js"></script>
+
+<script type="text/javascript" src="tools/query/queryLayer.js"></script>
+<script type="text/javascript" src="tools/wps/wpsManager.js"></script>
+<script type="text/javascript" src="tools/wps/wpsLayer.js"></script>
+		
+<script type="text/javascript" src="tools/wps/startUp_winman2.js"></script>
+
+
+<script type="text/javascript">
+		<!-- 
+		//PART TO BE EDITED
+	 		//MODULE VARS
+			var identifier = 'my_identifier';//Identifier name for WPS service
+			var wpsURL = 'http://localhost/cgi-bin/wps.py';//that works with PyWPS only
+			
+			//SERVER VARS
+			//Security risk. this var should be passed inside the include/config.php file
+			//or the pyWPS should use the kamachache dir
+			var wpsCache = '/local/path/my/WPS/cache/dir';//that works with PyWPS only
+		
+			//add SLD styles definitions 
+			addSldURL('Red color table','http://localhost/ka-map/htdocs/tools/wps/sld/sld_red_table.php');
+			addSldURL('Blue color table','http://localhost/ka-map/htdocs/tools/wps/sld/sld_red_table.php');
+
+			//Tip image infos 
+			var tipUrl = 'images/tip-yellow.png';
+			var tipOffsetX = '-19px';// the negative left position of the pointer in the image
+			var tipOffsetY = '-6px';// the negative top position of the pointer in the image
+		//END PART TO BE EDITED
+		-->
+		</script>
+
+
+<link rel="stylesheet" type="text/css" href="scalebar/scalebar-fat.css">
+<link href="tools/kaAqua/screen.css" rel="stylesheet" type="text/css" media="all">
+<link href="tools/kaAqua/tools.css" rel="stylesheet" type="text/css" media="all">
+
+<link href="tools/wps/wps_winman.css" rel="stylesheet" type="text/css" media="all">
+
+</head>
+<body onload="myOnLoad();">
+<div id="viewport">
+<div id="map">
+
+	<div id="scaleReference">
+        <div id="scaleBackground" class="transparentBackground"></div>
+        <div id="miniscalebar"></div>
+        <div id="scale">current scale</div>
+    </div>
+</div>
+
+<!-- top toolbar, title and navigation -->
+
+<div id="toolbar">
+<form action="">
+    <!--<div id="toolbarBackground" class="transparentBackground"></div>-->
+    <!--<div class="kmTitle">ka-Map! Sample Application</div>-->
+    <div style="text-align:center">
+    <select name="maps" id="maps" onchange="mySetMap(this.options[this.selectedIndex].value)">
+        <option value=''>Choose your kaMap!</option>
+        <option value=''>------------------</option>
+    </select>
+    <img id="toolQuery" onclick="switchMode(this.id)" title="Click and drag or double click to query the Map" alt="Click and drag or double click to query the Map" src="images/a_pixel.gif" >
+    <img id="toolPan" onclick="switchMode(this.id)" title="Click and drag to Navigate the Map" alt="Click and drag to Navigate the Map" src="images/a_pixel.gif">
+
+	<div id="kaLogo"><a href="http://ka-map.maptools.org/" target="_blank"><img alt="powered by ka-Map!" src="images/powered_by_kamap_lt.png" border="0" width="60" height="19"></a></div>
+	
+
+    </div>
+</form>
+</div>
+
+
+<div id="keymap"></div>
+
+<div id="blackboard">
+<h1>GRASS Buffer module</h1>
+	<p>
+	<strong>r.los</strong> generates a raster map output in which the cells that are visible from a user-specified observer location are marked with integer values that represent the vertical angle (in degrees) required to see those cells (viewshed).
+    	</p>
+	<p><strong>Usage:</strong> click on map to set <em>coords</em>. Use selects to change <em>distance</em> and
+	<em>height</em> params.<br>
+	Then click on <strong>Go!</strong> button to see overlayed output.
+	</p>
+<p>This window, as the viewport, is resizable. 
+Click on the bottom right button and drag to resize.<br /><br />
+
+You can drag & drop any windows clicking on the top bar.<br /><br />
+
+All windows may be rolled up. <br />
+Click on the top right button and drag to roll up the window.<br />
+Same button to restore window dimensions.
+<br /><br />
+
+<strong>Blackboard</strong> is a space where you can redirect your outputs.<br /> 
+Try the identify function or  "link to this view" function.
+</p>
+</div>
+
+
+    <span id="zoomTools">
+		<img id="toolZoomOut" onclick="myZoomOut();" title="zoom Out" alt="zoom Out" src="images/a_pixel.gif">
+		<span id="zoomer"></span>
+		<img id="toolZoomIn" onclick="myZoomIn()" title="zoom in" alt="zoom in" src="images/a_pixel.gif" >
+		<img id="toolZoomRubber" onclick="switchMode(this.id)" title="rubber zoom" alt="rubber zoom" src="images/a_pixel.gif" >
+    		<img id="toolZoomFull" onclick="getFullExtent()" title="zoom to full extents" alt="zoom to full extents" src="images/a_pixel.gif" >
+		<a id='linkToView' href='#'>link to this view</a>
+		<a id='help' href='#'>help</a>
+    </span>
+<!-- reference information -->
+<div id="reference">
+    
+    <div id="legend"></div>
+</div>
+
+<!-- 
+<div id="description">
+	<h1>GRASS Buffer module</h1>
+	<p>
+	<strong>r.los</strong> generates a raster map output in which the cells that are visible from a user-specified observer location are marked with integer values that represent the vertical angle (in degrees) required to see those cells (viewshed).
+    	</p>
+	<p><strong>Usage:</strong> click on map to set <em>coords</em>. Use selects to change <em>distance</em> and
+	<em>height</em> params.<br>
+	Then click on <strong>Go!</strong> button to see overlayed output.
+	</p>
+</div>
+ -->
+
+<div  id="params">
+<form method="post" action="#">
+	<fieldset>
+	<legend>Params</legend>
+        <label>X:</label><span id="xvalue_span">0</span> 
+		<input type="hidden" name="xvalue" id="xvalue" size="20" maxlength="40" value="599043" />		
+        <label>Y:</label><span id="yvalue_span">0</span> 
+		<input type="hidden" name="yvalue" id="yvalue" size="20" maxlength="40" value="4921752" />
+		<p><label>Max distance where check visibility:<br> (range <span id="maxdist_range"></span>)</label>
+		<!--<input type="text" name="maxdist" size="20" maxlength="40" value="" />-->
+		<select name="maxdist" id="maxdist">
+		</select></p>
+		<p><label>Height of the observer:<br> (range <span id="observer_range"></span>)</label>
+		<!--<input type="text" name="observer" size="20" maxlength="40" value="" />-->
+		<select name="observer" id="observer">
+		</select></p>
+		<input type="button" name="submit" id="go" value="Go!" />
+	</fieldset>
+	<fieldset>
+	<legend>Style</legend>
+		<p><label>Choose a color scheme:</label>
+		<!--<input type="text" name="observer" size="20" maxlength="40" value="" />-->
+		<select name="sld" id="sld">
+		</select>
+		<br> <a href="#" target="_blank" id="sldLink">link to sld file</a> 
+		</p>
+	</fieldset>
+	<!-- 
+		INTERFACE PARAMS
+		this hidden fields for interface params 
+	-->
+	<input type="hidden" name="map_extent" id="map_extent" value="588913.043478,4915200.000000,610066.956522,4928010.000000">
+	<input type="hidden" name="distance_extent" id="distance_extent" value="2000,7500">
+	<input type="hidden" name="height_extent" id="height_extent" value="1,50">
+	
+	<img id="outimg" src="" width="200" height="100" />
+</form>
+</div>
+
+<div id="contributors">
+<p>ka-Map is developed and maintained by the following folks:</p>
+<ul>
+  <li>Paul Spencer</li>
+  <li>Zak James</li>
+  <li>Jason Fournier</li>
+  <li>Fred Warnock</li>
+  <li>Andrea Cappugi</li>
+  <li>Lorenzo Becchi</li>
+</ul>
+<p>Special thanks to the following folks ...</p>
+<ul>
+  <li>Tim Schaub, for his Scalebar implementation included under the LGPL license.</li>
+  <li>Piergiorgio Navone, for contributing his dynamic overlay code</li>
+  <li>Tyler Mitchel, for testing, feedback and advocacy</li>
+</ul>
+</div>
+</div>
+</body>
+</html>
+

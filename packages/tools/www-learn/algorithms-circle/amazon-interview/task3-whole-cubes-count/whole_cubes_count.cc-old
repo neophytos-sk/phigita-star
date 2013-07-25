@@ -1,0 +1,32 @@
+#include <iostream>
+#include <cmath>
+
+using namespace std;
+
+const double eps=1e-5;
+
+bool is_whole_cube(int x) {
+  double a = pow(x, 1.0/3.0);
+  return (x-pow(floor(a),3.0)) < eps;
+}
+
+int whole_cubes_count ( int A, int B ) {
+
+  int count=0;
+  for(int i=A;i<=B;i++)
+    if (is_whole_cube(i)) {
+      count++;
+      cout << i << endl;
+    }
+
+  return count;
+
+}
+
+
+int main(){
+  int A,B;
+  cin >> A >> B;
+  cout << "whole_cubes_count=" << whole_cubes_count(A,B) << endl;
+  return 0;
+}

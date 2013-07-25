@@ -1,0 +1,11 @@
+Received: from ourpobxn (unknown [125.44.245.174])
+	by host.yourname.com (Postfix) with ESMTP
+	id 667B61B1ADC; Thu, 17 Nov 2011 12:58:01 +0800 (CST) 
+Message-ID: <20111117125501661636@wuxifangyue.com> 
+From: "rqfb" <janet@wuxifangyue.com> 
+To:  
+Subject: =?gb2312?B?wfnKrsTquvO/tMTjtcTG89K1IHAxbg==?= 
+Date: Thu, 17 Nov 2011 12:54:54 +0800 
+X-mailer: Rkshn 0 
+--------------------------------------
+ content-type=application/msword part-token=::mime::1058-2

@@ -1,0 +1,12 @@
+Received: from [151.183.154.100] (account traversing@rfast.com HELO tpdwvmjyrfuyppk.vatjf.su)
+	by cable-89-216-142-80.dynamic.sbb.rs (CommuniGate Pro SMTP 5.2.3)
+	with ESMTPA id 352891552 for webmaster@phigita.net; Fri, 2 Dec 2011 10:04:44 +0100 
+Date: Fri, 2 Dec 2011 10:04:44 +0100 
+From: =?koi8-r?B?Iu3B0svF1MnOxyDQzyDFLc3Fyswi?= 
+	<joltsmw2@travidia.com> 
+X-Mailer: The Bat! (v3.62.03) Professional 
+X-Priority: 3 (Normal) 
+Message-ID: <3320596580.YU31QY7Y462648@aoccshhreewbt.fovrnezqjzp.tv> 
+To: <webmaster@phigita.net> 
+Subject: =?koi8-r?B?NSDSwdPT2czPyyDawSAxMCAwMDAgLSDtxdPRwyDawSAyMCAwMDA=?= 
+

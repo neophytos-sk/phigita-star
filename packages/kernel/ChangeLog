@@ -1,0 +1,77 @@
+2002-07-22 Neophytos Demetriou (k2pts@phigita.net)
+	
+	* tcl/StructuredText/StructuredText-procs.tcl: Yet another try to fix
+	the problem with equations that include other patterns. Removing spaces
+	turned out to be a hack, i.e. it caused trouble with equations of the
+	form ''$\neg p$''.
+	
+2002-05-31 Neophytos Demetriou (k2pts@phigita.net)
+	
+	* tcl/StructuredText/StructuredText-procs.tcl: Fixed problem with
+	equations that include other patterns. For example,
+	''$f(x) = 2 *3 + 5* 8$'' includes '*3 + 5*' that triggered
+	the enclosed text, i.e. '3 + 5', to be emphasized. Moved the math 
+	equation handler before the style handler and modified it so that it
+	removes all spaces from equations.
+	
+
+	* tcl/StructuredText/StructuredText-procs.tcl: Yet another effort to
+	get paragraph indentation right. Several fixes.
+
+	* tcl/StructuredText/StructuredText-procs.tcl: Simplified empty
+	paragraph check.
+
+2002-05-30 Neophytos Demetriou (k2pts@phigita.net)
+
+	* tcl/StructuredText/StructuredText-procs.tcl: Important bug fix. We
+	need to keep track of opening tags included when 
+	''${this_indent_level} < ${prev_indent_level}''. Otherwise, paragraph
+	indentation is lost.
+
+2002-05-29  Neophytos Demetriou (k2pts@phigita.net)
+	
+	* tcl/StructuredText/StructuredText-procs.tcl: Added support for
+	headings in structured text. Text enclosed in double equal sign,
+	i.e. ''=='', denotes headings. The depth level defines what type
+	of heading should be used, i.e. ''<h2>'', ''<h3>'', etc. Also,
+	there's	an option available for specifying the ''start_depth''.
+
+2002-05-28  Neophytos Demetriou (k2pts@phigita.net)
+
+	* tcl/StructuredText/StructuredText-procs.tcl: Added support for 
+	physically (hard) wrapping preformatted text paragraphs 
+	(non-breaking lines are also wrapped). A continuation glyph/image
+	is added at the end of each wrapped line.
+	
+	* tcl/StructuredText/StructuredText-procs.tcl: Added support for
+	multi-paragraph bullet items.	
+
+2002-05-28  Neophytos Demetriou (k2pts@phigita.net)
+
+	* tcl/StructuredText/StructuredText-procs.tcl: Added symbology for math
+	equations in structured text. Text enclosed in single dollar signs 
+	denotes formulas appear right in the text while if it is enclosed 
+	within double dollar signs it denotes formulas that appear on their 
+	own line (respectively, the math and displaymath environments in LaTeX).
+	
+	* tcl/StructuredText/StructuredText-procs.tcl: Added switches that 
+	define the behavior of 'stx_to_html'.
+
+	* tcl/StructuredText/StructuredText-procs.tcl: Changed verbose mode 
+	symbology from single apostrophe to double. Single apostrophes are 
+	used in Greek (probably, in other languages as well) to shorten words 
+	either in the beginning or to the end of a word and thus conflicts 
+	arise.
+
+	* tcl/StructuredText/StructuredText-procs.tcl: Fixed problem with 
+	paragraph cutting when checking whether it starts with a bullet or 
+	not. In particular, I've changed 
+	''regexp {^[ \t\n]*([*o\-\#])[ \t\n]+([^\0\n]*)'' to 
+	''regexp {^[ \t\n]*([*o\-\#])[ \t\n]+([^\0]*)'' -- note the missing 
+	newline character in the second regular expression. The problem was 
+	that, in a multiline paragraph only the first line was accounted in the
+	result of the transformation.
+	
+	* tcl/StructuredText/StructuredText-procs.tcl: Fixed indentation 
+	problem of nested sequences (same bullet) when intervened by other
+	subparagraphs.

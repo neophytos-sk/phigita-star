@@ -1,0 +1,1 @@
+ad_returnredirect "/remarks/[string range [ad_conn extra_url] [expr 1+[string first / [ad_conn extra_url]]] end][ad_decode [ad_conn query] {} {} {?}][ad_conn query]"

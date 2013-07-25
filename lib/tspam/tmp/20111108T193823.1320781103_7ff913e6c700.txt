@@ -1,0 +1,12 @@
+Received: from qcqrqlut (unknown [110.53.26.149])
+	(Authenticated sender: hanwq@duk.cn)
+	by mail.duk.cn (Postfix) with ESMTP id D5132574CBE;
+	Wed,  9 Nov 2011 03:33:14 +0800 (CST) 
+Message-ID: <20111109033549722413@duk.cn> 
+From: "twvevyz" <hanwq@duk.cn> 
+To:  
+Subject: =?gb2312?B?wOahpNSwoaTKwKGkvNKhotDToaTUsKGk19OhpLXcoaqhqtawoaTStQ==?=
+	=?gb2312?B?u6+1xLHquMtucDR3?= 
+Date: Wed, 9 Nov 2011 03:35:37 +0800 
+X-mailer: Teg 8 
+Whoops!  What is a 'application/vnd.ms-excel'?

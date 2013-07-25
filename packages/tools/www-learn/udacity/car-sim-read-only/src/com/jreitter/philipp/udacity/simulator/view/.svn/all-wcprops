@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/!svn/ver/12/trunk/src/com/jreitter/philipp/udacity/simulator/view
+END
+SimulationFrame.java
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/!svn/ver/12/trunk/src/com/jreitter/philipp/udacity/simulator/view/SimulationFrame.java
+END
+ControlPanel.java
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/!svn/ver/4/trunk/src/com/jreitter/philipp/udacity/simulator/view/ControlPanel.java
+END
+SimulationPanel.java
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/!svn/ver/4/trunk/src/com/jreitter/philipp/udacity/simulator/view/SimulationPanel.java
+END

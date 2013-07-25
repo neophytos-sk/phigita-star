@@ -1,0 +1,10 @@
+Received: from 58.141.144.18 by cluster8.us.messagelabs.com; Wed, 23 Nov 2011 17:56:47 +0900 
+Date: Wed, 23 Nov 2011 17:56:47 +0900 
+From: =?koi8-r?B?IvrEz9LP19jFIMkgy9LB08/UwSI=?= <ordinariestm25@paloma.com> 
+X-Mailer: The Bat! (v3.62.03) Educational 
+Reply-To: ordinariestm25@paloma.com 
+X-Priority: 3 (Normal) 
+Message-ID: <956330522.29791090093401@paloma.com> 
+To: webmaster@phigita.net 
+Subject: =?koi8-r?B?7s/Xz9PUySwg09TB1NjJLCDOwdLPxM7ZxSDSxcPF0NTZ?= 
+

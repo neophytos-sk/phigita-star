@@ -1,0 +1,70 @@
+Received: by web1.extjs.com (Postfix, from userid 33)
+	id 4C3006C1DD; Wed, 23 Nov 2011 00:02:03 +0000 (UTC) 
+To: k2pts@phigita.net 
+Subject: "Ext: Examples and Extras" update 
+X-PHP-Originating-Script: 1000:class_mail.php 
+From: "Foros Sencha Forum" <admin@sencha.com> 
+Auto-Submitted: auto-generated 
+Message-ID: <20111123000203.ff6c8f7c299d@www.sencha.com> 
+X-Priority: 3 
+X-Mailer: vBulletin Mail via PHP 
+Date: Wed, 23 Nov 2011 00:02:03 +0000 (UTC) 
+--------------------------------------
+Dear k2pts,
+
+You are subscribed to the forum Ext: Examples and Extras, there have been 2 new thread(s) and 4 updated thread(s).
+http://www.sencha.com/forum/forumdisplay.php?7-Ext-Examples-and-Extras
+
+The following threads are new:
+************
+Taking Sencha Touch Apps Offline - yql Probem
+http://www.sencha.com/forum/showthread.php?156645-Taking-Sencha-Touch-Apps-Offline-yql-Probem
+In forum: Ext: Examples and Extras
+Started by: edd82
+Last post: 22 Nov 2011 3:23 PM
+************
+Ext.js Map example is not working
+http://www.sencha.com/forum/showthread.php?156675-Ext.js-Map-example-is-not-working
+In forum: Ext: Examples and Extras
+Started by: daddyschmack
+Last post: 22 Nov 2011 8:09 PM
+
+
+The following threads have been updated:
+************
+ExtJS 2.0 Project Management Application
+http://www.sencha.com/forum/showthread.php?25899-ExtJS-2.0-Project-Management-Application
+In forum: Ext: Examples and Extras
+Started by: fendrikat
+Last post: 22 Nov 2011 6:00 AM
+************
+Sortable Plugin for DataView
+http://www.sencha.com/forum/showthread.php?33857-Sortable-Plugin-for-DataView
+In forum: Ext: Examples and Extras
+Started by: tof
+Last post: 22 Nov 2011 12:49 PM
+************
+Teamup Reservations: Built on EXT JS4
+http://www.sencha.com/forum/showthread.php?151048-Teamup-Reservations-Built-on-EXT-JS4
+In forum: Ext: Examples and Extras
+Started by: g.sidler
+Last post: 22 Nov 2011 5:56 PM
+************
+First pass at implementation of Grid state saving / retrieving
+http://www.sencha.com/forum/showthread.php?5219-First-pass-at-implementation-of-Grid-state-saving-retrieving
+In forum: Ext: Examples and Extras
+Started by: dakokes
+Last post: 22 Nov 2011 11:36 PM
+
+
+All the best,
+Sencha Forum
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Unsubscription information:
+
+To unsubscribe from this forum, please visit this page:
+http://www.sencha.com/forum/subscription.php?do=removesubscription&type=forum&subscriptionid=66&auth=3a25e442e8ac3bf8d89a6f9b6eb4f810
+
+
+

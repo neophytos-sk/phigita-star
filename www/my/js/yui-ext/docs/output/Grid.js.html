@@ -1,0 +1,952 @@
+<html><head><title>Grid.js</title><link rel="stylesheet" type="text/css" href="../resources/style.css" media="screen"/></head><body><h1>Grid.js</h1><pre class="highlighted"><code><i>/**
+ * @class YAHOO.ext.grid.Grid
+ * @extends YAHOO.ext.util.Observable
+ * This class represents the primary interface of a component based grid control.
+ * &lt;br&gt;&lt;br&gt;Usage:&lt;pre&gt;&lt;code&gt;
+ <b>var</b> grid = <b>new</b> YAHOO.ext.grid.Grid('my-container-id', dataModel, columnModel);
+ <i>// set any options</i>
+ grid.render();
+ <i>// or using a config</i>
+ <b>var</b> grid = <b>new</b> YAHOO.ext.grid.Grid('my-container-id', {
+     dataModel: myDataModel,
+     colModel: myColModel,
+     selModel: mySelectionModel,
+     autoSizeColumns: true,
+     monitorWindowResize: false,
+     trackMouseOver: true
+ }).render();
+ * &lt;/code&gt;&lt;/pre&gt;
+ * &lt;b&gt;Common Problems:&lt;/b&gt;&lt;br/&gt;
+ * - Grid does not resize properly when going smaller: Setting overflow hidden on the container 
+ * element will correct <b>this</b>&lt;br/&gt;
+ * - If you get el.style[camel]= NaNpx or -2px or something related, be certain you have given your container element 
+ * dimensions. The grid adapts to your container's size, <b>if</b> your container has no size defined then the results
+ * are unpredictable.&lt;br/&gt;
+ * - Do not render the grid into an element <b>with</b> display:none. Try using visibility:hidden. Otherwise there is no way <b>for</b> the 
+ * grid to calculate dimensions/offsets.&lt;br/&gt;
+ * @requires YAHOO.util.Dom
+ * @requires YAHOO.util.Event
+ * @requires YAHOO.util.CustomEvent 
+ * @requires YAHOO.ext.Element
+ * @requires YAHOO.ext.util.Browser
+ * @requires YAHOO.ext.util.CSS
+ * @requires YAHOO.ext.SplitBar 
+ * @requires YAHOO.ext.EventObject 
+ * @constructor
+ * @param {String/HTMLElement/YAHOO.ext.Element} container The element into which <b>this</b> grid will be rendered - 
+ * The container MUST have some type of size defined <b>for</b> the grid to fill. The container will be 
+ * automatically set to position relative <b>if</b> it isn't already.
+ * @param {Object} config A config object that sets properties on <b>this</b> grid OR the data model to bind to
+ * @param {Object} colModel (optional) The column model <b>with</b> info about <b>this</b> grid's columns
+ * @param {Object} selectionModel (optional) The selection model <b>for</b> this grid (defaults to DefaultSelectionModel)
+ */</i>
+YAHOO.ext.grid.Grid = <b>function</b>(container, config, colModel, selectionModel){
+	<i>/** @private */</i>
+	<b>this</b>.container = YAHOO.ext.Element.get(container);
+	<b>this</b>.container.update('');
+	<b>this</b>.container.setStyle('overflow', 'hidden');
+	<b>this</b>.id = <b>this</b>.container.id;
+	<b>this</b>.rows = [];
+    <b>this</b>.rowCount = 0;
+    <b>this</b>.fieldId = null;
+    <b>var</b> dataModel = config; <i>// <b>for</b> legacy pre config support</i>
+    <b>this</b>.dataModel = dataModel;
+    <b>this</b>.colModel = colModel;
+    <b>this</b>.selModel = selectionModel;
+	<b>this</b>.activeEditor = null;
+	<b>this</b>.editingCell = null;
+	
+	<i>/** The minimum width a column can be resized to. (Defaults to 25)
+	 * @type Number */</i>
+	<b>this</b>.minColumnWidth = 25;
+	
+	<i>/** True to automatically resize the columns to fit their content &lt;b&gt;on initial render&lt;/b&gt;
+	 * @type Boolean */</i>
+	<b>this</b>.autoSizeColumns = false;
+	
+	<i>/** True to measure headers <b>with</b> column data when auto sizing columns
+	 * @type Boolean */</i>
+	<b>this</b>.autoSizeHeaders = false;
+	
+	<i>/**
+	 * True to autoSize the grid when the window resizes - defaults to true
+	 */</i>
+	<b>this</b>.monitorWindowResize = true;
+	
+	<i>/** If autoSizeColumns is on, maxRowsToMeasure can be used to limit the number of
+	 * rows measured to get a columns size - defaults to 0 (all rows).
+	 * @type Number */</i>
+	<b>this</b>.maxRowsToMeasure = 0;
+	
+	<i>/** True to highlight rows when the mouse is over (<b>default</b> is false)
+	 * @type Boolean */</i>
+	<b>this</b>.trackMouseOver = false;
+	
+	<i>/** True to enable drag and drop of rows
+	 * @type Boolean */</i>
+	<b>this</b>.enableDragDrop = false;
+	
+	<i>/** True to stripe the rows (<b>default</b> is true)
+	 * @type Boolean */</i>
+	<b>this</b>.stripeRows = true;
+	<i>/** True to fit the height of the grid container to the height of the data (defaults to false)
+	 * @type Boolean */</i>
+	<b>this</b>.autoHeight = false;
+	
+	<i>/** True to fit the width of the grid container to the width of the columns (defaults to false)
+	 * @type Boolean */</i>
+	<b>this</b>.autoWidth = false;
+	
+	<i>/**
+	 * The view used by the grid. This can be set before a call to render(). 
+	 * Defaults to a YAHOO.ext.grid.GridView or PagedGridView depending on the data model.
+	 * @type Object
+	 */</i>
+	<b>this</b>.view = null;
+	
+	<i>/** A regular expression defining tagNames 
+     * allowed to have text selection (Defaults to &lt;code&gt;/INPUT|TEXTAREA|SELECT/i&lt;/code&gt;) */</i>
+    <b>this</b>.allowTextSelectionPattern = /INPUT|TEXTAREA|SELECT/i;
+	
+	<b>if</b>(typeof config == 'object' &amp;&amp; !config.getRowCount){<i>// must be config object</i>
+	    YAHOO.ext.util.Config.apply(<b>this</b>, config);
+	}
+	
+	<i>/** @private */</i>
+	<b>this</b>.setValueDelegate = <b>this</b>.setCellValue.createDelegate(<b>this</b>);
+	
+	<i>/** @private */</i>
+	<b>this</b>.events = {
+	    <i>// raw events</i>
+	    <i>/**
+	     * @event click
+	     * The raw click event <b>for</b> the entire grid.
+	     * @param {YAHOO.ext.EventObject} e
+	     */</i>
+	    'click' : true,
+	    <i>/**
+	     * @event dblclick
+	     * The raw dblclick event <b>for</b> the entire grid.
+	     * @param {YAHOO.ext.EventObject} e
+	     */</i>
+	    'dblclick' : true,
+	    <i>/**
+	     * @event mousedown
+	     * The raw mousedown event <b>for</b> the entire grid.
+	     * @param {YAHOO.ext.EventObject} e
+	     */</i>
+	    'mousedown' : true,
+	    <i>/**
+	     * @event mouseup
+	     * The raw mouseup event <b>for</b> the entire grid.
+	     * @param {YAHOO.ext.EventObject} e
+	     */</i>
+	    'mouseup' : true,
+	    <i>/**
+	     * @event mouseover
+	     * The raw mouseover event <b>for</b> the entire grid.
+	     * @param {YAHOO.ext.EventObject} e
+	     */</i>
+	    'mouseover' : true,
+	    <i>/**
+	     * @event mouseout
+	     * The raw mouseout event <b>for</b> the entire grid.
+	     * @param {YAHOO.ext.EventObject} e
+	     */</i>
+	    'mouseout' : true,
+	    <i>/**
+	     * @event keypress
+	     * The raw keypress event <b>for</b> the entire grid.
+	     * @param {YAHOO.ext.EventObject} e
+	     */</i>
+	    'keypress' : true,
+	    <i>/**
+	     * @event keydown
+	     * The raw keydown event <b>for</b> the entire grid.
+	     * @param {YAHOO.ext.EventObject} e
+	     */</i>
+	    'keydown' : true,
+	    
+	    <i>// custom events</i>
+	    
+	    <i>/**
+	     * @event cellclick
+	     * Fires when a cell is clicked
+	     * @param {Grid} <b>this</b>
+	     * @param {Number} rowIndex
+	     * @param {Number} columnIndex
+	     * @param {YAHOO.ext.EventObject} e
+	     */</i>
+	    'cellclick' : true,
+	    <i>/**
+	     * @event celldblclick
+	     * Fires when a cell is double clicked
+	     * @param {Grid} <b>this</b>
+	     * @param {Number} rowIndex
+	     * @param {Number} columnIndex
+	     * @param {YAHOO.ext.EventObject} e
+	     */</i>
+	    'celldblclick' : true,
+	    <i>/**
+	     * @event rowclick
+	     * Fires when a row is clicked
+	     * @param {Grid} <b>this</b>
+	     * @param {Number} rowIndex
+	     * @param {YAHOO.ext.EventObject} e
+	     */</i>
+	    'rowclick' : true,
+	    <i>/**
+	     * @event rowdblclick
+	     * Fires when a row is double clicked
+	     * @param {Grid} <b>this</b>
+	     * @param {Number} rowIndex
+	     * @param {YAHOO.ext.EventObject} e
+	     */</i>
+	    'rowdblclick' : true,
+	    <i>/**
+	     * @event headerclick
+	     * Fires when a header is clicked
+	     * @param {Grid} <b>this</b>
+	     * @param {Number} columnIndex
+	     * @param {YAHOO.ext.EventObject} e
+	     */</i>
+	    'headerclick' : true,
+	    <i>/**
+	     * @event rowcontextmenu
+	     * Fires when a row is right clicked
+	     * @param {Grid} <b>this</b>
+	     * @param {Number} rowIndex
+	     * @param {YAHOO.ext.EventObject} e
+	     */</i>
+	    'rowcontextmenu' : true,
+	    <i>/**
+	     * @event headercontextmenu
+	     * Fires when a header is right clicked
+	     * @param {Grid} <b>this</b>
+	     * @param {Number} columnIndex
+	     * @param {YAHOO.ext.EventObject} e
+	     */</i>
+	    'headercontextmenu' : true,
+	    <i>/**
+	     * @event beforeedit
+	     * Fires before a cell is edited
+	     * @param {Grid} <b>this</b>
+	     * @param {Number} rowIndex
+	     * @param {Number} columnIndex
+	     */</i>
+	    'beforeedit' : true,
+	    <i>/**
+	     * @event afteredit
+	     * Fires after a cell is edited
+	     * @param {Grid} <b>this</b>
+	     * @param {Number} rowIndex
+	     * @param {Number} columnIndex
+	     */</i>
+	    'afteredit' : true,
+	    <i>/**
+	     * @event bodyscroll
+	     * Fires when the body element is scrolled
+	     * @param {Number} scrollLeft
+	     * @param {Number} scrollTop
+	     */</i>
+	    'bodyscroll' : true,
+	    <i>/**
+	     * @event columnresize
+	     * Fires when the user resizes a column
+	     * @param {Number} columnIndex
+	     * @param {Number} newSize
+	     */</i>
+	    'columnresize' : true,
+	    <i>/**
+	     * @event startdrag
+	     * Fires when row(s) start being dragged 
+	     * @param {Grid} <b>this</b>
+	     * @param {YAHOO.ext.GridDD} dd The drag drop object
+	     * @param {event} e The raw browser event
+	     */</i>
+	    'startdrag' : true,
+	    <i>/**
+	     * @event enddrag
+	     * Fires when a drag operation is complete
+	     * @param {Grid} <b>this</b>
+	     * @param {YAHOO.ext.GridDD} dd The drag drop object
+	     * @param {event} e The raw browser event
+	     */</i>
+	    'enddrag' : true,
+	    <i>/**
+	     * @event dragdrop
+	     * Fires when dragged row(s) are dropped on a valid DD target 
+	     * @param {Grid} <b>this</b>
+	     * @param {YAHOO.ext.GridDD} dd The drag drop object
+	     * @param {String} targetId The target drag drop object
+	     * @param {event} e The raw browser event
+	     */</i>
+	    'dragdrop' : true,
+	    <i>/**
+	     * @event dragover
+	     * Fires <b>while</b> row(s) are being dragged. &quot;targetId&quot; is the id of the Yahoo.util.DD object the selected rows are being dragged over.
+	     * @param {Grid} <b>this</b>
+	     * @param {YAHOO.ext.GridDD} dd The drag drop object
+	     * @param {String} targetId The target drag drop object
+	     * @param {event} e The raw browser event
+	     */</i>
+	    'dragover' : true,
+	    <i>/**
+	     * @event dragenter
+	     *  Fires when the dragged row(s) first cross another DD target <b>while</b> being dragged 
+	     * @param {Grid} <b>this</b>
+	     * @param {YAHOO.ext.GridDD} dd The drag drop object
+	     * @param {String} targetId The target drag drop object
+	     * @param {event} e The raw browser event
+	     */</i>
+	    'dragenter' : true,
+	    <i>/**
+	     * @event dragout
+	     * Fires when the dragged row(s) leave another DD target <b>while</b> being dragged 
+	     * @param {Grid} <b>this</b>
+	     * @param {YAHOO.ext.GridDD} dd The drag drop object
+	     * @param {String} targetId The target drag drop object
+	     * @param {event} e The raw browser event
+	     */</i>
+	    'dragout' : true
+	};
+};
+
+YAHOO.ext.grid.Grid.prototype = { 
+    <i>/**
+     * Called once after all setup has been completed and the grid is ready to be rendered.
+     * @<b>return</b> {YAHOO.ext.grid.Grid} <b>this</b>
+     */</i>
+    render : <b>function</b>(){
+        <b>if</b>((!<b>this</b>.container.dom.offsetHeight || <b>this</b>.container.dom.offsetHeight &lt; 20) 
+                || <b>this</b>.container.getStyle('height') == 'auto'){
+    	    <b>this</b>.autoHeight = true;   
+    	}	       
+    	<b>if</b>((!<b>this</b>.container.dom.offsetWidth || <b>this</b>.container.dom.offsetWidth &lt; 20)){
+    	    <b>this</b>.autoWidth = true;   
+    	}	       
+    	<b>if</b>(!<b>this</b>.view){
+    	    <b>if</b>(this.dataModel.isPaged()){
+    		    <b>this</b>.view = <b>new</b> YAHOO.ext.grid.PagedGridView();
+    	    }<b>else</b>{
+    	        <b>this</b>.view = <b>new</b> YAHOO.ext.grid.GridView();
+    	    }
+    	}
+    	<b>this</b>.view.init(<b>this</b>);
+        <b>this</b>.el = getEl(<b>this</b>.view.render(), true);
+        <b>var</b> c = <b>this</b>.container;
+        c.mon(&quot;click&quot;, <b>this</b>.onClick, <b>this</b>, true);
+        c.mon(&quot;dblclick&quot;, <b>this</b>.onDblClick, <b>this</b>, true);
+        c.mon(&quot;contextmenu&quot;, <b>this</b>.onContextMenu, <b>this</b>, true);
+        c.mon(&quot;selectstart&quot;, <b>this</b>.cancelTextSelection, <b>this</b>, true);
+        c.mon(&quot;mousedown&quot;, <b>this</b>.cancelTextSelection, <b>this</b>, true);
+        c.mon(&quot;mousedown&quot;, <b>this</b>.onMouseDown, <b>this</b>, true);
+        c.mon(&quot;mouseup&quot;, <b>this</b>.onMouseUp, <b>this</b>, true);
+        <b>if</b>(this.trackMouseOver){
+            <b>this</b>.el.mon(&quot;mouseover&quot;, <b>this</b>.onMouseOver, <b>this</b>, true);
+            <b>this</b>.el.mon(&quot;mouseout&quot;, <b>this</b>.onMouseOut, <b>this</b>, true);
+        }
+        c.mon(&quot;keypress&quot;, <b>this</b>.onKeyPress, <b>this</b>, true);
+        c.mon(&quot;keydown&quot;, <b>this</b>.onKeyDown, <b>this</b>, true);
+        <b>this</b>.init();
+        <b>return</b> this;
+    },
+    
+    init : <b>function</b>(){
+        <b>this</b>.rows = <b>this</b>.el.dom.rows;
+        <b>if</b>(!<b>this</b>.disableSelection){
+	        <b>if</b>(!<b>this</b>.selModel){
+	            <b>this</b>.selModel = <b>new</b> YAHOO.ext.grid.DefaultSelectionModel(<b>this</b>);
+	        }
+	        <b>this</b>.selModel.init(<b>this</b>);
+	        <b>this</b>.selModel.onSelectionChange.subscribe(<b>this</b>.updateField, <b>this</b>, true);
+        }<b>else</b>{
+            <b>this</b>.selModel = <b>new</b> YAHOO.ext.grid.DisableSelectionModel(<b>this</b>);
+            <b>this</b>.selModel.init(<b>this</b>);
+        }
+        
+        <b>if</b>(this.enableDragDrop){
+            <b>this</b>.dd = <b>new</b> YAHOO.ext.grid.GridDD(<b>this</b>, <b>this</b>.container.dom);
+        }
+     },   
+
+    <i>/**
+     * Resets the grid <b>for</b> use <b>with</b> a <b>new</b> configuration and/or data and column models. After calling <b>this</b> function
+     * you will need to call render() again. Any listeners <b>for</b> this grid will be retained.
+     * Warning: any listeners manually attached (not through the grid) to the grid's container 
+     * element will be removed. 
+     * @param {Object} config Standard config object <b>with</b> properties to set on <b>this</b> grid
+     * @<b>return</b> {YAHOO.ext.grid.Grid} <b>this</b>
+     */</i>
+    reset : <b>function</b>(config){
+        <b>this</b>.destroy(false, true);
+        YAHOO.ext.util.Config.apply(<b>this</b>, config);
+        <b>return</b> this;
+    },
+    
+    <i>/**
+     * Destroy <b>this</b> grid. 
+     * @param {Boolean} removeEl True to remove the element
+     */</i>
+    destroy : <b>function</b>(removeEl, keepListeners){
+        <b>var</b> c = <b>this</b>.container;
+        c.removeAllListeners();
+        <b>this</b>.view.destroy();
+        YAHOO.ext.EventManager.removeResizeListener(<b>this</b>.view.onWindowResize, <b>this</b>.view);
+        <b>this</b>.view = null;
+        <b>this</b>.colModel.purgeListeners();
+        <b>if</b>(!keepListeners){
+            <b>this</b>.purgeListeners();
+        }
+        c.update('');
+        <b>if</b>(removeEl === true){
+            c.remove();
+        }
+    },
+    
+    <i>/**
+     * Replace the current data model <b>with</b> a <b>new</b> one (experimental)
+     * @param {DataModel} dm The <b>new</b> data model
+     * @pram {Boolean} rerender true to render the grid rows from scratch
+     */</i>
+    setDataModel : <b>function</b>(dm, rerender){
+        <b>this</b>.view.unplugDataModel(<b>this</b>.dataModel);
+        <b>this</b>.dataModel = dm;
+        <b>this</b>.view.plugDataModel(dm);
+        <b>if</b>(rerender){
+            dm.fireEvent('datachanged');
+        }
+    },
+    
+    onMouseDown : <b>function</b>(e){
+        <b>this</b>.fireEvent('mousedown', e);
+    },
+    
+    onMouseUp : <b>function</b>(e){
+        <b>this</b>.fireEvent('mouseup', e);
+    },
+    
+    onMouseOver : <b>function</b>(e){
+        <b>this</b>.fireEvent('mouseover', e);
+    },
+    
+    onMouseOut : <b>function</b>(e){
+        <b>this</b>.fireEvent('mouseout', e);
+    },
+    
+    onKeyPress : <b>function</b>(e){
+        <b>this</b>.fireEvent('keypress', e);
+    },
+    
+    onKeyDown : <b>function</b>(e){
+        <b>this</b>.fireEvent('keydown', e);
+    },
+    
+    fireEvent : YAHOO.ext.util.Observable.prototype.fireEvent,
+    on : YAHOO.ext.util.Observable.prototype.on,
+    addListener : YAHOO.ext.util.Observable.prototype.addListener,
+    delayedListener : YAHOO.ext.util.Observable.prototype.delayedListener,
+    removeListener : YAHOO.ext.util.Observable.prototype.removeListener,
+    purgeListeners : YAHOO.ext.util.Observable.prototype.purgeListeners,
+    
+    onClick : <b>function</b>(e){
+        <b>this</b>.fireEvent('click', e);
+        <b>var</b> target = e.getTarget();
+        <b>var</b> row = <b>this</b>.getRowFromChild(target);
+        <b>var</b> cell = <b>this</b>.getCellFromChild(target);
+        <b>var</b> header = <b>this</b>.getHeaderFromChild(target);
+        <b>if</b>(row){
+            <b>this</b>.fireEvent('rowclick', <b>this</b>, row.rowIndex, e);
+        }
+        <b>if</b>(cell){
+            <b>this</b>.fireEvent('cellclick', <b>this</b>, row.rowIndex, cell.columnIndex, e);
+        }
+        <b>if</b>(header){
+            <b>this</b>.fireEvent('headerclick', <b>this</b>, header.columnIndex, e);
+        }
+    },
+
+    onContextMenu : <b>function</b>(e){
+        <b>var</b> target = e.getTarget();
+        <b>var</b> row = <b>this</b>.getRowFromChild(target);
+        <b>var</b> header = <b>this</b>.getHeaderFromChild(target);
+        <b>if</b>(row){
+            <b>this</b>.fireEvent('rowcontextmenu', <b>this</b>, row.rowIndex, e);
+        }
+        <b>if</b>(header){
+            <b>this</b>.fireEvent('headercontextmenu', <b>this</b>, header.columnIndex, e);
+        }
+        e.preventDefault();
+    },
+
+    onDblClick : <b>function</b>(e){
+        <b>this</b>.fireEvent('dblclick', e);
+        <b>var</b> target = e.getTarget();
+        <b>var</b> row = <b>this</b>.getRowFromChild(target);
+        <b>var</b> cell = <b>this</b>.getCellFromChild(target);
+        <b>if</b>(row){
+            <b>this</b>.fireEvent('rowdblclick', <b>this</b>, row.rowIndex, e);
+        }
+        <b>if</b>(cell){
+            <b>this</b>.fireEvent('celldblclick', <b>this</b>, row.rowIndex, cell.columnIndex, e);
+        }
+    },
+    
+    <i>/**
+     * Starts editing the specified <b>for</b> the specified row/column
+     * @param {Number} rowIndex
+     * @param {Number} colIndex
+     */</i>
+    startEditing : <b>function</b>(rowIndex, colIndex){
+        <b>var</b> row = <b>this</b>.rows[rowIndex];
+        <b>var</b> cell = row.childNodes[colIndex];
+        <b>this</b>.stopEditing();
+        setTimeout(<b>this</b>.doEdit.createDelegate(<b>this</b>, [row, cell]), 10);
+    },
+        
+    <i>/**
+     * Stops any active editing
+     */</i>
+    stopEditing : <b>function</b>(){
+        <b>if</b>(this.activeEditor){
+            <b>this</b>.activeEditor.stopEditing();
+        }
+    },
+        
+    <i>/** @ignore */</i>
+    doEdit : <b>function</b>(row, cell){
+        <b>if</b>(!row || !cell) <b>return</b>;
+        <b>var</b> cm = <b>this</b>.colModel;
+        <b>var</b> dm = <b>this</b>.dataModel;
+        <b>var</b> colIndex = cell.columnIndex;
+        <b>var</b> rowIndex = row.rowIndex;
+        <b>if</b>(cm.isCellEditable(colIndex, rowIndex)){
+           <b>var</b> ed = cm.getCellEditor(colIndex, rowIndex);
+           <b>if</b>(ed){
+               <b>if</b>(this.activeEditor){
+                   <b>this</b>.activeEditor.stopEditing();
+               }
+               <b>this</b>.fireEvent('beforeedit', <b>this</b>, rowIndex, colIndex);
+               <b>this</b>.activeEditor = ed;
+               <b>this</b>.editingCell = cell;
+               <b>this</b>.view.ensureVisible(row, true);
+               try{
+                   cell.focus();
+               }catch(e){}
+               ed.init(<b>this</b>, <b>this</b>.el.dom.parentNode, <b>this</b>.setValueDelegate);
+               <b>var</b> value = dm.getValueAt(rowIndex, cm.getDataIndex(colIndex));
+               <i>// set timeout so firefox stops editing before starting a <b>new</b> edit</i>
+               setTimeout(ed.startEditing.createDelegate(ed, [value, row, cell]), 1);
+           }   
+        }  
+    },
+    
+    setCellValue : <b>function</b>(value, rowIndex, colIndex){
+         <b>this</b>.dataModel.setValueAt(value, rowIndex, <b>this</b>.colModel.getDataIndex(colIndex));
+         <b>this</b>.fireEvent('afteredit', <b>this</b>, rowIndex, colIndex);
+    },
+    
+    <i>/** @ignore Called when text selection starts or mousedown to prevent <b>default</b> */</i>
+    cancelTextSelection : <b>function</b>(e){
+        <b>var</b> target = e.getTarget();
+        <b>if</b>(target &amp;&amp; target != <b>this</b>.el.dom.parentNode &amp;&amp; !<b>this</b>.allowTextSelectionPattern.test(target.tagName)){
+            e.preventDefault();
+        }
+    },
+    
+    <i>/**
+     * Causes the grid to manually recalculate it's dimensions. Generally <b>this</b> is done automatically, 
+     * but <b>if</b> manual update is required <b>this</b> method will initiate it.
+     */</i>
+    autoSize : <b>function</b>(){
+        <b>this</b>.view.updateWrapHeight();
+        <b>this</b>.view.adjustForScroll();
+    },
+    
+    <i>/**
+     * Scrolls the grid to the specified row
+     * @param {Number/HTMLElement} row The row object or index of the row
+     */</i>
+    scrollTo : <b>function</b>(row){
+        <b>if</b>(typeof row == 'number'){
+            row = <b>this</b>.rows[row];
+        }
+        <b>this</b>.view.ensureVisible(row, true);
+    },
+    
+    <i>/** @private */</i>
+    getEditingCell : <b>function</b>(){
+        <b>return</b> this.editingCell;    
+    },
+    
+    <i>/**
+     * Binds <b>this</b> grid to the field <b>with</b> the specified id. Initially reads and parses the comma 
+     * delimited ids <b>in</b> the field and selects those items. All selections made <b>in</b> the grid
+     * will be persisted to the field by their ids comma delimited.
+     * @param {String} The id of the field to bind to
+     */</i>
+    bindToField : <b>function</b>(fieldId){
+        <b>this</b>.fieldId = fieldId;
+        <b>this</b>.readField();
+    },
+    
+    <i>/** @private */</i>
+    updateField : <b>function</b>(){
+        <b>if</b>(this.fieldId){
+            <b>var</b> field = YAHOO.util.Dom.get(<b>this</b>.fieldId);
+            field.value = <b>this</b>.getSelectedRowIds().join(',');
+        }
+    },
+    
+    <i>/**
+     * Causes the grid to read and select the ids from the bound field - See {@link #bindToField}.
+     */</i>
+    readField : <b>function</b>(){
+        <b>if</b>(this.fieldId){
+            <b>var</b> field = YAHOO.util.Dom.get(<b>this</b>.fieldId);
+            <b>var</b> values = field.value.split(',');
+            <b>var</b> rows = <b>this</b>.getRowsById(values);
+            <b>this</b>.selModel.selectRows(rows, false);
+        }
+    },
+	
+	<i>/**
+	 * Returns the table row at the specified index
+	 * @param {Number} index
+	 * @<b>return</b> {HTMLElement} 
+	 */</i>
+    getRow : <b>function</b>(index){
+        <b>return</b> this.rows[index];
+    },
+	
+	<i>/**
+	 * Returns the rows that have the specified id(s). The id value <b>for</b> a row is provided 
+	 * by the DataModel. See {@link YAHOO.ext.grid.DefaultDataModel#getRowId}.
+	 * @param {String/Array} An id to find or an array of ids
+	 * @<b>return</b> {HtmlElement/Array} If one id was passed <b>in</b>, it returns one result. 
+	 * If an array of ids was specified, it returns an Array of HTMLElements
+	 */</i>
+    getRowsById : <b>function</b>(id){
+        <b>var</b> dm = <b>this</b>.dataModel;
+        <b>if</b>(!(id instanceof Array)){
+            <b>for</b>(var i = 0; i &lt; <b>this</b>.rows.length; i++){
+                <b>if</b>(dm.getRowId(i) == id){
+                    <b>return</b> this.rows[i];
+                }
+            }
+            <b>return</b> null;
+        }
+        <b>var</b> found = [];
+        <b>var</b> re = &quot;^(?:&quot;;
+        <b>for</b>(var i = 0; i &lt; id.length; i++){
+            re += id[i];
+            <b>if</b>(i != id.length-1) re += &quot;|&quot;;
+        }
+        <b>var</b> regex = <b>new</b> RegExp(re + &quot;)$&quot;);
+        <b>for</b>(var i = 0; i &lt; <b>this</b>.rows.length; i++){
+            <b>if</b>(regex.test(dm.getRowId(i))){
+                found.push(<b>this</b>.rows[i]);
+            }
+        }
+        <b>return</b> found;
+    },
+    
+    <i>/**
+	 * Returns the row that comes after the specified row - text nodes are skipped.
+	 * @param {HTMLElement} row
+	 * @<b>return</b> {HTMLElement} 
+	 */</i>
+    getRowAfter : <b>function</b>(row){
+        <b>return</b> this.getSibling('next', row);
+    },
+    
+    <i>/**
+	 * Returns the row that comes before the specified row - text nodes are skipped.
+	 * @param {HTMLElement} row
+	 * @<b>return</b> {HTMLElement} 
+	 */</i>
+    getRowBefore : <b>function</b>(row){
+        <b>return</b> this.getSibling('previous', row);
+    },
+    
+    <i>/**
+	 * Returns the cell that comes after the specified cell - text nodes are skipped.
+	 * @param {HTMLElement} cell
+	 * @param {Boolean} includeHidden
+	 * @<b>return</b> {HTMLElement} 
+	 */</i>
+    getCellAfter : <b>function</b>(cell, includeHidden){
+        <b>var</b> next = <b>this</b>.getSibling('next', cell);
+        <b>if</b>(next &amp;&amp; !includeHidden &amp;&amp; <b>this</b>.colModel.isHidden(next.columnIndex)){
+            <b>return</b> this.getCellAfter(next);
+        }
+        <b>return</b> next;
+    },
+    
+    <i>/**
+	 * Returns the cell that comes before the specified cell - text nodes are skipped.
+	 * @param {HTMLElement} cell
+	 * @param {Boolean} includeHidden
+	 * @<b>return</b> {HTMLElement} 
+	 */</i>
+    getCellBefore : <b>function</b>(cell, includeHidden){
+        <b>var</b> prev = <b>this</b>.getSibling('previous', cell);
+        <b>if</b>(prev &amp;&amp; !includeHidden &amp;&amp; <b>this</b>.colModel.isHidden(prev.columnIndex)){
+            <b>return</b> this.getCellBefore(prev);
+        }
+        <b>return</b> prev;
+    },
+    
+    <i>/**
+	 * Returns the last cell <b>for</b> the row - text nodes and hidden columns are skipped.
+	 * @param {HTMLElement} row
+	 * @param {Boolean} includeHidden
+	 * @<b>return</b> {HTMLElement} 
+	 */</i>
+    getLastCell : <b>function</b>(row, includeHidden){
+        <b>var</b> cell = <b>this</b>.getElement('previous', row.lastChild);
+        <b>if</b>(cell &amp;&amp; !includeHidden &amp;&amp; <b>this</b>.colModel.isHidden(cell.columnIndex)){
+            <b>return</b> this.getCellBefore(cell);
+        }
+        <b>return</b> cell;
+    },
+    
+    <i>/**
+	 * Returns the first cell <b>for</b> the row - text nodes and hidden columns are skipped.
+	 * @param {HTMLElement} row
+	 * @param {Boolean} includeHidden
+	 * @<b>return</b> {HTMLElement} 
+	 */</i>
+    getFirstCell : <b>function</b>(row, includeHidden){
+        <b>var</b> cell = <b>this</b>.getElement('next', row.firstChild);
+        <b>if</b>(cell &amp;&amp; !includeHidden &amp;&amp; <b>this</b>.colModel.isHidden(cell.columnIndex)){
+            <b>return</b> this.getCellAfter(cell);
+        }
+        <b>return</b> cell;
+    },
+    
+    <i>/**
+     * @private
+     * Gets siblings, skipping text nodes
+     * @param {String} type The direction to walk: 'next' or 'previous'
+     * @param {HTMLElement} node
+	 */</i>
+    getSibling : <b>function</b>(type, node){
+        <b>if</b>(!node) <b>return</b> null;
+        type += 'Sibling';
+        <b>var</b> n = node[type];
+        <b>while</b>(n &amp;&amp; n.nodeType != 1){
+            n = n[type];
+        }
+        <b>return</b> n;
+    },
+    
+    <i>/**
+     * Returns node <b>if</b> node is an HTMLElement <b>else</b> walks the siblings <b>in</b> direction looking <b>for</b> 
+     * a node that is an element
+     * @param {String} direction The direction to walk: 'next' or 'previous'
+     * @private
+     */</i>
+    getElement : <b>function</b>(direction, node){
+        <b>if</b>(!node || node.nodeType == 1) <b>return</b> node;
+        <b>else</b> return <b>this</b>.getSibling(direction, node);
+    },
+    
+    <i>/**
+     * @private
+     */</i>
+    getElementFromChild : <b>function</b>(childEl, parentClass){
+        <b>if</b>(!childEl || (YAHOO.util.Dom.hasClass(childEl, parentClass))){
+		    <b>return</b> childEl;
+	    }
+	    <b>var</b> p = childEl.parentNode;
+	    <b>var</b> b = document.body;
+	    <b>while</b>(p &amp;&amp; p != b){
+            <b>if</b>(YAHOO.util.Dom.hasClass(p, parentClass)){
+            	<b>return</b> p;
+            }
+            p = p.parentNode;
+        }
+	    <b>return</b> null;
+    },
+    
+    <i>/**
+	 * Returns the row that contains the specified child element.
+	 * @param {HTMLElement} childEl
+	 * @<b>return</b> {HTMLElement} 
+	 */</i>
+    getRowFromChild : <b>function</b>(childEl){
+        <b>return</b> this.getElementFromChild(childEl, 'ygrid-row');
+    },
+    
+    <i>/**
+	 * Returns the cell that contains the specified child element.
+	 * @param {HTMLElement} childEl
+	 * @<b>return</b> {HTMLElement} 
+	 */</i>
+    getCellFromChild : <b>function</b>(childEl){
+        <b>return</b> this.getElementFromChild(childEl, 'ygrid-col');
+    },
+    
+    
+    <i>/**
+     * Returns the header element that contains the specified child element.
+     * @param {HTMLElement}  childEl
+	 * @<b>return</b> {HTMLElement} 
+	 */</i>
+     getHeaderFromChild : <b>function</b>(childEl){
+        <b>return</b> this.getElementFromChild(childEl, 'ygrid-hd');
+    },
+    
+    <i>/**
+     * Convenience method <b>for</b> getSelectionModel().getSelectedRows() - 
+     * See &lt;small&gt;{@link YAHOO.ext.grid.DefaultSelectionModel#getSelectedRows}&lt;/small&gt; <b>for</b> more details.
+     * @<b>return</b> {Array}
+     */</i>
+    getSelectedRows : <b>function</b>(){
+        <b>return</b> this.selModel.getSelectedRows();
+    },
+    
+    <i>/**
+     * Convenience method <b>for</b> getSelectionModel().getSelectedRows()[0] - 
+     * See &lt;small&gt;{@link YAHOO.ext.grid.DefaultSelectionModel#getSelectedRows}&lt;/small&gt; <b>for</b> more details.
+     * @<b>return</b> {HTMLElement}
+     */</i>
+    getSelectedRow : <b>function</b>(){
+        <b>if</b>(this.selModel.hasSelection()){
+            <b>return</b> this.selModel.getSelectedRows()[0];
+        }
+        <b>return</b> null;
+    },
+    
+    <i>/**
+     * Get the selected row indexes
+     * @<b>return</b> {Array} Array of indexes
+     */</i>
+    getSelectedRowIndexes : <b>function</b>(){
+        <b>var</b> a = [];
+        <b>var</b> rows = <b>this</b>.selModel.getSelectedRows();
+        <b>for</b>(var i = 0; i &lt; rows.length; i++) {
+        	a[i] = rows[i].rowIndex;
+        }
+        <b>return</b> a;
+    },
+    
+    <i>/**
+     * Gets the first selected row or -1 <b>if</b> none are selected
+     * @<b>return</b> {Number}
+     */</i>
+    getSelectedRowIndex : <b>function</b>(){
+        <b>if</b>(this.selModel.hasSelection()){
+           <b>return</b> this.selModel.getSelectedRows()[0].rowIndex;
+        }
+        <b>return</b> -1;
+    },
+    
+    <i>/**
+     * Convenience method <b>for</b> getSelectionModel().getSelectedRowIds()[0] - 
+     * See &lt;small&gt;{@link YAHOO.ext.grid.DefaultSelectionModel#getSelectedRowIds}&lt;/small&gt; <b>for</b> more details.
+     * @<b>return</b> {String}
+     */</i>
+    getSelectedRowId : <b>function</b>(){
+        <b>if</b>(this.selModel.hasSelection()){
+           <b>return</b> this.selModel.getSelectedRowIds()[0];
+        }
+        <b>return</b> null;
+    },
+    
+    <i>/**
+     * Convenience method <b>for</b> getSelectionModel().getSelectedRowIds() - 
+     * See &lt;small&gt;{@link YAHOO.ext.grid.DefaultSelectionModel#getSelectedRowIds}&lt;/small&gt; <b>for</b> more details.
+     * @<b>return</b> {Array}
+     */</i>
+    getSelectedRowIds : <b>function</b>(){
+        <b>return</b> this.selModel.getSelectedRowIds();
+    },
+    
+    <i>/**
+     * Convenience method <b>for</b> getSelectionModel().clearSelections() - 
+     * See &lt;small&gt;{@link YAHOO.ext.grid.DefaultSelectionModel#clearSelections}&lt;/small&gt; <b>for</b> more details.
+     */</i>
+    clearSelections : <b>function</b>(){
+        <b>this</b>.selModel.clearSelections();
+    },
+    
+        
+    <i>/**
+     * Convenience method <b>for</b> getSelectionModel().selectAll() - 
+     * See &lt;small&gt;{@link YAHOO.ext.grid.DefaultSelectionModel#selectAll}&lt;/small&gt; <b>for</b> more details.
+     */</i>
+    selectAll : <b>function</b>(){
+        <b>this</b>.selModel.selectAll();
+    },
+    
+        
+    <i>/**
+     * Convenience method <b>for</b> getSelectionModel().getCount() - 
+     * See &lt;small&gt;{@link YAHOO.ext.grid.DefaultSelectionModel#getCount}&lt;/small&gt; <b>for</b> more details.
+     * @<b>return</b> {Number}
+     */</i>
+    getSelectionCount : <b>function</b>(){
+        <b>return</b> this.selModel.getCount();
+    },
+    
+    <i>/**
+     * Convenience method <b>for</b> getSelectionModel().hasSelection() - 
+     * See &lt;small&gt;{@link YAHOO.ext.grid.DefaultSelectionModel#hasSelection}&lt;/small&gt; <b>for</b> more details.
+     * @<b>return</b> {Boolean}
+     */</i>
+    hasSelection : <b>function</b>(){
+        <b>return</b> this.selModel.hasSelection();
+    },
+    
+    <i>/**
+     * Returns the grid's SelectionModel.
+     * @<b>return</b> {SelectionModel}
+     */</i>
+    getSelectionModel : <b>function</b>(){
+        <b>if</b>(!<b>this</b>.selModel){
+            <b>this</b>.selModel = <b>new</b> DefaultSelectionModel();
+        }
+        <b>return</b> this.selModel;
+    },
+    
+    <i>/**
+     * Returns the grid's DataModel.
+     * @<b>return</b> {DataModel}
+     */</i>
+    getDataModel : <b>function</b>(){
+        <b>return</b> this.dataModel;
+    },
+    
+    <i>/**
+     * Returns the grid's ColumnModel.
+     * @<b>return</b> {ColumnModel}
+     */</i>
+    getColumnModel : <b>function</b>(){
+        <b>return</b> this.colModel;
+    },
+    
+    <i>/**
+     * Returns the grid's GridView object.
+     * @<b>return</b> {GridView}
+     */</i>
+    getView : <b>function</b>(){
+        <b>return</b> this.view;
+    },
+    <i>/**
+     * Called to get grid's drag proxy text, by <b>default</b> returns <b>this</b>.ddText. 
+     * @<b>return</b> {String}
+     */</i>
+    getDragDropText : <b>function</b>(){
+        <b>return</b> this.ddText.replace('%0', <b>this</b>.selModel.getCount());
+    }
+};
+<i>/**
+ * Configures the text is the drag proxy (defaults to &quot;%0 selected row(s)&quot;). 
+ * %0 is replaced <b>with</b> the number of selected rows.
+ * @type String
+ */</i>
+YAHOO.ext.grid.Grid.prototype.ddText = &quot;%0 selected row(s)&quot;;</code></pre><hr><div style="font-size:10px;text-align:center;color:gray;">yui-ext - Copyright &copy; 2006 Jack Slocum.  |
+    Yahoo! UI - Copyright &copy; 2006 Yahoo! Inc.<br />All rights reserved.</div>
+    </body></html>

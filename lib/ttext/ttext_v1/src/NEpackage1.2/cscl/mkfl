@@ -1,0 +1,210 @@
+# USE gmake INSTEAD OF make !!!
+
+LIBDIR0 = /local/encap/flex-2.5.4/lib/
+LEX = flex
+
+# use bison different linking flags on cygwin
+ifeq ($(OSTYPE), cygwin)
+	YACC = bison -y -d
+	DEFINED = -DCYGWIN
+	LINKFLAGS = -lfl 
+endif
+
+ifeq ($(OSTYPE), linux)
+	YACC = bison -y -d
+        DEFINED = -DCYGWIN -DLINUX -DHASH_MAP
+        LINKFLAGS = -lfl -pthread 
+endif
+
+ifeq ($(OSTYPE), solaris)
+	YACC = yacc -d	
+        DEFINED = -DHASH_MAP
+	LINKFLAGS = -lxnet -lpthread -L $(LIBDIR0) -lfl
+endif
+
+CC = g++
+DEBUG = yes
+
+# standard stuff:
+CCFLAGS = -O3 -c $(DEFINED)
+
+SPOBJS = ShallowParser.o SPParams.o fex_v230sp/Parser.o fex_v230sp/Sparser.o\
+	fex_v230sp/Flex.o fex_v230sp/RGF.o fex_v230sp/Sensor.o fex_v230sp/Lexicon.o\
+	snow/Example.o snow/Cloud.o snow/Network.o snow/Target.o\
+	snow/Winnow.o snow/Perceptron.o snow/NaiveBayes.o\
+	snow/TargetIdSet.o snow/SnowParam.o snow/TargetOrder.o\
+	cscl/DAVComb.o cscl/Graph.o cscl/Pr.o cscl/HMMin.o
+
+FEXOBJS = Fex.o FexParams.o Lexicon.o Parser.o Sparser.o\
+	Flex.o RGF.o Sensor.o
+
+shallowparser : $(SPOBJS)
+	$(CC) -O3 -o shallowparser $(SPOBJS) $(LINKFLAGS)
+
+SPDEPS = SPParams.h fex_v230sp/Fex.h fex_v230sp/Parser.h fex_v230sp/Sparser.h fex_v230sp/RGF.h\
+	fex_v230sp/Lexicon.h snow/SnowTypes.h snow/Example.h snow/GlobalParams.h\
+	snow/Network.h snow/TargetRank.h snow/TargetOrder.h\
+	cscl/DAVComb.h cscl/Graph.h cscl/Pr.h cscl/HMMin.h
+
+ShallowParser.o : ShallowParser.cpp $(SPDEPS)
+	$(CC) $(CCFLAGS) -o $@ $*.cpp
+
+SPPARAMSDEPS = SPParams.h
+
+SPParams.o : SPParams.cpp $(SPPARAMSDEPS)
+	$(CC) $(CCFLAGS) -o $@ $*.cpp
+
+PARSERDEPS = fex_v230sp/Parser.h fex_v230sp/FexParams.h cscl/DAVComb.h fex_v230sp/Fex.h
+
+fex_v230sp/Parser.o : fex_v230sp/Parser.cpp $(PARSERDEPS)
+	$(CC) $(CCFLAGS) -o $@ $*.cpp
+
+LEXICONDEPS = fex_v230sp/Lexicon.h fex_v230sp/GlobalParams.h
+
+fex_v230sp/Lexicon.o : fex_v230sp/Lexicon.cpp $(LEXICONDEPS)
+	$(CC) $(CCFLAGS) -o $@ $*.cpp
+
+RGFDEPS = fex_v230sp/RGF.h fex_v230sp/Sensor.h fex_v230sp/GlobalParams.h fex_v230sp/Fex.h
+
+fex_v230sp/RGF.o : fex_v230sp/RGF.cpp $(RGFDEPS)
+	$(CC) $(CCFLAGS) -o $@ $*.cpp
+
+SensorDEPS = fex_v230sp/Sensor.h fex_v230sp/Fex.h
+
+fex_v230sp/Sensor.o : fex_v230sp/Sensor.cpp $(SensorDEPS)
+	$(CC) $(CCFLAGS) -o $@ $*.cpp
+
+# script parser rules:
+
+SPARSERDEPS = fex_v230sp/tokens.h fex_v230sp/Sparser.h 
+
+fex_v230sp/Sparser.o: fex_v230sp/Sparser.cpp $(SPARSERDEPS)
+	$(CC) $(CCFLAGS) -o $@ $*.cpp
+
+fex_v230sp/Sparser.cpp: fex_v230sp/tokens.h fex_v230sp/Sparser.h fex_v230sp/Sparser.y
+	$(YACC) fex_v230sp/Sparser.y
+	if cmp -s y.tab.h fex_v230sp/tokens.h; then rm y.tab.h; \
+	else mv y.tab.h fex_v230sp/tokens.h; fi
+	mv y.tab.c fex_v230sp/Sparser.cpp
+
+FLEXDEPS = fex_v230sp/tokens.h fex_v230sp/Flex.h fex_v230sp/Sparser.h
+
+fex_v230sp/Flex.o: fex_v230sp/Flex.cpp $(FLEXDEPS)
+	$(CC) $(CCFLAGS) -o $@ $*.c
+
+fex_v230sp/Flex.cpp: fex_v230sp/Flex.l
+	$(LEX) fex_v230sp/Flex.l
+	mv lex.yy.c fex_v230sp/Flex.c
+
+# clean up:
+
+clean:
+	rm -f core fex_v230sp/tokens.h fex_v230sp/Sparser.cpp fex_v230sp/Flex.c fex_v230sp/y.output\
+	$(SPOBJS) fex
+	echo "/* this file will be automatically generated. */" > tokens.h
+
+#from SNoW
+
+# For Linux, uncomment the following line
+# Tested on Linux 2.2.13, pgcc-2.91.66 (egcs-1.1.2)
+#
+CCFLAGS += -DLINUX
+
+# If you do not have hash_map support, comment out the following
+CCFLAGS += -DHASH_MAP
+
+SNOWOBJS = snow/Snow.o snow/Cloud.o snow/Network.o snow/Target.o snow/Winnow.o snow/Perceptron.o \
+		snow/NaiveBayes.o snow/Example.o snow/TargetIdSet.o snow/SnowParam.o snow/TargetOrder.o
+
+#snow : $(SNOWOBJS)
+#	$(CC) -o snow/snow $(SNOWOBJS)
+
+SNOWDEPS = snow/Usage.h 
+
+snow/Snow.o : snow/Snow.cpp $(SNOWDEPS)
+	$(CC) $(CCFLAGS) -o $@ $*.cpp
+
+CLOUDDEPS = snow/Cloud.h snow/Network.h snow/TargetRank.h snow/Winnow.h snow/Perceptron.h \
+		snow/NaiveBayes.h snow/LearningAlgorithm.h snow/Example.h \
+		snow/Target.h snow/Feature.h snow/MinimalFeature.h \
+		snow/GlobalParams.h snow/TargetIdSet.h snow/SnowTypes.h
+
+snow/Cloud.o : snow/Cloud.cpp $(CLOUDDEPS)
+	$(CC) $(CCFLAGS) -o $@ $*.cpp
+
+NETWORKDEPS = snow/Network.h snow/TargetRank.h snow/Winnow.h snow/Perceptron.h \
+		snow/NaiveBayes.h snow/LearningAlgorithm.h snow/Example.h \
+		snow/Target.h snow/Feature.h snow/MinimalFeature.h \
+		snow/GlobalParams.h snow/TargetIdSet.h snow/SnowTypes.h
+
+snow/Network.o : snow/Network.cpp $(NETWORKDEPS)
+	$(CC) $(CCFLAGS) -o $@ $*.cpp
+
+TARGETDEPS = snow/Target.h snow/Feature.h snow/MinimalFeature.h \
+		snow/GlobalParams.h snow/TargetIdSet.h snow/SnowTypes.h
+
+
+snow/Target.o : snow/Target.cpp $(TARGETDEPS)
+	$(CC) $(CCFLAGS) -o $@ $*.cpp
+
+WINNOWDEPS = snow/Winnow.h snow/LearningAlgorithm.h snow/Example.h \
+		snow/Target.h snow/Feature.h snow/MinimalFeature.h \
+		snow/GlobalParams.h snow/TargetIdSet.h snow/SnowTypes.h
+ 
+snow/Winnow.o : snow/Winnow.cpp $(WINNOWDEPS)
+	$(CC) $(CCFLAGS) -o $@ $*.cpp
+
+PERCEPTRONDEPS = snow/Perceptron.h snow/LearningAlgorithm.h snow/Example.h \
+		snow/Target.h snow/Feature.h snow/MinimalFeature.h \
+		snow/GlobalParams.h snow/TargetIdSet.h snow/SnowTypes.h
+
+snow/Perceptron.o : snow/Perceptron.cpp
+	$(CC) $(CCFLAGS) -o $@ $*.cpp
+
+NAIVEBAYESDEPS = snow/NaiveBayes.h snow/LearningAlgorithm.h snow/Example.h \
+		snow/Target.h snow/Feature.h snow/MinimalFeature.h \
+		snow/GlobalParams.h snow/TargetIdSet.h snow/SnowTypes.h
+
+snow/NaiveBayes.o : snow/NaiveBayes.cpp $(NAIVEBAYESDEPS)
+	$(CC) $(CCFLAGS) -o $@ $*.cpp
+
+EXAMPLEDEPS = snow/Example.h snow/GlobalParams.h snow/TargetIdSet.h snow/SnowTypes.h
+
+snow/Example.o : snow/Example.cpp $(EXAMPLEDEPS)
+	$(CC) $(CCFLAGS) -o $@ $*.cpp
+
+TARGETIDSETDEPS = snow/TargetIdSet.h snow/SnowTypes.h
+
+snow/TargetIdSet.o : snow/TargetIdSet.cpp $(TARGETIDSETDEPS)
+	$(CC) $(CCFLAGS) -o $@ $*.cpp
+
+SNOWPARAMDEPS = snow/GlobalParams.h snow/SnowParam.h
+
+snow/SnowParam.o : snow/SnowParam.cpp $(SNOWPARAMDEPS)
+	$(CC) $(CCFLAGS) -o $@ $*.cpp
+
+TARGETORDERDEPS = snow/SnowTypes.h snow/GlobalParams.h snow/TargetIdSet.h snow/TargetOrder.h
+
+snow/TargetOrder.o : snow/TargetOrder.cpp $(TARGETORDERDEPS)
+	$(CC) $(CCFLAGS) -o $@ $*.cpp
+
+#clean: 
+#	-rm -f core *.o
+
+#NEWCSCL
+
+CSCLOBJS = newcscl.o Graph.o
+
+newcscl : $(CSCLOBJS)
+	$(CC) -o newcscl $(CSCLOBJS)
+
+CSCLDEPS = Graph.h
+
+newcscl.o : newcscl.cpp $(CSCLDEPS)
+	$(CC) $(CCFLAGS) -o $@ $*.cpp
+
+GRAPHDEPS = Graph.h
+
+Graph.o : Graph.cpp $(GRAPHDEPS)
+	$(CC) $(CCFLAGS) -o $@ $*.cpp
+

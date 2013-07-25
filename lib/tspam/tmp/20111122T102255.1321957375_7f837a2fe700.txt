@@ -1,0 +1,39 @@
+Received: from 2.183.127.228 by mail.rogueapp.com; Tue, 22 Nov 2011 13:52:10 +0330 
+Date: Tue, 22 Nov 2011 13:52:10 +0330 
+From: "The Electronic Payments Association" <alerts@nacha.org> 
+X-Mailer: The Bat! (v3.60.07) Professional 
+Reply-To: gavottesw24@rogueapp.com 
+X-Priority: 3 (Normal) 
+Message-ID: <781587581.89395512285765@rogueapp.com> 
+To: k2pts@phigita.net 
+Subject: Your ACH transfer 
+--------------------------------------
+&nbsp;
+The ACH  transfer (ID: 397609123674), recently  initiated from your  checking account (by you or any other person), was  canceled by the  Electronic Payments Association.
+ 
+
+  
+    Canceled transfer
+  
+  
+    Transaction ID: 
+    397609123674
+  
+  
+     Reason for rejection
+    See details in the report below 
+  
+  
+    Transaction Report 
+    report_397609123674.doc (Microsoft Word Document) 
+  
+
+  
+
+
+13450 Sunrise Valley Drive, 
+Suite 100
+Herndon, VA 20171
+
+2011 NACHA - The Electronic Payments Association
+

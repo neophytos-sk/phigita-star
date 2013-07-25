@@ -1,0 +1,14 @@
+Received: from dayhh([10.1.1.35]) by cta.cq.cn(AIMCPRO 1.0.0.0)
+	with SMTP id jm234eb72b03; Mon, 07 Nov 2011 03:02:33 +0800 from dayhh([110.52.6.197]) by cta.cq.cn(AIMC 4.0.0.0)
+	with SMTP id AISP action; Mon, 07 Nov 2011 03:02:33 +0800 
+Message-ID: <20111107024505160583@jiarui.com.cn> 
+From: =?gb2312?B?yM6x+dPx?= <master@jiarui.com.cn> 
+To:  
+Subject: =?gb2312?B?0NAu1f4uuaQu1/cuzbMus+8uudwuwO0uuN8uvLYu?=
+	=?gb2312?B?0dAu0N4usOAtLS0tyM6x+dPx?= 
+Date: Mon, 7 Nov 2011 02:45:00 +0800 
+X-mailer: Qaupzkez 9 
+X-AIMC-AUTH: master 
+X-AIMC-MAILFROM: master@jiarui.com.cn 
+X-AIMC-Msg-ID: YbPzHX1B 
+Whoops!  What is a 'application/vnd.ms-excel'?

@@ -1,0 +1,11 @@
+Received: from kszhc (unknown [110.52.7.154])
+	by sd2887.sivit.org (Postfix) with ESMTPA id F380C7C200;
+	Sun,  6 Nov 2011 17:26:11 +0100 (CET) 
+Message-ID: <20111107002529747061@zenaba.com> 
+From: =?gb2312?B?ye7b2tP+t73Usrei1bnT0M/euavLvg==?= <postmaster@zenaba.com> 
+To:  
+Subject: =?gb2312?B?wcu94tfUztKjrMXg0fjV/ci3tcTQxMyso6zX9rrPuPHB7LW81d+jrA==?=
+	=?gb2312?B?LS0tLbXLzsS6ow==?= 
+Date: Mon, 7 Nov 2011 00:25:24 +0800 
+X-mailer: Gvgkdkegqq 6 
+Whoops!  What is a 'application/vnd.ms-excel'?

@@ -1,0 +1,17 @@
+a drawable is a named thing, should other things be named too?
+e.g., an "axis", which thus would have "properties" ?
+e.g., a linewidth, etc., which others can look up?
+
+but, defaults have to be "nice"
+  meaning, someone can use this and "not know" about it
+
+an axis is always on a drawable, but clearly there can be multiple axes per drawable
+  usually, one x and one y axis
+  hence, (drawable,x) and (drawable,y) would be fine names
+  this would give a way to look up the properties of the thing by the ticmark maker
+
+what about label maker, who wants to look up properties of both the axis and the tic marks?
+  ugh, named tic marks seem horrible
+
+
+

@@ -1,0 +1,326 @@
+set limit 20
+set limit_plus_one [expr {1+${limit}}]
+
+val -id user_id { return [ad_conn user_id] }
+val -id context_user_id { return [ad_conn ctx_uid] }
+
+datastore \
+    -id contextuserdata \
+    -singleton true \
+    -select {
+	user_id
+	email
+	screen_name
+	{first_names || ' ' || last_name as full_name}
+	member_since
+    } \
+    -from_class ::CC_Users \
+    -where [list "user_id=:context_user_id"] \
+    -limit 1 \
+    -extend {
+	set pretty_member_since [lc_time_fmt $member_since %q]
+    }
+
+guard { return @{contextuserdata:rowcount} }
+
+val -id registered_p { ::xo::kit::is_registered_p }
+
+
+
+val -id ns_conn_url { return [ns_conn url] }
+val -id login_url { return "https://www.phigita.net/accounts/?return_url=@{ns_conn_url}" }
+
+# for includelet
+val -id selectedtab { return "home" }
+
+# -------------------------------------------------------------------------------------------
+
+css {
+    .badge-blog { width:40px;text-align:center;background:#DEE5F2;color:#5a6986; }
+    .badge-echo { width:40px;text-align:center;background:#efefd7;color:#660; }
+    .badge-remark { width:40px;text-align:center;background:#F2DEE5;color:#865A69; }
+    .badge-media { width:40px;text-align:center;background:#000;color:#fff; }
+
+    .special_tag {color: #600;}
+    .echo-message {margin: 0 20px 7px;padding: 0 0 0 5px;}
+    .echo-message-body {
+	padding:0;
+	display:block;
+	font-family:georgia;
+	font-size:1.2em;
+	font-weight:bold;
+	line-height:1.25em;
+    }
+    .echo-message small {
+	display: block;
+	line-height: 20px;
+	color: #999999;
+    }
+    .echo-message small a { color: #666; }
+
+    ul li { margin-bottom:10px; }
+}
+
+# -------------------------------------------------------------------------------------------
+
+master -src "/templates/www-shared.master.inc" -title "@{object_get.contextuserdata.full_name}" {
+    include -src "/templates/www-shared.tabs.inc"
+
+    # latest blog posts & remark links
+    datastore \
+	-id blogdata \
+	-scope context_user \
+	-from_class ::Blog_Item \
+	-where [list "shared_p"] \
+	-order "entry_date desc" \
+	-limit 5 \
+	-extend {
+	    set pretty_date [::util::age_pretty \
+				 -timestamp_ansi $entry_date \
+				 -sysdate_ansi [clock_to_ansi [clock seconds]]]
+
+	}
+
+    datastore \
+	-id linkdata \
+	-scope context_user \
+	-from_class ::bm::Bookmark \
+	-order {creation_date desc} \
+	-where "shared_p" \
+	-limit "5" \
+	-extend {
+	    set description [::xo::structured_text::minitext_to_html $description]
+	    set age_pretty [::util::age_pretty -timestamp_ansi $last_update -sysdate_ansi [dt_systime]]
+
+	    if { $preview_p  } {
+		set jsImgArr [::bm::getJSImageArray [dict get $extra preview]]
+		set rownum [incr bm_counter]
+	    } else {
+		set jsImgArr \[\]
+	    }
+
+	    array set uri [::uri::split $url]
+	    set domain [::util::domain_from_host $uri(host)]
+	    set host $uri(host)
+
+	    if { $video_p } {
+		if { [catch {
+		    set video_id [dict get $extra video_id]
+		    set href http://video.phigita.net/${video_id}
+		} errMsg] } {
+		    set video_p 0
+		    ns_log notice "includelet-recent-shared-links: video_p check, possibly missing video_id in extra: errMsg=$errMsg"
+		}
+	    }
+	}
+
+    p
+    layout_row -class row-fluid {
+	tpl -if "@{blogdata:rowcount}" {
+	    layout_col -class span6 {
+		div -style "margin-left:25px;" {
+		    a -href "blog/" { 
+			div -class "badge badge-blog" {
+			    t "blog" 
+			}
+		    }
+		}
+		p
+		ul {
+		    tpl -for blogdata {
+			li {
+			    a -href "blog/@{id}" {
+				t @{title}
+			    }
+			    br
+			    small {
+				t " posted @{pretty_date}"
+			    }
+			}
+		    }
+		}
+	    }
+	}
+	tpl -if "@{linkdata:rowcount}" {
+	    layout_col -class span6 {
+		div -style "margin-left:25px;" {
+		    a -href "linklog/" { 
+			div -class "badge badge-remark" {
+			    t "reMark" 
+			}
+		    }
+		}
+		p
+		ul {
+		    tpl -for linkdata {
+			li {
+			    a -href @{url} {
+				t @{title}
+			    }
+			    br
+			    small {
+				t " posted @{age_pretty}"
+			    }
+			}
+		    }
+		}
+	    }
+	}
+    }
+
+    # latest echo messages & media items
+    datastore \
+	-id echodata \
+	-scope context_user \
+	-from_class ::echo::Message \
+	-where_if { "@{user_id} == 0" => "public_p='t'" } \
+	-order "creation_date desc" \
+	-limit 1 \
+	-extend {
+	    set content_in_html [::xo::structured_text::minitext_to_html $content]
+	    set pretty_date [::util::age_pretty \
+				 -timestamp_ansi $creation_date \
+				 -sysdate_ansi [clock_to_ansi [clock seconds]]]
+
+	}
+
+    val -id media_base_url { 
+	set context_username [ad_conn context_username]
+	return "http://www.phigita.net/~${context_username}/media" 
+    }
+
+    datastore \
+	-id mediadata \
+	-scope context_user \
+	-select {
+	    tags_ia
+	    id 
+	    title 
+	    {extra->'XO.File.Size' as file_size} 
+	    {lower(extra->'XO.File.Magic') as file_magic} 
+	    {lower(extra->'XO.File.Type') as filetype} 
+	    shared_p 
+	    deleted_p 
+	    hidden_p 
+	    starred_p 
+	} -from_class ::Content_Item \
+	-where [list "shared_p" "extra->'XO.File.Type' != 'audio'"] \
+	-order "creation_date desc" \
+	-limit 6 \
+	-extend {
+
+	    set extra [::util::decode ${filetype} image -s800 video / document / ""]
+	    set link_url @{media_base_url}/view/${filetype}/${id}${extra}
+	    set image_url @{media_base_url}/view/${filetype}/${id}-s120
+
+	}
+
+
+    p
+    layout_row -class row-fluid {
+	tpl -if @{echodata:rowcount} {
+	    layout_col -class span6 {
+		div -style "margin-left:25px;" {
+		    a -href "echo/" {
+			div -class "badge badge-echo"  { t "echo" }
+		    }
+		}
+		p
+		tpl -with echodata {
+		    div -class "echo-message" {
+			div -class "echo-message-body" {
+			    nt @{content_in_html:noquote}
+			}
+			small {
+			    a -href "/~@{object_get.userdata.screen_name}/echo/@{id}" {
+				t "@{pretty_date} via @{device}"
+			    }
+			    tpl -if "@{public_p}" {
+				nt " &#183; "
+				span -class "special_tag" {
+				    t "#public"
+				}
+			    }
+			}
+		    }
+		}
+	    }
+	}
+	tpl -if @{mediadata:rowcount} {
+	    layout_col -class span6 {
+		div -style "margin-left:25px;" {
+		    a -href "media/" {
+			div -class "badge badge-media"  { t "media" }
+		    }
+		}
+		p
+		ul -class "thumbnails" {
+		    tpl -for "mediadata" -limit 3 {
+			li -class span4 {
+			    div -class "thumbnail" {
+				a -href "@{link_url}" {
+				    img -src "@{image_url}" -border 0
+				}
+			    }
+			}
+		    }
+		}
+		ul -class "thumbnails" {
+		    tpl -for "mediadata" -offset 3 {
+			li -class span4 {
+			    div -class "thumbnail" {
+				a -href "@{link_url}" {
+				    img -src "@{image_url}" -border 0
+				}
+			    }
+			}
+		    }
+		}
+	    }
+	}
+    }
+
+
+    # sidebar
+    div -x-master-renderTo "sidebar" {
+	tpl -with contextuserdata {
+	    div -style "padding:15px;" {
+		t "A member of the community since @{pretty_member_since}."
+	    }
+	    ul {
+		tpl -if { not @{val.registered_p} } {
+		    li {
+			nt {
+			    If you were to <a href="@{val.login_url}">log in</a>, 
+			    you'd be able to get more information 
+			    on your fellow community member. 
+			}
+		    }
+
+		}
+		tpl -else "" {
+		    li { 
+			b { t "Email: " }
+			a -href "mailto:@{email}" {
+			    t "@{email}" 
+			}
+		    }
+		    li { 
+			b { t "User ID: " } 
+			t @{screen_name}
+		    }
+		    if {0} {
+			tpl -if @{val.registered_p} {
+			    li { 
+				b { t "IM Status: " }
+				t ${status}
+				img -src /graphics/im/@{status:lower} -width "16" -height "16" 
+			    }
+			}
+		    }
+		}
+	    }
+	}
+    }
+
+}

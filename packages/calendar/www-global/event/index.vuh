@@ -1,0 +1,9 @@
+set path_info [ad_conn path_info]
+
+if { [string is integer -strict $path_info] } {
+	rp_form_put id $path_info
+} else {
+	rp_returnnotfound
+	return
+}
+rp_internal_redirect /packages/calendar/tmpl-global/event-one

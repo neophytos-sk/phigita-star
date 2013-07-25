@@ -1,0 +1,13 @@
+Received: from [120.62.13.88] by mail.j-ki.de; Fri, 2 Dec 2011 16:16:44 -0700 
+Message-ID: <01ccb10d$c84bbe00$580d3e78@3dp.kirschbaum> 
+From: "Daren Bynum" <3dp.kirschbaum@j-ki.de> 
+To: <k2pts@phigita.net> 
+Subject: Re: 
+Date: Fri, 2 Dec 2011 16:16:44 -0700 
+X-Priority: 3 
+X-MSMail-Priority: Normal 
+X-Mailer: Microsoft Outlook Express 6.00.2800.1158 
+X-MimeOLE: Produced By Microsoft MimeOLE V6.00.2800.1158 
+--------------------------------------
+
+Whoops!  What is a 'image/gif'?

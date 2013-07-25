@@ -1,0 +1,3 @@
+rp_form_put id [ad_conn extra_url]
+
+rp_internal_redirect /packages/wiki/tmpl-pvt/page-one

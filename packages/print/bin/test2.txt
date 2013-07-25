@@ -1,0 +1,1110 @@
+en|000|Computer science, information & general works
+en|100|Philosophy & psychology
+en|200|Religion
+en|300|Social sciences
+en|400|Language
+en|500|Science
+en|600|Technology
+en|700|Arts & recreation
+en|800|Literature
+en|900|History & geography
+en|000|Computer science, knowledge & systems
+en|010|Bibliographies
+en|020|Library & information sciences
+en|030|Encyclopedias & books of facts
+en|040|{[Unassigned]}
+en|050|Magazines, journals & serials
+en|060|Associations, organizations & museums
+en|070|News media, journalism & publishing
+en|080|Quotations
+en|090|Manuscripts & rare books
+en|100|Philosophy
+en|110|Metaphysics
+en|120|Epistemology
+en|130|Parapsychology & occultism
+en|140|Philosophical schools of thought
+en|150|Psychology
+en|160|Logic
+en|170|Ethics
+en|180|Ancient, medieval & eastern philosophy
+en|190|Modern western philosophy
+en|200|Religion
+en|210|Philosophy & theory of religion
+en|220|The Bible
+en|230|Christianity & Christian theology
+en|240|Christian practice & observance
+en|250|Christian pastoral practice & religious orders
+en|260|Christian organization, social work & worship
+en|270|History of Christianity
+en|280|Christian denominations
+en|290|Other religions
+en|300|Social sciences, sociology & anthropology
+en|310|Statistics
+en|320|Political science
+en|330|Economics
+en|340|Law
+en|350|Public administration & military science
+en|360|Social problems & social services
+en|370|Education
+en|380|Commerce, communications & transportation
+en|390|Customs, etiquette & folklore
+en|400|Language
+en|410|Linguistics
+en|420|English & Old English languages
+en|430|German & related languages
+en|440|French & related languages
+en|450|Italian, Romanian & related languages
+en|460|Spanish & Portuguese languages
+en|470|Latin & Italic languages
+en|480|Classical & modern Greek languages
+en|490|Other languages
+en|500|Science
+en|510|Mathematics
+en|520|Astronomy
+en|530|Physics
+en|540|Chemistry
+en|550|Earth sciences & geology
+en|560|Fossils & prehistoric life
+en|570|Life {sciences;} biology
+en|580|Plants (Botany)
+en|590|Animals (Zoology)
+en|600|Technology
+en|610|Medicine & health
+en|620|Engineering
+en|630|Agriculture
+en|640|Home & family management
+en|650|Management & public relations
+en|660|Chemical engineering
+en|670|Manufacturing
+en|680|Manufacture for specific uses
+en|690|Building & construction
+en|700|Arts
+en|710|Landscaping & area planning
+en|720|Architecture
+en|730|Sculpture, ceramics & metalwork
+en|740|Drawing & decorative arts
+en|750|Painting
+en|760|Graphic arts
+en|770|Photography & computer art
+en|780|Music
+en|790|Sports, games & entertainment
+en|800|Literature, rhetoric & criticism
+en|810|American literature in English
+en|820|English & Old English literatures
+en|830|German & related literatures
+en|840|French & related literatures
+en|850|Italian, Romanian & related literatures
+en|860|Spanish & Portuguese literatures
+en|870|Latin & Italic literatures
+en|880|Classical & modern Greek literatures
+en|890|Other literatures
+en|900|History
+en|910|Geography & travel
+en|920|Biography & genealogy
+en|930|History of ancient world (to ca. 499)
+en|940|History of Europe
+en|950|History of Asia
+en|960|History of Africa
+en|970|History of North America
+en|980|History of South America
+en|990|History of other areas
+en|000|Computer science, information & general works
+en|001|Knowledge
+en|002|The book
+en|003|Systems
+en|004|Data processing & computer science
+en|005|Computer programming, programs & data
+en|006|Special computer methods
+en|007|{[Unassigned]}
+en|008|{[Unassigned]}
+en|009|{[Unassigned]}
+en|010|Bibliography
+en|011|Bibliographies
+en|012|Bibliographies of individuals
+en|013|{[Unassigned]}
+en|014|Of anonymous & pseudonymous works
+en|015|Bibliographies of works from specific places
+en|016|Bibliographies of works on specific subjects
+en|017|General subject catalogs
+en|018|Catalogs arranged by author, date, etc.
+en|019|Dictionary catalogs
+en|020|Library & information sciences
+en|021|Library relationships
+en|022|Administration of physical plant
+en|023|Personnel management
+en|024|{[Unassigned]}
+en|025|Library operations
+en|026|Libraries for specific subjects
+en|027|General libraries
+en|028|Reading & use of other information media
+en|029|{[Unassigned]}
+en|030|General encyclopedic works
+en|031|Encyclopedias in American English
+en|032|Encyclopedias in English
+en|033|In other Germanic languages
+en|034|Encyclopedias in French, Occitan & Catalan
+en|035|In Italian, Romanian & related languages
+en|036|Encyclopedias in Spanish & Portuguese
+en|037|Encyclopedias in Slavic languages
+en|038|Encyclopedias in Scandinavian languages
+en|039|Encyclopedias in other languages
+en|040|{[Unassigned]}
+en|041|{[Unassigned]}
+en|042|{[Unassigned]}
+en|043|{[Unassigned]}
+en|044|{[Unassigned]}
+en|045|{[Unassigned]}
+en|046|{[Unassigned]}
+en|047|{[Unassigned]}
+en|048|{[Unassigned]}
+en|049|{[Unassigned]}
+en|050|General serial publications
+en|051|Serials in American English
+en|052|Serials in English
+en|053|Serials in other Germanic languages
+en|054|Serials in French, Occitan & Catalan
+en|055|In Italian, Romanian & related languages
+en|056|Serials in Spanish & Portuguese
+en|057|Serials in Slavic languages
+en|058|Serials in Scandinavian languages
+en|059|Serials in other languages
+en|060|General organizations & museum science
+en|061|Organizations in North America
+en|062|Organizations in British {Isles;} in England
+en|063|Organizations in central {Europe;} in Germany
+en|064|Organizations in France & Monaco
+en|065|Organizations in Italy & adjacent islands
+en|066|In Iberian Peninsula & adjacent islands
+en|067|Organizations in eastern {Europe;} in Russia
+en|068|Organizations in other geographic areas
+en|069|Museum science
+en|070|News media, journalism & publishing
+en|071|Newspapers in North America
+en|072|Newspapers in British {Isles;} in England
+en|073|Newspapers in central {Europe;} in Germany
+en|074|Newspapers in France & Monaco
+en|075|Newspapers in Italy & adjacent islands
+en|076|In Iberian Peninsula & adjacent islands
+en|077|Newspapers in eastern {Europe;} in Russia
+en|078|Newspapers in Scandinavia
+en|079|Newspapers in other geographic areas
+en|080|General collections
+en|081|Collections in American English
+en|082|Collections in English
+en|083|Collections in other Germanic languages
+en|084|Collections in French, Occitan & Catalan
+en|085|In Italian, Romanian & related languages
+en|086|Collections in Spanish & Portuguese
+en|087|Collections in Slavic languages
+en|088|Collections in Scandinavian languages
+en|089|Collections in other languages
+en|090|Manuscripts & rare books
+en|091|Manuscripts
+en|092|Block books
+en|093|Incunabula
+en|094|Printed books
+en|095|Books notable for bindings
+en|096|Books notable for illustrations
+en|097|Books notable for ownership or origin
+en|098|Prohibited works, forgeries & hoaxes
+en|099|Books notable for format
+en|100|Philosophy & psychology
+en|101|Theory of philosophy
+en|102|Miscellany
+en|103|Dictionaries & encyclopedias
+en|104|{[Unassigned]}
+en|105|Serial publications
+en|106|Organizations & management
+en|107|Education, research & related topics
+en|108|Kinds of persons treatment
+en|109|Historical & collected persons treatment
+en|110|Metaphysics
+en|111|Ontology
+en|112|{[Unassigned]}
+en|113|Cosmology
+en|114|Space
+en|115|Time
+en|116|Change
+en|117|Structure
+en|118|Force & energy
+en|119|Number & quantity
+en|120|Epistemology, causation & humankind
+en|121|Epistemology
+en|122|Causation
+en|123|Determinism & indeterminism
+en|124|Teleology
+en|125|{[Unassigned]}
+en|126|The self
+en|127|The unconscious & the subconscious
+en|128|Humankind
+en|129|Origin & destiny of individual souls
+en|130|Parapsychology & occultism
+en|131|Parapsychological & occult methods
+en|132|{[Unassigned]}
+en|133|Specific topics in parapsychology & occultism
+en|134|{[Unassigned]}
+en|135|Dreams & mysteries
+en|136|{[Unassigned]}
+en|137|Divinatory graphology
+en|138|Physiognomy
+en|139|Phrenology
+en|140|Specific philosophical schools
+en|141|Idealism & related systems
+en|142|Critical philosophy
+en|143|Bergsonism & intuitionism
+en|144|Humanism & related systems
+en|145|Sensationalism
+en|146|Naturalism & related systems
+en|147|Pantheism & related systems
+en|148|Eclecticism, liberalism & traditionalism
+en|149|Other philosophical systems
+en|150|Psychology
+en|151|{[Unassigned]}
+en|152|Perception, movement, emotions & drives
+en|153|Mental processes & intelligence
+en|154|Subconscious & altered states
+en|155|Differential & developmental psychology
+en|156|Comparative psychology
+en|157|{[Unassigned]}
+en|158|Applied psychology
+en|159|{[Unassigned]}
+en|160|Logic
+en|161|Induction
+en|162|Deduction
+en|163|{[Unassigned]}
+en|164|{[Unassigned]}
+en|165|Fallacies & sources of error
+en|166|Syllogisms
+en|167|Hypotheses
+en|168|Argument & persuasion
+en|169|Analogy
+en|170|Ethics
+en|171|Ethical systems
+en|172|Political ethics
+en|173|Ethics of family relationships
+en|174|Occupational ethics
+en|175|Ethics of recreation & leisure
+en|176|Ethics of sex & reproduction
+en|177|Ethics of social relations
+en|178|Ethics of consumption
+en|179|Other ethical norms
+en|180|Ancient, medieval & eastern philosophy
+en|181|Eastern philosophy
+en|182|Pre-Socratic Greek philosophies
+en|183|Socratic & related philosophies
+en|184|Platonic philosophy
+en|185|Aristotelian philosophy
+en|186|Skeptic & Neoplatonic philosophies
+en|187|Epicurean philosophy
+en|188|Stoic philosophy
+en|189|Medieval western philosophy
+en|190|Modern western philosophy
+en|191|Philosophy of United States & Canada
+en|192|Philosophy of British Isles
+en|193|Philosophy of Germany & Austria
+en|194|Philosophy of France
+en|195|Philosophy of Italy
+en|196|Philosophy of Spain & Portugal
+en|197|Philosophy of former Soviet Union
+en|198|Philosophy of Scandinavia
+en|199|Philosophy in other geographic areas
+en|200|Religion
+en|201|Religious mythology & social theology
+en|202|Doctrines
+en|203|Public worship & other practices
+en|204|Religious experience, life & practice
+en|205|Religious ethics
+en|206|Leaders & organization
+en|207|Missions & religious education
+en|208|Sources
+en|209|Sects & reform movements
+en|210|Philosophy & theory of religion
+en|211|Concepts of God
+en|212|Existence, knowability & attributes of God
+en|213|Creation
+en|214|Theodicy
+en|215|Science & religion
+en|216|{[Unassigned]}
+en|217|{[Unassigned]}
+en|218|Humankind
+en|219|{[Unassigned]}
+en|220|Bible
+en|221|Old Testament (Tanakh)
+en|222|Historical books of Old Testament
+en|223|Poetic books of Old Testament
+en|224|Prophetic books of Old Testament
+en|225|New Testament
+en|226|Gospels & Acts
+en|227|Epistles
+en|228|Revelation (Apocalypse)
+en|229|Apocrypha & pseudepigrapha
+en|230|Christianity & Christian theology
+en|231|God
+en|232|Jesus Christ & his family
+en|233|Humankind
+en|234|Salvation & grace
+en|235|Spiritual beings
+en|236|Eschatology
+en|237|{[Unassigned]}
+en|238|Creeds & catechisms
+en|239|Apologetics & polemics
+en|240|Christian moral & devotional theology
+en|241|Christian ethics
+en|242|Devotional literature
+en|243|Evangelistic writings for individuals
+en|244|{[Unassigned]}
+en|245|{[Unassigned]}
+en|246|Use of art in Christianity
+en|247|Church furnishings & articles
+en|248|Christian experience, practice & life
+en|249|Christian observances in family life
+en|250|Christian orders & local church
+en|251|Preaching
+en|252|Texts of sermons
+en|253|Pastoral office & work
+en|254|Parish administration
+en|255|Religious congregations & orders
+en|256|{[Unassigned]}
+en|257|{[Unassigned]}
+en|258|{[Unassigned]}
+en|259|Pastoral care of families & kinds of persons
+en|260|Social & ecclesiastical theology
+en|261|Social theology
+en|262|Ecclesiology
+en|263|Days, times & places of observance
+en|264|Public worship
+en|265|Sacraments, other rites & acts
+en|266|Missions
+en|267|Associations for religious work
+en|268|Religious education
+en|269|Spiritual renewal
+en|270|History of Christianity & Christian church
+en|271|Religious orders in church history
+en|272|Persecutions in church history
+en|273|Doctrinal controversies & heresies
+en|274|History of Christianity in Europe
+en|275|History of Christianity in Asia
+en|276|History of Christianity in Africa
+en|277|History of Christianity in North America
+en|278|History of Christianity in South America
+en|279|History of Christianity in other areas
+en|280|Christian denominations & sects
+en|281|Early church & Eastern churches
+en|282|Roman Catholic Church
+en|283|Anglican churches
+en|284|Protestants of Continental origin
+en|285|Presbyterian, Reformed & Congregational
+en|286|Baptist, Disciples of Christ & Adventist
+en|287|Methodist & related churches
+en|288|{[Unassigned]}
+en|289|Other denominations & sects
+en|290|Other religions
+en|291|{[Unassigned]}
+en|292|Greek & Roman religion
+en|293|Germanic religion
+en|294|Religions of Indic origin
+en|295|Zoroastrianism
+en|296|Judaism
+en|297|Islam, Babism & Bahai Faith
+en|298|(Optional number)
+en|299|Religions not provided for elsewhere
+en|300|Social sciences
+en|301|Sociology & anthropology
+en|302|Social interaction
+en|303|Social processes
+en|304|Factors affecting social behavior
+en|305|Social groups
+en|306|Culture & institutions
+en|307|Communities
+en|308|{[Unassigned]}
+en|309|{[Unassigned]}
+en|310|Collections of general statistics
+en|311|{[Unassigned]}
+en|312|{[Unassigned]}
+en|313|{[Unassigned]}
+en|314|General statistics of Europe
+en|315|General statistics of Asia
+en|316|General statistics of Africa
+en|317|General statistics of North America
+en|318|General statistics of South America
+en|319|General statistics of other areas
+en|320|Political science
+en|321|Systems of governments & states
+en|322|Relation of state to organized groups
+en|323|Civil & political rights
+en|324|The political process
+en|325|International migration & colonization
+en|326|Slavery & emancipation
+en|327|International relations
+en|328|The legislative process
+en|329|{[Unassigned]}
+en|330|Economics
+en|331|Labor economics
+en|332|Financial economics
+en|333|Economics of land & energy
+en|334|Cooperatives
+en|335|Socialism & related systems
+en|336|Public finance
+en|337|International economics
+en|338|Production
+en|339|Macroeconomics & related topics
+en|340|Law
+en|341|Law of nations
+en|342|Constitutional & administrative law
+en|343|Military, tax, trade & industrial law
+en|344|Labor, social, education & cultural law
+en|345|Criminal law
+en|346|Private law
+en|347|Civil procedure & courts
+en|348|Laws, regulations & cases
+en|349|Law of specific jurisdictions & areas
+en|350|Public administration & military science
+en|351|Public administration
+en|352|General considerations of public administration
+en|353|Specific fields of public administration
+en|354|Administration of economy & environment
+en|355|Military science
+en|356|Infantry forces & warfare
+en|357|Mounted forces & warfare
+en|358|Air & other specialized forces
+en|359|Sea forces & warfare
+en|360|Social problems & {services;} associations
+en|361|Social problems & social welfare in general
+en|362|Social welfare problems & services
+en|363|Other social problems & services
+en|364|Criminology
+en|365|Penal & related institutions
+en|366|Associations
+en|367|General clubs
+en|368|Insurance
+en|369|Miscellaneous kinds of associations
+en|370|Education
+en|371|Schools & their {activities;} special education
+en|372|Elementary education
+en|373|Secondary education
+en|374|Adult education
+en|375|Curricula
+en|376|{[Unassigned]}
+en|377|{[Unassigned]}
+en|378|Higher education
+en|379|Public policy issues in education
+en|380|Commerce, communications & transportation
+en|381|Commerce
+en|382|International commerce
+en|383|Postal communication
+en|384|{Communications;} telecommunication
+en|385|Railroad transportation
+en|386|Inland waterway & ferry transportation
+en|387|Water, air & space transportation
+en|388|{Transportation;} ground transportation
+en|389|Metrology & standardization
+en|390|Customs, etiquette & folklore
+en|391|Costume & personal appearance
+en|392|Customs of life cycle & domestic life
+en|393|Death customs
+en|394|General customs
+en|395|Etiquette (Manners)
+en|396|{[Unassigned]}
+en|397|{[Unassigned]}
+en|398|Folklore
+en|399|Customs of war & diplomacy
+en|400|Language
+en|401|Philosophy & theory
+en|402|Miscellany
+en|403|Dictionaries & encyclopedias
+en|404|Special topics
+en|405|Serial publications
+en|406|Organizations & management
+en|407|Education, research & related topics
+en|408|Kinds of persons treatment
+en|409|Geographic & persons treatment
+en|410|Linguistics
+en|411|Writing systems
+en|412|Etymology
+en|413|Dictionaries
+en|414|Phonology & phonetics
+en|415|Grammar
+en|416|{[Unassigned]}
+en|417|Dialectology & historical linguistics
+en|418|Standard usage & applied linguistics
+en|419|Sign languages
+en|420|English & Old English
+en|421|English writing system & phonology
+en|422|English etymology
+en|423|English dictionaries
+en|424|{[Unassigned]}
+en|425|English grammar
+en|426|{[Unassigned]}
+en|427|English language variations
+en|428|Standard English usage
+en|429|Old English (Anglo-Saxon)
+en|430|Germanic {languages;} German
+en|431|German writing systems & phonology
+en|432|German etymology
+en|433|German dictionaries
+en|434|{[Unassigned]}
+en|435|German grammar
+en|436|{[Unassigned]}
+en|437|German language variations
+en|438|Standard German usage
+en|439|Other Germanic languages
+en|440|Romance {languages;} French
+en|441|French writing systems & phonology
+en|442|French etymology
+en|443|French dictionaries
+en|444|{[Unassigned]}
+en|445|French grammar
+en|446|{[Unassigned]}
+en|447|French language variations
+en|448|Standard French usage
+en|449|Occitan & Catalan
+en|450|Italian, Romanian & related languages
+en|451|Italian writing systems & phonology
+en|452|Italian etymology
+en|453|Italian dictionaries
+en|454|{[Unassigned]}
+en|455|Italian grammar
+en|456|{[Unassigned]}
+en|457|Italian language variations
+en|458|Standard Italian usage
+en|459|Romanian & related languages
+en|460|Spanish & Portuguese languages
+en|461|Spanish writing systems & phonology
+en|462|Spanish etymology
+en|463|Spanish dictionaries
+en|464|{[Unassigned]}
+en|465|Spanish grammar
+en|466|{[Unassigned]}
+en|467|Spanish language variations
+en|468|Standard Spanish usage
+en|469|Portuguese
+en|470|Italic {languages;} Latin
+en|471|Classical Latin writing & phonology
+en|472|Classical Latin etymology
+en|473|Classical Latin dictionaries
+en|474|{[Unassigned]}
+en|475|Classical Latin grammar
+en|476|{[Unassigned]}
+en|477|Old, postclassical & Vulgar Latin
+en|478|Classical Latin usage
+en|479|Other Italic languages
+en|480|Hellenic {languages;} classical Greek
+en|481|Classical Greek writing & phonology
+en|482|Classical Greek etymology
+en|483|Classical Greek dictionaries
+en|484|{[Unassigned]}
+en|485|Classical Greek grammar
+en|486|{[Unassigned]}
+en|487|Preclassical & postclassical Greek
+en|488|Classical Greek usage
+en|489|Other Hellenic languages
+en|490|Other languages
+en|491|East Indo-European & Celtic languages
+en|492|Afro-Asiatic {languages;} Semitic languages
+en|493|Non-Semitic Afro-Asiatic languages
+en|494|Altaic, Uralic, Hyperborean & Dravidian
+en|495|Languages of East & Southeast Asia
+en|496|African languages
+en|497|North American native languages
+en|498|South American native languages
+en|499|Austronesian & other languages
+en|500|Natural sciences & mathematics
+en|501|Philosophy & theory
+en|502|Miscellany
+en|503|Dictionaries & encyclopedias
+en|504|{[Unassigned]}
+en|505|Serial publications
+en|506|Organizations & management
+en|507|Education, research & related topics
+en|508|Natural history
+en|509|Historical, geographic & persons treatment
+en|510|Mathematics
+en|511|General principles of mathematics
+en|512|Algebra
+en|513|Arithmetic
+en|514|Topology
+en|515|Analysis
+en|516|Geometry
+en|517|{[Unassigned]}
+en|518|Numerical analysis
+en|519|Probabilities & applied mathematics
+en|520|Astronomy & allied sciences
+en|521|Celestial mechanics
+en|522|Techniques, equipment & materials
+en|523|Specific celestial bodies & phenomena
+en|524|{[Unassigned]}
+en|525|Earth (Astronomical geography)
+en|526|Mathematical geography
+en|527|Celestial navigation
+en|528|Ephemerides
+en|529|Chronology
+en|530|Physics
+en|531|Classical {mechanics;} solid mechanics
+en|532|Fluid {mechanics;} liquid mechanics
+en|533|Gas mechanics
+en|534|Sound & related vibrations
+en|535|Light & infrared & ultraviolet phenomena
+en|536|Heat
+en|537|Electricity & electronics
+en|538|Magnetism
+en|539|Modern physics
+en|540|Chemistry & allied sciences
+en|541|Physical chemistry
+en|542|Techniques, equipment & materials
+en|543|Analytical chemistry
+en|544|{[Unassigned]}
+en|545|{[Unassigned]}
+en|546|Inorganic chemistry
+en|547|Organic chemistry
+en|548|Crystallography
+en|549|Mineralogy
+en|550|Earth sciences
+en|551|Geology, hydrology & meteorology
+en|552|Petrology
+en|553|Economic geology
+en|554|Earth sciences of Europe
+en|555|Earth sciences of Asia
+en|556|Earth sciences of Africa
+en|557|Earth sciences of North America
+en|558|Earth sciences of South America
+en|559|Earth sciences of other areas
+en|560|{Paleontology;} paleozoology
+en|561|{Paleobotany;} fossil microorganisms
+en|562|Fossil invertebrates
+en|563|Fossil marine & seashore invertebrates
+en|564|Fossil mollusks & molluscoids
+en|565|Fossil arthropods
+en|566|Fossil chordates
+en|567|Fossil cold-blooded {vertebrates;} fossil fishes
+en|568|Fossil birds
+en|569|Fossil mammals
+en|570|Life {sciences;} biology
+en|571|Physiology & related subjects
+en|572|Biochemistry
+en|573|Specific physiological systems in animals
+en|574|{[Unassigned]}
+en|575|Specific parts of & systems in plants
+en|576|Genetics & evolution
+en|577|Ecology
+en|578|Natural history of organisms
+en|579|Microorganisms, fungi & algae
+en|580|Plants (Botany)
+en|581|Specific topics in natural history
+en|582|Plants noted for characteristics & flowers
+en|583|Dicotyledons
+en|584|Monocotyledons
+en|585|{Gymnosperms;} conifers
+en|586|Seedless plants
+en|587|Vascular seedless plants
+en|588|Bryophytes
+en|589|{[Unassigned]}
+en|590|Animals (Zoology)
+en|591|Specific topics in natural history
+en|592|Invertebrates
+en|593|Marine & seashore invertebrates
+en|594|Mollusks & molluscoids
+en|595|Arthropods
+en|596|Chordates
+en|597|Cold-blooded {vertebrates;} fishes
+en|598|Birds
+en|599|Mammals
+en|600|Technology
+en|601|Philosophy & theory
+en|602|Miscellany
+en|603|Dictionaries & encyclopedias
+en|604|Special topics
+en|605|Serial publications
+en|606|Organizations
+en|607|Education, research & related topics
+en|608|Inventions & patents
+en|609|Historical, geographic & persons treatment
+en|610|Medicine & health
+en|611|Human anatomy, cytology & histology
+en|612|Human physiology
+en|613|Personal health & safety
+en|614|Incidence & prevention of disease
+en|615|Pharmacology & therapeutics
+en|616|Diseases
+en|617|Surgery & related medical specialties
+en|618|Gynecology, obstetrics, pediatrics & geriatrics
+en|619|{[Unassigned]}
+en|620|Engineering & allied operations
+en|621|Applied physics
+en|622|Mining & related operations
+en|623|Military & nautical engineering
+en|624|Civil engineering
+en|625|Engineering of railroads & roads
+en|626|{[Unassigned]}
+en|627|Hydraulic engineering
+en|628|Sanitary & municipal engineering
+en|629|Other branches of engineering
+en|630|Agriculture & related technologies
+en|631|Techniques, equipment & materials
+en|632|Plant injuries, diseases & pests
+en|633|Field & plantation crops
+en|634|Orchards, fruits & forestry
+en|635|Garden crops (Horticulture)
+en|636|Animal husbandry
+en|637|Processing dairy & related products
+en|638|Insect culture
+en|639|Hunting, fishing & conservation
+en|640|Home & family management
+en|641|Food & drink
+en|642|Meals & table service
+en|643|Housing & household equipment
+en|644|Household utilities
+en|645|Household furnishings
+en|646|Sewing, clothing & personal living
+en|647|Management of public households
+en|648|Housekeeping
+en|649|Child rearing & home care of persons
+en|650|Management & auxiliary services
+en|651|Office services
+en|652|Processes of written communication
+en|653|Shorthand
+en|654|{[Unassigned]}
+en|655|{[Unassigned]}
+en|656|{[Unassigned]}
+en|657|Accounting
+en|658|General management
+en|659|Advertising & public relations
+en|660|Chemical engineering
+en|661|Industrial chemicals
+en|662|Explosives, fuels & related products
+en|663|Beverage technology
+en|664|Food technology
+en|665|Industrial oils, fats, waxes & gases
+en|666|Ceramic & allied technologies
+en|667|Cleaning, color & coating technologies
+en|668|Technology of other organic products
+en|669|Metallurgy
+en|670|Manufacturing
+en|671|Metalworking & primary metal products
+en|672|Iron, steel & other iron alloys
+en|673|Nonferrous metals
+en|674|Lumber processing, wood products & cork
+en|675|Leather & fur processing
+en|676|Pulp & paper technology
+en|677|Textiles
+en|678|Elastomers & elastomer products
+en|679|Other products of specific materials
+en|680|Manufacture for specific uses
+en|681|Precision instruments & other devices
+en|682|Small forge work (Blacksmithing)
+en|683|Hardware & household appliances
+en|684|Furnishings & home workshops
+en|685|Leather, fur goods & related products
+en|686|Printing & related activities
+en|687|Clothing & accessories
+en|688|Other final products & packaging
+en|689|{[Unassigned]}
+en|690|Buildings
+en|691|Building materials
+en|692|Auxiliary construction practices
+en|693|Specific materials & purposes
+en|694|Wood construction & carpentry
+en|695|Roof covering
+en|696|Utilities
+en|697|Heating, ventilating & air-conditioning
+en|698|Detail finishing
+en|699|{[Unassigned]}
+en|700|The {arts;} fine & decorative arts
+en|701|Philosophy of fine & decorative arts
+en|702|Miscellany of fine & decorative arts
+en|703|Dictionaries of fine & decorative arts
+en|704|Special topics in fine & decorative arts
+en|705|Serial publications of fine & decorative arts
+en|706|Organizations & management
+en|707|Education, research & related topics
+en|708|Galleries, museums & private collections
+en|709|Historical, geographic & persons treatment
+en|710|Civic & landscape art
+en|711|Area planning
+en|712|Landscape architecture
+en|713|Landscape architecture of trafficways
+en|714|Water features
+en|715|Woody plants
+en|716|Herbaceous plants
+en|717|Structures in landscape architecture
+en|718|Landscape design of cemeteries
+en|719|Natural landscapes
+en|720|Architecture
+en|721|Architectural structure
+en|722|Architecture to ca. 300
+en|723|Architecture from ca. 300 to 1399
+en|724|Architecture from 1400
+en|725|Public structures
+en|726|Buildings for religious purposes
+en|727|Buildings for education & research
+en|728|Residential & related buildings
+en|729|Design & decoration
+en|730|Plastic {arts;} sculpture
+en|731|Processes, forms & subjects of sculpture
+en|732|Sculpture to ca. 500
+en|733|Greek, Etruscan & Roman sculpture
+en|734|Sculpture from ca. 500 to 1399
+en|735|Sculpture from 1400
+en|736|Carving & carvings
+en|737|Numismatics & sigillography
+en|738|Ceramic arts
+en|739|Art metalwork
+en|740|Drawing & decorative arts
+en|741|Drawing & drawings
+en|742|Perspective
+en|743|Drawing & drawings by subject
+en|744|{[Unassigned]}
+en|745|Decorative arts
+en|746|Textile arts
+en|747|Interior decoration
+en|748|Glass
+en|749|Furniture & accessories
+en|750|Painting & paintings
+en|751|Techniques, equipment, materials & forms
+en|752|Color
+en|753|Symbolism, allegory, mythology & legend
+en|754|Genre paintings
+en|755|Religion
+en|756|{[Unassigned]}
+en|757|Human figures
+en|758|Other subjects
+en|759|Historical, geographic & persons treatment
+en|760|Graphic {arts;} printmaking & prints
+en|761|Relief processes (Block printing)
+en|762|{[Unassigned]}
+en|763|Lithographic processes
+en|764|Chromolithography & serigraphy
+en|765|Metal engraving
+en|766|Mezzotinting, aquatinting & related processes
+en|767|Etching & drypoint
+en|768|{[Unassigned]}
+en|769|Prints
+en|770|Photography, photographs & computer art
+en|771|Techniques, equipment & materials
+en|772|Metallic salt processes
+en|773|Pigment processes of printing
+en|774|Holography
+en|775|Digital photography
+en|776|Computer art (Digital art)
+en|777|{[Unassigned]}
+en|778|Fields & kinds of photography
+en|779|Photographs
+en|780|Music
+en|781|General principles & musical forms
+en|782|Vocal music
+en|783|Music for single {voices;} the voice
+en|784|Instruments & instrumental ensembles
+en|785|Ensembles with one instrument per part
+en|786|Keyboard & other instruments
+en|787|Stringed instruments
+en|788|Wind instruments
+en|789|(Optional number)
+en|790|Recreational & performing arts
+en|791|Public performances
+en|792|Stage presentations
+en|793|Indoor games & amusements
+en|794|Indoor games of skill
+en|795|Games of chance
+en|796|Athletic & outdoor sports & games
+en|797|Aquatic & air sports
+en|798|Equestrian sports & animal racing
+en|799|Fishing, hunting & shooting
+en|800|Literature & rhetoric
+en|801|Philosophy & theory
+en|802|Miscellany
+en|803|Dictionaries & encyclopedias
+en|804|{[Unassigned]}
+en|805|Serial publications
+en|806|Organizations & management
+en|807|Education, research & related topics
+en|808|Rhetoric & collections of literature
+en|809|History, description & criticism
+en|810|American literature in English
+en|811|American poetry in English
+en|812|American drama in English
+en|813|American fiction in English
+en|814|American essays in English
+en|815|American speeches in English
+en|816|American letters in English
+en|817|American humor & satire in English
+en|818|American miscellaneous writings
+en|819|(Optional number)
+en|820|English & Old English literatures
+en|821|English poetry
+en|822|English drama
+en|823|English fiction
+en|824|English essays
+en|825|English speeches
+en|826|English letters
+en|827|English humor & satire
+en|828|English miscellaneous writings
+en|829|Old English (Anglo-Saxon)
+en|830|Literatures of Germanic languages
+en|831|German poetry
+en|832|German drama
+en|833|German fiction
+en|834|German essays
+en|835|German speeches
+en|836|German letters
+en|837|German humor & satire
+en|838|German miscellaneous writings
+en|839|Other Germanic literatures
+en|840|Literatures of Romance languages
+en|841|French poetry
+en|842|French drama
+en|843|French fiction
+en|844|French essays
+en|845|French speeches
+en|846|French letters
+en|847|French humor & satire
+en|848|French miscellaneous writings
+en|849|Occitan & Catalan literatures
+en|850|Italian, Romanian & related literatures
+en|851|Italian poetry
+en|852|Italian drama
+en|853|Italian fiction
+en|854|Italian essays
+en|855|Italian speeches
+en|856|Italian letters
+en|857|Italian humor & satire
+en|858|Italian miscellaneous writings
+en|859|Romanian & related literatures
+en|860|Spanish & Portuguese literatures
+en|861|Spanish poetry
+en|862|Spanish drama
+en|863|Spanish fiction
+en|864|Spanish essays
+en|865|Spanish speeches
+en|866|Spanish letters
+en|867|Spanish humor & satire
+en|868|Spanish miscellaneous writings
+en|869|Portuguese literature
+en|870|Italic {literatures;} Latin literature
+en|871|Latin poetry
+en|872|Latin dramatic poetry & drama
+en|873|Latin epic poetry & fiction
+en|874|Latin lyric poetry
+en|875|Latin speeches
+en|876|Latin letters
+en|877|Latin humor & satire
+en|878|Latin miscellaneous writings
+en|879|Literatures of other Italic languages
+en|880|Hellenic {literatures;} classical Greek
+en|881|Classical Greek poetry
+en|882|Classical Greek dramatic poetry & drama
+en|883|Classical Greek epic poetry & fiction
+en|884|Classical Greek lyric poetry
+en|885|Classical Greek speeches
+en|886|Classical Greek letters
+en|887|Classical Greek humor & satire
+en|888|Classical Greek miscellaneous writings
+en|889|Modern Greek literature
+en|890|Literatures of other languages
+en|891|East Indo-European & Celtic literatures
+en|892|Afro-Asiatic {literatures;} Semitic literatures
+en|893|Non-Semitic Afro-Asiatic literatures
+en|894|Altaic, Uralic, Hyperborean & Dravidian
+en|895|Literatures of East & Southeast Asia
+en|896|African literatures
+en|897|North American native literatures
+en|898|South American native literatures
+en|899|Austronesian & other literatures
+en|900|History & geography
+en|901|Philosophy & theory
+en|902|Miscellany
+en|903|Dictionaries & encyclopedias
+en|904|Collected accounts of events
+en|905|Serial publications
+en|906|Organizations & management
+en|907|Education, research & related topics
+en|908|Kinds of persons treatment
+en|909|World history
+en|910|Geography & travel
+en|911|Historical geography
+en|912|Atlases, maps, charts & plans
+en|913|Geography of & travel in ancient world
+en|914|Geography of & travel in Europe
+en|915|Geography of & travel in Asia
+en|916|Geography of & travel in Africa
+en|917|Geography of & travel in North America
+en|918|Geography of & travel in South America
+en|919|Geography of & travel in other areas
+en|920|Biography, genealogy & insignia
+en|921|(Optional number)
+en|922|(Optional number)
+en|923|(Optional number)
+en|924|(Optional number)
+en|925|(Optional number)
+en|926|(Optional number)
+en|927|(Optional number)
+en|928|(Optional number)
+en|929|Genealogy, names & insignia
+en|930|History of ancient world to ca. 499
+en|931|China to 420
+en|932|Egypt to 640
+en|933|Palestine to 70
+en|934|India to 647
+en|935|Mesopotamia & Iranian Plateau to 637
+en|936|Europe north & west of Italy to ca. 499
+en|937|Italy & adjacent territories to 476
+en|938|Greece to 323
+en|939|Other parts of ancient world to ca. 640
+en|940|History of Europe
+en|941|British Isles
+en|942|England & Wales
+en|943|Central {Europe;} Germany
+en|944|France & Monaco
+en|945|Italian Peninsula & adjacent islands
+en|946|Iberian Peninsula & adjacent islands
+en|947|Eastern {Europe;} Russia
+en|948|Scandinavia
+en|949|Other parts of Europe
+en|950|History of {Asia;} Far East
+en|951|China & adjacent areas
+en|952|Japan
+en|953|Arabian Peninsula & adjacent areas
+en|954|South {Asia;} India
+en|955|Iran
+en|956|Middle East (Near East)
+en|957|Siberia (Asiatic Russia)
+en|958|Central Asia
+en|959|Southeast Asia
+en|960|History of Africa
+en|961|Tunisia & Libya
+en|962|Egypt & Sudan
+en|963|Ethiopia & Eritrea
+en|964|Northwest African coast & offshore islands
+en|965|Algeria
+en|966|West Africa & offshore islands
+en|967|Central Africa & offshore islands
+en|968|Southern {Africa;} Republic of South Africa
+en|969|South Indian Ocean islands
+en|970|History of North America
+en|971|Canada
+en|972|Middle {America;} Mexico
+en|973|United States
+en|974|Northeastern United States
+en|975|Southeastern United States
+en|976|South central United States
+en|977|North central United States
+en|978|Western United States
+en|979|Great Basin & Pacific Slope region
+en|980|History of South America
+en|981|Brazil
+en|982|Argentina
+en|983|Chile
+en|984|Bolivia
+en|985|Peru
+en|986|Colombia & Ecuador
+en|987|Venezuela
+en|988|Guiana
+en|989|Paraguay & Uruguay
+en|990|History of other areas
+en|991|{[Unassigned]}
+en|992|{[Unassigned]}
+en|993|New Zealand
+en|994|Australia
+en|995|{Melanesia;} New Guinea
+en|996|Other parts of {Pacific;} Polynesia
+en|997|Atlantic Ocean islands
+en|998|Arctic islands & Antarctica
+en|999|Extraterrestrial worlds

@@ -1,0 +1,12 @@
+Received: from dvdny ([110.53.24.91])
+	(envelope-sender <heming-zhang@hhxn.cn>)
+	by 10.141.26.105 with ESMTP
+	for <neophytos@phigita.net>; Fri, 11 Nov 2011 04:08:19 +0800 
+Message-ID: <20111111040555404282@hhxn.cn> 
+From: =?gb2312?B?0OzW3cCkzsS9qNb+17DKzrmry74=?= <heming-zhang@hhxn.cn> 
+To:  
+Subject: =?gb2312?B?dWxzobDW0Ln6udzA7dfJ0a+957XEu8bG0r780KOhsaOszqrG8w==?=
+	=?gb2312?B?0rW3otW50v26vda4tcAhLS0=?= 
+Date: Fri, 11 Nov 2011 04:05:50 +0800 
+X-mailer: Giz 1 
+Whoops!  What is a 'application/vnd.ms-excel'?

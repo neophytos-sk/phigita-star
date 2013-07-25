@@ -1,0 +1,12 @@
+Received: from taqcem ([110.53.27.94])
+	(envelope-sender <zxh@egb.com.cn>)
+	by 192.168.0.6 with ESMTP
+	for <ctc_kam_sh@testo.com.cn>; Mon, 17 Oct 2011 05:54:42 +0800 
+Message-ID: <20111017055758565827@egb.com.cn> 
+From: =?gb2312?B?0czMqL+lu9TEo77fuavLvg==?= <zxh@egb.com.cn> 
+To:  
+Subject: =?gb2312?B?qdW1sb3xtcTR0Lei0tGzyc6qxvPStb661fm1xNb31b2zoWt5aw==?=
+	=?gb2312?B?aGN5ZA==?= 
+Date: Mon, 17 Oct 2011 05:57:47 +0800 
+X-mailer: Obde 1 
+Whoops!  What is a 'application/vnd.ms-excel'?

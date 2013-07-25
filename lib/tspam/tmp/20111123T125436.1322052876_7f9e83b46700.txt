@@ -1,0 +1,17 @@
+Return-path: <webmaster@phigita.net> 
+Received: from [85.117.224.52] (port=2768 helo=KOMILSPC)
+	by mail.arbon-lesite.com with asmtp 
+	id 157A4A-000463-81
+	for <webmaster@phigita.net>; Wed, 23 Nov 2011 17:53:30 +0500 
+Message-ID: <026655FCEFBE400CB7A47D9AA3764107@KOMILSPC> 
+From: =?koi8-r?B?IuLPztPByiDHwczF0sXRIiA=?= <canterburyec@arbon-lesite.com> 
+To: <webmaster@phigita.net> 
+Subject: =?koi8-r?B?8sHT0NLPxMHWwSDR0M/O08vJyCDCz87TwcouIPDPxMHSz8sgzsEgxM/M?=
+	=?koi8-r?B?x8nFIMfPxNk=?= 
+Date: Wed, 23 Nov 2011 17:53:30 +0500 
+X-Priority: 3 
+X-MSMail-Priority: Normal 
+X-Mailer: Microsoft Windows Mail 6.0.6001.18000 
+X-MimeOLE: Produced By Microsoft MimeOLE V6.0.6001.18049 
+X-Spam: Not detected 
+X-Mras: Ok 

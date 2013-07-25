@@ -1,0 +1,30 @@
+==ttext==
+
+
+* Through this README file we assume that your current directory is where this
+file is originally located
+
+
+* Requirements
+
+  To succesfully run the program you must have a folder named "data" in the
+  current directory. The data directory must contain a folder that consists of:
+
+  - A collection of files to be processed.
+
+  - A listing of the files in the collection (one in each line), conveniently
+    called "filelist".
+
+  - A file with the most commonly used words that are can be ignored during 
+    text processing.
+
+* Compile
+
+    cd unix
+    ../configure
+    make
+
+* Test
+
+    cd test
+    ./test.sh

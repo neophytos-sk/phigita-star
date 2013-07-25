@@ -1,0 +1,37 @@
+/*
+ * yui-ext
+ * Copyright(c) 2006, Jack Slocum.
+ */
+
+#basic, #animated {
+    border:1px solid #c3daf9;
+    color:#1e4e8f;
+    font:bold 14px tahoma,verdana,helvetica;
+    text-align:center;
+    padding-top:20px;
+	 width:200px;
+	 height:80px;
+}
+#snap {
+    border:1px solid #c3daf9;
+    overflow:hidden;
+}
+#custom {
+    cursor:move;
+}
+#custom-rzwrap{
+    z-index: 10000;
+}
+#custom-rzwrap .yresizable-handle{
+    width:11px;
+    height:11px;
+    background:transparent url(../../resources/images/sizer/square.gif) no-repeat;
+    margin:0px;
+	 line-height:11px;
+}
+#custom-rzwrap .yresizable-handle-east, #custom-rzwrap .yresizable-handle-west{
+    top:45%;
+}
+#custom-rzwrap .yresizable-handle-north, #custom-rzwrap .yresizable-handle-south{
+    left:45%;
+}

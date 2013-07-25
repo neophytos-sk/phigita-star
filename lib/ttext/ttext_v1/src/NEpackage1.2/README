@@ -1,0 +1,207 @@
+NER PACKAGE v1.1
+-------------------
+
+Code by Jakob Metzler, January 2005
+Documentation and minor updates by Mark Sammons
+ 
+Cognitive Computation Group, Dept. of CS at UIUC
+
+
+INTRODUCTION
+------------
+ 
+This is a basic package of the Cognitive Computation Group's Named Entity
+Recognition code.  It enables the user to extract person, location,
+organization, and "miscellaneous" named enitities from a plain text file.
+ 
+It is designed to run in a UNIX environment; if you are using Windows,
+we recommend that you download and install CYGWIN to get a UNIX-like
+environment.
+
+
+Improvements in version 1.1:
+- use of gazetteers improves performance
+- Incremental learning possible to improve the classifier manually
+- server mode available (much much faster since no overhead)
+
+
+
+INSTALLATION
+------------
+ 
+The install script (install.sh) provided with the package should allow you to
+install the Named Entity Recognizer very easily.  Before running it, you need to
+check that the path to the perl binaries at the beginning of 'configure.pl'
+is correct for your system.
+ 
+'configure.pl' is a simple installation script which will take care of some
+basic tasks such as setting directory paths.  If your system doesn't recognize
+the command, you probably need to set the perl path in configure.pl.  Once you
+have done this, you can run install.sh, and also use configure.pl to set the
+perl path in all .pl files automatically.
+ 
+To set the perl path in all other perl scripts, type
+ 
+    ./configure.pl perl <perl path>
+ 
+-- e.g.
+ 
+    ./configure.pl perl /usr/bin/perl
+                                                                                                                                  
+                                                                                                                                  
+If gmake generates compilation errors, you may need to make some changes to the
+individual components of the package.  Check the Troubleshooting section below.
+                                                                                                                                  
+
+
+
+USAGE
+-----
+
+
+
+TAGGING - BATCH MODE
+
+
+Once all the parts above succesfully compiled, you should use NEpackage1.1/NEClassifier.pl to do the batch mode tagging.
+An example file is supplied. It contains a simple sentence. You have to supply this filename as an argument to the script. The output is sent to stdout.
+This is an example output:
+
+	[metzler1@frosty NEpackage1.1]$ more example_input.txt 
+	John Doe is American,  lives in Champaign and works for the CIA.
+	
+	[metzler1@frosty NEpackage1.1]$ ./NEClassifier.pl example_input.txt 
+	[PER John Doe ] is [MISC American ] , lives in [LOC Champaign ] and works for the [ORG CIA ] . 
+	[metzler1@frosty NEpackage]$ 
+
+
+It is important to note that this script should be used in batch mode, since the overhead of loading the files is ca. 20-30 seconds. Classifying just one sentence as done above will result in 99% overhead. Also make sure that the input is as "clean" as possible, meaning no special characters or strange symbols (e.g. it's not a great idea to run this with an html file full of html tags)
+
+
+
+
+TAGGING - SERVER MODE
+
+
+If the data you want to classify in one run is relatively small by nature - news articles for example - it is highly recommended that you use the server mode, since the response is almost instantanous because the files are loaded just once and stay in memory, as opposed to the batch mode.
+This is how the server is used:
+1. go to the server/ directory
+2. execute the script "startservers.sh", supplying 3 free ports on your local machine as parameters (takes ca. 30 seconds)
+3. Tag by executing "NEClassifier-server.pl" with the 3 ports as parameters plus an input file name
+4. When you are done or something seems to be stuck, kill the server with the script "killservers.sh".
+
+example output:
+
+[metzler1@frosty NEpackage1.1]$ cd server
+[metzler1@frosty server]$ ./startservers.sh 3000 3001 3002
+[metzler1@frosty server]$ ./NEClassifier-server.pl 3000 3001 3002 ../example_input.txt
+[PER John Doe ] is [MISC American ] , lives in [LOC Champaign ] and works for the [ORG CIA ] .
+
+...
+
+[metzler1@frosty server]$ ./killservers.sh
+NEClassifier-server.pl: no process killed
+[metzler1@frosty server]$
+
+
+
+
+INCREMENTAL TRAINING
+
+
+If the classifier supplied with this package doesn't perform well on your type of input (which is natural if it's not a Reuters news article)
+you have the opportunity to improve it by training it incrementally.
+To do this, execute "./NEpackage/IncrementalNE.pl" with an input file and number of training cycles as paramters.
+The result is the creation of a new network file, called "BILOUtrain.net.new". In order to use the file, you should move the old network file somewhere else and rename this file to "BILOUtrain.net". 
+The input to the incremental trainer is the same bracketed data that  you see when receiving classified data. To make sure the tags are recognized correctly, make sure that spaces are the right place. 
+Example: 
+	correct: "in [LOC Champaign ] and"
+	wrong: "in[LOC Champaign ]and"
+	wrong: "in [LOC Champaign] and"
+	wrong: "in [ LOC Champaign ] and"
+
+example output:
+
+[metzler1@frosty NEpackage1.1]$ cat incr-test.txt
+I work for Blorg , which is a location.
+[metzler1@frosty NEpackage1.1]$ ./NEClassifier.pl incr-test.txt
+I work for [ORG Blorg ] , which is a location .
+
+[metzler1@frosty NEpackage1.1]$ cat incr-train.txt
+I work for [LOC Blorg ] , which is a location.
+[metzler1@frosty NEpackage1.1]$ ./IncrementalNE.pl incr-train.txt 2
+[metzler1@frosty NEpackage1.1]$ ls *.new
+BILOUtrain.net.new
+[metzler1@frosty NEpackage1.1]$ mv BILOUtrain.net BILOUtrain.net.old
+[metzler1@frosty NEpackage1.1]$ mv BILOUtrain.net.new BILOUtrain.net
+[metzler1@frosty NEpackage1.1]$ ./NEClassifier.pl incr-test.txt
+I work for [LOC Blorg ] , which is a location .
+ 
+
+
+
+TROUBLESHOOTING
+---------------
+                                                                                                                                  
+The components of the package are:
+                                                                                                                                  
+                                                                                                                                  
+SCRIPTS
+-------
+                                                                                                                                  
+These preprocess the data and feed it to the different c++ modules.  The most
+likely problem will be that perl is installed in a different location on your
+system.
+                                                                                                                                  
+                                                                                                                                  
+FEX: feature extraction
+-----------------------
+                                                                                                                                  
+If you have problems installing FEX, you can try modifying the Makefile in the
+fex subdirectory of the main NEpackage directory.  If you are unable to
+resolve your difficulties, contact the Cognitive Computation Group (details
+below).
+                                                                                                                                  
+                                                                                                                                  
+SNOW: the classifier
+-------------------
+                                                                                                                                  
+SNoW's makefile (in the subdirectory Snow_v3.1) has some directions for
+changes which will fix many compilation problems; check that file for
+details.
+                                                                                                                                  
+If there are any further problems, you can consult the user manual, which can
+be found at l2r.cs.uiuc.edu/~cogcomp/software/snow-userguide.pdf.  You can
+also contact the Cognitive Computation Group (details below) if you still have
+problems compiling SNoW.
+                                                                                                                                  
+                                                                                                                                  
+HMMPure: the inference
+----------------------
+                                                                                                                                  
+If you have problems with the HMM components, contact the Cognitive Computation
+Group (details below).
+
+
+RUN-TIME PROBLEMS
+-----------------
+                                                                                                                                  
+If you successfully install the package but encounter run-time errors, make sure
+that the input is reasonably 'clean', e.g. free from HTML tags.
+                                                                                                                                  
+
+Cognitive Computation Group Contact info:
+-----------------------------------------
+                                                                                                                                  
+Contact Mark Sammons at mssammon@uiuc.edu for further help.  Please include
+the error messages you got (if you have multiple pages of compilation errors,
+just the first few will suffice :-) ).  Please also indicate the OS you are
+using (name and version), and which compiler.
+                                                                                                                                  
+If you experience difficulties at run time, please also include a copy of the
+input.
+                                                                                                                                  
+If for some reason your email bounces, you can try Professor Dan Roth at
+danr@cs.uiuc.edu.
+
+

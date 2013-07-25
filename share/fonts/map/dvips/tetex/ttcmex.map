@@ -1,0 +1,8 @@
+% Support for cmex fonts from TeXTrace project. Type1 files are taken
+% from CTAN:fonts/ps-type1/ec.
+%
+% (C) Thomas Esser, 2002, public domain.
+%
+cmex7 TeX-cmex7 <fmex7.pfb
+cmex8 TeX-cmex8 <fmex8.pfb
+cmex9 TeX-cmex9 <fmex9.pfb

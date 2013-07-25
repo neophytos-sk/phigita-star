@@ -1,0 +1,10 @@
+#!/usr/bin/make -f
+
+include /usr/share/cdbs/1/rules/simple-patchsys.mk
+include /usr/share/cdbs/1/rules/debhelper.mk
+include /usr/share/cdbs/1/class/autotools.mk
+
+DEB_INSTALL_DIRS_ALL := usr/share/lintian/overrides
+
+binary-install/qsf::
+	cp debian/lintian-override $(CURDIR)/debian/qsf/usr/share/lintian/overrides/qsf

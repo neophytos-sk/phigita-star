@@ -1,0 +1,66 @@
+DomainKey-Signature: q=dns; a=rsa-sha1; c=nofws;
+	s=prod; d=linkedin.com;
+	h=DKIM-Signature:Sender:Date:From:To:Message-ID:Subject:MIME-Version:Content-Type:X-LinkedIn-Template:X-LinkedIn-Class:X-LinkedIn-fbl;
+	b=gFTRbqsapaU69FmE295AAzB0JphcGugfxhDlTw7G0wJdXRmglpd76AL7ZLVLhTfI
+	9bdBEQg2hXoEIZF2YGbMAEX4X09cZM35Lw3ezh6ixLle8uMSjaVDm9TthaHOx+hP 
+DKIM-Signature: v=1; a=rsa-sha1; d=linkedin.com; s=proddkim; c=relaxed/relaxed;
+	q=dns/txt; i=@linkedin.com; t=1321573122;
+	h=From:Subject:Date:To:MIME-Version:Content-Type:X-LinkedIn-Class:X-LinkedIn-fbl:
+	X-LinkedIn-Template;
+	bh=pggYxyjUjw3PDb7Se6eZHc2qxck=;
+	b=dTWeht3DqM0zFt2Ea3srr50mx/DTCNUkYTghe1uSgpoVFdzZZmABSN61QR0QGcIK
+	moITxmjy46g2kvyPF42AiOzPOFleA7rO2WMaB4ie5TFTyZiknU51iIEEsgplJqL+; 
+Sender: messages-noreply@bounce.linkedin.com 
+Date: Thu, 17 Nov 2011 23:38:42 +0000 (UTC) 
+From: Cassandra NoSQL Group Members <group-digests@linkedin.com> 
+To: Neophytos Demetriou <k2pts@phigita.net> 
+Message-ID: <1426414672.52472541.1321573122450.JavaMail.app@ela4-app0103.prod> 
+Subject: [1] manager's choice, [1] new discussion and [6] new jobs on
+ LinkedIn 
+X-LinkedIn-Template: anet_digest_type 
+X-LinkedIn-Class: GROUPDIGEST 
+X-LinkedIn-fbl: m-GD3ASkVW-C7xtWWgTm0peBGKmLkc2c9g3q3Z3EAWzEWljNJB3WvjNzO 
+--------------------------------------
+Cassandra NoSQL
+  Latest discussions from Cassandra NoSQL group members.  Change the frequency of this digest:
+  http://www.linkedin.com/e/-1ht5d5-gv4eijk8-4y/ahs/2822930/EMLt_anet_settings/?hs=false&tok=3L6ggI7uvG5R01
+
+
+
+
+Send me an email for each new discussion &#187; http://www.linkedin.com/e/-1ht5d5-gv4eijk8-4y/snp/2822930/true/grp_email_subscribe_new_posts/?hs=false&tok=0egVo9IwvG5R01
+
+    Manager's Choice
+  Cassandra NYC 2011 - Tuesday Dec 6th (0)
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gv4eijk8-4y/ava/80324366/2822930/EMLt_anet_qa_ttle/?hs=false&tok=38RZ93oTbG5R01
+
+
+Discussions
+ * Dj  Das BigDataCloud Today! event on Nov 29th in Santa Clara, CA
+- Deep Business Sessions, Hands-on Hadoop Training, Casual Peer Networking.
+
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gv4eijk8-4y/ava/80147324/2822930/EMLt_anet_qa_ttle/?hs=false&tok=3_elob6nXG5R01
+
+
+Weekly Job Postings * Jessica  Cassidy: PHP Developer – Dwntwn Chicago – FT Direct Hire opportunity – OO, LAMP, jQuery, Front/Back End Development. Please message me for details!!
+  PHP Developer – Dwntwn Chicago – FT Direct Hire opportunity – OO, LAMP, jQuery, Front/Back End Development. Please message me for details!! (0)
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gv4eijk8-4y/ava/80943942/2822930/EMLt_anet_qa_ttle/?hs=false&tok=23uM8bE0LG5R01
+
+ * Ryan  Mehta: Java developer with cloud experience needed to disrupt the Ad space
+  Java developer with cloud experience needed to disrupt the Ad space (0)
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gv4eijk8-4y/ava/80621379/2822930/EMLt_anet_qa_ttle/?hs=false&tok=3f8-NKrDHG5R01
+
+ * Jessica  Cassidy: OO PHP Developer - Dwntwn Chicago - FT Direct Hire
+  OO PHP Developer - Dwntwn Chicago - FT Direct Hire (0)
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gv4eijk8-4y/ava/80582821/2822930/EMLt_anet_qa_ttle/?hs=false&tok=2OP2iIcmrG5R01
+
+ * Leigh  Johnson: Searching for a Data Scientist for Impermium in Palo Alto,CA.
+  Searching for a Data Scientist for Impermium in Palo Alto,CA. (0)
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gv4eijk8-4y/ava/80576501/2822930/EMLt_anet_qa_ttle/?hs=false&tok=2DZYcMEdfG5R01
+
+ * Jessica  Cassidy: Dwntwn Chicago - Immediate need for a front/back end PHP Developer for direct hire. Experience with Cassandra is a plus! Please contact me for details.
+  Dwntwn Chicago - Immediate need for a front/back end PHP Developer for direct hire. Experience with Cassandra is a plus! Please contact me for details. (0)
+ View discussion &raquo; http://www.linkedin.com/e/-1ht5d5-gv4eijk8-4y/ava/80391700/2822930/EMLt_anet_qa_ttle/?hs=false&tok=0IpRpdeNfG5R01
+
+
+

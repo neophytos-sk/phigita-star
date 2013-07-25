@@ -1,0 +1,102 @@
+ad_page_contract {
+	@author Neophytos Demetriou
+} {
+	{return_url ""}
+}
+
+set user_locale [ad_conn locale]
+
+set langList [db::Set new -from ad_locales -select "{locale as code} {label as name}" -order "label" -load]
+set langOptions ""
+foreach o [$langList set result] {
+    $o set name [_ language_[$o set code] [$o set name] [$o set code]]
+    if {[$o set code] eq ${user_locale}} {
+	append langOptions "<option value=[$o set code] selected=\"\">[$o set name]</option>"
+    } else {
+	append langOptions "<option value=[$o set code]>[$o set name]</option>"
+    }
+}
+
+
+
+tmpl::master -title Preferences -context_bar [ad_context_bar Preferences] -return_url $return_url {
+
+    script {
+	c {
+	    function saving() {alert("Your preferences have been saved ");}
+	}
+    }
+
+
+
+    t -disableOutputEscaping [subst -nobackslashes {
+<form name="pref-form" method="GET" action="pref-set">
+	<input type=hidden name=return_url value="$return_url">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2">
+	<tr bgcolor="#cbdced">
+	    <td>
+		<font face="arial,sans-serif" size=-1>
+	[mc "Save_Preferences_Message" "Save your preferences when finished and return back."]
+		</font>
+	    </td>
+	    <td align="right">
+		<font face="arial,sans-serif" size="-1">
+	<input type="submit" onclick="saving()" value="[mc "Save_Preferences" "Save Preferences"]" name="cmd">
+		</font>
+	    </td>
+	</tr>
+    </table>
+    <p>
+	<b>[mc "Global_Preferences" "Global Preferences"]</b>
+	<font size="-1" face="arial,sans-serif">
+	([mc "Preferences_Warning" "changes apply to all services"])
+	</font>
+	<table width="100%" cellpadding="0" cellspacing="0" border="0">
+	    <tr><td colspan="4" bgcolor="#cbdced"><img src="/graphics/cleardot.gif" alt="" height="2" width="1"></td>
+	    </tr>
+	    <tr><td width="1" bgcolor="#cbdced"><img src="/graphics/cleardot.gif" alt="" height="1" width="2"></td><td width="175" valign="top" nowrap>
+		    &nbsp;
+		    <br>
+		    &nbsp;
+		    <font size="-1" face="arial,sans-serif">
+	<b>[mc "Interface_Language" "Interface Language"]</b>
+		    </font>
+		</td>
+		<td colspan="2">
+		    <br>
+		    <font size="-1" face="arial,sans-serif">
+	[mc "Display_Tips_n_Messages" "Display tips and messages in:"]
+			<select name="hl">
+	$langOptions
+			</select>
+		    </font>
+		    <br>
+		    <br>
+		</td>
+	    </tr><tr><td colspan="4" bgcolor="#cbdced"><img src="/graphics/cleardot.gif" alt="" height="2" width="1"></td></tr>
+	</table>
+	<p>
+    <table width="100%" border="0" cellspacing="0" cellpadding="2">
+	<tr bgcolor="#cbdced">
+	    <td>
+		<font face="arial,sans-serif" size=-1>
+		    
+	[mc "Save_Preferences_Message" "Save your preferences when finished and return to homepage."]
+		</font>
+	    </td>
+	    <td align="right">
+		<font face="arial,sans-serif" size="-1">
+	<input type="submit" onclick="saving()" value="[mc "Save_Preferences" "Save Preferences"]" name="cmd">
+		</font>
+	    </td>
+	</tr>
+    </table>
+</form>
+    }]
+
+}
+
+
+
+
+

@@ -1,0 +1,100 @@
+Received: by web2.extjs.com (Postfix, from userid 33)
+	id BB37A6C1F2; Sat, 19 Nov 2011 00:02:05 +0000 (UTC) 
+To: k2pts@phigita.net 
+Subject: "Ext: Open Discussion" update 
+X-PHP-Originating-Script: 1000:class_mail.php 
+From: "Sencha Forum" <admin@sencha.com> 
+Auto-Submitted: auto-generated 
+Message-ID: <20111119000205.a7c71e4aca2c@www.sencha.com> 
+X-Priority: 3 
+X-Mailer: vBulletin Mail via PHP 
+Date: Sat, 19 Nov 2011 00:02:05 +0000 (UTC) 
+--------------------------------------
+Dear k2pts,
+
+You are subscribed to the forum Ext: Open Discussion, there have been 4 new thread(s) and 7 updated thread(s).
+http://www.sencha.com/forum/forumdisplay.php?6-Ext-Open-Discussion
+
+The following threads are new:
+************
+e-xgen extjs scafolding for admin
+http://www.sencha.com/forum/showthread.php?155591-e-xgen-extjs-scafolding-for-admin
+In forum: Ext: Open Discussion
+Started by: bluejedi
+Last post: 18 Nov 2011 3:50 AM
+************
+Not able to scroll in app
+http://www.sencha.com/forum/showthread.php?155630-Not-able-to-scroll-in-app
+In forum: Ext: Open Discussion
+Started by: manishkumar023
+Last post: 18 Nov 2011 9:44 AM
+************
+Store with no pageSize
+http://www.sencha.com/forum/showthread.php?155635-Store-with-no-pageSize
+In forum: Ext: Open Discussion
+Started by: radutoev
+Last post: 18 Nov 2011 9:47 AM
+************
+Applying CSS on CheckboxSelectionModel checkboxes
+http://www.sencha.com/forum/showthread.php?155729-Applying-CSS-on-CheckboxSelectionModel-checkboxes
+In forum: Ext: Open Discussion
+Started by: coooolmagic
+Last post: 18 Nov 2011 5:33 PM
+
+
+The following threads have been updated:
+************
+Combobox loadMask loop
+http://www.sencha.com/forum/showthread.php?152875-Combobox-loadMask-loop
+In forum: Ext: Open Discussion
+Started by: livensnick
+Last post: 18 Nov 2011 11:01 AM
+************
+What is the ION project?
+http://www.sencha.com/forum/showthread.php?97164-What-is-the-ION-project
+In forum: Ext: Open Discussion
+Started by: gurufaction
+Last post: 18 Nov 2011 2:57 PM
+************
+Problem displaying Sencha Website and forum in Google Chrome and Safari
+http://www.sencha.com/forum/showthread.php?155189-Problem-displaying-Sencha-Website-and-forum-in-Google-Chrome-and-Safari
+In forum: Ext: Open Discussion
+Started by: muhler
+Last post: 18 Nov 2011 4:07 PM
+************
+CDN issues
+http://www.sencha.com/forum/showthread.php?153084-CDN-issues
+In forum: Ext: Open Discussion
+Started by: mankz
+Last post: 18 Nov 2011 4:14 PM
+************
+Sencha Developers in Toronto
+http://www.sencha.com/forum/showthread.php?117819-Sencha-Developers-in-Toronto
+In forum: Ext: Open Discussion
+Started by: lophyte
+Last post: 18 Nov 2011 8:11 PM
+************
+ExtJS: Performance Best Practices
+http://www.sencha.com/forum/showthread.php?153565-ExtJS-Performance-Best-Practices
+In forum: Ext: Open Discussion
+Started by: skirtle
+Last post: 18 Nov 2011 8:54 PM
+************
+[Security] XSS attacks for Extjs Applications - critical warning
+http://www.sencha.com/forum/showthread.php?13913-Security-XSS-attacks-for-Extjs-Applications-critical-warning
+In forum: Ext: Open Discussion
+Started by: Alan Knowles
+Last post: 18 Nov 2011 9:36 PM
+
+
+All the best,
+Sencha Forum
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Unsubscription information:
+
+To unsubscribe from this forum, please visit this page:
+http://www.sencha.com/forum/subscription.php?do=removesubscription&type=forum&subscriptionid=63&auth=e23de5f6387a31c5573cf4993e28e47f
+
+
+
