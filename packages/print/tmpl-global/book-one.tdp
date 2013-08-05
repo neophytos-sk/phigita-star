@@ -1,3 +1,5 @@
+set image_host "http://i.phigita.com/cover/"
+
 contract {
     param -id "isbn" -check "notnull"
 }
@@ -54,7 +56,6 @@ val -id context_bar { return [::xo::kit::context_bar "One Book"] }
 
 val -id advertisement { return [::xo::google::adsense::get_slot_html 9117605027 125 125] }
 
-val -id image_host { return "http://i00-books.phigita.net" }
 
 # ---------------------------------------------------------------------------------------------
 
@@ -261,7 +262,7 @@ master -src "/templates/phigita.net/books/www-global.master.inc" -title @{title}
 				}
 				div {
 				    tpl -if { @{image_p} } {
-					img -class "cover" -src "@{val.image_host}/b@{ean13}.jpg" -border 0
+					img -class "cover" -src "${image_host}b@{ean13}.jpg" -border 0
 				    } 
 				    tpl -else "" {
 					img -class "cover" -src "http://www.phigita.net/graphics/nobook.gif" -border 0

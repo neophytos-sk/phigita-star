@@ -1,5 +1,7 @@
 ### BOOKS
 
+set image_host "http://i.phigita.com/cover/"
+
 val -id book_offset -cache_timeout "1800" {expr {int(4000*rand())}}
 
 datastore \
@@ -57,7 +59,7 @@ div -id book {
 	    tpl -with "bookdata" {
 		div -class "cover" {
 		    a -href "@{url}" {
-			img -class "cover" -src "//i00-books.phigita.net/s@{ean13}-x80.jpg" -height "80"
+			img -class "cover" -src "${image_host}s@{ean13}-x80.jpg" -height "80"
 		    }
 		}
 		div -id "book" {

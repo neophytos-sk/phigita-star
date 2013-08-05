@@ -1,6 +1,7 @@
 # if you plan to use fastpath, use: ns_server -server [ns_info server] pagedir
 
-proc get_pagedir {} { return /web/data/build/resources }
+# get_pagedir_default
+proc get_pagedir_ {} { return /web/data/build/resources }
 
 
 #ns_log notice "url=$url file=$file url2file=[ns_url2file $url] conn_pool=[ns_conn pool]"
@@ -10,6 +11,9 @@ array set connection_pools_arr [ns_set array [ns_configsection ns/server/[ns_inf
 set connection_pools [array names connection_pools_arr]
 ns_log notice "connection pools = $connection_pools"
 foreach pool ${connection_pools} {
+
+    set pagedir [ns_config ns/server/[ns_info server]/pool/${pool} "x-root"]
+    proc get_pagedir_${pool} {} "return [list ${pagedir}]"
 
     set add_headers_extra ""
     set add_headers [ns_config ns/server/[ns_info server]/pool/${pool} "x-add-header"]
@@ -68,7 +72,7 @@ foreach pool ${connection_pools} {
 	append code ${add_headers_extra}
     }
 
-    ns_log notice "process_outputheaders_${pool} ${code}"
+    # ns_log notice "process_outputheaders_${pool} ${code}"
 
     proc process_outputheaders_${pool} {} ${code}
 }
@@ -77,11 +81,11 @@ foreach pool ${connection_pools} {
 proc serve_static_file {} {
 
     set url [ns_conn url]
-    #ns_return 200 text/html url=$url
-    #return
+
+    set pool [ns_conn pool] 
 
     # TODO: url2file - check if array exists / otherwise create it yourself
-    set file [file normalize [get_pagedir]/${url}]
+    set file [file normalize [get_pagedir_${pool}]/${url}]
 
     if { ![file isfile $file] || ![file readable $file]} {
 	ns_log notice "file=$file not found - return 404" 
@@ -101,7 +105,7 @@ proc serve_static_file {} {
 	}
     }
 
-    process_outputheaders_[ns_conn pool]
+    process_outputheaders_${pool}
 
     ns_returnfile 200 ${mime} ${file}
 

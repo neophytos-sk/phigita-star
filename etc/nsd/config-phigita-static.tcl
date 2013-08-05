@@ -26,6 +26,7 @@ ns_section "ns/server/${server_static}/pools"
 ns_param js  "js pool"
 ns_param css "css pool"
 ns_param img "img pool"
+ns_param cover "book cover pool"
 
 ns_section "ns/server/${server_static}/pool/js"
 ns_param   minthreads 3
@@ -50,6 +51,16 @@ ns_param   maxthreads 10
 ns_param   map "GET /img"
 ns_param   map "POST /img"
 ns_param   map "HEAD /img"
+ns_param   x-add-header [list [list Cache-Control "public"]]
+ns_param   x-expires    "max"
+
+ns_section "ns/server/${server_static}/pool/cover"
+ns_param   minthreads 3
+ns_param   maxthreads 10
+ns_param   map "GET /cover"
+ns_param   map "POST /cover"
+ns_param   map "HEAD /cover"
+ns_param   x-root /web/data/books/
 ns_param   x-add-header [list [list Cache-Control "public"]]
 ns_param   x-expires    "max"
 

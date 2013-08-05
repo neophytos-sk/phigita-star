@@ -6,7 +6,7 @@ set mode 0 ;# dev && debug
 set mode 1 ;# not(dev) && debug
 set mode 2 ;# dev && not(debug)
 set mode 3 ;# not(dev) && not(debug) && connsperthread=10
-set mode 4 ;# performance
+#set mode 4 ;# performance
 
 if { $mode == 4 } {
     set performance_mode_p 1
