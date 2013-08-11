@@ -23,6 +23,7 @@ proc ::xo::html::extract {outResultVar inHtmlVar xpath {domNodeFunc "asHTML"} {x
     $doc delete
 }
 
+
 # tDOM: asText converts {&nbsp;} to \xa0
 proc ::xo::html::table_to_multilist {dataVar htmltableVar} {
     upvar $dataVar data
