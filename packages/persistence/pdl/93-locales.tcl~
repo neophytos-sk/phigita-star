@@ -1,1 +1,0 @@
-DB_Class ::Locale -prefix "public" -dbname "locations" -is_final_if_no_scope "1"
