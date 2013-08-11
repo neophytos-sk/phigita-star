@@ -1,0 +1,86 @@
+We’ve built the Lavabit e-mail server from the ground up with the most desirable combination of features, performance and flexibility. Read on for detailed descriptions of the key features of the Lavabit e-mail platform—one of the most advanced in existence. Our goal is to one day give back to the community by releasing this software to the public.
+Antispam
+Spam Filter
+
+Lavabit uses the DSPAM library to accurately filter spam. DSPAM is an adaptive filter that uses complex statistical algorithms to analyze your messages. At Lavabit, we use personalized training data that causes DSPAM to learn over time what you consider to be spam. This personalized approach means that many of our users typically see between 99.5% and 99.95% accuracy.
+Realtime Time Blacklists (RBL)
+
+These blacklists are maintained by organizations with an interest in combating the spam problem. The Lavabit e-mail server is capable of checking these lists as messages arrive and blocking those that appear to come from IP addresses on the list. You can configure the Lavabit e-mail server to mark messages that come from blacklisted servers as 'SPAM' or simply accept the default setting, which automatically rejects messages from blacklisted IP addresses.
+Greylisting
+
+This strategy is based on the theory that if a spam zombie attempts to send a message and it can’t deliver that message immediately, the message will fail permanently. Alternatively, legitimate e-mail servers will queue messages and retry delivery at a later date. Greylisting is therefore the process of rejecting all messages with a 400 level STMP code, indicating that the sending e-mail server should retry delivery at a later date. The Lavabit e-mail server is capable of maintaining a list of past attempts and only letting messages pass through that are being retried.
+Blacklisting
+
+Our e-mail server supports using regular expressions to block unwanted e-mail at the server. If a message matches a provided regular expression, the server can be configured to mark the message as 'SPAM', delete it or bounce the message back to the sender with an explanation.
+Scatter Back Blocking
+
+Welcome to the world of e-mail identity theft. Everyday spammers launch new e-mail campaigns using the addresses of unwitting users. The problem arises whenever a spammer’s e-mail campaign tries to send a message to an address that is invalid. A bounce message is generated and sent to the address in the from header. If that address happens to be yours, a virtual avalanche could end up in your inbox. If that ever happens to you while your using Lavabit, rest comfortably knowing that you can temporarily block bounce messages using our preferences portal.
+Challenge and Response
+
+A recently developed strategy in the fight against spam is to require that senders verify their humanity before a message is delivered to a user’s inbox. In this scenario when you first receive a message from someone it is delivered to a “pending” folder. The sender is then e-mailed with a link asking them to verify they are indeed a human. The theory rests on the idea that if a program was used to send the message it will never receive/understand the challenge message. Currently the Lavabit e-mail server supports this strategy but we are only letting a select number of users beta test this technology. Look for this option in the preferences portal soon.
+Sender Policy Framework (SPF)
+
+SPF is a technique for verifying that a message claiming to originate from a specific domain is actually being received from a server authorized to relay messages for that domain. As an example, SPF can be used to verify that a message claiming to be from 'whitehouse.gov' is actually being transmitted by a server authorized to represent 'whitehouse.gov'. Current estimates indicate that 50 percent of all domain names publish SPF information, while 30 percent check SPF information on inbound e-mail. Lavabit users have the option to disable this check, have messages that fail this check marked 'SPAM' or reject these messages during the SMTP session.
+Domainkeys
+
+Domainkeys is another technology used to prevent people from impersonating a domain name. Although domainkeys support is still in its infancy, we publish information about the Lavabit domain that allows users of domainkeys to block e-mail from the lavabit.com domain that doesn’t originate on our servers. Support for checking domainkeys on inbound e-mail is under development.
+Antivirus
+ClamAV
+
+The Lavabit e-mail server has been tightly integrated with the Clam antivirus engine. This integration allows us to protect our users from a variety of malware threats. Using a sophisticated engine and a worldwide network of e-mail administrators, ClamAV provides the best possible protection against new virus threats.
+Privacy
+Transport Layer Encryption
+
+Here at Lavabit we take privacy and security seriously. To ensure that no one intercepts your e-mail while it is being downloaded or sent to our servers, we support and encourage the use of Secure Sockets Layer (SSL) encryption. SSL was created specifically to eliminate eavesdropping and ensure that information could be transported securely over an untrusted network.
+Secure Mail Storage
+
+The secure mail storage process uses asymmetric encryption to ensure the privacy of messages while being stored on the Lavabit servers. Asymmetric encryption is a process that uses public key and private key encryption to make messages unreadable without knowing a user's plaintext password. Presently we use Elliptical Curve Cryptography (ECC) with 512 bits of security to encrypt messages. The private, or decryption, key is then encrypted with a user’s password using the Advanced Encryption Standard (AES) and 256 bits of security. The result is that once a message is stored on our servers in this fashion, it can’t be recovered without knowing a user's password. This provides a priceless level of security, particularly for customers that use e-mail to exchange sensitive information. You can learn more about our asymmetric encryption technology by reading our white paper on the subject.
+Basic
+Authentication Support
+
+Our SMTP server supports authentication using the PLAIN and LOGIN methods. By requiring SMTP authentication we guarantee that we only relay e-mail for Lavabit users.
+Message Forwarding
+
+Our e-mail server supports message forwarding. Because forwarding is controlled from a centralized database, it’s easy for you to set up using our custom preferences portal.
+Automatic Replies
+
+Occasionally—but probably not often enough—you go on vacation. When you do, the Lavabit e-mail server is ready to let your contacts know using an automatic reply.
+Catchall Address
+
+For those of you who choose our services for your personal or corporate domain names, the Lavabit e-mail server supports catchall addresses. This feature allows us to redirect all of the e-mail for a domain that isn’t addressed to a valid user into a specific catchall account.
+Multiple E-mail Addresses Per Account
+
+If you own multiple domain names, but want them all pointing to a single e-mail account, our server can come to the rescue. Our server supports tying multiple e-mail addresses to a single account.
+Server Side Sorting
+
+The Lavabit e-mail server allows you to automatically sort your e-mail using a powerful regular expression engine. Imagine having your e-mail pre-sorted on the server into specific folders. For those of you who access your e-mail from multiple computers, this technology means you’ll now see a consistent view of your e-mail.
+Archiving
+
+The Lavabit e-mail server supports archiving and retention policies. This technology allows our users with special requirements (like Sarbanes-Oxley) to set up rules that guarantee that their e-mail is retained securely.
+Server
+Message Limits
+
+The ability to place sending and receiving limits on users is a requirement for a free e-mail service. These limits deter spammers from using our system while protecting your inbox from e-mail bombs.
+Storage Quotas
+
+Another important feature of our e-mail server is its ability to internally manage storage quotas. Because all quotas are managed using a database, making updates or changes is very easy.
+Message Rollout
+
+A unique feature offered by our service is called message rollout. This feature, if enabled, allows a user to continually store e-mail on our servers. When their quota is reached, the server will automatically delete the oldest messages to make room for incoming e-mail. This feature allows you to retain your e-mail securely on the server without fear that doing so could cause you to lose an incoming message by exceeding your quota.
+Compression
+
+Developing a platform to efficiently offer free e-mail services required our programmers to develop innovative solutions that make the most of our hardware resources. One of those solutions is a compression algorithm that allows our servers to efficiently store e-mail on disk. Like many of the technologies we’ve developed at Lavabit, compression algorithms are not a novel idea. But the ability of our engineers to take advantage of compression without sacrificing performance gives our software a significant competitive advantage.
+Database Driven
+
+Controlling an e-mail service with such a large user base required us to develop a platform that’s centrally controlled, yet flexible. To meet that need we’ve developed our platform around a SQL-based database. This allows our team of engineers to easily administer our services while offering you the ability to customize your e-mail preferences. Gone are the days where a single antispam solution is effective for everyone. Instead, it’s necessary to customize a package of protections that satisfy each user’s willingness to balance spam protection with the risk of losing an important e-mail. Driving our e-mail server with a database gives us that control.
+Distributed Caching
+
+Database control isn’t a new concept. A number of people have tried to build large, scalable service-based platforms around databases. The problem is that such architectures are usually hindered by their reliance on a database server that can easily become bottlenecked and expensive to scale. We’ve decided to meet this challenge by using a distributed caching model. Using software based on memcached we’ve developed a distributed caching model that allows us to offload non-critical tasks from the database. Though difficult to develop, this technology implemented properly enables us to offer incredibly fast performance with incredible efficiency.
+Clustering
+
+Keeping our per-user cost structure low enables us to provide more services for less cash. A key aspect of that strategy is engineering systems that can scale to serve millions of users without increasing Lavabit’s cost per user. With the Lavabit e-mail server we’ve developed proprietary clustering technology that lets us accomplish that goal. As our services continue to grow, we’ll be adding commodity servers to our clusters to meet the demand. Without this technology, growth would require purchasing increasingly powerful servers. Because of the economics in the computer industry, it is far cheaper to buy eight different computers than it is to buy a single computer with eight processors.
+Spam Signatures and Advertising
+Intelligent Signatures
+
+The most accurate spam filter is worthless if nobody uses it. As a result we’ve decided to make extra efforts at making things easier to use. Part of that effort involves creating software that allows you to train your personal spam filter whether you’re accessing e-mail using a POP client or webmail. The Lavabit e-mail server can dynamically insert spam signatures into the bottom of your messages as they are downloaded. These signatures contain links that can be used to conveniently train your personalized server-based statistical spam filter.
+
