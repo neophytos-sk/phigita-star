@@ -62,25 +62,6 @@ proc trim_title {title} {
 }
 
 
-proc get_title_old {node} {
-
-    # returns all text node children of that current node combined
-    set t0 [filter_title stoptitles [trim_title [${node} text]]]
-
-    # for ELEMENT_NODEs, outputs the string-value of every text node 
-    # descendant of node in document order without any escaping
-    set t1 [filter_title stoptitles [trim_title [${node} asText]]]
-
-    # title attribute of the current node
-    set t2 [filter_title stoptitles [trim_title [${node} @title ""]]]
-
-    set list_of_titles [list ${t0} ${t1} ${t2}]
-    set title [lsearch -inline -not ${list_of_titles} {}]
-
-    return ${title}
-
-}
-
 proc get_title {stoptitlesVar node} {
     upvar $stoptitlesVar stoptitles
 
@@ -134,7 +115,7 @@ proc get_feed_items {resultVar feedVar {stoptitlesVar ""}} {
 
     set url         $feed(url)
     set include_re  $feed(include_re)
-    set exclude_re  $feed(exclude_re)
+    set exclude_re  [::util::var::get_value_if feed(exclude_re) ""]
 
     if { [info exists feed(domain)] } {
 	set domain $feed(domain)
@@ -172,7 +153,7 @@ proc get_feed_items {resultVar feedVar {stoptitlesVar ""}} {
 	}
 
 	# drop links that do not match regular expression
-	if { ![regexp -- ${include_re} ${href}] || [regexp -- ${exclude_re} ${href}] } {
+	if { ![regexp -- ${include_re} ${href}] || ( ${exclude_re} ne {} && [regexp -- ${exclude_re} ${href}] ) } {
 	    continue
 	}
 
@@ -270,8 +251,10 @@ foreach link $result(links) title_in_feed $result(titles) {
     set author_in_article ""
     if { ${xpath_article_author} ne {} } {
 	set author_node [${doc} selectNodes ${xpath_article_author}]
-	set author_in_article [string trim [${author_node} text]]
-	${author_node} delete
+	if { ${author_node} ne {} } {
+	    set author_in_article [string trim [${author_node} text]]
+	    ${author_node} delete
+	}
     }
 
     if { ${keep_title_from_feed_p} || ${title_in_article} eq {} } {
@@ -284,11 +267,13 @@ foreach link $result(links) title_in_feed $result(titles) {
     if { ${xpath_article_image} ne {} } {
 	foreach image_xpath ${xpath_article_image} {
 	    foreach image_node [${doc} selectNodes ${image_xpath}] {
-		lappend article_image [::uri::canonicalize \
-					   [::uri::resolve \
-						$link \
-						[$image_node @src]]]
-		${image_node} delete
+		if { ${image_node} ne {} } {
+		    lappend article_image [::uri::canonicalize \
+					       [::uri::resolve \
+						    $link \
+						    [$image_node @src]]]
+		    ${image_node} delete
+		}
 	    }
 	}
     }
@@ -307,7 +292,11 @@ foreach link $result(links) title_in_feed $result(titles) {
     set article_body ""
     if { ${xpath_article_body} ne {} } {
 	set article_body_node [${doc} selectNodes ${xpath_article_body}]
-	set article_body [${article_body_node} asText]
+	set article_body [${article_body_node} asHTML]
+	regsub -all -- {<[^>]*>} ${article_body} "\n" article_body
+	regsub -all -- {\n{3,}} ${article_body} "\n\n" article_body
+
+	#set article_body [${article_body_node} asText]
 	#set article_body [${doc} selectNodes returnstring(${xpath_article_body})]
     }
 
@@ -317,7 +306,7 @@ foreach link $result(links) title_in_feed $result(titles) {
     puts "Image: $article_image"
 
     # TODO: xpathfunc returntext (that returns structured text from html)
-    puts "Content: [string range $article_body 0 100]"
+    puts "Content: [string range $article_body 0 200]"
     # puts "Content: $article_body"
 
     $doc delete
