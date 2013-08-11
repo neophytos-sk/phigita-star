@@ -25,6 +25,17 @@ set feeds [dict create \
 		   }
 		   xpath_article_cleanup {//div[@class="soSialIcons"]}
 	       } \
+	       inbusiness {
+		   url http://www.sigmalive.com/inbusiness/
+		   include_re {/inbusiness/.*/[0-9]+}
+		   keep_title_from_feed_p 0
+		   xpath_article_title {//div[@id="articleContainer"]/h1}
+		   xpath_article_body {//div[@id="articleContainer"]/div[@class="content"]/div[1]}
+		   xpath_article_image {
+		       {//div[@class="article_image"]//img}
+		   }
+		   xpath_article_cleanup {//div[@class="articleContainer"]/h4}
+	       } \
 	       paideia-news {
 		   url http://www.paideia-news.com/
 		   include_re {id=[0-9]+&hid=[0-9]+}
@@ -37,8 +48,9 @@ set feeds [dict create \
 
 
 #array set feed [dict get $feeds philenews]
-array set feed [dict get $feeds sigmalive]
+#array set feed [dict get $feeds sigmalive]
 #array set feed [dict get $feeds paideia-news]
+array set feed [dict get $feeds inbusiness]
 
 proc compare_href_attr {n1 n2} {
     return [string compare [${n1} @href ""] [${n2} @href ""]]
