@@ -27,7 +27,6 @@ ns_log notice "pwd=[pwd]"
 
 #ns_eval {
 
-# package require xcmds
 #    package require tdom
     package require TclCurl
     package require textutil
@@ -43,6 +42,7 @@ ns_log notice "pwd=[pwd]"
 ::xo::lib::require htmltidy
 ::xo::lib::require util_procs
 ::xo::lib::require html_procs
+::xo::lib::require tdom_procs
 ::xo::lib::require tlucene
 
 #::xo::lib::require nssmtpd
