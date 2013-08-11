@@ -19,7 +19,10 @@ set feeds [dict create \
 		   keep_title_from_feed_p 0
 		   xpath_article_title {//h2[@class="cat_article_title"]/a}
 		   xpath_article_body {//div[@id="article_content"]}
-		   xpath_article_image {//div[@id="article_content"]/img}
+		   xpath_article_image {
+		       {//div[@id="article_content"]/img}
+		       {//div[@id="article_content"]//img[@class="pyro-image"]}
+		   }
 		   xpath_article_cleanup {//div[@class="soSialIcons"]}
 	       } \
 	       paideia-news {
@@ -279,12 +282,14 @@ foreach link $result(links) title_in_feed $result(titles) {
 
     set article_image [list]
     if { ${xpath_article_image} ne {} } {
-	foreach image_node [${doc} selectNodes ${xpath_article_image}] {
-	    lappend article_image [::uri::canonicalize \
-				       [::uri::resolve \
-					    $link \
-					    [$image_node @src]]]
-	    ${image_node} delete
+	foreach image_xpath ${xpath_article_image} {
+	    foreach image_node [${doc} selectNodes ${image_xpath}] {
+		lappend article_image [::uri::canonicalize \
+					   [::uri::resolve \
+						$link \
+						[$image_node @src]]]
+		${image_node} delete
+	    }
 	}
     }
 
