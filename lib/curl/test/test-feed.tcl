@@ -20,10 +20,15 @@ set feeds [dict create \
 		   xpath_article_title {//h2[@class="cat_article_title"]/a}
 		   xpath_article_body {//div[@id="article_content"]}
 		   xpath_article_image {
-		       {//div[@id="article_content"]/img}
-		       {//div[@id="article_content"]//img[@class="pyro-image"]}
+		       {values(//div[@id="article_content"]/img/@src)}
+		       {values(//div[@id="article_content"]//img[@class="pyro-image"]/@src)}
 		   }
-		   xpath_article_cleanup {//div[@class="soSialIcons"]}
+		   xpath_article_author {returnstring(//div[@class="article_meta"]/span[@class="meta_author"]/a/text())}
+		   xpath_article_date {returnstring(//div[@class="article_meta"]/span[@class="meta_date"]/strong/text())}
+		   xpath_article_cleanup {
+		       {//div[@class="soSialIcons"]}
+		       {//div[@class="article_meta"]}
+		   }
 	       } \
 	       inbusiness {
 		   url http://www.sigmalive.com/inbusiness/
@@ -32,25 +37,46 @@ set feeds [dict create \
 		   xpath_article_title {//div[@id="articleContainer"]/h1}
 		   xpath_article_body {//div[@id="articleContainer"]/div[@class="content"]/div[1]}
 		   xpath_article_image {
-		       {//div[@class="article_image"]//img}
+		       {values(//div[@class="articleImg"]/div[@class="img"]/img/@src)}
 		   }
-		   xpath_article_cleanup {//div[@class="articleContainer"]/h4}
+		   xpath_article_date {substring-after(//div[@id="articleContainer"]/h4/text(),"| ")}
+		   xpath_article_cleanup {
+		       {//div[@id="articleContainer"]/h4}
+		   }
 	       } \
 	       paideia-news {
 		   url http://www.paideia-news.com/
 		   include_re {id=[0-9]+&hid=[0-9]+}
 		   htmltidy_article_p 1
 		   xpath_article_title {//div[@class="main_resource_title_single"]}
-		   xpath_article_author {//div[@class="main_resource_summ2"]/p/strong/span}
+		   xpath_article_author {returnstring(//div[@class="main_resource_summ2"]/p/strong/span)}
 		   xpath_article_body {//div[@class="main_resource_summ2"]}
-		   xpath_article_image {values(//div[@class="main_resource_img_single"]/img)}
+		   xpath_article_image {values(//div[@class="main_resource_img_single"]/img/@src)}
+		   xpath_article_cleanup {
+		       {//div[@class="main_resource_summ2"]/p/strong/span}
+		   }
+	       } \
+	       haravgi {
+		   url http://www.haravgi.com.cy/rss/rss.php
+		   feed_type "rss"
+		   include_re {site-article-[0-9]+-gr.php}
+	       } \
+	       ant1iwo {
+		   url http://www.ant1iwo.com/
+		   include_re {/[0-9]{4}/[0-9]{2}/[0-9]{2}/}
+		   xpath_article_title {//div[@id="il_title"]/h1}
+		   xpath_article_body {//div[@id="il_text"]}
+		   xpath_article_date {substring-after(//div[@id="il_pub_date"]/div[@class="pubdate"]/text(),": ")}
 	       }]
+
 
 
 #array set feed [dict get $feeds philenews]
 #array set feed [dict get $feeds sigmalive]
 #array set feed [dict get $feeds paideia-news]
-array set feed [dict get $feeds inbusiness]
+#array set feed [dict get $feeds inbusiness]
+#array set feed [dict get $feeds haravgi]
+array set feed [dict get $feeds ant1iwo]
 
 proc compare_href_attr {n1 n2} {
     return [string compare [${n1} @href ""] [${n2} @href ""]]
@@ -135,9 +161,9 @@ proc get_feed_items {resultVar feedVar {stoptitlesVar ""}} {
 	set domain [::util::domain_from_url ${url}]
     }
 
-    set xpath {//a[@href]}
-    if { [info exists feed(xpath)] } {
-	set xpath $feed(xpath)
+    set xpath_feed_item {//a[@href]}
+    if { [info exists feed(xpath_feed_item)] } {
+	set xpath_feed_item $feed(xpath_feed_item)
     }
 
     set encoding {utf-8}
@@ -150,7 +176,7 @@ proc get_feed_items {resultVar feedVar {stoptitlesVar ""}} {
     set html [encoding convertfrom ${encoding} ${html}]
 
     set doc [dom parse -html ${html}]
-    set nodes [$doc selectNodes ${xpath}]
+    set nodes [$doc selectNodes ${xpath_feed_item}]
 
     set nodes2 [list]
     array set title_for_href [list]
@@ -206,6 +232,11 @@ foreach title [split [::util::readfile stoptitles.txt] "\n"] {
     set stoptitles(${title}) 1
 }
 
+set feed_type [::util::var::get_value_if feed(type) ""] 
+if { ${feed_type} eq {rss} } {
+    set feed(xpath_feed_item) //item
+}
+
 get_feed_items result feed stoptitles
 
 foreach link $result(links) title_in_feed $result(titles) {
@@ -213,6 +244,7 @@ foreach link $result(links) title_in_feed $result(titles) {
     puts ${link}
     puts "---"
 
+    #continue
 
     set encoding [::util::var::get_value_if feed(encoding) utf-8]
 
@@ -224,6 +256,7 @@ foreach link $result(links) title_in_feed $result(titles) {
 				    feed(keep_title_from_feed_p) \
 				    0]
 
+    # {//meta[@property="og:title"]}
     set xpath_article_title [::util::var::get_value_if \
 				 feed(xpath_article_title) \
 				 {//title}]
@@ -242,7 +275,16 @@ foreach link $result(links) title_in_feed $result(titles) {
 
     set xpath_article_image [::util::var::get_value_if \
 				 feed(xpath_article_image) \
-				 {}]
+				 {values(//meta[@property="og:image"]/@content)}]
+
+    set xpath_article_description [::util::var::get_value_if \
+				       feed(xpath_article_description) \
+				       {values(//meta[@property="og:description"]/@content)}]
+
+
+    set xpath_article_date [::util::var::get_value_if \
+				feed(xpath_article_date) \
+				{}]
 
 
     set html ""
@@ -262,11 +304,7 @@ foreach link $result(links) title_in_feed $result(titles) {
 
     set author_in_article ""
     if { ${xpath_article_author} ne {} } {
-	set author_node [${doc} selectNodes ${xpath_article_author}]
-	if { ${author_node} ne {} } {
-	    set author_in_article [string trim [${author_node} text]]
-	    ${author_node} delete
-	}
+	set author_in_article [${doc} selectNodes ${xpath_article_author}]
     }
 
     if { ${keep_title_from_feed_p} || ${title_in_article} eq {} } {
@@ -278,16 +316,23 @@ foreach link $result(links) title_in_feed $result(titles) {
     set article_image [list]
     if { ${xpath_article_image} ne {} } {
 	foreach image_xpath ${xpath_article_image} {
-	    foreach image_node [${doc} selectNodes ${image_xpath}] {
-		if { ${image_node} ne {} } {
-		    lappend article_image [::uri::canonicalize \
-					       [::uri::resolve \
-						    $link \
-						    [$image_node @src]]]
-		    ${image_node} delete
-		}
+	    foreach image_url [${doc} selectNodes ${image_xpath}] {
+		lappend article_image [::uri::canonicalize \
+					   [::uri::resolve \
+						$link \
+						$image_url]]
 	    }
 	}
+    }
+
+    set article_date ""
+    if { ${xpath_article_date} ne {} } {
+	set article_date [${doc} selectNodes ${xpath_article_date}]
+    }
+
+    set article_description ""
+    if { ${xpath_article_description} ne {} } {
+	set article_description [${doc} selectNodes ${xpath_article_description}]
     }
 
     # remove script nodes
@@ -295,8 +340,8 @@ foreach link $result(links) title_in_feed $result(titles) {
 	$cleanup_node delete
     }
 
-    if { ${xpath_article_cleanup} ne {} } {
-	foreach cleanup_node [${doc} selectNodes ${xpath_article_cleanup}] {
+    foreach cleanup_xpath ${xpath_article_cleanup} {
+	foreach cleanup_node [${doc} selectNodes ${cleanup_xpath}] {
 	    ${cleanup_node} delete
 	}
     }
@@ -314,8 +359,11 @@ foreach link $result(links) title_in_feed $result(titles) {
 
 
     puts "Title: $article_title"
+    puts "Description: $article_description"
     puts "Author: $author_in_article"
     puts "Image: $article_image"
+    puts "Date: $article_date"
+
 
     # TODO: xpathfunc returntext (that returns structured text from html)
     puts "Content: [string range $article_body 0 200]"
