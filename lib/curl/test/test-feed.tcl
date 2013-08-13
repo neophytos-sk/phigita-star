@@ -367,7 +367,7 @@ proc get_item_dir {link} {
     set reversehost [join [lreverse [split $uri_parts(host) {.}]] {.}]
     set urlsha1 [::sha1::sha1 -hex ${link}]
 
-    # set first3Chars [string range ${urlsha1} 0 2]
+    #set first3Chars [string range ${urlsha1} 0 2]
 
     set dir /web/data/crawldb/${reversehost}/${urlsha1}/
 
@@ -399,6 +399,12 @@ proc write_item {link feedVar itemVar} {
     # note that it overwrites the file if it already exists with the same content
     set fp [open ${filename} "w"]
     puts $fp ${data}
+    close ${fp}
+
+    set timestamp [clock seconds] 
+    set articles_filename /web/data/crawldb/articles.txt
+    set fp [open ${articles_filename} "a"]
+    puts $fp [list ${timestamp} ${datasha1} ${link} $item(title)]
     close ${fp}
 
 }
