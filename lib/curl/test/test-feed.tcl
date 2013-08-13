@@ -72,13 +72,6 @@ set feeds [dict create \
 
 
 
-#array set feed [dict get $feeds philenews]
-#array set feed [dict get $feeds sigmalive]
-#array set feed [dict get $feeds paideia-news]
-#array set feed [dict get $feeds inbusiness]
-#array set feed [dict get $feeds haravgi]
-array set feed [dict get $feeds ant1iwo]
-
 proc compare_href_attr {n1 n2} {
     return [string compare [${n1} @href ""] [${n2} @href ""]]
 }
@@ -374,6 +367,8 @@ proc get_item_dir {link} {
     set reversehost [join [lreverse [split $uri_parts(host) {.}]] {.}]
     set urlsha1 [::sha1::sha1 -hex ${link}]
 
+    # set first3Chars [string range ${urlsha1} 0 2]
+
     set dir /web/data/crawldb/${reversehost}/${urlsha1}/
 
     return ${dir}
@@ -413,23 +408,37 @@ foreach title [split [::util::readfile stoptitles.txt] "\n"] {
     set stoptitles(${title}) 1
 }
 
-set feed_type [::util::var::get_value_if feed(type) ""] 
-if { ${feed_type} eq {rss} } {
-    set feed(xpath_feed_item) //item
-}
 
-get_feed_items result feed stoptitles
+#array set feed [dict get $feeds haravgi]
+foreach feed_name {
+    philenews
+    sigmalive
+    paideia-news
+    inbusiness
+    ant1iwo
+} {
 
-foreach link $result(links) title_in_feed $result(titles) {
-    puts ${title_in_feed}
-    puts ${link}
-    puts "---"
+    array set feed [dict get ${feeds} ${feed_name}]
 
-    #continue
+    # set feed_type [::util::var::get_value_if feed(type) ""] 
+    # if { ${feed_type} eq {rss} } {
+    # set feed(xpath_feed_item) //item
+    # }
 
-    if { ![exists_item ${link} feed] } {
-	fetch_item ${link} ${title_in_feed} feed item
-	write_item ${link} feed item
+    get_feed_items result feed stoptitles
+
+    foreach link $result(links) title_in_feed $result(titles) {
+	puts ${title_in_feed}
+	puts ${link}
+	puts "---"
+
+	#continue
+	
+	if { ![exists_item ${link} feed] } {
+	    fetch_item ${link} ${title_in_feed} feed item
+	    write_item ${link} feed item
+	}
+
     }
 
 }
