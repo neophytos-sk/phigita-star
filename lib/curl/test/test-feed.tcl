@@ -6,6 +6,7 @@ source ../../naviserver_compat/tcl/module-naviserver_compat.tcl
 ::xo::lib::require htmltidy
 
 package require uri
+package require sha1
 
 set feeds [dict create \
 	       philenews {
@@ -344,6 +345,13 @@ proc fetch_item {link title_in_feed feedVar itemVar} {
 	#set article_body [${doc} selectNodes returnstring(${xpath_article_body})]
     }
 
+    array set item [list \
+			title $article_title \
+			description $article_description \
+			author $author_in_article \
+			image $article_image \
+			date $article_date \
+			content $article_body]
 
     puts "Title: $article_title"
     puts "Description: $article_description"
@@ -359,15 +367,45 @@ proc fetch_item {link title_in_feed feedVar itemVar} {
     $doc delete
 }
 
+proc get_item_dir {link} {
+
+    array set uri_parts [::uri::split ${link}]
+
+    set reversehost [join [lreverse [split $uri_parts(host) {.}]] {.}]
+    set urlsha1 [::sha1::sha1 -hex ${link}]
+
+    set dir /web/data/crawldb/${reversehost}/${urlsha1}/
+
+    return ${dir}
+
+}
 
 proc exists_item {link feedVar} {
     upvar $feedVar feed
-    return 0
+
+    return [file isdirectory [get_item_dir ${link}]]
+
 }
 
 proc write_item {link feedVar itemVar} {
     upvar $feedVar feed
     upvar $itemVar item
+
+    set dir [get_item_dir ${link}]
+
+    if { ![file isdirectory ${dir}] } {
+	file mkdir ${dir}
+    }
+
+    set data [array get item]
+    set datasha1 [::sha1::sha1 -hex ${data}]
+    set filename ${dir}/${datasha1}
+
+    # note that it overwrites the file if it already exists with the same content
+    set fp [open ${filename} "w"]
+    puts $fp ${data}
+    close ${fp}
+
 }
 
 array set stoptitles [list]
@@ -393,7 +431,5 @@ foreach link $result(links) title_in_feed $result(titles) {
 	fetch_item ${link} ${title_in_feed} feed item
 	write_item ${link} feed item
     }
-
-    break
 
 }
