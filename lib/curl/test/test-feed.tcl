@@ -227,24 +227,11 @@ proc get_feed_items {resultVar feedVar {stoptitlesVar ""}} {
     $doc delete
 }
 
-array set stoptitles [list]
-foreach title [split [::util::readfile stoptitles.txt] "\n"] {
-    set stoptitles(${title}) 1
-}
 
-set feed_type [::util::var::get_value_if feed(type) ""] 
-if { ${feed_type} eq {rss} } {
-    set feed(xpath_feed_item) //item
-}
+proc fetch_item {link title_in_feed feedVar itemVar} {
 
-get_feed_items result feed stoptitles
-
-foreach link $result(links) title_in_feed $result(titles) {
-    puts ${title_in_feed}
-    puts ${link}
-    puts "---"
-
-    #continue
+    upvar $feedVar feed
+    upvar $itemVar item
 
     set encoding [::util::var::get_value_if feed(encoding) utf-8]
 
@@ -370,6 +357,42 @@ foreach link $result(links) title_in_feed $result(titles) {
     # puts "Content: $article_body"
 
     $doc delete
+}
+
+
+proc exists_item {link feedVar} {
+    upvar $feedVar feed
+    return 0
+}
+
+proc write_item {link feedVar itemVar} {
+    upvar $feedVar feed
+    upvar $itemVar item
+}
+
+array set stoptitles [list]
+foreach title [split [::util::readfile stoptitles.txt] "\n"] {
+    set stoptitles(${title}) 1
+}
+
+set feed_type [::util::var::get_value_if feed(type) ""] 
+if { ${feed_type} eq {rss} } {
+    set feed(xpath_feed_item) //item
+}
+
+get_feed_items result feed stoptitles
+
+foreach link $result(links) title_in_feed $result(titles) {
+    puts ${title_in_feed}
+    puts ${link}
+    puts "---"
+
+    #continue
+
+    if { ![exists_item ${link} feed] } {
+	fetch_item ${link} ${title_in_feed} feed item
+	write_item ${link} feed item
+    }
 
     break
 
