@@ -9,6 +9,12 @@ set feeds [dict create \
 		   url http://www.philenews.com/
 		   include_re {/el-gr/.+/[0-9]+/[0-9]+/}
 		   exclude_re {vid=$}
+		   xpath_article_body {returntext(//div[@class="article-body"])}
+		   xpath_article_author {string(//div[@class="article-author"])}
+		   xpath_article_tags {values(//meta[@property="article:section"]/@content)}
+		   xpath_article_image {
+		       {values(//div[@class="fullarclimg"]/div/a/img/@src)}
+		   }
 	       } \
 	       sigmalive {
 		   url http://www.sigmalive.com/

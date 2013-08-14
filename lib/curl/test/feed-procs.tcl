@@ -445,7 +445,7 @@ proc test_feed {feedVar {stoptitlesVar ""}} {
 	fetch_item ${link} ${title_in_feed} feed item
 
 	if { [incr count] == 3 } {
-	    break
+	    #break
 	}
 
     }
