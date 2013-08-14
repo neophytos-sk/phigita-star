@@ -84,7 +84,7 @@ proc get_feed_items {resultVar feedVar {stoptitlesVar ""}} {
 
     set url         $feed(url)
     set include_re  $feed(include_re)
-    set exclude_re  [::util::var::get_value_if feed(exclude_re) ""]
+    set exclude_re  [get_value_if feed(exclude_re) ""]
 
     if { [info exists feed(domain)] } {
 	set domain $feed(domain)
@@ -97,11 +97,11 @@ proc get_feed_items {resultVar feedVar {stoptitlesVar ""}} {
 	set xpath_feed_item $feed(xpath_feed_item)
     }
 
-    set htmltidy_feed_p [::util::var::get_value_if \
+    set htmltidy_feed_p [get_value_if \
 			     feed(htmltidy_feed_p) \
 			     0]
 
-    set xpath_feed_cleanup [::util::var::get_value_if \
+    set xpath_feed_cleanup [get_value_if \
 				feed(xpath_feed_cleanup) \
 				{}]
 
@@ -188,62 +188,72 @@ proc html_to_text {htmlVar} {
     regsub -all -- {\s+[\n\r]\s+} ${html} " " html
 }
 
+proc exec_xpath {resultVar doc xpath} {
+    upvar $resultVar result
+
+    set result ""
+    if { ${xpath} ne {} } {
+	set result [string trim [${doc} selectNodes ${xpath}]]
+    }
+
+}
+
 
 proc fetch_item_helper {link title_in_feed feedVar itemVar} {
 
     upvar $feedVar feed
     upvar $itemVar item
 
-    set encoding [::util::var::get_value_if feed(encoding) utf-8]
+    set encoding [get_value_if feed(encoding) utf-8]
 
-    set htmltidy_article_p [::util::var::get_value_if \
+    set htmltidy_article_p [get_value_if \
 				feed(htmltidy_article_p) \
 				0]
 
-    set keep_title_from_feed_p [::util::var::get_value_if \
+    set keep_title_from_feed_p [get_value_if \
 				    feed(keep_title_from_feed_p) \
 				    0]
 
     # {//meta[@property="og:title"]}
-    set xpath_article_title [::util::var::get_value_if \
+    set xpath_article_title [get_value_if \
 				 feed(xpath_article_title) \
 				 {returnstring(//meta[@property="og:title"]/@content)}]
 
-    set xpath_article_body [::util::var::get_value_if \
+    set xpath_article_body [get_value_if \
 				feed(xpath_article_body) \
 				{}]
 
-    set xpath_article_cleanup [::util::var::get_value_if \
+    set xpath_article_cleanup [get_value_if \
 				   feed(xpath_article_cleanup) \
 				   {}]
 
-    set xpath_article_author [::util::var::get_value_if \
+    set xpath_article_author [get_value_if \
 				  feed(xpath_article_author) \
 				  {}]
 
-    set xpath_article_image [::util::var::get_value_if \
+    set xpath_article_image [get_value_if \
 				 feed(xpath_article_image) \
 				 {values(//meta[@property="og:image"]/@content)}]
 
-    set xpath_article_attachment [::util::var::get_value_if \
+    set xpath_article_attachment [get_value_if \
 				      feed(xpath_article_attachment) \
 				      {}]
 
-    set xpath_article_description [::util::var::get_value_if \
+    set xpath_article_description [get_value_if \
 				       feed(xpath_article_description) \
 				       {returnstring(//meta[@property="og:description"]/@content)}]
 
 
-    set xpath_article_date [::util::var::get_value_if \
+    set xpath_article_date [get_value_if \
 				feed(xpath_article_date) \
 				{values(//meta[@property="article:published_time"]/@content)}]
 
-    set xpath_article_modified_time [::util::var::get_value_if \
+    set xpath_article_modified_time [get_value_if \
 				feed(xpath_article_modified_time) \
 				{values(//meta[@property="article:modified_time"]/@content)}]
 
 
-    set xpath_article_tags [::util::var::get_value_if \
+    set xpath_article_tags [get_value_if \
 				feed(xpath_article_tags) \
 				{}]
 
@@ -259,13 +269,8 @@ proc fetch_item_helper {link title_in_feed feedVar itemVar} {
 
     set doc [dom parse -html ${html}]
 
-    set title_in_article [${doc} selectNodes ${xpath_article_title}]
-
-
-    set author_in_article ""
-    if { ${xpath_article_author} ne {} } {
-	set author_in_article [${doc} selectNodes ${xpath_article_author}]
-    }
+    exec_xpath title_in_article $doc $xpath_article_title
+    exec_xpath author_in_article $doc $xpath_article_author
 
     if { ${keep_title_from_feed_p} || ${title_in_article} eq {} } {
 	set article_title ${title_in_feed}
@@ -300,25 +305,11 @@ proc fetch_item_helper {link title_in_feed feedVar itemVar} {
     }
 
 
-    set article_date ""
-    if { ${xpath_article_date} ne {} } {
-	set article_date [${doc} selectNodes ${xpath_article_date}]
-    }
+    exec_xpath article_date $doc $xpath_article_date
+    exec_xpath article_modified_time $doc $xpath_article_modified_time
+    exec_xpath article_description $doc $xpath_article_description
+    exec_xpath article_tags $doc $xpath_article_tags
 
-    set article_modified_time ""
-    if { ${xpath_article_modified_time} ne {} } {
-	set article_modified_time [${doc} selectNodes ${xpath_article_modified_time}]
-    }
-
-    set article_description ""
-    if { ${xpath_article_description} ne {} } {
-	set article_description [${doc} selectNodes ${xpath_article_description}]
-    }
-
-    set article_tags ""
-    if { ${xpath_article_tags} ne {} } {
-	set article_tags [${doc} selectNodes ${xpath_article_tags}]
-    }
 
     # remove script and style and link nodes (in addition to the ones specified by the feed spec)
     lappend xpath_article_cleanup {//script}
@@ -379,6 +370,7 @@ proc fetch_item_helper {link title_in_feed feedVar itemVar} {
     # TODO: xpathfunc returntext (that returns structured text from html)
     puts "Content: [string range $article_body 0 200]"
     # puts "Content: $article_body"
+    puts "---"
 
     $doc delete
 }
@@ -389,6 +381,7 @@ proc fetch_item {link title_in_feed feedVar itemVar} {
     upvar $itemVar item
 
     if { [catch {fetch_item_helper ${link} ${title_in_feed} feed item} errmsg] } {
+	puts errmsg=$errmsg
 	array set item [list \
 			    link $link \
 			    title $title_in_feed \
@@ -494,7 +487,7 @@ proc sync_feeds {feedsVar stoptitlesVar} {
 
 	array set feed [dict get ${feeds} ${feed_name}]
 
-	# set feed_type [::util::var::get_value_if feed(type) ""] 
+	# set feed_type [get_value_if feed(type) ""] 
 	# if { ${feed_type} eq {rss} } {
 	# set feed(xpath_feed_item) //item
 	# }
@@ -502,10 +495,10 @@ proc sync_feeds {feedsVar stoptitlesVar} {
 	get_feed_items result feed stoptitles
 
 	foreach link $result(links) title_in_feed $result(titles) {
-	    puts ""
-	    puts ${title_in_feed}
-	    puts ${link}
-	    puts "---"
+	    #puts ""
+	    #puts ${title_in_feed}
+	    #puts ${link}
+	    #puts "---"
 
 	    #continue
 	    
