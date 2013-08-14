@@ -97,6 +97,14 @@ proc get_feed_items {resultVar feedVar {stoptitlesVar ""}} {
 	set xpath_feed_item $feed(xpath_feed_item)
     }
 
+    set htmltidy_feed_p [::util::var::get_value_if \
+			     feed(htmltidy_feed_p) \
+			     0]
+
+    set xpath_feed_cleanup [::util::var::get_value_if \
+				feed(xpath_feed_cleanup) \
+				{}]
+
     set encoding {utf-8}
     if { [info exists feed(encoding)] } {
 	set encoding $feed(encoding)
@@ -106,7 +114,19 @@ proc get_feed_items {resultVar feedVar {stoptitlesVar ""}} {
     
     set html [encoding convertfrom ${encoding} ${html}]
 
+    if { ${htmltidy_feed_p} } {
+	set html [::htmltidy::tidy ${html}]
+    }
+
     set doc [dom parse -html ${html}]
+
+
+    foreach cleanup_xpath ${xpath_feed_cleanup} {
+	foreach cleanup_node [${doc} selectNodes $cleanup_xpath] {
+	    $cleanup_node delete
+	}	    
+    }
+
     set nodes [$doc selectNodes ${xpath_feed_item}]
 
     set nodes2 [list]
@@ -187,7 +207,7 @@ proc fetch_item {link title_in_feed feedVar itemVar} {
     # {//meta[@property="og:title"]}
     set xpath_article_title [::util::var::get_value_if \
 				 feed(xpath_article_title) \
-				 {//title}]
+				 {values(//meta[@property="og:title"]/@content)}]
 
     set xpath_article_body [::util::var::get_value_if \
 				feed(xpath_article_body) \
@@ -205,6 +225,10 @@ proc fetch_item {link title_in_feed feedVar itemVar} {
 				 feed(xpath_article_image) \
 				 {values(//meta[@property="og:image"]/@content)}]
 
+    set xpath_article_attachment [::util::var::get_value_if \
+				      feed(xpath_article_attachment) \
+				      {}]
+
     set xpath_article_description [::util::var::get_value_if \
 				       feed(xpath_article_description) \
 				       {values(//meta[@property="og:description"]/@content)}]
@@ -212,7 +236,12 @@ proc fetch_item {link title_in_feed feedVar itemVar} {
 
     set xpath_article_date [::util::var::get_value_if \
 				feed(xpath_article_date) \
-				{}]
+				{values(//meta[@property="article:published_time"]/@content)}]
+
+    set xpath_article_modified_time [::util::var::get_value_if \
+				feed(xpath_article_modified_time) \
+				{values(//meta[@property="article:modified_time"]/@content)}]
+
 
     set xpath_article_tags [::util::var::get_value_if \
 				feed(xpath_article_tags) \
@@ -230,9 +259,8 @@ proc fetch_item {link title_in_feed feedVar itemVar} {
 
     set doc [dom parse -html ${html}]
 
-    set title_node [${doc} selectNodes ${xpath_article_title}]
-    set title_in_article [string trim [${title_node} text]]
-    ${title_node} delete
+    set title_in_article [${doc} selectNodes ${xpath_article_title}]
+
 
     set author_in_article ""
     if { ${xpath_article_author} ne {} } {
@@ -257,10 +285,29 @@ proc fetch_item {link title_in_feed feedVar itemVar} {
 	}
     }
 
+    set article_attachment [list]
+    if { ${xpath_article_attachment} ne {} } {
+	foreach attachment_xpath ${xpath_article_attachment} {
+	    foreach attachment_url [${doc} selectNodes ${attachment_xpath}] {
+		# TODO: schedule to fetch and recognize content type
+		# TODO: include_attachment_re, e.g. for stockwatch /media/announce_pdf
+		lappend article_attachment [::uri::canonicalize \
+						[::uri::resolve \
+						     $link \
+						     $attachment_url]]
+	    }
+	}
+    }
+
 
     set article_date ""
     if { ${xpath_article_date} ne {} } {
 	set article_date [${doc} selectNodes ${xpath_article_date}]
+    }
+
+    set article_modified_time ""
+    if { ${xpath_article_modified_time} ne {} } {
+	set article_modified_time [${doc} selectNodes ${xpath_article_modified_time}]
     }
 
     set article_description ""
@@ -299,15 +346,30 @@ proc fetch_item {link title_in_feed feedVar itemVar} {
 			tags ${article_tags} \
 			author $author_in_article \
 			image $article_image \
+			attachment $article_attachment \
 			date $article_date \
+			modified_time $article_modified_time \
 			content $article_body]
 
     puts "Title: $article_title"
-    puts "Description: $article_description"
-    puts "Author: $author_in_article"
-    puts "Image: $article_image"
-    puts "Date: $article_date"
-
+    if { $article_tags ne {} } {
+	puts "Tags: $article_tags"
+    }
+    if { $article_description ne {} } {
+	puts "Description: $article_description"
+    }
+    if { $author_in_article ne {} } {
+	puts "Author: $author_in_article"
+    }
+    if { $article_image ne {} } {
+	puts "Image(s): $article_image"
+    }
+    if { $article_date ne {} } {
+	puts "Date: $article_date"
+    }
+    if { $article_attachment ne {} } {
+	puts "Attachment(s): $article_attachment"
+    }
 
     # TODO: xpathfunc returntext (that returns structured text from html)
     puts "Content: [string range $article_body 0 200]"
