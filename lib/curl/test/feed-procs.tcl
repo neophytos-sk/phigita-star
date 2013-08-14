@@ -187,7 +187,7 @@ proc exec_xpath {resultVar doc xpath} {
 
     set result ""
     if { ${xpath} ne {} } {
-	set result [string trim [${doc} selectNodes ${xpath}]]
+	set result [${doc} selectNodes "normalize-space(${xpath})"]
     }
 
 }
@@ -211,7 +211,7 @@ proc fetch_item_helper {link title_in_feed feedVar itemVar} {
     # {//meta[@property="og:title"]}
     set xpath_article_title [get_value_if \
 				 feed(xpath_article_title) \
-				 {returnstring(//meta[@property="og:title"]/@content)}]
+				 {string(//meta[@property="og:title"]/@content)}]
 
     set xpath_article_body [get_value_if \
 				feed(xpath_article_body) \
@@ -227,7 +227,7 @@ proc fetch_item_helper {link title_in_feed feedVar itemVar} {
 
     set xpath_article_image [get_value_if \
 				 feed(xpath_article_image) \
-				 {values(//meta[@property="og:image"]/@content)}]
+				 {string(//meta[@property="og:image"]/@content)}]
 
     set xpath_article_attachment [get_value_if \
 				      feed(xpath_article_attachment) \
@@ -235,16 +235,16 @@ proc fetch_item_helper {link title_in_feed feedVar itemVar} {
 
     set xpath_article_description [get_value_if \
 				       feed(xpath_article_description) \
-				       {returnstring(//meta[@property="og:description"]/@content)}]
+				       {string(//meta[@property="og:description"]/@content)}]
 
 
     set xpath_article_date [get_value_if \
 				feed(xpath_article_date) \
-				{values(//meta[@property="article:published_time"]/@content)}]
+				{string(//meta[@property="article:published_time"]/@content)}]
 
     set xpath_article_modified_time [get_value_if \
 				feed(xpath_article_modified_time) \
-				{values(//meta[@property="article:modified_time"]/@content)}]
+				{string(//meta[@property="article:modified_time"]/@content)}]
 
 
     set xpath_article_tags [get_value_if \

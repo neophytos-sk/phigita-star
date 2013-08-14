@@ -128,7 +128,7 @@ set feeds [dict create \
 		   xpath_article_description {returnstring(//div[@id="adjust-text"]/h2)}
 		   xpath_article_body {returntext(//div[@id="adjust-text"]/p)}
 		   xpath_article_date {returnstring(//div[@class="first_info_00"])}
-		   xpath_article_modified_time {substring-after(//div[@class="last_info_00"],": ")}
+		   xpath_article_modified_time {substring-after(//div[@class="last_info_00"],":")}
 		   xpath_article_image {
 		       {values(//div[@id="SelectContainer"]/div[@class="blackImages_00"]/img/@src)}
 		   }

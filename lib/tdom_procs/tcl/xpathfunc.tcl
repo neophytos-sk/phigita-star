@@ -100,6 +100,7 @@ proc ::dom::xpathFunc::match_attribute {ctxNode pos nodeListType nodeList args} 
 #
 #----------------------------------------------------------------------------
 proc ::dom::xpathFuncHelper::coerce2html { type value } {
+puts value=$value
     switch $type {
         empty      { return "" }
         number -
