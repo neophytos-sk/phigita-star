@@ -393,7 +393,7 @@ proc test_feed {feedVar {stoptitlesVar ""}} {
 
 proc sync_feeds {feedsVar stoptitlesVar} {
 
-    upvar $feedVar feeds
+    upvar $feedsVar feeds
     if { $stoptitlesVar ne {} } {
 	upvar $stoptitlesVar stoptitles
     }
