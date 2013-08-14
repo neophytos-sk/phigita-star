@@ -9,6 +9,7 @@ package require uri
 package require sha1
 
 
+
 proc compare_href_attr {n1 n2} {
     return [string compare [${n1} @href ""] [${n2} @href ""]]
 }
@@ -181,13 +182,6 @@ proc get_feed_items {resultVar feedVar {stoptitlesVar ""}} {
 }
 
 
-proc html_to_text {htmlVar} {
-    upvar $htmlVar html
-    regsub -all -- {<[^>]*>} ${html} "\n\n" html
-    regsub -all -- {[\n\r]{3,}} ${html} "\n\n" html
-    regsub -all -- {\s+[\n\r]\s+} ${html} " " html
-}
-
 proc exec_xpath {resultVar doc xpath} {
     upvar $resultVar result
 
@@ -321,15 +315,7 @@ proc fetch_item_helper {link title_in_feed feedVar itemVar} {
 	}
     }
 
-    set article_body ""
-    if { ${xpath_article_body} ne {} } {
-	set article_body_node [${doc} selectNodes ${xpath_article_body}]
-	set article_body [${article_body_node} asHTML]
-	html_to_text article_body
-
-	#set article_body [${article_body_node} asText]
-	#set article_body [${doc} selectNodes returnstring(${xpath_article_body})]
-    }
+    exec_xpath article_body $doc $xpath_article_body
 
     array set item [list \
 			link $link \

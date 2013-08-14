@@ -16,7 +16,7 @@ set feeds [dict create \
 		   exclude_re {/inbusiness/}
 		   keep_title_from_feed_p 0
 		   xpath_article_title {returnstring(//h2[@class="cat_article_title"]/a)}
-		   xpath_article_body {//div[@id="article_content"]}
+		   xpath_article_body {returntext(//div[@id="article_content"])}
 		   xpath_article_image {
 		       {values(//div[@id="article_content"]/img/@src)}
 		       {values(//div[@id="article_content"]//img[@class="pyro-image"]/@src)}
@@ -33,7 +33,7 @@ set feeds [dict create \
 		   include_re {/inbusiness/.*/[0-9]+}
 		   keep_title_from_feed_p 0
 		   xpath_article_title {returnstring(//div[@id="articleContainer"]/h1)}
-		   xpath_article_body {//div[@id="articleContainer"]/div[@class="content"]/div[1]}
+		   xpath_article_body {returntext(//div[@id="articleContainer"]/div[@class="content"]/div[1])}
 		   xpath_article_image {
 		       {values(//div[@class="articleImg"]/div[@class="img"]/img/@src)}
 		   }
@@ -48,7 +48,7 @@ set feeds [dict create \
 		   htmltidy_article_p 1
 		   xpath_article_title {returnstring(//div[@class="main_resource_title_single"])}
 		   xpath_article_author {returnstring(//div[@class="main_resource_summ2"]/p/strong/span)}
-		   xpath_article_body {//div[@class="main_resource_summ2"]}
+		   xpath_article_body {returntext(//div[@class="main_resource_summ2"])}
 		   xpath_article_image {values(//div[@class="main_resource_img_single"]/img/@src)}
 		   xpath_article_cleanup {
 		       {//div[@class="main_resource_summ2"]/p/strong/span}
@@ -63,7 +63,7 @@ set feeds [dict create \
 		   url http://www.ant1iwo.com/
 		   include_re {/[0-9]{4}/[0-9]{2}/[0-9]{2}/}
 		   xpath_article_title {returnstring(//div[@id="il_title"]/h1)}
-		   xpath_article_body {//div[@id="il_text"]}
+		   xpath_article_body {returntext(//div[@id="il_text"])}
 		   xpath_article_date {substring-after(//div[@id="il_pub_date"]/div[@class="pubdate"]/text(),": ")}
 		   comment {image is via meta og:image}
 	       } \
@@ -73,7 +73,7 @@ set feeds [dict create \
 		   htmltidy_article_p 1
 		   xpath_article_title {returnstring(//h2[@class="itemTitle"]/a)}
 		   xpath_article_description {returnstring(//div[@class="itemBody"]/*[@class="itemIntroText"])}
-		   xpath_article_body {//div[@class="itemBody"]/*[@class="itemFullText"]}
+		   xpath_article_body {returntext(//div[@class="itemBody"]/*[@class="itemFullText"])}
 		   xpath_article_date {returnstring(//div[@class="inner-sidebar-left"]/strong)}
 		   xpath_article_author {returnstring(//a[@rel="author"])}
 		   xpath_article_image {
@@ -101,7 +101,7 @@ set feeds [dict create \
 		       {//div[@class="bg-nav"]}
 		   }
 		   xpath_article_title {substring-before(//title,'- Stockwatch')}
-		   xpath_article_body {//div[@class="text-content"]}
+		   xpath_article_body {returntext(//div[@class="text-content"])}
 		   xpath_article_image {
 		       {values(//div[@class="text-content"]/img[@align="left"]/@src)}
 		   }
@@ -126,7 +126,7 @@ set feeds [dict create \
 		   htmltidy_feed_p 1
 		   xpath_article_title {returnstring(//div[@id="galleryBox_top_new"]/h2)}
 		   xpath_article_description {returnstring(//div[@id="adjust-text"]/h2)}
-		   xpath_article_body {//div[@id="adjust-text"]/p}
+		   xpath_article_body {returntext(//div[@id="adjust-text"]/p)}
 		   xpath_article_date {returnstring(//div[@class="first_info_00"])}
 		   xpath_article_modified_time {substring-after(//div[@class="last_info_00"],": ")}
 		   xpath_article_image {
@@ -140,7 +140,7 @@ set feeds [dict create \
 		   url http://www.alithia.com.cy/
 		   include_re {/item/[0-9]+}
 		   xpath_article_title {returnstring(//h2[@class="itemTitle"]/a)}
-		   xpath_article_body {//div[@class="itemBody"]/*[@class="itemIntroText"]}
+		   xpath_article_body {returntext(//div[@class="itemBody"]/*[@class="itemIntroText"])}
 		   xpath_article_date {returnstring(//span[@class="itemDateCreated"])}
 		   xpath_article_author {returnstring(//a[@rel="author"])}
 		   xpath_article_image {

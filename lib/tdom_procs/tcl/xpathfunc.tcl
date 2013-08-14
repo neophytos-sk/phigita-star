@@ -47,7 +47,6 @@ proc ::dom::xpathFunc::returnstring {ctxNode pos nodeListNode nodeList args} {
 }
 
 
-
 proc ::dom::xpathFunc::textvalues { ctxNode pos nodeListType nodeList args } {
     if {[llength $args] != 2} {
 	error "wrong # of args for XPATH function 'values'"
@@ -92,4 +91,83 @@ proc ::dom::xpathFunc::match_attribute {ctxNode pos nodeListType nodeList args} 
     }
 
     return [list nodes $result_nodes]
+}
+
+
+
+#----------------------------------------------------------------------------
+#   coerce2html
+#
+#----------------------------------------------------------------------------
+proc ::dom::xpathFuncHelper::coerce2html { type value } {
+    switch $type {
+        empty      { return "" }
+        number -
+        string     { return $value }
+        attrvalues { return [lindex $value 0] }
+        nodes      { return [[lindex $value 0] asHTML] }
+        attrnodes  { return [lindex $value 1] }
+    }
+}
+
+proc ::dom::xpathFunc::returnhtml {ctxNode pos nodeListNode nodeList args} {
+    if {[llength $args] != 2} {
+        error "returnstring(): wrong # of args!"
+    }
+    foreach {arg1Typ arg1Value} $args break
+    set result [::dom::xpathFuncHelper::coerce2html $arg1Typ $arg1Value]
+    return [list string $result]
+}
+
+
+
+#----------------------------------------------------------------------------
+#   coerce2text
+#
+#----------------------------------------------------------------------------
+proc ::dom::xpathFuncHelper::coerce2text_helper {htmlVar node} {
+
+    upvar $htmlVar html
+
+    set nodeType [$node nodeType]
+    if { ${nodeType} eq {ELEMENT_NODE} } {
+	set tagname [$node tagName]
+	if { ${tagname} in {p div} } {
+	    append html "\n\n"
+	} else {
+	    append html " "
+	}
+	foreach child [$node childNodes] {
+	    coerce2text_helper html $child
+	}
+    } elseif { ${nodeType} eq {TEXT_NODE} } {
+	append html [$node nodeValue]
+    }
+    
+}
+
+proc ::dom::xpathFuncHelper::coerce2text { type value } {
+    switch $type {
+        empty      { return "" }
+        number -
+        string     { return $value }
+        attrvalues { return [lindex $value 0] }
+        nodes      { 
+	    set node [lindex $value 0]
+	    set html ""
+	    coerce2text_helper html $node
+	    return [string trim ${html}]
+	}
+        attrnodes  { return [lindex $value 1] }
+    }
+}
+
+
+proc ::dom::xpathFunc::returntext {ctxNode pos nodeListNode nodeList args} {
+    if {[llength $args] != 2} {
+        error "returnstring(): wrong # of args!"
+    }
+    foreach {arg1Typ arg1Value} $args break
+    set result [::dom::xpathFuncHelper::coerce2text $arg1Typ $arg1Value]
+    return [list string $result]
 }
