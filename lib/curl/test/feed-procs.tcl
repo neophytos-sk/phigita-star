@@ -488,6 +488,9 @@ proc sync_feeds {feedsVar stoptitlesVar} {
 
 	    #continue
 	    
+	    # TODO: if it exists and it's the first item in the feed,
+	    # fetch it and compare it to stored item to ensure sanity
+	    # of feed/article/page
 	    if { ![exists_item ${link} feed] } {
 		fetch_item ${link} ${title_in_feed} feed item
 		write_item ${link} feed item
