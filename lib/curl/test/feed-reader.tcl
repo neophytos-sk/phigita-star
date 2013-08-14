@@ -8,6 +8,7 @@ set feeds [dict create \
 	       philenews {
 		   url http://www.philenews.com/
 		   include_re {/el-gr/.+/[0-9]+/[0-9]+/}
+		   exclude_re {vid=$}
 	       } \
 	       sigmalive {
 		   url http://www.sigmalive.com/

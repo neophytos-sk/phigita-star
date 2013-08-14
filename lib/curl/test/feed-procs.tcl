@@ -207,7 +207,7 @@ proc fetch_item {link title_in_feed feedVar itemVar} {
     # {//meta[@property="og:title"]}
     set xpath_article_title [::util::var::get_value_if \
 				 feed(xpath_article_title) \
-				 {values(//meta[@property="og:title"]/@content)}]
+				 {returnstring(//meta[@property="og:title"]/@content)}]
 
     set xpath_article_body [::util::var::get_value_if \
 				feed(xpath_article_body) \
@@ -231,7 +231,7 @@ proc fetch_item {link title_in_feed feedVar itemVar} {
 
     set xpath_article_description [::util::var::get_value_if \
 				       feed(xpath_article_description) \
-				       {values(//meta[@property="og:description"]/@content)}]
+				       {returnstring(//meta[@property="og:description"]/@content)}]
 
 
     set xpath_article_date [::util::var::get_value_if \
