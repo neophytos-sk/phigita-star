@@ -74,6 +74,7 @@ set feeds [dict create \
 		   url http://www.24h.com.cy/
 		   include_re {item/[0-9]+}
 		   xpath_article_title {//h2[@class="itemTitle"]/a}
+		   xpath_article_description {//div[@class="itemIntroText"]}
 		   xpath_article_body {//div[@class="itemBody"]/div[@class="itemFullText"]}
 		   xpath_article_date {returnstring(//div[@class="inner-sidebar-left"]/strong)}
 		   xpath_article_author {returnstring(//a[@rel="author"])}
@@ -230,6 +231,8 @@ proc get_feed_items {resultVar feedVar {stoptitlesVar ""}} {
 	set href [${node} @href]
 	lappend result(links)  ${href}
 	lappend result(titles) $title_for_href(${href})
+	# TODO: thumbnail urls are a good way to group similar articles
+	#lappend result(thumbnail) $thumbnail
 
     }
 
