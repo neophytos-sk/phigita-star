@@ -1,0 +1,11 @@
+escape special characters: horizontal ellipsis	020046	8230	0x2026	&hellip;
+feed specification (conditionals), e.g.:
+default {
+  if "something holds"
+  xpath_article_title {blah/blah}
+}
+arthra-apo-syntakti {
+  if "something else holds"
+  xpath_article_title {someotherblah}
+  xpath_article_author {authorblah}
+}
