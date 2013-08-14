@@ -68,6 +68,7 @@ set feeds [dict create \
 		   xpath_article_title {//div[@id="il_title"]/h1}
 		   xpath_article_body {//div[@id="il_text"]}
 		   xpath_article_date {substring-after(//div[@id="il_pub_date"]/div[@class="pubdate"]/text(),": ")}
+		   comment {image is via meta og:image}
 	       } \
 	       24h {
 		   url http://www.24h.com.cy/
@@ -80,6 +81,9 @@ set feeds [dict create \
 		       {values(//span[@class="itemImage"]/a/img/@src)}
 		   }
 		   xpath_article_tags {values(//div[@class="itemTagsBlock"]/a)}
+		   xpath_article_cleanup {
+		       {//div[@class="jfbccomments"]}
+		   }
 	       }]
 
 
@@ -332,11 +336,15 @@ proc fetch_item {link title_in_feed feedVar itemVar} {
 	set article_description [${doc} selectNodes ${xpath_article_description}]
     }
 
-    # remove script nodes
-    foreach cleanup_node [${doc} selectNodes {//script}] {
-	$cleanup_node delete
+    set article_tags ""
+    if { ${xpath_article_tags} ne {} } {
+	set article_tags [${doc} selectNodes ${xpath_article_tags}]
     }
 
+    # remove script and style and link nodes (in addition to the ones specified by the feed spec)
+    lappend xpath_article_cleanup {//script}
+    lappend xpath_article_cleanup {//style}
+    lappend xpath_article_cleanup {//link}
     foreach cleanup_xpath ${xpath_article_cleanup} {
 	foreach cleanup_node [${doc} selectNodes ${cleanup_xpath}] {
 	    ${cleanup_node} delete
@@ -357,6 +365,7 @@ proc fetch_item {link title_in_feed feedVar itemVar} {
     array set item [list \
 			title $article_title \
 			description $article_description \
+			tags ${article_tags} \
 			author $author_in_article \
 			image $article_image \
 			date $article_date \
