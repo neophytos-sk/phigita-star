@@ -1,12 +1,6 @@
-source ../../naviserver_compat/tcl/module-naviserver_compat.tcl
+set dir [file dirname [info script]]
 
-::xo::lib::require curl
-::xo::lib::require tdom_procs
-::xo::lib::require util_procs
-::xo::lib::require htmltidy
-
-package require uri
-package require sha1
+source [file join ${dir} feed-procs.tcl]
 
 set feeds [dict create \
 	       philenews {
@@ -73,369 +67,30 @@ set feeds [dict create \
 	       24h {
 		   url http://www.24h.com.cy/
 		   include_re {item/[0-9]+}
+		   htmltidy_article_p 1
 		   xpath_article_title {//h2[@class="itemTitle"]/a}
-		   xpath_article_description {//div[@class="itemIntroText"]}
+		   xpath_article_description {returnstring(//div[@class="itemIntroText"])}
 		   xpath_article_body {//div[@class="itemBody"]/div[@class="itemFullText"]}
 		   xpath_article_date {returnstring(//div[@class="inner-sidebar-left"]/strong)}
 		   xpath_article_author {returnstring(//a[@rel="author"])}
 		   xpath_article_image {
 		       {values(//span[@class="itemImage"]/a/img/@src)}
+		       {values(//div[@class="itemBody"]/span[@class="itemFullText"]/img/@src)}
+		   }
+		   xpath_article_video {
+		       {values(//div[@class="itemBody"]/span[@class="itemFullText"]/iframe/@src)}
 		   }
 		   xpath_article_tags {values(//div[@class="itemTagsBlock"]/a)}
 		   xpath_article_cleanup {
 		       {//div[@class="jfbccomments"]}
 		   }
+		   comment {
+		       we have an issue with ads, related links, and other text in the main
+		       article body
+		   }
 	       }]
 
 
-
-proc compare_href_attr {n1 n2} {
-    return [string compare [${n1} @href ""] [${n2} @href ""]]
-}
-
-proc filter_title {stoptitlesVar title} {
-    upvar $stoptitlesVar stoptitles
-
-    if { [info exists stoptitles(${title})] } {
-	return ""
-    } else {
-	return ${title}
-    }
-}
-
-#TODO: trim non-greek and non-latin letters from beginning and end of title
-proc trim_title {title} {
-    #set re {^[^0-9a-z\u0370-\03FF]*}
-    #return [regexp -inline -- ${re} ${title}]
-    return [string trim ${title} " -\t\n\r"]
-}
-
-
-proc get_title {stoptitlesVar node} {
-    upvar $stoptitlesVar stoptitles
-
-    set nodeType [${node} nodeType]
-
-    if { ${nodeType} eq {ELEMENT_NODE} } {
-
-	# returns all text node children of that current node combined
-	set title [filter_title stoptitles [trim_title [${node} text]]]
-
-	if { ${title} ne {} } {
-	    return ${title}
-	}
-
-	foreach child [${node} childNodes] {
-	    set title [get_title stoptitles ${child}]
-	    if { ${title} ne {} } {
-		return ${title}
-	    }
-	}
-
-    } elseif { ${nodeType} eq {TEXT_NODE} } {
-
-	return [filter_title stoptitles [trim_title [${node} nodeValue]]]
-
-    }
-
-}
-
-proc ::util::domain_from_url {url} {
-
-    set index [string first {:} ${url}]
-    if { ${index} == -1 } {
-	return
-    }
-
-    set scheme [string range ${url} 0 ${index}]
-    if { ${scheme} ne {http:} && ${scheme} ne {https:} } {
-	return
-    }
-
-    array set uri_parts [::uri::split ${url}]
-    return $uri_parts(host)
-}
-
-
-proc get_feed_items {resultVar feedVar {stoptitlesVar ""}} {
-    upvar $resultVar result
-    upvar $feedVar feed
-    upvar $stoptitlesVar stoptitles
-
-    set url         $feed(url)
-    set include_re  $feed(include_re)
-    set exclude_re  [::util::var::get_value_if feed(exclude_re) ""]
-
-    if { [info exists feed(domain)] } {
-	set domain $feed(domain)
-    } else {
-	set domain [::util::domain_from_url ${url}]
-    }
-
-    set xpath_feed_item {//a[@href]}
-    if { [info exists feed(xpath_feed_item)] } {
-	set xpath_feed_item $feed(xpath_feed_item)
-    }
-
-    set encoding {utf-8}
-    if { [info exists feed(encoding)] } {
-	set encoding $feed(encoding)
-    }
-
-    ::xo::http::fetch html $url
-    
-    set html [encoding convertfrom ${encoding} ${html}]
-
-    set doc [dom parse -html ${html}]
-    set nodes [$doc selectNodes ${xpath_feed_item}]
-
-    set nodes2 [list]
-    array set title_for_href [list]
-    foreach node $nodes {
-
-	# turn relative urls into absolute urls and canonicalize	
-	set href [::uri::canonicalize [::uri::resolve ${url} [${node} @href ""]]]
-
-	# drop urls from other domains
-	if { [::util::domain_from_url ${href}] ne ${domain} } {
-	    continue
-	}
-
-	# drop links that do not match regular expression
-	if { ![regexp -- ${include_re} ${href}] || ( ${exclude_re} ne {} && [regexp -- ${exclude_re} ${href}] ) } {
-	    continue
-	}
-
-	${node} setAttribute href ${href}
-	
-	set title [get_title stoptitles ${node}]
-
-	if { ![info exists title_for_href(${href})] } {
-	    # coalesce title candidate values
-	    set title_for_href(${href}) ${title}
-	} else {
-	    set title_for_href(${href}) [lsearch -inline -not [list ${title} $title_for_href(${href})] {}]
-	}
-
-
-	lappend nodes2 ${node}
-
-    }
-
-    # remove duplicates
-    set nodes3 [lsort -unique -command compare_href_attr ${nodes2}]
-
-    array set result [list links "" titles ""]
-    foreach node ${nodes3} {
-
-	set href [${node} @href]
-	lappend result(links)  ${href}
-	lappend result(titles) $title_for_href(${href})
-	# TODO: thumbnail urls are a good way to group similar articles
-	#lappend result(thumbnail) $thumbnail
-
-    }
-
-    # cleanup
-    $doc delete
-}
-
-
-proc fetch_item {link title_in_feed feedVar itemVar} {
-
-    upvar $feedVar feed
-    upvar $itemVar item
-
-    set encoding [::util::var::get_value_if feed(encoding) utf-8]
-
-    set htmltidy_article_p [::util::var::get_value_if \
-				feed(htmltidy_article_p) \
-				0]
-
-    set keep_title_from_feed_p [::util::var::get_value_if \
-				    feed(keep_title_from_feed_p) \
-				    0]
-
-    # {//meta[@property="og:title"]}
-    set xpath_article_title [::util::var::get_value_if \
-				 feed(xpath_article_title) \
-				 {//title}]
-
-    set xpath_article_body [::util::var::get_value_if \
-				feed(xpath_article_body) \
-				{}]
-
-    set xpath_article_cleanup [::util::var::get_value_if \
-				   feed(xpath_article_cleanup) \
-				   {}]
-
-    set xpath_article_author [::util::var::get_value_if \
-				  feed(xpath_article_author) \
-				  {}]
-
-    set xpath_article_image [::util::var::get_value_if \
-				 feed(xpath_article_image) \
-				 {values(//meta[@property="og:image"]/@content)}]
-
-    set xpath_article_description [::util::var::get_value_if \
-				       feed(xpath_article_description) \
-				       {values(//meta[@property="og:description"]/@content)}]
-
-
-    set xpath_article_date [::util::var::get_value_if \
-				feed(xpath_article_date) \
-				{}]
-
-    set xpath_article_tags [::util::var::get_value_if \
-				feed(xpath_article_tags) \
-				{}]
-
-
-    set html ""
-    ::xo::http::fetch html ${link}
-
-    set html [encoding convertfrom ${encoding} ${html}]
-
-    if { ${htmltidy_article_p} } {
-	set html [::htmltidy::tidy ${html}]
-    }
-
-    set doc [dom parse -html ${html}]
-
-    set title_node [${doc} selectNodes ${xpath_article_title}]
-    set title_in_article [string trim [${title_node} text]]
-    ${title_node} delete
-
-    set author_in_article ""
-    if { ${xpath_article_author} ne {} } {
-	set author_in_article [${doc} selectNodes ${xpath_article_author}]
-    }
-
-    if { ${keep_title_from_feed_p} || ${title_in_article} eq {} } {
-	set article_title ${title_in_feed}
-    } else {
-	set article_title ${title_in_article}
-    }
-
-    set article_image [list]
-    if { ${xpath_article_image} ne {} } {
-	foreach image_xpath ${xpath_article_image} {
-	    foreach image_url [${doc} selectNodes ${image_xpath}] {
-		lappend article_image [::uri::canonicalize \
-					   [::uri::resolve \
-						$link \
-						$image_url]]
-	    }
-	}
-    }
-
-    set article_date ""
-    if { ${xpath_article_date} ne {} } {
-	set article_date [${doc} selectNodes ${xpath_article_date}]
-    }
-
-    set article_description ""
-    if { ${xpath_article_description} ne {} } {
-	set article_description [${doc} selectNodes ${xpath_article_description}]
-    }
-
-    set article_tags ""
-    if { ${xpath_article_tags} ne {} } {
-	set article_tags [${doc} selectNodes ${xpath_article_tags}]
-    }
-
-    # remove script and style and link nodes (in addition to the ones specified by the feed spec)
-    lappend xpath_article_cleanup {//script}
-    lappend xpath_article_cleanup {//style}
-    lappend xpath_article_cleanup {//link}
-    foreach cleanup_xpath ${xpath_article_cleanup} {
-	foreach cleanup_node [${doc} selectNodes ${cleanup_xpath}] {
-	    ${cleanup_node} delete
-	}
-    }
-
-    set article_body ""
-    if { ${xpath_article_body} ne {} } {
-	set article_body_node [${doc} selectNodes ${xpath_article_body}]
-	set article_body [${article_body_node} asHTML]
-	regsub -all -- {<[^>]*>} ${article_body} "\n" article_body
-	regsub -all -- {\n{3,}} ${article_body} "\n\n" article_body
-
-	#set article_body [${article_body_node} asText]
-	#set article_body [${doc} selectNodes returnstring(${xpath_article_body})]
-    }
-
-    array set item [list \
-			title $article_title \
-			description $article_description \
-			tags ${article_tags} \
-			author $author_in_article \
-			image $article_image \
-			date $article_date \
-			content $article_body]
-
-    puts "Title: $article_title"
-    puts "Description: $article_description"
-    puts "Author: $author_in_article"
-    puts "Image: $article_image"
-    puts "Date: $article_date"
-
-
-    # TODO: xpathfunc returntext (that returns structured text from html)
-    puts "Content: [string range $article_body 0 200]"
-    # puts "Content: $article_body"
-
-    $doc delete
-}
-
-proc get_item_dir {link} {
-
-    array set uri_parts [::uri::split ${link}]
-
-    set reversehost [join [lreverse [split $uri_parts(host) {.}]] {.}]
-    set urlsha1 [::sha1::sha1 -hex ${link}]
-
-    #set first3Chars [string range ${urlsha1} 0 2]
-
-    set dir /web/data/crawldb/${reversehost}/${urlsha1}/
-
-    return ${dir}
-
-}
-
-proc exists_item {link feedVar} {
-    upvar $feedVar feed
-
-    return [file isdirectory [get_item_dir ${link}]]
-
-}
-
-proc write_item {link feedVar itemVar} {
-    upvar $feedVar feed
-    upvar $itemVar item
-
-    set dir [get_item_dir ${link}]
-
-    if { ![file isdirectory ${dir}] } {
-	file mkdir ${dir}
-    }
-
-    set data [array get item]
-    set datasha1 [::sha1::sha1 -hex ${data}]
-    set filename ${dir}/${datasha1}
-
-    # note that it overwrites the file if it already exists with the same content
-    set fp [open ${filename} "w"]
-    puts $fp ${data}
-    close ${fp}
-
-    set timestamp [clock seconds] 
-    set articles_filename /web/data/crawldb/articles.txt
-    set fp [open ${articles_filename} "a"]
-    puts $fp [list ${timestamp} ${datasha1} ${link} $item(title)]
-    close ${fp}
-
-}
 
 array set stoptitles [list]
 foreach title [split [::util::readfile stoptitles.txt] "\n"] {
@@ -443,40 +98,11 @@ foreach title [split [::util::readfile stoptitles.txt] "\n"] {
 }
 
 
-#TODO: we need a way to test feed (before starting to store it)
-
-##### crawler
-
-#array set feed [dict get $feeds haravgi]
-foreach feed_name {
-    philenews
-    sigmalive
-    paideia-news
-    inbusiness
-    ant1iwo
-} {
-
-    array set feed [dict get ${feeds} ${feed_name}]
-
-    # set feed_type [::util::var::get_value_if feed(type) ""] 
-    # if { ${feed_type} eq {rss} } {
-    # set feed(xpath_feed_item) //item
-    # }
-
-    get_feed_items result feed stoptitles
-
-    foreach link $result(links) title_in_feed $result(titles) {
-	puts ${title_in_feed}
-	puts ${link}
-	puts "---"
-
-	#continue
-	
-	if { ![exists_item ${link} feed] } {
-	    fetch_item ${link} ${title_in_feed} feed item
-	    write_item ${link} feed item
-	}
-
-    }
-
+set argc [llength $argv]
+if { $argc == 1 } {
+    set feed_name [lindex $argv 0]
+    array set feed [dict get $feeds $feed_name]
+    test_feed feed stoptitles
+} else {
+    sync_feeds feeds stoptitles
 }
