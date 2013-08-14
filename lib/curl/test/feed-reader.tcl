@@ -72,16 +72,16 @@ set feeds [dict create \
 		   include_re {item/[0-9]+}
 		   htmltidy_article_p 1
 		   xpath_article_title {returnstring(//h2[@class="itemTitle"]/a)}
-		   xpath_article_description {returnstring(//div[@class="itemIntroText"])}
-		   xpath_article_body {//div[@class="itemBody"]/div[@class="itemFullText"]}
+		   xpath_article_description {returnstring(//div[@class="itemBody"]/*[@class="itemIntroText"])}
+		   xpath_article_body {//div[@class="itemBody"]/*[@class="itemFullText"]}
 		   xpath_article_date {returnstring(//div[@class="inner-sidebar-left"]/strong)}
 		   xpath_article_author {returnstring(//a[@rel="author"])}
 		   xpath_article_image {
 		       {values(//span[@class="itemImage"]/a/img/@src)}
-		       {values(//div[@class="itemBody"]/span[@class="itemFullText"]/img/@src)}
+		       {values(//div[@class="itemBody"]/*[@class="itemFullText"]/img/@src)}
 		   }
 		   xpath_article_video {
-		       {values(//div[@class="itemBody"]/span[@class="itemFullText"]/iframe/@src)}
+		       {values(//div[@class="itemBody"]/*[@class="itemFullText"]/iframe/@src)}
 		   }
 		   xpath_article_tags {values(//div[@class="itemTagsBlock"]/a/text())}
 		   xpath_article_cleanup {
@@ -118,6 +118,22 @@ set feeds [dict create \
 		       - og:image (not being used - just stockwatch logo for social networks)
 		       - TOD0: cleanup article body saying "note: save target as for attachments"
 		         ditto for "ektenesteri eidhsh se ligo"
+		   }
+	       }\
+	       newsit {
+		   url http://www.newsit.com.cy/
+		   include_re {default.php\?pname=Article&art_id=[0-9]+&catid=[0-9]+}
+		   htmltidy_feed_p 1
+		   xpath_article_title {returnstring(//div[@id="galleryBox_top_new"]/h2)}
+		   xpath_article_description {returnstring(//div[@id="adjust-text"]/h2)}
+		   xpath_article_body {//div[@id="adjust-text"]/p}
+		   xpath_article_date {returnstring(//div[@class="first_info_00"])}
+		   xpath_article_modified_time {substring-after(//div[@class="last_info_00"],": ")}
+		   xpath_article_image {
+		       {values(//div[@id="SelectContainer"]/div[@class="blackImages_00"]/img/@src)}
+		   }
+		   comment {
+		       - removal of "diavaste episis" text in the end of the article body
 		   }
 	       }]
 

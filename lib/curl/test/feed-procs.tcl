@@ -189,7 +189,7 @@ proc html_to_text {htmlVar} {
 }
 
 
-proc fetch_item {link title_in_feed feedVar itemVar} {
+proc fetch_item_helper {link title_in_feed feedVar itemVar} {
 
     upvar $feedVar feed
     upvar $itemVar item
@@ -341,6 +341,7 @@ proc fetch_item {link title_in_feed feedVar itemVar} {
     }
 
     array set item [list \
+			link $link \
 			title $article_title \
 			description $article_description \
 			tags ${article_tags} \
@@ -351,6 +352,7 @@ proc fetch_item {link title_in_feed feedVar itemVar} {
 			modified_time $article_modified_time \
 			content $article_body]
 
+    puts "Link: $link"
     puts "Title: $article_title"
     if { $article_tags ne {} } {
 	puts "Tags: $article_tags"
@@ -367,6 +369,9 @@ proc fetch_item {link title_in_feed feedVar itemVar} {
     if { $article_date ne {} } {
 	puts "Date: $article_date"
     }
+    if { $article_modified_time ne {} } {
+	puts "Last modified: $article_modified_time"
+    }
     if { $article_attachment ne {} } {
 	puts "Attachment(s): $article_attachment"
     }
@@ -376,6 +381,21 @@ proc fetch_item {link title_in_feed feedVar itemVar} {
     # puts "Content: $article_body"
 
     $doc delete
+}
+
+proc fetch_item {link title_in_feed feedVar itemVar} {
+
+    upvar $feedVar feed
+    upvar $itemVar item
+
+    if { [catch {fetch_item_helper ${link} ${title_in_feed} feed item} errmsg] } {
+	array set item [list \
+			    link $link \
+			    title $title_in_feed \
+			    status failure \
+			    errno 1 \
+			    errmsg $errmsg]
+    }
 }
 
 proc get_item_dir {link} {
@@ -469,6 +489,7 @@ proc sync_feeds {feedsVar stoptitlesVar} {
 	ant1iwo
 	24h
 	stockwatch
+	newsit
     } {
 
 	array set feed [dict get ${feeds} ${feed_name}]
