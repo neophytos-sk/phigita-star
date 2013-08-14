@@ -68,6 +68,18 @@ set feeds [dict create \
 		   xpath_article_title {//div[@id="il_title"]/h1}
 		   xpath_article_body {//div[@id="il_text"]}
 		   xpath_article_date {substring-after(//div[@id="il_pub_date"]/div[@class="pubdate"]/text(),": ")}
+	       } \
+	       24h {
+		   url http://www.24h.com.cy/
+		   include_re {item/[0-9]+}
+		   xpath_article_title {//h2[@class="itemTitle"]/a}
+		   xpath_article_body {//div[@class="itemBody"]/div[@class="itemFullText"]}
+		   xpath_article_date {returnstring(//div[@class="inner-sidebar-left"]/strong)}
+		   xpath_article_author {returnstring(//a[@rel="author"])}
+		   xpath_article_image {
+		       {values(//span[@class="itemImage"]/a/img/@src)}
+		   }
+		   xpath_article_tags {values(//div[@class="itemTagsBlock"]/a)}
 	       }]
 
 
@@ -267,6 +279,10 @@ proc fetch_item {link title_in_feed feedVar itemVar} {
 				feed(xpath_article_date) \
 				{}]
 
+    set xpath_article_tags [::util::var::get_value_if \
+				feed(xpath_article_tags) \
+				{}]
+
 
     set html ""
     ::xo::http::fetch html ${link}
@@ -414,6 +430,10 @@ foreach title [split [::util::readfile stoptitles.txt] "\n"] {
     set stoptitles(${title}) 1
 }
 
+
+#TODO: we need a way to test feed (before starting to store it)
+
+##### crawler
 
 #array set feed [dict get $feeds haravgi]
 foreach feed_name {
