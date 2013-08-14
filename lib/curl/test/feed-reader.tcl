@@ -112,9 +112,11 @@ set feeds [dict create \
 		       {//div[@class="ad-617x98"]}
 		   }
 		   comment {
-		       og:title
-		       og:description
-		       og:image (not being used - just stockwatch logo for social networks)
+		       - og:title
+		       - og:description
+		       - og:image (not being used - just stockwatch logo for social networks)
+		       - TOD0: cleanup article body saying "note: save target as for attachments"
+		         ditto for "ektenesteri eidhsh se ligo"
 		   }
 	       }]
 

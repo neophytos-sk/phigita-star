@@ -467,6 +467,8 @@ proc sync_feeds {feedsVar stoptitlesVar} {
 	paideia-news
 	inbusiness
 	ant1iwo
+	24h
+	stockwatch
     } {
 
 	array set feed [dict get ${feeds} ${feed_name}]
