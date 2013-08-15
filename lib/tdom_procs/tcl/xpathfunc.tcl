@@ -143,14 +143,24 @@ proc ::dom::xpathFuncHelper::coerce2text_helper {htmlVar node} {
 	    } else {
 		if { ${href} ne {} } {
 		    set text [string trim [$node asText]]
-		    append html " \"${text}\":${href} "
+		    if { ${text} ne {} } {
+			append html " \"${text}\":${href} "
+		    }
 		}
 	    }
 	} elseif { ${tagname} eq {img} } {
 	    set imageurl [string trim [$node @src ""]]
 	    if { ${imageurl} ne {} } {
-		# TODO: resolve and canonicalize url
+
+		set baseurl [[$node ownerDocument] baseURI]
+
+		set imageurl [::uri::canonicalize \
+				  [::uri::resolve \
+				       ${baseurl} \
+				       ${imageurl}]]
+
 		append html "{image: ${imageurl}} "
+
 	    }
 	} else {
 
@@ -196,9 +206,61 @@ proc ::dom::xpathFuncHelper::coerce2text { type value } {
 
 proc ::dom::xpathFunc::returntext {ctxNode pos nodeListNode nodeList args} {
     if {[llength $args] != 2} {
-        error "returnstring(): wrong # of args!"
+        error "returntext(): wrong # of args!"
     }
     foreach {arg1Typ arg1Value} $args break
     set result [::dom::xpathFuncHelper::coerce2text $arg1Typ $arg1Value]
     return [list string $result]
+}
+
+proc ::dom::xpathFunc::returndate {ctxNode pos nodeListNode nodeList args} {
+
+    set argc [llength ${args}]
+
+    if { ${argc} ni {4 6 8} } {
+
+        error "returndate(xpath,input_format,?output_format?): wrong # of args!"
+
+    } elseif { ${argc} == 4 } {
+
+	lassign ${args} \
+	    arg1Typ arg1Value \
+	    arg2Typ arg2Value
+
+	set locale en_US
+	set output_format {%Y%m%dT%H%M}
+
+    } elseif { ${argc} == 6 } {
+
+	lassign ${args} \
+	    arg1Typ arg1Value \
+	    arg2Typ arg2Value \
+	    arg3Typ arg3Value
+
+	set locale ${arg3Value}
+	set output_format {%Y%m%dT%H%M}
+
+    } elseif { ${argc} == 8 } {
+
+	lassign ${args} \
+	    arg1Typ arg1Value \
+	    arg2Typ arg2Value \
+	    arg3Typ arg3Value \
+	    arg4Typ arg4Value
+
+	set locale ${arg3Value}
+	set output_format ${arg4Value}
+
+    }
+
+
+    set ts_string [::dom::xpathFuncHelper::coerce2string ${arg1Typ} ${arg1Value}]
+    set input_format ${arg2Value}
+    set ts [string trim ${ts_string}]
+    set result ""
+    if { ${ts} ne {} } {
+	set timeval [clock scan ${ts} -format ${input_format} -locale ${locale}]
+	set result [clock format ${timeval} -format ${output_format}]
+    }
+    return [list string ${result}]
 }

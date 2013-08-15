@@ -30,7 +30,7 @@ set feeds [dict create \
 		       {values(//div[@id="article_content"]//img[@class="pyro-image"]/@src)}
 		   }
 		   xpath_article_author {returnstring(//div[@class="article_meta"]/span[@class="meta_author"]/a/text())}
-		   xpath_article_date {returnstring(//div[@class="article_meta"]/span[@class="meta_date"]/strong/text())}
+		   xpath_article_date {returndate(//div[@class="article_meta"]/span[@class="meta_date"]/strong,"%B %d, %Y %H:%M","el_GR")}
 		   xpath_article_cleanup {
 		       {//div[@class="soSialIcons"]}
 		       {//div[@class="article_meta"]}
@@ -45,7 +45,7 @@ set feeds [dict create \
 		   xpath_article_image {
 		       {values(//div[@class="articleImg"]/div[@class="img"]/img/@src)}
 		   }
-		   xpath_article_date {substring-after(//div[@id="articleContainer"]/h4/text(),"| ")}
+		   xpath_article_date {returndate(substring-after(//div[@id="articleContainer"]/h4/text(),"| "),"%d %B %Y, %H:%M","el_GR")}
 		   xpath_article_cleanup {
 		       {//div[@id="articleContainer"]/h4}
 		   }
@@ -57,6 +57,7 @@ set feeds [dict create \
 		   xpath_article_title {returnstring(//div[@class="main_resource_title_single"])}
 		   xpath_article_author {returnstring(//div[@class="main_resource_summ2"]/p/strong/span)}
 		   xpath_article_body {returntext(//div[@class="main_resource_summ2"])}
+		   xpath_article_date {returndate(//div[@class="main_resource_date"],"%Y-%m-%d %H:%M:%S")}
 		   xpath_article_image {values(//div[@class="main_resource_img_single"]/img/@src)}
 		   xpath_article_cleanup {
 		       {//div[@class="main_resource_summ2"]/p/strong/span}
@@ -80,11 +81,12 @@ set feeds [dict create \
 	       24h {
 		   url http://www.24h.com.cy/
 		   include_re {item/[0-9]+}
+		   htmltidy_feed_p 1
 		   htmltidy_article_p 1
 		   xpath_article_title {returnstring(//h2[@class="itemTitle"]/a)}
 		   xpath_article_description {returnstring(//div[@class="itemBody"]/*[@class="itemIntroText"])}
 		   xpath_article_body {returntext(//div[@class="itemBody"]/*[@class="itemFullText"])}
-		   xpath_article_date {returnstring(//div[@class="inner-sidebar-left"]/strong)}
+		   xpath_article_date {returndate(//div[@class="inner-sidebar-left"]/strong,"%H:%M, %d/%m/%Y")}
 		   xpath_article_author {returnstring(//a[@rel="author"])}
 		   xpath_article_image {
 		       {values(//span[@class="itemImage"]/a/img/@src)}
@@ -112,11 +114,13 @@ set feeds [dict create \
 		   }
 		   xpath_article_title {substring-before(//title,'- Stockwatch')}
 		   xpath_article_body {returntext(//div[@class="text-content"])}
+		   xpath_article_date {returndate(substring(substring-after(//h2[@style]/span/span,": "),1,16),"%d/%m/%Y %H:%M")}
+		   xpath_article_modified_time {returndate(substring-after(substring-after(//h2[@style]/span/span," / "),": "),"%d/%m/%Y %H:%M")}
 		   xpath_article_image {
 		       {values(//div[@class="text-content"]/img[@align="left"]/@src)}
 		   }
 		   xpath_article_attachment {
-		       {values(//div[@class="text-content"]/a[@target="_blank"]/@href)}
+		       {values(//div[@class="text-content"]/a/img[@class="attachment"]/parent::a/@href)}
 		   }
 		   xpath_article_cleanup {
 		       {//ul[@class="arrow-list"]}
@@ -137,8 +141,8 @@ set feeds [dict create \
 		   xpath_article_title {returnstring(//div[@id="galleryBox_top_new"]/h2)}
 		   xpath_article_description {returnstring(//div[@id="adjust-text"]/h2)}
 		   xpath_article_body {returntext(//div[@id="adjust-text"]/p)}
-		   xpath_article_date {returnstring(//div[@class="first_info_00"])}
-		   xpath_article_modified_time {substring-after(//div[@class="last_info_00"],":")}
+		   xpath_article_date {returndate(//div[@class="first_info_00"],"%d.%m.%Y | %H:%M")}
+		   xpath_article_modified_time {returndate(substring-after(//div[@class="last_info_00"],":"),"%d.%m.%Y | %H:%M")}
 		   xpath_article_image {
 		       {values(//div[@id="SelectContainer"]/div[@class="blackImages_00"]/img/@src)}
 		   }
@@ -151,7 +155,7 @@ set feeds [dict create \
 		   include_re {/item/[0-9]+}
 		   xpath_article_title {returnstring(//h2[@class="itemTitle"]/a)}
 		   xpath_article_body {returntext(//div[@class="itemBody"]/*[@class="itemIntroText"])}
-		   xpath_article_date {returnstring(//span[@class="itemDateCreated"])}
+		   xpath_article_date {returndate(//span[@class="itemDateCreated"],"%A, %e %B %Y %H:%M")}
 		   xpath_article_author {returnstring(//a[@rel="author"])}
 		   xpath_article_image {
 		       {values(//span[@class="itemImage"]/a/img/@src)}

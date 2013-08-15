@@ -240,11 +240,11 @@ proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar} {
 
     set xpath_article_date [get_value_if \
 				feed(xpath_article_date) \
-				{string(//meta[@property="article:published_time"]/@content)}]
+				{returndate(string(//meta[@property="article:published_time"]/@content),"%Y-%m-%d %H:%M")}]
 
     set xpath_article_modified_time [get_value_if \
 				feed(xpath_article_modified_time) \
-				{string(//meta[@property="article:modified_time"]/@content)}]
+				{returndate(string(//meta[@property="article:modified_time"]/@content),"%Y-%m-%d %H:%M")}]
 
 
     set xpath_article_tags [get_value_if \
@@ -262,6 +262,7 @@ proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar} {
     }
 
     set doc [dom parse -html ${html}]
+    ${doc} baseURI ${link}
 
     exec_xpath title_in_article $doc $xpath_article_title
     exec_xpath author_in_article $doc $xpath_article_author
