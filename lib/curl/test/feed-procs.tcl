@@ -321,6 +321,7 @@ proc fetch_item_helper {link title_in_feed feedVar itemVar} {
 			link $link \
 			title $article_title \
 			description $article_description \
+			body $article_body \
 			tags ${article_tags} \
 			author $author_in_article \
 			image $article_image \
@@ -354,8 +355,7 @@ proc fetch_item_helper {link title_in_feed feedVar itemVar} {
     }
 
     # TODO: xpathfunc returntext (that returns structured text from html)
-    #puts "Content: [string range $article_body 0 200]"
-    puts "Content: $article_body"
+    puts "Content (snippet): [string range $article_body 0 200]"
     puts "---"
 
     $doc delete
@@ -443,6 +443,7 @@ proc test_feed {feedVar {stoptitlesVar ""}} {
 	puts "---"
 
 	fetch_item ${link} ${title_in_feed} feed item
+	puts "Content:\n$item(body)"
 
 	if { [incr count] == 7 } {
 	    break
@@ -469,7 +470,7 @@ proc sync_feeds {feedsVar stoptitlesVar} {
 	24h
 	stockwatch
 	newsit
-    alitheia
+	alitheia
     } {
 
 	array set feed [dict get ${feeds} ${feed_name}]

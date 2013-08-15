@@ -132,17 +132,43 @@ proc ::dom::xpathFuncHelper::coerce2text_helper {htmlVar node} {
 
     set nodeType [$node nodeType]
     if { ${nodeType} eq {ELEMENT_NODE} } {
+
+
 	set tagname [$node tagName]
-	if { ${tagname} in {p div} } {
-	    append html "\n\n"
+	if { ${tagname} eq {a} } {
+	    set href [$node @href ""]
+	    set imgnode [$node selectNodes {descendant::img[@src]}]
+	    if { ${imgnode} ne {} } {
+		coerce2text_helper html ${imgnode}
+	    } else {
+		if { ${href} ne {} } {
+		    set text [string trim [$node asText]]
+		    append html "\"${text}\":${href} "
+		}
+	    }
+	} elseif { ${tagname} eq {img} } {
+	    set imageurl [string trim [$node @src ""]]
+	    if { ${imageurl} ne {} } {
+		# TODO: resolve and canonicalize url
+		append html "{image: ${imageurl}} "
+	    }
 	} else {
-	    append html " "
+	    if { ${tagname} in {p div} } {
+		append html "\n\n"
+	    } elseif { ${tagname} eq {br} } {
+		append html "\n"
+	    } else {
+		append html " "
+	    }
 	}
-	foreach child [$node childNodes] {
-	    coerce2text_helper html $child
+	foreach child [${node} childNodes] {
+	    coerce2text_helper html ${child}
 	}
+
     } elseif { ${nodeType} eq {TEXT_NODE} } {
+
 	append html [$node nodeValue]
+
     }
     
 }
