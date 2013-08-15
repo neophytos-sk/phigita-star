@@ -1,3 +1,5 @@
+#!/usr/bin/tclsh
+
 # TODO: extract comments from article pages
 
 set dir [file dirname [info script]]
@@ -68,6 +70,8 @@ set feeds [dict create \
 	       ant1iwo {
 		   url http://www.ant1iwo.com/
 		   include_re {/[0-9]{4}/[0-9]{2}/[0-9]{2}/}
+		   htmltidy_feed_p 1
+		   htmltidy_article_p 1
 		   xpath_article_title {returnstring(//div[@id="il_title"]/h1)}
 		   xpath_article_body {returntext(//div[@id="il_text"])}
 		   xpath_article_date {substring-after(//div[@id="il_pub_date"]/div[@class="pubdate"]/text(),": ")}
@@ -176,7 +180,7 @@ set argc [llength $argv]
 if { $argc == 1 } {
     set feed_name [lindex $argv 0]
     array set feed [dict get $feeds $feed_name]
-    test_feed feed stoptitles
+    ::feed_reader::test_feed feed stoptitles
 } else {
-    sync_feeds feeds stoptitles
+    ::feed_reader::sync_feeds feeds stoptitles
 }

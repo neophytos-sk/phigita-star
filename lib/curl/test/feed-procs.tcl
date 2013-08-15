@@ -8,13 +8,13 @@ source ../../naviserver_compat/tcl/module-naviserver_compat.tcl
 package require uri
 package require sha1
 
+namespace eval ::feed_reader {;}
 
-
-proc compare_href_attr {n1 n2} {
+proc ::feed_reader::compare_href_attr {n1 n2} {
     return [string compare [${n1} @href ""] [${n2} @href ""]]
 }
 
-proc filter_title {stoptitlesVar title} {
+proc ::feed_reader::filter_title {stoptitlesVar title} {
     upvar $stoptitlesVar stoptitles
 
     if { [info exists stoptitles(${title})] } {
@@ -25,14 +25,14 @@ proc filter_title {stoptitlesVar title} {
 }
 
 #TODO: trim non-greek and non-latin letters from beginning and end of title
-proc trim_title {title} {
+proc ::feed_reader::trim_title {title} {
     #set re {^[^0-9a-z\u0370-\03FF]*}
     #return [regexp -inline -- ${re} ${title}]
     return [string trim ${title} " -\t\n\r"]
 }
 
 
-proc get_title {stoptitlesVar node} {
+proc ::feed_reader::get_title {stoptitlesVar node} {
     upvar $stoptitlesVar stoptitles
 
     set nodeType [${node} nodeType]
@@ -78,7 +78,7 @@ proc ::util::domain_from_url {url} {
 }
 
 
-proc get_feed_items {resultVar feedVar {stoptitlesVar ""}} {
+proc ::feed_reader::get_feed_items {resultVar feedVar {stoptitlesVar ""}} {
     upvar $resultVar result
     upvar $feedVar feed
     upvar $stoptitlesVar stoptitles
@@ -182,7 +182,7 @@ proc get_feed_items {resultVar feedVar {stoptitlesVar ""}} {
 }
 
 
-proc exec_xpath {resultVar doc xpath} {
+proc ::feed_reader::exec_xpath {resultVar doc xpath} {
     upvar $resultVar result
 
     set result ""
@@ -193,7 +193,7 @@ proc exec_xpath {resultVar doc xpath} {
 }
 
 
-proc fetch_item_helper {link title_in_feed feedVar itemVar} {
+proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar} {
 
     upvar $feedVar feed
     upvar $itemVar item
@@ -361,7 +361,7 @@ proc fetch_item_helper {link title_in_feed feedVar itemVar} {
     $doc delete
 }
 
-proc fetch_item {link title_in_feed feedVar itemVar} {
+proc ::feed_reader::fetch_item {link title_in_feed feedVar itemVar} {
 
     upvar $feedVar feed
     upvar $itemVar item
@@ -377,58 +377,96 @@ proc fetch_item {link title_in_feed feedVar itemVar} {
     }
 }
 
-proc get_item_dir {link} {
+proc ::feed_reader::get_base_dir {} {
+    return {/web/data/crawldb}
+}
+
+proc ::feed_reader::get_item_dir {link} {
 
     array set uri_parts [::uri::split ${link}]
 
     set reversehost [join [lreverse [split $uri_parts(host) {.}]] {.}]
+
     set urlsha1 [::sha1::sha1 -hex ${link}]
 
     #set first3Chars [string range ${urlsha1} 0 2]
 
-    set dir /web/data/crawldb/${reversehost}/${urlsha1}/
+    set dir [get_base_dir]/${reversehost}/${urlsha1}/
 
     return ${dir}
 
 }
 
-proc exists_item {link feedVar} {
+proc ::feed_reader::get_content_dir {} {
+    return [get_base_dir]/content/
+}
+
+proc ::feed_reader::exists_item {link feedVar} {
     upvar $feedVar feed
 
     return [file isdirectory [get_item_dir ${link}]]
 
 }
 
-proc write_item {link feedVar itemVar} {
+proc ::feed_reader::write_item {link feedVar itemVar} {
     upvar $feedVar feed
     upvar $itemVar item
 
-    set dir [get_item_dir ${link}]
 
-    if { ![file isdirectory ${dir}] } {
-	file mkdir ${dir}
+    # save to content file
+    set content_dir [get_content_dir]
+    if { ![file isdirectory ${content_dir}] } {
+	file mkdir ${content_dir}
+    }
+    set content [list title $item(title) body $item(body)]
+    set contentsha1 [::sha1::sha1 -hex ${content}]
+    set contentfilename ${content_dir}/${contentsha1}
+
+    set item(contentsha1) ${contentsha1}
+    if { [file exists ${contentfilename}] } {
+	# we have seen this item before
+	set item(is_copy_p) 1
+    } else {
+	set fp [open ${contentfilename} "w"]
+	puts $fp ${content}
+	close $fp
+    }
+
+    set timestamp [clock seconds] 
+    set item(timestamp) ${timestamp}
+
+
+    # save to list of articles
+    set articles_filename [get_base_dir]/articles.txt
+    set fp [open ${articles_filename} "a"]
+    puts $fp [list ${timestamp} ${contentsha1} ${link} $item(title)]
+    close ${fp}
+    
+
+    # save data to item_dir
+    # note that it overwrites the file if it already exists with the same content
+    #
+
+
+    array unset item title
+    array unset item body
+
+    set item_dir [get_item_dir ${link}]
+    if { ![file isdirectory ${item_dir}] } {
+	file mkdir ${item_dir}
     }
 
     set data [array get item]
-    set datasha1 [::sha1::sha1 -hex ${data}]
-    set filename ${dir}/${datasha1}
-
-    # note that it overwrites the file if it already exists with the same content
-    set fp [open ${filename} "w"]
+    set datafilename ${item_dir}/${contentsha1}
+    set fp [open ${datafilename} "w"]
     puts $fp ${data}
-    close ${fp}
-
-    set timestamp [clock seconds] 
-    set articles_filename /web/data/crawldb/articles.txt
-    set fp [open ${articles_filename} "a"]
-    puts $fp [list ${timestamp} ${datasha1} ${link} $item(title)]
     close ${fp}
 
 }
 
 
 #TODO: we need a way to test feed (before starting to store it)
-proc test_feed {feedVar {stoptitlesVar ""}} {
+proc ::feed_reader::test_feed {feedVar {stoptitlesVar ""}} {
     upvar $feedVar feed
     if { $stoptitlesVar ne {} } {
 	upvar $stoptitlesVar stoptitles
@@ -453,7 +491,7 @@ proc test_feed {feedVar {stoptitlesVar ""}} {
 
 }
 
-proc sync_feeds {feedsVar stoptitlesVar} {
+proc ::feed_reader::sync_feeds {feedsVar stoptitlesVar} {
 
     upvar $feedsVar feeds
     if { $stoptitlesVar ne {} } {
