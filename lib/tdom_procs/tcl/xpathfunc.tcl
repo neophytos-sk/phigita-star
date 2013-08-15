@@ -157,6 +157,7 @@ proc ::dom::xpathFuncHelper::coerce2text { type value } {
 	    set node [lindex $value 0]
 	    set html ""
 	    coerce2text_helper html $node
+	    regsub -all -- {([^\s])\s*\n\n\s*([^\s])} ${html} "\\1\n\n\\2" html
 	    return [string trim ${html}]
 	}
         attrnodes  { return [lindex $value 1] }

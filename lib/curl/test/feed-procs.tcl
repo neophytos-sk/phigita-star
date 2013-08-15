@@ -187,7 +187,7 @@ proc exec_xpath {resultVar doc xpath} {
 
     set result ""
     if { ${xpath} ne {} } {
-	set result [${doc} selectNodes "normalize-space(${xpath})"]
+	set result [string trim [${doc} selectNodes "${xpath}"]]
     }
 
 }
@@ -354,8 +354,8 @@ proc fetch_item_helper {link title_in_feed feedVar itemVar} {
     }
 
     # TODO: xpathfunc returntext (that returns structured text from html)
-    puts "Content: [string range $article_body 0 200]"
-    # puts "Content: $article_body"
+    #puts "Content: [string range $article_body 0 200]"
+    puts "Content: $article_body"
     puts "---"
 
     $doc delete
@@ -444,7 +444,7 @@ proc test_feed {feedVar {stoptitlesVar ""}} {
 
 	fetch_item ${link} ${title_in_feed} feed item
 
-	if { [incr count] == 3 } {
+	if { [incr count] == 7 } {
 	    break
 	}
 
@@ -469,6 +469,7 @@ proc sync_feeds {feedsVar stoptitlesVar} {
 	24h
 	stockwatch
 	newsit
+    alitheia
     } {
 
 	array set feed [dict get ${feeds} ${feed_name}]
