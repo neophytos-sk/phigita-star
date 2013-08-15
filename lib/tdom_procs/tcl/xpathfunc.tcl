@@ -143,7 +143,7 @@ proc ::dom::xpathFuncHelper::coerce2text_helper {htmlVar node} {
 	    } else {
 		if { ${href} ne {} } {
 		    set text [string trim [$node asText]]
-		    append html "\"${text}\":${href} "
+		    append html " \"${text}\":${href} "
 		}
 	    }
 	} elseif { ${tagname} eq {img} } {
@@ -153,6 +153,7 @@ proc ::dom::xpathFuncHelper::coerce2text_helper {htmlVar node} {
 		append html "{image: ${imageurl}} "
 	    }
 	} else {
+
 	    if { ${tagname} in {p div} } {
 		append html "\n\n"
 	    } elseif { ${tagname} eq {br} } {
@@ -160,9 +161,11 @@ proc ::dom::xpathFuncHelper::coerce2text_helper {htmlVar node} {
 	    } else {
 		append html " "
 	    }
-	}
-	foreach child [${node} childNodes] {
-	    coerce2text_helper html ${child}
+
+	    foreach child [${node} childNodes] {
+		coerce2text_helper html ${child}
+	    }
+
 	}
 
     } elseif { ${nodeType} eq {TEXT_NODE} } {
