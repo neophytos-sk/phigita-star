@@ -187,6 +187,14 @@ set feeds [dict create \
 		   }
 		   xpath_article_date {returndate(//td[@width="524"]/descendant::p/i[contains(text(),' - ')],"%d/%m/%Y - %H:%M")}
 
+	       }\
+	       ikypros {
+		   url http://www.ikypros.com/
+		   include_re {/easyconsole.cfm/id/[0-9]{3,}}
+		   xpath_feed_cleanup {
+		       {//a[@id]}
+		       {//h3/a}
+		   }
 	       }]
 
 
