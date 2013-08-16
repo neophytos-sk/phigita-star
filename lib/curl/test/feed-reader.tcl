@@ -146,7 +146,11 @@ set feeds [dict create \
 		   xpath_article_image {
 		       {values(//div[@id="SelectContainer"]/div[@class="blackImages_00"]/img/@src)}
 		   }
-		   article_body_end_of_text_cleanup_p 1
+		   end_of_text_cleanup_p 1
+		   end_of_text_coeff "0"
+		   comment {
+		       an end_of_text_coeff of zero means always cut that text away
+		   }
 	       }\
 	       alitheia {
 		   url http://www.alithia.com.cy/

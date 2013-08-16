@@ -374,12 +374,13 @@ proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar} {
 
     exec_xpath article_body $doc $xpath_article_body
 
-    if { [get_value_if feed(article_body_end_of_text_cleanup_p) "0"] } {
+    if { [get_value_if feed(end_of_text_cleanup_p) "0"] } {
 	# if end_of_string is found after the 1/3 of the article body
 	# then drop text beyond that point
 	#
+	set end_of_text_cleanup_coeff [get_value_if feed(end_of_text_cleanup_coeff) "0.3"]
 	set article_body_len [string length ${article_body}]
-	set startIndex [expr { ( ${article_body_len} ) / 3 } ]
+	set startIndex [expr { int( ${article_body_len} * ${end_of_text_cleanup_coeff} ) } ]
 	foreach end_of_text_string $meta(end_of_text_strings) {
 	    set index [string first ${end_of_text_string} ${article_body} ${startIndex}]
 	    if { -1 != ${index} } {
