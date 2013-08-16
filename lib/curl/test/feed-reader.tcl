@@ -172,6 +172,17 @@ set feeds [dict create \
 		       article body
 		       also itemFullText and itemIntroText messed up
 		   }
+	       } \
+	       politis {
+		   url http://www.politis.com.cy/
+		   include_re {/cgibin/hweb\?-A=[0-9]+&-V=articles}
+		   encoding iso8859-7
+		   xpath_article_title {substring-after(//meta[@property="og:title"]/@content," - ")}
+		   xpath_article_body {returntext(//td[@width="524"]/descendant::p)}
+		   xpath_article_cleanup {
+		       {//td[@width="524"]/descendant::hr[2]/following-sibling::*}
+		       {//td[@width="524"]/descendant::hr[1]/preceding-sibling::*}
+		   }
 	       }]
 
 

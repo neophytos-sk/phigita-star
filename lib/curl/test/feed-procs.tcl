@@ -449,6 +449,8 @@ proc ::feed_reader::fetch_item {link title_in_feed feedVar itemVar} {
 			    status failure \
 			    errno 1 \
 			    errmsg $errmsg]
+
+	return 1 ;# failed with errors
     }
 
     return $errorcode
@@ -582,7 +584,7 @@ proc ::feed_reader::sync_feeds {feedsVar} {
 
     variable stoptitles
 
-    #haravgi, politis
+    #haravgi
     foreach feed_name {
 	philenews
 	sigmalive
@@ -593,6 +595,7 @@ proc ::feed_reader::sync_feeds {feedsVar} {
 	stockwatch
 	newsit
 	alitheia
+	politis
     } {
 
 	array set feed [dict get ${feeds} ${feed_name}]
