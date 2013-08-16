@@ -195,6 +195,11 @@ set feeds [dict create \
 		       {//a[@id]}
 		       {//h3/a}
 		   }
+	       } \
+	       pafosnet {
+		   url http://pafosnet.com/
+		   include_re {[[:alnum:]\-]+}
+		   exclude_re {/category/}
 	       }]
 
 
