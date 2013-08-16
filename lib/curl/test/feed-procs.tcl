@@ -563,8 +563,8 @@ proc ::feed_reader::list_feed {feedVar {offset "0"} {limit "10"}} {
 	    load_item_from_dir item ${item_dir}
 
 	    puts ""
-	    catch { puts $item(title) }
-	    catch { puts $item(urlsha1) }
+	    puts $item(title)
+	    puts $item(urlsha1)
 	    puts $item(link)
 
 	    unset item
