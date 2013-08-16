@@ -83,6 +83,8 @@ proc ::feed_reader::get_feed_items {resultVar feedVar {stoptitlesVar ""}} {
     upvar $feedVar feed
     upvar $stoptitlesVar stoptitles
 
+    array set result [list links "" titles ""]
+
     set url         $feed(url)
     set include_re  $feed(include_re)
     set exclude_re  [get_value_if feed(exclude_re) ""]
@@ -111,7 +113,10 @@ proc ::feed_reader::get_feed_items {resultVar feedVar {stoptitlesVar ""}} {
 	set encoding $feed(encoding)
     }
 
-    ::xo::http::fetch html $url
+    set errorcode [::xo::http::fetch html $url]
+    if { ${errorcode} } {
+	return $errorcode
+    }
     
     set html [encoding convertfrom ${encoding} ${html}]
 
@@ -166,7 +171,6 @@ proc ::feed_reader::get_feed_items {resultVar feedVar {stoptitlesVar ""}} {
     # remove duplicates
     set nodes3 [lsort -unique -command compare_href_attr ${nodes2}]
 
-    array set result [list links "" titles ""]
     foreach node ${nodes3} {
 
 	set href [${node} @href]
@@ -473,7 +477,11 @@ proc ::feed_reader::test_feed {feedVar {stoptitlesVar ""}} {
 	upvar $stoptitlesVar stoptitles
     }
 
-    get_feed_items result feed stoptitles
+    set errorcode [get_feed_items result feed stoptitles]
+    if { ${errorcode} } {
+	puts "get_feed_items failed errorcode=$errorcode"
+	return
+    }
 
     foreach link $result(links) title_in_feed $result(titles) {
 	puts ""
@@ -519,7 +527,11 @@ proc ::feed_reader::sync_feeds {feedsVar stoptitlesVar} {
 	# set feed(xpath_feed_item) //item
 	# }
 
-	get_feed_items result feed stoptitles
+	set errorcode [get_feed_items result feed stoptitles]
+	if { ${errorcode} } {
+	    puts "get_feed_items failed errorcode=$errorcode feed_name=$feed_name"
+	    continue
+	}
 
 	foreach link $result(links) title_in_feed $result(titles) {
 	    #puts ""
