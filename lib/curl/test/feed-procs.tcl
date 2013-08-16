@@ -102,6 +102,17 @@ proc ::feed_reader::get_title {stoptitlesVar node} {
 
 }
 
+proc ::util::domain_from_host {host} {
+
+    set re {([^\.]+\.)(com\.cy|gr|com|net|org|info|coop|int|co\.uk|org\.uk|ac\.uk|uk|__and so on__)$}
+
+    if { [regexp -- ${re} ${host} whole domain tld] } {
+	return ${domain}${tld}
+    }
+
+    error "could not match regexp to host=${host}"
+}
+
 proc ::util::domain_from_url {url} {
 
     set index [string first {:} ${url}]
@@ -114,8 +125,8 @@ proc ::util::domain_from_url {url} {
 	return
     }
 
-    array set uri_parts [::uri::split ${url}]
-    return $uri_parts(host)
+    array set uri [::uri::split ${url}]
+    return [::util::domain_from_host $uri(host)]
 }
 
 # get_feed_items
@@ -490,6 +501,10 @@ proc ::feed_reader::get_content_dir {} {
     return [get_base_dir]/content/
 }
 
+proc ::feed_reader::get_log_dir {} {
+    return [get_base_dir]/log/
+}
+
 proc ::feed_reader::get_index_dir {} {
     # multiple urls may have the same content
     return [get_base_dir]/contentsha1_to_urlsha1/
@@ -544,7 +559,9 @@ proc ::feed_reader::list_feed {feedVar {offset "0"} {limit "10"}} {
 	set first ${offset}
 	set last [expr { ${offset} + ${limit} - 1 }]
 
-	foreach item_dir [lrange ${sortedlist} ${first} ${last}] {
+	set slicelist [lrange ${sortedlist} ${first} ${last}]
+
+	foreach item_dir ${slicelist} {
 	    load_item_from_dir item ${item_dir}
 
 	    puts ""
@@ -557,6 +574,32 @@ proc ::feed_reader::list_feed {feedVar {offset "0"} {limit "10"}} {
     }
 }
 
+proc ::feed_reader::log {{offset "0"} {limit "10"}} {
+
+    puts "offset=$offset limit=$limit"
+
+    set log_dir [get_log_dir]
+
+    set logfilelist [glob -directory ${log_dir} *]
+
+    set sortedlist [lsort -decreasing -command compare_mtime ${logfilelist}]
+
+    set first ${offset}
+    set last [expr { ${offset} + ${limit} - 1 }]
+
+    set slicelist [lrange ${sortedlist} ${first} ${last}]
+
+
+    print_log_header
+
+    foreach logfilename ${slicelist} {
+
+        array set item [::util::readfile ${logfilename}]
+	print_log_entry item
+
+    }
+
+}
 
 proc ::feed_reader::exists_item {link} {
 
@@ -572,15 +615,49 @@ proc ::feed_reader::load_item {itemVar urlsha1} {
     set urlfilename [get_url_dir]/${urlsha1}
     array set item [::util::readfile $urlfilename]
 
+    load_content item $item(contentsha1)
+
+}
+
+proc ::feed_reader::show_content {contentsha1} {
+
+    load_content item ${contentsha1}
+    print_item item
+}
+
+proc ::feed_reader::load_content {itemVar contentsha1} {
+
+    upvar $itemVar item
+    set contentfilename [get_content_dir]/${contentsha1}
+    array set item [::util::readfile $contentfilename]
+
 }
 
 proc ::feed_reader::print_item {itemVar} {
     upvar $itemVar item
+
+    puts "--"
     foreach {key value} [array get item] {
 	if { ${value} ne {} } {
 	    puts "* ${key}: ${value}"
 	}
     }
+}
+
+
+proc ::feed_reader::print_log_header {} {
+
+    puts [format "%13s %40s %40s %24s %s" timestamp contentsha1 urlsha1 domain title]
+
+}
+
+proc ::feed_reader::print_log_entry {itemVar} {
+    upvar $itemVar item
+
+    set domain [::util::domain_from_url $item(link)]
+
+    puts [format "%13s %40s %40s %24s %s" $item(date) $item(contentsha1) $item(urlsha1) ${domain} $item(title)]
+    #puts [list $item(link)]
 }
 
 proc ::feed_reader::show_item {urlsha1} {
@@ -604,8 +681,9 @@ proc ::feed_reader::write_item {link feedVar itemVar} {
     set index_dir [get_index_dir]
     set item_dir [get_item_dir ${link} urlsha1]
     set url_dir [get_url_dir]
+    set log_dir [get_log_dir]
 
-    foreach varname {content_dir index_dir item_dir url_dir} {
+    foreach varname {content_dir index_dir item_dir url_dir log_dir} {
 	set dirname [set ${varname}]
 	if { ![file isdirectory ${dirname}] } {
 	    file mkdir ${dirname}
@@ -639,20 +717,20 @@ proc ::feed_reader::write_item {link feedVar itemVar} {
     set timestamp [clock seconds] 
     set item(timestamp) ${timestamp}
 
+    array unset item body
+    set data [array get item]
+
 
     # save to list of articles
-    set articles_filename [get_base_dir]/articles.txt
-    set fp [open ${articles_filename} "a"]
-    puts $fp [list ${timestamp} ${contentsha1} ${link} $item(title)]
+    set logfilename ${log_dir}/${urlsha1}
+    set fp [open ${logfilename} "w"]
+    puts $fp ${data}
     close ${fp}
     
 
     # save data to item_dir
     # note that it overwrites the file if it already exists with the same content
     #
-
-    array unset item body
-    set data [array get item]
 
     # TODO: needs to change
     set datafilename ${item_dir}/${contentsha1}

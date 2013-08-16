@@ -215,6 +215,7 @@ proc print_usage_info {} {
 			   "test" "feed_name" \
 			   "show" "urlsha1" \
 			   "show-url" "article_url" \
+			   "show-content" "contentsha1" \
 			   "list" "feed_name" \
 			   "TODO:test-article" "article_url" \
 			   "TODO:add" "feed_url"]
@@ -253,8 +254,17 @@ if { ${argc} < 1 } {
     } elseif { ${cmd} eq {show-url} && ${argc} == 2 } {
 
 	set article_url [lindex ${argv} 1]
-	::feed_reader::show_item_from_url ${article_url}	
+	::feed_reader::show_item_from_url ${article_url}
 
+
+    } elseif { ${cmd} eq {show-content} && ${argc} == 2 } {
+
+	set contentsha1 [lindex ${argv} 1]
+	::feed_reader::show_content ${contentsha1}
+
+    } elseif { ${cmd} eq {log} && ${argc} >= 1 } {
+
+	::feed_reader::log {*}[lrange ${argv} 1 end]
 
     } elseif { ${cmd} eq {list} && ${argc} >= 2 } {
 
