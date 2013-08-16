@@ -262,6 +262,11 @@ if { ${argc} < 1 } {
 	set contentsha1 [lindex ${argv} 1]
 	::feed_reader::show_content ${contentsha1}
 
+    } elseif { ${cmd} eq {uses-content} && ${argc} == 2 } {
+
+	set contentsha1 [lindex ${argv} 1]
+	::feed_reader::uses_content ${contentsha1}	
+
     } elseif { ${cmd} eq {log} && ${argc} >= 1 } {
 
 	::feed_reader::log {*}[lrange ${argv} 1 end]
@@ -270,7 +275,7 @@ if { ${argc} < 1 } {
 
 	set feed_name [lindex ${argv} 1]
 	array set feed [dict get $feeds $feed_name]
-	::feed_reader::list_feed feed {*}[lindex ${argv} 2 end]
+	::feed_reader::list_feed feed {*}[lrange ${argv} 2 end]
 
     } else {
 

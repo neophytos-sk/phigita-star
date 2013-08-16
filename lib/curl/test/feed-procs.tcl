@@ -623,6 +623,20 @@ proc ::feed_reader::show_content {contentsha1} {
     print_item item
 }
 
+proc ::feed_reader::uses_content {contentsha1} {
+    
+    # what objects use given content
+    # contentsha1_to_urlsha1
+    set filename [get_index_dir]/${contentsha1}
+    set urlsha1_list [::util::readfile ${filename}]
+    foreach urlsha1 ${urlsha1_list} {
+	load_item item ${urlsha1}
+	print_item item
+    }
+
+}
+
+
 proc ::feed_reader::load_content {itemVar contentsha1} {
 
     upvar $itemVar item
