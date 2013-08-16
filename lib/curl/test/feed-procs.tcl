@@ -8,7 +8,27 @@ source ../../naviserver_compat/tcl/module-naviserver_compat.tcl
 package require uri
 package require sha1
 
-namespace eval ::feed_reader {;}
+namespace eval ::feed_reader {
+
+    array set meta [list]
+    array set stoptitles [list]
+
+}
+
+proc ::feed_reader::init {} {
+
+    variable meta
+    variable stoptitles
+
+    read_meta meta
+
+    if { $meta(stoptitles) ne {} } {
+	foreach title $meta(stoptitles) {
+	    set stoptitles(${title}) 1
+	}
+    }
+
+}
 
 
 proc ::feed_reader::read_meta {metaVar} {
@@ -30,7 +50,6 @@ proc ::feed_reader::read_meta {metaVar} {
     array set meta [list stoptitles ${stoptitles} end_of_text_strings ${end_of_text_strings}]
 
 }
-
 
 proc ::feed_reader::compare_href_attr {n1 n2} {
     return [string compare [${n1} @href ""] [${n2} @href ""]]
@@ -223,11 +242,12 @@ proc ::feed_reader::exec_xpath {resultVar doc xpath} {
 }
 
 
-proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar metaVar} {
+proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar} {
 
     upvar $feedVar feed
     upvar $itemVar item
-    upvar $metaVar meta
+
+    variable meta
 
     array set item [list]
 
@@ -363,7 +383,7 @@ proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar metaVa
 	foreach end_of_text_string $meta(end_of_text_strings) {
 	    set index [string first ${end_of_text_string} ${article_body} ${startIndex}]
 	    if { -1 != ${index} } {
-		set article_body [string range ${article_body} 0 [expr { ${index} - 1 }]]
+		set article_body [string trim [string range ${article_body} 0 [expr { ${index} - 1 }]]]
 	    }
 	}
     }
@@ -415,13 +435,12 @@ proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar metaVa
     return 0 ;# no errors
 }
 
-proc ::feed_reader::fetch_item {link title_in_feed feedVar itemVar metaVar} {
+proc ::feed_reader::fetch_item {link title_in_feed feedVar itemVar} {
 
     upvar $feedVar feed
     upvar $itemVar item
-    upvar $metaVar meta
 
-    if { [catch {set errorcode [fetch_item_helper ${link} ${title_in_feed} feed item meta]} errmsg] } {
+    if { [catch {set errorcode [fetch_item_helper ${link} ${title_in_feed} feed item]} errmsg] } {
 	puts errmsg=$errmsg
 	array set item [list \
 			    link $link \
@@ -526,13 +545,8 @@ proc ::feed_reader::write_item {link feedVar itemVar} {
 proc ::feed_reader::test_feed {feedVar} {
     upvar $feedVar feed
 
-    read_meta meta
-    array set stoptitles [list]
-    if { $meta(stoptitles) ne {} } {
-	foreach title $meta(stoptitles) {
-	    set stoptitles(${title}) 1
-	}
-    }
+    variable meta
+    variable stoptitles
 
     set errorcode [fetch_feed result feed stoptitles]
     if { ${errorcode} } {
@@ -546,7 +560,7 @@ proc ::feed_reader::test_feed {feedVar} {
 	puts ${link}
 	puts "---"
 
-	set errorcode [fetch_item ${link} ${title_in_feed} feed item meta]
+	set errorcode [fetch_item ${link} ${title_in_feed} feed item]
 	if { ${errorcode} } {
 	    puts "fetch_item failed errorcode=$errorcode link=$link"
 	    continue
@@ -565,16 +579,9 @@ proc ::feed_reader::sync_feeds {feedsVar} {
 
     upvar $feedsVar feeds
 
-    read_meta meta
+    variable stoptitles
 
-    array set stoptitles [list]
-    if { ${stoptitles} ne {} } {
-	foreach ${title} ${stoptitles} {
-	    set stoptitles(${title}) 1
-	}
-    }
-
-    #haravgi, 24h, politis, stockwatch
+    #haravgi, politis
     foreach feed_name {
 	philenews
 	sigmalive
@@ -620,3 +627,6 @@ proc ::feed_reader::sync_feeds {feedsVar} {
 
     }
 }
+
+
+::feed_reader::init
