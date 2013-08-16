@@ -77,8 +77,8 @@ proc ::util::domain_from_url {url} {
     return $uri_parts(host)
 }
 
-
-proc ::feed_reader::get_feed_items {resultVar feedVar {stoptitlesVar ""}} {
+# get_feed_items
+proc ::feed_reader::fetch_feed {resultVar feedVar {stoptitlesVar ""}} {
     upvar $resultVar result
     upvar $feedVar feed
     upvar $stoptitlesVar stoptitles
@@ -183,6 +183,8 @@ proc ::feed_reader::get_feed_items {resultVar feedVar {stoptitlesVar ""}} {
 
     # cleanup
     $doc delete
+
+    return 0  ;# no errors
 }
 
 
@@ -201,6 +203,8 @@ proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar} {
 
     upvar $feedVar feed
     upvar $itemVar item
+
+    array set item [list]
 
     set encoding [get_value_if feed(encoding) utf-8]
 
@@ -257,7 +261,10 @@ proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar} {
 
 
     set html ""
-    ::xo::http::fetch html ${link}
+    set errorcode [::xo::http::fetch html ${link}]
+    if { ${errorcode} } {
+	return ${errorcode}
+    }
 
     set html [encoding convertfrom ${encoding} ${html}]
 
@@ -364,6 +371,8 @@ proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar} {
     puts "---"
 
     $doc delete
+
+    return 0 ;# no errors
 }
 
 proc ::feed_reader::fetch_item {link title_in_feed feedVar itemVar} {
@@ -371,7 +380,7 @@ proc ::feed_reader::fetch_item {link title_in_feed feedVar itemVar} {
     upvar $feedVar feed
     upvar $itemVar item
 
-    if { [catch {fetch_item_helper ${link} ${title_in_feed} feed item} errmsg] } {
+    if { [catch {set errorcode [fetch_item_helper ${link} ${title_in_feed} feed item]} errmsg] } {
 	puts errmsg=$errmsg
 	array set item [list \
 			    link $link \
@@ -380,6 +389,8 @@ proc ::feed_reader::fetch_item {link title_in_feed feedVar itemVar} {
 			    errno 1 \
 			    errmsg $errmsg]
     }
+
+    return $errorcode
 }
 
 proc ::feed_reader::get_base_dir {} {
@@ -477,9 +488,9 @@ proc ::feed_reader::test_feed {feedVar {stoptitlesVar ""}} {
 	upvar $stoptitlesVar stoptitles
     }
 
-    set errorcode [get_feed_items result feed stoptitles]
+    set errorcode [fetch_feed result feed stoptitles]
     if { ${errorcode} } {
-	puts "get_feed_items failed errorcode=$errorcode"
+	puts "fetch_feed failed errorcode=$errorcode"
 	return
     }
 
@@ -489,7 +500,11 @@ proc ::feed_reader::test_feed {feedVar {stoptitlesVar ""}} {
 	puts ${link}
 	puts "---"
 
-	fetch_item ${link} ${title_in_feed} feed item
+	set errorcode [fetch_item ${link} ${title_in_feed} feed item]
+	if { ${errorcode} } {
+	    puts "fetch_item failed errorcode=$errorcode link=$link"
+	    continue
+	}
 	puts "Content:\n$item(body)"
 
 	if { [incr count] == 7 } {
@@ -527,9 +542,9 @@ proc ::feed_reader::sync_feeds {feedsVar stoptitlesVar} {
 	# set feed(xpath_feed_item) //item
 	# }
 
-	set errorcode [get_feed_items result feed stoptitles]
+	set errorcode [fetch_feed result feed stoptitles]
 	if { ${errorcode} } {
-	    puts "get_feed_items failed errorcode=$errorcode feed_name=$feed_name"
+	    puts "fetch_feed failed errorcode=$errorcode feed_name=$feed_name"
 	    continue
 	}
 
