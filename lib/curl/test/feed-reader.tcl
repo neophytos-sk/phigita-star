@@ -182,7 +182,10 @@ set feeds [dict create \
 		   xpath_article_cleanup {
 		       {//td[@width="524"]/descendant::hr[2]/following-sibling::*}
 		       {//td[@width="524"]/descendant::hr[1]/preceding-sibling::*}
+		       {//td[@width="524"]/descendant::hr[1]/preceding-sibling::table}
 		   }
+		   xpath_article_date {returndate(//td[@width="524"]/descendant::p/i,"%d/%m/%Y - %H:%M")}
+
 	       }]
 
 
