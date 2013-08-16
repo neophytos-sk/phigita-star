@@ -104,7 +104,7 @@ proc ::feed_reader::get_title {stoptitlesVar node} {
 
 proc ::util::domain_from_host {host} {
 
-    set re {([^\.]+\.)(com\.cy|gr|com|net|org|info|coop|int|co\.uk|org\.uk|ac\.uk|uk|__and so on__)$}
+    set re {([^\.]+\.)(com\.cy|ac.cy|gov.cy|gr|com|net|org|info|coop|int|co\.uk|org\.uk|ac\.uk|uk|co|__and so on__)$}
 
     if { [regexp -- ${re} ${host} whole domain tld] } {
 	return ${domain}${tld}
@@ -472,9 +472,7 @@ proc ::feed_reader::get_base_dir {} {
 
 proc ::feed_reader::get_domain_dir {link} {
 
-    array set uri_parts [::uri::split ${link}]
-
-    set domain $uri_parts(host)
+    set domain [::util::domain_from_url ${link}]
 
     set reversehost [join [lreverse [split $domain {.}]] {.}]
 
