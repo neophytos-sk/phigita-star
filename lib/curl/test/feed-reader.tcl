@@ -176,7 +176,7 @@ set feeds [dict create \
 	       politis {
 		   url http://www.politis.com.cy/
 		   include_re {/cgibin/hweb\?-A=[0-9]+&-V=articles}
-		   encoding iso8859-7
+		   encoding cp1253
 		   xpath_article_title {substring-after(//meta[@property="og:title"]/@content," - ")}
 		   xpath_article_body {returntext(//td[@width="524"]/descendant::*[local-name()="p" or local-name()="div"])}
 		   xpath_article_cleanup {
@@ -186,6 +186,9 @@ set feeds [dict create \
 		       {//td[@width="524"]/descendant::p/i[contains(text(),' - ')]}
 		   }
 		   xpath_article_date {returndate(//td[@width="524"]/descendant::p/i[contains(text(),' - ')],"%d/%m/%Y - %H:%M")}
+		   comment {
+		       cp1253 (windows greek encoding - minor differences with iso8859-7, e.g. tonismeno alpha)
+		   }
 
 	       }\
 	       ikypros {
@@ -204,11 +207,65 @@ set feeds [dict create \
 
 
 
+proc print_usage_info {} {
+    upvar argv0 argv0
+
+    array set cmdinfo [list \
+			   "sync" "" \
+			   "test" "feed_name" \
+			   "show" "feed_name urlsha1" \
+			   "show-url" "article_url" \
+			   "list" "feed_name" \
+			   "TODO:test-article" "article_url" \
+			   "TODO:add" "feed_url"]
+
+
+    foreach cmd [lsort [array names cmdinfo]] {
+	puts "Usage: $argv0 ${cmd} $cmdinfo(${cmd})"
+    }
+
+}
+
 set argc [llength $argv]
-if { $argc == 1 } {
-    set feed_name [lindex $argv 0]
-    array set feed [dict get $feeds $feed_name]
-    ::feed_reader::test_feed feed
+if { ${argc} < 1 } {
+
+    print_usage_info
+
 } else {
-    ::feed_reader::sync_feeds feeds
+
+    set cmd [lindex $argv 0]
+
+    if { ${cmd} eq {sync} && ${argc} == 1 } {
+
+	::feed_reader::sync_feeds feeds
+
+    } elseif { ${cmd} eq {test} && ${argc} == 2} {
+
+	set feed_name [lindex ${argv} 1]
+	array set feed [dict get $feeds $feed_name]
+	::feed_reader::test_feed feed
+
+    } elseif { ${cmd} eq {show} && ${argc} == 2 } {
+
+	set urlsha1 [lindex ${argv} 1]
+	::feed_reader::show_item ${urlsha1}
+
+    } elseif { ${cmd} eq {show-url} && ${argc} == 2 } {
+
+	set article_url [lindex ${argv} 1]
+	::feed_reader::show_item_from_url ${article_url}	
+
+
+    } elseif { ${cmd} eq {list} && ${argc} == 2 } {
+
+	set feed_name [lindex ${argv} 1]
+	array set feed [dict get $feeds $feed_name]
+	::feed_reader::list_feed feed
+
+    } else {
+
+	print_usage_info
+
+    }
+
 }

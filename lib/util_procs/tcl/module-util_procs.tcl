@@ -31,8 +31,8 @@ proc ::util::prepend {prefix text} {
 # ---------------------------------- files ------------------------------
 
 proc ::util::readfile {filename} {
-    set fp [open $filename]
-    set data [read $fp]
+    set fp [open ${filename}]
+    set data [read $fp [file size ${filename}]]
     close $fp
     return $data
 }

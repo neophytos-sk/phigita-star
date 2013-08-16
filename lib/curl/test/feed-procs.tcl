@@ -460,17 +460,28 @@ proc ::feed_reader::get_base_dir {} {
     return {/web/data/crawldb}
 }
 
-proc ::feed_reader::get_item_dir {link} {
+proc ::feed_reader::get_domain_dir {link} {
 
     array set uri_parts [::uri::split ${link}]
 
-    set reversehost [join [lreverse [split $uri_parts(host) {.}]] {.}]
+    set domain $uri_parts(host)
+
+    set reversehost [join [lreverse [split $domain {.}]] {.}]
+
+    return [get_base_dir]/${reversehost}
+}
+
+proc ::feed_reader::get_item_dir {link {urlsha1Var ""}} {
+
+    upvar ${urlsha1Var} urlsha1
+
+    set domain_dir [get_domain_dir ${link}]
 
     set urlsha1 [::sha1::sha1 -hex ${link}]
 
     #set first3Chars [string range ${urlsha1} 0 2]
 
-    set dir [get_base_dir]/${reversehost}/${urlsha1}/
+    set dir ${domain_dir}/${urlsha1}/
 
     return ${dir}
 
@@ -480,24 +491,134 @@ proc ::feed_reader::get_content_dir {} {
     return [get_base_dir]/content/
 }
 
-proc ::feed_reader::exists_item {link feedVar} {
+proc ::feed_reader::get_index_dir {} {
+    # multiple urls may have the same content
+    return [get_base_dir]/contentsha1_to_urlsha1/
+}
+
+proc ::feed_reader::get_url_dir {} {
+    # multiple urls may have the same content
+    return [get_base_dir]/url/
+}
+
+
+proc ::feed_reader::exists_domain {link} {
+
+    return [file isdirectory [get_domain_dir ${link}]]
+
+}
+
+proc ::feed_reader::compare_mtime {file_or_dir1 file_or_dir2} {
+    set mtime1 [file mtime $file_or_dir1]
+    set mtime2 [file mtime $file_or_dir2]
+
+    if { ${mtime1} < ${mtime2} } {
+	return -1
+    } elseif { ${mtime1} > ${mtime2} } {
+	return 1
+    } else {
+	return 0
+    }
+}
+
+
+# load latest revision in item_dir
+# TODO: fix me
+proc ::feed_reader::load_item_from_dir {itemVar item_dir} {
+    upvar $itemVar item
+
+    set filelist [glob -directory ${item_dir} *]
+    set sortedlist [lsort -decreasing -command compare_mtime ${filelist}]
+    set filename [lindex ${filelist} 0]
+    array set item [::util::readfile ${filename}]
+}
+
+proc ::feed_reader::list_feed {feedVar {limit "10"} {offset "0"}} {
     upvar $feedVar feed
+
+    if { [exists_domain $feed(url)] } {
+	set domain_dir [get_domain_dir $feed(url)]
+	set item_dirs [glob -directory ${domain_dir} *]
+
+	set sortedlist [lsort -decreasing -command compare_mtime ${item_dirs}]
+
+	set first ${offset}
+	set last [expr { ${offset} + ${limit} - 1 }]
+
+	foreach item_dir [lrange ${sortedlist} ${first} ${last}] {
+	    load_item_from_dir item ${item_dir}
+
+	    puts ""
+	    catch { puts $item(title) }
+	    catch { puts $item(urlsha1) }
+	    puts $item(link)
+
+	    unset item
+	}
+    }
+}
+
+
+proc ::feed_reader::exists_item {link} {
 
     return [file isdirectory [get_item_dir ${link}]]
 
+}
+
+
+proc ::feed_reader::load_item {itemVar urlsha1} {
+
+    upvar $itemVar item
+
+    set urlfilename [get_url_dir]/${urlsha1}
+    array set item [::util::readfile $urlfilename]
+
+}
+
+proc ::feed_reader::print_item {itemVar} {
+    upvar $itemVar item
+    foreach {key value} [array get item] {
+	if { ${value} ne {} } {
+	    puts "* ${key}: ${value}"
+	}
+    }
+}
+
+proc ::feed_reader::show_item {urlsha1} {
+    load_item item ${urlsha1}
+    print_item item
+}
+
+proc ::feed_reader::show_item_from_url {link} {
+    
+    set urlsha1 [::sha1::sha1 -hex ${link}]
+    load_item item ${urlsha1}
+    print_item item
 }
 
 proc ::feed_reader::write_item {link feedVar itemVar} {
     upvar $feedVar feed
     upvar $itemVar item
 
-
-    # save to content file
+    # prepare to write
     set content_dir [get_content_dir]
-    if { ![file isdirectory ${content_dir}] } {
-	file mkdir ${content_dir}
+    set index_dir [get_index_dir]
+    set item_dir [get_item_dir ${link} urlsha1]
+    set url_dir [get_url_dir]
+
+    foreach varname {content_dir index_dir item_dir url_dir} {
+	set dirname [set ${varname}]
+	if { ![file isdirectory ${dirname}] } {
+	    file mkdir ${dirname}
+	}
     }
-    set content [list title $item(title) body $item(body)]
+
+
+    set item(urlsha1) ${urlsha1}
+
+    # save article body to content file
+    # TODO: each image,attachment,video,etc should get its own content file in the future
+    set content [list body $item(body)]
     set contentsha1 [::sha1::sha1 -hex ${content}]
     set contentfilename ${content_dir}/${contentsha1}
 
@@ -506,10 +627,15 @@ proc ::feed_reader::write_item {link feedVar itemVar} {
 	# we have seen this item before
 	set item(is_copy_p) 1
     } else {
-	set fp [open ${contentfilename} "w"]
-	puts $fp ${content}
-	close $fp
+	::util::writefile ${contentfilename} ${content}
     }
+
+    # contentsha1 to urlsha1, i.e. which links lead to the same content
+    # TODO: consider having simhash
+    set indexfilename ${index_dir}/${contentsha1}
+    set fp [open ${indexfilename} "a"]
+    puts $fp ${urlsha1}
+    close $fp
 
     set timestamp [clock seconds] 
     set item(timestamp) ${timestamp}
@@ -526,20 +652,15 @@ proc ::feed_reader::write_item {link feedVar itemVar} {
     # note that it overwrites the file if it already exists with the same content
     #
 
-
-    array unset item title
     array unset item body
-
-    set item_dir [get_item_dir ${link}]
-    if { ![file isdirectory ${item_dir}] } {
-	file mkdir ${item_dir}
-    }
-
     set data [array get item]
+
+    # TODO: needs to change
     set datafilename ${item_dir}/${contentsha1}
-    set fp [open ${datafilename} "w"]
-    puts $fp ${data}
-    close ${fp}
+    ::util::writefile ${datafilename} ${data}
+
+    set urlfilename ${url_dir}/${urlsha1}
+    ::util::writefile ${urlfilename} ${data}
 
 }
 
@@ -622,7 +743,7 @@ proc ::feed_reader::sync_feeds {feedsVar} {
 	    # TODO: if it exists and it's the first item in the feed,
 	    # fetch it and compare it to stored item to ensure sanity
 	    # of feed/article/page
-	    if { ![exists_item ${link} feed] } {
+	    if { ![exists_item ${link}] } {
 		fetch_item ${link} ${title_in_feed} feed item
 		write_item ${link} feed item
 	    }
