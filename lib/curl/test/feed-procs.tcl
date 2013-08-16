@@ -400,8 +400,7 @@ proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar} {
 			image $article_image \
 			attachment $article_attachment \
 			date $article_date \
-			modified_time $article_modified_time \
-			content $article_body]
+			modified_time $article_modified_time]
 
     puts "Link: $link"
     puts "Title: $article_title"
@@ -533,7 +532,7 @@ proc ::feed_reader::load_item_from_dir {itemVar item_dir} {
     array set item [::util::readfile ${filename}]
 }
 
-proc ::feed_reader::list_feed {feedVar {limit "10"} {offset "0"}} {
+proc ::feed_reader::list_feed {feedVar {offset "0"} {limit "10"}} {
     upvar $feedVar feed
 
     if { [exists_domain $feed(url)] } {
