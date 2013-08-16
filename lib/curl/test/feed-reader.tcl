@@ -146,9 +146,7 @@ set feeds [dict create \
 		   xpath_article_image {
 		       {values(//div[@id="SelectContainer"]/div[@class="blackImages_00"]/img/@src)}
 		   }
-		   comment {
-		       - removal of "diavaste episis" text in the end of the article body
-		   }
+		   article_body_end_of_text_cleanup_p 1
 	       }\
 	       alitheia {
 		   url http://www.alithia.com.cy/
@@ -174,17 +172,11 @@ set feeds [dict create \
 
 
 
-array set stoptitles [list]
-foreach title [split [::util::readfile stoptitles.txt] "\n"] {
-    set stoptitles(${title}) 1
-}
-
-
 set argc [llength $argv]
 if { $argc == 1 } {
     set feed_name [lindex $argv 0]
     array set feed [dict get $feeds $feed_name]
-    ::feed_reader::test_feed feed stoptitles
+    ::feed_reader::test_feed feed
 } else {
-    ::feed_reader::sync_feeds feeds stoptitles
+    ::feed_reader::sync_feeds feeds
 }

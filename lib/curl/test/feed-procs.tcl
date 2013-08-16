@@ -10,6 +10,28 @@ package require sha1
 
 namespace eval ::feed_reader {;}
 
+
+proc ::feed_reader::read_meta {metaVar} {
+
+    upvar ${metaVar} meta
+
+    set stoptitles [list]
+    foreach title [split [::util::readfile stoptitles.txt] "\n"] {
+	lappend stoptitles [trim_title ${title}]
+    }
+    
+    set end_of_text_strings [list]
+    foreach end_of_text_string [split [::util::readfile article_body_end_of_text_strings] "\n"] {
+	if { ${end_of_text_string} ne {} } {
+	    lappend end_of_text_strings ${end_of_text_string}
+	}
+    }
+
+    array set meta [list stoptitles ${stoptitles} end_of_text_strings ${end_of_text_strings}]
+
+}
+
+
 proc ::feed_reader::compare_href_attr {n1 n2} {
     return [string compare [${n1} @href ""] [${n2} @href ""]]
 }
@@ -81,7 +103,9 @@ proc ::util::domain_from_url {url} {
 proc ::feed_reader::fetch_feed {resultVar feedVar {stoptitlesVar ""}} {
     upvar $resultVar result
     upvar $feedVar feed
-    upvar $stoptitlesVar stoptitles
+    if { ${stoptitlesVar} ne {} } {
+	upvar $stoptitlesVar stoptitles
+    }
 
     array set result [list links "" titles ""]
 
@@ -199,10 +223,11 @@ proc ::feed_reader::exec_xpath {resultVar doc xpath} {
 }
 
 
-proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar} {
+proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar metaVar} {
 
     upvar $feedVar feed
     upvar $itemVar item
+    upvar $metaVar meta
 
     array set item [list]
 
@@ -329,6 +354,21 @@ proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar} {
 
     exec_xpath article_body $doc $xpath_article_body
 
+    if { [get_value_if feed(article_body_end_of_text_cleanup_p) "0"] } {
+	# if end_of_string is found after the 1/3 of the article body
+	# then drop text beyond that point
+	#
+	set article_body_len [string length ${article_body}]
+	set startIndex [expr { ( ${article_body_len} ) / 3 } ]
+	foreach end_of_text_string $meta(end_of_text_strings) {
+	    set index [string first ${end_of_text_string} ${article_body} ${startIndex}]
+	    if { -1 != ${index} } {
+		set article_body [string range ${article_body} 0 [expr { ${index} - 1 }]]
+	    }
+	}
+    }
+
+
     array set item [list \
 			link $link \
 			title $article_title \
@@ -375,12 +415,13 @@ proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar} {
     return 0 ;# no errors
 }
 
-proc ::feed_reader::fetch_item {link title_in_feed feedVar itemVar} {
+proc ::feed_reader::fetch_item {link title_in_feed feedVar itemVar metaVar} {
 
     upvar $feedVar feed
     upvar $itemVar item
+    upvar $metaVar meta
 
-    if { [catch {set errorcode [fetch_item_helper ${link} ${title_in_feed} feed item]} errmsg] } {
+    if { [catch {set errorcode [fetch_item_helper ${link} ${title_in_feed} feed item meta]} errmsg] } {
 	puts errmsg=$errmsg
 	array set item [list \
 			    link $link \
@@ -482,10 +523,15 @@ proc ::feed_reader::write_item {link feedVar itemVar} {
 
 
 #TODO: we need a way to test feed (before starting to store it)
-proc ::feed_reader::test_feed {feedVar {stoptitlesVar ""}} {
+proc ::feed_reader::test_feed {feedVar} {
     upvar $feedVar feed
-    if { $stoptitlesVar ne {} } {
-	upvar $stoptitlesVar stoptitles
+
+    read_meta meta
+    array set stoptitles [list]
+    if { $meta(stoptitles) ne {} } {
+	foreach title $meta(stoptitles) {
+	    set stoptitles(${title}) 1
+	}
     }
 
     set errorcode [fetch_feed result feed stoptitles]
@@ -500,7 +546,7 @@ proc ::feed_reader::test_feed {feedVar {stoptitlesVar ""}} {
 	puts ${link}
 	puts "---"
 
-	set errorcode [fetch_item ${link} ${title_in_feed} feed item]
+	set errorcode [fetch_item ${link} ${title_in_feed} feed item meta]
 	if { ${errorcode} } {
 	    puts "fetch_item failed errorcode=$errorcode link=$link"
 	    continue
@@ -515,11 +561,17 @@ proc ::feed_reader::test_feed {feedVar {stoptitlesVar ""}} {
 
 }
 
-proc ::feed_reader::sync_feeds {feedsVar stoptitlesVar} {
+proc ::feed_reader::sync_feeds {feedsVar} {
 
     upvar $feedsVar feeds
-    if { $stoptitlesVar ne {} } {
-	upvar $stoptitlesVar stoptitles
+
+    read_meta meta
+
+    array set stoptitles [list]
+    if { ${stoptitles} ne {} } {
+	foreach ${title} ${stoptitles} {
+	    set stoptitles(${title}) 1
+	}
     }
 
     #haravgi, 24h, politis, stockwatch
