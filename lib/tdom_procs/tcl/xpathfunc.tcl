@@ -193,12 +193,11 @@ proc ::dom::xpathFuncHelper::coerce2text { type value } {
         string     { return $value }
         attrvalues { return [lindex $value 0] }
         nodes { 
-	    puts "--->>> number of nodes [llength ${value}]"
 	    set html ""
 	    foreach node ${value} {
 		coerce2text_helper html $node
 	    }
-	    regsub -all -- {([^\s])\s*\n\n\s*([^\s])} ${html} "\\1\n\n\\2" html
+	    regsub -all -- {([^\s])\s*[\r\n]+\s*[\r\n]+\s*([^\s])} ${html} "\\1\n\n\\2" html
 	    return [string trim ${html}]
 	}
         attrnodes  { return [lindex $value 1] }
