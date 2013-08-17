@@ -212,7 +212,10 @@ set feeds [dict create \
 		   include_re {[[:alnum:]\-]{10,}}
 		   exclude_re {/category/|/#}
 		   xpath_article_title {returnstring(//head/title)}
-		   xpath_article_image {values(//div[@id="the_image"]/img/@src)}
+		   xpath_article_image {
+		       {values(//div[@id="the_image"]/img/@src)}
+		       {values(//div[@id="the_content"]/img/@src)}
+		   }
 		   xpath_article_date {returndate(normalizedate(//div[@id="the_category"]/span[@class="post_date"]),"%d %B %Y","el_GR")}
 		   comment {
 		       og:description
