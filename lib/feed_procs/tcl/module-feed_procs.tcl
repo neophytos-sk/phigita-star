@@ -1,3 +1,5 @@
+package provide feed_procs 0.1
+
 source ../../naviserver_compat/tcl/module-naviserver_compat.tcl
 
 ::xo::lib::require curl
