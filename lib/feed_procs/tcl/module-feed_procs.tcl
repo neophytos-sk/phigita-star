@@ -32,8 +32,6 @@ namespace eval ::dom::xpathFunc {
 
 proc ::dom::xpathFunc::normalizedate {ctxNode pos nodeListNode nodeList args} {
 
-    variable mapping
-
     if { [llength ${args}] != 4 } {
 	error "normalizedate(string): wrong # of args"
     }
@@ -46,9 +44,22 @@ proc ::dom::xpathFunc::normalizedate {ctxNode pos nodeListNode nodeList args} {
 
     set ts_string [::dom::xpathFuncHelper::coerce2string ${arg1Typ} ${arg1Value}]
     set locale $arg2Value
-    if { [info exists mapping(${locale})] } {
+
+    variable mapping_${locale}
+
+
+    if { [info exists mapping_${locale}] } {
 	
-	set ts_string [string map $mapping(${locale}) [::ttext::unaccent utf-8 ${ts_string}]]
+	set ts_string_list [list]
+	foreach word [split ${ts_string} { ,-/.}] {
+	    set unac_word [::ttext::unaccent utf-8 ${word}]
+	    if { [info exists mapping_${locale}(${unac_word})] } {
+		lappend ts_string_list $mapping_${locale}(${unac_word})
+	    } else {
+		lappend ts_string_list ${word}
+	    }
+	}
+	set ts_string [join ${ts_string_list} ""]
 
     }
 
@@ -57,7 +68,7 @@ proc ::dom::xpathFunc::normalizedate {ctxNode pos nodeListNode nodeList args} {
 	set ts_string [::util::dt::age_to_timestamp ${ts_string} [clock seconds]]
     }
 
-    #puts ts_string=$ts_string
+    puts ts_string=$ts_string
 
     return [list string ${ts_string}]
 
