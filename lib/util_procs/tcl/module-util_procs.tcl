@@ -80,6 +80,46 @@ proc ::util::urldecode {str} {
     return [subst -novar -nocommand $str]
 }
 
+# ------------------------ datetime -----------------------------
+
+namespace eval ::util::dt {;}
+
+proc ::util::dt::age_to_timestamp {age timeval} {
+
+    if { [lindex ${timeval} end] eq {ago} } {
+	set age  [lrange ${age} 0 end-1]
+    }
+
+    set secs 0
+    foreach {num precision} ${age} {
+	switch -exact ${precision} {
+	    sec -
+	    secs -
+	    second -
+	    seconds  { incr secs ${num} }
+	    min -
+	    mins -
+	    minute -
+	    minutes  { incr secs [expr { ${num} * 60 }] }
+	    hour -
+	    hours  { incr secs [expr { ${num} * 3600 }] }
+	    day -
+	    days  { incr secs [expr { ${num} * 86400 }] }
+	    week - 
+	    weeks  { incr secs [expr { ${num} * 86400 * 7 }] }
+	    month -
+	    months  { incr secs [expr { ${num} * 86400 * 30 }] }
+	    year -
+	    years  { incr secs [expr { ${num} * 86400 * 365 }] }
+	}
+    }
+
+    incr timeval ${secs}
+    set timestamp [clock format ${timeval} -format "%Y%m%dT%H%M"]
+
+    return ${timestamp}
+}
+
 
 # ---------------------------------- files ------------------------------
 

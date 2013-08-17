@@ -23,7 +23,7 @@ namespace eval ::dom::xpathFunc {
     set filelist [glob -nocomplain -directory ${mapping_dir} *]
 
     foreach filename ${filelist} {
-	set locale [file extension ${filename}]
+	set locale [string trimleft [file extension ${filename}] {.}]
 	set mapping(${locale}) [::util::readfile ${filename}]
     }
 
@@ -32,19 +32,34 @@ namespace eval ::dom::xpathFunc {
 
 proc ::dom::xpathFunc::normalizedate {ctxNode pos nodeListNode nodeList args} {
 
-    upvar $ts_stringVar ts_string
-
     variable mapping
 
-    if { ![info exists mapping(${locale})] } {
+    if { [llength ${args}] != 4 } {
+	error "normalizedate(string): wrong # of args"
+    }
+
+
+    lassign ${args} \
+	arg1Typ arg1Value \
+	arg2Typ arg2Value
+
+
+    set ts_string [::dom::xpathFuncHelper::coerce2string ${arg1Typ} ${arg1Value}]
+    set locale $arg2Value
+    if { [info exists mapping(${locale})] } {
 	
-	set ts_string [string totitle [string map $mapping(${locale}) [string tolower [::text::unaccent ${ts_string}]]]]
+	set ts_string [string map $mapping(${locale}) [::ttext::unaccent utf-8 ${ts_string}]]
 
     }
 
     if { [lindex ${ts_string} end] eq {ago} } {
 	# TODO: convert pretty age to a timestamp
+	set ts_string [::util::dt::age_to_timestamp ${ts_string} [clock seconds]]
     }
+
+    #puts ts_string=$ts_string
+
+    return [list string ${ts_string}]
 
 }
 

@@ -33,7 +33,7 @@ set feeds [dict create \
 		       {values(//div[@id="article_content"]//img[@class="pyro-image"]/@src)}
 		   }
 		   xpath_article_author {returnstring(//div[@class="article_meta"]/span[@class="meta_author"]/a/text())}
-		   xpath_article_date {returndate(normalizedate(//div[@class="article_meta"]/span[@class="meta_date"]/strong),"%B %d, %Y %H:%M","el_GR")}
+		   xpath_article_date {returndate(normalizedate(//div[@class="article_meta"]/span[@class="meta_date"]/strong,"el_GR"),"%B %d, %Y %H:%M","el_GR")}
 		   xpath_article_cleanup {
 		       {//div[@class="soSialIcons"]}
 		       {//div[@class="article_meta"]}
@@ -48,7 +48,7 @@ set feeds [dict create \
 		   xpath_article_image {
 		       {values(//div[@class="articleImg"]/div[@class="img"]/img/@src)}
 		   }
-		   xpath_article_date {returndate(substring-after(//div[@id="articleContainer"]/h4/text(),"| "),"%d %B %Y, %H:%M","el_GR")}
+		   xpath_article_date {returndate(normalizedate(substring-after(//div[@id="articleContainer"]/h4/text(),"| "),"el_GR"),"%d %B %Y, %H:%M","el_GR")}
 		   xpath_article_cleanup {
 		       {//div[@id="articleContainer"]/h4}
 		   }
@@ -82,7 +82,7 @@ set feeds [dict create \
 		   htmltidy_article_p 1
 		   xpath_article_title {returnstring(//div[@id="il_title"]/h1)}
 		   xpath_article_body {returntext(//div[@id="il_text"])}
-		   xpath_article_date {substring-after(//div[@id="il_pub_date"]/div[@class="pubdate"]/text(),": ")}
+		   xpath_article_date {normalizedate(substring-after(//div[@id="il_pub_date"]/div[@class="pubdate"]/text(),": "),"el_GR")}
 		   comment {image is via meta og:image}
 	       } \
 	       24h {
@@ -216,7 +216,7 @@ set feeds [dict create \
 		       {values(//div[@id="the_image"]/img/@src)}
 		       {values(//div[@id="the_content"]/img/@src)}
 		   }
-		   xpath_article_date {returndate(normalizedate(//div[@id="the_category"]/span[@class="post_date"]),"%d %B %Y","el_GR")}
+		   xpath_article_date {returndate(normalizedate(//div[@id="the_category"]/span[@class="post_date"],"el_GR"),"%d %B %Y","el_GR")}
 		   comment {
 		       og:description
 		       keywords
