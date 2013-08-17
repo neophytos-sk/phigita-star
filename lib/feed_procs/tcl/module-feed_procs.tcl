@@ -454,7 +454,7 @@ proc ::feed_reader::get_domain_dir {link} {
 
     set reversehost [join [lreverse [split $domain {.}]] {.}]
 
-    return [get_base_dir]/${reversehost}
+    return [get_base_dir]/site/${reversehost}
 }
 
 proc ::feed_reader::get_item_dir {link {urlsha1Var ""}} {
@@ -474,21 +474,21 @@ proc ::feed_reader::get_item_dir {link {urlsha1Var ""}} {
 }
 
 proc ::feed_reader::get_content_dir {} {
-    return [get_base_dir]/content/
+    return [get_base_dir]/content
 }
 
 proc ::feed_reader::get_log_dir {} {
-    return [get_base_dir]/log/
+    return [get_base_dir]/log
 }
 
 proc ::feed_reader::get_index_dir {} {
     # multiple urls may have the same content
-    return [get_base_dir]/contentsha1_to_urlsha1/
+    return [get_base_dir]/contentsha1_to_urlsha1
 }
 
 proc ::feed_reader::get_url_dir {} {
     # multiple urls may have the same content
-    return [get_base_dir]/url/
+    return [get_base_dir]/url
 }
 
 
@@ -546,7 +546,10 @@ proc ::feed_reader::list_feed {feedVar {limit "10"} {offset "0"}} {
     }
 }
 
-proc ::feed_reader::log {{limit "10"} {offset "0"}} {
+
+proc ::feed_reader::get_logfilelist {sortedlistVar} {
+
+    upvar $sortedlistVar sortedlist
 
     set log_dir [get_log_dir]
 
@@ -554,11 +557,17 @@ proc ::feed_reader::log {{limit "10"} {offset "0"}} {
 
     set sortedlist [lsort -decreasing -command compare_mtime ${logfilelist}]
 
+}
+
+
+proc ::feed_reader::log {{limit "10"} {offset "0"}} {
+
+    get_logfilelist sortedlist
+
     set first ${offset}
     set last [expr { ${offset} + ${limit} - 1 }]
 
     set slicelist [lrange ${sortedlist} ${first} ${last}]
-
 
     print_log_header
 
@@ -571,6 +580,46 @@ proc ::feed_reader::log {{limit "10"} {offset "0"}} {
     }
 
 }
+
+
+proc ::feed_reader::cluster {{limit "10"} {offset "0"} {k ""} {num_iter "3"}} {
+
+    set log_dir [get_log_dir]
+
+    set logfilelist [glob -directory ${log_dir} *]
+
+    set sortedlist [lsort -decreasing -command compare_mtime ${logfilelist}]
+
+    set first ${offset}
+    set last [expr { ${offset} + ${limit} - 1 }]
+
+    set slicelist [lrange ${sortedlist} ${first} ${last}]
+
+    #print_log_header
+
+    set contentfilelist [list]
+    foreach logfilename ${slicelist} {
+
+        array set item [::util::readfile ${logfilename}]
+	lappend contentfilelist [get_content_dir]/$item(contentsha1)
+
+	#print_log_entry item
+	unset item
+
+    }
+
+    set cmd "/web/repos/phigita/service-phgt-0/lib/document_clustering/cc/test_main"
+    if { ${k} eq {} } {
+	set k [expr { int(log(${limit}) * sqrt(${limit})) }]
+    }
+    set result [exec ${cmd} ${k} ${num_iter} {*}${contentfilelist}]
+
+    puts ${result}
+
+
+
+}
+
 
 proc ::feed_reader::exists_item {link} {
 
@@ -614,7 +663,8 @@ proc ::feed_reader::load_content {itemVar contentsha1} {
 
     upvar $itemVar item
     set contentfilename [get_content_dir]/${contentsha1}
-    array set item [::util::readfile $contentfilename]
+    array set item [list]
+    lassign [::util::readfile $contentfilename] item(title) item(body)
 
 }
 
@@ -685,7 +735,7 @@ proc ::feed_reader::write_item {link feedVar itemVar} {
 
     # save article body to content file
     # TODO: each image,attachment,video,etc should get its own content file in the future
-    set content [list body $item(body)]
+    set content [list $item(title) $item(body)]
     set contentsha1 [::sha1::sha1 -hex ${content}]
     set contentfilename ${content_dir}/${contentsha1}
 
@@ -711,18 +761,14 @@ proc ::feed_reader::write_item {link feedVar itemVar} {
     set data [array get item]
 
 
-    # save to list of articles
+    # save log file
     set logfilename ${log_dir}/${urlsha1}
-    set fp [open ${logfilename} "w"]
-    puts $fp ${data}
-    close ${fp}
-    
+    ::util::writefile ${logfilename}  ${data}  
 
     # save data to item_dir
     # note that it overwrites the file if it already exists with the same content
     #
 
-    # TODO: needs to change
     set datafilename ${item_dir}/${contentsha1}
     ::util::writefile ${datafilename} ${data}
 
@@ -828,6 +874,36 @@ proc ::feed_reader::sync_feeds {feedsVar} {
 	unset feed
 
     }
+}
+
+
+proc ::feed_reader::resync {feedsVar} {
+
+    upvar $feedsVar feeds
+
+    get_logfilelist sortedlist
+
+    foreach logfilename ${sortedlist} {
+
+	array set old_item [::util::readfile ${logfilename}]
+	array set feed [dict get ${feeds} $old_item(feed_name)]
+
+	set errorcode [fetch_item ${link} $old_item(title) feed new_item]
+	if { ${errorcode} } {
+	    puts "--->>> error ${link}"
+	    # write_error_item new_item
+	    # incr errorCount
+	    continue
+	}
+
+	# if distance between old and new item is great, then skip writing
+	write_item ${link} feed new_item
+
+	unset old_item
+	unset new_item
+
+    }
+
 }
 
 

@@ -220,13 +220,15 @@ proc print_usage_info {} {
 
     array set cmdinfo [list \
 			   "sync" "" \
+			   "resync" "" \
 			   "test" "feed_name ?limit? ?fetch_item_p?" \
 			   "show" "urlsha1" \
 			   "show-url" "article_url" \
 			   "show-content" "contentsha1" \
 			   "uses-content" "contentsha1" \
-			   "log" "limit ?offset?" \
+			   "log" "?limit? ?offset?" \
 			   "list" "feed_name ?limit? ?offset?" \
+			   "cluster" "?limit? ?offset?" \
 			   "TODO:test-article" "article_url" \
 			   "TODO:add" "feed_url"]
 
@@ -249,6 +251,10 @@ if { ${argc} < 1 } {
     if { ${cmd} eq {sync} && ${argc} == 1 } {
 
 	::feed_reader::sync_feeds feeds
+
+    } elseif { ${cmd} eq {resync} && ${argc} == 1 } {
+
+	::feed_reader::resync feeds
 
     } elseif { ${cmd} eq {test} && ${argc} >= 2} {
 
@@ -280,6 +286,10 @@ if { ${argc} < 1 } {
     } elseif { ${cmd} eq {log} && ${argc} >= 1 } {
 
 	::feed_reader::log {*}[lrange ${argv} 1 end]
+
+    } elseif { ${cmd} eq {cluster} && ${argc} >= 1 } {
+
+	::feed_reader::cluster {*}[lrange ${argv} 1 end]
 
     } elseif { ${cmd} eq {list} && ${argc} >= 2 } {
 
