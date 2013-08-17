@@ -102,32 +102,6 @@ proc ::feed_reader::get_title {stoptitlesVar node} {
 
 }
 
-proc ::util::domain_from_host {host} {
-
-    set re {([^\.]+\.)(com\.cy|ac.cy|gov.cy|gr|com|net|org|info|coop|int|co\.uk|org\.uk|ac\.uk|uk|co|__and so on__)$}
-
-    if { [regexp -- ${re} ${host} whole domain tld] } {
-	return ${domain}${tld}
-    }
-
-    error "could not match regexp to host=${host}"
-}
-
-proc ::util::domain_from_url {url} {
-
-    set index [string first {:} ${url}]
-    if { ${index} == -1 } {
-	return
-    }
-
-    set scheme [string range ${url} 0 ${index}]
-    if { ${scheme} ne {http:} && ${scheme} ne {https:} } {
-	return
-    }
-
-    array set uri [::uri::split ${url}]
-    return [::util::domain_from_host $uri(host)]
-}
 
 # get_feed_items
 proc ::feed_reader::fetch_feed {resultVar feedVar {stoptitlesVar ""}} {
