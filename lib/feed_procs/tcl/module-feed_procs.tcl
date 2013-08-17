@@ -325,6 +325,10 @@ proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar} {
 				 feed(xpath_article_image) \
 				 {string(//meta[@property="og:image"]/@content)}]
 
+    set xpath_article_video [get_value_if \
+				 feed(xpath_article_video) \
+				 {}]
+
     set xpath_article_attachment [get_value_if \
 				      feed(xpath_article_attachment) \
 				      {}]
@@ -398,6 +402,16 @@ proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar} {
 	}
     }
 
+    set article_video [list]
+    if { ${xpath_article_video} ne {} } {
+	foreach video_xpath ${xpath_article_video} {
+	    foreach video_url [${doc} selectNodes ${video_xpath}] {
+		# TODO: extract video id and convert to video url (if possible)
+		lappend article_video ${video_url}
+	    }
+	}
+    }
+
 
     exec_xpath article_date $doc $xpath_article_date
     exec_xpath article_modified_time $doc $xpath_article_modified_time
@@ -441,6 +455,7 @@ proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar} {
 			tags ${article_tags} \
 			author $author_in_article \
 			image $article_image \
+			video $article_video \
 			attachment $article_attachment \
 			date $article_date \
 			modified_time $article_modified_time]
@@ -467,6 +482,9 @@ proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar} {
     }
     if { $article_attachment ne {} } {
 	puts "Attachment(s): $article_attachment"
+    }
+    if { $article_video ne {} } {
+	puts "Video(s): $article_video"
     }
 
     # TODO: xpathfunc returntext (that returns structured text from html)
@@ -888,6 +906,7 @@ proc ::feed_reader::sync_feeds {feedsVar} {
 	newsit
 	alitheia
 	politis
+	pafosnet
     } {
 
 	array set feed [dict get ${feeds} ${feed_name}]
