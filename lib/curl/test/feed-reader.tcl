@@ -218,7 +218,8 @@ proc print_usage_info {} {
 			   "show-url" "article_url" \
 			   "show-content" "contentsha1" \
 			   "uses-content" "contentsha1" \
-			   "list" "feed_name" \
+			   "log" "limit offset" \
+			   "list" "feed_name limit offset" \
 			   "TODO:test-article" "article_url" \
 			   "TODO:add" "feed_url"]
 

@@ -387,8 +387,8 @@ proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar} {
 			date $article_date \
 			modified_time $article_modified_time]
 
-    puts "Link: $link"
     puts "Title: $article_title"
+    puts "Link: $link"
     if { $article_tags ne {} } {
 	puts "Tags: $article_tags"
     }
@@ -536,11 +536,7 @@ proc ::feed_reader::list_feed {feedVar {limit "10"} {offset "0"}} {
 	foreach item_dir ${slicelist} {
 	    load_item_from_dir item ${item_dir}
 
-	    puts ""
-	    puts $item(title)
-	    puts $item(urlsha1)
-	    puts $item(link)
-
+	    print_log_entry item
 	    unset item
 	}
     }
@@ -566,6 +562,7 @@ proc ::feed_reader::log {{limit "10"} {offset "0"}} {
 
         array set item [::util::readfile ${logfilename}]
 	print_log_entry item
+	unset item
 
     }
 
@@ -631,7 +628,7 @@ proc ::feed_reader::print_item {itemVar} {
 
 proc ::feed_reader::print_log_header {} {
 
-    puts [format "%13s %40s %40s %24s %s" timestamp urlsha1 contentsha1 domain title]
+    puts [format "%13s %40s %40s %24s %3s %s" timestamp urlsha1 contentsha1 domain "" title]
 
 }
 
@@ -640,7 +637,12 @@ proc ::feed_reader::print_log_entry {itemVar} {
 
     set domain [::util::domain_from_url $item(link)]
 
-    puts [format "%13s %40s %40s %24s %s" $item(date) $item(urlsha1) $item(contentsha1) ${domain} $item(title)]
+    set is_copy_string ""
+    if { [get_value_if item(is_copy_p) 0] } {
+	set is_copy_string "(*)"
+    }
+
+    puts [format "%13s %40s %40s %24s %3s %s" $item(date) $item(urlsha1) $item(contentsha1) ${domain} ${is_copy_string} $item(title)]
     #puts [list $item(link)]
 }
 
@@ -807,6 +809,7 @@ proc ::feed_reader::sync_feeds {feedsVar} {
 	    if { ![exists_item ${link}] } {
 		fetch_item ${link} ${title_in_feed} feed item
 		write_item ${link} feed item
+		unset item
 	    }
 
 	}
