@@ -168,6 +168,8 @@ proc ::feed_reader::fetch_feed {resultVar feedVar {stoptitlesVar ""}} {
     foreach node $nodes {
 
 	# turn relative urls into absolute urls and canonicalize	
+	# TODO: consider using urldecode, problem is decoded string might need to be
+	# converted from another encoding, i.e. encoding convertfrom url_decoded_string
 	set href [::uri::canonicalize [::uri::resolve ${url} [${node} @href ""]]]
 
 	# drop urls from other domains
@@ -426,7 +428,7 @@ proc ::feed_reader::fetch_item {link title_in_feed feedVar itemVar} {
     upvar $itemVar item
 
     if { [catch {set errorcode [fetch_item_helper ${link} ${title_in_feed} feed item]} errmsg] } {
-	puts errmsg=$errmsg
+
 	array set item [list \
 			    link $link \
 			    title $title_in_feed \
@@ -729,7 +731,7 @@ proc ::feed_reader::write_item {link feedVar itemVar} {
 
 
 #TODO: we need a way to test feed (before starting to store it)
-proc ::feed_reader::test_feed {feedVar} {
+proc ::feed_reader::test_feed {feedVar {limit "3"} {fetch_item_p "1"}} {
     upvar $feedVar feed
 
     variable meta
@@ -747,14 +749,16 @@ proc ::feed_reader::test_feed {feedVar} {
 	puts ${link}
 	puts "---"
 
-	set errorcode [fetch_item ${link} ${title_in_feed} feed item]
-	if { ${errorcode} } {
-	    puts "fetch_item failed errorcode=$errorcode link=$link"
-	    continue
+	if { ${fetch_item_p} } {
+	    set errorcode [fetch_item ${link} ${title_in_feed} feed item]
+	    if { ${errorcode} } {
+		puts "fetch_item failed errorcode=$errorcode link=$link"
+		continue
+	    }
+	    puts "Content:\n$item(body)"
 	}
-	puts "Content:\n$item(body)"
 
-	if { [incr count] == 7 } {
+	if { [incr count] == ${limit} } {
 	    break
 	}
 
@@ -807,12 +811,19 @@ proc ::feed_reader::sync_feeds {feedsVar} {
 	    # fetch it and compare it to stored item to ensure sanity
 	    # of feed/article/page
 	    if { ![exists_item ${link}] } {
-		fetch_item ${link} ${title_in_feed} feed item
+		set errorcode [fetch_item ${link} ${title_in_feed} feed item]
+		if { ${errorcode} } {
+		    puts "--->>> error ${link}"
+		    # incr errorCount
+		    continue
+		}
 		write_item ${link} feed item
 		unset item
 	    }
 
 	}
+
+	unset feed
 
     }
 }

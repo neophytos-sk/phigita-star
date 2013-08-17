@@ -49,6 +49,10 @@ set feeds [dict create \
 		   xpath_article_cleanup {
 		       {//div[@id="articleContainer"]/h4}
 		   }
+		   comment {
+		       issue with date, might be due to the fact it uses the word "maios" instead of "maiou"
+		       http://www.sigmalive.com/inbusiness/news/rankings/44887
+		   }
 	       } \
 	       paideia-news {
 		   url http://www.paideia-news.com/
@@ -213,13 +217,13 @@ proc print_usage_info {} {
 
     array set cmdinfo [list \
 			   "sync" "" \
-			   "test" "feed_name" \
+			   "test" "feed_name ?limit? ?fetch_item_p?" \
 			   "show" "urlsha1" \
 			   "show-url" "article_url" \
 			   "show-content" "contentsha1" \
 			   "uses-content" "contentsha1" \
-			   "log" "limit offset" \
-			   "list" "feed_name limit offset" \
+			   "log" "limit ?offset?" \
+			   "list" "feed_name ?limit? ?offset?" \
 			   "TODO:test-article" "article_url" \
 			   "TODO:add" "feed_url"]
 
@@ -243,11 +247,11 @@ if { ${argc} < 1 } {
 
 	::feed_reader::sync_feeds feeds
 
-    } elseif { ${cmd} eq {test} && ${argc} == 2} {
+    } elseif { ${cmd} eq {test} && ${argc} >= 2} {
 
 	set feed_name [lindex ${argv} 1]
 	array set feed [dict get $feeds $feed_name]
-	::feed_reader::test_feed feed
+	::feed_reader::test_feed feed {*}[lrange ${argv} 2 end]
 
     } elseif { ${cmd} eq {show} && ${argc} == 2 } {
 
