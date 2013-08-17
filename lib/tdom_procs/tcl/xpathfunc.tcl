@@ -260,7 +260,11 @@ proc ::dom::xpathFunc::returndate {ctxNode pos nodeListNode nodeList args} {
     set ts [string trim ${ts_string}]
     set result ""
     if { ${ts} ne {} } {
-	set timeval [clock scan ${ts} -format ${input_format} -locale ${locale}]
+	if { [catch {set timeval [clock scan ${ts} -format ${input_format} -locale ${locale}]} errmsg] } {
+	    puts errmsg=${errmsg}
+	    return [list string ""]
+	}
+
 	set result [clock format ${timeval} -format ${output_format}]
     }
     return [list string ${result}]

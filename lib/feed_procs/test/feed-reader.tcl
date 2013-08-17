@@ -33,7 +33,7 @@ set feeds [dict create \
 		       {values(//div[@id="article_content"]//img[@class="pyro-image"]/@src)}
 		   }
 		   xpath_article_author {returnstring(//div[@class="article_meta"]/span[@class="meta_author"]/a/text())}
-		   xpath_article_date {returndate(//div[@class="article_meta"]/span[@class="meta_date"]/strong,"%B %d, %Y %H:%M","el_GR")}
+		   xpath_article_date {returndate(normalizedate(//div[@class="article_meta"]/span[@class="meta_date"]/strong),"%B %d, %Y %H:%M","el_GR")}
 		   xpath_article_cleanup {
 		       {//div[@class="soSialIcons"]}
 		       {//div[@class="article_meta"]}
@@ -209,8 +209,15 @@ set feeds [dict create \
 	       } \
 	       pafosnet {
 		   url http://pafosnet.com/
-		   include_re {[[:alnum:]\-]+}
-		   exclude_re {/category/}
+		   include_re {[[:alnum:]\-]{10,}}
+		   exclude_re {/category/|/#}
+		   xpath_article_title {returnstring(//head/title)}
+		   xpath_article_image {values(//div[@id="the_image"]/img/@src)}
+		   xpath_article_date {returndate(normalizedate(//div[@id="the_category"]/span[@class="post_date"]),"%d %B %Y","el_GR")}
+		   comment {
+		       og:description
+		       keywords
+		   }
 	       }]
 
 

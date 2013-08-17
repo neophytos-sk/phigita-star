@@ -10,6 +10,45 @@ source ../../naviserver_compat/tcl/module-naviserver_compat.tcl
 package require uri
 package require sha1
 
+::xo::lib::require ttext
+::xo::lib::require util_procs
+
+namespace eval ::dom::xpathFunc {
+
+    array set mapping [list]
+
+    set dir [file dirname [info script]]
+    set mapping_dir [file normalize [file join ${dir} .. data]]
+
+    set filelist [glob -nocomplain -directory ${mapping_dir} *]
+
+    foreach filename ${filelist} {
+	set locale [file extension ${filename}]
+	set mapping(${locale}) [::util::readfile ${filename}]
+    }
+
+}
+
+
+proc ::dom::xpathFunc::normalizedate {ctxNode pos nodeListNode nodeList args} {
+
+    upvar $ts_stringVar ts_string
+
+    variable mapping
+
+    if { ![info exists mapping(${locale})] } {
+	
+	set ts_string [string totitle [string map $mapping(${locale}) [string tolower [::text::unaccent ${ts_string}]]]]
+
+    }
+
+    if { [lindex ${ts_string} end] eq {ago} } {
+	# TODO: convert pretty age to a timestamp
+    }
+
+}
+
+
 namespace eval ::feed_reader {
 
     array set meta [list]
@@ -291,7 +330,7 @@ proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar} {
 
     set xpath_article_tags [get_value_if \
 				feed(xpath_article_tags) \
-				{}]
+				{string(//meta[@property="og:keywords"]/@content)}]
 
 
     set html ""
@@ -430,6 +469,8 @@ proc ::feed_reader::fetch_item {link title_in_feed feedVar itemVar} {
     upvar $itemVar item
 
     if { [catch {set errorcode [fetch_item_helper ${link} ${title_in_feed} feed item]} errmsg] } {
+
+	puts errmsg=$errmsg
 
 	array set item [list \
 			    link $link \
