@@ -519,7 +519,7 @@ proc ::feed_reader::load_item_from_dir {itemVar item_dir} {
     array set item [::util::readfile ${filename}]
 }
 
-proc ::feed_reader::list_feed {feedVar {offset "0"} {limit "10"}} {
+proc ::feed_reader::list_feed {feedVar {limit "10"} {offset "0"}} {
     upvar $feedVar feed
 
     if { [exists_domain $feed(url)] } {
@@ -546,9 +546,7 @@ proc ::feed_reader::list_feed {feedVar {offset "0"} {limit "10"}} {
     }
 }
 
-proc ::feed_reader::log {{offset "0"} {limit "10"}} {
-
-    puts "offset=$offset limit=$limit"
+proc ::feed_reader::log {{limit "10"} {offset "0"}} {
 
     set log_dir [get_log_dir]
 
