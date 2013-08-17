@@ -184,6 +184,7 @@ set feeds [dict create \
 		       {//td[@width="524"]/descendant::hr[1]/preceding-sibling::*}
 		       {//td[@width="524"]/descendant::hr[1]/following-sibling::table}
 		       {//td[@width="524"]/descendant::p/i[contains(text(),' - ')]}
+		       {//td[@width="524"]/descendant::p[@class="viewonpdf"]}
 		   }
 		   xpath_article_date {returndate(//td[@width="524"]/descendant::p/i[contains(text(),' - ')],"%d/%m/%Y - %H:%M")}
 		   comment {

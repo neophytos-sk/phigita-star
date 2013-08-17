@@ -659,7 +659,7 @@ proc ::feed_reader::print_item {itemVar} {
 
 proc ::feed_reader::print_log_header {} {
 
-    puts [format "%13s %40s %40s %24s %s" timestamp contentsha1 urlsha1 domain title]
+    puts [format "%13s %40s %40s %24s %s" timestamp urlsha1 contentsha1 domain title]
 
 }
 
@@ -668,7 +668,7 @@ proc ::feed_reader::print_log_entry {itemVar} {
 
     set domain [::util::domain_from_url $item(link)]
 
-    puts [format "%13s %40s %40s %24s %s" $item(date) $item(contentsha1) $item(urlsha1) ${domain} $item(title)]
+    puts [format "%13s %40s %40s %24s %s" $item(date) $item(urlsha1) $item(contentsha1) ${domain} $item(title)]
     #puts [list $item(link)]
 }
 
