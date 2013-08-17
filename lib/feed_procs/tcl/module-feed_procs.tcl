@@ -24,7 +24,7 @@ namespace eval ::dom::xpathFunc {
 
     foreach filename ${filelist} {
 	set locale [string trimleft [file extension ${filename}] {.}]
-	set mapping(${locale}) [::util::readfile ${filename}]
+	array set mapping_${locale} [::util::readfile ${filename}]
     }
 
 }
@@ -51,7 +51,7 @@ proc ::dom::xpathFunc::normalizedate {ctxNode pos nodeListNode nodeList args} {
     if { [info exists mapping_${locale}] } {
 	
 	set ts_string_list [list]
-	foreach word [split ${ts_string} { ,-/.}] {
+	foreach word ${ts_string} {
 	    set unac_word [::ttext::unaccent utf-8 ${word}]
 	    if { [info exists mapping_${locale}(${unac_word})] } {
 		lappend ts_string_list $mapping_${locale}(${unac_word})
@@ -59,7 +59,7 @@ proc ::dom::xpathFunc::normalizedate {ctxNode pos nodeListNode nodeList args} {
 		lappend ts_string_list ${word}
 	    }
 	}
-	set ts_string [join ${ts_string_list} ""]
+	set ts_string [join ${ts_string_list}]
 
     }
 
@@ -68,7 +68,7 @@ proc ::dom::xpathFunc::normalizedate {ctxNode pos nodeListNode nodeList args} {
 	set ts_string [::util::dt::age_to_timestamp ${ts_string} [clock seconds]]
     }
 
-    puts ts_string=$ts_string
+    #puts ts_string=$ts_string
 
     return [list string ${ts_string}]
 
