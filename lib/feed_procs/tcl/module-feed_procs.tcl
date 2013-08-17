@@ -45,6 +45,7 @@ proc ::dom::xpathFunc::normalizedate {ctxNode pos nodeListNode nodeList args} {
 
     variable mapping_${locale}
 
+    #puts ts_string=$ts_string
 
     if { [info exists mapping_${locale}] } {
 
@@ -57,11 +58,13 @@ proc ::dom::xpathFunc::normalizedate {ctxNode pos nodeListNode nodeList args} {
 		lappend ts_string_list ${word}
 	    }
 	}
-	set ts_string [join ${ts_string_list}]
+	set ts_string [string trim [join ${ts_string_list}]]
 
     }
 
-    if { [lindex ${ts_string} end] eq {ago} } {
+    if { ${ts_string} eq {now} } {
+	set ts_string [clock format [clock seconds] -format "%Y%m%dT%H%M"]
+    } elseif { [lindex ${ts_string} end] eq {ago} } {
 	# TODO: convert pretty age to a timestamp
 	set ts_string [::util::dt::age_to_timestamp ${ts_string} [clock seconds]]
     }

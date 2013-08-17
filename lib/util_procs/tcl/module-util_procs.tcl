@@ -86,8 +86,10 @@ namespace eval ::util::dt {;}
 
 proc ::util::dt::age_to_timestamp {age timeval} {
 
+    set sign "-"
     if { [lindex ${timeval} end] eq {ago} } {
 	set age  [lrange ${age} 0 end-1]
+	set sign "-"
     }
 
     set secs 0
@@ -114,7 +116,7 @@ proc ::util::dt::age_to_timestamp {age timeval} {
 	}
     }
 
-    incr timeval ${secs}
+    incr timeval "${sign}${secs}"
     set timestamp [clock format ${timeval} -format "%Y%m%dT%H%M"]
 
     return ${timestamp}
