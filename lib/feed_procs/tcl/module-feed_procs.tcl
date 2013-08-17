@@ -15,8 +15,6 @@ package require sha1
 
 namespace eval ::dom::xpathFunc {
 
-    array set mapping [list]
-
     set dir [file dirname [info script]]
     set mapping_dir [file normalize [file join ${dir} .. data]]
 
@@ -49,12 +47,12 @@ proc ::dom::xpathFunc::normalizedate {ctxNode pos nodeListNode nodeList args} {
 
 
     if { [info exists mapping_${locale}] } {
-	
+
 	set ts_string_list [list]
 	foreach word ${ts_string} {
 	    set unac_word [::ttext::unaccent utf-8 ${word}]
 	    if { [info exists mapping_${locale}(${unac_word})] } {
-		lappend ts_string_list $mapping_${locale}(${unac_word})
+		lappend ts_string_list [set mapping_${locale}(${unac_word})]
 	    } else {
 		lappend ts_string_list ${word}
 	    }
