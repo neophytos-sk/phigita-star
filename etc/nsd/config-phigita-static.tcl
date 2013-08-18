@@ -76,7 +76,6 @@ ns_param   x-add-header [list [list Cache-Control "public"]]
 ns_param   x-expires    "max"
 
 
-
 # 
 # Tcl Configuration 
 # 
