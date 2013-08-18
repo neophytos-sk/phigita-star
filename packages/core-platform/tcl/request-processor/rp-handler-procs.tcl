@@ -101,10 +101,6 @@ Class ::xo::RequestHandler
 	}
     }
 
-    ns_log notice "peeraddr=[ad_conn peeraddr] user_id=[ad_conn user_id] url=[ns_conn url] session_id=[ad_conn session_id] host=[ad_conn host]"
-
-
-
 
     set root [acs_root_dir]
     set package_key [ad_conn package_key]
@@ -147,6 +143,11 @@ Class ::xo::RequestHandler
 	set status ""
 	set trymsg ""
 	lassign [rp_serve_abstract_file $root $path] status trymsg
+
+    ns_log notice "peeraddr=[ad_conn peeraddr] user_id=[ad_conn user_id] url=[ns_conn url] session_id=[ad_conn session_id] host=[ad_conn host] path=$path"
+
+
+
 
 	if { ${status} eq {SUCCESS} } {
 	    #set tcl_url2file([ad_conn url]) [ad_conn file]
