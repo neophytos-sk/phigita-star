@@ -150,7 +150,8 @@ void datamap::kmeans(const vector<datapoint>& dps, int k) {
   }
 
   bool some_point_is_moving = true;
-  while(some_point_is_moving) {
+  int round = 0;  // up to 10 rounds to stabilize
+  while(some_point_is_moving && round++ < 10) {
 
     eval_.reset();
 

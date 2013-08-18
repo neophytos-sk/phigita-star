@@ -48,7 +48,7 @@ proc ::dom::xpathFunc::normalizedate {ctxNode pos nodeListNode nodeList args} {
 
     if { [info exists mapping(${locale})] } {
 
-	set ts_string [string map $mapping(${locale}) ${ts_string}]
+	set ts_string [string trim [string map $mapping(${locale}) ${ts_string}]]
 
     }
 

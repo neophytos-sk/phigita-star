@@ -245,6 +245,9 @@ proc print_usage_info {} {
 			   "log" "?limit? ?offset?" \
 			   "list" "feed_name ?limit? ?offset?" \
 			   "cluster" "?limit? ?offset?" \
+			   "label" "axis class contentsha1 ?...?" \
+			   "unlabel" "axis class contentsha1 ?...?" \
+			   "fex" "?limit? ?offset?" \
 			   "TODO:test-article" "article_url" \
 			   "TODO:add" "feed_url"]
 
@@ -303,15 +306,44 @@ if { ${argc} < 1 } {
 
 	::feed_reader::log {*}[lrange ${argv} 1 end]
 
-    } elseif { ${cmd} eq {cluster} && ${argc} >= 1 } {
-
-	::feed_reader::cluster {*}[lrange ${argv} 1 end]
-
     } elseif { ${cmd} eq {list} && ${argc} >= 2 } {
 
 	set feed_name [lindex ${argv} 1]
 	array set feed [dict get $feeds $feed_name]
 	::feed_reader::list_feed feed {*}[lrange ${argv} 2 end]
+
+    } elseif { ${cmd} eq {cluster} && ${argc} >= 1 } {
+
+	::feed_reader::cluster {*}[lrange ${argv} 1 end]
+
+    } elseif { ${cmd} eq {label} && ${argc} >= 1 } {
+
+	# label axis class contentsha1 ...
+	#
+	# e.g. label spam true ae23ff acb673
+	# e.g. label important false example123 example456
+	# e.g. label topic politics  example742 example888 example923 example443
+	# e.g. label edition cyprus  example742 example888 example923 example443
+
+	::feed_reader::label {*}[lrange ${argv} 1 end]
+
+    } elseif { ${cmd} eq {unlabel} && ${argc} >= 1 } {
+
+	# unlabel axis class contentsha1 ...
+
+	::feed_reader::label {*}[lrange ${argv} 1 end]
+
+    } elseif { ${cmd} eq {fex} && ${argc} >= 1 } {
+
+	# TODO: word substrings, isFirstCapital, isLastPunct, isLastColon
+	# TODO: word shapes:
+	#    Varixella-zoster  Xx-xxx
+	#    mRNA              xXXX
+	#    CPA1              XXXd
+	# hasDigit
+	
+
+	::feed_reader::feature_extraction {*}[lrange ${argv} 1 end]
 
     } else {
 
