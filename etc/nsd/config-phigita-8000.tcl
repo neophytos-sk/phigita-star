@@ -63,15 +63,18 @@ set modules {}
 set server_web "phigita-web"
 set server_mail "phigita-mail"
 set server_static "phigita-static"
+set server_secure_static "phigita-secure-static"
 
 set servername_web    "phigita web server"
 set servername_mail   "phigita mail server"
 set servername_static "phigita static server"
+set servername_secure_static "phigita secure static server"
 
 
 
 #set server_static_host_and_port "i.phigita.com:8001"
 set server_static_host_and_port "i.phigita.net"
+set server_secure_static_host_and_port "i.phigita.net:443"
 
 set servername $servername_web
 

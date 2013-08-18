@@ -155,30 +155,7 @@ ns_param rollhour           0
 
 
 
-#
-# SSL
-#
-
-ns_section    "ns/server/${server_static}/module/nsssl"
-       # cat host.cert host.key > server.pem
-       ns_param      certificate	/web/data/ssl/phigita.net.pem ;# $serverroot/etc/next-scripting.org.pem
-       #ns_param      address    	$address
-       ns_param      address    	i.phigita.net
-       ns_param      port       	$httpsport
-       #ns_param      ciphers    	"ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP"
-       #ns_param      ciphers    	"ECDHE-RSA-RC4-SHA:RC4+SHA1+RSA"
-       ns_param      ciphers            "RC4:HIGH:!aNULL:!MD5;"
-       ns_param      protocols          "!SSLv2"
-       ns_param      verify     	0
-       ns_param      writerthreads      5 
-       ns_param      writersize         10
-       ns_param	     writerbufsize	16384	;# 8192, buffer size for writer threads
-       ns_param	     writerstreaming	false	;# false
-       ns_param      deferaccept	true    ;# false, Performance optimization,
-
-
 ns_section ns/server/${server_static}/modules 
 ns_param nslog          ${bindir}/nslog.so 
-ns_param nsssl          ${bindir}/nsssl.so 
 
 

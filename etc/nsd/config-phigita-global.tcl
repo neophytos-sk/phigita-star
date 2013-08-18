@@ -1,6 +1,7 @@
 ns_section ns/servers 
 ns_param $server        $servername_web
 ns_param $server_static $servername_static
+#ns_param $server_secure_static $servername_secure_static
 if { {nssmtpd} in ${modules} } {
     ns_param $server_mail   $servername_mail
 }
@@ -67,9 +68,40 @@ ns_section ns/module/nssock/servers
 ns_param $server          ${hostname}:$httpport
 #ns_param $server_static   i.uap.net:$httpport
 ns_param $server_static   ${server_static_host_and_port}
+#ns_param $server_secure_static   ${server_secure_static_host_and_port}
+
+#
+# SSL
+#
+
+ns_section    "ns/module/nsssl"
+       # cat host.cert host.key > server.pem
+       ns_param      certificate	/web/data/ssl/phigita.net.pem ;# $serverroot/etc/next-scripting.org.pem
+ns_param      defaultserver     $server ;# server_web
+       ns_param      address    	$address
+       ns_param      port       	$httpsport
+       #ns_param      ciphers    	"ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP"
+       #ns_param      ciphers    	"ECDHE-RSA-RC4-SHA:RC4+SHA1+RSA"
+       ns_param      ciphers            "RC4:HIGH:!aNULL:!MD5;"
+       ns_param      protocols          "!SSLv2"
+       ns_param      verify     	0
+       ns_param      writerthreads      5 
+       ns_param      writersize         10
+       ns_param	     writerbufsize	16384	;# 8192, buffer size for writer threads
+       ns_param	     writerstreaming	false	;# false
+       ns_param      deferaccept	true    ;# false, Performance optimization,
+
+
+ns_section ns/module/nsssl/servers
+ns_param $server          ${hostname}:$httpsport
+#ns_param $server_static   i.uap.net:$httpport
+#ns_param $server_secure_static   ${server_secure_static_host_and_port}
+ns_param $server_static ${server_secure_static_host_and_port}
+
 
 ns_section ns/modules 
 ns_param nssock          ${bindir}/nssock.so 
+ns_param nsssl          ${bindir}/nsssl.so 
 
 
 
