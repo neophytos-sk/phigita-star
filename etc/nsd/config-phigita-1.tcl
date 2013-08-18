@@ -67,7 +67,7 @@ if {1} {
 #---------------------------------------------------------------------
 # if debug is false, all debugging will be turned off
 
-set max_file_upload_mb        20
+set max_file_upload_mb        30
 set max_file_upload_min        5
 
 ns_log notice "done reading configuration settings"
