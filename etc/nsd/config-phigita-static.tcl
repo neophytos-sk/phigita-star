@@ -46,6 +46,7 @@ proc config_phigita_static {configVar} {
     ns_param   map "GET /js"
     ns_param   map "POST /js"
     ns_param   map "HEAD /js"
+    ns_param   x-add-header [list [list Cache-Control "public"]]
     ns_param   x-expires    "90d"
 
     ns_section "ns/server/${server}/pool/css"
@@ -54,8 +55,8 @@ proc config_phigita_static {configVar} {
     ns_param   map "GET /css"
     ns_param   map "POST /css"
     ns_param   map "HEAD /css"
-    #ns_param add_header test-img-header
-    #ns_param expires 30d
+    ns_param   x-add-header [list [list Cache-Control "public"]]
+    ns_param   x-expires 30d
 
     ns_section "ns/server/${server}/pool/img"
     ns_param   minthreads 3
