@@ -115,7 +115,12 @@ proc preferences::handler {} {
 	    set hex_location_id [::util::dec_to_hex [::util::coalesce $location_id "0"]]
 	    set cc_and_loc ${country_code}${hex_location_id}
 
-	    set hex_session_id [::util::dec_to_hex [ad_conn session_id]]
+	    if { [catch {
+		set hex_session_id [::util::dec_to_hex [ad_conn session_id]]
+	    } errmsg] } {
+		ns_log notice "preferences-procs.tcl: peeraddr=[ad_conn peeraddr] issecure=[ad_conn issecure] url=[ad_conn url] host=[ad_conn host]"
+		error $errmsg
+	    }
 
 
 	    # Version 1: set ul_cookie_value "${lo}_${hi}_${country_code}${hex_location_id}_${latitude}_${longitude}_${seconds}_${region_code}"
