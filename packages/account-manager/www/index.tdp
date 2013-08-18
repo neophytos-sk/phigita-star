@@ -1,6 +1,6 @@
 #Prompt the user for email and password.
 
-contract {
+contract -require_secure_conn "1" {
     param -id "email" -optional 1 -default ""
     param -id "return_url" -optional 1 -default "[ad_pvt_home]"
 }
