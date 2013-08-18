@@ -362,7 +362,7 @@ a -href {javascript:top.location.href='http://buzz.phigita.net/?host='+top.locat
 
 						ul {
 						    set storydate_i 0
-						    set imageDir "/var/lib/naviserver/service-phgt-0/data/news/images"
+						    set imageDir "/var/lib/naviserver/service-phigita/data/news/images"
 						    foreach story [${storydata} set result] {
 							
 							array set uri [uri::split [${story} set url]]

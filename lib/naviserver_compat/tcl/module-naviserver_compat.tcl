@@ -1,6 +1,6 @@
 namespace eval ::xo::lib {;}
 proc ::xo::lib::require {module_name} {
-    source /web/servers/service-phgt-0/lib/${module_name}/pkgIndex.tcl
+    source /web/servers/service-phigita/lib/${module_name}/pkgIndex.tcl
     package require $module_name
 }
 
@@ -15,7 +15,7 @@ proc ::xo::kit::debug_mode_p {} {
 
 
 proc acs_root_dir {} {
-    return /web/servers/service-phgt-0/
+    return /web/servers/service-phigita/
 }
 
 proc ns_log {level args} {

@@ -11,7 +11,7 @@ dbt_t* pglist = NULL;
 int tspam_init() {
   dbfmt_t     dbfmt = db_text;
   //char*       dbname = NULL;
-  char       dbname[] = "/web/servers/service-phgt-0/lib/tspam/dict";
+  char       dbname[] = "/web/servers/service-phigita/lib/tspam/dict";
   bool_t      rdonly;
 
   dbh_t*      pdb;

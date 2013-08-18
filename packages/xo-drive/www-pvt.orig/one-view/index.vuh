@@ -3,7 +3,7 @@
 #source [acs_root_dir]/packages/kernel/tcl/20-templating/29-hypertext-procs.tcl
 #source [acs_root_dir]/packages/kernel/tcl/20-templating/37-flv-procs.tcl
 #source [acs_root_dir]/packages/kernel/tcl/20-templating/40-panel-procs.tcl
-#source /web/service-phgt-0/packages/kernel/tcl/20-templating/YY-module-procs.tcl
+#source /web/service-phigita/packages/kernel/tcl/20-templating/YY-module-procs.tcl
 
 #####ad_conn_set user_id 814
 

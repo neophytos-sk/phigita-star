@@ -1,4 +1,4 @@
-source /var/lib/naviserver/service-phgt-0/packages/persistence/pdl/45-classification.tcl
+source /var/lib/naviserver/service-phigita/packages/persistence/pdl/45-classification.tcl
 
 tmpl::master -title "Create Class" -context_bar [ad_context_bar [list .. "Administration"] [list . "Classification"] "Create Class"] {
 

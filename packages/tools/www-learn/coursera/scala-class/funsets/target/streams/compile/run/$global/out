@@ -2,7 +2,7 @@
 [0m[[0mdebug[0m] [0mStarting sandboxed run...[0m
 [0m[[0mdebug[0m] [0mWaiting for threads to exit or System.exit to be called.[0m
 [0m[[0mdebug[0m] [0m  Classpath:[0m
-[0m[[0mdebug[0m] [0m	/web/servers/service-phgt-0/packages/tools/www-learn/coursera/scala-class/funsets/target/scala-2.9.2/classes[0m
+[0m[[0mdebug[0m] [0m	/web/servers/service-phigita/packages/tools/www-learn/coursera/scala-class/funsets/target/scala-2.9.2/classes[0m
 [0m[[0mdebug[0m] [0m	/home/nkd/.sbt/boot/scala-2.9.2/lib/scala-library.jar[0m
 [0m[[0mdebug[0m] [0mWaiting for thread run-main to exit[0m
 [0m[[0mdebug[0m] [0m	Thread run-main exited.[0m

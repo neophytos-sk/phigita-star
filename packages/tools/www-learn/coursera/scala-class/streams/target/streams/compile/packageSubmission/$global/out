@@ -1,15 +1,15 @@
-[0m[[0minfo[0m] [0mPackaging /web/servers/service-phgt-0/packages/tools/www-learn/coursera/scala-class/streams/target/scala-2.9.2/progfun-streams_2.9.2-1.0.0.jar ...[0m
+[0m[[0minfo[0m] [0mPackaging /web/servers/service-phigita/packages/tools/www-learn/coursera/scala-class/streams/target/scala-2.9.2/progfun-streams_2.9.2-1.0.0.jar ...[0m
 [0m[[0mdebug[0m] [0mInput file mappings:[0m
 [0m[[0mdebug[0m] [0m	streams/Solver.scala[0m
-[0m[[0mdebug[0m] [0m	  /web/servers/service-phgt-0/packages/tools/www-learn/coursera/scala-class/streams/src/main/scala/streams/Solver.scala[0m
+[0m[[0mdebug[0m] [0m	  /web/servers/service-phigita/packages/tools/www-learn/coursera/scala-class/streams/src/main/scala/streams/Solver.scala[0m
 [0m[[0mdebug[0m] [0m	streams/GameDef.scala[0m
-[0m[[0mdebug[0m] [0m	  /web/servers/service-phgt-0/packages/tools/www-learn/coursera/scala-class/streams/src/main/scala/streams/GameDef.scala[0m
+[0m[[0mdebug[0m] [0m	  /web/servers/service-phigita/packages/tools/www-learn/coursera/scala-class/streams/src/main/scala/streams/GameDef.scala[0m
 [0m[[0mdebug[0m] [0m	streams/StringParserTerrain.scala[0m
-[0m[[0mdebug[0m] [0m	  /web/servers/service-phgt-0/packages/tools/www-learn/coursera/scala-class/streams/src/main/scala/streams/StringParserTerrain.scala[0m
+[0m[[0mdebug[0m] [0m	  /web/servers/service-phigita/packages/tools/www-learn/coursera/scala-class/streams/src/main/scala/streams/StringParserTerrain.scala[0m
 [0m[[0mdebug[0m] [0m	streams/Bloxorz.scala[0m
-[0m[[0mdebug[0m] [0m	  /web/servers/service-phgt-0/packages/tools/www-learn/coursera/scala-class/streams/src/main/scala/streams/Bloxorz.scala[0m
+[0m[[0mdebug[0m] [0m	  /web/servers/service-phigita/packages/tools/www-learn/coursera/scala-class/streams/src/main/scala/streams/Bloxorz.scala[0m
 [0m[[0mdebug[0m] [0m	common/package.scala[0m
-[0m[[0mdebug[0m] [0m	  /web/servers/service-phgt-0/packages/tools/www-learn/coursera/scala-class/streams/src/main/scala/common/package.scala[0m
+[0m[[0mdebug[0m] [0m	  /web/servers/service-phigita/packages/tools/www-learn/coursera/scala-class/streams/src/main/scala/common/package.scala[0m
 [0m[[0mdebug[0m] [0m	streams/InfiniteTerrain.scala[0m
-[0m[[0mdebug[0m] [0m	  /web/servers/service-phgt-0/packages/tools/www-learn/coursera/scala-class/streams/src/main/scala/streams/InfiniteTerrain.scala[0m
+[0m[[0mdebug[0m] [0m	  /web/servers/service-phigita/packages/tools/www-learn/coursera/scala-class/streams/src/main/scala/streams/InfiniteTerrain.scala[0m
 [0m[[0minfo[0m] [0mDone packaging.[0m

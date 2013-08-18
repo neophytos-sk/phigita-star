@@ -1,4 +1,4 @@
-source /var/lib/naviserver/service-phgt-0/packages/persistence/pdl/45-classification.tcl
+source /var/lib/naviserver/service-phigita/packages/persistence/pdl/45-classification.tcl
 
 set classList [db::Set new -pool newsdb -type ::classification::Class -order tree_sk]
 $classList load

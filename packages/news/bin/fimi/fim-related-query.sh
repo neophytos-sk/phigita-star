@@ -1,7 +1,7 @@
 #!/bin/sh
 
 
-export ACS_ROOT_DIR=/var/lib/naviserver/service-phgt-0
+export ACS_ROOT_DIR=/var/lib/naviserver/service-phigita
 export FIMI_DIR=${ACS_ROOT_DIR}/packages/news/bin/fimi/
 
 cd $FIMI_DIR

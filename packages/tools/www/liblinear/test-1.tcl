@@ -52,7 +52,7 @@ append result "\n ll_model::get = [::ll_model::get new_model]"
 
 append result "\n ll_predict = [::ll_predict new_model {{1 0.2} {2 0.3}}]"
 
-ll_model::save new_model "/web/service-phgt-0/lib/liblinear/example.m"
+ll_model::save new_model "/web/service-phigita/lib/liblinear/example.m"
 append result "\n------------------------------"
 
 

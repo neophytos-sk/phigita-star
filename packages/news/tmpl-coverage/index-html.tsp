@@ -23,7 +23,7 @@ if { ${user_id} == 0 } {
 
 set base .
 set limit 10
-set imageDir "/var/lib/naviserver/service-phgt-0/data/news/images"
+set imageDir "/var/lib/naviserver/service-phigita/data/news/images"
 
 
 

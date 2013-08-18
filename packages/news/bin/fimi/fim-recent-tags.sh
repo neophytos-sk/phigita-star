@@ -1,7 +1,7 @@
 #!/bin/sh
 
 
-export ACS_ROOT_DIR=/web/service-phgt-0
+export ACS_ROOT_DIR=/web/service-phigita
 export FIMI_DIR=${ACS_ROOT_DIR}/packages/news/bin/fimi/
 export FIMI_WORKDIR=/web/data/news/fimi
 

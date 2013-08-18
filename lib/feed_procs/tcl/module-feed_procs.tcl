@@ -694,7 +694,7 @@ proc ::feed_reader::cluster {{limit "10"} {offset "0"} {k ""} {num_iter "3"}} {
 
     }
 
-    set cmd "/web/repos/phigita/service-phgt-0/lib/document_clustering/cc/test_main"
+    set cmd "/web/repos/phigita/service-phigita/lib/document_clustering/cc/test_main"
     if { ${k} eq {} } {
 	set k [expr { int(log(${limit}) * sqrt(${limit})) }]
     }

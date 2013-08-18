@@ -1,6 +1,6 @@
 load /opt/naviserver/lib/libnsd.so
 package require tdom
-source /web/service-phgt-0/packages/kernel/tcl/20-xo/structured_text-procs.tcl
+source /web/service-phigita/packages/kernel/tcl/20-xo/structured_text-procs.tcl
 package require critcl
 
 set fp [open sample.html]

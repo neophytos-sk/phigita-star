@@ -1,4 +1,4 @@
-source /var/lib/naviserver/service-phgt-0/packages/persistence/pdl/ZZ-aggregators.tcl
+source /var/lib/naviserver/service-phigita/packages/persistence/pdl/ZZ-aggregators.tcl
 ad_page_contract {
     @author Neophytos Demetriou
 } {

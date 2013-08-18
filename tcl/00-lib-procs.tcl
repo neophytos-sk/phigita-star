@@ -1,5 +1,5 @@
 proc acs_root_dir {} {
-    return "/web/servers/service-phgt-0/"
+    return "/web/servers/service-phigita/"
 }
 
 namespace eval ::xo::kit {;}

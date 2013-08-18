@@ -3,7 +3,7 @@
 package require Pgtcl
 encoding system utf-8
 
-set connlist [dict create host aias port 5432 dbname buzzdb user service-phgt-0]
+set connlist [dict create host aias port 5432 dbname buzzdb user service-phigita]
 set conn [pg::connect -connlist $connlist]
 
 proc default_text_search_config {} { return xo.xo__ts_cfg_greek }

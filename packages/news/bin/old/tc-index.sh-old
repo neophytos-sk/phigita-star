@@ -2,20 +2,20 @@
 
 fuser -s -k -n tcp 1821 1822
 
-rm -rf /var/lib/naviserver/service-phgt-0/data/news/model-rainbow/*
-rm -rf /var/lib/naviserver/service-phgt-0/data/news/model-crossbow/*
+rm -rf /var/lib/naviserver/service-phigita/data/news/model-rainbow/*
+rm -rf /var/lib/naviserver/service-phigita/data/news/model-crossbow/*
 
 #Topic Classification
-/var/lib/naviserver/service-phgt-0/packages/news/bin/bow/rainbow --verbosity=0 -d /var/lib/naviserver/service-phgt-0/data/news/model-rainbow/topic --lex-white --no-stemming --no-stoplist --index /var/lib/naviserver/service-phgt-0/data/news/tc/topic/*
+/var/lib/naviserver/service-phigita/packages/news/bin/bow/rainbow --verbosity=0 -d /var/lib/naviserver/service-phigita/data/news/model-rainbow/topic --lex-white --no-stemming --no-stoplist --index /var/lib/naviserver/service-phigita/data/news/tc/topic/*
 
 #Edition Classification
-/var/lib/naviserver/service-phgt-0/packages/news/bin/bow/rainbow --verbosity=0 -d /var/lib/naviserver/service-phgt-0/data/news/model-rainbow/edition --lex-white --no-stemming --no-stoplist --index /var/lib/naviserver/service-phgt-0/data/news/tc/edition/*
+/var/lib/naviserver/service-phigita/packages/news/bin/bow/rainbow --verbosity=0 -d /var/lib/naviserver/service-phigita/data/news/model-rainbow/edition --lex-white --no-stemming --no-stoplist --index /var/lib/naviserver/service-phigita/data/news/tc/edition/*
 
 #Topic Clustering
-cd /var/lib/naviserver/service-phgt-0/data/news/tc/cluster_sk/
+cd /var/lib/naviserver/service-phigita/data/news/tc/cluster_sk/
 
 for topic in *;
 do
-  /var/lib/naviserver/service-phgt-0/packages/news/bin/bow/crossbow --verbosity=0 -d /var/lib/naviserver/service-phgt-0/data/news/model-crossbow/${topic} --lex-white --no-stemming --no-stoplist --index /var/lib/naviserver/service-phgt-0/data/news/tc/cluster_sk/${topic}
+  /var/lib/naviserver/service-phigita/packages/news/bin/bow/crossbow --verbosity=0 -d /var/lib/naviserver/service-phigita/data/news/model-crossbow/${topic} --lex-white --no-stemming --no-stoplist --index /var/lib/naviserver/service-phigita/data/news/tc/cluster_sk/${topic}
 done
 

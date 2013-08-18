@@ -6,7 +6,7 @@
 #./code_docs_ngrams.tcl test_words.txt stopwords.txt test_docs.txt ${1} ${2} > test_docs_ngrams_0.txt
 
 
-#./code_docs.tcl test_words.txt /web/service-phgt-0/packages/news/bin/fimi/stopwords.txt test_docs.txt ${1} > test_docs_ngrams_0.txt
+#./code_docs.tcl test_words.txt /web/service-phigita/packages/news/bin/fimi/stopwords.txt test_docs.txt ${1} > test_docs_ngrams_0.txt
 
 ./transpose.tcl < test_docs_ngrams_0.txt > test_docs_ngrams_1.txt
 

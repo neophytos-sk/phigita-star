@@ -1,8 +1,8 @@
-set filename /var/lib/naviserver/service-phgt-0/data/news/images/[lindex [ad_conn urlv] end]-sample-80x80.jpg
+set filename /var/lib/naviserver/service-phigita/data/news/images/[lindex [ad_conn urlv] end]-sample-80x80.jpg
 
 if { [file exists $filename] } {
     ad_returnfile_background 200 [ns_guesstype ${filename}] ${filename}
 } else {
-    set notfound /var/lib/naviserver/service-phgt-0/www/graphics/nophoto.gif
+    set notfound /var/lib/naviserver/service-phigita/www/graphics/nophoto.gif
     ad_returnfile_background 200 [ns_guesstype ${notfound}] ${notfound}
 }

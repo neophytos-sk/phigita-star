@@ -1,4 +1,4 @@
-#-I/web/service-phgt-0/lib/structured_text/cc/
+#-I/web/service-phigita/lib/structured_text/cc/
 
 CC     = gcc
 CFLAGS = -g -O3

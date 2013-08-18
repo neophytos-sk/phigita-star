@@ -1,6 +1,6 @@
 ::xo::lib::require liblinear
 
-ll_problem::load problem "/web/service-phgt-0/lib/liblinear/test/news20-dataset/news20"
+ll_problem::load problem "/web/service-phigita/lib/liblinear/test/news20-dataset/news20"
 
 append result "problem=$problem"
 

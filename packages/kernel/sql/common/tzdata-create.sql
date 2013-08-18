@@ -5,4 +5,4 @@ create table xo.xo__timezone (
 );
 
 create index xo__timezone__country_code__idx on xo.xo__timezone(country_code);
-copy xo.xo__timezone (country_code,coordinates,tz) from '/web/service-phgt-0/packages/kernel/sql/common/zone.psql_tab' with delimiter E'\t';
+copy xo.xo__timezone (country_code,coordinates,tz) from '/web/service-phigita/packages/kernel/sql/common/zone.psql_tab' with delimiter E'\t';

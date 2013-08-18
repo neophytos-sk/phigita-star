@@ -1,4 +1,4 @@
-#source /web/service-phgt-0/packages/persistence/pdl/ZZ-aggregators.tcl
+#source /web/service-phigita/packages/persistence/pdl/ZZ-aggregators.tcl
 
 ad_page_contract {
     @author Neophytos Demetriou

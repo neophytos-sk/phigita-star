@@ -1,4 +1,4 @@
-[0m[[0minfo[0m] [0mUpdating {file:/web/servers/service-phgt-0/packages/tools/www-learn/coursera/scala-class/forcomp/project/}default-43b6bd...[0m
+[0m[[0minfo[0m] [0mUpdating {file:/web/servers/service-phigita/packages/tools/www-learn/coursera/scala-class/forcomp/project/}default-43b6bd...[0m
 [0m[[0mdebug[0m] [0mpost 1.3 ivy file: using exact as default matcher[0m
 [0m[[0mdebug[0m] [0m:: resolving dependencies :: default#default-43b6bd;0.1-SNAPSHOT[0m
 [0m[[0mdebug[0m] [0m	confs: [compile, runtime, test, provided, optional, compile-internal, runtime-internal, test-internal, plugin, sources, docs, pom][0m
@@ -5914,7 +5914,7 @@
 [0m[[0mdebug[0m] [0morg.scala-lang#scala-compiler;2.9.2 in test-internal: excluding org.scala-lang#scala-compiler;2.9.2!scala-compiler.jar[0m
 [0m[[0mdebug[0m] [0morg.scala-lang#scala-compiler;2.9.2 in provided: excluding org.scala-lang#scala-compiler;2.9.2!scala-compiler.jar[0m
 [0m[[0mdebug[0m] [0morg.scala-lang#scala-compiler;2.9.2 in compile-internal: excluding org.scala-lang#scala-compiler;2.9.2!scala-compiler.jar[0m
-[0m[[0mdebug[0m] [0m	resolved ivy file produced in /web/servers/service-phgt-0/packages/tools/www-learn/coursera/scala-class/forcomp/project/target/resolution-cache/default/default-43b6bd/scala_2.9.2/sbt_0.12/0.1-SNAPSHOT/resolved.xml.xml[0m
+[0m[[0mdebug[0m] [0m	resolved ivy file produced in /web/servers/service-phigita/packages/tools/www-learn/coursera/scala-class/forcomp/project/target/resolution-cache/default/default-43b6bd/scala_2.9.2/sbt_0.12/0.1-SNAPSHOT/resolved.xml.xml[0m
 [0m[[0mdebug[0m] [0m:: downloading artifacts ::[0m
 [0m[[0mdebug[0m] [0m	 trying http://repo1.maven.org/maven2/net/databinder/dispatch-http_2.9.2/0.8.8/dispatch-http_2.9.2-0.8.8.jar[0m
 [0m[[0mdebug[0m] [0m		tried http://repo1.maven.org/maven2/net/databinder/dispatch-http_2.9.2/0.8.8/dispatch-http_2.9.2-0.8.8.jar[0m
@@ -6122,7 +6122,7 @@
 [0m[[0mdebug[0m] [0mSort done for : com.typesafe.sbteclipse#sbteclipse-plugin;2.1.0[0m
 [0m[[0mdebug[0m] [0mModule descriptor is processed : com.typesafe.sbteclipse#sbteclipse-core;2.1.0[0m
 [0m[[0mdebug[0m] [0mModule descriptor is processed : org.scalaz#scalaz-core_2.9.2;6.0.4[0m
-[0m[[0mdebug[0m] [0m	report for default#default-43b6bd;0.1-SNAPSHOT compile produced in /web/servers/service-phgt-0/packages/tools/www-learn/coursera/scala-class/forcomp/project/target/resolution-cache/reports/default-default-43b6bd/compile-resolved.xml[0m
+[0m[[0mdebug[0m] [0m	report for default#default-43b6bd;0.1-SNAPSHOT compile produced in /web/servers/service-phigita/packages/tools/www-learn/coursera/scala-class/forcomp/project/target/resolution-cache/reports/default-default-43b6bd/compile-resolved.xml[0m
 [0m[[0mdebug[0m] [0mNbr of module to sort : 19[0m
 [0m[[0mdebug[0m] [0mSort dependencies of : net.databinder#dispatch-http_2.9.2;0.8.8 / Number of dependencies = 5[0m
 [0m[[0mdebug[0m] [0mSort dependencies of : net.databinder#dispatch-core_2.9.2;0.8.8 / Number of dependencies = 3[0m
@@ -6187,7 +6187,7 @@
 [0m[[0mdebug[0m] [0mSort done for : com.typesafe.sbteclipse#sbteclipse-plugin;2.1.0[0m
 [0m[[0mdebug[0m] [0mModule descriptor is processed : com.typesafe.sbteclipse#sbteclipse-core;2.1.0[0m
 [0m[[0mdebug[0m] [0mModule descriptor is processed : org.scalaz#scalaz-core_2.9.2;6.0.4[0m
-[0m[[0mdebug[0m] [0m	report for default#default-43b6bd;0.1-SNAPSHOT runtime produced in /web/servers/service-phgt-0/packages/tools/www-learn/coursera/scala-class/forcomp/project/target/resolution-cache/reports/default-default-43b6bd/runtime-resolved.xml[0m
+[0m[[0mdebug[0m] [0m	report for default#default-43b6bd;0.1-SNAPSHOT runtime produced in /web/servers/service-phigita/packages/tools/www-learn/coursera/scala-class/forcomp/project/target/resolution-cache/reports/default-default-43b6bd/runtime-resolved.xml[0m
 [0m[[0mdebug[0m] [0mNbr of module to sort : 19[0m
 [0m[[0mdebug[0m] [0mSort dependencies of : net.databinder#dispatch-http_2.9.2;0.8.8 / Number of dependencies = 5[0m
 [0m[[0mdebug[0m] [0mSort dependencies of : net.databinder#dispatch-core_2.9.2;0.8.8 / Number of dependencies = 3[0m
@@ -6252,7 +6252,7 @@
 [0m[[0mdebug[0m] [0mSort done for : com.typesafe.sbteclipse#sbteclipse-plugin;2.1.0[0m
 [0m[[0mdebug[0m] [0mModule descriptor is processed : com.typesafe.sbteclipse#sbteclipse-core;2.1.0[0m
 [0m[[0mdebug[0m] [0mModule descriptor is processed : org.scalaz#scalaz-core_2.9.2;6.0.4[0m
-[0m[[0mdebug[0m] [0m	report for default#default-43b6bd;0.1-SNAPSHOT test produced in /web/servers/service-phgt-0/packages/tools/www-learn/coursera/scala-class/forcomp/project/target/resolution-cache/reports/default-default-43b6bd/test-resolved.xml[0m
+[0m[[0mdebug[0m] [0m	report for default#default-43b6bd;0.1-SNAPSHOT test produced in /web/servers/service-phigita/packages/tools/www-learn/coursera/scala-class/forcomp/project/target/resolution-cache/reports/default-default-43b6bd/test-resolved.xml[0m
 [0m[[0mdebug[0m] [0mNbr of module to sort : 41[0m
 [0m[[0mdebug[0m] [0mSort dependencies of : org.scala-sbt#sbt;0.12.1 / Number of dependencies = 6[0m
 [0m[[0mdebug[0m] [0mSort dependencies of : org.scala-sbt#main;0.12.1 / Number of dependencies = 12[0m
@@ -6487,9 +6487,9 @@
 [0m[[0mdebug[0m] [0mModule descriptor is processed : org.scala-sbt#compiler-interface;0.12.1[0m
 [0m[[0mdebug[0m] [0mModule descriptor is processed : org.scala-sbt#precompiled-2_8_2;0.12.1[0m
 [0m[[0mdebug[0m] [0mModule descriptor is processed : org.scala-sbt#precompiled-2_10_0-m7;0.12.1[0m
-[0m[[0mdebug[0m] [0m	report for default#default-43b6bd;0.1-SNAPSHOT provided produced in /web/servers/service-phgt-0/packages/tools/www-learn/coursera/scala-class/forcomp/project/target/resolution-cache/reports/default-default-43b6bd/provided-resolved.xml[0m
+[0m[[0mdebug[0m] [0m	report for default#default-43b6bd;0.1-SNAPSHOT provided produced in /web/servers/service-phigita/packages/tools/www-learn/coursera/scala-class/forcomp/project/target/resolution-cache/reports/default-default-43b6bd/provided-resolved.xml[0m
 [0m[[0mdebug[0m] [0mNbr of module to sort : 0[0m
-[0m[[0mdebug[0m] [0m	report for default#default-43b6bd;0.1-SNAPSHOT optional produced in /web/servers/service-phgt-0/packages/tools/www-learn/coursera/scala-class/forcomp/project/target/resolution-cache/reports/default-default-43b6bd/optional-resolved.xml[0m
+[0m[[0mdebug[0m] [0m	report for default#default-43b6bd;0.1-SNAPSHOT optional produced in /web/servers/service-phigita/packages/tools/www-learn/coursera/scala-class/forcomp/project/target/resolution-cache/reports/default-default-43b6bd/optional-resolved.xml[0m
 [0m[[0mdebug[0m] [0mNbr of module to sort : 59[0m
 [0m[[0mdebug[0m] [0mSort dependencies of : net.databinder#dispatch-http_2.9.2;0.8.8 / Number of dependencies = 5[0m
 [0m[[0mdebug[0m] [0mSort dependencies of : net.databinder#dispatch-core_2.9.2;0.8.8 / Number of dependencies = 3[0m
@@ -6791,7 +6791,7 @@
 [0m[[0mdebug[0m] [0mModule descriptor is processed : org.scala-sbt#compiler-interface;0.12.1[0m
 [0m[[0mdebug[0m] [0mModule descriptor is processed : org.scala-sbt#precompiled-2_8_2;0.12.1[0m
 [0m[[0mdebug[0m] [0mModule descriptor is processed : org.scala-sbt#precompiled-2_10_0-m7;0.12.1[0m
-[0m[[0mdebug[0m] [0m	report for default#default-43b6bd;0.1-SNAPSHOT compile-internal produced in /web/servers/service-phgt-0/packages/tools/www-learn/coursera/scala-class/forcomp/project/target/resolution-cache/reports/default-default-43b6bd/compile-internal-resolved.xml[0m
+[0m[[0mdebug[0m] [0m	report for default#default-43b6bd;0.1-SNAPSHOT compile-internal produced in /web/servers/service-phigita/packages/tools/www-learn/coursera/scala-class/forcomp/project/target/resolution-cache/reports/default-default-43b6bd/compile-internal-resolved.xml[0m
 [0m[[0mdebug[0m] [0mNbr of module to sort : 19[0m
 [0m[[0mdebug[0m] [0mSort dependencies of : net.databinder#dispatch-http_2.9.2;0.8.8 / Number of dependencies = 5[0m
 [0m[[0mdebug[0m] [0mSort dependencies of : net.databinder#dispatch-core_2.9.2;0.8.8 / Number of dependencies = 3[0m
@@ -6856,7 +6856,7 @@
 [0m[[0mdebug[0m] [0mSort done for : com.typesafe.sbteclipse#sbteclipse-plugin;2.1.0[0m
 [0m[[0mdebug[0m] [0mModule descriptor is processed : com.typesafe.sbteclipse#sbteclipse-core;2.1.0[0m
 [0m[[0mdebug[0m] [0mModule descriptor is processed : org.scalaz#scalaz-core_2.9.2;6.0.4[0m
-[0m[[0mdebug[0m] [0m	report for default#default-43b6bd;0.1-SNAPSHOT runtime-internal produced in /web/servers/service-phgt-0/packages/tools/www-learn/coursera/scala-class/forcomp/project/target/resolution-cache/reports/default-default-43b6bd/runtime-internal-resolved.xml[0m
+[0m[[0mdebug[0m] [0m	report for default#default-43b6bd;0.1-SNAPSHOT runtime-internal produced in /web/servers/service-phigita/packages/tools/www-learn/coursera/scala-class/forcomp/project/target/resolution-cache/reports/default-default-43b6bd/runtime-internal-resolved.xml[0m
 [0m[[0mdebug[0m] [0mNbr of module to sort : 59[0m
 [0m[[0mdebug[0m] [0mSort dependencies of : net.databinder#dispatch-http_2.9.2;0.8.8 / Number of dependencies = 5[0m
 [0m[[0mdebug[0m] [0mSort dependencies of : net.databinder#dispatch-core_2.9.2;0.8.8 / Number of dependencies = 3[0m
@@ -7158,14 +7158,14 @@
 [0m[[0mdebug[0m] [0mModule descriptor is processed : org.scala-sbt#compiler-interface;0.12.1[0m
 [0m[[0mdebug[0m] [0mModule descriptor is processed : org.scala-sbt#precompiled-2_8_2;0.12.1[0m
 [0m[[0mdebug[0m] [0mModule descriptor is processed : org.scala-sbt#precompiled-2_10_0-m7;0.12.1[0m
-[0m[[0mdebug[0m] [0m	report for default#default-43b6bd;0.1-SNAPSHOT test-internal produced in /web/servers/service-phgt-0/packages/tools/www-learn/coursera/scala-class/forcomp/project/target/resolution-cache/reports/default-default-43b6bd/test-internal-resolved.xml[0m
+[0m[[0mdebug[0m] [0m	report for default#default-43b6bd;0.1-SNAPSHOT test-internal produced in /web/servers/service-phigita/packages/tools/www-learn/coursera/scala-class/forcomp/project/target/resolution-cache/reports/default-default-43b6bd/test-internal-resolved.xml[0m
 [0m[[0mdebug[0m] [0mNbr of module to sort : 0[0m
-[0m[[0mdebug[0m] [0m	report for default#default-43b6bd;0.1-SNAPSHOT plugin produced in /web/servers/service-phgt-0/packages/tools/www-learn/coursera/scala-class/forcomp/project/target/resolution-cache/reports/default-default-43b6bd/plugin-resolved.xml[0m
+[0m[[0mdebug[0m] [0m	report for default#default-43b6bd;0.1-SNAPSHOT plugin produced in /web/servers/service-phigita/packages/tools/www-learn/coursera/scala-class/forcomp/project/target/resolution-cache/reports/default-default-43b6bd/plugin-resolved.xml[0m
 [0m[[0mdebug[0m] [0mNbr of module to sort : 0[0m
-[0m[[0mdebug[0m] [0m	report for default#default-43b6bd;0.1-SNAPSHOT sources produced in /web/servers/service-phgt-0/packages/tools/www-learn/coursera/scala-class/forcomp/project/target/resolution-cache/reports/default-default-43b6bd/sources-resolved.xml[0m
+[0m[[0mdebug[0m] [0m	report for default#default-43b6bd;0.1-SNAPSHOT sources produced in /web/servers/service-phigita/packages/tools/www-learn/coursera/scala-class/forcomp/project/target/resolution-cache/reports/default-default-43b6bd/sources-resolved.xml[0m
 [0m[[0mdebug[0m] [0mNbr of module to sort : 0[0m
-[0m[[0mdebug[0m] [0m	report for default#default-43b6bd;0.1-SNAPSHOT docs produced in /web/servers/service-phgt-0/packages/tools/www-learn/coursera/scala-class/forcomp/project/target/resolution-cache/reports/default-default-43b6bd/docs-resolved.xml[0m
+[0m[[0mdebug[0m] [0m	report for default#default-43b6bd;0.1-SNAPSHOT docs produced in /web/servers/service-phigita/packages/tools/www-learn/coursera/scala-class/forcomp/project/target/resolution-cache/reports/default-default-43b6bd/docs-resolved.xml[0m
 [0m[[0mdebug[0m] [0mNbr of module to sort : 0[0m
-[0m[[0mdebug[0m] [0m	report for default#default-43b6bd;0.1-SNAPSHOT pom produced in /web/servers/service-phgt-0/packages/tools/www-learn/coursera/scala-class/forcomp/project/target/resolution-cache/reports/default-default-43b6bd/pom-resolved.xml[0m
+[0m[[0mdebug[0m] [0m	report for default#default-43b6bd;0.1-SNAPSHOT pom produced in /web/servers/service-phigita/packages/tools/www-learn/coursera/scala-class/forcomp/project/target/resolution-cache/reports/default-default-43b6bd/pom-resolved.xml[0m
 [0m[[0mdebug[0m] [0m	resolve done (15918ms resolve - 13134ms download)[0m
 [0m[[0minfo[0m] [0mDone updating.[0m

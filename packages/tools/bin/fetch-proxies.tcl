@@ -2,7 +2,7 @@ load /opt/naviserver/lib/libnsd.so
 package require TclCurl
 package require tdom
 
-source /web/service-phgt-0/packages/kernel/tcl/0000-utils/ZZ-xpathfunc-procs.tcl
+source /web/service-phigita/packages/kernel/tcl/0000-utils/ZZ-xpathfunc-procs.tcl
 
 set useragent "Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.1.6) Gecko/20100219 Gentoo Firefox/3.5.6"
 

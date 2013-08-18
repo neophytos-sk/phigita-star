@@ -1,4 +1,4 @@
-#load /var/lib/naviserver/service-phgt-0/modules/ttext0.3/unix/libttext0.3.so
+#load /var/lib/naviserver/service-phigita/modules/ttext0.3/unix/libttext0.3.so
 
 ad_page_contract {
     @author Neophytos Demetriou

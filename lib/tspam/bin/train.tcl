@@ -82,7 +82,7 @@ proc msg_to_text {token {resultVar ""}} {
 proc msg_to_text_file {msg_file} {
     set msg [::mime::initialize -file $msg_file]
 
-    set filename "/web/servers/service-phgt-0/lib/tspam/tmp/[file tail ${msg_file}].txt"
+    set filename "/web/servers/service-phigita/lib/tspam/tmp/[file tail ${msg_file}].txt"
     if { [file exists $filename] } { return $filename }
     set fp [open $filename w]
     foreach {key valuelist} [::mime::getheader $msg] {
@@ -104,7 +104,7 @@ proc msg_to_text_file {msg_file} {
 
 proc main {} {
     puts "argc=$::argc argv0=$::argv0"
-    set package_dir "/web/servers/service-phgt-0/lib/tspam/"
+    set package_dir "/web/servers/service-phigita/lib/tspam/"
 
     if { $::argc < 2 } {
 	puts "Usage: $::argv0 (spam|ham) dirname"

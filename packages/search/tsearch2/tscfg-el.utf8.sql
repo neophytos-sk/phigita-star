@@ -9,9 +9,9 @@ insert into pg_ts_cfg values('[default_text_search_config]','default','el_GR.utf
 DELETE FROM pg_ts_dict WHERE dict_name = 'el_GR_ispell';
 INSERT INTO pg_ts_dict
                (SELECT 'el_GR_ispell', dict_init,
-                       'DictFile="/var/lib/naviserver/service-phgt-0/packages/search/tsearch2/dict/greek/el_GR.utf8.dict",'
-                       'AffFile="/var/lib/naviserver/service-phgt-0/packages/search/tsearch2/dict/greek/el_GR.utf8.aff",'
-		       'StopFile="/var/lib/naviserver/service-phgt-0/packages/search/tsearch2/dict/greek/el_GR.utf8.stop"'
+                       'DictFile="/var/lib/naviserver/service-phigita/packages/search/tsearch2/dict/greek/el_GR.utf8.dict",'
+                       'AffFile="/var/lib/naviserver/service-phigita/packages/search/tsearch2/dict/greek/el_GR.utf8.aff",'
+		       'StopFile="/var/lib/naviserver/service-phigita/packages/search/tsearch2/dict/greek/el_GR.utf8.stop"'
 			,dict_lexize
                 FROM pg_ts_dict
                 WHERE dict_name = 'ispell_template');
@@ -23,7 +23,7 @@ INSERT INTO pg_ts_dict (dict_name,dict_init,dict_lexize)
                 WHERE dict_name = 'simple');
 
 
-update pg_ts_dict set dict_initoption='/var/lib/naviserver/service-phgt-0/packages/search/tsearch2/dict/greek/el_GR.utf8.stop' where dict_name='el_GR_simple';
+update pg_ts_dict set dict_initoption='/var/lib/naviserver/service-phigita/packages/search/tsearch2/dict/greek/el_GR.utf8.stop' where dict_name='el_GR_simple';
 
 -- tokens to index
 delete from pg_ts_cfgmap where ts_name = '[default_text_search_config]';

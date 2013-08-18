@@ -1,6 +1,6 @@
-source /web/service-phgt-0/packages/tools/lib/critcl-ext/tcl/module-critcl-ext.tcl
-source /web/service-phgt-0/packages/kernel/tcl/20-xo/fun/functional-procs.tcl
-source /web/service-phgt-0/packages/kernel/tcl/0000-utils/00-util-procs.tcl
+source /web/service-phigita/packages/tools/lib/critcl-ext/tcl/module-critcl-ext.tcl
+source /web/service-phigita/packages/kernel/tcl/20-xo/fun/functional-procs.tcl
+source /web/service-phigita/packages/kernel/tcl/0000-utils/00-util-procs.tcl
 
 proc ns_log {level args} {
     puts "$level: $args"

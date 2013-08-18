@@ -56,7 +56,7 @@ proc ::xo::html::add_style_file {url} {
 ### HAS BUGS
 proc ::xo::html::compile_style_file {url} {
     sv_cache_eval CSS_MEMOIZE CSS_FILE:${url} {
-	set infile [file normalize /web/service-phgt-0/www/${url}]
+	set infile [file normalize /web/service-phigita/www/${url}]
 	set outfile [file normalize /web/data/${url}]
 	if { ![file exists $outfile] } {
 	    set fp [open $infile]

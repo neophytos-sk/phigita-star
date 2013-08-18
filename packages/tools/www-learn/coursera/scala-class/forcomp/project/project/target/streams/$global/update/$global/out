@@ -1,4 +1,4 @@
-[0m[[0minfo[0m] [0mUpdating {file:/web/servers/service-phgt-0/packages/tools/www-learn/coursera/scala-class/forcomp/project/project/}default-f8ccae...[0m
+[0m[[0minfo[0m] [0mUpdating {file:/web/servers/service-phigita/packages/tools/www-learn/coursera/scala-class/forcomp/project/project/}default-f8ccae...[0m
 [0m[[0mdebug[0m] [0mpost 1.3 ivy file: using exact as default matcher[0m
 [0m[[0mdebug[0m] [0m:: resolving dependencies :: default#default-f8ccae;0.1-SNAPSHOT[0m
 [0m[[0mdebug[0m] [0m	confs: [compile, runtime, test, provided, optional, compile-internal, runtime-internal, test-internal, plugin, sources, docs, pom][0m
@@ -3308,7 +3308,7 @@
 [0m[[0mdebug[0m] [0morg.scala-lang#scala-compiler;2.9.2 in test-internal: excluding org.scala-lang#scala-compiler;2.9.2!scala-compiler.jar[0m
 [0m[[0mdebug[0m] [0morg.scala-lang#scala-compiler;2.9.2 in provided: excluding org.scala-lang#scala-compiler;2.9.2!scala-compiler.jar[0m
 [0m[[0mdebug[0m] [0morg.scala-lang#scala-compiler;2.9.2 in compile-internal: excluding org.scala-lang#scala-compiler;2.9.2!scala-compiler.jar[0m
-[0m[[0mdebug[0m] [0m	resolved ivy file produced in /web/servers/service-phgt-0/packages/tools/www-learn/coursera/scala-class/forcomp/project/project/target/resolution-cache/default/default-f8ccae/scala_2.9.2/sbt_0.12/0.1-SNAPSHOT/resolved.xml.xml[0m
+[0m[[0mdebug[0m] [0m	resolved ivy file produced in /web/servers/service-phigita/packages/tools/www-learn/coursera/scala-class/forcomp/project/project/target/resolution-cache/default/default-f8ccae/scala_2.9.2/sbt_0.12/0.1-SNAPSHOT/resolved.xml.xml[0m
 [0m[[0mdebug[0m] [0m:: downloading artifacts ::[0m
 [0m[[0mdebug[0m] [0m	[NOT REQUIRED] org.scala-sbt#sbt;0.12.1!sbt.jar[0m
 [0m[[0mdebug[0m] [0morg.scala-lang#scala-library;2.9.2 in test-internal: excluding org.scala-lang#scala-library;2.9.2!scala-library.jar[0m
@@ -3364,11 +3364,11 @@
 [0m[[0mdebug[0m] [0m	[NOT REQUIRED] org.scala-tools.testing#test-interface;0.5!test-interface.jar[0m
 [0m[[0mdebug[0m] [0m:: resolution report :: resolve 956ms :: artifacts dl 26ms[0m
 [0m[[0mdebug[0m] [0mNbr of module to sort : 0[0m
-[0m[[0mdebug[0m] [0m	report for default#default-f8ccae;0.1-SNAPSHOT compile produced in /web/servers/service-phgt-0/packages/tools/www-learn/coursera/scala-class/forcomp/project/project/target/resolution-cache/reports/default-default-f8ccae/compile-resolved.xml[0m
+[0m[[0mdebug[0m] [0m	report for default#default-f8ccae;0.1-SNAPSHOT compile produced in /web/servers/service-phigita/packages/tools/www-learn/coursera/scala-class/forcomp/project/project/target/resolution-cache/reports/default-default-f8ccae/compile-resolved.xml[0m
 [0m[[0mdebug[0m] [0mNbr of module to sort : 0[0m
-[0m[[0mdebug[0m] [0m	report for default#default-f8ccae;0.1-SNAPSHOT runtime produced in /web/servers/service-phgt-0/packages/tools/www-learn/coursera/scala-class/forcomp/project/project/target/resolution-cache/reports/default-default-f8ccae/runtime-resolved.xml[0m
+[0m[[0mdebug[0m] [0m	report for default#default-f8ccae;0.1-SNAPSHOT runtime produced in /web/servers/service-phigita/packages/tools/www-learn/coursera/scala-class/forcomp/project/project/target/resolution-cache/reports/default-default-f8ccae/runtime-resolved.xml[0m
 [0m[[0mdebug[0m] [0mNbr of module to sort : 0[0m
-[0m[[0mdebug[0m] [0m	report for default#default-f8ccae;0.1-SNAPSHOT test produced in /web/servers/service-phgt-0/packages/tools/www-learn/coursera/scala-class/forcomp/project/project/target/resolution-cache/reports/default-default-f8ccae/test-resolved.xml[0m
+[0m[[0mdebug[0m] [0m	report for default#default-f8ccae;0.1-SNAPSHOT test produced in /web/servers/service-phigita/packages/tools/www-learn/coursera/scala-class/forcomp/project/project/target/resolution-cache/reports/default-default-f8ccae/test-resolved.xml[0m
 [0m[[0mdebug[0m] [0mNbr of module to sort : 41[0m
 [0m[[0mdebug[0m] [0mSort dependencies of : org.scala-sbt#sbt;0.12.1 / Number of dependencies = 6[0m
 [0m[[0mdebug[0m] [0mSort dependencies of : org.scala-sbt#main;0.12.1 / Number of dependencies = 12[0m
@@ -3603,9 +3603,9 @@
 [0m[[0mdebug[0m] [0mModule descriptor is processed : org.scala-sbt#compiler-interface;0.12.1[0m
 [0m[[0mdebug[0m] [0mModule descriptor is processed : org.scala-sbt#precompiled-2_8_2;0.12.1[0m
 [0m[[0mdebug[0m] [0mModule descriptor is processed : org.scala-sbt#precompiled-2_10_0-m7;0.12.1[0m
-[0m[[0mdebug[0m] [0m	report for default#default-f8ccae;0.1-SNAPSHOT provided produced in /web/servers/service-phgt-0/packages/tools/www-learn/coursera/scala-class/forcomp/project/project/target/resolution-cache/reports/default-default-f8ccae/provided-resolved.xml[0m
+[0m[[0mdebug[0m] [0m	report for default#default-f8ccae;0.1-SNAPSHOT provided produced in /web/servers/service-phigita/packages/tools/www-learn/coursera/scala-class/forcomp/project/project/target/resolution-cache/reports/default-default-f8ccae/provided-resolved.xml[0m
 [0m[[0mdebug[0m] [0mNbr of module to sort : 0[0m
-[0m[[0mdebug[0m] [0m	report for default#default-f8ccae;0.1-SNAPSHOT optional produced in /web/servers/service-phgt-0/packages/tools/www-learn/coursera/scala-class/forcomp/project/project/target/resolution-cache/reports/default-default-f8ccae/optional-resolved.xml[0m
+[0m[[0mdebug[0m] [0m	report for default#default-f8ccae;0.1-SNAPSHOT optional produced in /web/servers/service-phigita/packages/tools/www-learn/coursera/scala-class/forcomp/project/project/target/resolution-cache/reports/default-default-f8ccae/optional-resolved.xml[0m
 [0m[[0mdebug[0m] [0mNbr of module to sort : 41[0m
 [0m[[0mdebug[0m] [0mSort dependencies of : org.scala-sbt#sbt;0.12.1 / Number of dependencies = 6[0m
 [0m[[0mdebug[0m] [0mSort dependencies of : org.scala-sbt#main;0.12.1 / Number of dependencies = 12[0m
@@ -3840,9 +3840,9 @@
 [0m[[0mdebug[0m] [0mModule descriptor is processed : org.scala-sbt#compiler-interface;0.12.1[0m
 [0m[[0mdebug[0m] [0mModule descriptor is processed : org.scala-sbt#precompiled-2_8_2;0.12.1[0m
 [0m[[0mdebug[0m] [0mModule descriptor is processed : org.scala-sbt#precompiled-2_10_0-m7;0.12.1[0m
-[0m[[0mdebug[0m] [0m	report for default#default-f8ccae;0.1-SNAPSHOT compile-internal produced in /web/servers/service-phgt-0/packages/tools/www-learn/coursera/scala-class/forcomp/project/project/target/resolution-cache/reports/default-default-f8ccae/compile-internal-resolved.xml[0m
+[0m[[0mdebug[0m] [0m	report for default#default-f8ccae;0.1-SNAPSHOT compile-internal produced in /web/servers/service-phigita/packages/tools/www-learn/coursera/scala-class/forcomp/project/project/target/resolution-cache/reports/default-default-f8ccae/compile-internal-resolved.xml[0m
 [0m[[0mdebug[0m] [0mNbr of module to sort : 0[0m
-[0m[[0mdebug[0m] [0m	report for default#default-f8ccae;0.1-SNAPSHOT runtime-internal produced in /web/servers/service-phgt-0/packages/tools/www-learn/coursera/scala-class/forcomp/project/project/target/resolution-cache/reports/default-default-f8ccae/runtime-internal-resolved.xml[0m
+[0m[[0mdebug[0m] [0m	report for default#default-f8ccae;0.1-SNAPSHOT runtime-internal produced in /web/servers/service-phigita/packages/tools/www-learn/coursera/scala-class/forcomp/project/project/target/resolution-cache/reports/default-default-f8ccae/runtime-internal-resolved.xml[0m
 [0m[[0mdebug[0m] [0mNbr of module to sort : 41[0m
 [0m[[0mdebug[0m] [0mSort dependencies of : org.scala-sbt#sbt;0.12.1 / Number of dependencies = 6[0m
 [0m[[0mdebug[0m] [0mSort dependencies of : org.scala-sbt#main;0.12.1 / Number of dependencies = 12[0m
@@ -4077,14 +4077,14 @@
 [0m[[0mdebug[0m] [0mModule descriptor is processed : org.scala-sbt#compiler-interface;0.12.1[0m
 [0m[[0mdebug[0m] [0mModule descriptor is processed : org.scala-sbt#precompiled-2_8_2;0.12.1[0m
 [0m[[0mdebug[0m] [0mModule descriptor is processed : org.scala-sbt#precompiled-2_10_0-m7;0.12.1[0m
-[0m[[0mdebug[0m] [0m	report for default#default-f8ccae;0.1-SNAPSHOT test-internal produced in /web/servers/service-phgt-0/packages/tools/www-learn/coursera/scala-class/forcomp/project/project/target/resolution-cache/reports/default-default-f8ccae/test-internal-resolved.xml[0m
+[0m[[0mdebug[0m] [0m	report for default#default-f8ccae;0.1-SNAPSHOT test-internal produced in /web/servers/service-phigita/packages/tools/www-learn/coursera/scala-class/forcomp/project/project/target/resolution-cache/reports/default-default-f8ccae/test-internal-resolved.xml[0m
 [0m[[0mdebug[0m] [0mNbr of module to sort : 0[0m
-[0m[[0mdebug[0m] [0m	report for default#default-f8ccae;0.1-SNAPSHOT plugin produced in /web/servers/service-phgt-0/packages/tools/www-learn/coursera/scala-class/forcomp/project/project/target/resolution-cache/reports/default-default-f8ccae/plugin-resolved.xml[0m
+[0m[[0mdebug[0m] [0m	report for default#default-f8ccae;0.1-SNAPSHOT plugin produced in /web/servers/service-phigita/packages/tools/www-learn/coursera/scala-class/forcomp/project/project/target/resolution-cache/reports/default-default-f8ccae/plugin-resolved.xml[0m
 [0m[[0mdebug[0m] [0mNbr of module to sort : 0[0m
-[0m[[0mdebug[0m] [0m	report for default#default-f8ccae;0.1-SNAPSHOT sources produced in /web/servers/service-phgt-0/packages/tools/www-learn/coursera/scala-class/forcomp/project/project/target/resolution-cache/reports/default-default-f8ccae/sources-resolved.xml[0m
+[0m[[0mdebug[0m] [0m	report for default#default-f8ccae;0.1-SNAPSHOT sources produced in /web/servers/service-phigita/packages/tools/www-learn/coursera/scala-class/forcomp/project/project/target/resolution-cache/reports/default-default-f8ccae/sources-resolved.xml[0m
 [0m[[0mdebug[0m] [0mNbr of module to sort : 0[0m
-[0m[[0mdebug[0m] [0m	report for default#default-f8ccae;0.1-SNAPSHOT docs produced in /web/servers/service-phgt-0/packages/tools/www-learn/coursera/scala-class/forcomp/project/project/target/resolution-cache/reports/default-default-f8ccae/docs-resolved.xml[0m
+[0m[[0mdebug[0m] [0m	report for default#default-f8ccae;0.1-SNAPSHOT docs produced in /web/servers/service-phigita/packages/tools/www-learn/coursera/scala-class/forcomp/project/project/target/resolution-cache/reports/default-default-f8ccae/docs-resolved.xml[0m
 [0m[[0mdebug[0m] [0mNbr of module to sort : 0[0m
-[0m[[0mdebug[0m] [0m	report for default#default-f8ccae;0.1-SNAPSHOT pom produced in /web/servers/service-phgt-0/packages/tools/www-learn/coursera/scala-class/forcomp/project/project/target/resolution-cache/reports/default-default-f8ccae/pom-resolved.xml[0m
+[0m[[0mdebug[0m] [0m	report for default#default-f8ccae;0.1-SNAPSHOT pom produced in /web/servers/service-phigita/packages/tools/www-learn/coursera/scala-class/forcomp/project/project/target/resolution-cache/reports/default-default-f8ccae/pom-resolved.xml[0m
 [0m[[0mdebug[0m] [0m	resolve done (956ms resolve - 26ms download)[0m
 [0m[[0minfo[0m] [0mDone updating.[0m
