@@ -1,6 +1,6 @@
 ### BOOKS
 
-set image_host "http://i.phigita.com/cover/"
+set image_host "http://i.phigita.net/cover/"
 
 val -id book_offset -cache_timeout "1800" {expr {int(4000*rand())}}
 

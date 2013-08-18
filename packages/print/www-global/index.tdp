@@ -5,7 +5,7 @@ set imageDir "/web/data/news/images"
 set limit 24
 set limit_plus_one [expr { 1+${limit} }]
 #set image_host "http://i00-books.phigita.net"
-set image_host "http://i.phigita.com/cover/"
+set image_host "http://i.phigita.net/cover/"
 
 
 set extend {
