@@ -1565,6 +1565,7 @@ ad_proc -private security::get_secure_location {} {
     Return the current location in secure (https) mode.
 
     @author Peter Marklund
+    @author Neophytos Demetriou
 } {
     set current_location [util_current_location]
     set https_prefix {https://}
@@ -1583,7 +1584,7 @@ ad_proc -private security::get_secure_location {} {
 
         # Add port number if non-standard
         set https_port [get_https_port]
-        if { ![string equal $https_port 443] && ![ns_config -bool ns/parameters ReverseProxyMode 0] } {
+        if { ${https_port} ne {443} && ![::xo::kit::reverse_proxy_mode_p] } {
             set secure_location ${secure_location}:$https_port
         }
 

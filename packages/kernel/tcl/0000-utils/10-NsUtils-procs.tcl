@@ -78,3 +78,42 @@ proc ::xo::ns::htmltidy {html {input_xml_p 0} {output_xml_p 0} {output_xhtml_p 1
                            --new-blocklevel-tags "xo__option" \
                            [regsub -all -- {('[^']*<)SCRIPT([^']*')} ${html} {\1SCR' + 'IPT\2}]]
 }
+
+
+
+if { ![::xo::kit::reverse_proxy_mode_p] } {
+
+    proc ::xo::ns::conn::peeraddr {} {
+	return [ns_conn peeraddr]
+    }
+
+    proc ::xo::ns::conn::protocol {} {
+	return [::util::coalesce [ns_conn protocol] {http}]
+    }
+
+} else {
+
+    #####
+    #
+    # ReverseProxyMode
+    #
+    #####
+
+    proc ::xo::ns::conn::peeraddr {} {
+
+	set headers [ns_conn headers]
+        set addr [lindex [ns_set iget ${headers} x-forwarded-for] end]
+        if { ${addr} eq {} } {
+            set addr [ns_conn peeraddr]
+        }
+
+    }
+
+
+    }
+
+    proc ::xo::ns::conn::protocol {} {
+	return [::util::coalesce [lindex [ns_set iget [ns_conn headers] x-forwarded-proto] end] [ns_conn protocol] {http}]
+    }
+
+}

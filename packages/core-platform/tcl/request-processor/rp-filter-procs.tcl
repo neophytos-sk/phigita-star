@@ -15,13 +15,9 @@ Object create ::xo::defaultRequestFilter
     ad_conn_set user_id 0
     ad_conn_set start_clicks [clock clicks -milliseconds]
 
-    set protocol [::util::coalesce [lindex [ns_set iget [ns_conn headers] x-forwarded-proto] end] [ns_conn protocol] {http}]
-    ad_conn_set protocol ${protocol}
-    if { ${protocol} eq {https} } {
-	ad_conn_set issecure 1
-    } else {
-	ad_conn_set issecure 0
-    }
+    ad_conn_set protocol [::xo::ns::conn::protocol]
+    ad_conn_set issecure [::xo::kit::is_secure_conn]
+
 
 
     # This is a hack to turn off perm checking --jcd
@@ -185,23 +181,8 @@ Object create ::xo::defaultRequestFilter
 	}
     }
 
-    #####
-    #
-    # ReverseProxyMode
-    #
-    #####
 
-    if { [::xo::kit::reverse_proxy_mode_p] } {
-	set headers [ns_conn headers]
-        set addr [lindex [ns_set iget ${headers} x-forwarded-for] end]
-        if { ${addr} eq {} } {
-            set addr [ns_conn peeraddr]
-        }
-        ad_conn_set peeraddr $addr
-    } else {
-        ad_conn_set peeraddr [ns_conn peeraddr]
-    }
-
+    ad_conn_set peeraddr [::xo::ns::conn::peeraddr]
 
 
     #####

@@ -164,7 +164,7 @@ ns_param   asynclogwriter  true    ;# false
 
 
 
-ns_param ReverseProxyMode   1
+ns_param ReverseProxyMode   0
 
 # Automatic adjustment of response content-type header to include charset
 # This defaults to True.
