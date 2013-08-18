@@ -70,7 +70,7 @@ proc_doc sec_handler {} {
 
 } {
 
-    ns_log notice "sec_handler: enter location=[ns_conn location] driver=[ns_conn driver] peeraddr=[ad_conn peeraddr]"
+    #ns_log notice "sec_handler: enter"
     if { [catch { set cookie_list [ad_get_signed_cookie_with_expr "_SID"] } errmsg ] } {
 
 	# ns_log notice "sec_handler: ad_get_signed_cookie failed errmsg=$errmsg peeraddr=[ad_conn peeraddr]"
