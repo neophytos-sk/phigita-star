@@ -106,8 +106,8 @@ Object create ::xo::defaultRequestFilter
     # Force the URL to look like [ns_conn location], if desired...
     set acs_kernel_id [util_memoize ad_acs_kernel_id]
 
-    #set host_header [ns_set iget [ns_conn headers] "Host"]
     set host_header [::xo::ns::conn::host]
+    ns_log notice "--->>> host_header=$host_header url=[ad_conn url]"
     if { $host_header eq {phigita.net} } {
 	set query [ns_getform]
 	if { $query ne {} } {
