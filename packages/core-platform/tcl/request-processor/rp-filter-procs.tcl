@@ -133,7 +133,7 @@ Object create ::xo::defaultRequestFilter
 
 
 	if { [::xo::kit::production_mode_p] && $node(host) ne {} && $node(host) ne ${host_header} } {
-	    #ns_log notice "node(host)=$node(host) host=$host_header"
+	    ns_log notice "node(host)=$node(host) host=$host_header"
 	    set redirect_url http://$node(host)/[string range [ns_conn url] [string length $node(url)] end]
 	    if { [ns_conn query] ne {} } {
 		append redirect_url ?[ns_conn query]
