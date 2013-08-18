@@ -108,7 +108,7 @@ array set config_web \
 	 serverroot          ${serverroot} \
 	 webroot             ${webroot} \
 	 bindir              ${bindir} \
-	 directoryfile       ${directoryfil} \
+	 directoryfile       ${directoryfile} \
 	 minthreads          ${minthreads} \
 	 maxthreads          ${maxthreads} \
 	 performance_mode_p  ${performance_mode_p} \
@@ -127,6 +127,7 @@ array set config_web \
 
 config_phigita_web config_web
 
+# no storage_port for server_secure_web
 array set config_secure_web \
     [list \
 	 server              ${server_secure_web} \
@@ -134,13 +135,13 @@ array set config_secure_web \
 	 serverroot          ${serverroot} \
 	 webroot             ${webroot} \
 	 bindir              ${bindir} \
-	 directoryfile       ${directoryfil} \
+	 directoryfile       ${directoryfile} \
 	 minthreads          ${minthreads} \
 	 maxthreads          ${maxthreads} \
 	 performance_mode_p  ${performance_mode_p} \
 	 production_mode_p   ${production_mode_p} \
 	 is_mail_server_p    ${is_mail_server_p} \
-	 storage_port        ${storage_port} \
+	 storage_port        {} \
 	 listening_to_host   ${listening_to_host} \
 	 email               ${email} \
 	 pagedir             ${pagedir} \

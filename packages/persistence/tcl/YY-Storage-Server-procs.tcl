@@ -356,10 +356,12 @@ proc ::xo::db::getControlPort {} {
 
 } -persistent 1
 
-if { [::xo::kit::performance_mode_p] } {
-    ns_schedule_proc -once 0 ControlThread do -async Storage_Server [::xo::db::getStoragePort] [ns_info hostname]
-} else {
-    ns_schedule_proc -once 0 ControlThread do -async Storage_Server [::xo::db::getStoragePort] localhost
+if { [::xo::db::getStoragePort] ne {} } {
+    if { [::xo::kit::performance_mode_p] } {
+	ns_schedule_proc -once 0 ControlThread do -async Storage_Server [::xo::db::getStoragePort] [ns_info hostname]
+    } else {
+	ns_schedule_proc -once 0 ControlThread do -async Storage_Server [::xo::db::getStoragePort] localhost
+    }
 }
 
 
