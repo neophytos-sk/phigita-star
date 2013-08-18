@@ -107,10 +107,9 @@ Object create ::xo::defaultRequestFilter
     set acs_kernel_id [util_memoize ad_acs_kernel_id]
 
     set host_header [::xo::ns::conn::host]
-    ns_log notice "--->>> host_header=$host_header url=[ad_conn url]"
-    if { $host_header eq {phigita.net} } {
+    if { ${host_header} eq {phigita.net} } {
 	set query [ns_getform]
-	if { $query ne {} } {
+	if { ${query} ne {} } {
 	    set url_vars [export_entire_form_as_url_vars]
 	    if { ![empty_string_p ${url_vars}] } {
 		set query "?${url_vars}"
