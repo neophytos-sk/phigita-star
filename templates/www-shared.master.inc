@@ -165,7 +165,7 @@ master -src "/templates/blank-master.inc" {
 		    layout_col -class "span4" {
 			div -class "logo_and_search" {
 			    a -href "http://www.phigita.net/" {
-				img -width 135 -height 40 -src //www.phigita.net/graphics/logo-v2.png
+				img -width 135 -height 40 -src [get_cdn_url /graphics/logo-v2.png]
 			    }
 			    div -class "livesearch" {
 				form -action "#" -id sform  -name sf -onsubmit "return false;" {
