@@ -33,7 +33,7 @@ set feeds [dict create \
 		       {values(//div[@id="article_content"]//img[@class="pyro-image"]/@src)}
 		   }
 		   xpath_article_author {returnstring(//div[@class="article_meta"]/span[@class="meta_author"]/a/text())}
-		   xpath_article_date {returndate(normalizedate(//div[@class="article_meta"]/span[@class="meta_date"]/strong,"el_GR"),"%B %d, %Y %H:%M","el_GR")}
+		   xpath_article_date {returndate(normalizedate(//div[@class="article_meta"]/span[@class="meta_date"]/strong/text(),"el_GR"),"%B %d, %Y %H:%M","el_GR")}
 		   xpath_article_cleanup {
 		       {//div[@class="soSialIcons"]}
 		       {//div[@class="article_meta"]}

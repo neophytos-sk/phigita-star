@@ -10,10 +10,11 @@ source ../../naviserver_compat/tcl/module-naviserver_compat.tcl
 package require uri
 package require sha1
 
-::xo::lib::require ttext
 ::xo::lib::require util_procs
 
 namespace eval ::dom::xpathFunc {
+
+    array set mapping [list]
 
     set dir [file dirname [info script]]
     set mapping_dir [file normalize [file join ${dir} .. data]]
@@ -22,7 +23,7 @@ namespace eval ::dom::xpathFunc {
 
     foreach filename ${filelist} {
 	set locale [string trimleft [file extension ${filename}] {.}]
-	array set mapping_${locale} [::util::readfile ${filename}]
+	set mapping(${locale}) [::util::readfile ${filename}]
     }
 
 }
@@ -43,22 +44,11 @@ proc ::dom::xpathFunc::normalizedate {ctxNode pos nodeListNode nodeList args} {
     set ts_string [::dom::xpathFuncHelper::coerce2string ${arg1Typ} ${arg1Value}]
     set locale $arg2Value
 
-    variable mapping_${locale}
+    variable mapping
 
-    #puts ts_string=$ts_string
+    if { [info exists mapping(${locale})] } {
 
-    if { [info exists mapping_${locale}] } {
-
-	set ts_string_list [list]
-	foreach word ${ts_string} {
-	    set unac_word [::ttext::unaccent utf-8 ${word}]
-	    if { [info exists mapping_${locale}(${unac_word})] } {
-		lappend ts_string_list [set mapping_${locale}(${unac_word})]
-	    } else {
-		lappend ts_string_list ${word}
-	    }
-	}
-	set ts_string [string trim [join ${ts_string_list}]]
+	set ts_string [string map $mapping(${locale}) ${ts_string}]
 
     }
 
@@ -68,8 +58,6 @@ proc ::dom::xpathFunc::normalizedate {ctxNode pos nodeListNode nodeList args} {
 	# TODO: convert pretty age to a timestamp
 	set ts_string [::util::dt::age_to_timestamp ${ts_string} [clock seconds]]
     }
-
-    #puts ts_string=$ts_string
 
     return [list string ${ts_string}]
 
