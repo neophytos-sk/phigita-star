@@ -681,6 +681,9 @@ proc rp_handle_tsp_request {} {
 
 proc rp_handle_tdp_request {} {
     ::xo::tdp::returnfile [ad_conn file]
+
+    ns_log notice "serve tdp request [ad_conn file]"
+
     return filter_return
 }
 
