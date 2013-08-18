@@ -67,9 +67,9 @@ if { ($secret_token eq $verify_token) && (${current_time} - ${time} < 600) } {
 		<html><head><meta http-equiv="refresh" content="0;url=${new_url}"/></head></html>
 	    }]
 	} else {
-	    ad_returnfile_background 200 image/gif [acs_root_dir]/www/graphics/noimage.gif
+	    ad_returnfile_background 200 image/gif [acs_root_dir]/resources/graphics/noimage.gif
 	}
     } else {
-	ad_returnfile_background 200 image/gif [acs_root_dir]/www/graphics/noimage.gif
+	ad_returnfile_background 200 image/gif [acs_root_dir]/resources/graphics/noimage.gif
     }
 }

@@ -42,7 +42,7 @@ set data [::db::Set new \
 $data load
 
 if { [$data emptyset_p] } {
-    ad_returnfile_background 200 image/gif [acs_root_dir]/www/graphics//noimage.gif
+    ad_returnfile_background 200 image/gif [acs_root_dir]/resources/graphics/noimage.gif
     return
 }
 
