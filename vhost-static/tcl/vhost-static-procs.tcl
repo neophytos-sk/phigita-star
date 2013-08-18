@@ -69,14 +69,15 @@ foreach pool ${connection_pools} {
     if { ${rewrite} ne {} } {
 	if { [llength ${rewrite}] == 2 } {
 	    lassign ${rewrite} re subSpec
-	    set process_url_code [list regsub -- ${re} \${url} ${subSpec} url]
+	    set process_url_code {}
+	    append process_url_code "\n" "upvar \${urlVar} url"
+	    append process_url_code "\n" "regsub -- [list ${re}] \${url} [list ${subSpec}] url"
 	} else {
 	    ns_log notice "x-rewrite: wrong # of arguments"
 	}
     }
 
-    proc process_url_${pool} {urlVar} "upvar \${urlVar} url; ${process_url_code}"
-
+    proc process_url_${pool} {urlVar} ${process_url_code}
 
     set code {}
     if { ${add_headers_extra} ne {} || ${expires_extra} ne {} } {
