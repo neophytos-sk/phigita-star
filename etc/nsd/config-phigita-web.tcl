@@ -4,7 +4,7 @@ ns_log notice "nsd.tcl: starting to read config file..."
 # 
 # Server parameters 
 # 
-ns_section ns/server/${server} 
+ns_section ns/server/${server_web} 
         ns_param   directoryfile	$directoryfile
 
 	#
@@ -72,10 +72,10 @@ ns_param is_mail_server_p   $is_mail_server_p  ;# process_incoming_mail
 #
 # Connection Thread Pools
 #
-ns_section "ns/server/${server}/pools"
+ns_section "ns/server/${server_web}/pools"
 ns_param monitor "Monitor pool"
 
-ns_section "ns/server/${server}/pool/monitor"
+ns_section "ns/server/${server_web}/pool/monitor"
 ns_param   minthreads 1
 ns_param   maxthreads 1
 ns_param   map "GET /admin/monitor/"
@@ -84,7 +84,7 @@ ns_param   map "GET /ds"
 ns_param   map "POST /ds"
 
 
-ns_section ns/server/${server}/ttrace
+ns_section ns/server/${server_web}/ttrace
 ns_param        enabletraces            false
 
 
@@ -95,7 +95,7 @@ ns_param        enabletraces            false
 #  case something is missing you can add it here. 
 #
 
-ns_section ns/server/${server}/MimeTypes
+ns_section ns/server/${server_web}/MimeTypes
 ns_param Default            text/plain
 ns_param NoExtension        text/plain
 ns_param .gif               image/gif
@@ -110,7 +110,7 @@ ns_param .ico               image/ico
 # 
 # Tcl Configuration 
 # 
-ns_section ns/server/${server}/tcl
+ns_section ns/server/${server_web}/tcl
 ns_param initfile ${bindir}/init.tcl
 ns_param library            ${serverroot}/tcl
 ns_param autoclose 	      on 
@@ -135,7 +135,7 @@ ns_param memoizecache         100000 ;# default is 10MB
 # 
 # ADP (AOLserver Dynamic Page) configuration 
 # 
-ns_section "ns/server/${server}/adp"
+ns_section "ns/server/${server_web}/adp"
 
 # ADP features
 ns_param defaultparser fancy
@@ -151,7 +151,7 @@ ns_param enabledebug   false     ;# Turn on Tclpro debugging with "?debug"
 #
 # Internal redirects
 #
-#ns_section "ns/server/${server}/redirects"
+#ns_section "ns/server/${server_web}/redirects"
 #ns_param 404 "/global/notfound.adp"      ;# Not Found error page
 #ns_param 403 "/global/forbidden.adp"     ;# Forbidden error page
 #ns_param 500 "/global/servererror.adp"   ;# Server error page
@@ -199,7 +199,7 @@ ns_param dataSource         ${datasource}
 ns_param user               ${user}
 ns_param password           ${password}
 
-ns_section ns/server/${server}/db
+ns_section ns/server/${server_web}/db
 ns_param pools              "main,bookdb"
 ns_param defaultpool        "main"
 
@@ -216,7 +216,7 @@ ns_param defaultpool        "main"
 # Access log -- nslog 
 # 
 #---------------------------------------------------------------------
-ns_section ns/server/${server}/module/nslog 
+ns_section ns/server/${server_web}/module/nslog 
     #
     # General parameters
     #
@@ -250,7 +250,7 @@ ns_param rollhour           0
 
 
 
-ns_section      ns/server/${server}/module/nsimap
+ns_section      ns/server/${server_web}/module/nsimap
 ns_param	idle_timeout	1800
 ns_param	debug		0
 #ns_param	mailbox		""
@@ -258,7 +258,7 @@ ns_param	debug		0
 #ns_param	password	""
 
 
-ns_section      "ns/server/${server}/module/nsclamav"
+ns_section      "ns/server/${server_web}/module/nsclamav"
    ns_param        dbdir          /var/lib/clamav
    ns_param        maxfiles       1000
    ns_param        maxfilesize    10485760
@@ -267,7 +267,7 @@ ns_section      "ns/server/${server}/module/nsclamav"
    ns_param        archivememlim  0
 
 
-ns_section      ns/server/${server}/module/nsdns
+ns_section      ns/server/${server_web}/module/nsdns
 ns_param        port            53 ;# 2525
 ns_param        address         0.0.0.0 ;# localhost
 ns_param        ttl             86400
@@ -287,7 +287,7 @@ ns_param        debug           0
 # SSL
 #
 
-ns_section    "ns/server/${server}/module/nsssl"
+ns_section    "ns/server/${server_web}/module/nsssl"
        # cat host.cert host.key > server.pem
        ns_param      certificate	/web/data/ssl/phigita.net.pem ;# $serverroot/etc/next-scripting.org.pem
        ns_param      address    	$address
@@ -340,19 +340,19 @@ ns_section    "ns/server/${server}/module/nsssl"
 #  4. Make sure the nscp.so module is loaded in the modules section.
 #
 
-ns_section      "ns/server/${server}/module/nscp"
+ns_section      "ns/server/${server_web}/module/nscp"
 ns_param        address                 127.0.0.1
 ns_param        port                    9999
 ns_param        echopassword            true
 ns_param        cpcmdlogging            false
 
-ns_section      "ns/server/${server}/module/nscp/users"
+ns_section      "ns/server/${server_web}/module/nscp/users"
 ns_param        user                    "nsadmin:t2GqvvaiIUbF2:"
 
 # 
 # Modules to load 
 # 
-ns_section ns/server/${server}/modules 
+ns_section ns/server/${server_web}/modules 
 ns_param nslog           ${bindir}/nslog.so 
 ns_param nsdb            ${bindir}/nsdb.so
 ns_param nsproxy         ${bindir}/nsproxy.so
@@ -388,16 +388,16 @@ if {[llength $libthread] == 0} {
 
 
 
-ns_section      "ns/server/${server}/module/qcluster"
+ns_section      "ns/server/${server_web}/module/qcluster"
 ns_param        address                 127.0.0.1
 ns_param        port                    8787
 ns_param        iam                     127.0.0.1
 
-ns_section      "ns/server/${server}/module/qcluster/groups"
+ns_section      "ns/server/${server_web}/module/qcluster/groups"
 ns_param        group                  "incoming"
 ns_param        group                  "outgoing"
 
-ns_section      "ns/server/${server}/module/qcluster/cluster"
+ns_section      "ns/server/${server_web}/module/qcluster/cluster"
 ns_param        member                 "127.0.0.1"
 
 
@@ -411,7 +411,7 @@ ns_param        member                 "127.0.0.1"
 # in case you ommit the ns_param lines.
 #
 
-ns_section  "ns/server/${server}/module/nsproxy"
+ns_section  "ns/server/${server_web}/module/nsproxy"
 
 ns_param    exec            ${homedir}/bin/nsproxy ; # Proxy program to start
 ns_param    evaltimeout     0       ; # Timeout (ms) when evaluating scripts
@@ -434,7 +434,7 @@ ns_param    maxslaves       8       ; # Max number of allowed slaves alive
 #
 
 
-ns_section "ns/server/${servername}/limits"
+ns_section "ns/server/${server_web}/limits"
 ns_param default         "GET  /*" ;# Map default limit to URL.
 ns_param default         "POST /*"
 ns_param default         "HEAD /*"

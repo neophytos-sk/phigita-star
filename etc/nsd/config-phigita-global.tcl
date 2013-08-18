@@ -1,5 +1,5 @@
 ns_section ns/servers 
-ns_param $server        $servername_web
+ns_param $server_web    $servername_web
 ns_param $server_static $servername_static
 #ns_param $server_secure_static $servername_secure_static
 if { {nssmtpd} in ${modules} } {
@@ -12,7 +12,7 @@ ns_section ns/module/nssock
 ns_param port $httpport
 ns_param hostname $hostname
 ns_param address $address
-ns_param defaultserver $server
+ns_param defaultserver $server_web
 #ns_param address            ${address}
 #ns_param hostname           ${hostname}
 #ns_param port               ${httpport}
@@ -65,7 +65,7 @@ ns_param maxsock 999
 # Socket driver module (HTTP)  -- nssock 
 # 
 ns_section ns/module/nssock/servers
-ns_param $server          ${hostname}:$httpport
+ns_param $server_web      ${hostname}:$httpport
 ns_param $server_static   ${server_static_host_and_port}
 
 #
@@ -92,7 +92,6 @@ ns_param      defaultserver     $server_web
 
 ns_section ns/module/nsssl/servers
 ns_param $server_web    ${hostname}:$httpsport
-#ns_param $server_static   i.uap.net:$httpport
 #ns_param $server_secure_static   ${server_secure_static_host_and_port}
 ns_param $server_static ${server_secure_static_host_and_port}
 
