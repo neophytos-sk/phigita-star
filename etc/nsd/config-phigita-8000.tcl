@@ -10,8 +10,8 @@ set is_mail_server_p 0  ;# ::xo::mail::process_incoming_mail
 
 set webroot               /web
 
-set server		  service-phgt-0
-set datasource		  localhost::${server}
+set server		  service-phigita
+set datasource		  localhost::service-phgt-0
 
 set minthreads             5
 set maxthreads             10

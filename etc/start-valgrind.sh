@@ -1,1 +1,1 @@
- LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/postgresql/lib:/opt/naviserver/lib:/opt/clucene/lib valgrind /opt/naviserver/bin/nsd -f -t /web/servers/service-phgt-0/etc/nsd/config-phigita-8090-valgrind.tcl -u nsadmin -g web
+ LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/postgresql/lib:/opt/naviserver/lib:/opt/clucene/lib valgrind /opt/naviserver/bin/nsd -f -t /web/servers/service-phigita/etc/nsd/config-phigita-8090-valgrind.tcl -u nsadmin -g web

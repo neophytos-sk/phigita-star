@@ -2,8 +2,8 @@ ns_log notice "nsd.tcl: starting to read config file..."
 
 set webroot               /web/
 
-set server		  service-phgt-0
-set datasource		  localhost::${server}
+set server		  service-phigita
+set datasource		  localhost::service-phgt-0
 
 set minthreads             5
 set maxthreads             10
@@ -379,7 +379,7 @@ set COMMENT {
 
 #set datasource sms::echodb
 #set datasource mars::echodb
-#set datasource mars::service-phgt-0
+#set datasource mars::service-phigita
 #set user postgres
 #set password ""
 ns_section ns/db/pool/echodb 

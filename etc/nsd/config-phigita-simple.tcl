@@ -63,7 +63,7 @@ set	address			localhost
 set	port			8080
 
 # Root directory for each virtual server
-set	serverdir		/web/servers/service-phgt-0/ ;# ${homedir}
+set	serverdir		/web/servers/service-phigita/ ;# ${homedir}
 
 # Alternatively in case when multiple server share the same
 # installation, server can be put into seperate directories
