@@ -189,7 +189,7 @@ val -id subtitle {
 }
 
 val -id top_right_ad {
-    return [::xo::google::adsense::slot_in_html 8133060118 200 200]
+    return [::xo::google::adsense::get_slot_html 8133060118 200 200]
 }
 
 # -------------------------------------------------------------------------------------------
