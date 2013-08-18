@@ -96,10 +96,11 @@ set server_secure_static_host_and_port "${server_static_host}:443"
 set servername $servername_web
 
 source [file join $serverroot etc/nsd/config-phigita-global.tcl]
-
-### dynamic content http and https servers
-
 source [file join $serverroot etc/nsd/config-phigita-web.tcl]
+source [file join $serverroot etc/nsd/config-phigita-static.tcl]
+
+
+### dynamic web content server
 
 array set config_web \
     [list \
@@ -127,37 +128,7 @@ array set config_web \
 
 config_phigita_web config_web
 
-# no storage_port for server_secure_web
-array set config_secure_web \
-    [list \
-	 server              ${server_secure_web} \
-	 connsperthread      ${connsperthread} \
-	 serverroot          ${serverroot} \
-	 webroot             ${webroot} \
-	 bindir              ${bindir} \
-	 directoryfile       ${directoryfile} \
-	 minthreads          ${minthreads} \
-	 maxthreads          ${maxthreads} \
-	 performance_mode_p  ${performance_mode_p} \
-	 production_mode_p   ${production_mode_p} \
-	 is_mail_server_p    ${is_mail_server_p} \
-	 storage_port        {} \
-	 listening_to_host   ${listening_to_host} \
-	 email               ${email} \
-	 pagedir             ${pagedir} \
-	 db_pool_connections ${db_pool_connections} \
-	 debug               ${debug} \
-	 datasource          ${datasource} \
-	 password            ${password} \
-	 user                ${user} \
-	 homedir             ${homedir}]
-
-config_phigita_web config_secure_web
-
-### static content http and https servers
-
-source [file join $serverroot etc/nsd/config-phigita-static.tcl]
-
+### static content server
 
 array set config_static \
     [list \
@@ -169,15 +140,6 @@ array set config_static \
 
 config_phigita_static config_static
 
-array set config_secure_static \
-    [list \
-	 server ${server_secure_static} \
-	 connsperthread ${connsperthread} \
-	 serverroot ${serverroot} \
-	 webroot ${webroot} \
-	 bindir ${bindir}]
-
-config_phigita_static config_secure_static
 
 if { {nssmtpd} in ${modules} } {
     source [file join $serverroot etc/nsd/config-phigita-mail.tcl]
