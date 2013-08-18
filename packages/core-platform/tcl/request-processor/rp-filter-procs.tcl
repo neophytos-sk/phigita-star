@@ -246,9 +246,6 @@ Object create ::xo::defaultRequestFilter
 	}
     }
 
-    ns_log notice "peeraddr=[ad_conn peeraddr] user_id=[ad_conn user_id] url=[ns_conn url] session_id=[ad_conn session_id] host=[ad_conn host]"
-
-
     return "filter_ok"
 }
 

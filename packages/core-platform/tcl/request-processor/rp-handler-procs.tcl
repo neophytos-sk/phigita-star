@@ -101,6 +101,11 @@ Class ::xo::RequestHandler
 	}
     }
 
+    ns_log notice "peeraddr=[ad_conn peeraddr] user_id=[ad_conn user_id] url=[ns_conn url] session_id=[ad_conn session_id] host=[ad_conn host]"
+
+
+
+
     set root [acs_root_dir]
     set package_key [ad_conn package_key]
 
