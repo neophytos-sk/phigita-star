@@ -197,11 +197,7 @@ Object create ::xo::defaultRequestFilter
     # call sec_handler at this point because the previous return
     # statements are all error-throwing cases or redirects.
 
-    ns_log Notice "--->>> sec_handler (before)"
-
     sec_handler
-
-    ns_log Notice "--->>> sec_handler (after)"
 
     set user_id [ad_conn user_id]
     ad_conn_set screen_name [::xo::kit::get_screen_name $user_id]
@@ -225,9 +221,6 @@ Object create ::xo::defaultRequestFilter
     ad_conn_set locale [ad_conn LD]
     ad_conn_set language [lindex [split [ad_conn LD] "_"] 0]
 
-
-
-    # ns_log Notice "OACS= RP end"
 
     #####
     #

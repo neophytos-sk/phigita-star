@@ -98,8 +98,13 @@ if { ![::xo::ns::reverse_proxy_mode_p] } {
 	return [ns_conn peeraddr]
     }
 
+    # ns_conn protocol is not doing a very good job
     proc ::xo::ns::conn::protocol {} {
-	return [::util::coalesce [ns_conn protocol] {http}]
+	if { [ns_conn driver] eq {nssock} } {
+	    return {http}
+	} else {
+	    return {https}
+	}
     }
 
 } else {
