@@ -152,8 +152,9 @@ Object create ::xo::defaultRequestFilter
 	}
 	
 	if { $node(url) eq "[ad_conn url]/" } {
-	    #ad_returnredirect [ns_conn url]/
-	    ns_returnmoved [ns_conn url]/
+	    ns_log notice "--->>> redirecting to url with slash"
+	    ad_returnredirect [ns_conn url]/
+	    #ns_returnmoved [ns_conn url]/
             #rp_debug "rp_filter: returnredirect node=$node(url) url=[ns_conn url] "
             #rp_debug "rp_filter: return filter_return"
 	    return "filter_return"
