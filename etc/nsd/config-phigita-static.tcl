@@ -39,7 +39,7 @@ proc config_phigita_static {configVar} {
     ns_param img "img pool"
     ns_param cover "book cover pool"
     ns_param graphics "graphics pool"
-    ns_param graphics "video-img pool"
+    ns_param video-img "video-img pool"
 
     ns_section "ns/server/${server}/pool/js"
     ns_param   minthreads 3
