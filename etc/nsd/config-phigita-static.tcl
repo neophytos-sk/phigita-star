@@ -27,6 +27,7 @@ ns_param js  "js pool"
 ns_param css "css pool"
 ns_param img "img pool"
 ns_param cover "book cover pool"
+#ns_param graphics "graphics pool"
 
 ns_section "ns/server/${server_static}/pool/js"
 ns_param   minthreads 3
@@ -64,6 +65,15 @@ ns_param   x-root /web/data/books/
 ns_param   x-add-header [list [list Cache-Control "public"]]
 ns_param   x-expires    "max"
 
+ns_section "ns/server/${server_static}/pool/graphics"
+ns_param   minthreads 3
+ns_param   maxthreads 10
+ns_param   map "GET /graphics"
+ns_param   map "POST /graphics"
+ns_param   map "HEAD /graphics"
+ns_param   x-root /web/servers/service-phigita/www/graphics/
+ns_param   x-add-header [list [list Cache-Control "public"]]
+ns_param   x-expires    "max"
 
 
 
@@ -144,7 +154,30 @@ ns_param rollday            *
 ns_param rollhour           0
 
 
+
+#
+# SSL
+#
+
+ns_section    "ns/server/${server_static}/module/nsssl"
+       # cat host.cert host.key > server.pem
+       ns_param      certificate	/web/data/ssl/phigita.net.pem ;# $serverroot/etc/next-scripting.org.pem
+       ns_param      address    	$address
+       ns_param      port       	$httpsport
+       #ns_param      ciphers    	"ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP"
+       #ns_param      ciphers    	"ECDHE-RSA-RC4-SHA:RC4+SHA1+RSA"
+       ns_param      ciphers            "RC4:HIGH:!aNULL:!MD5;"
+       ns_param      protocols          "!SSLv2"
+       ns_param      verify     	0
+       ns_param      writerthreads      5 
+       ns_param      writersize         10
+       ns_param	     writerbufsize	16384	;# 8192, buffer size for writer threads
+       ns_param	     writerstreaming	false	;# false
+       ns_param      deferaccept	true    ;# false, Performance optimization,
+
+
 ns_section ns/server/${server_static}/modules 
 ns_param nslog          ${bindir}/nslog.so 
+ns_param nslog          ${bindir}/nsssl.so 
 
 
