@@ -1,5 +1,0 @@
-if { [ad_conn extra_url] eq {all-in-one/} } {
-	ns_returnmoved http://news.phigita.net/all-in-one
-} else {
-	rp_returnnotfound
-}
