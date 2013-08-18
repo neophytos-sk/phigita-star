@@ -162,7 +162,7 @@ master -src "/templates/blank-master.inc" -title ${title} -onload "login_init();
 	div -style "width:350px;" {
 	    div -class "pull-right" {
 		a -href "http://www.phigita.net/" -target "_blank" {
-		    img -width 135 -height 40 -src //www.phigita.net/graphics/logo-v2.png
+		    img -width 135 -height 40 -src [get_cdn_url "/graphics/logo-v2.png"]
 		}
 	    }
 	    i -class "clearfix" 
@@ -173,7 +173,7 @@ master -src "/templates/blank-master.inc" -title ${title} -onload "login_init();
 
 	div -class "container" {
 	    a -href "http://www.phigita.net/" {
-		img -width 135 -height 40 -src //www.phigita.net/graphics/logo-v2.png
+		img -width 135 -height 40 -src [get_cdn_url "/graphics/logo-v2.png"]
 	    }
 	    p
 
