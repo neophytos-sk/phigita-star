@@ -100,6 +100,7 @@ set servername_static "phigita static server"
 
 
 set server_static_host_and_port "i-test.uap.net:8090"
+#set server_static_host_and_port "i.localhost:8090"
 
 set servername $servername_web
 
