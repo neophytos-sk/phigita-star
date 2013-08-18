@@ -75,7 +75,7 @@ proc_doc sec_handler {} {
 	set cookie_list [ad_get_signed_cookie_with_expr "_SID"]
     } errmsg ] } {
 
-	 ns_log notice "sec_handler:ad_get_signed_cookie failed $errmsg"
+	# ns_log notice "sec_handler: ad_get_signed_cookie failed $errmsg"
 
 	# cookie is invalid because either:
 	# -> it was never set
@@ -95,9 +95,9 @@ proc_doc sec_handler {} {
             }
 	    # ns_log notice "OACS= sec_handler:https, ad_user_login_secure cookie user_id $new_user_id"
 	}
-	# ns_log Notice "OACS= sec_handler:setting up session"
+	#ns_log notice "sec_handler: setting up session new_user_id=${new_user_id}"
 	sec_setup_session $new_user_id
-	# ns_log Notice "OACS= sec_handler:done setting up session"
+	#ns_log notice "sec_handler: done setting up session"
     } else {
 	# The session already exists and is valid.
 	set cookie_data [split [lindex $cookie_list 0] {,}]
@@ -106,9 +106,9 @@ proc_doc sec_handler {} {
 	set session_id [lindex $cookie_data 0]
 	set user_id [lindex $cookie_data 1]
 
-	# ns_log notice "OACS= sec_handler:sess exists & is valid"
-	# ns_log notice "OACS= sec_handler:cookie: $cookie_list, exp: $session_expr"
-	# ns_log notice "OACS= sec_handler:sess_id: $session_id, user_id: $user_id"
+	#ns_log notice "sec_handler: sess exists & is valid"
+	#ns_log notice "sec_handler: cookie: $cookie_list, exp: $session_expr"
+	#ns_log notice "sec_handler: sess_id: $session_id, user_id: $user_id"
 
 	# If it's a secure page and not a login page, we check
 	# secure token (can't check login page because they aren't
@@ -117,7 +117,7 @@ proc_doc sec_handler {} {
 	# system depends on these two functions
   	if { [ad_secure_conn_p] && ![ad_login_page] } {
 
-	    # ns_log notice "OACS= sec_handler:secure but not login page"
+	    #ns_log notice "sec_handler:secure but not login page"
 
   	    if { [catch { set sec_token [split [ad_get_signed_cookie "ad_secure_token"] {,}] } errmsg] } {
   		# token is incorrect or nonexistent, so we force relogin.
@@ -142,8 +142,9 @@ proc_doc sec_handler {} {
 		# need to check only one of the user_id and session_id
 		# if the cookie had been tampered.
 #		ns_log notice "OACS= sec_handler:token ok, $sec_token $session_id"
-		if { ![string match [lindex $sec_token 0] $session_id] } {
-		    # HERE: generalize redirect url
+		if { [lindex $sec_token 0] ne ${session_id} } {
+		    # TODO: generalize redirect url
+		    ns_log notice "sec_token=$sec_token session_id=${session_id}"
 		    ad_returnredirect "[ad_conn protocol]://www.phigita.net/accounts/?return_url=[ns_urlencode [ns_conn url]?[ns_conn query]]"
 		    return filter_break
 		}
