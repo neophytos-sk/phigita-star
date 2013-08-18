@@ -71,11 +71,9 @@ proc_doc sec_handler {} {
 } {
 
     #  ns_log notice "OACS= sec_handler: enter"
-    if { [catch { 
-	set cookie_list [ad_get_signed_cookie_with_expr "_SID"]
-    } errmsg ] } {
+    if { [catch { set cookie_list [ad_get_signed_cookie_with_expr "_SID"] } errmsg ] } {
 
-	# ns_log notice "sec_handler: ad_get_signed_cookie failed $errmsg"
+	# ns_log notice "sec_handler: ad_get_signed_cookie failed errmsg=$errmsg peeraddr=[ad_conn peeraddr]"
 
 	# cookie is invalid because either:
 	# -> it was never set
@@ -99,6 +97,7 @@ proc_doc sec_handler {} {
 	sec_setup_session $new_user_id
 	#ns_log notice "sec_handler: done setting up session"
     } else {
+
 	# The session already exists and is valid.
 	set cookie_data [split [lindex $cookie_list 0] {,}]
 	set session_expr [lindex $cookie_list 1]
@@ -129,9 +128,8 @@ proc_doc sec_handler {} {
 		# at some time in the past.
 		# So just call sec_setup_session to generate a new token.
 		# Otherwise, force a trip to /register
-		if { [catch {
-		    set new_user_id [lindex [split [ad_get_signed_cookie "ad_user_login_secure"] {,}] 0] }] } {
-#		     ns_log notice "OACS= sec_handler:token invalid $errmsg"
+		if { [catch { set new_user_id [lindex [split [ad_get_signed_cookie "ad_user_login_secure"] {,}] 0] } errmsg2] } {
+		    ns_log notice "OACS= sec_handler:token invalid $errmsg2"
 		    # HERE: generalize redirect url
 		    ad_returnredirect "[ad_conn protocol]://www.phigita.net/accounts/?return_url=[ns_urlencode [ns_conn url]?[ns_conn query]]"
 		     return filter_break
