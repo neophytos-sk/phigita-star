@@ -831,6 +831,7 @@ proc ::xo::tdp::compile_to_c {codearrVar templateDoc c_cmd_name tcl_cmd_name} {
 	return Result(interp,result);
 	#else
 	Tcl_DStringResult(interp,dsPtr);
+	return TCL_OK;
 	#endif
 
 
