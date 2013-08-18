@@ -482,7 +482,8 @@ ad_proc -public ad_set_client_property {
 }
 
 ad_proc -public ad_secure_conn_p {} { Returns true if the connection [ad_conn] is secure (HTTPS), or false otherwise. } {
-    return [string match "https:*" [ns_conn location]]
+    return 0
+    #return [string match "https:*" [ns_conn location]]
 }
 
 ad_proc -private sec_generate_secure_token_cookie { } { 
