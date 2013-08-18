@@ -828,9 +828,11 @@ proc ::xo::tdp::compile_to_c {codearrVar templateDoc c_cmd_name tcl_cmd_name} {
 	const char *data = Tcl_DStringValue(dsPtr);
 	DBG(fprintf(stderr,"page size/length=%d\n",len));
 	int result = Ns_ConnReturnCharData(conn, status,data,len,type);
+	return Result(interp,result);
+	#else
+	Tcl_DStringResult(interp,dsPtr);
 	#endif
 
-	return Result(interp,result);
 
     }]
 
