@@ -84,13 +84,15 @@ proc ::xo::ns::reverse_proxy_mode_p {} "return [ns_config -bool ns/parameters Re
 
 namespace eval ::xo::ns::conn {;}
 
+
+# question: what about ns_conn host?
+proc ::xo::ns::conn::host {} {
+    return [ns_set iget [ns_conn headers] "Host"]
+}
+
 if { ![::xo::ns::reverse_proxy_mode_p] } {
 
     ns_log notice "--->>> ReverseProxyMode=0"
-
-    proc ::xo::ns::conn::host {} {
-	return [ns_conn host]
-    }
 
     proc ::xo::ns::conn::peeraddr {} {
 	return [ns_conn peeraddr]
@@ -109,10 +111,6 @@ if { ![::xo::ns::reverse_proxy_mode_p] } {
     # ReverseProxyMode
     #
     #####
-
-    proc ::xo::ns::conn::host {} {
-	return [ns_set iget [ns_conn headers] "Host"]
-    }
 
     proc ::xo::ns::conn::peeraddr {} {
 
