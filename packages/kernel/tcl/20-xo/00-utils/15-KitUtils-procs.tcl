@@ -108,13 +108,17 @@ proc ::xo::kit::admin_p {{user_id ""} {object_id ""}} {
 
 
 if { [ns_config ns/server/[ns_info server] production_mode_p 1] } {
+
     proc ::xo::kit::production_mode_p {} {
 	return 1
     }
+
 } else {
+
     proc ::xo::kit::production_mode_p {} {
 	return 0
     }
+
 }
 
 if { [ns_config ns/server/[ns_info server] performance_mode_p 1] } {
@@ -139,7 +143,24 @@ proc ::xo::kit::is_secure_conn {} {
     return 0
 }
 
+
+namespace eval ::xo::kit {
+
+    array set listening_to_host [ns_config ns/server/[ns_info server] listening_to_host ""]
+
+}
+
+
 if { [::xo::kit::production_mode_p] } {
+
+    proc ::xo::kit::listening_to_host {host} {
+	variable listening_to_host
+	if { ![info exists listening_to_host(${host})] } {
+	    return 0
+	}
+	return 1
+    }
+
     proc ::xo::kit::pvt_home_url {} {
 	return "http://my.phigita.net"
     }
@@ -188,6 +209,11 @@ if { [::xo::kit::production_mode_p] } {
     proc ::xo::kit::log {args} {}
 
 } else {
+
+    proc ::xo::kit::listening_to_host {host} {
+	return 1
+    }
+
     proc ::xo::kit::pvt_home_url {} {
 	return "http://localhost:8090/my"
     }

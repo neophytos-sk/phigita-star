@@ -46,15 +46,25 @@ ns_section ns/server/${server_web}
 	# Application Options
 	#
 ns_param performance_mode_p ${performance_mode_p}
-ns_param production_mode_p ${production_mode_p}
+        ns_param production_mode_p ${production_mode_p}
 	ns_param is_crawler_p       no
 	ns_param is_sms_p           no
 	ns_param is_mail_p          yes
-ns_param is_mail_server_p   $is_mail_server_p  ;# process_incoming_mail
+        ns_param is_mail_server_p   $is_mail_server_p  ;# process_incoming_mail
 	ns_param is_ping_p          no
 	ns_param is_chat_p          no
 	ns_param start_request_monitor_p         1
 	ns_param storage_port       $storage_port
+
+ns_param listening_to_host {
+    www.phigita.net
+    my.phigita.net
+    books.phigita.net
+    remarks.phigita.net
+    echo.phigita.net
+    answers.phigita.net
+}
+
 	
 	ns_param pagedir           ${pagedir}
 	ns_param Webmaster          ${email}

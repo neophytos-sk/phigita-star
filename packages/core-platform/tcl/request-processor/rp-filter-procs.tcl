@@ -119,6 +119,10 @@ Object create ::xo::defaultRequestFilter
 	}
 	ns_returnmoved "http://www.phigita.net[ns_conn url]$query"
 	return filter_return
+    } elseif { ![::xo::kit::listening_to_host ${host_header}] } {
+	# only allowed hosts passed this point
+	ns_log notice "--->>> not listening to host ${host_header}"
+	return "filter_return"
     }
 
 
