@@ -1,2 +1,0 @@
-Library.TGHtml:                             libGuiHtml.so libGui.so libGraf.so libNet.so
-Library.TGHtmlBrowser:                      libGuiHtml.so libGui.so libGraf.so libNet.so

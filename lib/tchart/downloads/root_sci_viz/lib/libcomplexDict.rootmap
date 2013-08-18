@@ -1,5 +1,0 @@
-Library.complex<int>:                       complex.dll
-Library.complex<long>:                      complex.dll
-Library.complex<float>:                     complex.dll
-Library.complex<double>:                    complex.dll
-Library.complex<longlong>:                  complex.dll

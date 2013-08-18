@@ -1,1 +1,0 @@
-  math/mathmore/src/MultiNumGradFunction.o math/mathmore/src/MultiNumGradFunction.d: $(wildcard include/Math/MultiNumGradFunction.h include/Math/IFunction.h include/Math/IFunctionfwd.h include/Math/WrappedFunction.h include/Math/Derivator.h include/Math/IParamFunctionfwd.h)

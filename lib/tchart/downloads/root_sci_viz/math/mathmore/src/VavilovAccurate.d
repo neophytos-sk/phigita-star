@@ -1,1 +1,0 @@
-  math/mathmore/src/VavilovAccurate.o math/mathmore/src/VavilovAccurate.d: $(wildcard include/Math/VavilovAccurate.h include/Math/Vavilov.h include/Math/SpecFuncMathCore.h include/Math/SpecFuncMathMore.h include/Math/QuantFuncMathCore.h)

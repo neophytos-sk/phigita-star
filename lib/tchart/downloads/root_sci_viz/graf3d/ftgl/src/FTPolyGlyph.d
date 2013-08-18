@@ -1,1 +1,0 @@
-  graf3d/ftgl/src/FTPolyGlyph.o graf3d/ftgl/src/FTPolyGlyph.d: $(wildcard include/FTPolyGlyph.h include/FTGL.h include/FTGlyph.h include/FTBBox.h include/FTPoint.h include/FTVectoriser.h include/FTContour.h include/FTVector.h include/FTList.h)

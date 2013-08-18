@@ -1,1 +1,0 @@
-  graf3d/ftgl/src/FTGLOutlineFont.o graf3d/ftgl/src/FTGLOutlineFont.d: $(wildcard include/FTGLOutlineFont.h include/FTFont.h include/FTFace.h include/FTGL.h include/FTPoint.h include/FTSize.h include/FTOutlineGlyph.h include/FTGlyph.h include/FTBBox.h)

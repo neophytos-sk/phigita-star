@@ -1,3 +1,0 @@
-Library.TGraphStruct:                       libGviz.so libHist.so libGraf.so
-Library.TGraphNode:                         libGviz.so libHist.so libGraf.so
-Library.TGraphEdge:                         libGviz.so libHist.so libGraf.so

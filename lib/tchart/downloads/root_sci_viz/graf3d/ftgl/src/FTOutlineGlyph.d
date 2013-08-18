@@ -1,1 +1,0 @@
-  graf3d/ftgl/src/FTOutlineGlyph.o graf3d/ftgl/src/FTOutlineGlyph.d: $(wildcard include/FTOutlineGlyph.h include/FTGL.h include/FTGlyph.h include/FTBBox.h include/FTPoint.h include/FTVectoriser.h include/FTContour.h include/FTVector.h include/FTList.h)

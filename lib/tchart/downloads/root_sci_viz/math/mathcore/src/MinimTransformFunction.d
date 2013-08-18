@@ -1,1 +1,0 @@
-  math/mathcore/src/MinimTransformFunction.o math/mathcore/src/MinimTransformFunction.d: $(wildcard include/Math/MinimTransformFunction.h include/Math/IFunction.h include/Math/IFunctionfwd.h include/Math/MinimizerVariable.h include/Math/MinimizerVariableTransformation.h)

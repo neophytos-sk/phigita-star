@@ -1,1 +1,0 @@
-  math/mathmore/src/VavilovFast.o math/mathmore/src/VavilovFast.d: $(wildcard include/Math/VavilovFast.h include/Math/Vavilov.h include/Math/PdfFuncMathCore.h include/Math/ProbFuncMathCore.h include/Math/SpecFuncMathCore.h include/Math/SpecFuncMathMore.h)

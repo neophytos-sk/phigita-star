@@ -1,1 +1,0 @@
-  graf3d/ftgl/src/FTGlyphContainer.o graf3d/ftgl/src/FTGlyphContainer.d: $(wildcard include/FTGlyphContainer.h include/FTGL.h include/FTBBox.h include/FTPoint.h include/FTVector.h include/FTGlyph.h include/FTFace.h include/FTSize.h include/FTCharmap.h include/FTCharToGlyphIndexMap.h)

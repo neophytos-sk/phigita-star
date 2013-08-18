@@ -1,1 +1,0 @@
-  graf3d/ftgl/src/FTGLPolygonFont.o graf3d/ftgl/src/FTGLPolygonFont.d: $(wildcard include/FTGLPolygonFont.h include/FTFont.h include/FTFace.h include/FTGL.h include/FTPoint.h include/FTSize.h include/FTPolyGlyph.h include/FTGlyph.h include/FTBBox.h)

@@ -1,1 +1,0 @@
-  math/mathmore/src/PdfFuncMathMore.o math/mathmore/src/PdfFuncMathMore.d: $(wildcard include/Math/SpecFuncMathMore.h include/Math/SpecFuncMathCore.h include/Math/PdfFuncMathCore.h include/Math/DistFuncMathMore.h include/Math/PdfFuncMathMore.h include/Math/QuantFuncMathMore.h)
