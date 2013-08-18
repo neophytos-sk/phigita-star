@@ -106,8 +106,8 @@ Object create ::xo::defaultRequestFilter
     # Force the URL to look like [ns_conn location], if desired...
     set acs_kernel_id [util_memoize ad_acs_kernel_id]
 
-    set host_header [::xo::ns::conn::host]
-    if { ${host_header} eq {phigita.net} } {
+    set host [::xo::ns::conn::host]
+    if { ${host} eq {phigita.net} } {
 	set query [ns_getform]
 	if { ${query} ne {} } {
 	    set url_vars [export_entire_form_as_url_vars]
@@ -119,11 +119,12 @@ Object create ::xo::defaultRequestFilter
 	}
 	ns_returnmoved "http://www.phigita.net[ns_conn url]$query"
 	return filter_return
-    } elseif { ![::xo::kit::listening_to_host ${host_header}] } {
+    } elseif { ![::xo::kit::listening_to_host ${host}] } {
 	# only allowed hosts passed this point
-	ns_log notice "--->>> not listening to host ${host_header}"
+	ns_log notice "--->>> not listening to host ${host}"
 	return "filter_return"
     }
+    ad_conn_set host ${host}
 
 
     #rp_debug -ns_log_level debug -debug t "rp_filter: setting up request: [ns_conn method] [ns_conn url] [ad_conn query]"
@@ -135,15 +136,18 @@ Object create ::xo::defaultRequestFilter
     } else {
 
 
-	if { [::xo::kit::production_mode_p] && $node(host) ne {} && $node(host) ne ${host_header} } {
-	    ns_log notice "node(host)=$node(host) host=$host_header"
+	if { [::xo::kit::production_mode_p] && $node(host) ne {} && $node(host) ne ${host} } {
+
 	    set redirect_url http://$node(host)/[string range [ns_conn url] [string length $node(url)] end]
 	    if { [ns_conn query] ne {} } {
 		append redirect_url ?[ns_conn query]
 	    }
-	    #ns_log notice "redirect: $redirect_url"
+
+	    ns_log notice "redirect: $redirect_url"
 	    #ns_returnredirect $redirect_url
-	    ns_returnmoved $redirect_url
+
+	    #ns_returnmoved $redirect_url
+	    ns_returnredirect $redirect_url
 	    return "filter_return"
 	}
 	
@@ -211,7 +215,7 @@ Object create ::xo::defaultRequestFilter
     #####
     preferences::handler
 
-    ns_log notice "(after pref handler) peeraddr=[ad_conn peeraddr] user_id=[ad_conn user_id] url=[ns_conn url] session_id=[ad_conn session_id]"
+    ns_log notice "(after pref handler) peeraddr=[ad_conn peeraddr] user_id=[ad_conn user_id] url=[ns_conn url] session_id=[ad_conn session_id] host=[ad_conn host]"
 
     #####
     #
