@@ -111,9 +111,6 @@ if { ![::xo::kit::reverse_proxy_mode_p] } {
 
     }
 
-
-    }
-
     proc ::xo::ns::conn::protocol {} {
 	return [::util::coalesce [lindex [ns_set iget [ns_conn headers] x-forwarded-proto] end] [ns_conn protocol] {http}]
     }
