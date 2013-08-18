@@ -162,7 +162,7 @@ ns_param rollhour           0
 ns_section    "ns/server/${server_static}/module/nsssl"
        # cat host.cert host.key > server.pem
        ns_param      certificate	/web/data/ssl/phigita.net.pem ;# $serverroot/etc/next-scripting.org.pem
-       ns_param      address    	$address
+ns_param      address    	"192.168.10.1";# $address
        ns_param      port       	$httpsport
        #ns_param      ciphers    	"ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP"
        #ns_param      ciphers    	"ECDHE-RSA-RC4-SHA:RC4+SHA1+RSA"
@@ -178,6 +178,6 @@ ns_section    "ns/server/${server_static}/module/nsssl"
 
 ns_section ns/server/${server_static}/modules 
 ns_param nslog          ${bindir}/nslog.so 
-ns_param nslog          ${bindir}/nsssl.so 
+#ns_param nslog          ${bindir}/nsssl.so 
 
 
