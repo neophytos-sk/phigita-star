@@ -204,7 +204,7 @@ Object create ::xo::defaultRequestFilter
     set user_id [ad_conn user_id]
     ad_conn_set screen_name [::xo::kit::get_screen_name $user_id]
 
-    ns_log notice "peeraddr=[ad_conn peeraddr] user_id=[ad_conn user_id] url=[ns_conn url]"
+    ns_log notice "(before pref handler) peeraddr=[ad_conn peeraddr] user_id=[ad_conn user_id] url=[ns_conn url]"
 
 
     #####
@@ -213,6 +213,8 @@ Object create ::xo::defaultRequestFilter
     #
     #####
     preferences::handler
+
+    ns_log notice "(after pref handler) peeraddr=[ad_conn peeraddr] user_id=[ad_conn user_id] url=[ns_conn url]"
 
     #####
     #
