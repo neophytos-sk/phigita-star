@@ -85,7 +85,7 @@ proc serve_static_file {} {
     set pool [ns_conn pool] 
 
     # TODO: url2file - check if array exists / otherwise create it yourself
-    set file [file normalize [get_pagedir_${pool}]/${url}]
+    set file [file normalize [get_pagedir_${pool}]${url}]
 
     if { ![file isfile $file] || ![file readable $file]} {
 	ns_log notice "file=$file not found - return 404" 
