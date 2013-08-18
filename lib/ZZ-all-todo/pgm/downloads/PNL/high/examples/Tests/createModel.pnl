@@ -1,3 +1,0 @@
-execute("alarmModel.pnl")
-savenet("net.xml")
-comparefiles("alarm.xml", "net.xml", "create model")

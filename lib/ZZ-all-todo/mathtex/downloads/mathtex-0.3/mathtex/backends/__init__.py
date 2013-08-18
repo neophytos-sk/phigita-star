@@ -1,3 +1,0 @@
-"""
-Rendering backends available Mathtex.
-"""

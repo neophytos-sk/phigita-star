@@ -1,1 +1,0 @@
-dyn.load(paste("PNLClasses", .Platform$dynlib.ext, sep = ""))
