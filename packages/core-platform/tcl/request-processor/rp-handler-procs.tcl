@@ -144,11 +144,6 @@ Class ::xo::RequestHandler
 	set trymsg ""
 	lassign [rp_serve_abstract_file $root $path] status trymsg
 
-    ns_log notice "peeraddr=[ad_conn peeraddr] user_id=[ad_conn user_id] url=[ns_conn url] session_id=[ad_conn session_id] host=[ad_conn host] path=$path"
-
-
-
-
 	if { ${status} eq {SUCCESS} } {
 	    #set tcl_url2file([ad_conn url]) [ad_conn file]
 	    #set tcl_url2path_info([ad_conn url]) [ad_conn path_info]

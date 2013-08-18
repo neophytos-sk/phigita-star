@@ -122,6 +122,7 @@ if { [::xo::kit::production_mode_p] } {
 	    rp_returnerror
 	    return
 	}
+	ns_return 200 text/html ${html}
     }
 
     proc ::xo::tdp::returnfile {filename} {
@@ -819,6 +820,8 @@ proc ::xo::tdp::compile_to_c {codearrVar templateDoc c_cmd_name tcl_cmd_name} {
 
 	${result}
 
+	// TODO-HERE
+	#ifdef 0
 	Ns_Conn *conn = Ns_GetConn();
 	const int status = 200;
 	const char type[] = "${mime_type}";
@@ -826,7 +829,7 @@ proc ::xo::tdp::compile_to_c {codearrVar templateDoc c_cmd_name tcl_cmd_name} {
 	const char *data = Tcl_DStringValue(dsPtr);
 	DBG(fprintf(stderr,"page size/length=%d\n",len));
 	int result = Ns_ConnReturnCharData(conn, status,data,len,type);
-	//ND Tcl_DStringFree(dsPtr);
+	#endif
 
 	return Result(interp,result);
 
