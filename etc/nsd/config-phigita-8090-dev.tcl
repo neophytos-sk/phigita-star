@@ -1,7 +1,7 @@
 ns_log notice "start reading configuration settings"
 
-set production_mode_p 1
-set performance_mode_p 1
+set production_mode_p 0
+set performance_mode_p 0
 set connsperthread 1000
 set debug 0
 set dev 0

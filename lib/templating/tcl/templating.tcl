@@ -844,7 +844,7 @@ proc ::xo::tdp::compile_to_c {codearrVar templateDoc c_cmd_name tcl_cmd_name} {
     if { [get_value_if codearr(pragma.reuse_dstring) "0"] } {
 	append codearr(macros) "\n" "#define REUSE_DSTRING"
     }
-    if {0} {
+    if {1} {
 	append codearr(macros) "\n" "#define USE_NS_CONNRETURNCHARDATA"
     }
 
