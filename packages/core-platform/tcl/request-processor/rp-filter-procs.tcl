@@ -37,7 +37,7 @@ Object create ::xo::defaultRequestFilter
     set url [ns_conn url]
     # 2. handle special case: if the root is a prefix of the URL, 
     #                         remove this prefix from the URL, and redirect.
-    ns_log notice "request-processor, root=$root"
+    #ns_log notice "request-processor, root=$root"
     if { ${root} ne {} } {
 	set len [string length ${root}]
 	set url_prefix [string range $url 0 [expr {$len - 1}]]
@@ -106,7 +106,8 @@ Object create ::xo::defaultRequestFilter
     # Force the URL to look like [ns_conn location], if desired...
     set acs_kernel_id [util_memoize ad_acs_kernel_id]
 
-    set host_header [ns_set iget [ns_conn headers] "Host"]
+    #set host_header [ns_set iget [ns_conn headers] "Host"]
+    set host_header [::xo::ns::conn::host]
     if { $host_header eq {phigita.net} } {
 	set query [ns_getform]
 	if { $query ne {} } {
