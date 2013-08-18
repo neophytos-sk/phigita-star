@@ -12,7 +12,7 @@ set connection_pools [array names connection_pools_arr]
 ns_log notice "connection pools = $connection_pools"
 foreach pool ${connection_pools} {
 
-    set pagedir [ns_config ns/server/[ns_info server]/pool/${pool} "x-root"]
+    set pagedir [ns_config ns/server/[ns_info server]/pool/${pool} "x-root" "/web/data/build/resources"]
     proc get_pagedir_${pool} {} "return [list ${pagedir}]"
 
     set add_headers_extra ""
