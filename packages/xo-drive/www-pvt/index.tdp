@@ -83,7 +83,7 @@ master -title "Your MediaBox - Private Area" {
 		    -dataIndex {id}
 
 		column \
-		    -template {<a target="_blank" href="download/@{id}/@{title}@{extension}"><img alt="download" src="//www.phigita.net/graphics/dl_arrow.gif" /></a>}
+		    -template [subst {<a target="_blank" href="download/@{id}/@{title}@{extension}"><img alt="download" src=[get_cdn_url "/graphics/dl_arrow.gif"] /></a>}]
 
 		column \
 		    -text "Type" \
