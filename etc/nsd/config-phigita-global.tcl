@@ -66,9 +66,7 @@ ns_param maxsock 999
 # 
 ns_section ns/module/nssock/servers
 ns_param $server          ${hostname}:$httpport
-#ns_param $server_static   i.uap.net:$httpport
 ns_param $server_static   ${server_static_host_and_port}
-#ns_param $server_secure_static   ${server_secure_static_host_and_port}
 
 #
 # SSL
@@ -77,7 +75,7 @@ ns_param $server_static   ${server_static_host_and_port}
 ns_section    "ns/module/nsssl"
        # cat host.cert host.key > server.pem
        ns_param      certificate	/web/data/ssl/phigita.net.pem ;# $serverroot/etc/next-scripting.org.pem
-ns_param      defaultserver     server
+ns_param      defaultserver     $server_web
        ns_param      address    	$address
        ns_param      port       	$httpsport
        #ns_param      ciphers    	"ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP"
@@ -93,7 +91,7 @@ ns_param      defaultserver     server
 
 
 ns_section ns/module/nsssl/servers
-ns_param $server    ${hostname}:$httpsport
+ns_param $server_web    ${hostname}:$httpsport
 #ns_param $server_static   i.uap.net:$httpport
 #ns_param $server_secure_static   ${server_secure_static_host_and_port}
 ns_param $server_static ${server_secure_static_host_and_port}
