@@ -178,6 +178,6 @@ ns_section    "ns/server/${server_static}/module/nsssl"
 
 ns_section ns/server/${server_static}/modules 
 ns_param nslog          ${bindir}/nslog.so 
-ns_param nslog          ${bindir}/nsssl.so 
+ns_param nsssl          ${bindir}/nsssl.so 
 
 
