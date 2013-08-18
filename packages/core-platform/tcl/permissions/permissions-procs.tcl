@@ -110,12 +110,13 @@ namespace eval permission {
     } {
         require that party X have privilege Y on object Z
     } {
-        if {[empty_string_p $party_id]} {
+        if { ${party_id} eq {} } {
             set party_id [ad_conn user_id]
         }
 
         if {![permission_p -party_id $party_id -object_id $object_id -privilege $privilege]} {
             if {!${party_id}} {
+		ns_log notice "redirect for registration due to permission problem"
                 ad_maybe_redirect_for_registration
             } else {
                 ns_log notice "$party_id doesn't have $privilege on object $object_id"
