@@ -328,10 +328,10 @@ master \
 		}
 	    }
 	}
+
+	nt @{advertisement:noquote}
+
     }
-
-
-    nt @{advertisement:noquote}
 
     # sidebar end
 }
