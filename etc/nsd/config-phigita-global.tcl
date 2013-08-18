@@ -88,6 +88,8 @@ ns_param      defaultserver     $server_web
        ns_param	     writerstreaming	false	;# false
        ns_param      deferaccept	true    ;# false, Performance optimization,
 
+       ns_param   maxinput     [expr {$max_file_upload_mb * 1024 * 1024}] ;# 1024*1024, maximum size for inputs
+       ns_param   recvwait     [expr {$max_file_upload_min * 60}] ;# 30, timeout for receive operations
 
 ns_section ns/module/nsssl/servers
 ns_param $server_web    ${hostname}:$httpsport
