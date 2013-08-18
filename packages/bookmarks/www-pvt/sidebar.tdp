@@ -81,12 +81,12 @@ css {
     img {border:0;}
     body,td,font,a {font-family:Verdana,"Arial Unicode MS",Arial,helvetica,sans-serif;}
     body {font-size:12px;color:#333;background:transparent;}
-    #sidebar_container {position: fixed;top: 8px;right: 0;width: 380px;height: 100%;background: url('/graphics/sidebar_back.png') repeat-y; }
-    #sidebar_header {position: fixed; top: 0; right: 0;width: 355px; padding: 20px 0 0 25px; background: url('/graphics/sidebar_top.png') no-repeat 0px 0px; }
+    #sidebar_container {position: fixed;top: 8px;right: 0;width: 380px;height: 100%;background: url('//static.phigita.net/graphics/sidebar_back.png') repeat-y; }
+    #sidebar_header {position: fixed; top: 0; right: 0;width: 355px; padding: 20px 0 0 25px; background: url('//static.phigita.net/graphics/sidebar_top.png') no-repeat 0px 0px; }
     #sidebar_container_inner {position: fixed; top: 36px; right: 10px; width: 343px; height: 86%; margin-bottom:20px; padding: 0px 10px 30px; overflow-x: hidden; overflow-y: scroll; background-color: #fff;  }
     #_b_close {position:absolute;right:8px;top:12px;}
     #logo {width:250px;height:26px;position:absolute;top:7px;left:20px;}
-    .submitButtonBackground {border:0;background:url(/graphics/share_blue_button.png) no-repeat 0 0;width:65px;height:20px;font-size:14px;color:white;cursor:pointer;overflow:hidden;text-indent:0;display:block;}
+    .submitButtonBackground {border:0;background:url(//static.phigita.net/graphics/share_blue_button.png) no-repeat 0 0;width:65px;height:20px;font-size:14px;color:white;cursor:pointer;overflow:hidden;text-indent:0;display:block;}
     #sidebarOuterBento {width:330px;position:relative;}
     .attachone {float:left;width:80px;height:80px;margin:2px;}
     .attachone img {border:0;margin:0;padding:0;}
@@ -146,7 +146,7 @@ dataview {
 	div -id sidebar_container_inner {
 	    div -id sidebar_header {
 		a -id "_b_close" -href "javascript:void(null);" -title "Close sidebar" {
-		    img -alt "Close sidebar" -src "/graphics/close_button.gif"
+		    img -alt "Close sidebar" -src [get_cdn_url "/graphics/close_button.gif"]
 		}
 		div -id logo {
 		    div -style "float:left;text-align:right;font-size:16px;margin-left:5px;color:#606;" { nt "reMark&nbsp;" }
