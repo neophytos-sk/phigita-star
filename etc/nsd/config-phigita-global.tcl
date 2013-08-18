@@ -89,9 +89,9 @@ ns_param      defaultserver     $server_web
        ns_param      deferaccept	true    ;# false, Performance optimization,
 
 
-#ns_section ns/module/nsssl/servers
-#ns_param $server_web    ${hostname}:$httpsport
-#ns_param $server_static   ${server_secure_static_host_and_port}
+ns_section ns/module/nsssl/servers
+ns_param $server_web    ${hostname}:$httpsport
+ns_param $server_static   ${server_secure_static_host_and_port}
 
 
 ns_section ns/modules 
