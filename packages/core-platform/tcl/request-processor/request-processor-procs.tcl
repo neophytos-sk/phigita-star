@@ -607,6 +607,8 @@ proc ad_conn_reset {} {
 	package_key ""
 	extra_url ""
 	file ""
+	host ""
+	issecure ""
 	system_p 0
 	path_info ""
 	locale ""

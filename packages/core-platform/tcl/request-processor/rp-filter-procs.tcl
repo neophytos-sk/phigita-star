@@ -107,6 +107,7 @@ Object create ::xo::defaultRequestFilter
     set acs_kernel_id [util_memoize ad_acs_kernel_id]
 
     set host [::xo::ns::conn::host]
+    ad_conn_set host ${host}
     if { ${host} eq {phigita.net} } {
 	set query [ns_getform]
 	if { ${query} ne {} } {
@@ -124,14 +125,9 @@ Object create ::xo::defaultRequestFilter
 	ns_log notice "--->>> not listening to host ${host}"
 	return "filter_return"
     }
-    ad_conn_set host ${host}
-
-
-    #rp_debug -ns_log_level debug -debug t "rp_filter: setting up request: [ns_conn method] [ns_conn url] [ad_conn query]"
 
     if [catch { array set node [site_node__get_from_url [ad_conn url]] } errmsg] {
         # log and do nothing
-        #rp_debug -debug t 
 	ns_log notice "error within rp_filter [ns_conn method] [ns_conn url] [ad_conn query].  $errmsg"
     } else {
 
