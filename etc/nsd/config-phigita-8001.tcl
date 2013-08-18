@@ -33,8 +33,8 @@ set bindir                    [file dirname [ns_info nsd]]
 set libdir                    ${serverroot}/lib
 
 
-set httpport              8001
-set httpsport             8443 
+set httpport              80
+set httpsport             443 
 
 set storage_port          7001
 
@@ -69,7 +69,8 @@ set servername_mail   "phigita mail server"
 set servername_static "phigita static server"
 
 
-set server_static_host_and_port "i.phigita.com:8001"
+#set server_static_host_and_port "i.phigita.com:8001"
+set server_static_host_and_port "i.phigita.net"
 
 set servername $servername_web
 
