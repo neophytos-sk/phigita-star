@@ -79,7 +79,7 @@ proc ::xo::structured_text::transform_hr {configVar node} {
 
     div -style "width:100%;text-align:center;margin:10 0 10 0;" { 
 	::html::img -style "width:100px;height:1px;margin:5 0 5 0;background:#000;"
-	::html::img -src "/graphics/divider.png" -width "55" -height "12" -style "margin:0 5 0 5;"
+	::html::img -src "//static.phigita.net/graphics/divider.png" -width "55" -height "12" -style "margin:0 5 0 5;"
 	::html::img -style "width:100px;height:1px;margin:5 0 5 0;background:#000;"
     }
 }

@@ -40,9 +40,9 @@ typedef struct st_md_T {
 
 
 
-//const std::string kHorizontalRuleHTML = "<div style=\"width:100%;text-align:center;margin:10px 0px 10px 0px;\">-~-~-~-~-~-<img src=\"/graphics/divider.png\" style=\"width:55px;height:12px;margin:0px 5px 0px 5px;\" />-~-~-~-~-~-</div>";
-//const std::string kHorizontalRuleHTML = "<div style=\"width:100%;text-align:center;margin:10px 0px 10px 0px;\"><img style=\"width:100px;height:1px;margin:5px 0px 5px 0px;background:#000;\" /><img src=\"/graphics/divider.png\" style=\"width:55px;height:12px;margin:0px 5px 0px 5px;\" /><img style=\"width:100px;height:1px;margin:5px 0px 5px 0px;background:#000;\" /></div>";
-const std::string kHorizontalRuleHTML = "<div style=\"width:100%;text-align:center;margin:10px 0px 10px 0px;\"><span style=\"width:100px;height:1px;margin:5px 0px 5px 0px;border-bottom:1px solid #000;position:relative;top:7px;display:inline-block;\">&nbsp;</span><img src=\"/graphics/divider.png\" style=\"width:55px;height:12px;margin:0px 5px 0px 5px;\" /><span style=\"width:100px;height:1px;margin:5px 0px 5px 0px;border-bottom:1px solid #000;position:relative;top:7px;display:inline-block;\">&nbsp;</span></div>";
+//const std::string kHorizontalRuleHTML = "<div style=\"width:100%;text-align:center;margin:10px 0px 10px 0px;\">-~-~-~-~-~-<img src=\"//static.phigita.net/graphics/divider.png\" style=\"width:55px;height:12px;margin:0px 5px 0px 5px;\" />-~-~-~-~-~-</div>";
+//const std::string kHorizontalRuleHTML = "<div style=\"width:100%;text-align:center;margin:10px 0px 10px 0px;\"><img style=\"width:100px;height:1px;margin:5px 0px 5px 0px;background:#000;\" /><img src=\"//static.phigita.net/graphics/divider.png\" style=\"width:55px;height:12px;margin:0px 5px 0px 5px;\" /><img style=\"width:100px;height:1px;margin:5px 0px 5px 0px;background:#000;\" /></div>";
+const std::string kHorizontalRuleHTML = "<div style=\"width:100%;text-align:center;margin:10px 0px 10px 0px;\"><span style=\"width:100px;height:1px;margin:5px 0px 5px 0px;border-bottom:1px solid #000;position:relative;top:7px;display:inline-block;\">&nbsp;</span><img src=\"//static.phigita.net/graphics/divider.png\" style=\"width:55px;height:12px;margin:0px 5px 0px 5px;\" /><span style=\"width:100px;height:1px;margin:5px 0px 5px 0px;border-bottom:1px solid #000;position:relative;top:7px;display:inline-block;\">&nbsp;</span></div>";
 
 
 void st_init(st_md_t *md);
