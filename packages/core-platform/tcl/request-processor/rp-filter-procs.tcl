@@ -187,7 +187,7 @@ Object create ::xo::defaultRequestFilter
 
 
     ad_conn_set peeraddr [::xo::ns::conn::peeraddr]
-
+    ns_log notice "peeraddr=[::xo::ns::conn::peeraddr]"
 
     #####
     #
