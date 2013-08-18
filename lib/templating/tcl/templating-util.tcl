@@ -261,9 +261,8 @@ proc while_re {codearrVar re textVar fn {countVar ""}} {
 
 if { [::xo::kit::production_mode_p] } { 
     set default_cdn_host [::templating::config::get_option "default_cdn_host"]
-    proc get_cdn_url {url} {
-	return "//${default_cdn_host}/[string trimleft ${url} {/}]"
-    }
+    proc get_cdn_url {url} "return \"//${default_cdn_host}/\[string trimleft \${url} {/}\]\""
+    
 } else {
     proc get_cdn_url {url} {
 	return "/r/[string trimleft ${url} {/}]"
