@@ -335,18 +335,18 @@ master -src ${src} -title ${title} -keywords ${keywords} -search_query @{query_f
 				    td
 				    td {
 					a -href "@{url}" {
-					    img -src "http://www.phigita.net/graphics/pages.gif" -border 0 -height 7 -width 100% 
+					    img -src [get_cdn_url "/graphics/pages.gif"] -border 0 -height 7 -width 100% 
 					}
 				    }
 				    td -width 11 {
 					a -href "@{url}" {
-					    img -src "http://www.phigita.net/graphics/p_edge.gif" -border 0 -height 7 -width 11
+					    img -src [get_cdn_url "/graphics/p_edge.gif"] -border 0 -height 7 -width 11
 					}
 				    }
 				}
 				tr {
 				    td -valign bottom {
-					img -src "http://www.phigita.net/graphics/shadow.gif" -border 0 
+					img -src [get_cdn_url "/graphics/shadow.gif"] -border 0 
 				    }
 				    td -colspan 2 {
 					a -href "@{url}" {
@@ -354,7 +354,7 @@ master -src ${src} -title ${title} -keywords ${keywords} -search_query @{query_f
 						img -class "cover" -src "${image_host}/s@{ean13}-x80.jpg" -border 0 -height 80
 					    } 
 					    tpl -else "" {
-						img -class "cover" -src "http://www.phigita.net/graphics/nobook.gif" -border 0 -height 80
+						img -class "cover" -src [get_cdn_url "/graphics/nobook.gif"] -border 0 -height 80
 					    }
 					}
 				    }
@@ -448,7 +448,7 @@ master -src ${src} -title ${title} -keywords ${keywords} -search_query @{query_f
 	layout_col -class span2 {
 	    b { t "Send Feedback: " }
 	    br
-	    img -src /graphics/53dab96f0fd8087a4110eb0174b4cfbb.png
+	    img -src [get_cdn_url "/graphics/53dab96f0fd8087a4110eb0174b4cfbb.png"]
 	}
 	layout_col -class span6 {
 	    nt @{advertisement_bottom:noquote}
