@@ -75,7 +75,7 @@ proc_doc sec_handler {} {
 	set cookie_list [ad_get_signed_cookie_with_expr "_SID"]
     } errmsg ] } {
 
-	# ns_log notice "OACS= sec_handler:ad_get_signed_cookie failed $errmsg"
+	 ns_log notice "sec_handler:ad_get_signed_cookie failed $errmsg"
 
 	# cookie is invalid because either:
 	# -> it was never set
