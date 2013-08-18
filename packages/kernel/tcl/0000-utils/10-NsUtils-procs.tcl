@@ -87,7 +87,7 @@ namespace eval ::xo::ns::conn {;}
 
 # question: what about ns_conn host?
 proc ::xo::ns::conn::host {} {
-    return [lindex [split [ns_set iget [ns_conn headers] "Host"] {:}] 0]
+    return [ns_set iget [ns_conn headers] "Host"]
 }
 
 if { ![::xo::ns::reverse_proxy_mode_p] } {
