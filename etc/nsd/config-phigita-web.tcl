@@ -62,6 +62,7 @@ ns_param listening_to_host {
     books.phigita.net
     remarks.phigita.net
     blogs.phigita.net
+    video.phigita.net
     echo.phigita.net
     answers.phigita.net
 }
