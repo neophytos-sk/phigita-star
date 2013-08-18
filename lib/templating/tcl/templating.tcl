@@ -820,8 +820,7 @@ proc ::xo::tdp::compile_to_c {codearrVar templateDoc c_cmd_name tcl_cmd_name} {
 
 	${result}
 
-	// TODO-HERE
-	#ifdef 0
+	#ifdef USE_NS_CONNRETURNCHARDATA
 	Ns_Conn *conn = Ns_GetConn();
 	const int status = 200;
 	const char type[] = "${mime_type}";
@@ -841,6 +840,9 @@ proc ::xo::tdp::compile_to_c {codearrVar templateDoc c_cmd_name tcl_cmd_name} {
 
     if { [get_value_if codearr(pragma.reuse_dstring) "0"] } {
 	append codearr(macros) "\n" "#define REUSE_DSTRING"
+    }
+    if {0} {
+	append codearr(macros) "\n" "#define USE_NS_CONNRETURNCHARDATA"
     }
 
     set data_object_type [::templating::config::get_option "data_object_type"]

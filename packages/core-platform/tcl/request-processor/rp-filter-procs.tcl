@@ -143,7 +143,7 @@ Object create ::xo::defaultRequestFilter
 		append redirect_url ?[ns_conn query]
 	    }
 
-	    ns_log notice "redirect: $redirect_url"
+	    ns_log notice "redirect (rp-filter-procs.tcl): $redirect_url"
 	    #ns_returnredirect $redirect_url
 
 	    #ns_returnmoved $redirect_url
