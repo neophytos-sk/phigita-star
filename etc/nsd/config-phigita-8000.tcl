@@ -42,7 +42,7 @@ set storage_port          7000
 
 if {1} {
     set hostname               atlas
-    set address                127.0.0.1 ;#192.168.200.201;#0.0.0.0 ;# [ns_info address]
+    set address                0.0.0.0 ;# 127.0.0.1 ;#192.168.200.201;# [ns_info address]
 } else {
     set hostname               www.phigita.net;#[ns_info hostname]
     set address                127.0.0.1;#[ns_info address]
