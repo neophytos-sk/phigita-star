@@ -64,6 +64,20 @@ foreach pool ${connection_pools} {
 
     }
 
+    set rewrite [ns_config ns/server/[ns_info server]/pool/${pool} "x-rewrite"]
+    set process_url_code ""
+    if { ${rewrite} ne {} } {
+	if { [llength ${rewrite}] == 2 } {
+	    lassign ${rewrite} re subSpec
+	    set process_url_code [list regsub -- ${re} \${url} ${subSpec} url]
+	} else {
+	    ns_log notice "x-rewrite: wrong # of arguments"
+	}
+    }
+
+    proc process_url_${pool} {urlVar} "upvar \${urlVar} url; ${process_url_code}"
+
+
     set code {}
     if { ${add_headers_extra} ne {} || ${expires_extra} ne {} } {
 	set code {}
@@ -71,8 +85,6 @@ foreach pool ${connection_pools} {
 	append code ${expires_extra}
 	append code ${add_headers_extra}
     }
-
-    # ns_log notice "process_outputheaders_${pool} ${code}"
 
     proc process_outputheaders_${pool} {} ${code}
 }
@@ -84,11 +96,13 @@ proc serve_static_file {} {
 
     set pool [ns_conn pool] 
 
+    process_url_${pool} url
+
     # TODO: url2file - check if array exists / otherwise create it yourself
     set file [file normalize [get_pagedir_${pool}]/${url}]
 
-    if { ![file isfile $file] || ![file readable $file]} {
-	ns_log notice "pool=$pool file=$file not found - return 404" 
+    if { ![file isfile ${file}] || ![file readable ${file}]} {
+	ns_log notice "pool=${pool} file=${file} not found - return 404" 
 	ns_returnnotfound
 	return
     }

@@ -65,7 +65,8 @@ proc ::xo::buzz::getThumbnailDetails {o} {
     }
     set imageFile ${thumbnail_sha1}-sample-80x80.jpg
     set imageDir [::util::getDataDir news/images $thumbnail_sha1]
-    set imageHost [::util::getStaticHost $thumbnail_sha1 "i" "-buzz"]
+    #set imageHost [::util::getStaticHost $thumbnail_sha1 "i" "-buzz"]
+    set imageHost //static.phigita.net/video-img/
     return [list ${imageHost}/${thumbnail_sha1} $thumbnail_width $thumbnail_height]
 }
 

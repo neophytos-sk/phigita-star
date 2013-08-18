@@ -39,6 +39,7 @@ proc config_phigita_static {configVar} {
     ns_param img "img pool"
     ns_param cover "book cover pool"
     ns_param graphics "graphics pool"
+    ns_param graphics "video-img pool"
 
     ns_section "ns/server/${server}/pool/js"
     ns_param   minthreads 3
@@ -86,6 +87,18 @@ proc config_phigita_static {configVar} {
     ns_param   x-root /web/servers/service-phigita/resources/
     ns_param   x-add-header [list [list Cache-Control "public"]]
     ns_param   x-expires    "max"
+
+    ns_section "ns/server/${server}/pool/video-img"
+    ns_param   minthreads 3
+    ns_param   maxthreads 10
+    ns_param   map "GET /video-img"
+    ns_param   map "POST /video-img"
+    ns_param   map "HEAD /video-img"
+    ns_param   x-rewrite [list {^/video-img/(..)(.*)$} {/\1/\1\2-sample-80x80.jpg}]
+    ns_param   x-root /web/data/news/images/
+    ns_param   x-add-header [list [list Cache-Control "public"]]
+    ns_param   x-expires    "max"
+
 
 
     # 
