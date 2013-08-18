@@ -71,7 +71,7 @@ ns_param   maxthreads 10
 ns_param   map "GET /graphics"
 ns_param   map "POST /graphics"
 ns_param   map "HEAD /graphics"
-ns_param   x-root /web/servers/service-phigita/graphics/
+ns_param   x-root /web/servers/service-phigita/resources/
 ns_param   x-add-header [list [list Cache-Control "public"]]
 ns_param   x-expires    "max"
 
