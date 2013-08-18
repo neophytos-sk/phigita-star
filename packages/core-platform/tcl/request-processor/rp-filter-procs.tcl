@@ -187,7 +187,6 @@ Object create ::xo::defaultRequestFilter
 
 
     ad_conn_set peeraddr [::xo::ns::conn::peeraddr]
-    ns_log notice "peeraddr=[::xo::ns::conn::peeraddr]"
 
     #####
     #
@@ -204,6 +203,8 @@ Object create ::xo::defaultRequestFilter
 
     set user_id [ad_conn user_id]
     ad_conn_set screen_name [::xo::kit::get_screen_name $user_id]
+
+    ns_log notice "peeraddr=[ad_conn peeraddr] user_id=[ad_conn user_id]"
 
 
     #####
