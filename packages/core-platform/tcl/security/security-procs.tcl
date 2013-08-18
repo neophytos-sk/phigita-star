@@ -70,7 +70,7 @@ proc_doc sec_handler {} {
 
 } {
 
-    ns_log notice "sec_handler: enter location=[ns_conn location] driver=[ns_conn driver]"
+    ns_log notice "sec_handler: enter location=[ns_conn location] driver=[ns_conn driver] peeraddr=[ad_conn peeraddr]"
     if { [catch { set cookie_list [ad_get_signed_cookie_with_expr "_SID"] } errmsg ] } {
 
 	# ns_log notice "sec_handler: ad_get_signed_cookie failed errmsg=$errmsg peeraddr=[ad_conn peeraddr]"
@@ -482,7 +482,9 @@ ad_proc -public ad_set_client_property {
 }
 
 ad_proc -public ad_secure_conn_p {} { Returns true if the connection [ad_conn] is secure (HTTPS), or false otherwise. } {
-    return 0
+    return [ad_conn issecure]
+    #return 0
+    # Note that "ns_conn location" seem to always return "https://atlas:443"
     #return [string match "https:*" [ns_conn location]]
 }
 
