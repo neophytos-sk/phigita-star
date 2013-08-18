@@ -1,7 +1,7 @@
 ns_section ns/servers 
 ns_param $server_web    $servername_web
 ns_param $server_static $servername_static
-#ns_param $server_secure_static $servername_secure_static
+ns_param $server_secure_static $servername_secure_static
 if { {nssmtpd} in ${modules} } {
     ns_param $server_mail   $servername_mail
 }
@@ -92,8 +92,8 @@ ns_param      defaultserver     $server_web
 
 ns_section ns/module/nsssl/servers
 ns_param $server_web    ${hostname}:$httpsport
-#ns_param $server_secure_static   ${server_secure_static_host_and_port}
-ns_param $server_static ${server_secure_static_host_and_port}
+ns_param $server_secure_static   ${server_secure_static_host_and_port}
+#ns_param $server_static ${server_secure_static_host_and_port}
 
 
 ns_section ns/modules 

@@ -81,6 +81,27 @@ source [file join $serverroot etc/nsd/config-phigita-global.tcl]
 source [file join $serverroot etc/nsd/config-phigita-web.tcl]
 source [file join $serverroot etc/nsd/config-phigita-static.tcl]
 
+
+array set config_static \
+    [list \
+	 server ${server_static} \
+	 connsperthread ${connsperthread} \
+	 serverroot ${serverroot} \
+	 webroot ${webroot} \
+	 bindir ${bindir}]
+
+config_phigita_static config_static
+
+array set config_secure_static \
+    [list \
+	 server ${server_secure_static} \
+	 connsperthread ${connsperthread} \
+	 serverroot ${serverroot} \
+	 webroot ${webroot} \
+	 bindir ${bindir}]
+
+config_phigita_static config_secure_static
+
 if { {nssmtpd} in ${modules} } {
     source [file join $serverroot etc/nsd/config-phigita-mail.tcl]
 }

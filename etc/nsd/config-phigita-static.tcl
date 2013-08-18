@@ -1,128 +1,115 @@
-# 
-# Server parameters 
-# 
-ns_section ns/server/${server_static} 
-ns_param enabletclpages     0
-ns_param MaxBusyThreads     100
-ns_param MaxWait            20
+proc config_phigita_static {configVar} {
+
+    upvar $configVar config
+
+    set server         $config(server)
+    set connsperthread $config(connsperthread)
+    set serverroot     $config(serverroot)
+    set webroot        $config(webroot)
+    set bindir         $config(bindir)
 
 
-ns_param maxconnections    100 ;# GN:number of connections to be served by a connection thread before it restarts, the "maxconnections" setting can be tricky, since making it too large can cause your system to thrash. 
-ns_param maxthreads        10
-ns_param minthreads        5
-ns_param connsperthread    ${connsperthread}
-ns_param lowwatermark      10
-ns_param highwatermark     100
-#ns_param maxdropped        0
-ns_param threadtimeout     120       ;# Idle threads die at this rate (used to be set to 1800)
+    # 
+    # Server parameters 
+    # 
+    ns_section ns/server/${server} 
+    ns_param enabletclpages     0
+    ns_param MaxBusyThreads     100
+    ns_param MaxWait            20
 
 
-
-
-#
-# Connection Thread Pools
-#
-ns_section "ns/server/${server_static}/pools"
-ns_param js  "js pool"
-ns_param css "css pool"
-ns_param img "img pool"
-ns_param cover "book cover pool"
-ns_param graphics "graphics pool"
-
-ns_section "ns/server/${server_static}/pool/js"
-ns_param   minthreads 3
-ns_param   maxthreads 10
-ns_param   map "GET /js"
-ns_param   map "POST /js"
-ns_param   map "HEAD /js"
-ns_param   x-expires    "90d"
-
-ns_section "ns/server/${server_static}/pool/css"
-ns_param   minthreads 3
-ns_param   maxthreads 10
-ns_param   map "GET /css"
-ns_param   map "POST /css"
-ns_param   map "HEAD /css"
-#ns_param add_header test-img-header
-#ns_param expires 30d
-
-ns_section "ns/server/${server_static}/pool/img"
-ns_param   minthreads 3
-ns_param   maxthreads 10
-ns_param   map "GET /img"
-ns_param   map "POST /img"
-ns_param   map "HEAD /img"
-ns_param   x-add-header [list [list Cache-Control "public"]]
-ns_param   x-expires    "max"
-
-ns_section "ns/server/${server_static}/pool/cover"
-ns_param   minthreads 3
-ns_param   maxthreads 10
-ns_param   map "GET /cover"
-ns_param   map "POST /cover"
-ns_param   map "HEAD /cover"
-ns_param   x-root /web/data/books/
-ns_param   x-add-header [list [list Cache-Control "public"]]
-ns_param   x-expires    "max"
-
-ns_section "ns/server/${server_static}/pool/graphics"
-ns_param   minthreads 3
-ns_param   maxthreads 10
-ns_param   map "GET /graphics"
-ns_param   map "POST /graphics"
-ns_param   map "HEAD /graphics"
-ns_param   x-root /web/servers/service-phigita/resources/
-ns_param   x-add-header [list [list Cache-Control "public"]]
-ns_param   x-expires    "max"
-
-
-# 
-# Tcl Configuration 
-# 
-ns_section ns/server/${server_static}/tcl
-ns_param library            ${serverroot}/vhost-static/tcl
-ns_param autoclose 	      on 
-ns_param debug 		      false
-ns_param nsvbuckets           16
-ns_param lazyloader           false ;# true for lazy loader
-ns_param memoizecache         100000 ;# default is 10MB
-
-
-#ns_section ns/server/${server_static}/vhost
-#ns_param enabled 1
-#ns_param stripwww 1
-#ns_param stripport 1
-#ns_param hostprefix "/web/data/build/"  ;# {hostprefix}/{fastpath.pagedir}
-#ns_param hosthashlevel "0" ;# 0-5
-
-
-
-#ns_section "ns/server/${server_static}/fastpath"
-##ns_param        serverdir      ""       ;# default: ""
-#ns_param        pagedir        "/web/data/build/resources"       ;# default: "pages"
-##ns_param        cache          true     ;# default: false
-##ns_param        cachemaxsize   10240000  ;# default: 1024*10000
-##ns_param        cachemaxentry  8192      ;# default: 8192
-#ns_param        mmap             true     ;# default: false
-#ns_param        directoryfile    ""       ;# index.adp index.tcl index.html index.htm
-#ns_param        directorylisting "false"     ;# default: simple => _ns_dirlist for directoryproc
-#ns_param        directoryproc    ""          ;# if directorylisting=simple, default is _ns_dirlist
-#ns_param        directoryadp     ""
+    ns_param maxconnections    100 ;# GN:number of connections to be served by a connection thread before it restarts, the "maxconnections" setting can be tricky, since making it too large can cause your system to thrash. 
+    ns_param maxthreads        10
+    ns_param minthreads        5
+    ns_param connsperthread    ${connsperthread}
+    ns_param lowwatermark      10
+    ns_param highwatermark     100
+    #ns_param maxdropped        0
+    ns_param threadtimeout     120       ;# Idle threads die at this rate (used to be set to 1800)
 
 
 
 
+    #
+    # Connection Thread Pools
+    #
+    ns_section "ns/server/${server}/pools"
+    ns_param js  "js pool"
+    ns_param css "css pool"
+    ns_param img "img pool"
+    ns_param cover "book cover pool"
+    ns_param graphics "graphics pool"
 
-#---------------------------------------------------------------------
-# 
-# Access log -- nslog 
-# 
-#---------------------------------------------------------------------
-ns_section ns/server/${server_static}/module/nslog 
+    ns_section "ns/server/${server}/pool/js"
+    ns_param   minthreads 3
+    ns_param   maxthreads 10
+    ns_param   map "GET /js"
+    ns_param   map "POST /js"
+    ns_param   map "HEAD /js"
+    ns_param   x-expires    "90d"
+
+    ns_section "ns/server/${server}/pool/css"
+    ns_param   minthreads 3
+    ns_param   maxthreads 10
+    ns_param   map "GET /css"
+    ns_param   map "POST /css"
+    ns_param   map "HEAD /css"
+    #ns_param add_header test-img-header
+    #ns_param expires 30d
+
+    ns_section "ns/server/${server}/pool/img"
+    ns_param   minthreads 3
+    ns_param   maxthreads 10
+    ns_param   map "GET /img"
+    ns_param   map "POST /img"
+    ns_param   map "HEAD /img"
+    ns_param   x-add-header [list [list Cache-Control "public"]]
+    ns_param   x-expires    "max"
+
+    ns_section "ns/server/${server}/pool/cover"
+    ns_param   minthreads 3
+    ns_param   maxthreads 10
+    ns_param   map "GET /cover"
+    ns_param   map "POST /cover"
+    ns_param   map "HEAD /cover"
+    ns_param   x-root /web/data/books/
+    ns_param   x-add-header [list [list Cache-Control "public"]]
+    ns_param   x-expires    "max"
+
+    ns_section "ns/server/${server}/pool/graphics"
+    ns_param   minthreads 3
+    ns_param   maxthreads 10
+    ns_param   map "GET /graphics"
+    ns_param   map "POST /graphics"
+    ns_param   map "HEAD /graphics"
+    ns_param   x-root /web/servers/service-phigita/resources/
+    ns_param   x-add-header [list [list Cache-Control "public"]]
+    ns_param   x-expires    "max"
+
+
+    # 
+    # Tcl Configuration 
+    # 
+    ns_section ns/server/${server}/tcl
+    ns_param library            ${serverroot}/vhost-static/tcl
+    ns_param autoclose 	      on 
+    ns_param debug 		      false
+    ns_param nsvbuckets           16
+    ns_param lazyloader           false ;# true for lazy loader
+    ns_param memoizecache         100000 ;# default is 10MB
+
+
+
+    #---------------------------------------------------------------------
+    # 
+    # Access log -- nslog 
+    # 
+    #---------------------------------------------------------------------
+    ns_section ns/server/${server}/module/nslog 
     #
     # General parameters
     #
-    ns_param   file         ${webroot}/log/access.${server_static}.log
+    ns_param   file         ${webroot}/log/access.${server}.log
 
     #ns_param   maxbuffer       100 ;# 0, number of logfile entries to keep in memory before flushing to disk
     #
@@ -145,14 +132,15 @@ ns_section ns/server/${server_static}/module/nslog
     #ns_param   rollonsignal    true    ;# false, perform roll on a sighup
     ns_param   rollfmt      %Y-%m-%d-%H:%M  ;# format appendend to log file name
 
-# rolls the server log on the same basis as the access log 
-# {server}/tcl/logroll.tcl depends on rollday, rollhour, rollfmt being set
-ns_param rollday            *
-ns_param rollhour           0
+    # rolls the server log on the same basis as the access log 
+    # {server}/tcl/logroll.tcl depends on rollday, rollhour, rollfmt being set
+    ns_param rollday            *
+    ns_param rollhour           0
 
 
 
-ns_section ns/server/${server_static}/modules 
-ns_param nslog          ${bindir}/nslog.so 
+    ns_section ns/server/${server}/modules 
+    ns_param nslog          ${bindir}/nslog.so 
 
 
+}
