@@ -81,6 +81,8 @@ proc ::xo::ns::htmltidy {html {input_xml_p 0} {output_xml_p 0} {output_xhtml_p 1
 
 
 
+namespace eval ::xo::ns::conn {;}
+
 if { ![::xo::kit::reverse_proxy_mode_p] } {
 
     proc ::xo::ns::conn::peeraddr {} {
