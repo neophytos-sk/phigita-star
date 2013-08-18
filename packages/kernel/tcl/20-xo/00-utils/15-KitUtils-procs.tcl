@@ -146,7 +146,10 @@ proc ::xo::kit::is_secure_conn {} {
 
 namespace eval ::xo::kit {
 
-    array set listening_to_host [ns_config ns/server/[ns_info server] listening_to_host ""]
+    array set listening_to_host [list]
+    foreach host [ns_config ns/server/[ns_info server] listening_to_host ""] {
+	set listening_to_host(${host}) 1
+    }
 
 }
 
