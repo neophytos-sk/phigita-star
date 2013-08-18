@@ -1,0 +1,12 @@
+#!/bin/sh 
+
+# give time for Postgres to come up
+# see http://openacs.org/forums/message-view?message_id=176100
+###sleep 60
+
+exec /opt/naviserver/bin/nsd-postgres -i -t /web/servers/service-phigita/etc/nsd/config-phigita-1.tcl -u nsadmin -g web -b 0.0.0.0:25
+
+# -b 0.0.0.0:80,0.0.0.0:443,0.0.0.0:53/tcp,0.0.0.0:53/udp
+
+# For AOLserver 4 using privileged ports (usually < 1024), add the flag
+# -b youraddress:yourport to the nsd command
