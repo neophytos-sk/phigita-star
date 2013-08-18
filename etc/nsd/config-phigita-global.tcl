@@ -1,6 +1,7 @@
 ns_section ns/servers 
 ns_param $server_web    $servername_web
 ns_param $server_static $servername_static
+ns_param $server_secure_web $servername_secure_web
 ns_param $server_secure_static $servername_secure_static
 if { {nssmtpd} in ${modules} } {
     ns_param $server_mail   $servername_mail
@@ -75,7 +76,7 @@ ns_param $server_static   ${server_static_host_and_port}
 ns_section    "ns/module/nsssl"
        # cat host.cert host.key > server.pem
        ns_param      certificate	/web/data/ssl/phigita.net.pem ;# $serverroot/etc/next-scripting.org.pem
-ns_param      defaultserver     $server_web
+ns_param      defaultserver     $server_secure_web
        ns_param      address    	$address
        ns_param      port       	$httpsport
        #ns_param      ciphers    	"ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP"
@@ -91,7 +92,7 @@ ns_param      defaultserver     $server_web
 
 
 ns_section ns/module/nsssl/servers
-ns_param $server_web    ${hostname}:$httpsport
+ns_param $server_secure_web    ${hostname}:$httpsport
 ns_param $server_secure_static   ${server_secure_static_host_and_port}
 #ns_param $server_static ${server_secure_static_host_and_port}
 
@@ -124,9 +125,6 @@ ns_param        mmap             true     ;# default: false
 # NaviServer's directories. Autoconfigurable. 
 #
 #---------------------------------------------------------------------
-# Where are your pages going to live ?
-set pagedir                ${serverroot}/www 
-set directoryfile             index.tcl,index.adp,index.html,index.htm
 
 # 
 # Global server parameters 
