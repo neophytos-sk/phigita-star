@@ -1584,7 +1584,7 @@ ad_proc -private security::get_secure_location {} {
 
         # Add port number if non-standard
         set https_port [get_https_port]
-        if { ${https_port} ne {443} && ![::xo::kit::reverse_proxy_mode_p] } {
+        if { ${https_port} ne {443} && ![::xo::ns::reverse_proxy_mode_p] } {
             set secure_location ${secure_location}:$https_port
         }
 

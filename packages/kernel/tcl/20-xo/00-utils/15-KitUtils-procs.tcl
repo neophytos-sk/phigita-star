@@ -107,8 +107,6 @@ proc ::xo::kit::admin_p {{user_id ""} {object_id ""}} {
 }
 
 
-proc ::xo::kit::reverse_proxy_mode_p {} "return [ns_config -bool ns/parameters ReverseProxyMode 0]"
-
 if { [ns_config ns/server/[ns_info server] production_mode_p 1] } {
     proc ::xo::kit::production_mode_p {} {
 	return 1

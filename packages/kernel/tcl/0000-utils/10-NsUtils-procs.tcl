@@ -80,10 +80,11 @@ proc ::xo::ns::htmltidy {html {input_xml_p 0} {output_xml_p 0} {output_xhtml_p 1
 }
 
 
+proc ::xo::ns::reverse_proxy_mode_p {} "return [ns_config -bool ns/parameters ReverseProxyMode 0]"
 
 namespace eval ::xo::ns::conn {;}
 
-if { ![::xo::kit::reverse_proxy_mode_p] } {
+if { ![::xo::ns::reverse_proxy_mode_p] } {
 
     proc ::xo::ns::conn::peeraddr {} {
 	return [ns_conn peeraddr]
