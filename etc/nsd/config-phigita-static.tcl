@@ -178,6 +178,6 @@ ns_param      address    	"192.168.10.1";# $address
 
 ns_section ns/server/${server_static}/modules 
 ns_param nslog          ${bindir}/nslog.so 
-#ns_param nslog          ${bindir}/nsssl.so 
+ns_param nslog          ${bindir}/nsssl.so 
 
 
