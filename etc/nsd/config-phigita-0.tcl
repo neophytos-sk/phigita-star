@@ -72,7 +72,7 @@ set servername_secure_static "phigita secure static server"
 
 
 
-set server_static_host "i.phigita.net"
+set server_static_host "static.phigita.net"
 set server_static_host_and_port ${server_static_host}
 set server_secure_static_host_and_port "${server_static_host}:443"
 

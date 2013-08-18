@@ -3,7 +3,7 @@ namespace eval ::templating::config {
     # data_object_type := NSF | DICT
     array set options [list \
 			   data_object_type "NSF" \
-			   default_cdn_host "i.phigita.net"]
+			   default_cdn_host "static.phigita.net"]
 
 }
 

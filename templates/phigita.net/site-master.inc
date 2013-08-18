@@ -28,7 +28,7 @@ master -src "/templates/blank-master.inc" {
 	    }
 	    layout_col -class "span2" {
 		a -href "http://www.phigita.net/" {
-		    img -width 135 -height 40 -src //www.phigita.net/graphics/logo-v2.png
+		    img -width 135 -height 40 -src [get_cdn_url "/graphics/logo-v2.png"]
 		}
 	    }
 	    layout_col -class "span7" {

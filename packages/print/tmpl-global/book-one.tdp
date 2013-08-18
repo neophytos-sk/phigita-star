@@ -1,4 +1,4 @@
-set image_host "http://i.phigita.net/cover/"
+set image_host [get_cdn_url "/cover/"]
 
 contract {
     param -id "isbn" -check "notnull"
