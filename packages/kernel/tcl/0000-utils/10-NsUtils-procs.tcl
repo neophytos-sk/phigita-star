@@ -86,6 +86,8 @@ namespace eval ::xo::ns::conn {;}
 
 if { ![::xo::ns::reverse_proxy_mode_p] } {
 
+    ns_log notice "--->>> ReverseProxyMode=0"
+
     proc ::xo::ns::conn::peeraddr {} {
 	return [ns_conn peeraddr]
     }
@@ -95,6 +97,8 @@ if { ![::xo::ns::reverse_proxy_mode_p] } {
     }
 
 } else {
+
+    ns_log notice "--->>> ReverseProxyMode=1"
 
     #####
     #
