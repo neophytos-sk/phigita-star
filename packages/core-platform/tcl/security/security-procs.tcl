@@ -482,7 +482,6 @@ ad_proc -public ad_set_client_property {
 }
 
 ad_proc -public ad_secure_conn_p {} { Returns true if the connection [ad_conn] is secure (HTTPS), or false otherwise. } {
-    ns_log notice "ns_conn location = [ns_conn location] peeraddr=[ad_conn peeraddr]"
     return [ad_conn issecure]
     #return 0
     # Note that "ns_conn location" seem to always return "https://atlas:443"
