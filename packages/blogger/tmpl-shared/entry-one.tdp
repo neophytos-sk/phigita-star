@@ -328,8 +328,9 @@ master \
 		}
 	    }
 	}
-
-	nt @{advertisement:noquote}
+	div {
+	    nt @{advertisement:noquote}
+	}
 
     }
 
