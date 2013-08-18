@@ -215,8 +215,6 @@ Object create ::xo::defaultRequestFilter
     #####
     preferences::handler
 
-    ns_log notice "(after pref handler) peeraddr=[ad_conn peeraddr] user_id=[ad_conn user_id] url=[ns_conn url] session_id=[ad_conn session_id] host=[ad_conn host]"
-
     #####
     #
     # Internationalization
@@ -247,6 +245,10 @@ Object create ::xo::defaultRequestFilter
 	    return "filter_return"
 	}
     }
+
+    ns_log notice "peeraddr=[ad_conn peeraddr] user_id=[ad_conn user_id] url=[ns_conn url] session_id=[ad_conn session_id] host=[ad_conn host]"
+
+
     return "filter_ok"
 }
 
