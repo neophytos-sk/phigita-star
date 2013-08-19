@@ -254,8 +254,6 @@ proc print_usage_info {} {
 
     array set cmdinfo [list \
 			   "sync" "?feed_names?" \
-			   "resync" "" \
-			   "test" "feed_name ?limit? ?fetch_item_p?" \
 			   "show" "urlsha1" \
 			   "show-url" "article_url" \
 			   "show-content" "contentsha1" \
@@ -263,6 +261,7 @@ proc print_usage_info {} {
 			   "log" "?limit? ?offset?" \
 			   "list" "feed_name ?limit? ?offset?" \
 			   "revisions" "urlsha1" \
+			   "test" "feed_name ?limit? ?fetch_item_p?" \
 			   "remove-feed-items" "feed_name" \
 			   "cluster" "?limit? ?offset?" \
 			   "label" "axis class contentsha1 ?...?" \

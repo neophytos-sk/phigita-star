@@ -1182,37 +1182,6 @@ proc ::feed_reader::remove_feed_items {feedVar} {
 
 }
 
-proc ::feed_reader::resync {feedsVar} {
-
-    # unfinished work, return to avoid trouble
-    return
-
-    upvar $feedsVar feeds
-
-    get_logfilelist sortedlist
-
-    foreach logfilename ${sortedlist} {
-
-	array set old_item [::util::readfile ${logfilename}]
-	array set feed [dict get ${feeds} $old_item(feed_name)]
-
-	set errorcode [fetch_item ${link} $old_item(title) feed new_item]
-	if { ${errorcode} } {
-	    puts "--->>> error ${link}"
-	    # write_error_item new_item
-	    # incr errorCount
-	    continue
-	}
-
-	# if distance between old and new item is great, then skip writing
-	write_item ${link} feed new_item 1
-
-	unset old_item
-	unset new_item
-
-    }
-
-}
 
 
 ::feed_reader::init
