@@ -531,6 +531,11 @@ proc ::feed_reader::get_domain_dir {link} {
     return [get_base_dir]/site/${reversehost}
 }
 
+proc ::feed_reader::get_urlsha1 {link} {
+    set urlsha1 [::sha1::sha1 -hex ${link}]
+    return ${urlsha1}
+}
+
 proc ::feed_reader::get_item_dir {link {urlsha1Var ""}} {
 
     upvar ${urlsha1Var} urlsha1
@@ -555,6 +560,10 @@ proc ::feed_reader::get_log_dir {} {
     return [get_base_dir]/log
 }
 
+proc ::feed_reader::get_crawler_dir {} {
+    return [get_base_dir]/crawler
+}
+
 proc ::feed_reader::get_index_dir {} {
     # multiple urls may have the same content
     return [get_base_dir]/contentsha1_to_urlsha1
@@ -573,6 +582,7 @@ proc ::feed_reader::exists_domain {link} {
 }
 
 proc ::feed_reader::compare_mtime {file_or_dir1 file_or_dir2} {
+
     set mtime1 [file mtime $file_or_dir1]
     set mtime2 [file mtime $file_or_dir2]
 
@@ -583,6 +593,16 @@ proc ::feed_reader::compare_mtime {file_or_dir1 file_or_dir2} {
     } else {
 	return 0
     }
+
+}
+
+proc ::feed_reader::get_revision_filename {item_dir index} {
+
+    set filelist [glob -directory ${item_dir} *]
+    set sortedlist [lsort -decreasing -command compare_mtime ${filelist}]
+    set filename [lindex ${filelist} ${index}]
+    reeturn ${filename}
+
 }
 
 
@@ -591,9 +611,7 @@ proc ::feed_reader::compare_mtime {file_or_dir1 file_or_dir2} {
 proc ::feed_reader::load_item_from_dir {itemVar item_dir} {
     upvar $itemVar item
 
-    set filelist [glob -directory ${item_dir} *]
-    set sortedlist [lsort -decreasing -command compare_mtime ${filelist}]
-    set filename [lindex ${filelist} 0]
+    set filename [get_revision_filename item_dir 0]  ;# newest revision
     array set item [::util::readfile ${filename}]
 }
 
@@ -765,12 +783,15 @@ proc ::feed_reader::print_log_entry {itemVar} {
 
     set domain [::util::domain_from_url $item(link)]
 
-    set is_copy_string ""
+    set is_copy_or_rev_string ""
     if { [get_value_if item(is_copy_p) 0] } {
-	set is_copy_string "(*)"
+	append is_copy_or_rev_string "(*)"
+    }
+    if { [get_value_if item(is_revision_p) 0] } {
+	append is_copy_or_rev_string "upd"
     }
 
-    puts [format "%13s %40s %40s %24s %3s %s" $item(date) $item(contentsha1) $item(urlsha1) ${domain} ${is_copy_string} $item(title)]
+    puts [format "%13s %40s %40s %24s %3s %s" $item(date) $item(contentsha1) $item(urlsha1) ${domain} ${is_copy_or_rev_string} $item(title)]
     #puts [list $item(link)]
 }
 
@@ -786,7 +807,7 @@ proc ::feed_reader::show_item_from_url {link} {
     print_item item
 }
 
-proc ::feed_reader::write_item {link feedVar itemVar} {
+proc ::feed_reader::write_item {link feedVar itemVar resync_p} {
     upvar $feedVar feed
     upvar $itemVar item
 
@@ -796,8 +817,16 @@ proc ::feed_reader::write_item {link feedVar itemVar} {
     set item_dir [get_item_dir ${link} urlsha1]
     set url_dir [get_url_dir]
     set log_dir [get_log_dir]
+    set crawler_dir [get_crawler_dir]
 
-    foreach varname {content_dir index_dir item_dir url_dir log_dir} {
+    foreach varname {
+	content_dir 
+	index_dir 
+	item_dir 
+	url_dir 
+	log_dir 
+	crawler_dir
+    } {
 	set dirname [set ${varname}]
 	if { ![file isdirectory ${dirname}] } {
 	    file mkdir ${dirname}
@@ -805,48 +834,75 @@ proc ::feed_reader::write_item {link feedVar itemVar} {
     }
 
 
-    set item(urlsha1) ${urlsha1}
-
     # save article body to content file
     # TODO: each image,attachment,video,etc should get its own content file in the future
     set content [list $item(title) $item(body)]
     set contentsha1 [::sha1::sha1 -hex ${content}]
-    set contentfilename ${content_dir}/${contentsha1}
 
-    set item(contentsha1) ${contentsha1}
+    set crawlerfilename "${crawler_dir}/${urlsha1}"
+    close [open ${crawlerfilename} "w"]
+
+
+    #set itemfilename "item/${urlsha1}"
+    set revisionfilename ${item_dir}/${contentsha1}
+
+    if { [file exists ${revisionfilename}] } {
+	# revision content is the same as a previous one
+	# no need to overwrite the revisionfilename,
+	# nor the contentfilename and indexfilename
+	#
+	# note that if were keeping track of metadata changes
+	# then it would make sense to overwrite the logfilename
+	# and the urlfilename
+	return
+    }
+
+    set timestamp [clock seconds] 
+
+    if { ${resync_p} } {
+	set item(is_revision_p) 1
+	set item(first_sync) [get_first_sync_timestamp $item(link)]
+	set item(last_sync) ${timestamp}
+    }
+
+    set contentfilename ${content_dir}/${contentsha1}
+    set indexfilename ${index_dir}/${contentsha1}
+    set logfilename ${log_dir}/${urlsha1}
+    set urlfilename ${url_dir}/${urlsha1}
+
     if { [file exists ${contentfilename}] } {
-	# we have seen this item before
+	# we have seen this item before from a different url
 	set item(is_copy_p) 1
     } else {
 	::util::writefile ${contentfilename} ${content}
     }
 
-    # contentsha1 to urlsha1, i.e. which links lead to the same content
-    # TODO: consider having simhash
-    set indexfilename ${index_dir}/${contentsha1}
-    set fp [open ${indexfilename} "a"]
-    puts $fp ${urlsha1}
-    close $fp
 
-    set timestamp [clock seconds] 
     set item(timestamp) ${timestamp}
+    set item(urlsha1) ${urlsha1}
+    set item(contentsha1) ${contentsha1}
+
 
     array unset item body
     set data [array get item]
 
 
-    # save log file
-    set logfilename ${log_dir}/${urlsha1}
+    # contentsha1 to urlsha1, i.e. which links lead to the same content
+    # TODO: consider having simhash
+    set fp [open ${indexfilename} "a"]
+    puts $fp ${urlsha1}
+    close $fp
+
+
+
+    # save data to log dir
     ::util::writefile ${logfilename}  ${data}  
 
-    # save data to item_dir
-    # note that it overwrites the file if it already exists with the same content
+    # save data to item-revision dir
     #
+    ::util::writefile ${revisionfilename} ${data}
 
-    set datafilename ${item_dir}/${contentsha1}
-    ::util::writefile ${datafilename} ${data}
-
-    set urlfilename ${url_dir}/${urlsha1}
+    # save data to url dir
     ::util::writefile ${urlfilename} ${data}
 
 }
@@ -888,7 +944,43 @@ proc ::feed_reader::test_feed {feedVar {limit "3"} {fetch_item_p "1"}} {
 
 }
 
-proc ::feed_reader::auto_resync {feed link} {
+
+proc get_first_sync_timestamp {link} {
+
+    upvar $linkVar link
+
+    set item_dir [get_item_dir ${link} urlsha1]
+    set revisionfilename [get_revision_filename ${item_dir} end]  ;# oldest revision
+    return [file mtime ${revisionfilename}]
+
+}
+
+
+proc get_last_sync_timestamp {linkVar} {
+
+    upvar $linkVar link
+
+    set urlsha1 [get_urlsha1 ${link}]
+    set crawler_dir [get_crawler_dir]
+    set crawlerfilename "${crawler_dir}/${urlsha1}"
+    return [file mtime ${crawlerfilename}]
+
+}
+
+proc ::feed_reader::auto_resync_p {feedVar link} {
+
+    upvar $feedVar feed
+
+    set first_sync [get_first_sync_timestamp link]
+    set last_sync [get_last_sync_timestamp link]
+
+
+    # check for revisions every hour but 
+    # not for more than a day after the first sync
+    if { ${now} - ${last_sync} > 3600 && ${now} - ${first_sync} < 86400 } {
+	return 1
+    }
+
     return 0
 }
 

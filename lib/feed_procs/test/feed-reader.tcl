@@ -233,6 +233,7 @@ set feeds [dict create \
 		   include_re {item/[0-9]+}
 		   htmltidy_feed_p 1
 		   htmltidy_article_p 1
+		   check_for_revisions 1
 		   xpath_article_title {returnstring(//h2[@class="itemTitle"])}
 		   xpath_article_date {returndate(string(//span[@class="itemDateCreated"]),"%d/%m/%y - %H:%M")}
 		   xpath_article_description {returnstring(//div[@class="itemBody"]/*[@class="itemIntroText"])}
