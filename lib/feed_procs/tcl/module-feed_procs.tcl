@@ -1172,6 +1172,8 @@ proc ::feed_reader::remove_feed_items {feedVar} {
 
 	}
 
+	file delete ${item_dir}
+
 	unset item
     }
 
