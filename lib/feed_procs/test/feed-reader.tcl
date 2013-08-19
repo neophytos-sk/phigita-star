@@ -309,6 +309,25 @@ set feeds [dict create \
 		   }
 		   xpath_article_body {returntext(//div[@id="description"])}
 	       }\
+	       volkan {
+		   url http://www.volkangazetesi.net/
+		   include_re {[0-9]{3,}.html$}
+		   article_langclass {tr.utf8}
+		   xpath_article_title {returnstring(//div[@class="haber-detay"]/h1[1])}
+		   xpath_article_date {returndate(//div[@class="haber-detay"]/b/em[1],"%d.%m.%Y %H:%M")}
+		   xpath_article_body {returntext(//div[@class="haber-detay"])}
+		   xpath_article_image {
+		       {string(//meta[@property="og:image"]/@content)}
+		       {values(//div[@class="haber-detay"]/descendant::img/@src)}
+		   }
+		   xpath_article_cleanup {
+		       {//div[@class="haber-detay"]/h1[1]}
+		       {//div[@class="haber-detay"]/span[1]}
+		       {//div[@class="haber-detay"]/div[@class="haber-detay-paylas"]}
+		       {//div[@class="haber-detay"]/b/em[1]}
+		       {//div[@class="haber-detay"]/b[1]}
+		   }
+	       } \
 	       empty {
 		   url ""
 		   feed_type {}
