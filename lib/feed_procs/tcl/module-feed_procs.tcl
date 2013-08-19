@@ -596,7 +596,9 @@ proc ::feed_reader::compare_mtime {file_or_dir1 file_or_dir2} {
 
 }
 
-proc ::feed_reader::get_revision_files {item_dir} {
+proc ::feed_reader::get_revision_files {item_dirVar} {
+
+    upvar $item_dirVar item_dir
 
     set filelist [glob -directory ${item_dir} *]
     set sortedlist [lsort -decreasing -command compare_mtime ${filelist}]
@@ -604,9 +606,11 @@ proc ::feed_reader::get_revision_files {item_dir} {
 
 }
 
-proc ::feed_reader::get_revision_filename {item_dir index} {
+proc ::feed_reader::get_revision_filename {item_dirVar index} {
 
-    set filename [lindex [get_revision_files ${item_dir}] ${index}]
+    upvar $item_dirVar item_dir
+
+    set filename [lindex [get_revision_files item_dir] ${index}]
     return ${filename}
 
 }
@@ -809,7 +813,7 @@ proc ::feed_reader::show_item {urlsha1} {
 proc ::feed_reader::show_revisions {urlsha1} {
     load_item item ${urlsha1}
     set item_dir [get_item_dir $item(link)]
-    set filelist [get_revision_files $item_dir]
+    set filelist [get_revision_files item_dir]
     foreach filename ${filelist} {
 	puts "[file mtime ${filename}] [file tail ${filename}]"
     }
@@ -920,6 +924,20 @@ proc ::feed_reader::write_item {link feedVar itemVar resync_p} {
     # save data to url dir
     ::util::writefile ${urlfilename} ${data}
 
+
+    if { [get_value_if item(date) ""] ne {} } {
+	set timeval [clock scan $item(date) -format "%Y%m%dT%H%M"]
+	# up to a day difference is fine to account for servers
+	# with different timezone
+	if { ${timestamp} - ${timeval} > 86400 } {
+	    puts "item(date)=$item(date) is older than a day - updating files' mtime..."
+	    file mtime ${contentfilename} ${timeval}
+	    file mtime ${indexfilename} ${timeval}
+	    file mtime ${logfilename} ${timeval}
+	    file mtime ${revisionfilename} ${timeval}
+	    file mtime ${urlfilename} ${timeval}
+	}
+    }
 }
 
 
@@ -965,7 +983,7 @@ proc ::feed_reader::get_first_sync_timestamp {linkVar} {
     upvar $linkVar link
 
     set item_dir [get_item_dir ${link} urlsha1]
-    set revisionfilename [get_revision_filename ${item_dir} end]  ;# oldest revision
+    set revisionfilename [get_revision_filename item_dir end]  ;# oldest revision
     return [file mtime ${revisionfilename}]
 
 }
@@ -1019,6 +1037,7 @@ proc ::feed_reader::sync_feeds {feedsVar {feed_names ""}} {
 	    alitheia
 	    politis
 	    pafosnet
+	    bankingnews
 	}
     }
 
