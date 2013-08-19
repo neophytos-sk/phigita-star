@@ -858,7 +858,8 @@ proc ::feed_reader::show_item {urlsha1} {
 
 proc ::feed_reader::show_revisions {urlsha1} {
     load_item item ${urlsha1}
-    set item_dir [get_item_dir item(link)]
+    set normalized_link [get_value_if item(normalized_link) $item(link)]
+    set item_dir [get_item_dir normalized_link]
     set filelist [get_revision_files item_dir]
     foreach filename ${filelist} {
 	puts "[file mtime ${filename}] [file tail ${filename}]"
