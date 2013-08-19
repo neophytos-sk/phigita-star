@@ -519,7 +519,7 @@ proc ::feed_reader::fetch_item {link title_in_feed feedVar itemVar} {
 }
 
 proc ::feed_reader::get_base_dir {} {
-    return {/web/data/crawldb}
+    return {/web/data/newsdb}
 }
 
 proc ::feed_reader::get_domain_dir {link} {
