@@ -181,6 +181,8 @@ set feeds [dict create \
 		   url http://www.politis.com.cy/
 		   include_re {/cgibin/hweb\?-A=[0-9]+&-V=articles}
 		   encoding cp1253
+		   htmltidy_feed_p 1
+		   htmltidy_article_p 1
 		   xpath_article_title {substring-after(//meta[@property="og:title"]/@content," - ")}
 		   xpath_article_body {returntext(//td[@width="524"]/descendant::*[local-name()="p" or local-name()="div"])}
 		   xpath_article_cleanup {
@@ -198,10 +200,27 @@ set feeds [dict create \
 	       }\
 	       ikypros {
 		   url http://www.ikypros.com/
-		   include_re {/easyconsole.cfm/id/[0-9]{3,}}
+		   include_re {/easyconsole.cfm/id/[0-9]{4,}}
+		   htmltidy_feed_p 1
+		   htmltidy_article_p 1
 		   xpath_feed_cleanup {
 		       {//a[@id]}
 		       {//h3/a}
+		   }
+		   xpath_article_date {returndate(normalizedate(//span[@class="dateRed"],"el_GR"),"%d %B %Y %H:%M","el_GR")}
+		   xpath_article_description {string(//meta[@name="Description"]/@content)}
+		   xpath_article_tags {}
+		   xpath_article_body {returntext(//div[@class="newsArticleBox"])}
+		   xpath_article_cleanup {
+		       {//div[@class="articleGreyContainer"]}
+		       {//div[@class="articleImgContainer"]}
+		   }
+		   link_stoplist {
+		       http://www.ikypros.com/easyconsole.cfm/id/9809
+		       http://www.ikypros.com/easyconsole.cfm/id/67573
+		   }
+		   image_stoplist {
+		       http://www.ikypros.com/assets/image/imageoriginal/img-logo-ikypros.png
 		   }
 	       } \
 	       pafosnet {
@@ -260,6 +279,7 @@ proc print_usage_info {} {
 			   "show-url" "article_url" \
 			   "show-content" "contentsha1" \
 			   "uses-content" "contentsha1" \
+			   "diff-content" "contentsha1_old contentsha1_new" \
 			   "log" "?limit? ?offset?" \
 			   "list" "feed_name ?limit? ?offset?" \
 			   "revisions" "urlsha1" \
@@ -322,6 +342,12 @@ if { ${argc} < 1 } {
 
 	set contentsha1 [lindex ${argv} 1]
 	::feed_reader::show_content ${contentsha1}
+
+    } elseif { ${cmd} eq {diff-content} && ${argc} == 3 } {
+
+	set contentsha1_old [lindex ${argv} 1]
+	set contentsha1_new [lindex ${argv} 2]
+	::feed_reader::diff_content ${contentsha1_old} ${contentsha1_new}
 
     } elseif { ${cmd} eq {uses-content} && ${argc} == 2 } {
 

@@ -217,6 +217,8 @@ proc ::feed_reader::fetch_feed {resultVar feedVar {stoptitlesVar ""}} {
 	}	    
     }
 
+    set link_stoplist [get_value_if feed(link_stoplist) ""]
+
     set nodes [$doc selectNodes ${xpath_feed_item}]
 
     set nodes2 [list]
@@ -227,6 +229,11 @@ proc ::feed_reader::fetch_feed {resultVar feedVar {stoptitlesVar ""}} {
 	# TODO: consider using urldecode, problem is decoded string might need to be
 	# converted from another encoding, i.e. encoding convertfrom url_decoded_string
 	set href [::uri::canonicalize [::uri::resolve ${url} [${node} @href ""]]]
+
+	if { ${link_stoplist} ne {} && ${href} in ${link_stoplist} } {
+	    continue
+	}
+
 
 	# drop urls from other domains
 	if { [::util::domain_from_url ${href}] ne ${domain} } {
@@ -378,12 +385,22 @@ proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar} {
 
     set article_image [list]
     if { ${xpath_article_image} ne {} } {
+
+	set image_stoplist [get_value_if feed(image_stoplist) ""]
+
 	foreach image_xpath ${xpath_article_image} {
 	    foreach image_url [${doc} selectNodes ${image_xpath}] {
-		lappend article_image [::uri::canonicalize \
-					   [::uri::resolve \
-						$link \
-						$image_url]]
+		set canonical_image_url \
+		    [::uri::canonicalize \
+			 [::uri::resolve \
+			      $link \
+			      $image_url]]
+
+		if { ${image_stoplist} ne {} && ${canonical_image_url} in ${image_stoplist} } {
+		    continue
+		}
+
+		lappend article_image ${canonical_image_url}
 	    }
 	}
     }
@@ -544,7 +561,7 @@ proc ::feed_reader::fetch_and_write_item {link title_in_feed feedVar} {
 	if { ${errorcode} } {
 	    puts "--->>> error ${link}"
 	    # incr errorCount
-	    continue
+	    return
 	}
 
 	if { ${normalized_link} ne ${link} } {
@@ -793,6 +810,17 @@ proc ::feed_reader::show_content {contentsha1} {
     print_item item
 }
 
+proc ::feed_reader::diff_content {contentsha1_old contentsha1_new} {
+
+    load_content old_item ${contentsha1_old}
+    load_content new_item ${contentsha1_new}
+
+    puts "* title: [::util::strings::diff $old_item(title) $new_item(title)]"
+    puts "* body: [::util::strings::diff $old_item(body) $new_item(body)]"
+
+}
+
+
 proc ::feed_reader::uses_content {contentsha1} {
     
     # what objects use given content
@@ -830,7 +858,7 @@ proc ::feed_reader::print_item {itemVar} {
 
 proc ::feed_reader::print_log_header {} {
 
-    puts [format "%13s %40s %40s %24s %3s %s" date contentsha1 urlsha1 domain "" title]
+    puts [format "%13s %40s %40s %24s %3s %3s %s" date contentsha1 urlsha1 domain "" "" title]
 
 }
 
@@ -839,15 +867,16 @@ proc ::feed_reader::print_log_entry {itemVar} {
 
     set domain [::util::domain_from_url $item(link)]
 
-    set is_copy_or_rev_string ""
+    set is_copy_string ""
     if { [get_value_if item(is_copy_p) 0] } {
-	append is_copy_or_rev_string "(*)"
+	set is_copy_string "(*)"
     }
+    set is_revision_string ""
     if { [get_value_if item(is_revision_p) 0] } {
-	append is_copy_or_rev_string "upd"
+	set is_revision_string "upd"
     }
 
-    puts [format "%13s %40s %40s %24s %3s %s" $item(date) $item(contentsha1) $item(urlsha1) ${domain} ${is_copy_or_rev_string} $item(title)]
+    puts [format "%13s %40s %40s %24s %3s %3s %s" $item(date) $item(contentsha1) $item(urlsha1) ${domain} ${is_copy_string} ${is_revision_string} $item(title)]
     #puts [list $item(link)]
 }
 
@@ -1096,6 +1125,7 @@ proc ::feed_reader::sync_feeds {feedsVar {feed_names ""}} {
 	    politis
 	    pafosnet
 	    bankingnews
+	    ikypros
 	}
     }
 
@@ -1120,8 +1150,6 @@ proc ::feed_reader::sync_feeds {feedsVar {feed_names ""}} {
 	    #puts ${title_in_feed}
 	    #puts ${link}
 	    #puts "---"
-
-	    #continue
 
 	    fetch_and_write_item ${link} ${title_in_feed} feed
 
