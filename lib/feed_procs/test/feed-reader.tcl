@@ -221,6 +221,7 @@ set feeds [dict create \
 		   }
 		   image_stoplist {
 		       http://www.ikypros.com/assets/image/imageoriginal/img-logo-ikypros.png
+		       http://www.ikypros.com/images/galleryLeftArrow.gif
 		   }
 	       } \
 	       pafosnet {
