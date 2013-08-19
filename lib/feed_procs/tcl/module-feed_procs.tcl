@@ -525,7 +525,7 @@ proc ::feed_reader::fetch_and_write_item {link title_in_feed feedVar} {
 
 
     set normalize_link_re [get_value_if feed(normalize_link_re) ""]
-    if { ${normalize_link_re} } {
+    if { ${normalize_link_re} ne {} } {
 	regexp -- ${normalize_link_re} ${link} whole normalized_link
     } else {
 	set normalized_link ${link}
@@ -534,6 +534,9 @@ proc ::feed_reader::fetch_and_write_item {link title_in_feed feedVar} {
     # TODO: if it exists and it's the first item in the feed,
     # fetch it and compare it to stored item to ensure sanity
     # of feed/article/page
+
+    set can_resync_p [get_value_if feed(check_for_revisions) "0"]
+
     set resync_p 0
     if { ![exists_item ${normalized_link}] || ( ${can_resync_p} && [set resync_p [auto_resync_p feed ${normalized_link}]] ) } {
 	
@@ -660,8 +663,9 @@ proc ::feed_reader::get_revision_filename {item_dirVar index} {
 
 # load latest revision in item_dir
 # TODO: fix me
-proc ::feed_reader::load_item_from_dir {itemVar item_dir} {
+proc ::feed_reader::load_item_from_dir {itemVar item_dirVar} {
     upvar $itemVar item
+    upvar $item_dirVar item_dir
 
     set filename [get_revision_filename item_dir 0]  ;# newest revision
     array set item [::util::readfile ${filename}]
@@ -682,7 +686,7 @@ proc ::feed_reader::list_feed {feedVar {limit "10"} {offset "0"}} {
 	set slicelist [lrange ${sortedlist} ${first} ${last}]
 
 	foreach item_dir ${slicelist} {
-	    load_item_from_dir item ${item_dir}
+	    load_item_from_dir item item_dir
 
 	    print_log_entry item
 	    unset item
@@ -973,6 +977,7 @@ proc ::feed_reader::write_item {normalized_link feedVar itemVar resync_p} {
 	# with different timezone
 	if { ${timestamp} - ${timeval} > 86400 } {
 	    puts "item(date)=$item(date) is older than a day - updating files' mtime..."
+	    file mtime ${item_dir} ${timeval}
 	    file mtime ${contentfilename} ${timeval}
 	    file mtime ${indexfilename} ${timeval}
 	    file mtime ${logfilename} ${timeval}
@@ -1099,8 +1104,6 @@ proc ::feed_reader::sync_feeds {feedsVar {feed_names ""}} {
 	    continue
 	}
 
-	set can_resync_p [get_value_if feed(check_for_revisions) "0"]
-
 	foreach link $result(links) title_in_feed $result(titles) {
 	    #puts ""
 	    #puts ${title_in_feed}
@@ -1123,26 +1126,25 @@ proc ::feed_reader::remove_feed_items {feedVar} {
 
     upvar $feedVar feed
     
-    set domain_dir [get_domain_dir $feed(url)]
-
-    set urlsha1_list [glob -tails -directory ${domain_dir}/ *]
-
     set content_dir [get_content_dir]
     set index_dir [get_index_dir]
     set url_dir [get_url_dir]
     set log_dir [get_log_dir]
     set crawler_dir [get_crawler_dir]
+    set domain_dir [get_domain_dir $feed(url)]
 
-    foreach urlsha1 ${urlsha1_list} {
-	load_item item ${urlsha1}
+    set item_dirs [glob -directory ${domain_dir}/ *]
+    foreach item_dir ${item_dirs} {
+	load_item_from_dir item item_dir
+	set urlsha1 $item(urlsha1)
 
 	set crawlerfilename "${crawler_dir}/${urlsha1}"
 	set logfilename ${log_dir}/${urlsha1}
 	set urlfilename ${url_dir}/${urlsha1}
 
-	file delete ${crawlerfilename}
-	file delete ${logfilename}
-	file delete ${urlfilename}
+	catch { file delete ${crawlerfilename} }
+	catch { file delete ${logfilename} }
+	catch { file delete ${urlfilename} }
 
 	set normalized_link [get_value_if item(normalized_link) $item(link)]
 	set item_dir [get_item_dir normalized_link]
