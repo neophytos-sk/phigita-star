@@ -112,6 +112,7 @@ set feeds [dict create \
 		   htmltidy_feed_p 1
 		   htmltidy_article_p 1
 		   check_for_revisions 1
+		   check_for_revisions_interval_in_secs "7200"
 		   xpath_feed_cleanup {
 		       {//div[@class="bg-nav"]}
 		   }

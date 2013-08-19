@@ -830,7 +830,7 @@ proc ::feed_reader::print_item {itemVar} {
 
 proc ::feed_reader::print_log_header {} {
 
-    puts [format "%13s %40s %40s %24s %3s %s" timestamp contentsha1 urlsha1 domain "" title]
+    puts [format "%13s %40s %40s %24s %3s %s" date contentsha1 urlsha1 domain "" title]
 
 }
 
@@ -1052,15 +1052,25 @@ proc ::feed_reader::auto_resync_p {feedVar link} {
 
     upvar $feedVar feed
 
-    set first_sync [get_first_sync_timestamp link]
-    set last_sync [get_last_sync_timestamp link]
-
-
-    # check for revisions every hour but 
-    # not for more than a day after the first sync
     set now [clock seconds]
-    if { ${now} - ${last_sync} > 3600 && ${now} - ${first_sync} < 86400 } {
-	return 1
+    set first_sync [get_first_sync_timestamp link]
+
+    # do not check for revisions if the item is older than a day (or maxage)
+
+    set maxage [get_value_if feed(check_for_revisions_maxage) "86400"]
+
+    if { ${now} - ${first_sync} < ${maxage} } {
+
+	set last_sync [get_last_sync_timestamp link]
+
+	# check for revisions every hour (default) or given interval
+
+	set interval [get_value_if feed(check_for_revisions_interval) "3600"]
+
+	if { ${now} - ${last_sync} > ${interval} } {
+	    return 1
+	}
+
     }
 
     return 0
