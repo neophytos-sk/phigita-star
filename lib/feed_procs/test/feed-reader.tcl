@@ -260,12 +260,74 @@ set feeds [dict create \
 		   xpath_article_date {returndate(string(//span[@class="itemDateCreated"]),"%d/%m/%y - %H:%M")}
 		   xpath_article_description {returnstring(//div[@class="itemBody"]/*[@class="itemIntroText"])}
 		   xpath_article_tags {values(//div[@class="itemCategory"]/a/text())}
-		   xpath_article_image {values(//div[@class="itemBody"]/div[@class="itemImageBlock"]/descendant::img/@src)}
+		   xpath_article_image {
+		       {values(//div[@class="itemBody"]/div[@class="itemImageBlock"]/descendant::img/@src)}
+		   }
 		   xpath_article_cleanup {
 		       {//div[@class="itemBody"]/div[@class="clr" or @class="moduletabletrapezes"]}
 		       {//div[@class="itemBody"]/div[@class="itemImageBlock"]}
 		   }
 		   xpath_article_body {returntext(//div[@class="itemBody"]/*[@class="itemFullText"])}
+	       } \
+	       cyprus-mail {
+		   url http://cyprus-mail.com/
+		   include_re {/[0-9]{4}/[0-9]{2}/[0-9]{2}/[[:alnum:]\-]+/$}
+		   htmltidy_feed_p 1
+		   htmltidy_article_p 1
+		   article_langclass {en.utf8}
+		   xpath_article_title {returnstring(//h1[@class="entry-title"])}
+		   xpath_article_date {returndate(//div[@id="entry-post"]/descendant::span[@class="meta-time"],"%B %d, %Y")}
+		   xpath_article_tags {values(//div[@class="entry-tags"]/a[@rel="tag"]/text())}
+		   xpath_article_image {
+		       {values(//div[@class="entry-thumb"]/a/img/@src)}
+		   }
+		   xpath_article_cleanup {
+		       {//div[@itemprop="articleBody"]/p/em[1]}
+		       {//div[@class="printfriendly pf-alignright"]}
+		       {//div[@class="zilla-share"]}
+		       {//div[@class="kindleWidget kindleLight"]}
+		   }
+		   xpath_article_body {returntext(//div[@itemprop="articleBody"])}
+		   comment {
+		       xpath_article_category {//span[@class="category-item"]/a/text()}
+		   }
+	       } \
+	       empty {
+		   url ""
+		   feed_type {}
+		   encoding {}
+		   include_re {/[0-9]{4}/[0-9]{2}/[0-9]{2}/[[:alnum:]\-]+$}
+		   exclude_re {}
+		   normalize_link_re {}
+		   htmltidy_feed_p 0
+		   htmltidy_article_p 0
+		   check_for_revisions 0
+		   keep_title_from_feed_p 0
+		   article_langclass {auto}
+		   xpath_feed_cleanup {
+		   }
+		   xpath_article_title {returnstring()}
+		   xpath_article_date {returndate()}
+		   xpath_article_modified_time {returndate()}
+		   xpath_article_description {returnstring()}
+		   xpath_article_tags {values()}
+		   xpath_article_image {
+		       {values()}
+		   }
+		   xpath_article_attachment {
+		       {values()}
+		   }
+		   xpath_article_cleanup {
+		   }
+		   xpath_article_body {returntext()}
+		   xpath_article_video {
+		       {values()}
+		   }
+		   xpath_article_author {string()}
+		   end_of_text_cleanup_p 0
+		   end_of_text_coeff "0.33"
+		   comment {
+		   }
 	       }]
 
 
@@ -283,6 +345,8 @@ proc print_usage_info {} {
 			   "log" "?limit? ?offset?" \
 			   "list" "feed_name ?limit? ?offset?" \
 			   "revisions" "urlsha1" \
+			   "register-axis" "axis_name" \
+			   "register-label" "axis_name label_name" \
 			   "test" "feed_name ?limit? ?fetch_item_p?" \
 			   "remove-feed-items" "feed_name" \
 			   "cluster" "?limit? ?offset?" \
@@ -331,6 +395,17 @@ if { ${argc} < 1 } {
 
 	set urlsha1 [lindex ${argv} 1]
 	::feed_reader::show_revisions ${urlsha1}
+
+    } elseif { ${cmd} eq {register-axis} && ${argc} == 2 } {
+
+	set axis [lindex ${argv} 1]
+	::feed_reader::classifier::register_axis ${axis}
+	
+    } elseif { ${cmd} eq {register-label} && ${argc} == 3 } {
+
+	set axis [lindex ${argv} 1]
+	set label [lindex ${argv} 2]
+	::feed_reader::classifier::register_label ${axis} ${label}
 
     } elseif { ${cmd} eq {show-url} && ${argc} == 2 } {
 
