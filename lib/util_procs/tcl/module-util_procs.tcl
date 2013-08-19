@@ -45,7 +45,7 @@ proc ::util::domain_from_host {host} {
 	return
     }
 
-    set re {([^\.]+\.)(com\.cy|ac.cy|gov.cy|gr|com|net|org|info|coop|int|co\.uk|org\.uk|ac\.uk|uk|co|eu|__and so on__)$}
+    set re {([^\.]+\.)(com\.cy|ac.cy|gov.cy|org.cy|gr|com|net|org|info|coop|int|co\.uk|org\.uk|ac\.uk|uk|co|eu|__and so on__)$}
 
     if { [regexp -- ${re} ${host} whole domain tld] } {
 	return ${domain}${tld}
