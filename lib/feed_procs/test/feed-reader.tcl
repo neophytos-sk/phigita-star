@@ -111,6 +111,7 @@ set feeds [dict create \
 		   include_re {/nqcontent.cfm\?a_name=news_view&ann_id=[0-9]+}
 		   htmltidy_feed_p 1
 		   htmltidy_article_p 1
+		   check_for_revisions 1
 		   xpath_feed_cleanup {
 		       {//div[@class="bg-nav"]}
 		   }
