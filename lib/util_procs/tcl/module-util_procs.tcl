@@ -41,6 +41,10 @@ proc ::util::host_from_url {url} {
 
 proc ::util::domain_from_host {host} {
 
+    if { ${host} eq {} } {
+	return
+    }
+
     set re {([^\.]+\.)(com\.cy|ac.cy|gov.cy|gr|com|net|org|info|coop|int|co\.uk|org\.uk|ac\.uk|uk|co|__and so on__)$}
 
     if { [regexp -- ${re} ${host} whole domain tld] } {
@@ -51,6 +55,10 @@ proc ::util::domain_from_host {host} {
 }
 
 proc ::util::domain_from_url {url} {
+
+    if { ${url} eq {} } {
+	return
+    }
 
     set index [string first {:} ${url}]
     if { ${index} == -1 } {
@@ -63,6 +71,8 @@ proc ::util::domain_from_url {url} {
     }
 
     set host [host_from_url ${url}]
+
+    # note that host can be empty, e.g. if url was "http:///"    
 
     return [::util::domain_from_host ${host}]
 }

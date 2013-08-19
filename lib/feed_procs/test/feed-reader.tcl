@@ -70,11 +70,6 @@ set feeds [dict create \
 		       {//div[@class="main_resource_summ2"]/p/strong/span}
 		   }
 	       } \
-	       haravgi {
-		   url http://www.haravgi.com.cy/rss/rss.php
-		   feed_type "rss"
-		   include_re {site-article-[0-9]+-gr.php}
-	       } \
 	       ant1iwo {
 		   url http://www.ant1iwo.com/
 		   include_re {/[0-9]{4}/[0-9]{2}/[0-9]{2}/}
@@ -227,6 +222,27 @@ set feeds [dict create \
 		       we need to convert the video src to a video url
 		       xpath_article_category {//h2[@class="post_category"]}
 		   }
+	       } \
+	       haravgi {
+		   url http://www.haravgi.com.cy/rss/rss.php
+		   feed_type "rss"
+		   include_re {site-article-[0-9]+-gr.php}
+	       } \
+	       bankingnews {
+		   url http://www.bankingnews.gr/
+		   include_re {item/[0-9]+}
+		   htmltidy_feed_p 1
+		   htmltidy_article_p 1
+		   xpath_article_title {returnstring(//h2[@class="itemTitle"])}
+		   xpath_article_date {returndate(string(//span[@class="itemDateCreated"]),"%d/%m/%y - %H:%M")}
+		   xpath_article_description {returnstring(//div[@class="itemBody"]/*[@class="itemIntroText"])}
+		   xpath_article_tags {values(//div[@class="itemCategory"]/a/text())}
+		   xpath_article_image {values(//div[@class="itemBody"]/div[@class="itemImageBlock"]/descendant::img/@src)}
+		   xpath_article_cleanup {
+		       {//div[@class="itemBody"]/div[@class="clr" or @class="moduletabletrapezes"]}
+		       {//div[@class="itemBody"]/div[@class="itemImageBlock"]}
+		   }
+		   xpath_article_body {returntext(//div[@class="itemBody"]/*[@class="itemFullText"])}
 	       }]
 
 
@@ -235,7 +251,7 @@ proc print_usage_info {} {
     upvar argv0 argv0
 
     array set cmdinfo [list \
-			   "sync" "" \
+			   "sync" "?feed_names?" \
 			   "resync" "" \
 			   "test" "feed_name ?limit? ?fetch_item_p?" \
 			   "show" "urlsha1" \
@@ -244,6 +260,7 @@ proc print_usage_info {} {
 			   "uses-content" "contentsha1" \
 			   "log" "?limit? ?offset?" \
 			   "list" "feed_name ?limit? ?offset?" \
+			   "revisions" "urlsha1" \
 			   "cluster" "?limit? ?offset?" \
 			   "label" "axis class contentsha1 ?...?" \
 			   "unlabel" "axis class contentsha1 ?...?" \
@@ -267,9 +284,9 @@ if { ${argc} < 1 } {
 
     set cmd [lindex $argv 0]
 
-    if { ${cmd} eq {sync} && ${argc} == 1 } {
+    if { ${cmd} eq {sync} && ${argc} >= 1 } {
 
-	::feed_reader::sync_feeds feeds
+	::feed_reader::sync_feeds feeds [lrange ${argv} 1 end]
 
     } elseif { ${cmd} eq {resync} && ${argc} == 1 } {
 

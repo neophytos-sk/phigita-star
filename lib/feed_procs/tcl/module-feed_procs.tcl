@@ -770,7 +770,7 @@ proc ::feed_reader::print_log_entry {itemVar} {
 	set is_copy_string "(*)"
     }
 
-    puts [format "%13s %40s %40s %24s %3s %s" $item(date) $item(urlsha1) $item(contentsha1) ${domain} ${is_copy_string} $item(title)]
+    puts [format "%13s %40s %40s %24s %3s %s" $item(date) $item(contentsha1) $item(urlsha1) ${domain} ${is_copy_string} $item(title)]
     #puts [list $item(link)]
 }
 
@@ -888,26 +888,34 @@ proc ::feed_reader::test_feed {feedVar {limit "3"} {fetch_item_p "1"}} {
 
 }
 
-proc ::feed_reader::sync_feeds {feedsVar} {
+proc ::feed_reader::auto_resync {feed link} {
+    return 0
+}
+
+proc ::feed_reader::sync_feeds {feedsVar {feed_names ""}} {
 
     upvar $feedsVar feeds
 
     variable stoptitles
 
+    if { ${feed_names} eq {} } {
+	set feed_names {
+	    philenews
+	    sigmalive
+	    paideia-news
+	    inbusiness
+	    ant1iwo
+	    24h
+	    stockwatch
+	    newsit
+	    alitheia
+	    politis
+	    pafosnet
+	}
+    }
+
     #haravgi
-    foreach feed_name {
-	philenews
-	sigmalive
-	paideia-news
-	inbusiness
-	ant1iwo
-	24h
-	stockwatch
-	newsit
-	alitheia
-	politis
-	pafosnet
-    } {
+    foreach feed_name ${feed_names} {
 
 	array set feed [dict get ${feeds} ${feed_name}]
 
@@ -922,6 +930,8 @@ proc ::feed_reader::sync_feeds {feedsVar} {
 	    continue
 	}
 
+	set can_resync_p [get_value_if feed(check_for_revisions) "0"]
+
 	foreach link $result(links) title_in_feed $result(titles) {
 	    #puts ""
 	    #puts ${title_in_feed}
@@ -933,15 +943,20 @@ proc ::feed_reader::sync_feeds {feedsVar} {
 	    # TODO: if it exists and it's the first item in the feed,
 	    # fetch it and compare it to stored item to ensure sanity
 	    # of feed/article/page
-	    if { ![exists_item ${link}] } {
+	    set resync_p 0
+	    if { ![exists_item ${link}] || ( ${can_resync_p} && [set resync_p [auto_resync feed ${link}]] ) } {
+
 		set errorcode [fetch_item ${link} ${title_in_feed} feed item]
 		if { ${errorcode} } {
 		    puts "--->>> error ${link}"
 		    # incr errorCount
 		    continue
 		}
+
 		write_item ${link} feed item
+
 		unset item
+
 	    }
 
 	}
