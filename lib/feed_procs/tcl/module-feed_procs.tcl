@@ -977,6 +977,7 @@ proc ::feed_reader::auto_resync_p {feedVar link} {
 
     # check for revisions every hour but 
     # not for more than a day after the first sync
+    set now [clock seconds]
     if { ${now} - ${last_sync} > 3600 && ${now} - ${first_sync} < 86400 } {
 	return 1
     }
