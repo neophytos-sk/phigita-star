@@ -601,7 +601,7 @@ proc ::feed_reader::get_revision_filename {item_dir index} {
     set filelist [glob -directory ${item_dir} *]
     set sortedlist [lsort -decreasing -command compare_mtime ${filelist}]
     set filename [lindex ${filelist} ${index}]
-    reeturn ${filename}
+    return ${filename}
 
 }
 
