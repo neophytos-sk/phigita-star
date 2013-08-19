@@ -1,0 +1,188 @@
+<!doctype html>
+
+<title>Using Git to manage a web site</title>
+<link rel=stylesheet type="text/css" href="ams.css">
+
+<h1>Using Git to manage a web site</h1>
+
+<div class=byline>
+By <a href="http://toroid.org/ams/">Abhijit Menon-Sen</a> &lt;ams@toroid.org&gt;
+</div>
+
+<p>
+The HTML source for my (i.e., this) web site lives in a
+<a href="http://git.or.cz">Git</a> repository on my local workstation.
+This page describes how I set things up so that I can make changes live
+by running just "<code>git push web</code>".
+
+<p>
+The one-line summary:
+<a href="http://www.kernel.org/pub/software/scm/git/docs/git-push.html">push</a>
+into a
+<a href="http://www.kernel.org/pub/software/scm/git/docs/git-remote.html">remote</a>
+repository that has a detached work tree, and a
+<a href="http://www.kernel.org/pub/software/scm/git/docs/githooks.html"><code>post-receive</code> hook</a>
+that runs "<code>git checkout -f</code>".
+
+<h2>The local repository</h2>
+
+<p>
+It doesn't really matter how the local repository is set up, but for the
+sake of argument, let's suppose you're starting one from scratch.
+
+<pre class=excerpt>
+$ mkdir website &amp;&amp; cd website
+$ git init
+Initialized empty Git repository in /home/ams/website/.git/
+$ echo 'Hello, world!' &gt; index.html
+$ git add index.html
+$ git commit -q -m "The humble beginnings of my web site."
+</pre>
+
+<p>
+Anyway, however you got there, you have a repository whose contents you
+want to turn into a web site.
+
+<h2>The remote repository</h2>
+
+<p>
+I assume that the web site will live on a server to which you have ssh
+access, and that things are set up so that you can ssh to it without
+having to type a password (i.e., that your public key is in
+<code>~/.ssh/authorized_keys</code> and you are running
+<code>ssh-agent</code> locally).
+
+<p>
+On the server, we create a new repository to mirror the local one.
+
+<pre class=excerpt>
+$ mkdir website.git &amp;&amp; cd website.git
+$ git init --bare
+Initialized empty Git repository in /home/ams/website.git/
+</pre>
+
+<p>
+Then we define (and enable) a post-receive hook that checks out the
+latest tree into the web server's DocumentRoot (this directory must
+exist; Git will not create it for you):
+
+<pre class=excerpt>
+$ mkdir /var/www/www.example.org
+$ cat > hooks/post-receive
+#!/bin/sh
+GIT_WORK_TREE=/var/www/www.example.org git checkout -f
+$ chmod +x hooks/post-receive
+</pre>
+
+<p>
+Note: earlier versions of this howto depended on setting the git config
+variables core.worktree to the target directory, core.bare to false, and
+receive.denycurrentbranch to ignore. But these changes are not needed if
+you use GIT_WORK_TREE (which didn't work when I first wrote the howto),
+and the remote repository can remain bare.
+
+<p>
+Back on the workstation, we define a name for the remote mirror, and
+then mirror to it, creating a new "<code>master</code>" branch there.
+
+<pre class=excerpt>
+$ git remote add web ssh://server.example.org/home/ams/website.git
+$ git push web +master:refs/heads/master
+</pre>
+
+<p>
+On the server, <code>/var/www/www.example.org</code> should now contain
+a copy of your files, independent of any <code>.git</code> metadata.
+
+<h2>The update process</h2>
+
+<p>
+Nothing could be simpler. In the local repository, just run
+
+<pre class=excerpt>
+$ git push web
+</pre>
+
+<p>
+This will transfer any new commits to the remote repository, where the
+<code>post-receive</code> hook will immediately update the
+<code>DocumentRoot</code> for you.
+
+<p>
+(This is more convenient than defining your workstation as a remote on
+the server, and running "<code>git pull</code>" by hand or from a cron
+job, and it doesn't require your workstation to be accessible by ssh.)
+
+<h2>Notes</h2>
+
+<p>
+A few more things bear mentioning.
+
+<p>
+First, the work tree (<code>/var/www/www.example.org</code> above) must
+be writable by the user who runs the hook (or the user needs sudo access
+to run git checkout -f, or something similar).
+
+<p>
+Also, the work tree does not need to correspond exactly to your
+<code>DocumentRoot</code>. Your repository may represent only a
+subdirectory of it, or even contain it as a subdirectory.
+
+<p>
+In the work tree, you will need to set the environment variable
+<code>GIT_DIR</code> to the path to <code>website.git</code> before you
+can run any git commands (e.g. "<code>git status</code>").
+
+<p>
+Setting <code>receive.denycurrentbranch</code> to "<code>ignore</code>"
+on the server eliminates a warning issued by recent versions of git when
+you push an update to a checked-out branch on the server. (Thanks to
+Miklos Vajna for pointing this out.)
+
+<p>
+You can push to more than one remote repository by adding more URLs
+under the <code>[remote "web"]</code> section in your
+<code>.git/config</code>.
+
+<pre class=excerpt>
+[remote "web"]
+    url = ssh://server.example.org/home/ams/website.git
+    url = ssh://other.example.org/home/foo/website.git
+</pre>
+
+<p>
+There are also other hooks. See
+<a href="http://www.kernel.org/pub/software/scm/git/docs/githooks.html">githooks(5)</a>
+for details. For example, you could use <code>pre-receive</code> to
+accept or deny a push based on the results of an
+<a href="http://validator.w3.org">HTML validator</a>. Or you could do
+more work in the <code>post-receive</code> hook (such as send email to
+co-maintainers; see <code>contrib/hooks/post-receive-email</code>).
+
+<p>
+I wrote this after reading Daniel Miessler's piece on
+<a href="http://dmiessler.com/blog/using-git-to-maintain-your-website">Using
+Git to maintain your website</a>. He pushes to a bare repository on the
+server and pulls changes into a second clone that is used as the
+DocumentRoot. My implementation has fewer moving parts, and keeps .git
+separate from the DocumentRoot.
+
+<p>
+Note: some people have reported that this strategy doesn't work under
+git 1.5.4.3 (because the <code>git checkout -f</code> fails). I know
+it does work with 1.6.x. I haven't investigated further.
+
+<h2>Variants</h2>
+
+<p>
+<ul>
+ <li><a href="http://blog.thiagobelem.net/automatizando-a-instalacao-deploy-e-atualizacao-de-sites-com-git/">Brazilian Portuguese</a>
+ by Thiago Belem.
+ <li><a href="http://blog.woodylabs.com/2012/01/1and1-web-hosting-git-installing-it-for-singular-dev/">A 1and1-specific guide</a>
+ by Woody Hayday.
+</ul>
+
+<p>
+Questions and suggestions are welcome.
+
+<p>2010-11-17
