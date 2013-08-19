@@ -976,7 +976,7 @@ proc ::feed_reader::write_item {normalized_link feedVar itemVar resync_p} {
 	# up to a day difference is fine to account for servers
 	# with different timezone
 	if { ${timestamp} - ${timeval} > 86400 } {
-	    puts "item(date)=$item(date) is older than a day - updating files' mtime..."
+	    # puts "item(date)=$item(date) is older than a day - updating files' mtime..."
 	    file mtime ${item_dir} ${timeval}
 	    file mtime ${contentfilename} ${timeval}
 	    file mtime ${indexfilename} ${timeval}
