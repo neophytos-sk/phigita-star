@@ -615,7 +615,10 @@ if { ${argc} < 1 } {
 
 	# unlabel axis class contentsha1 ...
 
-	::feed_reader::label {*}[lrange ${argv} 1 end]
+	set axis [lindex ${argv} 1]
+	set label [lindex ${argv} 2]
+	set contentsha1_list [lrange ${argv} 3 end]
+	::feed_reader::classifier::unlabel ${axis} ${label} ${contentsha1_list}
 
     } elseif { ${cmd} eq {fex} && ${argc} >= 1 } {
 
