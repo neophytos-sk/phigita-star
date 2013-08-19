@@ -861,7 +861,7 @@ proc ::feed_reader::write_item {link feedVar itemVar resync_p} {
 
     if { ${resync_p} } {
 	set item(is_revision_p) 1
-	set item(first_sync) [get_first_sync_timestamp $item(link)]
+	set item(first_sync) [get_first_sync_timestamp item(link)]
 	set item(last_sync) ${timestamp}
     }
 
@@ -945,7 +945,7 @@ proc ::feed_reader::test_feed {feedVar {limit "3"} {fetch_item_p "1"}} {
 }
 
 
-proc get_first_sync_timestamp {link} {
+proc get_first_sync_timestamp {linkVar} {
 
     upvar $linkVar link
 
