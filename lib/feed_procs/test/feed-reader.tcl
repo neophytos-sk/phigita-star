@@ -292,6 +292,23 @@ set feeds [dict create \
 		       xpath_article_category {//span[@class="category-item"]/a/text()}
 		   }
 	       } \
+	       maxhnews {
+		   url http://www.maxhnews.com/
+		   include_re {/content/[0-9]+}
+		   htmltidy_feed_p 0
+		   htmltidy_article_p 0
+		   xpath_article_title {returnstring(//div[@id="title"]/h1)}
+		   xpath_article_date {returndate(substring-after(//div[@id="article-dates"]/br/preceding-sibling::text(),":"),"%Y-%m-%d %H:%M:%S")}
+		   xpath_article_modified_time {returndate(substring-after(//div[@id="article-dates"]/br/following-sibling::text(),":"),"%Y-%m-%d %H:%M:%S")}
+		   xpath_article_description {string(//meta[@name="description"]/@content)}
+		   xpath_article_image {
+		       {values(//div[@id="images-container"]/a/img/@src)}
+		   }
+		   xpath_article_cleanup {
+		       {//div[@id="images-container"]}
+		   }
+		   xpath_article_body {returntext(//div[@id="description"])}
+	       }\
 	       empty {
 		   url ""
 		   feed_type {}
