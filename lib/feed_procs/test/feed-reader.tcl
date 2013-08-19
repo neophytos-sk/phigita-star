@@ -263,6 +263,7 @@ proc print_usage_info {} {
 			   "log" "?limit? ?offset?" \
 			   "list" "feed_name ?limit? ?offset?" \
 			   "revisions" "urlsha1" \
+			   "remove-feed-items" "feed_name" \
 			   "cluster" "?limit? ?offset?" \
 			   "label" "axis class contentsha1 ?...?" \
 			   "unlabel" "axis class contentsha1 ?...?" \
@@ -335,6 +336,12 @@ if { ${argc} < 1 } {
 	set feed_name [lindex ${argv} 1]
 	array set feed [dict get $feeds $feed_name]
 	::feed_reader::list_feed feed {*}[lrange ${argv} 2 end]
+
+    } elseif { ${cmd} eq {remove-feed-items} && ${argc} >= 2 } {
+
+	set feed_name [lindex ${argv} 1]
+	array set feed [dict get $feeds $feed_name]
+	::feed_reader::remove_feed_items feed
 
     } elseif { ${cmd} eq {cluster} && ${argc} >= 1 } {
 

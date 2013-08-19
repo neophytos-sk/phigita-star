@@ -577,7 +577,7 @@ proc ::feed_reader::get_urlsha1 {link} {
 
 proc ::feed_reader::get_item_dir {linkVar {urlsha1Var ""}} {
 
-    upar ${linkVar} link
+    upvar ${linkVar} link
     if { ${urlsha1Var} ne {} } {
 	upvar ${urlsha1Var} urlsha1
     }
@@ -1118,6 +1118,65 @@ proc ::feed_reader::sync_feeds {feedsVar {feed_names ""}} {
     }
 }
 
+
+proc ::feed_reader::remove_feed_items {feedVar} {
+
+    upvar $feedVar feed
+    
+    set domain_dir [get_domain_dir $feed(url)]
+
+    set urlsha1_list [glob -tails -directory ${domain_dir}/ *]
+
+    set content_dir [get_content_dir]
+    set index_dir [get_index_dir]
+    set url_dir [get_url_dir]
+    set log_dir [get_log_dir]
+    set crawler_dir [get_crawler_dir]
+
+    foreach urlsha1 ${urlsha1_list} {
+	load_item item ${urlsha1}
+
+	set crawlerfilename "${crawler_dir}/${urlsha1}"
+	set logfilename ${log_dir}/${urlsha1}
+	set urlfilename ${url_dir}/${urlsha1}
+
+	file delete ${crawlerfilename}
+	file delete ${logfilename}
+	file delete ${urlfilename}
+
+	set normalized_link [get_value_if item(normalized_link) $item(link)]
+	set item_dir [get_item_dir normalized_link]
+	set revision_files [get_revision_files item_dir]
+	foreach revisionfilename ${revision_files} {
+
+	    set contentsha1 [file tail ${revisionfilename}]
+
+	    set indexfilename ${index_dir}/${contentsha1}
+	    set indexfilename_newdata [join [lsearch -not -inline -all [::util::readfile ${indexfilename}] ${urlsha1}] "\n"]
+
+	    if { ${indexfilename_newdata} eq {} } {
+
+		file delete ${indexfilename}
+		set contentfilename ${content_dir}/${contentsha1}
+		file delete ${contentfilename}
+
+	    } else {
+
+		::util::writefile ${indexfilename} ${indexfilename_newdata}
+
+	    }
+
+	    file delete ${revisionfilename}
+
+	}
+
+	unset item
+    }
+
+    file delete ${domain_dir}
+
+
+}
 
 proc ::feed_reader::resync {feedsVar} {
 
