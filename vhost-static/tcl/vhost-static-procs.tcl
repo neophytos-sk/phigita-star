@@ -3,6 +3,8 @@
 # get_pagedir_default
 proc get_pagedir_ {} { return /web/data/build/resources }
 
+proc process_url_ {urlVar} {}
+
 
 #ns_log notice "url=$url file=$file url2file=[ns_url2file $url] conn_pool=[ns_conn pool]"
 #ns_log notice "ns_config ns/server/[ns_info server]/pool/[ns_conn pool] add_header"
