@@ -4,12 +4,16 @@ proc ::feed_reader::classifier::get_classifier_dir {} {
     return [::feed_reader::get_base_dir]/classifier
 }
 
-proc ::feed_reader::classifier::register_axis {axis} {
-
+proc ::feed_reader::classifier::check_axis_name {axis} {
     set re {^[[:alpha:]]{2}.utf8_[[:alnum:]]+$}
     if { ![regexp -- ${re} ${axis}] } {
 	error "axis name must be of the form lang.encoding.alnum, for example, el.utf8.topic"
     }
+}
+
+proc ::feed_reader::classifier::register_axis {axis} {
+
+    check_axis_name ${axis}
 
     set classifier_dir [get_classifier_dir]
     set axis_dir ${classifier_dir}/${axis}
@@ -30,10 +34,7 @@ proc ::feed_reader::classifier::get_label_names {axis} {
 
 proc ::feed_reader::classifier::register_label {axis label} {
 
-    set re {^[[:alnum:]]+$}
-    if { ![regexp -- ${re} ${axis}] } {
-	error "axis name must be an alphanumeric string"
-    }
+    check_axis_name ${axis}
 
     if { ![regexp -- ${re} ${label}] } {
 	error "label name must be an alphanumeric string"
