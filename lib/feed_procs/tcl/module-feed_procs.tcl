@@ -596,11 +596,17 @@ proc ::feed_reader::compare_mtime {file_or_dir1 file_or_dir2} {
 
 }
 
-proc ::feed_reader::get_revision_filename {item_dir index} {
+proc ::feed_reader::get_revision_files {item_dir} {
 
     set filelist [glob -directory ${item_dir} *]
     set sortedlist [lsort -decreasing -command compare_mtime ${filelist}]
-    set filename [lindex ${filelist} ${index}]
+    return ${sortedlist}
+
+}
+
+proc ::feed_reader::get_revision_filename {item_dir index} {
+
+    set filename [lindex [get_revision_files ${item_dir}] ${index}]
     return ${filename}
 
 }
@@ -774,7 +780,7 @@ proc ::feed_reader::print_item {itemVar} {
 
 proc ::feed_reader::print_log_header {} {
 
-    puts [format "%13s %40s %40s %24s %3s %s" timestamp urlsha1 contentsha1 domain "" title]
+    puts [format "%13s %40s %40s %24s %3s %s" timestamp contentsha1 urlsha1 domain "" title]
 
 }
 
@@ -798,6 +804,15 @@ proc ::feed_reader::print_log_entry {itemVar} {
 proc ::feed_reader::show_item {urlsha1} {
     load_item item ${urlsha1}
     print_item item
+}
+
+proc ::feed_reader::show_revisions {urlsha1} {
+    load_item item ${urlsha1}
+    set item_dir [get_item_dir $item(link)]
+    set filelist [get_revision_files $item_dir]
+    foreach filename ${filelist} {
+	puts "[file mtime ${filename}] [file tail ${filename}]"
+    }
 }
 
 proc ::feed_reader::show_item_from_url {link} {
@@ -1061,6 +1076,9 @@ proc ::feed_reader::sync_feeds {feedsVar {feed_names ""}} {
 
 
 proc ::feed_reader::resync {feedsVar} {
+
+    # unfinished work, return to avoid trouble
+    return
 
     upvar $feedsVar feeds
 

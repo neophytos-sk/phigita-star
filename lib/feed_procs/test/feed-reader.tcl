@@ -304,6 +304,11 @@ if { ${argc} < 1 } {
 	set urlsha1 [lindex ${argv} 1]
 	::feed_reader::show_item ${urlsha1}
 
+    } elseif { ${cmd} eq {revisions} && ${argc} == 2 } {
+
+	set urlsha1 [lindex ${argv} 1]
+	::feed_reader::show_revisions ${urlsha1}
+
     } elseif { ${cmd} eq {show-url} && ${argc} == 2 } {
 
 	set article_url [lindex ${argv} 1]
