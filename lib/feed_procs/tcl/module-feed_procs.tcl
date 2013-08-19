@@ -1046,7 +1046,7 @@ proc ::feed_reader::sync_feeds {feedsVar {feed_names ""}} {
 		    continue
 		}
 
-		write_item ${link} feed item
+		write_item ${link} feed item ${resync_p}
 
 		unset item
 
@@ -1080,7 +1080,7 @@ proc ::feed_reader::resync {feedsVar} {
 	}
 
 	# if distance between old and new item is great, then skip writing
-	write_item ${link} feed new_item
+	write_item ${link} feed new_item 1
 
 	unset old_item
 	unset new_item
