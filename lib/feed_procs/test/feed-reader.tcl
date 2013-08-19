@@ -231,6 +231,7 @@ set feeds [dict create \
 	       bankingnews {
 		   url http://www.bankingnews.gr/
 		   include_re {item/[0-9]+}
+		   normalize_link_re {(^.*/item/[0-9]+)-.*$}
 		   htmltidy_feed_p 1
 		   htmltidy_article_p 1
 		   check_for_revisions 1

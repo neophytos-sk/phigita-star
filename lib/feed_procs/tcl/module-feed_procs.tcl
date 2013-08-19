@@ -518,6 +518,45 @@ proc ::feed_reader::fetch_item {link title_in_feed feedVar itemVar} {
     return $errorcode
 }
 
+
+proc ::feed_reader::fetch_and_write_item {link title_in_feed feedVar} {
+
+    upvar $feedVar feed
+
+
+    set normalize_link_re [get_value_if feed(normalize_link_re) ""]
+    if { ${normalize_link_re} } {
+	regexp -- ${normalize_link_re} ${link} whole normalized_link
+    } else {
+	set normalized_link ${link}
+    }
+
+    # TODO: if it exists and it's the first item in the feed,
+    # fetch it and compare it to stored item to ensure sanity
+    # of feed/article/page
+    set resync_p 0
+    if { ![exists_item ${normalized_link}] || ( ${can_resync_p} && [set resync_p [auto_resync_p feed ${normalized_link}]] ) } {
+	
+	set errorcode [fetch_item ${link} ${title_in_feed} feed item]
+	if { ${errorcode} } {
+	    puts "--->>> error ${link}"
+	    # incr errorCount
+	    continue
+	}
+
+	if { ${normalized_link} ne ${link} } {
+	    set item(normalized_link) ${normalized_link}
+	}
+
+	write_item ${normalized_link} feed item ${resync_p}
+	
+	unset item
+
+    }
+
+}
+
+
 proc ::feed_reader::get_base_dir {} {
     return {/web/data/newsdb}
 }
@@ -536,9 +575,12 @@ proc ::feed_reader::get_urlsha1 {link} {
     return ${urlsha1}
 }
 
-proc ::feed_reader::get_item_dir {link {urlsha1Var ""}} {
+proc ::feed_reader::get_item_dir {linkVar {urlsha1Var ""}} {
 
-    upvar ${urlsha1Var} urlsha1
+    upar ${linkVar} link
+    if { ${urlsha1Var} ne {} } {
+	upvar ${urlsha1Var} urlsha1
+    }
 
     set domain_dir [get_domain_dir ${link}]
 
@@ -725,7 +767,7 @@ proc ::feed_reader::cluster {{limit "10"} {offset "0"} {k ""} {num_iter "3"}} {
 
 proc ::feed_reader::exists_item {link} {
 
-    return [file isdirectory [get_item_dir ${link}]]
+    return [file isdirectory [get_item_dir link]]
 
 }
 
@@ -812,7 +854,7 @@ proc ::feed_reader::show_item {urlsha1} {
 
 proc ::feed_reader::show_revisions {urlsha1} {
     load_item item ${urlsha1}
-    set item_dir [get_item_dir $item(link)]
+    set item_dir [get_item_dir item(link)]
     set filelist [get_revision_files item_dir]
     foreach filename ${filelist} {
 	puts "[file mtime ${filename}] [file tail ${filename}]"
@@ -826,14 +868,14 @@ proc ::feed_reader::show_item_from_url {link} {
     print_item item
 }
 
-proc ::feed_reader::write_item {link feedVar itemVar resync_p} {
+proc ::feed_reader::write_item {normalized_link feedVar itemVar resync_p} {
     upvar $feedVar feed
     upvar $itemVar item
 
     # prepare to write
     set content_dir [get_content_dir]
     set index_dir [get_index_dir]
-    set item_dir [get_item_dir ${link} urlsha1]
+    set item_dir [get_item_dir normalized_link urlsha1]
     set url_dir [get_url_dir]
     set log_dir [get_log_dir]
     set crawler_dir [get_crawler_dir]
@@ -880,7 +922,7 @@ proc ::feed_reader::write_item {link feedVar itemVar resync_p} {
 
     if { ${resync_p} } {
 	set item(is_revision_p) 1
-	set item(first_sync) [get_first_sync_timestamp item(link)]
+	set item(first_sync) [get_first_sync_timestamp normalized_link]
 	set item(last_sync) ${timestamp}
     }
 
@@ -982,7 +1024,7 @@ proc ::feed_reader::get_first_sync_timestamp {linkVar} {
 
     upvar $linkVar link
 
-    set item_dir [get_item_dir ${link} urlsha1]
+    set item_dir [get_item_dir link urlsha1]
     set revisionfilename [get_revision_filename item_dir end]  ;# oldest revision
     return [file mtime ${revisionfilename}]
 
@@ -1066,25 +1108,8 @@ proc ::feed_reader::sync_feeds {feedsVar {feed_names ""}} {
 	    #puts "---"
 
 	    #continue
-	    
-	    # TODO: if it exists and it's the first item in the feed,
-	    # fetch it and compare it to stored item to ensure sanity
-	    # of feed/article/page
-	    set resync_p 0
-	    if { ![exists_item ${link}] || ( ${can_resync_p} && [set resync_p [auto_resync_p feed ${link}]] ) } {
 
-		set errorcode [fetch_item ${link} ${title_in_feed} feed item]
-		if { ${errorcode} } {
-		    puts "--->>> error ${link}"
-		    # incr errorCount
-		    continue
-		}
-
-		write_item ${link} feed item ${resync_p}
-
-		unset item
-
-	    }
+	    fetch_and_write_item ${link} ${title_in_feed} feed
 
 	}
 
