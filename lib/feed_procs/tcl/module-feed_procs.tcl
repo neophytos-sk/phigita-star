@@ -945,7 +945,7 @@ proc ::feed_reader::test_feed {feedVar {limit "3"} {fetch_item_p "1"}} {
 }
 
 
-proc get_first_sync_timestamp {linkVar} {
+proc ::feed_reader::get_first_sync_timestamp {linkVar} {
 
     upvar $linkVar link
 
@@ -956,7 +956,7 @@ proc get_first_sync_timestamp {linkVar} {
 }
 
 
-proc get_last_sync_timestamp {linkVar} {
+proc ::feed_reader::get_last_sync_timestamp {linkVar} {
 
     upvar $linkVar link
 
