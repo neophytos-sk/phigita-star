@@ -51,7 +51,9 @@ proc ::util::domain_from_host {host} {
 	return ${domain}${tld}
     }
 
-    error "could not match regexp to host=${host}"
+    puts "could not match regexp to host=${host}"
+
+    return ${host}
 }
 
 proc ::util::domain_from_url {url} {
