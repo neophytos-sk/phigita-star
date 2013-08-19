@@ -603,11 +603,13 @@ if { ${argc} < 1 } {
 	# label axis class contentsha1 ...
 	#
 	# e.g. label spam true ae23ff acb673
-	# e.g. label important false example123 example456
+	# e.g. label priority important example123 example456
 	# e.g. label topic politics  example742 example888 example923 example443
 	# e.g. label edition cyprus  example742 example888 example923 example443
-
-	::feed_reader::label {*}[lrange ${argv} 1 end]
+	set axis [lindex ${argv} 1]
+	set label [lindex ${argv} 2]
+	set contentsha1_list [lrange ${argv} 3 end]
+	::feed_reader::classifier::label ${axis} ${label} ${contentsha1_list}
 
     } elseif { ${cmd} eq {unlabel} && ${argc} >= 1 } {
 
