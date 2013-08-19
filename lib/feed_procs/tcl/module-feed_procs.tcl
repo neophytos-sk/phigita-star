@@ -1036,7 +1036,7 @@ proc ::feed_reader::sync_feeds {feedsVar {feed_names ""}} {
 	    # fetch it and compare it to stored item to ensure sanity
 	    # of feed/article/page
 	    set resync_p 0
-	    if { ![exists_item ${link}] || ( ${can_resync_p} && [set resync_p [auto_resync feed ${link}]] ) } {
+	    if { ![exists_item ${link}] || ( ${can_resync_p} && [set resync_p [auto_resync_p feed ${link}]] ) } {
 
 		set errorcode [fetch_item ${link} ${title_in_feed} feed item]
 		if { ${errorcode} } {
