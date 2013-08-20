@@ -538,6 +538,7 @@ set feeds [dict create \
 		   htmltidy_article_p 1
 		   xpath_article_title {returnstring(//div[@class="arttop"]/h1)}
 		   xpath_article_body {returntext(//div[@id="arttext"])}
+		   xpath_article_date {returndate(substring-after(//div[@class="date"],"Online"),"%H:%M %d/%m")}
 		   xpath_article_image {
 		       {values(//div[@class="PHOTOmain"]/descendant::img/@src)}
 		   }
