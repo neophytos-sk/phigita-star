@@ -1105,6 +1105,7 @@ proc ::feed_reader::sync_feeds {feedsVar {feed_names ""}} {
 	    elita
 	    cosmopolitan.com.cy
 	    sfera
+	    kissfm
 	}
     }
 

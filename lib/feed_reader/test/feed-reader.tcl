@@ -507,8 +507,19 @@ set feeds [dict create \
 	       }\
 	       sfera {
 		   url "http://www.sfera.com.cy/el-gr/News"
-		   include_re {el-gr/[^/]+/[0-9]+/[0-9]+/[[:alnum:]\-]+}
-		   exclude_re {el-gr/enter-and-win/}
+		   include_re {el-gr/news/[0-9]+/[0-9]+/[[:alnum:]\-]+}
+		   article_langclass {el.utf8}
+		   htmltidy_feed_p 1
+		   htmltidy_article_p 1
+		   xpath_article_title {returnstring(//div[@class="producerName"]/h1)}
+		   xpath_article_body {returntext(//div[@class="producerTXT"])}
+		   xpath_article_image {
+		       {values(//div[@class="producerIMG"]/descendant::img/@src)}
+		   }
+	       }\
+	       kissfm {
+		   url "http://www.kissfm.com.cy/el-gr/News"
+		   include_re {el-gr/News/[0-9]+/[0-9]+/[[:alnum:]\-]+}
 		   article_langclass {el.utf8}
 		   htmltidy_feed_p 1
 		   htmltidy_article_p 1
