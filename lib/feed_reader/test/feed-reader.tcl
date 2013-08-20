@@ -612,7 +612,7 @@ proc print_usage_info {} {
 			   "unlabel" "axis class contentsha1 ?...?" \
 			   "fex" "?limit? ?offset?" \
 			   "TODO:test-article" "article_url" \
-			   "TODO:add" "feed_url"]
+			   "generate-feed" "feed_url"]
 
 
     foreach cmd [lsort [array names cmdinfo]] {
@@ -634,9 +634,9 @@ if { ${argc} < 1 } {
 
 	::feed_reader::sync_feeds feeds [lrange ${argv} 1 end]
 
-    } elseif { ${cmd} eq {resync} && ${argc} == 1 } {
+    } elseif { ${cmd} eq {generate-feed} && ${argc} >= 2 } {
 
-	::feed_reader::resync feeds
+	::feed_reader::generate_feed {*}[lrange ${argv} 1 end]
 
     } elseif { ${cmd} eq {test} && ${argc} >= 2} {
 

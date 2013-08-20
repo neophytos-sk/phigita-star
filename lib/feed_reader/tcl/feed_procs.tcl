@@ -1201,3 +1201,168 @@ proc ::feed_reader::remove_feed_items {feedVar} {
 
 
 }
+
+proc ::feed_reader::generate_feed {feed_url {encoding ""}} {
+
+    set errorcode [::xo::http::fetch html $feed_url]
+    if { ${errorcode} } {
+	return $errorcode
+    }
+
+    if { [catch { set doc [dom parse -html ${html}] } errmsg] } {
+	set html [::htmltidy::tidy ${html}]
+	set doc [dom parse -html ${html}]
+    }
+
+    if { ${encoding} ne {} } {
+	set html [encoding convertfrom ${encoding} ${html}]
+    }
+
+    set domain [::util::domain_from_url ${feed_url}]
+
+
+
+    set links [${doc} selectNodes {values(//a[@href]/@href)}]
+
+    array set url_shape [list]
+    set max 0
+    set max_path {}
+
+    set paths [list]
+    foreach link ${links} {
+
+	set canonical_link \
+	    [::uri::canonicalize \
+		 [::uri::resolve \
+		      ${feed_url} \
+		      ${link}]]
+
+	if { ${domain} ne [::util::domain_from_url ${canonical_link}] } {
+	    continue
+	}
+
+	if { ![regexp -- {https?://[^/]+(/.+)$} ${canonical_link} _dummy_ path] } {
+	    continue
+	}
+
+	# store it before it changes
+	lappend paths ${path}
+
+	foreach {re subSpec} {
+	    {[a-z]} {x}
+	    {[A-Z]} {X}
+	    {[0-9]} {d}
+	    {d{4,}} {N\1}
+	    {d{1,3}} {D\1}
+	    {=x+(&|$)} {=y\1}
+	    {=X+(&|$)} {=Y\1}
+	    {=x[Xx]+(&|$)} {=w\1}
+	    {=X[Xx]+(&|$)} {=W\1}
+	    {x+} {P}
+	    {X+} {Q}
+	    {[Xx]+} {R}
+	    {[^[:alpha:]\/?&=.\-]+} {o}
+	    {([.?])} {\\\1}
+	    {([PQR][\-]|[\-][PQR]){2,}} {T}
+	    {(Po|oP|Qo|oQ|Ro|oR)+} {o}
+	} {
+
+	    regsub -all -- ${re} ${path} ${subSpec} path
+
+	}
+
+	set count [incr url_shape(${path})]
+	if { ${count} > ${max} && -1 != [string first {N} ${path}] } {
+	    set max ${count}
+	    set max_path ${path}
+	}
+
+	#puts "${canonical_link} ${path}"
+
+
+
+    }
+    
+    set num_paths [llength ${paths}]
+    set coeff "0.05" 
+    if { ${max} > ${coeff} * ${num_paths} } {
+
+	# if more than ${coeff} of links are recognized by ${max_path}
+	# then turn it into a regular expression
+
+	puts "url_shape=${max_path} count=${max}"
+
+	set include_re ${max_path}
+
+	foreach {re subSpec} {
+	    {N}     {[0-9]{4,}}
+	    {D}     {[0-9]{1,3}}
+	    {y}     {[a-z]+}
+	    {Y}     {[A-Z]+}
+	    {w}     {[a-z][a-zA-Z]+}
+	    {W}     {[A-Z][a-zA-Z]+}
+	    {o}     {.*}
+	    {P}    {([[:lower:]]+)}
+	    {Q}    {([[:upper:]]+)}
+	    {R} {([[:alpha:]]+)}
+	    {T} {.*}
+	} {
+	    regsub -all -- ${re} ${include_re} ${subSpec} include_re
+	}
+
+	append include_re {$}
+
+	array set inline_parts [list]
+	set max_count 0
+	set max_inline_match [list]
+	set second_best_inline_match [list]
+	foreach path ${paths} {
+
+	    # lrange is there to ensure that we exclude whole match from inline parts
+	    set inline_match [lrange [regexp -inline -- ${include_re} ${path}] 1 end]
+
+	    if { ${inline_match} ne {} } {
+		
+		puts ${path}
+
+		set count [incr inline_parts(${inline_match})]
+
+		if { ${count} > ${max_count} } {
+		    if { ${max_inline_match} ne {} && ${inline_match} ne ${max_inline_match} } {
+			set second_best_inline_match ${max_inline_match}
+		    }
+		    set max_count ${count}
+		    set max_inline_match ${inline_match}
+		}
+
+	    }
+
+	}
+
+	if { ${max_count} } {
+
+	    #puts "max_inline_match=$max_inline_match"
+	    #puts "second_best_inline_match=$second_best_inline_match"
+
+	    set re {\(\[\[:[a-z]+:\]\]\+\)}
+	    foreach inline_part ${max_inline_match} inline_part2 ${second_best_inline_match} {
+		if { ${inline_part2} ne {} && ${inline_part} ne ${inline_part2} } {
+		    set inline_part {[[:alpha:]]+}
+		}
+		# finds and substitutes first match
+		regsub -- ${re} ${include_re} ${inline_part} include_re
+	    }
+
+	}
+	puts include_re=${include_re}
+
+    } else {
+
+	puts "sorry, could not generate feed url_shape=${max_path} count=${max} num_paths=${num_paths}"
+
+    }
+
+
+    $doc delete
+
+}

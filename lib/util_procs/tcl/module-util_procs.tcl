@@ -1,5 +1,7 @@
 package provide util_procs 0.1
 
+set dir [file dirname [info script]]
+source [file join $dir list_procs.tcl]
 
 namespace eval ::util {;}
 

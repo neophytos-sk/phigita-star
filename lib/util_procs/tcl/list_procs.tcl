@@ -86,13 +86,3 @@ proc intersect {list1 list2} {
     }
     return $intersectList
 }
-
- proc lreverse { list } {
-
-     set ll [llength $list]
-     set newlist [list]
-     for {set i [expr $ll - 1]} { $i >= 0 } { incr i -1} {
-	 lappend newlist [lindex $list $i]
-     }
-     return $newlist
- }
