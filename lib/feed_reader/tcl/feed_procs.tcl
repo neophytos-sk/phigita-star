@@ -1104,6 +1104,7 @@ proc ::feed_reader::sync_feeds {feedsVar {feed_names ""}} {
 	    incyprus
 	    elita
 	    cosmopolitan.com.cy
+	    sfera
 	}
     }
 
