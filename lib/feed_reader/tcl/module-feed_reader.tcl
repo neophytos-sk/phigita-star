@@ -1,4 +1,4 @@
-package provide feed_procs 0.1
+package provide feed_reader 0.1
 
 ::xo::lib::require curl
 ::xo::lib::require tdom_procs

@@ -4,7 +4,7 @@
 
 source ../../naviserver_compat/tcl/module-naviserver_compat.tcl
 
-::xo::lib::require feed_procs
+::xo::lib::require feed_reader
 
 #set dir [file dirname [info script]]
 #source [file join ${dir} feed-procs.tcl]
