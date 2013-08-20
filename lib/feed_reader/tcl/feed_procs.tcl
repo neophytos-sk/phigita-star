@@ -1102,6 +1102,8 @@ proc ::feed_reader::sync_feeds {feedsVar {feed_names ""}} {
 	    cna6
 	    financialmirror
 	    incyprus
+	    elita
+	    cosmopolitan.com.cy
 	}
     }
 
