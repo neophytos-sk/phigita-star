@@ -1,0 +1,16 @@
+		   url http://www.sigmalive.com/inbusiness/
+		   include_re {/inbusiness/.*/[0-9]+}
+		   keep_title_from_feed_p 0
+		   xpath_article_title {returnstring(//div[@id="articleContainer"]/h1)}
+		   xpath_article_body {returntext(//div[@id="articleContainer"]/div[@class="content"]/div[1])}
+		   xpath_article_image {
+		       {values(//div[@class="articleImg"]/div[@class="img"]/img/@src)}
+		   }
+		   xpath_article_date {returndate(normalizedate(substring-after(//div[@id="articleContainer"]/h4/text(),"| "),"el_GR"),"%d %B %Y, %H:%M","el_GR")}
+		   xpath_article_cleanup {
+		       {//div[@id="articleContainer"]/h4}
+		   }
+		   comment {
+		       issue with date, might be due to the fact it uses the word "maios" instead of "maiou"
+		       http://www.sigmalive.com/inbusiness/news/rankings/44887
+		   }

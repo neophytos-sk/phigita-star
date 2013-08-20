@@ -1,0 +1,24 @@
+		   url http://www.24h.com.cy/
+		   include_re {item/[0-9]+}
+		   htmltidy_feed_p 1
+		   htmltidy_article_p 1
+		   xpath_article_title {returnstring(//h2[@class="itemTitle"]/a)}
+		   xpath_article_description {returnstring(//div[@class="itemBody"]/*[@class="itemIntroText"])}
+		   xpath_article_body {returntext(//div[@class="itemBody"]/*[@class="itemFullText"])}
+		   xpath_article_date {returndate(//div[@class="inner-sidebar-left"]/strong,"%H:%M, %d/%m/%Y")}
+		   xpath_article_author {returnstring(//a[@rel="author"])}
+		   xpath_article_image {
+		       {values(//span[@class="itemImage"]/a/img/@src)}
+		       {values(//div[@class="itemBody"]/*[@class="itemFullText"]/img/@src)}
+		   }
+		   xpath_article_video {
+		       {values(//div[@class="itemBody"]/*[@class="itemFullText"]/iframe/@src)}
+		   }
+		   xpath_article_tags {values(//div[@class="itemTagsBlock"]/a/text())}
+		   xpath_article_cleanup {
+		       {//div[@class="jfbccomments"]}
+		   }
+		   comment {
+		       we have an issue with ads, related links, and other text in the main
+		       article body
+		   }

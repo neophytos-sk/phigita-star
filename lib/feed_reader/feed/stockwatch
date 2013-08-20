@@ -1,0 +1,30 @@
+		   url http://www.stockwatch.com.cy/nqcontent.cfm?tt=article&a_id=1
+		   include_re {/nqcontent.cfm\?a_name=news_view&ann_id=[0-9]+}
+		   htmltidy_feed_p 1
+		   htmltidy_article_p 1
+		   check_for_revisions 1
+		   check_for_revisions_interval_in_secs "7200"
+		   xpath_feed_cleanup {
+		       {//div[@class="bg-nav"]}
+		   }
+		   xpath_article_title {substring-before(//title,'- Stockwatch')}
+		   xpath_article_body {returntext(//div[@class="text-content"])}
+		   xpath_article_date {returndate(substring(substring-after(//h2[@style]/span/span,": "),1,16),"%d/%m/%Y %H:%M")}
+		   xpath_article_modified_time {returndate(substring-after(substring-after(//h2[@style]/span/span," / "),": "),"%d/%m/%Y %H:%M")}
+		   xpath_article_image {
+		       {values(//div[@class="text-content"]/img[@align="left"]/@src)}
+		   }
+		   xpath_article_attachment {
+		       {values(//div[@class="text-content"]/a/img[@class="attachment"]/parent::a/@href)}
+		   }
+		   xpath_article_cleanup {
+		       {//ul[@class="arrow-list"]}
+		       {//div[@class="ad-617x98"]}
+		   }
+		   comment {
+		       - og:title
+		       - og:description
+		       - og:image (not being used - just stockwatch logo for social networks)
+		       - TOD0: cleanup article body saying "note: save target as for attachments"
+		         ditto for "ektenesteri eidhsh se ligo"
+		   }

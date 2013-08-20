@@ -1,0 +1,19 @@
+		   url http://pafosnet.com/
+		   include_re {[[:alnum:]\-]{10,}}
+		   exclude_re {/category/|/#}
+		   xpath_article_title {returnstring(//head/title)}
+		   xpath_article_body {returntext(//div[@id="the_content"])}
+		   xpath_article_image {
+		       {values(//div[@id="the_image"]/img/@src)}
+		       {values(//div[@id="the_content"]/descendant::img/@src)}
+		   }
+		   xpath_article_video {
+		       {values(//div[@id="videos_the_video"]/iframe/@src)}
+		   }
+		   xpath_article_date {returndate(normalizedate(//span[@class="post_date"],"el_GR"),"%d %B %Y","el_GR")}
+		   comment {
+		       og:description
+		       keywords
+		       we need to convert the video src to a video url
+		       xpath_article_category {//h2[@class="post_category"]}
+		   }

@@ -1,11 +1,18 @@
-
-
 namespace eval ::feed_reader {
 
     array set meta [list]
     array set stoptitles [list]
 
 }
+
+set dir [file dirname [info script]]
+set package_dir [file normalize [file join ${dir} ..]]
+
+
+proc ::feed_reader::get_package_dir {} "return ${package_dir}"
+
+proc ::feed_reader::get_conf_dir {} "return ${package_dir}/conf"
+
 
 proc ::feed_reader::init {} {
 
@@ -22,18 +29,19 @@ proc ::feed_reader::init {} {
 
 }
 
-
 proc ::feed_reader::read_meta {metaVar} {
 
     upvar ${metaVar} meta
 
+    set conf_dir [get_conf_dir]
+
     set stoptitles [list]
-    foreach title [split [::util::readfile stoptitles.txt] "\n"] {
+    foreach title [split [::util::readfile ${conf_dir}/stoptitles.txt] "\n"] {
 	lappend stoptitles [trim_title ${title}]
     }
     
     set end_of_text_strings [list]
-    foreach end_of_text_string [split [::util::readfile article_body_end_of_text_strings] "\n"] {
+    foreach end_of_text_string [split [::util::readfile ${conf_dir}/article_body_end_of_text_strings] "\n"] {
 	if { ${end_of_text_string} ne {} } {
 	    lappend end_of_text_strings ${end_of_text_string}
 	}
@@ -1069,9 +1077,7 @@ proc ::feed_reader::auto_resync_p {feedVar link} {
     return 0
 }
 
-proc ::feed_reader::sync_feeds {feedsVar {feed_names ""}} {
-
-    upvar $feedsVar feeds
+proc ::feed_reader::sync_feeds {{feed_names ""}} {
 
     variable stoptitles
 
@@ -1085,7 +1091,7 @@ proc ::feed_reader::sync_feeds {feedsVar {feed_names ""}} {
 	    24h
 	    stockwatch
 	    newsit
-	    alitheia
+	    alithia
 	    politis
 	    pafosnet
 	    bankingnews
@@ -1110,10 +1116,10 @@ proc ::feed_reader::sync_feeds {feedsVar {feed_names ""}} {
 	}
     }
 
-    #haravgi
+    set feed_dir [get_package_dir]/feed
     foreach feed_name ${feed_names} {
 
-	array set feed [dict get ${feeds} ${feed_name}]
+	array set feed [::util::readfile ${feed_dir}/${feed_name}]
 
 	# set feed_type [get_value_if feed(type) ""] 
 	# if { ${feed_type} eq {rss} } {
