@@ -1202,11 +1202,15 @@ proc ::feed_reader::remove_feed_items {feedVar} {
 
 }
 
-proc ::feed_reader::generate_feed {feed_url {encoding ""}} {
+proc ::feed_reader::generate_feed {feed_url {encoding "utf-8"}} {
 
     set errorcode [::xo::http::fetch html $feed_url]
     if { ${errorcode} } {
 	return $errorcode
+    }
+
+    if { ${encoding} ne {} } {
+	set html [encoding convertfrom ${encoding} ${html}]
     }
 
     if { [catch { set doc [dom parse -html ${html}] } errmsg] } {
@@ -1214,9 +1218,6 @@ proc ::feed_reader::generate_feed {feed_url {encoding ""}} {
 	set doc [dom parse -html ${html}]
     }
 
-    if { ${encoding} ne {} } {
-	set html [encoding convertfrom ${encoding} ${html}]
-    }
 
     set domain [::util::domain_from_url ${feed_url}]
 
@@ -1249,8 +1250,8 @@ proc ::feed_reader::generate_feed {feed_url {encoding ""}} {
 	lappend paths ${path}
 
 	foreach {re subSpec} {
-	    {[a-z]} {x}
-	    {[A-Z]} {X}
+	    {[[:lower:]]} {x}
+	    {[[:upper:]]} {X}
 	    {[0-9]} {d}
 	    {d{4,}} {N\1}
 	    {d{1,3}} {D\1}
@@ -1263,13 +1264,16 @@ proc ::feed_reader::generate_feed {feed_url {encoding ""}} {
 	    {[Xx]+} {R}
 	    {[^[:alpha:]\/?&=.\-]+} {o}
 	    {([.?])} {\\\1}
-	    {([PQR][\-]|[\-][PQR]){2,}} {T}
+	    {[PQR-]{2,}} {T}
 	    {(Po|oP|Qo|oQ|Ro|oR)+} {o}
 	} {
 
 	    regsub -all -- ${re} ${path} ${subSpec} path
 
 	}
+
+	#regsub -all -- {[[:alpha:]]+} ${path} {o} path
+	#puts ${path}
 
 	set count [incr url_shape(${path})]
 	if { ${count} > ${max} && -1 != [string first {N} ${path}] } {
@@ -1282,15 +1286,15 @@ proc ::feed_reader::generate_feed {feed_url {encoding ""}} {
 
 
     }
-    
+
+    set include_re ""
     set num_paths [llength ${paths}]
-    set coeff "0.05" 
-    if { ${max} > ${coeff} * ${num_paths} } {
+    if { ${max} } {
 
 	# if more than ${coeff} of links are recognized by ${max_path}
 	# then turn it into a regular expression
 
-	puts "url_shape=${max_path} count=${max}"
+	#puts "url_shape=${max_path} count=${max}"
 
 	set include_re ${max_path}
 
@@ -1316,6 +1320,7 @@ proc ::feed_reader::generate_feed {feed_url {encoding ""}} {
 	set max_count 0
 	set max_inline_match [list]
 	set second_best_inline_match [list]
+	set matching_paths [list]
 	foreach path ${paths} {
 
 	    # lrange is there to ensure that we exclude whole match from inline parts
@@ -1323,7 +1328,7 @@ proc ::feed_reader::generate_feed {feed_url {encoding ""}} {
 
 	    if { ${inline_match} ne {} } {
 		
-		puts ${path}
+		lappend matching_paths ${path}
 
 		set count [incr inline_parts(${inline_match})]
 
@@ -1354,15 +1359,148 @@ proc ::feed_reader::generate_feed {feed_url {encoding ""}} {
 	    }
 
 	}
+	puts "---"
 	puts include_re=${include_re}
 
     } else {
 
-	puts "sorry, could not generate feed url_shape=${max_path} count=${max} num_paths=${num_paths}"
+	puts "sorry, could not generate feed, could not figure out url_shape"
 
     }
 
 
     $doc delete
+
+    ########### fetch article
+
+    if { ${include_re} ne {} } {
+	set matching_paths [lrange ${paths} 0 9]
+	#set matching_paths [lindex ${matching_paths} 0]
+	foreach path ${matching_paths} {
+	    set canonical_link \
+		[::uri::canonicalize \
+		     [::uri::resolve \
+			  ${feed_url} \
+			  ${path}]]
+
+	    
+
+	    set errorcode [::xo::http::fetch html ${canonical_link}]
+	    if { ${errorcode} } {
+		return $errorcode
+	    }
+
+	    if { ${encoding} ne {} } {
+		set html [encoding convertfrom ${encoding} ${html}]
+	    }
+	    
+	    if { [catch { set doc [dom parse -html ${html}] } errmsg] } {
+		set html [::htmltidy::tidy ${html}]
+		set doc [dom parse -html ${html}]
+	    }
+
+	    bte bte_info ${doc}
+
+	    set maxnode $bte_info(maxnode)
+
+	    if { ${maxnode} eq {} } {
+		puts "no maxnode"
+		continue
+	    }
+
+	    set xpath [$maxnode toXPath]
+	    puts xpath=$xpath
+	    set ancestors [$maxnode selectNodes [concat ${xpath} / {ancestor::*[@class or @id][1]}]]
+	    #set ancestors [$maxnode parentNode]
+
+	    foreach ancestor ${ancestors} {
+		set ancestor_tagname [${ancestor} tagName]
+		set tagname [${maxnode} tagName]
+		set xpath "//${ancestor_tagname}"
+		set xpath_list [list]
+		foreach att [$ancestor attributes] {
+		    if { ${att} ni {id class style} } {
+			continue
+		    }
+		    lappend xpath_list "@${att}=\"[$ancestor getAttribute ${att}]\""
+		}
+		if { ${xpath_list} ne {} } {
+		    append xpath "\[[join ${xpath_list} { and }]\]"
+		} else {
+		    continue
+		}
+		
+		append xpath "/descendant::${tagname}"
+		set xpath_list [list]
+		foreach att [$maxnode attributes] {
+		    if { ${att} ni {id class style} } {
+			continue
+		    }
+		    lappend xpath_list "@${att}=\"[$maxnode getAttribute ${att}]\""
+		}
+		if { ${xpath_list} ne {} } {
+		    append xpath "\[[join ${xpath_list} { and }]\]"
+		}
+		set xpath_article_body "returntext(${xpath})"
+		puts "xpath_article_body=${xpath_article_body}"
+	    }
+
+
+	    ${doc} delete
+
+
+	}
+
+
+
+    }
+
+
+}
+
+
+proc ::feed_reader::bte_helper {resultVar node} {
+
+    upvar $resultVar result
+
+    if { ${node} eq {} || [${node} nodeType] ne {ELEMENT_NODE} } {
+	return 0
+    }
+
+    set len [string length [$node text]]
+
+    foreach child [${node} childNodes] {
+	incr len [expr { [bte_helper result ${child}] / 10 }]
+    }
+
+    if { ${len} > $result(maxlen) } {
+	set result(maxlen) ${len}
+	set result(maxnode) ${node}
+    }
+
+    return ${len}
+
+}
+
+# body text extraction
+proc ::feed_reader::bte {resultVar doc} {
+
+    upvar $resultVar result
+
+    foreach cleanup_xpath {
+	{//head}
+	{//script}
+	{//style}
+	{//link}
+	{//iframe}
+    } {
+	foreach cleanup_node [${doc} selectNodes ${cleanup_xpath}] {
+	    ${cleanup_node} delete
+	}
+    }
+
+    set result(maxlen) 0
+    set result(maxnode) {}
+    return [bte_helper result [${doc} selectNodes {//body[1]}]]
 
 }
