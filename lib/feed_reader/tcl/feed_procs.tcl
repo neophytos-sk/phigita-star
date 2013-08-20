@@ -270,7 +270,7 @@ proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar} {
 
     set xpath_article_video [get_value_if \
 				 feed(xpath_article_video) \
-				 {}]
+				 {values(//iframe[contains(@src,"youtube")]/@src)}]
 
     set xpath_article_attachment [get_value_if \
 				      feed(xpath_article_attachment) \
@@ -1106,6 +1106,7 @@ proc ::feed_reader::sync_feeds {feedsVar {feed_names ""}} {
 	    cosmopolitan.com.cy
 	    sfera
 	    kissfm
+	    sentragoal
 	}
     }
 

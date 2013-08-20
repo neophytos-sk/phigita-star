@@ -529,6 +529,26 @@ set feeds [dict create \
 		       {values(//div[@class="producerIMG"]/descendant::img/@src)}
 		   }
 	       }\
+	       sentragoal {
+		   url "http://www.sentragoal.com.cy/default.asp"
+		   include_re {article.asp\?catid=[0-9]+&subid=[0-9]+&pubid=[0-9]+}
+		   encoding {iso8859-7}
+		   article_langclass {el.utf8}
+		   htmltidy_feed_p 1
+		   htmltidy_article_p 1
+		   xpath_article_title {returnstring(//div[@class="arttop"]/h1)}
+		   xpath_article_body {returntext(//div[@id="arttext"])}
+		   xpath_article_image {
+		       {values(//div[@class="PHOTOmain"]/descendant::img/@src)}
+		   }
+		   xpath_article_cleanup {
+		       {//div[@class="arttop"]}
+		       {//div[@class="PHOTOmain"]}
+		       {//div[@class="banrelbox"]}
+		       {//div[@id="socialbox"]/following-sibling::*}
+		       {//div[@id="socialbox"]}
+		   }
+	       }\
 	       empty {
 		   url ""
 		   feed_type {}
@@ -562,7 +582,7 @@ set feeds [dict create \
 		   }
 		   xpath_article_author {string()}
 		   end_of_text_cleanup_p 0
-		   end_of_text_coeff "0.33"
+		   end_of_text_coeff "0.3"
 		   comment {
 		   }
 	       }]
