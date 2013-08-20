@@ -512,7 +512,7 @@ set feeds [dict create \
 		   article_langclass {el.utf8}
 		   htmltidy_feed_p 1
 		   htmltidy_article_p 1
-		   xpath_article_title {returnstring(//div[@class="producerName"])}
+		   xpath_article_title {returnstring(//div[@class="producerName"]/h1)}
 		   xpath_article_body {returntext(//div[@class="producerTXT"])}
 		   xpath_article_image {
 		       {values(//div[@class="producerIMG"]/descendant::img/@src)}
