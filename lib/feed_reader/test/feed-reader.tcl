@@ -301,7 +301,7 @@ set feeds [dict create \
 		   xpath_article_title {returnstring(//div[@id="title"]/h1)}
 		   xpath_article_date {returndate(substring-after(//div[@id="article-dates"]/br/preceding-sibling::text(),":"),"%Y-%m-%d %H:%M:%S")}
 		   xpath_article_modified_time {returndate(substring-after(//div[@id="article-dates"]/br/following-sibling::text(),":"),"%Y-%m-%d %H:%M:%S")}
-		   xpath_article_description {string(//meta[@name="description"]/@content)}
+		   xpath_article_description {}
 		   xpath_article_image {
 		       {values(//div[@id="images-container"]/a/img/@src)}
 		   }
