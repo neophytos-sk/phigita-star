@@ -1101,6 +1101,7 @@ proc ::feed_reader::sync_feeds {feedsVar {feed_names ""}} {
 	    cna5
 	    cna6
 	    financialmirror
+	    incyprus
 	}
     }
 

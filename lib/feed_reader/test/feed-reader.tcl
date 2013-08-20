@@ -453,6 +453,20 @@ set feeds [dict create \
 		       {values(//div[@class="newsCntrDetail"]/descendant::img/@src)}
 		   }
 	       }\
+	       incyprus {
+		   url "http://www.incyprus.com.cy/"
+		   include_re {/en-gb/Top-Stories-News/[0-9]+/[0-9]+/}
+		   article_langclass {en.utf8}
+		   htmltidy_feed_p 1
+		   htmltidy_article_p 1
+		   xpath_article_title {returnstring(//div[@class="ArticleCategories_T"]/a/h1[1])}
+		   xpath_article_date {returndate(//div[@class="ArticleCategories_T"]/div[@class="ArticleCategories_Date"],"%d %B %Y %H:%M")}
+		   xpath_article_image {
+		       {values(//div[@class="ArticleCategories_Img"]/img/@src)}
+		   }
+		   xpath_article_body {returntext(//div[@class="ArticleCategories_BODY"])}
+
+	       }\
 	       empty {
 		   url ""
 		   feed_type {}
