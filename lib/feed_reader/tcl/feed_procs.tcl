@@ -792,7 +792,9 @@ proc ::feed_reader::load_content {itemVar contentsha1} {
     lassign [::util::readfile $contentfilename] item(title) item(body)
 
     set contentsha1_to_label_filename [get_contentsha1_to_label_dir]/${contentsha1}
-    set item(label) [lsearch -inline -all -not [split [::util::readfile $contentsha1_to_label_filename] "\n"] {}]
+    if { [file exists ${contentsha1_to_label_filename}] } {
+	set item(label) [lsearch -inline -all -not [split [::util::readfile $contentsha1_to_label_filename] "\n"] {}]
+    }
 
 }
 
@@ -839,9 +841,12 @@ proc ::feed_reader::print_log_entry {itemVar} {
 
 }
 
-proc ::feed_reader::show_item {urlsha1} {
-    load_item item ${urlsha1}
-    print_item item
+proc ::feed_reader::show_item {urlsha1_list} {
+    foreach urlsha1 ${urlsha1_list} {
+	load_item item ${urlsha1}
+	print_item item
+	unset item
+    }
 }
 
 proc ::feed_reader::show_revisions {urlsha1} {

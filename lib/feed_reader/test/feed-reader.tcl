@@ -486,7 +486,7 @@ proc print_usage_info {} {
 
     array set cmdinfo [list \
 			   "sync" "?feed_names?" \
-			   "show" "urlsha1" \
+			   "show" "urlsha1 ?...?" \
 			   "show-url" "article_url" \
 			   "show-content" "contentsha1" \
 			   "uses-content" "contentsha1" \
@@ -535,10 +535,10 @@ if { ${argc} < 1 } {
 	array set feed [dict get $feeds $feed_name]
 	::feed_reader::test_feed feed {*}[lrange ${argv} 2 end]
 
-    } elseif { ${cmd} eq {show} && ${argc} == 2 } {
+    } elseif { ${cmd} eq {show} && ${argc} >= 2 } {
 
-	set urlsha1 [lindex ${argv} 1]
-	::feed_reader::show_item ${urlsha1}
+	set urlsha1_list [lrange ${argv} 1 end]
+	::feed_reader::show_item ${urlsha1_list}
 
     } elseif { ${cmd} eq {revisions} && ${argc} == 2 } {
 
