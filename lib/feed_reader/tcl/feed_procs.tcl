@@ -1367,10 +1367,10 @@ proc ::feed_reader::fetch_feed_p {feed_name timestamp {coeff "0.3"}} {
     set crawler_dir [get_crawler_dir]
     set crawler_feed_dir "${crawler_dir}/feed/${feed_name}/"
 
+    # 	{mdH-%m%d%H} would take too long to see results, so remove from list for now
     foreach format {
 	{H-%H}
 	{uH-%u%H}
-	{mdH-%m%d%H}
     } {
 
 	set pretty_timeval [clock format ${timestamp} -format ${format}]
