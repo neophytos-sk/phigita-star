@@ -1,3 +1,26 @@
+proc ::util::pretty_interval {secs} {
+
+    set result [list]
+
+    foreach {interval suffix} {
+	86400 d
+	3600  h
+	60    m
+	1     s
+    } {
+
+	if { ${secs} >= ${interval} } {
+	    set howmany [expr { ${secs} / ${interval} }]
+	    lappend result "${howmany}${suffix}"
+	    set secs [expr { ${secs} % ${interval} }]
+
+	}
+
+    }
+
+    return [join ${result} { }]
+
+}
 
 proc ::feed_reader::stats {{news_sources ""}} {
 
@@ -7,8 +30,8 @@ proc ::feed_reader::stats {{news_sources ""}} {
 	set news_sources [glob -nocomplain -tails -directory ${feeds_dir} *]
     }
 
-    puts [format "%40s %10s %10s %10s %20s" feed_name "Pr\[write\]" "#times/day" "interval" "#write / #fetch"]
-    puts [format "%40s %10s %10s %10s %20s" --------- "---------"   "----------" "--------" "---------------"]
+    puts [format "%40s %10s %10s %15s %15s" feed_name "Pr\[write\]" "#times/day" "interval" "#write / #fetch"]
+    puts [format "%40s %10s %10s %15s %15s" --------- "---------"   "----------" "--------" "---------------"]
 
     set crawler_dir [get_crawler_dir]
     foreach news_source $news_sources {
@@ -31,8 +54,8 @@ proc ::feed_reader::stats {{news_sources ""}} {
 
 	    # TODO: pretty interval
 	    #set interval_in_mins [expr { ${interval} / 60 }]
-
-	    puts [format "%40s %10.1f %10.1f %10s %20s" ${feed_name} ${pr} ${num_times} ${interval} "$count(FETCH_AND_WRITE_FEED) / $count(FETCH_FEED)"]
+	    set pretty_interval [::util::pretty_interval ${interval}]
+	    puts [format "%40s %10.1f %10.1f %15s %15s" ${feed_name} ${pr} ${num_times} ${pretty_interval} "$count(FETCH_AND_WRITE_FEED) / $count(FETCH_FEED)"]
 
 	    unset count
 	    
