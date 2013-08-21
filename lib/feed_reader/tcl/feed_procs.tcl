@@ -482,7 +482,7 @@ proc ::feed_reader::fetch_item {link title_in_feed feedVar itemVar} {
 			    errno 1 \
 			    errmsg $errmsg]
 
-	return ${retcode} ;# failed with errors
+	return {ERROR_FETCH} ;# failed with errors
     }
 
     return ${retcode}
@@ -678,7 +678,7 @@ proc ::feed_reader::load_item_from_dir {itemVar item_dirVar} {
 
 proc ::feed_reader::list_feed {news_source {limit "10"} {offset "0"}} {
 
-    set first_feed_file [get_feed_files ${news_source}]
+    set first_feed_file [lindex [get_feed_files ${news_source}] 0]
     array set feed [::util::readfile ${first_feed_file}]
 
     if { [exists_domain $feed(url)] } {
@@ -1070,6 +1070,54 @@ proc ::feed_reader::write_item {normalized_link feedVar itemVar resync_p} {
 
 }
 
+proc ::feed_reader::stats {{news_sources ""}} {
+
+    set feeds_dir [get_package_dir]/feed
+
+    if { ${news_sources} eq {} } {
+	set news_sources [glob -nocomplain -tails -directory ${feeds_dir} *]
+    }
+
+    puts [format "%40s %10s %10s %10s %20s" feed_name "Pr\[write\]" "#times/day" "interval" "#write / #fetch"]
+    puts [format "%40s %10s %10s %10s %20s" --------- "---------"   "----------" "--------" "---------------"]
+
+    set crawler_dir [get_crawler_dir]
+    foreach news_source $news_sources {
+
+	set feed_files [get_feed_files ${news_source}]
+	foreach feed_file ${feed_files} {
+
+	    set feed_name ${news_source}/[file tail ${feed_file}]
+
+	    set crawler_feed_dir ${crawler_dir}/feed/${feed_name}
+
+	    set stats_file ${crawler_feed_dir}/_stats
+
+	    array set count [::util::readfile ${stats_file}]
+
+	    # TODO: instead of 3600 seconds, use ${now} - ${first_sync_of_feed}
+	    #
+	    # having sampled all hours, probability here tells us 
+	    # how often a feed changes in a day
+	    #
+	    set pr [expr { double($count(FETCH_AND_WRITE_FEED)) / double($count(FETCH_FEED)) }]
+	    set epsilon 0.00001
+	    if { ${pr} < ${epsilon} } {
+		set num_times_each_day 1.0
+	    } else {
+		set max_times_per_day 48
+		set num_times_each_day [expr { ${pr} * ${max_times_per_day} }]
+	    }
+	    set interval [expr { int( 86400 / ${num_times_each_day} ) }]
+	    puts [format "%40s %10.1f %10s %10s %20s" ${feed_name} ${pr} ${num_times_each_day} ${interval} "$count(FETCH_AND_WRITE_FEED) / $count(FETCH_FEED)"]
+
+	    unset count
+	    
+	}
+
+    }
+}
+
 
 #TODO: we need a way to test feed (before starting to store it)
 proc ::feed_reader::test_feed {news_source {limit "3"} {fetch_item_p "1"}} {
@@ -1085,7 +1133,8 @@ proc ::feed_reader::test_feed {news_source {limit "3"} {fetch_item_p "1"}} {
 	set errorcode [fetch_feed result feed stoptitles]
 	if { ${errorcode} } {
 	    puts "fetch_feed failed errorcode=$errorcode"
-	    return
+	    unset feed
+	    continue
 	}
 
 	foreach link $result(links) title_in_feed $result(titles) {
@@ -1100,7 +1149,12 @@ proc ::feed_reader::test_feed {news_source {limit "3"} {fetch_item_p "1"}} {
 		    puts "fetch_item failed errorcode=$errorcode link=$link"
 		    continue
 		}
-		puts "Content:\n$item(body)"
+		foreach name [array names item] {
+		    if { $item(${name}) eq {} } {
+			continue
+		    }
+		    puts "* ${name}: $item(${name})"
+		}
 	    }
 
 	    if { [incr count] == ${limit} } {
@@ -1108,6 +1162,8 @@ proc ::feed_reader::test_feed {news_source {limit "3"} {fetch_item_p "1"}} {
 	    }
 
 	}
+
+	unset feed
     }
 
 }
@@ -1169,7 +1225,7 @@ proc ::feed_reader::print_sync_stats {feed_name statsVar} {
     puts [format "\t %20s" ${feed_name}]
     puts [format "\t %20s" [string repeat {-} [string length ${feed_name}]]]
 
-    set do_not_show {NO_WRITE_FEED FETCH_AND_WRITE_FEED}
+    set do_not_show {FETCH_FEED NO_WRITE_FEED FETCH_AND_WRITE_FEED}
     if { $stats(ERROR_FETCH_FEED) } {
 	set names {ERROR_FETCH_FEED}
     } elseif { $stats(NO_WRITE_FEED) } {
@@ -1232,6 +1288,7 @@ proc ::feed_reader::sync_feeds {{news_sources ""}} {
 		     NO_FETCH 0 \
 		     NO_WRITE 0 \
 		     ERROR_FETCH 0 \
+		     FETCH_FEED 0 \
 		     ERROR_FETCH_FEED 0 \
 		     FETCH_AND_WRITE_FEED 0 \
 		     NO_WRITE_FEED 0]
@@ -1250,12 +1307,9 @@ proc ::feed_reader::sync_feeds {{news_sources ""}} {
 		unset feed
 		continue
 	    }
+	    set stats(FETCH_FEED) 1
 
 	    foreach link $result(links) title_in_feed $result(titles) {
-		#puts ""
-		#puts ${title_in_feed}
-		#puts ${link}
-		#puts "---"
 
 		# returns FETCH_AND_WRITE, NO_FETCH, and NO_WRITE
 		set retcode [fetch_and_write_item ${link} ${title_in_feed} feed]
@@ -1287,8 +1341,8 @@ proc ::feed_reader::fetch_feed_p {feed_name timestamp {coeff "0.3"}} {
 
     foreach format {
 	{H-%H}
-	{u-%u}
-	{md-%m%d}
+	{uH-%u%H}
+	{mdH-%m%d%H}
     } {
 
 	set pretty_timeval [clock format ${timestamp} -format ${format}]
@@ -1302,7 +1356,7 @@ proc ::feed_reader::fetch_feed_p {feed_name timestamp {coeff "0.3"}} {
 	array set count [incr_array_in_file ${crawler_feed_sync_stats} stats]
 
 	# the extra 1 below is to avoid dealing with zeros
-	if { ( $count(FETCH_AND_WRITE_FEED) ) > ${coeff} * ( $count(NO_WRITE_FEED) + $count(ERROR_FETCH_FEED) ) } {
+	if { ( $count(FETCH_AND_WRITE_FEED) ) > ${coeff} * ( $count(FETCH_FEED) + $count(ERROR_FETCH_FEED) ) } {
 	    return 1
 	}
 
@@ -1320,7 +1374,7 @@ proc ::feed_reader::fetch_feed_p {feed_name timestamp {coeff "0.3"}} {
 
     array set count [::util::readfile ${filename}]
 
-    set interval [expr { 86400 * (1 - ( $count(FETCH_AND_WRITE_FEED) / ( $count(NO_WRITE_FEED) + $count(ERROR_FETCH_FEED) ) ) ) }]
+    set interval [expr { 86400 * (1 - ( $count(FETCH_AND_WRITE_FEED) / (  $count(FETCH_FEED) + $count(ERROR_FETCH_FEED) ) ) ) }]
 
     # if last update more than the computed general interval then fetch
     if { ${last_sync} + ${interval} < ${timestamp} } {
@@ -1340,8 +1394,8 @@ proc ::feed_reader::update_crawler_stats {timestamp feed_name statsVar} {
 
     foreach format {
 	{H-%H}
-	{u-%u}
-	{md-%m%d}
+	{uH-%u%H}
+	{mdH-%m%d%H}
     } {
 
 	set pretty_timeval [clock format ${timestamp} -format ${format}]
@@ -1420,7 +1474,7 @@ proc ::feed_reader::remove_item_from_dir {item_dirVar} {
 
 proc ::feed_reader::remove_feed_items {news_source {urlsha1_list ""}} {
 
-    set first_feed_file [get_feed_files ${news_source}]
+    set first_feed_file [lindex [get_feed_files ${news_source}] 0]
     array set feed [::util::readfile ${first_feed_file}]
 
     set domain_dir [get_domain_dir $feed(url)]

@@ -25,12 +25,13 @@ proc print_usage_info {} {
 			   "revisions" "urlsha1" \
 			   "register-axis" "axis_name" \
 			   "register-label" "axis_name label_name" \
-			   "test" "feed_name ?limit? ?fetch_item_p?" \
+			   "test" "news_source ?limit? ?fetch_item_p?" \
 			   "remove-feed-items" "news_source ?urlsha1? ?...?" \
 			   "cluster" "?limit? ?offset?" \
 			   "label" "axis class contentsha1 ?...?" \
 			   "unlabel" "axis class contentsha1 ?...?" \
 			   "fex" "?limit? ?offset?" \
+			   "stats" "?news_source? ?...?" \
 			   "TODO:test-article" "article_url" \
 			   "generate-feed" "feed_url"]
 
@@ -62,6 +63,10 @@ if { ${argc} < 1 } {
 
 	set news_source [lindex ${argv} 1]
 	::feed_reader::test_feed ${news_source} {*}[lrange ${argv} 2 end]
+
+    } elseif { ${cmd} eq {stats} && ${argc} >= 1} {
+
+	::feed_reader::stats [lrange ${argv} 1 end]
 
     } elseif { ${cmd} eq {show} && ${argc} >= 2 } {
 
