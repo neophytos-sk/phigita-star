@@ -1392,6 +1392,8 @@ proc ::feed_reader::remove_item_from_dir {item_dirVar} {
 	set contentsha1 [file tail ${revisionfilename}]
 	array set revision [::util::readfile ${revisionfilename}]
 
+	# TODO: remember to remove contentsha1_to_label entries
+
 	set indexfilename ${index_dir}/${contentsha1}
 	set indexfilename_newdata [join [lsearch -not -inline -all [::util::readfile ${indexfilename}] ${urlsha1}] "\n"]
 
@@ -1416,18 +1418,31 @@ proc ::feed_reader::remove_item_from_dir {item_dirVar} {
     unset item
 }
 
-proc ::feed_reader::remove_feed_items {feedVar} {
+proc ::feed_reader::remove_feed_items {news_source {urlsha1_list ""}} {
 
-    upvar $feedVar feed
-    
+    set first_feed_file [get_feed_files ${news_source}]
+    array set feed [::util::readfile ${first_feed_file}]
+
     set domain_dir [get_domain_dir $feed(url)]
 
+    set delete_domain_p 1
     set item_dirs [glob -directory ${domain_dir}/ *]
     foreach item_dir ${item_dirs} {
+
+	set urlsha1 [file tail ${item_dir}]
+
+	if { ${urlsha1_list} ne {} && ${urlsha1} ni ${urlsha1_list} } {
+	    set delete_domain_p 0
+	    continue
+	}
+
 	remove_item_from_dir item_dir
+
     }
 
-    file delete ${domain_dir}
+    if { ${delete_domain_p} } {
+	file delete ${domain_dir}
+    }
 
 
 }

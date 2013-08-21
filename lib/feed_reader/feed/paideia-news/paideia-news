@@ -1,11 +1,14 @@
-		   url http://www.paideia-news.com/
-		   include_re {id=[0-9]+&hid=[0-9]+}
-		   htmltidy_article_p 1
-		   xpath_article_title {returnstring(//div[@class="main_resource_title_single"])}
-		   xpath_article_author {returnstring(//div[@class="main_resource_summ2"]/p/strong/span)}
-		   xpath_article_body {returntext(//div[@class="main_resource_summ2"])}
-		   xpath_article_date {returndate(//div[@class="main_resource_date"],"%Y-%m-%d %H:%M:%S")}
-		   xpath_article_image {values(//div[@class="main_resource_img_single"]/img/@src)}
-		   xpath_article_cleanup {
-		       {//div[@class="main_resource_summ2"]/p/strong/span}
-		   }
+url http://www.paideia-news.com/
+include_re {id=[0-9]+&hid=[0-9]+}
+htmltidy_article_p 1
+xpath_article_title {returnstring(//div[@class="main_resource_title_single"])}
+xpath_article_author {returnstring(//div[@class="main_resource_summ2"]/p/strong/span)}
+xpath_article_body {returntext(//div[@class="main_resource_summ2"])}
+xpath_article_date {returndate(//div[@class="main_resource_date"],"%Y-%m-%d %H:%M:%S")}
+xpath_article_image {values(//div[@class="main_resource_img_single"]/img/@src)}
+xpath_article_cleanup {
+    {//div[@class="main_resource_summ2"]/p/strong/span}
+}
+xpath_article_attachment {
+    {values(//div[@class="attachment_btn"]/a/@href)}
+}

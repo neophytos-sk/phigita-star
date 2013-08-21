@@ -36,7 +36,7 @@ proc ::feed_reader::classifier::register_label {axis label} {
 
     check_axis_name ${axis}
 
-    set re {^[[:alnum:]]+$}
+    set re {^[[:alnum:]_]+$}
     if { ![regexp -- ${re} ${label}] } {
 	error "label name must be an alphanumeric string"
     }

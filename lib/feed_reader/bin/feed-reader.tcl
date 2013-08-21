@@ -26,7 +26,7 @@ proc print_usage_info {} {
 			   "register-axis" "axis_name" \
 			   "register-label" "axis_name label_name" \
 			   "test" "feed_name ?limit? ?fetch_item_p?" \
-			   "remove-feed-items" "feed_name" \
+			   "remove-feed-items" "news_source ?urlsha1? ?...?" \
 			   "cluster" "?limit? ?offset?" \
 			   "label" "axis class contentsha1 ?...?" \
 			   "unlabel" "axis class contentsha1 ?...?" \
@@ -117,10 +117,9 @@ if { ${argc} < 1 } {
 
     } elseif { ${cmd} eq {remove-feed-items} && ${argc} >= 2 } {
 
-	set feed_dir [::feed_reader::get_package_dir]/feed
-	set feed_name [lindex ${argv} 1]
-	array set feed [::util::readfile ${feed_dir}/${feed_name}]
-	::feed_reader::remove_feed_items feed
+	set news_source [lindex ${argv} 1]
+	set urlsha1_list [lrange ${argv} 2 end]
+	::feed_reader::remove_feed_items ${news_source} ${urlsha1_list}
 
     } elseif { ${cmd} eq {cluster} && ${argc} >= 1 } {
 
