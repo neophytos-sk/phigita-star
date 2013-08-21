@@ -1308,6 +1308,12 @@ proc ::feed_reader::update_crawler_stats {timestamp feedVar statsVar} {
 
 proc ::feed_reader::remove_crawler_stats {reversedomain timestamp urlsha1 contentsha1} {
 
+    # THIS IS NOT CORRECT, REMOVING AN ITEM DOES NOT GIVE US ANY INFORMATION ABOUT
+    # WHAT OTHER ITEMS WERE FETCHED FROM THE FEED AND THUS CANNOT REALLY DECREMENT
+    # ERROR_FETCH_FEED, FETCH_AND_WRITE_FEED, AND NO WRITE_FEED UNLESS WE KEEP TRACK
+    # STATS FOR THAT PARTICULAR ROUND OF CRAWLING.
+    return
+
     set crawler_dir [get_crawler_dir]
     set crawler_site_dir "${crawler_dir}/site/${reversedomain}/"
 
