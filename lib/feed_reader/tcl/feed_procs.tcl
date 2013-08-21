@@ -5,14 +5,6 @@ namespace eval ::feed_reader {
 
 }
 
-set dir [file dirname [info script]]
-set package_dir [file normalize [file join ${dir} ..]]
-
-
-proc ::feed_reader::get_package_dir {} "return ${package_dir}"
-
-proc ::feed_reader::get_conf_dir {} "return ${package_dir}/conf"
-
 
 proc ::feed_reader::init {} {
 
@@ -413,7 +405,10 @@ proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar} {
 	set article_langclass [::ttext::langclass "$article_title $article_body"]
     }
 
+    set domain [::util::domain_from_url ${link}]
+
     array set item [list \
+			domain ${domain} \
 			link $link \
 			langclass $article_langclass \
 			title $article_title \
@@ -532,13 +527,17 @@ proc ::feed_reader::get_base_dir {} {
     return {/web/data/newsdb}
 }
 
+proc ::feed_reader::reversedomain {domain} {
+    return [join [lreverse [split ${domain} {.}]] {.}]
+}
+
 proc ::feed_reader::get_domain_dir {link} {
 
     set domain [::util::domain_from_url ${link}]
 
-    set reversehost [join [lreverse [split $domain {.}]] {.}]
+    set reversedomain [reversedomain ${domain}]
 
-    return [get_base_dir]/site/${reversehost}
+    return [get_base_dir]/site/${reversedomain}
 }
 
 proc ::feed_reader::get_urlsha1 {link} {
@@ -874,6 +873,26 @@ proc ::feed_reader::show_item_from_url {link} {
     print_item item
 }
 
+proc ::feed_reader::incr_value_in_file {filename {increment "1"}} {
+
+    if { [file exists ${filename}] } {
+
+	set count [::util::readfile ${filename}]
+
+    } else {
+
+	set count 0
+
+    }
+
+    set result [incr count ${increment}]
+
+    ::util::writefile ${filename} ${result}
+
+    return ${result}
+
+}
+
 proc ::feed_reader::write_item {normalized_link feedVar itemVar resync_p} {
     upvar $feedVar feed
     upvar $itemVar item
@@ -900,19 +919,15 @@ proc ::feed_reader::write_item {normalized_link feedVar itemVar resync_p} {
 	}
     }
 
+    set timestamp [clock seconds] 
 
-    # save article body to content file
-    # TODO: each image,attachment,video,etc should get its own content file in the future
+    set crawlerfilename "${crawler_dir}/url/${urlsha1}"
+    close [open ${crawlerfilename} "w"]
+
     set content [list $item(title) $item(body)]
     set contentsha1 [::sha1::sha1 -hex ${content}]
 
-    set crawlerfilename "${crawler_dir}/${urlsha1}"
-    close [open ${crawlerfilename} "w"]
-
-
-    #set itemfilename "item/${urlsha1}"
     set revisionfilename ${item_dir}/${contentsha1}
-
     if { [file exists ${revisionfilename}] } {
 	# revision content is the same as a previous one
 	# no need to overwrite the revisionfilename,
@@ -924,7 +939,32 @@ proc ::feed_reader::write_item {normalized_link feedVar itemVar resync_p} {
 	return
     }
 
-    set timestamp [clock seconds] 
+    # TODO: maintain domain in item entries
+    set domain $item(domain)
+    set reversedomain [reversedomain ${domain}]
+    set crawler_site_dir "${crawler_dir}/site/${reversedomain}/"
+    # keep track of stats by hour, the number of the day of the week, month-day, and the total
+    foreach format {
+	{H-%H}
+	{u-%u}
+	{md-%m%d}
+    } {
+	set pretty_timeval [clock format ${timestamp} -format ${format}]
+	set crawler_site_stats_dir ${crawler_site_dir}/${pretty_timeval}/
+
+	if { ![file isdirectory ${crawler_site_stats_dir}] } {
+	    file mkdir ${crawler_site_stats_dir}
+	}
+
+	set crawler_site_stats_filename ${crawler_site_stats_dir}/${urlsha1}-${contentsha1}
+	close [open ${crawler_site_stats_filename} "w"]
+
+	set crawler_site_stats_count ${crawler_site_dir}/${pretty_timeval}/_count
+	incr_value_in_file ${crawler_site_stats_count}
+
+    }
+    incr_value_in_file  "${crawler_site_dir}/_count"
+
 
     if { ${resync_p} } {
 	set item(is_revision_p) 1
@@ -937,11 +977,18 @@ proc ::feed_reader::write_item {normalized_link feedVar itemVar resync_p} {
     set logfilename ${log_dir}/${urlsha1}
     set urlfilename ${url_dir}/${urlsha1}
 
+    # TODO: each image,attachment,video,etc should get its own content file in the future
+
     if { [file exists ${contentfilename}] } {
+
 	# we have seen this item before from a different url
 	set item(is_copy_p) 1
+
     } else {
+
+	# save article body to content file
 	::util::writefile ${contentfilename} ${content}
+
     }
 
 
@@ -1044,7 +1091,7 @@ proc ::feed_reader::get_last_sync_timestamp {linkVar} {
 
     set urlsha1 [get_urlsha1 ${link}]
     set crawler_dir [get_crawler_dir]
-    set crawlerfilename "${crawler_dir}/${urlsha1}"
+    set crawlerfilename "${crawler_dir}/url/${urlsha1}"
     return [file mtime ${crawlerfilename}]
 
 }
@@ -1147,60 +1194,109 @@ proc ::feed_reader::sync_feeds {{feed_names ""}} {
     }
 }
 
+proc ::feed_reader::remove_crawler_stats {reversedomain timestamp urlsha1 contentsha1} {
 
-proc ::feed_reader::remove_feed_items {feedVar} {
+    set crawler_dir [get_crawler_dir]
+    set crawler_site_dir "${crawler_dir}/site/${reversedomain}/"
 
-    upvar $feedVar feed
-    
+    foreach format {
+	{H-%H}
+	{u-%u}
+	{md-%m%d}
+    } {
+	set pretty_timeval [clock format ${timestamp} -format ${format}]
+	set crawler_site_stats_dir ${crawler_site_dir}/${pretty_timeval}/
+
+	if { ![file isdirectory ${crawler_site_stats_dir}] } {
+	    continue
+	}
+
+	set crawler_site_stats_filename ${crawler_site_stats_dir}/${urlsha1}-${contentsha1}
+	file delete ${crawler_site_stats_filename}
+
+	set crawler_site_stats_count ${crawler_site_dir}/${pretty_timeval}/_count
+	set count [incr_value_in_file ${crawler_site_stats_count} -1]
+	if { ${count} == 0 } {
+	    file delete ${crawler_site_stats_count}
+	    file delete ${crawler_site_stats_dir}
+	}
+
+    }
+    set total_count [incr_value_in_file  "${crawler_site_dir}/_count" -1]
+    if { ${count} == 0 } {
+	file delete ${crawler_site_stats_count}
+	file delete ${crawler_site_stats_dir}
+    }
+
+}
+
+proc ::feed_reader::remove_item_from_dir {item_dirVar} {
+
+    upvar $item_dirVar item_dir
+
     set content_dir [get_content_dir]
     set index_dir [get_index_dir]
     set url_dir [get_url_dir]
     set log_dir [get_log_dir]
     set crawler_dir [get_crawler_dir]
+    puts item_dir=$item_dir
+
+    load_item_from_dir item item_dir
+    set urlsha1 $item(urlsha1)
+    set reversedomain [reversedomain [::util::domain_from_url $item(link)]]
+
+
+    set crawlerfilename "${crawler_dir}/${urlsha1}"
+    set logfilename ${log_dir}/${urlsha1}
+    set urlfilename ${url_dir}/${urlsha1}
+
+    catch { file delete ${crawlerfilename} }
+    catch { file delete ${logfilename} }
+    catch { file delete ${urlfilename} }
+
+    set normalized_link [get_value_if item(normalized_link) $item(link)]
+    set item_dir [get_item_dir normalized_link]
+    set revision_files [get_revision_files item_dir]
+    foreach revisionfilename ${revision_files} {
+
+	set contentsha1 [file tail ${revisionfilename}]
+	array set revision [::util::readfile ${revisionfilename}]
+
+	remove_crawler_stats ${reversedomain} $revision(timestamp) ${urlsha1} ${contentsha1}
+
+	set indexfilename ${index_dir}/${contentsha1}
+	set indexfilename_newdata [join [lsearch -not -inline -all [::util::readfile ${indexfilename}] ${urlsha1}] "\n"]
+
+	if { ${indexfilename_newdata} eq {} } {
+
+	    file delete ${indexfilename}
+	    set contentfilename ${content_dir}/${contentsha1}
+	    file delete ${contentfilename}
+
+	} else {
+
+	    ::util::writefile ${indexfilename} ${indexfilename_newdata}
+
+	}
+
+	file delete ${revisionfilename}
+
+    }
+
+    file delete ${item_dir}
+
+    unset item
+}
+
+proc ::feed_reader::remove_feed_items {feedVar} {
+
+    upvar $feedVar feed
+    
     set domain_dir [get_domain_dir $feed(url)]
 
     set item_dirs [glob -directory ${domain_dir}/ *]
     foreach item_dir ${item_dirs} {
-	load_item_from_dir item item_dir
-	set urlsha1 $item(urlsha1)
-
-	set crawlerfilename "${crawler_dir}/${urlsha1}"
-	set logfilename ${log_dir}/${urlsha1}
-	set urlfilename ${url_dir}/${urlsha1}
-
-	catch { file delete ${crawlerfilename} }
-	catch { file delete ${logfilename} }
-	catch { file delete ${urlfilename} }
-
-	set normalized_link [get_value_if item(normalized_link) $item(link)]
-	set item_dir [get_item_dir normalized_link]
-	set revision_files [get_revision_files item_dir]
-	foreach revisionfilename ${revision_files} {
-
-	    set contentsha1 [file tail ${revisionfilename}]
-
-	    set indexfilename ${index_dir}/${contentsha1}
-	    set indexfilename_newdata [join [lsearch -not -inline -all [::util::readfile ${indexfilename}] ${urlsha1}] "\n"]
-
-	    if { ${indexfilename_newdata} eq {} } {
-
-		file delete ${indexfilename}
-		set contentfilename ${content_dir}/${contentsha1}
-		file delete ${contentfilename}
-
-	    } else {
-
-		::util::writefile ${indexfilename} ${indexfilename_newdata}
-
-	    }
-
-	    file delete ${revisionfilename}
-
-	}
-
-	file delete ${item_dir}
-
-	unset item
+	remove_item_from_dir item_dir
     }
 
     file delete ${domain_dir}

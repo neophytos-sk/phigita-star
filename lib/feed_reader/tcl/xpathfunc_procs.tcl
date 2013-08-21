@@ -3,8 +3,7 @@ namespace eval ::dom::xpathFunc {
 
     array set mapping [list]
 
-    set dir [file dirname [info script]]
-    set mapping_dir [file normalize [file join ${dir} .. data]]
+    set mapping_dir [::feed_reader::get_conf_dir]
 
     set filelist [glob -nocomplain -directory ${mapping_dir} *]
 
