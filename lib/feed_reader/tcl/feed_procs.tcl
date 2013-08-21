@@ -1169,14 +1169,13 @@ proc ::feed_reader::print_sync_stats {feed_name statsVar} {
     puts [format "\t %20s" ${feed_name}]
     puts [format "\t %20s" [string repeat {-} [string length ${feed_name}]]]
 
+    set do_not_show {NO_WRITE_FEED FETCH_AND_WRITE_FEED}
     if { $stats(ERROR_FETCH_FEED) } {
-	set do_not_show [list]
 	set names {ERROR_FETCH_FEED}
     } elseif { $stats(NO_WRITE_FEED) } {
-	set do_not_show [list]
 	set names {NO_FETCH NO_WRITE ERROR_FETCH}
     } else {
-	set do_not_show {ERROR_FETCH_FEED NO_WRITE_FEED}
+	set do_not_show [concat ${do_not_show} {ERROR_FETCH_FEED NO_WRITE_FEED}]
 	set names [array names stats]
     }
 
