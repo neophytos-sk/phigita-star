@@ -1447,28 +1447,11 @@ proc ::feed_reader::remove_feed_items {news_source {urlsha1_list ""}} {
 
 }
 
-proc ::feed_reader::generate_feed {feed_url {encoding "utf-8"}} {
-
-    set errorcode [::xo::http::fetch html $feed_url]
-    if { ${errorcode} } {
-	return $errorcode
-    }
-
-    if { ${encoding} ne {} } {
-	set html [encoding convertfrom ${encoding} ${html}]
-    }
-
-    if { [catch { set doc [dom parse -html ${html}] } errmsg] } {
-	set html [::htmltidy::tidy ${html}]
-	set doc [dom parse -html ${html}]
-    }
-
+proc ::feed_reader::generate_include_re {linksVar feed_url matching_pathsVar} {
+    upvar $linksVar links
+    upvar $matching_pathsVar matching_paths
 
     set domain [::util::domain_from_url ${feed_url}]
-
-
-
-    set links [${doc} selectNodes {values(//a[@href]/@href)}]
 
     array set url_shape [list]
     set max 0
@@ -1569,9 +1552,10 @@ proc ::feed_reader::generate_feed {feed_url {encoding "utf-8"}} {
 	foreach path ${paths} {
 
 	    # lrange is there to ensure that we exclude whole match from inline parts
-	    set inline_match [lrange [regexp -inline -- ${include_re} ${path}] 1 end]
+	    set inline_match0 [regexp -inline -- ${include_re} ${path}]
+	    set inline_match [lrange ${inline_match0} 1 end]
 
-	    if { ${inline_match} ne {} } {
+	    if { ${inline_match0} ne {} } {
 		
 		lappend matching_paths ${path}
 
@@ -1613,14 +1597,46 @@ proc ::feed_reader::generate_feed {feed_url {encoding "utf-8"}} {
 
     }
 
+    return ${include_re}
+}
 
+
+
+proc ::feed_reader::generate_feed {feed_url {encoding "utf-8"}} {
+
+    set errorcode [::xo::http::fetch html $feed_url]
+    if { ${errorcode} } {
+	return $errorcode
+    }
+
+    if { ${encoding} ne {} } {
+	set html [encoding convertfrom ${encoding} ${html}]
+    }
+
+    if { [catch { set doc [dom parse -html ${html}] } errmsg] } {
+	set html [::htmltidy::tidy ${html}]
+	set doc [dom parse -html ${html}]
+    }
+
+
+    set links [${doc} selectNodes {values(//a[@href]/@href)}]
     $doc delete
+
+    # generate include_re
+
+    set matching_paths [list]
+    set include_re [generate_include_re links ${feed_url} matching_paths]
+    if { ${include_re} eq {} } {
+	puts "sorry, got nothing to show for it"
+	return
+    }
+
+    # generate xpath_article_body
 
     ########### fetch article
 
     if { ${include_re} ne {} } {
-	set matching_paths [lrange ${paths} 0 9]
-	#set matching_paths [lindex ${matching_paths} 0]
+	set matching_paths [lrange ${matching_paths} 0 2]
 	foreach path ${matching_paths} {
 	    set canonical_link \
 		[::uri::canonicalize \
@@ -1654,49 +1670,14 @@ proc ::feed_reader::generate_feed {feed_url {encoding "utf-8"}} {
 	    }
 
 	    set xpath [$maxnode toXPath]
-	    puts xpath=$xpath
-	    set ancestors [$maxnode selectNodes [concat ${xpath} / {ancestor::*[@class or @id][1]}]]
-	    #set ancestors [$maxnode parentNode]
-
-	    foreach ancestor ${ancestors} {
-		set ancestor_tagname [${ancestor} tagName]
-		set tagname [${maxnode} tagName]
-		set xpath "//${ancestor_tagname}"
-		set xpath_list [list]
-		foreach att [$ancestor attributes] {
-		    if { ${att} ni {id class style} } {
-			continue
-		    }
-		    lappend xpath_list "@${att}=\"[$ancestor getAttribute ${att}]\""
-		}
-		if { ${xpath_list} ne {} } {
-		    append xpath "\[[join ${xpath_list} { and }]\]"
-		} else {
-		    continue
-		}
-		
-		append xpath "/descendant::${tagname}"
-		set xpath_list [list]
-		foreach att [$maxnode attributes] {
-		    if { ${att} ni {id class style} } {
-			continue
-		    }
-		    lappend xpath_list "@${att}=\"[$maxnode getAttribute ${att}]\""
-		}
-		if { ${xpath_list} ne {} } {
-		    append xpath "\[[join ${xpath_list} { and }]\]"
-		}
-		set xpath_article_body "returntext(${xpath})"
-		puts "xpath_article_body=${xpath_article_body}"
-	    }
-
-
+	    puts "xpath=$xpath path=${path}"
+	    puts [${doc} selectNodes returnstring(${xpath})]
+	    #puts [${maxnode} asHTML]
+	    puts "maxnode: tagname=[${maxnode} tagName] id=[${maxnode} @id ""] class=[${maxnode} @class ""]"
+	    
 	    ${doc} delete
 
-
 	}
-
-
 
     }
 
@@ -1708,22 +1689,29 @@ proc ::feed_reader::bte_helper {resultVar node} {
 
     upvar $resultVar result
 
+
     if { ${node} eq {} || [${node} nodeType] ne {ELEMENT_NODE} } {
 	return 0
     }
 
-    set len [string length [$node text]]
-
-    foreach child [${node} childNodes] {
-	incr len [expr { [bte_helper result ${child}] / 10 }]
+    set langclass [::ttext::langclass [$node text]]
+    set value 0
+    if { [llength ${langclass}]==1 && [lindex ${langclass} 0] in {el.utf8 en.utf8} } {
+	set value 1
     }
 
-    if { ${len} > $result(maxlen) } {
-	set result(maxlen) ${len}
+    set total_value ${value}
+    set childnodes [${node} childNodes]
+    foreach child ${childnodes} {
+	incr total_value [bte_helper result ${child}]
+    }
+
+    if { ${total_value} > $result(maxlen) && [${node} tagName] in {div p span} } {
+	set result(maxlen) ${total_value}
 	set result(maxnode) ${node}
     }
 
-    return ${len}
+    return ${value}
 
 }
 
@@ -1737,7 +1725,6 @@ proc ::feed_reader::bte {resultVar doc} {
 	{//script}
 	{//style}
 	{//link}
-	{//iframe}
     } {
 	foreach cleanup_node [${doc} selectNodes ${cleanup_xpath}] {
 	    ${cleanup_node} delete
