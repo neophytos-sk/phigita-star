@@ -1072,37 +1072,42 @@ proc ::feed_reader::write_item {normalized_link feedVar itemVar resync_p} {
 
 
 #TODO: we need a way to test feed (before starting to store it)
-proc ::feed_reader::test_feed {feedVar {limit "3"} {fetch_item_p "1"}} {
-    upvar $feedVar feed
+proc ::feed_reader::test_feed {news_source {limit "3"} {fetch_item_p "1"}} {
 
     variable meta
     variable stoptitles
 
-    set errorcode [fetch_feed result feed stoptitles]
-    if { ${errorcode} } {
-	puts "fetch_feed failed errorcode=$errorcode"
-	return
-    }
+    set feed_files [get_feed_files ${news_source}]
+    foreach feed_file ${feed_files} {
 
-    foreach link $result(links) title_in_feed $result(titles) {
-	puts ""
-	puts ${title_in_feed}
-	puts ${link}
-	puts "---"
+	array set feed [::util::readfile ${feed_file}]
 
-	if { ${fetch_item_p} } {
-	    set errorcode [fetch_item ${link} ${title_in_feed} feed item]
-	    if { ${errorcode} } {
-		puts "fetch_item failed errorcode=$errorcode link=$link"
-		continue
+	set errorcode [fetch_feed result feed stoptitles]
+	if { ${errorcode} } {
+	    puts "fetch_feed failed errorcode=$errorcode"
+	    return
+	}
+
+	foreach link $result(links) title_in_feed $result(titles) {
+	    puts ""
+	    puts ${title_in_feed}
+	    puts ${link}
+	    puts "---"
+
+	    if { ${fetch_item_p} } {
+		set errorcode [fetch_item ${link} ${title_in_feed} feed item]
+		if { ${errorcode} } {
+		    puts "fetch_item failed errorcode=$errorcode link=$link"
+		    continue
+		}
+		puts "Content:\n$item(body)"
 	    }
-	    puts "Content:\n$item(body)"
-	}
 
-	if { [incr count] == ${limit} } {
-	    break
-	}
+	    if { [incr count] == ${limit} } {
+		break
+	    }
 
+	}
     }
 
 }

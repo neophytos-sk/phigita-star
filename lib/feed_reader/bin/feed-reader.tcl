@@ -60,10 +60,8 @@ if { ${argc} < 1 } {
 
     } elseif { ${cmd} eq {test} && ${argc} >= 2} {
 
-	set feed_dir [::feed_reader::get_package_dir]/feed
-	set feed_name [lindex ${argv} 1]
-	array set feed [::util::readfile ${feed_dir}/${feed_name}]
-	::feed_reader::test_feed feed {*}[lrange ${argv} 2 end]
+	set news_source [lindex ${argv} 1]
+	::feed_reader::test_feed ${news_source} {*}[lrange ${argv} 2 end]
 
     } elseif { ${cmd} eq {show} && ${argc} >= 2 } {
 
