@@ -501,22 +501,35 @@ proc ::feed_reader::fetch_and_write_item {link title_in_feed feedVar} {
     set can_resync_p [get_value_if feed(check_for_revisions) "0"]
 
     set resync_p 0
-    if { ![exists_item ${normalized_link}] || ( ${can_resync_p} && [set resync_p [auto_resync_p feed ${normalized_link}]] ) } {
+    if { 
+	![exists_item ${normalized_link}] 
+	|| ( ${can_resync_p} && [set resync_p [auto_resync_p feed ${normalized_link}]] ) 
+    } {
 	
 	set errorcode [fetch_item ${link} ${title_in_feed} feed item]
 	if { ${errorcode} } {
 	    puts "--->>> error ${link}"
 	    # incr errorCount
-	    return
+	    return 0
 	}
 
 	if { ${normalized_link} ne ${link} } {
 	    set item(normalized_link) ${normalized_link}
 	}
 
-	write_item ${normalized_link} feed item ${resync_p}
+	set written_p [write_item ${normalized_link} feed item ${resync_p}]
 	
 	unset item
+
+	if { ${written_p} } {
+	    return {FETCH_AND_WRITE}
+	} else {
+	    return {NO_WRITE}
+	}
+
+    } else {
+
+	return {NO_FETCH}
 
     }
 
@@ -893,6 +906,30 @@ proc ::feed_reader::incr_value_in_file {filename {increment "1"}} {
 
 }
 
+proc ::feed_reader::incr_array_in_file {filename incrementVar} {
+
+    upvar $incrementVar increment
+
+    if { [file exists ${filename}] } {
+
+	array set count [::util::readfile ${filename}]
+
+    } else {
+
+	array set count [list]
+
+    }
+
+    foreach name [array names increment] {
+	incr count(${name}) $increment(${name})
+    }
+
+    ::util::writefile ${filename} [array get count]
+
+    return [array get count]
+
+}
+
 proc ::feed_reader::write_item {normalized_link feedVar itemVar resync_p} {
     upvar $feedVar feed
     upvar $itemVar item
@@ -936,35 +973,8 @@ proc ::feed_reader::write_item {normalized_link feedVar itemVar resync_p} {
 	# note that if were keeping track of metadata changes
 	# then it would make sense to overwrite the logfilename
 	# and the urlfilename
-	return
+	return 0
     }
-
-    # TODO: maintain domain in item entries
-    set domain $item(domain)
-    set reversedomain [reversedomain ${domain}]
-    set crawler_site_dir "${crawler_dir}/site/${reversedomain}/"
-    # keep track of stats by hour, the number of the day of the week, month-day, and the total
-    foreach format {
-	{H-%H}
-	{u-%u}
-	{md-%m%d}
-    } {
-	set pretty_timeval [clock format ${timestamp} -format ${format}]
-	set crawler_site_stats_dir ${crawler_site_dir}/${pretty_timeval}/
-
-	if { ![file isdirectory ${crawler_site_stats_dir}] } {
-	    file mkdir ${crawler_site_stats_dir}
-	}
-
-	set crawler_site_stats_filename ${crawler_site_stats_dir}/${urlsha1}-${contentsha1}
-	close [open ${crawler_site_stats_filename} "w"]
-
-	set crawler_site_stats_count ${crawler_site_dir}/${pretty_timeval}/_count
-	incr_value_in_file ${crawler_site_stats_count}
-
-    }
-    incr_value_in_file  "${crawler_site_dir}/_count"
-
 
     if { ${resync_p} } {
 	set item(is_revision_p) 1
@@ -1034,6 +1044,9 @@ proc ::feed_reader::write_item {normalized_link feedVar itemVar resync_p} {
 	    file mtime ${urlfilename} ${timeval}
 	}
     }
+
+    return 1
+
 }
 
 
@@ -1166,6 +1179,7 @@ proc ::feed_reader::sync_feeds {{feed_names ""}} {
     set feed_dir [get_package_dir]/feed
     foreach feed_name ${feed_names} {
 
+	array set stats [list FETCH_AND_WRITE 0 NO_FETCH 0 NO_WRITE 0]
 	array set feed [::util::readfile ${feed_dir}/${feed_name}]
 
 	# set feed_type [get_value_if feed(type) ""] 
@@ -1173,6 +1187,7 @@ proc ::feed_reader::sync_feeds {{feed_names ""}} {
 	# set feed(xpath_feed_item) //item
 	# }
 
+	set timestamp [clock seconds]
 	set errorcode [fetch_feed result feed stoptitles]
 	if { ${errorcode} } {
 	    puts "fetch_feed failed errorcode=$errorcode feed_name=$feed_name"
@@ -1185,16 +1200,32 @@ proc ::feed_reader::sync_feeds {{feed_names ""}} {
 	    #puts ${link}
 	    #puts "---"
 
-	    fetch_and_write_item ${link} ${title_in_feed} feed
-
+	    set retcode [fetch_and_write_item ${link} ${title_in_feed} feed]
+	    incr stats(${retcode})
 	}
 
+	update_crawler_stats ${timestamp} feed stats
+
 	unset feed
+	unset stats
 
     }
 }
 
-proc ::feed_reader::remove_crawler_stats {reversedomain timestamp urlsha1 contentsha1} {
+proc ::feed_reader::fetch_feed_p {feedVar} {
+   upvar $feedVar feed
+    # TODO: maintain domain in feed spec
+    set reversedomain [reversedomain [::util::domain_from_url $feed(url)]]
+
+}
+
+proc ::feed_reader::update_crawler_stats {timestamp feedVar statsVar} {
+
+    upvar $feedVar feed
+    upvar $statsVar stats
+
+    # TODO: maintain domain in feed spec
+    set reversedomain [reversedomain [::util::domain_from_url $feed(url)]]
 
     set crawler_dir [get_crawler_dir]
     set crawler_site_dir "${crawler_dir}/site/${reversedomain}/"
@@ -1204,29 +1235,58 @@ proc ::feed_reader::remove_crawler_stats {reversedomain timestamp urlsha1 conten
 	{u-%u}
 	{md-%m%d}
     } {
-	set pretty_timeval [clock format ${timestamp} -format ${format}]
-	set crawler_site_stats_dir ${crawler_site_dir}/${pretty_timeval}/
 
-	if { ![file isdirectory ${crawler_site_stats_dir}] } {
+	set pretty_timeval [clock format ${timestamp} -format ${format}]
+	set crawler_site_sync_dir ${crawler_site_dir}/${pretty_timeval}/
+	
+	if { ![file isdirectory ${crawler_site_sync_dir}] } {
+	    file mkdir ${crawler_site_sync_dir}
+	}
+	
+	set crawler_site_sync_stats ${crawler_site_dir}/${pretty_timeval}/_stats
+	incr_array_in_file ${crawler_site_sync_stats} stats
+
+    }
+
+    incr_array_in_file "${crawler_site_dir}/_stats" stats
+
+}
+
+proc ::feed_reader::remove_crawler_stats {reversedomain timestamp urlsha1 contentsha1} {
+
+    set crawler_dir [get_crawler_dir]
+    set crawler_site_dir "${crawler_dir}/site/${reversedomain}/"
+
+
+    array set minus_one_array \
+	[list \
+	     FETCH_AND_WRITE -1 \
+	     NO_WRITE -1 \
+	     NO_FETCH -1]
+
+    foreach format {
+	{H-%H}
+	{u-%u}
+	{md-%m%d}
+    } {
+	set pretty_timeval [clock format ${timestamp} -format ${format}]
+	set crawler_site_sync_dir ${crawler_site_dir}/${pretty_timeval}/
+
+	if { ![file isdirectory ${crawler_site_sync_dir}] } {
 	    continue
 	}
 
-	set crawler_site_stats_filename ${crawler_site_stats_dir}/${urlsha1}-${contentsha1}
-	file delete ${crawler_site_stats_filename}
-
-	set crawler_site_stats_count ${crawler_site_dir}/${pretty_timeval}/_count
-	set count [incr_value_in_file ${crawler_site_stats_count} -1]
-	if { ${count} == 0 } {
-	    file delete ${crawler_site_stats_count}
-	    file delete ${crawler_site_stats_dir}
+	set crawler_site_sync_stats ${crawler_site_dir}/${pretty_timeval}/_stats
+	if { [file exists ${crawler_site_sync_stats}] } {
+	    array set count [incr_array_in_file ${crawler_site_sync_stats} minus_one_array]
 	}
 
     }
-    set total_count [incr_value_in_file  "${crawler_site_dir}/_count" -1]
-    if { ${count} == 0 } {
-	file delete ${crawler_site_stats_count}
-	file delete ${crawler_site_stats_dir}
+
+    if { [file exists "${crawler_site_dir}/_stats"] } {
+	array set total_count [incr_array_in_file  "${crawler_site_dir}/_stats" minues_one_array]
     }
+
 
 }
 
