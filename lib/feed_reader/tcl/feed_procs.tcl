@@ -634,6 +634,18 @@ proc ::feed_reader::compare_mtime {file_or_dir1 file_or_dir2} {
 
 }
 
+proc ::feed_reader::get_feed_files {news_source} {
+
+    set feeds_dir [get_package_dir]/feed    
+    set news_source_dir ${feeds_dir}/${news_source}
+
+    set filelist [glob -directory ${news_source_dir} *]
+    set sortedlist [lsort -decreasing -command compare_mtime ${filelist}]
+    return ${sortedlist}
+
+}
+
+
 proc ::feed_reader::get_revision_files {item_dirVar} {
 
     upvar $item_dirVar item_dir
@@ -664,8 +676,10 @@ proc ::feed_reader::load_item_from_dir {itemVar item_dirVar} {
     array set item [::util::readfile ${filename}]
 }
 
-proc ::feed_reader::list_feed {feedVar {limit "10"} {offset "0"}} {
-    upvar $feedVar feed
+proc ::feed_reader::list_feed {news_source {limit "10"} {offset "0"}} {
+
+    set first_feed_file [get_feed_files ${news_source}]
+    array set feed [::util::readfile ${first_feed_file}]
 
     if { [exists_domain $feed(url)] } {
 	set domain_dir [get_domain_dir $feed(url)]
@@ -1204,6 +1218,7 @@ proc ::feed_reader::sync_feeds {{news_sources ""}} {
 	    set timestamp [clock seconds]
 	    if { ${check_fetch_feed_p} && ![fetch_feed_p ${feed_name} ${timestamp}] } {
 		puts "not fetching $feed_name in this round ${round}\n\n"
+		unset feed
 		continue
 	    }
 
@@ -1228,6 +1243,7 @@ proc ::feed_reader::sync_feeds {{news_sources ""}} {
 		puts "fetch_feed failed errorcode=$errorcode feed_name=$feed_name"
 		set stats(ERROR_FETCH_FEED) 1
 		update_crawler_stats ${timestamp} ${feed_name} stats
+		unset feed
 		continue
 	    }
 

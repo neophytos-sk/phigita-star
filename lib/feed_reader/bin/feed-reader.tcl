@@ -14,14 +14,14 @@ proc print_usage_info {} {
     upvar argv0 argv0
 
     array set cmdinfo [list \
-			   "sync" "?feed_names?" \
+			   "sync" "?news_source? ?...?" \
 			   "show" "urlsha1 ?...?" \
 			   "show-url" "article_url" \
 			   "show-content" "contentsha1" \
 			   "uses-content" "contentsha1" \
 			   "diff-content" "contentsha1_old contentsha1_new" \
 			   "log" "?limit? ?offset?" \
-			   "list" "feed_name ?limit? ?offset?" \
+			   "list" "news_source ?limit? ?offset?" \
 			   "revisions" "urlsha1" \
 			   "register-axis" "axis_name" \
 			   "register-label" "axis_name label_name" \
@@ -114,10 +114,8 @@ if { ${argc} < 1 } {
 
     } elseif { ${cmd} eq {list} && ${argc} >= 2 } {
 
-	set feed_dir [::feed_reader::get_package_dir]/feed
-	set feed_name [lindex ${argv} 1]
-	array set feed [::util::readfile ${feed_dir}/${feed_name}]
-	::feed_reader::list_feed feed {*}[lrange ${argv} 2 end]
+	set news_source [lindex ${argv} 1]
+	::feed_reader::list_feed ${news_source} {*}[lrange ${argv} 2 end]
 
     } elseif { ${cmd} eq {remove-feed-items} && ${argc} >= 2 } {
 
