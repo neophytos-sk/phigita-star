@@ -1095,21 +1095,12 @@ proc ::feed_reader::stats {{news_sources ""}} {
 
 	    array set count [::util::readfile ${stats_file}]
 
-	    # TODO: instead of 3600 seconds, use ${now} - ${first_sync_of_feed}
-	    #
-	    # having sampled all hours, probability here tells us 
-	    # how often a feed changes in a day
-	    #
-	    set pr [expr { double($count(FETCH_AND_WRITE_FEED)) / double($count(FETCH_FEED)) }]
-	    set epsilon 0.00001
-	    if { ${pr} < ${epsilon} } {
-		set num_times_each_day 1.0
-	    } else {
-		set max_times_per_day 48
-		set num_times_each_day [expr { ${pr} * ${max_times_per_day} }]
-	    }
-	    set interval [expr { int( 86400 / ${num_times_each_day} ) }]
-	    puts [format "%40s %10.1f %10s %10s %20s" ${feed_name} ${pr} ${num_times_each_day} ${interval} "$count(FETCH_AND_WRITE_FEED) / $count(FETCH_FEED)"]
+	    lassign [get_sync_info count] pr num_times_per_day interval
+
+	    # TODO: pretty interval
+	    #set interval_in_mins [expr { ${interval} / 60 }]
+
+	    puts [format "%40s %10.1f %10.1f %10s %20s" ${feed_name} ${pr} ${num_times_per_day} ${interval} "$count(FETCH_AND_WRITE_FEED) / $count(FETCH_FEED)"]
 
 	    unset count
 	    
@@ -1333,7 +1324,42 @@ proc ::feed_reader::sync_feeds {{news_sources ""}} {
     }
 }
 
-# if more than 1/3 of the time we fetch, we write, then fetch_feed_p
+
+
+
+# TODO: instead of 3600 seconds, use ${now} - ${first_sync_of_feed}
+#
+# having sampled all hours, probability here tells us 
+# how often a feed changes in a day
+#
+
+proc get_sync_info {countVar} {
+
+    upvar $countVar count
+
+    set epsilon 0.00001
+
+    set pr [expr { double($count(FETCH_AND_WRITE_FEED)) / double($count(FETCH_FEED)) }]
+
+    if { ${pr} < ${epsilon} } {
+
+	set num_times_per_day 1.0
+
+    } else {
+
+	set max_times_per_day 96 ;# max is every 15 minutes
+
+	set num_times_per_day [expr { ${pr} * ${max_times_per_day} }]
+
+    }
+
+    set interval [expr { int( 86400 / ${num_times_per_day} ) }]
+
+    return [list ${pr} ${num_times_per_day} ${interval}]
+
+}
+
+
 proc ::feed_reader::fetch_feed_p {feed_name timestamp {coeff "0.3"}} {
 
     set crawler_dir [get_crawler_dir]
@@ -1374,7 +1400,7 @@ proc ::feed_reader::fetch_feed_p {feed_name timestamp {coeff "0.3"}} {
 
     array set count [::util::readfile ${filename}]
 
-    set interval [expr { 86400 * (1 - ( $count(FETCH_AND_WRITE_FEED) / (  $count(FETCH_FEED) + $count(ERROR_FETCH_FEED) ) ) ) }]
+    lassign [get_sync_info count] pr num_times_each_day interval 
 
     # if last update more than the computed general interval then fetch
     if { ${last_sync} + ${interval} < ${timestamp} } {
