@@ -464,7 +464,7 @@ proc ::feed_reader::fetch_item {link title_in_feed feedVar itemVar} {
     upvar $feedVar feed
     upvar $itemVar item
 
-    if { [catch {set errorcode [fetch_item_helper ${link} ${title_in_feed} feed item]} errmsg] } {
+    if { [catch {set retcode [fetch_item_helper ${link} ${title_in_feed} feed item]} errmsg] } {
 
 	puts errmsg=$errmsg
 
@@ -475,10 +475,10 @@ proc ::feed_reader::fetch_item {link title_in_feed feedVar itemVar} {
 			    errno 1 \
 			    errmsg $errmsg]
 
-	return 1 ;# failed with errors
+	return ${retcode} ;# failed with errors
     }
 
-    return $errorcode
+    return ${retcode}
 }
 
 
@@ -510,7 +510,7 @@ proc ::feed_reader::fetch_and_write_item {link title_in_feed feedVar} {
 	if { ${errorcode} } {
 	    puts "--->>> error ${link}"
 	    # incr errorCount
-	    return 0
+	    return {ERROR_FETCH}
 	}
 
 	if { ${normalized_link} ne ${link} } {
@@ -1179,7 +1179,16 @@ proc ::feed_reader::sync_feeds {{feed_names ""}} {
     set feed_dir [get_package_dir]/feed
     foreach feed_name ${feed_names} {
 
-	array set stats [list FETCH_AND_WRITE 0 NO_FETCH 0 NO_WRITE 0]
+	array set stats \
+	    [list \
+		 FETCH_AND_WRITE 0 \
+		 NO_FETCH 0 \
+		 NO_WRITE 0 \
+		 ERROR_FETCH 0 \
+		 ERROR_FETCH_FEED 0 \
+		 FETCH_AND_WRITE_FEED 0 \
+		 NO_WRITE_FEED 0]
+
 	array set feed [::util::readfile ${feed_dir}/${feed_name}]
 
 	# set feed_type [get_value_if feed(type) ""] 
@@ -1191,6 +1200,8 @@ proc ::feed_reader::sync_feeds {{feed_names ""}} {
 	set errorcode [fetch_feed result feed stoptitles]
 	if { ${errorcode} } {
 	    puts "fetch_feed failed errorcode=$errorcode feed_name=$feed_name"
+	    set stats(ERROR_FETCH_FEED) 1
+	    update_crawler_stats ${timestamp} feed stats
 	    continue
 	}
 
@@ -1200,10 +1211,15 @@ proc ::feed_reader::sync_feeds {{feed_names ""}} {
 	    #puts ${link}
 	    #puts "---"
 
+	    # returns FETCH_AND_WRITE, NO_FETCH, and NO_WRITE
 	    set retcode [fetch_and_write_item ${link} ${title_in_feed} feed]
 	    incr stats(${retcode})
 	}
-
+	if { $stats(FETCH_AND_WRITE) > 0 } {
+	    set stats(FETCH_AND_WRITE_FEED) 1
+	} else {
+	    set stats(NO_WRITE_FEED) 1
+	}
 	update_crawler_stats ${timestamp} feed stats
 
 	unset feed
@@ -1212,10 +1228,48 @@ proc ::feed_reader::sync_feeds {{feed_names ""}} {
     }
 }
 
-proc ::feed_reader::fetch_feed_p {feedVar} {
+# if more than 1/3 of the time we fetch, we write, then fetch_feed_p
+proc ::feed_reader::fetch_feed_p {feedVar timestamp {coeff "0.3"}} {
    upvar $feedVar feed
     # TODO: maintain domain in feed spec
     set reversedomain [reversedomain [::util::domain_from_url $feed(url)]]
+
+    set crawler_dir [get_crawler_dir]
+    set crawler_site_dir "${crawler_dir}/site/${reversedomain}/"
+
+    foreach format {
+	{H-%H}
+	{u-%u}
+	{md-%m%d}
+    } {
+
+	set pretty_timeval [clock format ${timestamp} -format ${format}]
+	set crawler_site_sync_dir ${crawler_site_dir}/${pretty_timeval}/
+	
+	if { ![file isdirectory ${crawler_site_sync_dir}] } {
+	    return 1
+	}
+	
+	set crawler_site_sync_stats ${crawler_site_dir}/${pretty_timeval}/_stats
+	array set count [incr_array_in_file ${crawler_site_sync_stats} stats]
+
+	if { $count(FETCH_AND_WRITE_FEED) > coeff * ( $count(NO_WRITE_FEED) + $count(ERROR_FETCH_FEED) ) } {
+	    return 1
+	}
+
+    }
+
+    # if last update more than a week ago then fetch
+    if { [get_value_if feed(last_sync) "0"] + (7*86400) < ${timestamp} } {
+	return 1
+    }
+
+    # array set count [incr_array_in_file "${crawler_site_dir}/_stats" stats]
+    # if { $count(FETCH_AND_WRITE_FEED) / $count(FETCH_FEED) } {
+    # return 1
+    # }
+
+    return 0
 
 }
 
@@ -1261,8 +1315,13 @@ proc ::feed_reader::remove_crawler_stats {reversedomain timestamp urlsha1 conten
     array set minus_one_array \
 	[list \
 	     FETCH_AND_WRITE -1 \
+	     NO_FETCH -1 \
 	     NO_WRITE -1 \
-	     NO_FETCH -1]
+	     ERROR_FETCH -1 \
+	     ERROR_FETCH_FEED -1 \
+	     FETCH_AND_WRITE_FEED -1 \
+	     NO_WRITE_FEED -1]
+
 
     foreach format {
 	{H-%H}
