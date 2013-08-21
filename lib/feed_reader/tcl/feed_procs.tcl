@@ -1149,7 +1149,29 @@ proc ::feed_reader::print_sync_stats {feed_name statsVar} {
 
     puts [format "\t %20s" ${feed_name}]
     puts [format "\t %20s" [string repeat {-} [string length ${feed_name}]]]
-    foreach name [lsort [array names stats]] {
+
+    if { $stats(ERROR_FETCH_FEED) } {
+	set do_not_show [list]
+	set names {ERROR_FETCH_FEED}
+    } elseif { $stats(NO_WRITE_FEED) } {
+	set do_not_show [list]
+	set names {NO_FETCH NO_WRITE ERROR_FETCH}
+    } else {
+	set do_not_show {ERROR_FETCH_FEED NO_WRITE_FEED}
+	set names [array names stats]
+    }
+
+    if { !$stats(ERROR_FETCH) } {
+	lappend do_not_show {ERROR_FETCH}
+    }
+
+    if { !$stats(NO_WRITE) } {
+	lappend do_not_show {NO_WRITE}
+    }
+
+    lassign [intersect3 ${names} ${do_not_show}] names _intersection_ _list2_
+
+    foreach name ${names} {
 	puts [format "\t %20s %s" ${name} $stats(${name})]
     }
     puts "\n\n"
@@ -1276,7 +1298,7 @@ proc ::feed_reader::fetch_feed_p {feed_name timestamp {coeff "0.3"}} {
 
     array set count [::util::readfile ${filename}]
 
-    set interval [expr { 86400 * ( $count(FETCH_AND_WRITE_FEED) / $count(FETCH_FEED) ) }]
+    set interval [expr { 86400 * (1 - ( $count(FETCH_AND_WRITE_FEED) / ( $count(NO_WRITE_FEED) + $count(ERROR_FETCH_FEED) ) ) ) }]
 
     # if last update more than the computed general interval then fetch
     if { ${last_sync} + ${interval} < ${timestamp} } {
