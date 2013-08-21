@@ -133,7 +133,6 @@ proc ::dom::xpathFuncHelper::coerce2text_helper {htmlVar node} {
     set nodeType [$node nodeType]
     if { ${nodeType} eq {ELEMENT_NODE} } {
 
-
 	set tagname [$node tagName]
 	if { ${tagname} eq {a} } {
 	    set href [$node @href ""]
@@ -149,6 +148,7 @@ proc ::dom::xpathFuncHelper::coerce2text_helper {htmlVar node} {
 		}
 	    }
 	} elseif { ${tagname} eq {img} } {
+
 	    set imageurl [string trim [$node @src ""]]
 	    if { ${imageurl} ne {} } {
 
@@ -162,6 +162,14 @@ proc ::dom::xpathFuncHelper::coerce2text_helper {htmlVar node} {
 		append html "{image: ${imageurl}} "
 
 	    }
+
+	} elseif { ${tagname} eq {iframe} && [set src [${node} @src ""]] ne {} } {
+
+	    set re {(youtube|vimeo|dailymotion)} 
+	    if { [regexp -- ${re} ${src}] } {
+		append html "{video: ${src} }"
+	    }
+	    
 	} else {
 
 	    if { ${tagname} in {p div} } {

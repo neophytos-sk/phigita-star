@@ -482,7 +482,7 @@ proc ::feed_reader::fetch_item {link title_in_feed feedVar itemVar} {
 			    errno 1 \
 			    errmsg $errmsg]
 
-	return {ERROR_FETCH} ;# failed with errors
+	return 1 ;# failed with errors
     }
 
     return ${retcode}
@@ -1389,7 +1389,7 @@ proc ::feed_reader::fetch_feed_p {feed_name timestamp {coeff "0.3"}} {
 	lassign [get_sync_info count ${reference_interval} ${max_times}] pr num_times interval 
 
 	set last_sync [file mtime ${filename}]
-	if ( ${pr} > 0 && ${last_sync} + ${interval} < ${timestamp} ) {
+	if { ${pr} > 0 && ${last_sync} + ${interval} < ${timestamp} } {
 	    return 1
 	}
 
