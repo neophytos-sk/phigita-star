@@ -44,8 +44,9 @@ proc ::feed_reader::generate_include_re {linksVar feed_url matching_pathsVar} {
 	    {[Xx]+} {R}
 	    {[^[:alpha:]\/?&=.\-]+} {o}
 	    {([.?])} {\\\1}
-	    {[PQR-]{2,}} {T}
-	    {(Po|oP|Qo|oQ|Ro|oR)+} {o}
+	    {[PQR\-]{2,}} {T}
+	    {(Po|oP|Qo|oQ|Ro|oR|oDo|oNo)+} {o}
+	    {/[PQRT](/[PQRT])+} {/T}
 	} {
 
 	    regsub -all -- ${re} ${path} ${subSpec} path
@@ -62,7 +63,7 @@ proc ::feed_reader::generate_include_re {linksVar feed_url matching_pathsVar} {
 	}
 
 	#puts "${canonical_link} ${path}"
-
+	
 
 
     }
@@ -86,10 +87,10 @@ proc ::feed_reader::generate_include_re {linksVar feed_url matching_pathsVar} {
 	    {w}     {[a-z][a-zA-Z]+}
 	    {W}     {[A-Z][a-zA-Z]+}
 	    {o}     {.*}
-	    {P}    {([[:lower:]]+)}
-	    {Q}    {([[:upper:]]+)}
-	    {R} {([[:alpha:]]+)}
-	    {T} {.*}
+	    {P}     {([[:lower:]]+)}
+	    {Q}     {([[:upper:]]+)}
+	    {R}     {([[:alpha:]]+)}
+	    {T}     {([[:alpha:]\-]+)}
 	    {(\.\*)+} {.*}
 	} {
 	    regsub -all -- ${re} ${include_re} ${subSpec} include_re
@@ -131,10 +132,11 @@ proc ::feed_reader::generate_include_re {linksVar feed_url matching_pathsVar} {
 	    #puts "max_inline_match=$max_inline_match"
 	    #puts "second_best_inline_match=$second_best_inline_match"
 
-	    set re {\(\[\[:[a-z]+:\]\]\+\)}
+	    #set re {\(\[\[:[a-z]+:\]\]\+\)}
+	    set re {\([^\)]+\)}
 	    foreach inline_part ${max_inline_match} inline_part2 ${second_best_inline_match} {
 		if { ${inline_part2} ne {} && ${inline_part} ne ${inline_part2} } {
-		    set inline_part {[[:alpha:]]+}
+		    set inline_part {[[:alnum:]\-]+}
 		}
 		# finds and substitutes first match
 		regsub -- ${re} ${include_re} ${inline_part} include_re
@@ -142,7 +144,7 @@ proc ::feed_reader::generate_include_re {linksVar feed_url matching_pathsVar} {
 
 	}
 	#puts "---"
-	#puts include_re=${include_re}
+	puts include_re=${include_re}
 
     } else {
 
