@@ -422,37 +422,44 @@ proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar} {
 			date $article_date \
 			modified_time $article_modified_time]
 
-    puts "Lang: $article_langclass"
-    puts "Title: $article_title"
-    puts "Link: $link"
-    if { $article_tags ne {} } {
-	puts "Tags: $article_tags"
-    }
-    if { $article_description ne {} } {
-	puts "Description: $article_description"
-    }
-    if { $author_in_article ne {} } {
-	puts "Author: $author_in_article"
-    }
-    if { $article_image ne {} } {
-	puts "Image(s): $article_image"
-    }
-    if { $article_date ne {} } {
-	puts "Date: $article_date"
-    }
-    if { $article_modified_time ne {} } {
-	puts "Last modified: $article_modified_time"
-    }
-    if { $article_attachment ne {} } {
-	puts "Attachment(s): $article_attachment"
-    }
-    if { $article_video ne {} } {
-	puts "Video(s): $article_video"
-    }
 
-    # TODO: xpathfunc returntext (that returns structured text from html)
-    puts "Content (snippet): [string range $article_body 0 200]"
-    puts "---"
+    if { 0 } {
+	# puts [format "%10s %50s %s" $article_langclass $link $article_title]
+
+
+	puts "Lang: $article_langclass"
+	puts "Title: $article_title"
+	puts "Link: $link"
+
+	if { $article_tags ne {} } {
+	    puts "Tags: $article_tags"
+	}
+	if { $article_description ne {} } {
+	    puts "Description: $article_description"
+	}
+	if { $author_in_article ne {} } {
+	    puts "Author: $author_in_article"
+	}
+	if { $article_image ne {} } {
+	    puts "Image(s): $article_image"
+	}
+	if { $article_date ne {} } {
+	    puts "Date: $article_date"
+	}
+	if { $article_modified_time ne {} } {
+	    puts "Last modified: $article_modified_time"
+	}
+	if { $article_attachment ne {} } {
+	    puts "Attachment(s): $article_attachment"
+	}
+	if { $article_video ne {} } {
+	    puts "Video(s): $article_video"
+	}
+
+	puts "Content (snippet): [string range $article_body 0 200]"
+	puts "---"
+
+    }
 
     $doc delete
 
@@ -1137,6 +1144,17 @@ proc ::feed_reader::auto_resync_p {feedVar link} {
     return 0
 }
 
+proc ::feed_reader::print_sync_stats {feed_name statsVar} {
+    upvar $statsVar stats
+
+    puts [format "\t %20s" ${feed_name}]
+    puts [format "\t %20s" [string repeat {-} [string length ${feed_name}]]]
+    foreach name [lsort [array names stats]] {
+	puts [format "\t %20s %s" ${name} $stats(${name})]
+    }
+    puts "\n\n"
+}
+
 proc ::feed_reader::sync_feeds {{news_sources ""}} {
 
     variable stoptitles
@@ -1161,7 +1179,7 @@ proc ::feed_reader::sync_feeds {{news_sources ""}} {
 
 	    set timestamp [clock seconds]
 	    if { ${check_fetch_feed_p} && ![fetch_feed_p ${feed_name} ${timestamp}] } {
-		puts "not fetching $feed_name in this round"
+		puts "not fetching $feed_name in this round\n\n"
 		continue
 	    }
 
@@ -1204,6 +1222,9 @@ proc ::feed_reader::sync_feeds {{news_sources ""}} {
 	    } else {
 		set stats(NO_WRITE_FEED) 1
 	    }
+
+	    print_sync_stats ${feed_name} stats
+
 	    update_crawler_stats ${timestamp} ${feed_name} stats
 
 	    unset feed
@@ -1237,18 +1258,30 @@ proc ::feed_reader::fetch_feed_p {feed_name timestamp {coeff "0.3"}} {
 	array set count [incr_array_in_file ${crawler_feed_sync_stats} stats]
 
 	# the extra 1 below is to avoid dealing with zeros
-	if { ( 1 + $count(FETCH_AND_WRITE_FEED) ) > ${coeff} * ( $count(NO_WRITE_FEED) + $count(ERROR_FETCH_FEED) ) } {
+	if { ( $count(FETCH_AND_WRITE_FEED) ) > ${coeff} * ( $count(NO_WRITE_FEED) + $count(ERROR_FETCH_FEED) ) } {
 	    return 1
 	}
 
+	unset count
     }
 
-    # TODO: comment-in when last_sync is maintained in the feed info
+    # we don't have to check existence of this file
+    # because you cannot possibly reach this point 
+    # without having checked sub-directories for
+    # the hour, day of the week, and month-day stats.
+    #
+    set filename "${crawler_feed_dir}/_stats"
+
+    set last_sync [file mtime ${filename}]
+
+    array set count [::util::readfile ${filename}]
+
+    set interval [expr { 86400 * ( $count(FETCH_AND_WRITE_FEED) / $count(FETCH_FEED) ) }]
+
     # if last update more than the computed general interval then fetch
-    # set interval [expr { 86400 * ( $count(FETCH_AND_WRITE_FEED) / $count(FETCH_FEED) ) }]
-    # if { [get_value_if feed(last_sync) "0"] + ${interval} < ${timestamp} } {
-	# return 1
-    # }
+    if { ${last_sync} + ${interval} < ${timestamp} } {
+	return 1
+    }
 
     return 0
 
