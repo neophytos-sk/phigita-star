@@ -1266,9 +1266,10 @@ proc ::feed_reader::fetch_feed_p {feedVar timestamp {coeff "0.3"}} {
     }
 
     # if last update more than a week ago then fetch
-    if { [get_value_if feed(last_sync) "0"] + (7*86400) < ${timestamp} } {
-	return 1
-    }
+    # TODO: comment-in when last_sync is maintained in the feed info
+    # if { [get_value_if feed(last_sync) "0"] + (7*86400) < ${timestamp} } {
+	# return 1
+    # }
 
     # array set count [incr_array_in_file "${crawler_site_dir}/_stats" stats]
     # if { $count(FETCH_AND_WRITE_FEED) / $count(FETCH_FEED) } {
