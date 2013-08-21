@@ -1188,6 +1188,8 @@ proc ::feed_reader::sync_feeds {{news_sources ""}} {
 	set check_fetch_feed_p 1
     }
 
+    set round [clock seconds]
+
     foreach news_source ${news_sources} {
 
 	set news_source_dir ${feeds_dir}/${news_source}
@@ -1201,7 +1203,7 @@ proc ::feed_reader::sync_feeds {{news_sources ""}} {
 
 	    set timestamp [clock seconds]
 	    if { ${check_fetch_feed_p} && ![fetch_feed_p ${feed_name} ${timestamp}] } {
-		puts "not fetching $feed_name in this round\n\n"
+		puts "not fetching $feed_name in this round ${round}\n\n"
 		continue
 	    }
 
