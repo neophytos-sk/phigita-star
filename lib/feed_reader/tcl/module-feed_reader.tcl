@@ -22,6 +22,7 @@ proc ::feed_reader::get_conf_dir {} "return ${package_dir}/conf"
 
 source [file join $dir xpathfunc_procs.tcl]
 source [file join $dir feed_procs.tcl]
+source [file join $dir crawler_procs.tcl]
 source [file join $dir generate_procs.tcl]
 source [file join $dir classifier_procs.tcl]
 
