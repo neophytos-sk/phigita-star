@@ -1153,7 +1153,7 @@ proc ::feed_reader::sync_feeds {{news_sources ""}} {
 	set news_source_dir ${feeds_dir}/${news_source}
 	set filelist [glob -nocomplain -directory ${news_source_dir} *]
 	foreach filename ${filelist} {
-	    set feed_name ${news_source}.[file tail ${filename}]
+	    set feed_name ${news_source}/[file tail ${filename}]
 	    array set feed [::util::readfile ${filename}]
 
 	    # TODO: maintain domain in feed spec
@@ -1236,21 +1236,18 @@ proc ::feed_reader::fetch_feed_p {feed_name timestamp {coeff "0.3"}} {
 	set crawler_feed_sync_stats ${crawler_feed_dir}/${pretty_timeval}/_stats
 	array set count [incr_array_in_file ${crawler_feed_sync_stats} stats]
 
-	if { $count(FETCH_AND_WRITE_FEED) > ${coeff} * ( $count(NO_WRITE_FEED) + $count(ERROR_FETCH_FEED) ) } {
+	# the extra 1 below is to avoid dealing with zeros
+	if { ( 1 + $count(FETCH_AND_WRITE_FEED) ) > ${coeff} * ( $count(NO_WRITE_FEED) + $count(ERROR_FETCH_FEED) ) } {
 	    return 1
 	}
 
     }
 
-    # if last update more than a week ago then fetch
     # TODO: comment-in when last_sync is maintained in the feed info
-    # if { [get_value_if feed(last_sync) "0"] + (7*86400) < ${timestamp} } {
+    # if last update more than the computed general interval then fetch
+    # set interval [expr { 86400 * ( $count(FETCH_AND_WRITE_FEED) / $count(FETCH_FEED) ) }]
+    # if { [get_value_if feed(last_sync) "0"] + ${interval} < ${timestamp} } {
 	# return 1
-    # }
-
-    # array set count [incr_array_in_file "${crawler_site_dir}/_stats" stats]
-    # if { $count(FETCH_AND_WRITE_FEED) / $count(FETCH_FEED) } {
-    # return 1
     # }
 
     return 0
