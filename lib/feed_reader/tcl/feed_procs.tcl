@@ -1179,6 +1179,14 @@ proc ::feed_reader::sync_feeds {{feed_names ""}} {
     set feed_dir [get_package_dir]/feed
     foreach feed_name ${feed_names} {
 
+	array set feed [::util::readfile ${feed_dir}/${feed_name}]
+
+	set timestamp [clock seconds]
+	if { ![fetch_feed_p feed ${timestamp}] } {
+	    puts "not fetching $feed_name in this round"
+	    continue
+	}
+
 	array set stats \
 	    [list \
 		 FETCH_AND_WRITE 0 \
@@ -1189,14 +1197,12 @@ proc ::feed_reader::sync_feeds {{feed_names ""}} {
 		 FETCH_AND_WRITE_FEED 0 \
 		 NO_WRITE_FEED 0]
 
-	array set feed [::util::readfile ${feed_dir}/${feed_name}]
 
 	# set feed_type [get_value_if feed(type) ""] 
 	# if { ${feed_type} eq {rss} } {
 	# set feed(xpath_feed_item) //item
 	# }
 
-	set timestamp [clock seconds]
 	set errorcode [fetch_feed result feed stoptitles]
 	if { ${errorcode} } {
 	    puts "fetch_feed failed errorcode=$errorcode feed_name=$feed_name"
@@ -1253,7 +1259,7 @@ proc ::feed_reader::fetch_feed_p {feedVar timestamp {coeff "0.3"}} {
 	set crawler_site_sync_stats ${crawler_site_dir}/${pretty_timeval}/_stats
 	array set count [incr_array_in_file ${crawler_site_sync_stats} stats]
 
-	if { $count(FETCH_AND_WRITE_FEED) > coeff * ( $count(NO_WRITE_FEED) + $count(ERROR_FETCH_FEED) ) } {
+	if { $count(FETCH_AND_WRITE_FEED) > ${coeff} * ( $count(NO_WRITE_FEED) + $count(ERROR_FETCH_FEED) ) } {
 	    return 1
 	}
 
