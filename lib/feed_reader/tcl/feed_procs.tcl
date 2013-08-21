@@ -1137,111 +1137,88 @@ proc ::feed_reader::auto_resync_p {feedVar link} {
     return 0
 }
 
-proc ::feed_reader::sync_feeds {{feed_names ""}} {
+proc ::feed_reader::sync_feeds {{news_sources ""}} {
 
     variable stoptitles
 
-    if { ${feed_names} eq {} } {
-	set feed_names {
-	    philenews
-	    sigmalive
-	    paideia-news
-	    inbusiness
-	    ant1iwo
-	    24h
-	    stockwatch
-	    newsit
-	    alithia
-	    politis
-	    pafosnet
-	    bankingnews
-	    ikypros
-	    cyprus-mail
-	    maxhnews
-	    volkan
-	    cna0
-	    cna1
-	    cna2
-	    cna3
-	    cna4
-	    cna5
-	    cna6
-	    financialmirror
-	    incyprus
-	    elita
-	    cosmopolitan.com.cy
-	    sfera
-	    kissfm
-	    sentragoal
-	}
+    set feeds_dir [get_package_dir]/feed
+    set check_fetch_feed_p 0
+    if { ${news_sources} eq {} } {
+	set news_sources [glob -nocomplain -tails -directory ${feeds_dir} *]
+	set check_fetch_feed_p 1
     }
 
-    set feed_dir [get_package_dir]/feed
-    foreach feed_name ${feed_names} {
+    foreach news_source ${news_sources} {
 
-	array set feed [::util::readfile ${feed_dir}/${feed_name}]
+	set news_source_dir ${feeds_dir}/${news_source}
+	set filelist [glob -nocomplain -directory ${news_source_dir} *]
+	foreach filename ${filelist} {
+	    set feed_name ${news_source}.[file tail ${filename}]
+	    array set feed [::util::readfile ${filename}]
 
-	set timestamp [clock seconds]
-	if { ![fetch_feed_p feed ${timestamp}] } {
-	    puts "not fetching $feed_name in this round"
-	    continue
+	    # TODO: maintain domain in feed spec
+	    set domain [::util::domain_from_url $feed(url)]
+
+	    set timestamp [clock seconds]
+	    if { ${check_fetch_feed_p} && ![fetch_feed_p ${feed_name} ${timestamp}] } {
+		puts "not fetching $feed_name in this round"
+		continue
+	    }
+
+	    array set stats \
+		[list \
+		     FETCH_AND_WRITE 0 \
+		     NO_FETCH 0 \
+		     NO_WRITE 0 \
+		     ERROR_FETCH 0 \
+		     ERROR_FETCH_FEED 0 \
+		     FETCH_AND_WRITE_FEED 0 \
+		     NO_WRITE_FEED 0]
+
+
+	    # set feed_type [get_value_if feed(type) ""] 
+	    # if { ${feed_type} eq {rss} } {
+	    # set feed(xpath_feed_item) //item
+	    # }
+
+	    set errorcode [fetch_feed result feed stoptitles]
+	    if { ${errorcode} } {
+		puts "fetch_feed failed errorcode=$errorcode feed_name=$feed_name"
+		set stats(ERROR_FETCH_FEED) 1
+		update_crawler_stats ${timestamp} ${feed_name} stats
+		continue
+	    }
+
+	    foreach link $result(links) title_in_feed $result(titles) {
+		#puts ""
+		#puts ${title_in_feed}
+		#puts ${link}
+		#puts "---"
+
+		# returns FETCH_AND_WRITE, NO_FETCH, and NO_WRITE
+		set retcode [fetch_and_write_item ${link} ${title_in_feed} feed]
+		incr stats(${retcode})
+	    }
+	    if { $stats(FETCH_AND_WRITE) > 0 } {
+		set stats(FETCH_AND_WRITE_FEED) 1
+	    } else {
+		set stats(NO_WRITE_FEED) 1
+	    }
+	    update_crawler_stats ${timestamp} ${feed_name} stats
+
+	    unset feed
+	    unset stats
+
 	}
-
-	array set stats \
-	    [list \
-		 FETCH_AND_WRITE 0 \
-		 NO_FETCH 0 \
-		 NO_WRITE 0 \
-		 ERROR_FETCH 0 \
-		 ERROR_FETCH_FEED 0 \
-		 FETCH_AND_WRITE_FEED 0 \
-		 NO_WRITE_FEED 0]
-
-
-	# set feed_type [get_value_if feed(type) ""] 
-	# if { ${feed_type} eq {rss} } {
-	# set feed(xpath_feed_item) //item
-	# }
-
-	set errorcode [fetch_feed result feed stoptitles]
-	if { ${errorcode} } {
-	    puts "fetch_feed failed errorcode=$errorcode feed_name=$feed_name"
-	    set stats(ERROR_FETCH_FEED) 1
-	    update_crawler_stats ${timestamp} feed stats
-	    continue
-	}
-
-	foreach link $result(links) title_in_feed $result(titles) {
-	    #puts ""
-	    #puts ${title_in_feed}
-	    #puts ${link}
-	    #puts "---"
-
-	    # returns FETCH_AND_WRITE, NO_FETCH, and NO_WRITE
-	    set retcode [fetch_and_write_item ${link} ${title_in_feed} feed]
-	    incr stats(${retcode})
-	}
-	if { $stats(FETCH_AND_WRITE) > 0 } {
-	    set stats(FETCH_AND_WRITE_FEED) 1
-	} else {
-	    set stats(NO_WRITE_FEED) 1
-	}
-	update_crawler_stats ${timestamp} feed stats
-
-	unset feed
-	unset stats
 
     }
 }
 
 # if more than 1/3 of the time we fetch, we write, then fetch_feed_p
-proc ::feed_reader::fetch_feed_p {feedVar timestamp {coeff "0.3"}} {
-   upvar $feedVar feed
-    # TODO: maintain domain in feed spec
-    set reversedomain [reversedomain [::util::domain_from_url $feed(url)]]
+proc ::feed_reader::fetch_feed_p {feed_name timestamp {coeff "0.3"}} {
 
     set crawler_dir [get_crawler_dir]
-    set crawler_site_dir "${crawler_dir}/site/${reversedomain}/"
+    set crawler_feed_dir "${crawler_dir}/feed/${feed_name}/"
 
     foreach format {
 	{H-%H}
@@ -1250,14 +1227,14 @@ proc ::feed_reader::fetch_feed_p {feedVar timestamp {coeff "0.3"}} {
     } {
 
 	set pretty_timeval [clock format ${timestamp} -format ${format}]
-	set crawler_site_sync_dir ${crawler_site_dir}/${pretty_timeval}/
+	set crawler_feed_sync_dir ${crawler_feed_dir}/${pretty_timeval}/
 	
-	if { ![file isdirectory ${crawler_site_sync_dir}] } {
+	if { ![file isdirectory ${crawler_feed_sync_dir}] } {
 	    return 1
 	}
 	
-	set crawler_site_sync_stats ${crawler_site_dir}/${pretty_timeval}/_stats
-	array set count [incr_array_in_file ${crawler_site_sync_stats} stats]
+	set crawler_feed_sync_stats ${crawler_feed_dir}/${pretty_timeval}/_stats
+	array set count [incr_array_in_file ${crawler_feed_sync_stats} stats]
 
 	if { $count(FETCH_AND_WRITE_FEED) > ${coeff} * ( $count(NO_WRITE_FEED) + $count(ERROR_FETCH_FEED) ) } {
 	    return 1
@@ -1280,16 +1257,12 @@ proc ::feed_reader::fetch_feed_p {feedVar timestamp {coeff "0.3"}} {
 
 }
 
-proc ::feed_reader::update_crawler_stats {timestamp feedVar statsVar} {
+proc ::feed_reader::update_crawler_stats {timestamp feed_name statsVar} {
 
-    upvar $feedVar feed
     upvar $statsVar stats
 
-    # TODO: maintain domain in feed spec
-    set reversedomain [reversedomain [::util::domain_from_url $feed(url)]]
-
     set crawler_dir [get_crawler_dir]
-    set crawler_site_dir "${crawler_dir}/site/${reversedomain}/"
+    set crawler_feed_dir "${crawler_dir}/feed/${feed_name}/"
 
     foreach format {
 	{H-%H}
@@ -1298,67 +1271,18 @@ proc ::feed_reader::update_crawler_stats {timestamp feedVar statsVar} {
     } {
 
 	set pretty_timeval [clock format ${timestamp} -format ${format}]
-	set crawler_site_sync_dir ${crawler_site_dir}/${pretty_timeval}/
+	set crawler_feed_sync_dir ${crawler_feed_dir}/${pretty_timeval}/
 	
-	if { ![file isdirectory ${crawler_site_sync_dir}] } {
-	    file mkdir ${crawler_site_sync_dir}
+	if { ![file isdirectory ${crawler_feed_sync_dir}] } {
+	    file mkdir ${crawler_feed_sync_dir}
 	}
 	
-	set crawler_site_sync_stats ${crawler_site_dir}/${pretty_timeval}/_stats
-	incr_array_in_file ${crawler_site_sync_stats} stats
+	set crawler_feed_sync_stats ${crawler_feed_dir}/${pretty_timeval}/_stats
+	incr_array_in_file ${crawler_feed_sync_stats} stats
 
     }
 
-    incr_array_in_file "${crawler_site_dir}/_stats" stats
-
-}
-
-proc ::feed_reader::remove_crawler_stats {reversedomain timestamp urlsha1 contentsha1} {
-
-    # THIS IS NOT CORRECT, REMOVING AN ITEM DOES NOT GIVE US ANY INFORMATION ABOUT
-    # WHAT OTHER ITEMS WERE FETCHED FROM THE FEED AND THUS CANNOT REALLY DECREMENT
-    # ERROR_FETCH_FEED, FETCH_AND_WRITE_FEED, AND NO WRITE_FEED UNLESS WE KEEP TRACK
-    # STATS FOR THAT PARTICULAR ROUND OF CRAWLING.
-    return
-
-    set crawler_dir [get_crawler_dir]
-    set crawler_site_dir "${crawler_dir}/site/${reversedomain}/"
-
-
-    array set minus_one_array \
-	[list \
-	     FETCH_AND_WRITE -1 \
-	     NO_FETCH -1 \
-	     NO_WRITE -1 \
-	     ERROR_FETCH -1 \
-	     ERROR_FETCH_FEED -1 \
-	     FETCH_AND_WRITE_FEED -1 \
-	     NO_WRITE_FEED -1]
-
-
-    foreach format {
-	{H-%H}
-	{u-%u}
-	{md-%m%d}
-    } {
-	set pretty_timeval [clock format ${timestamp} -format ${format}]
-	set crawler_site_sync_dir ${crawler_site_dir}/${pretty_timeval}/
-
-	if { ![file isdirectory ${crawler_site_sync_dir}] } {
-	    continue
-	}
-
-	set crawler_site_sync_stats ${crawler_site_dir}/${pretty_timeval}/_stats
-	if { [file exists ${crawler_site_sync_stats}] } {
-	    array set count [incr_array_in_file ${crawler_site_sync_stats} minus_one_array]
-	}
-
-    }
-
-    if { [file exists "${crawler_site_dir}/_stats"] } {
-	array set total_count [incr_array_in_file  "${crawler_site_dir}/_stats" minues_one_array]
-    }
-
+    incr_array_in_file "${crawler_feed_dir}/_stats" stats
 
 }
 
@@ -1393,8 +1317,6 @@ proc ::feed_reader::remove_item_from_dir {item_dirVar} {
 
 	set contentsha1 [file tail ${revisionfilename}]
 	array set revision [::util::readfile ${revisionfilename}]
-
-	remove_crawler_stats ${reversedomain} $revision(timestamp) ${urlsha1} ${contentsha1}
 
 	set indexfilename ${index_dir}/${contentsha1}
 	set indexfilename_newdata [join [lsearch -not -inline -all [::util::readfile ${indexfilename}] ${urlsha1}] "\n"]
