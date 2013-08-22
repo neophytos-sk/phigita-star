@@ -632,11 +632,11 @@ ad_proc -public -deprecated ad_restrict_entire_server_to_registered_users {conn 
     unregistered, except the site index page and stuff underneath
     /register. Use permissions on the site node map to control access.
 } {
-    if {![string match "/index.tcl" [ad_conn url]] && ![string match "/" [ad_conn url]] && ![string match "http://www.phigita.net/accounts/*" [ad_conn url]] && ![string match "/SYSTEM/*" [ad_conn url]] && ![string match "/user_please_login.tcl" [ad_conn url]]} {
+    if {![string match "/index" [ad_conn url]] && ![string match "/" [ad_conn url]] && ![string match "*//www.phigita.net/accounts/*" [ad_conn url]] && ![string match "/SYSTEM/*" [ad_conn url]] && ![string match "/user_please_login" [ad_conn url]]} {
 	# not one of the magic acceptable URLs
 	set user_id [ad_conn user_id]
 	if {$user_id == 0} {
-	    ad_returnredirect "http://www.phigita.net/accounts/?return_url=[ns_urlencode [ad_conn url]?[ad_conn query]]"
+	    ad_returnredirect "https://www.phigita.net/accounts/?return_url=[ns_urlencode //[ad_conn host][ad_conn url]?[ad_conn query]]"
 	    return filter_return
 	}
     }
