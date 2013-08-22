@@ -81,6 +81,13 @@ proc subseqSimilarity {tokens_text1 tokens_text2} {
     
 }
 
+proc exactImageSrc {tokens_text1 tokens_text2} {
+
+    return [expr { ${tokens_text1} eq ${tokens_text2} }]
+    
+}
+
+
 proc ::dom::xpathFunc::similar_to_text {ctxNode pos nodeListNode nodeList args} {
 
     if { [llength ${args}] != { 6 } } {
@@ -91,6 +98,7 @@ proc ::dom::xpathFunc::similar_to_text {ctxNode pos nodeListNode nodeList args} 
 	arg1Typ nodes \
 	arg2Typ text2 \
 	arg3Type score_fn
+
 
     set tokens_text2 [::util::tokenize ${text2}]
 

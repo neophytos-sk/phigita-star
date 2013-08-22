@@ -285,6 +285,40 @@ proc ::feed_reader::generate_xpath_article_body {doc} {
 
 }
 
+proc stringDistance {a b} {
+    set n [string length $a]
+    set m [string length $b]
+    for {set i 0} {$i<=$n} {incr i} {set c($i,0) $i}
+    for {set j 0} {$j<=$m} {incr j} {set c(0,$j) $j}
+    for {set i 1} {$i<=$n} {incr i} {
+	for {set j 1} {$j<=$m} {incr j} {
+	    set x [expr { $c([expr { $i - 1 }],$j) + 1 }]
+	    set y [expr { $c($i,[expr { $j - 1 }]) + 1 }]
+	    set z $c([expr { $i - 1 }],[expr { $j - 1 }])
+	    if {[string index $a [expr { $i - 1 }]] != [string index $b [expr { $j - 1 }]]} {
+		incr z
+	    }
+	    set c($i,$j) [min $x $y $z]
+	}
+    }
+    set c($n,$m)
+}
+
+ # some little helpers:
+ if {[catch {
+    # DKF - these things (or rather improved versions) are provided by the 8.5 core
+    package require Tcl 8.5
+    namespace path {tcl::mathfunc tcl::mathop}
+ }]} then {
+    proc min args {lindex [lsort -real $args] 0}
+    proc max args {lindex [lsort -real $args] end}
+    proc - {p q} {expr {$p-$q}}
+ }
+
+ proc stringSimilarity {a b} {
+        set totalLength [string length $a$b]
+        max [expr {double($totalLength-2*[stringDistance $a $b])/$totalLength}] 0.0
+ }
 
 proc ::feed_reader::generate_xpath_article_image {doc} {
 
@@ -295,9 +329,33 @@ proc ::feed_reader::generate_xpath_article_image {doc} {
 	{string(//meta[@name="twitter:image"]/@content)}
     }
 
-    set score_fn "subseqSimilarity"
+    set xpath_article_image ""
+    foreach xpath ${xpathlist} {
 
-    return [generate_xpath_helper ${doc} ${xpath_candidate} ${xpathlist} ${score_fn}]
+	set imgsrc1 [${doc} selectNodes ${xpath}]
+	if { ${imgsrc1} eq {} } {
+	    continue
+	}
+
+	set imgnodes [${doc} selectNodes ${xpath_candidate}]
+	foreach imgnode ${imgnodes} {
+	    set imgsrc2 [${imgnode} @src]
+
+	    #puts imgsrc1=${imgsrc1}
+	    #puts imgsrc2=${imgsrc2}
+
+	    set similarity [stringSimilarity ${imgsrc1} ${imgsrc2}]
+	    if { ${similarity} > 0.85 } {
+		${imgnode} removeAttribute alt
+		${imgnode} removeAttribute src
+		set xpath_article_image [to_pretty_xpath ${doc} ${imgnode}]
+		break
+	    }
+	}
+
+    }
+
+    return ${xpath_article_image}
 
 }
 
@@ -428,13 +486,16 @@ proc ::feed_reader::generate_feed {feed_url {encoding "utf-8"}} {
 	return
     }
 
-    # generate xpath_article_body
-
     ########### fetch article
 
-    array set xpatharray [list article_title "" article_body ""]
+    array set xpath \
+	[list \
+	     article_title "" \
+	     article_body  "" \
+	     article_image ""]
+
     if { ${include_re} ne {} } {
-	generate_xpath xpatharray ${feed_url} matching_paths $encoding
+	generate_xpath xpath ${feed_url} matching_paths $encoding
     }
 
 
@@ -442,8 +503,9 @@ proc ::feed_reader::generate_feed {feed_url {encoding "utf-8"}} {
 	[list \
 	     url ${feed_url} \
 	     include_re ${include_re} \
-	     xpath_article_title $xpatharray(article_title) \
-	     xpath_article_body $xpatharray(article_body)]
+	     xpath_article_title $xpath(article_title) \
+	     xpath_article_body $xpath(article_body) \
+	     xpath_article_image $xpath(article_image)]
     
     puts [string repeat - 80]
     puts ""
