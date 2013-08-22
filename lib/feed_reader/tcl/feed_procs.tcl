@@ -1129,13 +1129,36 @@ proc ::feed_reader::write_item {normalized_link feedVar itemVar resync_p} {
 
 
     # save data to log dir
+
+    # storage::insert_column
+    #     column_family:news_item
+    #     row:log 
+    #     column:${urlsha1} 
+    #     payload:${data}
+    #
+    # operations: top_N (?), range (?), slice (?), insert, get, remove
     ::util::writefile ${logfilename}  ${data}  
 
     # save data to item-revision dir
+
+    # storage::insert_supercolumn 
+    #     column_family:news_item_revision
+    #     row:${reversedomain} 
+    #     supercolumn:${urlsha1} 
+    #     column:${contentsha1} 
+    #     payload:${data}
     #
+    # operations: slice, insert, get, remove
     ::util::writefile ${revisionfilename} ${data}
 
     # save data to url dir
+
+    # storage::insert_row
+    #     column_family:news_item
+    #     row:url/${urlsha1} 
+    #     payload:${data}
+    #
+    # operations: insert, get, remove, delete
     ::util::writefile ${urlfilename} ${data}
 
 
