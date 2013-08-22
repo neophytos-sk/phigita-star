@@ -131,7 +131,7 @@ proc_doc sec_handler {} {
 		if { [catch { set new_user_id [lindex [split [ad_get_signed_cookie "ad_user_login_secure"] {,}] 0] } errmsg2] } {
 		    ns_log notice "OACS= sec_handler:token invalid $errmsg2"
 		    # HERE: generalize redirect url
-		    ad_returnredirect "[ad_conn protocol]://www.phigita.net/accounts/?return_url=[ns_urlencode //[ad_conn host][ns_conn url]?[ns_conn query]]"
+		    ad_returnredirect "[ad_conn protocol]://www.phigita.net/accounts/?return_url=[ns_urlencode [ad_conn protocol]://[ad_conn host][ns_conn url]?[ns_conn query]]"
 		     return filter_break
 		 } else {
 		     sec_setup_session $new_user_id
@@ -143,7 +143,7 @@ proc_doc sec_handler {} {
 		if { [lindex $sec_token 0] ne ${session_id} } {
 		    # TODO: generalize redirect url
 		    ns_log notice "sec_token=$sec_token session_id=${session_id}"
-		    ad_returnredirect "[ad_conn protocol]://www.phigita.net/accounts/?return_url=[ns_urlencode //[ad_conn host][ns_conn url]?[ns_conn query]]"
+		    ad_returnredirect "[ad_conn protocol]://www.phigita.net/accounts/?return_url=[ns_urlencode [ad_conn protocol]://[ad_conn host][ns_conn url]?[ns_conn query]]"
 		    return filter_break
 		}
 	    }
