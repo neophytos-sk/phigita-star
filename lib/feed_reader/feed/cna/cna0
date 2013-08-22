@@ -1,15 +1,15 @@
-		   url "http://www.cna.org.cy/applications/NewsManager/announcements2.asp"
-		   include_re {/applications/NewsManager/announcements2.asp\?ItemID=[0-9]+&rcid=[0-9]+&pcid=[0-9]+&cid=[0-9]+}
-		   article_langclass {auto}
-		   htmltidy_feed_p 1
-		   htmltidy_article_p 1
-		   xpath_article_title {returnstring(//span[@class="pagetitle"]/strong)}
-		   xpath_article_body {returntext(//body/table[1]/descendant::td[@valign="top"])}
-		   xpath_article_image {
-		       {values(//td[@valign="top"]/descendant::img/@src)}
-		   }
-		   xpath_article_cleanup {
-		       {//span[@class="pagetitle"]/strong}
-		   }
-		   xpath_article_date {returndate(//span[@class="pagetitle"]/font[2]/following-sibling::text(),"%d/%N/%Y %H:%M")}
+url "http://www.cna.org.cy/applications/NewsManager/announcements2.asp"
+include_re {/applications/NewsManager/announcements2.asp\?ItemID=[0-9]+&rcid=[0-9]+&pcid=[0-9]+&cid=[0-9]+}
+article_langclass {auto}
+htmltidy_feed_p 1
+htmltidy_article_p 1
+xpath_article_title {returnstring(//span[@class="pagetitle"]/strong)}
+xpath_article_body {returntext(//body/table[1]/descendant::td[@valign="top"])}
+xpath_article_image {
+    {values(//td[@valign="top"]/descendant::img/@src)}
+}
+xpath_article_cleanup {
+    {//span[@class="pagetitle"]/strong}
+}
+xpath_article_date {returndate(//span[@class="pagetitle"]/font[2]/following-sibling::text(),"%d/%N/%Y %H:%M")}
 
