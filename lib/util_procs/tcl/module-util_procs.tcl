@@ -280,6 +280,20 @@ proc ::util::strings::diff {old new {show_old_p "1"}} {
     return "$output"
 }
 
+# ------------------------ quoting -----------------------------
+
+proc ::util::doublequote {text} {
+    return \"[string map {\" {\"}} ${text}]\"
+}
+
+
+proc ::util::striphtml {html} {
+    return [ns_striphtml ${html}]
+    ###
+    regsub -all -- {<[^>]*>} ${html} "" html
+    return ${html}
+}
+
 
 # ------------------------ variables -----------------------------
 

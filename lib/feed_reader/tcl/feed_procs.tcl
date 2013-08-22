@@ -749,6 +749,11 @@ proc ::feed_reader::log {{limit "10"} {offset "0"}} {
 }
 
 
+proc ::util::tokenize {text} {
+    set splitChars ",- \t\n\""
+    return [split [string tolower [::ttext::unaccent utf-8 ${text}]] ${splitChars}]
+}
+
 proc ::feed_reader::search {keywords {limit "10"} {offset "0"}} {
 
     get_contentfilelist sortedlist
@@ -766,11 +771,9 @@ proc ::feed_reader::search {keywords {limit "10"} {offset "0"}} {
 
 	load_content item ${contentsha1}
 
-	set splitChars ",- \t\n\""
-
-	set tokens_title [split [string tolower [::ttext::unaccent utf-8 $item(title)]] ${splitChars}]
-	set tokens_body [split [string tolower [::ttext::unaccent utf-8 $item(body)]] ${splitChars}]
-	set tokens_keywords [split [string tolower [::ttext::unaccent utf-8 $keywords]] ${splitChars}]
+	set tokens_title [::util::tokenize $item(title)] 
+	set tokens_body [::util::tokenize $item(body)] 
+	set tokens_keywords [::util::tokenize $keywords]
 
 	set not_found \
 	    [ldifference \

@@ -156,12 +156,7 @@ proc ::feed_reader::generate_include_re {linksVar feed_url matching_pathsVar} {
 }
 
 
-proc ::feed_reader::generate_xpath_for_node {doc node} {
-
-    set xpath [$node toXPath]
-    #puts "xpath=$xpath path=${path}"
-    set text1 [${doc} selectNodes returntext(${xpath})]
-    #puts [${node} asHTML]
+proc ::feed_reader::to_pretty_xpath {doc node} {
 
     set pn [${node} parentNode]
     set candidate_xpath ""
@@ -211,7 +206,7 @@ proc ::feed_reader::generate_xpath_for_node {doc node} {
 
     if { ${candidate_xpath} ne {} } {
 
-	set candidate_xpath "returntext(${candidate_xpath})"
+	#set candidate_xpath "returntext(${candidate_xpath})"
 
     } else {
 
@@ -219,10 +214,82 @@ proc ::feed_reader::generate_xpath_for_node {doc node} {
 
     }
 
-    puts "candidate xpath = ${candidate_xpath}"
+    return ${candidate_xpath}
+
+}
 
 
-    set text2 [${doc} selectNodes ${candidate_xpath}]
+proc ::feed_reader::generate_xpath_article_title {doc} {
+
+    set textlist [list]
+    lappend textlist [${doc} selectNodes {returnstring(//title)}]
+    lappend textlist [${doc} selectNodes {string(//meta[@property="og:title"]/@content)}]
+    lappend textlist [${doc} selectNodes {string(//meta[@name="title"]/@content)}]
+
+    set xpath_result ""
+    foreach text ${textlist} {
+	if { ${text} eq {} } {
+	    continue
+	}
+	set quoted_text [::util::doublequote ${text}]
+	set xpath [subst -nocommands -nobackslashes {similar_to_text(//*[local-name()="div" or local-name()="h2"],${quoted_text},"tokenSimilarity")}]
+	set similarnode [${doc} selectNodes ${xpath}]
+
+	#puts similarnode=${similarnode}
+	set xpath_result [to_pretty_xpath ${doc} ${similarnode}]
+
+    }
+		      
+    return ${xpath_result}
+
+}
+
+
+proc ::feed_reader::generate_xpath_article_body {doc} {
+
+    set textlist [list]
+    lappend textlist [${doc} selectNodes {string(//meta[@property="og:description"]/@content)}]
+    lappend textlist [${doc} selectNodes {string(//meta[@name="description"]/@content)}]
+
+
+    set candidate_xpath ""
+    foreach text ${textlist} {
+	if { ${text} eq {} } {
+	    continue
+	}
+	set quoted_text [::util::doublequote ${text}]
+	set xpath [subst -nocommands -nobackslashes {similar_to_text(//p/parent::div,${quoted_text},"stringSimilarity")}]
+	set similarnode [${doc} selectNodes ${xpath}]
+
+	#puts similarnode=${similarnode}
+	set candidate_xpath [to_pretty_xpath ${doc} ${similarnode}]
+
+    }
+		      
+    return ${candidate_xpath}
+
+}
+
+
+
+proc ::feed_reader::generate_xpath_article_body_using_bte {doc} {
+
+    bte bte_info ${doc}
+
+    set maxnode $bte_info(maxnode)
+
+    if { ${maxnode} eq {} } {
+	puts "no maxnode"
+	return
+    }
+
+    set candidate_xpath [to_pretty_xpath ${doc} ${maxnode}]
+
+
+    set xpath [$maxnode toXPath]
+    set text1 [${doc} selectNodes returntext(${xpath})]
+    set text2 [${doc} selectNodes returntext(${candidate_xpath})]
+
 
     if { ${text1} ne ${text2} } {
 
@@ -235,28 +302,32 @@ proc ::feed_reader::generate_xpath_for_node {doc node} {
 
     }
 
-    return ${candidate_xpath}
+    return returntext(${candidate_xpath})
 
     # puts "text2=$text2"
+
 }
 
-proc ::feed_reader::generate_xpath_article_body {feed_url matching_pathsVar encoding} {
+proc ::feed_reader::generate_xpath {xpathVar feed_url matching_pathsVar encoding} {
 
+    upvar $xpathVar xpath
     upvar $matching_pathsVar matching_paths
 
-    set xpath_article_body ""
+    set parts [array names xpath]
 
     set matching_paths [lrange ${matching_paths} 0 4]
     array set xpath_count [list]
-    set max_count 0
+    foreach part ${parts} {
+	set max_count(${part}) 0
+    }
     foreach path ${matching_paths} {
+
 	set canonical_link \
 	    [::uri::canonicalize \
 		 [::uri::resolve \
 		      ${feed_url} \
 		      ${path}]]
 
-	
 
 	set errorcode [::xo::http::fetch html ${canonical_link}]
 	if { ${errorcode} } {
@@ -272,31 +343,26 @@ proc ::feed_reader::generate_xpath_article_body {feed_url matching_pathsVar enco
 	    set doc [dom parse -html ${html}]
 	}
 
-	bte bte_info ${doc}
+	puts canonical_link=${canonical_link}
 
-	set maxnode $bte_info(maxnode)
+	foreach part ${parts} {
+	    set candidate_xpath [generate_xpath_${part} ${doc}]
 
-	if { ${maxnode} eq {} } {
-	    puts "no maxnode"
-	    continue
-	}
+	    puts "candidate xpath (${part}) = ${candidate_xpath}"
 
-	set candidate_xpath [generate_xpath_for_node ${doc} ${maxnode}]
+	    set count [incr xpath_count(${part},${candidate_xpath})]
 
-	set count [incr xpath_count(${candidate_xpath})]
+	    if { ${count} > $max_count(${part}) } {
 
-	if { ${count} > ${max_count} } {
+		set xpath(${part}) ${candidate_xpath}
+		set max_count(${part}) ${count}
 
-	    set xpath_article_body ${candidate_xpath}
-	    set max_count ${count}
-
+	    }
 	}
 
 	${doc} delete
 
     }
-
-    return ${xpath_article_body}
 
 }
 
@@ -334,9 +400,9 @@ proc ::feed_reader::generate_feed {feed_url {encoding "utf-8"}} {
 
     ########### fetch article
 
-    set xpath_article_body ""
+    array set xpatharray [list article_title "" article_body ""]
     if { ${include_re} ne {} } {
-	set xpath_article_body [generate_xpath_article_body ${feed_url} matching_paths $encoding]
+	generate_xpath xpatharray ${feed_url} matching_paths $encoding
     }
 
 
@@ -344,7 +410,8 @@ proc ::feed_reader::generate_feed {feed_url {encoding "utf-8"}} {
 	[list \
 	     url ${feed_url} \
 	     include_re ${include_re} \
-	     xpath_article_body ${xpath_article_body}]
+	     xpath_article_title $xpatharray(article_title) \
+	     xpath_article_body $xpatharray(article_body)]
     
     puts ""
     puts ""
@@ -394,10 +461,8 @@ proc ::feed_reader::bte {resultVar doc} {
     upvar $resultVar result
 
     foreach cleanup_xpath {
-	{//head}
 	{//script}
 	{//style}
-	{//link}
     } {
 	foreach cleanup_node [${doc} selectNodes ${cleanup_xpath}] {
 	    ${cleanup_node} delete
