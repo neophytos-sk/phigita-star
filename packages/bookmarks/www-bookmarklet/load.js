@@ -17,7 +17,7 @@
  document.body.appendChild(e);
  }
  };
- _loadCss('http://www.phigita.net/bookmarklet/sidebar.css');
+ _loadCss('//www.phigita.net/bookmarklet/sidebar.css');
 
 
  var _reMark_long_url = document.location.href;
@@ -27,5 +27,5 @@
 
 
  // _load('http://www.phigita.net/bookmarklet/sidebar.js?v=1&u='+encodeURIComponent(_reMark_long_url) );
- _load('http://www.phigita.net/js/bookmarks.sidebar.js?v=2' );
+ _load('//www.phigita.net/js/bookmarks.sidebar.js?v=2' );
 })();
