@@ -750,8 +750,8 @@ proc ::feed_reader::log {{limit "10"} {offset "0"}} {
 
 
 proc ::util::tokenize {text} {
-    set splitChars ",- \t\n\""
-    return [split [string tolower [::ttext::unaccent utf-8 ${text}]] ${splitChars}]
+    set splitChars ",- \t\n\"()[]"
+    return [lsearch -inline -all -not [split [string tolower [::ttext::unaccent utf-8 ${text}]] ${splitChars}] {}]
 }
 
 proc ::feed_reader::search {keywords {limit "10"} {offset "0"}} {

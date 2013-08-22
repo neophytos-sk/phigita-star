@@ -2,6 +2,7 @@ url http://www.24h.com.cy/
 include_re {item/[0-9]+}
 htmltidy_feed_p 1
 htmltidy_article_p 1
+check_for_revisions 1
 xpath_article_title {returnstring(//h2[@class="itemTitle"]/a)}
 xpath_article_description {returnstring(//div[@class="itemBody"]/*[@class="itemIntroText"])}
 xpath_article_body {returntext(//div[@class="itemBody"]/*[@class="itemIntroText" or @class="itemFullText"])}

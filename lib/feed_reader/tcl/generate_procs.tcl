@@ -257,12 +257,14 @@ proc ::feed_reader::generate_xpath_article_body {doc} {
 	if { ${text} eq {} } {
 	    continue
 	}
-	set quoted_text [::util::doublequote ${text}]
-	set xpath [subst -nocommands -nobackslashes {similar_to_text(//p/parent::div,${quoted_text},"stringSimilarity")}]
+	set quoted_text [::util::doublequote [string map {\" {}} ${text}]]
+	set xpath [subst -nocommands -nobackslashes {similar_to_text(//div,${quoted_text},"startsWithSimilarity")}]
 	set similarnode [${doc} selectNodes ${xpath}]
 
 	#puts similarnode=${similarnode}
-	set candidate_xpath [to_pretty_xpath ${doc} ${similarnode}]
+	if { ${similarnode} ne {} } {
+	    set candidate_xpath [to_pretty_xpath ${doc} ${similarnode}]
+	}
 
     }
 		      
