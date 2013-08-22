@@ -2,6 +2,7 @@ namespace eval ::feed_reader {
 
     array set meta [list]
     array set stoptitles [list]
+    array set stopwords [list]
 
 }
 
@@ -10,12 +11,19 @@ proc ::feed_reader::init {} {
 
     variable meta
     variable stoptitles
+    variable stopwords
 
     read_meta meta
 
     if { $meta(stoptitles) ne {} } {
 	foreach title $meta(stoptitles) {
 	    set stoptitles(${title}) 1
+	}
+    }
+
+    if { $meta(stopwords) ne {} } {
+	foreach token $meta(stopwords) {
+	    set stopwords(${token}) 1
 	}
     }
 
@@ -32,6 +40,8 @@ proc ::feed_reader::read_meta {metaVar} {
 	lappend stoptitles [trim_title ${title}]
     }
     
+    set stopwords [::util::readfile ${conf_dir}/stopwords.txt]
+
     set end_of_text_strings [list]
     foreach end_of_text_string [split [::util::readfile ${conf_dir}/article_body_end_of_text_strings] "\n"] {
 	if { ${end_of_text_string} ne {} } {
@@ -39,7 +49,11 @@ proc ::feed_reader::read_meta {metaVar} {
 	}
     }
 
-    array set meta [list stoptitles ${stoptitles} end_of_text_strings ${end_of_text_strings}]
+    array set meta \
+	[list \
+	     stoptitles ${stoptitles} \
+	     end_of_text_strings ${end_of_text_strings} \
+	     stopwords ${stopwords}]
 
 }
 
@@ -750,6 +764,7 @@ proc ::feed_reader::log {{limit "10"} {offset "0"}} {
 
 
 proc ::util::tokenize {text} {
+
     set removeChars_re {[^[:alnum:]]+}
     regsub -all -- ${removeChars_re} ${text} { } text
 
@@ -1284,14 +1299,48 @@ proc ::feed_reader::remove_feed_items {news_source {urlsha1_list ""}} {
 
 }
 
-proc ::feed_reader::wordcount {contentsha1_list} {
+proc ::feed_reader::filter_stopwords {resultVar tokensVar} {
+
+    upvar $resultVar result
+    upvar $tokensVar tokens
+
+    variable stopwords
+
+    set result [list]
+    foreach token ${tokens} {
+	if { [info exists stopwords(${token})] } {
+	    continue
+	}
+	lappend result ${token}
+    }
+
+}
+
+
+# * TODO: bin packing for word cloud 
+# * TODO: word cloud for each cluster
+# * label interactive could show word coud to ease training
+#
+proc ::feed_reader::wordcount {{contentsha1_list ""}} {
+
+    if { ${contentsha1_list} eq {} } {
+	set contentsha1_list [lrange [glob -tails -directory [get_content_dir] *] 0 100]
+    }
 
     array set count [list]
     foreach contentsha1 ${contentsha1_list} {
 	load_content item ${contentsha1}
 
 	set content [concat $item(title) $item(body)]
-	set tokens [::util::tokenize ${content}]
+
+	# remove embedded content and urls
+	set re {\{[^\}]+\}|https?://[^\s]+}
+	regsub -all -- ${re} ${content} { } content
+
+	set tokens0 [::util::tokenize ${content}]
+
+	filter_stopwords tokens tokens0
+
 	foreach token ${tokens} {
 	    incr count(${token})
 	}
@@ -1299,9 +1348,25 @@ proc ::feed_reader::wordcount {contentsha1_list} {
 	unset item
     }
 
-    set names [lsort [array names count]]
-    foreach name ${names} {
-	puts [list ${name} $count(${name})]
+    package require struct::prioqueue
+
+    set pq [struct::prioqueue::prioqueue -integer]
+
+    foreach {token prio} [array get count] {
+	set item [array get count ${token}]
+	${pq} put ${item} ${prio}
+	#puts [list ${name} $count(${name})]
     }
+
+    set limit 50
+    while { [${pq} size] && [incr limit -1] } {
+	set item [${pq} peek]
+	#puts ${item}
+	lassign ${item} token wc
+	puts ${token}
+	${pq} remove ${item}
+    }
+
+    ${pq} destroy
 
 }
