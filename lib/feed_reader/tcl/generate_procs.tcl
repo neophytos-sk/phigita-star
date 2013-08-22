@@ -169,21 +169,11 @@ proc ::feed_reader::to_pretty_xpath {doc node} {
 
 	append candidate_xpath "\[@class=\"${cls}\"\]"
 
-    }
-
-    if { [set id [${node} @id ""]] ne {} } {
-
-	append candidate_xpath "/[${node} tagName]\[@id=\"${id}\"\]"
-
-    } elseif { [set cls [${node} @class ""]] ne {} } {
-
-	append candidate_xpath "/[${node} tagName]\[@class=\"${cls}\"\]"
-
     } else {
 
-	set candidate_xpath "//[$pn tagName]"
+	append candidate_xpath "//[$pn tagName]"
+	set xpath_list [list]
 	foreach att [${pn} attributes] {
-	    set xpath_list [list]
 	    if { [set attvalue [${pn} getAttribute ${att} ""]] ne {} } {
 		lappend xpath_list "@${att}=\"${attvalue}\""
 	    }
@@ -191,13 +181,28 @@ proc ::feed_reader::to_pretty_xpath {doc node} {
 	if { ${xpath_list} ne {} } {
 	    append candidate_xpath "\[[join ${xpath_list} { and }]\]"
 	}
+
+    }
+
+    if { [set id [${node} @id ""]] ne {} } {
+
+	set candidate_xpath "//[${node} tagName]\[@id=\"${id}\"\]"
+
+    } elseif { [set cls [${node} @class ""]] ne {} } {
+
+	append candidate_xpath "/[${node} tagName]\[@class=\"${cls}\"\]"
+
+    } else {
+
 	append candidate_xpath "/[${node} tagName]"
+
+	set xpath_list [list]
 	foreach att [${node} attributes] {
-	    set xpath_list [list]
 	    if { [set attvalue [${node} getAttribute ${att} ""]] ne {} } {
 		lappend xpath_list "@${att}=\"${attvalue}\""
 	    }
 	}
+
 	if { ${xpath_list} ne {} } {
 	    append candidate_xpath "\[[join ${xpath_list} { and }]\]"
 	}
@@ -219,24 +224,26 @@ proc ::feed_reader::to_pretty_xpath {doc node} {
 }
 
 
-proc ::feed_reader::generate_xpath_article_title {doc} {
 
-    set textlist [list]
-    lappend textlist [${doc} selectNodes {returnstring(//title)}]
-    lappend textlist [${doc} selectNodes {string(//meta[@property="og:title"]/@content)}]
-    lappend textlist [${doc} selectNodes {string(//meta[@name="title"]/@content)}]
+proc ::feed_reader::generate_xpath_helper {doc xpath_candidate xpathlist score_fn} {
+
+    set quoted_score_fn [::util::doublequote ${score_fn}]
 
     set xpath_result ""
-    foreach text ${textlist} {
-	if { ${text} eq {} } {
-	    continue
-	}
-	set quoted_text [::util::doublequote ${text}]
-	set xpath [subst -nocommands -nobackslashes {similar_to_text(//*[local-name()="div" or local-name()="h2"],${quoted_text},"tokenSimilarity")}]
-	set similarnode [${doc} selectNodes ${xpath}]
+    foreach xpath_inner ${xpathlist} {
 
-	#puts similarnode=${similarnode}
-	set xpath_result [to_pretty_xpath ${doc} ${similarnode}]
+	set xpath_outer [subst -nocommands -nobackslashes {
+	    similar_to_text(${xpath_candidate},
+			    ${xpath_inner},
+			    ${quoted_score_fn})
+	}]
+
+	set similarnode [${doc} selectNodes ${xpath_outer}]
+
+	if { ${similarnode} ne {} } {
+	    set xpath_result [to_pretty_xpath ${doc} ${similarnode}]
+	    break
+	}
 
     }
 		      
@@ -245,33 +252,54 @@ proc ::feed_reader::generate_xpath_article_title {doc} {
 }
 
 
+proc ::feed_reader::generate_xpath_article_title {doc} {
+
+    set xpath_candidate {//div | //h1 | //h2 | //h3}
+
+    set xpathlist {
+	{returnstring(//title)}
+	{string(//meta[@property="og:title"]/@content)}
+	{string(//meta[@name="twitter:title"]/@content)}
+	{string(//meta[@name="title"]/@content)}
+    }
+
+    set score_fn "tokenSimilarity"
+
+    return [generate_xpath_helper ${doc} ${xpath_candidate} ${xpathlist} ${score_fn}]
+}
+
+
 proc ::feed_reader::generate_xpath_article_body {doc} {
 
-    set textlist [list]
-    lappend textlist [${doc} selectNodes {string(//meta[@property="og:description"]/@content)}]
-    lappend textlist [${doc} selectNodes {string(//meta[@name="description"]/@content)}]
+    set xpath_candidate {//div}
 
-
-    set candidate_xpath ""
-    foreach text ${textlist} {
-	if { ${text} eq {} } {
-	    continue
-	}
-	set quoted_text [::util::doublequote [string map {\" {}} ${text}]]
-	set xpath [subst -nocommands -nobackslashes {similar_to_text(//div,${quoted_text},"startsWithSimilarity")}]
-	set similarnode [${doc} selectNodes ${xpath}]
-
-	#puts similarnode=${similarnode}
-	if { ${similarnode} ne {} } {
-	    set candidate_xpath [to_pretty_xpath ${doc} ${similarnode}]
-	}
-
+    set xpathlist {
+	{string(//meta[@property="og:description"]/@content)}
+	{string(//meta[@name="twitter:description"]/@content)}
+	{string(//meta[@name="description"]/@content)}
     }
-		      
-    return ${candidate_xpath}
+
+    set score_fn "subseqSimilarity"
+
+    return [generate_xpath_helper ${doc} ${xpath_candidate} ${xpathlist} ${score_fn}]
 
 }
 
+
+proc ::feed_reader::generate_xpath_article_image {doc} {
+
+    set xpath_candidate {//img}
+
+    set xpathlist {
+	{string(//meta[@property="og:img"]/@content)}
+	{string(//meta[@name="twitter:image"]/@content)}
+    }
+
+    set score_fn "subseqSimilarity"
+
+    return [generate_xpath_helper ${doc} ${xpath_candidate} ${xpathlist} ${score_fn}]
+
+}
 
 
 proc ::feed_reader::generate_xpath_article_body_using_bte {doc} {
@@ -317,7 +345,8 @@ proc ::feed_reader::generate_xpath {xpathVar feed_url matching_pathsVar encoding
 
     set parts [array names xpath]
 
-    set matching_paths [lrange ${matching_paths} 0 4]
+    set sample_last 4
+    set matching_paths [lrange ${matching_paths} 0 ${sample_last}]
     array set xpath_count [list]
     foreach part ${parts} {
 	set max_count(${part}) 0
@@ -345,6 +374,7 @@ proc ::feed_reader::generate_xpath {xpathVar feed_url matching_pathsVar encoding
 	    set doc [dom parse -html ${html}]
 	}
 
+	puts ""
 	puts canonical_link=${canonical_link}
 
 	foreach part ${parts} {
@@ -415,7 +445,7 @@ proc ::feed_reader::generate_feed {feed_url {encoding "utf-8"}} {
 	     xpath_article_title $xpatharray(article_title) \
 	     xpath_article_body $xpatharray(article_body)]
     
-    puts ""
+    puts [string repeat - 80]
     puts ""
     foreach {key value} [array get feed] {
 	puts [list ${key} ${value}]
