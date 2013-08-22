@@ -1,7 +1,7 @@
 namespace eval ::bm {;}
 
 proc ::bm::bookmarklet_href {} {
-    return {javascript:try{var%20d=document;var%20e=d.createElement('script');e.setAttribute('src','http://www.phigita.net/bookmarklet/load.js');(d.getElementsByTagName('head')[0]||d.body).appendChild(e);}%20catch(z)%20{};void(0);}
+    return {javascript:try{var%20d=document;var%20e=d.createElement('script');e.setAttribute('src','//www.phigita.net/bookmarklet/load.js');(d.getElementsByTagName('head')[0]||d.body).appendChild(e);}%20catch(z)%20{};void(0);}
 }
 
 proc ::bm::init_css {} {
