@@ -750,8 +750,10 @@ proc ::feed_reader::log {{limit "10"} {offset "0"}} {
 
 
 proc ::util::tokenize {text} {
-    set splitChars ",- \t\n\"()[]"
-    return [lsearch -inline -all -not [split [string tolower [::ttext::unaccent utf-8 ${text}]] ${splitChars}] {}]
+    set removeChars_re {[^[:alnum:]]+}
+    regsub -all -- ${removeChars_re} ${text} { } text
+
+    return [lsearch -inline -all -not [split [string tolower [::ttext::unaccent utf-8 ${text}]]] {}]
 }
 
 proc ::feed_reader::search {keywords {limit "10"} {offset "0"}} {
@@ -1279,5 +1281,27 @@ proc ::feed_reader::remove_feed_items {news_source {urlsha1_list ""}} {
 	file delete ${domain_dir}
     }
 
+
+}
+
+proc ::feed_reader::wordcount {contentsha1_list} {
+
+    array set count [list]
+    foreach contentsha1 ${contentsha1_list} {
+	load_content item ${contentsha1}
+
+	set content [concat $item(title) $item(body)]
+	set tokens [::util::tokenize ${content}]
+	foreach token ${tokens} {
+	    incr count(${token})
+	}
+
+	unset item
+    }
+
+    set names [lsort [array names count]]
+    foreach name ${names} {
+	puts [list ${name} $count(${name})]
+    }
 
 }

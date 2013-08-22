@@ -33,6 +33,7 @@ proc print_usage_info {} {
 			   "unlabel" "axis class contentsha1 ?...?" \
 			   "fex" "?limit? ?offset?" \
 			   "stats" "?news_source? ?...?" \
+			   "wc" "contentsha1 ?...?" \
 			   "TODO:test-article" "article_url" \
 			   "generate-feed" "feed_url"]
 
@@ -73,6 +74,11 @@ if { ${argc} < 1 } {
 
 	set urlsha1_list [lrange ${argv} 1 end]
 	::feed_reader::show_item ${urlsha1_list}
+
+    } elseif { ${cmd} eq {wc} && ${argc} >= 2 } {
+
+	set contentsha1_list [lrange ${argv} 1 end]
+	::feed_reader::wordcount ${contentsha1_list}
 
     } elseif { ${cmd} eq {search} && ${argc} >= 2 } {
 
