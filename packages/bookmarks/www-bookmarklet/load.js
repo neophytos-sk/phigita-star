@@ -26,6 +26,6 @@
  }
 
 
- // _load('http://www.phigita.net/bookmarklet/sidebar.js?v=1&u='+encodeURIComponent(_reMark_long_url) );
+ // _load('//www.phigita.net/bookmarklet/sidebar.js?v=1&u='+encodeURIComponent(_reMark_long_url) );
  _load('//www.phigita.net/js/bookmarks.sidebar.js?v=2' );
 })();

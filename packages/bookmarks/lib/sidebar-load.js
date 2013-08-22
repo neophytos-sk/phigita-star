@@ -4,7 +4,7 @@ var sfside;
 //Set values for the bookmark addition page
 var sf_url=location.href;
 var sf_description=document.title; 
-var logo = 'http://www.phigita.net/graphics/logo.png';
+var logo = '//www.phigita.net/graphics/logo.png';
 var bookmarklet_height = 35;
 var bookmarklet_width = 173;
 //Turn debugging on or off.
@@ -257,7 +257,7 @@ _reMark.stopCapture = function() {
     }
 };
 
-//_reMark.loadCss('http://www.phigita.net/bookmarklet/sidebar.css');
+//_reMark.loadCss('//www.phigita.net/bookmarklet/sidebar.css');
 _reMark.drawOverlay();
 
 

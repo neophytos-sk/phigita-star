@@ -54,7 +54,7 @@ proc render_bookmark {o {base ""} {show_user_p "1"} {show_comments_p "1"} {show_
     }
 
     if { [ad_host] ne [::util::coalesce $base "www.phigita.net"] } {
-	set base "http://www.phigita.net"
+	set base "//www.phigita.net"
     } else {
 	set base ""
     }
@@ -78,7 +78,7 @@ proc render_bookmark {o {base ""} {show_user_p "1"} {show_comments_p "1"} {show_
 	    if { $video_p } {
 		t " "
 		a -href $href -style "text-decoration:none;border:0;" {
-		    img -src "http://www.phigita.net/graphics/icon_video.gif" -width 19 -height 12 -border 0 -alt {[video]}
+		    img -src "//www.phigita.net/graphics/icon_video.gif" -width 19 -height 12 -border 0 -alt {[video]}
 		}
 	    }
 	    if { [$o set preview_p] } {

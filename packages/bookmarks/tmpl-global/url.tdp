@@ -123,7 +123,7 @@ master -title "@{object_get.urldata.title} - Social Bookmarks" {
 		blockquote {
 		    t @{content_in_html:noquote}
 		    small {
-			a -href "http://www.phigita.net/~@{screen_name}/" {
+			a -href "//www.phigita.net/~@{screen_name}/" {
 			    t "@{full_name}"
 			}
 			t ", "

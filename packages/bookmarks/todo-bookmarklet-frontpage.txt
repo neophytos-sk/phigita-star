@@ -1,1 +1,1 @@
-javascript:var d=document;var f=e.setAttribute;var%20e=d.createElement('script');f('language','javascript');f('src','http://www.phigita.net/bookmarklet/load.js');try{d.getElementsByTagName('head')[0].appendChild(e);}%20catch(z)%20{d.body.appendChild(e)};void(0);
+javascript:var d=document;var f=e.setAttribute;var%20e=d.createElement('script');f('language','javascript');f('src','//www.phigita.net/bookmarklet/load.js');try{d.getElementsByTagName('head')[0].appendChild(e);}%20catch(z)%20{d.body.appendChild(e)};void(0);

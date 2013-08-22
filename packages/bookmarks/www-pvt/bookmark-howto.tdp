@@ -83,7 +83,7 @@ master -title "bookmark-howto" {
 		    div -style "margin-top:10px;"
 		    br
 		    t "The old and good bookmarklet is here: "
-		    a -id bookmarklet -href {javascript:void((function(){w=window.open(%22%22,%22_blank%22,%22toolbar=no,status=no,menubar=no,personalbar=no,width=500,height=485,scrollbars=no,resizable=yes%22); w.document.open();w.document.write('<html><head><script language="javascript">function Init() {var s=document.createElement("script"); s.language="javascript"; s.src="http://www.phigita.net/js/url-add.js"; document.getElementsByTagName("head")[0].appendChild(s);}</script></head></html>'); w.Init();w.document.close();})())} -title "reMark (popup)" -onclick $onclick_warning  {
+		    a -id bookmarklet -href {javascript:void((function(){w=window.open(%22%22,%22_blank%22,%22toolbar=no,status=no,menubar=no,personalbar=no,width=500,height=485,scrollbars=no,resizable=yes%22); w.document.open();w.document.write('<html><head><script language="javascript">function Init() {var s=document.createElement("script"); s.language="javascript"; s.src="//www.phigita.net/js/url-add.js"; document.getElementsByTagName("head")[0].appendChild(s);}</script></head></html>'); w.Init();w.document.close();})())} -title "reMark (popup)" -onclick $onclick_warning  {
 			t "reMark (popup)"
 		    }
 		    br

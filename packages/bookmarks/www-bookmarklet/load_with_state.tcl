@@ -122,7 +122,7 @@ overlay.appendChild(content);
 // animate it?
 document.body.appendChild(overlay);
 };
-_reMark.loadCss('http://www.phigita.net/bookmarklet/sidebar.css');
+_reMark.loadCss('//www.phigita.net/bookmarklet/sidebar.css');
 _reMark.drawOverlay();
 window['_reMark']=_reMark;
 })();

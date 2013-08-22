@@ -19,7 +19,7 @@ You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-http://www.gnu.org/licenses/gpl.txt
+//www.gnu.org/licenses/gpl.txt
 
 TODO - 
 + add in more logging so that we can see what sites are failing.
@@ -35,7 +35,7 @@ Portions of this code are:
 //Set values for the bookmark addition page
 var sf_url=location.href;
 var sf_description=document.title; 
-var logo = 'http://www.stylefeeder.com/images/bookmarklet-logo-1.gif';
+var logo = '//www.stylefeeder.com/images/bookmarklet-logo-1.gif';
 var bookmarklet_height = 115;
 var bookmarklet_width = 200;
 //Turn debugging on or off.
@@ -52,7 +52,7 @@ var offY = 15;
 //Failsafe function: if an exception occurs, try to run this.
 function failsafe(err) {
 		sflog('Failsafe running');
-		var loc = "http://www.stylefeeder.com/bookmarklet/index.html?url=" +encodeURIComponent(sf_url)+ "&description=" +encodeURIComponent(sf_description);
+		var loc = "//www.stylefeeder.com/bookmarklet/index.html?url=" +encodeURIComponent(sf_url)+ "&description=" +encodeURIComponent(sf_description);
 		if (err != null) {
 			loc += "&exception=" + err;
 		}
@@ -207,7 +207,7 @@ try {
 					
 					
 					
-						document.location='http://www.stylefeeder.com/bookmarklet/index.html?url='+encodeURIComponent(sf_url)+'&description='+encodeURIComponent(sf_description)+'&thumbnailUrl='+encodeURIComponent(this.src); 
+						document.location='//www.stylefeeder.com/bookmarklet/index.html?url='+encodeURIComponent(sf_url)+'&description='+encodeURIComponent(sf_description)+'&thumbnailUrl='+encodeURIComponent(this.src); 
 						document.getElementById('sfpointer').style.display='none';
 						document.getElementById('sfside').style.display='none';
 						document.body.style.cursor='pointer';
@@ -307,7 +307,7 @@ function recurseTree(element) {
 					
 					
 						alert('no!');
-						document.location='http://www.stylefeeder.com/bookmarklet/index.html2?url='+encodeURIComponent(sf_url)+'&description='+encodeURIComponent(sf_description)+'&thumbnailUrl='+encodeURIComponent(image_url);
+						document.location='//www.stylefeeder.com/bookmarklet/index.html2?url='+encodeURIComponent(sf_url)+'&description='+encodeURIComponent(sf_description)+'&thumbnailUrl='+encodeURIComponent(image_url);
 					
 					 
 		}
