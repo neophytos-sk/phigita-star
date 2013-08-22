@@ -714,6 +714,18 @@ proc ::feed_reader::get_logfilelist {sortedlistVar} {
 
 }
 
+proc ::feed_reader::get_contentfilelist {sortedlistVar} {
+
+    upvar $sortedlistVar sortedlist
+
+    set content_dir [get_content_dir]
+
+    set contentfilelist [glob -directory ${content_dir} *]
+
+    set sortedlist [lsort -decreasing -command compare_mtime ${contentfilelist}]
+
+}
+
 
 proc ::feed_reader::log {{limit "10"} {offset "0"}} {
 
@@ -735,6 +747,62 @@ proc ::feed_reader::log {{limit "10"} {offset "0"}} {
     }
 
 }
+
+
+proc ::feed_reader::search {keywords {limit "10"} {offset "0"}} {
+
+    get_contentfilelist sortedlist
+
+    set first ${offset}
+    set last [expr { ${offset} + ${limit} - 1 }]
+
+    puts [format "%40s %s" contentsha1 title]
+
+    foreach contentfilename ${sortedlist} {
+
+	set contentsha1 [file tail ${contentfilename}]
+
+	#puts ${contentsha1}
+
+	load_content item ${contentsha1}
+
+	set splitChars ",- \t\n\""
+
+	set tokens_title [split [string tolower [::ttext::unaccent utf-8 $item(title)]] ${splitChars}]
+	set tokens_body [split [string tolower [::ttext::unaccent utf-8 $item(body)]] ${splitChars}]
+	set tokens_keywords [split [string tolower [::ttext::unaccent utf-8 $keywords]] ${splitChars}]
+
+	set not_found \
+	    [ldifference \
+		 ${tokens_keywords} \
+		 [concat \
+		      ${tokens_title} \
+		      ${tokens_body}]]
+
+	if { ${not_found} eq {} } {
+	    if { [incr num_found] <= 1 + ${last} } {
+		if { ${num_found} > ${first} } {
+		    if { ${first} > 0 } {
+			puts ""
+		    }
+		    puts "${contentsha1} $item(title)"
+		} else {
+		    if { ${first} > 0 } {
+			puts -nonewline "."
+		    }
+		}
+	    } else {
+		break
+	    }
+	}
+	unset item
+
+    }
+
+
+
+}
+
 
 
 proc ::feed_reader::cluster {{limit "10"} {offset "0"} {k ""} {num_iter "3"}} {
@@ -825,7 +893,7 @@ proc ::feed_reader::uses_content {contentsha1} {
 }
 
 
-proc ::feed_reader::load_content {itemVar contentsha1} {
+proc ::feed_reader::load_content {itemVar contentsha1 {include_labels_p "1"}} {
 
     upvar $itemVar item
     set contentfilename [get_content_dir]/${contentsha1}
