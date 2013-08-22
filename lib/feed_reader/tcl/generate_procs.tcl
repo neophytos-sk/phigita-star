@@ -45,7 +45,7 @@ proc ::feed_reader::generate_include_re {linksVar feed_url matching_pathsVar} {
 	    {[^[:alpha:]\/?&=.\-]+} {o}
 	    {([.?])} {\\\1}
 	    {[PQR\-]{2,}} {T}
-	    {(Po|oP|Qo|oQ|Ro|oR|oDo|oNo)+} {o}
+	    {(Po|oP|Qo|oQ|Ro|oR|oDo|oNo|oTo)+} {o}
 	    {/[PQRT](/[PQRT])+} {/T}
 	} {
 
@@ -156,6 +156,90 @@ proc ::feed_reader::generate_include_re {linksVar feed_url matching_pathsVar} {
 }
 
 
+proc ::feed_reader::generate_xpath_for_node {doc node} {
+
+    set xpath [$node toXPath]
+    #puts "xpath=$xpath path=${path}"
+    set text1 [${doc} selectNodes returntext(${xpath})]
+    #puts [${node} asHTML]
+
+    set pn [${node} parentNode]
+    set candidate_xpath ""
+    append candidate_xpath "//[${pn} tagName]"
+    if { [set id [${pn} @id ""]] ne {} } {
+
+	append candidate_xpath "\[@id=\"${id}\"\]"
+
+    } elseif { [set cls [${pn} @class ""]] ne {} } {
+
+	append candidate_xpath "\[@class=\"${cls}\"\]"
+
+    }
+
+    if { [set id [${node} @id ""]] ne {} } {
+
+	append candidate_xpath "/[${node} tagName]\[@id=\"${id}\"\]"
+
+    } elseif { [set cls [${node} @class ""]] ne {} } {
+
+	append candidate_xpath "/[${node} tagName]\[@class=\"${cls}\"\]"
+
+    } else {
+
+	set candidate_xpath "//[$pn tagName]"
+	foreach att [${pn} attributes] {
+	    set xpath_list [list]
+	    if { [set attvalue [${pn} getAttribute ${att} ""]] ne {} } {
+		lappend xpath_list "@${att}=\"${attvalue}\""
+	    }
+	}
+	if { ${xpath_list} ne {} } {
+	    append candidate_xpath "\[[join ${xpath_list} { and }]\]"
+	}
+	append candidate_xpath "/[${node} tagName]"
+	foreach att [${node} attributes] {
+	    set xpath_list [list]
+	    if { [set attvalue [${node} getAttribute ${att} ""]] ne {} } {
+		lappend xpath_list "@${att}=\"${attvalue}\""
+	    }
+	}
+	if { ${xpath_list} ne {} } {
+	    append candidate_xpath "\[[join ${xpath_list} { and }]\]"
+	}
+
+    }
+
+    if { ${candidate_xpath} ne {} } {
+
+	set candidate_xpath "returntext(${candidate_xpath})"
+
+    } else {
+
+	append candidate_xpath "/[${node} tagName]"
+
+    }
+
+    puts "candidate xpath = ${candidate_xpath}"
+
+
+    set text2 [${doc} selectNodes ${candidate_xpath}]
+
+    if { ${text1} ne ${text2} } {
+
+	puts "-> text1 != text2"
+	#puts $text1
+	#puts ---
+	#puts $text2
+
+	set candidate_xpath ""
+
+    }
+
+    return ${candidate_xpath}
+
+    # puts "text2=$text2"
+}
+
 proc ::feed_reader::generate_xpath_article_body {feed_url matching_pathsVar encoding} {
 
     upvar $matching_pathsVar matching_paths
@@ -197,96 +281,16 @@ proc ::feed_reader::generate_xpath_article_body {feed_url matching_pathsVar enco
 	    continue
 	}
 
+	set candidate_xpath [generate_xpath_for_node ${doc} ${maxnode}]
 
-	set xpath [$maxnode toXPath]
-	#puts "xpath=$xpath path=${path}"
-	set text1 [${doc} selectNodes returntext(${xpath})]
-	#puts [${maxnode} asHTML]
+	set count [incr xpath_count(${candidate_xpath})]
 
-	set pn [${maxnode} parentNode]
-	set candidate_xpath_article_body ""
-	append candidate_xpath_article_body "//[${pn} tagName]"
-	if { [set id [${pn} @id ""]] ne {} } {
+	if { ${count} > ${max_count} } {
 
-	    append candidate_xpath_article_body "\[@id=\"${id}\"\]"
-
-	} elseif { [set cls [${pn} @class ""]] ne {} } {
-
-	    append candidate_xpath_article_body "\[@class=\"${cls}\"\]"
+	    set xpath_article_body ${candidate_xpath}
+	    set max_count ${count}
 
 	}
-
-	if { [set id [${maxnode} @id ""]] ne {} } {
-
-	    append candidate_xpath_article_body "/[${maxnode} tagName]\[@id=\"${id}\"\]"
-
-	} elseif { [set cls [${maxnode} @class ""]] ne {} } {
-
-	    append candidate_xpath_article_body "/[${maxnode} tagName]\[@class=\"${cls}\"\]"
-
-	} else {
-
-	    set candidate_xpath_article_body "//[$pn tagName]"
-	    foreach att [${pn} attributes] {
-		set xpath_list [list]
-		if { [set attvalue [${pn} getAttribute ${att} ""]] ne {} } {
-		    lappend xpath_list "@${att}=\"${attvalue}\""
-		}
-	    }
-	    if { ${xpath_list} ne {} } {
-		append candidate_xpath_article_body "\[[join ${xpath_list} { and }]\]"
-	    }
-	    append candidate_xpath_article_body "/[${maxnode} tagName]"
-	    foreach att [${maxnode} attributes] {
-		set xpath_list [list]
-		if { [set attvalue [${maxnode} getAttribute ${att} ""]] ne {} } {
-		    lappend xpath_list "@${att}=\"${attvalue}\""
-		}
-	    }
-	    if { ${xpath_list} ne {} } {
-		append candidate_xpath_article_body "\[[join ${xpath_list} { and }]\]"
-	    }
-
-	}
-
-	if { ${candidate_xpath_article_body} ne {} } {
-
-	    set candidate_xpath_article_body "returntext(${candidate_xpath_article_body})"
-
-	} else {
-
-	    append candidate_xpath_article_body "/[${maxnode} tagName]"
-
-	}
-
-	puts "candidate xpath_article_body = ${candidate_xpath_article_body}"
-
-
-	set text2 [${doc} selectNodes ${candidate_xpath_article_body}]
-
-	if { ${text1} ne ${text2} } {
-
-	    puts "-> text1 != text2"
-	    #puts $text1
-	    #puts ---
-	    #puts $text2
-
-	    set candidate_xpath_article_body ""
-
-	} else {
-
-	    set count [incr xpath_count(${candidate_xpath_article_body})]
-
-	    if { ${count} > ${max_count} } {
-
-		set xpath_article_body ${candidate_xpath_article_body}
-		set max_count ${count}
-
-	    }
-
-	}
-
-	# puts "text2=$text2"
 
 	${doc} delete
 
@@ -405,3 +409,5 @@ proc ::feed_reader::bte {resultVar doc} {
     return [bte_helper result [${doc} selectNodes {//body[1]}]]
 
 }
+
+
