@@ -175,7 +175,7 @@ if { [::xo::kit::production_mode_p] } {
     }
     proc ::xo::kit::get_accounts_url {url_args} {
 	# ad_conn protocol
-	return "https://www.phigita.net/accounts/?return_url=[ns_urlencode [ad_conn protocol]://[ad_conn host][ns_conn url]$url_args]"
+	return "https://www.phigita.net/accounts/?return_url=[ns_urlencode [ad_conn protocol]://[ad_host][ns_conn url]$url_args]"
     }
     proc ::xo::kit::get_api_url {} {
 	return "https://api.phigita.net/"

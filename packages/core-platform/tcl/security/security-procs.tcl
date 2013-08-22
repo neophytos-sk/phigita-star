@@ -587,7 +587,7 @@ ad_proc -public ad_redirect_for_registration {} {
 	    incr form_counter_i
 	}
     }
-    #ns_log notice [list ad_returnredirect "http://www.phigita.net/accounts/?return_url=[ns_urlencode [ad_host][ns_conn url]$url_args]"]
+    ns_log notice [list ad_returnredirect "http://www.phigita.net/accounts/?return_url=[ns_urlencode [ad_host][ns_conn url]$url_args]"]
     ad_returnredirect [::xo::kit::get_accounts_url $url_args]
     return
 }
