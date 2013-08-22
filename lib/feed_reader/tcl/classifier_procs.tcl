@@ -83,7 +83,7 @@ proc ::feed_reader::classifier::label {axis label contentsha1_list} {
 
     if { ![file isdirectory ${label_dir}] } {
 	puts "${label} is not a registered label name"
-	puts "registered axis names:"
+	puts "registered label names:"
 	puts [join [get_label_names ${axis}] "\n"]
 	puts ---
 	error "${label} is not a registered label name"
