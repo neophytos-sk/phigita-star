@@ -390,7 +390,9 @@ proc ::feed_reader::generate_xpath_article_image {doc} {
 	}
 	if { ${min_imgnode} ne {} } {
 	    foreach att {src alt title} {
-		${min_imgnode} removeAttribute ${att}
+		if { [${min_imgnode} hasAttribute ${att}] } {
+		    ${min_imgnode} removeAttribute ${att}
+		}
 	    }
 	    set xpath_result [to_pretty_xpath ${doc} ${min_imgnode}]
 	}
