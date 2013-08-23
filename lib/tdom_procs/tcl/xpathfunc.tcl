@@ -172,7 +172,7 @@ proc ::dom::xpathFuncHelper::coerce2text_helper {htmlVar node} {
 	    
 	} else {
 
-	    if { ${tagname} in {p div} } {
+	    if { ${tagname} in {p div h1 h2 h3} } {
 		append html "\n\n"
 	    } elseif { ${tagname} eq {br} } {
 		append html "\n"
