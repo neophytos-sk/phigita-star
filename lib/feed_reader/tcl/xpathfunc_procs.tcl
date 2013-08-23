@@ -170,3 +170,20 @@ proc ::dom::xpathFunc::similar_to_text {ctxNode pos nodeListNode nodeList args} 
     }
 
 }
+
+
+
+proc ::dom::xpathFunc::split-string {ctxNode pos nodeListNode nodeList args} {
+
+    if { [llength ${args}] != 4  } {
+	error "tokenize(string,pattern): wrong # of args"
+    }
+
+
+    lassign ${args} \
+	arg1Typ str \
+	arg2Typ splitChars
+
+    return [list string [split ${str} ${splitChars}]]
+
+}

@@ -178,16 +178,20 @@ proc ::dom::xpathFuncHelper::coerce2text_helper {htmlVar node} {
         } else {
 
             if { ${tagname} in {p div h1 h2 h3} } {
-                append html "\n\n"
+                set str "\n\n"
             } elseif { ${tagname} eq {br} } {
-                append html "\n"
+                set str "\n"
             } else {
-                append html " "
+                set str " "
             }
+
+            append html ${str}
 
             foreach child [${node} childNodes] {
                 coerce2text_helper html ${child}
             }
+
+            append html ${str}
 
         }
 
@@ -225,6 +229,41 @@ proc ::dom::xpathFunc::returntext {ctxNode pos nodeListNode nodeList args} {
     foreach {arg1Typ arg1Value} $args break
     set result [::dom::xpathFuncHelper::coerce2text $arg1Typ $arg1Value]
     return [list string $result]
+}
+
+namespace eval ::dom::xpathFunc {
+
+    array set date_format \
+	[list \
+	     {Y-nn-nn nn:nn} {%Y-%m-%d %H:%M} \
+	     {nn-nn-Y nn:nn} {%d-%m-%Y %H:%M} \
+	     {nn/nn/Y nn:nn} {%d/%m/%Y %H:%M} \
+	     {nn.nn.Y nn:nn} {%d.%m.%Y %H:%M} \
+	     {nn/nn nn:nn} {%d/%m %H:%M} \
+	     {nn Xxx Y} {%d %B %Y} \
+	     {nn Xxx Y} {%d %B %Y} \
+	     {Xxx nn, Y} {%B %d, %Y} \
+	     {nn.Xxx.Y} {%d.%b.%Y} \
+	     {Xxx, dd Xxx Y} {A, d B Y} \
+	     {nn/nn} {%d/%m} \
+	     {nn:nn} {%H:%M}]
+    
+}
+
+proc ::dom::xpathFunc::returndate_helper__date_shape {text} {
+
+    foreach {re subSpec} {
+	{[[:lower:]]} x
+	{[[:upper:]]} X
+	{[[:digit:]]} n
+	{Xx+x} Xxx
+	{n{4}} Y
+    } {
+	regsub -all -- ${re} ${text} ${subSpec} text
+    }
+
+    return ${text}
+
 }
 
 proc ::dom::xpathFunc::returndate {ctxNode pos nodeListNode nodeList args} {
@@ -273,6 +312,27 @@ proc ::dom::xpathFunc::returndate {ctxNode pos nodeListNode nodeList args} {
     set ts [string trim ${ts_string}]
     set result ""
     if { ${ts} ne {} } {
+
+	if { ${input_format} eq {auto} } {
+	    # date recognizer using date/string shapes, e.g. dd-dd-dddd OR d-m-Y
+
+	    #regsub -all -- "\xa0" ${ts} {} ts
+	    regsub -all -- {[^[:alnum:][:punct:] ]} ${ts} {} ts
+
+	    variable date_format
+
+	    set shape [returndate_helper__date_shape ${ts}]
+
+	    if { [info exists date_format(${shape})] } {
+		set input_format $date_format(${shape})
+	    } else {
+		return [list string ""]
+	    }
+
+
+	}
+
+
 	if { [catch {set timeval [clock scan ${ts} -format ${input_format} -locale ${locale}]} errmsg] } {
 	    puts "errmsg=${errmsg} ts=${ts} input_format=${input_format} locale=${locale}"
 	    return [list string ""]

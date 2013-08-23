@@ -772,7 +772,7 @@ proc ::util::tokenize {text} {
 }
 
 
-proc ::util::recognize_date_format {text {locales {en_US el_GR}}} {
+proc ::util::recognize_date_format {text {locales {en_US el_GR}} {normalize_text_p 1}} {
 
     regsub -all -- {[^[:alnum:]\:]} ${text} { } stripped_text
 
@@ -780,7 +780,9 @@ proc ::util::recognize_date_format {text {locales {en_US el_GR}}} {
 
 	set normalized_text $stripped_text
 
-	::dom::xpathFunc::normalizedate_helper normalized_text ${locale}
+	if { ${normalize_text_p} } {
+	    ::dom::xpathFunc::normalizedate_helper normalized_text ${locale}
+	}
 	
 	foreach date_format {
 	    "%Y %N %d"
