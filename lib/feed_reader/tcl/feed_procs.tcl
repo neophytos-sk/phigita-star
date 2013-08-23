@@ -1283,43 +1283,44 @@ proc ::feed_reader::test_feed {news_source {limit "3"} {fetch_item_p "1"}} {
     set feed_files [get_feed_files ${news_source}]
     foreach feed_file ${feed_files} {
 
-	array set feed [::util::readfile ${feed_file}]
+        array set feed [::util::readfile ${feed_file}]
 
-	set errorcode [fetch_feed result feed stoptitles]
-	if { ${errorcode} } {
-	    puts "fetch_feed failed errorcode=$errorcode"
-	    unset feed
-	    continue
-	}
+        set errorcode [fetch_feed result feed stoptitles]
+        if { ${errorcode} } {
+            puts "fetch_feed failed errorcode=$errorcode"
+            unset feed
+            continue
+        }
 
-	foreach link $result(links) title_in_feed $result(titles) {
+        foreach link $result(links) title_in_feed $result(titles) {
 
-	    puts ""
-	    puts ${title_in_feed}
-	    puts ${link}
-	    puts "---"
+                if { [incr count] == 1 + ${limit} } {
+                    break
+                }
 
-	    if { [incr count] == 1 + ${limit} } {
-		break
-	    }
+                puts ""
+                puts ${title_in_feed}
+                puts ${link}
+                puts "---"
 
-	    if { ${fetch_item_p} } {
-		set errorcode [fetch_item ${link} ${title_in_feed} feed item]
-		if { ${errorcode} } {
-		    puts "fetch_item failed errorcode=$errorcode link=$link"
-		    continue
-		}
-		foreach name [array names item] {
-		    if { $item(${name}) eq {} } {
-			continue
-		    }
-		    puts "* ${name}: $item(${name})"
-		}
-	    }
 
-	}
+                if { ${fetch_item_p} } {
+                    set errorcode [fetch_item ${link} ${title_in_feed} feed item]
+                    if { ${errorcode} } {
+                        puts "fetch_item failed errorcode=$errorcode link=$link"
+                        continue
+                    }
+                    foreach name [array names item] {
+                        if { $item(${name}) eq {} } {
+                            continue
+                        }
+                        puts "* ${name}: [string range $item(${name}) 0 300]"
+                    }
+                }
 
-	unset feed
+        }
+
+        unset feed
     }
 
 }

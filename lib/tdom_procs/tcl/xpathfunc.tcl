@@ -276,38 +276,39 @@ proc ::dom::xpathFunc::returndate {ctxNode pos nodeListNode nodeList args} {
 
     } elseif { ${argc} == 4 } {
 
-	lassign ${args} \
-	    arg1Typ arg1Value \
-	    arg2Typ arg2Value
+        lassign ${args} \
+            arg1Typ arg1Value \
+            arg2Typ arg2Value
 
-	set locale en_US
-	set output_format {%Y%m%dT%H%M}
+
+        set locale en_US
+        set output_format {%Y%m%dT%H%M}
 
     } elseif { ${argc} == 6 } {
 
-	lassign ${args} \
-	    arg1Typ arg1Value \
-	    arg2Typ arg2Value \
-	    arg3Typ arg3Value
+        lassign ${args} \
+            arg1Typ arg1Value \
+            arg2Typ arg2Value \
+            arg3Typ arg3Value
 
-	set locale ${arg3Value}
-	set output_format {%Y%m%dT%H%M}
+        set locale ${arg3Value}
+        set output_format {%Y%m%dT%H%M}
 
     } elseif { ${argc} == 8 } {
 
-	lassign ${args} \
-	    arg1Typ arg1Value \
-	    arg2Typ arg2Value \
-	    arg3Typ arg3Value \
-	    arg4Typ arg4Value
+        lassign ${args} \
+            arg1Typ arg1Value \
+            arg2Typ arg2Value \
+            arg3Typ arg3Value \
+            arg4Typ arg4Value
 
-	set locale ${arg3Value}
-	set output_format ${arg4Value}
+        set locale ${arg3Value}
+        set output_format ${arg4Value}
 
     }
 
-
     set ts_string [::dom::xpathFuncHelper::coerce2string ${arg1Typ} ${arg1Value}]
+
     set input_format ${arg2Value}
     set ts [string trim ${ts_string}]
     set result ""

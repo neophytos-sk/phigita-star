@@ -124,14 +124,14 @@ proc ::dom::xpathFunc::currentdate {ctxNode pos nodeListNode nodeList args} {
 proc ::dom::xpathFunc::similar_to_text {ctxNode pos nodeListNode nodeList args} {
 
     if { [llength ${args}] != 8 } {
-	error "similar_to_text(nodes,text,score_fn,tokenizer): wrong # of args"
+        error "similar_to_text(nodes,text,score_fn,tokenizer): wrong # of args"
     }
 
     lassign ${args} \
-	arg1Typ nodes \
-	arg2Typ text2 \
-	arg3Type score_fn \
-	arg4Type tokenizer
+        arg1Typ nodes \
+        arg2Typ text2 \
+        arg3Type score_fn \
+        arg4Type tokenizer
 
     set tokenizer [lsearch -inline -not [list ${tokenizer} "::util::tokenize"] {}]
 
@@ -141,32 +141,32 @@ proc ::dom::xpathFunc::similar_to_text {ctxNode pos nodeListNode nodeList args} 
 
     if { ${tokens_text2} ne {} } {
 
-	set min_score 999999
-	foreach node ${nodes} {
+        set min_score 999999
+        foreach node ${nodes} {
 
-	    set text1 [${node} asText]
+            set text1 [${node} asText]
 
-	    if { ${text1} eq {} } {
-		continue
-	    }
-	    set tokens_text1 [${tokenizer} ${text1}]
+            if { ${text1} eq {} } {
+            continue
+            }
+            set tokens_text1 [${tokenizer} ${text1}]
 
-	    set score [${score_fn} ${tokens_text1} ${tokens_text2}]
+            set score [${score_fn} ${tokens_text1} ${tokens_text2}]
 
-	    if { ${score} <= ${min_score} } {
-		set similarnode ${node}
-		set min_score ${score}
-	    }
+            if { ${score} <= ${min_score} } {
+            set similarnode ${node}
+            set min_score ${score}
+            }
 
-	}
+        }
     }
 
     #puts similarnode=${similarnode}
 
     if { ${similarnode} eq {} } {
-	return [list string ""]
+        return [list string ""]
     } else {
-	return [list string ${similarnode}]
+        return [list string ${similarnode}]
     }
 
 }
@@ -176,14 +176,19 @@ proc ::dom::xpathFunc::similar_to_text {ctxNode pos nodeListNode nodeList args} 
 proc ::dom::xpathFunc::split-string {ctxNode pos nodeListNode nodeList args} {
 
     if { [llength ${args}] != 4  } {
-	error "tokenize(string,pattern): wrong # of args"
+        error "split-string(string,pattern): wrong # of args"
     }
 
 
     lassign ${args} \
-	arg1Typ str \
-	arg2Typ splitChars
+        arg1Typ str \
+        arg2Typ splitChars
 
-    return [list string [split ${str} ${splitChars}]]
 
+    set doc [$ctxNode ownerDocument]
+    set nodes [list]
+    foreach str [split ${str} ${splitChars}] {
+        lappend nodes [${doc} createTextNode ${str}]
+    }
+    return [list nodes ${nodes}]
 }
