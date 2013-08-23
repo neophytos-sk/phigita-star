@@ -1,0 +1,12 @@
+url "http://lemesospress.com/"
+include_re {http://lemesospress\.com/[^#]{10,}/}
+exclude_re {/category/|/xrysos-odigos/επικοινωνια/}
+xpath_article_title {returnstring(//div[@class="active"]/h1)}
+xpath_article_body {returntext(//div[@id="left"]//div[@class="content"])}
+xpath_article_image {
+    {values(//div[@class="content"]//div[@class="thumb"]//img/@src)}
+}
+xpath_article_cleanup {
+    {//div[@class="thumb"]}
+}
+xpath_article_date {normalizedate(substring(//span[@class="date"]/span[@class="time"],4),"el_GR","%d %B %Y")}

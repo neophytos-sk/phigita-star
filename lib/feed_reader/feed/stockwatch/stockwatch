@@ -21,6 +21,9 @@
 		       {//ul[@class="arrow-list"]}
 		       {//div[@class="ad-617x98"]}
 		   }
+           image_stoplist {
+               {http://www.stockwatch.com.cy/include/img/images/graph-icon.jpg}
+           }
 		   comment {
 		       - og:title
 		       - og:description
