@@ -1163,17 +1163,23 @@ proc ::feed_reader::write_item {normalized_link feedVar itemVar resync_p} {
 
 
     if { [get_value_if item(date) ""] ne {} } {
-	set timeval [clock scan $item(date) -format "%Y%m%dT%H%M"]
-	# up to a day difference is fine to account for servers
-	# with different timezone
-	if { ${timestamp} - ${timeval} > 86400 } {
-	    # puts "item(date)=$item(date) is older than a day - updating files' mtime..."
-	    file mtime ${item_dir} ${timeval}
-	    file mtime ${contentfilename} ${timeval}
-	    file mtime ${indexfilename} ${timeval}
-	    file mtime ${logfilename} ${timeval}
-	    file mtime ${revisionfilename} ${timeval}
-	    file mtime ${urlfilename} ${timeval}
+
+	lassign [split $item(date) {T}] date time
+
+	if { ${time} ne {0000} } {
+	    # up to a day difference is fine to account for servers
+	    # with different timezone
+	    set timeval [clock scan $item(date) -format "%Y%m%dT%H%M"]
+	    
+	    if { ${timestamp} - ${timeval} > 3600 } {
+		# puts "item(date)=$item(date) is older than a day - updating files' mtime..."
+		file mtime ${item_dir} ${timeval}
+		file mtime ${contentfilename} ${timeval}
+		file mtime ${indexfilename} ${timeval}
+		file mtime ${logfilename} ${timeval}
+		file mtime ${revisionfilename} ${timeval}
+		file mtime ${urlfilename} ${timeval}
+	    }
 	}
     }
 
