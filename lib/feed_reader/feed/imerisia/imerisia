@@ -5,3 +5,11 @@ htmltidy_article_p 1
 xpath_article_body {returntext(//div[@id="arttext"])}
 xpath_article_title {returnstring(//div[@id="arttext"]/h1)}
 xpath_article_image {{values(//div[@id="arttext"]/img/@src)}}
+xpath_article_date {returndate(substring-before(//meta[@name="description"]/@content,"-"),"%d/%m/%Y")}
+xpath_article_cleanup {
+    {//div[@class="clear"]}
+    {//div[@class="relartu"]}
+    {//div[@class="belowArticle"]}
+    {//div[@id="contactHoverBox"]}
+    {//div[@class="adsbox"]}
+}

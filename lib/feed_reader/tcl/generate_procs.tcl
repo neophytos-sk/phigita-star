@@ -155,10 +155,34 @@ proc ::feed_reader::generate_include_re {linksVar feed_url matching_pathsVar} {
     return ${include_re}
 }
 
+proc ::feed_reader::to_pretty_xpath_cleanup_helper {args} {
+
+    # rationalize id on given and parent node
+    foreach node ${args} {
+	foreach att {id class} {
+
+	    if { [${node} hasAttribute ${att}] } {
+
+		set attvalue [${node} getAttribute ${att} ""]
+
+		set re {[0-9]{4,}}
+		if { [regexp -- ${re} ${attvalue}] } {
+		    ${node} removeAttribute ${att}
+		}
+	    }
+
+	}
+    }
+}
 
 proc ::feed_reader::to_pretty_xpath {doc node} {
 
+    set ignore_attributes {href src alt title}
+
     set pn [${node} parentNode]
+
+    to_pretty_xpath_cleanup_helper ${node} [${node} parentNode]
+
     set candidate_xpath ""
     if { [set id [${pn} @id ""]] ne {} } {
 
@@ -175,7 +199,7 @@ proc ::feed_reader::to_pretty_xpath {doc node} {
 	set candidate_xpath "//[$pn tagName]"
 	set xpath_list [list]
 	foreach att [${pn} attributes] {
-	    if { ${att} in {href src alt title} } {
+	    if { ${att} in ${ignore_attributes} } {
 		continue
 	    }
 	    if { [set attvalue [${pn} getAttribute ${att} ""]] ne {} } {
@@ -202,7 +226,7 @@ proc ::feed_reader::to_pretty_xpath {doc node} {
 
 	set xpath_list [list]
 	foreach att [${node} attributes] {
-	    if { ${att} in {href src alt title} } {
+	    if { ${att} in ${ignore_attributes} } {
 		continue
 	    }
 	    if { [set attvalue [${node} getAttribute ${att} ""]] ne {} } {
@@ -232,17 +256,16 @@ proc ::feed_reader::to_pretty_xpath {doc node} {
 
 
 
-proc ::feed_reader::generate_xpath_helper {doc xpath_candidate xpathlist score_fn {xpathfunc ""}} {
-
-    set quoted_score_fn [::util::doublequote ${score_fn}]
+proc ::feed_reader::generate_xpath_helper {doc xpath_candidate xpathlist score_fn {xpathfunc ""} {tokenizer ""}} {
 
     set xpath_result ""
     foreach xpath_inner ${xpathlist} {
 
-	set xpath_outer [subst -nocommands -nobackslashes {
+	set xpath_outer [subst -nobackslashes {
 	    similar_to_text(${xpath_candidate},
 			    ${xpath_inner},
-			    ${quoted_score_fn})
+			    [::util::doublequote ${score_fn}],
+			    [::util::doublequote ${tokenizer}])
 	}]
 
 	set similarnode [${doc} selectNodes ${xpath_outer}]
@@ -280,6 +303,90 @@ proc ::feed_reader::generate_xpath_article_title {doc} {
 }
 
 
+# Google's example of how to mark up your timestamps using microdata is:
+# <time itemprop="startDate" datetime="2009-10-15T19:00-08:00">
+# https://support.google.com/webmasters/answer/176035
+
+proc ::feed_reader::generate_xpath_article_date {doc} {
+
+    set xpath_candidate {//div | //span | //p}
+
+    set xpathlist {
+	{string(//meta[@property="article:published_time"]/@content)}
+	{string(//meta[@name="dc.date.created"]/@content)}
+	{string(//meta[@name="date"]/@content)}
+	{string(//meta[@name="dc.date"]/@content)}
+    }
+
+    #set score_fn "tokenSimilarity"
+    set score_fn "subseqSimilarity"
+
+    set tokenizer "::util::tokenize_date"
+
+    set xpath_result [generate_xpath_helper ${doc} ${xpath_candidate} ${xpathlist} ${score_fn} "" ${tokenizer}]
+
+    # verify date xpath, figure out format, 
+    # and rewrite xpath_result accordingly
+
+    set text [${doc} selectNodes "string(${xpath_result})"]
+
+    set recognizer_result [::util::recognize_date_format ${text}]
+
+    if { ${recognizer_result} ne {} } { 
+
+	lassign ${recognizer_result} format locale timeval
+	set xpath_result \
+	    [subst -nobackslashes \
+		 {normalizedate(${xpath_result}, [::util::doublequote ${locale}],[::util::doublequote ${format}])}]
+
+    } else {
+
+	set xpath_result {}
+
+    }
+
+    return ${xpath_result}
+}
+
+
+proc ::feed_reader::generate_xpath_article_modified_time {doc} {
+
+    set xpath_candidate {//div | //span | //p}
+
+    set xpathlist {
+	{string(//meta[@property="article:modified_time"]/@content)}
+	{string(//meta[@name="dc.date.modified"]/@content)}
+    }
+
+    set score_fn "tokenSimilarity"
+    set tokenizer "::util::tokenize_date"
+
+    set xpath_result [generate_xpath_helper ${doc} ${xpath_candidate} ${xpathlist} ${score_fn} "returnstring" ${tokenizer}]
+
+    # verify date xpath, figure out format, 
+    # and rewrite xpath_result accordingly
+
+    set text [${doc} selectNodes "string(${xpath_result})"]
+
+    set recognizer_result [::util::recognize_date_format ${text}]
+
+    if { ${recognizer_result} ne {} } { 
+
+	lassign ${recognizer_result} format locale timeval
+	set xpath_result \
+	    [subst -nobackslashes \
+		 {normalizedate(${xpath_result}, [::util::doublequote ${locale}],[::util::doublequote ${format}])}]
+
+    } else {
+
+	set xpath_result {}
+
+    }
+
+    return ${xpath_result}
+}
+
+
 proc ::feed_reader::generate_xpath_article_body {doc} {
 
     set xpath_candidate {//div}
@@ -302,35 +409,6 @@ proc ::feed_reader::generate_xpath_article_body {doc} {
     return ${xpath_result}
 
 }
-
-proc stringDistance {a b} {
-
-    set n [string length $a]
-    set m [string length $b]
-    for {set i 0} {$i<=$n} {incr i} {set c($i,0) $i}
-    for {set j 0} {$j<=$m} {incr j} {set c(0,$j) $j}
-    for {set i 1} {$i<=$n} {incr i} {
-	for {set j 1} {$j<=$m} {incr j} {
-	    set x [expr { $c([expr { $i - 1 }],$j) + 1 }]
-	    set y [expr { $c($i,[expr { $j - 1 }]) + 1 }]
-	    set z $c([expr { $i - 1 }],[expr { $j - 1 }])
-	    if {[string index $a [expr { $i - 1 }]] != [string index $b [expr { $j - 1 }]]} {
-		incr z
-	    }
-	    set c($i,$j) [min $x $y $z]
-	}
-    }
-    set c($n,$m)
-}
-
-proc min args {lindex [lsort -real $args] 0}
-proc max args {lindex [lsort -real $args] end}
-
-
- proc stringSimilarity {a b} {
-     set totalLength [string length "${a}${b}"]
-     max [expr {double(${totalLength} - 2 * [stringDistance ${a} ${b}]) / ${totalLength}}] 0.0
- }
 
 proc ::feed_reader::generate_xpath_article_image {doc} {
 
@@ -358,8 +436,7 @@ proc ::feed_reader::generate_xpath_article_image {doc} {
 
 	    set similarity [stringSimilarity ${imgsrc1} ${imgsrc2}]
 	    if { ${similarity} > 0.85 } {
-		${imgnode} removeAttribute alt
-		${imgnode} removeAttribute src
+
 		set xpath_result [to_pretty_xpath ${doc} ${imgnode}]
 		break
 	    }
@@ -484,7 +561,6 @@ proc ::feed_reader::generate_xpath {xpathVar feed_url matching_pathsVar encoding
 
 	puts ""
 	puts canonical_link=${canonical_link}
-
 	foreach part ${parts} {
 	    set candidate_xpath [generate_xpath_${part} ${doc}]
 
@@ -542,33 +618,66 @@ proc ::feed_reader::generate_feed {feed_url {encoding "utf-8"}} {
 	[list \
 	     article_title "" \
 	     article_body  "" \
-	     article_image ""]
+	     article_image "" \
+	     article_date  "" \
+	     article_modified_time ""]
+
 
     if { ${include_re} ne {} } {
 	generate_xpath xpath ${feed_url} matching_paths $encoding
     }
 
-
-    array set feed \
+    
+    array set feed  \
 	[list \
 	     url ${feed_url} \
 	     include_re ${include_re} \
-	     xpath_article_title $xpath(article_title) \
-	     xpath_article_body $xpath(article_body) \
-	     xpath_article_image $xpath(article_image)]
+	     htmltidy_feed_p 0 \
+	     htmltidy_article_p 0]
+
+    foreach name [array names xpath] {
+	set feed(xpath_${name}) $xpath(${name})
+    }
     
     puts [string repeat - 80]
     puts ""
-    foreach {key value} [array get feed] {
-	puts [list ${key} ${value}]
+    set ordered_names [get_feed_ordered_names feed]
+    foreach name ${ordered_names} {
+	puts [list ${name} $feed(${name})]
     }
     puts ""
     puts ""
- 
+	
 
 }
 
 
+proc ::feed_reader::compare_feed_element {name1 name2} {
+
+    set ordered_names {
+	url 
+	include_re 
+	htmltidy_feed_p 
+	htmltidy_article_p
+	xpath_article_title 
+	xpath_article_body 
+	xpath_article_image
+	xpath_article_date
+	xpath_article_modified_time
+    }
+
+    set i1 [lsearch ${ordered_names} ${name1}]
+    set i2 [lsearch ${ordered_names} ${name2}]
+
+    return [expr { ${i1} < ${i2} ? -1 : ( ${i1} > ${i2} ? 1 : 0 ) }]
+}
+
+proc ::feed_reader::get_feed_ordered_names {feedVar} {
+    upvar $feedVar feed
+    set names [lsort -command compare_feed_element [array names feed]]
+}
+    
+    
 proc ::feed_reader::bte_helper {resultVar node} {
 
     upvar $resultVar result

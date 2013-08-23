@@ -771,6 +771,85 @@ proc ::util::tokenize {text} {
     return [lsearch -inline -all -not [split [string tolower [::ttext::unaccent utf-8 ${text}]]] {}]
 }
 
+
+proc ::util::recognize_date_format {text {locales {en_US el_GR}}} {
+
+    regsub -all -- {[^[:alnum:]\:]} ${text} { } stripped_text
+
+    foreach locale ${locales} {
+
+	set normalized_text $stripped_text
+
+	::dom::xpathFunc::normalizedate_helper normalized_text ${locale}
+	
+	foreach date_format {
+	    "%Y %N %d"
+	    "%d %N %Y"
+	    "%N %d %Y"
+	    "%d %B %Y"
+	    "%d %b %Y"
+	    "%A %d %B %Y"
+	    "%a %d %B %Y"
+	} {
+	    foreach time_format {
+		""
+		" %H:%M"
+		" %k:%m"
+		" %l:%m"
+		" %l:%m"
+		" %H:%M:%S"
+		" %k:%m:%S"
+		" %l:%m:%S"
+		" %l:%m:%S"
+	    } {
+		foreach ampm_format {
+		    ""
+		    " %p"
+		    " %P"
+		} {
+
+		    set format "${date_format}${time_format}${ampm_format}"
+		    
+		    if { ![catch { set timeval [clock scan ${normalized_text} -format ${format} -locale ${locale}] } errmsg] } {
+			return [list ${format} ${locale} ${timeval}]
+		    }
+		}
+	    }
+	}
+    }
+}
+
+proc ::util::tokenize_date {text} {
+
+    set tokens [list]
+
+    set len [string length ${text}]
+
+    if { ${len} < 40 } {
+
+	set tokens [::util::tokenize ${text}]
+
+	set recognizer_result [::util::recognize_date_format ${text} timeval]
+	if { ${recognizer_result} ne {} } {
+
+	    lassign ${recognizer_result} format locale timeval
+
+	    set tokens \
+		[concat ${tokens} \
+		     [clock format ${timeval} \
+			  -format "%a %A %b %B %p %P" \
+			  -locale ${locale}]]
+
+	    puts "matched_date format=${format} = tokens=${tokens}"
+			
+	    return ${tokens}
+	}
+
+    }
+    
+    return ${tokens}
+}
+
 proc ::feed_reader::search {keywords {limit "10"} {offset "0"}} {
 
     get_contentfilelist sortedlist

@@ -7,4 +7,7 @@ xpath_article_image {{values(//a[@rel="mainphotos"]/img/@src)}}
 xpath_article_date {returndate(concat(//div[@class="article-info"]/span[@class="time"][1]," ",//div[@class="article-info"]/span[@class="time"][2]),"%d/%m/%Y %H:%M")}
 xpath_article_modified_time {returndate(concat(//div[@class="article-info"]/span[@class="time"][3]," ",substring-before(//div[@class="article-info"]/span[@class="time"][4],"(upd)")),"%d/%m/%Y %H:%M")}
 xpath_article_author {returnstring(//div[@class="article-info"]/span[@class="name"])}
+xpath_article_cleanup {
+    {//div[@class="adtext"]}
+}
 

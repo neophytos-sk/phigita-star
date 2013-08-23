@@ -14,6 +14,17 @@ namespace eval ::dom::xpathFunc {
 
 }
 
+proc ::dom::xpathFunc::normalizedate_helper {textVar locale} {
+    upvar $textVar text
+
+    variable mapping
+
+    if { [info exists mapping(${locale})] } {
+
+	set text [string trim [string map $mapping(${locale}) ${text}]]
+
+    }
+}
 
 proc ::dom::xpathFunc::normalizedate {ctxNode pos nodeListNode nodeList args} {
 
@@ -31,13 +42,7 @@ proc ::dom::xpathFunc::normalizedate {ctxNode pos nodeListNode nodeList args} {
     set ts_string [::dom::xpathFuncHelper::coerce2string ${arg1Typ} ${arg1Value}]
     set locale $arg2Value
 
-    variable mapping
-
-    if { [info exists mapping(${locale})] } {
-
-	set ts_string [string trim [string map $mapping(${locale}) ${ts_string}]]
-
-    }
+    normalizedate_helper ts_string ${locale}
 
     if { ${ts_string} eq {now} } {
 	set ts_string [clock format [clock seconds] -format "%Y%m%dT%H%M"]
@@ -62,7 +67,6 @@ proc tokenSimilarity {tokens_text1 tokens_text2} {
     
 }
 
-
 proc subseqSimilarity {tokens_text1 tokens_text2} {
 
     set len [llength ${tokens_text2}]
@@ -81,26 +85,53 @@ proc subseqSimilarity {tokens_text1 tokens_text2} {
     
 }
 
-proc exactImageSrc {tokens_text1 tokens_text2} {
 
-    return [expr { ${tokens_text1} eq ${tokens_text2} }]
-    
+proc stringDistance {a b} {
+
+    set n [string length $a]
+    set m [string length $b]
+    for {set i 0} {$i<=$n} {incr i} {set c($i,0) $i}
+    for {set j 0} {$j<=$m} {incr j} {set c(0,$j) $j}
+    for {set i 1} {$i<=$n} {incr i} {
+	for {set j 1} {$j<=$m} {incr j} {
+	    set x [expr { $c([expr { $i - 1 }],$j) + 1 }]
+	    set y [expr { $c($i,[expr { $j - 1 }]) + 1 }]
+	    set z $c([expr { $i - 1 }],[expr { $j - 1 }])
+	    if {[string index $a [expr { $i - 1 }]] != [string index $b [expr { $j - 1 }]]} {
+		incr z
+	    }
+	    set c($i,$j) [min $x $y $z]
+	}
+    }
+    set c($n,$m)
 }
+
+proc min args {lindex [lsort -real $args] 0}
+proc max args {lindex [lsort -real $args] end}
+
+
+proc stringSimilarity {a b} {
+    set totalLength [string length "${a}${b}"]
+    max [expr {double(${totalLength} - 2 * [stringDistance ${a} ${b}]) / ${totalLength}}] 0.0
+}
+
 
 
 proc ::dom::xpathFunc::similar_to_text {ctxNode pos nodeListNode nodeList args} {
 
-    if { [llength ${args}] != { 6 } } {
-	error "similar(string): wrong # of args"
+    if { [llength ${args}] != 8 } {
+	error "similar_to_text(nodes,text,score_fn,tokenizer): wrong # of args"
     }
 
     lassign ${args} \
 	arg1Typ nodes \
 	arg2Typ text2 \
-	arg3Type score_fn
+	arg3Type score_fn \
+	arg4Type tokenizer
 
+    set tokenizer [lsearch -inline -not [list ${tokenizer} "::util::tokenize"] {}]
 
-    set tokens_text2 [::util::tokenize ${text2}]
+    set tokens_text2 [${tokenizer} ${text2}]
 
     set similarnode ""
     set min_score 999999
@@ -109,7 +140,7 @@ proc ::dom::xpathFunc::similar_to_text {ctxNode pos nodeListNode nodeList args} 
 	if { ${text1} eq {} } {
 	    continue
 	}
-	set tokens_text1 [::util::tokenize ${text1}]
+	set tokens_text1 [${tokenizer} ${text1}]
 
 	set score [${score_fn} ${tokens_text1} ${tokens_text2}]
 
