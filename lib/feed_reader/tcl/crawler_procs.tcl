@@ -146,87 +146,188 @@ proc ::feed_reader::print_sync_stats {feed_name statsVar} {
     puts "\n\n"
 }
 
+proc print_round_stats {round_statsVar} {
+    upvar $round_statsVar round_stats
 
-proc ::feed_reader::sync_feeds {{news_sources ""}} {
+    puts ""
+    puts "--->>> round $round_stats(round_timestamp) stats"
+    puts ""
+    array unset round_stats round_timestamp
+    foreach name [array names round_stats] {
+        puts [format "%20s %s" ${name} $round_stats(${name})]
+    }
+    puts ""
+
+}
+
+proc update_round_stats {round_timestamp feed_name statsVar round_statsVar} {
+    upvar $statsVar stats
+    upvar $round_statsVar round_stats
+
+    foreach name [array names stats] {
+        incr round_stats(${name}) $stats(${name})
+    }
+
+    if { $stats(ERROR_FETCH_FEED) } {
+        lappend round_stats(ERROR_FETCH_FEED_LIST) ${feed_name}
+    }
+
+    if { $stats(ERROR_FETCH) } {
+        lappend round_stats(ERROR_FETCH_LIST) ${feed_name}
+    }
+}
+
+
+proc progress_init {tot} {
+    set ::progress_start     [clock seconds]
+    set ::progress_last      0
+    set ::progress_last_time 0
+    set ::progress_tot       $tot
+ }
+
+ # We update if there's a 5% difference or a 5 second difference
+
+ proc progress_tick {cur} {
+    set now [clock seconds]
+    set tot $::progress_tot
+
+    if {$cur > $tot} {
+        set cur $tot
+    }
+    if {($cur >= $tot && $::progress_last < $cur) ||
+        ($cur - $::progress_last) >= (0.05 * $tot) ||
+        ($now - $::progress_last_time) >= 5} {
+        set ::progress_last $cur
+        set ::progress_last_time $now
+        set percentage [expr round($cur*100/$tot)]
+        set ticks [expr $percentage/2]
+        if {$cur == 0} {
+            set eta   ETA:[format %7s Unknown]
+        } elseif {$cur >= $tot} {
+            set eta   TOT:[format %7d [expr int($now - $::progress_start)]]s
+        } else {
+            set eta   ETA:[format %7d [expr int(($tot - $cur) * ($now - $::progress_start)/$cur)]]s
+        }
+        set lticks [expr 50 - $ticks]
+        set str "[format %3d $percentage]%|[string repeat = $ticks]"
+        append str "[string repeat . $lticks]|[format %8d $cur]|$eta\r"
+        puts -nonewline stdout $str
+        if {$cur >= $tot} {
+            puts ""
+        }
+        flush stdout
+    }
+ }
+
+proc ::feed_reader::sync_feeds {{news_sources ""} {debug_p "0"}} {
 
     variable stoptitles
 
     set feeds_dir [get_package_dir]/feed
     set check_fetch_feed_p 0
     if { ${news_sources} eq {} } {
-	set news_sources [glob -nocomplain -tails -directory ${feeds_dir} *]
-	set check_fetch_feed_p 1
+        set news_sources [glob -nocomplain -tails -directory ${feeds_dir} *]
+        set check_fetch_feed_p 1
     }
 
     set round [clock seconds]
 
+    array set round_stats [list round_timestamp ${round}]
+
+    progress_init [llength ${news_sources}]
+
+    set cur 0
     foreach news_source ${news_sources} {
 
-	set news_source_dir ${feeds_dir}/${news_source}
-	set filelist [glob -nocomplain -directory ${news_source_dir} *]
-	foreach filename ${filelist} {
-	    set feed_name ${news_source}/[file tail ${filename}]
-	    array set feed [::util::readfile ${filename}]
+        set news_source_dir ${feeds_dir}/${news_source}
 
-	    # TODO: maintain domain in feed spec
-	    set domain [::util::domain_from_url $feed(url)]
+        set filelist [glob -nocomplain -directory ${news_source_dir} *]
 
-	    set timestamp [clock seconds]
-	    if { ${check_fetch_feed_p} && ![fetch_feed_p ${feed_name} ${timestamp}] } {
-		puts "not fetching $feed_name in this round ${round}\n\n"
-		unset feed
-		continue
-	    }
+        foreach filename ${filelist} {
 
-	    array set stats \
-		[list \
-		     FETCH_AND_WRITE 0 \
-		     NO_FETCH 0 \
-		     NO_WRITE 0 \
-		     ERROR_FETCH 0 \
-		     FETCH_FEED 0 \
-		     ERROR_FETCH_FEED 0 \
-		     FETCH_AND_WRITE_FEED 0 \
-		     NO_WRITE_FEED 0]
+            set feed_name ${news_source}/[file tail ${filename}]
+
+            array set feed [::util::readfile ${filename}]
+
+            # TODO: maintain domain in feed spec
+            set domain [::util::domain_from_url $feed(url)]
+
+            set timestamp [clock seconds]
+            if { ${check_fetch_feed_p} && ![fetch_feed_p ${feed_name} ${timestamp}] } {
+                incr round_stats(SKIP_FEED) 
+                #puts "not fetching $feed_name in this round ${round}\n\n"
+                unset feed
+                continue
+            }
+
+            array set stats \
+                [list \
+                     FETCH_AND_WRITE 0 \
+                     NO_FETCH 0 \
+                     NO_WRITE 0 \
+                     ERROR_FETCH 0 \
+                     FETCH_FEED 0 \
+                     ERROR_FETCH_FEED 0 \
+                     FETCH_AND_WRITE_FEED 0 \
+                     NO_WRITE_FEED 0]
 
 
-	    # set feed_type [get_value_if feed(type) ""] 
-	    # if { ${feed_type} eq {rss} } {
-	    # set feed(xpath_feed_item) //item
-	    # }
+            # set feed_type [get_value_if feed(type) ""] 
+            # if { ${feed_type} eq {rss} } {
+            # set feed(xpath_feed_item) //item
+            # }
 
-	    set errorcode [fetch_feed result feed stoptitles]
-	    if { ${errorcode} } {
-		puts "fetch_feed failed errorcode=$errorcode feed_name=$feed_name"
-		set stats(ERROR_FETCH_FEED) 1
-		update_crawler_stats ${timestamp} ${feed_name} stats
-		unset feed
-		continue
-	    }
-	    set stats(FETCH_FEED) 1
+            set errorcode [fetch_feed result feed stoptitles]
+            if { ${errorcode} } {
 
-	    foreach link $result(links) title_in_feed $result(titles) {
+                puts "fetch_feed failed errorcode=$errorcode feed_name=$feed_name"
 
-		# returns FETCH_AND_WRITE, NO_FETCH, and NO_WRITE
-		set retcode [fetch_and_write_item ${link} ${title_in_feed} feed]
-		incr stats(${retcode})
-	    }
-	    if { $stats(FETCH_AND_WRITE) > 0 } {
-		set stats(FETCH_AND_WRITE_FEED) 1
-	    } else {
-		set stats(NO_WRITE_FEED) 1
-	    }
+                set stats(ERROR_FETCH_FEED) 1
 
-	    print_sync_stats ${feed_name} stats
+                update_crawler_stats ${timestamp} ${feed_name} stats
 
-	    update_crawler_stats ${timestamp} ${feed_name} stats
+                update_round_stats ${timestamp} ${feed_name} stats round_stats
 
-	    unset feed
-	    unset stats
+                unset feed
 
-	}
+                continue
+            }
+            set stats(FETCH_FEED) 1
+
+            foreach link $result(links) title_in_feed $result(titles) {
+
+                # returns FETCH_AND_WRITE, NO_FETCH, and NO_WRITE
+                set retcode [fetch_and_write_item ${link} ${title_in_feed} feed]
+                incr stats(${retcode})
+            }
+
+            if { $stats(FETCH_AND_WRITE) > 0 } {
+                set stats(FETCH_AND_WRITE_FEED) 1
+            } else {
+                set stats(NO_WRITE_FEED) 1
+            }
+
+            if { ${debug_p} } {
+                print_sync_stats ${feed_name} stats
+            }
+
+            update_crawler_stats ${timestamp} ${feed_name} stats
+
+            update_round_stats ${timestamp} ${feed_name} stats round_stats
+
+            unset feed
+            unset stats
+
+        }
+        
+        progress_tick [incr cur]
 
     }
+
+    print_round_stats round_stats
+
+    unset round_stats
+
 }
 
 

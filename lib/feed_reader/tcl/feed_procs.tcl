@@ -741,7 +741,7 @@ proc ::feed_reader::get_contentfilelist {sortedlistVar} {
 }
 
 
-proc ::feed_reader::log {{limit "10"} {offset "0"}} {
+proc ::feed_reader::log {{limit "40"} {offset "0"}} {
 
     get_logfilelist sortedlist
 
