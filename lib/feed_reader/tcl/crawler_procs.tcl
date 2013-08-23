@@ -328,7 +328,7 @@ proc ::feed_reader::sync_feeds {{news_sources ""} {debug_p "0"}} {
     if { ![file isdirectory ${round_dir}] } {
         file mkdir ${round_dir}
     }
-    ::util::writefile ${round_dir}/{round}
+    ::util::writefile ${round_dir}/${round} [array get round_stats]
 
     print_round_stats round_stats
 
