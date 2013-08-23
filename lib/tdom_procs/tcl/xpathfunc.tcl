@@ -131,64 +131,69 @@ proc ::dom::xpathFuncHelper::coerce2text_helper {htmlVar node} {
     upvar $htmlVar html
 
     set nodeType [$node nodeType]
+
     if { ${nodeType} eq {ELEMENT_NODE} } {
 
-	set tagname [$node tagName]
-	if { ${tagname} eq {a} } {
-	    set href [$node @href ""]
-	    set imgnode [$node selectNodes {descendant::img[@src]}]
-	    if { ${imgnode} ne {} } {
-		coerce2text_helper html ${imgnode}
-	    } else {
-		if { ${href} ne {} } {
-		    set text [string trim [$node asText]]
-		    if { ${text} ne {} } {
-			append html " \"${text}\":${href} "
-		    }
-		}
-	    }
-	} elseif { ${tagname} eq {img} } {
+        set tagname [$node tagName]
+        if { ${tagname} eq {a} } {
 
-	    set imageurl [string trim [$node @src ""]]
-	    if { ${imageurl} ne {} } {
+            set href [$node @href ""]
 
-		set baseurl [[$node ownerDocument] baseURI]
+            set imgnode [$node selectNodes {descendant::img[@src]}]
 
-		set imageurl [::uri::canonicalize \
-				  [::uri::resolve \
-				       ${baseurl} \
-				       ${imageurl}]]
+            if { ${imgnode} ne {} } {
+                coerce2text_helper html ${imgnode}
+            } else {
+                if { ${href} ne {} } {
+                    set text [string trim [$node asText]]
+                    if { ${text} ne {} } {
+                        append html " \"${text}\":${href} "
+                    }
+                }
+            }
 
-		append html "{image: ${imageurl}} "
+        } elseif { ${tagname} eq {img} } {
 
-	    }
+            set imageurl [string trim [$node @src ""]]
+            if { ${imageurl} ne {} } {
 
-	} elseif { ${tagname} eq {iframe} && [set src [${node} @src ""]] ne {} } {
+                set baseurl [[$node ownerDocument] baseURI]
 
-	    set re {(youtube|vimeo|dailymotion)} 
-	    if { [regexp -- ${re} ${src}] } {
-		append html "{video: ${src} }"
-	    }
-	    
-	} else {
+                set imageurl [::uri::canonicalize \
+                          [::uri::resolve \
+                               ${baseurl} \
+                               ${imageurl}]]
 
-	    if { ${tagname} in {p div h1 h2 h3} } {
-		append html "\n\n"
-	    } elseif { ${tagname} eq {br} } {
-		append html "\n"
-	    } else {
-		append html " "
-	    }
+                append html "{image: ${imageurl}} "
 
-	    foreach child [${node} childNodes] {
-		coerce2text_helper html ${child}
-	    }
+            }
 
-	}
+        } elseif { ${tagname} eq {iframe} && [set src [${node} @src ""]] ne {} } {
+
+            set re {(youtube|vimeo|dailymotion)} 
+            if { [regexp -- ${re} ${src}] } {
+                append html "{video: ${src} }"
+            }
+            
+        } else {
+
+            if { ${tagname} in {p div h1 h2 h3} } {
+                append html "\n\n"
+            } elseif { ${tagname} eq {br} } {
+                append html "\n"
+            } else {
+                append html " "
+            }
+
+            foreach child [${node} childNodes] {
+                coerce2text_helper html ${child}
+            }
+
+        }
 
     } elseif { ${nodeType} eq {TEXT_NODE} } {
 
-	append html [$node nodeValue]
+        append html [$node nodeValue]
 
     }
     
@@ -201,13 +206,13 @@ proc ::dom::xpathFuncHelper::coerce2text { type value } {
         string     { return $value }
         attrvalues { return [lindex $value 0] }
         nodes { 
-	    set html ""
-	    foreach node ${value} {
-		coerce2text_helper html $node
-	    }
-	    regsub -all -- {([^\s])\s*[\r\n]+\s*[\r\n]+\s*([^\s])} ${html} "\\1\n\n\\2" html
-	    return [string trim ${html}]
-	}
+            set html ""
+            foreach node ${value} {
+                coerce2text_helper html $node
+            }
+            regsub -all -- {([^\s])\s*[\r\n]+\s*[\r\n]+\s*([^\s])} ${html} "\\1\n\n\\2" html
+            return [string trim ${html}]
+        }
         attrnodes  { return [lindex $value 1] }
     }
 }

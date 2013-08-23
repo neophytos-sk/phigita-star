@@ -160,7 +160,7 @@ proc print_round_stats {round_statsVar} {
 
 }
 
-proc update_round_stats {round_timestamp feed_name statsVar round_statsVar} {
+proc update_round_stats {feed_name statsVar round_statsVar} {
     upvar $statsVar stats
     upvar $round_statsVar round_stats
 
@@ -286,7 +286,7 @@ proc ::feed_reader::sync_feeds {{news_sources ""} {debug_p "0"}} {
 
                 update_crawler_stats ${timestamp} ${feed_name} stats
 
-                update_round_stats ${timestamp} ${feed_name} stats round_stats
+                update_round_stats ${feed_name} stats round_stats
 
                 unset feed
 
@@ -313,7 +313,7 @@ proc ::feed_reader::sync_feeds {{news_sources ""} {debug_p "0"}} {
 
             update_crawler_stats ${timestamp} ${feed_name} stats
 
-            update_round_stats ${timestamp} ${feed_name} stats round_stats
+            update_round_stats ${feed_name} stats round_stats
 
             unset feed
             unset stats
@@ -323,6 +323,12 @@ proc ::feed_reader::sync_feeds {{news_sources ""} {debug_p "0"}} {
         progress_tick [incr cur]
 
     }
+
+    set round_dir [get_crawler_dir]/round
+    if { ![file isdirectory ${round_dir}] } {
+        file mkdir ${round_dir}
+    }
+    ::util::writefile ${round_dir}/{round}
 
     print_round_stats round_stats
 

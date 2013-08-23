@@ -6,5 +6,5 @@ xpath_article_image {
     {//div[@class="main-object"]/img/@src}
 }
 xpath_article_date {returndate(substring-after(//div[@class="inside"]/p[@class="date"],":"),"%d/%m/%Y - %H:%M")}
-xpath_article_tags {values(//div[@class="tags"]/a[@rel="nofollow"]/@href)}
+xpath_article_tags {values(//div[@class="tags"]/a[@rel="nofollow"]/text())}
 

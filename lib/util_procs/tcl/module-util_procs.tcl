@@ -53,7 +53,7 @@ proc ::util::domain_from_host {host} {
 	return ${domain}${tld}
     }
 
-    puts "could not match regexp to host=${host}"
+    #puts "could not match regexp to host=${host}"
 
     return ${host}
 }
