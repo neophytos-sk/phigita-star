@@ -160,20 +160,24 @@ proc ::feed_reader::to_pretty_xpath {doc node} {
 
     set pn [${node} parentNode]
     set candidate_xpath ""
-    append candidate_xpath "//[${pn} tagName]"
     if { [set id [${pn} @id ""]] ne {} } {
 
+	set candidate_xpath "//[${pn} tagName]"
 	append candidate_xpath "\[@id=\"${id}\"\]"
 
     } elseif { [set cls [${pn} @class ""]] ne {} } {
 
+	set candidate_xpath "//[${pn} tagName]"
 	append candidate_xpath "\[@class=\"${cls}\"\]"
 
     } else {
 
-	append candidate_xpath "//[$pn tagName]"
+	set candidate_xpath "//[$pn tagName]"
 	set xpath_list [list]
 	foreach att [${pn} attributes] {
+	    if { ${att} in {href src alt title} } {
+		continue
+	    }
 	    if { [set attvalue [${pn} getAttribute ${att} ""]] ne {} } {
 		lappend xpath_list "@${att}=\"${attvalue}\""
 	    }
@@ -198,6 +202,9 @@ proc ::feed_reader::to_pretty_xpath {doc node} {
 
 	set xpath_list [list]
 	foreach att [${node} attributes] {
+	    if { ${att} in {href src alt title} } {
+		continue
+	    }
 	    if { [set attvalue [${node} getAttribute ${att} ""]] ne {} } {
 		lappend xpath_list "@${att}=\"${attvalue}\""
 	    }
@@ -367,7 +374,7 @@ proc ::feed_reader::generate_xpath_article_image {doc} {
 	# choose the one with the most unsimilar src
 	#
 
-	set imgnodes [${doc} selectNodes {//div/img[contains(@src,"jpg")]}]
+	set imgnodes [${doc} selectNodes {//div/img[contains(@src,"jpg")] | //div/a/img[contains(@src,"jpg")]}]
 	set min_score "99999"
 	set min_imgnode ""
 	foreach imgnode1 ${imgnodes} {
@@ -389,11 +396,6 @@ proc ::feed_reader::generate_xpath_article_image {doc} {
 
 	}
 	if { ${min_imgnode} ne {} } {
-	    foreach att {src alt title} {
-		if { [${min_imgnode} hasAttribute ${att}] } {
-		    ${min_imgnode} removeAttribute ${att}
-		}
-	    }
 	    set xpath_result [to_pretty_xpath ${doc} ${min_imgnode}]
 	}
     }

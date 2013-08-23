@@ -1207,6 +1207,7 @@ proc ::feed_reader::test_feed {news_source {limit "3"} {fetch_item_p "1"}} {
 	}
 
 	foreach link $result(links) title_in_feed $result(titles) {
+	    set link http://www.protothema.gr/greece/article/304155/sugrousi-leoforeiou-ih-stin-ethniki-odo-patron-korinthou/
 	    puts ""
 	    puts ${title_in_feed}
 	    puts ${link}
