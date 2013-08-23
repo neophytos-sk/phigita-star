@@ -78,7 +78,7 @@ js -deps {
 	    for(var i=0;i<imgArr.length;i++) 
 	    {
 	     var imgEl   = document.createElement('img');
-	     imgEl.src   ='http://img.phigita.net/'+imgArr[i]['s'];
+	     imgEl.src   ='//static.phigita.net/video-img/'+imgArr[i]['s'];
 	     imgEl.width =imgArr[i]['w'];
 	     imgEl.height=imgArr[i]['h'];
 	     var divEl   = document.createElement('div');

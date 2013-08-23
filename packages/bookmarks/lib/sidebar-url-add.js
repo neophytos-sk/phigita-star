@@ -68,7 +68,7 @@ BM.reqSuccess = function(o) {
 	attachments.push({"type":mediaType,"url":mediaUrl,"hash":imgSha1,"width":imgWidth,"height":imgHeight});
 	var divEl = $('attachments');
 	var imgEl = document.createElement('img');
-	imgEl.src = 'http://img.phigita.net/'+imgSha1;
+	imgEl.src = '//static.phigita.net/video-img/'+imgSha1;
 	imgEl.width = imgWidth;
 	imgEl.height= imgHeight;
 	var imgDivEl = document.createElement('div');
