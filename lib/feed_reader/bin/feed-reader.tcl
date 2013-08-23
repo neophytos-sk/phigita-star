@@ -18,8 +18,8 @@ proc print_usage_info {} {
 			   "search" "keyword ?...?" \
 			   "show" "urlsha1 ?...?" \
 			   "show-url" "article_url" \
-			   "show-content" "contentsha1" \
-			   "uses-content" "contentsha1" \
+			   "show-content" "contentsha1 ?...?" \
+			   "uses-content" "contentsha1 ?...?" \
 			   "diff-content" "contentsha1_old contentsha1_new" \
 			   "log" "?limit? ?offset?" \
 			   "list" "news_source ?limit? ?offset?" \
@@ -107,10 +107,10 @@ if { ${argc} < 1 } {
 	::feed_reader::show_item_from_url ${article_url}
 
 
-    } elseif { ${cmd} eq {show-content} && ${argc} == 2 } {
+    } elseif { ${cmd} eq {show-content} && ${argc} >= 2 } {
 
-	set contentsha1 [lindex ${argv} 1]
-	::feed_reader::show_content ${contentsha1}
+	set contentsha1_list [lrange ${argv} 1 end]
+	::feed_reader::show_content ${contentsha1_list}
 
     } elseif { ${cmd} eq {diff-content} && ${argc} == 3 } {
 
@@ -118,10 +118,10 @@ if { ${argc} < 1 } {
 	set contentsha1_new [lindex ${argv} 2]
 	::feed_reader::diff_content ${contentsha1_old} ${contentsha1_new}
 
-    } elseif { ${cmd} eq {uses-content} && ${argc} == 2 } {
+    } elseif { ${cmd} eq {uses-content} && ${argc} >= 2 } {
 
-	set contentsha1 [lindex ${argv} 1]
-	::feed_reader::uses_content ${contentsha1}	
+	set contentsha1_list [lrange ${argv} 1 end]
+	::feed_reader::uses_content ${contentsha1_list}	
 
     } elseif { ${cmd} eq {log} && ${argc} >= 1 } {
 

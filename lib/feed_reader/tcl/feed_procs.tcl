@@ -850,7 +850,7 @@ proc ::util::tokenize_date {text} {
     return ${tokens}
 }
 
-proc ::feed_reader::search {keywords {limit "10"} {offset "0"}} {
+proc ::feed_reader::search {keywords {limit "40"} {offset "0"}} {
 
     get_contentfilelist sortedlist
 
@@ -961,10 +961,13 @@ proc ::feed_reader::load_item {itemVar urlsha1} {
 
 }
 
-proc ::feed_reader::show_content {contentsha1} {
+proc ::feed_reader::show_content {contentsha1_list} {
 
-    load_content item ${contentsha1}
-    print_item item
+    foreach contentsha1 ${contentsha1_list} {
+        load_content item ${contentsha1}
+        print_item item
+        unset item
+    }
 }
 
 proc ::feed_reader::diff_content {contentsha1_old contentsha1_new} {
@@ -978,15 +981,17 @@ proc ::feed_reader::diff_content {contentsha1_old contentsha1_new} {
 }
 
 
-proc ::feed_reader::uses_content {contentsha1} {
+proc ::feed_reader::uses_content {contentsha1_list} {
     
     # what objects use given content
     # contentsha1_to_urlsha1
-    set filename [get_index_dir]/${contentsha1}
-    set urlsha1_list [::util::readfile ${filename}]
-    foreach urlsha1 ${urlsha1_list} {
-	load_item item ${urlsha1}
-	print_item item
+    foreach contentsha1 ${contentsha1_list} {
+        set filename [get_index_dir]/${contentsha1}
+        set urlsha1_list [::util::readfile ${filename}]
+        foreach urlsha1 ${urlsha1_list} {
+            load_item item ${urlsha1}
+            print_item item
+        }
     }
 
 }
