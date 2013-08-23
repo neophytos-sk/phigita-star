@@ -225,7 +225,7 @@ proc ::feed_reader::to_pretty_xpath {doc node} {
 
 
 
-proc ::feed_reader::generate_xpath_helper {doc xpath_candidate xpathlist score_fn} {
+proc ::feed_reader::generate_xpath_helper {doc xpath_candidate xpathlist score_fn {xpathfunc ""}} {
 
     set quoted_score_fn [::util::doublequote ${score_fn}]
 
@@ -246,7 +246,11 @@ proc ::feed_reader::generate_xpath_helper {doc xpath_candidate xpathlist score_f
 	}
 
     }
-		      
+    
+    if { ${xpath_result} ne {} && ${xpathfunc} ne {} } {
+	set xpath_result "${xpathfunc}(${xpath_result})"
+    }
+
     return ${xpath_result}
 
 }
@@ -265,7 +269,7 @@ proc ::feed_reader::generate_xpath_article_title {doc} {
 
     set score_fn "tokenSimilarity"
 
-    return [generate_xpath_helper ${doc} ${xpath_candidate} ${xpathlist} ${score_fn}]
+    return [generate_xpath_helper ${doc} ${xpath_candidate} ${xpathlist} ${score_fn} "returnstring"]
 }
 
 
@@ -281,11 +285,19 @@ proc ::feed_reader::generate_xpath_article_body {doc} {
 
     set score_fn "subseqSimilarity"
 
-    return [generate_xpath_helper ${doc} ${xpath_candidate} ${xpathlist} ${score_fn}]
+    set xpath_result [generate_xpath_helper ${doc} ${xpath_candidate} ${xpathlist} ${score_fn} "returntext"]
+
+    if { ${xpath_result} eq {} } {
+	# use other techniques to get the xpath
+	# e.g. body text extraction
+    }
+
+    return ${xpath_result}
 
 }
 
 proc stringDistance {a b} {
+
     set n [string length $a]
     set m [string length $b]
     for {set i 0} {$i<=$n} {incr i} {set c($i,0) $i}
@@ -304,20 +316,13 @@ proc stringDistance {a b} {
     set c($n,$m)
 }
 
- # some little helpers:
- if {[catch {
-    # DKF - these things (or rather improved versions) are provided by the 8.5 core
-    package require Tcl 8.5
-    namespace path {tcl::mathfunc tcl::mathop}
- }]} then {
-    proc min args {lindex [lsort -real $args] 0}
-    proc max args {lindex [lsort -real $args] end}
-    proc - {p q} {expr {$p-$q}}
- }
+proc min args {lindex [lsort -real $args] 0}
+proc max args {lindex [lsort -real $args] end}
+
 
  proc stringSimilarity {a b} {
-        set totalLength [string length $a$b]
-        max [expr {double($totalLength-2*[stringDistance $a $b])/$totalLength}] 0.0
+     set totalLength [string length "${a}${b}"]
+     max [expr {double(${totalLength} - 2 * [stringDistance ${a} ${b}]) / ${totalLength}}] 0.0
  }
 
 proc ::feed_reader::generate_xpath_article_image {doc} {
@@ -329,7 +334,7 @@ proc ::feed_reader::generate_xpath_article_image {doc} {
 	{string(//meta[@name="twitter:image"]/@content)}
     }
 
-    set xpath_article_image ""
+    set xpath_result ""
     foreach xpath ${xpathlist} {
 
 	set imgsrc1 [${doc} selectNodes ${xpath}]
@@ -348,14 +353,55 @@ proc ::feed_reader::generate_xpath_article_image {doc} {
 	    if { ${similarity} > 0.85 } {
 		${imgnode} removeAttribute alt
 		${imgnode} removeAttribute src
-		set xpath_article_image [to_pretty_xpath ${doc} ${imgnode}]
+		set xpath_result [to_pretty_xpath ${doc} ${imgnode}]
 		break
 	    }
 	}
 
     }
 
-    return ${xpath_article_image}
+
+    if { ${xpath_result} eq {} } {
+
+	# use other techniques to get the xpath
+	# choose the one with the most unsimilar src
+	#
+
+	set imgnodes [${doc} selectNodes {//div/img[contains(@src,"jpg")]}]
+	set min_score "99999"
+	set min_imgnode ""
+	foreach imgnode1 ${imgnodes} {
+
+	    set imgsrc1 [$imgnode1 @src]
+	    set score "0.0"
+	    foreach imgnode2 ${imgnodes} {
+		if { ${imgnode1} eq ${imgnode2} } {
+		    continue
+		}
+		set imgsrc2 [$imgnode2 @src]
+		set score [expr { ${score} + [stringSimilarity $imgsrc1 $imgsrc2] }]
+	    }
+
+	    if { ${score} < ${min_score} } {
+		set min_score ${score}
+		set min_imgnode ${imgnode1}
+	    }
+
+	}
+	if { ${min_imgnode} ne {} } {
+	    foreach att {src alt title} {
+		${min_imgnode} removeAttribute ${att}
+	    }
+	    set xpath_result [to_pretty_xpath ${doc} ${min_imgnode}]
+	}
+    }
+
+
+    if { ${xpath_result} ne {} } {
+	set xpath_result [list values(${xpath_result}/@src)]
+    }
+
+    return ${xpath_result}
 
 }
 
