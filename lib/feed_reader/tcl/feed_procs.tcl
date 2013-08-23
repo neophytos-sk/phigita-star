@@ -1286,6 +1286,11 @@ proc ::feed_reader::test_feed {news_source {limit "3"} {fetch_item_p "1"}} {
 	}
 
 	foreach link $result(links) title_in_feed $result(titles) {
+
+	    if { [incr count] == 1 + ${limit} } {
+		break
+	    }
+
 	    puts ""
 	    puts ${title_in_feed}
 	    puts ${link}
@@ -1303,10 +1308,6 @@ proc ::feed_reader::test_feed {news_source {limit "3"} {fetch_item_p "1"}} {
 		    }
 		    puts "* ${name}: $item(${name})"
 		}
-	    }
-
-	    if { [incr count] == ${limit} } {
-		break
 	    }
 
 	}
