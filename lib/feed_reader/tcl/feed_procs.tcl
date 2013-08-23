@@ -840,7 +840,7 @@ proc ::util::tokenize_date {text} {
 			  -format "%a %A %b %B %p %P" \
 			  -locale ${locale}]]
 
-	    puts "matched_date format=${format} = tokens=${tokens}"
+	    # puts "matched_date format=${format} = tokens=${tokens}"
 			
 	    return ${tokens}
 	}

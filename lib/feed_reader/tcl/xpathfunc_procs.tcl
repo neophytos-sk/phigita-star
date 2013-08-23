@@ -69,20 +69,15 @@ proc tokenSimilarity {tokens_text1 tokens_text2} {
 
 proc subseqSimilarity {tokens_text1 tokens_text2} {
 
-    set len [llength ${tokens_text2}]
-    set tokens_text1 [lrange ${tokens_text1} 0 ${len}]
+    set l2 [llength ${tokens_text2}]
+    set tokens_text1 [lrange ${tokens_text1} 0 ${l2}]
 
     lassign [intersect3 ${tokens_text1} ${tokens_text2}] t1 _common_ t2
-
-    set n1 [llength ${t1}]
-    set n2 [llength ${t2}]
 
     set score [expr { -1 * [llength ${_common_}] }]
 
     return ${score}
 
-    set score [expr { ${n1} + ${n2} }]
-    
 }
 
 
@@ -116,6 +111,15 @@ proc stringSimilarity {a b} {
 }
 
 
+proc ::dom::xpathFunc::currentdate {ctxNode pos nodeListNode nodeList args} {
+
+    if { [llength ${args}] != 0 } {
+	error "currentdate(): wrong # of args (takes not arguments)"
+    }
+ 
+    return [list "string" [clock format [clock seconds] -format "%Y %m %d %H:%M"]]
+}
+
 
 proc ::dom::xpathFunc::similar_to_text {ctxNode pos nodeListNode nodeList args} {
 
@@ -134,21 +138,27 @@ proc ::dom::xpathFunc::similar_to_text {ctxNode pos nodeListNode nodeList args} 
     set tokens_text2 [${tokenizer} ${text2}]
 
     set similarnode ""
-    set min_score 999999
-    foreach node ${nodes} {
-	set text1 [${node} asText]
-	if { ${text1} eq {} } {
-	    continue
+
+    if { ${tokens_text2} ne {} } {
+
+	set min_score 999999
+	foreach node ${nodes} {
+
+	    set text1 [${node} asText]
+
+	    if { ${text1} eq {} } {
+		continue
+	    }
+	    set tokens_text1 [${tokenizer} ${text1}]
+
+	    set score [${score_fn} ${tokens_text1} ${tokens_text2}]
+
+	    if { ${score} <= ${min_score} } {
+		set similarnode ${node}
+		set min_score ${score}
+	    }
+
 	}
-	set tokens_text1 [${tokenizer} ${text1}]
-
-	set score [${score_fn} ${tokens_text1} ${tokens_text2}]
-
-	if { ${score} <= ${min_score} } {
-	    set similarnode ${node}
-	    set min_score ${score}
-	}
-
     }
 
     #puts similarnode=${similarnode}
