@@ -57,11 +57,11 @@ proc ::persistence::create_row_if {keyspace row_key row_dirVar} {
 # example column families and column names:
 #
 # cf=news_item url/3ef3908e7438635a03e2321669b5855dbf4f238f
-# cf=news_item item keywspace:log/row:3ef3908e7438635a03e2321669b5855dbf4f238f
-# cf=content_item keyspace:content/row:cdaa22d5ca05c6111d900ce81f5686c376a50881
+# cf=news_item item keywspace:newsdb log/row:3ef3908e7438635a03e2321669b5855dbf4f238f
+# cf=content_item keyspace:newsdb content/row:cdaa22d5ca05c6111d900ce81f5686c376a50881
 #
-# cf=revision     keyspace:site/row:com.philenews/super:3ef3908e7438635a03e2321669b5855dbf4f238f/column:cdaa22d5ca05c6111d900ce81f5686c376a50881
-# cf=revision     keywspace:site/row:com.philenews.3ef3908e7438635a03e2321669b5855dbf4f238f/cdaa22d5ca05c6111d900ce81f5686c376a50881
+# cf=revision     keyspace:newsdb site/row:com.philenews/super:3ef3908e7438635a03e2321669b5855dbf4f238f/column:cdaa22d5ca05c6111d900ce81f5686c376a50881
+# cf=revision     keywspace:newsdb site/row:com.philenews.3ef3908e7438635a03e2321669b5855dbf4f238f/cdaa22d5ca05c6111d900ce81f5686c376a50881
 #
 # name := keyspace/row_key/column_path
 # column_path := super_column_name/column_name or just column_name

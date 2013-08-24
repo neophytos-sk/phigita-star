@@ -1219,12 +1219,14 @@ proc ::feed_reader::write_item {normalized_link feedVar itemVar resync_p} {
 
     # storage::insert_column
     #     column_family:news_item
-    #     keyspace:log 
+    #     keyspace:newsdb
+    #     row:log
     #     column:${urlsha1} 
     #     payload:${data}
     #
     # operations: top_N (?), range (?), slice (?), insert, get, remove
-    ::util::writefile ${logfilename}  ${data}  
+    # ::util::writefile ${logfilename}  ${data}  
+    ::persistence::insert_column newsdb log ${urlsha1} ${data}
 
     # save data to item-revision dir
 
@@ -1252,6 +1254,7 @@ proc ::feed_reader::write_item {normalized_link feedVar itemVar resync_p} {
     #
     # operations: insert, get, remove, delete
     ::util::writefile ${urlfilename} ${data}
+    #::persistence::insert_column newsdb url/${urlsha1} {} ${data}
 
 
     if { [get_value_if item(date) ""] ne {} } {
