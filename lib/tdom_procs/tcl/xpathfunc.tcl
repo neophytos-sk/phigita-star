@@ -245,6 +245,7 @@ namespace eval ::dom::xpathFunc {
 	     {Xxx nn, Y} {%B %d, %Y} \
 	     {nn.Xxx.Y} {%d.%b.%Y} \
 	     {Xxx, dd Xxx Y} {A, d B Y} \
+         {nn:nn - nn/nn/nn} {%H:%M - %d/%m/%y} \
 	     {nn/nn} {%d/%m} \
 	     {nn:nn} {%H:%M}]
     
@@ -314,24 +315,23 @@ proc ::dom::xpathFunc::returndate {ctxNode pos nodeListNode nodeList args} {
     set result ""
     if { ${ts} ne {} } {
 
-	if { ${input_format} eq {auto} } {
-	    # date recognizer using date/string shapes, e.g. dd-dd-dddd OR d-m-Y
+        if { ${input_format} eq {auto} } {
+            # date recognizer using date/string shapes, e.g. dd-dd-dddd OR d-m-Y
 
-	    #regsub -all -- "\xa0" ${ts} {} ts
-	    regsub -all -- {[^[:alnum:][:punct:] ]} ${ts} {} ts
+            regsub -all -- {[^[:alnum:][:punct:] ]} ${ts} {} ts
 
-	    variable date_format
+            variable date_format
 
-	    set shape [returndate_helper__date_shape ${ts}]
+            set shape [returndate_helper__date_shape ${ts}]
 
-	    if { [info exists date_format(${shape})] } {
-		set input_format $date_format(${shape})
-	    } else {
-		return [list string ""]
-	    }
+            if { [info exists date_format(${shape})] } {
+            set input_format $date_format(${shape})
+            } else {
+            return [list string ""]
+            }
 
 
-	}
+        }
 
 
 	if { [catch {set timeval [clock scan ${ts} -format ${input_format} -locale ${locale}]} errmsg] } {

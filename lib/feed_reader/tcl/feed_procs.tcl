@@ -1027,7 +1027,7 @@ proc ::feed_reader::print_item {itemVar} {
 
 proc ::feed_reader::print_log_header {} {
 
-    puts [format "%10s %13s %40s %40s %24s %3s %3s %s" langclass date contentsha1 urlsha1 domain "" "" title]
+    puts [format "%3s %13s %40s %40s %24s %3s %3s %s" lang date contentsha1 urlsha1 domain "" "" title]
 
 }
 
@@ -1045,8 +1045,9 @@ proc ::feed_reader::print_log_entry {itemVar} {
 	set is_revision_string "upd"
     }
 
-    puts [format "%10s %13s %40s %40s %24s %3s %3s %s" \
-	      [get_value_if item(langclass) "el.utf8"] \
+    set lang [lindex [split [get_value_if item(langclass) "el.utf8"] {.}] 0]
+    puts [format "%3s %13s %40s %40s %24s %3s %3s %s" \
+	      ${lang} \
 	      $item(date) $item(contentsha1) \
 	      $item(urlsha1) \
 	      ${domain} \
@@ -1401,7 +1402,7 @@ proc ::feed_reader::test_feed {news_source {limit "3"} {fetch_item_p "1"}} {
     set feed_files [get_feed_files ${news_source}]
     foreach feed_file ${feed_files} {
 
-        array set feed [::util::readfile ${feed_file}]v
+        array set feed [::util::readfile ${feed_file}]
 
         set errorcode [fetch_feed result feed stoptitles]
         if { ${errorcode} } {
@@ -1428,12 +1429,7 @@ proc ::feed_reader::test_feed {news_source {limit "3"} {fetch_item_p "1"}} {
                         puts "fetch_item failed errorcode=$errorcode link=$link"
                         continue
                     }
-                    foreach name [array names item] {
-                        if { $item(${name}) eq {} } {
-                            continue
-                        }
-                        puts "* ${name}: [string range $item(${name}) 0 300]"
-                    }
+                    print_item item 
                 }
 
         }
