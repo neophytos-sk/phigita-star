@@ -6,9 +6,10 @@ htmltidy_feed_p 1
 htmltidy_article_p 1
 xpath_article_title {returnstring(//div[@class="arttop"]/h1)}
 xpath_article_body {returntext(//div[@id="arttext"])}
-xpath_article_date {returndate(substring-after(//div[@class="date"],"Online"),"%H:%M %d/%m")}
+xpath_article_date {returndate(values(split-string(//div[@class="date"]," ")[position() != 1]),"%H:%M %d/%m")}
 xpath_article_image {
-    {values(//div[@class="PHOTOmain"]/descendant::img/@src)}
+    {values(//div[@class="PHOTOmain"]//img/@src)}
+    {values(//div[@id="arttext"]//img/@src)}
 }
 xpath_article_cleanup {
     {//div[@class="arttop"]}

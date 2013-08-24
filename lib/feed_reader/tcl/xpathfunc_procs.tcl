@@ -191,9 +191,10 @@ proc ::dom::xpathFunc::split-string {ctxNode pos nodeListNode nodeList args} {
 
 
     lassign ${args} \
-        arg1Typ str \
+        arg1Typ arg1Value \
         arg2Typ splitChars
 
+    set str [::dom::xpathFuncHelper::coerce2string $arg1Typ $arg1Value]
 
     set doc [$ctxNode ownerDocument]
     set nodes [list]

@@ -1453,10 +1453,9 @@ proc ::feed_reader::test_article {news_source feed_name link} {
     set title_in_feed ""
     set retcode [fetch_item ${link} ${title_in_feed} feed item]
 
-    puts retcode=$retcode
-
     print_item item
-
+    
+    puts retcode=$retcode
 }
 
 
