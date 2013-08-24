@@ -1138,17 +1138,17 @@ proc ::feed_reader::write_item {normalized_link feedVar itemVar resync_p} {
     set crawler_dir [get_crawler_dir]
 
     foreach varname {
-	content_dir 
-	index_dir 
-	item_dir 
-	url_dir 
-	log_dir 
-	crawler_dir
+        content_dir 
+        index_dir 
+        item_dir 
+        url_dir 
+        log_dir 
+        crawler_dir
     } {
-	set dirname [set ${varname}]
-	if { ![file isdirectory ${dirname}] } {
-	    file mkdir ${dirname}
-	}
+        set dirname [set ${varname}]
+        if { ![file isdirectory ${dirname}] } {
+            file mkdir ${dirname}
+        }
     }
 
     set timestamp [clock seconds] 
@@ -1161,20 +1161,20 @@ proc ::feed_reader::write_item {normalized_link feedVar itemVar resync_p} {
 
     set revisionfilename ${item_dir}/${contentsha1}
     if { [file exists ${revisionfilename}] } {
-	# revision content is the same as a previous one
-	# no need to overwrite the revisionfilename,
-	# nor the contentfilename and indexfilename
-	#
-	# note that if were keeping track of metadata changes
-	# then it would make sense to overwrite the logfilename
-	# and the urlfilename
-	return 0
+        # revision content is the same as a previous one
+        # no need to overwrite the revisionfilename,
+        # nor the contentfilename and indexfilename
+        #
+        # note that if were keeping track of metadata changes
+        # then it would make sense to overwrite the logfilename
+        # and the urlfilename
+        return 0
     }
 
     if { ${resync_p} } {
-	set item(is_revision_p) 1
-	set item(first_sync) [get_first_sync_timestamp normalized_link]
-	set item(last_sync) ${timestamp}
+        set item(is_revision_p) 1
+        set item(first_sync) [get_first_sync_timestamp normalized_link]
+        set item(last_sync) ${timestamp}
     }
 
     set contentfilename ${content_dir}/${contentsha1}
@@ -1186,13 +1186,13 @@ proc ::feed_reader::write_item {normalized_link feedVar itemVar resync_p} {
 
     if { [file exists ${contentfilename}] } {
 
-	# we have seen this item before from a different url
-	set item(is_copy_p) 1
+        # we have seen this item before from a different url
+        set item(is_copy_p) 1
 
     } else {
 
-	# save article body to content file
-	::util::writefile ${contentfilename} ${content}
+        # save article body to content file
+        ::util::writefile ${contentfilename} ${content}
 
     }
 
@@ -1250,23 +1250,23 @@ proc ::feed_reader::write_item {normalized_link feedVar itemVar resync_p} {
 
     if { [get_value_if item(date) ""] ne {} } {
 
-	lassign [split $item(date) {T}] date time
+        lassign [split $item(date) {T}] date time
 
-	if { ${time} ne {0000} } {
-	    # up to a day difference is fine to account for servers
-	    # with different timezone
-	    set timeval [clock scan $item(date) -format "%Y%m%dT%H%M"]
-	    
-	    if { ${timestamp} - ${timeval} > 3600 } {
-		# puts "item(date)=$item(date) is older than a day - updating files' mtime..."
-		file mtime ${item_dir} ${timeval}
-		file mtime ${contentfilename} ${timeval}
-		file mtime ${indexfilename} ${timeval}
-		file mtime ${logfilename} ${timeval}
-		file mtime ${revisionfilename} ${timeval}
-		file mtime ${urlfilename} ${timeval}
-	    }
-	}
+        if { ${time} ne {0000} } {
+            # up to a day difference is fine to account for servers
+            # with different timezone
+            set timeval [clock scan $item(date) -format "%Y%m%dT%H%M"]
+            
+            if { ${timestamp} - ${timeval} > 900 } {
+                # puts "item(date)=$item(date) is older than 15 mins - updating files' mtime..."
+                file mtime ${item_dir} ${timeval}
+                file mtime ${contentfilename} ${timeval}
+                file mtime ${indexfilename} ${timeval}
+                file mtime ${logfilename} ${timeval}
+                file mtime ${revisionfilename} ${timeval}
+                file mtime ${urlfilename} ${timeval}
+            }
+        }
     }
 
     return 1
