@@ -186,57 +186,57 @@ proc ::feed_reader::to_pretty_xpath {doc node} {
     set candidate_xpath ""
     if { [set id [${pn} @id ""]] ne {} } {
 
-	set candidate_xpath "//[${pn} tagName]"
-	append candidate_xpath "\[@id=\"${id}\"\]"
+        set candidate_xpath "//[${pn} tagName]"
+        append candidate_xpath "\[@id=\"${id}\"\]"
 
     } elseif { [set cls [${pn} @class ""]] ne {} } {
 
-	set candidate_xpath "//[${pn} tagName]"
-	append candidate_xpath "\[@class=\"${cls}\"\]"
+        set candidate_xpath "//[${pn} tagName]"
+        append candidate_xpath "\[@class=\"${cls}\"\]"
 
     } else {
 
-	set candidate_xpath "//[$pn tagName]"
-	set xpath_list [list]
-	foreach att [${pn} attributes] {
-	    if { ${att} in ${ignore_attributes} } {
-		continue
-	    }
-	    if { [set attvalue [${pn} getAttribute ${att} ""]] ne {} } {
-		lappend xpath_list "@${att}=\"${attvalue}\""
-	    }
-	}
-	if { ${xpath_list} ne {} } {
-	    append candidate_xpath "\[[join ${xpath_list} { and }]\]"
-	}
+        set candidate_xpath "//[$pn tagName]"
+        set xpath_list [list]
+        foreach att [${pn} attributes] {
+            if { ${att} in ${ignore_attributes} } {
+            continue
+            }
+            if { [set attvalue [${pn} getAttribute ${att} ""]] ne {} } {
+            lappend xpath_list "@${att}=\"${attvalue}\""
+            }
+        }
+        if { ${xpath_list} ne {} } {
+            append candidate_xpath "\[[join ${xpath_list} { and }]\]"
+        }
 
     }
 
     if { [set id [${node} @id ""]] ne {} } {
 
-	set candidate_xpath "//[${node} tagName]\[@id=\"${id}\"\]"
+        set candidate_xpath "//[${node} tagName]\[@id=\"${id}\"\]"
 
     } elseif { [set cls [${node} @class ""]] ne {} } {
 
-	append candidate_xpath "/[${node} tagName]\[@class=\"${cls}\"\]"
+        append candidate_xpath "/[${node} tagName]\[@class=\"${cls}\"\]"
 
     } else {
 
-	append candidate_xpath "/[${node} tagName]"
+        append candidate_xpath "/[${node} tagName]"
 
-	set xpath_list [list]
-	foreach att [${node} attributes] {
-	    if { ${att} in ${ignore_attributes} } {
-		continue
-	    }
-	    if { [set attvalue [${node} getAttribute ${att} ""]] ne {} } {
-		lappend xpath_list "@${att}=\"${attvalue}\""
-	    }
-	}
+        set xpath_list [list]
+        foreach att [${node} attributes] {
+            if { ${att} in ${ignore_attributes} } {
+                continue
+            }
+            if { [set attvalue [${node} getAttribute ${att} ""]] ne {} } {
+                lappend xpath_list "@${att}=\"${attvalue}\""
+            }
+        }
 
-	if { ${xpath_list} ne {} } {
-	    append candidate_xpath "\[[join ${xpath_list} { and }]\]"
-	}
+        if { ${xpath_list} ne {} } {
+            append candidate_xpath "\[[join ${xpath_list} { and }]\]"
+        }
 
     }
 

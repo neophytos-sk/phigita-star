@@ -3,18 +3,18 @@ proc ::util::pretty_interval {secs} {
     set result [list]
 
     foreach {interval suffix} {
-	86400 d
-	3600  h
-	60    m
-	1     s
+        86400 d
+        3600  h
+        60    m
+        1     s
     } {
 
-	if { ${secs} >= ${interval} } {
-	    set howmany [expr { ${secs} / ${interval} }]
-	    lappend result "${howmany}${suffix}"
-	    set secs [expr { ${secs} % ${interval} }]
+        if { ${secs} >= ${interval} } {
+            set howmany [expr { ${secs} / ${interval} }]
+            lappend result "${howmany}${suffix}"
+            set secs [expr { ${secs} % ${interval} }]
 
-	}
+        }
 
     }
 
@@ -27,7 +27,7 @@ proc ::feed_reader::stats {{news_sources ""}} {
     set feeds_dir [get_package_dir]/feed
 
     if { ${news_sources} eq {} } {
-	set news_sources [glob -nocomplain -tails -directory ${feeds_dir} *]
+        set news_sources [glob -nocomplain -tails -directory ${feeds_dir} *]
     }
 
     puts [format "%40s %10s %10s %15s %15s" feed_name "Pr\[write\]" "#times/day" "interval" "#write / #fetch"]
@@ -36,30 +36,30 @@ proc ::feed_reader::stats {{news_sources ""}} {
     set crawler_dir [get_crawler_dir]
     foreach news_source $news_sources {
 
-	set feed_files [get_feed_files ${news_source}]
-	foreach feed_file ${feed_files} {
+        set feed_files [get_feed_files ${news_source}]
+        foreach feed_file ${feed_files} {
 
-	    set feed_name ${news_source}/[file tail ${feed_file}]
+            set feed_name ${news_source}/[file tail ${feed_file}]
 
-	    set crawler_feed_dir ${crawler_dir}/feed/${feed_name}
+            set crawler_feed_dir ${crawler_dir}/feed/${feed_name}
 
-	    set stats_file ${crawler_feed_dir}/_stats
+            set stats_file ${crawler_feed_dir}/_stats
 
-	    array set count [::util::readfile ${stats_file}]
+            array set count [::util::readfile ${stats_file}]
 
-	    set reference_interval 86400
-	    set max_times 96
-	    lassign [get_sync_info count ${reference_interval} ${max_times}] pr num_times interval 
+            set reference_interval 86400
+            set max_times 96
+            lassign [get_sync_info count ${reference_interval} ${max_times}] pr num_times interval 
 
 
-	    # TODO: pretty interval
-	    #set interval_in_mins [expr { ${interval} / 60 }]
-	    set pretty_interval [::util::pretty_interval ${interval}]
-	    puts [format "%40s %10.1f %10.1f %15s %15s" ${feed_name} ${pr} ${num_times} ${pretty_interval} "$count(FETCH_AND_WRITE_FEED) / $count(FETCH_FEED)"]
+            # TODO: pretty interval
+            #set interval_in_mins [expr { ${interval} / 60 }]
+            set pretty_interval [::util::pretty_interval ${interval}]
+            puts [format "%40s %10.1f %10.1f %15s %15s" ${feed_name} ${pr} ${num_times} ${pretty_interval} "$count(FETCH_AND_WRITE_FEED) / $count(FETCH_FEED)"]
 
-	    unset count
-	    
-	}
+            unset count
+            
+        }
 
     }
 }
@@ -99,15 +99,15 @@ proc ::feed_reader::auto_resync_p {feedVar link} {
 
     if { ${now} - ${first_sync} < ${maxage} } {
 
-	set last_sync [get_last_sync_timestamp link]
+        set last_sync [get_last_sync_timestamp link]
 
-	# check for revisions every hour (default) or given interval
+        # check for revisions every hour (default) or given interval
 
-	set interval [get_value_if feed(check_for_revisions_interval) "3600"]
+        set interval [get_value_if feed(check_for_revisions_interval) "3600"]
 
-	if { ${now} - ${last_sync} > ${interval} } {
-	    return 1
-	}
+        if { ${now} - ${last_sync} > ${interval} } {
+            return 1
+        }
 
     }
 
@@ -122,26 +122,26 @@ proc ::feed_reader::print_sync_stats {feed_name statsVar} {
 
     set do_not_show {FETCH_FEED NO_WRITE_FEED FETCH_AND_WRITE_FEED}
     if { $stats(ERROR_FETCH_FEED) } {
-	set names {ERROR_FETCH_FEED}
+        set names {ERROR_FETCH_FEED}
     } elseif { $stats(NO_WRITE_FEED) } {
-	set names {NO_FETCH NO_WRITE ERROR_FETCH}
+        set names {NO_FETCH NO_WRITE ERROR_FETCH}
     } else {
-	set do_not_show [concat ${do_not_show} {ERROR_FETCH_FEED NO_WRITE_FEED}]
-	set names [array names stats]
+        set do_not_show [concat ${do_not_show} {ERROR_FETCH_FEED NO_WRITE_FEED}]
+        set names [array names stats]
     }
 
     if { !$stats(ERROR_FETCH) } {
-	lappend do_not_show {ERROR_FETCH}
+        lappend do_not_show {ERROR_FETCH}
     }
 
     if { !$stats(NO_WRITE) } {
-	lappend do_not_show {NO_WRITE}
+        lappend do_not_show {NO_WRITE}
     }
 
     lassign [intersect3 ${names} ${do_not_show}] names _intersection_ _list2_
 
     foreach name ${names} {
-	puts [format "\t %20s %s" ${name} $stats(${name})]
+        puts [format "\t %20s %s" ${name} $stats(${name})]
     }
     puts "\n\n"
 }
@@ -353,12 +353,12 @@ proc get_sync_info {countVar {reference_interval "86400"} {max_times "96"}} {
 
     if { ${pr} < ${epsilon} } {
 
-	set pr 0
-	set num_times 1.0
+        set pr 0
+        set num_times 1.0
 
     } else {
 
-	set num_times [expr { ${pr} * ${max_times} }]
+        set num_times [expr { ${pr} * ${max_times} }]
 
     }
 
@@ -376,31 +376,31 @@ proc ::feed_reader::fetch_feed_p {feed_name timestamp {coeff "0.3"}} {
 
     # 	{mdH-%m%d%H} would take too long to see results, so remove from list for now
     foreach format {
-	{H-%H}
-	{uH-%u%H}
+        {H-%H}
+        {uH-%u%H}
     } {
 
-	set pretty_timeval [clock format ${timestamp} -format ${format}]
-	set crawler_feed_sync_dir ${crawler_feed_dir}/${pretty_timeval}/
-	
-	if { ![file isdirectory ${crawler_feed_sync_dir}] } {
-	    return 1
-	}
-	
-	set filename ${crawler_feed_dir}/${pretty_timeval}/_stats
+        set pretty_timeval [clock format ${timestamp} -format ${format}]
+        set crawler_feed_sync_dir ${crawler_feed_dir}/${pretty_timeval}/
+        
+        if { ![file isdirectory ${crawler_feed_sync_dir}] } {
+            return 1
+        }
+        
+        set filename ${crawler_feed_dir}/${pretty_timeval}/_stats
 
-	array set count [::util::readfile ${filename}]
+        array set count [::util::readfile ${filename}]
 
-	set reference_interval 3600
-	set max_times 4
-	lassign [get_sync_info count ${reference_interval} ${max_times}] pr num_times interval 
+        set reference_interval 3600
+        set max_times 4
+        lassign [get_sync_info count ${reference_interval} ${max_times}] pr num_times interval 
 
-	set last_sync [file mtime ${filename}]
-	if { ${pr} > 0 && ${last_sync} + ${interval} < ${timestamp} } {
-	    return 1
-	}
+        set last_sync [file mtime ${filename}]
+        if { ${pr} > 0 && ${last_sync} + ${interval} < ${timestamp} } {
+            return 1
+        }
 
-	unset count
+        unset count
     }
 
     # we don't have to check existence of this file
@@ -420,7 +420,7 @@ proc ::feed_reader::fetch_feed_p {feed_name timestamp {coeff "0.3"}} {
 
     # if last update more than the computed general interval then fetch
     if { ${last_sync} + ${interval} < ${timestamp} } {
-	return 1
+        return 1
     }
 
     return 0
@@ -435,9 +435,9 @@ proc ::feed_reader::update_crawler_stats {timestamp feed_name statsVar} {
     set crawler_feed_dir "${crawler_dir}/feed/${feed_name}/"
 
     foreach format {
-	{H-%H}
-	{uH-%u%H}
-	{mdH-%m%d%H}
+        {H-%H}
+        {uH-%u%H}
+        {mdH-%m%d%H}
     } {
 
 	set pretty_timeval [clock format ${timestamp} -format ${format}]
@@ -447,8 +447,8 @@ proc ::feed_reader::update_crawler_stats {timestamp feed_name statsVar} {
 	    file mkdir ${crawler_feed_sync_dir}
 	}
 	
-	set crawler_feed_sync_stats ${crawler_feed_dir}/${pretty_timeval}/_stats
-	incr_array_in_file ${crawler_feed_sync_stats} stats
+        set crawler_feed_sync_stats ${crawler_feed_dir}/${pretty_timeval}/_stats
+        incr_array_in_file ${crawler_feed_sync_stats} stats
 
     }
 
