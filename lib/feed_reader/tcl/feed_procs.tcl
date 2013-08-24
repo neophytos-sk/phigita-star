@@ -1219,7 +1219,7 @@ proc ::feed_reader::write_item {normalized_link feedVar itemVar resync_p} {
 
     # storage::insert_column
     #     column_family:news_item
-    #     row:log 
+    #     keyspace:log 
     #     column:${urlsha1} 
     #     payload:${data}
     #
@@ -1236,7 +1236,12 @@ proc ::feed_reader::write_item {normalized_link feedVar itemVar resync_p} {
     #     payload:${data}
     #
     # operations: slice, insert, get, remove
-    ::util::writefile ${revisionfilename} ${data}
+    #
+    # ::util::writefile ${revisionfilename} ${data}
+
+    set reversedomain [reversedomain [::util::domain_from_url ${normalized_link}]]
+
+    ::persistence::insert_column newsdb site/${reversedomain} ${urlsha1}/${contentsha1} ${data}
 
     # save data to url dir
 

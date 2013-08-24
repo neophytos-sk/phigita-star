@@ -1,6 +1,56 @@
-namespace eval ::feed_reader::data {
+namespace eval ::persistence {
 
-    set base_dir /web/data/newsdb
+    variable base_dir 
+
+    set base_dir "/web/data/"
+
+}
+
+proc ::persistence::get_keyspace_dir {keyspace} {
+
+    variable base_dir
+    set keyspace_dir ${base_dir}/${keyspace}
+    return ${keyspace_dir}
+
+}
+
+proc ::persistence::keyspace_exists_p {keyspace} {
+
+    return [file isdirectory [get_keyspace_dir ${keyspace}]]
+
+}
+
+proc ::persistence::create_keyspace_if {keyspace {replication_factor "3"}} {
+
+    if { ![keyspace_exists_p ${keyspace}] } {
+	file mkdir [get_keyspace_dir ${keyspace}]
+	return 1
+    }
+
+    return 0
+
+}
+
+proc ::persistence::create_row_if {keyspace row_key row_dirVar} {
+
+    upvar ${row_dirVar} row_dir
+
+    # ensure ${keyspace_dir} exists
+    if { ![keyspace_exists_p ${keyspace}] } {
+	error "get_row_dir: no such keyspace (${keyspace})"
+    }
+
+    set keyspace_dir [get_keyspace_dir ${keyspace}]
+
+    # TODO: depending on keyspace settings, 
+    # we can setup other placement strategies
+    # e.g. order preserving partitioning
+    # or 
+
+    set row_dir ${keyspace_dir}/${row_key}
+
+    # create ${row_dir} dir
+    file mkdir ${row_dir}
 
 }
 
@@ -16,28 +66,19 @@ namespace eval ::feed_reader::data {
 # name := keyspace/row_key/column_path
 # column_path := super_column_name/column_name or just column_name
 #
-proc ::feed_reader::data::insert_column {keyspace row column_path data {timestamp ""}} {
+proc ::persistence::insert_column {keyspace row_key column_path data {timestamp ""}} {
 
-    variable base_dir
+    create_row_if ${keyspace} ${row_key} row_dir
 
-    set keyspace_dir ${base_dir}/${keyspace}
-
-    # ensure ${keyspace_dir} exists
-    if { ![file isdirectory ${keyspace_dir}] } {
-	error "insert_column: no such keyspace dir ${keyspace_dir}"
-    }
-
-    set row_dir ${keyspace_dir}/${row}
-
-    # create ${row_dir} dir
-    file mkdir ${row_dir}
-
+    # path to file that will hold the data
     set filename ${row_dir}/${column_path}
 
     # if it applies, mkdir super_column_dir
     if { [set super_column_dir [file dirname ${filename}]] ne ${row_dir} } {
+
 	# it's a supecolumn
 	file mkdir ${super_column_dir}
+
     }
 
     ::util::writefile ${filename} ${data}
