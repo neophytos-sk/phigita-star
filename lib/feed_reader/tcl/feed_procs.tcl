@@ -690,28 +690,28 @@ proc ::feed_reader::load_item_from_dir {itemVar item_dirVar} {
     array set item [::util::readfile ${filename}]
 }
 
-proc ::feed_reader::list_feed {news_source {limit "10"} {offset "0"}} {
+proc ::feed_reader::list_feed {news_source {limit "40"} {offset "0"}} {
 
     set first_feed_file [lindex [get_feed_files ${news_source}] 0]
     array set feed [::util::readfile ${first_feed_file}]
 
     if { [exists_domain $feed(url)] } {
-	set domain_dir [get_domain_dir $feed(url)]
-	set item_dirs [glob -directory ${domain_dir} *]
+        set domain_dir [get_domain_dir $feed(url)]
+        set item_dirs [glob -directory ${domain_dir} *]
 
-	set sortedlist [lsort -decreasing -command compare_mtime ${item_dirs}]
+        set sortedlist [lsort -decreasing -command compare_mtime ${item_dirs}]
 
-	set first ${offset}
-	set last [expr { ${offset} + ${limit} - 1 }]
+        set first ${offset}
+        set last [expr { ${offset} + ${limit} - 1 }]
 
-	set slicelist [lrange ${sortedlist} ${first} ${last}]
+        set slicelist [lrange ${sortedlist} ${first} ${last}]
 
-	foreach item_dir ${slicelist} {
-	    load_item_from_dir item item_dir
+        foreach item_dir ${slicelist} {
+            load_item_from_dir item item_dir
 
-	    print_log_entry item
-	    unset item
-	}
+            print_log_entry item
+            unset item
+        }
     }
 }
 
