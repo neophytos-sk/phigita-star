@@ -34,7 +34,7 @@ proc print_usage_info {} {
 			   "fex" "?limit? ?offset?" \
 			   "stats" "?news_source? ?...?" \
 			   "wc" "?contentsha1? ?...?" \
-			   "TODO:test-article" "article_url" \
+			   "test-article" "news_source feed_name article_url" \
 			   "generate-feed" "feed_url"]
 
 
@@ -55,130 +55,134 @@ if { ${argc} < 1 } {
 
     if { ${cmd} eq {sync} && ${argc} >= 1 } {
 
-	::feed_reader::sync_feeds [lrange ${argv} 1 end]
+        ::feed_reader::sync_feeds [lrange ${argv} 1 end]
 
     } elseif { ${cmd} eq {generate-feed} && ${argc} >= 2 } {
 
-	::feed_reader::generate_feed {*}[lrange ${argv} 1 end]
+        ::feed_reader::generate_feed {*}[lrange ${argv} 1 end]
+
+    } elseif { ${cmd} eq {test-article} && ${argc} == 4 } {
+
+        ::feed_reader::test_article {*}[lrange ${argv} 1 end]
 
     } elseif { ${cmd} eq {test} && ${argc} >= 2} {
 
-	set news_source [lindex ${argv} 1]
-	::feed_reader::test_feed ${news_source} {*}[lrange ${argv} 2 end]
+        set news_source [lindex ${argv} 1]
+        ::feed_reader::test_feed ${news_source} {*}[lrange ${argv} 2 end]
 
     } elseif { ${cmd} eq {stats} && ${argc} >= 1} {
 
-	::feed_reader::stats [lrange ${argv} 1 end]
+        ::feed_reader::stats [lrange ${argv} 1 end]
 
     } elseif { ${cmd} eq {show} && ${argc} >= 2 } {
 
-	set urlsha1_list [lrange ${argv} 1 end]
-	::feed_reader::show_item ${urlsha1_list}
+        set urlsha1_list [lrange ${argv} 1 end]
+        ::feed_reader::show_item ${urlsha1_list}
 
     } elseif { ${cmd} eq {wc} && ${argc} >= 1 } {
 
-	set contentsha1_list [lrange ${argv} 1 end]
-	::feed_reader::wordcount ${contentsha1_list}
+        set contentsha1_list [lrange ${argv} 1 end]
+        ::feed_reader::wordcount ${contentsha1_list}
 
     } elseif { ${cmd} eq {search} && ${argc} >= 2 } {
 
-	set keywords [lrange ${argv} 1 end]
-	::feed_reader::search ${keywords}
+        set keywords [lrange ${argv} 1 end]
+        ::feed_reader::search ${keywords}
 
     } elseif { ${cmd} eq {revisions} && ${argc} == 2 } {
 
-	set urlsha1 [lindex ${argv} 1]
-	::feed_reader::show_revisions ${urlsha1}
+        set urlsha1 [lindex ${argv} 1]
+        ::feed_reader::show_revisions ${urlsha1}
 
     } elseif { ${cmd} eq {register-axis} && ${argc} == 2 } {
 
-	set axis [lindex ${argv} 1]
-	::feed_reader::classifier::register_axis ${axis}
-	
+        set axis [lindex ${argv} 1]
+        ::feed_reader::classifier::register_axis ${axis}
+        
     } elseif { ${cmd} eq {register-label} && ${argc} == 3 } {
 
-	set axis [lindex ${argv} 1]
-	set label [lindex ${argv} 2]
-	::feed_reader::classifier::register_label ${axis} ${label}
+        set axis [lindex ${argv} 1]
+        set label [lindex ${argv} 2]
+        ::feed_reader::classifier::register_label ${axis} ${label}
 
     } elseif { ${cmd} eq {show-url} && ${argc} == 2 } {
 
-	set article_url [lindex ${argv} 1]
-	::feed_reader::show_item_from_url ${article_url}
+        set article_url [lindex ${argv} 1]
+        ::feed_reader::show_item_from_url ${article_url}
 
 
     } elseif { ${cmd} eq {show-content} && ${argc} >= 2 } {
 
-	set contentsha1_list [lrange ${argv} 1 end]
-	::feed_reader::show_content ${contentsha1_list}
+        set contentsha1_list [lrange ${argv} 1 end]
+        ::feed_reader::show_content ${contentsha1_list}
 
     } elseif { ${cmd} eq {diff-content} && ${argc} == 3 } {
 
-	set contentsha1_old [lindex ${argv} 1]
-	set contentsha1_new [lindex ${argv} 2]
-	::feed_reader::diff_content ${contentsha1_old} ${contentsha1_new}
+        set contentsha1_old [lindex ${argv} 1]
+        set contentsha1_new [lindex ${argv} 2]
+        ::feed_reader::diff_content ${contentsha1_old} ${contentsha1_new}
 
     } elseif { ${cmd} eq {uses-content} && ${argc} >= 2 } {
 
-	set contentsha1_list [lrange ${argv} 1 end]
-	::feed_reader::uses_content ${contentsha1_list}	
+        set contentsha1_list [lrange ${argv} 1 end]
+        ::feed_reader::uses_content ${contentsha1_list}	
 
     } elseif { ${cmd} eq {log} && ${argc} >= 1 } {
 
-	::feed_reader::log {*}[lrange ${argv} 1 end]
+        ::feed_reader::log {*}[lrange ${argv} 1 end]
 
     } elseif { ${cmd} eq {list} && ${argc} >= 2 } {
 
-	set news_source [lindex ${argv} 1]
-	::feed_reader::list_feed ${news_source} {*}[lrange ${argv} 2 end]
+        set news_source [lindex ${argv} 1]
+        ::feed_reader::list_feed ${news_source} {*}[lrange ${argv} 2 end]
 
     } elseif { ${cmd} eq {remove-feed-items} && ${argc} >= 2 } {
 
-	set news_source [lindex ${argv} 1]
-	set urlsha1_list [lrange ${argv} 2 end]
-	::feed_reader::remove_feed_items ${news_source} ${urlsha1_list}
+        set news_source [lindex ${argv} 1]
+        set urlsha1_list [lrange ${argv} 2 end]
+        ::feed_reader::remove_feed_items ${news_source} ${urlsha1_list}
 
     } elseif { ${cmd} eq {cluster} && ${argc} >= 1 } {
 
-	::feed_reader::cluster {*}[lrange ${argv} 1 end]
+        ::feed_reader::cluster {*}[lrange ${argv} 1 end]
 
     } elseif { ${cmd} eq {label} && ${argc} >= 1 } {
 
-	# label axis class contentsha1 ...
-	#
-	# e.g. label spam true ae23ff acb673
-	# e.g. label priority important example123 example456
-	# e.g. label topic politics  example742 example888 example923 example443
-	# e.g. label edition cyprus  example742 example888 example923 example443
-	set axis [lindex ${argv} 1]
-	set label [lindex ${argv} 2]
-	set contentsha1_list [lrange ${argv} 3 end]
-	::feed_reader::classifier::label ${axis} ${label} ${contentsha1_list}
+        # label axis class contentsha1 ...
+        #
+        # e.g. label spam true ae23ff acb673
+        # e.g. label priority important example123 example456
+        # e.g. label topic politics  example742 example888 example923 example443
+        # e.g. label edition cyprus  example742 example888 example923 example443
+        set axis [lindex ${argv} 1]
+        set label [lindex ${argv} 2]
+        set contentsha1_list [lrange ${argv} 3 end]
+        ::feed_reader::classifier::label ${axis} ${label} ${contentsha1_list}
 
     } elseif { ${cmd} eq {unlabel} && ${argc} >= 1 } {
 
-	# unlabel axis class contentsha1 ...
+        # unlabel axis class contentsha1 ...
 
-	set axis [lindex ${argv} 1]
-	set label [lindex ${argv} 2]
-	set contentsha1_list [lrange ${argv} 3 end]
-	::feed_reader::classifier::unlabel ${axis} ${label} ${contentsha1_list}
+        set axis [lindex ${argv} 1]
+        set label [lindex ${argv} 2]
+        set contentsha1_list [lrange ${argv} 3 end]
+        ::feed_reader::classifier::unlabel ${axis} ${label} ${contentsha1_list}
 
     } elseif { ${cmd} eq {fex} && ${argc} >= 1 } {
 
-	# TODO: word substrings, isFirstCapital, isLastPunct, isLastColon
-	# TODO: word shapes:
-	#    Varixella-zoster  Xx-xxx
-	#    mRNA              xXXX
-	#    CPA1              XXXd
-	# hasDigit
-	
+        # TODO: word substrings, isFirstCapital, isLastPunct, isLastColon
+        # TODO: word shapes:
+        #    Varixella-zoster  Xx-xxx
+        #    mRNA              xXXX
+        #    CPA1              XXXd
+        # hasDigit
+        
 
-	::feed_reader::feature_extraction {*}[lrange ${argv} 1 end]
+        ::feed_reader::feature_extraction {*}[lrange ${argv} 1 end]
 
     } else {
 
-	print_usage_info
+        print_usage_info
 
     }
 

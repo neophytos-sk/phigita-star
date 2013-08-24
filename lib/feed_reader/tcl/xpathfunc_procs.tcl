@@ -45,13 +45,23 @@ proc ::dom::xpathFunc::normalizedate {ctxNode pos nodeListNode nodeList args} {
     normalizedate_helper ts_string ${locale}
 
     if { ${ts_string} eq {now} } {
-	set ts_string [clock format [clock seconds] -format "%Y%m%dT%H%M"]
+
+        set ts_string [clock format [clock seconds] -format "%Y%m%dT%H%M"]
+
     } elseif { [lindex ${ts_string} end] eq {ago} } {
-	# TODO: convert pretty age to a timestamp
-	set ts_string [::util::dt::age_to_timestamp ${ts_string} [clock seconds]]
+
+        # TODO: convert pretty age to a timestamp
+        set ts_string [::util::dt::age_to_timestamp ${ts_string} [clock seconds]]
+
+    } elseif { [regexp -- {ago ([0-9]+)'} ${ts_string} _whole_ num_mins] } {
+
+        set ts_string [::util::dt::age_to_timestamp "${num_mins} mins ago" [clock seconds]]
+
     } else {
-	set format ${arg3Value}	
-	return [::dom::xpathFunc::returndate $ctxNode $pos $nodeListNode $nodeList string ${ts_string} string ${format} string ${locale}]
+
+        set format ${arg3Value}	
+        return [::dom::xpathFunc::returndate $ctxNode $pos $nodeListNode $nodeList string ${ts_string} string ${format} string ${locale}]
+
     }
 
     return [list string ${ts_string}]

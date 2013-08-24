@@ -1273,6 +1273,124 @@ proc ::feed_reader::write_item {normalized_link feedVar itemVar resync_p} {
 
 }
 
+proc ::feed_reader::sync_feeds {{news_sources ""} {debug_p "0"}} {
+
+    variable stoptitles
+
+    set feeds_dir [get_package_dir]/feed
+    set check_fetch_feed_p 0
+    if { ${news_sources} eq {} } {
+        set news_sources [glob -nocomplain -tails -directory ${feeds_dir} *]
+        set check_fetch_feed_p 1
+    }
+
+    set round [clock seconds]
+
+    array set round_stats [list round_timestamp ${round}]
+
+    progress_init [llength ${news_sources}]
+
+    set cur 0
+    foreach news_source ${news_sources} {
+
+        set news_source_dir ${feeds_dir}/${news_source}
+
+        set filelist [glob -nocomplain -directory ${news_source_dir} *]
+
+        foreach filename ${filelist} {
+
+            set feed_name ${news_source}/[file tail ${filename}]
+
+            array set feed [::util::readfile ${filename}]
+
+            # TODO: maintain domain in feed spec
+            set domain [::util::domain_from_url $feed(url)]
+
+            set timestamp [clock seconds]
+            if { ${check_fetch_feed_p} && ![fetch_feed_p ${feed_name} ${timestamp}] } {
+                incr round_stats(SKIP_FEED) 
+                #puts "not fetching $feed_name in this round ${round}\n\n"
+                unset feed
+                continue
+            }
+
+            array set stats \
+                [list \
+                     FETCH_AND_WRITE 0 \
+                     NO_FETCH 0 \
+                     NO_WRITE 0 \
+                     ERROR_FETCH 0 \
+                     FETCH_FEED 0 \
+                     ERROR_FETCH_FEED 0 \
+                     FETCH_AND_WRITE_FEED 0 \
+                     NO_WRITE_FEED 0]
+
+
+            # set feed_type [get_value_if feed(type) ""] 
+            # if { ${feed_type} eq {rss} } {
+            # set feed(xpath_feed_item) //item
+            # }
+
+            set errorcode [fetch_feed result feed stoptitles]
+            if { ${errorcode} } {
+
+                puts "fetch_feed failed errorcode=$errorcode feed_name=$feed_name"
+
+                set stats(ERROR_FETCH_FEED) 1
+
+                update_crawler_stats ${timestamp} ${feed_name} stats
+
+                update_round_stats ${feed_name} stats round_stats
+
+                unset feed
+
+                continue
+            }
+            set stats(FETCH_FEED) 1
+
+            foreach link $result(links) title_in_feed $result(titles) {
+
+                # returns FETCH_AND_WRITE, NO_FETCH, and NO_WRITE
+                set retcode [fetch_and_write_item ${link} ${title_in_feed} feed]
+                incr stats(${retcode})
+            }
+
+            if { $stats(FETCH_AND_WRITE) > 0 } {
+                set stats(FETCH_AND_WRITE_FEED) 1
+            } else {
+                set stats(NO_WRITE_FEED) 1
+            }
+
+            if { ${debug_p} } {
+                print_sync_stats ${feed_name} stats
+            }
+
+            update_crawler_stats ${timestamp} ${feed_name} stats
+
+            update_round_stats ${feed_name} stats round_stats
+
+            unset feed
+            unset stats
+
+        }
+        
+        progress_tick [incr cur]
+
+    }
+
+    set round_dir [get_crawler_dir]/round
+    if { ![file isdirectory ${round_dir}] } {
+        file mkdir ${round_dir}
+    }
+    ::util::writefile ${round_dir}/${round} [array get round_stats]
+
+    print_round_stats round_stats
+
+    unset round_stats
+
+}
+
+
 
 #TODO: we need a way to test feed (before starting to store it)
 proc ::feed_reader::test_feed {news_source {limit "3"} {fetch_item_p "1"}} {
@@ -1283,7 +1401,7 @@ proc ::feed_reader::test_feed {news_source {limit "3"} {fetch_item_p "1"}} {
     set feed_files [get_feed_files ${news_source}]
     foreach feed_file ${feed_files} {
 
-        array set feed [::util::readfile ${feed_file}]
+        array set feed [::util::readfile ${feed_file}]v
 
         set errorcode [fetch_feed result feed stoptitles]
         if { ${errorcode} } {
@@ -1326,7 +1444,20 @@ proc ::feed_reader::test_feed {news_source {limit "3"} {fetch_item_p "1"}} {
 }
 
 
+proc ::feed_reader::test_article {news_source feed_name link} {
 
+    set feed_file [get_package_dir]/feed/${news_source}/${feed_name}
+
+    array set feed [::util::readfile ${feed_file}]
+
+    set title_in_feed ""
+    set retcode [fetch_item ${link} ${title_in_feed} feed item]
+
+    puts retcode=$retcode
+
+    print_item item
+
+}
 
 
 proc ::feed_reader::remove_item_from_dir {item_dirVar} {
