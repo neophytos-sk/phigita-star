@@ -1,0 +1,16 @@
+url http://www.contra.gr/
+include_re {/[[:alnum:]\-]+\.[0-9]{4,}\.html$}
+htmltidy_feed_p 1
+htmltidy_article_p 1
+xpath_article_title {returnstring(//div[@class="article-content"]/h1)}
+xpath_article_description {returntext(//div[@class="article-content"]/div[@class="summary"])}
+xpath_article_body {returntext(//div[@class="article-content"]/div[@class="body"])}
+xpath_article_image {
+    {values(//div[@class="images-wrap"]//img[@width and @height]/@src)}
+}
+xpath_article_date {returndate(substring-after(//div[@class="article-content"]//span[@class="byline_date"], ":"), "%B %d %Y %H:%M","el_GR")}
+xpath_article_modified_time {}
+xpath_article_cleanup {
+    {//div[@class="shareButtons"]}
+    {//div[@class="social-toolbar"]}
+}

@@ -1,0 +1,14 @@
+url http://www.euro2day.gr/
+encoding {iso8859-7}
+include_re {/article/[0-9]{4,}/[[:alnum:]\-]+\.html$}
+htmltidy_feed_p 1
+htmltidy_article_p 1
+xpath_article_title {returnstring(//div[@class="article"]/h2)}
+xpath_article_description {returntext(//div[@class="article"]/div[@class="article-first"])}
+xpath_article_body {returntext(//div[@id="article-body"])}
+xpath_article_image {
+    {//div[@id="article-photo"]/img[@class="article-image"]/@src}
+}
+xpath_article_date {returndate(//div[@class="article article-template-article"]/em[@class="date"]/b,"%H:%M - %d/%m/%y")}
+xpath_article_modified_time {}
+
