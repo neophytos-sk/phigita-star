@@ -1,0 +1,12 @@
+url "http://www.capital.gr/static-all-news.htm"
+encoding {cp1253}
+include_re {/News\.asp\?id=[0-9]{4,}$}
+htmltidy_feed_p 1
+htmltidy_article_p 1
+xpath_article_title {returnstring(//td/h1[@class="title"])}
+xpath_article_body {returntext(//div[@id="textbody"]/*[@align="justify"])}
+xpath_article_image {
+    {values(//div[@id="textbody"]//img[@src]/@src)}
+}
+xpath_article_date {normalizedate(//div[@class="articledate"],"el_GR","%A, %d %B %Y - %H:%M")}
+xpath_article_modified_time {}

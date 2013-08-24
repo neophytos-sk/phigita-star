@@ -1,0 +1,9 @@
+url http://www.tovima.gr/
+include_re {/article/\?aid=[0-9]{4,}$}
+htmltidy_feed_p 1
+htmltidy_article_p 1
+xpath_article_title {returnstring(//div[@class="article_ext"]/div[@class="article_title"])}
+xpath_article_body {returntext(//div[@id="intext_content_tag"])}
+xpath_article_image {{values(//div[@id="videos"]/img/@src)}}
+xpath_article_date {normalizedate(string(split-string(substring-after(//div[@class="article_info"],":"),"|")[1]),"el_GR","auto")}
+xpath_article_modified_time {normalizedate(substring-after(substring-after(//div[@class="article_info"],"|"),":"),"el_GR","auto")}
