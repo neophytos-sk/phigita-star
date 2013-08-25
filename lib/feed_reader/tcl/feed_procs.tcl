@@ -871,7 +871,11 @@ proc ::feed_reader::cluster {{limit "10"} {offset "0"} {k ""} {num_iter "3"}} {
 
 proc ::feed_reader::exists_item {link} {
 
-    return [file isdirectory [get_item_dir link]]
+    return [::persistence::exists_column_p \
+		"newsdb" \
+		"news_item/by_urlsha1_and_const" \
+		"${urlsha1}" \
+		"_data_"]
 
 }
 
