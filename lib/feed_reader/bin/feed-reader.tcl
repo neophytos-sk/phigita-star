@@ -22,7 +22,7 @@ proc print_usage_info {} {
 			   "uses-content" "contentsha1 ?...?" \
 			   "diff-content" "contentsha1_old contentsha1_new" \
 			   "log" "?limit? ?offset?" \
-			   "list" "news_source ?limit? ?offset?" \
+			   "list" "domain ?offset? ?limit?" \
 			   "revisions" "urlsha1" \
 			   "register-axis" "axis_name" \
 			   "register-label" "axis_name label_name" \

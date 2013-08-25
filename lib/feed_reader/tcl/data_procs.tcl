@@ -118,32 +118,146 @@ proc ::persistence::insert_column {keyspace column_family row_key column_path da
 
 }
 
+proc ::persistence::get_data {filename} {
 
-proc ::persistence::get_slice {keyspace column_family row_key} {
-
-    set row_dir [get_row_dir ${keyspace} ${column_family} ${row_key}]
-
-    puts row_dir=$row_dir
-
-    return [lsort [glob -nocomplain -directory ${row_dir} *]]
+    return [::util::readfile ${filename}]
 
 }
 
 
-proc ::persistence::get_column {keyspace column_family row_key column_path {dataVar ""}} {
+proc slice_predicate=lrange {slicelistVar offset {limit ""}} {
+
+    upvar ${slicelistVar} slicelist
+
+    set first ${offset}
+
+    set last "end"
+    if { ${limit} ne {} } {
+	set last [expr { ${offset} + ${limit} - 1 }]
+    }
+
+    set slicelist [lrange ${slicelist} ${first} ${last}]
+    
+}
+
+proc slice_predicate=lindex {slicelistVar index} {
+
+    upvar ${slicelistVar} slicelist
+
+    set slicelist [lindex ${slicelist} ${index}]
+
+}
+
+
+proc ::persistence::get_slice {keyspace column_family row_key {slice_predicate ""}} {
+
+    set row_dir [get_row_dir ${keyspace} ${column_family} ${row_key}]
+
+    puts "row_dir = ${row_dir}"
+
+    set slicelist [lsort -decreasing [glob -nocomplain -directory ${row_dir} *]]
+
+    if { ${slice_predicate} ne {} } {
+
+	lassign ${slice_predicate} cmd args
+
+	slice_filter=${cmd} {*}${args}
+
+    }
+
+    return ${slicelist}
+
+}
+
+proc ::persistence::get_slice_names {args} {
+
+    set result [list]
+
+    set slicelist [get_slice {*}${args}]
+
+    foreach filename ${slicelist} {
+
+	lappend result [file tail ${filename}]
+
+    }
+
+    return ${result}
+
+}
+
+proc ::persistence::get_column {keyspace column_family row_key column_path {dataVar ""} {exists_pVar ""}} {
 
     set row_dir [get_row_dir ${keyspace} ${column_family} ${row_key}]
 
     set filename ${row_dir}/${column_path}
 
-    puts filename=${filename} 
-
     if { ${dataVar} ne {} } {
-	upvar ${dataVar} data
-	set data [::util::readfile ${filename}]
+
+	if { ${exists_pVar} ne {} } {
+	    upvar ${exists_pVar} exists_p
+	}
+
+	set exists_p [file exists ${filename}]
+
+	if { ${exists_column_p} } {
+
+	    upvar ${dataVar} data
+	    set data [get_data ${filename}]
+
+	}
+
     }
 
     return ${filename}
 
 }
 
+
+proc ::persistence::remove_column {keyspace column_family row_key column_path} {
+
+    set row_dir [get_row_dir ${keyspace} ${column_family} ${row_key}]
+
+    set filename ${row_dir}/${column_path}
+
+    file delete ${filename}
+
+}
+
+
+proc ::persistence::exists_column_p {keyspace column_family row_key column_path} {
+
+    set row_dir [get_row_dir ${keyspace} ${column_family} ${row_key}]
+
+    set filename ${row_dir}/${column_path}
+
+    return [file exists ${filename}]
+
+}
+
+
+### TO BE TESTED
+
+
+proc ::persistence::multiget_slice {keyspace_list column_family row_keys {slice_predicate ""}} {
+
+    set result [list]
+
+    foreach row_key ${row_keys} {
+
+	set slicelist [get_slice ${keyspace} ${column_family} ${row_key} ${slicePredicate}]
+
+	lappend result [list ${row_key} ${slicelist}]
+
+    }
+
+    return ${result}
+
+}
+
+
+
+
+#TODO: get_range_slices
+#TODO: batch_mutate
+#TODO: incr_column
+#TODO: incr_super_column

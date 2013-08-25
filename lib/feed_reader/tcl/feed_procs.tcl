@@ -556,9 +556,6 @@ proc ::feed_reader::get_item_dir {linkVar {urlsha1Var ""}} {
 
     set urlsha1 [::sha1::sha1 -hex ${link}]
 
-    #set domain_dir [get_domain_dir ${link}]
-    #set dir ${domain_dir}/${urlsha1}/
-
     set [get_base_dir]/news_item_by_url_and_rev/${urlsha1}
 
     return ${dir}
@@ -594,11 +591,6 @@ proc ::feed_reader::get_url_dir {} {
 }
 
 
-proc ::feed_reader::exists_domain {link} {
-
-    return [file isdirectory [get_domain_dir ${link}]]
-
-}
 
 proc ::feed_reader::compare_mtime {file_or_dir1 file_or_dir2} {
 
@@ -627,73 +619,38 @@ proc ::feed_reader::get_feed_files {news_source} {
 }
 
 
-proc ::feed_reader::get_revision_files {item_dirVar} {
-
-    upvar $item_dirVar item_dir
-
-    set filelist [glob -directory ${item_dir} *]
-    set sortedlist [lsort -decreasing -command compare_mtime ${filelist}]
-    return ${sortedlist}
-
-}
-
-proc ::feed_reader::get_revision_filename {item_dirVar index} {
-
-    upvar $item_dirVar item_dir
-
-    set filename [lindex [get_revision_files item_dir] ${index}]
-    return ${filename}
-
-}
 
 
-# load latest revision in item_dir
-# TODO: fix me
-proc ::feed_reader::load_item_from_dir {itemVar item_dirVar} {
-    upvar $itemVar item
-    upvar $item_dirVar item_dir
+proc ::feed_reader::list_feed {domain {offset "0"} {limit "40"}} {
 
-    set filename [get_revision_filename item_dir 0]  ;# newest revision
-    array set item [::util::readfile ${filename}]
-}
+    #set first_feed_file [lindex [get_feed_files ${news_source}] 0]
+    #array set feed [::util::readfile ${first_feed_file}]
 
-proc ::feed_reader::list_feed {news_source {limit "40"} {offset "0"}} {
+    set reversedomain [reversedomain ${domain}]
 
-    set first_feed_file [lindex [get_feed_files ${news_source}] 0]
-    array set feed [::util::readfile ${first_feed_file}]
+    set slicelist [::persistence::get_slice        \
+		       "newsdb"                    \
+		       "news_item/by_site_and_url" \
+		       "${reversedomain}"]
+    
 
-    if { [exists_domain $feed(url)] } {
-        set domain_dir [get_domain_dir $feed(url)]
-        set item_dirs [glob -directory ${domain_dir} *]
+    set sortedlist [lsort -decreasing -command compare_mtime ${slicelist}]
+    
+    set first ${offset}
+    set last [expr { ${offset} + ${limit} - 1 }]
 
-        set sortedlist [lsort -decreasing -command compare_mtime ${item_dirs}]
+    set slicelist [lrange ${sortedlist} ${first} ${last}]
 
-        set first ${offset}
-        set last [expr { ${offset} + ${limit} - 1 }]
+    foreach filename ${slicelist} {
+	array set item [::persistence::get_data ${filename}]
 
-        set slicelist [lrange ${sortedlist} ${first} ${last}]
-
-        foreach item_dir ${slicelist} {
-            load_item_from_dir item item_dir
-
-            print_log_entry item
-            unset item
-        }
+	print_log_entry item
+	unset item
     }
-}
-
-
-proc ::feed_reader::get_logfilelist {sortedlistVar} {
-
-    upvar $sortedlistVar sortedlist
-
-    set log_dir [get_log_dir]
-
-    set logfilelist [glob -directory ${log_dir} *]
-
-    set sortedlist [lsort -decreasing -command compare_mtime ${logfilelist}]
 
 }
+
+
 
 proc ::feed_reader::get_contentfilelist {sortedlistVar} {
 
@@ -707,23 +664,21 @@ proc ::feed_reader::get_contentfilelist {sortedlistVar} {
 
 }
 
+proc ::feed_reader::log {{offset "0"} {limit "40"}} {
 
-proc ::feed_reader::log {{limit "40"} {offset "0"}} {
+    set predicate [list "lrange" "${offset}" "${limit}"]
 
-    get_logfilelist sortedlist
-
-    set first ${offset}
-    set last [expr { ${offset} + ${limit} - 1 }]
-
-    set slicelist [lrange ${sortedlist} ${first} ${last}]
-
-    # HERE
+    set slicelist [::persistence::get_slice          \
+		       "newsdb"                      \
+		       "news_item/by_const_and_date" \
+		       "log"                         \
+		       "${predicate}"
 
     print_log_header
 
     foreach logfilename ${slicelist} {
 
-        array set item [::util::readfile ${logfilename}]
+        array set item [::persistence::get_data ${logfilename}]
 	print_log_entry item
 	unset item
 
@@ -963,9 +918,13 @@ proc ::feed_reader::uses_content {contentsha1_list} {
     # what objects use given content
     # contentsha1_to_urlsha1
     foreach contentsha1 ${contentsha1_list} {
-        set filename [get_index_dir]/${contentsha1}
-        set urlsha1_list [::util::readfile ${filename}]
-        foreach urlsha1 ${urlsha1_list} {
+
+	set slicelist [::persistence::get_slice_names \
+			   "newsdb" \
+			   "index/contentsha1_to_urlsha1" \
+			   "${contentsha1}"]
+
+        foreach urlsha1 ${slicelist} {
             load_item item ${urlsha1}
             print_item item
         }
@@ -1013,14 +972,12 @@ proc ::feed_reader::print_item {itemVar} {
 
 proc ::feed_reader::print_log_header {} {
 
-    puts [format "%3s %13s %40s %40s %24s %3s %3s %5s %s" lang date contentsha1 urlsha1 domain "" "" len title]
+    puts [format "%3s %13s %40s %40s %5s %24s %3s %3s %s" lang date contentsha1 urlsha1 len domain "" "" title]
 
 }
 
 
 proc ::util::pretty_length {chars} {
-
-    set chars 5423
 
     if { ${chars} eq {} } {
 	return
@@ -1035,19 +992,14 @@ proc ::util::pretty_length {chars} {
     } {
 
         if { ${chars} >= ${length} } {
-            set howmany [expr { ${chars} / ${length} }]
-            lappend result "${howmany}${suffix}"
-            set chars [expr { ${chars} % ${length} }]
-
+            set howmany [expr { ${chars} / double(${length}) }]
+            set result [format "%5.1f%s" ${howmany} ${suffix}]
+	    break
         }
 
     }
 
-    if { ${result} eq {} } {
-	lappend result "1k"
-    }
-
-    return [join ${result} { }]
+    return ${result}
 
 }
 
@@ -1067,14 +1019,14 @@ proc ::feed_reader::print_log_entry {itemVar} {
     }
 
     set lang [lindex [split [get_value_if item(langclass) "el.utf8"] {.}] 0]
-    puts [format "%3s %13s %40s %40s %24s %3s %3s %5s %s" \
+    puts [format "%3s %13s %40s %40s %5s %24s %3s %3s %s" \
 	      ${lang} \
 	      $item(date) $item(contentsha1) \
 	      $item(urlsha1) \
+	      [::util::pretty_length [get_value_if item(body_length) ""]] \
 	      ${domain} \
 	      ${is_copy_string} \
 	      ${is_revision_string} \
-	      [::util::pretty_length [get_value_if item(body_length) ""]] \
 	      $item(title)]
 
 }
@@ -1088,14 +1040,6 @@ proc ::feed_reader::show_item {urlsha1_list} {
 }
 
 proc ::feed_reader::show_revisions {urlsha1} {
-    #load_item item ${urlsha1}
-    #set normalized_link [get_value_if item(normalized_link) $item(link)]
-
-    #set item_dir [get_item_dir normalized_link]
-    #set filelist [get_revision_files item_dir]
-    #foreach filename ${filelist} {
-	#puts "[file mtime ${filename}] [file tail ${filename}]"
-    #}
 
     set slicelist [::persistence::get_slice       \
 		       "newsdb"                   \
@@ -1165,35 +1109,25 @@ proc ::feed_reader::write_item {normalized_link feedVar itemVar resync_p} {
     upvar $feedVar feed
     upvar $itemVar item
 
-    # prepare to write
-    set content_dir [get_content_dir]
-    set index_dir [get_index_dir]
-    set item_dir [get_item_dir normalized_link urlsha1]
-    set url_dir [get_url_dir]
-    set log_dir [get_log_dir]
-    set crawler_dir [get_crawler_dir]
+    set timestamp [clock seconds]
+    set timestamp_date [clock scan ${timestamp} -format "%Y%m%dT%H%M"]
 
-    foreach varname {
-        content_dir 
-        index_dir 
-        item_dir 
-        url_dir 
-        log_dir 
-        crawler_dir
-    } {
-        set dirname [set ${varname}]
-        if { ![file isdirectory ${dirname}] } {
-            file mkdir ${dirname}
-        }
-    }
+    ::persistence::insert_column         \
+	"crawldb"                        \
+	"sync_info/by_urlsha1_and_const" \
+	"${urlsha1}"                     \
+	"${timestamp_date}"              \
+	""
 
-    set timestamp [clock seconds] 
-
-    set crawlerfilename "${crawler_dir}/url/${urlsha1}"
-    close [open ${crawlerfilename} "w"]
-
+    set urlsha1 [::sha1::sha1 -hex $normalized_link]
     set content [list $item(title) $item(body)]
     set contentsha1 [::sha1::sha1 -hex ${content}]
+
+    ::persistence::exists_column_p \
+	"newsdb"                   \
+	"news_item/by_url_and_rev" \
+	"${urlsha1}"               \
+	"${contentsha1}"
 
     set revisionfilename ${item_dir}/${contentsha1}
     if { [file exists ${revisionfilename}] } {
@@ -1244,10 +1178,17 @@ proc ::feed_reader::write_item {normalized_link feedVar itemVar resync_p} {
 
     # contentsha1 to urlsha1, i.e. which links lead to the same content
     # TODO: consider having simhash
+
     set fp [open ${indexfilename} "a"]
     puts $fp ${urlsha1}
     close $fp
 
+    ::persistence::insert_column \
+	"newsdb" \
+	"index/contentsha1_to_urlsha1" \
+	"${contentsha1}" \
+	"${urlsha1}" \
+	""
 
     # insert_column
     #   keyspace: newsdb
@@ -1256,19 +1197,33 @@ proc ::feed_reader::write_item {normalized_link feedVar itemVar resync_p} {
     #   column_name: _data_
     #
 
-    ::persistence::insert_column newsdb news_item/by_url_and_const ${urlsha1} "_data_" ${data}
+    ::persistence::insert_column     \
+	"newsdb"                     \
+	"news_item/by_url_and_const" \
+	"${urlsha1}"                 \
+	"_data_"                     \
+	"${data}"
 
     # insert_column
     #   keyspace: newsdb
-    #   column_family: news_item / variant: by_const_and_url
+    #   column_family: news_item / variant: by_const_and_date
     #   row: log
-    #   column_name: ${urlsha1}
+    #   column_name: ${date}.${urlsha1}
     #
     # operations: top_N (?), range (?), slice (?), insert, get, remove
     #
     # ::util::writefile ${logfilename}  ${data}  
     #
-    ::persistence::insert_column newsdb news_item/by_const_and_url log ${urlsha1} ${data}
+    set date $item(date) 
+    if { ${date} eq {} } {
+	set date [clock format $item(timestamp) -format "%Y%m%dT%H%M"]
+    }
+    ::persistence::insert_column      \
+	"newsdb"                      \
+	"news_item/by_const_and_date" \
+	"log"                         \
+	"${date}.${urlsha1}"          \
+	"${data}"
 
     # insert_column
     #   keyspace: newsdb
@@ -1282,7 +1237,12 @@ proc ::feed_reader::write_item {normalized_link feedVar itemVar resync_p} {
     #
     set reversedomain [reversedomain [::util::domain_from_url ${normalized_link}]]
 
-    ::persistence::insert_column newsdb news_item/by_site_and_url ${reversedomain} ${urlsha1} ${data}
+    ::persistence::insert_column    \
+	"newsdb"                    \
+	"news_item/by_site_and_url" \
+	"${reversedomain}"          \
+	"${urlsha1}"                \
+	"${data}"
 
     # insert_column
     #   keyspace: newsdb
@@ -1292,7 +1252,12 @@ proc ::feed_reader::write_item {normalized_link feedVar itemVar resync_p} {
     #
     # ::util::writefile ${urlfilename} ${data}
     #
-    ::persistence::insert_column newsdb news_item/by_url_and_rev ${urlsha1} ${contentsha1} ${data}
+    ::persistence::insert_column   \
+	"newsdb"                   \
+	"news_item/by_url_and_rev" \
+	"${urlsha1}"               \
+	"${contentsha1}"           \
+	"${data}"
 
 
     if { [get_value_if item(date) ""] ne {} } {
@@ -1425,11 +1390,12 @@ proc ::feed_reader::sync_feeds {{news_sources ""} {debug_p "0"}} {
 
     }
 
-    set round_dir [get_crawler_dir]/round
-    if { ![file isdirectory ${round_dir}] } {
-        file mkdir ${round_dir}
-    }
-    ::util::writefile ${round_dir}/${round} [array get round_stats]
+    ::persistence::insert_column              \
+	"crawldb"                             \
+	"round_stats/by_timestamp_and_const"  \
+	"${round}"                            \
+	"_data_"                              \
+	"[array get round_stats]"
 
     print_round_stats round_stats
 
@@ -1502,6 +1468,8 @@ proc ::feed_reader::test_article {news_source feed_name link} {
 
 
 proc ::feed_reader::remove_item_from_dir {item_dirVar} {
+
+    error "not implemented yet - use persistence procs"
 
     upvar $item_dirVar item_dir
 

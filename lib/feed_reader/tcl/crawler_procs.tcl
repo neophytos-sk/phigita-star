@@ -41,11 +41,15 @@ proc ::feed_reader::stats {{news_sources ""}} {
 
             set feed_name ${news_source}/[file tail ${feed_file}]
 
-            set crawler_feed_dir ${crawler_dir}/feed/${feed_name}
 
-            set stats_file ${crawler_feed_dir}/_stats
+	    ::persistence::get_column          \
+		"crawldb"                      \
+		"feed_stats/by_feed_and_const" \
+		"${feed_name}"                 \
+		"_stats"                       \
+		"column_data"
 
-            array set count [::util::readfile ${stats_file}]
+            array set count ${column_data}
 
             set reference_interval 86400
             set max_times 96
@@ -68,8 +72,18 @@ proc ::feed_reader::get_first_sync_timestamp {linkVar} {
 
     upvar $linkVar link
 
-    set item_dir [get_item_dir link urlsha1]
-    set revisionfilename [get_revision_filename item_dir end]  ;# oldest revision
+    set urlsha1 [get_urlsha1 ${link}]
+
+    set slice_predicate [list "lindex" "0"]
+
+    set slicelist [::persistence::get_slice             \
+		       "crawldb"                        \
+		       "sync_info/by_urlsha1_and_const" \
+		       "${urlsha1}"                     \
+		       "${slice_predicate}"]
+
+    set revisionfilename [lindex ${slicelist} 0]
+
     return [file mtime ${revisionfilename}]
 
 }
@@ -80,9 +94,19 @@ proc ::feed_reader::get_last_sync_timestamp {linkVar} {
     upvar $linkVar link
 
     set urlsha1 [get_urlsha1 ${link}]
-    set crawler_dir [get_crawler_dir]
-    set crawlerfilename "${crawler_dir}/url/${urlsha1}"
-    return [file mtime ${crawlerfilename}]
+
+    set slice_predicate [list "lindex" "end"]
+
+    set slicelist [::persistence::get_slice             \
+		       "crawldb"                        \
+		       "sync_info/by_urlsha1_and_const" \
+		       "${urlsha1}"                     \
+		       "${slice_predicate}"]
+
+    # column_data constains the timestamp of the
+    # of the last time the given url was crawled
+
+    return ${column_data}
 
 }
 
@@ -263,15 +287,21 @@ proc ::feed_reader::fetch_feed_p {feed_name timestamp {coeff "0.3"}} {
     } {
 
         set pretty_timeval [clock format ${timestamp} -format ${format}]
-        set crawler_feed_sync_dir ${crawler_feed_dir}/${pretty_timeval}/
-        
-        if { ![file isdirectory ${crawler_feed_sync_dir}] } {
-            return 1
-        }
-        
-        set filename ${crawler_feed_dir}/${pretty_timeval}/_stats
 
-        array set count [::util::readfile ${filename}]
+	set filename \
+	    [::persistence::exists_column_p      \
+		 "crawldb"                       \
+		 "feed_stats/by_feed_and_period" \
+		 "${feed_name}"                  \
+		 "${pretty_interval}"            \
+		 "column_data"                   \
+		 "exists_column_p"]
+
+	if { !${exists_column_p} } {
+	    return 1
+	}
+
+        array set count ${column_data}
 
         set reference_interval 3600
         set max_times 4
@@ -285,16 +315,16 @@ proc ::feed_reader::fetch_feed_p {feed_name timestamp {coeff "0.3"}} {
         unset count
     }
 
-    # we don't have to check existence of this file
-    # because you cannot possibly reach this point 
-    # without having checked sub-directories for
-    # the hour, day of the week, and month-day stats.
-    #
-    set filename "${crawler_feed_dir}/_stats"
+    set filename [::persistence::get_column           \
+		      "crawldb"                       \
+		      "feed_stats/by_feed_and_const"  \
+		      "${feed_name}"                  \
+		      "_stats"                        \
+		      "column_data"]
+
+    array set count ${column_data}
 
     set last_sync [file mtime ${filename}]
-
-    array set count [::util::readfile ${filename}]
 
     set reference_interval 86400
     set max_times 96
