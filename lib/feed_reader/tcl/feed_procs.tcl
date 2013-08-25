@@ -664,15 +664,15 @@ proc ::feed_reader::get_contentfilelist {sortedlistVar} {
 
 }
 
-proc ::feed_reader::log {{offset "0"} {limit "40"}} {
+proc ::feed_reader::log {{offset "0"} {limit "20"}} {
 
-    set predicate [list "lrange" "${offset}" "${limit}"]
+    set predicate [list "lrange" [list "${offset}" "${limit}"]]
 
     set slicelist [::persistence::get_slice          \
 		       "newsdb"                      \
 		       "news_item/by_const_and_date" \
 		       "log"                         \
-		       "${predicate}"
+		       "${predicate}"]
 
     print_log_header
 
@@ -871,6 +871,8 @@ proc ::feed_reader::cluster {{limit "10"} {offset "0"} {k ""} {num_iter "3"}} {
 
 proc ::feed_reader::exists_item {link} {
 
+    set urlsha1 [get_urlsha1 ${link}]
+
     return [::persistence::exists_column_p \
 		"newsdb" \
 		"news_item/by_urlsha1_and_const" \
@@ -976,7 +978,7 @@ proc ::feed_reader::print_item {itemVar} {
 
 proc ::feed_reader::print_log_header {} {
 
-    puts [format "%3s %13s %40s %40s %5s %24s %3s %3s %s" lang date contentsha1 urlsha1 len domain "" "" title]
+    puts [format "%3s %13s %40s %40s %6s %24s %3s %3s %s" lang date contentsha1 urlsha1 len domain "" "" title]
 
 }
 
@@ -1003,6 +1005,11 @@ proc ::util::pretty_length {chars} {
 
     }
 
+    set length 1000
+    set suffix k
+    set howmany [expr { ${chars} / double(${length}) }]
+    set result [format "%5.1f%s" ${howmany} ${suffix}]
+
     return ${result}
 
 }
@@ -1023,7 +1030,7 @@ proc ::feed_reader::print_log_entry {itemVar} {
     }
 
     set lang [lindex [split [get_value_if item(langclass) "el.utf8"] {.}] 0]
-    puts [format "%3s %13s %40s %40s %5s %24s %3s %3s %s" \
+    puts [format "%3s %13s %40s %40s %6s %24s %3s %3s %s" \
 	      ${lang} \
 	      $item(date) $item(contentsha1) \
 	      $item(urlsha1) \
@@ -1070,7 +1077,8 @@ proc ::feed_reader::write_item {normalized_link feedVar itemVar resync_p} {
     upvar $itemVar item
 
     set timestamp [clock seconds]
-    set timestamp_date [clock scan ${timestamp} -format "%Y%m%dT%H%M"]
+    set timestamp_date [clock format ${timestamp} -format "%Y%m%dT%H%M"]
+    set urlsha1 [::sha1::sha1 -hex $normalized_link]
 
     ::persistence::insert_column         \
 	"crawldb"                        \
@@ -1079,18 +1087,19 @@ proc ::feed_reader::write_item {normalized_link feedVar itemVar resync_p} {
 	"${timestamp_date}"              \
 	""
 
-    set urlsha1 [::sha1::sha1 -hex $normalized_link]
+
     set content [list $item(title) $item(body)]
     set contentsha1 [::sha1::sha1 -hex ${content}]
 
-    ::persistence::exists_column_p \
-	"newsdb"                   \
-	"news_item/by_url_and_rev" \
-	"${urlsha1}"               \
-	"${contentsha1}"
+    set exists_revision_p \
+	[::persistence::exists_column_p \
+	     "newsdb"                   \
+	     "news_item/by_url_and_rev" \
+	     "${urlsha1}"               \
+	     "${contentsha1}"]
 
-    set revisionfilename ${item_dir}/${contentsha1}
-    if { [file exists ${revisionfilename}] } {
+
+    if { ${exists_revision_p} } {
         # revision content is the same as a previous one
         # no need to overwrite the revisionfilename,
         # nor the contentfilename and indexfilename
@@ -1107,22 +1116,24 @@ proc ::feed_reader::write_item {normalized_link feedVar itemVar resync_p} {
         set item(last_sync) ${timestamp}
     }
 
-    set contentfilename ${content_dir}/${contentsha1}
-    set indexfilename ${index_dir}/${contentsha1}
-    set logfilename ${log_dir}/${urlsha1}
-    set urlfilename ${url_dir}/${urlsha1}
-
     # TODO: each image,attachment,video,etc should get its own content file in the future
 
-    if { [file exists ${contentfilename}] } {
+
+    set contentfilename \
+	[::persistence::get_column                   \
+	     "newsdb"                                \
+	     "content_item/by_contentsha1_and_const" \
+	     "${contentsha1}"                        \
+	     "_data_"]
+
+    if { [::persistence::exists_data_p ${contentfilename}] } {
 
         # we have seen this item before from a different url
         set item(is_copy_p) 1
 
     } else {
 
-        # save article body to content file
-        ::util::writefile ${contentfilename} ${content}
+	::persistence::set_data ${contentfilename} ${content}
 
     }
 
@@ -1138,10 +1149,6 @@ proc ::feed_reader::write_item {normalized_link feedVar itemVar resync_p} {
 
     # contentsha1 to urlsha1, i.e. which links lead to the same content
     # TODO: consider having simhash
-
-    set fp [open ${indexfilename} "a"]
-    puts $fp ${urlsha1}
-    close $fp
 
     ::persistence::insert_column \
 	"newsdb" \
@@ -1174,15 +1181,48 @@ proc ::feed_reader::write_item {normalized_link feedVar itemVar resync_p} {
     #
     # ::util::writefile ${logfilename}  ${data}  
     #
-    set date $item(date) 
-    if { ${date} eq {} } {
-	set date [clock format $item(timestamp) -format "%Y%m%dT%H%M"]
+    
+    set item(sort_date) ""
+
+    if { [get_value_if item(date) ""] ne {} } {
+
+        lassign [split $item(date) {T}] date time
+
+        if { ${time} ne {0000} } {
+
+            # up to 15mins difference in time it is considered to be
+	    # fine to take into account servers at different timezones
+
+            set timeval [clock scan $item(date) -format "%Y%m%dT%H%M"]
+            
+            if { ${timestamp} - ${timeval} > 900 } {
+
+		set item(sort_date)
+                # puts "item(date)=$item(date) is older than 15 mins - using that date for sorting..."
+
+            }
+
+        } else {
+
+	    # use computed date for sorting
+
+	}
+
+    } else {
+
+	# use computed date for sorting
+
     }
+
+    if { $item(sort_date) eq {} } {
+	set item(sort_date) [clock format $item(timestamp) -format "%Y%m%dT%H%M"]
+    }
+
     ::persistence::insert_column      \
 	"newsdb"                      \
 	"news_item/by_const_and_date" \
 	"log"                         \
-	"${date}.${urlsha1}"          \
+	"$item(sort_date).${urlsha1}" \
 	"${data}"
 
     # insert_column
@@ -1220,26 +1260,6 @@ proc ::feed_reader::write_item {normalized_link feedVar itemVar resync_p} {
 	"${data}"
 
 
-    if { [get_value_if item(date) ""] ne {} } {
-
-        lassign [split $item(date) {T}] date time
-
-        if { ${time} ne {0000} } {
-            # up to a day difference is fine to account for servers
-            # with different timezone
-            set timeval [clock scan $item(date) -format "%Y%m%dT%H%M"]
-            
-            if { ${timestamp} - ${timeval} > 900 } {
-                # puts "item(date)=$item(date) is older than 15 mins - updating files' mtime..."
-                file mtime ${item_dir} ${timeval}
-                file mtime ${contentfilename} ${timeval}
-                file mtime ${indexfilename} ${timeval}
-                file mtime ${logfilename} ${timeval}
-                file mtime ${revisionfilename} ${timeval}
-                file mtime ${urlfilename} ${timeval}
-            }
-        }
-    }
 
     return 1
 

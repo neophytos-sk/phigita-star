@@ -278,9 +278,6 @@ proc get_sync_info {countVar {reference_interval "86400"} {max_times "96"}} {
 
 proc ::feed_reader::fetch_feed_p {feed_name timestamp {coeff "0.3"}} {
 
-    set crawler_dir [get_crawler_dir]
-    set crawler_feed_dir "${crawler_dir}/feed/${feed_name}/"
-
     # 	{mdH-%m%d%H} would take too long to see results, so remove from list for now
     foreach format {
         {H-%H}
@@ -290,19 +287,17 @@ proc ::feed_reader::fetch_feed_p {feed_name timestamp {coeff "0.3"}} {
         set pretty_timeval [clock format ${timestamp} -format ${format}]
 
 	set filename \
-	    [::persistence::exists_column_p      \
+	    [::persistence::get_column           \
 		 "crawldb"                       \
 		 "feed_stats/by_feed_and_period" \
 		 "${feed_name}"                  \
-		 "${pretty_interval}"            \
-		 "column_data"                   \
-		 "exists_column_p"]
+		 "${pretty_timeval}"]
 
-	if { !${exists_column_p} } {
+	if { ![::persistence::exists_data_p ${filename}] } {
 	    return 1
 	}
 
-        array set count ${column_data}
+        array set count [::persistence::get_data ${filename}]
 
         set reference_interval 3600
         set max_times 4
@@ -393,13 +388,11 @@ proc ::feed_reader::update_crawler_stats {timestamp feed_name statsVar} {
 
 	set pretty_timeval [clock format ${timestamp} -format ${format}]
 	
-        set stats [incr_array_in_file ${crawler_feed_sync_stats} stats]
-
 	incr_array_in_column                \
 	    "crawldb"                       \
 	    "feed_stats/by_feed_and_period" \
 	    "${feed_name}"                  \
-	    "${pretty_interval}"            \
+	    "${pretty_timeval}"            \
 	    "stats"
 
     }

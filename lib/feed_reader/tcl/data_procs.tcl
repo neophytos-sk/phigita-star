@@ -2,7 +2,7 @@ namespace eval ::persistence {
 
     variable base_dir 
 
-    set base_dir "/web/data/"
+    set base_dir "/web/data"
 
 }
 
@@ -102,6 +102,8 @@ proc ::persistence::insert_column {keyspace column_family row_key column_path da
     # path to file that will hold the data
     set filename ${row_dir}/${column_path}
 
+    #puts "filename = $filename"
+
     # if it applies, mkdir super_column_dir
     if { [set super_column_dir [file dirname ${filename}]] ne ${row_dir} } {
 
@@ -110,11 +112,26 @@ proc ::persistence::insert_column {keyspace column_family row_key column_path da
 
     }
 
-    ::util::writefile ${filename} ${data}
+    set_data ${filename} ${data}
 
     if { ${timestamp} ne {} } {
 	file mtime ${filename} ${timestamp}
     }
+
+}
+
+
+proc ::persistence::exists_data_p {filename} {
+
+    return [file exists ${filename}]
+
+}
+
+proc ::persistence::set_data {filename data} {
+
+    file mkdir [file dirname ${filename}]
+
+    return [::util::writefile ${filename} ${data}]
 
 }
 
@@ -161,7 +178,7 @@ proc ::persistence::get_slice {keyspace column_family row_key {slice_predicate "
 
 	lassign ${slice_predicate} cmd args
 
-	slice_filter=${cmd} {*}${args}
+	slice_predicate=${cmd} slicelist {*}${args}
 
     }
 
@@ -191,6 +208,8 @@ proc ::persistence::get_column {keyspace column_family row_key column_path {data
 
     set filename ${row_dir}/${column_path}
 
+    # puts "filename = $filename"
+
     if { ${dataVar} ne {} } {
 
 	if { ${exists_pVar} ne {} } {
@@ -199,7 +218,7 @@ proc ::persistence::get_column {keyspace column_family row_key column_path {data
 
 	}
 
-	set exists_p [file exists ${filename}]
+	set exists_p [exists_data_p ${filename}]
 
 	if { ${exists_p} } {
 
