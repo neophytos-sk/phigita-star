@@ -353,17 +353,26 @@ proc ::feed_reader::update_crawler_stats {timestamp feed_name statsVar} {
     } {
 
 	set pretty_timeval [clock format ${timestamp} -format ${format}]
-	set crawler_feed_sync_dir ${crawler_feed_dir}/${pretty_timeval}/
 	
-	if { ![file isdirectory ${crawler_feed_sync_dir}] } {
-	    file mkdir ${crawler_feed_sync_dir}
-	}
-	
-        set crawler_feed_sync_stats ${crawler_feed_dir}/${pretty_timeval}/_stats
-        incr_array_in_file ${crawler_feed_sync_stats} stats
+        #set crawler_feed_sync_stats ${crawler_feed_dir}/${pretty_timeval}/_stats
+        set stats [incr_array_in_file ${crawler_feed_sync_stats} stats]
+
+	::persistence::insert_column        \
+	    "crawldb"                       \
+	    "feed_stats/by_feed_and_period" \
+	    "${feed_name}"                  \
+	    "${pretty_interval}"            \
+	    "${stats}"
 
     }
 
-    incr_array_in_file "${crawler_feed_dir}/_stats" stats
+    set stats [incr_array_in_file "${crawler_feed_dir}/_stats" stats]
+
+    ::persistence::insert_column        \
+	"crawldb"                       \
+	"feed_stats/by_feed_and_period" \
+	"${feed_name}"                  \
+	"_stats"                        \
+	"${stats}"
 
 }
