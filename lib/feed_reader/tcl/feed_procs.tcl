@@ -1032,7 +1032,8 @@ proc ::feed_reader::print_log_entry {itemVar} {
     set lang [lindex [split [get_value_if item(langclass) "el.utf8"] {.}] 0]
     puts [format "%3s %13s %40s %40s %6s %24s %3s %3s %s" \
 	      ${lang} \
-	      $item(date) $item(contentsha1) \
+	      $item(date) \
+	      $item(contentsha1) \
 	      $item(urlsha1) \
 	      [::util::pretty_length [get_value_if item(body_length) ""]] \
 	      ${domain} \
@@ -1197,7 +1198,7 @@ proc ::feed_reader::write_item {normalized_link feedVar itemVar resync_p} {
             
             if { ${timestamp} - ${timeval} > 900 } {
 
-		set item(sort_date)
+		set item(sort_date) $item(date)
                 # puts "item(date)=$item(date) is older than 15 mins - using that date for sorting..."
 
             }
