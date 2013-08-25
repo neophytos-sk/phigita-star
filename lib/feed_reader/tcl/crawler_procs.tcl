@@ -39,7 +39,8 @@ proc ::feed_reader::stats {{news_sources ""}} {
         set feed_files [get_feed_files ${news_source}]
         foreach feed_file ${feed_files} {
 
-            set feed_name ${news_source}/[file tail ${feed_file}]
+            # set feed_name ${news_source}/[file tail ${feed_file}]
+            set feed_name [file tail ${feed_file}]
 
 
 	    ::persistence::get_column          \

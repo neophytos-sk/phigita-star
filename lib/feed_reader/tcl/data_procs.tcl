@@ -201,7 +201,7 @@ proc ::persistence::get_column {keyspace column_family row_key column_path {data
 
 	set exists_p [file exists ${filename}]
 
-	if { ${exists_column_p} } {
+	if { ${exists_p} } {
 
 	    upvar ${dataVar} data
 
