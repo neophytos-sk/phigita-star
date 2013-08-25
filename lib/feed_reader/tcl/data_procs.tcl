@@ -14,11 +14,42 @@ proc ::persistence::get_keyspace_dir {keyspace} {
 
 }
 
+
+proc ::persistence::get_cf_dir {keyspace column_family} {
+    set keyspace_dir [get_keyspace_dir ${keyspace}]
+    set cf_dir ${keyspace_dir}/${column_family}
+    return ${cf_dir}
+}
+
+
+proc ::persistence::get_row_dir {keyspace column_family row_key} {
+
+    # aka snapshot directory
+    set cf_dir [get_cf_dir ${keyspace} ${column_family}]
+
+    # TODO: depending on keyspace settings, 
+    # we can setup other storage strategies
+
+    set row_dir ${cf_dir}/${row_key}
+
+    return ${row_dir}
+
+}
+
+
 proc ::persistence::keyspace_exists_p {keyspace} {
 
     return [file isdirectory [get_keyspace_dir ${keyspace}]]
 
 }
+
+
+proc ::persistence::cf_exists_p {keyspace column_family} {
+
+    return [file isdirectory [get_cf_dir ${keyspace} ${column_family}]]
+
+}
+
 
 proc ::persistence::create_keyspace_if {keyspace {replication_factor "3"}} {
 
@@ -31,23 +62,21 @@ proc ::persistence::create_keyspace_if {keyspace {replication_factor "3"}} {
 
 }
 
-proc ::persistence::create_row_if {keyspace row_key row_dirVar} {
+proc ::persistence::create_row_if {keyspace column_family row_key row_dirVar} {
 
     upvar ${row_dirVar} row_dir
 
-    # ensure ${keyspace_dir} exists
+    # ensure keyspace exists
     if { ![keyspace_exists_p ${keyspace}] } {
-	error "get_row_dir: no such keyspace (${keyspace})"
+	error "create_row_if: no such keyspace (${keyspace})"
     }
 
-    set keyspace_dir [get_keyspace_dir ${keyspace}]
+    # ensure ${cf_dir} exists
+    if { ![cf_exists_p ${keyspace} ${column_family}] } {
+	error "create_row_if: no such column family (${keyspace}/${column_family})"
+    }
 
-    # TODO: depending on keyspace settings, 
-    # we can setup other placement strategies
-    # e.g. order preserving partitioning
-    # or 
-
-    set row_dir ${keyspace_dir}/${row_key}
+    set row_dir [get_row_dir ${keyspace} ${column_family} ${row_key}]
 
     # create ${row_dir} dir
     file mkdir ${row_dir}
@@ -66,9 +95,9 @@ proc ::persistence::create_row_if {keyspace row_key row_dirVar} {
 # name := keyspace/row_key/column_path
 # column_path := super_column_name/column_name or just column_name
 #
-proc ::persistence::insert_column {keyspace row_key column_path data {timestamp ""}} {
+proc ::persistence::insert_column {keyspace column_family row_key column_path data {timestamp ""}} {
 
-    create_row_if ${keyspace} ${row_key} row_dir
+    create_row_if ${keyspace} ${column_family} ${row_key} row_dir
 
     # path to file that will hold the data
     set filename ${row_dir}/${column_path}
@@ -86,6 +115,35 @@ proc ::persistence::insert_column {keyspace row_key column_path data {timestamp 
     if { ${timestamp} ne {} } {
 	file mtime ${filename} ${timestamp}
     }
+
+}
+
+
+proc ::persistence::get_slice {keyspace column_family row_key} {
+
+    set row_dir [get_row_dir ${keyspace} ${column_family} ${row_key}]
+
+    puts row_dir=$row_dir
+
+    return [lsort [glob -nocomplain -directory ${row_dir} *]]
+
+}
+
+
+proc ::persistence::get_column {keyspace column_family row_key column_path {dataVar ""}} {
+
+    set row_dir [get_row_dir ${keyspace} ${column_family} ${row_key}]
+
+    set filename ${row_dir}/${column_path}
+
+    puts filename=${filename} 
+
+    if { ${dataVar} ne {} } {
+	upvar ${dataVar} data
+	set data [::util::readfile ${filename}]
+    }
+
+    return ${filename}
 
 }
 

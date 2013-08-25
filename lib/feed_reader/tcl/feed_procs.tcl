@@ -421,6 +421,8 @@ proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar} {
 
     set domain [::util::domain_from_url ${link}]
 
+    set body_length [string length ${article_body}]
+
     array set item [list \
 			domain ${domain} \
 			link $link \
@@ -428,6 +430,7 @@ proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar} {
 			title $article_title \
 			description $article_description \
 			body $article_body \
+			body_length ${body_length} \
 			tags ${article_tags} \
 			author $author_in_article \
 			image $article_image \
@@ -436,44 +439,6 @@ proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar} {
 			date $article_date \
 			modified_time $article_modified_time]
 
-
-    if { 0 } {
-	# puts [format "%10s %50s %s" $article_langclass $link $article_title]
-
-
-	puts "Lang: $article_langclass"
-	puts "Title: $article_title"
-	puts "Link: $link"
-
-	if { $article_tags ne {} } {
-	    puts "Tags: $article_tags"
-	}
-	if { $article_description ne {} } {
-	    puts "Description: $article_description"
-	}
-	if { $author_in_article ne {} } {
-	    puts "Author: $author_in_article"
-	}
-	if { $article_image ne {} } {
-	    puts "Image(s): $article_image"
-	}
-	if { $article_date ne {} } {
-	    puts "Date: $article_date"
-	}
-	if { $article_modified_time ne {} } {
-	    puts "Last modified: $article_modified_time"
-	}
-	if { $article_attachment ne {} } {
-	    puts "Attachment(s): $article_attachment"
-	}
-	if { $article_video ne {} } {
-	    puts "Video(s): $article_video"
-	}
-
-	puts "Content (snippet): [string range $article_body 0 200]"
-	puts "---"
-
-    }
 
     $doc delete
 
@@ -579,6 +544,9 @@ proc ::feed_reader::get_urlsha1 {link} {
     return ${urlsha1}
 }
 
+
+# TODO: partition row_key
+# set first3Chars [string range ${urlsha1} 0 2]
 proc ::feed_reader::get_item_dir {linkVar {urlsha1Var ""}} {
 
     upvar ${linkVar} link
@@ -586,13 +554,12 @@ proc ::feed_reader::get_item_dir {linkVar {urlsha1Var ""}} {
 	upvar ${urlsha1Var} urlsha1
     }
 
-    set domain_dir [get_domain_dir ${link}]
-
     set urlsha1 [::sha1::sha1 -hex ${link}]
 
-    #set first3Chars [string range ${urlsha1} 0 2]
+    #set domain_dir [get_domain_dir ${link}]
+    #set dir ${domain_dir}/${urlsha1}/
 
-    set dir ${domain_dir}/${urlsha1}/
+    set [get_base_dir]/news_item_by_url_and_rev/${urlsha1}
 
     return ${dir}
 
@@ -749,6 +716,8 @@ proc ::feed_reader::log {{limit "40"} {offset "0"}} {
     set last [expr { ${offset} + ${limit} - 1 }]
 
     set slicelist [lrange ${sortedlist} ${first} ${last}]
+
+    # HERE
 
     print_log_header
 
@@ -956,8 +925,14 @@ proc ::feed_reader::load_item {itemVar urlsha1} {
 
     upvar $itemVar item
 
-    set urlfilename [get_url_dir]/${urlsha1}
-    array set item [::util::readfile $urlfilename]
+    ::persistence::get_column        \
+	"newsdb"                     \
+	"news_item/by_url_and_const" \
+	"${urlsha1}"                 \
+	"_data_"                     \
+	"column_data"
+
+    array set item ${column_data}
 
     load_content item $item(contentsha1)
 
@@ -1002,9 +977,20 @@ proc ::feed_reader::uses_content {contentsha1_list} {
 proc ::feed_reader::load_content {itemVar contentsha1 {include_labels_p "1"}} {
 
     upvar $itemVar item
-    set contentfilename [get_content_dir]/${contentsha1}
-    array set item [list]
-    lassign [::util::readfile $contentfilename] item(title) item(body)
+
+    ::persistence::get_column \
+	"newsdb" \
+	"content_item/by_contentsha1_and_const" \
+	"${contentsha1}" \
+	"_data_" \
+	"column_data"
+
+    lassign ${column_data} item(title) item(body)
+
+
+    # set contentfilename [get_content_dir]/${contentsha1}
+    # array set item [list]
+    # lassign [::util::readfile $contentfilename] item(title) item(body)
 
     set contentsha1_to_label_filename [get_contentsha1_to_label_dir]/${contentsha1}
     if { [file exists ${contentsha1_to_label_filename}] } {
@@ -1027,9 +1013,44 @@ proc ::feed_reader::print_item {itemVar} {
 
 proc ::feed_reader::print_log_header {} {
 
-    puts [format "%3s %13s %40s %40s %24s %3s %3s %s" lang date contentsha1 urlsha1 domain "" "" title]
+    puts [format "%3s %13s %40s %40s %24s %3s %3s %5s %s" lang date contentsha1 urlsha1 domain "" "" len title]
 
 }
+
+
+proc ::util::pretty_length {chars} {
+
+    set chars 5423
+
+    if { ${chars} eq {} } {
+	return
+    }
+
+    set result [list]
+
+    foreach {length suffix} {
+        1000000000 G
+        1000000    M
+        1000       k
+    } {
+
+        if { ${chars} >= ${length} } {
+            set howmany [expr { ${chars} / ${length} }]
+            lappend result "${howmany}${suffix}"
+            set chars [expr { ${chars} % ${length} }]
+
+        }
+
+    }
+
+    if { ${result} eq {} } {
+	lappend result "1k"
+    }
+
+    return [join ${result} { }]
+
+}
+
 
 proc ::feed_reader::print_log_entry {itemVar} {
     upvar $itemVar item
@@ -1046,13 +1067,14 @@ proc ::feed_reader::print_log_entry {itemVar} {
     }
 
     set lang [lindex [split [get_value_if item(langclass) "el.utf8"] {.}] 0]
-    puts [format "%3s %13s %40s %40s %24s %3s %3s %s" \
+    puts [format "%3s %13s %40s %40s %24s %3s %3s %5s %s" \
 	      ${lang} \
 	      $item(date) $item(contentsha1) \
 	      $item(urlsha1) \
 	      ${domain} \
 	      ${is_copy_string} \
 	      ${is_revision_string} \
+	      [::util::pretty_length [get_value_if item(body_length) ""]] \
 	      $item(title)]
 
 }
@@ -1066,13 +1088,26 @@ proc ::feed_reader::show_item {urlsha1_list} {
 }
 
 proc ::feed_reader::show_revisions {urlsha1} {
-    load_item item ${urlsha1}
-    set normalized_link [get_value_if item(normalized_link) $item(link)]
-    set item_dir [get_item_dir normalized_link]
-    set filelist [get_revision_files item_dir]
-    foreach filename ${filelist} {
-	puts "[file mtime ${filename}] [file tail ${filename}]"
+    #load_item item ${urlsha1}
+    #set normalized_link [get_value_if item(normalized_link) $item(link)]
+
+    #set item_dir [get_item_dir normalized_link]
+    #set filelist [get_revision_files item_dir]
+    #foreach filename ${filelist} {
+	#puts "[file mtime ${filename}] [file tail ${filename}]"
+    #}
+
+    set slicelist [::persistence::get_slice       \
+		       "newsdb"                   \
+		       "news_item/by_url_and_rev" \
+		       "${urlsha1}"]
+
+    foreach {filename} ${slicelist} {
+	set timestamp [file mtime ${filename}]
+	set column_name [file tail ${filename}]
+	puts "${timestamp} ${column_name}"
     }
+
 }
 
 proc ::feed_reader::show_item_from_url {link} {
@@ -1214,47 +1249,50 @@ proc ::feed_reader::write_item {normalized_link feedVar itemVar resync_p} {
     close $fp
 
 
+    # insert_column
+    #   keyspace: newsdb
+    #   column_family: news_item / variant: by_url_and_const
+    #   row: ${urlsha1}
+    #   column_name: _data_
+    #
 
-    # save data to log dir
+    ::persistence::insert_column newsdb news_item/by_url_and_const ${urlsha1} "_data_" ${data}
 
-    # storage::insert_column
-    #     column_family:news_item
-    #     keyspace:newsdb
-    #     row:log
-    #     column:${urlsha1} 
-    #     payload:${data}
+    # insert_column
+    #   keyspace: newsdb
+    #   column_family: news_item / variant: by_const_and_url
+    #   row: log
+    #   column_name: ${urlsha1}
     #
     # operations: top_N (?), range (?), slice (?), insert, get, remove
+    #
     # ::util::writefile ${logfilename}  ${data}  
-    ::persistence::insert_column newsdb log ${urlsha1} ${data}
+    #
+    ::persistence::insert_column newsdb news_item/by_const_and_url log ${urlsha1} ${data}
 
-    # save data to item-revision dir
-
-    # storage::insert_supercolumn 
-    #     column_family:news_item_revision
-    #     row:${reversedomain} 
-    #     supercolumn:${urlsha1} 
-    #     column:${contentsha1} 
-    #     payload:${data}
+    # insert_column
+    #   keyspace: newsdb
+    #   column_family: news_item / variant: by_site_and_url
+    #   row: ${reversedomain}
+    #   column_name: ${urlsha1}
     #
     # operations: slice, insert, get, remove
     #
     # ::util::writefile ${revisionfilename} ${data}
-
+    #
     set reversedomain [reversedomain [::util::domain_from_url ${normalized_link}]]
 
-    ::persistence::insert_column newsdb site/${reversedomain} ${urlsha1}/${contentsha1} ${data}
+    ::persistence::insert_column newsdb news_item/by_site_and_url ${reversedomain} ${urlsha1} ${data}
 
-    # save data to url dir
-
-    # storage::insert_row
-    #     column_family:news_item
-    #     row:url/${urlsha1} 
-    #     payload:${data}
+    # insert_column
+    #   keyspace: newsdb
+    #   column_family: news_item / variant: by_url_and_rev
+    #   row: ${urlsha1}
+    #   column_name: ${contentsha1}
     #
-    # operations: insert, get, remove, delete
-    ::util::writefile ${urlfilename} ${data}
-    #::persistence::insert_column newsdb url/${urlsha1} {} ${data}
+    # ::util::writefile ${urlfilename} ${data}
+    #
+    ::persistence::insert_column newsdb news_item/by_url_and_rev ${urlsha1} ${contentsha1} ${data}
 
 
     if { [get_value_if item(date) ""] ne {} } {
