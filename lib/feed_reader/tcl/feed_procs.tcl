@@ -1061,50 +1061,6 @@ proc ::feed_reader::show_item_from_url {link} {
     print_item item
 }
 
-proc ::feed_reader::incr_value_in_file {filename {increment "1"}} {
-
-    if { [file exists ${filename}] } {
-
-	set count [::util::readfile ${filename}]
-
-    } else {
-
-	set count 0
-
-    }
-
-    set result [incr count ${increment}]
-
-    ::util::writefile ${filename} ${result}
-
-    return ${result}
-
-}
-
-proc ::feed_reader::incr_array_in_file {filename incrementVar} {
-
-    upvar $incrementVar increment
-
-    if { [file exists ${filename}] } {
-
-	array set count [::util::readfile ${filename}]
-
-    } else {
-
-	array set count [list]
-
-    }
-
-    foreach name [array names increment] {
-	incr count(${name}) $increment(${name})
-    }
-
-    ::util::writefile ${filename} [array get count]
-
-    return [array get count]
-
-}
-
 proc ::feed_reader::write_item {normalized_link feedVar itemVar resync_p} {
     upvar $feedVar feed
     upvar $itemVar item
@@ -1311,7 +1267,8 @@ proc ::feed_reader::sync_feeds {{news_sources ""} {debug_p "0"}} {
 
         foreach filename ${filelist} {
 
-            set feed_name ${news_source}/[file tail ${filename}]
+            #set feed_name ${news_source}/[file tail ${filename}]
+            set feed_name [file tail ${filename}]
 
             array set feed [::util::readfile ${filename}]
 

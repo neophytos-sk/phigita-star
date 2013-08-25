@@ -340,12 +340,50 @@ proc ::feed_reader::fetch_feed_p {feed_name timestamp {coeff "0.3"}} {
 
 }
 
+
+proc ::feed_reader::incr_array_in_column {keyspace column_family row_key column_path incrementVar} {
+
+    upvar $incrementVar increment
+
+    ::persistence::get_column     \
+	"${keyspace}"             \
+	"${column_family}"        \
+	"${row_key}"              \
+	"${column_path}"          \
+	"column_data"             \
+	"exists_column_p"
+    
+    if { ${exists_column_p} } {
+
+	array set count ${column_data}
+
+    } else {
+
+	array set count [list]
+
+    }
+
+    foreach name [array names increment] {
+	incr count(${name}) $increment(${name})
+    }
+
+    set stats [array get count]
+
+    ::persistence::insert_column  \
+	"${keyspace}"             \
+	"${column_family}"        \
+	"${row_key}"              \
+	"${column_path}"          \
+	"${stats}"
+
+    return ${stats}
+
+}
+
+
 proc ::feed_reader::update_crawler_stats {timestamp feed_name statsVar} {
 
     upvar $statsVar stats
-
-    set crawler_dir [get_crawler_dir]
-    set crawler_feed_dir "${crawler_dir}/feed/${feed_name}/"
 
     foreach format {
         {H-%H}
@@ -355,25 +393,22 @@ proc ::feed_reader::update_crawler_stats {timestamp feed_name statsVar} {
 
 	set pretty_timeval [clock format ${timestamp} -format ${format}]
 	
-        #set crawler_feed_sync_stats ${crawler_feed_dir}/${pretty_timeval}/_stats
         set stats [incr_array_in_file ${crawler_feed_sync_stats} stats]
 
-	::persistence::insert_column        \
+	incr_array_in_column                \
 	    "crawldb"                       \
 	    "feed_stats/by_feed_and_period" \
 	    "${feed_name}"                  \
 	    "${pretty_interval}"            \
-	    "${stats}"
+	    "stats"
 
     }
 
-    set stats [incr_array_in_file "${crawler_feed_dir}/_stats" stats]
-
-    ::persistence::insert_column        \
+    incr_array_in_column                \
 	"crawldb"                       \
 	"feed_stats/by_feed_and_period" \
 	"${feed_name}"                  \
 	"_stats"                        \
-	"${stats}"
+	stats
 
 }
