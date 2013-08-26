@@ -77,15 +77,21 @@ proc ::feed_reader::get_first_sync_timestamp {linkVar} {
 
     set slice_predicate [list "lindex" "0"]
 
-    set slicelist [::persistence::get_slice             \
+    set slicelist [::persistence::get_slice_names       \
 		       "crawldb"                        \
 		       "sync_info/by_urlsha1_and_const" \
 		       "${urlsha1}"                     \
 		       "${slice_predicate}"]
 
-    set revisionfilename [lindex ${slicelist} 0]
+    set revision_datetime ${slicelist}
 
-    return [file mtime ${revisionfilename}]
+    #puts "get_first_sync_timestamp: urlsha1=$urlsha1 revision_datetime=$revision_datetime link=$link"
+
+    if { ${revision_datetime} eq {} } {
+	return 0
+    }
+
+    return [clock scan ${revision_datetime} -format "%Y%m%dT%H%M"]
 
 }
 
@@ -98,16 +104,15 @@ proc ::feed_reader::get_last_sync_timestamp {linkVar} {
 
     set slice_predicate [list "lindex" "end"]
 
-    set slicelist [::persistence::get_slice             \
+    set slicelist [::persistence::get_slice_names       \
 		       "crawldb"                        \
 		       "sync_info/by_urlsha1_and_const" \
 		       "${urlsha1}"                     \
 		       "${slice_predicate}"]
 
-    # column_data constains the timestamp of the
-    # of the last time the given url was crawled
+    set revision_datetime ${slicelist}
 
-    return ${column_data}
+    return [clock scan ${revision_datetime} -format "%Y%m%dT%H%M"]
 
 }
 

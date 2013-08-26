@@ -170,7 +170,7 @@ proc ::persistence::get_slice {keyspace column_family row_key {slice_predicate "
 
     set row_dir [get_row_dir ${keyspace} ${column_family} ${row_key}]
 
-    puts "row_dir = ${row_dir}"
+    # puts "row_dir = ${row_dir}"
 
     set slicelist [lsort -decreasing [glob -nocomplain -directory ${row_dir} *]]
 

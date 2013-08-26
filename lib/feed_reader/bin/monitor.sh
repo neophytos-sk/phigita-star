@@ -1,4 +1,3 @@
-watch -n 60 'clear && ./feed-reader.tcl log 40'
+watch -n 10 'clear && echo "feed-reader" && ./feed-reader.tcl log'
 
-# watch -n 60 'clear && ./feed-reader.tcl log 40 && ./feed-reader.tcl sync'
 

@@ -242,10 +242,11 @@ proc ::feed_reader::exec_xpath {resultVar doc xpath} {
 }
 
 
-proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar} {
+proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar infoVar} {
 
     upvar $feedVar feed
     upvar $itemVar item
+    upvar $infoVar info
 
     variable meta
 
@@ -310,7 +311,11 @@ proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar} {
 
 
     set html ""
-    set errorcode [::xo::http::fetch html ${link}]
+
+    array set options [get_value_if feed(http_options) ""]
+    set errorcode [::xo::http::fetch html ${link} options info]
+    unset options
+
     if { ${errorcode} } {
 	return ${errorcode}
     }
@@ -442,15 +447,97 @@ proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar} {
 
     $doc delete
 
+    if { ${body_length} == 0 } {
+	# puts "--->>> zero-length body"
+	return 1 ;# error due to zero-length body
+    }
+
     return 0 ;# no errors
 }
 
-proc ::feed_reader::fetch_item {link title_in_feed feedVar itemVar} {
+
+proc ::feed_reader::get_cookielist_and_try_again {link title_in_feed feedVar itemVar infoVar} {
+
+    error "not good enough - improve and make it work with handle_redirect_item"
 
     upvar $feedVar feed
     upvar $itemVar item
+    upvar $infoVar info
 
-    if { [catch {set retcode [fetch_item_helper ${link} ${title_in_feed} feed item]} errmsg] } {
+    if { [get_value_if feed(article_redirect_policy) ""] eq {GET_COOKIELIST_AND_TRY_AGAIN} } {
+
+	set redirect_url [get_value_if info(redirecturl) ""]
+
+	if { ${redirect_url} ne {} } {
+	    
+	    if { [catch {
+
+		set redirect_retcode [::xo::http::fetch _dummy_ ${redirect_url} "" redirect_info]
+
+	    } errmsg] } {
+
+		puts "--->>> tried redirect but it failed redirect_info=[array get redirect_info] errmsg=$errmsg"
+
+	    } else {
+
+		#redirect succeeded, get the cookielist and try again
+		puts "redirect_info=[array get redirect_info]"
+
+	    }
+
+	}
+
+    }
+
+}
+
+proc ::feed_reader::handle_redirect_item {link title_in_feed feedVar itemVar infoVar redirect_count} {
+    upvar $feedVar feed
+    upvar $itemVar item
+    upvar $infoVar info
+
+    if { ${redirect_count} <= 1} {
+
+	set redirect_url $info(redirecturl)
+
+	# 1. mark given link as a redirect item
+
+	set item(urlsha1) [get_urlsha1 ${link}]
+	set item(responsecode) $info(responsecode)
+	set item(redirect_url) ${redirect_url}
+
+	::persistence::insert_column         \
+	    "newsdb"                         \
+	    "news_item/by_urlsha1_and_const" \
+	    "$item(urlsha1)"                 \
+	    "_data_"                         \
+	    "[array get item]"
+
+	unset item
+
+	# 2. fetch item at redirect url
+
+	array set item [list]
+
+	return [fetch_item ${redirect_url} ${title_in_feed} feed item info [incr redirect_count]]
+
+    }
+
+    return 1 ;# failure or no redirect
+}
+
+
+proc ::feed_reader::fetch_item {link title_in_feed feedVar itemVar infoVar {redirect_count "0"}} {
+
+    upvar $feedVar feed
+    upvar $itemVar item
+    upvar $infoVar info
+
+    if { [catch {
+
+	set retcode [fetch_item_helper ${link} ${title_in_feed} feed item info]
+
+    } errmsg] } {
 
 	puts errmsg=$errmsg
 
@@ -464,11 +551,17 @@ proc ::feed_reader::fetch_item {link title_in_feed feedVar itemVar} {
 	return 1 ;# failed with errors
     }
 
+    if { [get_value_if info(responsecode) ""] eq {302} && [get_value_if feed(handle_redirect_item_p) "0"] } {
+
+	return [handle_redirect_item ${link} ${title_in_feed} feed item info ${redirect_count}]
+
+    }
+
     return ${retcode}
 }
 
 
-proc ::feed_reader::fetch_and_write_item {link title_in_feed feedVar} {
+proc ::feed_reader::fetch_and_write_item {timestamp link title_in_feed feedVar} {
 
     upvar $feedVar feed
 
@@ -491,11 +584,14 @@ proc ::feed_reader::fetch_and_write_item {link title_in_feed feedVar} {
 	![exists_item ${normalized_link}] 
 	|| ( ${can_resync_p} && [set resync_p [auto_resync_p feed ${normalized_link}]] ) 
     } {
-	
-	set errorcode [fetch_item ${link} ${title_in_feed} feed item]
+
+	set errorcode [fetch_item ${link} ${title_in_feed} feed item info]
 	if { ${errorcode} } {
+	    puts "--->>> errorcode=$errorcode"
 	    puts "--->>> error ${link}"
-	    # incr errorCount
+	    puts "--->>> info=[array get info]"
+	    # unset item
+	    # unset info
 	    return {ERROR_FETCH}
 	}
 
@@ -503,9 +599,14 @@ proc ::feed_reader::fetch_and_write_item {link title_in_feed feedVar} {
 	    set item(normalized_link) ${normalized_link}
 	}
 
-	set written_p [write_item ${normalized_link} feed item ${resync_p}]
+	if { $item(link) ne ${link} } {
+	    set item(original_link) ${link}
+	}
+
+	set written_p [write_item ${timestamp} ${normalized_link} feed item ${resync_p}]
 	
-	unset item
+	#unset item
+	#unset info
 
 	if { ${written_p} } {
 	    return {FETCH_AND_WRITE}
@@ -886,11 +987,11 @@ proc ::feed_reader::load_item {itemVar urlsha1} {
 
     upvar $itemVar item
 
-    ::persistence::get_column        \
-	"newsdb"                     \
-	"news_item/by_url_and_const" \
-	"${urlsha1}"                 \
-	"_data_"                     \
+    ::persistence::get_column            \
+	"newsdb"                         \
+	"news_item/by_urlsha1_and_const" \
+	"${urlsha1}"                     \
+	"_data_"                         \
 	"column_data"
 
     array set item ${column_data}
@@ -1073,11 +1174,11 @@ proc ::feed_reader::show_item_from_url {link} {
     print_item item
 }
 
-proc ::feed_reader::write_item {normalized_link feedVar itemVar resync_p} {
+proc ::feed_reader::write_item {timestamp normalized_link feedVar itemVar resync_p} {
     upvar $feedVar feed
     upvar $itemVar item
 
-    set timestamp [clock seconds]
+    #set timestamp [clock seconds]
     set timestamp_datetime [clock format ${timestamp} -format "%Y%m%dT%H%M"]
     set urlsha1 [::sha1::sha1 -hex $normalized_link]
 
@@ -1165,11 +1266,11 @@ proc ::feed_reader::write_item {normalized_link feedVar itemVar resync_p} {
     #   column_name: _data_
     #
 
-    ::persistence::insert_column     \
-	"newsdb"                     \
-	"news_item/by_url_and_const" \
-	"${urlsha1}"                 \
-	"_data_"                     \
+    ::persistence::insert_column         \
+	"newsdb"                         \
+	"news_item/by_urlsha1_and_const" \
+	"${urlsha1}"                     \
+	"_data_"                         \
 	"${data}"
 
     # insert_column
@@ -1297,8 +1398,6 @@ proc ::feed_reader::sync_feeds {{news_sources ""} {debug_p "0"}} {
 
     progress_init [llength ${news_sources}]
 
-    progress_tick 0
-
     set cur 0
     foreach news_source ${news_sources} {
 
@@ -1361,7 +1460,7 @@ proc ::feed_reader::sync_feeds {{news_sources ""} {debug_p "0"}} {
             foreach link $result(links) title_in_feed $result(titles) {
 
                 # returns FETCH_AND_WRITE, NO_FETCH, and NO_WRITE
-                set retcode [fetch_and_write_item ${link} ${title_in_feed} feed]
+                set retcode [fetch_and_write_item ${timestamp} ${link} ${title_in_feed} feed]
                 incr stats(${retcode})
             }
 
@@ -1434,13 +1533,16 @@ proc ::feed_reader::test_feed {news_source {limit "3"} {fetch_item_p "1"}} {
 
 
                 if { ${fetch_item_p} } {
-                    set errorcode [fetch_item ${link} ${title_in_feed} feed item]
+                    set errorcode [fetch_item ${link} ${title_in_feed} feed item info]
                     if { ${errorcode} } {
                         puts "fetch_item failed errorcode=$errorcode link=$link"
+			puts "info=[array get info]"
                         continue
                     }
                     print_item item 
                 }
+		unset item
+		unset info
 
         }
 
@@ -1457,11 +1559,12 @@ proc ::feed_reader::test_article {news_source feed_name link} {
     array set feed [::util::readfile ${feed_file}]
 
     set title_in_feed ""
-    set retcode [fetch_item ${link} ${title_in_feed} feed item]
+    set retcode [fetch_item ${link} ${title_in_feed} feed item info]
 
     print_item item
     
-    puts retcode=$retcode
+    puts "retcode=$retcode"
+    puts "info=[array get info]"
 }
 
 

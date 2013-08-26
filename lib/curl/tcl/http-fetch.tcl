@@ -1,12 +1,39 @@
 namespace eval ::xo::http {;}
 
-proc ::xo::http::fetch {contentVar url} {
+proc ::xo::http::fetch {contentVar url {optionsVar ""} {infoVar ""}} {
     upvar ${contentVar} content
 
-    if { [catch {set errorcode [curl::transfer -url ${url} \
-				    -bodyvar content \
-				    -infohttpcode httpcode \
-				    -infocontenttype contenttype] } errmsg] } {
+    if { ${optionsVar} ne {} } {
+	upvar ${optionsVar} options
+    }
+
+    if { ${infoVar} ne {} } {
+	upvar ${infoVar} info
+    }
+
+    set httpversion [get_value_if options(httpversion) "1.1"]
+    set followlocation [get_value_if options(followlocation) "0"]
+    set maxredirs [get_value_if options(maxredirs) "0"]
+
+    if { [catch {
+	set errorcode [curl::transfer -url ${url} \
+			   -httpversion ${httpversion} \
+			   -followlocation ${followlocation} \
+			   -maxredirs ${maxredirs} \
+			   -bodyvar content \
+			   -inforesponsecode info(responsecode) \
+			   -infocontenttype info(contenttype) \
+			   -infoeffectiveurl info(effectiveurl) \
+			   -inforedirecturl info(redirecturl) \
+			   -infocookielist info(cookielist)\
+			   -infonamelookuptime info(namelookuptime)\
+			   -infoconnecttime info(connecttime) \
+			   -infopretransfertime info(pretransfertime) \
+			   -infostarttransfertime info(starttransfertime) \
+			   -infototaltime info(totaltime) \
+			   -inforedirecttime info(redirecttime) \
+			   -inforedirectcount info(redirectcount)] 
+    } errmsg] } {
 
 	if { [string is integer ${errmsg}] } {
 	    return ${errmsg}
@@ -17,7 +44,7 @@ proc ::xo::http::fetch {contentVar url} {
     }
 
 
-    if { $errorcode == 0 && $httpcode == 200} {;}
+    #if { $errorcode == 0 && $info(httpcode) == 200} {;}
 
     return $errorcode
 }
