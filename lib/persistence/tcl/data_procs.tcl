@@ -257,18 +257,16 @@ proc ::persistence::exists_column_p {keyspace column_family row_key column_path}
 }
 
 
-### TO BE TESTED
-
-
-proc ::persistence::multiget_slice {keyspace_list column_family row_keys {slice_predicate ""}} {
+proc ::persistence::multiget_slice {keyspace column_family row_keys {slice_predicate ""}} {
 
     set result [list]
 
     foreach row_key ${row_keys} {
 
-	set slicelist [get_slice ${keyspace} ${column_family} ${row_key} ${slicePredicate}]
+	set slicelist [get_slice ${keyspace} ${column_family} ${row_key} ${slice_predicate}]
 
-	lappend result [list ${row_key} ${slicelist}]
+	lappend result ${row_key}
+	lappend result ${slicelist}
 
     }
 

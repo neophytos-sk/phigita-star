@@ -1,5 +1,6 @@
 url "http://www.capital.gr/startpage_weekend.asp"
 encoding {cp1253}
+langclass {auto}
 include_re {/News\.asp\?id=[0-9]{4,}$}
 htmltidy_feed_p 1
 htmltidy_article_p 1

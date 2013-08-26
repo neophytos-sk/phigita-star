@@ -722,7 +722,7 @@ proc ::feed_reader::get_feed_files {news_source} {
 
 
 
-proc ::feed_reader::list_feed {domain {offset "0"} {limit "20"}} {
+proc ::feed_reader::list_site {domain {offset "0"} {limit "20"}} {
 
     set slice_predicate [list "lrange" [list "${offset}" "${limit}"]]
 
@@ -758,7 +758,7 @@ proc ::feed_reader::get_contentfilelist {sortedlistVar} {
 
 }
 
-proc ::feed_reader::log {{offset "0"} {limit "20"}} {
+proc ::feed_reader::list_all {{offset "0"} {limit "20"}} {
 
     set predicate [list "lrange" [list "${offset}" "${limit}"]]
 
@@ -1673,15 +1673,20 @@ proc ::feed_reader::filter_stopwords {resultVar tokensVar} {
 #
 proc ::feed_reader::wordcount {{contentsha1_list ""}} {
 
-    if { ${contentsha1_list} eq {} } {
-	set contentsha1_list [lrange [glob -tails -directory [get_content_dir] *] 0 100]
-    }
+
+    set multislicelist [::persistence::multiget_slice \
+			    "newsdb" \
+			    "content_item/by_contentsha1_and_const" \
+			    "${contentsha1_list}"]
 
     array set count [list]
-    foreach contentsha1 ${contentsha1_list} {
-	load_content item ${contentsha1}
+    foreach {contentsha1 slicelist} ${multislicelist} {
 
-	set content [concat $item(title) $item(body)]
+	# we know that slicelist is just one element
+        # we are just keeping appearances here
+	set contentfilename [lindex ${slicelist} 0]
+
+	set content [join [::persistence::get_data $contentfilename]]
 
 	# remove embedded content and urls
 	set re {\{[^\}]+\}|https?://[^\s]+}
@@ -1695,7 +1700,6 @@ proc ::feed_reader::wordcount {{contentsha1_list ""}} {
 	    incr count(${token})
 	}
 
-	unset item
     }
 
     package require struct::prioqueue

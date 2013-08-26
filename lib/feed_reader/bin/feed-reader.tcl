@@ -21,8 +21,8 @@ proc print_usage_info {} {
 			   "show-content" "contentsha1 ?...?" \
 			   "uses-content" "contentsha1 ?...?" \
 			   "diff-content" "contentsha1_old contentsha1_new" \
-			   "log" "?limit? ?offset?" \
-			   "list" "domain ?offset? ?limit?" \
+			   "list" "?offset? ?limit?" \
+			   "list-site" "domain ?offset? ?limit?" \
 			   "revisions" "urlsha1" \
 			   "register-axis" "axis_name" \
 			   "register-label" "axis_name label_name" \
@@ -127,14 +127,14 @@ if { ${argc} < 1 } {
         set contentsha1_list [lrange ${argv} 1 end]
         ::feed_reader::uses_content ${contentsha1_list}	
 
-    } elseif { ${cmd} eq {log} && ${argc} >= 1 } {
+    } elseif { ${cmd} eq {list} && ${argc} >= 1 } {
 
-        ::feed_reader::log {*}[lrange ${argv} 1 end]
+        ::feed_reader::list_all {*}[lrange ${argv} 1 end]
 
-    } elseif { ${cmd} eq {list} && ${argc} >= 2 } {
+    } elseif { ${cmd} eq {list-site} && ${argc} >= 2 } {
 
         set news_source [lindex ${argv} 1]
-        ::feed_reader::list_feed ${news_source} {*}[lrange ${argv} 2 end]
+        ::feed_reader::list_site ${news_source} {*}[lrange ${argv} 2 end]
 
     } elseif { ${cmd} eq {remove-feed-items} && ${argc} >= 2 } {
 
