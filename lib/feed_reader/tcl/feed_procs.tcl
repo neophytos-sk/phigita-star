@@ -664,7 +664,7 @@ proc ::feed_reader::get_item_dir {linkVar {urlsha1Var ""}} {
 }
 
 proc ::feed_reader::get_content_dir {} {
-    return [get_base_dir]/content
+    return [get_base_dir]/content_item/by_contentsha1_and_const
 }
 
 proc ::feed_reader::get_log_dir {} {
@@ -931,26 +931,22 @@ proc ::feed_reader::search {keywords {limit "40"} {offset "0"}} {
 
 
 
-proc ::feed_reader::cluster {{limit "10"} {offset "0"} {k ""} {num_iter "3"}} {
+proc ::feed_reader::cluster {{offset "0"} {limit "10"} {k ""} {num_iter "3"}} {
 
-    set log_dir [get_log_dir]
+    set slice_predicate [list "lrange" [list "${offset}" "${limit}"]]
 
-    set logfilelist [glob -directory ${log_dir} *]
+    set slicelist [::persistence::get_slice \
+		       "newsdb" \
+		       "news_item/by_const_and_date" \
+		       "log" \
+		       "${slice_predicate}"]
 
-    set sortedlist [lsort -decreasing -command compare_mtime ${logfilelist}]
-
-    set first ${offset}
-    set last [expr { ${offset} + ${limit} - 1 }]
-
-    set slicelist [lrange ${sortedlist} ${first} ${last}]
-
-    #print_log_header
 
     set contentfilelist [list]
     foreach logfilename ${slicelist} {
 
         array set item [::util::readfile ${logfilename}]
-	lappend contentfilelist [get_content_dir]/$item(contentsha1)
+	lappend contentfilelist [get_content_dir]/$item(contentsha1)/_data_
 
 	#print_log_entry item
 	unset item
@@ -964,8 +960,6 @@ proc ::feed_reader::cluster {{limit "10"} {offset "0"} {k ""} {num_iter "3"}} {
     set result [exec ${cmd} ${k} ${num_iter} {*}${contentfilelist}]
 
     puts ${result}
-
-
 
 }
 
@@ -1077,13 +1071,6 @@ proc ::feed_reader::print_item {itemVar} {
 }
 
 
-proc ::feed_reader::print_log_header {} {
-
-    puts [format "%2s %13s %40s %40s %6s %20s %3s %3s %s" lc date contentsha1 urlsha1 len domain "" "" title]
-
-}
-
-
 proc ::util::pretty_length {chars} {
 
     if { ${chars} eq {} } {
@@ -1116,6 +1103,13 @@ proc ::util::pretty_length {chars} {
 }
 
 
+proc ::feed_reader::print_log_header {} {
+
+    puts [format "%2s %13s %40s %6s %20s %3s %3s %s" lc date contentsha1 urlsha1 len domain "" "" title]
+
+}
+
+
 proc ::feed_reader::print_log_entry {itemVar} {
     upvar $itemVar item
 
@@ -1131,10 +1125,9 @@ proc ::feed_reader::print_log_entry {itemVar} {
     }
 
     set lang [lindex [split [get_value_if item(langclass) "el.utf8"] {.}] 0]
-    puts [format "%2s %13s %40s %40s %6s %20s %3s %3s %s" \
+    puts [format "%2s %13s %40s %6s %20s %3s %3s %s" \
 	      ${lang} \
 	      $item(date) \
-	      $item(contentsha1) \
 	      $item(urlsha1) \
 	      [::util::pretty_length [get_value_if item(body_length) ""]] \
 	      ${domain} \
