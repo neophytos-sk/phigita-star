@@ -165,6 +165,28 @@ proc slice_predicate=lindex {slicelistVar index} {
 
 }
 
+proc slice_predicate=in {slicelistVar column_names} {
+
+    upvar ${slicelistVar} slicelist
+
+    set result [list]
+
+    foreach filename ${slicelist} {
+	if { [file tail ${filename}] in ${column_names} } {
+	    lappend result ${filename}
+	}
+    }
+
+    set slicelist ${result}
+
+}
+
+proc slice_predicate=lsort {slicelistVar args} {
+
+    set slicelist [lsort {*}${args} ${slicelist}]
+
+}
+
 
 proc ::persistence::get_slice {keyspace column_family row_key {slice_predicate ""}} {
 
