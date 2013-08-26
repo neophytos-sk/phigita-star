@@ -729,6 +729,7 @@ proc ::feed_reader::list_feed {domain {offset "0"} {limit "40"}} {
 
     set reversedomain [reversedomain ${domain}]
 
+    # TODO: use sort_date just like we do for news_item/by_const_and_date
     set slicelist [::persistence::get_slice        \
 		       "newsdb"                    \
 		       "news_item/by_site_and_url" \
@@ -1239,44 +1240,10 @@ proc ::feed_reader::write_item {timestamp normalized_link feedVar itemVar resync
 
 
     array unset item body
-    set data [array get item]
 
 
-    # contentsha1 to urlsha1, i.e. which links lead to the same content
-    # TODO: consider having simhash
 
-    ::persistence::insert_column \
-	"newsdb" \
-	"index/contentsha1_to_urlsha1" \
-	"${contentsha1}" \
-	"${urlsha1}" \
-	""
 
-    # insert_column
-    #   keyspace: newsdb
-    #   column_family: news_item / variant: by_url_and_const
-    #   row: ${urlsha1}
-    #   column_name: _data_
-    #
-
-    ::persistence::insert_column         \
-	"newsdb"                         \
-	"news_item/by_urlsha1_and_const" \
-	"${urlsha1}"                     \
-	"_data_"                         \
-	"${data}"
-
-    # insert_column
-    #   keyspace: newsdb
-    #   column_family: news_item / variant: by_const_and_date
-    #   row: log
-    #   column_name: ${date}.${urlsha1}
-    #
-    # operations: top_N (?), range (?), slice (?), insert, get, remove
-    #
-    # ::util::writefile ${logfilename}  ${data}  
-    #
-    
     set item(sort_date) ""
 
     if { [get_value_if item(date) ""] ne {} } {
@@ -1326,6 +1293,46 @@ proc ::feed_reader::write_item {timestamp normalized_link feedVar itemVar resync
     if { $item(sort_date) eq {} } {
 	set item(sort_date) ${timestamp_datetime}
     }
+
+
+
+    set data [array get item]
+
+
+    # contentsha1 to urlsha1, i.e. which links lead to the same content
+    # TODO: consider having simhash
+
+    ::persistence::insert_column \
+	"newsdb" \
+	"index/contentsha1_to_urlsha1" \
+	"${contentsha1}" \
+	"${urlsha1}" \
+	""
+
+    # insert_column
+    #   keyspace: newsdb
+    #   column_family: news_item / variant: by_url_and_const
+    #   row: ${urlsha1}
+    #   column_name: _data_
+    #
+
+    ::persistence::insert_column         \
+	"newsdb"                         \
+	"news_item/by_urlsha1_and_const" \
+	"${urlsha1}"                     \
+	"_data_"                         \
+	"${data}"
+
+    # insert_column
+    #   keyspace: newsdb
+    #   column_family: news_item / variant: by_const_and_date
+    #   row: log
+    #   column_name: ${date}.${urlsha1}
+    #
+    # operations: top_N (?), range (?), slice (?), insert, get, remove
+    #
+    # ::util::writefile ${logfilename}  ${data}  
+    #
 
     ::persistence::insert_column      \
 	"newsdb"                      \

@@ -320,8 +320,14 @@ proc ::feed_reader::fetch_feed_p {feed_name timestamp {coeff "0.3"}} {
 		      "crawldb"                       \
 		      "feed_stats/by_feed_and_const"  \
 		      "${feed_name}"                  \
-		      "_stats"                        \
-		      "column_data"]
+		      "_stats"]
+    
+    if { ![::persistence::exists_data_p ${filename}] } {
+	return 1
+    }
+
+    array set count [::persistence::get_data ${filename}]
+
 
     array set count ${column_data}
 
