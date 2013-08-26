@@ -12,4 +12,5 @@ xpath_article_cleanup {
     {//div[@class="belowArticle"]}
     {//div[@id="contactHoverBox"]}
     {//div[@class="adsbox"]}
+    {//div[@class="forum"]}
 }

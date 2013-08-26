@@ -978,7 +978,7 @@ proc ::feed_reader::print_item {itemVar} {
 
 proc ::feed_reader::print_log_header {} {
 
-    puts [format "%3s %13s %40s %40s %6s %24s %3s %3s %s" lang date contentsha1 urlsha1 len domain "" "" title]
+    puts [format "%2s %13s %40s %40s %6s %20s %3s %3s %s" lc date contentsha1 urlsha1 len domain "" "" title]
 
 }
 
@@ -1030,7 +1030,7 @@ proc ::feed_reader::print_log_entry {itemVar} {
     }
 
     set lang [lindex [split [get_value_if item(langclass) "el.utf8"] {.}] 0]
-    puts [format "%3s %13s %40s %40s %6s %24s %3s %3s %s" \
+    puts [format "%2s %13s %40s %40s %6s %20s %3s %3s %s" \
 	      ${lang} \
 	      $item(date) \
 	      $item(contentsha1) \
@@ -1078,14 +1078,14 @@ proc ::feed_reader::write_item {normalized_link feedVar itemVar resync_p} {
     upvar $itemVar item
 
     set timestamp [clock seconds]
-    set timestamp_date [clock format ${timestamp} -format "%Y%m%dT%H%M"]
+    set timestamp_datetime [clock format ${timestamp} -format "%Y%m%dT%H%M"]
     set urlsha1 [::sha1::sha1 -hex $normalized_link]
 
     ::persistence::insert_column         \
 	"crawldb"                        \
 	"sync_info/by_urlsha1_and_const" \
 	"${urlsha1}"                     \
-	"${timestamp_date}"              \
+	"${timestamp_datetime}"          \
 	""
 
 
@@ -1193,10 +1193,14 @@ proc ::feed_reader::write_item {normalized_link feedVar itemVar resync_p} {
 
             # up to 15mins difference in time it is considered to be
 	    # fine to take into account servers at different timezones
+	    #
+	    # abs is to account for news sources that set a time in the
+	    # future be it due to timezone difference or deliberately
+	    #
 
-            set timeval [clock scan $item(date) -format "%Y%m%dT%H%M"]
-            
-            if { ${timestamp} - ${timeval} > 900 } {
+	    set timeval [clock scan $item(date) -format "%Y%m%dT%H%M"]
+
+            if { abs( ${timestamp} - ${timeval} ) > 900 } {
 
 		set item(sort_date) $item(date)
                 # puts "item(date)=$item(date) is older than 15 mins - using that date for sorting..."
@@ -1205,7 +1209,17 @@ proc ::feed_reader::write_item {normalized_link feedVar itemVar resync_p} {
 
         } else {
 
-	    # use computed date for sorting
+	    # if time eq {0000} and
+	    set timestamp_date [lindex [split ${timestamp_datetime} {.}] 0]
+	    if { ${date} ne ${timestamp_date} } {
+
+		set item(sort_date) $item(date)
+
+	    } else {
+
+		# use computed date for sorting
+
+	    }
 
 	}
 
@@ -1216,7 +1230,7 @@ proc ::feed_reader::write_item {normalized_link feedVar itemVar resync_p} {
     }
 
     if { $item(sort_date) eq {} } {
-	set item(sort_date) [clock format $item(timestamp) -format "%Y%m%dT%H%M"]
+	set item(sort_date) ${timestamp_datetime}
     }
 
     ::persistence::insert_column      \
@@ -1282,6 +1296,8 @@ proc ::feed_reader::sync_feeds {{news_sources ""} {debug_p "0"}} {
     array set round_stats [list round_timestamp ${round}]
 
     progress_init [llength ${news_sources}]
+
+    progress_tick 0
 
     set cur 0
     foreach news_source ${news_sources} {
