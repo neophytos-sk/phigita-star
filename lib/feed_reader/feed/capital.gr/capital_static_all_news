@@ -1,6 +1,6 @@
 url "http://www.capital.gr/static-all-news.htm"
 encoding {cp1253}
-langclass {auto}
+article_langclass {auto}
 include_re {/News\.asp\?id=[0-9]{4,}$}
 htmltidy_feed_p 1
 htmltidy_article_p 1

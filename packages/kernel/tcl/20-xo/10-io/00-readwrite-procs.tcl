@@ -32,12 +32,14 @@ proc ::xo::io::writeVarText {channelId line {encoding ""}} {
 	fconfigure $channelId -encoding $encoding
     }
     ::xo::io::writeText $channelId $line
+    return ${len}
 }
 
 proc ::xo::io::writeString {channelId line} {
     set len [string bytelength $line]
     ::xo::io::writeInt $channelId $len
     puts -nonewline $channelId $line
+    return ${len}
 }
 
 
@@ -97,4 +99,20 @@ proc ::xo::io::readString {channelId {lineVar ""} {encoding ""}} {
 	fconfigure $channelId -encoding $encoding
     }
     set line [read $channelId $len]
+}
+
+proc ::xo::io::skipString {channelId} {
+    set len [::xo::io::readInt $channelId]
+    seek ${channelId} ${len} current
+}
+
+proc ::xo::io::skipInt {channelId} {
+    seek ${channelId} 4 current
+}
+
+proc ::xo::io::skipVarText {channelId encoding} {
+    fconfigure $channelId -encoding binary
+    set len [::xo::io::readInt $channelId]
+    fconfigure $channelId -encoding $encoding
+    seek ${channelId} ${len} current
 }
