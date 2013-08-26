@@ -722,26 +722,18 @@ proc ::feed_reader::get_feed_files {news_source} {
 
 
 
-proc ::feed_reader::list_feed {domain {offset "0"} {limit "40"}} {
+proc ::feed_reader::list_feed {domain {offset "0"} {limit "20"}} {
 
-    #set first_feed_file [lindex [get_feed_files ${news_source}] 0]
-    #array set feed [::util::readfile ${first_feed_file}]
+    set slice_predicate [list "lrange" [list "${offset}" "${limit}"]]
 
     set reversedomain [reversedomain ${domain}]
 
-    # TODO: use sort_date just like we do for news_item/by_const_and_date
-    set slicelist [::persistence::get_slice        \
-		       "newsdb"                    \
-		       "news_item/by_site_and_url" \
-		       "${reversedomain}"]
+    set slicelist [::persistence::get_slice         \
+		       "newsdb"                     \
+		       "news_item/by_site_and_date" \
+		       "${reversedomain}"           \
+		       "${slice_predicate}"]
     
-
-    set sortedlist [lsort -decreasing -command compare_mtime ${slicelist}]
-    
-    set first ${offset}
-    set last [expr { ${offset} + ${limit} - 1 }]
-
-    set slicelist [lrange ${sortedlist} ${first} ${last}]
 
     foreach filename ${slicelist} {
 	array set item [::persistence::get_data ${filename}]
@@ -1343,7 +1335,7 @@ proc ::feed_reader::write_item {timestamp normalized_link feedVar itemVar resync
 
     # insert_column
     #   keyspace: newsdb
-    #   column_family: news_item / variant: by_site_and_url
+    #   column_family: news_item / variant: by_site_and_date
     #   row: ${reversedomain}
     #   column_name: ${urlsha1}
     #
@@ -1353,11 +1345,11 @@ proc ::feed_reader::write_item {timestamp normalized_link feedVar itemVar resync
     #
     set reversedomain [reversedomain [::util::domain_from_url ${normalized_link}]]
 
-    ::persistence::insert_column    \
-	"newsdb"                    \
-	"news_item/by_site_and_url" \
-	"${reversedomain}"          \
-	"${urlsha1}"                \
+    ::persistence::insert_column       \
+	"newsdb"                       \
+	"news_item/by_site_and_date"   \
+	"${reversedomain}"             \
+	"$item(sort_date).${urlsha1}"  \
 	"${data}"
 
     # insert_column

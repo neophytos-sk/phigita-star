@@ -133,7 +133,7 @@ proc ::feed_reader::auto_resync_p {feedVar link} {
 
         # check for revisions every hour (default) or given interval
 
-        set interval [get_value_if feed(check_for_revisions_interval) "3600"]
+        set interval [get_value_if feed(check_for_revisions_interval) "7200"]
 
         if { ${now} - ${last_sync} > ${interval} } {
             return 1
