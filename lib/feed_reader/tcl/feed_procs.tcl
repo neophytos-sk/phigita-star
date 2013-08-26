@@ -1105,7 +1105,7 @@ proc ::util::pretty_length {chars} {
 
 proc ::feed_reader::print_log_header {} {
 
-    puts [format "%2s %13s %40s %6s %20s %3s %3s %s" lc date contentsha1 urlsha1 len domain "" "" title]
+    puts [format "%2s %13s %40s %6s %20s %3s %3s %s" lc date urlsha1 len domain "" "" title]
 
 }
 
