@@ -328,9 +328,6 @@ proc ::feed_reader::fetch_feed_p {feed_name timestamp {coeff "0.3"}} {
 
     array set count [::persistence::get_data ${filename}]
 
-
-    array set count ${column_data}
-
     set last_sync [file mtime ${filename}]
 
     set reference_interval 86400
