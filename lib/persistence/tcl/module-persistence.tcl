@@ -5,9 +5,9 @@ set package_dir [file normalize [file join ${dir} ..]]
 
 namespace eval ::persistence {;}
 
-proc ::feed_reader::get_package_dir {} "return ${package_dir}"
+proc ::persistence::get_package_dir {} "return ${package_dir}"
 
-proc ::feed_reader::get_conf_dir {} "return ${package_dir}/conf"
+proc ::persistence::get_conf_dir {} "return ${package_dir}/conf"
 
 source [file join $dir data_procs.tcl]
 
