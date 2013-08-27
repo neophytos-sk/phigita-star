@@ -19,6 +19,7 @@ proc print_usage_info {} {
 			   "show" "urlsha1 ?...?" \
 			   "show-url" "article_url" \
 			   "show-content" "contentsha1 ?...?" \
+			   "classify-content" "contentsha1 ?...?" \
 			   "uses-content" "contentsha1 ?...?" \
 			   "diff-content" "contentsha1_old contentsha1_new" \
 			   "list" "?offset? ?limit?" \
@@ -30,6 +31,7 @@ proc print_usage_info {} {
 			   "remove-feed-items" "domain ?sort_date.urlsha1? ?...?" \
 			   "cluster" "?limit? ?offset?" \
 			   "label-interactive" "axis label keywords ?offset? ?limit? ?callback?" \
+			   "label-batch" "axis label keywords ?offset? ?limit?" \
 			   "label" "axis class contentsha1 ?...?" \
 			   "unlabel" "axis class contentsha1 ?...?" \
 			   "fex" "?limit? ?offset?" \
@@ -97,6 +99,13 @@ if { ${argc} < 1 } {
         set keywords [lindex ${argv} 3]
         ::feed_reader::label_interactive ${axis} ${label} ${keywords} {*}[lrange ${argv} 4 end]
 
+    } elseif { ${cmd} eq {label-batch} && ${argc} >= 2 } {
+
+	set axis [lindex ${argv} 1]
+	set label [lindex ${argv} 2]
+        set keywords [lindex ${argv} 3]
+        ::feed_reader::label_batch ${axis} ${label} ${keywords} {*}[lrange ${argv} 4 end]
+
     } elseif { ${cmd} eq {revisions} && ${argc} == 2 } {
 
         set urlsha1 [lindex ${argv} 1]
@@ -123,6 +132,11 @@ if { ${argc} < 1 } {
 
         set contentsha1_list [lrange ${argv} 1 end]
         ::feed_reader::show_content ${contentsha1_list}
+
+    } elseif { ${cmd} eq {classify-content} && ${argc} >= 2 } {
+
+        set contentsha1_list [lrange ${argv} 1 end]
+        ::feed_reader::classify_content ${contentsha1_list}
 
     } elseif { ${cmd} eq {diff-content} && ${argc} == 3 } {
 

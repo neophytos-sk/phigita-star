@@ -950,10 +950,23 @@ proc ::feed_reader::search_callback=label_menu {contentsha1 axis label} {
     }
     
     puts "--->>> please enter 'y' to classify it in ${label} or 'n' to skip this item"
-    set selection [read stdin 2]
+    set selection [gets stdin 2]
     puts "your selection is ${selection}"
 
 }
+
+
+proc ::feed_reader::search_callback=label_content {contentsha1 axis label} {
+
+    ::persistence::insert_column \
+	"newsdb" \
+	"classifier/${axis}" \
+	"${label}" \
+	"${contentsha1}" \
+	""
+
+}
+
 
 proc ::feed_reader::label_interactive {axis label keywords {offset "0"} {limit "20"}} {
 puts axis=$axis
@@ -963,6 +976,20 @@ puts offset=$offset
 puts limit=$limit
 
     set callback [list "label_menu" [list ${axis} ${label}]]
+
+    search ${keywords} ${offset} ${limit} ${callback}
+
+}
+
+
+proc ::feed_reader::label_batch {axis label keywords {offset "0"} {limit "20"}} {
+puts axis=$axis
+puts label=$label
+puts keywords=$keywords
+puts offset=$offset
+puts limit=$limit
+
+    set callback [list "label_content" [list ${axis} ${label}]]
 
     search ${keywords} ${offset} ${limit} ${callback}
 
@@ -1041,6 +1068,154 @@ proc ::feed_reader::show_content {contentsha1_list} {
         unset item
     }
 }
+
+proc ::feed_reader::fprob {token cat} {
+
+    if { $::__catcount(${cat}) == 0 } {
+	return 0
+    }
+
+    return [expr { [fcount ${token} ${cat}] / $::__catcount($cat) }]
+
+}
+
+
+proc ::feed_reader::fcount {token cat} {
+
+    return [get_value_if ::__fcount_${cat}(${token}) "0.0"]
+
+}
+
+proc ::feed_reader::sum_fcount {token} {
+
+    set sum 0
+    foreach cat {politics sports} {
+	set sum [expr { ${sum} + [fcount $token $cat] }]
+    }
+
+    return $sum
+}
+
+proc ::feed_reader::docprob {itemVar cat} {
+    upvar $itemVar item
+
+    set content [concat $item(title) $item(body)]
+
+    array set count [list]
+    wordcount_helper count content
+
+    set p 1
+    foreach token [array names count] {
+
+	set basicprob [fprob ${token} ${cat}]
+
+	set totals [sum_fcount $token]
+
+	set weight 1.0
+
+	set ap 0.5
+
+	set weightedprob [expr { ($weight * $ap + $totals * $basicprob) / ($weight + $totals)  }]
+
+	set p [expr { $p * $weightedprob }]
+    }
+
+    return $p
+
+}
+
+proc ::feed_reader::catcount {cat} {
+
+    set slicelist \
+	[::persistence::get_slice \
+	     "newsdb" \
+	     "classifier/el.utf8.topic" \
+	     "${cat}"]
+
+    return [llength ${slicelist}]
+
+}
+
+
+proc ::feed_reader::classify_pr {itemVar cat} {
+    upvar $itemVar item
+
+    #set totalcount [totalcount_of_docs]
+    #set catprob [expr { [catcount ${cat}] / ${totalcount} }]
+    #set catprob [expr { [catcount ${cat}] / 271.0 }]
+    set catprob [catcount ${cat}]
+    set docprob [docprob item $cat]
+
+    set pr [expr { ${docprob} * double(${catprob}) }]
+
+    puts "cat=$cat catprob=$catprob docprob=$docprob pr=$pr"
+
+    return $pr
+}
+
+proc ::feed_reader::classify_item {itemVar} {
+    upvar $itemVar item
+    
+    set max_pr 0
+    set max_cat ""
+
+    foreach cat {politics sports} {
+
+	set pr [classify_pr item $cat]
+
+	if { $pr > $max_pr } {
+	    set max_pr $pr
+	    set max_cat $cat
+	}
+
+    }
+
+    puts "max_cat=$max_cat max_pr=$max_pr"
+
+}
+
+proc ::feed_reader::classify_content {contentsha1_list} {
+
+    
+    foreach cat {politics sports} { 
+
+	array set ::__fcount_${cat} [list]
+
+	set slicelist \
+	    [::persistence::get_slice_names \
+		 "newsdb" \
+		 "classifier/el.utf8.topic" \
+		 "${cat}"]
+
+	set ::__catcount(${cat}) [llength ${slicelist}]
+
+	foreach sha1 ${slicelist} {
+
+	    set filename \
+		[::persistence::get_column \
+		     "newsdb" \
+		     "content_item/by_contentsha1_and_const" \
+		     "${sha1}" \
+		     "_data_"]
+
+	    set content [join [::persistence::get_data ${filename}]]
+
+	    wordcount_helper ::__fcount_${cat} content
+
+	}
+
+    }
+
+
+
+    foreach contentsha1 ${contentsha1_list} {
+        load_content item ${contentsha1}
+        classify_item item
+        unset item
+    }
+
+}
+
 
 proc ::feed_reader::diff_content {contentsha1_old contentsha1_new} {
 
@@ -1759,6 +1934,24 @@ proc ::feed_reader::filter_stopwords {resultVar tokensVar} {
 
 }
 
+proc ::feed_reader::wordcount_helper {countVar contentVar} {
+
+    upvar $countVar count
+    upvar $contentVar content
+
+    # remove embedded content and urls
+    set re {\{[^\}]+\}|https?://[^\s]+}
+    regsub -all -- ${re} ${content} { } content
+
+    set tokens0 [::util::tokenize ${content}]
+
+    filter_stopwords tokens tokens0
+
+    foreach token ${tokens} {
+	incr count(${token})
+    }
+
+}
 
 # * TODO: bin packing for word cloud 
 # * TODO: word cloud for each cluster
@@ -1781,17 +1974,7 @@ proc ::feed_reader::wordcount {{contentsha1_list ""}} {
 
 	set content [join [::persistence::get_data $contentfilename]]
 
-	# remove embedded content and urls
-	set re {\{[^\}]+\}|https?://[^\s]+}
-	regsub -all -- ${re} ${content} { } content
-
-	set tokens0 [::util::tokenize ${content}]
-
-	filter_stopwords tokens tokens0
-
-	foreach token ${tokens} {
-	    incr count(${token})
-	}
+	wordcount_helper count content
 
     }
 
