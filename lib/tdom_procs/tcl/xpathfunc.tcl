@@ -240,17 +240,18 @@ namespace eval ::dom::xpathFunc {
 	     {nn/nn/Y nn:nn} {%d/%m/%Y %H:%M} \
 	     {nn.nn.Y nn:nn} {%d.%m.%Y %H:%M} \
 	     {nn/nn nn:nn} {%d/%m %H:%M} \
-	     {nn Xxx Y} {%d %B %Y} \
-	     {nn Xxx Y} {%d %B %Y} \
-	     {Xxx nn, Y} {%B %d, %Y} \
-	     {nn.Xxx.Y} {%d.%b.%Y} \
-	     {Xxx, dd Xxx Y} {A, d B Y} \
+	     {nn B Y} {%d %B %Y} \
+	     {nn B Y} {%d %B %Y} \
+	     {B nn, Y} {%B %d, %Y} \
+	     {nn.B.Y} {%d.%b.%Y} \
+	     {B, dd B Y} {A, d B Y} \
 	     {nn:nn - nn/nn/nn} {%H:%M - %d/%m/%y} \
 	     {nn:nn nn/nn} {%H:%M - %d/%m} \
 	     {nn:nn n/nn} {%H:%M %d/%m} \
 	     {nn:nn nn/n} {%H:%M %d/%m} \
 	     {nn:nn n/n} {%H:%M %d/%m} \
 	     {nn/nn} {%d/%m} \
+	     {nn/n} {%d/%m} \
 	     {nn:nn} {%H:%M}]
     
 }
@@ -261,8 +262,9 @@ proc ::dom::xpathFunc::returndate_helper__date_shape {text} {
 	{[[:lower:]]} x
 	{[[:upper:]]} X
 	{[[:digit:]]} n
-	{Xx+x} Xxx
+	{Xx+x} B
 	{n{4}} Y
+	{[^nBY ,\-/:]}
     } {
 	regsub -all -- ${re} ${text} ${subSpec} text
     }
@@ -319,10 +321,15 @@ proc ::dom::xpathFunc::returndate {ctxNode pos nodeListNode nodeList args} {
     set result ""
     if { ${ts} ne {} } {
 
-        if { ${input_format} eq {auto} } {
+        if { ${input_format} in {auto auto_noalpha} } {
             # date recognizer using date/string shapes, e.g. dd-dd-dddd OR d-m-Y
 
-            regsub -all -- {[^[:alnum:][:punct:] ]} ${ts} {} ts
+	    if { ${input_format} eq {auto_noalpha} } {
+		regsub -all -- {[^[:digit:] ,\-/:]} ${ts} {} ts
+	    } else {
+		regsub -all -- {[^[:alnum:] ,\-/:]} ${ts} {} ts
+	    }
+
 
             variable date_format
 

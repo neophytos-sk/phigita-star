@@ -5,7 +5,7 @@ htmltidy_article_p 1
 xpath_article_title {returnstring(//div[@id="arttext"]/h1)}
 xpath_article_body {returntext(//div[@id="arttext"])}
 xpath_article_image {{values(//a[@rel="lightbox-group1"]/img[@width="480" and @border="0"]/@src)}}
-xpath_article_date {returndate(substring-after(//div[@class="toolsleft"]/div[@class="date"],"On Line"),"auto")}
+xpath_article_date {returndate(//div[@class="toolsleft"]/div[@class="date"]/br/following-sibling::text(),"auto_noalpha")}
 xpath_article_modified_time {}
 xpath_article_cleanup {
     {//div[@class="belowArticle"]/following-sibling::*}
