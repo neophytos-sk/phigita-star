@@ -737,7 +737,6 @@ proc ::feed_reader::list_site {domain {offset "0"} {limit "20"}} {
 
     foreach filename ${slicelist} {
 	array set item [::persistence::get_data ${filename}]
-	puts ${filename}
 	print_log_entry item
 	unset item
     }
