@@ -1,4 +1,4 @@
-url http://news.in.gr/
+url http://kids.in.gr/
 include_re {/article/\?aid=[0-9]{4,}$}
 htmltidy_feed_p 0
 htmltidy_article_p 0
