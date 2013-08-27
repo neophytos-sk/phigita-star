@@ -1,0 +1,11 @@
+url http://www.enet.gr/
+include_re {/\?i=news\.el\.[[:alnum:]\-]+&id=[0-9]{4,}$}
+htmltidy_feed_p 0
+htmltidy_article_p 0
+xpath_article_title {returnstring(//div[@id="post-header"]/h2[@class="page-title"])}
+xpath_article_body {returntext(//div[@id="post-content"])}
+xpath_article_image {
+    {values(//div[@id="post-content"]//a/img/@src)}
+}
+xpath_article_date {normalizedate(substring-after(//h2/small[@class="post-meta-item first"],", "),"el_GR","auto")}
+xpath_article_modified_time {}
