@@ -245,7 +245,11 @@ namespace eval ::dom::xpathFunc {
 	     {Xxx nn, Y} {%B %d, %Y} \
 	     {nn.Xxx.Y} {%d.%b.%Y} \
 	     {Xxx, dd Xxx Y} {A, d B Y} \
-         {nn:nn - nn/nn/nn} {%H:%M - %d/%m/%y} \
+	     {nn:nn - nn/nn/nn} {%H:%M - %d/%m/%y} \
+	     {nn:nn nn/nn} {%H:%M - %d/%m} \
+	     {nn:nn n/nn} {%H:%M %d/%m} \
+	     {nn:nn nn/n} {%H:%M %d/%m} \
+	     {nn:nn n/n} {%H:%M %d/%m} \
 	     {nn/nn} {%d/%m} \
 	     {nn:nn} {%H:%M}]
     
