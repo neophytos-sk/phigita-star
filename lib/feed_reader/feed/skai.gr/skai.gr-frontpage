@@ -3,10 +3,13 @@ include_re {/article/[0-9]{4,}/[[:alnum:]\-]+/$}
 htmltidy_feed_p 0
 htmltidy_article_p 0
 xpath_article_title {returnstring(//hgroup/h1[@class="article-title"])}
-xpath_article_body {returntext(//article)}
+xpath_article_body {returntext(//div[@id="column-main"])}
 xpath_article_image {{values(//div[@class="thumb"]/img/@src)}}
 xpath_article_date {returndate(string(//time[@datetime]/@datetime),"%Y-%m-%dT%H:%M:%S")}
 xpath_article_modified_time {returndate(string(//time[@last-update]/@last-update),"%Y-%m-%dT%H:%M:%S")}
 xpath_article_cleanup {
     {//div[@id="article"]}
+    {//article/preceding-sibling::*}
+    {//article/following-sibling::*}
 }
+xpath_article_author {returnstring(//div[@class="byline vcard"]/strong[@class="author"])}

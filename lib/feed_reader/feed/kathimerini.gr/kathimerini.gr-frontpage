@@ -1,0 +1,13 @@
+url http://www.kathimerini.gr/
+include_re {/4dcgi/_w_articles_kathremote_1_[0-9]+/[0-9]+/[0-9]+_[0-9]{4,}$}
+encoding {iso8859-7}
+htmltidy_feed_p 1
+htmltidy_article_p 1
+xpath_article_title {returnstring(//td[@class="articleTitlos"])}
+xpath_article_body {returntext(//td[@class="eelantext"])}
+xpath_article_description {returntext(//td[@class="YpoTitle"])}
+xpath_article_image {
+    {//td[@class="eelantext"]//img[@width and @border="0"]/@src}
+}
+xpath_article_date {normalizedate(substring-after(//td[@class="eelantext3" and @width="240"]," : "),"el_GR","%d %B %Y")}
+xpath_article_modified_time {}
