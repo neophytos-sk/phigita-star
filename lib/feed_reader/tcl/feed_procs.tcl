@@ -1638,7 +1638,7 @@ proc ::feed_reader::remove_item {filename} {
 	    ::persistence::delete_row \
 		"newsdb" \
 		"content_item/by_contentsha1_and_const" \
-		"${contentsha1}"]
+		"${contentsha1}"
 
 	}
 
@@ -1676,7 +1676,10 @@ proc ::feed_reader::remove_feed_items {domain {urlsha1_list ""}} {
 
     set delete_domain_p 1
 
-    set slice_predicate [list "in" [list ${urlsha1_list}]]
+    set slice_predicate ""
+    if { ${urlsha1_list} ne {} } {
+	set slice_predicate [list "in" [list ${urlsha1_list}]]
+    }
 
     set slicelist [::persistence::get_slice         \
 		       "newsdb"                     \

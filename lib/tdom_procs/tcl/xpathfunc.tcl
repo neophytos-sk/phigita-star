@@ -244,7 +244,12 @@ namespace eval ::dom::xpathFunc {
 	     {nn B Y} {%d %B %Y} \
 	     {B nn, Y} {%B %d, %Y} \
 	     {nn.B.Y} {%d.%b.%Y} \
-	     {B, dd B Y} {A, d B Y} \
+	     {B n B Y} {%A %d %B %Y} \
+	     {B nn B Y} {%A %d %B %Y} \
+	     {B, nn B Y} {%A, %d %B %Y} \
+	     {B, nn B Y} {%A, %d %B %Y} \
+	     {nn:nn B nn B Y} {%H:%M %A %d %B %Y} \
+	     {nn:nn B n B Y} {%H:%M %A %d %B %Y} \
 	     {nn:nn - nn/nn/nn} {%H:%M - %d/%m/%y} \
 	     {nn:nn nn/nn} {%H:%M - %d/%m} \
 	     {nn:nn n/nn} {%H:%M %d/%m} \
@@ -325,9 +330,9 @@ proc ::dom::xpathFunc::returndate {ctxNode pos nodeListNode nodeList args} {
             # date recognizer using date/string shapes, e.g. dd-dd-dddd OR d-m-Y
 
 	    if { ${input_format} eq {auto_noalpha} } {
-		regsub -all -- {[^[:digit:] ,\-/:]} ${ts} {} ts
+		regsub -all -- {[^[:digit:][:punct:] ]} ${ts} {} ts
 	    } else {
-		regsub -all -- {[^[:alnum:] ,\-/:]} ${ts} {} ts
+		regsub -all -- {[^[:alnum:][:punct:] ]} ${ts} {} ts
 	    }
 
 
@@ -336,11 +341,10 @@ proc ::dom::xpathFunc::returndate {ctxNode pos nodeListNode nodeList args} {
             set shape [returndate_helper__date_shape ${ts}]
 
             if { [info exists date_format(${shape})] } {
-            set input_format $date_format(${shape})
+		set input_format $date_format(${shape})
             } else {
-            return [list string ""]
+		return [list string ""]
             }
-
 
         }
 
