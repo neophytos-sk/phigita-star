@@ -22,7 +22,7 @@ proc ::persistence::get_cf_dir {keyspace column_family} {
 }
 
 
-proc ::persistence::get_row_dir {keyspace column_family row_key} {
+proc ::persistence::get_row {keyspace column_family row_key} {
 
     # aka snapshot directory
     set cf_dir [get_cf_dir ${keyspace} ${column_family}]
@@ -76,7 +76,7 @@ proc ::persistence::create_row_if {keyspace column_family row_key row_dirVar} {
 	error "create_row_if: no such column family (${keyspace}/${column_family})"
     }
 
-    set row_dir [get_row_dir ${keyspace} ${column_family} ${row_key}]
+    set row_dir [get_row ${keyspace} ${column_family} ${row_key}]
 
     # create ${row_dir} dir
     file mkdir ${row_dir}
@@ -203,7 +203,7 @@ proc slice_predicate=lsort {slicelistVar args} {
 
 proc ::persistence::get_slice {keyspace column_family row_key {slice_predicate ""}} {
 
-    set row_dir [get_row_dir ${keyspace} ${column_family} ${row_key}]
+    set row_dir [get_row ${keyspace} ${column_family} ${row_key}]
 
     # puts "row_dir = ${row_dir}"
 
@@ -237,9 +237,10 @@ proc ::persistence::get_slice_names {args} {
 
 }
 
+
 proc ::persistence::get_column {keyspace column_family row_key column_path {dataVar ""} {exists_pVar ""}} {
 
-    set row_dir [get_row_dir ${keyspace} ${column_family} ${row_key}]
+    set row_dir [get_row ${keyspace} ${column_family} ${row_key}]
 
     set filename ${row_dir}/${column_path}
 
@@ -282,22 +283,33 @@ proc ::persistence::get_column_name {args} {
 }
 
 
-proc ::persistence::delete_column {keyspace column_family row_key column_path} {
+proc ::persistence::delete_column {args} {
 
-    set filename [get_column \
-		      ${keyspace} \
-		      ${column_family} \
-		      ${row_key} \
-		      ${column_path}]
+    set filename [get_column {*}${args}]
 
     delete_data ${filename}
 
 }
 
+proc ::persistence::delete_row {args} {
+    
+    set row_dir [get_row {*}${args}]
+
+    delete_data ${row_dir}
+
+}
+
+proc ::persistence::delete_slice {args} {
+    set slicelist [::persistence::get_slice {*}${args}]
+    foreach filename ${slicelist} {
+	::persistence::delete_data ${filename}
+    }
+}
+
 
 proc ::persistence::exists_column_p {keyspace column_family row_key column_path} {
 
-    set row_dir [get_row_dir ${keyspace} ${column_family} ${row_key}]
+    set row_dir [get_row ${keyspace} ${column_family} ${row_key}]
 
     set filename ${row_dir}/${column_path}
 

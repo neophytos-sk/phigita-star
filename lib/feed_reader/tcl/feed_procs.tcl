@@ -1570,90 +1570,93 @@ proc ::feed_reader::test_article {news_source feed_name link} {
 }
 
 
-proc ::feed_reader::remove_item_from_dir {item_dirVar} {
+proc ::feed_reader::remove_item {filename} {
+    array set item [::persistence::get_data ${filename}]
 
-    error "not implemented yet - use persistence procs"
-
-    upvar $item_dirVar item_dir
-
-    set content_dir [get_content_dir]
-    set index_dir [get_index_dir]
-    set url_dir [get_url_dir]
-    set log_dir [get_log_dir]
-    set crawler_dir [get_crawler_dir]
-    puts item_dir=$item_dir
-
-    load_item_from_dir item item_dir
     set urlsha1 $item(urlsha1)
+
     set reversedomain [reversedomain [::util::domain_from_url $item(link)]]
 
+    ::persistence::delete_slice               \
+	     "crawldb"                        \
+	     "sync_info/by_urlsha1_and_const" \
+	     "${urlsha1}"
 
-    set crawlerfilename "${crawler_dir}/${urlsha1}"
-    set logfilename ${log_dir}/${urlsha1}
-    set urlfilename ${url_dir}/${urlsha1}
+    # the following we use to determine whether 
+    # an item is already downloaded or not
+    ::persistence::delete_slice                  \
+		"newsdb"                         \
+		"news_item/by_urlsha1_and_const" \
+		"${urlsha1}"
 
-    catch { file delete ${crawlerfilename} }
-    catch { file delete ${logfilename} }
-    catch { file delete ${urlfilename} }
 
-    set normalized_link [get_value_if item(normalized_link) $item(link)]
-    set item_dir [get_item_dir normalized_link]
-    set revision_files [get_revision_files item_dir]
-    foreach revisionfilename ${revision_files} {
+    set contentsha1_list                \
+	[::persistence::get_slice_names \
+	     "newsdb"                   \
+	     "news_item/by_url_and_rev" \
+	     "${urlsha1}"]
 
-	set contentsha1 [file tail ${revisionfilename}]
-	array set revision [::util::readfile ${revisionfilename}]
+    foreach contentsha1 ${contentsha1_list} {    
 
-	# TODO: remember to remove contentsha1_to_label entries
-
-	set indexfilename ${index_dir}/${contentsha1}
-	set indexfilename_newdata [join [lsearch -not -inline -all [::util::readfile ${indexfilename}] ${urlsha1}] "\n"]
-
-	if { ${indexfilename_newdata} eq {} } {
-
-	    file delete ${indexfilename}
-	    set contentfilename ${content_dir}/${contentsha1}
-	    file delete ${contentfilename}
-
-	} else {
-
-	    ::util::writefile ${indexfilename} ${indexfilename_newdata}
-
-	}
-
-	file delete ${revisionfilename}
+	::persistence::delete_column       \
+	    "newsdb"                       \
+	    "index/contentsha1_to_urlsha1" \
+	    "${contentsha1}"               \
+	    "${urlsha1}"
 
     }
 
-    file delete ${item_dir}
+    ::persistence::delete_column      \
+	"newsdb"                      \
+	"news_item/by_const_and_date" \
+	"log"                         \
+	"$item(sort_date).${urlsha1}"
 
-    unset item
+    ::persistence::delete_column       \
+	"newsdb"                       \
+	"news_item/by_site_and_date"   \
+	"${reversedomain}"             \
+	"$item(sort_date).${urlsha1}"
+
+    ::persistence::delete_column \
+	"newsdb" \
+	"index/urlsha1_to_date_sk" \
+	"${urlsha1}" \
+	"$item(sort_date).${urlsha1}"
+
+    ::persistence::delete_slice   \
+	"newsdb"                   \
+	"news_item/by_url_and_rev" \
+	"${urlsha1}"
+
+
 }
 
-proc ::feed_reader::remove_feed_items {news_source {urlsha1_list ""}} {
+proc ::feed_reader::remove_feed_items {domain {urlsha1_list ""}} {
 
-    set first_feed_file [lindex [get_feed_files ${news_source}] 0]
-    array set feed [::util::readfile ${first_feed_file}]
-
-    set domain_dir [get_domain_dir $feed(url)]
+    set reversedomain [reversedomain ${domain}]
 
     set delete_domain_p 1
-    set item_dirs [glob -directory ${domain_dir}/ *]
-    foreach item_dir ${item_dirs} {
 
-	set urlsha1 [file tail ${item_dir}]
+    set slicelist [::persistence::get_slice         \
+		       "newsdb"                     \
+		       "news_item/by_site_and_date" \
+		       "${reversedomain}"]
 
-	if { ${urlsha1_list} ne {} && ${urlsha1} ni ${urlsha1_list} } {
-	    set delete_domain_p 0
-	    continue
-	}
-
-	remove_item_from_dir item_dir
-
+    foreach filename ${slicelist} {
+	remove_item ${filename}
     }
 
     if { ${delete_domain_p} } {
-	file delete ${domain_dir}
+
+	set domain_dir                        \
+	    [::persistence::get_row           \
+		 "newsdb"                     \
+		 "news_item/by_site_and_date" \
+		 "${domain}"]
+
+	::persistence::delete_data ${domain_dir}
+
     }
 
 
