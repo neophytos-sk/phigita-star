@@ -1,0 +1,14 @@
+url http://www.newsbomb.gr/
+include_re {/story/[0-9]{4,}/[[:alnum:]\-]+$}
+exclude_re {/bloggers/}
+htmltidy_feed_p 0
+htmltidy_article_p 0
+xpath_article_title {returnstring(//div[@class="main-article-info"]/h1[@class="itemTitle"])}
+xpath_article_description {returntext(//div[@class="itemBody"]/div[@class="itemIntro"])}
+xpath_article_body {returntext(//div[@class="itemBody"]/div[@class="itemFullText"])}
+xpath_article_image {
+    {values(//span[@class="itemImage"]/img[@alt]/@src)}
+}
+xpath_article_date {returndate(string(//span[@class="publication"]//time/@datetime),"%Y-%m-%dT%H:%m+03:00")}
+xpath_article_modified_time {}
+
