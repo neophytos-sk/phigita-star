@@ -872,7 +872,8 @@ proc ::util::tokenize_date {text} {
     return ${tokens}
 }
 
-proc ::feed_reader::search {keywords {offset "0"} {limit "20"}} {
+
+proc ::feed_reader::search {keywords {offset "0"} {limit "20"} {callback ""}} {
 
 
     set first ${offset}
@@ -914,7 +915,14 @@ proc ::feed_reader::search {keywords {offset "0"} {limit "20"}} {
 		    if { ${first} > 0 } {
 			puts ""
 		    }
+
 		    puts "${contentsha1} $item(title)"
+
+		    if { $callback ne {} } {
+			lassign ${callback} cmd args
+			search_callback=${cmd} ${contentsha1} {*}${args}
+		    }
+
 		} else {
 		    if { ${first} > 0 } {
 			puts -nonewline "."
@@ -929,6 +937,34 @@ proc ::feed_reader::search {keywords {offset "0"} {limit "20"}} {
     }
 
 
+
+}
+
+proc ::feed_reader::search_callback=label_menu {contentsha1 axis label} {
+
+    set menulabels [::feed_reader::classifier::get_label_names ${axis}]
+    set menuindex 0
+    foreach menulabel ${menulabels} {
+	puts "${menuindex}. ${menulabel}"
+	incr menuindex
+    }
+    
+    puts "--->>> please enter 'y' to classify it in ${label} or 'n' to skip this item"
+    set selection [read stdin 2]
+    puts "your selection is ${selection}"
+
+}
+
+proc ::feed_reader::label_interactive {axis label keywords {offset "0"} {limit "20"}} {
+puts axis=$axis
+puts label=$label
+puts keywords=$keywords
+puts offset=$offset
+puts limit=$limit
+
+    set callback [list "label_menu" [list ${axis} ${label}]]
+
+    search ${keywords} ${offset} ${limit} ${callback}
 
 }
 

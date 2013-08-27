@@ -15,7 +15,7 @@ proc print_usage_info {} {
 
     array set cmdinfo [list \
 			   "sync" "?news_source? ?...?" \
-			   "search" "keyword ?...?" \
+			   "search" "keywords offset limit" \
 			   "show" "urlsha1 ?...?" \
 			   "show-url" "article_url" \
 			   "show-content" "contentsha1 ?...?" \
@@ -29,6 +29,7 @@ proc print_usage_info {} {
 			   "test" "domain feed_name ?limit? ?fetch_item_p?" \
 			   "remove-feed-items" "domain ?sort_date.urlsha1? ?...?" \
 			   "cluster" "?limit? ?offset?" \
+			   "label-interactive" "axis label keywords ?offset? ?limit? ?callback?" \
 			   "label" "axis class contentsha1 ?...?" \
 			   "unlabel" "axis class contentsha1 ?...?" \
 			   "fex" "?limit? ?offset?" \
@@ -86,8 +87,15 @@ if { ${argc} < 1 } {
 
     } elseif { ${cmd} eq {search} && ${argc} >= 2 } {
 
-        set keywords [lrange ${argv} 1 end]
-        ::feed_reader::search ${keywords}
+        set keywords [lindex ${argv} 1]
+        ::feed_reader::search ${keywords} {*}[lrange ${argv} 2 end]
+
+    } elseif { ${cmd} eq {label-interactive} && ${argc} >= 2 } {
+
+	set axis [lindex ${argv} 1]
+	set label [lindex ${argv} 2]
+        set keywords [lindex ${argv} 3]
+        ::feed_reader::label_interactive ${axis} ${label} ${keywords} {*}[lrange ${argv} 4 end]
 
     } elseif { ${cmd} eq {revisions} && ${argc} == 2 } {
 
