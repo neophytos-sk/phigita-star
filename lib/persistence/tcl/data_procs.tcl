@@ -155,7 +155,7 @@ proc ::persistence::delete_data {filename} {
 }
 
 
-proc slice_predicate=lrange {slicelistVar offset {limit ""}} {
+proc predicate=lrange {slicelistVar offset {limit ""}} {
 
     upvar ${slicelistVar} slicelist
 
@@ -170,7 +170,7 @@ proc slice_predicate=lrange {slicelistVar offset {limit ""}} {
     
 }
 
-proc slice_predicate=lindex {slicelistVar index} {
+proc predicate=lindex {slicelistVar index} {
 
     upvar ${slicelistVar} slicelist
 
@@ -178,7 +178,7 @@ proc slice_predicate=lindex {slicelistVar index} {
 
 }
 
-proc slice_predicate=in {slicelistVar column_names} {
+proc predicate=in {slicelistVar column_names} {
 
     upvar ${slicelistVar} slicelist
 
@@ -195,9 +195,28 @@ proc slice_predicate=in {slicelistVar column_names} {
 
 }
 
-proc slice_predicate=lsort {slicelistVar args} {
+proc predicate=lsort {slicelistVar args} {
 
     set slicelist [lsort {*}${args} ${slicelist}]
+
+}
+
+
+proc ::persistence::get_multirow {keyspace column_family {predicate ""}} {
+
+    set cf_dir [get_cf_dir ${keyspace} ${column_family}]
+
+    set multirow [lsort -decreasing [glob -nocomplain -directory ${cf_dir} *]]
+
+    if { ${predicate} ne {} } {
+
+	lassign ${predicate} cmd args
+
+	predicate=${cmd} multirow {*}${args}
+
+    }
+
+    return ${multirow}
 
 }
 
@@ -214,7 +233,7 @@ proc ::persistence::get_slice {keyspace column_family row_key {slice_predicate "
 
 	lassign ${slice_predicate} cmd args
 
-	slice_predicate=${cmd} slicelist {*}${args}
+	predicate=${cmd} slicelist {*}${args}
 
     }
 

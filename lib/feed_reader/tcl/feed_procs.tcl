@@ -872,18 +872,26 @@ proc ::util::tokenize_date {text} {
     return ${tokens}
 }
 
-proc ::feed_reader::search {keywords {limit "40"} {offset "0"}} {
+proc ::feed_reader::search {keywords {offset "0"} {limit "20"}} {
 
-    get_contentfilelist sortedlist
 
     set first ${offset}
-    set last [expr { ${offset} + ${limit} - 1 }]
+
+    set last "end"
+    if { ${limit} ne {} } {
+	set last [expr { ${offset} + ${limit} - 1 }]
+    }
+
+    set rangelist \
+	[::persistence::get_multirow \
+	     "newsdb" \
+	     "content_item/by_contentsha1_and_const"]
 
     puts [format "%40s %s" contentsha1 title]
 
-    foreach contentfilename ${sortedlist} {
+    foreach contentdir ${rangelist} {
 
-	set contentsha1 [file tail ${contentfilename}]
+	set contentsha1 [file tail ${contentdir}]
 
 	#puts ${contentsha1}
 
@@ -1626,6 +1634,11 @@ proc ::feed_reader::remove_item {filename} {
 		"${cf_variant}"           \
 		"${contentsha1}"          \
 		"_data_"
+
+	    ::persistence::delete_row \
+		"newsdb" \
+		"content_item/by_contentsha1_and_const" \
+		"${contentsha1}"]
 
 	}
 
