@@ -37,6 +37,7 @@ proc ::xo::io::writeVarText {channelId line {encoding ""}} {
 
 proc ::xo::io::writeString {channelId line} {
     set len [string bytelength $line]
+    #set len [string length $line]
     ::xo::io::writeInt $channelId $len
     puts -nonewline $channelId $line
     return ${len}
@@ -115,4 +116,17 @@ proc ::xo::io::skipVarText {channelId encoding} {
     set len [::xo::io::readInt $channelId]
     fconfigure $channelId -encoding $encoding
     seek ${channelId} ${len} current
+}
+
+
+proc ::xo::io::writeUTF8 {fp str} {
+    set len [string bytelength ${str}]
+    puts -nonewline $fp [binary format i $len]
+    puts -nonewline $fp [encoding convertto utf-8 $str]
+}
+
+proc ::xo::io::readUTF8 {fp str} {
+    binary scan [read $fp 4] i len
+    set str [read ${fp} ${len}]
+    return [encoding convertfrom $str]
 }

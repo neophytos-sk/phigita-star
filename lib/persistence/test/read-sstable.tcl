@@ -21,8 +21,8 @@ set in_row_key [lindex $argv 1]
 set in_column_name [lindex $argv 2]
 
 
-set fp [open ${infile} "r"]
-fconfigure $fp -encoding binary
+set fp [open ${infile} "rb"]
+#fconfigure $fp -translation binary
 
 set index_position [::xo::io::readLong ${fp}]
 
@@ -32,7 +32,7 @@ seek ${fp} ${index_position}
 
 
 set row_key ""
-while { [set row_key [::xo::io::readVarText ${fp} "" utf-8]] ne ${in_row_key} } {
+while { [set row_key [::xo::io::readString ${fp}]] ne ${in_row_key} } {
     # skip index pos
     ::xo::io::readInt ${fp}
 }
@@ -47,19 +47,19 @@ if { ${row_key} eq ${in_row_key} } {
     set row_pos [::xo::io::readInt ${fp}]
     seek ${fp} ${row_pos} start
 
-    set row_key [::xo::io::readVarText ${fp} "" utf-8]
+    set row_key [::xo::io::readString ${fp} ""]
     puts row_key=${row_key}
 
     set found_p 0
     while { [tell ${fp}] < ${pos} } {
 
-	set column_name [::xo::io::readVarText ${fp} "" utf-8]
+	set column_name [::xo::io::readString ${fp} ""]
 	if { [string length ${column_name}] > 100 } {
-	    puts [string range ${column_name} 0 200]
+	    puts "ERROR: [string range ${column_name} 0 200]"
 	    break
 	}
 	#puts column_name=${column_name}
-	set column_value [::xo::io::readVarText ${fp} "" utf-8]
+	set column_value [::xo::io::readUTF8 ${fp} ""]
 
 	if { ${column_name} eq ${in_column_name} } {
 	    set found_p 1
@@ -69,7 +69,7 @@ if { ${row_key} eq ${in_row_key} } {
     }
 
     if { ${found_p} } {
-	puts ${column_value}
+	puts [encoding convertfrom utf-8 ${column_value}]
     }
 }
 
