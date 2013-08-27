@@ -397,7 +397,10 @@ proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar infoVa
     lappend xpath_article_cleanup {//link}
     foreach cleanup_xpath ${xpath_article_cleanup} {
 	foreach cleanup_node [${doc} selectNodes ${cleanup_xpath}] {
-	    ${cleanup_node} delete
+	    if { ${cleanup_node} ne {} } {
+		# might have been deleted inside another node
+		catch { ${cleanup_node} delete }
+	    }
 	}
     }
 
