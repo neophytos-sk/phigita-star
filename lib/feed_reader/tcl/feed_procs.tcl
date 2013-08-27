@@ -1598,11 +1598,36 @@ proc ::feed_reader::remove_item {filename} {
 
     foreach contentsha1 ${contentsha1_list} {    
 
-	::persistence::delete_column       \
-	    "newsdb"                       \
-	    "index/contentsha1_to_urlsha1" \
-	    "${contentsha1}"               \
+	set cf_variant "index/contentsha1_to_urlsha1"
+
+	::persistence::delete_column  \
+	    "newsdb"                  \
+	    "${cf_variant}"           \
+	    "${contentsha1}"          \
 	    "${urlsha1}"
+
+
+	set slicelist \
+	    [::persistence::get_slice  \
+		 "newsdb"              \
+		 "${cf_variant}"       \
+		 "${contentsha1}"]
+
+	if { ${slicelist} eq {} } {
+
+	    # no more references for this content
+	    # delete it so that we won't get any 
+	    # is_copy_p set to true because of it
+
+	    set cf_variant "content_item/by_contentsha1_and_const"
+
+	    ::persistence::delete_column  \
+		"newsdb"                  \
+		"${cf_variant}"           \
+		"${contentsha1}"          \
+		"_data_"
+
+	}
 
     }
 
