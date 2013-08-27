@@ -1,0 +1,9 @@
+url http://www.koutipandoras.gr/
+include_re {/[0-9]{4,}/.*\.html$}
+htmltidy_feed_p 1
+htmltidy_article_p 1
+xpath_article_title {returnstring(//article[@class="cat_article"]/h1[@class="cat_article_title"])}
+xpath_article_body {returntext(//div[@id="article_content"])}
+xpath_article_image values(//div[@id="article_content"]/a/img/@src)
+xpath_article_date {normalizedate(//div[@class="article_meta"]/span[@class="meta_date"]/strong,"el_GR","%B %d, %Y %l:%M %P")}
+xpath_article_modified_time {}
