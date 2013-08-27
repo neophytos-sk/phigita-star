@@ -1,6 +1,6 @@
 url "http://pafospress.com/"
 include_re {http://pafospress\.com/[^#]{10,}/}
-exclude_re {/category/|/tag/|/xrysos-odigos/|/επικοινωνια/|/%ce%b5%cf%80%ce%b9%ce%ba%ce%bf%ce%b9%ce%bd%cf%89%ce%bd%ce%b9%ce%b1/|/%cf%88%cf%89%ce%bd%ce%b9%ce%b6%cf%89-%ce%ba%cf%85%cf%80%cf%81%ce%b9%ce%b1%ce%ba%ce%b1/|/%cf%80%ce%bb%ce%b7%cf%81%ce%bf%cf%86%ce%bf%cf%81%ce%b9%ce%b5%cf%83/}
+exclude_re {/category/|/tag/|/xrysos-odigos/|/επικοινωνια/|#respond|/%ce%b5%cf%80%ce%b9%ce%ba%ce%bf%ce%b9%ce%bd%cf%89%ce%bd%ce%b9%ce%b1/|/%cf%88%cf%89%ce%bd%ce%b9%ce%b6%cf%89-%ce%ba%cf%85%cf%80%cf%81%ce%b9%ce%b1%ce%ba%ce%b1/|/%cf%80%ce%bb%ce%b7%cf%81%ce%bf%cf%86%ce%bf%cf%81%ce%b9%ce%b5%cf%83/}
 xpath_article_title {returnstring(//div[@class="active"]/h1)}
 xpath_article_body {returntext(//div[@id="left"]//div[@class="content"])}
 xpath_article_image {
