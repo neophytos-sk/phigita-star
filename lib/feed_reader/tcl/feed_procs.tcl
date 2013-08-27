@@ -1663,10 +1663,13 @@ proc ::feed_reader::remove_feed_items {domain {urlsha1_list ""}} {
 
     set delete_domain_p 1
 
+    set slice_predicate [list "in" [list ${urlsha1_list}]]
+
     set slicelist [::persistence::get_slice         \
 		       "newsdb"                     \
 		       "news_item/by_site_and_date" \
-		       "${reversedomain}"]
+		       "${reversedomain}"           \
+		       "${slice_predicate}"]
 
     foreach filename ${slicelist} {
 	remove_item ${filename}

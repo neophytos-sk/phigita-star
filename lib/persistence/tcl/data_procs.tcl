@@ -185,6 +185,7 @@ proc slice_predicate=in {slicelistVar column_names} {
     set result [list]
 
     foreach filename ${slicelist} {
+
 	if { [file tail ${filename}] in ${column_names} } {
 	    lappend result ${filename}
 	}

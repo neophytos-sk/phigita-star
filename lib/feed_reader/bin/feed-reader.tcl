@@ -26,15 +26,15 @@ proc print_usage_info {} {
 			   "revisions" "urlsha1" \
 			   "register-axis" "axis_name" \
 			   "register-label" "axis_name label_name" \
-			   "test" "news_source ?limit? ?fetch_item_p?" \
-			   "remove-feed-items" "news_source ?urlsha1? ?...?" \
+			   "test" "domain feed_name ?limit? ?fetch_item_p?" \
+			   "remove-feed-items" "domain ?sort_date.urlsha1? ?...?" \
 			   "cluster" "?limit? ?offset?" \
 			   "label" "axis class contentsha1 ?...?" \
 			   "unlabel" "axis class contentsha1 ?...?" \
 			   "fex" "?limit? ?offset?" \
-			   "stats" "?news_source? ?...?" \
+			   "stats" "?domain? ?...?" \
 			   "wc" "?contentsha1? ?...?" \
-			   "test-article" "news_source feed_name article_url" \
+			   "test-article" "domain feed_name article_url" \
 			   "generate-feed" "feed_url"]
 
 
