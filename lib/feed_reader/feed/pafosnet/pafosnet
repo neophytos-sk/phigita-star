@@ -1,6 +1,6 @@
 url http://pafosnet.com/
 include_re {[[:alnum:]\-]{10,}}
-exclude_re {/category/|/#}
+exclude_re {/category/|/#|/video/}
 xpath_article_title {returnstring(//head/title)}
 xpath_article_body {returntext(//div[@id="the_content"])}
 xpath_article_image {

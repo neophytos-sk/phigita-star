@@ -737,7 +737,7 @@ proc ::feed_reader::list_site {domain {offset "0"} {limit "20"}} {
 
     foreach filename ${slicelist} {
 	array set item [::persistence::get_data ${filename}]
-
+	puts ${filename}
 	print_log_entry item
 	unset item
     }
@@ -1230,6 +1230,8 @@ proc ::feed_reader::write_item {timestamp normalized_link feedVar itemVar resync
     set item(urlsha1) ${urlsha1}
     set item(contentsha1) ${contentsha1}
 
+    set reversedomain [reversedomain [::util::domain_from_url ${normalized_link}]]
+
 
     array unset item body
 
@@ -1301,13 +1303,6 @@ proc ::feed_reader::write_item {timestamp normalized_link feedVar itemVar resync
 	"${urlsha1}" \
 	""
 
-    # insert_column
-    #   keyspace: newsdb
-    #   column_family: news_item / variant: by_url_and_const
-    #   row: ${urlsha1}
-    #   column_name: _data_
-    #
-
     ::persistence::insert_column         \
 	"newsdb"                         \
 	"news_item/by_urlsha1_and_const" \
@@ -1315,16 +1310,37 @@ proc ::feed_reader::write_item {timestamp normalized_link feedVar itemVar resync
 	"_data_"                         \
 	"${data}"
 
-    # insert_column
-    #   keyspace: newsdb
-    #   column_family: news_item / variant: by_const_and_date
-    #   row: log
-    #   column_name: ${date}.${urlsha1}
-    #
-    # operations: top_N (?), range (?), slice (?), insert, get, remove
-    #
-    # ::util::writefile ${logfilename}  ${data}  
-    #
+
+    set slicelist \
+	[::persistence::get_slice       \
+	     "newsdb"                   \
+	     "index/urlsha1_to_date_sk" \
+	     "${urlsha1}"]
+
+    # there should only be one column
+    # but since this is still under development
+    # we might have missed some and thus
+    # why the need for the loop
+
+    foreach filename ${slicelist} {
+
+	set column_name [::persistence::get_name ${filename}]
+
+	::persistence::delete_data ${filename}
+
+	::persistence::delete_column      \
+	    "newsdb"                      \
+	    "news_item/by_const_and_date" \
+	    "log"                         \
+	    "${column_name}"
+
+	::persistence::delete_column       \
+	    "newsdb"                       \
+	    "news_item/by_site_and_date"   \
+	    "${reversedomain}"             \
+	    "${column_name}"
+
+    }
 
     ::persistence::insert_column      \
 	"newsdb"                      \
@@ -1333,17 +1349,6 @@ proc ::feed_reader::write_item {timestamp normalized_link feedVar itemVar resync
 	"$item(sort_date).${urlsha1}" \
 	"${data}"
 
-    # insert_column
-    #   keyspace: newsdb
-    #   column_family: news_item / variant: by_site_and_date
-    #   row: ${reversedomain}
-    #   column_name: ${urlsha1}
-    #
-    # operations: slice, insert, get, remove
-    #
-    # ::util::writefile ${revisionfilename} ${data}
-    #
-    set reversedomain [reversedomain [::util::domain_from_url ${normalized_link}]]
 
     ::persistence::insert_column       \
 	"newsdb"                       \
@@ -1352,14 +1357,13 @@ proc ::feed_reader::write_item {timestamp normalized_link feedVar itemVar resync
 	"$item(sort_date).${urlsha1}"  \
 	"${data}"
 
-    # insert_column
-    #   keyspace: newsdb
-    #   column_family: news_item / variant: by_url_and_rev
-    #   row: ${urlsha1}
-    #   column_name: ${contentsha1}
-    #
-    # ::util::writefile ${urlfilename} ${data}
-    #
+    ::persistence::insert_column \
+	"newsdb" \
+	"index/urlsha1_to_date_sk" \
+	"${urlsha1}" \
+	"$item(sort_date).${urlsha1}" \
+	""
+
     ::persistence::insert_column   \
 	"newsdb"                   \
 	"news_item/by_url_and_rev" \

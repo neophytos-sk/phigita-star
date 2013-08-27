@@ -127,6 +127,7 @@ proc ::persistence::exists_data_p {filename} {
 
 }
 
+# TODO: consider renaming it to put_data
 proc ::persistence::set_data {filename data} {
 
     file mkdir [file dirname ${filename}]
@@ -138,6 +139,18 @@ proc ::persistence::set_data {filename data} {
 proc ::persistence::get_data {filename} {
 
     return [::util::readfile ${filename}]
+
+}
+
+proc ::persistence::get_name {filename} {
+
+    return [file tail ${filename}]
+
+}
+
+proc ::persistence::delete_data {filename} {
+
+    return [file delete ${filename}]
 
 }
 
@@ -256,14 +269,28 @@ proc ::persistence::get_column {keyspace column_family row_key column_path {data
 
 }
 
+proc ::persistence::get_column_name {args} {
 
-proc ::persistence::remove_column {keyspace column_family row_key column_path} {
+    set result [list]
 
-    set row_dir [get_row_dir ${keyspace} ${column_family} ${row_key}]
+    set column [get_column {*}${args}]
 
-    set filename ${row_dir}/${column_path}
+    set result [file tail ${column}]
 
-    file delete ${filename}
+    return ${result}
+
+}
+
+
+proc ::persistence::delete_column {keyspace column_family row_key column_path} {
+
+    set filename [get_column \
+		      ${keyspace} \
+		      ${column_family} \
+		      ${row_key} \
+		      ${column_path}]
+
+    delete_data ${filename}
 
 }
 
