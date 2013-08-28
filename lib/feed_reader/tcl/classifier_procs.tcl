@@ -281,15 +281,18 @@ proc ::feed_reader::classifier::classify_naive_bayes_text {modelVar contentVar} 
 
     set categories $pr(categories)
 
-    set max_pr 0
+    set max_pr -9999999999 ;# 0
     set max_category ""
     foreach category ${categories} {
-	set p 1.0
+	#set p 1.0
+	set p 0.0
 	foreach token [::util::tokenize ${content}] {
 	    set pr_word_given_cat [get_value_if pr(word_${token},${category}) "0.5"]
-	    set p [expr { ${p} * $pr_word_given_cat }]
+	    #set p [expr { ${p} * $pr_word_given_cat }]
+	    set p [expr { ${p} + log(${pr_word_given_cat}) }]
 	}
-	set p [expr { $pr(cat_${category}) * ${p} }]
+	#set p [expr { $pr(cat_${category}) * ${p} }]
+	set p [expr { log($pr(cat_${category})) + ${p} }]
 
 	if { ${p} > ${max_pr} } {
 	    set max_pr ${p}
