@@ -590,9 +590,49 @@ proc ::feed_reader::fetch_and_write_item {timestamp link title_in_feed feedVar} 
 
 	set errorcode [fetch_item ${link} ${title_in_feed} feed item info]
 	if { ${errorcode} } {
+
 	    puts "--->>> errorcode=$errorcode"
 	    puts "--->>> error ${link}"
 	    puts "--->>> info=[array get info]"
+
+	    set urlsha1 [get_urlsha1 ${link}]
+	    set errordata [list \
+			       errorcode ${errorcode} \
+			       link ${link} \
+			       urlsha1 ${urlsha1} \
+			       http_fetch_info [array get info] \
+			       title_in_feed ${title_in_feed} \
+			       item [array get item]]
+
+
+	    ::persistence::insert_column \
+		"newsdb" \
+		"error_item/by_urlsha1_and_timestamp" \
+		"${urlsha1}"\
+		"${timestamp}" \
+		"${errordata}"
+
+	    set slicelist \
+		[::persistence::get_slice \
+		     "newsdb" \
+		     "error_item/by_urlsha1_and_timestamp" \
+		     "[get_urlsha1 ${link}]"]
+
+	    if { [llength ${slicelist}] >= 3 } {
+
+		puts "--->>> marking this item as fetched... (${urlsha1})"
+
+		::persistence::insert_column \
+		    "newsdb" \
+		    "news_item/by_urlsha1_and_const" \
+		    "${urlsha1}" \
+		    "_data_" \
+		    "${errordata}"
+
+	    }
+			       
+
+
 	    # unset item
 	    # unset info
 	    return {ERROR_FETCH}
