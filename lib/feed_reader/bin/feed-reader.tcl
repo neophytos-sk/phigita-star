@@ -19,8 +19,9 @@ proc print_usage_info {} {
 			   "show" "urlsha1 ?...?" \
 			   "show-url" "article_url" \
 			   "show-content" "contentsha1 ?...?" \
-			   "classify" "urlsha1 ?...?" \
-			   "classify-content" "contentsha1 ?...?" \
+			   "train" "axis ?category? ?...?"\
+			   "classify" "axis urlsha1 ?...?" \
+			   "classify-content" "axis contentsha1 ?...?" \
 			   "uses-content" "contentsha1 ?...?" \
 			   "diff-content" "contentsha1_old contentsha1_new" \
 			   "list" "?offset? ?limit?" \
@@ -86,7 +87,7 @@ if { ${argc} < 1 } {
     } elseif { ${cmd} eq {wc} && ${argc} >= 1 } {
 
         set contentsha1_list [lrange ${argv} 1 end]
-        ::feed_reader::wordcount ${contentsha1_list}
+        ::feed_reader::classifier::wordcount ${contentsha1_list}
 
     } elseif { ${cmd} eq {search} && ${argc} >= 2 } {
 
@@ -134,15 +135,23 @@ if { ${argc} < 1 } {
         set contentsha1_list [lrange ${argv} 1 end]
         ::feed_reader::show_content ${contentsha1_list}
 
-    } elseif { ${cmd} eq {classify} && ${argc} >= 2 } {
+    } elseif { ${cmd} eq {train} && ${argc} >= 2 } {
+	
+	set axis [lindex ${argv} 1]
+	set categories [lrange ${argv} 2 end]
+        ::feed_reader::classifier::train ${axis} ${categories}
 
-        set urlsha1_list [lrange ${argv} 1 end]
-        ::feed_reader::classify_item ${urlsha1_list}
+    } elseif { ${cmd} eq {classify} && ${argc} >= 3 } {
 
-    } elseif { ${cmd} eq {classify-content} && ${argc} >= 2 } {
+        set axis [lindex ${argv} 1]
+        set urlsha1_list [lrange ${argv} 2 end]
+        ::feed_reader::classify ${axis} ${urlsha1_list}
 
-        set contentsha1_list [lrange ${argv} 1 end]
-        ::feed_reader::classify_content ${contentsha1_list}
+    } elseif { ${cmd} eq {classify-content} && ${argc} >= 3 } {
+
+        set axis [lindex ${argv} 1]
+        set contentsha1_list [lrange ${argv} 2 end]
+        ::feed_reader::classify_content ${axis} ${contentsha1_list}
 
     } elseif { ${cmd} eq {diff-content} && ${argc} == 3 } {
 

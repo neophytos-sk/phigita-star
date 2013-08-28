@@ -171,3 +171,251 @@ proc ::feed_reader::classifier::unlabel {axis label contentsha1_list} {
     }
 
 }
+
+
+proc ::feed_reader::classifier::learn_naive_bayes_text {multirow_slice_names categories {modelVar ""}} {
+
+    if { $modelVar ne {} } {
+	upvar $modelVar probability
+    }
+
+    set probability(categories) ${categories}
+
+    array set vocabulary [list]
+    foreach slicelist ${multirow_slice_names} category ${categories} {
+
+	array set count_${category} [list]
+
+	foreach contentsha1 ${slicelist} {
+
+	    set filename \
+		[::persistence::get_column                   \
+		     "newsdb"                                \
+		     "content_item/by_contentsha1_and_const" \
+		     "${contentsha1}"                        \
+		     "_data_"]
+
+	    if { ![::persistence::exists_data_p ${filename}] } {
+		continue
+	    }
+
+	    set content [join [::persistence::get_data ${filename}]]
+
+
+	    wordcount_helper wordcount_${category} content
+
+	}
+
+	foreach word [array names wordcount_${category}] {
+	    set vocabulary(${word}) 1
+	}
+
+
+	set slicelen [llength ${slicelist}]
+	set num_docs(${category}) $slicelen
+	set num_words(${category}) [array size wordcount_${category}]
+
+	incr total_docs ${slicelen}
+	#puts "num_words(${category})=$num_words(${category})"
+	#puts "num_docs(${category})=$num_docs(${category})"
+
+    }
+
+    set vocabulary_size [array size vocabulary]
+
+    puts total_words_in_vocabulary=$vocabulary_size
+
+    foreach category ${categories} {
+
+	set probability(cat_${category}) \
+	    [expr { $num_docs(${category}) / double(${total_docs})  }]
+
+
+	foreach {word num_occurrences} [array get wordcount_${category}] {
+
+	    set probability(word_${word},${category})\
+		[expr { double( ${num_occurrences} + 1 ) / double( $num_words(${category}) + ${vocabulary_size} ) }]
+
+	}
+
+    }
+
+
+}
+
+proc ::feed_reader::classifier::save_naive_bayes_model {modelVar axis} {
+
+    upvar $modelVar model
+
+    ::persistence::insert_column \
+	"newsdb" \
+	"classifier/model" \
+	"${axis}" \
+	"_data_" \
+	[array get model]
+
+}
+
+
+proc ::feed_reader::classifier::load_naive_bayes_model {modelVar axis} {
+
+    upvar $modelVar model
+
+    ::persistence::get_column \
+	"newsdb" \
+	"classifier/model" \
+	"${axis}" \
+	"_data_" \
+	"column_data"
+
+    array set model ${column_data}
+
+}
+
+
+proc ::feed_reader::classifier::classify_naive_bayes_text {modelVar contentVar} {
+
+    upvar $modelVar pr
+    upvar $contentVar content
+
+
+    set categories $pr(categories)
+
+    set max_pr 0
+    set max_category ""
+    foreach category ${categories} {
+	set p 1.0
+	foreach token [::util::tokenize ${content}] {
+	    set pr_word_given_cat [get_value_if pr(word_${token},${category}) "0.5"]
+	    set p [expr { ${p} * $pr_word_given_cat }]
+	}
+	set p [expr { $pr(cat_${category}) * ${p} }]
+
+	if { ${p} > ${max_pr} } {
+	    set max_pr ${p}
+	    set max_category ${category}
+	}
+    }
+
+    puts max_pr=$max_pr
+    puts max_category=$max_category
+}
+
+proc ::feed_reader::classifier::train {axis {categories ""}} {
+
+    #set axis "el.utf8.topic"
+    set categories {politics sports}
+
+    set multirow_predicate [list "in" [list ${categories}]]
+
+    set multirow_slice \
+	[::persistence::get_multirow_slice_names \
+	     "newsdb"                            \
+	     "classifier/${axis}"                \
+	     "${multirow_predicate}"]
+
+    learn_naive_bayes_text ${multirow_slice} ${categories} model
+
+    save_naive_bayes_model model ${axis}
+    
+
+}
+
+proc ::feed_reader::classifier::classify {axis contentVar} {
+
+    upvar $contentVar content
+
+    load_naive_bayes_model model ${axis}
+
+    classify_naive_bayes_text model content
+
+}
+
+
+
+proc ::feed_reader::classifier::filter_stopwords {resultVar tokensVar} {
+
+    upvar $resultVar result
+    upvar $tokensVar tokens
+
+    variable stopwords
+
+    set result [list]
+    foreach token ${tokens} {
+	if { [info exists stopwords(${token})] } {
+	    continue
+	}
+	lappend result ${token}
+    }
+
+}
+
+
+
+proc ::feed_reader::classifier::wordcount_helper {countVar contentVar} {
+
+    upvar $countVar count
+    upvar $contentVar content
+
+    # remove embedded content and urls
+    set re {\{[^\}]+\}|https?://[^\s]+}
+    regsub -all -- ${re} ${content} { } content
+
+    set tokens0 [::util::tokenize ${content}]
+
+    filter_stopwords tokens tokens0
+
+    foreach token ${tokens} {
+	incr count(${token})
+    }
+
+}
+
+
+# * TODO: bin packing for word cloud 
+# * TODO: word cloud for each cluster
+# * label interactive could show word coud to ease training
+#
+proc ::feed_reader::classifier::wordcount {{contentsha1_list ""}} {
+
+
+    set multislicelist [::persistence::multiget_slice \
+			    "newsdb" \
+			    "content_item/by_contentsha1_and_const" \
+			    "${contentsha1_list}"]
+
+    array set count [list]
+    foreach {contentsha1 slicelist} ${multislicelist} {
+
+	# we know that slicelist is just one element
+        # we are just keeping appearances here
+	set contentfilename [lindex ${slicelist} 0]
+
+	set content [join [::persistence::get_data $contentfilename]]
+
+	wordcount_helper count content
+
+    }
+
+    package require struct::prioqueue
+
+    set pq [struct::prioqueue::prioqueue -integer]
+
+    foreach {token prio} [array get count] {
+	set item [array get count ${token}]
+	${pq} put ${item} ${prio}
+	#puts [list ${name} $count(${name})]
+    }
+
+    set limit 50
+    while { [${pq} size] && [incr limit -1] } {
+	set item [${pq} peek]
+	#puts ${item}
+	lassign ${item} token wc
+	puts ${token}
+	${pq} remove ${item}
+    }
+
+    ${pq} destroy
+
+}

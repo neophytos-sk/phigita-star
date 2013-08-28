@@ -142,17 +142,18 @@ proc ::persistence::get_data {filename} {
 
 }
 
-proc ::persistence::get_name {filename} {
+proc ::persistence::get_name {filename_or_dir} {
 
-    return [file tail ${filename}]
+    return [file tail ${filename_or_dir}]
+
+}
+
+proc ::persistence::delete_data {filename_or_dir} {
+
+    return [file delete ${filename_or_dir}]
 
 }
 
-proc ::persistence::delete_data {filename} {
-
-    return [file delete ${filename}]
-
-}
 
 
 proc predicate=lrange {slicelistVar offset {limit ""}} {
@@ -220,12 +221,41 @@ proc ::persistence::get_multirow {keyspace column_family {predicate ""}} {
 
 }
 
+proc ::persistence::get_multirow_slice {keyspace column_family {multirow_predicate ""} {slice_predicate ""}} {
 
-proc ::persistence::get_slice {keyspace column_family row_key {slice_predicate ""}} {
+    set multirow [get_multirow ${keyspace} ${column_family} ${multirow_predicate}]
 
-    set row_dir [get_row ${keyspace} ${column_family} ${row_key}]
+    set multirow_slice [list]
 
-    # puts "row_dir = ${row_dir}"
+    foreach row_dir ${multirow} {
+
+	set slicelist [get_slice_from_row ${row_dir} ${slice_predicate}]
+
+	lappend multirow_slice ${slicelist}
+
+    }
+
+    return ${multirow_slice}
+}
+
+
+proc ::persistence::get_multirow_slice_names {args} {
+
+    set multirow_slice [get_multirow_slice {*}${args}]
+
+    set multirow_slice_names [list]
+    foreach slicelist ${multirow_slice} {
+	set names [list]
+	foreach filename ${slicelist} {
+	    lappend names [::persistence::get_name ${filename}]
+	}
+	lappend multirow_slice_names ${names}
+    }
+    return ${multirow_slice_names}
+
+}
+
+proc ::persistence::get_slice_from_row {row_dir {slice_predicate ""}} {
 
     set slicelist [lsort -decreasing [glob -nocomplain -directory ${row_dir} *]]
 
@@ -241,6 +271,14 @@ proc ::persistence::get_slice {keyspace column_family row_key {slice_predicate "
 
 }
 
+proc ::persistence::get_slice {keyspace column_family row_key {slice_predicate ""}} {
+
+    set row_dir [get_row ${keyspace} ${column_family} ${row_key}]
+
+    return [get_slice_from_row ${row_dir} ${slice_predicate}]
+
+}
+
 proc ::persistence::get_slice_names {args} {
 
     set result [list]
@@ -249,7 +287,7 @@ proc ::persistence::get_slice_names {args} {
 
     foreach filename ${slicelist} {
 
-	lappend result [file tail ${filename}]
+	lappend result [::persistence::get_name ${filename}]
 
     }
 

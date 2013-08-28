@@ -1215,50 +1215,22 @@ proc ::feed_reader::classify_content_item {itemVar} {
 
 }
 
-proc ::feed_reader::classify_content {contentsha1_list} {
 
-    
-    foreach cat {politics sports} { 
-
-	array set ::__fcount_${cat} [list]
-
-	set slicelist \
-	    [::persistence::get_slice_names \
-		 "newsdb" \
-		 "classifier/el.utf8.topic" \
-		 "${cat}"]
-
-	set ::__catcount(${cat}) [llength ${slicelist}]
-
-	foreach sha1 ${slicelist} {
-
-	    set filename \
-		[::persistence::get_column \
-		     "newsdb" \
-		     "content_item/by_contentsha1_and_const" \
-		     "${sha1}" \
-		     "_data_"]
-
-	    if { ! [::persistence::exists_data_p $filename] } {
-		::persistence::delete_data $filename
-		continue
-	    }
-
-	    set content [join [::persistence::get_data ${filename}]]
-
-	    wordcount_helper ::__fcount_${cat} content
-
-	}
-
-    }
-
-
+proc ::feed_reader::classify_content {axis contentsha1_list} {
 
     foreach contentsha1 ${contentsha1_list} {
-        load_content item ${contentsha1}
-        classify_content_item item
-        unset item
+
+	::persistence::get_column \
+	    "newsdb" \
+	    "content_item/by_contentsha1_and_const" \
+	    "${contentsha1}" \
+	    "_data_" \
+	    "content"
+
+	::feed_reader::classifier::classify ${axis} content
+
     }
+
 
 }
 
@@ -1405,7 +1377,7 @@ proc ::feed_reader::show_item {urlsha1_list} {
     }
 }
 
-proc ::feed_reader::classify_item {urlsha1_list} {
+proc ::feed_reader::classify {axis urlsha1_list} {
     set contentsha1_list [list]
     foreach urlsha1 ${urlsha1_list} {
 	load_item item ${urlsha1}
@@ -1413,7 +1385,7 @@ proc ::feed_reader::classify_item {urlsha1_list} {
 	unset item
     }
 
-    classify_content ${contentsha1_list}
+    classify_content ${axis} ${contentsha1_list}
 
 }
 
@@ -1996,86 +1968,3 @@ proc ::feed_reader::remove_feed_items {domain {urlsha1_list ""}} {
 
 }
 
-proc ::feed_reader::filter_stopwords {resultVar tokensVar} {
-
-    upvar $resultVar result
-    upvar $tokensVar tokens
-
-    variable stopwords
-
-    set result [list]
-    foreach token ${tokens} {
-	if { [info exists stopwords(${token})] } {
-	    continue
-	}
-	lappend result ${token}
-    }
-
-}
-
-proc ::feed_reader::wordcount_helper {countVar contentVar} {
-
-    upvar $countVar count
-    upvar $contentVar content
-
-    # remove embedded content and urls
-    set re {\{[^\}]+\}|https?://[^\s]+}
-    regsub -all -- ${re} ${content} { } content
-
-    set tokens0 [::util::tokenize ${content}]
-
-    filter_stopwords tokens tokens0
-
-    foreach token ${tokens} {
-	incr count(${token})
-    }
-
-}
-
-# * TODO: bin packing for word cloud 
-# * TODO: word cloud for each cluster
-# * label interactive could show word coud to ease training
-#
-proc ::feed_reader::wordcount {{contentsha1_list ""}} {
-
-
-    set multislicelist [::persistence::multiget_slice \
-			    "newsdb" \
-			    "content_item/by_contentsha1_and_const" \
-			    "${contentsha1_list}"]
-
-    array set count [list]
-    foreach {contentsha1 slicelist} ${multislicelist} {
-
-	# we know that slicelist is just one element
-        # we are just keeping appearances here
-	set contentfilename [lindex ${slicelist} 0]
-
-	set content [join [::persistence::get_data $contentfilename]]
-
-	wordcount_helper count content
-
-    }
-
-    package require struct::prioqueue
-
-    set pq [struct::prioqueue::prioqueue -integer]
-
-    foreach {token prio} [array get count] {
-	set item [array get count ${token}]
-	${pq} put ${item} ${prio}
-	#puts [list ${name} $count(${name})]
-    }
-
-    set limit 50
-    while { [${pq} size] && [incr limit -1] } {
-	set item [${pq} peek]
-	#puts ${item}
-	lassign ${item} token wc
-	puts ${token}
-	${pq} remove ${item}
-    }
-
-    ${pq} destroy
-
-}
