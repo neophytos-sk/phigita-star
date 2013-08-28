@@ -19,6 +19,7 @@ proc print_usage_info {} {
 			   "show" "urlsha1 ?...?" \
 			   "show-url" "article_url" \
 			   "show-content" "contentsha1 ?...?" \
+			   "classify" "urlsha1 ?...?" \
 			   "classify-content" "contentsha1 ?...?" \
 			   "uses-content" "contentsha1 ?...?" \
 			   "diff-content" "contentsha1_old contentsha1_new" \
@@ -132,6 +133,11 @@ if { ${argc} < 1 } {
 
         set contentsha1_list [lrange ${argv} 1 end]
         ::feed_reader::show_content ${contentsha1_list}
+
+    } elseif { ${cmd} eq {classify} && ${argc} >= 2 } {
+
+        set urlsha1_list [lrange ${argv} 1 end]
+        ::feed_reader::classify_item ${urlsha1_list}
 
     } elseif { ${cmd} eq {classify-content} && ${argc} >= 2 } {
 

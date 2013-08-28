@@ -1194,7 +1194,7 @@ proc ::feed_reader::classify_pr {itemVar cat} {
     return $pr
 }
 
-proc ::feed_reader::classify_item {itemVar} {
+proc ::feed_reader::classify_content_item {itemVar} {
     upvar $itemVar item
     
     set max_pr 0
@@ -1256,7 +1256,7 @@ proc ::feed_reader::classify_content {contentsha1_list} {
 
     foreach contentsha1 ${contentsha1_list} {
         load_content item ${contentsha1}
-        classify_item item
+        classify_content_item item
         unset item
     }
 
@@ -1404,6 +1404,19 @@ proc ::feed_reader::show_item {urlsha1_list} {
 	unset item
     }
 }
+
+proc ::feed_reader::classify_item {urlsha1_list} {
+    set contentsha1_list [list]
+    foreach urlsha1 ${urlsha1_list} {
+	load_item item ${urlsha1}
+	lappend contentsha1_list $item(contentsha1)
+	unset item
+    }
+
+    classify_content ${contentsha1_list}
+
+}
+
 
 proc ::feed_reader::show_revisions {urlsha1} {
 
