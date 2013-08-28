@@ -1,0 +1,11 @@
+url http://www.sportdog.gr/
+include_re {/article/[0-9]{4,}/[[:alnum:]\-]+$}
+htmltidy_feed_p 0
+htmltidy_article_p 0
+xpath_article_title {returnstring(//div[@class="node-title"]/h1[@class="title"])}
+xpath_article_description {returntext(//div[@class="node-intro"]/div[@class="intro"])}
+xpath_article_body {returntext(//div[@id="content-area"]//div[@class="node-content clearfix"])}
+xpath_article_image {{values(//a/img[@class="imagecache imagecache-inside_large"]/@src)}}
+xpath_article_date {returndate(//div[@class="node-info clearfix"]/div[@class="date"], "%d.%m.%Y - %H:%M")}
+xpath_article_modified_time {}
+
