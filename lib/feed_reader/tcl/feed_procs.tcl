@@ -1917,7 +1917,6 @@ proc ::feed_reader::remove_feed_items {domain {urlsha1_list ""}} {
 		       "${reversedomain}"           \
 		       "${slice_predicate}"]
 
-    puts slicelist=$slicelist
 
     foreach filename ${slicelist} {
 	remove_item ${filename}

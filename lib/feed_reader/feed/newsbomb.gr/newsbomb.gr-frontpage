@@ -9,6 +9,6 @@ xpath_article_body {returntext(//div[@class="itemBody"]/div[@class="itemFullText
 xpath_article_image {
     {values(//span[@class="itemImage"]/img[@alt]/@src)}
 }
-xpath_article_date {returndate(string(//span[@class="publication"]//time/@datetime),"%Y-%m-%dT%H:%m+03:00")}
+xpath_article_date {returndate(string(//span[@class="publication"]//time/@datetime),"%Y-%m-%dT%H:%M+03:00")}
 xpath_article_modified_time {}
 
