@@ -236,7 +236,7 @@ proc ::feed_reader::exec_xpath {resultVar doc xpath} {
 
     set result ""
     if { ${xpath} ne {} } {
-	set result [string trim [${doc} selectNodes "${xpath}"]]
+	set result [string trim [${doc} selectNodes "${xpath}"] " \n\r\t"]
     }
 
 }
