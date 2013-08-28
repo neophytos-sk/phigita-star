@@ -936,6 +936,7 @@ proc ::feed_reader::search {keywords {offset "0"} {limit "20"} {callback ""}} {
 
 	#puts ${contentsha1}
 
+
 	load_content item ${contentsha1}
 
 	set tokens_title [::util::tokenize $item(title)] 
@@ -1237,6 +1238,11 @@ proc ::feed_reader::classify_content {contentsha1_list} {
 		     "content_item/by_contentsha1_and_const" \
 		     "${sha1}" \
 		     "_data_"]
+
+	    if { ! [::persistence::exists_data_p $filename] } {
+		::persistence::delete_data $filename
+		continue
+	    }
 
 	    set content [join [::persistence::get_data ${filename}]]
 
