@@ -1790,6 +1790,9 @@ proc ::feed_reader::test_article {news_source feed_name link} {
 
 
 proc ::feed_reader::remove_item {filename} {
+
+    puts "remove_item ${filename}"
+
     array set item [::persistence::get_data ${filename}]
 
     set urlsha1 $item(urlsha1)
@@ -1881,6 +1884,22 @@ proc ::feed_reader::remove_item {filename} {
 
 }
 
+proc predicate=custom_composite_in {slicelistVar urlsha1_list} {
+    upvar $slicelistVar slicelist
+
+    set result [list]
+    foreach filename $slicelist {
+	set composite_key [file tail ${filename}]
+	set urlsha1 [lindex [split ${composite_key} {.}] 1]
+	if { ${urlsha1} in ${urlsha1_list} } {
+	    lappend result ${filename}
+	}
+
+    }
+
+    set slicelist ${result}
+}
+
 proc ::feed_reader::remove_feed_items {domain {urlsha1_list ""}} {
 
     set reversedomain [reversedomain ${domain}]
@@ -1889,7 +1908,7 @@ proc ::feed_reader::remove_feed_items {domain {urlsha1_list ""}} {
 
     set slice_predicate ""
     if { ${urlsha1_list} ne {} } {
-	set slice_predicate [list "in" [list ${urlsha1_list}]]
+	set slice_predicate [list "custom_composite_in" [list ${urlsha1_list}]]
     }
 
     set slicelist [::persistence::get_slice         \
@@ -1897,6 +1916,8 @@ proc ::feed_reader::remove_feed_items {domain {urlsha1_list ""}} {
 		       "news_item/by_site_and_date" \
 		       "${reversedomain}"           \
 		       "${slice_predicate}"]
+
+    puts slicelist=$slicelist
 
     foreach filename ${slicelist} {
 	remove_item ${filename}

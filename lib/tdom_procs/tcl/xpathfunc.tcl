@@ -330,7 +330,7 @@ proc ::dom::xpathFunc::returndate {ctxNode pos nodeListNode nodeList args} {
             # date recognizer using date/string shapes, e.g. dd-dd-dddd OR d-m-Y
 
 	    if { ${input_format} eq {auto_noalpha} } {
-		regsub -all -- {[^[:digit:][:punct:] ]} ${ts} {} ts
+		regsub -all -- {[^[:digit:]/,\-:\. ]} ${ts} {} ts
 	    } else {
 		regsub -all -- {[^[:alnum:][:punct:] ]} ${ts} {} ts
 	    }
