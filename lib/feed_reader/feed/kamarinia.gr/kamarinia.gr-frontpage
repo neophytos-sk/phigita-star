@@ -1,0 +1,10 @@
+url http://www.kamarinia.gr/
+include_re {/item/[0-9]{4,}[[:alnum:]\-]+$}
+htmltidy_feed_p 0
+htmltidy_article_p 0
+xpath_article_title {returnstring(//h1[@class="title"])}
+xpath_article_body {returntext(//div[@id="content"]//div[@class="content"])}
+xpath_article_image {{values(//div[@id="content"]//img/@src)}}
+xpath_article_date {returndate(//div[@id="content"]//li[@class="date"], "%d.%m.%Y - %H:%M")}
+xpath_article_modified_time {}
+
