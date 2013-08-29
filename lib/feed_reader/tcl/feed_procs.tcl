@@ -675,65 +675,27 @@ proc ::feed_reader::reversedomain {domain} {
     return [join [lreverse [split ${domain} {.}]] {.}]
 }
 
-proc ::feed_reader::get_domain_dir {link} {
-
-    set domain [::util::domain_from_url ${link}]
-
-    set reversedomain [reversedomain ${domain}]
-
-    return [get_base_dir]/site/${reversedomain}
-}
-
 proc ::feed_reader::get_urlsha1 {link} {
     set urlsha1 [::sha1::sha1 -hex ${link}]
     return ${urlsha1}
 }
 
 
-# TODO: partition row_key
-# set first3Chars [string range ${urlsha1} 0 2]
-proc ::feed_reader::get_item_dir {linkVar {urlsha1Var ""}} {
-
-    upvar ${linkVar} link
-    if { ${urlsha1Var} ne {} } {
-	upvar ${urlsha1Var} urlsha1
-    }
-
-    set urlsha1 [::sha1::sha1 -hex ${link}]
-
-    set [get_base_dir]/news_item_by_url_and_rev/${urlsha1}
-
-    return ${dir}
-
-}
-
 proc ::feed_reader::get_content_dir {} {
     return [get_base_dir]/content_item/by_contentsha1_and_const
 }
 
-proc ::feed_reader::get_log_dir {} {
-    return [get_base_dir]/log
-}
 
 proc ::feed_reader::get_crawler_dir {} {
     return [get_base_dir]/crawler
 }
 
 
-proc ::feed_reader::get_index_dir {} {
-    # multiple urls may have the same content
-    return [get_base_dir]/contentsha1_to_urlsha1
-}
-
 proc ::feed_reader::get_contentsha1_to_label_dir {} {
     # multiple urls may have the same content
     return [get_base_dir]/contentsha1_to_label
 }
 
-proc ::feed_reader::get_url_dir {} {
-    # multiple urls may have the same content
-    return [get_base_dir]/url
-}
 
 
 
@@ -984,7 +946,7 @@ proc ::feed_reader::search {keywords {offset "0"} {limit "20"} {callback ""}} {
 
 proc ::feed_reader::search_callback=label_menu {contentsha1 axis label} {
 
-    set menulabels [::feed_reader::classifier::get_label_names ${axis}]
+    set menulabels [classifier::get_label_names ${axis}]
     set menuindex 0
     foreach menulabel ${menulabels} {
 	puts "${menuindex}. ${menulabel}"
@@ -1123,7 +1085,7 @@ proc ::feed_reader::classify_content {axis contentsha1_list} {
 	    "_data_" \
 	    "content"
 
-	::feed_reader::classifier::classify ${axis} content
+	classifier::classify ${axis} content
 
     }
 
@@ -1273,7 +1235,7 @@ proc ::feed_reader::show_item {urlsha1_list} {
 	if { $item(langclass) eq {el.utf8} } {
 
 	    set content [concat $item(title) $item(body)]
-	    set item(el.utf8.topic) [::feed_reader::classifier::classify el.utf8.topic content]
+	    set item(el.utf8.topic) [classifier::classify el.utf8.topic content]
 
 	    puts $item(el.utf8.topic)
 	}
@@ -1298,7 +1260,7 @@ proc ::feed_reader::show_revisions {urlsha1} {
 
     set slicelist [::persistence::get_slice       \
 		       "newsdb"                   \
-		       "news_item/by_url_and_rev" \
+		       "news_item/by_urlsha1_and_contentsha1" \
 		       "${urlsha1}"]
 
     foreach {filename} ${slicelist} {
@@ -1338,7 +1300,7 @@ proc ::feed_reader::write_item {timestamp normalized_link feedVar itemVar resync
     set exists_revision_p \
 	[::persistence::exists_column_p \
 	     "newsdb"                   \
-	     "news_item/by_url_and_rev" \
+	     "news_item/by_urlsha1_and_contentsha1" \
 	     "${urlsha1}"               \
 	     "${contentsha1}"]
 
@@ -1526,7 +1488,7 @@ proc ::feed_reader::write_item {timestamp normalized_link feedVar itemVar resync
 
     ::persistence::insert_column   \
 	"newsdb"                   \
-	"news_item/by_url_and_rev" \
+	"news_item/by_urlsha1_and_contentsha1" \
 	"${urlsha1}"               \
 	"${contentsha1}"           \
 	"${data}"
@@ -1750,7 +1712,7 @@ proc ::feed_reader::remove_item {filename} {
     set contentsha1_list                \
 	[::persistence::get_slice_names \
 	     "newsdb"                   \
-	     "news_item/by_url_and_rev" \
+	     "news_item/by_urlsha1_and_contentsha1" \
 	     "${urlsha1}"]
 
     foreach contentsha1 ${contentsha1_list} {    
@@ -1813,7 +1775,7 @@ proc ::feed_reader::remove_item {filename} {
 
     ::persistence::delete_slice   \
 	"newsdb"                   \
-	"news_item/by_url_and_rev" \
+	"news_item/by_urlsha1_and_contentsha1" \
 	"${urlsha1}"
 
 

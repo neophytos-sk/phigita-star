@@ -4,7 +4,12 @@ namespace eval ::persistence {
 
     set base_dir "/web/data"
 
+    array set ks [list]
+    array set cf [list]
+
 }
+
+
 
 proc ::persistence::get_keyspace_dir {keyspace} {
 
@@ -22,6 +27,76 @@ proc ::persistence::get_cf_dir {keyspace column_family} {
 }
 
 
+
+proc ::persistence::exists_ks_p {keyspace} {
+
+    variable ks
+
+    #return [file isdirectory [get_keyspace_dir ${keyspace}]]
+    return [info exists ks(${keyspace})]
+
+}
+
+proc ::persistence::exists_cf_p {keyspace column_family} {
+
+    variable ks
+    variable cf
+
+    #return [file isdirectory [get_cf_dir ${keyspace} ${column_family}]]
+    return [info exists cf(${keyspace},${column_family})]
+
+}
+
+
+proc ::persistence::create_ks_if {keyspace {replication_factor "3"}} {
+
+    if { ![exists_ks_p ${keyspace}] } {
+	file mkdir [get_keyspace_dir ${keyspace}]
+	return 1
+    }
+
+    return 0
+
+}
+
+
+proc ::persistence::create_cf_if {keyspace column_family} {
+
+    if { ![exists_cf_p ${keyspace} ${column_family}] } {
+	file mkdir [get_cf_dir ${keyspace} ${column_family}]
+	return 1
+    }
+
+    return 0
+
+}
+
+
+proc ::persistence::define_ks {keyspace} {
+
+    variable ks
+
+    create_ks_if ${keyspace}
+
+    set ks(${keyspace}) 1
+    
+}
+
+
+proc ::persistence::define_cf {keyspace column_family} {
+
+    variable cf
+
+    if { ![exists_ks_p ${keyspace}] } {
+	error "define_cf: no such keyspace (${keyspace})"
+    }
+
+    create_cf_if ${keyspace} ${column_family}
+
+    set cf(${keyspace},${column_family}) 1
+
+}
+
 proc ::persistence::get_row {keyspace column_family row_key} {
 
     # aka snapshot directory
@@ -37,43 +112,19 @@ proc ::persistence::get_row {keyspace column_family row_key} {
 }
 
 
-proc ::persistence::keyspace_exists_p {keyspace} {
-
-    return [file isdirectory [get_keyspace_dir ${keyspace}]]
-
-}
-
-
-proc ::persistence::cf_exists_p {keyspace column_family} {
-
-    return [file isdirectory [get_cf_dir ${keyspace} ${column_family}]]
-
-}
-
-
-proc ::persistence::create_keyspace_if {keyspace {replication_factor "3"}} {
-
-    if { ![keyspace_exists_p ${keyspace}] } {
-	file mkdir [get_keyspace_dir ${keyspace}]
-	return 1
-    }
-
-    return 0
-
-}
 
 proc ::persistence::create_row_if {keyspace column_family row_key row_dirVar} {
 
     upvar ${row_dirVar} row_dir
 
     # ensure keyspace exists
-    if { ![keyspace_exists_p ${keyspace}] } {
+    if { ![exists_ks_p ${keyspace}] } {
 	error "create_row_if: no such keyspace (${keyspace})"
     }
 
     # ensure ${cf_dir} exists
-    if { ![cf_exists_p ${keyspace} ${column_family}] } {
-	error "create_row_if: no such column family (${keyspace}/${column_family})"
+    if { ![exists_cf_p ${keyspace} ${column_family}] } {
+	error "create_row_if: no such column family (${keyspace},${column_family})"
     }
 
     set row_dir [get_row ${keyspace} ${column_family} ${row_key}]

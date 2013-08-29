@@ -10,4 +10,5 @@ proc ::persistence::get_package_dir {} "return ${package_dir}"
 proc ::persistence::get_conf_dir {} "return ${package_dir}/conf"
 
 source [file join $dir data_procs.tcl]
+source [file join $dir orm_procs.tcl]
 
