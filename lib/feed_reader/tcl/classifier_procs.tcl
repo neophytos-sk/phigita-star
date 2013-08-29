@@ -369,8 +369,16 @@ proc ::feed_reader::classifier::wordcount_helper {countVar contentVar} {
     upvar $contentVar content
 
     # remove embedded content and urls
-    set re {\{[^\}]+\}|https?://[^\s]+}
-    regsub -all -- ${re} ${content} { } content
+    foreach re {
+	{\{[^\}]+:\s*https?://[^\s]+\}}
+	{\{[^\}]+:\s*https?://[^\s]+\}}
+	{\"[^\}]+\":[^\s]+}
+	{[^[:alnum:]]}
+    } {
+	regsub -all -- ${re} ${content} { } content
+    }
+
+#puts $content
 
     set tokens0 [::util::tokenize ${content}]
 
