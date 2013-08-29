@@ -407,11 +407,6 @@ proc ::feed_reader::classifier::wordcount_helper {countVar contentVar} {
     set tokens [clean_and_tokenize content]
 
     foreach token ${tokens} {
-
-	if { [string length ${token}] <= 3 } {
-	    continue
-	}
-
 	incr count(${token})
     }
 
