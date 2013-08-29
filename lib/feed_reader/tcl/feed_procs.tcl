@@ -1373,6 +1373,16 @@ proc ::feed_reader::show_item {urlsha1_list} {
     foreach urlsha1 ${urlsha1_list} {
 	load_item item ${urlsha1}
 	print_item item
+
+	if { $item(langclass) eq {el.utf8} } {
+
+	    set content [concat $item(title) $item(body)]
+	    set item(el.utf8.topic) [::feed_reader::classifier::classify el.utf8.topic content]
+
+	    puts $item(el.utf8.topic)
+	}
+
+
 	unset item
     }
 }
@@ -1384,8 +1394,6 @@ proc ::feed_reader::classify {axis urlsha1_list} {
 	lappend contentsha1_list $item(contentsha1)
 	unset item
     }
-
-    classify_content ${axis} ${contentsha1_list}
 
 }
 

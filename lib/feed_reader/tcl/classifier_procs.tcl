@@ -278,6 +278,8 @@ proc ::feed_reader::classifier::classify_naive_bayes_text {modelVar contentVar} 
     upvar $modelVar pr
     upvar $contentVar content
 
+    # we wordcount_helper as it strips out embedded content (images,video)
+    wordcount_helper wordcount_text content
 
     set categories $pr(categories)
 
@@ -286,8 +288,8 @@ proc ::feed_reader::classifier::classify_naive_bayes_text {modelVar contentVar} 
     foreach category ${categories} {
 	#set p 1.0
 	set p 0.0
-	foreach token [lsort -unique [::util::tokenize ${content}]] {
-	    set pr_word_given_cat [get_value_if pr(word_${token},${category}) "0.5"]
+	foreach word [array names wordcount_text] {
+	    set pr_word_given_cat [get_value_if pr(word_${word},${category}) "0.5"]
 	    #set p [expr { ${p} * $pr_word_given_cat }]
 	    set p [expr { ${p} + log(${pr_word_given_cat}) }]
 	}
@@ -299,12 +301,14 @@ proc ::feed_reader::classifier::classify_naive_bayes_text {modelVar contentVar} 
 	    set max_category ${category}
 	}
 
-	puts "$category p=$p"
+	#puts "$category p=$p"
     }
 
-    puts max_pr=$max_pr
+    #puts max_pr=$max_pr
     puts max_category=$max_category
-    puts ---
+    #puts ---
+
+    return ${max_category}
 
 }
 
@@ -334,7 +338,7 @@ proc ::feed_reader::classifier::classify {axis contentVar} {
 
     load_naive_bayes_model model ${axis}
 
-    classify_naive_bayes_text model content
+    return [classify_naive_bayes_text model content]
 
 }
 
