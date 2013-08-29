@@ -57,6 +57,7 @@ proc ::feed_reader::read_meta {metaVar} {
 
 }
 
+
 proc ::feed_reader::compare_href_attr {n1 n2} {
     return [string compare [${n1} @href ""] [${n2} @href ""]]
 }

@@ -173,16 +173,16 @@ proc ::feed_reader::classifier::unlabel {axis label contentsha1_list} {
 }
 
 
-proc ::feed_reader::classifier::learn_naive_bayes_text {multirow_slice_names categories {modelVar ""}} {
+proc ::feed_reader::classifier::learn_naive_bayes_text {multirow_examples multirow_categories {modelVar ""}} {
 
     if { $modelVar ne {} } {
 	upvar $modelVar probability
     }
 
-    set probability(categories) ${categories}
+    set probability(categories) ${multirow_categories}
 
     array set vocabulary [list]
-    foreach slicelist ${multirow_slice_names} category ${categories} {
+    foreach slicelist ${multirow_examples} category ${multirow_categories} {
 
 	array set count_${category} [list]
 
@@ -216,8 +216,10 @@ proc ::feed_reader::classifier::learn_naive_bayes_text {multirow_slice_names cat
 	set num_words(${category}) [array size wordcount_${category}]
 
 	incr total_docs ${slicelen}
-	#puts "num_words(${category})=$num_words(${category})"
-	#puts "num_docs(${category})=$num_docs(${category})"
+
+	puts "num_words(${category})=$num_words(${category})"
+	puts "num_docs(${category})=$num_docs(${category})"
+	wordcount_topN wordcount_${category} 10
 
     }
 
@@ -225,7 +227,7 @@ proc ::feed_reader::classifier::learn_naive_bayes_text {multirow_slice_names cat
 
     puts total_words_in_vocabulary=$vocabulary_size
 
-    foreach category ${categories} {
+    foreach category ${multirow_categories} {
 
 	set probability(cat_${category}) \
 	    [expr { $num_docs(${category}) / double(${total_docs})  }]
@@ -272,6 +274,28 @@ proc ::feed_reader::classifier::load_naive_bayes_model {modelVar axis} {
 
 }
 
+proc ::feed_reader::classifier::clean_and_tokenize {contentVar} { 
+
+    upvar $contentVar content
+
+    # remove embedded content and urls
+    foreach re {
+	{\{[^\}]+:\s*https?://[^\s]+\}}
+	{\{[^\}]+:\s*https?://[^\s]+\}}
+	{\"[^\}]+\":[^\s]+}
+	{https?://[^\s]+}
+	{[^[:alnum:]]}
+    } {
+	regsub -all -- ${re} ${content} { } content
+    }
+
+    set tokens0 [::util::tokenize ${content}]
+
+    filter_stopwords tokens tokens0
+
+    return ${tokens}
+
+}
 
 proc ::feed_reader::classifier::classify_naive_bayes_text {modelVar contentVar} {
 
@@ -279,7 +303,10 @@ proc ::feed_reader::classifier::classify_naive_bayes_text {modelVar contentVar} 
     upvar $contentVar content
 
     # we wordcount_helper as it strips out embedded content (images,video)
-    wordcount_helper wordcount_text content
+
+    # wordcount_helper wordcount_text content
+    # set words [array names wordcount_text]
+    set words [clean_and_tokenize content]
 
     set categories $pr(categories)
 
@@ -288,7 +315,7 @@ proc ::feed_reader::classifier::classify_naive_bayes_text {modelVar contentVar} 
     foreach category ${categories} {
 	#set p 1.0
 	set p 0.0
-	foreach word [array names wordcount_text] {
+	foreach word ${words} {
 	    set pr_word_given_cat [get_value_if pr(word_${word},${category}) "0.5"]
 	    #set p [expr { ${p} * $pr_word_given_cat }]
 	    set p [expr { ${p} + log(${pr_word_given_cat}) }]
@@ -301,12 +328,12 @@ proc ::feed_reader::classifier::classify_naive_bayes_text {modelVar contentVar} 
 	    set max_category ${category}
 	}
 
-	#puts "$category p=$p"
+	puts "$category p=$p"
     }
 
-    #puts max_pr=$max_pr
+    puts max_pr=$max_pr
     puts max_category=$max_category
-    #puts ---
+    puts ---
 
     return ${max_category}
 
@@ -319,13 +346,19 @@ proc ::feed_reader::classifier::train {axis {categories ""}} {
 
     set multirow_predicate [list "in" [list ${categories}]]
 
-    set multirow_slice \
+    set multirow_examples \
 	[::persistence::get_multirow_slice_names \
 	     "newsdb"                            \
 	     "classifier/${axis}"                \
 	     "${multirow_predicate}"]
 
-    learn_naive_bayes_text ${multirow_slice} ${categories} model
+    set multirow_categories \
+	[::persistence::get_multirow_names \
+	     "newsdb" \
+	     "classifier/${axis}" \
+	     "${multirow_predicate}"]
+
+    learn_naive_bayes_text ${multirow_examples} ${multirow_categories} model
 
     save_naive_bayes_model model ${axis}
     
@@ -343,13 +376,16 @@ proc ::feed_reader::classifier::classify {axis contentVar} {
 }
 
 
+namespace eval ::feed_reader::classifier {
+
+}
 
 proc ::feed_reader::classifier::filter_stopwords {resultVar tokensVar} {
 
     upvar $resultVar result
     upvar $tokensVar tokens
 
-    variable stopwords
+    variable ::feed_reader::stopwords
 
     set result [list]
     foreach token ${tokens} {
@@ -368,23 +404,14 @@ proc ::feed_reader::classifier::wordcount_helper {countVar contentVar} {
     upvar $countVar count
     upvar $contentVar content
 
-    # remove embedded content and urls
-    foreach re {
-	{\{[^\}]+:\s*https?://[^\s]+\}}
-	{\{[^\}]+:\s*https?://[^\s]+\}}
-	{\"[^\}]+\":[^\s]+}
-	{[^[:alnum:]]}
-    } {
-	regsub -all -- ${re} ${content} { } content
-    }
-
-#puts $content
-
-    set tokens0 [::util::tokenize ${content}]
-
-    filter_stopwords tokens tokens0
+    set tokens [clean_and_tokenize content]
 
     foreach token ${tokens} {
+
+	if { [string length ${token}] <= 3 } {
+	    continue
+	}
+
 	incr count(${token})
     }
 
@@ -416,6 +443,14 @@ proc ::feed_reader::classifier::wordcount {{contentsha1_list ""}} {
 
     }
 
+    wordcount_topN count
+
+}
+
+proc ::feed_reader::classifier::wordcount_topN {countVar {limit "50"}} {
+
+    upvar $countVar count
+
     package require struct::prioqueue
 
     set pq [struct::prioqueue::prioqueue -integer]
@@ -426,7 +461,6 @@ proc ::feed_reader::classifier::wordcount {{contentsha1_list ""}} {
 	#puts [list ${name} $count(${name})]
     }
 
-    set limit 50
     while { [${pq} size] && [incr limit -1] } {
 	set item [${pq} peek]
 	#puts ${item}

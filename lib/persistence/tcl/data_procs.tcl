@@ -221,6 +221,17 @@ proc ::persistence::get_multirow {keyspace column_family {predicate ""}} {
 
 }
 
+proc ::persistence::get_multirow_names {args} {
+
+    set multirow [get_multirow {*}${args}]
+    set result [list]
+    foreach row ${multirow} {
+	lappend result [get_name ${row}]
+    }
+    return ${result}
+}
+
+
 proc ::persistence::get_multirow_slice {keyspace column_family {multirow_predicate ""} {slice_predicate ""}} {
 
     set multirow [get_multirow ${keyspace} ${column_family} ${multirow_predicate}]
