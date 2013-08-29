@@ -1,0 +1,16 @@
+url http://www.techgear.gr/
+include_re {/[[:alnum:]\-]+[0-9]{4,}/$}
+exclude_re {/tag/}
+htmltidy_feed_p 0
+htmltidy_article_p 0
+xpath_article_title {returnstring(//div[@id="intext_content_tag"]/h1[@class="entry-title"])}
+xpath_article_body {returntext(//div[@id="intext_content_tag"]/div[@class="entry-content"])}
+xpath_article_image {{values(//div[@class="entry-content"]//img[@width]/@src)}}
+xpath_article_date {returndate(//div[@class="entry-meta"]//a[@rel="bookmark"]/span[@class="entry-date"], "%d %B, %Y")}
+xpath_article_author {returnstring(//div[@class="entry-meta"]/span[@class="meta-prep meta-prep-author"])}
+xpath_article_modified_time {}
+xpath_article_cleanup {
+    {//div[@class="socialize-containter"]}
+    {//div[@class="yarpp-related"]}
+}
+
