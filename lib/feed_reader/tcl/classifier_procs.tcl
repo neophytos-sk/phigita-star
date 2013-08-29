@@ -342,7 +342,7 @@ proc ::feed_reader::classifier::classify_naive_bayes_text {modelVar contentVar} 
 proc ::feed_reader::classifier::train {axis {categories ""}} {
 
     #set axis "el.utf8.topic"
-    set categories {politics sports}
+    set categories {politics sports technology}
 
     set multirow_predicate [list "in" [list ${categories}]]
 
