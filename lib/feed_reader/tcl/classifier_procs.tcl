@@ -282,11 +282,11 @@ proc ::feed_reader::classifier::clean_and_tokenize {contentVar} {
     foreach re {
 	{\{[^\}]+:\s*https?://[^\s]+\}}
 	{\{[^\}]+:\s*https?://[^\s]+\}}
-	{\"[^\}]+\":[^\s]+}
+	{\"([^\}]+)\":[^\s]+}
 	{https?://[^\s]+}
 	{[^[:alnum:]]}
     } {
-	regsub -all -- ${re} ${content} { } content
+	regsub -all -- ${re} ${content} {\1 } content
     }
 
     set tokens0 [::util::tokenize ${content}]
