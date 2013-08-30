@@ -1,0 +1,21 @@
+url http://www.sport.gr/
+include_re {/Article/.*\-[0-9]{4,}.html$}
+htmltidy_feed_p 1
+htmltidy_article_p 1
+xpath_article_title {returnstring(//div[@class="team-box-top"]/h1)}
+xpath_article_body {returntext(//div[@id="intext_content_tag"]/div[@class="txt"])}
+xpath_article_image {{values(//div[@id="art-rel-img"]/div[@class="photos"]/img/@src)}}
+xpath_article_cleanup {
+    {//div[@id="intext_content_tag"]/div[@class="txt"]/div}
+}
+xpath_article_date {
+    returndate(
+        concat(
+            substring-after(//div[@id="article"]/em[@class="h1-em"]/text(),":"),
+            //div[@id="article"]/em[@class="h1-em"]/span[@class="time"]
+        ), 
+        "%d/%m/%Y @ %H:%M"
+    )
+}
+xpath_article_modified_time {}
+

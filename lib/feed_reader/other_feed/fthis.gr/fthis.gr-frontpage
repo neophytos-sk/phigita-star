@@ -1,0 +1,10 @@
+url http://www.fthis.gr/
+include_re {/article/[0-9]{4,}/[[:alnum:]\-]+$}
+htmltidy_feed_p 0
+htmltidy_article_p 0
+xpath_article_title {returnstring(//div[@class="articledT"]/h1[@class="redtxt font30txt slab normal lh24"])}
+xpath_article_body {returntext(//div[@id="articletext"])}
+xpath_article_image values(//div[@id="articletext"]//img[@width]/@src)
+xpath_article_description {//div[@class="greytxt font12txt"]/span[@itemprop="description"]}
+xpath_article_date {normalizedate(//div[@class="greytxt font12txt"]/br/following-sibling::text(),"el_GR","auto")}
+xpath_article_modified_time {}
