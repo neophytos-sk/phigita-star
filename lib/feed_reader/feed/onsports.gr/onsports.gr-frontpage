@@ -1,5 +1,6 @@
 url http://www.onsports.gr/
 include_re {/item/[0-9]{4,}[[:alnum:]\-]+$}
+exclude_re {/Skitso-ths-Hmeras/}
 htmltidy_feed_p 1
 htmltidy_article_p 1
 xpath_article_title {returnstring(//div[@class="itemHeader"]/h1[@class="itemTitle"])}
