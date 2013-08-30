@@ -245,8 +245,6 @@ proc ::feed_reader::exec_xpath {resultVar doc xpath} {
 proc ::feed_reader::is_video_url_p {video_url output_video_urlVar} {
     upvar $output_video_urlVar output_video_url
 
-puts video_url=$video_url
-
     if { [string match *youtube* $video_url] || [string match *ustream.tv* $video_url] } {
 	set output_video_url $video_url
 	return 1
