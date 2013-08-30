@@ -3,6 +3,7 @@ include_re {/eidiseis/.*[[:alnum:]\-]+\.[0-9]{4,}\.html$}
 htmltidy_feed_p 1
 htmltidy_article_p 1
 xpath_article_title {returnstring(//div[@class="storyContent "]/h1[@class="title"])}
+xpath_article_description {returntext(//div[@id="mainStoryContent"]//div[@class="lead"])}
 xpath_article_body {returntext(//div[@id="mainStoryContent"]/div[@class="storyContent" or @class="body"])}
 xpath_article_image {
     {values(//div[@class="relatedContents picture"]//img[@id="relPicsMainPic"]/@src)}
@@ -10,4 +11,6 @@ xpath_article_image {
 xpath_article_date {normalizedate(//div[@id="mainStoryContent"]//div[@class="date"]/span/text(),"el_GR","%B %d %Y %H:%M")}
 xpath_article_author {returnstring(//div[@id="mainStoryContent"]//a[@class="author"])}
 xpath_article_modified_time {}
-
+xpath_article_cleanup {
+    {//div[@id="lead_byline"]}
+}
