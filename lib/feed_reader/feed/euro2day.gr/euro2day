@@ -1,5 +1,5 @@
 url http://www.euro2day.gr/
-encoding {iso8859-7}
+encoding {cp1253}
 include_re {/article/[0-9]{4,}/[[:alnum:]\-]+\.html$}
 htmltidy_feed_p 1
 htmltidy_article_p 1

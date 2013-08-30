@@ -316,7 +316,7 @@ proc ::feed_reader::classifier::classify_naive_bayes_text {modelVar contentVar} 
 	#set p 1.0
 	set p 0.0
 	foreach word ${words} {
-	    set pr_word_given_cat [get_value_if pr(word_${word},${category}) "0.5"]
+	    set pr_word_given_cat [get_value_if pr(word_${word},${category}) "0.1"]
 	    #set p [expr { ${p} * $pr_word_given_cat }]
 	    set p [expr { ${p} + log(${pr_word_given_cat}) }]
 	}
