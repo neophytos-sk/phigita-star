@@ -357,7 +357,12 @@ proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar infoVa
 	set html [::htmltidy::tidy ${html}]
     }
 
-    set doc [dom parse -html ${html}]
+    if { [catch {
+	set doc [dom parse -html ${html}]
+    } errmsg] } {
+	return -2 ;# error parsing article html
+    }
+
     ${doc} baseURI ${link}
 
     exec_xpath title_in_article $doc $xpath_article_title
@@ -600,6 +605,9 @@ proc ::feed_reader::fetch_item {link title_in_feed feedVar itemVar infoVar {redi
 namespace eval ::feed_reader {
 
     array set errorcode_messages {
+
+	-2
+	{dom parse error for article html}
 
 	-1 
 	{zero-length body}
