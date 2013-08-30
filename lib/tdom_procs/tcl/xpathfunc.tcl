@@ -170,9 +170,8 @@ proc ::dom::xpathFuncHelper::coerce2text_helper {htmlVar node} {
 
         } elseif { ${tagname} eq {iframe} && [set src [${node} @src ""]] ne {} } {
 
-            set re {(youtube|vimeo|dailymotion)} 
-            if { [regexp -- ${re} ${src}] } {
-                append html "{video: ${src} }"
+            if { [::feed_reader::is_video_url_p ${src} video_id] } {
+                append html "{video: ${video_id} }"
             }
             
         } else {

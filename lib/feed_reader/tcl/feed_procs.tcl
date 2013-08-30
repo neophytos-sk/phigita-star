@@ -242,11 +242,27 @@ proc ::feed_reader::exec_xpath {resultVar doc xpath} {
 
 }
 
-proc ::feed_reader::is_video_url_p {video_url output_video_urlVar} {
-    upvar $output_video_urlVar output_video_url
 
-    if { [string match *youtube* $video_url] || [string match *ustream.tv* $video_url] } {
-	set output_video_url $video_url
+proc ::feed_reader::get_video_id_from_iframe_src {url} {
+    set ref_video_id ""
+    foreach {provider re} {
+	youtube {//www.youtube.com/embed/([0-9a-zA-Z_\-]+)(?:[?])(?:&?[a-zA-Z0-9_\.\-]+=[a-zA-Z0-9_\.\-]*)*$}
+    } {
+	if { [regexp -- ${re} ${url} __match__ ref_video_id] } {
+	    return ${ref_video_id}.${provider}
+	}
+    }
+    return
+}
+
+
+proc ::feed_reader::is_video_url_p {video_url output_video_idVar} {
+    upvar $output_video_idVar video_id
+
+puts video_url=$video_url
+
+    set video_id [get_video_id_from_iframe_src ${video_url}]
+    if { ${video_id} ne {} } {
 	return 1
     }
 
