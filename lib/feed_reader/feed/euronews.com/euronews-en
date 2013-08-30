@@ -10,7 +10,7 @@ xpath_article_date {returndate(//div[@id="title-wrap-new"]/p[@class="cet"],"%d/%
 xpath_article_tags {values(//a[@rel="tag"]/text())}
 xpath_article_cleanup {
     {//div[@class="article-tools"]}
-    {//div[@class="related-stories"]}
+    {//div[@id="related-stories"]}
     {//span[@class="kwl"]/following-sibling::*}
     {//span[@class="kwl"]}
     {//p[@class="en-cpy"]}
