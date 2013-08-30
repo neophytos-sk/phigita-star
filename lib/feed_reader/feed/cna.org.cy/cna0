@@ -12,4 +12,5 @@ xpath_article_cleanup {
     {//span[@class="pagetitle"]/strong}
 }
 xpath_article_date {returndate(//span[@class="pagetitle"]/font[2]/following-sibling::text(),"%d/%N/%Y %H:%M")}
-
+end_of_text_cleanup_p 1
+end_of_text_coeff "0.3"
