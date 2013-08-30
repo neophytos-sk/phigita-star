@@ -589,7 +589,7 @@ proc ::feed_reader::fetch_item {link title_in_feed feedVar itemVar infoVar {redi
 			    errno 1 \
 			    errmsg $errmsg]
 
-	return 1 ;# failed with errors
+	return -3 ;# failed with errors
     }
 
     if { [get_value_if info(responsecode) ""] eq {302} && [get_value_if feed(handle_redirect_item_p) "0"] } {
@@ -605,6 +605,9 @@ proc ::feed_reader::fetch_item {link title_in_feed feedVar itemVar infoVar {redi
 namespace eval ::feed_reader {
 
     array set errorcode_messages {
+
+	-3
+	{failed during information extraction from article}
 
 	-2
 	{dom parse error for article html}
