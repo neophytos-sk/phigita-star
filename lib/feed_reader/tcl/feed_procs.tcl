@@ -259,8 +259,6 @@ proc ::feed_reader::get_video_id_from_iframe_src {url} {
 proc ::feed_reader::is_video_url_p {video_url output_video_idVar} {
     upvar $output_video_idVar video_id
 
-puts video_url=$video_url
-
     set video_id [get_video_id_from_iframe_src ${video_url}]
     if { ${video_id} ne {} } {
 	return 1
