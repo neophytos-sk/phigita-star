@@ -275,6 +275,9 @@ proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar infoVa
 				    0]
 
     # {//meta[@property="og:title"]}
+
+    set xpath_article_prefix [get_value_if feed(xpath_article_prefix) ""]
+
     set xpath_article_title [get_value_if \
 				 feed(xpath_article_title) \
 				 {string(//meta[@property="og:title"]/@content)}]
@@ -298,6 +301,8 @@ proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar infoVa
     set xpath_article_video [get_value_if \
 				 feed(xpath_article_video) \
 				 {values(//iframe[@src]/@src)}]
+
+    ::util::prepend ${xpath_article_prefix} xpath_article_video
 
     set xpath_article_attachment [get_value_if \
 				      feed(xpath_article_attachment) \

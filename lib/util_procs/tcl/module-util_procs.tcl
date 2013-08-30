@@ -26,8 +26,9 @@ proc ::util::head {list} {
     return [lindex $list 0]
 }
 
-proc ::util::prepend {prefix text} {
-    return "${prefix}${text}"
+proc ::util::prepend {prefix textVar} {
+    upvar $textVar text
+    set text "${prefix}${text}"
 }
 
 
