@@ -2,13 +2,14 @@ url http://www.tvkosmos.gr/default.aspx
 include_re {/details\.aspx\?id=[0-9]{4,}$}
 htmltidy_feed_p 1
 htmltidy_article_p 1
-xpath_article_title returnstring(//div[@id="content"]//article[1]/h1)
-xpath_article_body {returntext(//div[@id="content"]//article[1]/h1/following-sibling::*)}
-xpath_article_image {{values(//img[@id="ctl00_ContentPlaceHolder1_Image1"]/@src)}}
+xpath_article_title returnstring(//div[@id="content"]//h1)
+xpath_article_body {returntext(//div[@id="content"]//h1/following-sibling::*)}
+xpath_article_image {{values(//div[@id="feature-image"]/img/@src)}}
 xpath_article_date {returndate(//ul[@class="meta"]/li[2],"%A, %B %d, %Y - %H:%M:%S %P")}
 xpath_article_modified_time {}
 xpath_article_cleanup {
     {//div[@id="article-list"]}
     {//ul[@class="meta"]}
     {//div[@id="feature-image"]}
+    {//table[@id="attachments"]}
 }
