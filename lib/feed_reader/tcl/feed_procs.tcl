@@ -242,6 +242,19 @@ proc ::feed_reader::exec_xpath {resultVar doc xpath} {
 
 }
 
+proc ::feed_reader::is_video_url_p {video_url output_video_urlVar} {
+    upvar $output_video_urlVar output_video_url
+
+puts video_url=$video_url
+
+    if { [string match *youtube* $video_url] || [string match *ustream.tv* $video_url] } {
+	set output_video_url $video_url
+	return 1
+    }
+
+    return 0
+}
+
 
 proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar infoVar} {
 
@@ -286,7 +299,7 @@ proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar infoVa
 
     set xpath_article_video [get_value_if \
 				 feed(xpath_article_video) \
-				 {values(//iframe[contains(@src,"youtube")]/@src)}]
+				 {values(//iframe[@src]/@src)}]
 
     set xpath_article_attachment [get_value_if \
 				      feed(xpath_article_attachment) \
@@ -380,7 +393,9 @@ proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar infoVa
 	foreach video_xpath ${xpath_article_video} {
 	    foreach video_url [${doc} selectNodes ${video_xpath}] {
 		# TODO: extract video id and convert to video url (if possible)
-		lappend article_video ${video_url}
+		if { [is_video_url_p ${video_url} video_url_rewritten] } {
+		    lappend article_video ${video_url_rewritten}
+		}
 	    }
 	}
     }
