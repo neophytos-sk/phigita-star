@@ -407,7 +407,7 @@ proc ::feed_reader::update_crawler_stats {timestamp feed_name statsVar} {
 
     incr_array_in_column                \
 	"crawldb"                       \
-	"feed_stats/by_feed_and_period" \
+	"feed_stats/by_feed_and_const" \
 	"${feed_name}"                  \
 	"_stats"                        \
 	stats
