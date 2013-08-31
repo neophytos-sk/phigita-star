@@ -320,7 +320,7 @@ proc ::feed_reader::classifier::load_naive_bayes_model {modelVar axis} {
 
 }
 
-proc ::feed_reader::classifier::clean_and_tokenize {contentVar} { 
+proc ::feed_reader::classifier::clean_and_tokenize {contentVar {filter_stopwords_p 0}} { 
 
     upvar $contentVar content
 
@@ -336,12 +336,15 @@ proc ::feed_reader::classifier::clean_and_tokenize {contentVar} {
 	regsub -all -- ${re} ${content} {\1 } content
     }
 
-    set tokens [::util::tokenize ${content}]
+    set tokens0 [::util::tokenize ${content}]
 
-    # filter_stopwords tokens tokens0
+    if { $filter_stopwords_p } {
+	filter_stopwords tokens tokens0
+	return ${tokens}
+    }
 
 
-    return ${tokens}
+    return ${tokens0}
 
 }
 
@@ -450,12 +453,12 @@ proc ::feed_reader::classifier::less_than_3 {num} {
 }
 
 
-proc ::feed_reader::classifier::wordcount_helper {countVar contentVar} {
+proc ::feed_reader::classifier::wordcount_helper {countVar contentVar {filter_stopwords_p 0}} {
 
     upvar $countVar count
     upvar $contentVar content
 
-    set tokens [clean_and_tokenize content]
+    set tokens [clean_and_tokenize content ${filter_stopwords_p}]
 
     foreach token ${tokens} {
 	incr count(${token})

@@ -1210,15 +1210,38 @@ proc ::feed_reader::search_callback=label_menu {contentsha1 axis label} {
 
 }
 
+proc ::feed_reader::confirm {} {
+
+    while { [set reply [gets stdin]] ni {y n yes no t f true false 0 1} } {
+    }
+
+    return [::util::boolean ${reply}]
+
+}
+
 
 proc ::feed_reader::search_callback=label_content {contentsha1 axis label} {
 
-    ::persistence::insert_column \
-	"newsdb" \
-	"classifier/${axis}" \
-	"${label}" \
+    ::persistence::get_column \
+	"newsdb"\
+	"content_item/by_contentsha1_and_const" \
 	"${contentsha1}" \
-	""
+	"_data_" \
+	"column_data"
+
+    classifier::wordcount_helper count column_data true ;# filter_stopwords
+    classifier::print_words [classifier::wordcount_topN count 40]
+
+    if { [confirm] } {
+
+	::persistence::insert_column \
+	    "newsdb" \
+	    "classifier/${axis}" \
+	    "${label}" \
+	    "${contentsha1}" \
+	    ""
+
+    }
 
 }
 
