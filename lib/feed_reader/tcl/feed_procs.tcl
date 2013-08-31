@@ -1798,6 +1798,9 @@ proc ::feed_reader::resync_item {filename} {
 	set item(body) $new_item(body)
 	set item(video) [get_value_if new_item(video)]
 	set item(feed) [file tail $feedfilename]
+	if { [get_value_if item(timestamp) ""] eq {} } {
+	    set item(timestamp) [file mtime ${filename}]
+	}
 
 	remove_item $filename
 
