@@ -448,13 +448,18 @@ proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar infoVa
 	# if end_of_string is found after the 1/3 of the article body
 	# then drop text beyond that point
 	#
+
+	puts article_body=$article_body
+
 	set end_of_text_cleanup_coeff [get_value_if feed(end_of_text_cleanup_coeff) "0.3"]
 	set article_body_len [string length ${article_body}]
 	set startIndex [expr { int( ${article_body_len} * ${end_of_text_cleanup_coeff} ) } ]
+
 	foreach end_of_text_string $meta(end_of_text_strings) {
 	    set index [string first ${end_of_text_string} ${article_body} ${startIndex}]
 	    if { -1 != ${index} } {
 		set article_body [string trim [string range ${article_body} 0 [expr { ${index} - 1 }]]]
+		set index 0
 	    }
 	}
     }
@@ -1940,6 +1945,11 @@ proc ::feed_reader::remove_item {filename} {
 
     array set item [::persistence::get_data ${filename}]
 
+    if { ![info exists item(sort_date)] } {
+	set item(sort_date) [clock format $item(timestamp) -format "%Y%m%dT%H%M"]
+    }
+
+
     set urlsha1 $item(urlsha1)
 
     set reversedomain [reversedomain [::util::domain_from_url $item(link)]]
@@ -1957,13 +1967,16 @@ proc ::feed_reader::remove_item {filename} {
 		"${urlsha1}"
 
 
-    set contentsha1_list                \
-	[::persistence::get_slice_names \
-	     "newsdb"                   \
+    set contentslicelist                            \
+	[::persistence::delete_slice                \
+	     "newsdb"                               \
 	     "news_item/by_urlsha1_and_contentsha1" \
 	     "${urlsha1}"]
 
-    foreach contentsha1 ${contentsha1_list} {    
+    foreach contentfilename ${contentslicelist} {    
+
+	set contentsha1 \
+	    [::persistence::get_name ${contentfilename}]
 
 	set cf_variant "index/contentsha1_to_urlsha1"
 
@@ -1973,31 +1986,52 @@ proc ::feed_reader::remove_item {filename} {
 	    "${contentsha1}"          \
 	    "${urlsha1}"
 
-
-	set slicelist \
-	    [::persistence::get_slice  \
-		 "newsdb"              \
-		 "${cf_variant}"       \
+	set deleted_row_p \
+	    [::persistence::delete_row_if \
+		 "newsdb"                 \
+		 "${cf_variant}"          \
 		 "${contentsha1}"]
 
-	if { ${slicelist} eq {} } {
+	if { ${deleted_row_p} } {
+
 
 	    # no more references for this content
 	    # delete it so that we won't get any 
 	    # is_copy_p set to true because of it
 
-	    set cf_variant "content_item/by_contentsha1_and_const"
+	    set cf_variant2 "content_item/by_contentsha1_and_const"
 
 	    ::persistence::delete_column  \
 		"newsdb"                  \
-		"${cf_variant}"           \
+		"${cf_variant2}"          \
 		"${contentsha1}"          \
 		"_data_"
 
 	    ::persistence::delete_row \
-		"newsdb" \
-		"content_item/by_contentsha1_and_const" \
+		"newsdb"              \
+		"${cf_variant2}"      \
 		"${contentsha1}"
+
+
+	    set indexslicelist \
+		[::persistence::delete_slice \
+		     "newsdb" \
+		     "index/contentsha1_to_label" \
+		     "${contentsha1}"]
+
+	    foreach indexfilename ${indexslicelist} {
+		set composite_key [::persistence::get_name ${filename}]
+
+		lassign [split ${composite_key} {-}] axis label
+
+		::persistence::delete_column \
+		    "newsdb" \
+		    "classifier/${axis}" \
+		    "${label}" \
+		    "${contentsha1}"
+		
+	    }
+
 
 	}
 

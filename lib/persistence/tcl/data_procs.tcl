@@ -206,6 +206,10 @@ proc ::persistence::delete_data {filename_or_dir} {
 }
 
 
+proc ::persistence::empty_row_p {row_dir} {
+    return [expr { [glob -nocomplain -directory ${row_dir} *] eq {} }]
+}
+
 
 proc predicate=lrange {slicelistVar offset {limit ""}} {
 
@@ -419,11 +423,34 @@ proc ::persistence::delete_row {args} {
 
 }
 
-proc ::persistence::delete_slice {args} {
-    set slicelist [::persistence::get_slice {*}${args}]
+proc ::persistence::delete_row_if {args} {
+    set row_dir [get_row {*}${args}]
+
+    set empty_row_p [empty_row_p ${row_dir}]
+
+    if { ${empty_row_p} } {
+	delete_data ${row_dir}
+    }
+
+    return ${empty_row_p}
+}
+
+
+proc ::persistence::delete_slice {keyspace column_family row_key {slice_predicate ""}} {
+
+    set row_dir [get_row ${keyspace} ${column_family} ${row_key}]
+    set slicelist [get_slice_from_row ${row_dir} ${slice_predicate}]
+
     foreach filename ${slicelist} {
 	::persistence::delete_data ${filename}
     }
+
+
+    if { [empty_row_p ${row_dir}] } {
+	delete_data ${row_dir}
+    }
+
+    return ${slicelist}
 }
 
 

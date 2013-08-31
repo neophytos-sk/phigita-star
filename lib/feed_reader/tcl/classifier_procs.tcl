@@ -184,6 +184,8 @@ proc ::feed_reader::classifier::learn_naive_bayes_text {multirow_examples multir
     array set vocabulary [list]
     foreach slicelist ${multirow_examples} category ${multirow_categories} {
 
+	puts "--->>> wordcount category = ${category}"
+
 	array set count_${category} [list]
 
 	foreach contentsha1 ${slicelist} {
@@ -204,12 +206,11 @@ proc ::feed_reader::classifier::learn_naive_bayes_text {multirow_examples multir
 
 	    wordcount_helper wordcount_${category} content
 
-	}
+	    foreach word [array names wordcount_${category}] {
+		incr vocabulary(${word})
+	    }
 
-	foreach word [array names wordcount_${category}] {
-	    set vocabulary(${word}) 1
 	}
-
 
 	set slicelen [llength ${slicelist}]
 	set num_docs(${category}) $slicelen
@@ -217,15 +218,60 @@ proc ::feed_reader::classifier::learn_naive_bayes_text {multirow_examples multir
 
 	incr total_docs ${slicelen}
 
-	puts "num_words(${category})=$num_words(${category})"
-	puts "num_docs(${category})=$num_docs(${category})"
-	wordcount_topN wordcount_${category} 10
-
     }
 
-    set vocabulary_size [array size vocabulary]
+    # TODO: use zipf's law to compute how many 
+    # frequent and rare words to remove
 
+    #
+    # mark top 300 words for removal
+    #
+    set remove_frequent_words [wordcount_topN vocabulary 300]
+    puts "frequent words (to be removed):"
+    print_words $remove_frequent_words
+
+    #
+    # mark words with less than 20 occurrences for removal
+    #
+    set remove_rare_words [list]
+    foreach word [array names vocabulary] {
+	if { $vocabulary(${word}) <= 20 } {
+	    lappend remove_rare_words ${word}
+	}
+    }
+    puts "rare words (to be removed):"
+    print_words ${remove_rare_words}
+
+    #
+    # actually remove marked words
+    #
+
+    set remove_words [concat ${remove_frequent_words} ${remove_rare_words}]
+    foreach word ${remove_words} {
+	unset vocabulary(${word})
+	incr vocabulary_size -1
+	foreach category ${multirow_categories} {
+	    if { [info exists wordcount_${category}(${word})] } {
+		unset wordcount_${category}(${word})
+		incr num_words(${category}) -1
+	    }
+	}
+    }
+
+
+    set vocabulary_size [array size vocabulary]
+    puts ""
+    puts "--->>> model vocabulary"
     puts total_words_in_vocabulary=$vocabulary_size
+    print_words [wordcount_topN vocabulary 40]
+
+    foreach category ${multirow_categories} {
+	puts "--->>> model category = ${category}"
+	puts "num_words(${category})=$num_words(${category})"
+	puts "num_docs(${category})=$num_docs(${category})"
+	print_words [wordcount_topN wordcount_${category} 40]
+    }
+
 
     foreach category ${multirow_categories} {
 
@@ -280,6 +326,7 @@ proc ::feed_reader::classifier::clean_and_tokenize {contentVar} {
 
     # remove embedded content and urls
     foreach re {
+	{\{[^\}]+:\s*[^\}]+\}}
 	{\{[^\}]+:\s*https?://[^\s]+\}}
 	{\{[^\}]+:\s*https?://[^\s]+\}}
 	{\"([^\}]+)\":[^\s]+}
@@ -289,9 +336,10 @@ proc ::feed_reader::classifier::clean_and_tokenize {contentVar} {
 	regsub -all -- ${re} ${content} {\1 } content
     }
 
-    set tokens0 [::util::tokenize ${content}]
+    set tokens [::util::tokenize ${content}]
 
-    filter_stopwords tokens tokens0
+    # filter_stopwords tokens tokens0
+
 
     return ${tokens}
 
@@ -339,9 +387,9 @@ proc ::feed_reader::classifier::classify_naive_bayes_text {modelVar contentVar} 
 
 }
 
+# axis = el.utf8.topic (for example)
 proc ::feed_reader::classifier::train {axis {categories ""}} {
 
-    #set axis "el.utf8.topic"
     set categories {politics sports technology business society lifestyle}
 
     set multirow_predicate [list "in" [list ${categories}]]
@@ -397,6 +445,9 @@ proc ::feed_reader::classifier::filter_stopwords {resultVar tokensVar} {
 
 }
 
+proc ::feed_reader::classifier::less_than_3 {num} {
+    return [expr { ${num} < 3 }]
+}
 
 
 proc ::feed_reader::classifier::wordcount_helper {countVar contentVar} {
@@ -438,7 +489,20 @@ proc ::feed_reader::classifier::wordcount {{contentsha1_list ""}} {
 
     }
 
-    wordcount_topN count
+    print_words [wordcount_topN count]
+
+}
+
+proc ::feed_reader::classifier::print_words {words} {
+
+    foreach token ${words} {
+	puts -nonewline " ${token} "
+	if { [incr x] % 10 == 0 } {
+	    puts ""
+	}
+    }
+    puts ""
+
 
 }
 
@@ -456,14 +520,20 @@ proc ::feed_reader::classifier::wordcount_topN {countVar {limit "50"}} {
 	#puts [list ${name} $count(${name})]
     }
 
+    set result [list]
     while { [${pq} size] && [incr limit -1] } {
+
 	set item [${pq} peek]
-	#puts ${item}
 	lassign ${item} token wc
-	puts ${token}
 	${pq} remove ${item}
+
+	lappend result ${token}
+
     }
 
     ${pq} destroy
+
+
+    return ${result}
 
 }

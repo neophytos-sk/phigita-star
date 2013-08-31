@@ -10,4 +10,7 @@ xpath_article_image {
 }
 xpath_article_date {returndate(//div[@id="content-area"]/div[@class="date-header"],"%d.%m.%Y - %H:%M")}
 xpath_article_modified_time {}
+xpath_article_cleanup {
+    {//div[@class="breadcrumb"]}
+}
 
