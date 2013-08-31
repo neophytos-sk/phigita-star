@@ -449,8 +449,6 @@ proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar infoVa
 	# then drop text beyond that point
 	#
 
-	puts article_body=$article_body
-
 	set end_of_text_cleanup_coeff [get_value_if feed(end_of_text_cleanup_coeff) "0.3"]
 	set article_body_len [string length ${article_body}]
 	set startIndex [expr { int( ${article_body_len} * ${end_of_text_cleanup_coeff} ) } ]

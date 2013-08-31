@@ -8,4 +8,6 @@ xpath_article_body {returntext(//div[@id="content-area"]//div[@class="node-conte
 xpath_article_image {{values(//a/img[@class="imagecache imagecache-inside_large"]/@src)}}
 xpath_article_date {returndate(//div[@class="node-info clearfix"]/div[@class="date"], "%d.%m.%Y - %H:%M")}
 xpath_article_modified_time {}
+end_of_text_cleanup_p 1
+end_of_text_cleanup_coeff "0"
 
