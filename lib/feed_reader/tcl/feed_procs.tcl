@@ -1783,7 +1783,8 @@ proc ::feed_reader::resync_item {filename} {
 	set item(domain) ${domain}
     }
 
-puts domain=$domain
+
+    puts domain=${domain}
 
     set feed_dir [get_package_dir]/feed/${domain}
     set feedfilename [lindex [glob -directory ${feed_dir} *] 0]
@@ -1792,12 +1793,11 @@ puts domain=$domain
     set title_in_feed $item(title)
     set errorcode [fetch_item $item(link) ${title_in_feed} feed new_item info]
 
-    puts errorcode=$errorcode
-
     if { !${errorcode} } {
 
 	set item(body) $new_item(body)
 	set item(video) [get_value_if new_item(video)]
+	set item(feed) [file tail $feedfilename]
 
 	remove_item $filename
 
@@ -1808,9 +1808,10 @@ puts domain=$domain
 	set normalized_link [get_value_if item(normalized_link) $item(link)]
 	set resync_p [get_value_if item(is_revision_p) 0]
 
+
 	write_item $item(timestamp) ${normalized_link} feed item ${resync_p}
 
-	puts [format "%40s %20s %s" $item(urlsha1) $item(domain) $item(link)]
+	puts [format "%40s %s" $item(urlsha1) $item(link)]
 
     }
 
@@ -1824,6 +1825,7 @@ proc ::feed_reader::resync {} {
 	     "newsdb" \
 	     "news_item/by_urlsha1_and_const"]
 
+
     foreach slicelist ${multirow_slicelists} {
 
 	foreach filename ${slicelist} {
@@ -1832,7 +1834,7 @@ proc ::feed_reader::resync {} {
 	    # of the multirow_slicelists
 	    resync_item ${filename}
 	}
-	if { [incr x] == 2 } break
+	#if { [incr x] == 10 } break
     }
 
 }
