@@ -37,6 +37,14 @@ proc ::persistence::exists_ks_p {keyspace} {
 
 }
 
+
+proc ::persistence::assert_ks {keyspace} {
+    if { ![exists_ks_p ${keyspace}] } {
+	error "assert_ks: no such keyspace (${keyspace})"
+    }
+}
+
+
 proc ::persistence::exists_cf_p {keyspace column_family} {
 
     variable ks
@@ -45,6 +53,12 @@ proc ::persistence::exists_cf_p {keyspace column_family} {
     #return [file isdirectory [get_cf_dir ${keyspace} ${column_family}]]
     return [info exists cf(${keyspace},${column_family})]
 
+}
+
+proc ::persistence::assert_cf {keyspace column_family} {
+    if { ![exists_cf_p ${keyspace} ${column_family}] } {
+	error "assert_cf: no such column family (${keyspace},${column_family})"
+    }
 }
 
 
@@ -259,6 +273,10 @@ proc predicate=lsort {slicelistVar args} {
 
 
 proc ::persistence::get_multirow {keyspace column_family {predicate ""}} {
+
+
+    assert_cf ${keyspace} ${column_family}
+
 
     set cf_dir [get_cf_dir ${keyspace} ${column_family}]
 

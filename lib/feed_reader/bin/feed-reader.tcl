@@ -15,6 +15,7 @@ proc print_usage_info {} {
 
     array set cmdinfo [list \
 			   "sync" "?news_source? ?...?" \
+			   "resync" ""\
 			   "search" "keywords offset limit" \
 			   "show" "urlsha1 ?...?" \
 			   "show-url" "article_url" \
@@ -61,6 +62,10 @@ if { ${argc} < 1 } {
     if { ${cmd} eq {sync} && ${argc} >= 1 } {
 
         ::feed_reader::sync_feeds [lrange ${argv} 1 end]
+
+    } elseif { ${cmd} eq {resync} && ${argc} == 1 } {
+
+        ::feed_reader::resync
 
     } elseif { ${cmd} eq {generate-feed} && ${argc} >= 2 } {
 

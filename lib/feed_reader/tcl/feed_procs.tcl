@@ -1137,14 +1137,14 @@ proc ::feed_reader::search {keywords {offset "0"} {limit "20"} {callback ""}} {
 	set last [expr { ${offset} + ${limit} - 1 }]
     }
 
-    set rangelist \
+    set multirow \
 	[::persistence::get_multirow \
 	     "newsdb" \
 	     "content_item/by_contentsha1_and_const"]
 
     puts [format "%40s %s" contentsha1 title]
 
-    foreach contentdir ${rangelist} {
+    foreach contentdir ${multirow} {
 
 	set contentsha1 [file tail ${contentdir}]
 
@@ -1772,6 +1772,71 @@ proc ::feed_reader::write_item {timestamp normalized_link feedVar itemVar resync
     return 1
 
 }
+
+proc ::feed_reader::resync_item {filename} {
+
+    array set item [::persistence::get_data ${filename}]
+
+    set domain [get_value_if item(domain) ""]
+    if { ${domain} eq {} } {
+	set domain [::util::domain_from_url $item(link)]
+	set item(domain) ${domain}
+    }
+
+puts domain=$domain
+
+    set feed_dir [get_package_dir]/feed/${domain}
+    set feedfilename [lindex [glob -directory ${feed_dir} *] 0]
+    array set feed [::util::readfile ${feedfilename}]
+
+    set title_in_feed $item(title)
+    set errorcode [fetch_item $item(link) ${title_in_feed} feed new_item info]
+
+    puts errorcode=$errorcode
+
+    if { !${errorcode} } {
+
+	set item(body) $new_item(body)
+	set item(video) [get_value_if new_item(video)]
+
+	remove_item $filename
+
+	# resync_p is different than what we are doing here
+	# it is meant for checking for revisions
+	#
+
+	set normalized_link [get_value_if item(normalized_link) $item(link)]
+	set resync_p [get_value_if item(is_revision_p) 0]
+
+	write_item $item(timestamp) ${normalized_link} feed item ${resync_p}
+
+	puts [format "%40s %20s %s" $item(urlsha1) $item(domain) $item(link)]
+
+    }
+
+
+}
+
+proc ::feed_reader::resync {} {
+
+    set multirow_slicelists \
+	[::persistence::get_multirow_slice \
+	     "newsdb" \
+	     "news_item/by_urlsha1_and_const"]
+
+    foreach slicelist ${multirow_slicelists} {
+
+	foreach filename ${slicelist} {
+	    # even though we expect slicelist to have just one item
+	    # we still use the inner forearch to denote the structure
+	    # of the multirow_slicelists
+	    resync_item ${filename}
+	}
+	if { [incr x] == 2 } break
+    }
+
+}
+
 
 proc ::feed_reader::sync_feeds {{news_sources ""} {debug_p "0"}} {
 
