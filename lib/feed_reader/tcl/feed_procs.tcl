@@ -2037,7 +2037,11 @@ proc ::feed_reader::remove_item {filename} {
     array set item [::persistence::get_data ${filename}]
 
     if { ![info exists item(sort_date)] } {
-	set item(sort_date) [clock format $item(timestamp) -format "%Y%m%dT%H%M"]
+	set timestamp [get_value_if item(timestamp) ""]
+	if { ${timestamp} eq {} } {
+	    set timestamp [file mtime ${filename}]
+	}
+	set item(sort_date) [clock format ${timestamp} -format "%Y%m%dT%H%M"]
     }
 
 
