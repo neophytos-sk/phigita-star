@@ -1790,7 +1790,18 @@ proc ::feed_reader::resync_item {filename} {
     set feedfilename [lindex [glob -directory ${feed_dir} *] 0]
     array set feed [::util::readfile ${feedfilename}]
 
-    set title_in_feed $item(title)
+    set title_in_feed [get_value_if item(title) ""]
+
+    if { ${title_in_feed} eq {} } {
+	#most likely an error item
+	set errorcode [get_value_if item(errorcode) ""]
+	if { ${errorcode} ne {} } {
+	    return
+	} else {
+	    puts "----->>>>> no title and no errorcode - strange"
+	}
+    }
+
     set errorcode [fetch_item $item(link) ${title_in_feed} feed new_item info]
 
     if { !${errorcode} } {
