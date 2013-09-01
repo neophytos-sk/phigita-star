@@ -397,22 +397,63 @@ proc ::feed_reader::classifier::train {axis {categories ""}} {
 
     set multirow_predicate [list "in" [list ${categories}]]
 
-    set multirow_examples \
-	[::persistence::get_multirow_slice_names \
-	     "newsdb"                            \
-	     "classifier/${axis}"                \
-	     "${multirow_predicate}"]
-
     set multirow_categories \
 	[::persistence::get_multirow_names \
 	     "newsdb" \
 	     "classifier/${axis}" \
 	     "${multirow_predicate}"]
 
-    learn_naive_bayes_text ${multirow_examples} ${multirow_categories} model
+    set multirow_examples \
+	[::persistence::get_multirow_slice_names \
+	     "newsdb"                            \
+	     "classifier/${axis}"                \
+	     "${multirow_predicate}"]
 
-    save_naive_bayes_model model ${axis}
-    
+    if {0} {
+	#::persistence::directed_join newsdb
+	#  get_multirow_slice_names classifier/${axis}
+	#  get_column content_item/by_contentsha1_and_const/%s/_data_
+
+	proc directed_join {multirow_slice_names args} {
+	    set multirow_filelist [list]
+	    foreach names ${multirow_slice_names} { 
+		set filelist [list]
+		foreach name ${names} {
+		    lappend filelist \
+			[::persistence::get_column \
+			     [format {*}${args} ${name}]]
+
+		} 
+		lappend multirow_filelist ${filelist}
+	    }
+	    return ${multirow_filelist}
+	}
+	    
+
+	set multirow_filelist \
+	    [directed_join ${multirow_examples} \
+		 "newsdb" \
+		 "content_item/by_contentsha1_and_const" \
+		 "%s" \
+		 "_data_"]
+
+	::naivebayes::learn_naive_bayes_text ${multirow_filelist} ${multirow_categories} model
+
+    }
+
+    learn_naive_bayes_text ${multirow_examples} ${multirow_categories} model
+    #save_naive_bayes_model model ${axis}
+
+    #::naivebayes::learn_naive_bayes_text ${multirow_examples} ${multirow_categories} model
+
+    set filename \
+	[::persistence::get_column \
+	     "newsdb" \
+	     "classifier/model" \
+	     "${axis}" \
+	     "_data_"]
+
+    ::naivebayes::save_naive_bayes_model model ${filename}
 
 }
 
