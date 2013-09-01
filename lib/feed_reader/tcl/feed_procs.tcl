@@ -577,6 +577,16 @@ proc ::feed_reader::fetch_item {link title_in_feed feedVar itemVar infoVar {redi
     upvar $itemVar item
     upvar $infoVar info
 
+    if { [get_value_if feed(article_link_urlencode_p) "0"] } {
+	array set uri [::uri::split ${link}]
+	set ue_path [::util::urlencode $uri(path)]
+	set ue_link "$uri(scheme)://$uri(host)/${ue_path}"
+	if { $uri(query) ne {} } {
+	    append ue_link "?$uri(query)"
+	}
+	set link ${ue_link}
+    }
+
     if { [catch {
 
 	set retcode [fetch_item_helper ${link} ${title_in_feed} feed item info]

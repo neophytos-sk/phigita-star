@@ -82,8 +82,32 @@ proc ::util::domain_from_url {url} {
     return [::util::domain_from_host ${host}]
 }
 
+namespace eval ::util {
 
-proc ::util::urldecode {str} {
+    variable ue_map
+    variable ud_map
+
+}
+
+proc ::util::ue_init {} {
+    variable ue_map
+    variable ud_map
+
+    lappend d + { }
+    for {set i 0} {$i < 256} {incr i} {
+	set c [format %c $i]
+	set x %[format %02x $i]
+	if {![string match {[a-zA-Z0-9]} $c]} {
+	    lappend e $c $x
+	    lappend d $x $c
+	}
+    }
+    set ue_map $e
+    set ud_map $d
+}
+::util::ue_init
+
+proc ::util::urldecode2 {str} {
     # rewrite "+" back to space
     # protect \ from quoting another '\'
     set str [string map [list + { } "\\" "\\\\"] $str]
@@ -93,6 +117,18 @@ proc ::util::urldecode {str} {
 
     # process \u unicode mapped chars
     return [subst -novar -nocommand $str]
+}
+
+proc ::util::urlencode {s} {
+    variable ue_map
+    set s [encoding convertto utf-8 ${s}]
+    return [string map ${ue_map} ${s}]
+}
+
+
+proc ::util::urldecode {s} {
+    variable ud_map
+    return [string map ${ud_map} ${s}]
 }
 
 # ------------------------ datetime -----------------------------

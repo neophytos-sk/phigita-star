@@ -1,0 +1,14 @@
+url http://www.kerdos.gr/
+include_re {/[[:alnum:]\-]+/[0-9]{4,}[[:alnum:]\-]+$}
+htmltidy_feed_p 0
+htmltidy_article_p 0
+article_link_urlencode_p 1
+xpath_article_title returnstring(//div[@id="artTitle"]/h1)
+xpath_article_body {returntext(//div[@id="artContent"])}
+xpath_article_image {{values(//div[@id="artImg"]/img/@src)}}
+xpath_article_date {returndate(substring-after(//div[@id="artContent"]/*[@class="artContEtc"],"Κέρδος "),"%d/%m/%Y %H:%M")}
+xpath_article_modified_time {}
+xpath_article_cleanup {
+    {//div[@id="artContent"]/*[@class="artContEtc"]}
+}
+
