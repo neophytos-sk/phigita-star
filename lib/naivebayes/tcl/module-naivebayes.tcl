@@ -119,15 +119,6 @@ proc ::naivebayes::save_naive_bayes_model {modelVar filename} {
 
     ::persistence::set_data ${filename} [array get model]
 
-    if {0} {
-	::persistence::insert_column \
-	    "newsdb" \
-	    "classifier/model" \
-	    "${axis}" \
-	    "_data_" \
-	    [array get model]
-    }
-
 }
 
 
@@ -136,17 +127,6 @@ proc ::naivebayes::load_naive_bayes_model {modelVar filename} {
     upvar $modelVar model
 
     array set model [::persistence::get_data ${filename}]
-
-    if {0} {
-	::persistence::get_column \
-	    "newsdb" \
-	    "classifier/model" \
-	    "${axis}" \
-	    "_data_" \
-	    "column_data"
-
-	array set model ${column_data}
-    }
 
 }
 
