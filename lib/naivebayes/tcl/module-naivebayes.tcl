@@ -109,6 +109,11 @@ proc ::naivebayes::learn_naive_bayes_text {multirow_examples multirow_categories
 
 	}
 
+	# for words in the vocabulary that are not found
+	# in the category
+	set probability(cat_${category}_default_pr) \
+	    [expr { 1.0 / double( $num_words(${category}) + ${vocabulary_size} ) }]
+
     }
 
 
@@ -239,7 +244,8 @@ proc ::naivebayes::classify_naive_bayes_text {modelVar contentVar} {
        #set p 1.0
        set p 0.0
        foreach word ${words} {
-           set pr_word_given_cat [get_value_if pr(word_${word},${category}) "0.1"]
+           set pr_word_given_cat [get_value_if pr(word_${word},${category}) "$pr(cat_${category}_default_pr)"]
+
            #set p [expr { ${p} * $pr_word_given_cat }]
            set p [expr { ${p} + log(${pr_word_given_cat}) }]
        }

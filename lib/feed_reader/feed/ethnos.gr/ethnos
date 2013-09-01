@@ -10,4 +10,6 @@ xpath_article_modified_time {}
 xpath_article_cleanup {
     {//div[@class="belowArticle"]/following-sibling::*}
     {//div[@class="belowArticle"]}
+    {//div[@id="arttext"]/ul/following-sibling::*}
+    {//div[@id="arttext"]/ul}
 }
