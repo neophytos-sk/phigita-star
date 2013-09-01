@@ -174,33 +174,6 @@ proc ::feed_reader::classifier::unlabel {axis label contentsha1_list} {
 
 }
 
-proc ::feed_reader::classifier::clean_and_tokenize {contentVar {filter_stopwords_p 0}} { 
-
-    upvar $contentVar content
-
-    # remove embedded content and urls
-    foreach re {
-	{\{[^\}]+:\s*[^\}]+\}}
-	{\{[^\}]+:\s*https?://[^\s]+\}}
-	{\{[^\}]+:\s*https?://[^\s]+\}}
-	{\"([^\}]+)\":[^\s]+}
-	{https?://[^\s]+}
-	{[^[:alnum:]]}
-    } {
-	regsub -all -- ${re} ${content} {\1 } content
-    }
-
-    set tokens0 [::util::tokenize ${content}]
-
-    if { $filter_stopwords_p } {
-	filter_stopwords tokens tokens0
-	return ${tokens}
-    }
-
-
-    return ${tokens0}
-
-}
 
 # axis = el.utf8.topic (for example)
 proc ::feed_reader::classifier::train {axis {categories ""}} {
@@ -219,34 +192,13 @@ proc ::feed_reader::classifier::train {axis {categories ""}} {
 	[::persistence::get_multirow_slice_names \
 	     "newsdb"                            \
 	     "classifier/${axis}"                \
-	     "${multirow_predicate}"]
-
-    #::persistence::directed_join newsdb
-    #  get_multirow_slice_names classifier/${axis}
-    #  get_column content_item/by_contentsha1_and_const/%s/_data_
-
-    proc directed_join {multirow_slice_names args} {
-	set multirow_filelist [list]
-	foreach names ${multirow_slice_names} { 
-	    set filelist [list]
-	    foreach name ${names} {
-		set get_column_args [format ${args} ${name}]
-		lappend filelist \
-		    [::persistence::get_column {*}${get_column_args}]
-
-	    } 
-	    lappend multirow_filelist ${filelist}
-	}
-	return ${multirow_filelist}
-    }
-    
+	     "${multirow_predicate}"]    
 
     set multirow_filelist \
-	[directed_join ${multirow_examples} \
+	[::persistence::multirow_slice__directed_join \
+	     "${multirow_examples}" \
 	     "newsdb" \
-	     "content_item/by_contentsha1_and_const" \
-	     "%s" \
-	     "_data_"]
+	     "content_item/by_contentsha1_and_const"]
 
     ::naivebayes::learn_naive_bayes_text ${multirow_filelist} ${multirow_categories} model
 
@@ -289,40 +241,6 @@ namespace eval ::feed_reader::classifier {
 
 }
 
-proc ::feed_reader::classifier::filter_stopwords {resultVar tokensVar} {
-
-    upvar $resultVar result
-    upvar $tokensVar tokens
-
-    variable ::feed_reader::stopwords
-
-    set result [list]
-    foreach token ${tokens} {
-	if { [info exists stopwords(${token})] } {
-	    continue
-	}
-	lappend result ${token}
-    }
-
-}
-
-proc ::feed_reader::classifier::less_than_3 {num} {
-    return [expr { ${num} < 3 }]
-}
-
-
-proc ::feed_reader::classifier::wordcount_helper {countVar contentVar {filter_stopwords_p 0}} {
-
-    upvar $countVar count
-    upvar $contentVar content
-
-    set tokens [clean_and_tokenize content ${filter_stopwords_p}]
-
-    foreach token ${tokens} {
-	incr count(${token})
-    }
-
-}
 
 
 # * TODO: bin packing for word cloud 
@@ -346,55 +264,11 @@ proc ::feed_reader::classifier::wordcount {{contentsha1_list ""}} {
 
 	set content [join [::persistence::get_data $contentfilename]]
 
-	wordcount_helper count content
+	::naivebayes::wordcount_helper count content 1 ;# filter_stopwords
 
     }
 
-    print_words [wordcount_topN count]
+    ::naivebayes::print_words [::naivebayes::wordcount_topN count]
 
 }
 
-proc ::feed_reader::classifier::print_words {words} {
-
-    foreach token ${words} {
-	puts -nonewline " ${token} "
-	if { [incr x] % 10 == 0 } {
-	    puts ""
-	}
-    }
-    puts ""
-
-
-}
-
-proc ::feed_reader::classifier::wordcount_topN {countVar {limit "50"}} {
-
-    upvar $countVar count
-
-    package require struct::prioqueue
-
-    set pq [struct::prioqueue::prioqueue -integer]
-
-    foreach {token prio} [array get count] {
-	set item [array get count ${token}]
-	${pq} put ${item} ${prio}
-	#puts [list ${name} $count(${name})]
-    }
-
-    set result [list]
-    while { [${pq} size] && [incr limit -1] } {
-
-	set item [${pq} peek]
-	lassign ${item} token wc
-	${pq} remove ${item}
-
-	lappend result ${token}
-
-    }
-
-    ${pq} destroy
-
-
-    return ${result}
-
-}

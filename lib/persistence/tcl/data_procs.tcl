@@ -500,6 +500,37 @@ proc ::persistence::multiget_slice {keyspace column_family row_keys {slice_predi
 
 }
 
+#::persistence::directed_join newsdb
+#  get_multirow_slice_names classifier/${axis}
+#  get_column content_item/by_contentsha1_and_const/%s/_data_
+
+proc ::persistence::multirow_slice__directed_join {multirow_slice_names keyspace column_family {include_empty_p "0"}} {
+    set multirow_filelist [list]
+    foreach names ${multirow_slice_names} { 
+	set filelist [list]
+	foreach name ${names} {
+
+	    set get_slice_args [concat ${keyspace} ${column_family} ${name}]
+
+	    # if the relationship is one to one, i.e. if one name
+	    # in the left-hand side corresponds to one item in the
+	    # right-hand side then slicelist should be a list a
+	    # list of length at most one
+	    set slicelist [::persistence::get_slice {*}${get_slice_args}]
+
+	    # note that slicelist can be empty if no match was found
+	    if { ${slicelist} ne {} || ${include_empty_p} } {
+		lappend filelist ${slicelist}
+		#puts "${name} -> ${slicelist}"
+	    }
+
+
+	} 
+
+	lappend multirow_filelist ${filelist}
+    }
+    return ${multirow_filelist}
+}
 
 
 

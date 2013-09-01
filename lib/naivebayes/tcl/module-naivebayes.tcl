@@ -1,5 +1,6 @@
 package provide naivebayes 0.1
 
+::xo::lib::require persistence
 
 namespace eval ::naivebayes {;}
 
@@ -258,5 +259,22 @@ proc ::naivebayes::classify_naive_bayes_text {modelVar contentVar} {
     puts ---
 
     return ${max_category}
+
+}
+
+proc ::naivebayes::filter_stopwords {resultVar tokensVar} {
+
+    upvar $resultVar result
+    upvar $tokensVar tokens
+
+    variable ::feed_reader::stopwords
+
+    set result [list]
+    foreach token ${tokens} {
+	if { [info exists stopwords(${token})] } {
+	    continue
+	}
+	lappend result ${token}
+    }
 
 }
