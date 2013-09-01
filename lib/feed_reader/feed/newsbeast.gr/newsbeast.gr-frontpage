@@ -1,0 +1,9 @@
+url http://www.newsbeast.gr/
+include_re {/arthro/[0-9]{4,}/[[:alnum:]\-]+/$}
+htmltidy_feed_p 0
+htmltidy_article_p 0
+xpath_article_title {returnstring(//div[@class="article-title"]/h2/a)}
+xpath_article_body {returntext(//div[@id="intext_content_tag"])}
+xpath_article_image {{values(//div[@class="article_sidebar"]/a/img[@rel]/@src)}}
+xpath_article_date {normalizedate(//p[@class="article_datetime"],"el_GR","%H:%M - %A, %d %B %Y")}
+xpath_article_modified_time {}

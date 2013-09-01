@@ -130,10 +130,13 @@ proc ::feed_reader::fetch_feed {resultVar feedVar {stoptitlesVar ""}} {
 	set domain [::util::domain_from_url ${url}]
     }
 
-    set xpath_feed_item {//a[@href]}
-    if { [info exists feed(xpath_feed_item)] } {
-	set xpath_feed_item $feed(xpath_feed_item)
-    }
+    set xpath_feed_item [get_value_if \
+			     feed(xpath_feed_item) \
+			     {//a[@href]}]
+
+    set feed_type [get_value_if \
+		       feed(feed_type) \
+		       {html}]
 
     set htmltidy_feed_p [get_value_if \
 			     feed(htmltidy_feed_p) \
@@ -159,7 +162,11 @@ proc ::feed_reader::fetch_feed {resultVar feedVar {stoptitlesVar ""}} {
 	set html [::htmltidy::tidy ${html}]
     }
 
-    set doc [dom parse -html ${html}]
+    if { ${feed_type} eq {html} } {
+	set doc [dom parse -html ${html}]
+    } elseif { ${feed_type} in {rss} } {
+	set doc [dom parse ${html}]
+    }
 
 
     foreach cleanup_xpath ${xpath_feed_cleanup} {
@@ -170,16 +177,25 @@ proc ::feed_reader::fetch_feed {resultVar feedVar {stoptitlesVar ""}} {
 
     set link_stoplist [get_value_if feed(link_stoplist) ""]
 
-    set nodes [$doc selectNodes ${xpath_feed_item}]
+    set item_nodes [$doc selectNodes ${xpath_feed_item}]
 
     set nodes2 [list]
     array set title_for_href [list]
-    foreach node $nodes {
+    foreach item_node $item_nodes {
+
+	set tagname [$item_node tagName]
+	if { ${tagname} eq {a} } {
+	    set href [${item_node} @href ""]
+	} elseif { ${tagname} eq {item} } {
+	    set href [${item_node} selectNodes {string(descendant::link/text())}]
+	} else {
+	    error "unrecognized item tag"
+	}
 
 	# turn relative urls into absolute urls and canonicalize	
 	# TODO: consider using urldecode, problem is decoded string might need to be
 	# converted from another encoding, i.e. encoding convertfrom url_decoded_string
-	set href [::uri::canonicalize [::uri::resolve ${url} [${node} @href ""]]]
+	set href [::uri::canonicalize [::uri::resolve ${url} ${href}]]
 
 	if { ${link_stoplist} ne {} && ${href} in ${link_stoplist} } {
 	    continue
@@ -196,9 +212,14 @@ proc ::feed_reader::fetch_feed {resultVar feedVar {stoptitlesVar ""}} {
 	    continue
 	}
 
-	${node} setAttribute href ${href}
-	
-	set title [get_title stoptitles ${node}]
+	# needed for sorting
+	${item_node} setAttribute href ${href}
+
+	if { ${tagname} eq {a} } {
+	    set title [get_title stoptitles ${item_node}]
+	} elseif { ${tagname} eq {item} } {
+	    set title [${item_node} selectNodes {string(//title/text())}]
+	}
 
 	if { ![info exists title_for_href(${href})] } {
 	    # coalesce title candidate values
@@ -208,7 +229,7 @@ proc ::feed_reader::fetch_feed {resultVar feedVar {stoptitlesVar ""}} {
 	}
 
 
-	lappend nodes2 ${node}
+	lappend nodes2 ${item_node}
 
     }
 
