@@ -1,3 +1,5 @@
+::xo::lib::require naivebayes
+
 namespace eval ::feed_reader::classifier {;}
 
 proc ::feed_reader::classifier::get_classifier_dir {} {
@@ -172,154 +174,6 @@ proc ::feed_reader::classifier::unlabel {axis label contentsha1_list} {
 
 }
 
-
-proc ::feed_reader::classifier::learn_naive_bayes_text {multirow_examples multirow_categories {modelVar ""}} {
-
-    if { $modelVar ne {} } {
-	upvar $modelVar probability
-    }
-
-    set probability(categories) ${multirow_categories}
-
-    array set vocabulary [list]
-    foreach slicelist ${multirow_examples} category ${multirow_categories} {
-
-	puts "--->>> wordcount category = ${category}"
-
-	array set count_${category} [list]
-
-	foreach contentsha1 ${slicelist} {
-
-	    set filename \
-		[::persistence::get_column                   \
-		     "newsdb"                                \
-		     "content_item/by_contentsha1_and_const" \
-		     "${contentsha1}"                        \
-		     "_data_"]
-
-	    if { ![::persistence::exists_data_p ${filename}] } {
-		continue
-	    }
-
-	    set content [join [::persistence::get_data ${filename}]]
-
-
-	    wordcount_helper wordcount_${category} content
-
-	    foreach word [array names wordcount_${category}] {
-		incr vocabulary(${word})
-	    }
-
-	}
-
-	set slicelen [llength ${slicelist}]
-	set num_docs(${category}) $slicelen
-	set num_words(${category}) [array size wordcount_${category}]
-
-	incr total_docs ${slicelen}
-
-    }
-
-    # TODO: use zipf's law to compute how many 
-    # frequent and rare words to remove
-
-    #
-    # mark top 300 words for removal
-    #
-    set remove_frequent_words [wordcount_topN vocabulary 300]
-    puts "frequent words (to be removed):"
-    print_words $remove_frequent_words
-
-    #
-    # mark words with less than 20 occurrences for removal
-    #
-    set remove_rare_words [list]
-    foreach word [array names vocabulary] {
-	if { $vocabulary(${word}) <= 20 } {
-	    lappend remove_rare_words ${word}
-	}
-    }
-    puts "rare words (to be removed):"
-    print_words ${remove_rare_words}
-
-    #
-    # actually remove marked words
-    #
-
-    set remove_words [concat ${remove_frequent_words} ${remove_rare_words}]
-    foreach word ${remove_words} {
-	unset vocabulary(${word})
-	incr vocabulary_size -1
-	foreach category ${multirow_categories} {
-	    if { [info exists wordcount_${category}(${word})] } {
-		unset wordcount_${category}(${word})
-		incr num_words(${category}) -1
-	    }
-	}
-    }
-
-
-    set vocabulary_size [array size vocabulary]
-    puts ""
-    puts "--->>> model vocabulary"
-    puts total_words_in_vocabulary=$vocabulary_size
-    print_words [wordcount_topN vocabulary 40]
-
-    foreach category ${multirow_categories} {
-	puts "--->>> model category = ${category}"
-	puts "num_words(${category})=$num_words(${category})"
-	puts "num_docs(${category})=$num_docs(${category})"
-	print_words [wordcount_topN wordcount_${category} 40]
-    }
-
-
-    foreach category ${multirow_categories} {
-
-	set probability(cat_${category}) \
-	    [expr { $num_docs(${category}) / double(${total_docs})  }]
-
-
-	foreach {word num_occurrences} [array get wordcount_${category}] {
-
-	    set probability(word_${word},${category})\
-		[expr { double( ${num_occurrences} + 1 ) / double( $num_words(${category}) + ${vocabulary_size} ) }]
-
-	}
-
-    }
-
-
-}
-
-proc ::feed_reader::classifier::save_naive_bayes_model {modelVar axis} {
-
-    upvar $modelVar model
-
-    ::persistence::insert_column \
-	"newsdb" \
-	"classifier/model" \
-	"${axis}" \
-	"_data_" \
-	[array get model]
-
-}
-
-
-proc ::feed_reader::classifier::load_naive_bayes_model {modelVar axis} {
-
-    upvar $modelVar model
-
-    ::persistence::get_column \
-	"newsdb" \
-	"classifier/model" \
-	"${axis}" \
-	"_data_" \
-	"column_data"
-
-    array set model ${column_data}
-
-}
-
 proc ::feed_reader::classifier::clean_and_tokenize {contentVar {filter_stopwords_p 0}} { 
 
     upvar $contentVar content
@@ -348,48 +202,6 @@ proc ::feed_reader::classifier::clean_and_tokenize {contentVar {filter_stopwords
 
 }
 
-proc ::feed_reader::classifier::classify_naive_bayes_text {modelVar contentVar} {
-
-    upvar $modelVar pr
-    upvar $contentVar content
-
-    # we wordcount_helper as it strips out embedded content (images,video)
-
-    # wordcount_helper wordcount_text content
-    # set words [array names wordcount_text]
-    set words [clean_and_tokenize content]
-
-    set categories $pr(categories)
-
-    set max_pr -9999999999 ;# 0
-    set max_category ""
-    foreach category ${categories} {
-	#set p 1.0
-	set p 0.0
-	foreach word ${words} {
-	    set pr_word_given_cat [get_value_if pr(word_${word},${category}) "0.1"]
-	    #set p [expr { ${p} * $pr_word_given_cat }]
-	    set p [expr { ${p} + log(${pr_word_given_cat}) }]
-	}
-	#set p [expr { $pr(cat_${category}) * ${p} }]
-	set p [expr { log($pr(cat_${category})) + ${p} }]
-
-	if { ${p} > ${max_pr} } {
-	    set max_pr ${p}
-	    set max_category ${category}
-	}
-
-	puts "$category p=$p"
-    }
-
-    puts max_pr=$max_pr
-    puts max_category=$max_category
-    puts ---
-
-    return ${max_category}
-
-}
-
 # axis = el.utf8.topic (for example)
 proc ::feed_reader::classifier::train {axis {categories ""}} {
 
@@ -409,42 +221,40 @@ proc ::feed_reader::classifier::train {axis {categories ""}} {
 	     "classifier/${axis}"                \
 	     "${multirow_predicate}"]
 
-    if {0} {
-	#::persistence::directed_join newsdb
-	#  get_multirow_slice_names classifier/${axis}
-	#  get_column content_item/by_contentsha1_and_const/%s/_data_
+    #::persistence::directed_join newsdb
+    #  get_multirow_slice_names classifier/${axis}
+    #  get_column content_item/by_contentsha1_and_const/%s/_data_
 
-	proc directed_join {multirow_slice_names args} {
-	    set multirow_filelist [list]
-	    foreach names ${multirow_slice_names} { 
-		set filelist [list]
-		foreach name ${names} {
-		    lappend filelist \
-			[::persistence::get_column \
-			     [format {*}${args} ${name}]]
+    proc directed_join {multirow_slice_names args} {
+	set multirow_filelist [list]
+	foreach names ${multirow_slice_names} { 
+	    set filelist [list]
+	    foreach name ${names} {
+		set get_column_args [format ${args} ${name}]
+		lappend filelist \
+		    [::persistence::get_column {*}${get_column_args}]
 
-		} 
-		lappend multirow_filelist ${filelist}
-	    }
-	    return ${multirow_filelist}
+	    } 
+	    lappend multirow_filelist ${filelist}
 	}
-	    
-
-	set multirow_filelist \
-	    [directed_join ${multirow_examples} \
-		 "newsdb" \
-		 "content_item/by_contentsha1_and_const" \
-		 "%s" \
-		 "_data_"]
-
-	::naivebayes::learn_naive_bayes_text ${multirow_filelist} ${multirow_categories} model
-
+	return ${multirow_filelist}
     }
+    
 
-    learn_naive_bayes_text ${multirow_examples} ${multirow_categories} model
+    set multirow_filelist \
+	[directed_join ${multirow_examples} \
+	     "newsdb" \
+	     "content_item/by_contentsha1_and_const" \
+	     "%s" \
+	     "_data_"]
+
+    ::naivebayes::learn_naive_bayes_text ${multirow_filelist} ${multirow_categories} model
+
+
+
+    #learn_naive_bayes_text ${multirow_examples} ${multirow_categories} model
     #save_naive_bayes_model model ${axis}
 
-    #::naivebayes::learn_naive_bayes_text ${multirow_examples} ${multirow_categories} model
 
     set filename \
 	[::persistence::get_column \
@@ -461,9 +271,16 @@ proc ::feed_reader::classifier::classify {axis contentVar} {
 
     upvar $contentVar content
 
-    load_naive_bayes_model model ${axis}
+    set filename \
+	[::persistence::get_column \
+	     "newsdb" \
+	     "classifier/model" \
+	     "${axis}" \
+	     "_data_"]
 
-    return [classify_naive_bayes_text model content]
+    ::naivebayes::load_naive_bayes_model model ${filename}
+
+    return [::naivebayes::classify_naive_bayes_text model content]
 
 }
 

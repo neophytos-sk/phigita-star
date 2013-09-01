@@ -131,7 +131,7 @@ proc ::naivebayes::save_naive_bayes_model {modelVar filename} {
 }
 
 
-proc ::naivebayes::load_naive_bayes_model {modelVar ${filename}} {
+proc ::naivebayes::load_naive_bayes_model {modelVar filename} {
 
     upvar $modelVar model
 
@@ -150,3 +150,133 @@ proc ::naivebayes::load_naive_bayes_model {modelVar ${filename}} {
 
 }
 
+
+
+
+proc ::naivebayes::clean_and_tokenize {contentVar {filter_stopwords_p 0}} { 
+
+    upvar $contentVar content
+
+    # remove embedded content and urls
+    foreach re {
+	{\{[^\}]+:\s*[^\}]+\}}
+	{\{[^\}]+:\s*https?://[^\s]+\}}
+	{\{[^\}]+:\s*https?://[^\s]+\}}
+	{\"([^\}]+)\":[^\s]+}
+	{https?://[^\s]+}
+	{[^[:alnum:]]}
+    } {
+	regsub -all -- ${re} ${content} {\1 } content
+    }
+
+    set tokens0 [::util::tokenize ${content}]
+
+    if { $filter_stopwords_p } {
+	filter_stopwords tokens tokens0
+	return ${tokens}
+    }
+
+
+    return ${tokens0}
+
+}
+
+proc ::naivebayes::wordcount_helper {countVar contentVar {filter_stopwords_p 0}} {
+
+    upvar $countVar count
+    upvar $contentVar content
+
+    set tokens [clean_and_tokenize content ${filter_stopwords_p}]
+
+    foreach token ${tokens} {
+	incr count(${token})
+    }
+
+}
+
+proc ::naivebayes::wordcount_topN {countVar {limit "50"}} {
+
+    upvar $countVar count
+
+    package require struct::prioqueue
+
+    set pq [struct::prioqueue::prioqueue -integer]
+
+    foreach {token prio} [array get count] {
+	set item [array get count ${token}]
+	${pq} put ${item} ${prio}
+	#puts [list ${name} $count(${name})]
+    }
+
+    set result [list]
+    while { [${pq} size] && [incr limit -1] } {
+
+	set item [${pq} peek]
+	lassign ${item} token wc
+	${pq} remove ${item}
+
+	lappend result ${token}
+
+    }
+
+    ${pq} destroy
+
+
+    return ${result}
+
+}
+
+proc ::naivebayes::print_words {words} {
+
+    foreach token ${words} {
+	puts -nonewline " ${token} "
+	if { [incr x] % 10 == 0 } {
+	    puts ""
+	}
+    }
+    puts ""
+
+
+}
+
+proc ::naivebayes::classify_naive_bayes_text {modelVar contentVar} {
+
+    upvar $modelVar pr
+    upvar $contentVar content
+
+    # we wordcount_helper as it strips out embedded content (images,video)
+
+    # wordcount_helper wordcount_text content
+    # set words [array names wordcount_text]
+    set words [clean_and_tokenize content]
+
+    set categories $pr(categories)
+
+    set max_pr -9999999999 ;# 0
+    set max_category ""
+    foreach category ${categories} {
+       #set p 1.0
+       set p 0.0
+       foreach word ${words} {
+           set pr_word_given_cat [get_value_if pr(word_${word},${category}) "0.1"]
+           #set p [expr { ${p} * $pr_word_given_cat }]
+           set p [expr { ${p} + log(${pr_word_given_cat}) }]
+       }
+       #set p [expr { $pr(cat_${category}) * ${p} }]
+       set p [expr { log($pr(cat_${category})) + ${p} }]
+
+       if { ${p} > ${max_pr} } {
+           set max_pr ${p}
+           set max_category ${category}
+       }
+
+       puts "$category p=$p"
+    }
+
+    puts max_pr=$max_pr
+    puts max_category=$max_category
+    puts ---
+
+    return ${max_category}
+
+}
