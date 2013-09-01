@@ -1260,8 +1260,8 @@ proc ::feed_reader::search_callback=label_content {contentsha1 axis label} {
 	"_data_" \
 	"column_data"
 
-    classifier::wordcount_helper count column_data true ;# filter_stopwords
-    classifier::print_words [classifier::wordcount_topN count 40]
+    ::naivebayes::wordcount_helper count column_data true ;# filter_stopwords
+    ::naivebayes::print_words [::naivebayes::wordcount_topN count 40]
 
     if { [confirm] } {
 
