@@ -11,4 +11,6 @@ xpath_article_image {
 }
 xpath_article_date {returndate(string(//span[@class="publication"]//time/@datetime),"%Y-%m-%dT%H:%M+03:00")}
 xpath_article_modified_time {}
+end_of_text_cleanup_p 1
+end_of_text_cleanup_coeff "0"
 

@@ -257,12 +257,12 @@ proc ::naivebayes::classify_naive_bayes_text {modelVar contentVar} {
            set max_category ${category}
        }
 
-       puts "$category p=$p"
+       #puts "$category p=$p"
     }
 
-    puts max_pr=$max_pr
-    puts max_category=$max_category
-    puts ---
+    #puts max_pr=$max_pr
+    #puts max_category=$max_category
+    #puts ---
 
     return ${max_category}
 

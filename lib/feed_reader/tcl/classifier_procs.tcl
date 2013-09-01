@@ -230,9 +230,12 @@ proc ::feed_reader::classifier::classify {axis contentVar} {
 	     "${axis}" \
 	     "_data_"]
 
-    ::naivebayes::load_naive_bayes_model model ${filename}
+    variable __nb_model_topic
+    if { ![info exists __nb_model_topic] } {
+	::naivebayes::load_naive_bayes_model __nb_model_topic ${filename}
+    }
 
-    return [::naivebayes::classify_naive_bayes_text model content]
+    return [::naivebayes::classify_naive_bayes_text __nb_model_topic content]
 
 }
 
