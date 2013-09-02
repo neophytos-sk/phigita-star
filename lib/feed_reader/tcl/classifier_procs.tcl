@@ -33,6 +33,7 @@ proc ::feed_reader::classifier::get_axis_names {} {
     return [lsort [glob -tails -directory ${classifier_dir} *]]
 }
 
+# deprecated
 proc ::feed_reader::classifier::get_label_names {axis} {
     set axis_dir [get_training_dir]/${axis}
     return [lsort [glob -tails -directory ${axis_dir} *]]
@@ -185,6 +186,10 @@ proc ::feed_reader::classifier::unlabel {axis label contentsha1_list} {
 }
 
 proc ::feed_reader::classifier::list_training_labels {axis} {
+    puts [get_training_labels ${axis}]
+}
+
+proc ::feed_reader::classifier::get_training_labels {axis} {
 
     set supercolumns_predicate {}
     set supercolumns_categories \
@@ -194,7 +199,8 @@ proc ::feed_reader::classifier::list_training_labels {axis} {
 	     "${axis}" \
 	     "${supercolumns_predicate}"]
 
-    puts ${supercolumns_categories}
+
+    return ${supercolumns_categories}
 
 }
 

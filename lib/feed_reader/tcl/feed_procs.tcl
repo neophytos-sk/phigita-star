@@ -1169,10 +1169,20 @@ proc ::feed_reader::search {keywords {offset "0"} {limit "20"} {callback ""}} {
 	set last [expr { ${offset} + ${limit} - 1 }]
     }
 
-    set multirow \
-	[::persistence::get_multirow \
-	     "newsdb" \
-	     "content_item/by_contentsha1_and_const"]
+    if { 1 } {
+	set multirow \
+	    [::persistence::get_multirow \
+		 "newsdb" \
+		 "content_item/by_contentsha1_and_const"]
+    } else {
+	set filelist \
+	    [::persistence::get_slice \
+		 "newsdb" \
+		 "news_item/by_const_and_date" \
+		 "log"]
+
+    }
+
 
     puts [format "%40s %s" contentsha1 title]
 
@@ -1227,20 +1237,6 @@ proc ::feed_reader::search {keywords {offset "0"} {limit "20"} {callback ""}} {
 
 }
 
-proc ::feed_reader::search_callback=label_menu {contentsha1 axis label} {
-
-    set menulabels [classifier::get_label_names ${axis}]
-    set menuindex 0
-    foreach menulabel ${menulabels} {
-	puts "${menuindex}. ${menulabel}"
-	incr menuindex
-    }
-    
-    puts "--->>> please enter 'y' to classify it in ${label} or 'n' to skip this item"
-    set selection [gets stdin 2]
-    puts "your selection is ${selection}"
-
-}
 
 proc ::feed_reader::confirm {} {
 
@@ -1251,8 +1247,28 @@ proc ::feed_reader::confirm {} {
 
 }
 
+proc ::feed_reader::read_integer_between {from to msg} {
 
-proc ::feed_reader::search_callback=label_content {contentsha1 axis label} {
+    puts $msg
+    while { 
+	   [set sel [gets stdin]] 
+	   && ![string is integer ${sel}] 
+	   && ${sel} != -1 
+	   && ${sel}< ${from} 
+	   && ${sel} > ${to}  
+       } {
+	puts $msg
+    }
+
+    if { ${sel} != {-1} } {
+	return ${sel}
+    }
+
+    return ""
+
+}
+
+proc ::feed_reader::search_callback=label_content {contentsha1 axis label {need_confirm_p "1"}} {
 
     ::persistence::get_column \
 	"newsdb"\
@@ -1261,11 +1277,33 @@ proc ::feed_reader::search_callback=label_content {contentsha1 axis label} {
 	"_data_" \
 	"column_data"
 
-    set content [join ${column_data}]
-    ::naivebayes::wordcount_helper count content true ;# filter_stopwords
-    ::naivebayes::print_words [::naivebayes::wordcount_topN count 40]
+    if { ${label} eq {} || ${need_confirm_p} } {
+	set content [join ${column_data}]
+	::naivebayes::wordcount_helper count content true ;# filter_stopwords
+	::naivebayes::print_words [::naivebayes::wordcount_topN count 40]
+	puts ""
+    }
 
-    if { [confirm] } {
+    if { ${label} eq {} } {
+	set labels [classifier::get_training_labels ${axis}]
+	set num_labels [llength ${labels}]
+	set index 0
+	foreach label ${labels} {
+	    puts [format "%3s %-40s" "${index}." ${label}]
+	    incr index
+	}
+
+	set selection [read_integer_between 0 $num_labels "--->>> your choice (-1 to skip):"]
+	if { ${selection} ne {} } {
+	    set label [lindex ${labels} ${selection}]
+	    puts "your selection: ${label}"
+	} else {
+	    return
+	}
+	puts ""
+    }
+
+    if { !${need_confirm_p} || [confirm] } {
 
 	::persistence::insert_column \
 	    "newsdb" \
@@ -1284,7 +1322,7 @@ proc ::feed_reader::assert_dir {dir msg} {
     }
 }
 
-proc ::feed_reader::label_interactive {axis label keywords {offset "0"} {limit "5"}} {
+proc ::feed_reader::label_batch {axis label keywords {offset "0"} {limit "5"}} {
 puts axis=$axis
 puts label=$label
 puts keywords=$keywords
@@ -1293,14 +1331,14 @@ puts limit=$limit
 
     assert_dir [get_base_dir]/train_item/${axis}/+/${label} "no such label ${axis}/${label}"
 
-    set callback [list "label_menu" [list ${axis} ${label}]]
+    set callback [list "label_content" [list ${axis} ${label} "0"]]
 
     search ${keywords} ${offset} ${limit} ${callback}
 
 }
 
 
-proc ::feed_reader::label_batch {axis label keywords {offset "0"} {limit "5"}} {
+proc ::feed_reader::label_interactive {axis label keywords {offset "0"} {limit "5"}} {
 
     assert_dir [get_base_dir]/train_item/${axis}/+/${label} "no such label ${axis}/${label}"
 
