@@ -71,6 +71,9 @@ proc ::naivebayes::learn_naive_bayes_text {multirow_examples multirow_categories
 
     set remove_words [concat ${remove_frequent_words} ${remove_rare_words}]
     foreach word ${remove_words} {
+	if { ![info exists vocabulary(${word})] } {
+	    continue
+	}
 	unset vocabulary(${word})
 	incr vocabulary_size -1
 	foreach category ${multirow_categories} {
