@@ -261,7 +261,14 @@ proc get_sync_info {countVar {reference_interval "86400"} {max_times "96"}} {
 
     set epsilon 0.00001
 
-    set pr [expr { double($count(FETCH_AND_WRITE_FEED)) / double($count(FETCH_FEED)) }]
+    if { [catch {
+	set pr [expr { double(1 + $count(FETCH_AND_WRITE_FEED)) / double(1 + $count(FETCH_FEED)) }]
+    } errmsg] } {
+
+	puts "----------------->>> error errmsg=$errmsg count=[array get count]"
+
+	return [list 0 0 0]
+    }
 
     if { ${pr} < ${epsilon} } {
 
