@@ -178,7 +178,7 @@ proc ::feed_reader::classifier::unlabel {axis label contentsha1_list} {
 # axis = el.utf8.topic (for example)
 proc ::feed_reader::classifier::train {axis {categories ""}} {
 
-    set categories {politics sports technology business society lifestyle}
+    set categories {politics sports technology business society lifestyle entertainment}
 
     set multirow_predicate [list "in" [list ${categories}]]
 
