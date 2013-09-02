@@ -186,14 +186,12 @@ proc ::feed_reader::classifier::unlabel {axis label contentsha1_list} {
 
 proc ::feed_reader::classifier::list_training_labels {axis} {
 
-    set recursive_subdirs_p 1
     set supercolumns_predicate {}
     set supercolumns_categories \
-	[::persistence::get_supercolumns_names \
+	[::persistence::get_supercolumns_paths \
 	     "newsdb" \
 	     "train_item" \
 	     "${axis}" \
-	     "${recursive_subdirs_p}" \
 	     "${supercolumns_predicate}"]
 
     puts ${supercolumns_categories}
@@ -207,15 +205,12 @@ proc ::feed_reader::classifier::train {axis {categories ""}} {
     #set categories {politics sports technology business society lifestyle entertainment science health}
     #set supercolumns_predicate [list "in" [list ${categories}]]
 
-    set recursive_subdirs_p_is_false 0
-    set recursive_subdirs_p_is_true 1
     set supercolumns_predicate {}
     set supercolumns_categories \
 	[::persistence::get_supercolumns_names \
 	     "newsdb" \
 	     "train_item" \
 	     "${axis}" \
-	     "${recursive_subdirs_p_is_false}" \
 	     "${supercolumns_predicate}"]
 
     set supercolumns_examples \
@@ -223,7 +218,6 @@ proc ::feed_reader::classifier::train {axis {categories ""}} {
 	     "newsdb" \
 	     "train_item" \
 	     "${axis}" \
-	     "${recursive_subdirs_p_is_true}" \
 	     "${supercolumns_predicate}"]    
 
     set supercolumns_filelist \

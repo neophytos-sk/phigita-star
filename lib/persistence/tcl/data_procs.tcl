@@ -334,7 +334,18 @@ proc ::persistence::get_recursive_subdirs {dir resultVar} {
 
 proc ::persistence::get_slice_from_supercolumn {supercolumn_dir {slice_predicate ""}} {
 
-    set slicelist [lsort -decreasing [get_files ${supercolumn_dir}]]
+    set dirs [list ${supercolumn_dir}]
+
+    get_recursive_subdirs ${supercolumn_dir} dirs
+
+    set slicelist [list]
+    foreach dir ${dirs} {
+	foreach filename [get_files ${dir}] {
+	    lappend slicelist ${filename}
+	}
+    }
+
+    set slicelist [lsort -decreasing ${slicelist}]
 
     if { ${slice_predicate} ne {} } {
 
@@ -632,7 +643,7 @@ proc ::persistence::get_multirow_slice_names {args} {
 
 
 
-proc ::persistence::get_supercolumns {keyspace column_family row_key {recursive_subdirs_p "1"} {predicate ""}} {
+proc ::persistence::get_supercolumns {keyspace column_family row_key {predicate ""}} {
 
 
     assert_cf ${keyspace} ${column_family}
@@ -640,12 +651,7 @@ proc ::persistence::get_supercolumns {keyspace column_family row_key {recursive_
 
     set row_dir [get_row ${keyspace} ${column_family} ${row_key}]
 
-    set subdirs [list]
-    if { ${recursive_subdirs_p} } {
-	get_recursive_subdirs ${row_dir} subdirs
-    } else {
-	set subdirs [get_subdirs ${row_dir}]
-    }
+    set subdirs [get_subdirs ${row_dir}]
 
     set supercolumns [lsort -decreasing ${subdirs}]
 
@@ -679,11 +685,30 @@ proc ::persistence::get_supercolumns_names {args} {
     set supercolumns [get_supercolumns {*}${args}]
     set result [list]
     foreach supercolumn ${supercolumns} {
-	lappend result [get_column_path ${supercolumn}]
+	lappend result [get_name ${supercolumn}]
     }
     return ${result}
 }
 
+
+# recursive column paths, i.e. under each supercolumn
+proc ::persistence::get_supercolumns_paths {args} {
+
+
+    set supercolumns [get_supercolumns {*}${args}]
+    set subdirs [list]
+    foreach supercolumn_dir ${supercolumns} {
+	lappend subdirs ${supercolumn_dir}
+	get_recursive_subdirs ${supercolumn_dir} subdirs
+    }
+
+    set result [list]
+    foreach subdir ${subdirs} {
+	lappend result [get_column_path ${subdir}]
+    }
+    return ${result}
+
+}
 
 
 proc ::persistence::get_supercolumns_slice {keyspace column_family row_key {supercolumns_predicate ""} {slice_predicate ""}} {
