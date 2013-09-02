@@ -381,6 +381,7 @@ proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar infoVa
     if { [catch {
 	set doc [dom parse -html ${html}]
     } errmsg] } {
+	puts errmsg=$errmsg
 	return -2 ;# error parsing article html
     }
 
