@@ -280,7 +280,7 @@ proc ::persistence::get_multirow {keyspace column_family {predicate ""}} {
 
     set cf_dir [get_cf_dir ${keyspace} ${column_family}]
 
-    set multirow [lsort -decreasing [glob -nocomplain -directory ${cf_dir} *]]
+    set multirow [lsort -decreasing [glob -types {d} -nocomplain -directory ${cf_dir} *]]
 
     if { ${predicate} ne {} } {
 
@@ -341,7 +341,7 @@ proc ::persistence::get_multirow_slice_names {args} {
 
 proc ::persistence::get_slice_from_row {row_dir {slice_predicate ""}} {
 
-    set slicelist [lsort -decreasing [glob -nocomplain -directory ${row_dir} *]]
+    set slicelist [lsort -decreasing [glob -types {f} -nocomplain -directory ${row_dir} *]]
 
     if { ${slice_predicate} ne {} } {
 
