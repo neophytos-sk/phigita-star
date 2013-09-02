@@ -1278,6 +1278,11 @@ proc ::feed_reader::search_callback=label_content {contentsha1 axis label} {
 
 }
 
+proc ::feed_reader::assert_dir {dir msg} {
+    if { ![file isdirectory ${dir}] } {
+	error ${msg}
+    }
+}
 
 proc ::feed_reader::label_interactive {axis label keywords {offset "0"} {limit "5"}} {
 puts axis=$axis
@@ -1285,6 +1290,8 @@ puts label=$label
 puts keywords=$keywords
 puts offset=$offset
 puts limit=$limit
+
+    assert_dir [get_base_dir]/train_item/${axis}/+/${label} "no such label ${axis}/${label}"
 
     set callback [list "label_menu" [list ${axis} ${label}]]
 
@@ -1294,6 +1301,9 @@ puts limit=$limit
 
 
 proc ::feed_reader::label_batch {axis label keywords {offset "0"} {limit "5"}} {
+
+    assert_dir [get_base_dir]/train_item/${axis}/+/${label} "no such label ${axis}/${label}"
+
 puts axis=$axis
 puts label=$label
 puts keywords=$keywords
