@@ -1279,7 +1279,7 @@ proc ::feed_reader::search_callback=label_content {contentsha1 axis label} {
 }
 
 
-proc ::feed_reader::label_interactive {axis label keywords {offset "0"} {limit "20"}} {
+proc ::feed_reader::label_interactive {axis label keywords {offset "0"} {limit "5"}} {
 puts axis=$axis
 puts label=$label
 puts keywords=$keywords
@@ -1293,7 +1293,7 @@ puts limit=$limit
 }
 
 
-proc ::feed_reader::label_batch {axis label keywords {offset "0"} {limit "20"}} {
+proc ::feed_reader::label_batch {axis label keywords {offset "0"} {limit "5"}} {
 puts axis=$axis
 puts label=$label
 puts keywords=$keywords
