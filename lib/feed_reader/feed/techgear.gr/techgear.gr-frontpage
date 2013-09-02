@@ -10,6 +10,7 @@ xpath_article_date {returndate(//div[@class="entry-meta"]//a[@rel="bookmark"]/sp
 xpath_article_author {returnstring(//div[@class="entry-meta"]/span[@class="meta-prep meta-prep-author"])}
 xpath_article_modified_time {}
 xpath_article_cleanup {
+    {//div[@class="socialize-containter"]/following-sibling::*}
     {//div[@class="socialize-containter"]}
     {//div[@class="yarpp-related"]}
 }
