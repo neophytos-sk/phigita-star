@@ -42,14 +42,14 @@ proc ::feed_reader::classifier::register_label {axis label} {
 
     check_axis_name ${axis}
 
-    set re {^[[:lower:][:digit:]_]+$}
+    set re {^[[:lower:][:digit:]_]+(/[[:lower:][:digit:]_]+)*$}
     if { ![regexp -- ${re} ${label}] } {
-	error "label name must be an alphanumeric string"
+	error "label name must be an alphanumeric string (possibly separated by /)"
     }
 
     set training_dir [get_training_dir]
     set axis_dir ${training_dir}/${axis}
-    set label_dir ${axis_dir}/${label}
+    set label_dir ${axis_dir}/+/${label}
 
     if { ![file isdirectory ${axis_dir}] } {
 	puts "${axis} is not a registered axis name"

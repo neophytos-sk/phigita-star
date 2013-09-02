@@ -1,6 +1,6 @@
 url http://www.kathimerini.gr/
 include_re {/4dcgi/_w_articles_kathremote_1_[0-9]+/[0-9]+/[0-9]+_[0-9]{4,}$}
-encoding {iso8859-7}
+encoding {cp1253}
 htmltidy_feed_p 1
 htmltidy_article_p 1
 xpath_article_title {returnstring(//td[@class="articleTitlos"])}
