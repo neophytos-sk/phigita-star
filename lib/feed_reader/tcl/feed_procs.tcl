@@ -1281,6 +1281,9 @@ proc ::feed_reader::search_callback=label_content {contentsha1 axis label {need_
 	set content [join ${column_data}]
 	::naivebayes::wordcount_helper count content true ;# filter_stopwords
 	::naivebayes::print_words [::naivebayes::wordcount_topN count 40]
+
+	set max_category [classifier::classify ${axis} content]
+
 	puts ""
     }
 
@@ -1289,14 +1292,35 @@ proc ::feed_reader::search_callback=label_content {contentsha1 axis label {need_
 	set num_labels [llength ${labels}]
 	set index 0
 	foreach label ${labels} {
-	    puts [format "%3s %-40s" "${index}." ${label}]
+
+	    if { 
+		${num_labels} > 10 
+		&& [string first {/} ${label}] != -1 
+		&& ![string match ${max_category}* ${label}] 
+	    } {
+
+		# do nothing
+
+	    } else {
+
+		set preferred ""
+		if { ${label} eq ${max_category} } {
+		    set preferred {(*)}
+		}
+
+		puts [format "%10s %-40s" "${preferred} ${index}." ${label}]
+
+	    }
+
 	    incr index
+
 	}
 
 	set selection [read_integer_between 0 $num_labels "--->>> your choice (-1 to skip):"]
 	if { ${selection} ne {} } {
 	    set label [lindex ${labels} ${selection}]
 	    puts "your selection: ${label}"
+	    set need_confirm_p 0
 	} else {
 	    return
 	}
