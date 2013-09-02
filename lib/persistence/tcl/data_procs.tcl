@@ -62,6 +62,24 @@ proc ::persistence::assert_cf {keyspace column_family} {
 }
 
 
+proc ::persistence::exists_row_p {args} {
+
+    set row_dir [get_row {*}${args}]
+
+    return [file isdirectory ${row_dir}]
+
+}
+
+proc ::persistence::assert_row {keyspace column_family row_key} {
+
+    assert_cf ${keyspace} ${column_family}
+
+    if { ![exists_row_p ${keyspace} ${column_family} ${row_key}] } {
+	error "assert_cf: no such column family (${keyspace},${column_family})"
+    }
+}
+
+
 proc ::persistence::create_ks_if {keyspace {replication_factor "3"}} {
 
     if { ![exists_ks_p ${keyspace}] } {
@@ -119,9 +137,26 @@ proc ::persistence::get_row {keyspace column_family row_key} {
     # TODO: depending on keyspace settings, 
     # we can setup other storage strategies
 
-    set row_dir ${cf_dir}/${row_key}
+    set delimiter {+}
+    set row_dir "${cf_dir}/${row_key}/${delimiter}"
 
     return ${row_dir}
+
+}
+
+proc ::persistence::get_supercolumn {keyspace column_family row_key supercolumn_name} {
+
+    # aka snapshot directory
+    set cf_dir [get_cf_dir ${keyspace} ${column_family}]
+
+    # TODO: depending on keyspace settings, 
+    # we can setup other storage strategies
+
+    set row_dir ${cf_dir}/${row_key}
+
+    set supercolumn_dir ${row_dir}/${supercolumn_name}
+
+    return ${supercolumn_dir}
 
 }
 
@@ -272,76 +307,53 @@ proc predicate=lsort {slicelistVar args} {
 }
 
 
-proc ::persistence::get_multirow {keyspace column_family {predicate ""}} {
 
-
-    assert_cf ${keyspace} ${column_family}
-
-
-    set cf_dir [get_cf_dir ${keyspace} ${column_family}]
-
-    set multirow [lsort -decreasing [glob -types {d} -nocomplain -directory ${cf_dir} *]]
-
-    if { ${predicate} ne {} } {
-
-	lassign ${predicate} cmd args
-
-	predicate=${cmd} multirow {*}${args}
-
-    }
-
-    return ${multirow}
-
+proc ::persistence::get_files {dir} {
+    return [glob -types {f} -nocomplain -directory ${dir} *]
 }
 
-proc ::persistence::get_multirow_names {args} {
-
-    set multirow [get_multirow {*}${args}]
-    set result [list]
-    foreach row ${multirow} {
-	lappend result [get_name ${row}]
-    }
-    return ${result}
+proc ::persistence::get_subdirs {dir} {
+    return [glob -types {d} -nocomplain -directory ${dir} *]
 }
 
 
-proc ::persistence::get_multirow_slice {keyspace column_family {multirow_predicate ""} {slice_predicate ""}} {
+proc ::persistence::get_recursive_subdirs {dir resultVar} {
 
-    set multirow [get_multirow ${keyspace} ${column_family} ${multirow_predicate}]
+    upvar $resultVar result
 
-    set multirow_slice [list]
-
-    foreach row_dir ${multirow} {
-
-	set slicelist [get_slice_from_row ${row_dir} ${slice_predicate}]
-
-	lappend multirow_slice ${slicelist}
-
+    set subdirs [get_subdirs ${dir}]
+    foreach subdir ${subdirs} {
+	lappend result ${subdir}
+	get_recursive_subdirs ${subdir} result
     }
 
-    return ${multirow_slice}
 }
 
 
-proc ::persistence::get_multirow_slice_names {args} {
 
-    set multirow_slice [get_multirow_slice {*}${args}]
 
-    set multirow_slice_names [list]
-    foreach slicelist ${multirow_slice} {
-	set names [list]
-	foreach filename ${slicelist} {
-	    lappend names [::persistence::get_name ${filename}]
-	}
-	lappend multirow_slice_names ${names}
+proc ::persistence::get_slice_from_supercolumn {supercolumn_dir {slice_predicate ""}} {
+
+    set slicelist [lsort -decreasing [get_files ${supercolumn_dir}]]
+
+    if { ${slice_predicate} ne {} } {
+
+	lassign ${slice_predicate} cmd args
+
+	predicate=${cmd} slicelist {*}${args}
+
     }
-    return ${multirow_slice_names}
+
+    return ${slicelist}
 
 }
+
 
 proc ::persistence::get_slice_from_row {row_dir {slice_predicate ""}} {
 
-    set slicelist [lsort -decreasing [glob -types {f} -nocomplain -directory ${row_dir} *]]
+    set slicelist [get_files ${row_dir}]
+
+    set slicelist [lsort -decreasing ${slicelist}]
 
     if { ${slice_predicate} ne {} } {
 
@@ -359,7 +371,9 @@ proc ::persistence::get_slice {keyspace column_family row_key {slice_predicate "
 
     set row_dir [get_row ${keyspace} ${column_family} ${row_key}]
 
-    return [get_slice_from_row ${row_dir} ${slice_predicate}]
+    return [get_slice_from_row \
+		"${row_dir}" \
+		"${slice_predicate}"]
 
 }
 
@@ -504,7 +518,7 @@ proc ::persistence::multiget_slice {keyspace column_family row_keys {slice_predi
 #  get_multirow_slice_names classifier/${axis}
 #  get_column content_item/by_contentsha1_and_const/%s/_data_
 
-proc ::persistence::multirow_slice__directed_join {multirow_slice_names keyspace column_family {include_empty_p "0"}} {
+proc ::persistence::names__directed_join {multirow_slice_names keyspace column_family {include_empty_p "0"}} {
     set multirow_filelist [list]
     foreach names ${multirow_slice_names} { 
 	set filelist [list]
@@ -538,3 +552,180 @@ proc ::persistence::multirow_slice__directed_join {multirow_slice_names keyspace
 #TODO: batch_mutate
 #TODO: incr_column
 #TODO: incr_super_column
+
+
+################ multirow
+
+proc ::persistence::get_multirow {keyspace column_family {predicate ""}} {
+
+
+    assert_cf ${keyspace} ${column_family}
+
+
+    set cf_dir [get_cf_dir ${keyspace} ${column_family}]
+
+    set multirow [lsort -decreasing [glob -types {d} -nocomplain -directory ${cf_dir} *]]
+
+    if { ${predicate} ne {} } {
+
+	lassign ${predicate} cmd args
+
+	predicate=${cmd} multirow {*}${args}
+
+    }
+
+    return ${multirow}
+
+}
+
+
+proc ::persistence::get_multirow_names {args} {
+
+    set multirow [get_multirow {*}${args}]
+    set result [list]
+    foreach row ${multirow} {
+	lappend result [get_name ${row}]
+    }
+    return ${result}
+}
+
+
+proc ::persistence::get_multirow_slice {keyspace column_family {multirow_predicate ""} {slice_predicate ""}} {
+
+    set multirow [get_multirow ${keyspace} ${column_family} ${multirow_predicate}]
+
+    set multirow_slice [list]
+
+    foreach row_dir ${multirow} {
+
+	set slicelist \
+	    [get_slice_from_row \
+		 "${row_dir}" \
+		 "${slice_predicate}"]
+
+	lappend multirow_slice ${slicelist}
+
+    }
+
+    return ${multirow_slice}
+}
+
+
+proc ::persistence::get_multirow_slice_names {args} {
+
+    set multirow_slice [get_multirow_slice {*}${args}]
+
+    set multirow_slice_names [list]
+    foreach slicelist ${multirow_slice} {
+	set names [list]
+	foreach filename ${slicelist} {
+	    lappend names [::persistence::get_name ${filename}]
+	}
+	lappend multirow_slice_names ${names}
+    }
+    return ${multirow_slice_names}
+
+}
+
+
+############## supercolumns
+
+
+
+proc ::persistence::get_supercolumns {keyspace column_family row_key {recursive_subdirs_p "1"} {predicate ""}} {
+
+
+    assert_cf ${keyspace} ${column_family}
+    assert_row ${keyspace} ${column_family} ${row_key}
+
+    set row_dir [get_row ${keyspace} ${column_family} ${row_key}]
+
+    set subdirs [list]
+    if { ${recursive_subdirs_p} } {
+	get_recursive_subdirs ${row_dir} subdirs
+    } else {
+	set subdirs [get_subdirs ${row_dir}]
+    }
+
+    set supercolumns [lsort -decreasing ${subdirs}]
+
+    if { ${predicate} ne {} } {
+
+	lassign ${predicate} cmd args
+
+	predicate=${cmd} supercolumns {*}${args}
+
+    }
+
+    return ${supercolumns}
+
+}
+
+
+
+proc ::persistence::get_column_path {column_parent_dir} {
+
+    set delimiter {+}
+    lassign [split ${column_parent_dir} ${delimiter}] row_dir column_path
+
+    # alternatively, we could just trimleft {/} but for
+    # some reason we expect the following would be faster
+    return [string range ${column_path} 1 end]
+
+}
+
+proc ::persistence::get_supercolumns_names {args} {
+
+    set supercolumns [get_supercolumns {*}${args}]
+    set result [list]
+    foreach supercolumn ${supercolumns} {
+	lappend result [get_column_path ${supercolumn}]
+    }
+    return ${result}
+}
+
+
+
+proc ::persistence::get_supercolumns_slice {keyspace column_family row_key {supercolumns_predicate ""} {slice_predicate ""}} {
+
+    set supercolumns [get_supercolumns \
+			  ${keyspace} \
+			  ${column_family} \
+			  ${row_key} \
+			  ${supercolumns_predicate}]
+
+    set supercolumns_slice [list]
+
+    foreach supercolumn_dir ${supercolumns} {
+
+	set slicelist \
+	    [get_slice_from_supercolumn \
+		 "${supercolumn_dir}" \
+		 "${slice_predicate}"]
+
+	lappend supercolumns_slice ${slicelist}
+
+    }
+
+    return ${supercolumns_slice}
+}
+
+
+proc ::persistence::get_supercolumns_slice_names {args} {
+
+    set supercolumns_slice [get_supercolumns_slice {*}${args}]
+
+    set supercolumns_slice_names [list]
+    foreach slicelist ${supercolumns_slice} {
+	set names [list]
+	foreach filename ${slicelist} {
+	    lappend names [::persistence::get_name ${filename}]
+	}
+	lappend supercolumns_slice_names ${names}
+    }
+    return ${supercolumns_slice_names}
+
+}
+
+
+

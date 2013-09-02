@@ -1269,9 +1269,9 @@ proc ::feed_reader::search_callback=label_content {contentsha1 axis label} {
 
 	::persistence::insert_column \
 	    "newsdb" \
-	    "train_item/${axis}" \
-	    "${label}" \
-	    "${contentsha1}" \
+	    "train_item" \
+	    "${axis}" \
+	    "${label}/${contentsha1}" \
 	    ""
 
     }

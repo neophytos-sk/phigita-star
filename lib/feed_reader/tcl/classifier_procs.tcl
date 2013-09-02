@@ -184,33 +184,55 @@ proc ::feed_reader::classifier::unlabel {axis label contentsha1_list} {
 
 }
 
+proc ::feed_reader::classifier::list_training_labels {axis} {
+
+    set recursive_subdirs_p 1
+    set supercolumns_predicate {}
+    set supercolumns_categories \
+	[::persistence::get_supercolumns_names \
+	     "newsdb" \
+	     "train_item" \
+	     "${axis}" \
+	     "${recursive_subdirs_p}" \
+	     "${supercolumns_predicate}"]
+
+    puts ${supercolumns_categories}
+
+}
+
 
 # axis = el/topic (for example)
 proc ::feed_reader::classifier::train {axis {categories ""}} {
 
-    set categories {politics sports technology business society lifestyle entertainment science health}
+    #set categories {politics sports technology business society lifestyle entertainment science health}
+    #set supercolumns_predicate [list "in" [list ${categories}]]
 
-    set multirow_predicate [list "in" [list ${categories}]]
-
-    set multirow_categories \
-	[::persistence::get_multirow_names \
+    set recursive_subdirs_p_is_false 0
+    set recursive_subdirs_p_is_true 1
+    set supercolumns_predicate {}
+    set supercolumns_categories \
+	[::persistence::get_supercolumns_names \
 	     "newsdb" \
-	     "train_item/${axis}" \
-	     "${multirow_predicate}"]
+	     "train_item" \
+	     "${axis}" \
+	     "${recursive_subdirs_p_is_false}" \
+	     "${supercolumns_predicate}"]
 
-    set multirow_examples \
-	[::persistence::get_multirow_slice_names \
-	     "newsdb"                            \
-	     "train_item/${axis}"                \
-	     "${multirow_predicate}"]    
+    set supercolumns_examples \
+	[::persistence::get_supercolumns_slice_names \
+	     "newsdb" \
+	     "train_item" \
+	     "${axis}" \
+	     "${recursive_subdirs_p_is_true}" \
+	     "${supercolumns_predicate}"]    
 
-    set multirow_filelist \
-	[::persistence::multirow_slice__directed_join \
-	     "${multirow_examples}" \
+    set supercolumns_filelist \
+	[::persistence::names__directed_join \
+	     "${supercolumns_examples}" \
 	     "newsdb" \
 	     "content_item/by_contentsha1_and_const"]
 
-    ::naivebayes::learn_naive_bayes_text ${multirow_filelist} ${multirow_categories} model
+    ::naivebayes::learn_naive_bayes_text ${supercolumns_filelist} ${supercolumns_categories} model
 
 
 

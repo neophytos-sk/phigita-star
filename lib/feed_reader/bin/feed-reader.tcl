@@ -37,6 +37,7 @@ proc print_usage_info {} {
 			   "label-batch" "axis label keywords ?offset? ?limit?" \
 			   "label" "axis class contentsha1 ?...?" \
 			   "unlabel" "axis class contentsha1 ?...?" \
+			   "list-training-labels" "axis" \
 			   "fex" "?limit? ?offset?" \
 			   "stats" "?domain? ?...?" \
 			   "wc" "?contentsha1? ?...?" \
@@ -209,6 +210,11 @@ if { ${argc} < 1 } {
         set label [lindex ${argv} 2]
         set contentsha1_list [lrange ${argv} 3 end]
         ::feed_reader::classifier::unlabel ${axis} ${label} ${contentsha1_list}
+
+    } elseif { ${cmd} eq {list-training-labels} && ${argc} == 2 } {
+
+        set axis [lindex ${argv} 1]
+        ::feed_reader::classifier::list_training_labels ${axis}
 
     } elseif { ${cmd} eq {fex} && ${argc} >= 1 } {
 
