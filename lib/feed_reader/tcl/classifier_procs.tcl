@@ -6,10 +6,14 @@ proc ::feed_reader::classifier::get_classifier_dir {} {
     return [::feed_reader::get_base_dir]/classifier
 }
 
+proc ::feed_reader::classifier::get_training_dir {} {
+    return [::feed_reader::get_base_dir]/train_item
+}
+
 proc ::feed_reader::classifier::check_axis_name {axis} {
-    set re {^[[:alpha:]]{2}.utf8.[[:alnum:]]+$}
+    set re {^[[:alpha:]]{2}/[[:alnum:]]+$}
     if { ![regexp -- ${re} ${axis}] } {
-	error "axis=${axis} name must be of the form lang.encoding.alnum, for example, el.utf8.topic"
+	error "axis=${axis} name must be of the form lang/alnum, for example, el/topic"
     }
 }
 
@@ -17,8 +21,8 @@ proc ::feed_reader::classifier::register_axis {axis} {
 
     check_axis_name ${axis}
 
-    set classifier_dir [get_classifier_dir]
-    set axis_dir ${classifier_dir}/${axis}
+    set training_dir [get_training_dir]
+    set axis_dir ${training_dir}/${axis}
 
     file mkdir ${axis_dir}
 
@@ -30,7 +34,7 @@ proc ::feed_reader::classifier::get_axis_names {} {
 }
 
 proc ::feed_reader::classifier::get_label_names {axis} {
-    set axis_dir [get_classifier_dir]/${axis}
+    set axis_dir [get_training_dir]/${axis}
     return [lsort [glob -tails -directory ${axis_dir} *]]
 }
 
@@ -43,8 +47,8 @@ proc ::feed_reader::classifier::register_label {axis label} {
 	error "label name must be an alphanumeric string"
     }
 
-    set classifier_dir [get_classifier_dir]
-    set axis_dir ${classifier_dir}/${axis}
+    set training_dir [get_training_dir]
+    set axis_dir ${training_dir}/${axis}
     set label_dir ${axis_dir}/${label}
 
     if { ![file isdirectory ${axis_dir}] } {
@@ -62,6 +66,10 @@ proc ::feed_reader::classifier::register_label {axis label} {
 }
 
 proc ::feed_reader::classifier::label {axis label contentsha1_list} {
+
+    error "old - to be implemented again - should have label-for-manual-training and label-for-auto-classification/"
+
+    # implies label-for-manual-training in the old classifier_dir, use training_dir if you choose to go that way
 
     set classifier_dir [get_classifier_dir]
     set axis_dir ${classifier_dir}/${axis}
@@ -117,6 +125,8 @@ proc ::feed_reader::classifier::label {axis label contentsha1_list} {
 
 
 proc ::feed_reader::classifier::unlabel {axis label contentsha1_list} {
+
+    error "old - see comment for label / same holds here, i.e. training vs. classification"
 
     set classifier_dir [get_classifier_dir]
     set axis_dir ${classifier_dir}/${axis}
@@ -175,7 +185,7 @@ proc ::feed_reader::classifier::unlabel {axis label contentsha1_list} {
 }
 
 
-# axis = el.utf8.topic (for example)
+# axis = el/topic (for example)
 proc ::feed_reader::classifier::train {axis {categories ""}} {
 
     set categories {politics sports technology business society lifestyle entertainment science health}
@@ -185,13 +195,13 @@ proc ::feed_reader::classifier::train {axis {categories ""}} {
     set multirow_categories \
 	[::persistence::get_multirow_names \
 	     "newsdb" \
-	     "classifier/${axis}" \
+	     "train_item/${axis}" \
 	     "${multirow_predicate}"]
 
     set multirow_examples \
 	[::persistence::get_multirow_slice_names \
 	     "newsdb"                            \
-	     "classifier/${axis}"                \
+	     "train_item/${axis}"                \
 	     "${multirow_predicate}"]    
 
     set multirow_filelist \

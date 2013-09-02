@@ -1269,7 +1269,7 @@ proc ::feed_reader::search_callback=label_content {contentsha1 axis label} {
 
 	::persistence::insert_column \
 	    "newsdb" \
-	    "classifier/${axis}" \
+	    "train_item/${axis}" \
 	    "${label}" \
 	    "${contentsha1}" \
 	    ""
@@ -1524,7 +1524,7 @@ proc ::feed_reader::print_log_entry {itemVar} {
 
     load_content item $item(contentsha1)
     set content [concat $item(title) $item(body)]
-    set topic [classifier::classify el.utf8.topic content]
+    set topic [classifier::classify el/topic content]
 
 
     set lang [lindex [split [get_value_if item(langclass) "el.utf8"] {.}] 0]
@@ -1549,9 +1549,9 @@ proc ::feed_reader::show_item {urlsha1_list} {
 	if { $item(langclass) eq {el.utf8} } {
 
 	    set content [concat $item(title) $item(body)]
-	    set item(el.utf8.topic) [classifier::classify el.utf8.topic content]
+	    set item(el/topic) [classifier::classify el/topic content]
 
-	    puts $item(el.utf8.topic)
+	    puts $item(el/topic)
 	}
 
 
@@ -2172,7 +2172,7 @@ proc ::feed_reader::remove_item {filename} {
 
 		::persistence::delete_column \
 		    "newsdb" \
-		    "classifier/${axis}" \
+		    "train_item/${axis}" \
 		    "${label}" \
 		    "${contentsha1}"
 		

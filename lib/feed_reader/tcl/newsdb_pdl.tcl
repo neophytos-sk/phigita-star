@@ -20,10 +20,13 @@ foreach column_family {
 
     classifier
     classifier/model
-    classifier/el.utf8.edition
-    classifier/el.utf8.topic
-    classifier/el.utf8.priority
-    classifier/el.utf8.type
+
+    train_item
+    train_item/el
+    train_item/el/edition
+    train_item/el/topic
+    train_item/el/priority
+    train_item/el/type
 
 
 
