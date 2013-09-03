@@ -257,6 +257,8 @@ proc ::feed_reader::classifier::classify {axis contentVar} {
 
     upvar $contentVar content
 
+    # category classification
+
     set filename \
 	[::persistence::get_column \
 	     "newsdb" \
@@ -269,7 +271,30 @@ proc ::feed_reader::classifier::classify {axis contentVar} {
 	::naivebayes::load_naive_bayes_model __nb_model_topic ${filename}
     }
 
-    return [::naivebayes::classify_naive_bayes_text __nb_model_topic content]
+    set category [::naivebayes::classify_naive_bayes_text __nb_model_topic content]
+
+
+    # sub-category classification
+
+    set subcategory_filename \
+	[::persistence::get_column \
+	     "newsdb" \
+	     "classifier/model" \
+	     "${axis}" \
+	     "[file join ${category} _data_]"]
+
+    set subcategory ""
+    if { [::persistence::exists_data_p ${subcategory_filename}] } {
+
+	if { ![info exists __nb_model_topic_${category}] } {
+	    ::naivebayes::load_naive_bayes_model __nb_model_topic_${category} ${subcategory_filename}
+	}
+	
+	set subcategory [::naivebayes::classify_naive_bayes_text __nb_model_topic_${category} content]
+    }
+
+    return [file join ${category} ${subcategory}]
+
 
 }
 

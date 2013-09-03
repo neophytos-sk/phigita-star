@@ -1574,7 +1574,7 @@ proc ::util::pretty_length {chars} {
 
 proc ::feed_reader::print_log_header {} {
 
-    puts [format "%2s %13s %40s %6s %20s %3s %3s %20s %s" lc date urlsha1 len domain "" "" topic title]
+    puts [format "%2s %13s %40s %6s %-10s %22s %3s %3s %-80s %20s" lc date urlsha1 len topic subtopic "" "" title domain]
 
 }
 
@@ -1596,20 +1596,29 @@ proc ::feed_reader::print_log_entry {itemVar} {
 
     load_content item $item(contentsha1)
     set content [concat $item(title) $item(body)]
-    set topic [classifier::classify el/topic content]
+    set topic_and_subtopic [classifier::classify el/topic content]
 
+    lassign [split ${topic_and_subtopic} {/}] topic subtopic
+
+    set domain_prefix "${domain} -- "
+    set num_spaces [string length ${domain_prefix}]
+
+    set title $item(title)
+    set title_first_line [string range ${title} 0 79]
+    set title_second_line [string range ${title} 80 end]
 
     set lang [lindex [split [get_value_if item(langclass) "el.utf8"] {.}] 0]
-    puts [format "%2s %13s %40s %6s %20s %3s %3s %20s %s" \
+    puts [format "%2s %13s %40s %6s %-10s %22s %3s %3s %-80s %20s" \
 	      ${lang} \
 	      $item(date) \
 	      $item(urlsha1) \
 	      [::util::pretty_length [get_value_if item(body_length) ""]] \
-	      ${domain} \
+	      ${topic} \
+	      ${subtopic} \
 	      ${is_copy_string} \
 	      ${is_revision_string} \
-	      ${topic} \
-	      $item(title)]
+	      ${title_first_line} \
+	      ${domain}]
 
 }
 
