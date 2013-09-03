@@ -20,7 +20,7 @@ proc print_usage_info {} {
 			   "show" "urlsha1 ?...?" \
 			   "show-url" "article_url" \
 			   "show-content" "contentsha1 ?...?" \
-			   "train" "axis ?category? ?...?"\
+			   "train" "axis"\
 			   "classify" "axis urlsha1 ?...?" \
 			   "classify-content" "axis contentsha1 ?...?" \
 			   "uses-content" "contentsha1 ?...?" \
@@ -37,7 +37,7 @@ proc print_usage_info {} {
 			   "label-batch" "axis label keywords ?offset? ?limit?" \
 			   "label" "axis class contentsha1 ?...?" \
 			   "unlabel" "axis class contentsha1 ?...?" \
-			   "list-training-labels" "axis ?supercolumn_name?" \
+			   "list-training-labels" "axis ?supercolumn_path?" \
 			   "fex" "?limit? ?offset?" \
 			   "stats" "?domain? ?...?" \
 			   "wc" "?contentsha1? ?...?" \
@@ -141,11 +141,10 @@ if { ${argc} < 1 } {
         set contentsha1_list [lrange ${argv} 1 end]
         ::feed_reader::show_content ${contentsha1_list}
 
-    } elseif { ${cmd} eq {train} && ${argc} >= 2 } {
+    } elseif { ${cmd} eq {train} && ${argc} == 2 } {
 	
 	set axis [lindex ${argv} 1]
-	set categories [lrange ${argv} 2 end]
-        ::feed_reader::classifier::train ${axis} ${categories}
+        ::feed_reader::classifier::train ${axis}
 
     } elseif { ${cmd} eq {classify} && ${argc} >= 3 } {
 

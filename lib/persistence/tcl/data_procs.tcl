@@ -70,12 +70,31 @@ proc ::persistence::exists_row_p {args} {
 
 }
 
+
+proc ::persistence::exists_supercolumn_p {args} {
+
+    set supercolumn_dir [get_supercolumn {*}${args}]
+
+    return [file isdirectory ${supercolumn_dir}]
+
+}
+
+
 proc ::persistence::assert_row {keyspace column_family row_key} {
 
     assert_cf ${keyspace} ${column_family}
 
     if { ![exists_row_p ${keyspace} ${column_family} ${row_key}] } {
-	error "assert_cf: no such column family (${keyspace},${column_family})"
+	error "assert_row: no such row (${keyspace},${column_family},${row_key})"
+    }
+}
+
+proc ::persistence::assert_supercolumn {keyspace column_family row_key supercolumn_path} {
+
+    assert_row ${keyspace} ${column_family} ${row_key}
+
+    if { ![exists_supercolumn_p ${keyspace} ${column_family} ${row_key} ${supercolumn_path}] } {
+	error "assert_supercolumn: no such supercolumn (${keyspace},${column_family},${row_key},${supercolumn_path})"
     }
 }
 
@@ -144,17 +163,11 @@ proc ::persistence::get_row {keyspace column_family row_key} {
 
 }
 
-proc ::persistence::get_supercolumn {keyspace column_family row_key supercolumn_name} {
+proc ::persistence::get_supercolumn {keyspace column_family row_key supercolumn_path} {
 
-    # aka snapshot directory
-    set cf_dir [get_cf_dir ${keyspace} ${column_family}]
+    set row_dir [get_row ${keyspace} ${column_family} ${row_key}]
 
-    # TODO: depending on keyspace settings, 
-    # we can setup other storage strategies
-
-    set row_dir ${cf_dir}/${row_key}
-
-    set supercolumn_dir ${row_dir}/${supercolumn_name}
+    set supercolumn_dir ${row_dir}/${supercolumn_path}
 
     return ${supercolumn_dir}
 
@@ -673,15 +686,16 @@ proc ::persistence::get_multirow_slice_names {args} {
 
 
 
-proc ::persistence::get_supercolumns {keyspace column_family row_key {predicate ""}} {
+proc ::persistence::get_supercolumns {keyspace column_family row_key {supercolumn_path ""} {predicate ""}} {
 
 
-    assert_cf ${keyspace} ${column_family}
-    assert_row ${keyspace} ${column_family} ${row_key}
+    # assert_cf ${keyspace} ${column_family}
+    # assert_row ${keyspace} ${column_family} ${row_key}
+    assert_supercolumn  ${keyspace} ${column_family} ${row_key} ${supercolumn_path}
 
-    set row_dir [get_row ${keyspace} ${column_family} ${row_key}]
+    set supercolumn_dir [get_supercolumn ${keyspace} ${column_family} ${row_key} ${supercolumn_path}]
 
-    set subdirs [get_subdirs ${row_dir}]
+    set subdirs [get_subdirs ${supercolumn_dir}]
 
     set supercolumns [lsort -decreasing ${subdirs}]
 
@@ -741,12 +755,13 @@ proc ::persistence::get_supercolumns_paths {args} {
 }
 
 
-proc ::persistence::get_supercolumns_slice {keyspace column_family row_key {supercolumns_predicate ""} {slice_predicate ""}} {
+proc ::persistence::get_supercolumns_slice {keyspace column_family row_key {supercolumn_path ""} {supercolumns_predicate ""} {slice_predicate ""}} {
 
     set supercolumns [get_supercolumns \
 			  ${keyspace} \
 			  ${column_family} \
 			  ${row_key} \
+			  ${supercolumn_path} \
 			  ${supercolumns_predicate}]
 
     set supercolumns_slice [list]

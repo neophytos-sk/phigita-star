@@ -185,23 +185,20 @@ proc ::feed_reader::classifier::unlabel {axis label contentsha1_list} {
 
 }
 
-proc ::feed_reader::classifier::list_training_labels {axis {supercolumn_name ""}} {
+proc ::feed_reader::classifier::list_training_labels {axis {supercolumn_path ""}} {
 
-    set predicate ""
-    if { ${supercolumn_name} ne {} } {
-	set predicate [list "match_name" [list "${supercolumn_name}"]]
-    }
-    puts [get_training_labels ${axis} ${predicate}]
+    puts [get_training_labels ${axis} ${supercolumn_path}]
 }
 
-proc ::feed_reader::classifier::get_training_labels {axis {predicate ""}} {
+proc ::feed_reader::classifier::get_training_labels {axis {supercolumn_path ""}} {
 
-    set supercolumns_predicate ${predicate}
+    set supercolumns_predicate {}
     set supercolumns_categories \
 	[::persistence::get_supercolumns_paths \
 	     "newsdb" \
 	     "train_item" \
 	     "${axis}" \
+	     "${supercolumn_path}" \
 	     "${supercolumns_predicate}"]
 
 
@@ -211,10 +208,8 @@ proc ::feed_reader::classifier::get_training_labels {axis {predicate ""}} {
 
 
 # axis = el/topic (for example)
-proc ::feed_reader::classifier::train {axis {categories ""}} {
-
-    #set categories {politics sports technology business society lifestyle entertainment science health}
-    #set supercolumns_predicate [list "in" [list ${categories}]]
+# remaining_levels = 1 => two levels of categories, i.e. topic and sub-topic
+proc ::feed_reader::classifier::train {axis {supercolumn_path ""} {remaining_levels "1"}} {
 
     set supercolumns_predicate {}
     set supercolumns_categories \
@@ -222,6 +217,7 @@ proc ::feed_reader::classifier::train {axis {categories ""}} {
 	     "newsdb" \
 	     "train_item" \
 	     "${axis}" \
+	     "${supercolumn_path}" \
 	     "${supercolumns_predicate}"]
 
     set supercolumns_examples \
@@ -229,7 +225,8 @@ proc ::feed_reader::classifier::train {axis {categories ""}} {
 	     "newsdb" \
 	     "train_item" \
 	     "${axis}" \
-	     "${supercolumns_predicate}"]    
+	     "${supercolumn_path}" \
+	     "${supercolumns_predicate}"]
 
     set supercolumns_filelist \
 	[::persistence::names__directed_join \
@@ -239,20 +236,20 @@ proc ::feed_reader::classifier::train {axis {categories ""}} {
 
     ::naivebayes::learn_naive_bayes_text ${supercolumns_filelist} ${supercolumns_categories} model
 
-
-
-    #learn_naive_bayes_text ${multirow_examples} ${multirow_categories} model
-    #save_naive_bayes_model model ${axis}
-
-
     set filename \
 	[::persistence::get_column \
 	     "newsdb" \
 	     "classifier/model" \
 	     "${axis}" \
-	     "_data_"]
+	     "[file join ${supercolumn_path} _data_]"]
 
     ::naivebayes::save_naive_bayes_model model ${filename}
+
+    if { ${remaining_levels} } {
+	foreach path ${supercolumns_categories} {
+	    train ${axis} ${path} [expr { ${remaining_levels} - 1 }]
+	}
+    }
 
 }
 

@@ -101,9 +101,26 @@ proc ::naivebayes::learn_naive_bayes_text {multirow_examples multirow_categories
 
     foreach category ${multirow_categories} {
 
-	set probability(cat_${category}) \
-	    [expr { $num_docs(${category}) / double(${total_docs})  }]
+	if { $num_docs(${category}) != 0 } {
 
+	    set category_pr \
+		[expr { $num_docs(${category}) / double(${total_docs})  }]
+
+	    # for words in the vocabulary that are not found
+	    # in the category
+	    set default_word_pr \
+		[expr { 1.0 / double( $num_words(${category}) + ${vocabulary_size} ) }]
+
+
+	} else {
+
+	    set category_pr 0
+	    set default_word_pr 0
+
+	}
+
+	set probability(cat_${category}) ${category_pr}
+	set probability(cat_${category}_default_pr) ${default_word_pr}
 
 	foreach {word num_occurrences} [array get wordcount_${category}] {
 
@@ -112,10 +129,6 @@ proc ::naivebayes::learn_naive_bayes_text {multirow_examples multirow_categories
 
 	}
 
-	# for words in the vocabulary that are not found
-	# in the category
-	set probability(cat_${category}_default_pr) \
-	    [expr { 1.0 / double( $num_words(${category}) + ${vocabulary_size} ) }]
 
     }
 
