@@ -260,7 +260,7 @@ proc ::persistence::empty_row_p {row_dir} {
 }
 
 
-proc predicate=lrange {slicelistVar offset {limit ""}} {
+proc ::persistence::predicate=lrange {slicelistVar offset {limit ""}} {
 
     upvar ${slicelistVar} slicelist
 
@@ -275,7 +275,37 @@ proc predicate=lrange {slicelistVar offset {limit ""}} {
     
 }
 
-proc predicate=lindex {slicelistVar index} {
+proc ::persistence::predicate=match {slicelistVar pattern} {
+
+    upvar ${slicelistVar} slicelist
+
+    set result [list]
+    foreach filename ${slicelist} {
+	if { [string match ${pattern} ${filename}] } {
+	    lappend result ${filename}
+	}
+    }
+    set slicelist ${result}
+    
+}
+
+proc ::persistence::predicate=match_name {slicelistVar pattern} {
+
+    upvar ${slicelistVar} slicelist
+
+    set result [list]
+    foreach filename ${slicelist} {
+	set name [::persistence::get_name ${filename}]
+	if { [string match ${pattern} ${name}] } {
+	    lappend result ${filename}
+	}
+    }
+    set slicelist ${result}
+    
+}
+
+
+proc ::persistence::predicate=lindex {slicelistVar index} {
 
     upvar ${slicelistVar} slicelist
 
@@ -283,7 +313,7 @@ proc predicate=lindex {slicelistVar index} {
 
 }
 
-proc predicate=in {slicelistVar column_names} {
+proc ::persistence::predicate=in {slicelistVar column_names} {
 
     upvar ${slicelistVar} slicelist
 
@@ -300,7 +330,7 @@ proc predicate=in {slicelistVar column_names} {
 
 }
 
-proc predicate=lsort {slicelistVar args} {
+proc ::persistence::predicate=lsort {slicelistVar args} {
 
     set slicelist [lsort {*}${args} ${slicelist}]
 

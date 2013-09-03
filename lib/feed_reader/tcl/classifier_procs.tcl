@@ -185,13 +185,18 @@ proc ::feed_reader::classifier::unlabel {axis label contentsha1_list} {
 
 }
 
-proc ::feed_reader::classifier::list_training_labels {axis} {
-    puts [get_training_labels ${axis}]
+proc ::feed_reader::classifier::list_training_labels {axis {supercolumn_name ""}} {
+
+    set predicate ""
+    if { ${supercolumn_name} ne {} } {
+	set predicate [list "match_name" [list "${supercolumn_name}"]]
+    }
+    puts [get_training_labels ${axis} ${predicate}]
 }
 
-proc ::feed_reader::classifier::get_training_labels {axis} {
+proc ::feed_reader::classifier::get_training_labels {axis {predicate ""}} {
 
-    set supercolumns_predicate {}
+    set supercolumns_predicate ${predicate}
     set supercolumns_categories \
 	[::persistence::get_supercolumns_paths \
 	     "newsdb" \
