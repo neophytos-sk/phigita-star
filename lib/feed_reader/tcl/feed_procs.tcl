@@ -1574,7 +1574,7 @@ proc ::util::pretty_length {chars} {
 
 proc ::feed_reader::print_log_header {} {
 
-    puts [format "%2s %13s %40s %6s %20s %3s %3s %10s %s" lc date urlsha1 len domain "" "" topic title]
+    puts [format "%2s %13s %40s %6s %20s %3s %3s %20s %s" lc date urlsha1 len domain "" "" topic title]
 
 }
 
@@ -1600,7 +1600,7 @@ proc ::feed_reader::print_log_entry {itemVar} {
 
 
     set lang [lindex [split [get_value_if item(langclass) "el.utf8"] {.}] 0]
-    puts [format "%2s %13s %40s %6s %20s %3s %3s %10s %s" \
+    puts [format "%2s %13s %40s %6s %20s %3s %3s %20s %s" \
 	      ${lang} \
 	      $item(date) \
 	      $item(urlsha1) \
