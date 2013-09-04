@@ -37,6 +37,7 @@ proc print_usage_info {} {
 			   "label-batch" "axis label keywords ?offset? ?limit?" \
 			   "rename-label" "axis old_name new_name" \
 			   "label" "axis class contentsha1 ?...?" \
+			   "unlabel-interactive" "axis label keywords ?offset? ?limit? ?callback?" \
 			   "unlabel" "axis class contentsha1 ?...?" \
 			   "list-training-labels" "axis ?supercolumn_path?" \
 			   "fex" "?limit? ?offset?" \
@@ -107,6 +108,13 @@ if { ${argc} < 1 } {
 	set label [lindex ${argv} 2]
         set keywords [lindex ${argv} 3]
         ::feed_reader::label_interactive ${axis} ${label} ${keywords} {*}[lrange ${argv} 4 end]
+
+    } elseif { ${cmd} eq {unlabel-interactive} && ${argc} >= 2 } {
+
+	set axis [lindex ${argv} 1]
+	set label [lindex ${argv} 2]
+        set keywords [lindex ${argv} 3]
+        ::feed_reader::unlabel_interactive ${axis} ${label} ${keywords} {*}[lrange ${argv} 4 end]
 
     } elseif { ${cmd} eq {label-batch} && ${argc} >= 2 } {
 

@@ -1340,6 +1340,45 @@ proc ::feed_reader::search_callback=label_content {contentsha1 axis label {need_
 
 }
 
+
+
+proc ::feed_reader::search_callback=unlabel_content {contentsha1 axis label {need_confirm_p "1"}} {
+
+    if { ${label} eq {} } {
+	error "unlabel_content: empty label name"
+    }
+
+    ::persistence::get_column \
+	"newsdb"\
+	"content_item/by_contentsha1_and_const" \
+	"${contentsha1}" \
+	"_data_" \
+	"column_data"
+
+    if { ${need_confirm_p} } {
+	set content [join ${column_data}]
+	::naivebayes::wordcount_helper count content true ;# filter_stopwords
+	::naivebayes::print_words [::naivebayes::wordcount_topN count 40]
+
+	set max_category [classifier::classify ${axis} content]
+
+	puts ""
+    }
+
+    if { !${need_confirm_p} || [confirm] } {
+
+	::persistence::delete_column \
+	    "newsdb" \
+	    "train_item" \
+	    "${axis}" \
+	    "${label}/${contentsha1}" \
+	    ""
+
+    }
+
+}
+
+
 proc ::feed_reader::assert_dir {dir msg} {
     if { ![file isdirectory ${dir}] } {
 	error ${msg}
@@ -1374,6 +1413,23 @@ puts limit=$limit
 
     set callback [list "label_content" [list ${axis} ${label}]]
 
+    search ${keywords} ${offset} ${limit} ${callback}
+
+}
+
+proc ::feed_reader::unlabel_interactive {axis label keywords {offset "0"} {limit "5"}} {
+
+    assert_dir [get_base_dir]/train_item/${axis}/+/${label} "no such label ${axis}/${label}"
+
+puts axis=$axis
+puts label=$label
+puts keywords=$keywords
+puts offset=$offset
+puts limit=$limit
+
+    set callback [list "unlabel_content" [list ${axis} ${label}]]
+
+    # TODO: search_label ${axis} ${label} ${keywords} ${offset} ${limit} ${callback}
     search ${keywords} ${offset} ${limit} ${callback}
 
 }
