@@ -35,6 +35,7 @@ proc print_usage_info {} {
 			   "cluster" "?limit? ?offset?" \
 			   "label-interactive" "axis label keywords ?offset? ?limit? ?callback?" \
 			   "label-batch" "axis label keywords ?offset? ?limit?" \
+			   "rename-label" "axis old_name new_name" \
 			   "label" "axis class contentsha1 ?...?" \
 			   "unlabel" "axis class contentsha1 ?...?" \
 			   "list-training-labels" "axis ?supercolumn_path?" \
@@ -214,6 +215,13 @@ if { ${argc} < 1 } {
 
         set axis [lindex ${argv} 1]
         ::feed_reader::classifier::list_training_labels ${axis} {*}[lrange ${argv} 2 end]
+
+    } elseif { ${cmd} eq {rename-label} && ${argc} == 4 } {
+
+        set axis [lindex ${argv} 1]
+	set old_name [lindex ${argv} 2]
+	set new_name [lindex ${argv} 3]
+        ::feed_reader::classifier::rename_label ${axis} ${old_name} ${new_name}
 
     } elseif { ${cmd} eq {fex} && ${argc} >= 1 } {
 

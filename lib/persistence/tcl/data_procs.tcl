@@ -799,3 +799,27 @@ proc ::persistence::get_supercolumns_slice_names {args} {
 
 
 
+
+proc ::persistence::rename_supercolumn {keyspace column_family row_key old_name_path new_name_path} {
+
+    set old_supercolumn_dir \
+	[::persistence::get_supercolumn \
+	     "${keyspace}" \
+	     "${column_family}" \
+	     "${row_key}" \
+	     "${old_name_path}"]
+
+    set new_supercolumn_dir \
+	[::persistence::get_supercolumn \
+	     "${keyspace}" \
+	     "${column_family}" \
+	     "${row_key}" \
+	     "${new_name_path}"]
+
+
+    puts old_supercolumn_dir=$old_supercolumn_dir
+    puts new_supercolumn_dir=$new_supercolumn_dir
+
+    file rename ${old_supercolumn_dir} ${new_supercolumn_dir}
+	
+}

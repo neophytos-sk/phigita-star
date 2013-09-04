@@ -185,6 +185,18 @@ proc ::feed_reader::classifier::unlabel {axis label contentsha1_list} {
 
 }
 
+proc ::feed_reader::classifier::rename_label {axis old_name_path new_name_path} {
+
+    ::persistence::rename_supercolumn \
+	"newsdb" \
+	"train_item" \
+	"${axis}" \
+	"${old_name_path}" \
+	"${new_name_path}"
+
+}
+
+
 proc ::feed_reader::classifier::list_training_labels {axis {supercolumn_path ""}} {
 
     puts [get_training_labels ${axis} ${supercolumn_path}]
