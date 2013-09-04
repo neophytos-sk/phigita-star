@@ -1026,9 +1026,11 @@ proc ::feed_reader::list_site {domain {offset "0"} {limit "20"}} {
 
     foreach filename ${slicelist} {
 	array set item [::persistence::get_data ${filename}]
-	print_log_entry item
+	print_log_entry item context
 	unset item
     }
+
+    print_log_footer context
 
 }
 
@@ -1061,10 +1063,12 @@ proc ::feed_reader::list_all {{offset "0"} {limit "20"}} {
     foreach logfilename ${slicelist} {
 
         array set item [::persistence::get_data ${logfilename}]
-	print_log_entry item
+	print_log_entry item context
 	unset item
 
     }
+
+    print_log_footer context
 
 }
 
@@ -1629,13 +1633,31 @@ proc ::util::pretty_length {chars} {
 
 proc ::feed_reader::print_log_header {} {
 
-    puts [format "%2s %13s %40s %6s %-14s %22s %3s %3s %-60s %20s" lc date urlsha1 len topic subtopic "" "" title domain]
+    puts [format "%2s %40s %6s %-14s %22s %3s %3s %-60s %20s" lc urlsha1 len topic subtopic "" "" title domain]
+
+}
+
+proc ::feed_reader::print_log_footer {contextVar} {
+
+    upvar $contextVar context
+
+    set from_date [get_value_if context(from_date) ""]
+    set to_date [get_value_if context(to_date) ""]
+    if { ${from_date} ne {} } {
+	puts ""
+	puts "- date from ${from_date} to ${to_date}"
+    }
+
 
 }
 
 
-proc ::feed_reader::print_log_entry {itemVar} {
+proc ::feed_reader::print_log_entry {itemVar {contextVar ""}} {
     upvar $itemVar item
+
+    if { ${contextVar} ne {} } {
+	upvar ${contextVar} context
+    }
 
     set domain [::util::domain_from_url $item(link)]
 
@@ -1662,10 +1684,15 @@ proc ::feed_reader::print_log_entry {itemVar} {
     set title_first_line [string range ${title} 0 59]
     set title_second_line [string range ${title} 60 end]
 
+
+    if { ![info exists context(from_date)] } {
+	set context(from_date) $item(date)
+    }
+    set context(to_date) $item(date)
+
     set lang [lindex [split [get_value_if item(langclass) "el.utf8"] {.}] 0]
-    puts [format "%2s %13s %40s %6s %-14s %22s %3s %3s %-60s %20s" \
+    puts [format "%2s %40s %6s %-14s %22s %3s %3s %-60s %20s" \
 	      ${lang} \
-	      $item(date) \
 	      $item(urlsha1) \
 	      [::util::pretty_length [get_value_if item(body_length) ""]] \
 	      ${topic} \
