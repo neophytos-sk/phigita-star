@@ -1192,7 +1192,6 @@ proc ::feed_reader::search {keywords {offset "0"} {limit "20"} {callback ""}} {
 
 	#puts ${contentsha1}
 
-
 	load_content item ${contentsha1}
 
 	set tokens_title [::util::tokenize $item(title)] 

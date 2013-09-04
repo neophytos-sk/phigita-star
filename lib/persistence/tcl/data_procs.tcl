@@ -505,7 +505,19 @@ proc ::persistence::delete_row {args} {
     
     set row_dir [get_row {*}${args}]
 
+    delete_row_dir ${row_dir}
+
+}
+
+proc ::persistence::delete_row_dir {row_dir} {
+
+    # removes by_urlsha1_and_contentsha1/0ede2e2ca7bf4bf22a75cb22bac7e70a4e466a0d/+
+    # (with plus sign)
     delete_data ${row_dir}
+
+    # removes by_urlsha1_and_contentsha1/0ede2e2ca7bf4bf22a75cb22bac7e70a4e466a0d/
+    # (without plus sign)
+    delete_data [file dirname ${row_dir}]
 
 }
 
@@ -515,7 +527,7 @@ proc ::persistence::delete_row_if {args} {
     set empty_row_p [empty_row_p ${row_dir}]
 
     if { ${empty_row_p} } {
-	delete_data ${row_dir}
+	delete_row_dir ${row_dir}
     }
 
     return ${empty_row_p}
