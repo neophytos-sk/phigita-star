@@ -1,0 +1,14 @@
+url http://www.star.gr/Pages/Default.aspx
+include_re {\.aspx\?art=[0-9]{4,}&artTitle=}
+htmltidy_feed_p 0
+htmltidy_article_p 0
+xpath_article_title {returnstring(//div[@id="articleStory"]//h1)}
+xpath_article_body {returntext(//div[@id="textCont"])}
+xpath_article_image {{values(//div[@id="bigphoto"]/img/@src)}}
+xpath_article_date {returndate(//div[@id="articleInfo"]/div[@class="published"]/text(),"%d.%m.%Y - %H.%M")}
+xpath_article_modified_time {}
+xpath_article_author {returnstring(substring-after(//div[@id="textCont"]/p[1]/em,":"))}
+xpath_article_cleanup {
+    {//div[@id="textCont"]/p[1]/em}
+}
+xpath_article_tags {values(//div[@id="keywords"]//a[@rel="tag"]/text())}
