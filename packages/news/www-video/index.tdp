@@ -6,7 +6,10 @@ datastore \
     -order "last_update desc" \
     -limit 64 \
     -extend {
-	lassign [::xo::buzz::getThumbnailDetails [self]] thumbnail_url thumbnail_width thumbnail_height
+	set thumbnail_url2 ""
+	set thumbnail_width2 ""
+	set thumbnail_height2 ""
+	lassign [::xo::buzz::getThumbnailDetails_using_upvar] thumbnail_url2 thumbnail_width2 thumbnail_height2
     }
 
 css {
@@ -44,9 +47,9 @@ master -title "Video Buzz" {
 
 	    a -href "@{ref_video_id}.@{provider}" {
 		img \
-		    -src "@{thumbnail_url}" \
-		    -width "@{thumbnail_width}" \
-		    -height "@{thumbnail_height}" \
+		    -src "@{thumbnail_url2}" \
+		    -width "@{thumbnail_width2}" \
+		    -height "@{thumbnail_height2}" \
 		    -style "margin:1px;"
 	    }
 	    br

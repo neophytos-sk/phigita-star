@@ -52,12 +52,14 @@ proc ::util::videoIf {url linkVar {idVar ""}} {
     return 0
 }
 
-proc ::xo::buzz::getThumbnailDetails {o} {
-    set thumbnail_sha1 [$o set thumbnail_sha1]
-    set thumbnail_width [$o set thumbnail_width]
-    set thumbnail_height [$o set thumbnail_height]
+proc ::xo::buzz::getThumbnailDetails_using_upvar {} {
+    upvar thumbnail_sha1 thumbnail_sha1
+    upvar thumbnail_width thumbnail_width
+    upvar thumbnail_height thumbnail_height
+    upvar ref_video_id ref_video_id
+
     if { $thumbnail_sha1 eq {} } {
-	set video_image_url http://www.youtube.com/v/[$o set ref_video_id]
+	set video_image_url http://www.youtube.com/v/${ref_video_id}
 	set thumbnail_sha1 [ns_sha1 [::xo::buzz::getVideoImageURL $video_image_url]]
 	if {![catch {set image_size [ns_jpegsize ${imageDir}/${imageFile}]}] } {
 	    lassign ${image_size} thumbnail_width thumbnail_height
@@ -67,7 +69,8 @@ proc ::xo::buzz::getThumbnailDetails {o} {
     set imageDir [::util::getDataDir news/images $thumbnail_sha1]
     #set imageHost [::util::getStaticHost $thumbnail_sha1 "i" "-buzz"]
     set imageHost //static.phigita.net/video-img/
-    return [list ${imageHost}/${thumbnail_sha1} $thumbnail_width $thumbnail_height]
+    set thumbnail_url ${imageHost}/${thumbnail_sha1}
+    return [list $thumbnail_url $thumbnail_width $thumbnail_height]
 }
 
 
