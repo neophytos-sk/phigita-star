@@ -2,11 +2,13 @@ namespace eval ::adp_compiler {;}
 
 proc ::adp_compiler::compile_template_for {node depth inside_code_block} {
 
+    set dict_get_cmd [::templating::config::dict_get_cmd]
+
     set varname [$node @for]
     if { $varname eq {.} } {
 	set list_expr "\$o${depth}"
     } else {
-	set list_expr "\[\$o${depth} set ${varname}\]"
+	set list_expr "\[${dict_get_cmd} \$o${depth} ${varname}\]"
     }
 
     set new_depth [expr {1+$depth}]
@@ -20,13 +22,15 @@ proc ::adp_compiler::compile_template_for {node depth inside_code_block} {
 
 proc ::adp_compiler::compile_template_if_expr {node depth inside_code_block} {
 
+    set dict_get_cmd [::templating::config::dict_get_cmd]
+
     #TODO: check that vars exist, check with datastore, or meta vars available (e.g.rownum)
     #TODO: use while_regsub
 
     set expr_tpl [$node @if]
     set expr_tpl [string map {"\{_\}" "\$o${depth}"} $expr_tpl]
     set re {@\{([a-zA-Z_][a-zA-Z_0-9\.]*)\}}
-    set conditional_expr [regsub -all -- $re $expr_tpl "\[\$o${depth} set \\1\]"]
+    set conditional_expr [regsub -all -- $re $expr_tpl "\[${dict_get_cmd} \$o${depth} \\1\]"]
     return $conditional_expr
 
 }
@@ -122,6 +126,8 @@ proc ::adp_compiler::compile_template_helper {node {depth 0} {inside_code_block 
 
 proc ::adp_compiler::compiled_template_to_adp {text} {
 
+    set dict_get_cmd [::templating::config::dict_get_cmd]
+
     set adp ""
     set re {\xfe([^\xfe\xff]*)\xff}
     set start 0
@@ -143,7 +149,7 @@ proc ::adp_compiler::compiled_template_to_adp {text} {
 	    if { $varname eq {_} } {
 		set var_expr "${obj}"
 	    } else {
-		set var_expr "\[${obj} set ${varname}\]"
+		set var_expr "\[${dict_get_cmd} ${obj} ${varname}\]"
 	    }
 	    if { $inside_code_block } {
 		append adp "\n" "\xfb${var_expr}" "\xfc"
