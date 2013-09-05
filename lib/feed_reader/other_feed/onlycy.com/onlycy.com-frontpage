@@ -1,0 +1,14 @@
+url http://www.onlycy.com/
+include_re {/[0-9]{4,}-[[:alnum:]\-]+$}
+htmltidy_feed_p 1
+htmltidy_article_p 1
+xpath_article_title {returnstring(//div[@class="post"]/h2)}
+xpath_article_body {returntext(//div[@id="homepost"]/div[@class="post"]/div[@class="entry"])}
+xpath_article_image {{values(//div[@class="entry"]//img[@src and @width and @height and @title]/@src)}}
+xpath_article_date {returndate(//div[@id="datemeta_l"]/text(), "%a, %b %dth, %Y -%H:%M")}
+xpath_article_modified_time {}
+xpath_article_cleanup {
+    {//div[@class="entry"]//span[@displaytext]}
+    {//div[@class="entry"]//div[@style="" and descendant::center]/following-sibling::*}
+    {//div[@class="entry"]//div[@style="" and descendant::center]}
+}
