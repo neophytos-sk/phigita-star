@@ -9,7 +9,15 @@ contract {
 val -id videodata { 
     set vo ""
     lassign [::xo::buzz::getVideo @{video_id}] found_p vo
-    return ${vo}
+
+    set mydict [dict create]
+    if { $found_p } { 
+	foreach varname [$vo info vars] {
+	    dict set mydict $varname [$vo set $varname]
+	}
+    }
+
+    return ${mydict}
  }
 
 
