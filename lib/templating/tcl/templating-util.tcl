@@ -39,6 +39,10 @@ proc tclcode_to_cstring {tclcode} {
     }
 }
 
+namespace eval ::templating::util {;}
+
+
+
 
 # --------------------- used mainly by datastore -------------------------
 
@@ -134,7 +138,9 @@ proc transform_refs_helper {codearrVar textVar} {
 		error "transform_refs_helper (object.property): no such identifier '${varname}'"
 	    }
 
-	    return "\[::nsf::var::set \$::__data__(${part1}) ${part2}\]"
+	    # nsf::var::set or dict get
+	    set dict_get_cmd [::templating::config::dict_get_cmd]
+	    return "\[${dict_get_cmd} \$::__data__(${part1}) ${part2}\]"
 
 	}
 
@@ -150,7 +156,9 @@ proc transform_refs_helper {codearrVar textVar} {
 		error "tranforms_refs_helper (object_get.object.property): no such identifier '${varname}'"
 	    }
 
-	    return "\[::nsf::var::set \$::__data__(${part2}) ${part3}\]"
+	    # nsf::var::set or dict get
+	    set dict_get_cmd [::templating::config::dict_get_cmd]
+	    return "\[${dict_get_cmd} \$::__data__(${part2}) ${part3}\]"
 	} else {
 
 	    error "no such thing ${text}"
