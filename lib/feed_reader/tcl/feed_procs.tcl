@@ -1685,10 +1685,10 @@ proc ::feed_reader::print_log_entry {itemVar {contextVar ""}} {
     set title_second_line [string range ${title} 60 end]
 
 
-    if { ![info exists context(from_date)] } {
-	set context(from_date) $item(date)
+    if { ![info exists context(to_date)] } {
+	set context(to_date) $item(sort_date)
     }
-    set context(to_date) $item(date)
+    set context(from_date) $item(sort_date)
 
     set lang [lindex [split [get_value_if item(langclass) "el.utf8"] {.}] 0]
     puts [format "%2s %40s %6s %-14s %22s %3s %3s %-60s %20s" \
@@ -1865,7 +1865,7 @@ proc ::feed_reader::write_item {timestamp normalized_link feedVar itemVar resync
 
 	    # if time eq {0000} and
 	    set timestamp_date [lindex [split ${timestamp_datetime} {.}] 0]
-	    if { ${date} ne ${timestamp_date} } {
+	    if { ${date} < ${timestamp_date} } {
 
 		set item(sort_date) $item(date)
 
