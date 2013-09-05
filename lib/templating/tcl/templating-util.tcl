@@ -1,3 +1,11 @@
+namespace eval ::templating::util {;}
+
+proc ::templating::util::dict_get {dictionaryValue key} \
+    "return \[[::templating::config::dict_get_cmd] \${dictionaryValue} \${key}\]"
+
+
+
+
   # ouch, some md5 implementations return hex, others binary
 if {[string length [md5 ""]] == 32} {
     proc ::util::md5_hex {s} { return [md5 ${s}] }
@@ -295,3 +303,5 @@ proc make_resources_skel {} {
 }
 
 make_resources_skel
+
+

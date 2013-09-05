@@ -162,9 +162,9 @@ val -id pretty_date {
 val -id selected_label_name {
     if { @{label_id} ne {} } {
 	foreach o @{labeldata} {
-	    set id [dict get $o id]
+	    set id [::templating::util::dict_get $o id]
 	    if { ${id}  == @{label_id} } {
-		return [dict get $o name]
+		return [::templating::util::dict_get $o name]
 	    }
 	}
     }

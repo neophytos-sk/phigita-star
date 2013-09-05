@@ -28,3 +28,5 @@ proc ::templating::config::dict_get_cmd {} {
 	error "unknown data_object_type in templating config (must be NSF or DICT)"
     }
 }
+
+

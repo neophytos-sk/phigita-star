@@ -71,7 +71,7 @@ datastore -id answerdata \
     }
 
 val -id title { 
-    set subject [@{questiondata} set subject]
+    set subject [::templating::dict_get @{questiondata} subject]
     return "${subject} - Answers" 
 }
 

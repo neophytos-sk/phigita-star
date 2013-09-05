@@ -21,7 +21,7 @@ guard {
 	rp_returnnotfound
 	return 0
     } else {
-	set duration [${vo} set duration]
+	set duration [::templating::util::dict_get ${vo} duration]
 	if { $duration eq {} || $duration == 0 } {
 	    rp_returnnotfound
 	    return 0
@@ -32,7 +32,7 @@ guard {
 }
 
 val -id duration { 
-    set duration [@{videodata} set duration]
+    set duration [::templating::util::dict_get @{videodata} duration]
     return [VideoDuration $duration] 
 }
 
