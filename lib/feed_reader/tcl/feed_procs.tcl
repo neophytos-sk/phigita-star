@@ -1458,7 +1458,7 @@ proc ::feed_reader::cluster {{offset "0"} {limit "10"} {k ""} {num_iter "3"}} {
 	set contentfilename \
 	    [::persistence::get_column \
 		 "newsdb" \
-		 "content_item/by_urlsha1_and_const" \
+		 "content_item/by_contentsha1_and_const" \
 		 "$item(contentsha1)" \
 		 "_data_"]
 
@@ -1641,7 +1641,7 @@ proc ::util::pretty_length {chars} {
 
 proc ::feed_reader::print_log_header {} {
 
-    puts [format "%2s %40s %6s %-14s %22s %3s %3s %-60s %20s" lc urlsha1 len topic subtopic "" "" title domain]
+    puts [format "%2s %40s %6s %-14s %30s %3s %3s %-60s %20s" lc urlsha1 len topic subtopic "" "" title domain]
 
 }
 
@@ -1699,7 +1699,7 @@ proc ::feed_reader::print_log_entry {itemVar {contextVar ""}} {
     set context(from_date) $item(sort_date)
 
     set lang [lindex [split [get_value_if item(langclass) "el.utf8"] {.}] 0]
-    puts [format "%2s %40s %6s %-14s %22s %3s %3s %-60s %20s" \
+    puts [format "%2s %40s %6s %-14s %30s %3s %3s %-60s %20s" \
 	      ${lang} \
 	      $item(urlsha1) \
 	      [::util::pretty_length [get_value_if item(body_length) ""]] \
