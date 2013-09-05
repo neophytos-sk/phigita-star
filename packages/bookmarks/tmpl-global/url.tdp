@@ -82,7 +82,7 @@ master -title "@{object_get.urldata.title} - Social Bookmarks" {
 		    nt "&nbsp;"
 		    tpl -if { @{video_p} } {
 			a -href "@{href}" -style "text-decoration:none;border:0;" {
-			    img -src "//www.phigita.net/graphics/icon_video.gif" -width 19 -height 12 -alt {video}
+			    img -src "//static.phigita.net/graphics/icon_video.gif" -width 19 -height 12 -alt {video}
 			}
 		    }
 		    br
@@ -123,7 +123,7 @@ master -title "@{object_get.urldata.title} - Social Bookmarks" {
 		blockquote {
 		    t @{content_in_html:noquote}
 		    small {
-			a -href "//www.phigita.net/~@{screen_name}/" {
+			a -href "//static.phigita.net/~@{screen_name}/" {
 			    t "@{full_name}"
 			}
 			t ", "

@@ -271,7 +271,7 @@ master -title ${title} -description $description -keywords $keywords {
 			    }
 			    tpl -if { @{video_p} } {
 				a -href "@{href}" -style "text-decoration:none;border:0;" {
-				    img -src "//www.phigita.net/graphics/icon_video.gif" -width 19 -height 12 -alt {video}
+				    img -src "//static.phigita.net/graphics/icon_video.gif" -width 19 -height 12 -alt {video}
 				}
 			    }
 			    tpl -if { @{preview_p} } {
@@ -394,7 +394,7 @@ master -title ${title} -description $description -keywords $keywords {
 				t ", last"
 			    }
 			    t " by "
-			    a -href "//www.phigita.net/~@{screen_name}/" { t @{screen_name} }
+			    a -href "//static.phigita.net/~@{screen_name}/" { t @{screen_name} }
 			}
 
 		    }

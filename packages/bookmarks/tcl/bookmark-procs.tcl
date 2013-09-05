@@ -1,7 +1,7 @@
 namespace eval ::bm {;}
 
 proc ::bm::bookmarklet_href {} {
-    return {javascript:try{var%20d=document;var%20e=d.createElement('script');e.setAttribute('src','//www.phigita.net/bookmarklet/load.js');(d.getElementsByTagName('head')[0]||d.body).appendChild(e);}%20catch(z)%20{};void(0);}
+    return {javascript:try{var%20d=document;var%20e=d.createElement('script');e.setAttribute('src','//static.phigita.net/bookmarklet/load.js');(d.getElementsByTagName('head')[0]||d.body).appendChild(e);}%20catch(z)%20{};void(0);}
 }
 
 proc ::bm::init_css {} {
@@ -53,8 +53,8 @@ proc render_bookmark {o {base ""} {show_user_p "1"} {show_comments_p "1"} {show_
 	set remarks_base ""
     }
 
-    if { [ad_host] ne [::util::coalesce $base "www.phigita.net"] } {
-	set base "//www.phigita.net"
+    if { [ad_host] ne [::util::coalesce $base "static.phigita.net"] } {
+	set base "//static.phigita.net"
     } else {
 	set base ""
     }
@@ -78,7 +78,7 @@ proc render_bookmark {o {base ""} {show_user_p "1"} {show_comments_p "1"} {show_
 	    if { $video_p } {
 		t " "
 		a -href $href -style "text-decoration:none;border:0;" {
-		    img -src "//www.phigita.net/graphics/icon_video.gif" -width 19 -height 12 -border 0 -alt {[video]}
+		    img -src "//static.phigita.net/graphics/icon_video.gif" -width 19 -height 12 -border 0 -alt {[video]}
 		}
 	    }
 	    if { [$o set preview_p] } {

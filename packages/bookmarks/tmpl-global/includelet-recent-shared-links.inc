@@ -174,7 +174,7 @@ div -id remark {
 		    }
 		    tpl -if { @{video_p} } {
 			a -href "@{href}" -style "text-decoration:none;border:0;" {
-			    img -src "//www.phigita.net/graphics/icon_video.gif" -width 19 -height 12 -alt {video}
+			    img -src "//static.phigita.net/graphics/icon_video.gif" -width 19 -height 12 -alt {video}
 			}
 		    }
 		    tpl -if { @{preview_p} } {
