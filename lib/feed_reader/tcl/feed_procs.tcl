@@ -1454,7 +1454,15 @@ proc ::feed_reader::cluster {{offset "0"} {limit "10"} {k ""} {num_iter "3"}} {
     foreach logfilename ${slicelist} {
 
         array set item [::util::readfile ${logfilename}]
-	lappend contentfilelist [get_content_dir]/$item(contentsha1)/_data_
+
+	set contentfilename \
+	    [::persistence::get_column \
+		 "newsdb" \
+		 "content_item/by_urlsha1_and_const" \
+		 "$item(contentsha1)" \
+		 "_data_"]
+
+	lappend contentfilelist ${contentfilename}
 
 	#print_log_entry item
 	unset item
