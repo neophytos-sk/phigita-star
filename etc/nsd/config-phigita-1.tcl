@@ -9,6 +9,7 @@ set listening_to_host {
     video.phigita.net
     echo.phigita.net
     answers.phigita.net
+    api.phigita.net
 }
 
 set production_mode_p 1
