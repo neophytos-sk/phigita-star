@@ -199,7 +199,7 @@ proc ::feed_reader::classifier::rename_label {axis old_name_path new_name_path} 
 
 proc ::feed_reader::classifier::list_training_labels {axis {supercolumn_path ""}} {
 
-    puts [get_training_labels ${axis} ${supercolumn_path}]
+    puts [join [lsort [get_training_labels ${axis} ${supercolumn_path}]] \n]
 }
 
 proc ::feed_reader::classifier::get_training_labels {axis {supercolumn_path ""}} {
