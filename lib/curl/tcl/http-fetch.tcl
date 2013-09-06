@@ -14,9 +14,13 @@ proc ::xo::http::fetch {contentVar url {optionsVar ""} {infoVar ""}} {
     set httpversion [get_value_if options(httpversion) "1.1"]
     set followlocation [get_value_if options(followlocation) "0"]
     set maxredirs [get_value_if options(maxredirs) "0"]
+    set timeout [get_value_if options(timeout) "30"]
 
     if { [catch {
-	set errorcode [curl::transfer -url ${url} \
+	set errorcode [curl::transfer \
+			   -nosignal 1 \
+			   -url ${url} \
+			   -timeout ${timeout} \
 			   -httpversion ${httpversion} \
 			   -followlocation ${followlocation} \
 			   -maxredirs ${maxredirs} \
