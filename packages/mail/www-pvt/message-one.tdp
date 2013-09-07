@@ -94,7 +94,7 @@ master -title @{object_get.message.subject} -context_bar @{context_bar} {
 	    div { 
 		b { t "Attachments: " }
 		tpl -for "attachments" {
-		    tpl -if { @{_:rownum} > 1 } {
+		    tpl -if { @{_:rownum} > 0 } {
 			t ", "
 		    }
 		    a -href @{_.0} {
