@@ -81,7 +81,9 @@ val -id "context_bar" {
 # keep css classes and tags used by context_bar
 ::xo::tdp::excludeClassesFromRenaming {breadcrumb divider ul li active}
 
-master -title @{object_get.message.subject} -context_bar @{context_bar} {
+master -title @{object_get.message.subject} {
+
+    nt @{context_bar:noquote}
 
     tpl -with "message" {
 	p
