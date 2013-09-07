@@ -28,8 +28,6 @@ val -id "messages" -x-value-attributes ${attributes} {
     set maildir [::xo::mail::maildir]
     set mail_file [file join $maildir message-list.txt]
 
-    ns_log notice "--->>> mail_file=${mail_file} exists_p=[file exists ${mail_file}]"
-
     set fp [open $mail_file]
 
     set message_list [list]
