@@ -63,52 +63,54 @@ val -id "context_bar" {
 master -title "@{word} - Spell Check" {
     nt @{context_bar:noquote}
 
-    div -style "margin:25;padding:10;width:468;background:#f0f0f0;float:left;" {
-	tpl -with "wordcheck" {
-	    b {
-		tpl -if "@{correct_p}" {
-		    font -color "#006600" {
-			t "\"@{top.word}\" is spelled correctly."
+    layout_row {
+	layout_col -class span1
+	layout_col -class span7 {
+	    tpl -with "wordcheck" {
+		b {
+		    tpl -if "@{correct_p}" {
+			font -color "#006600" {
+			    t "\"@{top.word}\" is spelled correctly."
+			}
+		    }
+		    tpl -else "" {
+			font -color "#990033" {
+			    t "\"@{top.word}\" is misspelled."
+			}
 		    }
 		}
-		tpl -else "" {
-		    font -color "#990033" {
-			t "\"@{top.word}\" is misspelled."
-		    }
-		}
-	    }
-	    
-	    p
-	    tpl -if { @{wordlist} ne {} } {
-		b { t "Here are some suggestions:" }
-		div {
-		    ol {
-			tpl -for "wordlist" {
-			    li {
-				tpl -if { @{top.dictionary} eq {en} } {
-				    a -href "http://www.google.com/search?ie=utf-8&oe=utf-8&q=define:@{_}" {
-					t @{_}
+		
+		p
+		tpl -if { @{wordlist} ne {} } {
+		    b { t "Here are some suggestions:" }
+		    div {
+			ol {
+			    tpl -for "wordlist" {
+				li {
+				    tpl -if { @{top.dictionary} eq {en} } {
+					a -href "http://www.google.com/search?ie=utf-8&oe=utf-8&q=define:@{_}" {
+					    t @{_}
+					}
 				    }
+				    tpl -else "" {
+					t @{_}
+				    }					
 				}
-				tpl -else "" {
-				    t @{_}
-				}					
 			    }
 			}
 		    }
 		}
 	    }
+
+	    div {
+		nt @{google_ad_bottom:noquote}
+	    }
+
 	}
 
-	div {
-	    nt @{google_ad_bottom:noquote}
+	layout_col -class span4 {
+	    nt @{google_ad_top_right:noquote}
 	}
-
     }
 
-
-
-    div -class little -style "padding:8;margin-left:550;border-left: 1px solid #efefef;" {
-	nt @{google_ad_top_right:noquote}
-    }
 }
