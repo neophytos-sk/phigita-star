@@ -1,6 +1,6 @@
-::xo::kit::require_secure_conn
+contract -require_secure_conn true
 
-tmpl::master {
+master {
     form -action message-compose-2 -method post {
 	button -type submit { t "SEND" }
 	p -class sep
@@ -11,6 +11,5 @@ tmpl::master {
 	input -type text -name "subject"
 	p -class sep
 	textarea -name "content" -rows 10 -cols 80
-
     }
 }
