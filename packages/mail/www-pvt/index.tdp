@@ -1,0 +1,128 @@
+set static_host "//static.phigita.net"
+
+contract -require_secure_conn true {
+    param -id "show_spam_p" -vcheck "boolean notnull" -default f
+    param -id "offset" -vcheck "naturalnum" -default 0
+    param -id "limit" -vcheck "naturalnum" -default 100
+}
+
+#package require mime
+
+
+# as we are not using the normal means of datastore
+# we have to specify which attributes are available
+# in the elements of messages
+set attributes {
+    msg_id date spam_p langclass from subject
+    attachments calendar friendly_address pretty_date
+    address
+}
+
+
+val -id "messages" -x-value-attributes ${attributes} {
+
+    set show_spam_p @{param.show_spam_p}
+    set offset @{param.offset}
+    set limit @{param.limit}
+
+    set maildir [::xo::mail::maildir]
+    set mail_file [file join $maildir message-list.txt]
+    set fp [open $mail_file]
+
+    set message_list [list]
+    while {![eof $fp]} {
+        if { [catch {::xo::io::readVarText $fp line utf-8} errMsg] } {
+        break
+        }
+        lappend message_list $line
+    }
+    set message_list [lreverse $message_list]
+    close $fp
+
+    set messages [list]
+    foreach line ${message_list} {
+	lassign $line msg_id date spam_p langclass from subject attachments calendar
+
+	if { $spam_p && !$show_spam_p } { continue }
+        incr count
+        if { $count < $offset } continue
+        if { $count - $offset > $limit } break
+
+
+        lassign ${from} address friendly
+        set friendly_address [::util::coalesce ${friendly} ${address}]
+
+        set subject [::util::coalesce $subject "Untitled"]
+
+	lassign [split $date ".+"] timestamp_ansi __microseconds_and_tz__
+	set seconds [clock scan $timestamp_ansi]
+	# if seconds > start_of_today_seconds then show time
+	# i.e. clock format $seconds -format "%l:%M%p"
+	# else clock format $seconds -format "%b %d"
+        set pretty_date  [clock format $seconds -format "%b %d %l:%M%p"]
+
+        lappend messages \
+            [dict create msg_id $msg_id date $date spam_p $spam_p langclass $langclass \
+		 from $from subject $subject attachments $attachments calendar $calendar \
+		 friendly_address $friendly_address pretty_date $pretty_date \
+		 address $address]
+    }
+
+
+    return ${messages}
+}
+
+
+
+css {
+    .button {background:#a00;color:#fff;font-weight:bold;padding:3px 5px 3px 5px;text-decoration:none;}
+}
+
+
+
+
+master -title "Your Mail - Private Area" {
+
+    a -href "message-compose" -class button { t "COMPOSE" }
+
+    table {
+	tpl -for "messages" {
+
+            tr {
+                td -width "4%" {
+
+                    tpl -if { @{spam_p} } {
+                        b { t "SPAM " }
+                    }
+
+                }
+                td -style "width:4%;" {
+
+                    div -title @{address} {
+                        t @{friendly_address}
+                    }
+                }
+                td {
+                    a -href "message-one?msg_id=@{msg_id}" {
+                        t @{subject}
+                    }
+                }
+                td {
+                    tpl -if { @{attachments} ne {} } {
+                        img -src ${static_host}/graphics/paperclip.gif -width 15 -height 15
+                    }
+                    tpl -if { @{calendar} ne {} } {
+                        img -src ${static_host}/graphics/calendar/calbr1.gif
+                    }
+                }
+                td -nowrap "" -align "right" {
+                    t @{pretty_date}
+                }
+            }
+        }
+    }
+}
+
+
+
+
