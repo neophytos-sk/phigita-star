@@ -97,8 +97,8 @@ master -title @{object_get.message.subject} -context_bar @{context_bar} {
 		    tpl -if { @{_:rownum} > 1 } {
 			t ", "
 		    }
-		    a -href @{_.1} {
-			t @{_.2}
+		    a -href @{_.0} {
+			t @{_.1}
 		    }
 		}
 	    }
@@ -113,8 +113,8 @@ master -title @{object_get.message.subject} -context_bar @{context_bar} {
 	tpl -if { @{param.with_header} } {
 	    tpl -for "header" {
 		div {
-		    b { t "@{_.1}: " }
-		    t @{_.2}
+		    b { t "@{_.0}: " }
+		    t @{_.1}
 		}
 	    }
 	}
