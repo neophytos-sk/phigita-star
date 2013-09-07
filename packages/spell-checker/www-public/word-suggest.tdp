@@ -57,6 +57,8 @@ val -id "google_ad_top_right" {
 val -id "context_bar" {
     return [::xo::kit::context_bar "Suggested Words for \"@{word}\""]
 }
+# keep css classes and tags used by context_bar
+::xo::tdp::excludeClassesFromRenaming {breadcrumb divider ul li active}
 
 master -title "@{word} - Spell Check" {
     nt @{context_bar:noquote}
