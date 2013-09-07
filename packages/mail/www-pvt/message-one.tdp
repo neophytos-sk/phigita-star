@@ -1,0 +1,129 @@
+contract -require_secure_conn true {
+    param -id "msg_id" -vcheck "notnull"
+    param -id "with_header" -vcheck "boolean notnull" -optional 1 -default "f"
+}
+
+
+set attributes {msgname date pretty_spam header msgbody langclass from subject attachments calendar}
+val -id "message" -x-value-attributes ${attributes} {
+
+    set msg_id @{param.msg_id}
+    set with_header @{param.with_header}
+
+    set maildir [::xo::mail::maildir]
+    set filename [file join $maildir cur $msg_id]
+
+    set mail_file [file join $maildir message-list.txt]
+    set index_file [file join $maildir message-list.idx]
+
+    set fp [open $index_file]
+    while { ![eof $fp] } {
+	if { [catch {array set index [::xo::io::readString $fp]} errMsg] } {
+	    break
+	}
+    }
+    close $fp
+
+
+    set offset $index($msg_id)
+    set fp [open $mail_file]
+    fconfigure $fp -encoding binary
+    seek $fp $offset
+
+    ::xo::io::readVarText $fp message_list utf-8
+    close $fp
+
+
+    set msg [::mime::initialize -file $filename]
+
+    lassign $message_list msgname date spam_p langclass from subject attachments0 calendar
+
+
+    set pretty_spam [::util::decode $spam_p 0 No 1 Yes]
+    set attachments [list]
+    foreach attachment ${attachments0} {
+	lassign $attachment attachment_id attachment_name attachment_type
+	set attachment_url "attachment/${attachment_name}?attachment_id=${attachment_id}&attachment_type=${attachment_type}"
+	lappend attachments [list $attachment_url $attachment_name]
+    }
+
+    set header [list]
+    if { ${with_header} } {
+	foreach {key valuelist} [::mime::getheader $msg] {
+	    set decoded_valuelist [list]
+	    foreach value $valuelist {
+	    lappend decoded_valuelist [::mime::field_decode $value]
+	    }
+	    lappend header [list ${key} ${decoded_valuelist}]
+	}
+    }
+    set msgbody [::xo::mail::render_part_t $msg]
+
+    ::mime::finalize $msg
+
+    return [dict create \
+		msgname $msgname \
+		date $date \
+		pretty_spam $pretty_spam \
+		header ${header} \
+		msgbody ${msgbody} \
+		langclass $langclass \
+		from $from \
+		subject $subject \
+		attachments $attachments \
+		calendar $calendar]
+
+}
+
+val -id "context_bar" {
+    return [::xo::kit::context_bar "One Message"]
+}
+# keep css classes and tags used by context_bar
+::xo::tdp::excludeClassesFromRenaming {breadcrumb divider ul li active}
+
+master -title @{object_get.message.subject} -context_bar @{context_bar} {
+
+    tpl -with "message" {
+	p
+	div { b { t "Date: " }; t @{date} }
+	div { b { t "Spam: " }; t @{pretty_spam} }
+	div { b { t "LangClass: "}; t @{langclass} }
+	div { b { t "From: " }; t @{from} }
+	div { b { t "Subject: " }; t @{subject} }
+	tpl -if { @{attachments} ne {} } {
+	    div { 
+		b { t "Attachments: " }
+		tpl -for "attachments" {
+		    tpl -if { @{_:rownum} > 1 } {
+			t ", "
+		    }
+		    a -href @{_.1} {
+			t @{_.2}
+		    }
+		}
+	    }
+	}
+
+	tpl -if { @{calendar} ne {} } {
+	    div { b { t "Calendar: " }; t @{calendar} }
+	}
+	
+	p
+
+	tpl -if { @{param.with_header} } {
+	    tpl -for "header" {
+		div {
+		    b { t "@{_.1}: " }
+		    t @{_.2}
+		}
+	    }
+	}
+
+	pre {
+	    code {
+		nt @{msgbody:noquote}
+	    }
+	}
+    }
+}
+
