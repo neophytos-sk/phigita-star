@@ -1,9 +1,9 @@
 set static_host "//static.phigita.net"
 
 contract -require_secure_conn true {
-    param -id "show_spam_p" -vcheck "boolean notnull" -default f
-    param -id "offset" -vcheck "naturalnum" -default 0
-    param -id "limit" -vcheck "naturalnum" -default 100
+    param -id "show_spam_p" -vcheck "boolean notnull" -optional 1 -default f
+    param -id "offset" -vcheck "naturalnum notnull" -optional 1 -default 0
+    param -id "limit" -vcheck "naturalnum notnull" -optional 1 -default 100
 }
 
 #package require mime
@@ -27,6 +27,9 @@ val -id "messages" -x-value-attributes ${attributes} {
 
     set maildir [::xo::mail::maildir]
     set mail_file [file join $maildir message-list.txt]
+
+    ns_log notice "--->>> mail_file=${mail_file} exists_p=[file exists ${mail_file}]"
+
     set fp [open $mail_file]
 
     set message_list [list]
