@@ -1,83 +1,69 @@
-package provide critcl 2.1
-
-package require platform 1.0.3
-
 set sourcedir [info script]
 
-# make sure the Tcl interpreter supports lassign
-if {[info command ::lassign] eq ""} {
-    proc lassign {valueList args} {
-        if {[llength $args] == 0} {
-            error "wrong # args: lassign list varname ?varname..?"
-        }
-        uplevel [list foreach $args $valueList {break}]
-        return [lrange $valueList [llength $args] end]
-    }
-}
 
 # md5 could be a cmd or a pkg, or be in a separate namespace
 if {[catch { md5 "" }]} {
-  # do *not* use "package require md5c" since crtcl is not loaded yet,
-  # but do look for a compiled one, in case object code already exists
-  if {![catch { md5c "" }]} {
-    interp alias {} md5 {} md5c
-  } elseif {[catch {package require Trf 2.0}] || [catch {::md5 -- test}]} {
-    # else try to load the Tcl version in tcllib
-    catch { package require md5 }
-    if {![catch { md5::md5 "" }]} {
-      interp alias {} md5 {} md5::md5
-    } else {
-      # last resort: package require or source Don Libes' md5pure script
-      if {[catch { package require md5pure }]} {
-	if {[file exists md5pure.tcl]} {
-	  source md5pure.tcl
-	  interp alias {} md5 {} md5pure::md5
+    # do *not* use "package require md5c" since crtcl is not loaded yet,
+    # but do look for a compiled one, in case object code already exists
+    if {![catch { md5c "" }]} {
+	interp alias {} md5 {} md5c
+    } elseif {[catch {package require Trf 2.0}] || [catch {::md5 -- test}]} {
+	# else try to load the Tcl version in tcllib
+	catch { package require md5 }
+	if {![catch { md5::md5 "" }]} {
+	    interp alias {} md5 {} md5::md5
 	} else {
-	  source [file join [file dirname [info script]] ../md5/md5.tcl]
-	  interp alias {} md5 {} md5::md5
+	    # last resort: package require or source Don Libes' md5pure script
+	    if {[catch { package require md5pure }]} {
+		if {[file exists md5pure.tcl]} {
+		    source md5pure.tcl
+		    interp alias {} md5 {} md5pure::md5
+		} else {
+		    source [file join [file dirname [info script]] ../md5/md5.tcl]
+		    interp alias {} md5 {} md5::md5
+		}
+	    } else {
+		interp alias {} md5 {} md5pure::md5
+	    }
 	}
-      } else {
-	interp alias {} md5 {} md5pure::md5
-      }
     }
-  }
 }
 
 namespace eval ::critcl {
-  namespace export cache ccode ccommand cdata cdefines cflags cheaders \
-                   check cinit clibraries compiled compiling config cproc \
-                   csources debug done failed framework ininame ldflags platform \
-                   tk tsources preload license cfile
+    namespace export cache ccode ccommand cdata cdefines cflags cheaders \
+	check cinit clibraries compiled compiling config cproc \
+	csources debug done failed framework ininame ldflags platform \
+	tk tsources preload license cfile
 
-  variable run [interp create] ;# interpreter to run commands, eval when, etc
+    variable run [interp create] ;# interpreter to run commands, eval when, etc
 
-  # ouch, some md5 implementations return hex, others binary
-  if {[string length [md5 ""]] == 32} {
-    proc md5_hex {s} { return [md5 $s] }
-  } else {
-    proc md5_hex {s} { binary scan [md5 $s] H* md; return $md }
-  }
-
-  # file normalize is a Tcl 8.4 extension, emulate it if not available
-  if {[catch { file normalize . }]} {
-    proc file_normalize {file} {
-      set sp [file split $file]
-      if {[file pathtype [lindex $sp 0]] == "relative"} {
-	set sp [file split [eval [list file join [pwd]] $sp]]
-      }
-      set np {}
-      foreach ele $sp {
-	if {$ele != ".."} {
-	  if {$ele != "."} { lappend np $ele }
-	} elseif {[llength $np]> 1} {
-	  set np [lrange $np 0 [expr {[llength $np] - 2}]]
-	}
-      }
-      if {[llength $np] > 0} { return [eval file join $np] }
+    # ouch, some md5 implementations return hex, others binary
+    if {[string length [md5 ""]] == 32} {
+	proc md5_hex {s} { return [md5 $s] }
+    } else {
+	proc md5_hex {s} { binary scan [md5 $s] H* md; return $md }
     }
-  } else {
-    proc file_normalize {file} { return [file normalize $file] }
-  }
+
+    # file normalize is a Tcl 8.4 extension, emulate it if not available
+    if {[catch { file normalize . }]} {
+	proc file_normalize {file} {
+	    set sp [file split $file]
+	    if {[file pathtype [lindex $sp 0]] == "relative"} {
+		set sp [file split [eval [list file join [pwd]] $sp]]
+	    }
+	    set np {}
+	    foreach ele $sp {
+		if {$ele != ".."} {
+		    if {$ele != "."} { lappend np $ele }
+		} elseif {[llength $np]> 1} {
+		    set np [lrange $np 0 [expr {[llength $np] - 2}]]
+		}
+	    }
+	    if {[llength $np] > 0} { return [eval file join $np] }
+	}
+    } else {
+	proc file_normalize {file} { return [file normalize $file] }
+    }
 
     proc platform {} {
         return $v::platform
@@ -110,110 +96,108 @@ namespace eval ::critcl {
     }
 
 
-  # keep all variables in a sub-namespace for easy access
-  namespace eval v {
-    variable cache                          ;# cache directory
-    variable platform                       ;# target platform
-    variable version ""                     ;# min version # on platform
-    variable generic [critcl::platformcc]   ;# actual platform
-    variable config                         ;# the matching config
-    variable hdrdir	[file join [file dirname [info script]] critcl_c]
+    # keep all variables in a sub-namespace for easy access
+    namespace eval v {
+	variable cache                          ;# cache directory
+	variable platform                       ;# target platform
+	variable version ""                     ;# min version # on platform
+	variable generic [critcl::platformcc]   ;# actual platform
+	variable config                         ;# the matching config
+	variable hdrdir	[file join [::critcl::get_package_dir] critcl_c]
+	
+	variable prefix	"v[package require critcl]"
+	regsub {\.} $prefix {} prefix
 
-    variable prefix	"v[package require critcl]"
-    regsub {\.} $prefix {} prefix
+	variable compile
+	variable link
+	variable options
 
-    variable compile
-    variable link
-    variable options
+	array set options {outdir "" keepsrc 0 combine "" appinit "" force 0}
+	array set options {I "" L "" tk 0 language "" lines 1}
 
-    array set options {outdir "" keepsrc 0 combine "" appinit "" force 0}
-    array set options {I "" L "" tk 0 language "" lines 1}
-
-    variable code	     ;# this array collects all code snippets
-    variable curr	     ;# current digest
-    variable compiling 0 ;# indicates that the gcc/cc is available
-    variable failed 0    ;# set if compile fails
-    variable ininame ""
-    variable libfile ""
-    variable cflags ""
-    variable ldflags ""
-    variable targets ""    ;# cross-compile targets
-    variable objs [list] ;# compiled object for each csources
-    variable preload ""  ;# list of shared libraries to pre-load
-    variable libsrc ""
-
-    # config variables
-    variable configvars { platform compile include link strip tclstubs tkstubs
-                          debug_memory debug_symbols output preproc_define
-                          preproc_enum object optimize noassert threadflags
-                          sharedlibext link_debug link_release version
-                          link_preload ldoutput optimize
-                        }
-
-  }
-
-  # keep config options in a namespace
-  namespace eval c [list
-      foreach var $v::configvars {
-        variable $var
-     }
-  ]
+	variable code	     ;# this array collects all code snippets
+	variable curr	     ;# current digest
+	variable compiling 0 ;# indicates that the gcc/cc is available
+	variable failed 0    ;# set if compile fails
+	variable ininame ""
+	variable libfile ""
+	variable cflags ""
+	variable ldflags ""
+	variable targets ""    ;# cross-compile targets
+	variable objs [list] ;# compiled object for each csources
+	variable preload ""  ;# list of shared libraries to pre-load
+	variable libsrc ""
+	
+	# config variables
+	variable configvars { 
+	    platform compile include link strip tclstubs tkstubs
+	    debug_memory debug_symbols output preproc_define
+	    preproc_enum object optimize noassert threadflags
+	    sharedlibext link_debug link_release version
+	    link_preload ldoutput optimize
+	}
+	
+    }
+    
+    # keep config options in a namespace
+    namespace eval c \
+      [list foreach var $v::configvars { variable $var }]
 
 
-  proc emit {s} {
-    append v::code($v::curr) $s
-  }
+    proc emit {s} {
+	append v::code($v::curr) $s
+    }
 
-  proc emitln {{s ""}} {
-    emit "$s\n"
-  }
+    proc emitln {{s ""}} {
+	emit "$s\n"
+    }
 
     
-  proc reset {} {
+    proc reset {} {
 
-      if { [info exists v::code] } {
-	  unset v::code ;# this array collects all code snippets
-      }
+	if { [info exists v::code] } {
+	    unset v::code ;# this array collects all code snippets
+	}
 
-      if { [info exists v::curr] } {
-	  unset v::curr      ;# current digest
-      }
+	if { [info exists v::curr] } {
+	    unset v::curr      ;# current digest
+	}
 
-      set v::compiling 0 ;# indicates that the gcc/cc is available
-      set v::failed 0    ;# set if compile fails
-      set v::ininame ""
-      set v::libfile ""
-      set v::cflags ""
-      set v::ldflags ""
-      set v::targets ""    ;# cross-compile targets
-      set v::objs [list] ;# compiled object for each csources
-      set v::preload ""  ;# list of shared libraries to pre-load
-      set v::libsrc ""
-      
-      
-      catch { unset v::options }
-      array set v::options {outdir "" keepsrc 0 combine "standalone" appinit "" force 0}
-      array set v::options {I "" L "" tk 0 language "" lines 1}
+	set v::compiling 0 ;# indicates that the gcc/cc is available
+	set v::failed 0    ;# set if compile fails
+	set v::ininame ""
+	set v::libfile ""
+	set v::cflags ""
+	set v::ldflags ""
+	set v::targets ""    ;# cross-compile targets
+	set v::objs [list] ;# compiled object for each csources
+	set v::preload ""  ;# list of shared libraries to pre-load
+	set v::libsrc ""
+	
+	
+	catch { unset v::options }
+	array set v::options {outdir "" keepsrc 0 combine "standalone" appinit "" force 0}
+	array set v::options {I "" L "" tk 0 language "" lines 1}
 
 
-      ::critcl::config outdir /web/local-data/critcl/
-      ::critcl::cache /web/local-data/critcl/cache/
-      ::critcl::config force [::xo::kit::debug_mode_p]
-      ::critcl::config keepsrc 1
-      ::critcl::optimize
-      if { [::xo::kit::debug_mode_p] } {
-	  ::critcl::cflags -DDEBUG
-      }
+	::critcl::config outdir /web/local-data/critcl/
+	::critcl::cache /web/local-data/critcl/cache/
+	::critcl::config force [::xo::kit::debug_mode_p]
+	::critcl::config keepsrc 1
+	::critcl::optimize
+	if { [::xo::kit::debug_mode_p] } {
+	    ::critcl::cflags -DDEBUG
+	}
 
-      variable run
-      if { [interp exists $run] } {
-	  if { [catch "interp delete $run" errmsg] } {
-	      ns_log notice "failed to interp delete $run, errmsg=$errmsg"
-	  }
-      }
-      set run [interp create]
+	variable run
+	if { [interp exists $run] } {
+	    if { [catch "interp delete $run" errmsg] } {
+		ns_log notice "failed to interp delete $run, errmsg=$errmsg"
+	    }
+	}
+	set run [interp create]
 
-  }
+    }
 
 
   proc config {option args} {

@@ -220,6 +220,8 @@ proc ::templating::tag::val::final_rewrite {codearrVar node} {
     set doc [$node ownerDocument]
     $node replaceChild [$doc createTextNode $script] [$node first]
 
+    set id [$node @id ""]
+    set name [$node @name $id]
 
     # helps to associate the attributes from a datastore/dataset 
     # when the value is an element of that dataset so that
@@ -227,9 +229,14 @@ proc ::templating::tag::val::final_rewrite {codearrVar node} {
     # replace this by a specialized tag in the future
     set valuefrom [$node @x-value-from ""]
     if { ${valuefrom} ne {} } {
-	set id [$node @id ""]
-	set name [$node @name $id]
 	set codearr(${name},attributes) $codearr(${valuefrom},attributes)
+    }
+
+    # we have situation in which we setup a list of objects-dictionaries
+    # and we need to specify the attributes for the elements in that list
+    set attributes [$node @x-value-attributes ""]
+    foreach attname ${attributes} {
+	lappend codearr(${name},attributes) ${attname}
     }
 
 }

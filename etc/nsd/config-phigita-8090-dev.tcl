@@ -16,7 +16,7 @@ set production_mode_p 0
 set performance_mode_p 0
 set connsperthread 100
 set debug 0
-set dev 0
+set dev 1
 set reverse_proxy_mode_p 0
 set is_mail_server_p 0  ;# ::xo::mail::process_incoming_mail
 
