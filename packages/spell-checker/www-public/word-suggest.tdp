@@ -1,0 +1,112 @@
+contract {
+    param -id "q" -vcheck "notnull"
+}
+
+val -id "word" {
+
+    set q @{param.q}
+
+    set base .
+    set maxlength 80
+    set word [string range ${q} 0 ${maxlength}]
+
+    return ${word}
+
+}
+
+val -id "dictionary" {
+
+    set langclass [::ttext::langclass @{q}]
+    set lang [lindex [split [lindex $langclass 0] {.}] 0]
+    if { ${lang} eq {el} } {
+	set dictionary el
+    } else {
+	set dictionary en
+    }
+    
+
+}
+
+val -id "wordcheck" -x-value-attributes "correct_p wordlist" {
+    set word @{word}
+    set dictionary @{dictionary}
+
+    set encoding utf-8
+    set mode sgml
+    set o [::SpellChecker new -volatile  \
+	       -dictionary ${dictionary} \
+	       -encoding ${encoding}     \
+	       -mode ${mode}] 
+
+    set correct_p [${o} checkWord ${word}]
+    set wordlist [${o} suggestWord ${word}]
+
+    return [dict create correct_p $correct_p wordlist $wordlist]
+
+}
+
+
+
+val -id "google_ad_bottom" {
+    return [::xo::google::adsense::get_slot_html 2239820321 468 60]
+}
+val -id "google_ad_top_right" {
+    return [::xo::google::adsense::get_slot_html 2239820321 160 600]
+}
+
+val -id "context_bar" {
+    return [::xo::kit::context_bar "Suggested Words for \"@{word}\""]
+}
+
+master -title "@{word} - Spell Check" {
+    nt @{context_bar:noquote}
+
+    div -style "margin:25;padding:10;width:468;background:#f0f0f0;float:left;" {
+	tpl -with "wordcheck" {
+	    b {
+		tpl -if "@{correct_p}" {
+		    font -color "#006600" {
+			t "\"@{top.word}\" is spelled correctly."
+		    }
+		}
+		tpl -else "" {
+		    font -color "#990033" {
+			t "\"@{top.word}\" is misspelled."
+		    }
+		}
+	    }
+	    
+	    p
+	    tpl -if { @{wordlist} ne {} } {
+		b { t "Here are some suggestions:" }
+		div {
+		    ol {
+			tpl -for "wordlist" {
+			    li {
+				tpl -if { @{top.dictionary} eq {en} } {
+				    a -href "http://www.google.com/search?ie=utf-8&oe=utf-8&q=define:@{_}" {
+					t @{_}
+				    }
+				}
+				tpl -else "" {
+				    t @{_}
+				}					
+			    }
+			}
+		    }
+		}
+	    }
+	}
+
+	div {
+	    nt @{google_ad_bottom:noquote}
+	}
+
+    }
+
+
+
+    div -class little -style "padding:8;margin-left:550;border-left: 1px solid #efefef;" {
+	nt @{google_ad_top_right:noquote}
+    }
+}
