@@ -116,6 +116,8 @@ proc ::xo::mail::render_part_t {token {resultVar ""}} {
 	application/ppt  -
 	application/pdf  -
 	image/jpeg  -
+	image/gif -
+	image/png -
 	application/x-gzip  -
 	application/msword  -
 	application/octet-stream  -
