@@ -1,7 +1,154 @@
 package provide naivebayes 0.1
 
+::xo::lib::require critcl
 ::xo::lib::require persistence
-::xo::lib::require naivebayes
+
+####
+
+::critcl::reset
+
+::critcl::clibraries -L/opt/naviserver/lib -lm
+
+::critcl::config I /opt/naviserver/include
+
+::critcl::cinit {
+    // init_text
+
+    Tcl_CreateObjCommand(ip, "::naivebayes::classify", naivebayes_ClassifyCmd, NULL, NULL);
+
+} {
+    // init_exts
+}
+
+critcl::ccode {
+
+    #include "tcl.h"
+    #include "math.h"
+
+        #define CheckArgs(min,max,n,msg) \
+                     if ((objc < min) || (objc >max)) { \
+                         Tcl_WrongNumArgs(interp, n, objv, msg); \
+                         return TCL_ERROR; \
+                     }
+
+    static int naivebayes_ModuleInitialized;
+
+    int naivebayes_ClassifyCmd(ClientData clientData,Tcl_Interp *interp,int objc,Tcl_Obj * const objv[]) {
+	
+	CheckArgs(2,3,1,"modelVar wordsVar");
+	
+	Tcl_Obj *modelObjPtr = objv[1]; // Tcl_ObjGetVar2(interp,objv[1], NULL, TCL_LEAVE_ERR_MSG);
+	Tcl_Obj *wordListPtr = Tcl_ObjGetVar2(interp,objv[2], NULL, TCL_LEAVE_ERR_MSG);
+
+	int numWords;
+	if (TCL_OK != Tcl_ListObjLength(interp, wordListPtr, &numWords)) {
+	    // some error
+	    return TCL_ERROR;
+	}
+
+	// fprintf(stderr,"%s\n",Tcl_GetString(wordListPtr));
+
+
+	Tcl_Obj *nameObjPtr;
+	nameObjPtr = Tcl_NewStringObj("categories",-1);
+
+	Tcl_Obj *catListPtr = Tcl_ObjGetVar2(interp, modelObjPtr, nameObjPtr, TCL_LEAVE_ERR_MSG);
+
+	if (!catListPtr) {
+	    fprintf(stderr, "no categories found\n");
+	    return TCL_ERROR;
+	}
+
+	int numCategories;
+	if (TCL_OK != Tcl_ListObjLength(interp, catListPtr, &numCategories)) {
+	    // some error occurred
+	    return TCL_ERROR;
+	}
+
+
+
+	// fprintf(stderr, "numWords=%d categories: %s\n", numWords, Tcl_GetString(catListPtr));
+
+	double max_pr = -9999999999;
+
+	Tcl_Obj *maxCatObjPtr = NULL;
+
+	Tcl_Obj *catObjPtr;
+	Tcl_Obj *wordObjPtr;
+
+	int i,j;
+	for(i=0;i<numCategories;++i) 
+	{
+
+	 Tcl_ListObjIndex(interp,catListPtr,i,&catObjPtr);
+
+
+	 nameObjPtr = Tcl_NewStringObj("cat_",-1);
+	 Tcl_AppendObjToObj(nameObjPtr, catObjPtr);
+	 Tcl_AppendObjToObj(nameObjPtr, Tcl_NewStringObj("_default_pr",-1));
+	 Tcl_Obj *prCatDefaultObjPtr = Tcl_ObjGetVar2(interp,modelObjPtr,nameObjPtr,TCL_LEAVE_ERR_MSG);
+
+	 double pr_cat_default;
+	 Tcl_GetDoubleFromObj(interp,prCatDefaultObjPtr, &pr_cat_default);
+
+	 nameObjPtr = Tcl_NewStringObj("cat_",-1);
+	 Tcl_AppendObjToObj(nameObjPtr, catObjPtr);
+	 Tcl_Obj *prCatObjPtr = Tcl_ObjGetVar2(interp,modelObjPtr,nameObjPtr,TCL_LEAVE_ERR_MSG);
+
+	 double pr_cat;
+	 Tcl_GetDoubleFromObj(interp,prCatDefaultObjPtr, &pr_cat);
+
+	 if (!pr_cat) {continue;}
+	 // fprintf(stderr, "category: %s pr_cat=%f pr_cat_default=%f numWords=%d\n", Tcl_GetString(catObjPtr),pr_cat,pr_cat_default,numWords);
+
+	 double p;
+	 p = 0.0;
+	 for(j=0; j<numWords; ++j) 
+	 {
+
+	  Tcl_ListObjIndex(interp,wordListPtr,j,&wordObjPtr);
+
+	  nameObjPtr = Tcl_NewStringObj("word_",-1);
+	  Tcl_AppendObjToObj(nameObjPtr, wordObjPtr);
+	  Tcl_AppendObjToObj(nameObjPtr, Tcl_NewStringObj(",",-1));
+	  Tcl_AppendObjToObj(nameObjPtr, catObjPtr);
+
+	  Tcl_Obj *prWordGivenCatObjPtr = Tcl_ObjGetVar2(interp,modelObjPtr,nameObjPtr,0);
+
+	  double pr_word_given_cat;
+	  if (prWordGivenCatObjPtr) {
+	      Tcl_GetDoubleFromObj(interp,prWordGivenCatObjPtr, &pr_word_given_cat);
+	  } else {
+	      pr_word_given_cat = pr_cat_default;
+	  }
+
+	  p += log(pr_word_given_cat);
+      }
+	 p += log(pr_cat);
+
+
+	 // fprintf(stderr,"category: %s p=%f\n",Tcl_GetString(catObjPtr),p);
+	    
+	 if (p > max_pr) {
+	     max_pr = p;
+	     maxCatObjPtr = catObjPtr;
+	 }
+
+     }
+
+	if (maxCatObjPtr) {
+	    Tcl_SetObjResult(interp,Tcl_DuplicateObj(maxCatObjPtr));
+	}
+	return TCL_OK;
+
+    }
+
+
+}
+
+::critcl::cbuild [file normalize [info script]]
+
+# ::critcl::ccodedir naivebayes_c
 
 namespace eval ::naivebayes {;}
 
@@ -252,6 +399,11 @@ proc ::naivebayes::classify_naive_bayes_text {modelVar contentVar} {
     # wordcount_helper wordcount_text content
     # set words [array names wordcount_text]
     set words [clean_and_tokenize content]
+
+    return [::naivebayes::classify pr words]
+
+    # ---- 
+
 
     set categories $pr(categories)
 
