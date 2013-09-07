@@ -12,3 +12,6 @@ xpath_article_cleanup {
     {//a[@id="itemImageGalleryAnchor"]}
 
 }
+end_of_text_cleanup_p 1
+end_of_text_cleanup_coeff "0"
+

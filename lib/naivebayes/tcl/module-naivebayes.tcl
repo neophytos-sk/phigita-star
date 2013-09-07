@@ -1,6 +1,7 @@
 package provide naivebayes 0.1
 
 ::xo::lib::require persistence
+::xo::lib::require naivebayes
 
 namespace eval ::naivebayes {;}
 

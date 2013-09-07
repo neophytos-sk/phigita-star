@@ -11,9 +11,9 @@ proc ::feed_reader::classifier::get_training_dir {} {
 }
 
 proc ::feed_reader::classifier::check_axis_name {axis} {
-    set re {^[[:alpha:]]{2}/[[:alnum:]]+$}
+    set re {^[[:alpha:]]{2}/[[:alnum:]_]+$}
     if { ![regexp -- ${re} ${axis}] } {
-	error "axis=${axis} name must be of the form lang/alnum, for example, el/topic"
+	error "axis=${axis} name must be of the form lang/alnum (or underscore), for example, el/topic"
     }
 }
 
