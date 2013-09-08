@@ -2,49 +2,154 @@
 #include "math.h"
 
 #include "common.h"
+#include "persistence.h"
+
+
+typedef struct {
+  Tcl_Obj *name;
+  int num_docs;
+  int num_words;
+  double pr;
+  double default_word_pr;
+  Tcl_HashTable wordcount;
+  Tcl_HashTable word_pr;
+} category_t;
+
 
 static int naivebayes_ModuleInitialized;
 
-int persistence_GetData(Tcl_Interp *interp, Tcl_Obj *pathPtr, Tcl_Obj *content) {
 
-  Tcl_Channel channel = Tcl_FSOpenFileChannel(interp,pathPtr,"r",0644);
-  if (!channel) {
-    return TCL_ERROR;
-  }
 
-  Tcl_ReadChars(channel,content,-1,0);
+int wordcount_helper(Tcl_Interp *interp, category_t *c, Tcl_Obj *content);
+int compute_category_probabilities(category_t *c, int total_docs, int vocabulary_size);
+int compute_word_probabilities(category_t *c, int vocabulary_size);
 
-  Tcl_Close(interp,channel);
 
+int initialize_category(category_t *c) {
+  c->name = NULL;
+  c->num_docs = 0;
+  c->num_words = 0;
+  c->pr = 0;
+  c->default_word_pr = 0;
+  Tcl_InitHashTable(&c->wordcount,TCL_STRING_KEYS);
   return TCL_OK;
-}
+}  
 
-
-int wordcount_helper(Tcl_Interp *interp, Tcl_HashTable *wordcount_tablePtr, Tcl_Obj *content) {
+int wordcount_helper(Tcl_Interp *interp, category_t *c, Tcl_Obj *content) {
 
   // TODO: set tokens [clean_and_tokenize content]
   Tcl_Obj *tokens = content;
-  int numTokens;
-  Tcl_ListObjLength(interp,tokens,&numTokens);
+  Tcl_ListObjLength(interp,tokens,&c->num_words);
 
   int i;
-  for (i=1; i<numTokens; ++i) {
+  for (i=1; i < c->num_words; ++i) {
 
     Tcl_Obj *word_objPtr;
     Tcl_ListObjIndex(interp, tokens, i, &word_objPtr);
 
     const char *word_key = Tcl_GetString(word_objPtr);
-    Tcl_HashEntry *word_entryPtr = Tcl_FindHashEntry(wordcount_tablePtr, word_key);
+
     int value;
-    if (word_entryPtr) {
-      // ClientData value
-      value = (int) Tcl_GetHashValue(word_entryPtr);
+    int new;
+    Tcl_HashEntry *entryPtr = 
+      Tcl_CreateHashEntry(&(c->wordcount), word_key, &new);
+
+    if (new) {
+
+      // new word
+      value = 1;
+
     } else {
-      value = 0;
+
+      // existing word
+      value = *((int *) Tcl_GetHashValue(entryPtr));
+      value++;
+
     }
-    Tcl_SetHashValue(word_entryPtr, value+1);
+
+    Tcl_SetHashValue(entryPtr, &value);
 
   }
+
+}
+
+int update_vocabulary_count(Tcl_HashTable *vocabulary_tablePtr, category_t *c, int *vocabulary_sizePtr) {
+
+  Tcl_HashSearch searchPtr;
+  Tcl_HashEntry *entryPtr = Tcl_FirstHashEntry(&c->wordcount, &searchPtr);
+  while(entryPtr) {
+    const char *word_key = 
+      Tcl_GetHashKey(&c->wordcount, entryPtr);
+
+    int value;
+    int new;
+    Tcl_HashEntry *vocabulary_word_entryPtr = 
+      Tcl_CreateHashEntry(vocabulary_tablePtr, word_key, &new);
+
+    if (new) {
+
+      // new word
+      value = 0;
+      (*vocabulary_sizePtr)++;
+
+    } else {
+
+      // existing word
+      value = *((int *) Tcl_GetHashValue(vocabulary_word_entryPtr));
+      value++;
+
+    }
+
+    Tcl_SetHashValue(vocabulary_word_entryPtr, &value);
+
+    entryPtr = Tcl_NextHashEntry(&searchPtr);
+  }
+
+  return TCL_OK;
+
+}
+
+int compute_category_probabilities(category_t *c, int total_docs, int vocabulary_size) {
+
+  if ( c->num_docs != 0 ) {
+
+    c->pr = ((double) c->num_docs) / total_docs;
+
+    // for words in the vocabulary that are not found
+    // in the category
+    c->default_word_pr = 1.0 / (c->num_words + vocabulary_size );
+
+  }
+
+  // compute word probabilities given this category
+  return compute_word_probabilities(c, vocabulary_size);
+  
+}
+
+
+int compute_word_probabilities(category_t *c, int vocabulary_size) {
+
+    Tcl_HashSearch searchPtr;
+    Tcl_HashEntry *entryPtr = Tcl_FirstHashEntry(&c->wordcount,&searchPtr);
+    while(entryPtr) {
+      
+      const char *word_key = Tcl_GetHashKey(&c->wordcount, entryPtr);
+
+      int num_occurrences = *((int *) Tcl_GetHashValue(entryPtr));
+
+      double value = (1.0 + (double) num_occurrences) / ((double) c->num_words + vocabulary_size);
+
+      int new;
+      Tcl_HashEntry *newEntryPtr = Tcl_CreateHashEntry(&c->word_pr, word_key, &new);
+
+      // it must be a new entry
+      Tcl_SetHashValue(newEntryPtr,&value);
+
+      entryPtr = Tcl_NextHashEntry(&searchPtr);
+
+    }
+
+    return TCL_OK;
 
 }
 
@@ -56,31 +161,36 @@ int naivebayes_LearnCmd(ClientData clientData,Tcl_Interp *interp,int objc,Tcl_Ob
   // examples = multirow of slices
   // categories = list
   Tcl_Obj *examples = Tcl_ObjGetVar2(interp, objv[1], NULL, TCL_LEAVE_ERR_MSG);
-  Tcl_Obj *categories = Tcl_ObjGetVar2(interp, objv[2], NULL, TCL_LEAVE_ERR_MSG);
+  Tcl_Obj *category_names = Tcl_ObjGetVar2(interp, objv[2], NULL, TCL_LEAVE_ERR_MSG);
 
   int num_categories;
-  Tcl_ListObjLength(interp, categories, &num_categories);
+  Tcl_ListObjLength(interp, category_names, &num_categories);
 
-  // number of docs and words in each category
-  int *num_docs = (int *) Tcl_Alloc(num_categories * sizeof(int));
-  int *num_words = (int *) Tcl_Alloc(num_categories * sizeof(int));
+  category_t *categories = (category_t *) Tcl_Alloc(num_categories * sizeof(category_t));
 
-
-  Tcl_HashTable **wordcount_tablePtr = (Tcl_HashTable **) Tcl_Alloc(num_categories * sizeof(Tcl_HashTable));
   Tcl_HashTable vocabulary;
   Tcl_InitHashTable(&vocabulary, TCL_STRING_KEYS);
 
-  int i, j, total_docs;
-  for (i=1; i<num_categories; ++i) {
-    Tcl_Obj *slice;
-    Tcl_Obj *category;
-    Tcl_ListObjIndex(interp, examples, i, &slice);
-    Tcl_ListObjIndex(interp, categories, i, &category);
+  // initialize vocabulary_size
+  int vocabulary_size = 0;
 
-    Tcl_InitHashTable(wordcount_tablePtr[i],TCL_STRING_KEYS);
+
+  int i, j, total_docs;
+  for (i=1; i < num_categories; ++i) {
+
+    // initialize category structure
+    initialize_category(&categories[i]);
+
+    // get the category name and set it in the structure
+    Tcl_ListObjIndex(interp, category_names, i, &categories[i].name);
+
+    // get the ith slice
+    Tcl_Obj *slice;
+    Tcl_ListObjIndex(interp, examples, i, &slice);
 
     int slicelen;
     Tcl_ListObjLength(interp, slice, &slicelen);
+
     for (j=1; j< slicelen; ++j) {
       Tcl_Obj *filename;
       Tcl_ListObjIndex(interp, slice, j, &filename);
@@ -92,25 +202,12 @@ int naivebayes_LearnCmd(ClientData clientData,Tcl_Interp *interp,int objc,Tcl_Ob
       persistence_GetData(interp, filename, content);
 
       // count words in content and update wordcount for category i
-      wordcount_helper(interp, wordcount_tablePtr[i],content);
+      wordcount_helper(interp, &categories[i],content);
 
       // update the vocabulary hash table
-      num_words[i] = 0;
-      Tcl_HashSearch *searchPtr;
-      Tcl_HashEntry *category_word_entryPtr = Tcl_FirstHashEntry(wordcount_tablePtr[i], searchPtr);
-      while(category_word_entryPtr) {
-	const char *word_key = Tcl_GetHashKey(wordcount_tablePtr[i], category_word_entryPtr);
+      update_vocabulary_count(&vocabulary, &categories[i], &vocabulary_size);
 
-	Tcl_HashEntry *vocabulary_word_entryPtr = Tcl_FindHashEntry(&vocabulary, word_key);
-	ClientData value = Tcl_GetHashValue(vocabulary_word_entryPtr);
-	Tcl_SetHashValue(vocabulary_word_entryPtr, value+1);
-
-	category_word_entryPtr = Tcl_NextHashEntry(searchPtr);
-
-	num_words[i]++;
-      }
-
-      num_docs[i] = slicelen;
+      categories[i].num_docs = slicelen;
 
     }
 
@@ -118,9 +215,70 @@ int naivebayes_LearnCmd(ClientData clientData,Tcl_Interp *interp,int objc,Tcl_Ob
 
   }
 
-  Tcl_Free(wordcount_tablePtr);
-  Tcl_Free(num_docs);
-  Tcl_Free(num_words);
+  /*
+    # TODO: use zipf's law to compute how many 
+    # frequent and rare words to remove
+
+    #
+    # mark top 300 words for removal
+    #
+    set remove_frequent_words [wordcount_topN vocabulary 300]
+    puts "frequent words (to be removed):"
+    print_words $remove_frequent_words
+
+    #
+    # mark words with less than 20 occurrences for removal
+    #
+    set remove_rare_words [list]
+    foreach word [array names vocabulary] {
+	if { $vocabulary(${word}) <= 20 } {
+	    lappend remove_rare_words ${word}
+	}
+    }
+    puts "rare words (to be removed):"
+    print_words ${remove_rare_words}
+
+    #
+    # actually remove marked words
+    #
+
+    set remove_words [concat ${remove_frequent_words} ${remove_rare_words}]
+    foreach word ${remove_words} {
+	if { ![info exists vocabulary(${word})] } {
+	    continue
+	}
+	unset vocabulary(${word})
+	incr vocabulary_size -1
+	foreach category ${multirow_categories} {
+	    if { [info exists wordcount_${category}(${word})] } {
+		unset wordcount_${category}(${word})
+		incr num_words(${category}) -1
+	    }
+	}
+    }
+
+
+    set vocabulary_size [array size vocabulary]
+    puts ""
+    puts "--->>> model vocabulary"
+    puts total_words_in_vocabulary=$vocabulary_size
+    print_words [wordcount_topN vocabulary 40]
+
+    foreach category ${multirow_categories} {
+	puts "--->>> model category = ${category}"
+	puts "num_words(${category})=$num_words(${category})"
+	puts "num_docs(${category})=$num_docs(${category})"
+	print_words [wordcount_topN wordcount_${category} 40]
+    }
+
+  */
+
+
+  for (i=0; i < num_categories; ++i) {
+    compute_category_probabilities(&categories[i], total_docs, vocabulary_size);
+  }
+
+  Tcl_Free(categories);
 
 }
 

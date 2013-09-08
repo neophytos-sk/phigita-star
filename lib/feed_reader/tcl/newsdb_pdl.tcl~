@@ -1,3 +1,0 @@
-
-::persistence::orm::define_class news_item
-::persistence::orm::define_class content_item

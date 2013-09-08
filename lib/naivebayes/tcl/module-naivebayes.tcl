@@ -22,6 +22,7 @@ set package_dir [file dirname [file dirname [info script]]]
     // init_exts
 }
 
+critcl::csources ${package_dir}/c/persistence.c
 critcl::ccode [::util::readfile ${package_dir}/c/naivebayes.c]
 ::critcl::cbuild [file normalize [info script]]
 
