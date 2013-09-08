@@ -19,6 +19,37 @@ int persistence_GetData(Tcl_Interp *interp, Tcl_Obj *pathPtr, Tcl_Obj *content) 
   return TCL_OK;
 }
 
+
+int wordcount_helper(Tcl_Interp *interp, Tcl_HashTable *wordcount_tablePtr, Tcl_Obj *content) {
+
+  // TODO: set tokens [clean_and_tokenize content]
+  Tcl_Obj *tokens = content;
+  int numTokens;
+  Tcl_ListObjLength(interp,tokens,&numTokens);
+
+  int i;
+  for (i=1; i<numTokens; ++i) {
+
+    Tcl_Obj *word_objPtr;
+    Tcl_ListObjIndex(interp, tokens, i, &word_objPtr);
+
+    const char *word_key = Tcl_GetString(word_objPtr);
+    Tcl_HashEntry *word_entryPtr = Tcl_FindHashEntry(wordcount_tablePtr, word_key);
+    int value;
+    if (word_entryPtr) {
+      // ClientData value
+      value = (int) Tcl_GetHashValue(word_entryPtr);
+    } else {
+      value = 0;
+    }
+    Tcl_SetHashValue(word_entryPtr, value+1);
+
+  }
+
+}
+
+
+
 int naivebayes_LearnCmd(ClientData clientData,Tcl_Interp *interp,int objc,Tcl_Obj * const objv[]) {
   CheckArgs(2,3,1,"examplesVar categoriesVar");
 
@@ -29,6 +60,11 @@ int naivebayes_LearnCmd(ClientData clientData,Tcl_Interp *interp,int objc,Tcl_Ob
 
   int num_categories;
   Tcl_ListObjLength(interp, categories, &num_categories);
+
+  // number of docs and words in each category
+  int *num_docs = (int *) Tcl_Alloc(num_categories * sizeof(int));
+  int *num_words = (int *) Tcl_Alloc(num_categories * sizeof(int));
+
 
   Tcl_HashTable **wordcount_tablePtr = (Tcl_HashTable **) Tcl_Alloc(num_categories * sizeof(Tcl_HashTable));
   Tcl_HashTable vocabulary;
@@ -51,35 +87,40 @@ int naivebayes_LearnCmd(ClientData clientData,Tcl_Interp *interp,int objc,Tcl_Ob
 
       Tcl_Obj *content = Tcl_NewObj();
       Tcl_IncrRefCount(content);
-      persistence_GetData(interp, filename, content);
-      // wordcount_helper &wordcount_tablePtr[i] content //  wordcount_${category} content
 
+      // read the data from the given file
+      persistence_GetData(interp, filename, content);
+
+      // count words in content and update wordcount for category i
+      wordcount_helper(interp, wordcount_tablePtr[i],content);
 
       // update the vocabulary hash table
+      num_words[i] = 0;
       Tcl_HashSearch *searchPtr;
-      Tcl_HashEntry *entryPtr = Tcl_FirstHashEntry(wordcount_tablePtr[i], searchPtr);
-      while(entryPtr) {
-	const char *word_key = Tcl_GetHashKey(wordcount_tablePtr[i], entryPtr);
+      Tcl_HashEntry *category_word_entryPtr = Tcl_FirstHashEntry(wordcount_tablePtr[i], searchPtr);
+      while(category_word_entryPtr) {
+	const char *word_key = Tcl_GetHashKey(wordcount_tablePtr[i], category_word_entryPtr);
 
-	Tcl_HashEntry *word_entryPtr = Tcl_FindHashEntry(&vocabulary, word_key);
-	ClientData value = Tcl_GetHashValue(word_entryPtr);
-	Tcl_SetHashValue(word_entryPtr, value+1);
+	Tcl_HashEntry *vocabulary_word_entryPtr = Tcl_FindHashEntry(&vocabulary, word_key);
+	ClientData value = Tcl_GetHashValue(vocabulary_word_entryPtr);
+	Tcl_SetHashValue(vocabulary_word_entryPtr, value+1);
 
-	entryPtr = Tcl_NextHashEntry(searchPtr);
+	category_word_entryPtr = Tcl_NextHashEntry(searchPtr);
+
+	num_words[i]++;
       }
+
+      num_docs[i] = slicelen;
 
     }
 
-
-    // num_docs(${category}) = slicelen;
-    // num_words(${category}) = [array size wordcount_${category}]
-
     total_docs += slicelen;
-
 
   }
 
   Tcl_Free(wordcount_tablePtr);
+  Tcl_Free(num_docs);
+  Tcl_Free(num_words);
 
 }
 
