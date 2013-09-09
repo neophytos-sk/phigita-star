@@ -413,7 +413,7 @@ proc ::templating::compiler::compile_template_with {codearrVar node depth inside
 
 	# correct if singleton=true was specified on datastore tag
 	if { ![exists_singleton_datastore codearr ${varname}] } {
-	    error "${varname} is not a singleton datastore - <tpl with=\"\"> only with singletons"
+	    ns_log notice "${varname} is not a singleton datastore - <tpl with=\"\"> only with singletons"
 	}
 	set obj_expr "Tcl_Obj *${block} = [getter_for_varname codearr ${parent_block} $varname "getvar_"];"
 
