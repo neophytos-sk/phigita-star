@@ -181,6 +181,37 @@ proc ::dom::xpathFunc::similar_to_text {ctxNode pos nodeListNode nodeList args} 
 
 }
 
+proc ::dom::xpathFunc::ends-with {ctxNode pos nodeListNode nodeList args} {
+
+    if { [llength ${args}] != 4  } {
+        error "coalesce(string, string): wrong # of args"
+    }
+
+    lassign $args arg1Typ arg1Value arg2Typ arg2Value
+
+    set str1 [::dom::xpathFuncHelper::coerce2string ${arg1Typ} ${arg1Value}]
+    set str2 $arg2Value
+
+    set result false
+    set str2_len [string length ${str2}]
+    if { $str2_len } {
+        if { $str2_len == 1 } {
+            set from_index end
+        } else {
+            set from_index "end-[expr { ${str2_len} - 1 }]"
+        }
+        set str1_substring [string range ${str1} end-${str2_len} end]
+        if { $str1_substring eq $str2 } {
+            set result true
+        }
+    } else {
+        set result true
+    }
+
+    return [list string ${result}]
+}
+
+
 proc ::dom::xpathFunc::coalesce {ctxNode pos nodeListNode nodeList args} {
 
     if { [llength ${args}] < 4  } {

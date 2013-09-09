@@ -1,0 +1,16 @@
+url http://www.mcit.gov.cy/mcit/mcit.nsf/dmlindex_gr/dmlindex_gr?OpenDocument
+include_re {/mcit\.nsf/All/[A-Z0-9]{32}\?OpenDocument$}
+xpath_feed_item {//a[@href and @class="links"]}
+htmltidy_feed_p 1
+htmltidy_article_p 1
+xpath_article_title {returnstring(//center/span[@class="text2"])}
+xpath_article_body {returntext(//td[@width="100%" and @align="justify"]/div[@align="justify"])}
+xpath_article_image {
+    {values(//td[@width="100%" and @align="justify"]/div[@align="justify"]/div[@align="justify"]//img/@src)}
+}
+xpath_article_date {returndate(//td[@width="694"]/center/span[@class="text3"],"%d/%m/%Y")}
+xpath_article_modified_time {}
+xpath_article_attachment {
+    {values(//a[@class="text1" and @target="_blank" and ends-with(@href,".pdf")]/@href)}
+}
+allow_empty_body_p 1

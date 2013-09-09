@@ -1,0 +1,12 @@
+url http://www.moi.gov.cy/moi/pio/pio.nsf/releases_gr/releases_gr?OpenForm
+include_re {/pio\.nsf/All/[A-Z0-9]{32}\?Opendocument$}
+xpath_feed_item {//a[@href and @class="linksblue"]}
+htmltidy_feed_p 1
+htmltidy_article_p 1
+xpath_article_title {returnstring(//td[@width="816" and @bgcolor="#FFFFFF" and @colspan="3"]/span[@class="text5"])}
+xpath_article_body {returntext(//tr[@valign="top" and position()=last()]/td[@width="816" and @bgcolor="#FFFFFF" and @colspan="3"])}
+xpath_article_image {
+    {values(//td[@width="816" and @bgcolor="#FFFFFF" and @colspan="3"]//img/@src)}
+}
+xpath_article_date {returndate(//td[@width="816" and @bgcolor="#FFFFFF" and @colspan="3"]/span[@class="text1"],"%d/%m/%Y")}
+xpath_article_modified_time {}

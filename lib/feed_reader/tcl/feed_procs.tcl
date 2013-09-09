@@ -513,7 +513,8 @@ proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar infoVa
 
     $doc delete
 
-    if { ${body_length} == 0 } {
+    set allow_empty_body_p [get_value_if feed(allow_empty_body_p) 0]
+    if { ${body_length} == 0 && !${allow_empty_body_p} } {
 	# puts "--->>> zero-length body"
 	return -1 ;# error due to zero-length body
     }
