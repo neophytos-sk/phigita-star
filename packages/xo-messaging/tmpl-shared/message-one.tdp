@@ -18,6 +18,7 @@ datastore \
 
 datastore \
     -id echodata \
+    -singleton true \
     -scope context_user \
     -from_class ::echo::Message \
     -where [list "id=:id"] \
@@ -92,11 +93,11 @@ master -src "/templates/www-shared.master.inc" -title "echo - @{object_get.userd
     include -src "/templates/www-shared.tabs.inc"
 
     tpl -with "echodata" {
-
 	div -class "well" {
 	    div -class "echo-message" {
 		nt @{content:noquote}
 	    }
+
 	    div -class "echo-date" {
 		small {
 		    t "@{pretty_date} via @{device}"

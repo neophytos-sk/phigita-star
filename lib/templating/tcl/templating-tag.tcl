@@ -561,6 +561,7 @@ proc ::templating::tag::datastore::final_rewrite {codearrVar node} {
 	}
     }
 
+    set codearr(${name},singleton) ${singleton}
     set codearr(${name},sql_attributes) ${sql_attributes}
     set codearr(${name},extend_attributes) ${extend_attrs}
     set codearr(${name},attributes) [concat ${sql_attributes} ${extend_attrs}]

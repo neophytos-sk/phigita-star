@@ -171,6 +171,7 @@ master -src "/templates/www-shared.master.inc" -title "@{object_get.contextuserd
     # latest echo messages & media items
     datastore \
 	-id echodata \
+	-singleton true \
 	-scope context_user \
 	-from_class ::echo::Message \
 	-where_if { "@{user_id} == 0" => "public_p='t'" } \

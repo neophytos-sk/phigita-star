@@ -700,6 +700,14 @@ proc add_global_string {codearrVar global_name global_string} {
 }
 
 
+proc exists_singleton_datastore {codearrVar global_name} {
+    upvar $codearrVar codearr
+    if { [info exists codearr(${global_name},singleton)] && $codearr(${global_name},singleton) } {
+	return true
+    }
+    return false
+}
+
 proc ::xo::tdp::compile_to_c_helper {codearrVar templateDoc} {
 
     upvar $codearrVar codearr
