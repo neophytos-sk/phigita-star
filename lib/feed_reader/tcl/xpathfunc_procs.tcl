@@ -188,11 +188,10 @@ proc ::dom::xpathFunc::ends-with {ctxNode pos nodeListNode nodeList args} {
     }
 
     lassign $args arg1Typ arg1Value arg2Typ arg2Value
-
-    set str1 [::dom::xpathFuncHelper::coerce2string ${arg1Typ} ${arg1Value}]
+    set str1 [lindex $arg1Value $pos]
     set str2 $arg2Value
 
-    set result false
+    set result 0
     set str2_len [string length ${str2}]
     if { $str2_len } {
         if { $str2_len == 1 } {
@@ -200,15 +199,15 @@ proc ::dom::xpathFunc::ends-with {ctxNode pos nodeListNode nodeList args} {
         } else {
             set from_index "end-[expr { ${str2_len} - 1 }]"
         }
-        set str1_substring [string range ${str1} end-${str2_len} end]
+        set str1_substring [string range ${str1} ${from_index} end]
         if { $str1_substring eq $str2 } {
-            set result true
+            set result 1
         }
     } else {
-        set result true
+        set result 1
     }
+    return [list number ${result}]
 
-    return [list string ${result}]
 }
 
 
