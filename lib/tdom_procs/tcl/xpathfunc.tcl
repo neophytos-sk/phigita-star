@@ -320,40 +320,49 @@ proc ::dom::xpathFunc::returndate {ctxNode pos nodeListNode nodeList args} {
 
     set ts_string [::dom::xpathFuncHelper::coerce2string ${arg1Typ} ${arg1Value}]
 
-    set input_format ${arg2Value}
-    set ts [string trim ${ts_string}]
+    set input_formats ${arg2Value}
+    if { [llength ${arg2Value}] > 1 && [lindex ${arg2Value} end] ne {auto} } {
+        set input_formats [list ${arg2Value}]
+    }
+
     set result ""
-    if { ${ts} ne {} } {
+    foreach input_format ${input_formats} {
 
-        if { ${input_format} in {auto auto_noalpha} } {
-            # date recognizer using date/string shapes, e.g. dd-dd-dddd OR d-m-Y
+        set ts [string trim ${ts_string}]
+        set result ""
+        if { ${ts} ne {} } {
 
-	    if { ${input_format} eq {auto_noalpha} } {
-		regsub -all -- {[^[:digit:]/,\-:\. ]} ${ts} {} ts
-	    } else {
-		regsub -all -- {[^[:alnum:][:punct:] ]} ${ts} {} ts
-	    }
+            if { ${input_format} in {auto auto_noalpha} } {
+                # date recognizer using date/string shapes, e.g. dd-dd-dddd OR d-m-Y
+
+                if { ${input_format} eq {auto_noalpha} } {
+                    regsub -all -- {[^[:digit:]/,\-:\. ]} ${ts} {} ts
+                } else {
+                    regsub -all -- {[^[:alnum:][:punct:] ]} ${ts} {} ts
+                }
 
 
-            variable date_format
+                variable date_format
 
-            set shape [returndate_helper__date_shape ${ts}]
+                set shape [returndate_helper__date_shape ${ts}]
 
-            if { [info exists date_format(${shape})] } {
-		set input_format $date_format(${shape})
-            } else {
-		return [list string ""]
+                if { [info exists date_format(${shape})] } {
+                    set input_format $date_format(${shape})
+                } else {
+                    return [list string ""]
+                }
+
             }
 
+
+            if { [catch {set timeval [clock scan ${ts} -format ${input_format} -locale ${locale}]} errmsg] } {
+                # puts "errmsg=${errmsg} ts=${ts} input_format=${input_format} locale=${locale}"
+                continue
+            } else {
+                set result [clock format ${timeval} -format ${output_format}]
+                break
+            }
         }
-
-
-	if { [catch {set timeval [clock scan ${ts} -format ${input_format} -locale ${locale}]} errmsg] } {
-	    puts "errmsg=${errmsg} ts=${ts} input_format=${input_format} locale=${locale}"
-	    return [list string ""]
-	}
-
-	set result [clock format ${timeval} -format ${output_format}]
     }
     return [list string ${result}]
 }

@@ -280,10 +280,10 @@ proc ::feed_reader::classifier::classify {axis contentVar} {
 
     variable __nb_model_topic
     if { ![info exists __nb_model_topic] } {
-	::naivebayes::load_naive_bayes_model __nb_model_topic ${filename}
+	::naivebayes::load_naive_bayes_model __nb_model_${axis} ${filename}
     }
 
-    set category [::naivebayes::classify_naive_bayes_text __nb_model_topic content]
+    set category [::naivebayes::classify_naive_bayes_text __nb_model_${axis} content]
 
 
     # sub-category classification
@@ -298,11 +298,11 @@ proc ::feed_reader::classifier::classify {axis contentVar} {
     set subcategory ""
     if { [::persistence::exists_data_p ${subcategory_filename}] } {
 
-	if { ![info exists __nb_model_topic_${category}] } {
-	    ::naivebayes::load_naive_bayes_model __nb_model_topic_${category} ${subcategory_filename}
+	if { ![info exists __nb_model_${axis}_${category}] } {
+	    ::naivebayes::load_naive_bayes_model __nb_model_${axis}_${category} ${subcategory_filename}
 	}
 	
-	set subcategory [::naivebayes::classify_naive_bayes_text __nb_model_topic_${category} content]
+	set subcategory [::naivebayes::classify_naive_bayes_text __nb_model_${axis}_${category} content]
     }
 
     return [file join ${category} ${subcategory}]

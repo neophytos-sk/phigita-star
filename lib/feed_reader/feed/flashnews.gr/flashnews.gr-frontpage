@@ -1,0 +1,19 @@
+url http://www.flashnews.gr
+include_re {/page\.ashx\?pid=[0-9]+&aid=[0-9]+&cid=[0-9]+$}
+htmltidy_feed_p 0
+htmltidy_article_p 0
+xpath_article_title {returnstring(//div[@id="ctl00_ArticleLeftZone_ctl00_pnlArticle"]/div[@class="mytitle"])}
+xpath_article_body {returntext(//div[@id="ctl00_ArticleLeftZone_ctl00_pnlArticle"]/div[@class="content"])}
+xpath_article_image {{values(//a[@id="ctl00_ArticleLeftZone_ctl00_hrefImage"]/img/@src)}}
+xpath_article_date {
+    normalizedate(
+        //div[@id="ctl00_ArticleLeftZone_ctl00_pnlArticle"]/div[@class="date"]/text(),
+        "el_GR",
+        "
+            {%A, %d %B, %Y | %H:%M}
+            {%A, %d %B, %Y}
+            {auto}
+        " 
+    )
+}
+xpath_article_modified_time {}
