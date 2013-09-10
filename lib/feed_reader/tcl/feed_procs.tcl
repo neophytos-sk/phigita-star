@@ -1683,8 +1683,8 @@ proc ::feed_reader::print_log_entry {itemVar {contextVar ""}} {
     load_content item $item(contentsha1)
     set content [concat $item(title) $item(body)]
     set topic_and_subtopic [classifier::classify el/topic content]
-    # set edition classifier::classify el/edition content
-    set edition ""
+    set edition [classifier::classify el/edition content]
+    #set edition ""
 
     lassign [split ${topic_and_subtopic} {/}] topic subtopic
 

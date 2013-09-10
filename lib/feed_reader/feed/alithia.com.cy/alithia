@@ -1,5 +1,6 @@
 url http://www.alithia.com.cy/
 include_re {/item/[0-9]+}
+check_for_revisions 1
 xpath_article_title {returnstring(//h2[@class="itemTitle"]/a)}
 xpath_article_body {returntext(//div[@class="itemBody"]/*[@class="itemIntroText"])}
 xpath_article_date {returndate(//span[@class="itemDateCreated"],"%A, %e %B %Y %H:%M")}
