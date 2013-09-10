@@ -1,0 +1,11 @@
+url http://www.crime.gr/
+include_re {/[0-9]+/articles/([[:alnum:]\-]+)/article\.aspx$}
+htmltidy_feed_p 0
+htmltidy_article_p 0
+xpath_article_title {returnstring(//div[@class="page-content review"]/h1[@class="title"])}
+xpath_article_body {returntext(//div[@class="page-content review"]/div[@class="content-panel"])}
+xpath_article_image {
+    {values(//div[@class="page-content review"]//img/@src)}
+}
+xpath_article_date {normalizedate(//div[@class="section date"]/div[1],"el_GR","{%d %B, %Y - %H:%M}")}
+xpath_article_modified_time {}
