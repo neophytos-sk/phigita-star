@@ -1851,49 +1851,49 @@ proc ::feed_reader::write_item {timestamp normalized_link feedVar itemVar resync
         if { ${time} ne {0000} } {
 
             # up to 15mins difference in time it is considered to be
-	    # fine to take into account servers at different timezones
-	    #
-	    # abs is to account for news sources that set a time in the
-	    # future be it due to timezone difference or deliberately
-	    #
+            # fine to take into account servers at different timezones
+            #
+            # abs is to account for news sources that set a time in the
+            # future be it due to timezone difference or deliberately
+            #
 
-	    set timeval [clock scan $item(date) -format "%Y%m%dT%H%M"]
+            set timeval [clock scan $item(date) -format "%Y%m%dT%H%M"]
 
-            if { ${timestamp} - ${timeval} > 900 } {
+                if { ${timestamp} - ${timeval} > 900 } {
 
-		set item(sort_date) $item(date)
-                # puts "item(date)=$item(date) is older than 15 mins - using that date for sorting..."
+            set item(sort_date) $item(date)
+                    # puts "item(date)=$item(date) is older than 15 mins - using that date for sorting..."
 
-            }
+                }
 
-	    # otherwise, including item(date) in the future,
-	    # use computed date for sorting
+            # otherwise, including item(date) in the future,
+            # use computed date for sorting
 
 
         } else {
 
-	    # if time eq {0000} and
-	    set timestamp_date [lindex [split ${timestamp_datetime} {.}] 0]
-	    if { ${date} < ${timestamp_date} } {
+            # if time eq {0000} and
+            set timestamp_date [lindex [split ${timestamp_datetime} {.}] 0]
+            if { ${date} < ${timestamp_date} } {
 
-		set item(sort_date) $item(date)
+                set item(sort_date) $item(date)
 
-	    } else {
+            } else {
 
-		# use computed date for sorting
+                # use computed date for sorting
 
-	    }
+            }
 
-	}
+        }
 
     } else {
 
-	# use computed date for sorting
+        # use computed date for sorting
 
     }
 
     if { $item(sort_date) eq {} } {
-	set item(sort_date) ${timestamp_datetime}
+        set item(sort_date) ${timestamp_datetime}
     }
 
 
