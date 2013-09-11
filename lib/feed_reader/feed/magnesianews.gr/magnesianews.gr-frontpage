@@ -1,0 +1,17 @@
+url http://www.magnesianews.gr/
+include_re {/News/.*\?EntityID=[[:alnum:]]+-[[:alnum:]]+-[[:alnum:]]+-[[:alnum:]]+-[[:alnum:]]+$}
+htmltidy_feed_p 0
+htmltidy_article_p 0
+xpath_article_title {returnstring(//div[@class="main_text"]/div[@class="blue"])}
+xpath_article_body {returntext(//div[@class="main_text"])}
+xpath_article_image {{values(//div[@style="float:left;"]/img[@width="300" and @height="200" and @style="padding-right:5px"]/@src)}}
+xpath_article_date {returndate(substring-after(//div[@class="main_text"]/div[@class="grey"],":"), "%d/%m/%Y, %H:%M")}
+xpath_article_modified_time {}
+xpath_article_cleanup {
+    {//div[@class="main_text"]/div[@class="breadcrumb"]}
+    {//div[@class="main_text"]/div[@class="blue"]}
+    {//div[@class="main_text"]/div[@class="SubTitle"]}
+    {//div[@class="main_text"]/div[@class="grey"]}
+    {//div[@id="ctl00_ContentPlaceHolder1_Articles_pnlPrint"]/following-sibling::*}
+    {//div[@id="ctl00_ContentPlaceHolder1_Articles_pnlPrint"]}
+}
