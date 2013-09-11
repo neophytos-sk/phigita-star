@@ -1,8 +1,8 @@
 url http://www.epikaira.gr/home.html
 encoding {cp1253}
 include_re {/epikairo\.php\?id=[0-9]+&category_id=[0-9]+$}
-htmltidy_feed_p 0
-htmltidy_article_p 0
+htmltidy_feed_p 1
+htmltidy_article_p 1
 xpath_article_title {returnstring(//td[@class="listing"]/h1)}
 xpath_article_description {returnstring(//td[@class="listing"]/text())}
 xpath_article_body {returntext(//td[@class="infull" and @valign="top"])}
