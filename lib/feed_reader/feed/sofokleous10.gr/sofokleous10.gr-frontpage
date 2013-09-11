@@ -1,0 +1,15 @@
+url http://www.sofokleous10.gr/portal2/
+include_re {[0-9]{14}/$}
+htmltidy_feed_p 1
+htmltidy_article_p 1
+xpath_article_title {returnstring(//h2/a[@class="contentpagetitle"])}
+xpath_article_body {returntext(//div[@class="article-content"])}
+xpath_article_image {{values(//div[@class="article-content"]/p//img/@src)}}
+xpath_article_date {returndate(//span[@class="createdate"],"%A, %d %B %Y %H:%M","el_GR")}
+xpath_article_modified_time {}
+xpath_article_cleanup {
+    {//div[@class="article-content"]/div[1]}
+    {//div[@class="article-content"]/table}
+    {//div[@class="article-content"]/div[@id="fb-root"]/following-sibling::*}
+    {//div[@class="article-content"]/div[@id="fb-root"]}
+}

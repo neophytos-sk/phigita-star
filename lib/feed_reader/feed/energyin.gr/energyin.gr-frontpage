@@ -1,0 +1,13 @@
+url http://energyin.gr/
+include_re {/[0-9]{4}/[0-9]{2}/[0-9]{2}/[^/]+/}
+htmltidy_feed_p 1
+htmltidy_article_p 1
+xpath_article_title {returnstring(//div[@id="content"]/h3)}
+xpath_article_body {returntext(//div[@id="content"]/div[@class="entry"])}
+xpath_article_image {{values(//div[@id="content"]/div[@class="entry"]//a/img/@src)}}
+xpath_article_date {returndate(substring-before(substring-after(//p[@class="postmeta"]/text(),"Δημοσιεύθηκε στις "),"|"),"%d/%m/%Y")}
+xpath_article_modified_time {}
+xpath_article_cleanup {
+    {//div[@class="sociable"]/following-sibling::*}
+    {//div[@class="sociable"]}
+}
