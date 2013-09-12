@@ -156,6 +156,7 @@ proc smtpd::rcpt { id } {
     switch -exact -- $user_email {
 	k2pts@phigita.net -
 	neophytos@phigita.net -
+    sales@phigita.net -
 	webmaster@phigita.net {
 	    # Check everything for this domain
 	    ns_smtpd setflag $id 0 VIRUSCHECK
