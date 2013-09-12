@@ -8,4 +8,4 @@ cp /web/data/backup/atlas.service-phigita.pg_dump /web/tmp/
 su - ${USER} -c '/opt/postgresql/bin/vacuumdb --analyze bookdb'
 su - ${USER} -c '/opt/postgresql/bin/vacuumdb --analyze --full service-phgt-0'
 
-su - ${USER} -c '/usr/bin/visitors /web/log/access.8001.log* > /web/tmp/visitors.8001.html'
+su - ${USER} -c '/usr/bin/visitors /web/log/access.phigita-web.log* > /web/tmp/visitors.phigita-web.html'
