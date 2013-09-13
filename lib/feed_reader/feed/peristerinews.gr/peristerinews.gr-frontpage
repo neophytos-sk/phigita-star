@@ -1,0 +1,12 @@
+url http://peristerinews.gr/
+include_re {/[a-z]+/[[:alnum:]\-_]+.html$}
+htmltidy_feed_p 0
+htmltidy_article_p 0
+xpath_article_title {returnstring(//div[@style="float: left; width: 670px;"]/h1)}
+xpath_article_body {returntext(//div[@style="padding-top: 10px;"]/div[@style="line-height: 20px;"])}
+xpath_article_image {
+    {values(//div[@style="padding-top: 10px;"]/div[@style="margin-bottom: 15px;"]//img/@src)}
+}
+xpath_article_date {returndate(//div[@style="float: left; width: 120px;"]//div[@class="pagetextsmall"],"%d/%m/%Y %H:%M")}
+xpath_article_modified_time {}
+
