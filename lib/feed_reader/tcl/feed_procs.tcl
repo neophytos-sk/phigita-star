@@ -952,7 +952,7 @@ proc ::feed_reader::fetch_and_write_item {timestamp link title_in_feed feedVar} 
 
 
 proc ::feed_reader::get_base_dir {} {
-    return {/web/data/newsdb}
+    return {/web/data/mystore/newsdb}
 }
 
 proc ::feed_reader::reversedomain {domain} {
