@@ -40,6 +40,7 @@ proc print_usage_info {} {
 			   "unlabel-interactive" "axis label keywords ?offset? ?limit? ?callback?" \
 			   "unlabel" "axis class contentsha1 ?...?" \
 			   "list-training-labels" "axis ?supercolumn_path?" \
+			   "link-label" "target_axis/+/target_supercolumn_path link_axis/+/link_supercolumn_path" \
 			   "fex" "?limit? ?offset?" \
 			   "stats" "?domain? ?...?" \
 			   "wc" "?contentsha1? ?...?" \
@@ -223,6 +224,12 @@ if { ${argc} < 1 } {
 
         set axis [lindex ${argv} 1]
         ::feed_reader::classifier::list_training_labels ${axis} {*}[lrange ${argv} 2 end]
+
+    } elseif { ${cmd} eq {link-label} && ${argc} == 3 } {
+
+        set target_path [lindex ${argv} 1]
+	set link_path [lindex ${argv} 2]
+        ::feed_reader::classifier::link_label ${target_path} ${link_path}
 
     } elseif { ${cmd} eq {rename-label} && ${argc} == 4 } {
 

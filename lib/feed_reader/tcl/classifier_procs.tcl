@@ -196,6 +196,12 @@ proc ::feed_reader::classifier::rename_label {axis old_name_path new_name_path} 
 
 }
 
+proc ::feed_reader::classifier::link_label {target_path link_path} {
+
+    ::persistence::link "newsdb" "train_item" ${target_path} ${link_path}
+
+}
+
 
 proc ::feed_reader::classifier::list_training_labels {axis {supercolumn_path ""}} {
 

@@ -2,7 +2,7 @@ namespace eval ::persistence {
 
     variable base_dir 
 
-    set base_dir "/web/data"
+    set base_dir "/web/data/mystore"
 
     array set ks [list]
     array set cf [list]
@@ -255,6 +255,53 @@ proc ::persistence::get_data {filename} {
 
 }
 
+proc ::persistence::incr_refcount {target_filename_or_dir link_filename_or_dir} {
+
+    set mapping {{/} {.}}
+    set target_name [string map ${mapping} ${target_filename_or_dir}]
+    set link_name [string map ${mapping} ${link_filename_or_dir}]
+
+    ::persistence::insert_column \
+	"sysdb" \
+	"refcount_item" \
+	"target-${target_name}" \
+	"link-${link_name}" \
+	"${link_filename_or_dir}"
+
+}
+
+proc ::persistence::assert_refcount_is_zero {target_filename_or_dir} {
+    set mapping {{/} {.}}
+    set target_name [string map ${mapping} ${target_filename_or_dir}]
+
+    set slice \
+	[::persistence::get_slice \
+	     "sysdb" \
+	     "refcount_item" \
+	     "target-${target_name}"]
+
+    if { ${slice} ne {} } {
+	error "assert_refcount: there one or more items linking to this object"
+    }
+
+}
+
+proc ::persistence::link_data {target_filename_or_dir link_filename_or_dir} {
+
+    file link -symbolic ${link_filename_or_dir} ${target_filename_or_dir}
+
+    incr_refcount ${target_filename_or_dir} ${link_filename_or_dir} 
+
+}
+
+proc ::persistence::rename_data {old_supercolumn_dir new_supercolumn_dir} {
+
+    assert_refcount_is_zero ${old_supercolumn_dir}
+
+    file rename ${old_supercolumn_dir} ${new_supercolumn_dir}
+
+}
+
 proc ::persistence::get_name {filename_or_dir} {
 
     return [file tail ${filename_or_dir}]
@@ -262,6 +309,8 @@ proc ::persistence::get_name {filename_or_dir} {
 }
 
 proc ::persistence::delete_data {filename_or_dir} {
+
+    assert_refcount_is_zero ${filename_or_dir}
 
     return [file delete ${filename_or_dir}]
 
@@ -832,6 +881,60 @@ proc ::persistence::rename_supercolumn {keyspace column_family row_key old_name_
     puts old_supercolumn_dir=$old_supercolumn_dir
     puts new_supercolumn_dir=$new_supercolumn_dir
 
-    file rename ${old_supercolumn_dir} ${new_supercolumn_dir}
+    ::persistence::rename_data ${old_supercolumn_dir} ${new_supercolumn_dir}
 	
+}
+
+
+# for example:
+#
+# ::persistence::link \
+#     newsdb \
+#     train_item \
+#     el/edition/+/cyprus/politics/domestic_politics \
+#     el/topic/+/politics/domestic_politics/cyprus
+#
+proc ::persistence::link {keyspace column_family target_path link_path {force_p "0"}} {
+
+    lassign [split ${target_path} {+}] target_row target_supercolumn_path
+    lassign [split ${link_path} {+}] link_row link_supercolumn_path   
+
+    set target_row [string trimright ${target_row} {/}]
+    set link_row [string trimright ${link_row} {/}]
+
+    set target_supercolumn_path [string trimleft ${target_supercolumn_path} {/}]
+    set link_supercolumn_path [string trimleft ${link_supercolumn_path} {/}]
+
+    assert_supercolumn \
+	${keyspace} \
+	${column_family} \
+	${target_row} \
+	${target_supercolumn_path}
+
+    assert_row \
+	${keyspace} \
+	${column_family} \
+	${link_row}
+
+
+    set target_supercolumn_dir \
+	[::persistence::get_supercolumn \
+	     "${keyspace}" \
+	     "${column_family}" \
+	     "${target_row}" \
+	     "${target_supercolumn_path}"]
+
+    set link_supercolumn_dir \
+	[::persistence::get_supercolumn \
+	     "${keyspace}" \
+	     "${column_family}" \
+	     "${link_row}" \
+	     "${link_supercolumn_path}"]
+
+    if { !${force_p} && [::persistence::exists_data_p ${link_supercolumn_dir}] } {
+	error "::persistence::link - data already exists at ${link_supercolumn_dir}"
+    }
+
+    ::persistence::link_data ${target_supercolumn_dir} ${link_supercolumn_dir}
+
 }
