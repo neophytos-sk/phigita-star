@@ -205,14 +205,24 @@ proc ::feed_reader::classifier::link_label {target_path link_path} {
 
 proc ::feed_reader::classifier::list_training_labels {axis {supercolumn_path ""}} {
 
-    puts [join [lsort [get_training_labels ${axis} ${supercolumn_path}]] \n]
+    foreach label_list [get_training_labels ${axis} ${supercolumn_path}] {
+	lassign ${label_list} label lstat_map
+	array set lstat $lstat_map
+	puts -nonewline ${label}
+	if { $lstat(type) eq {link} } {
+	    puts " -> $lstat(target)"
+	} else {
+	    puts ""
+	}
+    }
+
 }
 
 proc ::feed_reader::classifier::get_training_labels {axis {supercolumn_path ""}} {
 
     set supercolumns_predicate {}
     set supercolumns_categories \
-	[::persistence::get_supercolumns_paths \
+	[::persistence::get_supercolumns_paths_with_status \
 	     "newsdb" \
 	     "train_item" \
 	     "${axis}" \

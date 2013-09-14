@@ -399,7 +399,6 @@ proc ::persistence::predicate=lsort {slicelistVar args} {
 }
 
 
-
 proc ::persistence::get_files {dir} {
     return [glob -types {f} -nocomplain -directory ${dir} *]
 }
@@ -785,6 +784,29 @@ proc ::persistence::get_column_path {column_parent_dir} {
 
 }
 
+proc ::persistence::get_column_path_with_status {column_parent_dir} {
+
+    set delimiter {+}
+    lassign [split ${column_parent_dir} ${delimiter}] row_dir column_path
+
+    # alternatively, we could just trimleft {/} but for
+    # some reason we expect the following would be faster
+    set result_path [string range ${column_path} 1 end]
+
+    file lstat ${column_parent_dir} lstat
+
+    if { $lstat(type) eq {link} } {
+	#variable base_dir
+	#set fromIndex [string length ${base_dir}]
+	#set lstat(target) [string range [file readlink ${column_parent_dir}] $fromIndex end]
+	set lstat(target) [file readlink ${column_parent_dir}]
+    }
+
+    return [list ${result_path} [array get lstat]]
+
+}
+
+
 proc ::persistence::get_supercolumns_names {args} {
 
     set supercolumns [get_supercolumns {*}${args}]
@@ -799,7 +821,6 @@ proc ::persistence::get_supercolumns_names {args} {
 # recursive column paths, i.e. under each supercolumn
 proc ::persistence::get_supercolumns_paths {args} {
 
-
     set supercolumns [get_supercolumns {*}${args}]
     set subdirs [list]
     foreach supercolumn_dir ${supercolumns} {
@@ -810,6 +831,24 @@ proc ::persistence::get_supercolumns_paths {args} {
     set result [list]
     foreach subdir ${subdirs} {
 	lappend result [get_column_path ${subdir}]
+    }
+    return ${result}
+
+}
+
+# recursive column paths, i.e. under each supercolumn
+proc ::persistence::get_supercolumns_paths_with_status {args} {
+
+    set supercolumns [get_supercolumns {*}${args}]
+    set subdirs [list]
+    foreach supercolumn_dir ${supercolumns} {
+	lappend subdirs ${supercolumn_dir}
+	get_recursive_subdirs ${supercolumn_dir} subdirs
+    }
+
+    set result [list]
+    foreach subdir ${subdirs} {
+	lappend result [get_column_path_with_status ${subdir}]
     }
     return ${result}
 
