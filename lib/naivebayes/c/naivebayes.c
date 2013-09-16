@@ -3,7 +3,7 @@
 
 #include "common.h"
 #include "persistence.h"
-
+#include "heapq.h"
 
 typedef struct {
   Tcl_Obj *name;
@@ -69,6 +69,101 @@ int wordcount_helper(Tcl_Interp *interp, category_t *c, Tcl_Obj *content) {
 
     Tcl_SetHashValue(entryPtr, &value);
 
+  }
+
+}
+
+void mark_frequent_words(Tcl_Interp *interp, Tcl_Obj *remove_words_listPtr, Tcl_HashTable *vocabulary_tablePtr, int top_n) {
+
+  heapq_t *q = heapq_new(100,compare_wordcount_hashentry);
+
+
+  Tcl_HashSearch searchPtr;
+  Tcl_HashEntry *entryPtr = Tcl_FirstHashEntry(vocabulary_tablePtr, &searchPtr);
+  while(entryPtr) {
+
+    heapq_insert(q,entryPtr);
+
+    if (heapq_size(q) > top_n) {
+      // remove lowest priority item
+      heapq_pop_back(q);
+    }
+
+    entryPtr = Tcl_NextHashEntry(&searchPtr);
+
+  }
+
+  while(!heapq_empty(q) && top_n) {
+
+    entryPtr = heapq_top(q);
+
+    const char *word_key = 
+      Tcl_GetHashKey(vocabulary_tablePtr, entryPtr);
+    
+    // int num_occurrences = *((int *) Tcl_GetHashValue(entryPtr));
+    Tcl_ListObjAppendElement(interp, remove_words_listPtr, Tcl_NewStringObj(word_key,-1));
+
+    heapq_pop(q);
+    top_n--;
+  }
+
+}
+
+void mark_rare_words(Tcl_Interp *interp, Tcl_Obj *remove_words_listPtr, Tcl_HashTable *vocabulary_tablePtr, int threshold) {
+
+  Tcl_HashSearch searchPtr;
+  Tcl_HashEntry *entryPtr = Tcl_FirstHashEntry(vocabulary_tablePtr, &searchPtr);
+  while(entryPtr) {
+
+    const char *word_key = 
+      Tcl_GetHashKey(vocabulary_tablePtr, entryPtr);
+    
+    int num_occurrences = *((int *) Tcl_GetHashValue(entryPtr));
+    if (num_occurrences < threshold) {
+      Tcl_ListObjAppendElement(interp, remove_words_listPtr, Tcl_NewStringObj(word_key,-1));
+    }
+
+    entryPtr = Tcl_NextHashEntry(&searchPtr);
+
+  }
+
+}
+
+void remove_marked_words(Tcl_Interp *interp, Tcl_Obj *remove_words_listPtr, Tcl_HashTable *vocabulary_tablePtr, category_t *categories) {
+
+  int i,len;
+
+  Tcl_ListObjLength(interp, remove_words_listPtr, &len);
+
+  for (i=0; i<len; i++) {
+
+    Tcl_ListObjIndex(interp, remove_words_listPtr, i, &word_objPtr);
+
+    const char *word_key = Tcl_GetString(word_objPtr);
+
+    // remove word from vocabulary
+    Tcl_HashEntry *vocabulary_word_entryPtr = 
+      Tcl_FindHashEntry(vocabulary_tablePtr, word_key);
+
+    if (vocabulary_word_entryPtr) {
+      Tcl_DeleteHashEntry(vocabulary_word_entryPtr);
+    }
+
+
+    // remove word from all categories
+    for (j=0; j<num_categories; j++) {
+      category_t *c = categories[j];
+
+      Tcl_HashEntry *category_word_entryPtr = 
+	Tcl_FindHashEntry(&c->wordcount, word_key);
+
+      if (category_word_entryPtr) {
+	Tcl_DeleteHashEntry(category_word_entryPtr);
+      }
+      
+    }
+    
+    
   }
 
 }
@@ -214,6 +309,18 @@ int naivebayes_LearnCmd(ClientData clientData,Tcl_Interp *interp,int objc,Tcl_Ob
     total_docs += slicelen;
 
   }
+
+
+  // mark top 300 words for removal
+  Tcl_Obj *remove_words_listPtr = Tcl_NewObj();
+  mark_frequent_words(interp, remove_words_listPtr, &vocabulary, 300);
+
+  // mark words with less than 20 occurrences for removal
+  mark_rare_words(interp, remove_words_listPtr, &vocabulary, 20);
+
+  // actually remove marked words
+  remove_marked_words(interp, remove_words_listPtr, &vocabulary, categories);
+
 
   /*
     # TODO: use zipf's law to compute how many 

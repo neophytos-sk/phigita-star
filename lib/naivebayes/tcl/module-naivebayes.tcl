@@ -17,6 +17,7 @@ set package_dir [file dirname [file dirname [info script]]]
     // init_text
 
     Tcl_CreateObjCommand(ip, "::naivebayes::classify", naivebayes_ClassifyCmd, NULL, NULL);
+    Tcl_CreateObjCommand(ip, "::naivebayes::learn", naivebayes_LearnCmd, NULL, NULL);
 
 } {
     // init_exts
