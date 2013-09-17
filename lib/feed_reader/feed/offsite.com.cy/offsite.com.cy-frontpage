@@ -1,6 +1,6 @@
 url http://offsite.com.cy/
 include_re {/[[:alnum:]\-]+/$}
-exclude_re {/category/|/offsite-application/|/author/}
+exclude_re {/category/|/offsite-application/|/author/|/tag/|/feed/|/blog/}
 htmltidy_feed_p 0
 htmltidy_article_p 0
 xpath_article_title {returnstring(//div[@id="single"]/h1/a)}
