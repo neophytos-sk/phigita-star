@@ -1,6 +1,94 @@
 namespace eval mail {;}
 namespace eval mail::msg {;}
 
+proc html_to_text_helper {node outputVar} {
+
+    upvar $outputVar output
+
+    set nodeType [$node nodeType]
+
+    if { ${nodeType} eq {ELEMENT_NODE} } {
+
+        set tagname [$node tagName]
+        if { ${tagname} eq {a} } {
+
+            set href [$node @href ""]
+
+            set imgnode [$node selectNodes {descendant::img[@src]}]
+
+            if { ${imgnode} ne {} } {
+                html_to_text_helper output ${imgnode}
+            } else {
+                if { ${href} ne {} } {
+                    set text [string trim [$node asText]]
+                    if { ${text} ne {} } {
+                        append output " \"${text}\":${href} "
+                    }
+                }
+            }
+
+        } elseif { ${tagname} eq {img} } {
+
+            set imageurl [string trim [$node @src ""]]
+            if { ${imageurl} ne {} } {
+
+                set baseurl [[$node ownerDocument] baseURI]
+
+                set imageurl [::uri::canonicalize \
+                          [::uri::resolve \
+                               ${baseurl} \
+                               ${imageurl}]]
+
+                append output "{image: ${imageurl}} "
+
+            }
+
+        } elseif { ${tagname} eq {iframe} && [set src [${node} @src ""]] ne {} } {
+
+            if { [::feed_reader::is_video_url_p ${src} video_id] } {
+                append output "{video: ${video_id} }"
+            }
+            
+        } else {
+
+            if { ${tagname} in {p div h1 h2 h3} } {
+                set str "\n\n"
+            } elseif { ${tagname} eq {br} } {
+                set str "\n"
+            } else {
+                set str " "
+            }
+
+            append output ${str}
+
+            foreach child [${node} childNodes] {
+                html_to_text_helper output ${child}
+            }
+
+            append output ${str}
+
+        }
+
+    } elseif { ${nodeType} eq {TEXT_NODE} } {
+
+        append output [$node nodeValue]
+
+    }
+
+}
+
+proc html_to_text {htmlVar} {
+    upvar $htmlVar html
+
+    set doc [dom parse -simple $body]
+    set root [$doc documentElement]
+    set text ""
+    html_to_text_helper $root text
+    ${doc} delete
+    return $text
+}
+
+
 proc mail::msg::pretty_size { size } {
     return "[format "%.1f" [expr $size/1024.0]]KB"
 }
@@ -147,7 +235,7 @@ proc ::xo::mail::render_part_t {token {resultVar ""}} {
 		if { $params(charset) ne {} } {
 		    set body [encoding convertfrom [::mime::reversemapencoding $params(charset)] $body]
 		}
-		if { [catch { set text [ad_html_to_text -- $body] } errmsg] } {
+		if { [catch { set text [html_to_text body] } errmsg] } {
 		    set text "error parsing html, raw text = $body"
 		}
 		append result "--------------------------------------\n content-type=$content \n ${text}"
