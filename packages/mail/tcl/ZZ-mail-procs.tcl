@@ -174,6 +174,7 @@ proc ::xo::mail::render_part_t {token {resultVar ""}} {
 	multipart/related -
 	multipart/report -
 	multipart/alternative -
+	multipart/signed -
 	multipart/mixed {
 	    foreach part [mime::getproperty $token parts] {
 		render_part_t $part result
