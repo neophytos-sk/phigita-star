@@ -147,7 +147,10 @@ proc ::xo::mail::render_part_t {token {resultVar ""}} {
 		if { $params(charset) ne {} } {
 		    set body [encoding convertfrom [::mime::reversemapencoding $params(charset)] $body]
 		}
-		append result "--------------------------------------\n content-type=$content \n [ad_html_to_text -- $body]"
+		if { [catch { set text [ad_html_to_text -- $body] } errmsg] } {
+		    set text "error parsing html, raw text = $body"
+		}
+		append result "--------------------------------------\n content-type=$content \n ${text}"
 	    }
 	}
 	message/rfc822 -
