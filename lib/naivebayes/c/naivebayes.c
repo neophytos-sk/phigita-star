@@ -3,7 +3,7 @@
 
 #include "common.h"
 #include "persistence.h"
-#include "heapq.h"
+#include "heapq.c"
 
 typedef struct {
   Tcl_Obj *name;
@@ -73,6 +73,14 @@ int wordcount_helper(Tcl_Interp *interp, category_t *c, Tcl_Obj *content) {
 
 }
 
+int compare_wordcount_hashentry(const void *d1, const void *d2)
+{
+  int v1 = *((int *) Tcl_GetHashValue((Tcl_HashEntry *) d1));
+  int v2 = *((int *) Tcl_GetHashValue((Tcl_HashEntry *) d2));
+
+  return (v1>v2) ? -1 : ((v1<v2) ? 1 : 0);
+}
+
 void mark_frequent_words(Tcl_Interp *interp, Tcl_Obj *remove_words_listPtr, Tcl_HashTable *vocabulary_tablePtr, int top_n) {
 
   heapq_t *q = heapq_new(100,compare_wordcount_hashentry);
@@ -129,12 +137,13 @@ void mark_rare_words(Tcl_Interp *interp, Tcl_Obj *remove_words_listPtr, Tcl_Hash
 
 }
 
-void remove_marked_words(Tcl_Interp *interp, Tcl_Obj *remove_words_listPtr, Tcl_HashTable *vocabulary_tablePtr, category_t *categories) {
+void remove_marked_words(Tcl_Interp *interp, Tcl_Obj *remove_words_listPtr, Tcl_HashTable *vocabulary_tablePtr, category_t *categories, int num_categories) {
 
   int i,len;
 
   Tcl_ListObjLength(interp, remove_words_listPtr, &len);
 
+  Tcl_Obj *word_objPtr;
   for (i=0; i<len; i++) {
 
     Tcl_ListObjIndex(interp, remove_words_listPtr, i, &word_objPtr);
@@ -151,8 +160,9 @@ void remove_marked_words(Tcl_Interp *interp, Tcl_Obj *remove_words_listPtr, Tcl_
 
 
     // remove word from all categories
+    int j;
     for (j=0; j<num_categories; j++) {
-      category_t *c = categories[j];
+      category_t *c = &categories[j];
 
       Tcl_HashEntry *category_word_entryPtr = 
 	Tcl_FindHashEntry(&c->wordcount, word_key);
@@ -319,7 +329,7 @@ int naivebayes_LearnCmd(ClientData clientData,Tcl_Interp *interp,int objc,Tcl_Ob
   mark_rare_words(interp, remove_words_listPtr, &vocabulary, 20);
 
   // actually remove marked words
-  remove_marked_words(interp, remove_words_listPtr, &vocabulary, categories);
+  remove_marked_words(interp, remove_words_listPtr, &vocabulary, categories, num_categories);
 
 
   /*
@@ -385,7 +395,7 @@ int naivebayes_LearnCmd(ClientData clientData,Tcl_Interp *interp,int objc,Tcl_Ob
     compute_category_probabilities(&categories[i], total_docs, vocabulary_size);
   }
 
-  Tcl_Free(categories);
+  Tcl_Free((char *) categories);
 
 }
 

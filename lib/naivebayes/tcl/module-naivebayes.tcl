@@ -10,8 +10,11 @@ set package_dir [file dirname [file dirname [info script]]]
 
 ::critcl::clibraries -L/opt/naviserver/lib -lm
 
-::critcl::config I /opt/naviserver/include
-::critcl::config I ${package_dir}/c/
+::critcl::config I \
+    /opt/naviserver/include \
+    ${package_dir}/c/ \
+    ${package_dir}/../struct/heapq/c
+
 
 ::critcl::cinit {
     // init_text

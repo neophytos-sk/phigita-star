@@ -1,22 +1,5 @@
 #include <stdlib.h>
-
-typedef struct {
-
-  /* actual size of a heap */
-  size_t size;
-
-  /* amount of allocated memory for the heap */
-  size_t capacity;
-
-  /* array of (void *), the actual max heap */
-  void **data;
-
-  /* comparator function used to prioritize elements */
-  int (*cmp)(const void *d1, const void *d2);
-
-} heapq_t;
-
-
+#include "heapq.h"
 
 
 static inline size_t LEFT  (size_t x) { return (2 * (x) + 1); }
@@ -46,8 +29,14 @@ void heapq_destroy(heapq_t *q)
   free(q);
 }
 
-int heapq_empty(heapq_t *q) {
+int heapq_empty(heapq_t *q) 
+{
   return q->size==0;
+}
+
+size_t heapq_size(heapq_t *q) 
+{
+  return q->size;
 }
 
 void heapq_insert(heapq_t *q, const void *data)
@@ -77,14 +66,16 @@ void heapq_insert(heapq_t *q, const void *data)
 }
 
 
-void *heapq_top(heapq_t *q) {
+void *heapq_top(heapq_t *q) 
+{
   if (heapq_empty(q)) {
     return NULL;
   }
   return q->data[0];
 }
 
-void heapq_pop(heapq_t *q) {
+void heapq_pop(heapq_t *q) 
+{
   if (heapq_empty(q)) {
     // error
     return;
@@ -113,7 +104,8 @@ void heapq_pop(heapq_t *q) {
 
 
 /* remove lowest priority item */
-void heapq_pop_back(heapq_t *q) {
+void heapq_pop_back(heapq_t *q) 
+{
   if (heapq_empty(q)) {
     // error
     return;
