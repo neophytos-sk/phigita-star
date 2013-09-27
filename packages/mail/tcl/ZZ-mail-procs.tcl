@@ -39,7 +39,7 @@ proc html_to_text_helper {node outputVar} {
                                ${baseurl} \
                                ${imageurl}]]
 
-                append output "{image: ${imageurl}} "
+                append output "(image: ${imageurl} ) "
 
             }
 
@@ -49,6 +49,10 @@ proc html_to_text_helper {node outputVar} {
                 append output "{video: ${video_id} }"
             }
             
+	} elseif { ${tagname} in {style script link} } {
+
+	    # do nothing
+
         } else {
 
             if { ${tagname} in {p div h1 h2 h3} } {
