@@ -241,7 +241,7 @@ proc ::xo::mail::render_part_t {token {resultVar ""}} {
 		    set body [encoding convertfrom [::mime::reversemapencoding $params(charset)] $body]
 		}
 		if { [catch { set text [html_to_text body] } errmsg] } {
-		    set text "error parsing html, raw text = [ns_quotehtml $body]"
+		    set text "error parsing html, errmsg=$errmsg raw text = [ns_quotehtml $body]"
 		}
 		append result "--------------------------------------\n content-type=$content \n ${text}"
 	    }
