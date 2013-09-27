@@ -1,0 +1,65 @@
+
+
+val -id context_user_id { return [ad_conn ctx_uid] }
+
+datastore \
+    -id userdata \
+    -singleton true \
+    -select {
+        screen_name
+        {first_names || ' ' || last_name as full_name}
+    } \
+    -from_class ::CC_Users \
+    -where [list "user_id=:context_user_id"] \
+    -limit 1
+
+guard { return @{userdata:rowcount} }
+
+
+datastore \
+    -id commentdata \
+    -scope {context_user} \
+    -from_class ::Blog_Item \
+    -where [list "cnt_comments != 0"] \
+    -order "last_comment desc" \
+    -limit 20 \
+    -extend {
+	set pretty_last_comment [lc_time_fmt $last_comment "%A %r, %d %b %Y"]
+    }
+
+# todo: change to blog-comments
+val -id selectedtab { return "blog" }
+
+master \
+    -src "/templates/www-shared.master.inc" \
+    -title "@{object_get.userdata.full_name} - Blog - Comments" {
+
+	include -src "/templates/www-shared.tabs.inc"
+
+	h3 {
+	    t "Posts with most recent comments"
+	}
+
+	ul {
+	    tpl -for "commentdata" {
+		li {
+		    a -href "../@{id}" {
+			t "@{title}"
+		    }
+		    br
+		    small {
+			t "@{cnt_comments}"
+			tpl -if "@{cnt_comments} == 1" {
+			    t " comment, on "
+			}
+			tpl -else "" {
+			    t " comments, last on "
+			}
+			t "@{pretty_last_comment}"
+		    }
+		}
+	    }
+	}
+	
+}
+
