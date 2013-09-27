@@ -39,7 +39,7 @@ proc html_to_text_helper {node outputVar} {
                                ${baseurl} \
                                ${imageurl}]]
 
-                append output "(image: ${imageurl} ) "
+                append output "{image: ${imageurl}} "
 
             }
 
