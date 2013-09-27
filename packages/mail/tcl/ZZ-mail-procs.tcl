@@ -89,7 +89,7 @@ proc html_to_text {htmlVar} {
     set text ""
     html_to_text_helper $root text
     ${doc} delete
-    return $text
+    return [ns_quotehtml $text]
 }
 
 
