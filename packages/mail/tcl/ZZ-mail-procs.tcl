@@ -17,7 +17,7 @@ proc html_to_text_helper {node outputVar} {
             set imgnode [$node selectNodes {descendant::img[@src]}]
 
             if { ${imgnode} ne {} } {
-                html_to_text_helper output ${imgnode}
+                html_to_text_helper ${imgnode} output
             } else {
                 if { ${href} ne {} } {
                     set text [string trim [$node asText]]
@@ -66,7 +66,7 @@ proc html_to_text_helper {node outputVar} {
             append output ${str}
 
             foreach child [${node} childNodes] {
-                html_to_text_helper output ${child}
+                html_to_text_helper ${child} output
             }
 
             append output ${str}
