@@ -20,7 +20,7 @@ datastore \
     -id commentdata \
     -scope {context_user} \
     -from_class ::Blog_Item \
-    -where [list "cnt_comments != 0"] \
+    -where [list "cnt_comments != 0" "shared_p"] \
     -order "last_comment desc" \
     -limit 20 \
     -extend {
