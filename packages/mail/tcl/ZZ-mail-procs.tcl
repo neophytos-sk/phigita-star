@@ -85,7 +85,7 @@ proc html_to_text {htmlVar} {
     upvar $htmlVar html
 
     set html [::htmltidy::tidy $html]
-    set doc [dom parse -simple $html]
+    set doc [dom parse -html $html]
     set root [$doc documentElement]
     set text ""
     html_to_text_helper $root text
