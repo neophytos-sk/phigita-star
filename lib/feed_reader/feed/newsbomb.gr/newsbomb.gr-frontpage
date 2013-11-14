@@ -1,8 +1,8 @@
 url http://www.newsbomb.gr/
 include_re {/story/[0-9]{4,}/[[:alnum:]\-]+$}
 exclude_re {/bloggers/|/tromokraths/}
-htmltidy_feed_p 0
-htmltidy_article_p 0
+htmltidy_feed_p 1
+htmltidy_article_p 1
 xpath_article_title {returnstring(//div[@class="main-article-info"]/h1[@class="itemTitle"])}
 xpath_article_description {returntext(//div[@class="itemBody"]/div[@class="itemIntro"])}
 xpath_article_body {returntext(//div[@class="itemBody"]/div[@class="itemFullText"])}

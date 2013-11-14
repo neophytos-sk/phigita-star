@@ -1,7 +1,7 @@
 url http://www.digitallife.gr/
 include_re {/[[:alnum:]\-]+[0-9]{4,}$}
-htmltidy_feed_p 0
-htmltidy_article_p 0
+htmltidy_feed_p 1
+htmltidy_article_p 1
 xpath_article_title {returnstring(//div[@class="entry-title"]/h2)}
 xpath_article_body {returntext(//div/div[@class="entry-content"])}
 xpath_article_image {{values(//div/div[@class="entry-content"]//img[@width]/@src)}}
