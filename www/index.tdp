@@ -13,7 +13,7 @@ master -title $title -description $description -keywords $keywords {
             # include -src /packages/xo-messaging/tmpl-global/includelet-latest-echo.inc
             include -src /packages/print/tmpl-global/includelet-random-book.inc
         }
-        layout_col -class "span6" -style "background:#000;" {
+        layout_col -class "span6" {
             # include -src /packages/bookmarks/tmpl-global/includelet-recent-shared-links.inc
         }
     }
