@@ -6,14 +6,16 @@ set keywords "Greek, Blogs, Cyprus, Greece, Social Utility, Books"
 master -title $title -description $description -keywords $keywords {
 
     layout_row {
-	layout_col -class "span6" {
-	    include -src /packages/blogger/tmpl-global/includelet-latest-blog-entries.inc
-	    # include -src /packages/xo-messaging/tmpl-global/includelet-latest-echo.inc
-	    include -src /packages/print/tmpl-global/includelet-random-book.inc
-	}
-	layout_col -class "span6" {
-	    include -src /packages/bookmarks/tmpl-global/includelet-recent-shared-links.inc
-	}
+        layout_col -class "span3" {
+        }
+        layout_col -class "span6" {
+            include -src /packages/blogger/tmpl-global/includelet-latest-blog-entries.inc
+            # include -src /packages/xo-messaging/tmpl-global/includelet-latest-echo.inc
+            include -src /packages/print/tmpl-global/includelet-random-book.inc
+        }
+        layout_col -class "span3" {
+            # include -src /packages/bookmarks/tmpl-global/includelet-recent-shared-links.inc
+        }
     }
 }
 
