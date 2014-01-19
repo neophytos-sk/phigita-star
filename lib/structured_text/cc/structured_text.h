@@ -5,7 +5,6 @@
 #include <cstring>  // For memrchr, strdup
 #include <queue>
 #include <string>
-#include <stack>
 #include <utility> // For make_pair
 
 #include "tcl.h"

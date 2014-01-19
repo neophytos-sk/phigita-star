@@ -1,5 +1,9 @@
 #include "structured_text.h"
 
+extern "C" {
+    #include "stack.h"
+}
+
 
 #define FLAG_HREF  1
 #define FLAG_MEDIA 2
@@ -1102,20 +1106,21 @@ void SpecialToHtml(Tcl_DString *dsPtr, int *outflags, const char *specialTextMar
 
 
 static
-int isIncompatibleCloseTag(int indent, int indent_stack_top,const std::string& ctag, const std::string& ctag_stack_top) {
+int isIncompatibleCloseTag(int indent, int indent_stack_top,const std::string& ctag, const std::string *ctag_stack_top) {
+
 
   if (indent < indent_stack_top) return 1;
 
   /* it is implied that ctag has greater indent than ctag_stack_top */
-  if (ctag==ctag_stack_top) {
+  if (ctag==*ctag_stack_top) {
     return 0;
-  } else if (ctag=="</ul>" && ctag_stack_top=="</ol>") {
+  } else if (ctag=="</ul>" && *ctag_stack_top=="</ol>") {
     return 0;
-  } else if (ctag=="</ol>" && ctag_stack_top=="</ul>") {
+  } else if (ctag=="</ol>" && *ctag_stack_top=="</ul>") {
     return 0;
-  } else if (indent=indent_stack_top && ctag=="" && ctag_stack_top=="</ol>") {
+  } else if (indent=indent_stack_top && ctag=="" && *ctag_stack_top=="</ol>") {
     return 0;
-  } else if (indent=indent_stack_top && ctag=="" && ctag_stack_top=="</ul>") {
+  } else if (indent=indent_stack_top && ctag=="" && *ctag_stack_top=="</ul>") {
     return 0;
   } else {
     return 1;
@@ -1142,8 +1147,12 @@ int StxToHtml(Tcl_DString *dsPtr, int *outflags, char *text) {
   const char *specialTextMarkerPtr;
 
   std::string otag, ctag;
-  std::stack<int> indent_stack;
-  std::stack<std::string> ctag_stack;
+  stack indent_stack;
+  StackInit(&indent_stack, sizeof(int));
+
+  stack ctag_stack;
+  StackInit(&ctag_stack, sizeof(std::string *));
+
   std::queue<std::pair<const char*,size_t> > special_text_queue;
 
   const char *curr = begin;
@@ -1219,11 +1228,11 @@ int StxToHtml(Tcl_DString *dsPtr, int *outflags, char *text) {
     }
 
 
-    while (!indent_stack.empty()) {
-      if (isIncompatibleCloseTag(indent,indent_stack.top(),ctag,ctag_stack.top())) {
-        Tcl_DStringAppend(dsPtr, ctag_stack.top().c_str(), ctag_stack.top().size());
-        ctag_stack.pop();
-        indent_stack.pop();
+    while (!StackEmpty(&indent_stack)) {
+      if (isIncompatibleCloseTag(indent, *((int *) StackTop(&indent_stack)), ctag, (const std::string *) StackTop(&ctag_stack))) {
+        Tcl_DStringAppend(dsPtr, ((const std::string *) StackTop(&ctag_stack))->c_str(), ((const std::string *) StackTop(&ctag_stack))->size());
+        StackPop(&ctag_stack);
+        StackPop(&indent_stack);
       } else {
         break;
       }
@@ -1249,12 +1258,12 @@ int StxToHtml(Tcl_DString *dsPtr, int *outflags, char *text) {
       specialTextMarkerPtr = NULL;
     }
 
-    if ( (indent_stack.empty() && ctag_stack.empty()) 
-	 || indent > indent_stack.top() 
-	 || ctag != ctag_stack.top() ) {
+    if ( (StackEmpty(&indent_stack) && StackEmpty(&ctag_stack)) 
+	 || indent > *((int *) StackTop(&indent_stack)) 
+	 || ctag != *((const std::string *) StackTop(&ctag_stack))) {
       Tcl_DStringAppend(dsPtr, otag.c_str(), otag.size());
-      indent_stack.push(indent);
-      ctag_stack.push(ctag);
+      StackPush(&indent_stack,&indent);
+      StackPush(&ctag_stack,&ctag);
     }
 
     switch (tag) {
@@ -1291,10 +1300,13 @@ int StxToHtml(Tcl_DString *dsPtr, int *outflags, char *text) {
     preformatted_p=false;
   }
 
-  while(!ctag_stack.empty()) {
-    Tcl_DStringAppend(dsPtr, ctag_stack.top().c_str(), ctag_stack.top().size());
-    ctag_stack.pop();
+  while(!StackEmpty(&ctag_stack)) {
+    Tcl_DStringAppend(dsPtr, (char *) StackTop(&ctag_stack), ((const std::string *) StackTop(&ctag_stack))->size());
+    StackPop(&ctag_stack);
   }
+
+  StackFree(&indent_stack);
+  StackFree(&ctag_stack);
 
   // special symbols are unescaped in DStringAppendQuoted
 
