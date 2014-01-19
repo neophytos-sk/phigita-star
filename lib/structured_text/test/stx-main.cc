@@ -1,4 +1,5 @@
 #include <cstdio>
+#include <cstdlib>
 #include "structured_text.h"
 
 
@@ -55,21 +56,15 @@ int main(int argc, char *argv[]) {
   char *text;
   int size = ReadFile(argv[1],&text);
 
-  //printf("%s",text);
-
-  structured_text doc(text);
-  //int text_length = strlen(text);
-  //int extra_bytes = text_length; // this is for the markup code
-  //char *html = (char *) malloc(text_length+1+extra_bytes);
-  //html[text_length] = '\0';
-  //stx_to_html(text,html);
-  //printf("++++++++++++html++++++++++\n%s\n",doc.to_html().c_str());
   int outflags = 0;
-  std::string html;
-  doc.to_html(html,&outflags);
-  printf("%s",html.c_str());
+  Tcl_DString ds;
+  Tcl_DStringInit(&ds);
+  StxToHtml(&ds, &outflags, text);
+
+  printf("%s",Tcl_DStringValue(&ds));
   printf("\noutflags=%d\n",(unsigned char) outflags);
-  //free(html);
+
+  Tcl_DStringFree(&ds);
 
   return 0;
 }

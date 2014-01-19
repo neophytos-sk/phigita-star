@@ -1,21 +1,21 @@
-		   url http://cyprus-mail.com/
-		   include_re {/[0-9]{4}/[0-9]{2}/[0-9]{2}/[[:alnum:]\-]+/$}
-		   htmltidy_feed_p 1
-		   htmltidy_article_p 1
-		   article_langclass {en.utf8}
-		   xpath_article_title {returnstring(//h1[@class="entry-title"])}
-		   xpath_article_date {returndate(//div[@id="entry-post"]/descendant::span[@class="meta-time"],"%B %d, %Y")}
-		   xpath_article_tags {values(//div[@class="entry-tags"]/a[@rel="tag"]/text())}
-		   xpath_article_image {
-		       {values(//div[@class="entry-thumb"]/a/img/@src)}
-		   }
-		   xpath_article_cleanup {
-		       {//div[@itemprop="articleBody"]/p/em[1]}
-		       {//div[@class="printfriendly pf-alignright"]}
-		       {//div[@class="zilla-share"]}
-		       {//div[@class="kindleWidget kindleLight"]}
-		   }
-		   xpath_article_body {returntext(//div[@itemprop="articleBody"])}
-		   comment {
-		       xpath_article_category {//span[@class="category-item"]/a/text()}
-		   }
+url http://cyprus-mail.com/
+include_re {/[0-9]{4}/[0-9]{2}/[0-9]{2}/[[:alnum:]\-]+/$}
+htmltidy_feed_p 1
+htmltidy_article_p 1
+article_langclass {en.utf8}
+xpath_article_title {returnstring(//h1[@class="entry-title"])}
+xpath_article_date {returndate(//div[@id="entry-post"]/descendant::span[@class="meta-time"],"%B %d, %Y")}
+xpath_article_tags {values(//div[@class="entry-tags"]/a[@rel="tag"]/text())}
+xpath_article_image {
+    {values(//div[@class="entry-thumb"]/a/img/@src)}
+}
+xpath_article_cleanup {
+    {//div[@itemprop="articleBody"]/p/em[1]}
+    {//div[@class="printfriendly pf-alignright"]}
+    {//div[@class="zilla-share"]}
+    {//div[@class="kindleWidget kindleLight"]}
+}
+xpath_article_body {returntext(//div[@itemprop="articleBody"])}
+comment {
+    xpath_article_category {//span[@class="category-item"]/a/text()}
+}

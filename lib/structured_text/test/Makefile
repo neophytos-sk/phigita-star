@@ -1,7 +1,7 @@
 #-I/web/service-phigita/lib/structured_text/cc/
 
 CC     = g++
-CFLAGS = -g -O3
+CFLAGS = -O3 -I/opt/naviserver/include/tcl -ltcl
 DEPS   = structured_text.h
 OBJ    = stx-main.o structured_text.o
 EXT    = cc
@@ -18,4 +18,4 @@ test:	all
 	./test.sh
 
 clean:
-	rm -f stx *.o *~ sha1-c/*.o
+	rm -f stx *.o *~ 

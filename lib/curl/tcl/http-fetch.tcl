@@ -15,6 +15,7 @@ proc ::xo::http::fetch {contentVar url {optionsVar ""} {infoVar ""}} {
     set followlocation [get_value_if options(followlocation) "0"]
     set maxredirs [get_value_if options(maxredirs) "0"]
     set timeout [get_value_if options(timeout) "30"]
+    set cookiefile [get_value_if options(cookiefile) ""]
 
     if { [catch {
 	set errorcode [curl::transfer \
@@ -24,6 +25,7 @@ proc ::xo::http::fetch {contentVar url {optionsVar ""} {infoVar ""}} {
 			   -httpversion ${httpversion} \
 			   -followlocation ${followlocation} \
 			   -maxredirs ${maxredirs} \
+               -cookiefile ${cookiefile} \
 			   -bodyvar content \
 			   -inforesponsecode info(responsecode) \
 			   -infocontenttype info(contenttype) \
