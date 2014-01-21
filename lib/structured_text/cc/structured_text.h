@@ -2,10 +2,6 @@
 #define STRUCTURED_TEXT_H
 
 
-#include <cstring>  // For memrchr, strdup
-#include <queue>
-#include <string>
-#include <utility> // For make_pair
 
 #include "tcl.h"
 

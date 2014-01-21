@@ -15,7 +15,7 @@ size_t ReadFile(const char *filename, char **text) {
   size_t total = 0;
   char *buffer;
   size_t blocksize = 65536;
-  ssize_t bytes;
+  size_t bytes;
 
   *text = (char *) malloc(blocksize);
   if (*text == NULL) {
@@ -25,7 +25,7 @@ size_t ReadFile(const char *filename, char **text) {
   total = blocksize;
 
   buffer = *text;
-  while(bytes=fread((char *) buffer, blocksize, 1, fp)) {
+  while((bytes=fread((char *) buffer, blocksize, 1, fp))) {
 
     if (bytes < blocksize) {
       // an error occured, check with feof(3) and ferror(3)
@@ -44,6 +44,7 @@ size_t ReadFile(const char *filename, char **text) {
   }
 
   fclose(fp);
+  return total;
 }
 
 int main(int argc, char *argv[]) {
@@ -54,7 +55,7 @@ int main(int argc, char *argv[]) {
   }
 
   char *text;
-  int size = ReadFile(argv[1],&text);
+  ReadFile(argv[1],&text);
 
   int outflags = 0;
   Tcl_DString ds;

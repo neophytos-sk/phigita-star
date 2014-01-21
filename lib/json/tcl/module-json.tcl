@@ -1,9 +1,9 @@
 package provide json 0.1
 
-set dir [file dirname [info script]]
 
 ::xo::lib::require critcl
 
+set dir [file dirname [info script]]
 ::critcl::reset
 ::critcl::clibraries -L/usr/lib/ -lm
 ::critcl::config I /opt/naviserver/include [file join $dir ../c/]

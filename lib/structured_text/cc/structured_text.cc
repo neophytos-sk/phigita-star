@@ -1,8 +1,10 @@
+#include <string.h>  // For memrchr, strdup, strncmp
+
 #include "structured_text.h"
 
-extern "C" {
-    #include "stack.h"
-}
+#include "str.h"
+#include "stack.h"
+#include "queue.h"
 
 
 #define FLAG_HREF  1
@@ -57,13 +59,14 @@ enum {
   BOLDITALIC  = 16
 };
 
+
 #define MAX_ARGS 4
 typedef struct st_md_T { 
   const char *ptr[MAX_ARGS]; 
 } st_md_t;
 
 
-const std::string kHorizontalRuleHTML = "<div style=\"width:100%;text-align:center;margin:10px 0px 10px 0px;\"><span style=\"width:100px;height:1px;margin:5px 0px 5px 0px;border-bottom:1px solid #000;position:relative;top:7px;display:inline-block;\">&nbsp;</span><img src=\"//static.phigita.net/graphics/divider.png\" style=\"width:55px;height:12px;margin:0px 5px 0px 5px;\" /><span style=\"width:100px;height:1px;margin:5px 0px 5px 0px;border-bottom:1px solid #000;position:relative;top:7px;display:inline-block;\">&nbsp;</span></div>";
+const char kHorizontalRuleHTML[] = "<div style=\"width:100%;text-align:center;margin:10px 0px 10px 0px;\"><span style=\"width:100px;height:1px;margin:5px 0px 5px 0px;border-bottom:1px solid #000;position:relative;top:7px;display:inline-block;\">&nbsp;</span><img src=\"//static.phigita.net/graphics/divider.png\" style=\"width:55px;height:12px;margin:0px 5px 0px 5px;\" /><span style=\"width:100px;height:1px;margin:5px 0px 5px 0px;border-bottom:1px solid #000;position:relative;top:7px;display:inline-block;\">&nbsp;</span></div>";
 
 const char kMarkupSymbol[] = "*_\"\'$";
 
@@ -149,7 +152,7 @@ void DStringAppendQuoted(Tcl_DString *dsPtr, const char *string, int length) {
     }
 }
 
-static
+static inline
 const char *rfind_char(const char*const begin, const char*const end, char ch) {
   return (const char *) memrchr(begin,ch,end-begin);
 }
@@ -169,7 +172,7 @@ void DStringAppendShortUrl(Tcl_DString *dsPtr, const char *url, int length, int 
   } else {
 
     /* skip protocol slashes after http or https */
-    const size_t skip_proto_pos = 10;
+    const int skip_proto_pos = 10;
 
     const char *pos = rfind_char(url, url+left_index, '/');
     if (pos && (pos - url) > skip_proto_pos) { 
@@ -184,7 +187,7 @@ void DStringAppendShortUrl(Tcl_DString *dsPtr, const char *url, int length, int 
   }
 }
 
-static
+static inline
 void st_init(st_md_t *md) {
   int i;
   for (i = 0; i < MAX_ARGS; ++i)
@@ -195,8 +198,8 @@ void st_init(st_md_t *md) {
 // is_traling_char
 // is_leading_char
 
-static
-inline int is_digit(const char*const ch) {
+static inline
+int is_digit(const char*const ch) {
   return (*ch >='0' && *ch<='9');
 }
 
@@ -283,6 +286,7 @@ const char *find_char_neq(const char *begin, const char*const end, char ch) {
     return NULL;
 }
 
+/*
 static
 const char *next_boundary(const char *ch, const char*const end) {
   const char *stop = ch + 1000; // max lookahead 1000 chars
@@ -295,6 +299,7 @@ const char *next_boundary(const char *ch, const char*const end) {
 
   return ch;
 }
+*/
 
 
 #define HTTP_PROTO(ch) ('h' == *(ch) && 't' == *((ch) + 1) && 't' == *((ch) + 2) && 'p' == *((ch) + 3) && ':' == *((ch) + 4) && '/' == *((ch) + 5) && '/' == *((ch) + 6))
@@ -322,13 +327,15 @@ const char *match_href(const char*const ch, const char*const begin, const char*c
   return NULL;
 }
 
-
+/*
 static
 const char *match_spaces(const char*const begin, const char*const end) {
   const char *p = begin;
   while (p!=end && *p == ' ') ++p;
   return p;
 }
+*/
+
 
 static
 int only_spaces(const char*const begin, const char*const end) {
@@ -384,7 +391,7 @@ const char *match_image(const char*const begin, const char*const last_char, st_m
        ':' == *(begin+6) ) {
 
     const char *ch;
-    if (ch=match_integer(begin+7,end,md)) {
+    if ((ch=match_integer(begin+7,end,md))) {
       md->ptr[0] = ch;
       //printf("HERE: %.*s\n",10,ch);
       //++ch;
@@ -628,7 +635,7 @@ int compute_para_indent(const char *begin, const char *end) {
 	result = count;
 
     /* advance to the next line of the paragraph */
-    if (p=find_char(p,end,'\n')) 
+    if ((p=find_char(p,end,'\n'))) 
       ++p;
     else
       break;
@@ -740,7 +747,7 @@ const char *rfind_str(const char*const begin, const char*const end, const char*c
   const char ch = str[n-1];
   bool found_p = false;
 
-  while (p>begin && (p= (const char *) memrchr(begin,ch,p-begin)) && p-begin+1 >= n-1 && !found_p) {
+  while (p>begin && (p= (const char *) memrchr(begin,ch,p-begin)) && (size_t)(p-begin+1) >= n-1 && !found_p) {
     found_p = true;
     for(size_t i=1; i<n; ++i) {
       if (str[n-1-i] != *(p-i)) {
@@ -761,7 +768,7 @@ const char *rfind_str_if(const char*const begin, const char*const end, const cha
 
   while (p>begin && is_space_or_newline(p)) p--;
 
-  if (p-begin+1 < n) return NULL;
+  if ((size_t) (p-begin+1) < n) return NULL;
 
   for(size_t i=0; i<n; ++i) {
     if (str[n-1-i] != *(p-i)) {
@@ -857,7 +864,7 @@ void BlockToHtml(Tcl_DString *dsPtr, int *outflags, const char flags, const char
       break;
     case UNDERLINE:
       if (ALLOW_STYLE(flags)) {
-        if (s=rfind_char(begin,q,'_')) {
+        if ((s=rfind_char(begin,q,'_'))) {
           if ( s > begin ) {
             DStringAppendQuoted(dsPtr, begin, s-begin);
           }
@@ -889,7 +896,7 @@ void BlockToHtml(Tcl_DString *dsPtr, int *outflags, const char flags, const char
       break;
     case BOLDITALIC:
       if (ALLOW_STYLE(flags)) {
-        if (s=rfind_str(begin,q,"***",3)) {
+        if ((s=rfind_str(begin,q,"***",3))) {
           if ( s-2 > begin ) {
             DStringAppendQuoted(dsPtr, begin, (s-2)-begin);
           }
@@ -905,7 +912,7 @@ void BlockToHtml(Tcl_DString *dsPtr, int *outflags, const char flags, const char
       break;
     case BOLD:
       if (ALLOW_STYLE(flags)) {
-        if (s=rfind_str(begin,q,"**",2)) {
+        if ((s=rfind_str(begin,q,"**",2))) {
           if ( s-1 > begin ) {
             DStringAppendQuoted(dsPtr, begin,(s-1)-begin);
           }
@@ -921,7 +928,7 @@ void BlockToHtml(Tcl_DString *dsPtr, int *outflags, const char flags, const char
       break;
     case HIGHLIGHT:
       if (ALLOW_STYLE(flags)) {
-        if (s=rfind_str(begin,q,"\x01\x02",2)) {
+        if (((s=rfind_str(begin,q,"\x01\x02",2)))) {
           if ( s-1 > begin ) {
             DStringAppendQuoted(dsPtr, begin, (s-1)-begin);
           }
@@ -937,7 +944,7 @@ void BlockToHtml(Tcl_DString *dsPtr, int *outflags, const char flags, const char
       break;
     case HEADING:
       if (ALLOW_HEADING(flags)) {
-        if (s=rfind_str(begin,q,"==",2)) {
+        if ((s=rfind_str(begin,q,"==",2))) {
           if ( s-1 > begin ) {
             DStringAppendQuoted(dsPtr, begin, (s-1)-begin);
           }
@@ -953,7 +960,7 @@ void BlockToHtml(Tcl_DString *dsPtr, int *outflags, const char flags, const char
       break;
     case INCLUDELET:
       if (ALLOW_MEDIA(flags)) {
-        if (s=find_char(q,end,'}')) {
+        if ((s=find_char(q,end,'}'))) {
           if (match_image(q,s,&md)) {
             if ( q > begin ) {
               DStringAppendQuoted(dsPtr, begin, q-begin);
@@ -1011,8 +1018,9 @@ void BlockToHtml(Tcl_DString *dsPtr, int *outflags, const char flags, const char
 #define IS_PREFORMATTED_MARKER(p) ((*p) == ':' && (*(p+1)) == ':')
 #define IS_CODE_MARKER(p) ((*p) == '%' && (*(p+1)) == '%')
 
+    
 static
-void SpecialToHtml(Tcl_DString *dsPtr, int *outflags, const char *specialTextMarkerPtr, std::queue<std::pair<const char*,size_t> >& special_text_queue) {
+void SpecialToHtml(Tcl_DString *dsPtr, int *outflags, const char *specialTextMarkerPtr, queue *special_text_queuePtr) {
 
   if (IS_PREFORMATTED_MARKER(specialTextMarkerPtr)) {
 
@@ -1020,17 +1028,17 @@ void SpecialToHtml(Tcl_DString *dsPtr, int *outflags, const char *specialTextMar
 
     Tcl_DStringAppend(dsPtr, "<div class=\"z-pre\">", 19);
 
-    std::pair<const char*,size_t> p;
+    const string_t *p;
     const char *iter;
     const char * stop;
 
-    bool empty_p = special_text_queue.empty();
+    bool empty_p = QueueEmpty(special_text_queuePtr);
     while (!empty_p) {
-      p = special_text_queue.front();
+      p = (const string_t *) QueueFront(special_text_queuePtr);
 
       Tcl_DString dsSpecialHtml;
       Tcl_DStringInit(&dsSpecialHtml);
-      BlockToHtml(&dsSpecialHtml, outflags, FLAGS_PREFORMATTED, p.first, p.first+p.second);
+      BlockToHtml(&dsSpecialHtml, outflags, FLAGS_PREFORMATTED, p->data, p->data + p->length);
 
       iter = Tcl_DStringValue(&dsSpecialHtml);
       stop = iter + Tcl_DStringLength(&dsSpecialHtml);
@@ -1044,9 +1052,8 @@ void SpecialToHtml(Tcl_DString *dsPtr, int *outflags, const char *specialTextMar
           DStringAppendQuoted(dsPtr, iter, 1);
       }
       Tcl_DStringFree(&dsSpecialHtml);
-
-      special_text_queue.pop();
-      if (!(empty_p=special_text_queue.empty())) {
+      QueuePop(special_text_queuePtr);
+      if (!(empty_p=QueueEmpty(special_text_queuePtr))) {
         Tcl_DStringAppend(dsPtr, "<br /><br />", 12);  // new paragraph/block in special text
       }
 
@@ -1059,21 +1066,17 @@ void SpecialToHtml(Tcl_DString *dsPtr, int *outflags, const char *specialTextMar
     SET_FLAG(outflags,FLAG_CODE);
 
     Tcl_DStringAppend(dsPtr, "<div class=\"z-code\"><pre><code>", 31);
-    std::pair<const char*,size_t> p;
-    const char *iter;
-    const char * stop;
+    const string_t *p;
 
-    bool empty_p = special_text_queue.empty();
+    bool empty_p = QueueEmpty(special_text_queuePtr);
     while (!empty_p) {
-      p = special_text_queue.front();
-      iter = p.first;
-      stop = p.first + p.second;
+      p = (const string_t *) QueueFront(special_text_queuePtr);
 
       // FLAGS_CODE
-      DStringAppendUnquoted(dsPtr, p.first, p.second);
+      DStringAppendUnquoted(dsPtr, p->data, p->length);
 
-      special_text_queue.pop();
-      if (!(empty_p=special_text_queue.empty())) {
+      QueuePop(special_text_queuePtr);
+      if (!(empty_p=QueueEmpty(special_text_queuePtr))) {
         Tcl_DStringAppend(dsPtr, "\n\n", 2);  // new paragraph/block in special text
       }
 
@@ -1106,28 +1109,26 @@ void SpecialToHtml(Tcl_DString *dsPtr, int *outflags, const char *specialTextMar
 
 
 static
-int isIncompatibleCloseTag(int indent, int indent_stack_top,const std::string& ctag, const std::string *ctag_stack_top) {
+int isIncompatibleCloseTag(int indent, int indent_stack_top,const string_t *ctagPtr, const string_t *ctag_stack_top) {
 
 
   if (indent < indent_stack_top) return 1;
 
-  /* it is implied that ctag has greater indent than ctag_stack_top */
-  if (ctag==*ctag_stack_top) {
+  /* it is implied that ctagPtr has greater indent than ctag_stack_top */
+  if (0==strncmp(StringData(ctagPtr), StringData(ctag_stack_top), StringLength(ctagPtr))) {
     return 0;
-  } else if (ctag=="</ul>" && *ctag_stack_top=="</ol>") {
+  } else if (0==strncmp(StringData(ctagPtr),"</ul>",5) && 0==strncmp(StringData(ctag_stack_top), "</ol>", 5)) {
     return 0;
-  } else if (ctag=="</ol>" && *ctag_stack_top=="</ul>") {
+  } else if (0==strncmp(StringData(ctagPtr), "</ol>",5) && 0==strncmp(StringData(ctag_stack_top), "</ul>", 5)) {
     return 0;
-  } else if (indent=indent_stack_top && ctag=="" && *ctag_stack_top=="</ol>") {
+  } else if (indent==indent_stack_top && StringEmpty(ctagPtr) && 0==strncmp(StringData(ctag_stack_top),"</ol>", 5)) {
     return 0;
-  } else if (indent=indent_stack_top && ctag=="" && *ctag_stack_top=="</ul>") {
+  } else if (indent==indent_stack_top && StringEmpty(ctagPtr) && 0==strncmp(StringData(ctag_stack_top),"</ul>", 5)) {
     return 0;
   } else {
     return 1;
   }
 }
-
-
 
 int StxToHtml(Tcl_DString *dsPtr, int *outflags, char *text) {
 
@@ -1140,27 +1141,30 @@ int StxToHtml(Tcl_DString *dsPtr, int *outflags, char *text) {
 
   EscapeSymbols(begin, end);
 
-  int indent = 0, prev_indent = 0, pos = 0, tag = NONE;
+  int indent = 0, prev_indent = 0, tag = NONE;
   bool preformatted_p = false, prev_preformatted_p = false;
 
   // points to special text marker, i.e. ::, %%, etc
-  const char *specialTextMarkerPtr;
+  const char *specialTextMarkerPtr = NULL;
 
-  std::string otag, ctag;
+  string_t otag, ctag;
+  StringInit(&otag);
+  StringInit(&ctag);
   stack indent_stack;
   StackInit(&indent_stack, sizeof(int));
 
   stack ctag_stack;
-  StackInit(&ctag_stack, sizeof(std::string *));
+  StackInit(&ctag_stack, sizeof(string_t));
 
-  std::queue<std::pair<const char*,size_t> > special_text_queue;
+  // std::queue<std::pair<const char*,size_t> > 
+  queue special_text_queue;
+  QueueInit(&special_text_queue, sizeof(string_t));
 
   const char *curr = begin;
   const char *end_of_curr; // end of current paragraph
   const char *stop_of_curr;  // skip characters after this point, e.g. special text markers,
   const char *next = NULL;
 
-  int count = 0;
   while (curr && curr != end) {
     // DO NOT TOUCH - START
     next = find_next_para(curr,end);
@@ -1175,7 +1179,10 @@ int StxToHtml(Tcl_DString *dsPtr, int *outflags, char *text) {
     //    || next == end
     if (preformatted_p && (prev_indent < indent)) {
       if (curr < end_of_curr) {
-        special_text_queue.push(std::make_pair(curr,end_of_curr-curr));
+          string_t special_text;
+          StringInit(&special_text);
+          StringAssign(&special_text, curr, end_of_curr - curr);
+          QueuePush(&special_text_queue, &special_text);
       }
       prev_preformatted_p = true;
       curr = next;
@@ -1185,52 +1192,45 @@ int StxToHtml(Tcl_DString *dsPtr, int *outflags, char *text) {
 
       // ^[ \t\n]*([*o\-\#])([ \t\n]+[^\0]*)}
       const char *symbol = NULL;
-      if (symbol=find_char_neq(curr,end_of_curr,' ')) {
-	if (*symbol == '-' && match_divider(symbol,end_of_curr,&stop_of_curr)) {
-	  tag = HR;
-	  otag = kHorizontalRuleHTML;
-	  ctag = "\n\n";
-	  curr = stop_of_curr;
-	} else if ((*symbol == '*' || *symbol == '-' || *symbol == 'o' || *symbol == '+') && is_space(symbol+1)) {
-	  tag = UL;
-	  otag = "<ul>";
-	  ctag = "</ul>";
-	  curr = symbol+2;
-	} else if ( (*symbol == '#' &&  is_space(symbol+1)) 
-		    /*
-		    || (is_digit(symbol) && *(symbol+1)=='.') 
-		    || (is_digit(symbol) && is_digit(symbol+1) && *(symbol+2)=='.')
-		    */ ) {
-	  tag = OL;
-	  otag = "<ol>";
-	  ctag = "</ol>";
-	  curr = symbol+2;
-	} else if (*symbol == '=' && match_heading(symbol,end_of_curr,&stop_of_curr)) {
-	  tag = HEADING;
-	  otag = "<h3>";
-	  ctag = "</h3>";
-	  curr = symbol+2;
-	} else {
-	  tag = NONE;
-	  otag.clear();
-	  ctag.clear();
-	}
+      if ((symbol=find_char_neq(curr,end_of_curr,' '))) {
+        if (*symbol == '-' && match_divider(symbol,end_of_curr,&stop_of_curr)) {
+          tag = HR;
+          StringAssign(&otag, kHorizontalRuleHTML, strlen(kHorizontalRuleHTML));
+          StringAssign(&ctag, "\n\n", 2);
+          curr = stop_of_curr;
+        } else if ((*symbol == '*' || *symbol == '-' || *symbol == 'o' || *symbol == '+') && is_space(symbol+1)) {
+          tag = UL;
+          StringAssign(&otag, "<ul>", 4);
+          StringAssign(&ctag, "</ul>", 5);
+          curr = symbol+2;
+        } else if ( (*symbol == '#' &&  is_space(symbol+1)) 
+                /*
+                || (is_digit(symbol) && *(symbol+1)=='.') 
+                || (is_digit(symbol) && is_digit(symbol+1) && *(symbol+2)=='.')
+                */ ) {
+          tag = OL;
+          StringAssign(&otag, "<ol>", 4);
+          StringAssign(&ctag, "</ol>", 5);
+          curr = symbol+2;
+        } else if (*symbol == '=' && match_heading(symbol,end_of_curr,&stop_of_curr)) {
+          tag = HEADING;
+          StringAssign(&otag, "<h3>", 4);
+          StringAssign(&ctag, "</h3>", 5);
+          curr = symbol+2;
+        } else {
+          tag = NONE;
+          StringAssign(&otag, "", 0);
+          StringAssign(&ctag, "", 0);
+        }
       } 
 
-      /*
-	if (tag != NONE && tag != HR && std::string::npos == text_.find_first_not_of(" \t",index+1,2)) {
-	  tag = NONE;
-	  otag.clear();
-	  ctag.clear();
-	}
-	*/
 
     }
 
 
     while (!StackEmpty(&indent_stack)) {
-      if (isIncompatibleCloseTag(indent, *((int *) StackTop(&indent_stack)), ctag, (const std::string *) StackTop(&ctag_stack))) {
-        Tcl_DStringAppend(dsPtr, ((const std::string *) StackTop(&ctag_stack))->c_str(), ((const std::string *) StackTop(&ctag_stack))->size());
+      if (isIncompatibleCloseTag(indent, *((int *) StackTop(&indent_stack)), &ctag, (const string_t *) StackTop(&ctag_stack))) {
+        Tcl_DStringAppend(dsPtr, StringData((const string_t *) StackTop(&ctag_stack)), StringLength((const string_t *) StackTop(&ctag_stack)));
         StackPop(&ctag_stack);
         StackPop(&indent_stack);
       } else {
@@ -1238,8 +1238,8 @@ int StxToHtml(Tcl_DString *dsPtr, int *outflags, char *text) {
       }
     }
 
-    if (prev_preformatted_p) {
-      SpecialToHtml(dsPtr, outflags, specialTextMarkerPtr, special_text_queue);
+    if (prev_preformatted_p && specialTextMarkerPtr) {
+      SpecialToHtml(dsPtr, outflags, specialTextMarkerPtr, &special_text_queue);
       prev_preformatted_p = false;
       preformatted_p=false;
     }
@@ -1260,8 +1260,8 @@ int StxToHtml(Tcl_DString *dsPtr, int *outflags, char *text) {
 
     if ( (StackEmpty(&indent_stack) && StackEmpty(&ctag_stack)) 
 	 || indent > *((int *) StackTop(&indent_stack)) 
-	 || ctag != *((const std::string *) StackTop(&ctag_stack))) {
-      Tcl_DStringAppend(dsPtr, otag.c_str(), otag.size());
+	 || 0 != strncmp(StringData(&ctag), StringData((const string_t *) StackTop(&ctag_stack)), StringLength(&ctag))) {
+      Tcl_DStringAppend(dsPtr, StringData(&otag), StringLength(&otag));
       StackPush(&indent_stack,&indent);
       StackPush(&ctag_stack,&ctag);
     }
@@ -1295,18 +1295,19 @@ int StxToHtml(Tcl_DString *dsPtr, int *outflags, char *text) {
 
 
   if ( prev_preformatted_p ) {
-    SpecialToHtml(dsPtr, outflags, specialTextMarkerPtr, special_text_queue);
+    SpecialToHtml(dsPtr, outflags, specialTextMarkerPtr, &special_text_queue);
     prev_preformatted_p = false;
     preformatted_p=false;
   }
 
   while(!StackEmpty(&ctag_stack)) {
-    Tcl_DStringAppend(dsPtr, (char *) StackTop(&ctag_stack), ((const std::string *) StackTop(&ctag_stack))->size());
+    Tcl_DStringAppend(dsPtr, StringData((const string_t *) StackTop(&ctag_stack)), StringLength((const string_t *) StackTop(&ctag_stack)));
     StackPop(&ctag_stack);
   }
 
   StackFree(&indent_stack);
   StackFree(&ctag_stack);
+  QueueFree(&special_text_queue);
 
   // special symbols are unescaped in DStringAppendQuoted
 
