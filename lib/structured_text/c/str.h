@@ -5,7 +5,8 @@
 #define NULL ((void *) 0)
 #endif
 
-typedef int bool_t;
+#include "bool.h"
+
 typedef unsigned int uint;
 
 typedef struct {

@@ -45,7 +45,7 @@ static inline void StackPush(stack *const s, const void *const elemPtr)
     }
 
     void *const destPtr = (char *)s->elems + s->logLength * s->elemSize;
-    memcpy(destPtr, elemPtr, s->elemSize);
+    memcpy(destPtr,elemPtr,s->elemSize);
     s->logLength++;
 }
 
@@ -58,8 +58,7 @@ static inline void StackPop(stack *const s)
 static inline const void *StackTop(const stack *const s)
 {
     assert(!StackEmpty(s));
-    const void *sourcePtr;
-    sourcePtr = (const char *) s->elems + s->logLength * s->elemSize;
+    void *const sourcePtr = (char *) s->elems + (s->logLength - 1) * s->elemSize;
     return sourcePtr;
 
 }

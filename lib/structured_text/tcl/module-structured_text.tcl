@@ -12,15 +12,15 @@ source [file join $dir structured_text.tcl]
 ::critcl::cache /web/local-data/critcl/cache/
 ::critcl::config force [::xo::kit::debug_mode_p]
 ::critcl::config keepsrc 1
-::critcl::config language c++
-::critcl::clibraries -lstdc++
+#::critcl::config language c++
+#::critcl::clibraries -lstdc++
 ::critcl::clibraries -L/opt/naviserver/lib
 
 ::critcl::config I /opt/naviserver/include
-::critcl::config I [file join $dir ../cc]
+::critcl::config I [file join $dir ../c]
 
-::critcl::csources [file join $dir ../cc/structured_text.cc]
-::critcl::cheaders [file join $dir ../cc/structured_text.h]
+::critcl::csources [file join $dir ../c/structured_text.c]
+::critcl::cheaders [file join $dir ../c/structured_text.h]
 
 ::critcl::cinit {
     // init_text
@@ -46,28 +46,23 @@ critcl::ccode {
     stx_TextToHtmlCmd (ClientData  clientData, Tcl_Interp *interp, int objc, Tcl_Obj * const objv[] ) {
         CheckArgs(3,3,1,"textVar htmlVar");
 
-	const char *textVar = Tcl_GetString(objv[1]);
-	const char *text = Tcl_GetVar(interp, textVar, TCL_LEAVE_ERR_MSG);
-	if (!text) {
-	    return TCL_ERROR;
-	}
+        const char *textVar = Tcl_GetString(objv[1]);
+        const char *text = Tcl_GetVar(interp, textVar, TCL_LEAVE_ERR_MSG);
+        if (!text) {
+            return TCL_ERROR;
+        }
 
-	structured_text doc(text);
+        int outflags = 0;
+        Tcl_DString ds;
+        Tcl_DStringInit(&ds);
+        StxToHtml(&ds, &outflags, text);
+        Tcl_Obj *newValuePtr = Tcl_NewStringObj(Tcl_DStringValue(&ds),Tcl_DStringLength(&ds));
+        Tcl_DStringFree(&ds);
 
-	std::string html;
-	int outflags = 0;
-	doc.to_html(html,&outflags);
+        Tcl_ObjSetVar2(interp, objv[2], NULL, newValuePtr, TCL_LEAVE_ERR_MSG);
+        Tcl_SetObjResult(interp,Tcl_NewIntObj(outflags));
 
-	Tcl_Obj *newValuePtr = Tcl_NewStringObj(html.c_str(),-1);
-
-	//const char *data = html.c_str();
-	//int length = html.size();
-	//Tcl_Obj *newValuePtr = Tcl_NewByteArrayObj((unsigned char *)data,length);
-	//Tcl_ConvertToType(interp,newValuePtr,Tcl_GetObjType("string"));
-
-	Tcl_ObjSetVar2(interp, objv[2], NULL, newValuePtr, TCL_LEAVE_ERR_MSG);
-	Tcl_SetObjResult(interp,Tcl_NewIntObj(outflags));
-	return TCL_OK;
+        return TCL_OK;
     }
 
 
@@ -77,13 +72,14 @@ critcl::ccode {
 
 	const char *textVar = Tcl_GetString(objv[1]);
 
-	int outflags = 0;
 	const char *text = Tcl_GetVar(interp, textVar, TCL_LEAVE_ERR_MSG);
-	structured_text doc(text);
-	std::string html;
-	doc.minitext_to_html(html,&outflags);
 
-	Tcl_Obj *newValuePtr = Tcl_NewStringObj(html.c_str(),-1);
+    int outflags = 0;
+    Tcl_DString ds;
+    Tcl_DStringInit(&ds);
+    MinitextToHtml(&ds, &outflags, text);
+    Tcl_Obj *newValuePtr = Tcl_NewStringObj(Tcl_DStringValue(&ds),Tcl_DStringLength(&ds));
+    Tcl_DStringFree(&ds);
 
 	Tcl_ObjSetVar2(interp, objv[2], NULL, newValuePtr, TCL_LEAVE_ERR_MSG);
 	Tcl_SetObjResult(interp,Tcl_NewIntObj(outflags));

@@ -2,10 +2,10 @@
 
 #include "structured_text.h"
 
+#include "bool.h"
 #include "str.h"
 #include "stack.h"
 #include "queue.h"
-
 
 #define FLAG_HREF  1
 #define FLAG_MEDIA 2
@@ -252,7 +252,7 @@ inline int is_markup_symbol(const char*const ch) {
 
 
 static
-inline bool is_math_symbol(const char*const ch) {
+inline bool_t is_math_symbol(const char*const ch) {
   return ((*ch >= 'a' && *ch <= 'z') ||
 	  (*ch >= '0' && *ch <= '9') ||
 	  (*ch >= '<' && *ch <= '>') ||
@@ -488,7 +488,7 @@ const char *match_embed(const char*const begin, const char*const last_char, st_m
 
 
 static
-bool match_heading(const char*const begin, const char*const end, const char **stop_of_curr) {
+bool_t match_heading(const char*const begin, const char*const end, const char **stop_of_curr) {
   const char *p = begin;
   if (*p == '=' && *(p+1) == '=') {
     p = end-1;
@@ -745,11 +745,12 @@ static
 const char *rfind_str(const char*const begin, const char*const end, const char*const str, size_t n) {
   const char *p = end;
   const char ch = str[n-1];
-  bool found_p = false;
+  bool_t found_p = false;
 
-  while (p>begin && (p= (const char *) memrchr(begin,ch,p-begin)) && (size_t)(p-begin+1) >= n-1 && !found_p) {
+  while (p>begin && (p= rfind_char(begin,p,ch)) && (size_t)(p-begin+1) >= n-1 && !found_p) {
     found_p = true;
-    for(size_t i=1; i<n; ++i) {
+    size_t i;
+    for(i=1; i<n; ++i) {
       if (str[n-1-i] != *(p-i)) {
 	found_p = false;
 	break;
@@ -770,7 +771,8 @@ const char *rfind_str_if(const char*const begin, const char*const end, const cha
 
   if ((size_t) (p-begin+1) < n) return NULL;
 
-  for(size_t i=0; i<n; ++i) {
+  size_t i;
+  for(i=0; i<n; ++i) {
     if (str[n-1-i] != *(p-i)) {
       return NULL;
     }
@@ -1032,7 +1034,7 @@ void SpecialToHtml(Tcl_DString *dsPtr, int *outflags, const char *specialTextMar
     const char *iter;
     const char * stop;
 
-    bool empty_p = QueueEmpty(special_text_queuePtr);
+    bool_t empty_p = QueueEmpty(special_text_queuePtr);
     while (!empty_p) {
       p = (const string_t *) QueueFront(special_text_queuePtr);
 
@@ -1068,7 +1070,7 @@ void SpecialToHtml(Tcl_DString *dsPtr, int *outflags, const char *specialTextMar
     Tcl_DStringAppend(dsPtr, "<div class=\"z-code\"><pre><code>", 31);
     const string_t *p;
 
-    bool empty_p = QueueEmpty(special_text_queuePtr);
+    bool_t empty_p = QueueEmpty(special_text_queuePtr);
     while (!empty_p) {
       p = (const string_t *) QueueFront(special_text_queuePtr);
 
@@ -1111,11 +1113,12 @@ void SpecialToHtml(Tcl_DString *dsPtr, int *outflags, const char *specialTextMar
 static
 int isIncompatibleCloseTag(int indent, int indent_stack_top,const string_t *ctagPtr, const string_t *ctag_stack_top) {
 
+    // printf("indent=%d indent_stack_top=%d ctag=%s ctag_stack_top=%s",indent, indent_stack_top, StringData(ctagPtr), StringData(ctag_stack_top));
 
   if (indent < indent_stack_top) return 1;
 
   /* it is implied that ctagPtr has greater indent than ctag_stack_top */
-  if (0==strncmp(StringData(ctagPtr), StringData(ctag_stack_top), StringLength(ctagPtr))) {
+  if (0==strcmp(StringData(ctagPtr), StringData(ctag_stack_top))) {
     return 0;
   } else if (0==strncmp(StringData(ctagPtr),"</ul>",5) && 0==strncmp(StringData(ctag_stack_top), "</ol>", 5)) {
     return 0;
@@ -1142,7 +1145,7 @@ int StxToHtml(Tcl_DString *dsPtr, int *outflags, char *text) {
   EscapeSymbols(begin, end);
 
   int indent = 0, prev_indent = 0, tag = NONE;
-  bool preformatted_p = false, prev_preformatted_p = false;
+  bool_t preformatted_p = false, prev_preformatted_p = false;
 
   // points to special text marker, i.e. ::, %%, etc
   const char *specialTextMarkerPtr = NULL;
@@ -1229,13 +1232,14 @@ int StxToHtml(Tcl_DString *dsPtr, int *outflags, char *text) {
 
 
     while (!StackEmpty(&indent_stack)) {
-      if (isIncompatibleCloseTag(indent, *((int *) StackTop(&indent_stack)), &ctag, (const string_t *) StackTop(&ctag_stack))) {
-        Tcl_DStringAppend(dsPtr, StringData((const string_t *) StackTop(&ctag_stack)), StringLength((const string_t *) StackTop(&ctag_stack)));
-        StackPop(&ctag_stack);
-        StackPop(&indent_stack);
-      } else {
-        break;
-      }
+        int indentTop = *((const int *) StackTop(&indent_stack));
+        if (isIncompatibleCloseTag(indent, indentTop, &ctag, (const string_t *) StackTop(&ctag_stack))) {
+            Tcl_DStringAppend(dsPtr, StringData((const string_t *) StackTop(&ctag_stack)), StringLength((const string_t *) StackTop(&ctag_stack)));
+            StackPop(&ctag_stack);
+            StackPop(&indent_stack);
+        } else {
+            break;
+        }
     }
 
     if (prev_preformatted_p && specialTextMarkerPtr) {
@@ -1262,8 +1266,8 @@ int StxToHtml(Tcl_DString *dsPtr, int *outflags, char *text) {
 	 || indent > *((int *) StackTop(&indent_stack)) 
 	 || 0 != strncmp(StringData(&ctag), StringData((const string_t *) StackTop(&ctag_stack)), StringLength(&ctag))) {
       Tcl_DStringAppend(dsPtr, StringData(&otag), StringLength(&otag));
-      StackPush(&indent_stack,&indent);
-      StackPush(&ctag_stack,&ctag);
+      StackPush(&indent_stack, &indent);
+      StackPush(&ctag_stack, &ctag);
     }
 
     switch (tag) {

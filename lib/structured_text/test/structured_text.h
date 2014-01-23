@@ -1,1 +1,0 @@
-../cc/structured_text.h
