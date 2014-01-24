@@ -97,7 +97,11 @@ set server_secure_static_host_and_port "${server_static_host}:443"
 set servername $servername_web
 
 source [file join $serverroot etc/nsd/config-phigita-global.tcl]
-source [file join $serverroot etc/nsd/config-phigita-web.tcl]
+if {0} {
+	source [file join $serverroot etc/nsd/config-phigita-web.tcl]
+} else {
+	source [file join $serverroot etc/nsd/config-phigita-web-dev.tcl]
+}
 source [file join $serverroot etc/nsd/config-phigita-static.tcl]
 
 
