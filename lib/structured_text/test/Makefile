@@ -16,4 +16,4 @@ test:	all
 	./test.sh
 
 clean:
-	rm -f stx *.o *~ 
+	rm -f stx *.o *~ ../c/*.o
