@@ -689,7 +689,7 @@ void transform_embed(Tcl_DString *dsPtr, int *outflags, const char*const p, st_m
   if (md->ptr[1]) {
     BlockToHtml(dsPtr, outflags, FLAGS_CAPTION, md->ptr[1]+1, md->ptr[2]);
   }
-  Tcl_DStringAppend(dsPtr, "</__embed__>", 13);
+  Tcl_DStringAppend(dsPtr, "</__embed__>", 12);
 
   md->ptr[0] = NULL;
   md->ptr[1] = NULL;
@@ -1085,35 +1085,35 @@ void BlockToHtml(Tcl_DString *dsPtr, int *outflags, const char flags, const char
       if (ALLOW_MEDIA(flags)) {
         if ((s=find_char(q,end,'}'))) {
           if (match_image(q,s,&md)) {
-            if ( q > begin ) {
-              DStringAppendQuoted(dsPtr, begin, q-begin);
-            }
-            transform_image(dsPtr, outflags, q, &md);
-            begin=s+1;
-            p = s+1;
-            SET_FLAG(outflags,FLAG_MEDIA);
-            SET_FLAG(outflags,FLAG_IMAGE);
-            continue;
+                if ( q > begin ) {
+                  DStringAppendQuoted(dsPtr, begin, q-begin);
+                }
+                transform_image(dsPtr, outflags, q, &md);
+                begin=s+1;
+                p = s+1;
+                SET_FLAG(outflags,FLAG_MEDIA);
+                SET_FLAG(outflags,FLAG_IMAGE);
+                continue;
           } else if (match_video(q,s,&md)) {
-            if ( q > begin ) {
-                DStringAppendQuoted(dsPtr, begin, q-begin);
-            }
-            transform_video(dsPtr, outflags, q, &md);
-            begin=s+1;
-            p = s+1;
-            SET_FLAG(outflags,FLAG_MEDIA);
-            SET_FLAG(outflags,FLAG_VIDEO);
-            continue;
+                if ( q > begin ) {
+                    DStringAppendQuoted(dsPtr, begin, q-begin);
+                }
+                transform_video(dsPtr, outflags, q, &md);
+                begin=s+1;
+                p = s+1;
+                SET_FLAG(outflags,FLAG_MEDIA);
+                SET_FLAG(outflags,FLAG_VIDEO);
+                continue;
           } else if (match_embed(q,s,&md)) {
-            if ( q > begin ) {
-                DStringAppendQuoted(dsPtr, begin, q-begin);
-            }
-            transform_embed(dsPtr, outflags, q, &md);
-            begin=s+1;
-            p = s+1;
-            SET_FLAG(outflags,FLAG_MEDIA);
-            SET_FLAG(outflags,FLAG_EMBED);
-            continue;
+                if ( q > begin ) {
+                    DStringAppendQuoted(dsPtr, begin, q-begin);
+                }
+                transform_embed(dsPtr, outflags, q, &md);
+                begin=s+1;
+                p = s+1;
+                SET_FLAG(outflags,FLAG_MEDIA);
+                SET_FLAG(outflags,FLAG_EMBED);
+                continue;
           }
         }
       }
