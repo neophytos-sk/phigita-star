@@ -5,6 +5,11 @@
 
 size_t ReadFile(const char *filename, char **text) {
 
+  size_t total;
+  size_t blocksize;
+  size_t bytes;
+  char *buffer;
+
   FILE *fp = fopen(filename,"r");
 
   if (!fp) {
@@ -12,10 +17,8 @@ size_t ReadFile(const char *filename, char **text) {
     return 0;
   }
 
-  size_t total = 0;
-  char *buffer;
-  size_t blocksize = 65536;
-  size_t bytes;
+  total = 0;
+  blocksize = 65536;
 
   *text = (char *) malloc(blocksize);
   if (*text == NULL) {
@@ -28,13 +31,13 @@ size_t ReadFile(const char *filename, char **text) {
   while((bytes=fread((char *) buffer, blocksize, 1, fp))) {
 
     if (bytes < blocksize) {
-      // an error occured, check with feof(3) and ferror(3)
+      /* an error occured, check with feof(3) and ferror(3) */
       fprintf(stderr, "Error reading file, bytes=%zd\n",bytes);
       free(text);
       return 0;
     }
     if (bytes < blocksize) {
-      // last block of the file, no need to allocate more memory
+      /* last block of the file, no need to allocate more memory */
       break;
     } else {
       total += blocksize;
@@ -49,16 +52,17 @@ size_t ReadFile(const char *filename, char **text) {
 
 int main(int argc, char *argv[]) {
 
+  char *text;
+  int outflags = 0;
+  Tcl_DString ds;
+
   if (argc<2) {
     printf("Usage: %s structured_text_file\n",argv[0]);
     return 1;
   }
 
-  char *text;
   ReadFile(argv[1],&text);
 
-  int outflags = 0;
-  Tcl_DString ds;
   Tcl_DStringInit(&ds);
   StxToHtml(&ds, &outflags, text);
 

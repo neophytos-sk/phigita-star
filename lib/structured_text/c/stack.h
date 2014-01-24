@@ -2,10 +2,10 @@
 #define __STACK_H__
 
 
-#include <assert.h>  // for assert
-#include <stdlib.h>  // for memcpy
-#include <string.h>  // for malloc, free
+#include <assert.h>  /* for assert */
+#include <string.h>  /* for memcpy */
 
+#include "common.h"
 
 typedef struct {
     void *elems;
@@ -24,12 +24,12 @@ static inline void StackInit(stack *const s, int elemSize)
     s->elemSize = elemSize;
     s->logLength = 0;
     s->allocLength = kInitialAllocationSize;
-    s->elems = malloc(kInitialAllocationSize * elemSize);
+    s->elems = ckalloc(kInitialAllocationSize * elemSize);
     assert(s->elems != NULL);
 }
 
 static inline void StackFree(stack *const s) {
-    free(s->elems);
+    ckfree(s->elems);
 }
 
 static inline int StackEmpty(const stack *const s) {
@@ -40,7 +40,7 @@ static inline void StackPush(stack *const s, const void *const elemPtr)
 {
     if (s->logLength == s->allocLength) {
         s->allocLength *= 2;
-        s->elems = realloc(s->elems, s->allocLength * s->elemSize);
+        s->elems = ckrealloc(s->elems, s->allocLength * s->elemSize);
         assert(s->elems != NULL);
     }
 

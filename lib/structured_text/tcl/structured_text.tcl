@@ -33,7 +33,7 @@ proc ::xo::structured_text::transform_embed {configVar node url align} {
 
     set clip_id ""
     if { [::xo::structured_text::video_if $url link clip_id] } {
-	::xo::media::embed_video $clip_id true ;# true here means try to fetch the video (if not found in db)
+        ::xo::media::embed_video $clip_id true ;# true here means try to fetch the video (if not found in db)
     }
 }
 

@@ -6,7 +6,7 @@
 #include "tcl.h"
 
 
-int MinitextToHtml(Tcl_DString *dsPtr, int *outflags, char *text);
-int StxToHtml(Tcl_DString *dsPtr, int *outflags, char *text);
+int MinitextToHtml(Tcl_DString *dsPtr, int *outflags, const char *text);
+int StxToHtml(Tcl_DString *dsPtr, int *outflags, const char *text);
 
 #endif

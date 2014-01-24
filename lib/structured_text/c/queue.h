@@ -1,9 +1,10 @@
 #ifndef __QUEUE_H
 #define __QUEUE_H__
 
-#include <assert.h>  // for assert
-#include <stdlib.h>  // for memcpy
-#include <string.h>  // for malloc, free
+#include <assert.h>  /* for assert */
+#include <string.h>  /* for memcpy */
+
+#include "common.h"
 
 typedef struct queue_itemT {
     struct queue_itemT *next;
@@ -33,8 +34,8 @@ static inline void QueueFree(queue *const q) {
     queue_item_t *curr = q->front;
     while(curr && curr != q->back) {
         queue_item_t *next = curr->next;
-        free(curr->data);
-        free(curr);
+        ckfree((char *) curr->data);
+        ckfree((char *) curr);
         curr = next;
     }
 }
@@ -45,15 +46,12 @@ static inline int QueueEmpty(const queue *const q) {
 
 static inline void QueuePush(queue *const q, const void *const elemPtr) 
 {
-    void *destPtr;
-    destPtr = malloc(q->elemSize);
-    memcpy(destPtr, elemPtr, q->elemSize);
-    q->logLength++;
-
-    queue_item_t *itemPtr = (queue_item_t *) malloc(sizeof(queue_item_t));
-    itemPtr->data = destPtr;
+    queue_item_t *itemPtr = (queue_item_t *) ckalloc(sizeof(queue_item_t));
     itemPtr->next = NULL;
+    itemPtr->data = ckalloc(q->elemSize);
+    memcpy(itemPtr->data, elemPtr, q->elemSize);
     assert(itemPtr->data != NULL);
+    q->logLength++;
 
     if (q->back) {
         q->back->next = itemPtr;
@@ -71,7 +69,7 @@ static inline void QueuePop(queue *const q)
 
     queue_item_t * itemPtr = q->front;
     q->front = q->front->next;
-    free(itemPtr);
+    ckfree((char *) itemPtr);
 
     if (q->front == NULL) {
         q->back = NULL;

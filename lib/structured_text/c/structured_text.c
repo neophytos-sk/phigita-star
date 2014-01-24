@@ -1,11 +1,11 @@
-#include <string.h>  // For memrchr, strdup, strncmp
-
 #include "structured_text.h"
 
 #include "bool.h"
 #include "str.h"
 #include "stack.h"
 #include "queue.h"
+
+#include <string.h>  /* For memrchr, strdup, strncmp, memcpy */
 
 #define FLAG_HREF  1
 #define FLAG_MEDIA 2
@@ -33,11 +33,14 @@
 
 #define SET_FLAG(x,y) (*x)|=(y);
 
-
-#define DQ_CH 0x01
-#define SQ_CH 0x02
-#define LT_CH 0x03
-#define GT_CH 0x04
+#define DQ_CH '"'
+// 0x01
+#define SQ_CH '\''
+// 0x02
+#define LT_CH '<'
+// 0x03
+#define GT_CH '>'
+//0x04
 
 enum {
   NONE        = 0,
@@ -74,7 +77,7 @@ const char kMarkupSymbol[] = "*_\"\'$";
 static void BlockToHtml(Tcl_DString *dsPtr, int *outflags, const char flags, const char *begin, const char*const end);
 
 
-static
+static inline
 void DStringAppendUnquoted(Tcl_DString *dsPtr, const char *string, int length) {
     while (length--) {
         switch (*string) {
@@ -103,67 +106,153 @@ void DStringAppendUnquoted(Tcl_DString *dsPtr, const char *string, int length) {
     }
 }
 
+static inline
+void DStringAppendPreformatted(Tcl_DString *dsPtr, const char *begin, int length) {
+    const char *iter = begin;
+    const char *stop = begin+length;
+    for(; iter != stop; ++iter) {
+        switch(*iter) {
+            case '\n':
+                Tcl_DStringAppend(dsPtr, "<br />", 6);
+                break;
+            case '\t':
+                Tcl_DStringAppend(dsPtr, "&nbsp; &nbsp; &nbsp; &nbsp; ", 28);
+            case '<':
+                Tcl_DStringAppend(dsPtr, "&lt;",4);
+                break;
+            case '>':
+                Tcl_DStringAppend(dsPtr, "&gt;",4);
+                break;
+            default:
+                Tcl_DStringAppend(dsPtr, iter, 1);
+                break;
+        }
+    }
+}
+
 static
 void DStringAppendQuoted(Tcl_DString *dsPtr, const char *string, int length) {
+    size_t skipchars = 0;
     while (length--) {
         switch (*string) {
 
             case '<':
-            Tcl_DStringAppend(dsPtr, "&lt;",4);
-            break;
+                if (skipchars) Tcl_DStringAppend(dsPtr, string-skipchars, skipchars);
+                skipchars = 0;
+                Tcl_DStringAppend(dsPtr, "&lt;",4);
+                break;
 
             case '>':
-            Tcl_DStringAppend(dsPtr, "&gt;",4);
-            break;
+                if (skipchars) Tcl_DStringAppend(dsPtr, string-skipchars, skipchars);
+                skipchars = 0;
+                Tcl_DStringAppend(dsPtr, "&gt;",4);
+                break;
 
             case '\'':
-            Tcl_DStringAppend(dsPtr, "&#39;",5);
-            break;
+                if (skipchars) Tcl_DStringAppend(dsPtr, string-skipchars, skipchars);
+                skipchars = 0;
+                Tcl_DStringAppend(dsPtr, "&#39;",5);
+                break;
 
             case '"':
-            Tcl_DStringAppend(dsPtr, "&#34;",5);
-            break;
+                if (skipchars) Tcl_DStringAppend(dsPtr, string-skipchars, skipchars);
+                skipchars = 0;
+                Tcl_DStringAppend(dsPtr, "&#34;",5);
+                break;
     
             case '&':
-            Tcl_DStringAppend(dsPtr, "&amp;",5);
-            break;
-
-            case LT_CH:
-            Tcl_DStringAppend(dsPtr, "<", 1);
-            break;
-
-            case GT_CH:
-            Tcl_DStringAppend(dsPtr, ">", 1);
-            break;
-
-            case SQ_CH:
-            Tcl_DStringAppend(dsPtr, "'", 1);
-            break;
-
-            case DQ_CH:
-            Tcl_DStringAppend(dsPtr, "\"", 1);
-            break;
+                if (skipchars) Tcl_DStringAppend(dsPtr, string-skipchars, skipchars);
+                skipchars = 0;
+                Tcl_DStringAppend(dsPtr, "&amp;",5);
+                break;
 
             default:
-            Tcl_DStringAppend(dsPtr, string, 1);
+            /* Tcl_DStringAppend(dsPtr, string, 1); */
+            ++skipchars;
             break;
         }
         ++string;
     }
+    if (skipchars) Tcl_DStringAppend(dsPtr, string-skipchars, skipchars);
 }
 
+/* 
+static
+void DStringAppendQuoted2(Tcl_DString *dsPtr, const char *begin, const char *end) {
+    const char *next = NULL;
+    const char *p = begin;
+    while (p && p<end) {
+        switch (*p) {
+
+            case '<':
+                Tcl_DStringAppend(dsPtr, "&lt;",4);
+                break;
+
+            case '>':
+                Tcl_DStringAppend(dsPtr, "&gt;",4);
+                break;
+
+            case '\'':
+                Tcl_DStringAppend(dsPtr, "&#39;",5);
+                break;
+
+            case '"':
+                Tcl_DStringAppend(dsPtr, "&#34;",5);
+                break;
+    
+            case '&':
+                Tcl_DStringAppend(dsPtr, "&amp;",5);
+                break;
+
+            default:
+                next = Tcl_UtfNext(p);
+                Tcl_DStringAppend(dsPtr, p, next-p);
+                p=next;
+                continue;
+                break;
+        }
+        ++p;
+    }
+}
+*/
+
+#ifndef __USE_GNU
+/*
+ * Reverse memchr()
+ * Find the last occurrence of 'c' in the buffer 's' of size 'n'.
+ */
+void *
+memrchr(s, c, n)
+    const void *s;
+    int c;
+    size_t n;
+{
+    const unsigned char *cp;
+
+    if (n != 0) {
+    cp = (unsigned char *)s + n;
+    do {
+        if (*(--cp) == (unsigned char)c)
+        return((void *)cp);
+    } while (--n != 0);
+    }
+    return((void *)0);
+}
+#endif
+
 static inline
-const char *rfind_char(const char*const begin, const char*const end, char ch) {
-  return (const char *) memrchr(begin,ch,end-begin);
+const char *rfind_char(const char* begin, const char* end, char ch) {
+    return (char *) memrchr(begin,ch,end-begin);
 }
 
 
 static
 void DStringAppendShortUrl(Tcl_DString *dsPtr, const char *url, int length, int left_index, int right_index) {
-  // TODO:
-  // * handle urlencode / urldecode 
-  // * handle utf8
-  // until then, we just return the url as is
+  /* TODO:
+   * handle urlencode / urldecode 
+   * handle utf8
+   * until then, we just return the url as is
+   */
 
   if (left_index + right_index > length) {
 
@@ -171,11 +260,8 @@ void DStringAppendShortUrl(Tcl_DString *dsPtr, const char *url, int length, int 
 
   } else {
 
-    /* skip protocol slashes after http or https */
-    const int skip_proto_pos = 10;
-
     const char *pos = rfind_char(url, url+left_index, '/');
-    if (pos && (pos - url) > skip_proto_pos) { 
+    if (pos) {
         DStringAppendQuoted(dsPtr, url, (pos-url) + 1);
         Tcl_DStringAppend(dsPtr, "...", 3);
     } else {
@@ -674,6 +760,7 @@ const char *find_next_para(const char *begin, const char *end_of_text) {
 }
 
 
+/*
 // convert symbol characters using special characters in order to
 // be able to distinguish them from characters we generate during
 // the transformation of the structured text to html
@@ -704,6 +791,33 @@ void EscapeSymbols(char *begin, const char *end) {
 
 }
 
+
+static
+void UnescapeSymbols(char *begin, const char *end) {
+
+  char *ch = begin;
+  while (ch != end) {
+    switch(*ch) {
+        case DQ_CH:
+          *ch = '"';
+          break;
+        case SQ_CH:
+          *ch = '\'';
+          break;
+        case LT_CH:
+          *ch = '<';
+          break;
+        case GT_CH:
+          *ch = '>';
+          break;
+        default:
+          break;
+    }
+    ++ch;
+  }
+
+}
+*/
 
 static
 int trailing_markup(const char*const ch, const char*const end) {
@@ -743,13 +857,14 @@ const char *find_first_true(const char *begin, const char*const end,
 
 static
 const char *rfind_str(const char*const begin, const char*const end, const char*const str, size_t n) {
+
+    size_t i;
   const char *p = end;
   const char ch = str[n-1];
   bool_t found_p = false;
 
   while (p>begin && (p= rfind_char(begin,p,ch)) && (size_t)(p-begin+1) >= n-1 && !found_p) {
     found_p = true;
-    size_t i;
     for(i=1; i<n; ++i) {
       if (str[n-1-i] != *(p-i)) {
 	found_p = false;
@@ -765,13 +880,14 @@ const char *rfind_str(const char*const begin, const char*const end, const char*c
 /* Helps us find the preformatted text marker "::" followed by spaces or newlines. */
 static
 const char *rfind_str_if(const char*const begin, const char*const end, const char*const str, size_t n) {
+
+  size_t i;
   const char *p = end-1;
 
   while (p>begin && is_space_or_newline(p)) p--;
 
   if ((size_t) (p-begin+1) < n) return NULL;
 
-  size_t i;
   for(i=0; i<n; ++i) {
     if (str[n-1-i] != *(p-i)) {
       return NULL;
@@ -783,8 +899,9 @@ const char *rfind_str_if(const char*const begin, const char*const end, const cha
 
 
 
-// decorate, font emphasis (bold,italic,highlight)
-// paragraph to html, in the future maybe section to html, we'll see...
+/* decorate, font emphasis (bold,italic,highlight)
+ * paragraph to html, in the future maybe section to html, we'll see...
+ */
 static
 void BlockToHtml(Tcl_DString *dsPtr, int *outflags, const char flags, const char *begin, const char*const end) {
 
@@ -797,19 +914,24 @@ void BlockToHtml(Tcl_DString *dsPtr, int *outflags, const char flags, const char
 
     q = find_first_true(p,end,trailing_markup);
 
+    /*
+    printf("p=%p q=%p",p,q);
+    printf("%.*s\n",q-p,p);
+    */
+
     s = NULL;
     switch(trailing_markup(q,end)) {
     case HREF_NOTEXT:
       if (ALLOW_HREF(flags)) {
-        //fprintf(stderr,"try href_notext\n");
-        // handle http vs https case
+        /* fprintf(stderr,"try href_notext\n"); */
+        /* handle http vs https case */
         if ('s' == *(q-1))
           r = q-5;
         else
           r = q-4;
 
         if (r >= begin && (s = match_href(r,begin,end))) {
-          // check that this is not an href inside the quotes of an href_text
+          /* check that this is not an href inside the quotes of an href_text */
           if ( r > begin && s < end-1 && *(r-1)==DQ_CH && *s==DQ_CH && *(s+1)==':') break;
           if ( r > begin ) {
             DStringAppendQuoted(dsPtr, begin, r-begin);
@@ -833,14 +955,13 @@ void BlockToHtml(Tcl_DString *dsPtr, int *outflags, const char flags, const char
         r=q+2;
         if (r <end && (temp = match_href(r,begin,end)) && (s = rfind_char(begin,q,DQ_CH))) {
           if ( s > begin ) {
-            DStringAppendQuoted(dsPtr, begin, s-begin);
+            DStringAppendQuoted(dsPtr, begin, s - begin);
           }
           Tcl_DStringAppend(dsPtr, "<a href=\"", 9);
-          DStringAppendQuoted(dsPtr, r, temp-r);
+          DStringAppendQuoted(dsPtr, r, temp - r);
           Tcl_DStringAppend(dsPtr, "\">", 2);
-          DStringAppendQuoted(dsPtr, s+1, q-(s+1));
+          DStringAppendQuoted(dsPtr, s+1, q - (s+1));
           Tcl_DStringAppend(dsPtr, "</a>", 4); 
-
           begin = temp;
           p = temp;
           SET_FLAG(outflags,FLAG_HREF);
@@ -999,19 +1120,19 @@ void BlockToHtml(Tcl_DString *dsPtr, int *outflags, const char flags, const char
       break;
     }
 
-    // if none activated, fallback case is here
+    /* if none activated, fallback case is here */
     if (!s && begin < end) {
       DStringAppendQuoted(dsPtr, begin, q-begin);
       begin = q;
     }
 
-    // use two variables, one to keep track the search, and one to show the last processed character
+    /* use two variables, one to keep track the search, and one to show the last processed character */
     if (q != end)
       p=q+1;
     else
       break;
 
-  } // while
+  } /* while */
 
 
 }
@@ -1031,8 +1152,6 @@ void SpecialToHtml(Tcl_DString *dsPtr, int *outflags, const char *specialTextMar
     Tcl_DStringAppend(dsPtr, "<div class=\"z-pre\">", 19);
 
     const string_t *p;
-    const char *iter;
-    const char * stop;
 
     bool_t empty_p = QueueEmpty(special_text_queuePtr);
     while (!empty_p) {
@@ -1042,21 +1161,11 @@ void SpecialToHtml(Tcl_DString *dsPtr, int *outflags, const char *specialTextMar
       Tcl_DStringInit(&dsSpecialHtml);
       BlockToHtml(&dsSpecialHtml, outflags, FLAGS_PREFORMATTED, p->data, p->data + p->length);
 
-      iter = Tcl_DStringValue(&dsSpecialHtml);
-      stop = iter + Tcl_DStringLength(&dsSpecialHtml);
-
-      for(; iter != stop; ++iter) {
-        if (*iter == '\n')
-          Tcl_DStringAppend(dsPtr, "<br />", 6);
-        else if (*iter == '\t')
-          Tcl_DStringAppend(dsPtr, "&nbsp; &nbsp; &nbsp; &nbsp; ", 28);
-        else
-          DStringAppendQuoted(dsPtr, iter, 1);
-      }
+      Tcl_DStringAppend(dsPtr, Tcl_DStringValue(&dsSpecialHtml), Tcl_DStringLength(&dsSpecialHtml));
       Tcl_DStringFree(&dsSpecialHtml);
       QueuePop(special_text_queuePtr);
       if (!(empty_p=QueueEmpty(special_text_queuePtr))) {
-        Tcl_DStringAppend(dsPtr, "<br /><br />", 12);  // new paragraph/block in special text
+        Tcl_DStringAppend(dsPtr, "<br /><br />", 12);  /* new paragraph/block in special text */
       }
 
     }
@@ -1074,12 +1183,13 @@ void SpecialToHtml(Tcl_DString *dsPtr, int *outflags, const char *specialTextMar
     while (!empty_p) {
       p = (const string_t *) QueueFront(special_text_queuePtr);
 
-      // FLAGS_CODE
-      DStringAppendUnquoted(dsPtr, p->data, p->length);
+      /* FLAGS_CODE */
+      // DStringAppendUnquoted(dsPtr, p->data, p->length);
+      Tcl_DStringAppend(dsPtr, p->data, p->length);
 
       QueuePop(special_text_queuePtr);
       if (!(empty_p=QueueEmpty(special_text_queuePtr))) {
-        Tcl_DStringAppend(dsPtr, "\n\n", 2);  // new paragraph/block in special text
+        Tcl_DStringAppend(dsPtr, "\n\n", 2);  /* new paragraph/block in special text */
       }
 
     }
@@ -1113,7 +1223,7 @@ void SpecialToHtml(Tcl_DString *dsPtr, int *outflags, const char *specialTextMar
 static
 int isIncompatibleCloseTag(int indent, int indent_stack_top,const string_t *ctagPtr, const string_t *ctag_stack_top) {
 
-    // printf("indent=%d indent_stack_top=%d ctag=%s ctag_stack_top=%s",indent, indent_stack_top, StringData(ctagPtr), StringData(ctag_stack_top));
+    /* printf("indent=%d indent_stack_top=%d ctag=%s ctag_stack_top=%s",indent, indent_stack_top, StringData(ctagPtr), StringData(ctag_stack_top)); */
 
   if (indent < indent_stack_top) return 1;
 
@@ -1133,53 +1243,50 @@ int isIncompatibleCloseTag(int indent, int indent_stack_top,const string_t *ctag
   }
 }
 
-int StxToHtml(Tcl_DString *dsPtr, int *outflags, char *text) {
+int StxToHtml(Tcl_DString *dsPtr, int *outflags, const char *text) {
 
-  char *begin = text;
   const size_t size = strlen(text);
+  char *begin = strndup(text,size);
   const char *end = begin + size;
-
-  // Tcl_DStringSetLength(dsPtr, size);
-  // Tcl_DStringSetLength(dsPtr, 0);
-
-  EscapeSymbols(begin, end);
 
   int indent = 0, prev_indent = 0, tag = NONE;
   bool_t preformatted_p = false, prev_preformatted_p = false;
-
-  // points to special text marker, i.e. ::, %%, etc
+  /* points to special text marker, i.e. ::, %%, etc */
   const char *specialTextMarkerPtr = NULL;
 
   string_t otag, ctag;
-  StringInit(&otag);
-  StringInit(&ctag);
   stack indent_stack;
-  StackInit(&indent_stack, sizeof(int));
-
   stack ctag_stack;
-  StackInit(&ctag_stack, sizeof(string_t));
-
-  // std::queue<std::pair<const char*,size_t> > 
   queue special_text_queue;
-  QueueInit(&special_text_queue, sizeof(string_t));
 
   const char *curr = begin;
-  const char *end_of_curr; // end of current paragraph
-  const char *stop_of_curr;  // skip characters after this point, e.g. special text markers,
+  const char *end_of_curr; /* end of current paragraph */
+  const char *stop_of_curr;  /* skip chars after this point, e.g. special text markers, */
   const char *next = NULL;
 
+  // EscapeSymbols(begin, end);
+
+  StringInit(&otag);
+  StringInit(&ctag);
+  StackInit(&indent_stack, sizeof(int));
+
+  StackInit(&ctag_stack, sizeof(string_t));
+
+  QueueInit(&special_text_queue, sizeof(string_t));
+
+
   while (curr && curr != end) {
-    // DO NOT TOUCH - START
+    /* DO NOT TOUCH - START */
     next = find_next_para(curr,end);
     end_of_curr = next;
     while (curr!=end_of_curr && is_space_or_newline(end_of_curr-1)) --end_of_curr;
-    // DO NOT TOUCH - END
+    /* DO NOT TOUCH - END */
 
     stop_of_curr = end_of_curr;
     indent = compute_para_indent(curr,end_of_curr);
 
-    //printf("preformatted_p=%d prev_indent=%d indent=%d\n",preformatted_p,prev_indent,indent);
-    //    || next == end
+    /* printf("preformatted_p=%d prev_indent=%d indent=%d\n",preformatted_p,prev_indent,indent); */
+    /*    || next == end */
     if (preformatted_p && (prev_indent < indent)) {
       if (curr < end_of_curr) {
           string_t special_text;
@@ -1193,7 +1300,7 @@ int StxToHtml(Tcl_DString *dsPtr, int *outflags, char *text) {
     } else {
       tag = NONE;
 
-      // ^[ \t\n]*([*o\-\#])([ \t\n]+[^\0]*)}
+      /* ^[ \t\n]*([*o\-\#])([ \t\n]+[^\0]*)} */
       const char *symbol = NULL;
       if ((symbol=find_char_neq(curr,end_of_curr,' '))) {
         if (*symbol == '-' && match_divider(symbol,end_of_curr,&stop_of_curr)) {
@@ -1287,7 +1394,7 @@ int StxToHtml(Tcl_DString *dsPtr, int *outflags, char *text) {
       if (curr != stop_of_curr) {
         Tcl_DStringAppend(dsPtr, "<p>", 3);
         BlockToHtml(dsPtr, outflags, FLAGS, curr, stop_of_curr);
-        Tcl_DStringAppend(dsPtr, "</p>\n\n", 6);  // remove the newlines when done testing
+        Tcl_DStringAppend(dsPtr, "</p>\n\n", 6);  /* remove the newlines when done testing */
       }
       break;
     }
@@ -1313,15 +1420,16 @@ int StxToHtml(Tcl_DString *dsPtr, int *outflags, char *text) {
   StackFree(&ctag_stack);
   QueueFree(&special_text_queue);
 
-  // special symbols are unescaped in DStringAppendQuoted
+  /* special symbols are unescaped in DStringAppendQuoted */
+  // UnescapeSymbols(begin,end);
 
   return 0;
 
 }
 
-// TODO: parse twitter-like addressing, e.g. @k2pts
-int MinitextToHtml(Tcl_DString *dsPtr, int *outflags, char *text) {
-  const char *begin = text;  // pointer to an internal array containing the same content as the string
+/* TODO: parse twitter-like addressing, e.g. @k2pts */
+int MinitextToHtml(Tcl_DString *dsPtr, int *outflags, const char *text) {
+  const char *begin = text;  /* pointer to an internal array containing the same content as the string */
   const size_t size = strlen(text);
   const char *end = begin + size;
 

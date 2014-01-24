@@ -1125,8 +1125,8 @@ proc ::xo::tdp::compile_to_c {codearrVar templateDoc c_cmd_name tcl_cmd_name} {
 
 	    Tcl_Obj *valuePtr;
 	    if (TCL_ERROR == Tcl_DictObjGet(interp,dictPtr,keyPtr,&valuePtr)) {
-		DBG(fprintf(stderr,"DictObjGet error in append_1"));
-		return NULL;
+            DBG(fprintf(stderr,"DictObjGet error in append_1"));
+            return /* NULL */;
 	    }
 
 	    int length;
