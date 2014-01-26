@@ -487,7 +487,6 @@ int naivebayes_ClassifyCmd(ClientData clientData,Tcl_Interp *interp,int objc,Tcl
   CheckArgs(2,3,1,"modelVar wordsVar");
 	
   Tcl_Obj *modelPtr = Tcl_ObjGetVar2(interp, objv[1], NULL, TCL_LEAVE_ERR_MSG);
-  // Tcl_Obj *modelObjPtr = objv[1];
   Tcl_Obj *wordListPtr = Tcl_ObjGetVar2(interp,objv[2], NULL, TCL_LEAVE_ERR_MSG);
 
   int numWords;
@@ -499,116 +498,107 @@ int naivebayes_ClassifyCmd(ClientData clientData,Tcl_Interp *interp,int objc,Tcl
   // fprintf(stderr,"%s\n",Tcl_GetString(wordListPtr));
 
 
-  Tcl_Obj *nameObjPtr;
-  nameObjPtr = Tcl_NewStringObj("categories",-1);
-
-  // Tcl_Obj *catListPtr = Tcl_ObjGetVar2(interp, modelObjPtr, nameObjPtr, TCL_LEAVE_ERR_MSG);
-  Tcl_Obj *catListPtr;
-  Tcl_DictObjGet(interp, modelPtr, nameObjPtr, &catListPtr);
-
-  if (!catListPtr) {
-    fprintf(stderr, "no categories found\n");
-    return TCL_ERROR;
-  }
-
-  int numCategories;
-  if (TCL_OK != Tcl_ListObjLength(interp, catListPtr, &numCategories)) {
-    // some error occurred
-    return TCL_ERROR;
-  }
-
-
-
-  // fprintf(stderr, "numWords=%d categories: %s\n", numWords, Tcl_GetString(catListPtr));
-
   double max_pr = -9999999999;
 
   Tcl_Obj *maxCatObjPtr = NULL;
-
   Tcl_Obj *catObjPtr;
   Tcl_Obj *wordObjPtr;
+  Tcl_Obj *categoriesDictPtr, *catDictPtr;
+  Tcl_DictObjGet(interp, modelPtr, Tcl_NewStringObj("categories",-1), &categoriesDictPtr);
+
+  int size=0;
+  Tcl_DictObjSize(interp, categoriesDictPtr, &size);
+// printf("modelPtr=%p categoriesDictPtr=%p size=%d\n",modelPtr, categoriesDictPtr, size);
+  if (!size) {
+    return TCL_OK;
+  }
 
   int i,j;
-  for(i=0;i<numCategories;++i) {
+  Tcl_Obj *prCatDefaultObjPtr;
+  double pr_cat_default;
+  Tcl_Obj *prCatObjPtr;
+  double pr_cat;
 
-    Tcl_ListObjIndex(interp,catListPtr,i,&catObjPtr);
+    Tcl_DictSearch search;
+    Tcl_Obj *key, *value;
+    int done;
 
-/*
-    nameObjPtr = Tcl_NewStringObj("cat_",-1);
-    Tcl_AppendObjToObj(nameObjPtr, catObjPtr);
-    Tcl_AppendObjToObj(nameObjPtr, Tcl_NewStringObj("_default_pr",-1));
-    Tcl_Obj *prCatDefaultObjPtr = Tcl_ObjGetVar2(interp,modelObjPtr,nameObjPtr,TCL_LEAVE_ERR_MSG);
-*/
-    nameObjPtr = Tcl_NewStringObj("categories ",-1);
-    Tcl_AppendObjToObj(nameObjPtr, catObjPtr);
-    Tcl_AppendObjToObj(nameObjPtr, Tcl_NewStringObj(" default_word_pr",-1));
-    Tcl_Obj *prCatDefaultObjPtr;
-    Tcl_DictObjGet(interp, modelPtr, nameObjPtr, &prCatDefaultObjPtr);
-
-    double pr_cat_default;
-    Tcl_GetDoubleFromObj(interp,prCatDefaultObjPtr, &pr_cat_default);
-
-/* 
-    nameObjPtr = Tcl_NewStringObj("cat_",-1);
-    Tcl_AppendObjToObj(nameObjPtr, catObjPtr);
-    Tcl_Obj *prCatObjPtr = Tcl_ObjGetVar2(interp,modelObjPtr,nameObjPtr,TCL_LEAVE_ERR_MSG);
-*/
-    nameObjPtr = Tcl_NewStringObj("categories ",-1);
-    Tcl_AppendObjToObj(nameObjPtr, catObjPtr);
-    Tcl_AppendObjToObj(nameObjPtr, Tcl_NewStringObj(" category_pr",-1));
-    Tcl_Obj *prCatObjPtr;
-    Tcl_DictObjGet(interp, modelPtr, nameObjPtr, &prCatObjPtr);
-
-    double pr_cat;
-    Tcl_GetDoubleFromObj(interp,prCatDefaultObjPtr, &pr_cat);
-
-    if (!pr_cat) {continue;}
-    // fprintf(stderr, "category: %s pr_cat=%f pr_cat_default=%f numWords=%d\n", Tcl_GetString(catObjPtr),pr_cat,pr_cat_default,numWords);
-
-    double p;
-    p = 0.0;
-    for(j=0; j<numWords; ++j) {
-
-      Tcl_ListObjIndex(interp,wordListPtr,j,&wordObjPtr);
-
-/*
-      nameObjPtr = Tcl_NewStringObj("word_",-1);
-      Tcl_AppendObjToObj(nameObjPtr, wordObjPtr);
-      Tcl_AppendObjToObj(nameObjPtr, Tcl_NewStringObj(",",-1));
-      Tcl_AppendObjToObj(nameObjPtr, catObjPtr);
-      Tcl_Obj *prWordGivenCatObjPtr = Tcl_ObjGetVar2(interp,modelObjPtr,nameObjPtr,0);
-*/
-    nameObjPtr = Tcl_NewStringObj("categories ",-1);
-    Tcl_AppendObjToObj(nameObjPtr, catObjPtr);
-    Tcl_AppendObjToObj(nameObjPtr, Tcl_NewStringObj(" word_pr_map ",-1));
-    Tcl_AppendObjToObj(nameObjPtr, wordObjPtr);
-    Tcl_Obj *prWordGivenCatObjPtr;
-    Tcl_DictObjGet(interp, modelPtr, nameObjPtr, &prWordGivenCatObjPtr);
-
-      double pr_word_given_cat;
-      if (prWordGivenCatObjPtr) {
-	Tcl_GetDoubleFromObj(interp,prWordGivenCatObjPtr, &pr_word_given_cat);
-      } else {
-	pr_word_given_cat = pr_cat_default;
-      }
-
-      p += log(pr_word_given_cat);
+    /*
+     * Assume interp and objPtr are parameters.  This is the
+     * idiomatic way to start an iteration over the dictionary; it
+     * sets a lock on the internal representation that ensures that
+     * there are no concurrent modification issues when normal
+     * reference count management is also used.  The lock is
+     * released automatically when the loop is finished, but must
+     * be released manually when an exceptional exit from the loop
+     * is performed. However it is safe to try to release the lock
+     * even if we've finished iterating over the loop.
+     */
+    if (Tcl_DictObjFirst(interp, categoriesDictPtr, &search,
+            &key, &value, &done) != TCL_OK) {
+        return TCL_ERROR;
     }
-    p += log(pr_cat);
+    for (; !done ; Tcl_DictObjNext(&search, &key, &value, &done)) {
+
+        catObjPtr = key;
+        catDictPtr = value;
+
+        // Tcl_DictObjGet(interp, categoriesDictPtr, catObjPtr, &catDictPtr);
+
+ // printf("Here %s\n", Tcl_GetString(catObjPtr));
+
+        Tcl_DictObjGet(interp, catDictPtr, Tcl_NewStringObj("default_word_pr",-1), &prCatDefaultObjPtr);
+        Tcl_GetDoubleFromObj(interp,prCatDefaultObjPtr, &pr_cat_default);
+
+        Tcl_DictObjGet(interp, catDictPtr, Tcl_NewStringObj("category_pr",-1), &prCatObjPtr);
+        Tcl_GetDoubleFromObj(interp,prCatObjPtr, &pr_cat);
+
+        if (!pr_cat) {continue;}
+        // fprintf(stderr, "category: %s pr_cat=%f pr_cat_default=%f numWords=%d\n", Tcl_GetString(catObjPtr),pr_cat,pr_cat_default,numWords);
+
+        Tcl_Obj *word_pr_mapPtr;
+        Tcl_DictObjGet(interp, catDictPtr, Tcl_NewStringObj("word_pr_map",-1), &word_pr_mapPtr);
+
+        double p;
+        p = 0.0;
+        Tcl_Obj *prWordGivenCatObjPtr;
+        for(j=0; j<numWords; ++j) {
+
+          Tcl_ListObjIndex(interp,wordListPtr,j,&wordObjPtr);
+          Tcl_DictObjGet(interp, word_pr_mapPtr, wordObjPtr, &prWordGivenCatObjPtr);
 
 
-    // fprintf(stderr,"category: %s p=%f\n",Tcl_GetString(catObjPtr),p);
-	    
-    if (p > max_pr) {
-      max_pr = p;
-      maxCatObjPtr = catObjPtr;
-    }
+          double pr_word_given_cat;
+          if (prWordGivenCatObjPtr) {
+            Tcl_GetDoubleFromObj(interp,prWordGivenCatObjPtr, &pr_word_given_cat);
+          } else {
+            pr_word_given_cat = pr_cat_default;
+          }
+
+          p += log(pr_word_given_cat);
+        }
+        p += log(pr_cat);
+
+
+        // fprintf(stderr,"category: %s p=%f\n",Tcl_GetString(catObjPtr),p);
+            
+        if (p > max_pr) {
+          max_pr = p;
+          maxCatObjPtr = catObjPtr;
+        }
 
   }
+
+    Tcl_DictObjDone(&search);
 
   if (maxCatObjPtr) {
-    Tcl_SetObjResult(interp,Tcl_DuplicateObj(maxCatObjPtr));
+      // printf("maxCatObjPtr=%s\n", Tcl_GetString(maxCatObjPtr));
+      Tcl_SetObjResult(interp,Tcl_DuplicateObj(maxCatObjPtr));
+      // Tcl_SetResult(interp, Tcl_GetString(maxCatObjPtr));
   }
+
+    // printf("done\n");
+
   return TCL_OK;
 
 }
