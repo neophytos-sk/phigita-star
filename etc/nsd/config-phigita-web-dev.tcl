@@ -245,9 +245,11 @@ set db_port "5432"
 set db_name "service-phgt-0"
 
 ns_section "ns/server/${server}/modules"
+#ns_section "ns/modules"
 ns_param   pool1     nsdbipg.so
 
 ns_section "ns/server/${server}/module/pool1"
+#ns_section "ns/module/pool1"
 ns_param   default       true
 ns_param   maxhandles    10
 ns_param   timeout       10

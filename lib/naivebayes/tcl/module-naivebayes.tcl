@@ -34,9 +34,14 @@ namespace eval ::naivebayes {;}
 
 proc ::naivebayes::learn_naive_bayes_text {multirow_examples multirow_categories {modelVar ""}} {
 
+    ::naivebayes::learn multirow_examples multirow_categories "/tmp/naivebayes-news.model"
+
+    return
+
     if { $modelVar ne {} } {
-	upvar $modelVar probability
+        upvar $modelVar probability
     }
+
 
     set probability(categories) ${multirow_categories}
 
