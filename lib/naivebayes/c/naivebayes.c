@@ -283,40 +283,67 @@ int compute_category_probabilities(category_t *c, int total_docs, int vocabulary
   
 }
 
-int write_model_file(Tcl_Interp *interp, Tcl_Obj *outfile, category_t *categories, int total_docs, int num_categories) {
+int set_model_info(Tcl_Interp *interp, Tcl_Obj *outvarname, category_t *categories, int num_docs, int num_categories) {
+    // category
+    // category.name
+    // category.category_pr
+    // category.default_word_pr
+    // category.word_pr_map
+    //
+    Tcl_Obj *modelPtr = Tcl_NewDictObj();
 
-    Tcl_Obj *content = Tcl_NewListObj(0,NULL);
-    Tcl_ListObjAppendElement(interp, content, Tcl_NewIntObj(total_docs));
-    Tcl_ListObjAppendElement(interp, content, Tcl_NewIntObj(num_categories));
+    Tcl_DictObjPut(interp, modelPtr, Tcl_NewStringObj("num_docs",-1), Tcl_NewIntObj(num_docs));
+    Tcl_DictObjPut(interp, modelPtr, Tcl_NewStringObj("num_categories",-1), Tcl_NewIntObj(num_docs));
+
+
     int i;
+    Tcl_Obj *listPtr, *wordlistPtr, *categoriesListPtr;
+
+    categoriesListPtr = Tcl_NewListObj(0,NULL);
     for (i = 0; i < num_categories; i++) {
         category_t *c = &categories[i];
-        Tcl_ListObjAppendElement(interp, content, c->name);
-        Tcl_ListObjAppendElement(interp, content, Tcl_NewIntObj(c->num_docs));
-        Tcl_ListObjAppendElement(interp, content, Tcl_NewIntObj(c->num_words));
-        Tcl_ListObjAppendElement(interp, content, Tcl_NewDoubleObj(c->pr));
-        Tcl_ListObjAppendElement(interp, content, Tcl_NewDoubleObj(c->default_word_pr));
 
-        // word_pr
-          Tcl_HashSearch searchPtr;
-          Tcl_HashEntry *entryPtr = Tcl_FirstHashEntry(&c->word_pr, &searchPtr);
-          while(entryPtr) {
+        listPtr = Tcl_NewListObj(0,NULL);
 
-            const char *word_key = 
-              Tcl_GetHashKey(&c->word_pr, entryPtr);
-           
-           // printf("word_key=%s\n",word_key);
-            Tcl_ListObjAppendElement(interp, content, Tcl_NewStringObj(word_key,-1));
+        Tcl_ListObjAppendElement(interp, listPtr, Tcl_NewStringObj("name",-1));
+        Tcl_ListObjAppendElement(interp, listPtr, c->name);
+        Tcl_ListObjAppendElement(interp, listPtr, Tcl_NewStringObj("num_docs",-1));
+        Tcl_ListObjAppendElement(interp, listPtr, Tcl_NewIntObj(c->num_docs));
+        Tcl_ListObjAppendElement(interp, listPtr, Tcl_NewStringObj("num_words",-1));
+        Tcl_ListObjAppendElement(interp, listPtr, Tcl_NewIntObj(c->num_words));
+        Tcl_ListObjAppendElement(interp, listPtr, Tcl_NewStringObj("category_pr",-1));
+        Tcl_ListObjAppendElement(interp, listPtr, Tcl_NewDoubleObj(c->pr));
+        Tcl_ListObjAppendElement(interp, listPtr, Tcl_NewStringObj("default_word_pr",-1));
+        Tcl_ListObjAppendElement(interp, listPtr, Tcl_NewDoubleObj(c->default_word_pr));
 
-            double word_pr = *((double *) Tcl_GetHashValue(entryPtr));
-            Tcl_ListObjAppendElement(interp, content, Tcl_NewDoubleObj(word_pr));
+        // word_pr_map
+        wordlistPtr = Tcl_NewListObj(0,NULL);
 
-            entryPtr = Tcl_NextHashEntry(&searchPtr);
+        Tcl_HashSearch searchPtr;
+        Tcl_HashEntry *entryPtr = Tcl_FirstHashEntry(&c->word_pr, &searchPtr);
+        while(entryPtr) {
 
-          }
+          const char *word_key = Tcl_GetHashKey(&c->word_pr, entryPtr);
+          double word_pr = *((double *) Tcl_GetHashValue(entryPtr));
+
+          Tcl_ListObjAppendElement(interp, wordlistPtr, Tcl_NewStringObj(word_key,-1));
+          Tcl_ListObjAppendElement(interp, wordlistPtr, Tcl_NewDoubleObj(word_pr));
+
+          entryPtr = Tcl_NextHashEntry(&searchPtr);
+
+        }
+
+        Tcl_ListObjAppendElement(interp, listPtr, Tcl_NewStringObj("word_pr_map",-1));
+        Tcl_ListObjAppendElement(interp, listPtr, wordlistPtr);
+
+        Tcl_ListObjAppendElement(interp, categoriesListPtr, c->name);
+        Tcl_ListObjAppendElement(interp, categoriesListPtr, listPtr);
 
     }
-    persistence_SetData(interp, outfile, content); 
+
+    Tcl_DictObjPut(interp, modelPtr, Tcl_NewStringObj("categories",-1), categoriesListPtr);
+
+    Tcl_ObjSetVar2(interp, outvarname, NULL, modelPtr, TCL_LEAVE_ERR_MSG); 
     
 }
 
@@ -353,13 +380,14 @@ int compute_word_probabilities(category_t *c, int vocabulary_size) {
 
 
 int naivebayes_LearnCmd(ClientData clientData,Tcl_Interp *interp,int objc,Tcl_Obj * const objv[]) {
-  CheckArgs(3,4,1,"examplesVar categoriesVar model_outfile");
+  CheckArgs(3,4,1,"examplesVar categoriesVar modelVar");
 
   // examples = multirow of slices
   // categories = list
   Tcl_Obj *examples = Tcl_ObjGetVar2(interp, objv[1], NULL, TCL_LEAVE_ERR_MSG);
   Tcl_Obj *category_names = Tcl_ObjGetVar2(interp, objv[2], NULL, TCL_LEAVE_ERR_MSG);
-  Tcl_Obj *outfile = objv[3]; // Tcl_ObjGetVar2(interp, objv[3], NULL, TCL_LEAVE_ERR_MSG);
+  Tcl_Obj *outvarname = objv[3]; // Tcl_ObjGetVar2(interp, objv[3], NULL, TCL_LEAVE_ERR_MSG);
+
 
   int num_categories;
   Tcl_ListObjLength(interp, category_names, &num_categories);
@@ -440,78 +468,26 @@ printf("actually remove marked words\n");
     # frequent and rare words to remove
    */
 
-  /* 
-    #
-    # mark top 300 words for removal
-    #
-    set remove_frequent_words [wordcount_topN vocabulary 300]
-    puts "frequent words (to be removed):"
-    print_words $remove_frequent_words
-
-    #
-    # mark words with less than 20 occurrences for removal
-    #
-    set remove_rare_words [list]
-    foreach word [array names vocabulary] {
-	if { $vocabulary(${word}) <= 20 } {
-	    lappend remove_rare_words ${word}
-	}
-    }
-    puts "rare words (to be removed):"
-    print_words ${remove_rare_words}
-
-    #
-    # actually remove marked words
-    #
-
-    set remove_words [concat ${remove_frequent_words} ${remove_rare_words}]
-    foreach word ${remove_words} {
-	if { ![info exists vocabulary(${word})] } {
-	    continue
-	}
-	unset vocabulary(${word})
-	incr vocabulary_size -1
-	foreach category ${multirow_categories} {
-	    if { [info exists wordcount_${category}(${word})] } {
-		unset wordcount_${category}(${word})
-		incr num_words(${category}) -1
-	    }
-	}
-    }
-
-
-    set vocabulary_size [array size vocabulary]
-    puts ""
-    puts "--->>> model vocabulary"
-    puts total_words_in_vocabulary=$vocabulary_size
-    print_words [wordcount_topN vocabulary 40]
-
-    foreach category ${multirow_categories} {
-	puts "--->>> model category = ${category}"
-	puts "num_words(${category})=$num_words(${category})"
-	puts "num_docs(${category})=$num_docs(${category})"
-	print_words [wordcount_topN wordcount_${category} 40]
-    }
-
-  */
-
 printf("compute category probabilities\n");
 
   for (i=0; i < num_categories; ++i) {
     compute_category_probabilities(&categories[i], total_docs, vocabulary_size);
   }
 
-    write_model_file(interp, outfile, categories, total_docs, num_categories);
+printf("set model info\n");
+    set_model_info(interp, outvarname, categories, total_docs, num_categories);
 
   Tcl_Free((char *) categories);
 
+  return TCL_OK;
 }
 
 int naivebayes_ClassifyCmd(ClientData clientData,Tcl_Interp *interp,int objc,Tcl_Obj * const objv[]) {
 	
   CheckArgs(2,3,1,"modelVar wordsVar");
 	
-  Tcl_Obj *modelObjPtr = objv[1];
+  Tcl_Obj *modelPtr = Tcl_ObjGetVar2(interp, objv[1], NULL, TCL_LEAVE_ERR_MSG);
+  // Tcl_Obj *modelObjPtr = objv[1];
   Tcl_Obj *wordListPtr = Tcl_ObjGetVar2(interp,objv[2], NULL, TCL_LEAVE_ERR_MSG);
 
   int numWords;
@@ -526,7 +502,9 @@ int naivebayes_ClassifyCmd(ClientData clientData,Tcl_Interp *interp,int objc,Tcl
   Tcl_Obj *nameObjPtr;
   nameObjPtr = Tcl_NewStringObj("categories",-1);
 
-  Tcl_Obj *catListPtr = Tcl_ObjGetVar2(interp, modelObjPtr, nameObjPtr, TCL_LEAVE_ERR_MSG);
+  // Tcl_Obj *catListPtr = Tcl_ObjGetVar2(interp, modelObjPtr, nameObjPtr, TCL_LEAVE_ERR_MSG);
+  Tcl_Obj *catListPtr;
+  Tcl_DictObjGet(interp, modelPtr, nameObjPtr, &catListPtr);
 
   if (!catListPtr) {
     fprintf(stderr, "no categories found\n");
@@ -555,18 +533,31 @@ int naivebayes_ClassifyCmd(ClientData clientData,Tcl_Interp *interp,int objc,Tcl
 
     Tcl_ListObjIndex(interp,catListPtr,i,&catObjPtr);
 
-
+/*
     nameObjPtr = Tcl_NewStringObj("cat_",-1);
     Tcl_AppendObjToObj(nameObjPtr, catObjPtr);
     Tcl_AppendObjToObj(nameObjPtr, Tcl_NewStringObj("_default_pr",-1));
     Tcl_Obj *prCatDefaultObjPtr = Tcl_ObjGetVar2(interp,modelObjPtr,nameObjPtr,TCL_LEAVE_ERR_MSG);
+*/
+    nameObjPtr = Tcl_NewStringObj("categories ",-1);
+    Tcl_AppendObjToObj(nameObjPtr, catObjPtr);
+    Tcl_AppendObjToObj(nameObjPtr, Tcl_NewStringObj(" default_word_pr",-1));
+    Tcl_Obj *prCatDefaultObjPtr;
+    Tcl_DictObjGet(interp, modelPtr, nameObjPtr, &prCatDefaultObjPtr);
 
     double pr_cat_default;
     Tcl_GetDoubleFromObj(interp,prCatDefaultObjPtr, &pr_cat_default);
 
+/* 
     nameObjPtr = Tcl_NewStringObj("cat_",-1);
     Tcl_AppendObjToObj(nameObjPtr, catObjPtr);
     Tcl_Obj *prCatObjPtr = Tcl_ObjGetVar2(interp,modelObjPtr,nameObjPtr,TCL_LEAVE_ERR_MSG);
+*/
+    nameObjPtr = Tcl_NewStringObj("categories ",-1);
+    Tcl_AppendObjToObj(nameObjPtr, catObjPtr);
+    Tcl_AppendObjToObj(nameObjPtr, Tcl_NewStringObj(" category_pr",-1));
+    Tcl_Obj *prCatObjPtr;
+    Tcl_DictObjGet(interp, modelPtr, nameObjPtr, &prCatObjPtr);
 
     double pr_cat;
     Tcl_GetDoubleFromObj(interp,prCatDefaultObjPtr, &pr_cat);
@@ -580,12 +571,19 @@ int naivebayes_ClassifyCmd(ClientData clientData,Tcl_Interp *interp,int objc,Tcl
 
       Tcl_ListObjIndex(interp,wordListPtr,j,&wordObjPtr);
 
+/*
       nameObjPtr = Tcl_NewStringObj("word_",-1);
       Tcl_AppendObjToObj(nameObjPtr, wordObjPtr);
       Tcl_AppendObjToObj(nameObjPtr, Tcl_NewStringObj(",",-1));
       Tcl_AppendObjToObj(nameObjPtr, catObjPtr);
-
       Tcl_Obj *prWordGivenCatObjPtr = Tcl_ObjGetVar2(interp,modelObjPtr,nameObjPtr,0);
+*/
+    nameObjPtr = Tcl_NewStringObj("categories ",-1);
+    Tcl_AppendObjToObj(nameObjPtr, catObjPtr);
+    Tcl_AppendObjToObj(nameObjPtr, Tcl_NewStringObj(" word_pr_map ",-1));
+    Tcl_AppendObjToObj(nameObjPtr, wordObjPtr);
+    Tcl_Obj *prWordGivenCatObjPtr;
+    Tcl_DictObjGet(interp, modelPtr, nameObjPtr, &prWordGivenCatObjPtr);
 
       double pr_word_given_cat;
       if (prWordGivenCatObjPtr) {

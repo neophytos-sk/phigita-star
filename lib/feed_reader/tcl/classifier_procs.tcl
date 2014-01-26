@@ -274,9 +274,9 @@ proc ::feed_reader::classifier::train {axis {supercolumn_path ""} {remaining_lev
     ::naivebayes::save_naive_bayes_model model ${filename}
 
     if { ${remaining_levels} } {
-	foreach path ${supercolumns_categories} {
-	    train ${axis} ${path} [expr { ${remaining_levels} - 1 }]
-	}
+        foreach path ${supercolumns_categories} {
+            train ${axis} ${path} [expr { ${remaining_levels} - 1 }]
+        }
     }
 
 }

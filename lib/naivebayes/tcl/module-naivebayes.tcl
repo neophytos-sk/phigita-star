@@ -34,9 +34,15 @@ namespace eval ::naivebayes {;}
 
 proc ::naivebayes::learn_naive_bayes_text {multirow_examples multirow_categories {modelVar ""}} {
 
-    ::naivebayes::learn multirow_examples multirow_categories "/tmp/naivebayes-news.model"
+    if { $modelVar ne {} } {
+        upvar $modelVar model
+    }
 
-    return
+    ::naivebayes::learn multirow_examples multirow_categories model
+
+}
+
+proc ::naivebayes::learn_naive_bayes_text__tcl {multirow_examples multirow_categories {modelVar ""}} {
 
     if { $modelVar ne {} } {
         upvar $modelVar probability
@@ -172,7 +178,8 @@ proc ::naivebayes::save_naive_bayes_model {modelVar filename} {
 
     upvar $modelVar model
 
-    ::persistence::set_data ${filename} [array get model]
+    # model is a tcl dict
+    ::persistence::set_data ${filename} $model
 
 }
 
@@ -181,7 +188,8 @@ proc ::naivebayes::load_naive_bayes_model {modelVar filename} {
 
     upvar $modelVar model
 
-    array set model [::persistence::get_data ${filename}]
+    set data [::persistence::get_data ${filename}]
+    set model [dict create {*}${data}]
 
 }
 
@@ -276,19 +284,29 @@ proc ::naivebayes::print_words {words} {
 
 proc ::naivebayes::classify_naive_bayes_text {modelVar contentVar} {
 
-    upvar $modelVar pr
+    upvar $modelVar model
     upvar $contentVar content
-
+    #
     # we wordcount_helper as it strips out embedded content (images,video)
 
     # wordcount_helper wordcount_text content
     # set words [array names wordcount_text]
     set words [clean_and_tokenize content]
 
-    return [::naivebayes::classify pr words]
+    return [::naivebayes::classify model words]
 
-    # ---- 
+}
 
+proc ::naivebayes::classify_naive_bayes_text__tcl_old {modelVar contentVar} {
+
+    upvar $modelVar pr
+    upvar $contentVar content
+    #
+    # we wordcount_helper as it strips out embedded content (images,video)
+
+    # wordcount_helper wordcount_text content
+    # set words [array names wordcount_text]
+    set words [clean_and_tokenize content]
 
     set categories $pr(categories)
 
