@@ -71,7 +71,7 @@ int clean_and_tokenize(Tcl_Interp *interp, Tcl_Obj *content, Tcl_Obj *resObjPtr,
     // content is a list of two elements, the title and the content
     // join them together
 
-    int i,j,listLen,subListLen;
+    int i,listLen;
     Tcl_Obj **elemPtrs;
 
     if (Tcl_ListObjGetElements(interp, content, &listLen, &elemPtrs) != TCL_OK) {
@@ -80,7 +80,6 @@ int clean_and_tokenize(Tcl_Interp *interp, Tcl_Obj *content, Tcl_Obj *resObjPtr,
     }
 
     int count=0;
-    Tcl_Obj *objPtr;
     for (i = 0;  i < listLen;  i++) {
 
         Tcl_IncrRefCount(elemPtrs[i]);
@@ -108,10 +107,10 @@ int wordcount_helper(Tcl_Interp *interp, category_t *c, Tcl_Obj *content) {
 // printf("num_words=%d\n",c->num_words);
 
   Tcl_Obj *word_objPtr;
-  Tcl_HashEntry *entryPtr;
 
   int i;
   for (i=0; i < c->num_words; ++i) {
+      Tcl_HashEntry *entryPtr;
 
     Tcl_ListObjIndex(interp, tokens, i, &word_objPtr);
 // printf("ListObjIndex\n");
@@ -224,12 +223,13 @@ void remove_marked_words(Tcl_Interp *interp, Tcl_Obj *remove_words_listPtr, Tcl_
   Tcl_ListObjLength(interp, remove_words_listPtr, &len);
 
   Tcl_Obj *word_objPtr;
-  Tcl_HashEntry *vocabulary_word_entryPtr;
   Tcl_HashEntry *category_word_entryPtr; 
-  const char *word_key;
   category_t *c;
 
   for (i=0; i<len; i++) {
+
+      const char *word_key;
+      Tcl_HashEntry *vocabulary_word_entryPtr;
 
     Tcl_ListObjIndex(interp, remove_words_listPtr, i, &word_objPtr);
 
@@ -335,10 +335,13 @@ int set_model_info(Tcl_Interp *interp, Tcl_Obj *outvarname, category_t *categori
 
 
     int i;
-    Tcl_Obj *listPtr, *wordlistPtr, *categoriesListPtr;
+    Tcl_Obj *categoriesListPtr;
 
     categoriesListPtr = Tcl_NewListObj(0,NULL);
     for (i = 0; i < num_categories; i++) {
+
+        Tcl_Obj *listPtr, *wordlistPtr;
+
         category_t *c = &categories[i];
 
         listPtr = Tcl_NewListObj(0,NULL);
@@ -395,9 +398,10 @@ int compute_word_probabilities(Tcl_Interp *interp, category_t *c, int vocabulary
     Tcl_HashSearch searchPtr;
     Tcl_HashEntry *entryPtr = Tcl_FirstHashEntry(&c->wordcount,&searchPtr);
     int new;
-    Tcl_HashEntry *newEntryPtr;
     int num_occurrences;
     while(entryPtr) {
+
+        Tcl_HashEntry *newEntryPtr;
       
       const char *word_key = Tcl_GetHashKey(&c->wordcount, entryPtr);
 
@@ -548,7 +552,7 @@ int naivebayes_ClassifyCmd(ClientData clientData,Tcl_Interp *interp,int objc,Tcl
   Tcl_Obj *maxCatObjPtr = NULL;
   Tcl_Obj *catObjPtr;
   Tcl_Obj *wordObjPtr;
-  Tcl_Obj *categoriesDictPtr, *catDictPtr;
+  Tcl_Obj *categoriesDictPtr;
   Tcl_DictObjGet(interp, modelPtr, Tcl_NewStringObj("categories",-1), &categoriesDictPtr);
 
   int size=0;
@@ -558,7 +562,7 @@ int naivebayes_ClassifyCmd(ClientData clientData,Tcl_Interp *interp,int objc,Tcl
     return TCL_OK;
   }
 
-  int i,j;
+  int j;
   Tcl_Obj *prCatDefaultObjPtr;
   double pr_cat_default;
   Tcl_Obj *prCatObjPtr;
@@ -584,6 +588,8 @@ int naivebayes_ClassifyCmd(ClientData clientData,Tcl_Interp *interp,int objc,Tcl
         return TCL_ERROR;
     }
     for (; !done ; Tcl_DictObjNext(&search, &key, &value, &done)) {
+
+          Tcl_Obj *catDictPtr;
 
         catObjPtr = key;
         catDictPtr = value;
