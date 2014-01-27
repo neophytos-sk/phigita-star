@@ -38,6 +38,35 @@ int initialize_category(category_t *c) {
   return TCL_OK;
 }  
 
+int tokenize(Tcl_Interp *interp, Tcl_Obj *resObjPtr, Tcl_Obj *text, int *count) {
+
+    int i, num_tokens = 0;
+    Tcl_Obj *tokens_objPtr, *token, *cmd_objPtr;
+
+    // Tcl_Obj *cmd_objPtr =  Tcl_NewStringObj("::util::tokenize", -1);
+    cmd_objPtr =  Tcl_NewStringObj("::naivebayes::clean_and_tokenize_wrapper", -1);
+    Tcl_Obj *objv[] = {cmd_objPtr, text};
+    if (TCL_OK != Tcl_EvalObjv(interp, 2, objv, TCL_EVAL_GLOBAL)) {
+        // TODO: add error message
+        printf("error calling clean_and_tokenize\n");
+        return TCL_ERROR;
+    }
+
+    tokens_objPtr = Tcl_GetObjResult(interp);
+    Tcl_ListObjLength(interp, tokens_objPtr, &num_tokens);
+    // printf("tokens=%s num_tokens=%d\n", Tcl_GetString(tokens_objPtr), num_tokens);
+
+    for (i = 0; i < num_tokens; i++) {
+        Tcl_ListObjIndex(interp, tokens_objPtr, i, &token);
+        Tcl_ListObjAppendElement(interp, resObjPtr, token);
+    }
+
+    *count += num_tokens;
+
+    return TCL_OK;
+
+}
+
 int clean_and_tokenize(Tcl_Interp *interp, Tcl_Obj *content, Tcl_Obj *resObjPtr, int *num_tokens) {
     // content is a list of two elements, the title and the content
     // join them together
@@ -50,40 +79,16 @@ int clean_and_tokenize(Tcl_Interp *interp, Tcl_Obj *content, Tcl_Obj *resObjPtr,
         return TCL_ERROR;
     }
 
-    const char delim[] = ",. -:;?'\"\n\t()[]<>/\\";
     int count=0;
     Tcl_Obj *objPtr;
-    char *saveptr, *token, *str;
-    const char *immutable_str;
     for (i = 0;  i < listLen;  i++) {
 
         Tcl_IncrRefCount(elemPtrs[i]);
 
-        int length = 0;
-        
-        immutable_str = Tcl_GetStringFromObj(elemPtrs[i],&length);
-        str = strndup(immutable_str,length);
-        token = strtok_r(str, delim, &saveptr);
-        while (token) {
-            count++;
-            // size_t tokenlen = saveptr - token - 1;
-            Tcl_ListObjAppendElement(interp, resObjPtr, Tcl_NewStringObj(token,-1));
-            // printf("token=%s saveptr=%p\n", token, saveptr);
-            token = strtok_r(NULL, delim, &saveptr);
+        if (TCL_OK != tokenize(interp, resObjPtr, elemPtrs[i], &count)) {
+            // TODO: add error message
+            return TCL_ERROR;
         }
-
-        /* 
-        Tcl_ListObjLength(interp, elemPtrs[i], &subListLen);
-        for (j = 0; j < subListLen; j++) {
-            Tcl_ListObjIndex(interp, elemPtrs[i], j, &objPtr);
-
-            // TODO: investigate why this is needed
-            if (!objPtr) continue;
-
-            Tcl_ListObjAppendElement(interp, resObjPtr, objPtr);
-            count++;
-        }
-        */
 
         Tcl_DecrRefCount(elemPtrs[i]);
 
@@ -326,7 +331,7 @@ int set_model_info(Tcl_Interp *interp, Tcl_Obj *outvarname, category_t *categori
     Tcl_Obj *modelPtr = Tcl_NewDictObj();
 
     Tcl_DictObjPut(interp, modelPtr, Tcl_NewStringObj("num_docs",-1), Tcl_NewIntObj(num_docs));
-    Tcl_DictObjPut(interp, modelPtr, Tcl_NewStringObj("num_categories",-1), Tcl_NewIntObj(num_docs));
+    Tcl_DictObjPut(interp, modelPtr, Tcl_NewStringObj("num_categories",-1), Tcl_NewIntObj(num_categories));
 
 
     int i;
@@ -439,7 +444,7 @@ int naivebayes_LearnCmd(ClientData clientData,Tcl_Interp *interp,int objc,Tcl_Ob
   int vocabulary_size = 0;
 
 
-  int i, j, total_docs;
+  int i, j, total_docs = 0;
   for (i=0; i < num_categories; ++i) {
 
     // initialize category structure

@@ -194,6 +194,18 @@ proc ::naivebayes::load_naive_bayes_model {modelVar filename} {
 }
 
 
+proc ::util::tokenize {text} {
+
+    set removeChars_re {[^[:alnum:]]+}
+    regsub -all -- ${removeChars_re} ${text} { } text
+
+    return [lsearch -inline -all -not [split [string tolower [::ttext::unaccent utf-8 ${text}]]] {}]
+}
+
+
+proc ::naivebayes::clean_and_tokenize_wrapper {content {filter_stopwords_p 0}} { 
+    return [clean_and_tokenize content]
+}
 
 
 proc ::naivebayes::clean_and_tokenize {contentVar {filter_stopwords_p 0}} { 
@@ -209,14 +221,14 @@ proc ::naivebayes::clean_and_tokenize {contentVar {filter_stopwords_p 0}} {
 	{https?://[^\s]+}
 	{[^[:alnum:]]}
     } {
-	regsub -all -- ${re} ${content} {\1 } content
+        regsub -all -- ${re} ${content} {\1 } content
     }
 
     set tokens0 [::util::tokenize ${content}]
 
     if { $filter_stopwords_p } {
-	filter_stopwords tokens tokens0
-	return ${tokens}
+        filter_stopwords tokens tokens0
+        return ${tokens}
     }
 
 

@@ -1074,15 +1074,6 @@ proc ::feed_reader::list_all {{offset "0"} {limit "20"}} {
 }
 
 
-proc ::util::tokenize {text} {
-
-    set removeChars_re {[^[:alnum:]]+}
-    regsub -all -- ${removeChars_re} ${text} { } text
-
-    return [lsearch -inline -all -not [split [string tolower [::ttext::unaccent utf-8 ${text}]]] {}]
-}
-
-
 proc ::util::recognize_date_format {text {locales {en_US el_GR}} {normalize_text_p 1}} {
 
     regsub -all -- {[^[:alnum:]\:]} ${text} { } stripped_text
@@ -1131,6 +1122,15 @@ proc ::util::recognize_date_format {text {locales {en_US el_GR}} {normalize_text
 	}
     }
 }
+
+proc ::util::tokenize {text} {
+
+    set removeChars_re {[^[:alnum:]]+}
+    regsub -all -- ${removeChars_re} ${text} { } text
+
+    return [lsearch -inline -all -not [split [string tolower [::ttext::unaccent utf-8 ${text}]]] {}]
+}
+
 
 proc ::util::tokenize_date {text} {
 
