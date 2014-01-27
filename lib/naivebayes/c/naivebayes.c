@@ -5,6 +5,8 @@
 #include "persistence.h"
 #include "heapq.h"
 
+#include <string.h>
+
 typedef struct {
   Tcl_Obj *name;
   int num_docs;
@@ -48,9 +50,29 @@ int clean_and_tokenize(Tcl_Interp *interp, Tcl_Obj *content, Tcl_Obj *resObjPtr,
         return TCL_ERROR;
     }
 
+    const char delim[] = ",. -:;?'\"";
     int count=0;
     Tcl_Obj *objPtr;
+    char *saveptr, *token, *str;
+    const char *immutable_str;
     for (i = 0;  i < listLen;  i++) {
+
+        Tcl_IncrRefCount(elemPtrs[i]);
+
+        int length = 0;
+        
+        immutable_str = Tcl_GetStringFromObj(elemPtrs[i],&length);
+        str = strndup(immutable_str,length);
+        token = strtok_r(str, delim, &saveptr);
+        while (token) {
+            count++;
+            // size_t tokenlen = saveptr - token - 1;
+            Tcl_ListObjAppendElement(interp, resObjPtr, Tcl_NewStringObj(token,-1));
+            // printf("token=%s saveptr=%p\n", token, saveptr);
+            token = strtok_r(NULL, delim, &saveptr);
+        }
+
+        /* 
         Tcl_ListObjLength(interp, elemPtrs[i], &subListLen);
         for (j = 0; j < subListLen; j++) {
             Tcl_ListObjIndex(interp, elemPtrs[i], j, &objPtr);
@@ -61,7 +83,13 @@ int clean_and_tokenize(Tcl_Interp *interp, Tcl_Obj *content, Tcl_Obj *resObjPtr,
             Tcl_ListObjAppendElement(interp, resObjPtr, objPtr);
             count++;
         }
+        */
+
+        Tcl_DecrRefCount(elemPtrs[i]);
+
     }
+
+    // printf("done count=%d\n",count);
 
     *num_tokens = count;
 
@@ -410,7 +438,7 @@ int naivebayes_LearnCmd(ClientData clientData,Tcl_Interp *interp,int objc,Tcl_Ob
     // get the category name and set it in the structure
     Tcl_ListObjIndex(interp, category_names, i, &categories[i].name);
 
-// printf("HERE: category=%s\n", Tcl_GetString(categories[i].name));
+//  printf("HERE: category=%s\n", Tcl_GetString(categories[i].name));
 
     // get the ith slice
     Tcl_Obj *slice;
@@ -430,6 +458,8 @@ int naivebayes_LearnCmd(ClientData clientData,Tcl_Interp *interp,int objc,Tcl_Ob
       // read the data from the given file
       persistence_GetData(interp, infile, content);
  
+// printf("before wordcount_helper category=%s\n", Tcl_GetString(categories[i].name));
+
       // count words in content and update wordcount for category i
       wordcount_helper(interp, &categories[i], content);
 
