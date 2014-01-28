@@ -11,6 +11,47 @@ proc ::util::boolean {value} {
 }
 
 # ---------------------------------- numbers ------------------------------
+
+namespace eval ::util {
+    variable base_chars "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+}
+
+proc ::util::to_base {number base} {
+        variable base_chars
+        if {$number==0} { 
+                return 0 
+        } elseif {(($base>62) || ($base<2))} { 
+                return -code error "base: expected integer between 2 and 62, got '$base'"
+        } 
+        set nums [string range $base_chars 0 [expr $base - 1]] 
+        set result ""
+        while {$number > 0} { 
+                set result "[string index $nums [expr $number % $base]]${result}"
+                set number [expr int($number / $base)]
+        }
+        set result
+} 
+
+proc ::util::from_base {number base} {
+        variable base_chars
+        if {(($base>62) || ($base<2))} { 
+                return -code error "base: expected integer between 2 and 62, got '$base'"
+        }
+        set nums [string range $base_chars 0 [expr $base - 1]]  
+        for {
+                set result 0 
+                set i 0
+                set len [string length $number]
+        } {$i<$len} {
+                incr i
+        } {     incr i
+                set result [expr $result * $base] 
+                set result [expr $result + [string first [string index $number $i] $nums]]  
+        } 
+        set result
+} 
+
+# ---------------------------------- numbers ------------------------------
  
 proc ::util::dec_to_hex {num} {
     return [format "%x" $num]
