@@ -194,12 +194,26 @@ proc ::naivebayes::load_naive_bayes_model {modelVar filename} {
 }
 
 
+proc greek_utf8_to_greeklish {str} {
+    set iso_str [encoding convertto iso8859-7 $str]
+    set fromchars "áâãäåæçèéêëìíîïðñóòôõö÷øùÜÝÞßúÀüýûàþÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÓÔÕÖ×ØÙ¶¸¹ºÚ¼¾Û¿"
+    set tochars "abgdezh8iklmn3oprsstufxywaehiiiouuuwABGDEZH8IKLMNJOPRSTYFXCWAEHIIOUUW"
+
+    set map [list]
+    foreach f [split $fromchars ""] t [split $tochars ""] {
+        lappend map $f $t
+    }
+
+    return [string map $map $iso_str]
+}
+
 proc ::util::tokenize {text} {
 
     set removeChars_re {[^[:alnum:]]+}
     regsub -all -- ${removeChars_re} ${text} { } text
 
-    return [lsearch -inline -all -not [split [string tolower [::ttext::unaccent utf-8 ${text}]]] {}]
+    #return [lsearch -inline -all -not [split [string tolower [::ttext::unaccent utf-8 ${text}]]] {}]
+    return [lsearch -inline -all -not [split [string tolower [greek_utf8_to_greeklish ${text}]]] {}]
 }
 
 
