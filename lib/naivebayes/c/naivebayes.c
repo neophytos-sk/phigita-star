@@ -22,12 +22,12 @@ static int naivebayes_ModuleInitialized;
 
 
 
-int wordcount_helper(Tcl_Interp *interp, category_t *c, Tcl_Obj *content);
-int compute_category_probabilities(Tcl_Interp *interp, category_t *c, int total_docs, int vocabulary_size);
-int compute_word_probabilities(Tcl_Interp *interp, category_t *c, int vocabulary_size);
+static int wordcount_helper(Tcl_Interp *interp, category_t *c, Tcl_Obj *content);
+static int compute_category_probabilities(Tcl_Interp *interp, category_t *c, int total_docs, int vocabulary_size);
+static int compute_word_probabilities(Tcl_Interp *interp, category_t *c, int vocabulary_size);
 
 
-int initialize_category(category_t *c) {
+static int initialize_category(category_t *c) {
   c->name = NULL;
   c->num_docs = 0;
   c->num_words = 0;
@@ -38,7 +38,7 @@ int initialize_category(category_t *c) {
   return TCL_OK;
 }  
 
-int tokenize(Tcl_Interp *interp, Tcl_Obj *resObjPtr, Tcl_Obj *text, int *count) {
+static int tokenize(Tcl_Interp *interp, Tcl_Obj *resObjPtr, Tcl_Obj *text, int *count) {
 
     int i, num_tokens = 0;
     Tcl_Obj *tokens_objPtr, *token, *cmd_objPtr;
@@ -67,7 +67,7 @@ int tokenize(Tcl_Interp *interp, Tcl_Obj *resObjPtr, Tcl_Obj *text, int *count) 
 
 }
 
-int clean_and_tokenize(Tcl_Interp *interp, Tcl_Obj *content, Tcl_Obj *resObjPtr, int *num_tokens) {
+static int clean_and_tokenize(Tcl_Interp *interp, Tcl_Obj *content, Tcl_Obj *resObjPtr, int *num_tokens) {
     // content is a list of two elements, the title and the content
     // join them together
 
@@ -99,7 +99,8 @@ int clean_and_tokenize(Tcl_Interp *interp, Tcl_Obj *content, Tcl_Obj *resObjPtr,
 
     return TCL_OK;
 }
-int wordcount_helper(Tcl_Interp *interp, category_t *c, Tcl_Obj *content) {
+
+static int wordcount_helper(Tcl_Interp *interp, category_t *c, Tcl_Obj *content) {
 
   Tcl_Obj *tokens = Tcl_NewListObj(0,NULL);
   clean_and_tokenize(interp, content, tokens, &c->num_words);
@@ -144,7 +145,7 @@ int wordcount_helper(Tcl_Interp *interp, category_t *c, Tcl_Obj *content) {
 
 }
 
-int compare_wordcount_hashentry(const void *d1, const void *d2)
+static int compare_wordcount_hashentry(const void *d1, const void *d2)
 {
   int v1, v2;
 
@@ -154,7 +155,7 @@ int compare_wordcount_hashentry(const void *d1, const void *d2)
   return (v1>v2) ? -1 : ((v1<v2) ? 1 : 0);
 }
 
-void mark_frequent_words(Tcl_Interp *interp, Tcl_Obj *remove_words_listPtr, Tcl_HashTable *vocabulary_tablePtr, int top_n) {
+static void mark_frequent_words(Tcl_Interp *interp, Tcl_Obj *remove_words_listPtr, Tcl_HashTable *vocabulary_tablePtr, int top_n) {
 
   heapq_t q;
   heapq_init(&q,compare_wordcount_hashentry);
@@ -191,7 +192,7 @@ void mark_frequent_words(Tcl_Interp *interp, Tcl_Obj *remove_words_listPtr, Tcl_
 
 }
 
-void mark_rare_words(Tcl_Interp *interp, Tcl_Obj *remove_words_listPtr, Tcl_HashTable *vocabulary_tablePtr, int threshold) {
+static void mark_rare_words(Tcl_Interp *interp, Tcl_Obj *remove_words_listPtr, Tcl_HashTable *vocabulary_tablePtr, int threshold) {
 
   Tcl_HashSearch searchPtr;
   Tcl_HashEntry *entryPtr = Tcl_FirstHashEntry(vocabulary_tablePtr, &searchPtr);
@@ -216,7 +217,7 @@ void mark_rare_words(Tcl_Interp *interp, Tcl_Obj *remove_words_listPtr, Tcl_Hash
 
 }
 
-void remove_marked_words(Tcl_Interp *interp, Tcl_Obj *remove_words_listPtr, Tcl_HashTable *vocabulary_tablePtr, category_t *categories, int num_categories) {
+static void remove_marked_words(Tcl_Interp *interp, Tcl_Obj *remove_words_listPtr, Tcl_HashTable *vocabulary_tablePtr, category_t *categories, int num_categories) {
 
   int i,j,len;
 
@@ -266,7 +267,7 @@ void remove_marked_words(Tcl_Interp *interp, Tcl_Obj *remove_words_listPtr, Tcl_
 
 }
 
-int update_vocabulary_count(Tcl_Interp *interp, Tcl_HashTable *vocabulary_tablePtr, category_t *c, int *vocabulary_sizePtr) {
+static int update_vocabulary_count(Tcl_Interp *interp, Tcl_HashTable *vocabulary_tablePtr, category_t *c, int *vocabulary_sizePtr) {
 
   Tcl_HashSearch searchPtr;
   Tcl_HashEntry *entryPtr = Tcl_FirstHashEntry(&c->wordcount, &searchPtr);
@@ -304,7 +305,7 @@ int update_vocabulary_count(Tcl_Interp *interp, Tcl_HashTable *vocabulary_tableP
 
 }
 
-int compute_category_probabilities(Tcl_Interp *interp, category_t *c, int total_docs, int vocabulary_size) {
+static int compute_category_probabilities(Tcl_Interp *interp, category_t *c, int total_docs, int vocabulary_size) {
 
   if ( c->num_docs != 0 ) {
 
@@ -321,7 +322,7 @@ int compute_category_probabilities(Tcl_Interp *interp, category_t *c, int total_
   
 }
 
-int set_model_info(Tcl_Interp *interp, Tcl_Obj *outvarname, category_t *categories, int num_docs, int num_categories) {
+static int set_model_info(Tcl_Interp *interp, Tcl_Obj *outvarname, category_t *categories, int num_docs, int num_categories) {
     // category
     // category.name
     // category.category_pr
@@ -393,7 +394,7 @@ int set_model_info(Tcl_Interp *interp, Tcl_Obj *outvarname, category_t *categori
 
 
 
-int compute_word_probabilities(Tcl_Interp *interp, category_t *c, int vocabulary_size) {
+static int compute_word_probabilities(Tcl_Interp *interp, category_t *c, int vocabulary_size) {
 
     Tcl_HashSearch searchPtr;
     Tcl_HashEntry *entryPtr = Tcl_FirstHashEntry(&c->wordcount,&searchPtr);
