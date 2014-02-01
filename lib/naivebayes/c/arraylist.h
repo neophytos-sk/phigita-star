@@ -6,6 +6,7 @@
 #include <string.h>  /* for memcpy */
 
 #include "common.h"
+#include "object.h"
 
 typedef struct {
     void *elems;
@@ -14,22 +15,33 @@ typedef struct {
     int allocLength;
 } arraylist_t;
 
+static inline void arraylist_foreach(arraylist_t *const list, void (fn)(char *));
 
 
-#define kInitialAllocationSize 4
-
-static inline void arraylist_init(arraylist_t *const list, int elemSize)
+static inline void arraylist_init(arraylist_t *const list, int initialAllocationSize, int elemSize)
 {
     assert(elemSize > 0);
     list->elemSize = elemSize;
     list->logLength = 0;
-    list->allocLength = kInitialAllocationSize;
-    list->elems = ckalloc(kInitialAllocationSize * elemSize);
+    list->allocLength = initialAllocationSize;
+    list->elems = ckalloc(initialAllocationSize * elemSize);
     assert(list->elems != NULL);
 }
 
-static inline void arraylist_free(arraylist_t *const list) {
+static inline void arraylist_cleanup(arraylist_t *const list) {
+    arraylist_foreach(list, decr_ref_count);
     ckfree(list->elems);
+}
+
+static inline arraylist_t *const arraylist_new(int initialAllocationSize, int elemSize) {
+    arraylist_t *list = (arraylist_t *) ckalloc(sizeof(arraylist_t));
+    arraylist_init(list, initialAllocationSize, elemSize);
+    return list;
+}
+
+static inline void arraylist_free(arraylist_t *list) {
+    arraylist_cleanup(list);
+    ckfree(list);
 }
 
 static inline int arraylist_empty(const arraylist_t *const list) {
@@ -46,36 +58,37 @@ static inline int arraylist_capacity(const arraylist_t *const list) {
 
 static inline void arraylist_resize(arraylist_t *const list, size_t n)
 {
+    assert(n > 0);
     list->allocLength = n;
     list->elems = ckrealloc(list->elems, n * list->elemSize);
     assert(list->elems != NULL);
 
-    // size_t n = (index - list->logLength) * list->elemSize;
-    // memset((char *) list->elems + list->logLength * list->elemSize, 0, n);
-    // list->logLength = index + 1;
-
 }
 
-static inline const void *arraylist_get(const arraylist_t *const list, size_t index)
+static inline int arraylist_get(const arraylist_t *const list, size_t index, void **elemPtrPtr)
 {
     assert(!arraylist_empty(list));
     assert(index >= 0 && index < arraylist_length(list));
     void *const sourcePtr = (char *) list->elems + index * list->elemSize;
-    return sourcePtr;
+    memcpy(elemPtrPtr, sourcePtr, sizeof(void *));
+    return 1; // OK
 }
 
-static inline void arraylist_set(arraylist_t *const list, size_t index, const void *const elemPtr)
+static inline void arraylist_set(arraylist_t *const list, size_t index, void *const elemPtr)
 {
     assert(index > 0 && index < arraylist_capacity(list));
     void *const destPtr = (char *)list->elems + index * list->elemSize;
-    memcpy(destPtr,elemPtr,list->elemSize);
+
+    incr_ref_count(elemPtr);
+    memcpy(destPtr, &elemPtr, list->elemSize);
+
     if (index > list->logLength) {
         list->logLength = index+1;
     }
 
 }
 
-static inline void arraylist_push(arraylist_t *const list, const void *const elemPtr) 
+static inline void arraylist_push(arraylist_t *const list, void *const elemPtr) 
 {
     if (list->logLength == list->allocLength) {
         arraylist_resize(list, list->allocLength * 2);
@@ -85,13 +98,46 @@ static inline void arraylist_push(arraylist_t *const list, const void *const ele
     list->logLength++;
 }
 
-static inline void arraylist_pop(arraylist_t *const list)
+static inline int arraylist_top(const arraylist_t *const list, void **elemPtrPtr)
 {
-    assert(!arraylist_empty(list));
-    list->logLength--;
+    arraylist_get(list, list->logLength - 1, elemPtrPtr);
+    return 1;
 }
 
 
+static inline void arraylist_pop(arraylist_t *const list)
+{
+    assert(!arraylist_empty(list));
+    // TODO: decr_ref_count
+    list->logLength--;
+}
+
+static inline void *arraylist_begin(arraylist_t *list)
+{
+    return list->elems;
+}
+
+static inline const void *arraylist_cbegin(const arraylist_t *const list)
+{
+    return list->elems;
+}
+
+static inline const void *arraylist_cend(const arraylist_t *const list)
+{
+    return (char *) list->elems + list->logLength * list->elemSize;
+}
+
+static inline void arraylist_foreach(arraylist_t *const list, void (fn)(char *))
+{
+   char **iter = arraylist_begin(list);
+   const void *const end = arraylist_cend(list); 
+   for (; iter != end; ++iter) {
+       printf("iter=%p\n",iter);
+       if (*((char **) iter)) {
+           fn(*((char **) iter));
+       }
+   }
+}
 
 #endif /* __ARRAYLIST_H__ */
 
