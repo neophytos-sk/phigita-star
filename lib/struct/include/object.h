@@ -35,6 +35,10 @@ static inline object_t *object_new(int nbytes)
 {
     object_t *objPtr = object_alloc();
 
+    /* If nbytes is 0, then malloc() returns either NULL,
+     * or a unique pointer that can later be successfully
+     * passed to free()
+     */
     objPtr->bytes = (char *) ckalloc(nbytes);
 
     objPtr->nbytes = nbytes;
@@ -44,16 +48,23 @@ static inline object_t *object_new(int nbytes)
     return objPtr;
 }
 
+static inline size_t object_size(const object_t *objPtr)
+{
+    return objPtr->nbytes;
+}
+
 static inline void object_cleanup(object_t *objPtr)
 {
-    ckfree(objPtr->bytes);
+    if (object_size(objPtr)) {
+        ckfree(objPtr->bytes);
+    }
 }
 
 static inline void object_free(object_t *objPtr)
 {
     assert(objPtr->refCount == 0);
 
-    DBG(printf("object_free: %p\n", objPtr));
+    // DBG(printf("object_free: %p\n", objPtr));
     object_cleanup(objPtr); 
     ckfree(objPtr);
 }
@@ -72,7 +83,7 @@ static inline void decr_ref_count(object_t *objPtr)
 {
     assert(objPtr->refCount > 0);
 
-    printf("decr_ref_count: objPtr=%p refCount=%d\n", objPtr, objPtr->refCount);
+    // DBG(printf("decr_ref_count: objPtr=%p refCount=%d\n", objPtr, objPtr->refCount));
 
     if (--objPtr->refCount == 0) {
         object_free(objPtr);

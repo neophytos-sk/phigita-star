@@ -6,6 +6,10 @@
 # define DBG(x) 
 #endif
 
+#ifndef NULL
+#define NULL ((void *) 0)
+#endif
+
 #ifdef _TCL
 #define CheckArgs(min,max,n,msg)		\
   if ((objc < min) || (objc >max)) {		\

@@ -34,10 +34,10 @@ int main(void) {
 
     arraylist_set(listPtr, 1, x);
     arraylist_set(listPtr, 3, y);
-    arraylist_push(listPtr, x);
-    arraylist_push(listPtr, integer_new(12));
-    arraylist_push(listPtr, integer_new(23));
-    arraylist_push(listPtr, integer_new(45));
+    arraylist_append(listPtr, x);
+    arraylist_append(listPtr, integer_new(12));
+    arraylist_append(listPtr, integer_new(23));
+    arraylist_append(listPtr, integer_new(45));
    
     for (i = 0, len = arraylist_length(listPtr); i < len; i++) {
         object_t *objPtr;

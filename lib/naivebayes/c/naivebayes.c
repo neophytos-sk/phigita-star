@@ -4,8 +4,9 @@
 #include "common.h"
 #include "persistence.h"
 #include "heapq.h"
+#include "arraylist.h"
+#include "str.h"
 
-#include <string.h>
 
 typedef struct {
   Tcl_Obj *name;
@@ -155,7 +156,7 @@ static int compare_wordcount_hashentry(const void *d1, const void *d2)
   return (v1>v2) ? -1 : ((v1<v2) ? 1 : 0);
 }
 
-static void mark_frequent_words(Tcl_Interp *interp, Tcl_Obj *remove_words_listPtr, Tcl_HashTable *vocabulary_tablePtr, int top_n) {
+static void mark_frequent_words(Tcl_Interp *interp, arraylist_t *remove_words_listPtr, Tcl_HashTable *vocabulary_tablePtr, int top_n) {
 
   heapq_t q;
   heapq_init(&q,compare_wordcount_hashentry);
@@ -184,7 +185,7 @@ static void mark_frequent_words(Tcl_Interp *interp, Tcl_Obj *remove_words_listPt
       Tcl_GetHashKey(vocabulary_tablePtr, entryPtr);
     
     // int num_occurrences = *((int *) Tcl_GetHashValue(entryPtr));
-    Tcl_ListObjAppendElement(interp, remove_words_listPtr, Tcl_NewStringObj(word_key,-1));
+    arraylist_append(remove_words_listPtr, string_new(word_key,-1));
 
     heapq_pop(&q);
     top_n--;
@@ -192,7 +193,7 @@ static void mark_frequent_words(Tcl_Interp *interp, Tcl_Obj *remove_words_listPt
 
 }
 
-static void mark_rare_words(Tcl_Interp *interp, Tcl_Obj *remove_words_listPtr, Tcl_HashTable *vocabulary_tablePtr, int threshold) {
+static void mark_rare_words(Tcl_Interp *interp, arraylist_t *remove_words_listPtr, Tcl_HashTable *vocabulary_tablePtr, int threshold) {
 
   Tcl_HashSearch searchPtr;
   Tcl_HashEntry *entryPtr = Tcl_FirstHashEntry(vocabulary_tablePtr, &searchPtr);
@@ -208,7 +209,7 @@ static void mark_rare_words(Tcl_Interp *interp, Tcl_Obj *remove_words_listPtr, T
    // printf("word_key=%s num_occurrences=%d\n",word_key,num_occurrences);
 
     if (num_occurrences < threshold) {
-      Tcl_ListObjAppendElement(interp, remove_words_listPtr, Tcl_NewStringObj(word_key,-1));
+      arraylist_append(remove_words_listPtr, string_new(word_key, -1));
     }
 
     entryPtr = Tcl_NextHashEntry(&searchPtr);
@@ -217,53 +218,53 @@ static void mark_rare_words(Tcl_Interp *interp, Tcl_Obj *remove_words_listPtr, T
 
 }
 
-static void remove_marked_words(Tcl_Interp *interp, Tcl_Obj *remove_words_listPtr, Tcl_HashTable *vocabulary_tablePtr, category_t *categories, int num_categories) {
+static void remove_marked_words(Tcl_Interp *interp, arraylist_t *remove_words_listPtr, Tcl_HashTable *vocabulary_tablePtr, category_t *categories, int num_categories) {
 
-  int i,j,len;
+    int i,j,len;
 
-  Tcl_ListObjLength(interp, remove_words_listPtr, &len);
+    arraylist_length(remove_words_listPtr);
 
-  Tcl_Obj *word_objPtr;
-  Tcl_HashEntry *category_word_entryPtr; 
-  category_t *c;
+    object_t *word_objPtr;
+    Tcl_HashEntry *category_word_entryPtr; 
+    category_t *c;
 
-  for (i=0; i<len; i++) {
+    for (i=0; i<len; i++) {
 
-      const char *word_key;
-      Tcl_HashEntry *vocabulary_word_entryPtr;
+        const char *word_key;
+        Tcl_HashEntry *vocabulary_word_entryPtr;
 
-    Tcl_ListObjIndex(interp, remove_words_listPtr, i, &word_objPtr);
+        arraylist_get(remove_words_listPtr, i, &word_objPtr);
 
-    word_key = Tcl_GetString(word_objPtr);
+        word_key = string_value(word_objPtr);
 
- // printf("word_key=%s\n",word_key);
+        // DBG(printf("word_key=%s\n",word_key));
 
-    // remove word from vocabulary
-    vocabulary_word_entryPtr = Tcl_FindHashEntry(vocabulary_tablePtr, word_key);
+        // remove word from vocabulary
+        vocabulary_word_entryPtr = Tcl_FindHashEntry(vocabulary_tablePtr, word_key);
 
-    if (vocabulary_word_entryPtr) {
-      Tcl_DeleteHashEntry(vocabulary_word_entryPtr);
+        if (vocabulary_word_entryPtr) {
+            Tcl_DeleteHashEntry(vocabulary_word_entryPtr);
+        }
+        // printf("remove word from all categories\n");
+
+        // remove word from all categories
+        for (j=0; j<num_categories; j++) {
+            c = &categories[j];
+
+            // printf("word_key=%s j=%d, c=%p &c->wordcount=%p\n",word_key,j,c,&c->wordcount);
+
+            category_word_entryPtr = Tcl_FindHashEntry(&c->wordcount, word_key);
+
+            // printf("category_word_entryPtr=%p\n\n",category_word_entryPtr);
+
+            if (category_word_entryPtr) {
+                Tcl_DeleteHashEntry(category_word_entryPtr);
+            }
+
+        }
+
+
     }
-// printf("remove word from all categories\n");
-
-    // remove word from all categories
-    for (j=0; j<num_categories; j++) {
-      c = &categories[j];
-
-// printf("word_key=%s j=%d, c=%p &c->wordcount=%p\n",word_key,j,c,&c->wordcount);
-
-      category_word_entryPtr = Tcl_FindHashEntry(&c->wordcount, word_key);
-
-// printf("category_word_entryPtr=%p\n\n",category_word_entryPtr);
-
-      if (category_word_entryPtr) {
-        Tcl_DeleteHashEntry(category_word_entryPtr);
-      }
-      
-    }
-    
-    
-  }
 
 }
 
@@ -428,108 +429,112 @@ static int compute_word_probabilities(Tcl_Interp *interp, category_t *c, int voc
 
 
 int naivebayes_LearnCmd(ClientData clientData,Tcl_Interp *interp,int objc,Tcl_Obj * const objv[]) {
-  CheckArgs(3,4,1,"examplesVar categoriesVar modelVar");
+    CheckArgs(3,4,1,"examplesVar categoriesVar modelVar");
 
-  // examples = multirow of slices
-  // categories = list
-  Tcl_Obj *examples = Tcl_ObjGetVar2(interp, objv[1], NULL, TCL_LEAVE_ERR_MSG);
-  Tcl_Obj *category_names = Tcl_ObjGetVar2(interp, objv[2], NULL, TCL_LEAVE_ERR_MSG);
-  Tcl_Obj *outvarname = objv[3]; // Tcl_ObjGetVar2(interp, objv[3], NULL, TCL_LEAVE_ERR_MSG);
-
-
-  int num_categories;
-  Tcl_ListObjLength(interp, category_names, &num_categories);
-
-  category_t *categories = (category_t *) Tcl_Alloc(num_categories * sizeof(category_t));
-
-  Tcl_HashTable vocabulary;
-  Tcl_InitHashTable(&vocabulary, TCL_STRING_KEYS);
-
-  // initialize vocabulary_size
-  int vocabulary_size = 0;
+    // examples = multirow of slices
+    // categories = list
+    Tcl_Obj *examples = Tcl_ObjGetVar2(interp, objv[1], NULL, TCL_LEAVE_ERR_MSG);
+    Tcl_Obj *category_names = Tcl_ObjGetVar2(interp, objv[2], NULL, TCL_LEAVE_ERR_MSG);
+    Tcl_Obj *outvarname = objv[3]; // Tcl_ObjGetVar2(interp, objv[3], NULL, TCL_LEAVE_ERR_MSG);
 
 
-  int i, j, total_docs = 0;
-  for (i=0; i < num_categories; ++i) {
+    int num_categories;
+    Tcl_ListObjLength(interp, category_names, &num_categories);
 
-    // initialize category structure
-    initialize_category(&categories[i]);
+    category_t *categories = (category_t *) Tcl_Alloc(num_categories * sizeof(category_t));
 
-    // get the category name and set it in the structure
-    Tcl_ListObjIndex(interp, category_names, i, &categories[i].name);
+    Tcl_HashTable vocabulary;
+    Tcl_InitHashTable(&vocabulary, TCL_STRING_KEYS);
 
-//  printf("HERE: category=%s\n", Tcl_GetString(categories[i].name));
+    // initialize vocabulary_size
+    int vocabulary_size = 0;
 
-    // get the ith slice
-    Tcl_Obj *slice;
-    Tcl_ListObjIndex(interp, examples, i, &slice);
 
-    int slicelen;
-    Tcl_ListObjLength(interp, slice, &slicelen);
+    int i, j, total_docs = 0;
+    for (i=0; i < num_categories; ++i) {
 
-    Tcl_Obj *content = Tcl_NewObj();
-    for (j=1; j< slicelen; ++j) {
-      Tcl_Obj *infile;
-      Tcl_ListObjIndex(interp, slice, j, &infile);
+        // initialize category structure
+        initialize_category(&categories[i]);
 
-      // Tcl_IncrRefCount(content);
+        // get the category name and set it in the structure
+        Tcl_ListObjIndex(interp, category_names, i, &categories[i].name);
 
-      // printf("infile=%s i=%d slicelen=%d\n", Tcl_GetString(infile), i, slicelen);
-      // read the data from the given file
-      persistence_GetData(interp, infile, content);
- 
-// printf("before wordcount_helper category=%s\n", Tcl_GetString(categories[i].name));
+        //  printf("HERE: category=%s\n", Tcl_GetString(categories[i].name));
 
-      // count words in content and update wordcount for category i
-      wordcount_helper(interp, &categories[i], content);
+        // get the ith slice
+        Tcl_Obj *slice;
+        Tcl_ListObjIndex(interp, examples, i, &slice);
 
-      // update the vocabulary hash table
-      update_vocabulary_count(interp, &vocabulary, &categories[i], &vocabulary_size);
+        int slicelen;
+        Tcl_ListObjLength(interp, slice, &slicelen);
 
-      categories[i].num_docs = slicelen;
+        Tcl_Obj *content = Tcl_NewObj();
+        for (j=1; j< slicelen; ++j) {
+            Tcl_Obj *infile;
+            Tcl_ListObjIndex(interp, slice, j, &infile);
 
-      Tcl_SetObjLength(content,0);
+            // Tcl_IncrRefCount(content);
+
+            // printf("infile=%s i=%d slicelen=%d\n", Tcl_GetString(infile), i, slicelen);
+            // read the data from the given file
+            persistence_GetData(interp, infile, content);
+
+            // printf("before wordcount_helper category=%s\n", Tcl_GetString(categories[i].name));
+
+            // count words in content and update wordcount for category i
+            wordcount_helper(interp, &categories[i], content);
+
+            // update the vocabulary hash table
+            update_vocabulary_count(interp, &vocabulary, &categories[i], &vocabulary_size);
+
+            categories[i].num_docs = slicelen;
+
+            Tcl_SetObjLength(content,0);
+
+        }
+
+        total_docs += slicelen;
 
     }
 
-    total_docs += slicelen;
+    DBG(printf("mark top 300 words for removal\n"));
 
-  }
+    // mark top 300 words for removal
 
-printf("mark top 300 words for removal\n");
+    arraylist_t *remove_words_listPtr = arraylist_new(1000, sizeof(object_t *));
 
-  // mark top 300 words for removal
-  Tcl_Obj *remove_words_listPtr = Tcl_NewObj();
-  mark_frequent_words(interp, remove_words_listPtr, &vocabulary, 300);
+    mark_frequent_words(interp, remove_words_listPtr, &vocabulary, 300);
 
-printf("mark words with less than 20 occurrences for removal\n");
+    DBG(printf("mark words with less than 20 occurrences for removal\n"));
 
-  // mark words with less than 20 occurrences for removal
-  mark_rare_words(interp, remove_words_listPtr, &vocabulary, 20);
+    // mark words with less than 20 occurrences for removal
+    mark_rare_words(interp, remove_words_listPtr, &vocabulary, 20);
 
-printf("actually remove marked words\n");
+    DBG(printf("actually remove marked words\n"));
 
-  // actually remove marked words
-  remove_marked_words(interp, remove_words_listPtr, &vocabulary, categories, num_categories);
+    // actually remove marked words
+    remove_marked_words(interp, remove_words_listPtr, &vocabulary, categories, num_categories);
 
+    // DBG(printf("remove_words_listPtr.length=%d\n", arraylist_length(remove_words_listPtr)));
+    arraylist_free(remove_words_listPtr);
 
-  /*
-    # TODO: use zipf's law to compute how many 
-    # frequent and rare words to remove
-   */
+    /*
+     * TODO: use zipf's law to compute how many 
+     * frequent and rare words to remove
+     */
 
-printf("compute category probabilities\n");
+    DBG(printf("compute category probabilities\n"));
 
-  for (i=0; i < num_categories; ++i) {
-    compute_category_probabilities(interp, &categories[i], total_docs, vocabulary_size);
-  }
+    for (i=0; i < num_categories; ++i) {
+        compute_category_probabilities(interp, &categories[i], total_docs, vocabulary_size);
+    }
 
-printf("set model info\n");
+    DBG(printf("set model info\n"));
     set_model_info(interp, outvarname, categories, total_docs, num_categories);
 
-  Tcl_Free((char *) categories);
+    Tcl_Free((char *) categories);
 
-  return TCL_OK;
+    return TCL_OK;
 }
 
 int naivebayes_ClassifyCmd(ClientData clientData,Tcl_Interp *interp,int objc,Tcl_Obj * const objv[]) {

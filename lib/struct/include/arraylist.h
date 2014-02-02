@@ -17,7 +17,10 @@ typedef struct {
 
 static inline void arraylist_foreach(arraylist_t *const list, void (fn)(char *));
 
-
+static inline arraylist_t *arraylist_alloc()
+{
+    return (arraylist_t *) ckalloc(sizeof(arraylist_t));
+}
 static inline void arraylist_init(arraylist_t *const list, int initialAllocationSize, int elemSize)
 {
     assert(elemSize > 0);
@@ -34,7 +37,7 @@ static inline void arraylist_cleanup(arraylist_t *const list) {
 }
 
 static inline arraylist_t *const arraylist_new(int initialAllocationSize, int elemSize) {
-    arraylist_t *list = (arraylist_t *) ckalloc(sizeof(arraylist_t));
+    arraylist_t *list = arraylist_alloc();
     arraylist_init(list, initialAllocationSize, elemSize);
     return list;
 }
@@ -88,16 +91,18 @@ static inline void arraylist_set(arraylist_t *const list, size_t index, void *co
 
 }
 
-static inline void arraylist_push(arraylist_t *const list, void *const elemPtr) 
+static inline void arraylist_append(arraylist_t *const list, void *const elemPtr) 
 {
     if (list->logLength == list->allocLength) {
         arraylist_resize(list, list->allocLength * 2);
     }
 
+
     arraylist_set(list, list->logLength, elemPtr);
     list->logLength++;
 }
 
+/* 
 static inline int arraylist_top(const arraylist_t *const list, void **elemPtrPtr)
 {
     arraylist_get(list, list->logLength - 1, elemPtrPtr);
@@ -111,6 +116,7 @@ static inline void arraylist_pop(arraylist_t *const list)
     // TODO: decr_ref_count
     list->logLength--;
 }
+*/
 
 static inline void *arraylist_begin(arraylist_t *list)
 {
@@ -132,7 +138,7 @@ static inline void arraylist_foreach(arraylist_t *const list, void (fn)(char *))
    char **iter = arraylist_begin(list);
    const void *const end = arraylist_cend(list); 
    for (; iter != end; ++iter) {
-       printf("iter=%p\n",iter);
+       // DBG(printf("iter=%p\n",iter));
        if (*((char **) iter)) {
            fn(*((char **) iter));
        }
