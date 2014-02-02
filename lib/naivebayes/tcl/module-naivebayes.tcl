@@ -12,8 +12,9 @@ set package_dir [file dirname [file dirname [info script]]]
 
 ::critcl::config I \
     /opt/naviserver/include \
-    ${package_dir}/c/ \
-    ${package_dir}/../struct/heapq/c
+    ${package_dir}/include/ \
+    ${package_dir}/../persistence/c \
+    ${package_dir}/../struct/include
 
 
 ::critcl::cinit {
@@ -26,7 +27,7 @@ set package_dir [file dirname [file dirname [info script]]]
     // init_exts
 }
 
-critcl::csources ${package_dir}/c/persistence.c
+critcl::csources ${package_dir}/../persistence/c/persistence.c
 critcl::ccode [::util::readfile ${package_dir}/c/naivebayes.c]
 ::critcl::cbuild [file normalize [info script]]
 

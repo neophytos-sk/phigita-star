@@ -11,11 +11,8 @@ set dir [file dirname [info script]]
 ::critcl::reset
 ::critcl::clibraries -L/opt/naviserver/lib
 
-#::critcl::config I /opt/naviserver/include
+::critcl::config I [file join $dir ../../include/]
 ::critcl::config I [file join $dir ../c]
-
-::critcl::csources [file join $dir ../c/heapq.c]
-::critcl::cheaders [file join $dir ../c/heapq.h]
 
 ::critcl::cinit {
     // init_text
@@ -33,6 +30,7 @@ set dir [file dirname [info script]]
 }
 
 critcl::ccode {
+    #include "heapq.h"
     #include <stdio.h>
     #include <string.h>
 

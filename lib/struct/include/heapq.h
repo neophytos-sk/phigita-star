@@ -2,6 +2,7 @@
 #define __HEAPQ_H__
 
 #include <assert.h>
+#include "common.h"
 
 typedef struct {
     void **elems;
@@ -10,16 +11,9 @@ typedef struct {
     int (*cmp)(const void *d1, const void *d2);
 } heapq_t;
 
-#ifndef _TCL
-#include <stdlib.h>  // for malloc, free
-#define ckalloc(x) malloc(x)
-#define ckfree(x) free(x)
-#define ckrealloc(x,y) realloc(x,y)
-#endif
-
-static inline size_t LEFT  (size_t x) { return (2 * (x) + 1); }
-static inline size_t RIGHT (size_t x) { return (2 * (x) + 2); }
-static inline size_t PARENT(size_t x) { return ((x) / 2);     }
+static inline size_t heapq_left  (size_t x) { return (2 * (x) + 1); }
+static inline size_t heapq_right (size_t x) { return (2 * (x) + 2); }
+static inline size_t heapq_parent(size_t x) { return ((x) / 2);     }
 
 
 #define kInitialAllocationSize 4
@@ -73,7 +67,7 @@ void heapq_insert(heapq_t *q, const void *elemPtr)
   n = q->logLength++;
 
   /* append at end, then up heap */
-  while ((m = PARENT(n)) != n && q->cmp(b[m],elemPtr) > 0) {
+  while ((m = heapq_parent(n)) != n && q->cmp(b[m],elemPtr) > 0) {
     b[n] = b[m];
     n = m;
   }
@@ -104,7 +98,7 @@ void heapq_pop(heapq_t *q)
   --q->logLength;
 
   int n = 0, m;
-  while ((m = LEFT(n)) < q->logLength) {
+  while ((m = heapq_left(n)) < q->logLength) {
 
     /* if right node is greater than left node then use that one */
     if (m + 1 < q->logLength && q->cmp(q->elems[m], q->elems[m + 1]) > 0) m++;

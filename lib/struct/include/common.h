@@ -6,11 +6,13 @@
 # define DBG(x) 
 #endif
 
+#ifdef _TCL
 #define CheckArgs(min,max,n,msg)		\
   if ((objc < min) || (objc >max)) {		\
     Tcl_WrongNumArgs(interp, n, objv, msg);	\
     return TCL_ERROR;				\
   }
+#endif
 
 #ifndef _TCL
 #include <stdlib.h>  /* for malloc, free */
