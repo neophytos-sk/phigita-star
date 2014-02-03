@@ -9,13 +9,13 @@
 
 
 typedef struct {
-  Tcl_Obj *name;
-  int num_docs;
-  int num_words;
-  double pr;
-  double default_word_pr;
-  Tcl_HashTable wordcount;
-  Tcl_HashTable word_pr;
+    Tcl_Obj *name;
+    int num_docs;
+    int num_words;
+    double pr;
+    double default_word_pr;
+    Tcl_HashTable wordcount;
+    Tcl_HashTable word_pr;
 } category_t;
 
 
@@ -29,14 +29,14 @@ static int compute_word_probabilities(Tcl_Interp *interp, category_t *c, int voc
 
 
 static int initialize_category(category_t *c) {
-  c->name = NULL;
-  c->num_docs = 0;
-  c->num_words = 0;
-  c->pr = 0;
-  c->default_word_pr = 0;
-  Tcl_InitHashTable(&c->wordcount,TCL_STRING_KEYS);
-  Tcl_InitHashTable(&c->word_pr,TCL_STRING_KEYS);
-  return TCL_OK;
+    c->name = NULL;
+    c->num_docs = 0;
+    c->num_words = 0;
+    c->pr = 0;
+    c->default_word_pr = 0;
+    Tcl_InitHashTable(&c->wordcount,TCL_STRING_KEYS);
+    Tcl_InitHashTable(&c->word_pr,TCL_STRING_KEYS);
+    return TCL_OK;
 }  
 
 static int tokenize_old(Tcl_Interp *interp, Tcl_Obj *resObjPtr, Tcl_Obj *text, int *count) {
@@ -112,7 +112,7 @@ tokenize(const char *s, arraylist_t *tokens, int maxtokens, const char *sep)
 
         arraylist_append(tokens, string_new(s, (size_t)(e-s)));
 
-       // DBG(printf("ntokens=%d token=%.*s\n",ntokens, (e-s), s));
+        // DBG(printf("ntokens=%d token=%.*s\n",ntokens, (e-s), s));
 
         s = e;
 
@@ -180,73 +180,73 @@ static int wordcount_helper(Tcl_Interp *interp, category_t *c, const char *text)
 
 static int compare_wordcount_hashentry(const void *d1, const void *d2)
 {
-  int v1, v2;
+    int v1, v2;
 
-  Tcl_GetIntFromObj(NULL, Tcl_GetHashValue((Tcl_HashEntry *) d1), &v1);
-  Tcl_GetIntFromObj(NULL, Tcl_GetHashValue((Tcl_HashEntry *) d2), &v2);
+    Tcl_GetIntFromObj(NULL, Tcl_GetHashValue((Tcl_HashEntry *) d1), &v1);
+    Tcl_GetIntFromObj(NULL, Tcl_GetHashValue((Tcl_HashEntry *) d2), &v2);
 
-  return (v1>v2) ? -1 : ((v1<v2) ? 1 : 0);
+    return (v1>v2) ? -1 : ((v1<v2) ? 1 : 0);
 }
 
 static void mark_frequent_words(Tcl_Interp *interp, arraylist_t *remove_words_listPtr, Tcl_HashTable *vocabulary_tablePtr, int top_n) {
 
-  heapq_t q;
-  heapq_init(&q,compare_wordcount_hashentry);
+    heapq_t q;
+    heapq_init(&q,compare_wordcount_hashentry);
 
 
-  Tcl_HashSearch searchPtr;
-  Tcl_HashEntry *entryPtr = Tcl_FirstHashEntry(vocabulary_tablePtr, &searchPtr);
-  while(entryPtr) {
+    Tcl_HashSearch searchPtr;
+    Tcl_HashEntry *entryPtr = Tcl_FirstHashEntry(vocabulary_tablePtr, &searchPtr);
+    while(entryPtr) {
 
-    heapq_insert(&q,entryPtr);
+        heapq_insert(&q,entryPtr);
 
-    if (heapq_size(&q) > top_n) {
-      // remove lowest priority item
-      heapq_pop_back(&q);
+        if (heapq_size(&q) > top_n) {
+            // remove lowest priority item
+            heapq_pop_back(&q);
+        }
+
+        entryPtr = Tcl_NextHashEntry(&searchPtr);
+
     }
 
-    entryPtr = Tcl_NextHashEntry(&searchPtr);
+    while(!heapq_empty(&q) && top_n) {
 
-  }
+        entryPtr = heapq_top(&q);
 
-  while(!heapq_empty(&q) && top_n) {
+        const char *word_key = 
+            Tcl_GetHashKey(vocabulary_tablePtr, entryPtr);
 
-    entryPtr = heapq_top(&q);
+        // int num_occurrences = *((int *) Tcl_GetHashValue(entryPtr));
+        arraylist_append(remove_words_listPtr, string_new(word_key,-1));
 
-    const char *word_key = 
-      Tcl_GetHashKey(vocabulary_tablePtr, entryPtr);
-    
-    // int num_occurrences = *((int *) Tcl_GetHashValue(entryPtr));
-    arraylist_append(remove_words_listPtr, string_new(word_key,-1));
-
-    heapq_pop(&q);
-    top_n--;
-  }
+        heapq_pop(&q);
+        top_n--;
+    }
 
 }
 
 static void mark_rare_words(Tcl_Interp *interp, arraylist_t *remove_words_listPtr, Tcl_HashTable *vocabulary_tablePtr, int threshold) {
 
-  Tcl_HashSearch searchPtr;
-  Tcl_HashEntry *entryPtr = Tcl_FirstHashEntry(vocabulary_tablePtr, &searchPtr);
-  while(entryPtr) {
+    Tcl_HashSearch searchPtr;
+    Tcl_HashEntry *entryPtr = Tcl_FirstHashEntry(vocabulary_tablePtr, &searchPtr);
+    while(entryPtr) {
 
-    const char *word_key = 
-      Tcl_GetHashKey(vocabulary_tablePtr, entryPtr);
-   
+        const char *word_key = 
+            Tcl_GetHashKey(vocabulary_tablePtr, entryPtr);
 
-    int num_occurrences;
-    Tcl_GetIntFromObj(interp, Tcl_GetHashValue(entryPtr), &num_occurrences);
 
-   // printf("word_key=%s num_occurrences=%d\n",word_key,num_occurrences);
+        int num_occurrences;
+        Tcl_GetIntFromObj(interp, Tcl_GetHashValue(entryPtr), &num_occurrences);
 
-    if (num_occurrences < threshold) {
-      arraylist_append(remove_words_listPtr, string_new(word_key, -1));
+        // printf("word_key=%s num_occurrences=%d\n",word_key,num_occurrences);
+
+        if (num_occurrences < threshold) {
+            arraylist_append(remove_words_listPtr, string_new(word_key, -1));
+        }
+
+        entryPtr = Tcl_NextHashEntry(&searchPtr);
+
     }
-
-    entryPtr = Tcl_NextHashEntry(&searchPtr);
-
-  }
 
 }
 
@@ -302,57 +302,57 @@ static void remove_marked_words(Tcl_Interp *interp, arraylist_t *remove_words_li
 
 static int update_vocabulary_count(Tcl_Interp *interp, Tcl_HashTable *vocabulary_tablePtr, category_t *c, int *vocabulary_sizePtr) {
 
-  Tcl_HashSearch searchPtr;
-  Tcl_HashEntry *entryPtr = Tcl_FirstHashEntry(&c->wordcount, &searchPtr);
-  while(entryPtr) {
-    const char *word_key = 
-      Tcl_GetHashKey(&c->wordcount, entryPtr);
+    Tcl_HashSearch searchPtr;
+    Tcl_HashEntry *entryPtr = Tcl_FirstHashEntry(&c->wordcount, &searchPtr);
+    while(entryPtr) {
+        const char *word_key = 
+            Tcl_GetHashKey(&c->wordcount, entryPtr);
 
-//  printf("vocabulary word_key=%s\n",word_key);
+        //  printf("vocabulary word_key=%s\n",word_key);
 
-    int value;
-    int new;
-    Tcl_HashEntry *vocabulary_word_entryPtr = 
-      Tcl_CreateHashEntry(vocabulary_tablePtr, word_key, &new);
+        int value;
+        int new;
+        Tcl_HashEntry *vocabulary_word_entryPtr = 
+            Tcl_CreateHashEntry(vocabulary_tablePtr, word_key, &new);
 
-    if (new) {
+        if (new) {
 
-      // new word
-      value = 0;
-      (*vocabulary_sizePtr)++;
+            // new word
+            value = 0;
+            (*vocabulary_sizePtr)++;
 
-    } else {
+        } else {
 
-      // existing word
-      Tcl_GetIntFromObj(interp, Tcl_GetHashValue(vocabulary_word_entryPtr), &value);
-      value++;
+            // existing word
+            Tcl_GetIntFromObj(interp, Tcl_GetHashValue(vocabulary_word_entryPtr), &value);
+            value++;
 
+        }
+
+        Tcl_SetHashValue(vocabulary_word_entryPtr, Tcl_NewIntObj(value));
+
+        entryPtr = Tcl_NextHashEntry(&searchPtr);
     }
 
-    Tcl_SetHashValue(vocabulary_word_entryPtr, Tcl_NewIntObj(value));
-
-    entryPtr = Tcl_NextHashEntry(&searchPtr);
-  }
-
-  return TCL_OK;
+    return TCL_OK;
 
 }
 
 static int compute_category_probabilities(Tcl_Interp *interp, category_t *c, int total_docs, int vocabulary_size) {
 
-  if ( c->num_docs != 0 ) {
+    if ( c->num_docs != 0 ) {
 
-    c->pr = ((double) c->num_docs) / total_docs;
+        c->pr = ((double) c->num_docs) / total_docs;
 
-    // for words in the vocabulary that are not found
-    // in the category
-    c->default_word_pr = 1.0 / (c->num_words + vocabulary_size );
+        // for words in the vocabulary that are not found
+        // in the category
+        c->default_word_pr = 1.0 / (c->num_words + vocabulary_size );
 
-  }
+    }
 
-  // compute word probabilities given this category
-  return compute_word_probabilities(interp, c, vocabulary_size);
-  
+    // compute word probabilities given this category
+    return compute_word_probabilities(interp, c, vocabulary_size);
+
 }
 
 static int set_model_info(Tcl_Interp *interp, Tcl_Obj *outvarname, category_t *categories, int num_docs, int num_categories) {
@@ -398,16 +398,16 @@ static int set_model_info(Tcl_Interp *interp, Tcl_Obj *outvarname, category_t *c
         Tcl_HashEntry *entryPtr = Tcl_FirstHashEntry(&c->word_pr, &searchPtr);
         while(entryPtr) {
 
-          const char *word_key = Tcl_GetHashKey(&c->word_pr, entryPtr);
-          // word_pr_objPtr is a Tcl_Obj that holds a double value
-          Tcl_Obj *word_pr_objPtr = (Tcl_Obj *) Tcl_GetHashValue(entryPtr);
+            const char *word_key = Tcl_GetHashKey(&c->word_pr, entryPtr);
+            // word_pr_objPtr is a Tcl_Obj that holds a double value
+            Tcl_Obj *word_pr_objPtr = (Tcl_Obj *) Tcl_GetHashValue(entryPtr);
 
- // printf("word_key=%s word_pr=%s\n", word_key, Tcl_GetString(word_pr_objPtr));
+            // printf("word_key=%s word_pr=%s\n", word_key, Tcl_GetString(word_pr_objPtr));
 
-          Tcl_ListObjAppendElement(interp, wordlistPtr, Tcl_NewStringObj(word_key,-1));
-          Tcl_ListObjAppendElement(interp, wordlistPtr, word_pr_objPtr);
+            Tcl_ListObjAppendElement(interp, wordlistPtr, Tcl_NewStringObj(word_key,-1));
+            Tcl_ListObjAppendElement(interp, wordlistPtr, word_pr_objPtr);
 
-          entryPtr = Tcl_NextHashEntry(&searchPtr);
+            entryPtr = Tcl_NextHashEntry(&searchPtr);
 
         }
 
@@ -422,7 +422,7 @@ static int set_model_info(Tcl_Interp *interp, Tcl_Obj *outvarname, category_t *c
     Tcl_DictObjPut(interp, modelPtr, Tcl_NewStringObj("categories",-1), categoriesListPtr);
 
     Tcl_ObjSetVar2(interp, outvarname, NULL, modelPtr, TCL_LEAVE_ERR_MSG); 
-    
+
 }
 
 
@@ -436,21 +436,21 @@ static int compute_word_probabilities(Tcl_Interp *interp, category_t *c, int voc
     while(entryPtr) {
 
         Tcl_HashEntry *newEntryPtr;
-      
-      const char *word_key = Tcl_GetHashKey(&c->wordcount, entryPtr);
 
-      Tcl_GetIntFromObj(interp, Tcl_GetHashValue(entryPtr), &num_occurrences);
+        const char *word_key = Tcl_GetHashKey(&c->wordcount, entryPtr);
 
-      double value = (1.0 + (double) num_occurrences) / ((double) c->num_words + vocabulary_size);
+        Tcl_GetIntFromObj(interp, Tcl_GetHashValue(entryPtr), &num_occurrences);
 
-//  printf("word_key=%s num_occurrences=%d value=%f\n",word_key, num_occurrences, value);
+        double value = (1.0 + (double) num_occurrences) / ((double) c->num_words + vocabulary_size);
 
-      newEntryPtr = Tcl_CreateHashEntry(&c->word_pr, word_key, &new);
+        //  printf("word_key=%s num_occurrences=%d value=%f\n",word_key, num_occurrences, value);
 
-      // it must be a new entry
-      Tcl_SetHashValue(newEntryPtr, Tcl_NewDoubleObj(value));
+        newEntryPtr = Tcl_CreateHashEntry(&c->word_pr, word_key, &new);
 
-      entryPtr = Tcl_NextHashEntry(&searchPtr);
+        // it must be a new entry
+        Tcl_SetHashValue(newEntryPtr, Tcl_NewDoubleObj(value));
+
+        entryPtr = Tcl_NextHashEntry(&searchPtr);
 
     }
 
@@ -575,41 +575,41 @@ int naivebayes_LearnCmd(ClientData clientData,Tcl_Interp *interp,int objc,Tcl_Ob
 }
 
 int naivebayes_ClassifyCmd(ClientData clientData,Tcl_Interp *interp,int objc,Tcl_Obj * const objv[]) {
-	
-  CheckArgs(2,3,1,"modelVar wordsVar");
-	
-  Tcl_Obj *modelPtr = Tcl_ObjGetVar2(interp, objv[1], NULL, TCL_LEAVE_ERR_MSG);
-  Tcl_Obj *wordListPtr = Tcl_ObjGetVar2(interp,objv[2], NULL, TCL_LEAVE_ERR_MSG);
 
-  int numWords;
-  if (TCL_OK != Tcl_ListObjLength(interp, wordListPtr, &numWords)) {
-    // some error
-    return TCL_ERROR;
-  }
+    CheckArgs(2,3,1,"modelVar wordsVar");
 
-  // fprintf(stderr,"%s\n",Tcl_GetString(wordListPtr));
+    Tcl_Obj *modelPtr = Tcl_ObjGetVar2(interp, objv[1], NULL, TCL_LEAVE_ERR_MSG);
+    Tcl_Obj *wordListPtr = Tcl_ObjGetVar2(interp,objv[2], NULL, TCL_LEAVE_ERR_MSG);
+
+    int numWords;
+    if (TCL_OK != Tcl_ListObjLength(interp, wordListPtr, &numWords)) {
+        // some error
+        return TCL_ERROR;
+    }
+
+    // fprintf(stderr,"%s\n",Tcl_GetString(wordListPtr));
 
 
-  double max_pr = -9999999999;
+    double max_pr = -9999999999;
 
-  Tcl_Obj *maxCatObjPtr = NULL;
-  Tcl_Obj *catObjPtr;
-  Tcl_Obj *wordObjPtr;
-  Tcl_Obj *categoriesDictPtr;
-  Tcl_DictObjGet(interp, modelPtr, Tcl_NewStringObj("categories",-1), &categoriesDictPtr);
+    Tcl_Obj *maxCatObjPtr = NULL;
+    Tcl_Obj *catObjPtr;
+    Tcl_Obj *wordObjPtr;
+    Tcl_Obj *categoriesDictPtr;
+    Tcl_DictObjGet(interp, modelPtr, Tcl_NewStringObj("categories",-1), &categoriesDictPtr);
 
-  int size=0;
-  Tcl_DictObjSize(interp, categoriesDictPtr, &size);
-// printf("modelPtr=%p categoriesDictPtr=%p size=%d\n",modelPtr, categoriesDictPtr, size);
-  if (!size) {
-    return TCL_OK;
-  }
+    int size=0;
+    Tcl_DictObjSize(interp, categoriesDictPtr, &size);
+    // printf("modelPtr=%p categoriesDictPtr=%p size=%d\n",modelPtr, categoriesDictPtr, size);
+    if (!size) {
+        return TCL_OK;
+    }
 
-  int j;
-  Tcl_Obj *prCatDefaultObjPtr;
-  double pr_cat_default;
-  Tcl_Obj *prCatObjPtr;
-  double pr_cat;
+    int j;
+    Tcl_Obj *prCatDefaultObjPtr;
+    double pr_cat_default;
+    Tcl_Obj *prCatObjPtr;
+    double pr_cat;
 
     Tcl_DictSearch search;
     Tcl_Obj *key, *value;
@@ -627,19 +627,19 @@ int naivebayes_ClassifyCmd(ClientData clientData,Tcl_Interp *interp,int objc,Tcl
      * even if we've finished iterating over the loop.
      */
     if (Tcl_DictObjFirst(interp, categoriesDictPtr, &search,
-            &key, &value, &done) != TCL_OK) {
+                &key, &value, &done) != TCL_OK) {
         return TCL_ERROR;
     }
     for (; !done ; Tcl_DictObjNext(&search, &key, &value, &done)) {
 
-          Tcl_Obj *catDictPtr;
+        Tcl_Obj *catDictPtr;
 
         catObjPtr = key;
         catDictPtr = value;
 
         // Tcl_DictObjGet(interp, categoriesDictPtr, catObjPtr, &catDictPtr);
 
- // printf("Here %s\n", Tcl_GetString(catObjPtr));
+        // printf("Here %s\n", Tcl_GetString(catObjPtr));
 
         Tcl_DictObjGet(interp, catDictPtr, Tcl_NewStringObj("default_word_pr",-1), &prCatDefaultObjPtr);
         Tcl_GetDoubleFromObj(interp,prCatDefaultObjPtr, &pr_cat_default);
@@ -658,42 +658,42 @@ int naivebayes_ClassifyCmd(ClientData clientData,Tcl_Interp *interp,int objc,Tcl
         Tcl_Obj *prWordGivenCatObjPtr;
         for(j=0; j<numWords; ++j) {
 
-          Tcl_ListObjIndex(interp,wordListPtr,j,&wordObjPtr);
-          Tcl_DictObjGet(interp, word_pr_mapPtr, wordObjPtr, &prWordGivenCatObjPtr);
+            Tcl_ListObjIndex(interp,wordListPtr,j,&wordObjPtr);
+            Tcl_DictObjGet(interp, word_pr_mapPtr, wordObjPtr, &prWordGivenCatObjPtr);
 
 
-          double pr_word_given_cat;
-          if (prWordGivenCatObjPtr) {
-            Tcl_GetDoubleFromObj(interp,prWordGivenCatObjPtr, &pr_word_given_cat);
-          } else {
-            pr_word_given_cat = pr_cat_default;
-          }
+            double pr_word_given_cat;
+            if (prWordGivenCatObjPtr) {
+                Tcl_GetDoubleFromObj(interp,prWordGivenCatObjPtr, &pr_word_given_cat);
+            } else {
+                pr_word_given_cat = pr_cat_default;
+            }
 
-          p += log(pr_word_given_cat);
+            p += log(pr_word_given_cat);
         }
         p += log(pr_cat);
 
 
         // fprintf(stderr,"category: %s p=%f\n",Tcl_GetString(catObjPtr),p);
-            
+
         if (p > max_pr) {
-          max_pr = p;
-          maxCatObjPtr = catObjPtr;
+            max_pr = p;
+            maxCatObjPtr = catObjPtr;
         }
 
-  }
+    }
 
     Tcl_DictObjDone(&search);
 
-  if (maxCatObjPtr) {
-      // printf("maxCatObjPtr=%s\n", Tcl_GetString(maxCatObjPtr));
-      Tcl_SetObjResult(interp,Tcl_DuplicateObj(maxCatObjPtr));
-      // Tcl_SetResult(interp, Tcl_GetString(maxCatObjPtr));
-  }
+    if (maxCatObjPtr) {
+        // printf("maxCatObjPtr=%s\n", Tcl_GetString(maxCatObjPtr));
+        Tcl_SetObjResult(interp,Tcl_DuplicateObj(maxCatObjPtr));
+        // Tcl_SetResult(interp, Tcl_GetString(maxCatObjPtr));
+    }
 
     // printf("done\n");
 
-  return TCL_OK;
+    return TCL_OK;
 
 }
 
