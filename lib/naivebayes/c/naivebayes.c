@@ -23,7 +23,7 @@ static int naivebayes_ModuleInitialized;
 
 
 
-static int wordcount_helper(Tcl_Interp *interp, category_t *c, Tcl_Obj *content);
+static int wordcount_helper(Tcl_Interp *interp, category_t *c, const char *text);
 static int compute_category_probabilities(Tcl_Interp *interp, category_t *c, int total_docs, int vocabulary_size);
 static int compute_word_probabilities(Tcl_Interp *interp, category_t *c, int vocabulary_size);
 
@@ -39,7 +39,7 @@ static int initialize_category(category_t *c) {
   return TCL_OK;
 }  
 
-static int tokenize(Tcl_Interp *interp, Tcl_Obj *resObjPtr, Tcl_Obj *text, int *count) {
+static int tokenize_old(Tcl_Interp *interp, Tcl_Obj *resObjPtr, Tcl_Obj *text, int *count) {
 
     int i, num_tokens = 0;
     Tcl_Obj *tokens_objPtr, *token, *cmd_objPtr;
@@ -68,81 +68,113 @@ static int tokenize(Tcl_Interp *interp, Tcl_Obj *resObjPtr, Tcl_Obj *text, int *
 
 }
 
-static int clean_and_tokenize(Tcl_Interp *interp, Tcl_Obj *content, Tcl_Obj *resObjPtr, int *num_tokens) {
+static int flatten_data(Tcl_Interp *interp, Tcl_Obj *dataObjPtr, Tcl_Obj *textObjPtr) {
     // content is a list of two elements, the title and the content
     // join them together
 
-    int i,listLen;
+    int i, length;
     Tcl_Obj **elemPtrs;
 
-    if (Tcl_ListObjGetElements(interp, content, &listLen, &elemPtrs) != TCL_OK) {
+    if (Tcl_ListObjGetElements(interp, dataObjPtr, &length, &elemPtrs) != TCL_OK) {
         // TODO: cleanup
         return TCL_ERROR;
     }
 
-    int count=0;
-    for (i = 0;  i < listLen;  i++) {
-
-        Tcl_IncrRefCount(elemPtrs[i]);
-
-        if (TCL_OK != tokenize(interp, resObjPtr, elemPtrs[i], &count)) {
-            // TODO: add error message
-            return TCL_ERROR;
-        }
-
-        Tcl_DecrRefCount(elemPtrs[i]);
-
+    int count = 0;
+    for (i = 0;  i < length;  i++) {
+        Tcl_ListObjAppendList(interp, textObjPtr, elemPtrs[i]);
     }
-
-    // printf("done count=%d\n",count);
-
-    *num_tokens = count;
 
     return TCL_OK;
 }
 
-static int wordcount_helper(Tcl_Interp *interp, category_t *c, Tcl_Obj *content) {
 
-  Tcl_Obj *tokens = Tcl_NewListObj(0,NULL);
-  clean_and_tokenize(interp, content, tokens, &c->num_words);
+int
+tokenize(const char *s, arraylist_t *tokens, int maxtokens, const char *sep)
+{
+    // DBG(printf("tokenize\n"));
 
-// printf("num_words=%d\n",c->num_words);
+    int ntokens;
+    const char *e;
 
-  Tcl_Obj *word_objPtr;
+    for (ntokens = 0; ntokens < maxtokens; ntokens++) {
 
-  int i;
-  for (i=0; i < c->num_words; ++i) {
-      Tcl_HashEntry *entryPtr;
+        while (*s != '\0' && strchr(sep, (char) *s))
+            s++;
 
-    Tcl_ListObjIndex(interp, tokens, i, &word_objPtr);
-// printf("ListObjIndex\n");
+        if (*s == '\0') {
+            break;
+        }
 
-    const char *word_key = Tcl_GetString(word_objPtr);
+        e = s;
+        while (*e !='\0' && !strchr(sep, (char) *e))
+            e = Tcl_UtfNext(e);
 
-// printf("word_key=%s i=%d / num_words=%d\n", word_key, i, c->num_words);
+        arraylist_append(tokens, string_new(s, (size_t)(e-s)));
 
-    int value;
-    int new;
-    entryPtr = Tcl_CreateHashEntry(&(c->wordcount), word_key, &new);
+       // DBG(printf("ntokens=%d token=%.*s\n",ntokens, (e-s), s));
 
-    if (new) {
-
-      // new word
-      value = 1;
-// printf("new word, value=%d\n",value);
-
-    } else {
-
-      // existing word
-      Tcl_GetIntFromObj(interp, Tcl_GetHashValue(entryPtr), &value);
-      value++;
-//printf("existing word, value=%d\n",value);
+        s = e;
 
     }
 
-    Tcl_SetHashValue(entryPtr, Tcl_NewIntObj(value));
-// printf("SetHashValue\n");
-  }
+    return ntokens;
+}
+
+const int kMaxTokens = 10000;
+
+static int wordcount_helper(Tcl_Interp *interp, category_t *c, const char *text) {
+
+    // DBG(printf("wordcount_helper\n"));
+
+    arraylist_t *tokens = arraylist_new(1000, sizeof(object_t *));
+    int num_words = tokenize(text, tokens, kMaxTokens, " ,-:;?.-!()[]{}/\\");
+
+    c->num_words += num_words;
+
+    // DBG(printf("done tokenize num_words=%d\n",num_words));
+
+    object_t *word_objPtr;
+
+    int i;
+    for (i=0; i < num_words; ++i) {
+        Tcl_HashEntry *entryPtr;
+
+        arraylist_get(tokens, i, &word_objPtr);
+
+        // TODO: memleak if used outside of our own hash table implementation
+        // just like the arraylist_t type
+        char *word_key = string_value(string_duplicate(word_objPtr));
+
+        // DBG(printf("word_key=%s i=%d strlen=%d\n", word_key, i, string_size(word_objPtr)));
+
+        int value;
+        int new;
+        entryPtr = Tcl_CreateHashEntry(&(c->wordcount), word_key, &new);
+
+        if (new) {
+
+            // new word
+            value = 1;
+            // printf("new word, value=%d\n",value);
+
+        } else {
+
+            // existing word
+            Tcl_GetIntFromObj(interp, Tcl_GetHashValue(entryPtr), &value);
+            value++;
+            // printf("existing word, value=%d\n",value);
+
+        }
+
+        Tcl_SetHashValue(entryPtr, Tcl_NewIntObj(value));
+        // printf("SetHashValue\n");
+
+        // see above (re: memleak)
+        ckfree(word_key);
+    }
+
+    arraylist_free(tokens);
 
 }
 
@@ -468,30 +500,35 @@ int naivebayes_LearnCmd(ClientData clientData,Tcl_Interp *interp,int objc,Tcl_Ob
         int slicelen;
         Tcl_ListObjLength(interp, slice, &slicelen);
 
-        Tcl_Obj *content = Tcl_NewObj();
+        Tcl_Obj *dataObjPtr = Tcl_NewObj(), *textObjPtr = Tcl_NewListObj(0,NULL);
         for (j=1; j< slicelen; ++j) {
             Tcl_Obj *infile;
             Tcl_ListObjIndex(interp, slice, j, &infile);
 
-            // Tcl_IncrRefCount(content);
-
             // printf("infile=%s i=%d slicelen=%d\n", Tcl_GetString(infile), i, slicelen);
             // read the data from the given file
-            persistence_GetData(interp, infile, content);
+            persistence_GetData(interp, infile, dataObjPtr);
+            flatten_data(interp, dataObjPtr, textObjPtr);
+            const char *text = Tcl_GetString(textObjPtr);
 
             // printf("before wordcount_helper category=%s\n", Tcl_GetString(categories[i].name));
 
             // count words in content and update wordcount for category i
-            wordcount_helper(interp, &categories[i], content);
+            wordcount_helper(interp, &categories[i], text);
+
+            // printf("after wordcount_helper category=%s\n", Tcl_GetString(categories[i].name));
 
             // update the vocabulary hash table
             update_vocabulary_count(interp, &vocabulary, &categories[i], &vocabulary_size);
 
             categories[i].num_docs = slicelen;
 
-            Tcl_SetObjLength(content,0);
+            Tcl_SetObjLength(dataObjPtr,0);
+            Tcl_SetObjLength(textObjPtr,0);
 
         }
+        // Tcl_Free(dataObjPtr);
+        // Tcl_Free(textObjPtr);
 
         total_docs += slicelen;
 

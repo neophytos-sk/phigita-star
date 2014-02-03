@@ -20,9 +20,27 @@
 #define __OBJECT_H__
 
 typedef struct {
+    int refCount;  /* when zero the object will be freed */
     char *bytes;
     int nbytes;
-    int refCount;
+
+    union {                     /* The internal representation: */
+        long longValue;         /*   - a long integer value. */
+        double doubleValue;     /*   - a double-precision floating value. */
+        void *otherValuePtr;    /*   - another, type-specific value. */
+        /*WideInt wideValue;*/  /*   - a long long value. */
+        struct {                /*   - internal rep as two pointers. */
+            void *ptr1;
+            void *ptr2;
+        } twoPtrValue;
+        struct {                /*   - internal rep as a wide int, tightly
+                                 *     packed fields. */
+            void *ptr;          /* Pointer to digits. */
+            unsigned long value;/* Alloc, used, and signum packed into a
+                                 * single word. */
+        } ptrAndLongRep;
+
+    } internalRep;
 
 } object_t;
 
