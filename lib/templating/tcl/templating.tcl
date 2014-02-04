@@ -617,25 +617,19 @@ proc ::xo::tdp::compile_doc_in_c {codearrVar templateDoc filename} {
 
     }]
 
-    ::critcl::reset
-    #::critcl::cflags "-Wall -pedantic"
-    if { [::xo::kit::debug_mode_p] } { 
-	::critcl::debug all
-    }
-    ::critcl::config outdir [get_outdir $filename]
-    ::critcl::clibraries -L/opt/naviserver/lib -lnsd
-    ::critcl::config I /opt/naviserver/include
-    ::critcl::ininame [::xo::tdp::get_ininame $filename]
-    ::critcl::cinit $init_code {
-	// init_exts
-    } $filename
-    
-    ::critcl::ccode $c_code $filename
+    array set conf [list]
+    set conf(debug_mode_p) [::xo::kit::debug_mode_p]
 
-    set base [get_base_rootname $filename]
-    set load 0
-    set pretend_load 1
-    lassign [::critcl::cbuild ${filename} ${load} "" "" ${pretend_load} ${base}] libfile ininame
+    set conf(clibraries) "-L/opt/naviserver/lib -lnsd"
+    set conf(includedirs) [list "/opt/naviserver/include"]
+    set conf(cinit) $init_code
+    set conf(ccode) $c_code
+
+    #set conf(base) [get_base_rootname $filename]
+    #set load 0
+    #set pretend_load 1
+    #lassign [::critcl::cbuild ${filename} ${load} "" "" ${pretend_load} ${base}] libfile ininame
+    lassign [::critcl::ext::cbuild_module ${filename} conf] libfile ininame
 
     set dir [file dirname ${rootname}]
     set tailname [file tail ${rootname}]

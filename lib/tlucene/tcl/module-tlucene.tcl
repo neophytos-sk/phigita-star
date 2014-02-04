@@ -6,34 +6,30 @@ source [file join $dir tlucene.tcl]
 
 ::xo::lib::require critcl
 
-::critcl::reset
-::critcl::config language c++
-::critcl::clibraries \
-    -lclucene-core \
-    -lclucene-shared \
-    -L/opt/naviserver/lib \
-    -L/opt/clucene/lib
+array set conf [list]
 
-::critcl::config I \
+set conf(language) c++
+
+set conf(clibraries) "-lclucene-core -lclucene-shared -L/opt/naviserver/lib -L/opt/clucene/lib"
+
+set conf(includedirs) [list \
     /opt/naviserver/include \
     /opt/clucene/include \
     /usr/include \
-    [file join $dir ../cc]
+    [file join $dir ../cc]]
 
 #::critcl::csources [file join $dir ../cc/tlucene.h]
-::critcl::csources [file join $dir ../cc/tlucene.cc]
+set conf(csources) [file join $dir ../cc/tlucene.cc]
 
 
-::critcl::cinit {
+set conf(cinit) {
     // init_text
     Tcl_CreateObjCommand(ip, "::tlucene::parse_query", tlucene_ParseQueryCmd, NULL, NULL);
     Tcl_CreateObjCommand(ip, "::tlucene::tokenize", tlucene_TokenizeCmd, NULL, NULL);
-} {
-    // init_exts
 }
 
 
-critcl::ccode {
+set conf(ccode) {
 
     #include "tlucene.h"
 
@@ -99,5 +95,5 @@ critcl::ccode {
 }
 
 
-::critcl::cbuild [file normalize [info script]]
+::critcl::ext::cbuild_module [info script] conf
 

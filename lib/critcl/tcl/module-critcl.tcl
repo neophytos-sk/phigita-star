@@ -9,3 +9,4 @@ proc ::critcl::get_package_dir {} "return [list ${package_dir}]"
 
 source [file join ${dir} platform.tcl]
 source [file join ${dir} critcl.tcl]
+source [file join ${dir} critcl-ext.tcl]

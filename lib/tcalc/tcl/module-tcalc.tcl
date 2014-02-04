@@ -2,48 +2,43 @@ package provide tcalc 0.1
 
 set dir [file dirname [info script]]
 
-#package require critcl
 ::xo::lib::require critcl
 
-::critcl::reset
-::critcl::config outdir /web/local-data/critcl/
-::critcl::cache /web/local-data/critcl/cache/
-::critcl::config force [::xo::kit::debug_mode_p]
-::critcl::config keepsrc 1
-::critcl::clibraries -L/opt/naviserver/lib -lm
+array set conf [list]
+set conf(debug_mode_p) [::xo::kit::debug_mode_p]
+set conf(clibraries) "-L/opt/naviserver/lib -lm"
 
-::critcl::config I /usr/include
-::critcl::config I /opt/naviserver/include
-::critcl::config I [file join $dir ../c]
+set conf(includedirs) [list \
+    /usr/include \
+    /opt/naviserver/include \
+    [file join $dir ../c]]
 
 foreach file {eval.c eval.h token.c token.h} {
     set extension [file extension $file]
     set filename  [file join $dir ../c/ $file]
     if { $extension eq {.h} } {
-	::critcl::cheaders $filename
+        lappend conf(cheaders) $filename
     } else {
-	::critcl::csources $filename
+        lappend conf(csources) $filename
     }
 }
 
 
 if { [::xo::kit::debug_mode_p] } {
-    ::critcl::cflags -DDEBUG
+    set conf(cflags) -DDEBUG
 }
 
 
 
-::critcl::cinit {
+set conf(cinit) {
     // init_text
     tcalc_InitModule();
     Tcl_CreateObjCommand(ip, "::tcalc::eval", tcalc_EvalCmd, NULL, NULL);
     // Tcl_CreateThreadExitHandler(tcalc_ExitHandler,NULL);
 
-} {
-    // init_exts
 }
 
-critcl::ccode {
+set conf(ccode) {
 
     #include "eval.h"
 
@@ -112,4 +107,4 @@ critcl::ccode {
 }
 
 
-::critcl::cbuild [file normalize [info script]]
+::critcl::ext::cbuild_module [info script] conf

@@ -1,6 +1,6 @@
-proc acs_root_dir {} {
-    return "/web/servers/service-phigita/"
-}
+set dir [file dirname [info script]]
+
+proc acs_root_dir {} [list return [file normalize [file join $dir ..]]]
 
 namespace eval ::xo::kit {;}
 

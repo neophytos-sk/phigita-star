@@ -6,26 +6,24 @@ source [file join $dir ttext-langclass.tcl]
 
 ::xo::lib::require critcl
 
-::critcl::reset
-::critcl::clibraries -L/opt/naviserver/lib -lunac -lexttextcat
-::critcl::config I /opt/naviserver/include
+array set conf [list]
+set conf(clibraries) "-L/opt/naviserver/lib -lunac -lexttextcat"
+set conf(includedirs) [list /opt/naviserver/include]
 
 
 if { [::xo::kit::debug_mode_p] } {
-    ::critcl::cflags -DDEBUG
+    set conf(cflags) -DDEBUG
 }
 
-::critcl::cinit {
+set conf(cinit) {
     // init_text
     RegisterExitHandlers(ip);
     ttext_InitModule(ip);
 
 
-} {
-    // init_exts
 }
 
-critcl::ccode {
+set conf(ccode) {
     #include <string.h>
     #include <stdlib.h>
     #include "unac.h"
@@ -204,4 +202,4 @@ critcl::ccode {
 
 }
 
-::critcl::cbuild [file normalize [info script]]
+::critcl::ext::cbuild_module [info script] conf

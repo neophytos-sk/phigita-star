@@ -7,30 +7,28 @@ source [file join $dir structured_text.tcl]
 
 ::xo::lib::require critcl
 
-::critcl::reset
-::critcl::config outdir /web/local-data/critcl/
-::critcl::cache /web/local-data/critcl/cache/
-::critcl::config force [::xo::kit::debug_mode_p]
-::critcl::config keepsrc 1
-::critcl::clibraries -L/opt/naviserver/lib
-::critcl::clibraries -ltcl
+array set conf [list]
 
-::critcl::config I /opt/naviserver/include
-::critcl::config I [file join $dir ../c]
+set conf(debug_mode_p) [::xo::kit::debug_mode_p]
 
-::critcl::csources [file join $dir ../c/structured_text.c]
-#::critcl::cheaders [file join $dir ../c/structured_text.h]
+set conf(clibraries) "-L/opt/naviserver/lib -ltcl"
 
-::critcl::cinit {
+set conf(includedirs) [list \
+    "/opt/naviserver/include" \
+    [file join $dir ../c/] \
+    [file join $dir ../../struct/include]]
+
+
+set conf(csources) [file join $dir ../c/structured_text.c]
+set conf(cheaders) [file join $dir ../c/structured_text.h]
+
+set conf(cinit) {
     // init_text
     Tcl_CreateObjCommand(ip, "::xo::structured_text::__stx_to_html", stx_TextToHtmlCmd, NULL, NULL);
     Tcl_CreateObjCommand(ip, "::xo::structured_text::__mtx_to_html", stx_MiniToHtmlCmd, NULL, NULL);
-} {
-    // init_exts
 }
 
-
-critcl::ccode {
+set conf(ccode) {
     #include "structured_text.h"
 
     #define CheckArgs(min,max,n,msg) \
@@ -87,6 +85,5 @@ critcl::ccode {
 
 }
 
-
-::critcl::cbuild [file normalize [info script]]
+::critcl::ext::cbuild_module [info script] conf
 

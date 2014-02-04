@@ -4,22 +4,18 @@ set dir [file dirname [info script]]
 
 ::xo::lib::require critcl
 
-::critcl::reset
+array set conf [list]
+set conf(clibraries) "-L/opt/naviserver/lib -ltidy"
+set conf(includedirs) [list "/opt/naviserver/include"]
 
-::critcl::clibraries -L/opt/naviserver/lib -ltidy
-
-::critcl::config I /opt/naviserver/include
-
-::critcl::cinit {
+set conf(cinit) {
     // init_text
 
     Tcl_CreateObjCommand(ip, "::htmltidy::tidy", htmltidy_TidyCmd, NULL, NULL);
 
-} {
-    // init_exts
 }
 
-critcl::ccode {
+set conf(ccode) {
 
     #undef panic
     /*
@@ -157,4 +153,4 @@ critcl::ccode {
 
 }
 
-::critcl::cbuild [file normalize [info script]]
+::critcl::ext::cbuild_module [info script] conf
