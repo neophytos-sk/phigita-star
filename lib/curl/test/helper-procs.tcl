@@ -12,11 +12,11 @@ proc exec_xpath {resultVar doc xpath} {
 }
 
 proc tokenize {text} {
-    return [lsearch -inline -all -not [split [string tolower [regsub -all {[^[:alnum:] ]+} $text { }]] " "] {}]
+    return [lsearch -inline -all -not [split [string tolower [regsub -all {([^[:alnum:] ]+)} $text { \1 }]] " "] {}]
 }
 
 proc tokenize_pretty {text} {
-    return [lsearch -inline -all -not [split [regsub -all {[^[:alnum:] ]+} $text { }] " "] {}]
+    return [lsearch -inline -all -not [split [regsub -all {([^[:alnum:] ]+)} $text { \1 }] " "] {}]
 }
 
 # relies on tokenize to maintain empty tokens
@@ -37,14 +37,23 @@ proc highlight {max_text boundaries numContextTokens} {
         }
 
         set minContextPos 0
-        set maxContextPos [llength $max_text_tokens]
+        set maxContextPos end
 
-        return [join [concat \
-                [lrange $max_text_tokens $minContextPos [expr {$minPos - 1}]] \
-                ">>>" \
-                [lrange $max_text_tokens $minPos $maxPos] \
-                "<<<" \
-                [lrange $max_text_tokens [expr {$maxPos + 1}] $maxContextPos]]]
+        set beforeTokens [lrange $max_text_tokens $minContextPos [expr {$minPos - 1}]]
+        set highlightTokens [lrange $max_text_tokens $minPos $maxPos]
+        set afterTokens [lrange $max_text_tokens [expr {$maxPos + 1}] $maxContextPos]
+
+        set statementStartPos [lindex [lsearch -all -regexp $beforeTokens {;\s*\n}] end]
+        if { $statementStartPos != -1 } {
+            set beforeTokens [lrange $beforeTokens [expr { $statementStartPos + 1 }] end]
+        }
+
+        set statementEndPos [lsearch -regexp $afterTokens {;\s*\n}]
+        if { $statementEndPos != -1 } {
+            set afterTokens [lrange $afterTokens 0 $statementEndPos]
+        }
+
+        return [join [concat $beforeTokens ">>>" $highlightTokens "<<<" $afterTokens]]
 
     }
 
@@ -52,11 +61,40 @@ proc highlight {max_text boundaries numContextTokens} {
 
 }
 
+proc intersect3_alnum {list1 list2} {
+    set la1(0) {} ; unset la1(0)
+    set lai(0) {} ; unset lai(0)
+    set la2(0) {} ; unset la2(0)
+
+    set re {^[[:alnum:]]+$}
+
+    foreach v $list1 {
+        if { ![regexp -- $re $v] } continue
+        set la1($v) {}
+    }
+
+    foreach v $list2 {
+        if { ![regexp -- $re $v] } continue
+        set la2($v) {}
+    }
+
+    foreach elem [concat $list1 $list2] {
+        if {[info exists la1($elem)] && [info exists la2($elem)]} {
+            unset la1($elem)
+            unset la2($elem)
+            set lai($elem) {}
+        }
+    }
+    list [lsort [array names la1]] [lsort [array names lai]] \
+         [lsort [array names la2]]
+}
+
+
 proc tokenSimilarity {tokens_text1 tokens_text2 resultVar} {
 
     upvar $resultVar result
 
-    lassign [intersect3 ${tokens_text1} ${tokens_text2}] t1 common t2
+    lassign [intersect3_alnum ${tokens_text1} ${tokens_text2}] t1 common t2
 
     set result ${common}
     set score [llength ${common}]
@@ -130,7 +168,7 @@ proc to_xpath {node} {
     return $default_xpath
 }
 
-proc find_data_fragment {url max_textVar {numContextTokens 10}} {
+proc find_data_fragment {url max_textVar {numContextTokens 20}} {
 
     upvar $max_textVar max_text
 

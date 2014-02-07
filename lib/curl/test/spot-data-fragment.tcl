@@ -43,6 +43,6 @@ foreach url $urls {
 
 if { $max_xpath ne {} } {
     puts "--->> xpath=$max_xpath"
-    puts "--->> highlighted_text= $max_text"
+    puts "--->> highlighted_text=\n$max_text"
 }
 
