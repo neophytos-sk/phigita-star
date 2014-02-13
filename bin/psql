@@ -1,0 +1,2 @@
+#!/bin/sh
+/opt/postgresql/bin/psql -U postgres -h $1 $2

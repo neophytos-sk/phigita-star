@@ -1,0 +1,9 @@
+#!/bin/sh
+
+if [ "$1" != "" ]; then
+  DIR=$1
+else
+  DIR=`pwd`
+fi
+echo DIR=$DIR
+find ${DIR} -name '*~' | xargs rm -f

@@ -1,0 +1,16 @@
+
+global en_to_el
+set en_to_el(bibliography) "Περιέχει βιβλιογραφία"
+set en_to_el(prototype) "Τίτλος πρωτοτύπου"
+set en_to_el(prologue) "Πρόλογος"
+set en_to_el(epimetro) "Επίμετρο"
+set en_to_el(bilingual) "Δίγλωσση έκδοση"
+set en_to_el(distribution) "Κεντρική διάθεση"
+set en_to_el(introducsinipeuthinotita) "Συγγραφική συνυπευθυνότητα"
+set en_to_el(coeditor) "Συνέκδοση"
+set en_to_el(includes) "Περιέχει"
+set en_to_el(first_edition) "1η έκδοση"
+set en_to_el(distributor) "Διακινητής"
+set en_to_el(republish) "Επανέκδοση"
+set en_to_el(scale) "Κλίμακα"
+set en_to_el(sinipeuthinotita) "Συγγραφική συνυπευθυνότητα"

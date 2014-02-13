@@ -1,0 +1,4 @@
+#!/bin/bash
+echo "alter table countries alter column name type varchar(48);update countries set name=trim(name);"
+for i in `seq 0 255`; do echo "create index ip4_${i}__kCountry on ip4_$i (country);"; echo "create index ip4_${i}__kCity on ip4_$i (city);"; echo "create index ip4_${i}__kb on ip4_$i (b);"; echo "create index ip4_${i}__kc on ip4_$i (c);"; echo "create index ip4_${i}__kcron on ip4_$i (cron);"; echo "create index countries_name_idx on countries (name);"; echo "create unique index countries_code_un on countries (code);"; echo "create index citybycountry__country__idx on citybycountry (country);"; echo "create index citybycountry__name__idx on citybycountry (name);"; done
+VACUUM FULL ANALYZE ;
