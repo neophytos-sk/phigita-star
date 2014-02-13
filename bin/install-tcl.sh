@@ -45,4 +45,3 @@ make install
 
 ln -sf ${TCLHOME}/bin/tclsh8.? /usr/bin/tclsh
 ln -sf ${TCLHOME}/ /opt/tcl
-ln -sf ${TCLHOME}/lib/libtcl8.?.so ${PREFIX}/lib/libtcl.so

@@ -70,6 +70,8 @@ cd ${NAVISERVER}
 make CFLAGS_EXTRA="-O3 -fPIC"
 make install
 
+ln -sf ${NSHOME}/lib/libtcl8.?.so ${NSHOME}/lib/libtcl.so
+
 ### nsdbi
 cd ${WORKDIR}/modules-${NAVISERVER}/nsdbi
 make install NSHOME=${NSHOME} NAVISERVER=${NSHOME} POSTGRES=${PGHOME_SHORT} PGINCLUDE=${PGHOME_SHORT}/include/ PGLIB=${PGHOME_SHORT}/lib/
