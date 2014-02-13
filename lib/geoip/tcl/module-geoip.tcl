@@ -89,6 +89,13 @@ proc ::xo::geoip::init {} {
 
 proc ::xo::geoip::ip_locate {query_ip {loVar ""} {hiVar ""}} {
 
+#1  0x00007fffeb9710e3 in segment_match_cb () from
+#   /web/data/build/lib/critbit_tree/tcl/module-critbit_tree.1.3832005.1392301541.so
+#2  0x00007fffeb97122c in critbit0_segment_match () from
+#   /web/data/build/lib/critbit_tree/tcl/module-critbit_tree.1.3832005.1392301541.so
+
+    return
+
     if { $loVar ne {} } { upvar $loVar lo }
     if { $hiVar ne {} } { upvar $hiVar hi }
 
