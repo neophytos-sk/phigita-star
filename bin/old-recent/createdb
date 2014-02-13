@@ -1,0 +1,23 @@
+#!/bin/sh
+
+###################################################################
+
+WEBHOME=~nsadmin
+source ${WEBHOME}/bin/install-env.sh
+
+###################################################################
+
+DBNAME=$1
+
+PGHOME="/opt/postgresql"
+${PGHOME}/bin/createdb ${DBNAME}
+${PGHOME}/bin/createlang plpgsql ${DBNAME}
+${PGHOME}/bin/psql -f ${FILEDIR}/ts_cfg_greek.sql ${DBNAME}
+${PGHOME}/bin/psql -f ${FILEDIR}/phigita-xo-create.sql ${DBNAME}
+${PGHOME}/bin/psql -f ${PGHOME}/share/contrib/hstore.sql ${DBNAME}
+${PGHOME}/bin/psql -f ${PGHOME}/share/contrib/_int.sql ${DBNAME}
+${PGHOME}/bin/psql -f ${PGHOME}/share/contrib/int_aggregate.sql ${DBNAME}
+${PGHOME}/bin/psql -f ${PGHOME}/share/contrib/dblink.sql ${DBNAME}
+
+
+
