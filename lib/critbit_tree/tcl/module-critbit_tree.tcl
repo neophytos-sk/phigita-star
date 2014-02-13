@@ -4,10 +4,12 @@
 
 package provide critbit_tree 0.1
 
-set dir [file dirname [info script]]
 
 #package require critcl
 ::xo::lib::require critcl
+
+
+set dir [file dirname [info script]]
 
 array set conf [list]
 set conf(debug_mode_p) [::xo::kit::debug_mode_p]

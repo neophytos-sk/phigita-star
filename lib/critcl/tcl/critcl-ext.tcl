@@ -1,3 +1,6 @@
+
+::xo::lib::require util_procs
+
 namespace eval ::critcl::ext {;}
 
 proc ::critcl::ext::get_value_if {varname {default ""}} {
@@ -26,11 +29,12 @@ proc ::critcl::ext::get_build_rootname {filename} {
     set root_dir_len [string length $root_dir]
     set prefix_dir_of_rootname [string range $rootname 0 [expr {$root_dir_len - 1}]]
     if { $prefix_dir_of_rootname eq $root_dir } {
-        set rootname [string range $rootname [expr { $root_dir_len + 1 }] end]
+        set rootname [string range $rootname $root_dir_len end]
     }
 
     set build_dir [get_build_dir]
     set build_rootname ${build_dir}/${rootname}
+
     if { ![file isdirectory [file dirname $build_rootname]] } {
         file mkdir [file dirname $build_rootname]
     }

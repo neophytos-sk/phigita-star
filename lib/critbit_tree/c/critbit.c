@@ -31,6 +31,13 @@ typedef struct{
   int keylen;
 } critbit0_tree;
 
+
+static inline int
+critbit_ref_is_internal(uint8_t *ref)
+{
+    return 1 & (intptr_t)ref;
+}
+
 int
 critbit0_bytelen(const critbit0_tree*const t,const char*u) {
   //printf("keylen=%d %zd elem=%s\n",t->keylen,strlen(u),u);
@@ -42,11 +49,11 @@ int
 critbit0_contains(const critbit0_tree*t,const char*u){
   const uint8*ubytes= (void*)u;
   const size_t ulen= critbit0_bytelen(t,u);
-  uint8*p= t->root;
+  uint8 *p = t->root;
 
   if(!p)return 0;
 
-  while(1&(intptr_t)p){
+  while(critbit_ref_is_internal(p)){
     critbit0_node*q= (void*)(p-1);
     uint8 c= 0;
     if(q->byte<ulen)c= ubytes[q->byte];
@@ -72,7 +79,7 @@ int critbit0_insert(critbit0_tree*const t,const unsigned char*u, const size_t ul
     return 2;
   }
 
-  while(1&(intptr_t)p){
+  while(critbit_ref_is_internal(p)){
     critbit0_node*q= (void*)(p-1);
     uint8 c= 0;
     if(q->byte<ulen)c= ubytes[q->byte];
@@ -122,8 +129,8 @@ int critbit0_insert(critbit0_tree*const t,const unsigned char*u, const size_t ul
   void**wherep= &t->root;
   for(;;){
     uint8*p= *wherep;
-    if(!(1&(intptr_t)p))break;
-    critbit0_node*q= (void*)(p-1);
+    if (!critbit_ref_is_internal(p)) break;
+    critbit0_node *q = (void*)(p-1);
     if(q->byte> newbyte)break;
     if(q->byte==newbyte&&q->otherbits> newotherbits)break;
     uint8 c= 0;
@@ -150,7 +157,7 @@ int critbit0_delete(critbit0_tree*const t,const char*const u,const size_t ulen){
 
   if(!p)return 0;
 
-  while(1&(intptr_t)p){
+  while (critbit_ref_is_internal(p)) {
     whereq= wherep;
     q= (void*)(p-1);
     uint8 c= 0;
@@ -183,7 +190,7 @@ traverse(void*top){
   
   uint8*p= top;
 
-  if(1&(intptr_t)p){
+  if(critbit_ref_is_internal(p)){
     critbit0_node*q= (void*)(p-1);
     traverse(q->child[0]);
     traverse(q->child[1]);
@@ -206,7 +213,7 @@ static int
 allprefixed_traverse(critbit0_tree*t,uint8*top,
 		     int(*callback)(critbit0_tree*t,const char*,void*),void*arg){
 
-  if(1&(intptr_t)top){
+  if(critbit_ref_is_internal(top)){
     critbit0_node*q= (void*)(top-1);
     int direction;
     for(direction= 0;direction<2;++direction)
@@ -232,7 +239,7 @@ critbit0_allprefixed(critbit0_tree*t,const char*prefix,
   
   if(!p)return 1;
 
-  while(1&(intptr_t)p){
+  while(critbit_ref_is_internal(p)){
     critbit0_node*q= (void*)(p-1);
     uint8 c= 0;
     if(q->byte<ulen)c= ubytes[q->byte];
@@ -294,7 +301,7 @@ guided_traverse(critbit0_tree*t,uint8*top,
 
   DBG(printf("direction=%d remaining=%d\n",direction,*remaining));
 
-  if(1&(intptr_t)top){
+  if (critbit_ref_is_internal(top)) {
     critbit0_node*q= (void*)(top-1);
     
     switch(guided_traverse(t,q->child[direction],callback,direction,remaining,arg)){
@@ -328,7 +335,7 @@ critbit0_prefix_match(critbit0_tree *t, const char *u, const size_t ulen,
 
   if(!p) return 0;
   
-  while(1&(intptr_t)p){
+  while(critbit_ref_is_internal(p)){
     critbit0_node*q= (void*)(p-1);
     uint8 c= 0;
     if(q->byte<ulen)c= ubytes[q->byte];
@@ -374,7 +381,7 @@ int bounded_traverse(const uint8*const top,const char*const u,const size_t ulen,
 
   const uint8*const ubytes= (void*)u;
 
-  if(1&(intptr_t)top){
+  if(critbit_ref_is_internal(top)){
     critbit0_node*q= (void*)(top-1);
     uint8 c= 0;
     if(q->byte<ulen)c= ubytes[q->byte];
@@ -417,7 +424,7 @@ serialize(const critbit0_tree*const t,const uint8*const top,
 	  int(*external_node_cb)(const critbit0_tree*const,const uint8*const,uint32*const offset,void*),
 	  uint32*const offset,void*arg){
 
-  if(1&(intptr_t)top){
+  if (critbit_ref_is_internal(top)) {
 
     if(!internal_node_cb(t,top,offset,arg)) return 0;
 
@@ -448,7 +455,7 @@ int dump_internal_node_cb(const critbit0_tree * const t,const uint8*const top, u
   // reference code from insert operation: (void*)(1+(char*)newnode)
   int i;
   for(i=0;i<2;++i){
-    int node_type_tag= 1&(intptr_t)q->child[i];
+    int node_type_tag = critbit_ref_is_internal(q->child[i]);
     void *child= (void*)(node_type_tag+(char*)(*offset<<sizeof(int)));
     if (!fwrite(&child,sizeof(void*),1,fp)){
       fprintf(stderr,"fwrite error\n");
@@ -522,7 +529,7 @@ int critbit0_dump(const critbit0_tree*const t, const char*const filename){
   }
 
   // dump the root node type tag of the root
-  const int root_type_tag = 1&(intptr_t)t->root;
+  const int root_type_tag = critbit_ref_is_internal(t->root);
   fprintf(stderr,"root_type_tag=%d\n",root_type_tag);
   if (!fwrite(&root_type_tag,sizeof(int),1,fp)) {
     fprintf(stderr, "fwrite error: root_type_tag\n");
@@ -707,7 +714,7 @@ critbit0_prefix_exists(const critbit0_tree*const t, const char*const u, const si
 
   if(!p) return 0;
 
-  while(1&(intptr_t)p){
+  while(critbit_ref_is_internal(p)){
     critbit0_node*q= (void*)(p-1);
     uint8 c= 0;
     if(q->byte<ulen)c= ubytes[q->byte];
@@ -730,7 +737,7 @@ critbit0_get(const critbit0_tree*const t, const char*const u, const size_t ulen,
 
   if(!p) return 0;
 
-  while(1&(intptr_t)p){
+  while(critbit_ref_is_internal(p)){
     critbit0_node*q= (void*)(p-1);
     uint8 c= 0;
     if(q->byte<ulen)c= ubytes[q->byte];

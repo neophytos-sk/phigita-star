@@ -39,35 +39,6 @@ static int initialize_category(category_t *c) {
     return TCL_OK;
 }  
 
-static int tokenize_old(Tcl_Interp *interp, Tcl_Obj *resObjPtr, Tcl_Obj *text, int *count) {
-
-    int i, num_tokens = 0;
-    Tcl_Obj *tokens_objPtr, *token, *cmd_objPtr;
-
-    // Tcl_Obj *cmd_objPtr =  Tcl_NewStringObj("::util::tokenize", -1);
-    cmd_objPtr =  Tcl_NewStringObj("::naivebayes::clean_and_tokenize_wrapper", -1);
-    Tcl_Obj *objv[] = {cmd_objPtr, text};
-    if (TCL_OK != Tcl_EvalObjv(interp, 2, objv, TCL_EVAL_GLOBAL)) {
-        // TODO: add error message
-        printf("error calling clean_and_tokenize\n");
-        return TCL_ERROR;
-    }
-
-    tokens_objPtr = Tcl_GetObjResult(interp);
-    Tcl_ListObjLength(interp, tokens_objPtr, &num_tokens);
-    // printf("tokens=%s num_tokens=%d\n", Tcl_GetString(tokens_objPtr), num_tokens);
-
-    for (i = 0; i < num_tokens; i++) {
-        Tcl_ListObjIndex(interp, tokens_objPtr, i, &token);
-        Tcl_ListObjAppendElement(interp, resObjPtr, token);
-    }
-
-    *count += num_tokens;
-
-    return TCL_OK;
-
-}
-
 static int flatten_data(Tcl_Interp *interp, Tcl_Obj *dataObjPtr, Tcl_Obj *textObjPtr) {
     // content is a list of two elements, the title and the content
     // join them together
@@ -127,7 +98,7 @@ static int wordcount_helper(Tcl_Interp *interp, category_t *c, const char *text)
 
     // DBG(printf("wordcount_helper\n"));
 
-    arraylist_t *tokens = arraylist_new(1000, sizeof(object_t *));
+    arraylist_t *tokens = arraylist_new(1000);
     int num_words = tokenize(text, tokens, kMaxTokens, " ,-:;?.-!()[]{}/\\");
 
     c->num_words += num_words;

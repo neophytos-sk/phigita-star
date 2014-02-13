@@ -1,7 +1,0 @@
-
-
-version 0.5 : Initial release.
-  Implemented : Unicode database builder
-  Implemented : UnicodeDataBase class to access wide char properties
-  Implemented : Partial WString class
-  Implemented : Normalization forms C, D, KC, KD.

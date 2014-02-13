@@ -1,2 +1,0 @@
-compile with:
-	g++ -std=c++0x add_numbers.cc

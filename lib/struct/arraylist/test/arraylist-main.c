@@ -1,7 +1,7 @@
 /*
  * =====================================================================================
  *
- *       Filename:  test-arraylist.c
+ *       Filename:  arraylist-main.c
  *
  *    Description:  
  *
@@ -10,7 +10,7 @@
  *       Revision:  none
  *       Compiler:  gcc
  *
- *         Author:  YOUR NAME (), 
+ *         Author:  Neophytos Demetriou (neophytos@gmail.com), 
  *   Organization:  
  *
  * =====================================================================================
@@ -25,7 +25,7 @@
 int main(void) {
     int i, len;
 
-    arraylist_t *listPtr = arraylist_new(6, sizeof(object_t *));
+    arraylist_t *listPtr = arraylist_new(6);
 
     object_t *x = integer_new(5);
     object_t *y = integer_new(7);

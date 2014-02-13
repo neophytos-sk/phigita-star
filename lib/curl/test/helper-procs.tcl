@@ -16,48 +16,59 @@ proc tokenize {text} {
 }
 
 proc tokenize_pretty {text} {
-    return [lsearch -inline -all -not [split [regsub -all {([^[:alnum:] ]+)} $text { \1 }] " "] {}]
+    return [lsearch -inline -all -not [split [regsub -all {([^[:alnum:] ]+)} $text " \x01\\1\x02 "] " "] {}]
+}
+
+
+proc remove_special_chars {text} {
+    set re "( \x01|\x02 |\x01|\x02)"
+    return [regsub -all $re $text {}]
+}
+
+proc highlight_minWin {max_text max_keywords} {
+
+    set max_text_tokens [tokenize $max_text]
+    set max_text_tokens_pretty [tokenize_pretty $max_text]
+
+    set minWin [minWindow $max_text_tokens $max_keywords list_of_boundaries]
+    
+    set highlight_text ""
+    foreach boundaries $list_of_boundaries {
+        # "boundaries=\[[join $boundaries ","]\] \n"
+        append highlight_text "\n-~-~-~-\n" [remove_special_chars [highlight $max_text_tokens_pretty $boundaries]]
+    }
+
+    # comment-in to debug result
+    # append highlight_text "\n\n" "$max_text"
+
+    return $highlight_text
+
 }
 
 # relies on tokenize to maintain empty tokens
-proc highlight {max_text boundaries numContextTokens} {
+proc highlight {max_text_tokens boundaries} {
 
-    set max_text_tokens [tokenize_pretty $max_text]
 
     lassign $boundaries minPos maxPos
 
-    if { $numContextTokens } {
+    set minContextPos 0
+    set maxContextPos end
 
-        if { $minPos - $numContextTokens > 0 } {
-            set minContextPos [expr { $minPos - $numContextTokens }]
-        }
+    set beforeTokens [lrange $max_text_tokens $minContextPos [expr {$minPos - 1}]]
+    set highlightTokens [lrange $max_text_tokens $minPos $maxPos]
+    set afterTokens [lrange $max_text_tokens [expr {$maxPos + 1}] $maxContextPos]
 
-        if { $maxPos + $numContextTokens < [llength $max_text_tokens] } {
-            set maxContextPos [expr { $maxPos + $numContextTokens }]
-        }
-
-        set minContextPos 0
-        set maxContextPos end
-
-        set beforeTokens [lrange $max_text_tokens $minContextPos [expr {$minPos - 1}]]
-        set highlightTokens [lrange $max_text_tokens $minPos $maxPos]
-        set afterTokens [lrange $max_text_tokens [expr {$maxPos + 1}] $maxContextPos]
-
-        set statementStartPos [lindex [lsearch -all -regexp $beforeTokens {;\s*\n}] end]
-        if { $statementStartPos != -1 } {
-            set beforeTokens [lrange $beforeTokens [expr { $statementStartPos + 1 }] end]
-        }
-
-        set statementEndPos [lsearch -regexp $afterTokens {;\s*\n}]
-        if { $statementEndPos != -1 } {
-            set afterTokens [lrange $afterTokens 0 $statementEndPos]
-        }
-
-        return [join [concat $beforeTokens ">>>" $highlightTokens "<<<" $afterTokens]]
-
+    set statementStartPos [lindex [lsearch -all -regexp $beforeTokens {;\s*\n}] end]
+    if { $statementStartPos != -1 } {
+        set beforeTokens [lrange $beforeTokens [expr { $statementStartPos + 1 }] end]
     }
 
-    return [join [lrange $max_text_tokens $minPos $maxPos]]
+    set statementEndPos [lsearch -regexp $afterTokens {;\s*\n}]
+    if { $statementEndPos != -1 } {
+        set afterTokens [lrange $afterTokens 0 $statementEndPos]
+    }
+
+    return [join [concat $beforeTokens ">>>" $highlightTokens "<<<" $afterTokens]]
 
 }
 
@@ -100,6 +111,7 @@ proc tokenSimilarity {tokens_text1 tokens_text2 resultVar} {
     set score [llength ${common}]
     
 }
+
 
 proc stringDistance {a b} {
 
@@ -168,9 +180,9 @@ proc to_xpath {node} {
     return $default_xpath
 }
 
-proc find_data_fragment {url max_textVar {numContextTokens 20}} {
+proc find_data_fragment {url highlight_textVar {numContextTokens 20}} {
 
-    upvar $max_textVar max_text
+    upvar $highlight_textVar highlight_text
 
     set options(followlocation) 1
     set options(maxredirs) 5
@@ -189,15 +201,17 @@ proc find_data_fragment {url max_textVar {numContextTokens 20}} {
     exec_xpath og_description $doc {string(//meta[@property='og:description'])}
 
     set title [lsearch -inline -not [list $og_title $page_title] {}]
+    set tokens_title [tokenize $title]
+
     puts "--->>> title=$title"
 
-    set max_node ""
+    set max_node [list]
+    set max_text [list]
     set max_similarity 0
     set nodes [$doc selectNodes {//script[not(@src)]}]
     foreach node $nodes {
         set text [$node text]
 
-        set tokens_title [tokenize $title]
         set tokens_text [tokenize $text]
         # puts tokens_text=$tokens_text
 
@@ -205,18 +219,20 @@ proc find_data_fragment {url max_textVar {numContextTokens 20}} {
         if { $similarity > $max_similarity } {
             set max_node $node
             set max_similarity $similarity
-            set max_text $text
-            set max_text_tokens $tokens_text
+            set max_text [list $text]
             set max_keywords [filter_tokens $tokens_title $common]
             # puts "--->>> max_keywords=$max_keywords"
+        } elseif { $similarity && $similarity == $max_similarity } {
+            lappend max_node $node
+            lappend max_text $text
         }
     }
 
-    set xpath ""
-    if { $max_node ne {} } {
-        set xpath [to_xpath $max_node]
-        set minWin [minWindow $max_text_tokens $max_keywords boundaries]
-        set max_text [highlight $max_text $boundaries $numContextTokens]
+    set highlight_text [list]
+    set xpath [list]
+    foreach node $max_node text $max_text {
+        lappend xpath [to_xpath $node]
+        lappend highlight_text [highlight_minWin $text $max_keywords]
     }
 
     $doc delete
@@ -254,7 +270,7 @@ proc minWindow {tokens keywords boundariesVar} {
     }
 
     upvar $boundariesVar boundaries
-    set boundaries [list 0 $n]
+    set boundaries [list]
 
     set minPos [expr {$n + 1}]
     set maxPos [expr {$n + 1}]
@@ -289,11 +305,24 @@ proc minWindow {tokens keywords boundariesVar} {
         }
 
         set win [expr { $maxPos - $minPos + 1 }]
+
+        # for the first minimum window
+        #
+        # if { $minWin == -1 || $win < $minWin } {
+            # set boundaries [list $minPos $maxPos]
+            # set minWin $win
+        # }
+
+        # for all equal minimum windows
         if { $minWin == -1 || $win < $minWin } {
-            set boundaries [list $minPos $maxPos]
+            set boundaries [list [list $minPos $maxPos]]
             set minWin $win
+        } elseif { $win == $minWin } {
+            lappend boundaries [list $minPos $maxPos]
         }
+
         set i $minPos
+
     }
     return $minWin
 }

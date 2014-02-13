@@ -10,10 +10,11 @@
 
 typedef struct {
     void *elems;
-    int elemSize;
     int logLength;
     int allocLength;
 } arraylist_t;
+
+const int k_arraylist_elemSize = sizeof(void *);
 
 static inline void arraylist_foreach(arraylist_t *const list, void (fn)(char *));
 
@@ -21,13 +22,11 @@ static inline arraylist_t *arraylist_alloc()
 {
     return (arraylist_t *) ckalloc(sizeof(arraylist_t));
 }
-static inline void arraylist_init(arraylist_t *const list, int initialAllocationSize, int elemSize)
+static inline void arraylist_init(arraylist_t *const list, int initialAllocationSize)
 {
-    assert(elemSize > 0);
-    list->elemSize = elemSize;
     list->logLength = 0;
     list->allocLength = initialAllocationSize;
-    list->elems = ckalloc(initialAllocationSize * elemSize);
+    list->elems = ckalloc(initialAllocationSize * k_arraylist_elemSize);
     assert(list->elems != NULL);
 }
 
@@ -36,9 +35,9 @@ static inline void arraylist_cleanup(arraylist_t *const list) {
     ckfree(list->elems);
 }
 
-static inline arraylist_t *const arraylist_new(int initialAllocationSize, int elemSize) {
+static inline arraylist_t *const arraylist_new(int initialAllocationSize) {
     arraylist_t *list = arraylist_alloc();
-    arraylist_init(list, initialAllocationSize, elemSize);
+    arraylist_init(list, initialAllocationSize);
     return list;
 }
 
@@ -63,7 +62,7 @@ static inline void arraylist_resize(arraylist_t *const list, size_t n)
 {
     assert(n > 0);
     list->allocLength = n;
-    list->elems = ckrealloc(list->elems, n * list->elemSize);
+    list->elems = ckrealloc(list->elems, n * k_arraylist_elemSize);
     assert(list->elems != NULL);
 
 }
@@ -72,18 +71,18 @@ static inline int arraylist_get(const arraylist_t *const list, size_t index, voi
 {
     assert(!arraylist_empty(list));
     assert(index >= 0 && index < arraylist_length(list));
-    void *const sourcePtr = (char *) list->elems + index * list->elemSize;
-    memcpy(elemPtrPtr, sourcePtr, sizeof(void *));
+    void *const sourcePtr = (char *) list->elems + index * k_arraylist_elemSize;
+    memcpy(elemPtrPtr, sourcePtr, k_arraylist_elemSize);
     return 1; // OK
 }
 
 static inline void arraylist_set(arraylist_t *const list, size_t index, void *const elemPtr)
 {
     assert(index > 0 && index < arraylist_capacity(list));
-    void *const destPtr = (char *)list->elems + index * list->elemSize;
+    void *const destPtr = (char *)list->elems + index * k_arraylist_elemSize;
 
     incr_ref_count(elemPtr);
-    memcpy(destPtr, &elemPtr, list->elemSize);
+    memcpy(destPtr, &elemPtr, k_arraylist_elemSize);
 
     if (index > list->logLength) {
         list->logLength = index+1;
@@ -130,7 +129,7 @@ static inline const void *arraylist_cbegin(const arraylist_t *const list)
 
 static inline const void *arraylist_cend(const arraylist_t *const list)
 {
-    return (char *) list->elems + list->logLength * list->elemSize;
+    return (char *) list->elems + list->logLength * k_arraylist_elemSize;
 }
 
 static inline void arraylist_foreach(arraylist_t *const list, void (fn)(char *))
