@@ -1381,9 +1381,9 @@ int StxToHtml(Tcl_DString *dsPtr, int *outflags, const char *text) {
     case UL:
     case OL:
     case DL:
-      Tcl_DStringAppend(dsPtr, "<li>", 3);
+      Tcl_DStringAppend(dsPtr, "<li>", 4);
       BlockToHtml(dsPtr, outflags, FLAGS, curr, stop_of_curr);
-      Tcl_DStringAppend(dsPtr, "</li>", 4);
+      Tcl_DStringAppend(dsPtr, "</li>", 5);
       break;
     case HEADING:
       DStringAppendQuoted(dsPtr, curr, stop_of_curr-curr);
