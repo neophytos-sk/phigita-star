@@ -45,8 +45,8 @@ AOLSERVER=aolserver-4.5.1
 #TCL=tcl8.5.11
 #TCL=tcl8.5.12
 #TCL=tcl8.6b2
-TCL=tcl8.5.14
-#TCL=tcl8.6.0
+#TCL=tcl8.5.14
+TCL=tcl8.6.0
 
 # TCL_THREAD_LIB=thread2.6.6
 TCL_THREAD_LIB=thread2.6.7
