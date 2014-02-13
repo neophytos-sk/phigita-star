@@ -19,6 +19,8 @@
 #ifndef __OBJECT_H__
 #define __OBJECT_H__
 
+#include <string.h>
+
 typedef struct {
     int refCount;  /* when zero the object will be freed */
     char *bytes;
