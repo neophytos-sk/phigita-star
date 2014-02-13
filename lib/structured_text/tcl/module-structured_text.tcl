@@ -11,7 +11,12 @@ array set conf [list]
 
 set conf(debug_mode_p) [::xo::kit::debug_mode_p]
 
-set conf(clibraries) "-L/opt/naviserver/lib -ltcl"
+if { [info cmds ns_info] ne {} && [ns_info name] eq {NaviServer} } {
+    set conf(clibraries) "-L/opt/naviserver/lib"
+} else {
+    set conf(clibraries) "-L/opt/naviserver/lib -ltcl"
+}
+
 
 set conf(includedirs) [list \
     "/opt/naviserver/include" \
