@@ -1107,4 +1107,4 @@ namespace eval ::cbt {
 }
 
 
-::critcl::ext::cbuild_module [info script] conf
+::critcl::ext::cbuild_module [file normalize [info script]] conf
