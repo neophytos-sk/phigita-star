@@ -12,8 +12,8 @@ set listening_to_host {
     api.phigita.net
 }
 
-set production_mode_p 0
-set performance_mode_p 0
+set production_mode_p 1
+set performance_mode_p 1
 set connsperthread 100
 set debug 0
 set dev 0

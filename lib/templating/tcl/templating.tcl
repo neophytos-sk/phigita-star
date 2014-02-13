@@ -207,7 +207,7 @@ proc ::xo::tdp::initial_rewrite_compare {node1 node2} {
 	lappend filelist $inputfile
 
 	# add file dependencies
-	set depfile [get_build_rootname $inputfile].tdp_dep
+	set depfile [::critcl::ext::get_build_rootname $inputfile].tdp_dep
 	if { [file readable $depfile] } {
 	    foreach filename [::util::readfile $depfile] {
 		lappend filelist $filename
@@ -232,12 +232,12 @@ proc ::xo::tdp::compile_and_load {filename} {
 
     require_template_procs
 
-    set rootname [get_build_rootname $filename]
+    set rootname [::critcl::ext::get_build_rootname $filename]
     set specfile ${rootname}.tdp_spec
     set xmlfile ${rootname}.tdp_xml
     set htmlfile ${rootname}.tdp_html
-    set sharedlib [::xo::tdp::get_sharedlib $filename]
-    set ininame [::xo::tdp::get_ininame $filename]
+    set sharedlib [::critcl::ext::get_sharedlib $filename]
+    set ininame [::critcl::ext::get_ininame $filename]
 
 
     set latest_mtime [latest_mtime $filename]
@@ -339,8 +339,8 @@ proc ::xo::tdp::compile_and_load {filename} {
 
     # latest mtime may have changed because of the deps
     # get those names again, taking the new deps into consideration
-    set sharedlib [::xo::tdp::get_sharedlib $filename]
-    set ininame [::xo::tdp::get_ininame $filename]
+    set sharedlib [::critcl::ext::get_sharedlib $filename]
+    set ininame [::critcl::ext::get_ininame $filename]
 
     ns_log notice "--- (after compile) --->>> load $sharedlib $ininame"
     load $sharedlib $ininame
@@ -354,7 +354,7 @@ proc ::xo::tdp::next_other_id {} {
 
 proc ::xo::tdp::compile_doc {templateDoc filename} {
 
-    set rootname [get_build_rootname $filename]
+    set rootname [::critcl::ext::get_build_rootname $filename]
 
     array set codearr [list \
 			   build_rootname $rootname \
@@ -454,7 +454,7 @@ proc ::xo::tdp::compile_doc {templateDoc filename} {
 
     # -------------------------- compile js ------------------------------------
 
-    set rootname [get_build_rootname $filename]
+    set rootname [::critcl::ext::get_build_rootname $filename]
     ::templating::js::get_compiled_script ${rootname} rename_map js
 
     # ---------------- rename classes in the template doc ----------------------
@@ -603,7 +603,7 @@ proc ::xo::tdp::compile_doc_in_c {codearrVar templateDoc filename} {
 
     set c_code [compile_to_c codearr $templateDoc $c_cmd_name $tcl_cmd_name]
 
-    set rootname [get_build_rootname $filename]
+    set rootname [::critcl::ext::get_build_rootname $filename]
     set c_file ${rootname}.tdp_c
     ::util::writefile $c_file $c_code
 
@@ -625,7 +625,6 @@ proc ::xo::tdp::compile_doc_in_c {codearrVar templateDoc filename} {
     set conf(cinit) $init_code
     set conf(ccode) $c_code
 
-    #set conf(base) [get_base_rootname $filename]
     #set load 0
     #set pretend_load 1
     #lassign [::critcl::cbuild ${filename} ${load} "" "" ${pretend_load} ${base}] libfile ininame
@@ -1382,52 +1381,6 @@ proc ::xo::tdp::compile_helper {codearrVar node procName} {
 	}
     }
     return $result
-}
-
-
-proc ::xo::tdp::get_build_rootname {filename} {
-
-    set rootname [file rootname $filename]
-    set root_dir [acs_root_dir]
-    set root_dir_len [string length $root_dir]
-    set prefix_dir_of_rootname [string range $rootname 0 [expr {$root_dir_len - 1}]]
-    if { $prefix_dir_of_rootname eq $root_dir } {
-	set rootname [string range $rootname [expr { $root_dir_len + 1 }] end]
-    }
-
-    set build_dir /web/data/build
-    set build_rootname ${build_dir}/${rootname}
-    if { ![file isdirectory [file dirname $build_rootname]] } {
-	file mkdir [file dirname $build_rootname]
-    }
-
-    return ${build_rootname}
-}
-
-proc ::xo::tdp::get_base_rootname {filename} {
-    set build_rootname [get_build_rootname $filename]
-    return ${build_rootname}.[::xo::kit::performance_mode_p].[::util::ino $filename].[latest_mtime $filename]
-}
-
-
-proc ::xo::tdp::get_outdir {filename} {
-    return [file dirname [get_build_rootname $filename]]
-    #return /web/local-data/critcl
-}
-
-proc ::xo::tdp::get_ininame {filename} {
-    set mode [::xo::kit::performance_mode_p]
-    set ino [::util::ino $filename]
-    set rootname [file rootname [file tail $filename]]
-    set ininame [string totitle [string map {"-" "_"} $rootname]]_${mode}_${ino}
-    #set ininame [string totitle [string map {"-" "_"} $rootname]]
-    return ${ininame}
-}
-
-
-proc ::xo::tdp::get_sharedlib {filename} {
-    set sharedlibext [info sharedlibextension]
-    return [get_base_rootname $filename]${sharedlibext}
 }
 
 

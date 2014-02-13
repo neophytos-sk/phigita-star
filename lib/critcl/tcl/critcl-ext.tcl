@@ -24,7 +24,8 @@ proc ::critcl::ext::get_build_dir {} {
 proc ::critcl::ext::get_build_rootname {filename} {
 
     set rootname [file rootname $filename]
-    set root_dir [acs_root_dir]
+    # dereference possible symbolic link in acs_root_dir
+    set root_dir [file normalize [file normalize [acs_root_dir]/www]/..]
 
     set root_dir_len [string length $root_dir]
     set prefix_dir_of_rootname [string range $rootname 0 [expr {$root_dir_len - 1}]]
@@ -111,7 +112,7 @@ proc ::critcl::ext::cbuild_module {filename confArr} {
     set debug_mode_p [get_value_if conf(debug_mode_p) 0]
     set keepsrc [get_value_if conf(keepsrc) 1]
     set language [get_value_if conf(language) ""]
-    set combine [get_value_if conf(combine) "standalone"]
+    set combine [get_value_if conf(combine) "dynamic"]
 
     set cachedir [get_build_dir]/cache
     set outdir [get_outdir $filename]
