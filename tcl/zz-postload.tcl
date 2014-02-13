@@ -43,4 +43,5 @@ ns_log notice patchlevel=[info patchlevel]
 ns_log notice loaded=[info loaded]
 ns_log notice threads=[ns_info threads]
 ns_log notice "ns_proxy pools=[ns_proxy pools]"
+ns_log notice "production_mode_p=[::xo::kit::production_mode_p]"
 
