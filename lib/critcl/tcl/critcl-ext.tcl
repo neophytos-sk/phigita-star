@@ -111,7 +111,7 @@ proc ::critcl::ext::cbuild_module {filename confArr} {
     set debug_mode_p [get_value_if conf(debug_mode_p) 0]
     set keepsrc [get_value_if conf(keepsrc) 1]
     set language [get_value_if conf(language) ""]
-    set combine [get_value_if conf(combine) "dynamic"]
+    set combine [get_value_if conf(combine) "standalone"]
 
     set cachedir [get_build_dir]/cache
     set outdir [get_outdir $filename]
