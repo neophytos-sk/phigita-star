@@ -81,10 +81,17 @@ namespace eval ::xo::geoip {;}
 
 # read geoip_blocks.cbt_db database into a critbit tree
 proc ::xo::geoip::init {} {
+
     if { [::cbt::id "geoip_blocks.cbt_db"] ne {} } return
+
     set blocks_cbt [::cbt::create $::cbt::UINT64_KEYS "geoip_blocks.cbt_db"]
+
     set dir [file join [acs_root_dir] lib geoip]
-    ::cbt::read_from_file $blocks_cbt [file join $dir data/geoip_blocks.cbt_db]
+    set filename [file join $dir data/geoip_blocks.cbt_db]
+
+    puts filename=$filename
+    ::cbt::read_from_file $blocks_cbt $filename
+
 }
 
 proc ::xo::geoip::ip_locate {query_ip {loVar ""} {hiVar ""}} {
@@ -94,7 +101,7 @@ proc ::xo::geoip::ip_locate {query_ip {loVar ""} {hiVar ""}} {
 #2  0x00007fffeb97122c in critbit0_segment_match () from
 #   /web/data/build/lib/critbit_tree/tcl/module-critbit_tree.1.3832005.1392301541.so
 
-    return
+#    return
 
     if { $loVar ne {} } { upvar $loVar lo }
     if { $hiVar ne {} } { upvar $hiVar hi }

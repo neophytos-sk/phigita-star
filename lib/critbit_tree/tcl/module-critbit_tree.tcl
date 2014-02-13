@@ -908,8 +908,8 @@ set conf(ccode) {
 
     int cbt_ContainsCmd (ClientData cd, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[]) {
 
-        char* handle = objv[0];
-        char* elem = objv[1];
+        char* handle = Tcl_GetString(objv[1]);
+        char* elem = Tcl_GetString(objv[2]);
         
         char *errMsg;
         cbt_InternalType *internal = cbt_GetInternalFromHandle(interp,handle,&errMsg);
@@ -926,7 +926,7 @@ set conf(ccode) {
 
 
     int cbt_ToStringCmd (ClientData cd, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[]) {
-        char *handle = objv[0];
+        char *handle = Tcl_GetString(objv[1]);
 
         char *errMsg;
         cbt_InternalType *internal= cbt_GetInternalFromHandle(interp,handle,&errMsg);
@@ -942,7 +942,7 @@ set conf(ccode) {
     }
 
     int cbt_BytesCmd (ClientData cd, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[]) {
-        char *handle = objv[0];
+        char *handle = Tcl_GetString(objv[1]);
 
         char *errMsg;
         cbt_InternalType *internal= cbt_GetInternalFromHandle(interp,handle,&errMsg);
@@ -958,7 +958,7 @@ set conf(ccode) {
     }
 
     int cbt_WriteToFileCmd (ClientData cd, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[]) {
-        char *handle = objv[0];
+        char *handle = Tcl_GetString(objv[1]);
         char *filename = objv[1];
 
         DBG(fprintf(stderr,"WriteToFileCmd\n"));
@@ -988,8 +988,10 @@ set conf(ccode) {
     }
 
     int cbt_ReadFromFileCmd (ClientData cd, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[]) {
-        char *handle = objv[0];
-        char *filename = objv[1];
+        char *handle = Tcl_GetString(objv[1]);
+        char *filename = Tcl_GetString(objv[2]);
+
+        fprintf(stderr, "handle=%s filename=%s\n", handle, filename);
 
         FILE *file;
         char *buffer;
@@ -998,7 +1000,7 @@ set conf(ccode) {
         //Open file
         file = fopen(filename, "rb");
         if (!file) {
-            fprintf(stderr, "Unable to open file %s", filename);
+            fprintf(stderr, "Unable to open file \"%s\"\n", filename);
             return;
         }
 
