@@ -100,7 +100,7 @@ variable ::xo::structured_text::transform_spec {
 
 set transform_flags 0
 foreach {required_flag match action attrs} $::xo::structured_text::transform_spec {
-    set transform_flags [expr { ${transform_flags} | ${required_flags} }]
+    set transform_flags [expr { ${transform_flags} | ${required_flag} }]
 }
 variable ::xo::structured_text::transform_flags ${transform_flags}
 
