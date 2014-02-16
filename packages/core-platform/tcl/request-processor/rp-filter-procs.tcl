@@ -21,7 +21,7 @@ proc rp_filter_preauth {args} {
     set url [ns_conn url]
 
     # helps us debug cases when url is not recorded in access log
-    ns_log notice "url=$url"
+    # ns_log notice "url=$url"
 
 
     # -------------------------------------------------------------------------
