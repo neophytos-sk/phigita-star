@@ -45,8 +45,8 @@ AOLSERVER=aolserver-4.5.1
 #TCL=tcl8.5.11
 #TCL=tcl8.5.12
 #TCL=tcl8.6b2
-TCL=tcl8.5.14
-#TCL=tcl8.6.0
+#TCL=tcl8.5.14
+TCL=tcl8.6.0
 
 # TCL_THREAD_LIB=thread2.6.6
 TCL_THREAD_LIB=thread2.6.7
@@ -95,7 +95,8 @@ TCLCURL=TclCurl-7.22.0
 #NAVISERVER=naviserver-phigita-2013.10
 #NAVISERVER=naviserver-phigita-2014.1
 #NAVISERVER=naviserver-phigita-2014.2
-NAVISERVER=naviserver-phigita-2014.3
+#NAVISERVER=naviserver-phigita-2014.3
+NAVISERVER=naviserver-phigita-2014.4
 
 
 #MAPSERVER=mapserver-5.0.2
