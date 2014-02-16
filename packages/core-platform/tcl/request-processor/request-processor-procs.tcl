@@ -464,25 +464,26 @@ proc rp_serve_abstract_file { root path {precedence ""} {noredirect_p 0}} {
 
 
 proc rp_serve_concrete_file {file extension} {
+
     if { $extension eq {tsp} || ${extension} eq {tdp} || $extension eq {tcl} || $extension eq {vuh} } {
 
-	set handler "rp_handle_${extension}_request"
+        set handler "rp_handle_${extension}_request"
 
-	if { [catch {
-	    ${handler}
-	    rp_finish_serving_page
-	} errmsg] } { 
-	    ns_log notice "handler=$handler"
-	    ns_log notice "[info script] rp_serve_concrete_file handler=$handler errmsg=$errmsg"
-	    # CAUTION: SERIOUS BUG if uncaught throw reaches this point
-	    # FATAL SIGNAL 11 (see handle_tcl_request)
-	    set errno 1
-	    global errorCode errorInfo
-	    return -code $errno -errorcode $errorCode -errorinfo $errorInfo $errmsg
-	}
+        if { [catch {
+            ${handler}
+            rp_finish_serving_page
+        } errmsg] } { 
+            ns_log notice "handler=$handler"
+            ns_log notice "[info script] rp_serve_concrete_file handler=$handler errmsg=$errmsg"
+            # CAUTION: SERIOUS BUG if uncaught throw reaches this point
+            # FATAL SIGNAL 11 (see handle_tcl_request)
+            set errno 1
+            global errorCode errorInfo
+            return -code $errno -errorcode $errorCode -errorinfo $errorInfo $errmsg
+        }
     } else {
-	# Some other random kind of file - guess the type and return it.
-	ad_returnfile_background 200 [ns_guesstype ${file}] ${file}
+    # Some other random kind of file - guess the type and return it.
+        ad_returnfile_background 200 [ns_guesstype ${file}] ${file}
     }
 }
 
