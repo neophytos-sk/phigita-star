@@ -54,7 +54,7 @@ static inline const char *string_value(const object_t *const objPtr)
         return 0;
     }
 
-    const char **p = (char **) object_value(objPtr);
+    const char **p = (const char **) object_value(objPtr);
     return *p;
 }
 

@@ -1176,7 +1176,7 @@ void SpecialToHtml(Tcl_DString *dsPtr, int *outflags, const char *specialTextMar
 
     SET_FLAG(outflags,FLAG_CODE);
 
-    Tcl_DStringAppend(dsPtr, "<div class=\"z-code\"><pre><code>", 31);
+    Tcl_DStringAppend(dsPtr, "<div class=\"z-code\"><pre><code>//<![CDATA[\n", 43);
     const string_t *p;
 
     bool_t empty_p = QueueEmpty(special_text_queuePtr);
@@ -1194,7 +1194,7 @@ void SpecialToHtml(Tcl_DString *dsPtr, int *outflags, const char *specialTextMar
 
     }
 
-    Tcl_DStringAppend(dsPtr, "</code></pre></div>\n\n", 21);
+    Tcl_DStringAppend(dsPtr, "\n//]]>\n</code></pre></div>\n\n", 28);
   }
 
   /*
