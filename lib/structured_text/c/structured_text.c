@@ -1223,6 +1223,8 @@ void SpecialToHtml(Tcl_DString *dsPtr, int *outflags, const char *specialTextMar
 static
 int isIncompatibleCloseTag(int indent, int indent_stack_top,const string_t *ctagPtr, const string_t *ctag_stack_top) {
 
+    /*  printf("ctag_stack_top=%p ctagPtr=%p\n",StringData(ctag_stack_top), StringData(ctagPtr)); */
+    
     /* printf("indent=%d indent_stack_top=%d ctag=%s ctag_stack_top=%s",indent, indent_stack_top, StringData(ctagPtr), StringData(ctag_stack_top)); */
 
   if (indent < indent_stack_top) return 1;
@@ -1245,165 +1247,171 @@ int isIncompatibleCloseTag(int indent, int indent_stack_top,const string_t *ctag
 
 int StxToHtml(Tcl_DString *dsPtr, int *outflags, const char *text) {
 
-  const size_t size = strlen(text);
-  char *begin = strndup(text,size);
-  const char *end = begin + size;
+    const size_t size = strlen(text);
+    char *begin = strndup(text,size);
+    const char *end = begin + size;
 
-  int indent = 0, prev_indent = 0, tag = NONE;
-  bool_t preformatted_p = false, prev_preformatted_p = false;
-  /* points to special text marker, i.e. ::, %%, etc */
-  const char *specialTextMarkerPtr = NULL;
+    int indent = 0, prev_indent = 0, tag = NONE;
+    bool_t preformatted_p = false, prev_preformatted_p = false;
+    /* points to special text marker, i.e. ::, %%, etc */
+    const char *specialTextMarkerPtr = NULL;
 
-  string_t otag, ctag;
-  stack indent_stack;
-  stack ctag_stack;
-  queue special_text_queue;
+    string_t otag, ctag;
+    stack indent_stack;
+    stack ctag_stack;
+    queue special_text_queue;
 
-  const char *curr = begin;
-  const char *end_of_curr; /* end of current paragraph */
-  const char *stop_of_curr;  /* skip chars after this point, e.g. special text markers, */
-  const char *next = NULL;
+    const char *curr = begin;
+    const char *end_of_curr; /* end of current paragraph */
+    const char *stop_of_curr;  /* skip chars after this point, e.g. special text markers, */
+    const char *next = NULL;
 
-  // EscapeSymbols(begin, end);
+    // EscapeSymbols(begin, end);
 
-  StringInit(&otag);
-  StringInit(&ctag);
-  StackInit(&indent_stack, sizeof(int));
+    StringInit(&otag);
+    StringInit(&ctag);
+    StringAssign(&otag, "", 0);
+    StringAssign(&ctag, "", 0);
 
-  StackInit(&ctag_stack, sizeof(string_t));
+    StackInit(&indent_stack, sizeof(int));
+    StackInit(&ctag_stack, sizeof(string_t));
+    QueueInit(&special_text_queue, sizeof(string_t));
 
-  QueueInit(&special_text_queue, sizeof(string_t));
 
+    while (curr && curr != end) {
+        /* DO NOT TOUCH - START */
+        next = find_next_para(curr,end);
+        end_of_curr = next;
+        while (curr!=end_of_curr && is_space_or_newline(end_of_curr-1)) --end_of_curr;
+        /* DO NOT TOUCH - END */
 
-  while (curr && curr != end) {
-    /* DO NOT TOUCH - START */
-    next = find_next_para(curr,end);
-    end_of_curr = next;
-    while (curr!=end_of_curr && is_space_or_newline(end_of_curr-1)) --end_of_curr;
-    /* DO NOT TOUCH - END */
+        stop_of_curr = end_of_curr;
+        indent = compute_para_indent(curr,end_of_curr);
 
-    stop_of_curr = end_of_curr;
-    indent = compute_para_indent(curr,end_of_curr);
-
-    /* printf("preformatted_p=%d prev_indent=%d indent=%d\n",preformatted_p,prev_indent,indent); */
-    /*    || next == end */
-    if (preformatted_p && (prev_indent < indent)) {
-      if (curr < end_of_curr) {
-          string_t special_text;
-          StringInit(&special_text);
-          StringAssign(&special_text, curr, end_of_curr - curr);
-          QueuePush(&special_text_queue, &special_text);
-      }
-      prev_preformatted_p = true;
-      curr = next;
-      continue;
-    } else {
-      tag = NONE;
-
-      /* ^[ \t\n]*([*o\-\#])([ \t\n]+[^\0]*)} */
-      const char *symbol = NULL;
-      if ((symbol=find_char_neq(curr,end_of_curr,' '))) {
-        if (*symbol == '-' && match_divider(symbol,end_of_curr,&stop_of_curr)) {
-          tag = HR;
-          StringAssign(&otag, kHorizontalRuleHTML, strlen(kHorizontalRuleHTML));
-          StringAssign(&ctag, "\n\n", 2);
-          curr = stop_of_curr;
-        } else if ((*symbol == '*' || *symbol == '-' || *symbol == 'o' || *symbol == '+') && is_space(symbol+1)) {
-          tag = UL;
-          StringAssign(&otag, "<ul>", 4);
-          StringAssign(&ctag, "</ul>", 5);
-          curr = symbol+2;
-        } else if ( (*symbol == '#' &&  is_space(symbol+1)) 
-                /*
-                || (is_digit(symbol) && *(symbol+1)=='.') 
-                || (is_digit(symbol) && is_digit(symbol+1) && *(symbol+2)=='.')
-                */ ) {
-          tag = OL;
-          StringAssign(&otag, "<ol>", 4);
-          StringAssign(&ctag, "</ol>", 5);
-          curr = symbol+2;
-        } else if (*symbol == '=' && match_heading(symbol,end_of_curr,&stop_of_curr)) {
-          tag = HEADING;
-          StringAssign(&otag, "<h3>", 4);
-          StringAssign(&ctag, "</h3>", 5);
-          curr = symbol+2;
+        /* printf("preformatted_p=%d prev_indent=%d indent=%d\n",preformatted_p,prev_indent,indent); */
+        /*    || next == end */
+        if (preformatted_p && (prev_indent < indent)) {
+            if (curr < end_of_curr) {
+                string_t special_text;
+                StringInit(&special_text);
+                StringAssign(&special_text, curr, end_of_curr - curr);
+                QueuePush(&special_text_queue, &special_text);
+            }
+            prev_preformatted_p = true;
+            curr = next;
+            continue;
         } else {
-          tag = NONE;
-          StringAssign(&otag, "", 0);
-          StringAssign(&ctag, "", 0);
-        }
-      } 
+            tag = NONE;
+
+            /* ^[ \t\n]*([*o\-\#])([ \t\n]+[^\0]*)} */
+        const char *symbol = NULL;
+        if ((symbol=find_char_neq(curr,end_of_curr,' '))) {
+            if (*symbol == '-' && match_divider(symbol,end_of_curr,&stop_of_curr)) {
+                tag = HR;
+                StringAssign(&otag, kHorizontalRuleHTML, strlen(kHorizontalRuleHTML));
+                StringAssign(&ctag, "\n\n", 2);
+                curr = stop_of_curr;
+            } else if ((*symbol == '*' || *symbol == '-' || *symbol == 'o' || *symbol == '+') && is_space(symbol+1)) {
+                tag = UL;
+                StringAssign(&otag, "<ul>", 4);
+                StringAssign(&ctag, "</ul>", 5);
+                curr = symbol+2;
+            } else if ( (*symbol == '#' &&  is_space(symbol+1)) 
+                    /*
+                       || (is_digit(symbol) && *(symbol+1)=='.') 
+                       || (is_digit(symbol) && is_digit(symbol+1) && *(symbol+2)=='.')
+                       */ ) {
+                tag = OL;
+                StringAssign(&otag, "<ol>", 4);
+                StringAssign(&ctag, "</ol>", 5);
+                curr = symbol+2;
+            } else if (*symbol == '=' && match_heading(symbol,end_of_curr,&stop_of_curr)) {
+                tag = HEADING;
+                StringAssign(&otag, "<h3>", 4);
+                StringAssign(&ctag, "</h3>", 5);
+                curr = symbol+2;
+            } else {
+                tag = NONE;
+                StringAssign(&otag, "", 0);
+                StringAssign(&ctag, "", 0);
+            }
+        } 
 
 
     }
 
-
     while (!StackEmpty(&indent_stack)) {
+
         int indentTop = *((const int *) StackTop(&indent_stack));
+
         if (isIncompatibleCloseTag(indent, indentTop, &ctag, (const string_t *) StackTop(&ctag_stack))) {
+
             Tcl_DStringAppend(dsPtr, StringData((const string_t *) StackTop(&ctag_stack)), StringLength((const string_t *) StackTop(&ctag_stack)));
             StackPop(&ctag_stack);
             StackPop(&indent_stack);
+
         } else {
+
             break;
+
         }
+
     }
 
     if (prev_preformatted_p && specialTextMarkerPtr) {
-      SpecialToHtml(dsPtr, outflags, specialTextMarkerPtr, &special_text_queue);
-      prev_preformatted_p = false;
-      preformatted_p=false;
+        SpecialToHtml(dsPtr, outflags, specialTextMarkerPtr, &special_text_queue);
+        prev_preformatted_p = false;
+        preformatted_p=false;
     }
 
 
     const char *marker;
 
     if ((marker=rfind_str_if(curr, end_of_curr, "::", 2))
-	|| (marker=rfind_str_if(curr, end_of_curr, "%%", 2))
-	|| (marker=rfind_str_if(curr, end_of_curr, "##", 2))) {
+            || (marker=rfind_str_if(curr, end_of_curr, "%%", 2))
+            || (marker=rfind_str_if(curr, end_of_curr, "##", 2))) {
 
-      specialTextMarkerPtr = marker-1;
-      preformatted_p = true;
-      stop_of_curr = marker-1;
+        specialTextMarkerPtr = marker-1;
+        preformatted_p = true;
+        stop_of_curr = marker-1;
     } else {
-      specialTextMarkerPtr = NULL;
+        specialTextMarkerPtr = NULL;
     }
 
     if ( (StackEmpty(&indent_stack) && StackEmpty(&ctag_stack)) 
-	 || indent > *((int *) StackTop(&indent_stack)) 
-	 || 0 != strncmp(StringData(&ctag), StringData((const string_t *) StackTop(&ctag_stack)), StringLength(&ctag))) {
-      Tcl_DStringAppend(dsPtr, StringData(&otag), StringLength(&otag));
-      StackPush(&indent_stack, &indent);
-      StackPush(&ctag_stack, &ctag);
+            || indent > *((int *) StackTop(&indent_stack)) 
+            || 0 != strncmp(StringData(&ctag), StringData((const string_t *) StackTop(&ctag_stack)), StringLength(&ctag))) {
+        Tcl_DStringAppend(dsPtr, StringData(&otag), StringLength(&otag));
+        StackPush(&indent_stack, &indent);
+        StackPush(&ctag_stack, &ctag);
     }
 
     switch (tag) {
-    case UL:
-    case OL:
-    case DL:
-      Tcl_DStringAppend(dsPtr, "<li>", 4);
-      BlockToHtml(dsPtr, outflags, FLAGS, curr, stop_of_curr);
-      Tcl_DStringAppend(dsPtr, "</li>", 5);
-      break;
-    case HEADING:
-      DStringAppendQuoted(dsPtr, curr, stop_of_curr-curr);
-      break;
-    case HR:
-      break;
-    default:
-      if (curr != stop_of_curr) {
-        Tcl_DStringAppend(dsPtr, "<p>", 3);
-        BlockToHtml(dsPtr, outflags, FLAGS, curr, stop_of_curr);
-        Tcl_DStringAppend(dsPtr, "</p>\n\n", 6);  /* remove the newlines when done testing */
-      }
-      break;
+        case UL:
+        case OL:
+        case DL:
+            Tcl_DStringAppend(dsPtr, "<li>", 4);
+            BlockToHtml(dsPtr, outflags, FLAGS, curr, stop_of_curr);
+            Tcl_DStringAppend(dsPtr, "</li>", 5);
+            break;
+        case HEADING:
+            DStringAppendQuoted(dsPtr, curr, stop_of_curr-curr);
+            break;
+        case HR:
+            break;
+        default:
+            if (curr != stop_of_curr) {
+                Tcl_DStringAppend(dsPtr, "<p>", 3);
+                BlockToHtml(dsPtr, outflags, FLAGS, curr, stop_of_curr);
+                Tcl_DStringAppend(dsPtr, "</p>\n\n", 6);  /* remove the newlines when done testing */
+            }
+            break;
     }
     prev_indent = indent;
 
 
     curr = next;
-  }
-
+}
 
   if ( prev_preformatted_p ) {
     SpecialToHtml(dsPtr, outflags, specialTextMarkerPtr, &special_text_queue);
