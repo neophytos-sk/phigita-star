@@ -20,9 +20,8 @@ proc rp_filter_preauth {args} {
     #   Has to match corresponding hack at rp_handler...
     set url [ns_conn url]
 
-    #if {[regexp {^/(graphics|global|stylesheets)/} $url]} {
-    #    return "filter_ok"
-    #}
+    # helps us debug cases when url is not recorded in access log
+    ns_log notice "url=$url"
 
 
     # -------------------------------------------------------------------------
