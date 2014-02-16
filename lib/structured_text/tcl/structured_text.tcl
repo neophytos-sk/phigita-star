@@ -158,36 +158,37 @@ proc ::xo::structured_text::stx_to_html {configVar textVar {resultVar ""}} {
     set outflags [::xo::structured_text::__stx_to_html text html] ;# we will call our C library here
 
     # checks if any transformations are needed
-    if { !(${outflags} & $::xo::structured_text::transform_flags) } {
-        # if no parsing needed, return as is
-        return ${html}
-    }
+    if { ${outflags} & $::xo::structured_text::transform_flags } {
 
 
-    set doc [dom parse -simple -keepEmpties -paramentityparsing never "<div>${html}<div>"]
+        set doc [dom parse -simple -keepEmpties -paramentityparsing never "<div>${html}<div>"]
 
-    foreach {required_flag match action attrs} $::xo::structured_text::transform_spec {
-        if { ${outflags} & ${required_flag} } {
-        #ns_log notice "stx_to_html: selectNodes $match (outflags=$outflags say we can)"
-            set nodes [$doc selectNodes $match]
-            foreach node $nodes {
-                set parent [$node parentNode]
-                set args [list]
-                foreach attr $attrs {
-                    lappend args [$node getAttribute $attr ""]
+        foreach {required_flag match action attrs} $::xo::structured_text::transform_spec {
+            if { ${outflags} & ${required_flag} } {
+            #ns_log notice "stx_to_html: selectNodes $match (outflags=$outflags say we can)"
+                set nodes [$doc selectNodes $match]
+                foreach node $nodes {
+                    set parent [$node parentNode]
+                    set args [list]
+                    foreach attr $attrs {
+                        lappend args [$node getAttribute $attr ""]
+                    }
+
+                    $parent insertBeforeFromScript {
+                        $action config $node {*}${args}
+                    } $node
+                    $node delete
                 }
-
-                $parent insertBeforeFromScript {
-                    $action config $node {*}${args}
-                } $node
-                $node delete
             }
         }
+
+        set result [$doc asHTML]
+        $doc delete
+    } else {
+        set result ${html}
     }
 
-    set result [$doc asHTML]
-    $doc delete
-    return ${result}
+    return
 }
 
 proc ::xo::structured_text::minitext_to_html {text} {
