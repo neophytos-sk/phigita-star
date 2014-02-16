@@ -118,8 +118,7 @@ proc ::xo::structured_text::init_css_for_tweb {} {
 	    border:1px dashed #999;
 	    color: #333;
 	    font-family: "Courier New", Courier, monospace;
-	    margin: 1em 0 2em;
-	    padding:0.5em;
+	    margin: 1em 0;
 	    overflow-x: auto;
 	    white-space:pre-wrap;
 	    white-space: -moz-pre-wrap !important;
