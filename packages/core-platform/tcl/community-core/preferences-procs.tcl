@@ -98,47 +98,50 @@ proc preferences::handler {} {
     # Version 1: if { $pa_num > $hi || $pa_num < $lo || ${seconds}-${tm} > $max_age || ${region} eq {} }
     # Version 2:
     if { $pa_num > $hi || $pa_num < $lo || ${version} ne ${cookie_version} } {
-	set mydict [::xo::geoip::ip_locate_details [ad_conn peeraddr]]
-	set lo [dict get $mydict lo]
-	set hi [dict get $mydict hi]
-	set country_code [dict get $mydict country_code]
-	set city_name [dict get $mydict city_name]
-	set region_code [dict get $mydict region_code]
-	set location_id [dict get $mydict location_id]
-	set hex_location_id 0                        ;# if location_id is the empty string, e.g. for local ip addresses
-	#set latitude [dict get $mydict latitude]    ;# upon request, see ad_conn UL_LAT
-	#set longitude [dict get $mydict longitude]  ;# upon request, see ad_conn UL_LNG
+        set mydict [::xo::geoip::ip_locate_details [ad_conn peeraddr]]
+        set lo [dict get $mydict lo]
+        set hi [dict get $mydict hi]
+        set country_code [dict get $mydict country_code]
+        set city_name [dict get $mydict city_name]
+        set region_code [dict get $mydict region_code]
+        set location_id [dict get $mydict location_id]
+        set hex_location_id 0                        ;# if location_id is the empty string, e.g. for local ip addresses
+        #set latitude [dict get $mydict latitude]    ;# upon request, see ad_conn UL_LAT
+        #set longitude [dict get $mydict longitude]  ;# upon request, see ad_conn UL_LNG
 
-	if { $country_code ne {} } {
+        if { $country_code ne {} } {
 
-	    set hi_diff [expr { $hi - $lo }]
-	    set hex_location_id [::util::dec_to_hex [::util::coalesce $location_id "0"]]
-	    set cc_and_loc ${country_code}${hex_location_id}
+            set hi_diff [expr { $hi - $lo }]
+            set hex_location_id [::util::dec_to_hex [::util::coalesce $location_id "0"]]
+            set cc_and_loc ${country_code}${hex_location_id}
 
-	    if { [catch {
-		set hex_session_id [::util::dec_to_hex [ad_conn session_id]]
-	    } errmsg] } {
-		ns_log notice "preferences-procs.tcl: peeraddr=[ad_conn peeraddr] issecure=[ad_conn issecure] url=[ad_conn url] host=[ad_conn host]"
-		error $errmsg
-	    }
+            set session_id [ad_conn session_id]
+            if { ${session_id} eq {} } {
+                error "empty session_id"
+            }
+
+            if { [catch { set hex_session_id [::util::dec_to_hex ${session_id}] } errmsg] } {
+                ns_log notice "preferences-procs.tcl: peeraddr=[ad_conn peeraddr] issecure=[ad_conn issecure] url=[ns_conn url] host=[ad_conn host]"
+                error "error converting session_id=$session_id to hex errmsg=$errmsg"
+            }
 
 
-	    # Version 1: set ul_cookie_value "${lo}_${hi}_${country_code}${hex_location_id}_${latitude}_${longitude}_${seconds}_${region_code}"
-	    # Version 2: set ul_cookie_value "${lo}_${hi_diff}_${cc_and_loc}_${region_code}_${version}"
-	    # Version 3:
-	    set ul_cookie_value "${lo}_${hi_diff}_${cc_and_loc}_${region_code}_${version}_${hex_session_id}"
+            # Version 1: set ul_cookie_value "${lo}_${hi}_${country_code}${hex_location_id}_${latitude}_${longitude}_${seconds}_${region_code}"
+            # Version 2: set ul_cookie_value "${lo}_${hi_diff}_${cc_and_loc}_${region_code}_${version}"
+            # Version 3:
+            set ul_cookie_value "${lo}_${hi_diff}_${cc_and_loc}_${region_code}_${version}_${hex_session_id}"
 
-	    # Version 1: ad_set_cookie -replace t -max_age inf UL [::base64::encode -maxlen 128 -wrapchar "" $ul_cookie_value]
-	    # Version 2: 
-	    ad_set_cookie -replace t -max_age inf UL [::base64::encode -maxlen 128 -wrapchar "" $ul_cookie_value]
+            # Version 1: ad_set_cookie -replace t -max_age inf UL [::base64::encode -maxlen 128 -wrapchar "" $ul_cookie_value]
+            # Version 2: 
+            ad_set_cookie -replace t -max_age inf UL [::base64::encode -maxlen 128 -wrapchar "" $ul_cookie_value]
 
-	    # Version 3: 
-	    # set signed_cookie_value "number_of_ones"
-	    # ad_set_cookie -replace t -max_age inf UL [::base64::encode -maxlen 128 -wrapchar "" $signed_cookie_value]
+            # Version 3: 
+            # set signed_cookie_value "number_of_ones"
+            # ad_set_cookie -replace t -max_age inf UL [::base64::encode -maxlen 128 -wrapchar "" $signed_cookie_value]
 
-	    #ns_log notice "peeraddr=[ad_conn peeraddr] UL=$ul_cookie_value"
+            #ns_log notice "peeraddr=[ad_conn peeraddr] UL=$ul_cookie_value"
 
-	}
+        }
 
     }
 
