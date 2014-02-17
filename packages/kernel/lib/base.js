@@ -2,8 +2,7 @@
 
 xo.global = this;
 
-/** @define {boolean} DEBUG */
-xo.DEBUG = false;
+xo.DEBUG = DEBUG;
 
 xo.log = function(o) {
     xo.DEBUG && window.console && o && window.console.log(o);
@@ -54,7 +53,7 @@ xo.isFF3_6 = xo.isGecko3 && check(/rv:1\.9\.2/);
 xo.isWindows = check(/windows|win32/);
 xo.isMac = check(/macintosh|mac os x/);
 xo.isLinux = check(/linux/);
-scrollbarSize = null;
+// scrollbarSize = null;
 xo.isSecure = /^https/i.test(window.location.protocol);
 xo.isStrict = window.document.compatMode === "CSS1Compat";
 

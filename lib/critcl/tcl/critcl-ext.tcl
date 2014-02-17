@@ -23,7 +23,7 @@ proc ::critcl::ext::get_build_dir {} {
 
 proc ::critcl::ext::get_build_rootname {filename} {
 
-    set rootname [file rootname $filename]
+    set rootname [file rootname [file normalize $filename]]
     # dereference possible symbolic link in acs_root_dir
     set root_dir [file normalize [file normalize [acs_root_dir]/www]/..]
 

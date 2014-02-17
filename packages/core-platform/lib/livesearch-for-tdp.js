@@ -17,7 +17,8 @@ function dh_del(n) {
     try {
 	while (n.childNodes.length>0) dh_del(n.lastChild);
 	n.parentNode.removeChild(n);
-	delete n;
+    n = null;
+	// delete n;
     } catch (ex) {
 	// do nothing
     }

@@ -130,4 +130,4 @@ xo.DomHelper.removeClass = function(el,className){
 };
 
 
-DH = xo.DomHelper;
+var DH = xo.DomHelper;
