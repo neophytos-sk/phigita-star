@@ -117,12 +117,14 @@ void DStringAppendPreformatted(Tcl_DString *dsPtr, const char *begin, int length
                 break;
             case '\t':
                 Tcl_DStringAppend(dsPtr, "&nbsp; &nbsp; &nbsp; &nbsp; ", 28);
+            /*
             case '<':
                 Tcl_DStringAppend(dsPtr, "&lt;",4);
                 break;
             case '>':
                 Tcl_DStringAppend(dsPtr, "&gt;",4);
                 break;
+                */
             default:
                 Tcl_DStringAppend(dsPtr, iter, 1);
                 break;
@@ -1161,7 +1163,7 @@ void SpecialToHtml(Tcl_DString *dsPtr, int *outflags, const char *specialTextMar
       Tcl_DStringInit(&dsSpecialHtml);
       BlockToHtml(&dsSpecialHtml, outflags, FLAGS_PREFORMATTED, p->data, p->data + p->length);
 
-      Tcl_DStringAppend(dsPtr, Tcl_DStringValue(&dsSpecialHtml), Tcl_DStringLength(&dsSpecialHtml));
+      DStringAppendPreformatted(dsPtr, Tcl_DStringValue(&dsSpecialHtml), Tcl_DStringLength(&dsSpecialHtml));
       Tcl_DStringFree(&dsSpecialHtml);
       QueuePop(special_text_queuePtr);
       if (!(empty_p=QueueEmpty(special_text_queuePtr))) {
