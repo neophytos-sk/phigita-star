@@ -51,9 +51,9 @@ function hslToRgb(h, s, l){
 }
 
 
-rgb_password = {};
+var rgb_password = {};
 
-rgb_color_boxes = function() {  
+var rgb_color_boxes = function() {  
 
     var password = rgb_password.__password;
 
