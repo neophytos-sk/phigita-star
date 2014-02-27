@@ -172,8 +172,9 @@ proc ::xo::js::compile {key js {compilation_level "ADVANCED_OPTIMIZATIONS"} {ext
 	    append extra " --externs ${extern_file} " 
 	}
 
-	#	set JAVA /usr/bin/java
-	set JAVA /opt/jdk/bin/java
+	#set JAVA /usr/bin/java
+	#set JAVA /opt/jdk/bin/java
+    set JAVA "java"
 	set cmd "${JAVA} -jar /opt/closure/compiler.jar --compilation_level ${compilation_level} --create_source_map ${mapfile} --js ${infile} --js_output_file ${outfile} --process_closure_primitives false --define DEBUG=${ENABLE_DEBUG}"
 	ns_log notice "::xo::js::compile (CLOSURE) -> cmd=$cmd"
 	set errmsg [exec -- /bin/sh -c "${cmd} 2>&1 || exit 0" 2> /dev/null]
