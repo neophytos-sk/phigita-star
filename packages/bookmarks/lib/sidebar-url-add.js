@@ -4,7 +4,7 @@
 	return document.getElementById(id);
     }
 
-BM = {};
+var BM = {};
 
 // Not quite sure but encodeURIComponent not needed here.
 // Ensure that asyncRequest/XmlHttpRequest already takes care of that.
