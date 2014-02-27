@@ -23,6 +23,8 @@ proc ::critcl::ext::get_build_dir {} {
 
 proc ::critcl::ext::get_build_rootname {filename} {
 
+    set performance_mode_p [::xo::kit::performance_mode_p]
+
     set rootname [file rootname [file normalize $filename]]
     # dereference possible symbolic link in acs_root_dir
     set root_dir [file normalize [file normalize [acs_root_dir]/www]/..]
@@ -34,7 +36,7 @@ proc ::critcl::ext::get_build_rootname {filename} {
     }
 
     set build_dir [get_build_dir]
-    set build_rootname ${build_dir}/${rootname}
+    set build_rootname ${build_dir}/${performance_mode_p}/${rootname}
 
     if { ![file isdirectory [file dirname $build_rootname]] } {
         file mkdir [file dirname $build_rootname]
@@ -73,9 +75,8 @@ proc ::critcl::ext::latest_mtime {inputfile} {
 
 proc ::critcl::ext::get_base_rootname {filename} {
     set build_rootname [get_build_rootname $filename]
-    set performance_mode_p [::xo::kit::performance_mode_p]
     set latest_mtime [latest_mtime ${filename}]
-    return "${build_rootname}.${performance_mode_p}.[::util::ino $filename].${latest_mtime}"
+    return "${build_rootname}.[::util::ino $filename].${latest_mtime}"
 }
 
 
