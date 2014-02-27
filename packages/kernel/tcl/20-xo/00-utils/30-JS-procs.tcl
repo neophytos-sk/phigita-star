@@ -150,46 +150,48 @@ proc ::xo::js::compile {key js {compilation_level "ADVANCED_OPTIMIZATIONS"} {ext
     set infile ${prefix}-source-${token}.js
     set outfile ${prefix}-compiled-${token}.js
     set mapfile ${prefix}-map.js
-    
+
     if { [::xo::kit::performance_mode_p] } {
-	set ENABLE_DEBUG "false"
+        set ENABLE_DEBUG "false"
     } else {
-	set ENABLE_DEBUG "true"
+        set ENABLE_DEBUG "true"
     }
 
     if { ![file exists $infile] } {
-	foreach filename [glob -nocomplain ${prefix}-*] {
-	    file delete -force -- $filename
-	}
-	set fp [open ${infile} w]
-	puts $fp ${js}
-	close $fp
+        foreach filename [glob -nocomplain ${prefix}-*] {
+            file delete -force -- $filename
+        }
+        set fp [open ${infile} w]
+        puts $fp "/** @define {boolean} DEBUG */"
+        puts $fp "var DEBUG = false;"
+        puts $fp ${js}
+        close $fp
     }
     if { ![file exists $outfile] } {
 
-	set extra ""
-	foreach extern_file $externs {
-	    append extra " --externs ${extern_file} " 
-	}
+        set extra ""
+        foreach extern_file $externs {
+            append extra " --externs ${extern_file} " 
+        }
 
-	#set JAVA /usr/bin/java
-	#set JAVA /opt/jdk/bin/java
-    set JAVA "java"
-	set cmd "${JAVA} -jar /opt/closure/compiler.jar --compilation_level ${compilation_level} --create_source_map ${mapfile} --js ${infile} --js_output_file ${outfile} --process_closure_primitives false --define DEBUG=${ENABLE_DEBUG}"
-	ns_log notice "::xo::js::compile (CLOSURE) -> cmd=$cmd"
-	set errmsg [exec -- /bin/sh -c "${cmd} 2>&1 || exit 0" 2> /dev/null]
-	if { [file exists $outfile] } {
-	    set size [file size $outfile]
-	    if { $size > 0 } {
-		ns_log notice "SUCCESS file $outfile size=[file size $outfile]"
-	    } else {
-		ns_log notice "FAILURE errmsg=$errmsg"
-		#return 
-	    }
-	} else {
-	    ns_log notice "file $outfile does not exist... something went wrong while compiling"
-	    #return
-	}
+        #set JAVA /usr/bin/java
+        #set JAVA /opt/jdk/bin/java
+        set JAVA "java"
+        set cmd "${JAVA} -jar /opt/closure/compiler.jar --compilation_level ${compilation_level} --create_source_map ${mapfile} --js ${infile} --js_output_file ${outfile} --process_closure_primitives false --define DEBUG=${ENABLE_DEBUG}"
+        ns_log notice "::xo::js::compile (CLOSURE) -> cmd=$cmd"
+        set errmsg [exec -- /bin/sh -c "${cmd} 2>&1 || exit 0" 2> /dev/null]
+        if { [file exists $outfile] } {
+            set size [file size $outfile]
+            if { $size > 0 } {
+                ns_log notice "SUCCESS file $outfile size=[file size $outfile]"
+            } else {
+                ns_log notice "FAILURE errmsg=$errmsg"
+                #return 
+            }
+        } else {
+            ns_log notice "file $outfile does not exist... something went wrong while compiling"
+            #return
+        }
     }
     set result ""
     set fp [open $outfile]
