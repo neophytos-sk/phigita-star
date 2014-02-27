@@ -1,6 +1,6 @@
 /** @const */ var xo = xo || {};
 
-xo.global = this;
+xo.global = window;
 
 xo.DEBUG = DEBUG;
 
