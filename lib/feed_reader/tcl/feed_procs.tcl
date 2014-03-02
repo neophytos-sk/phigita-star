@@ -112,10 +112,12 @@ proc ::feed_reader::get_title {stoptitlesVar node} {
 
 # get_feed_items
 proc ::feed_reader::fetch_feed {resultVar feedVar {stoptitlesVar ""}} {
+
     upvar $resultVar result
     upvar $feedVar feed
+
     if { ${stoptitlesVar} ne {} } {
-	upvar $stoptitlesVar stoptitles
+        upvar $stoptitlesVar stoptitles
     }
 
     array set result [list links "" titles ""]
@@ -125,54 +127,58 @@ proc ::feed_reader::fetch_feed {resultVar feedVar {stoptitlesVar ""}} {
     set exclude_re  [get_value_if feed(exclude_re) ""]
 
     if { [info exists feed(domain)] } {
-	set domain $feed(domain)
+        set domain $feed(domain)
     } else {
-	set domain [::util::domain_from_url ${url}]
+        set domain [::util::domain_from_url ${url}]
     }
 
     set xpath_feed_item [get_value_if \
-			     feed(xpath_feed_item) \
-			     {//a[@href]}]
+        feed(xpath_feed_item) \
+        {//a[@href]}]
 
     set feed_type [get_value_if \
-		       feed(feed_type) \
-		       {html}]
+        feed(feed_type) \
+        {html}]
 
     set htmltidy_feed_p [get_value_if \
-			     feed(htmltidy_feed_p) \
-			     0]
+        feed(htmltidy_feed_p) \
+        0]
 
     set xpath_feed_cleanup [get_value_if \
-				feed(xpath_feed_cleanup) \
-				{}]
+        feed(xpath_feed_cleanup) \
+        {}]
 
     set encoding {utf-8}
     if { [info exists feed(encoding)] } {
-	set encoding $feed(encoding)
+        set encoding $feed(encoding)
     }
 
     set errorcode [::xo::http::fetch html $url]
     if { ${errorcode} } {
-	return $errorcode
+        return $errorcode
     }
-    
+
+    if { ${html} eq {} } {
+        return -4  ;# empty html while fetching feed
+    }
+
     set html [encoding convertfrom ${encoding} ${html}]
 
     if { ${htmltidy_feed_p} } {
-	set html [::htmltidy::tidy ${html}]
+        set html [::htmltidy::tidy ${html}]
     }
 
     if { ${feed_type} eq {html} } {
-	set doc [dom parse -html ${html}]
+        set doc [dom parse -html ${html}]
     } elseif { ${feed_type} in {rss} } {
-	set doc [dom parse ${html}]
+        set doc [dom parse ${html}]
     }
 
 
     foreach cleanup_xpath ${xpath_feed_cleanup} {
-	foreach cleanup_node [${doc} selectNodes $cleanup_xpath] {
-	    $cleanup_node delete
-	}	    
+        foreach cleanup_node [${doc} selectNodes $cleanup_xpath] {
+            $cleanup_node delete
+        }	    
     }
 
     set link_stoplist [get_value_if feed(link_stoplist) ""]
@@ -183,53 +189,53 @@ proc ::feed_reader::fetch_feed {resultVar feedVar {stoptitlesVar ""}} {
     array set title_for_href [list]
     foreach item_node $item_nodes {
 
-	set tagname [$item_node tagName]
-	if { ${tagname} eq {a} } {
-	    set href [${item_node} @href ""]
-	} elseif { ${tagname} eq {item} } {
-	    set href [${item_node} selectNodes {string(descendant::link/text())}]
-	} else {
-	    error "unrecognized item tag"
-	}
+        set tagname [$item_node tagName]
+        if { ${tagname} eq {a} } {
+            set href [${item_node} @href ""]
+        } elseif { ${tagname} eq {item} } {
+            set href [${item_node} selectNodes {string(descendant::link/text())}]
+        } else {
+            error "unrecognized item tag"
+        }
 
-	# turn relative urls into absolute urls and canonicalize	
-	# TODO: consider using urldecode, problem is decoded string might need to be
-	# converted from another encoding, i.e. encoding convertfrom url_decoded_string
-	set href [::uri::canonicalize [::uri::resolve ${url} ${href}]]
+        # turn relative urls into absolute urls and canonicalize	
+        # TODO: consider using urldecode, problem is decoded string might need to be
+        # converted from another encoding, i.e. encoding convertfrom url_decoded_string
+        set href [::uri::canonicalize [::uri::resolve ${url} ${href}]]
 
-	if { ${link_stoplist} ne {} && ${href} in ${link_stoplist} } {
-	    continue
-	}
-
-
-	# drop urls from other domains
-	if { [::util::domain_from_url ${href}] ne ${domain} } {
-	    continue
-	}
-
-	# drop links that do not match regular expression
-	if { ![regexp -- ${include_re} ${href}] || ( ${exclude_re} ne {} && [regexp -- ${exclude_re} ${href}] ) } {
-	    continue
-	}
-
-	# needed for sorting
-	${item_node} setAttribute href ${href}
-
-	if { ${tagname} eq {a} } {
-	    set title [get_title stoptitles ${item_node}]
-	} elseif { ${tagname} eq {item} } {
-	    set title [${item_node} selectNodes {string(//title/text())}]
-	}
-
-	if { ![info exists title_for_href(${href})] } {
-	    # coalesce title candidate values
-	    set title_for_href(${href}) ${title}
-	} else {
-	    set title_for_href(${href}) [lsearch -inline -not [list ${title} $title_for_href(${href})] {}]
-	}
+        if { ${link_stoplist} ne {} && ${href} in ${link_stoplist} } {
+            continue
+        }
 
 
-	lappend nodes2 ${item_node}
+        # drop urls from other domains
+        if { [::util::domain_from_url ${href}] ne ${domain} } {
+            continue
+        }
+
+        # drop links that do not match regular expression
+        if { ![regexp -- ${include_re} ${href}] || ( ${exclude_re} ne {} && [regexp -- ${exclude_re} ${href}] ) } {
+            continue
+        }
+
+        # needed for sorting
+        ${item_node} setAttribute href ${href}
+
+        if { ${tagname} eq {a} } {
+            set title [get_title stoptitles ${item_node}]
+        } elseif { ${tagname} eq {item} } {
+            set title [${item_node} selectNodes {string(//title/text())}]
+        }
+
+        if { ![info exists title_for_href(${href})] } {
+        # coalesce title candidate values
+            set title_for_href(${href}) ${title}
+        } else {
+            set title_for_href(${href}) [lsearch -inline -not [list ${title} $title_for_href(${href})] {}]
+        }
+
+
+        lappend nodes2 ${item_node}
 
     }
 
@@ -238,11 +244,11 @@ proc ::feed_reader::fetch_feed {resultVar feedVar {stoptitlesVar ""}} {
 
     foreach node ${nodes3} {
 
-	set href [${node} @href]
-	lappend result(links)  ${href}
-	lappend result(titles) $title_for_href(${href})
-	# TODO: thumbnail urls are a good way to group similar articles
-	#lappend result(thumbnail) $thumbnail
+        set href [${node} @href]
+        lappend result(links)  ${href}
+        lappend result(titles) $title_for_href(${href})
+        # TODO: thumbnail urls are a good way to group similar articles
+        #lappend result(thumbnail) $thumbnail
 
     }
 
@@ -642,197 +648,200 @@ namespace eval ::feed_reader {
 
     array set errorcode_messages {
 
-	-3
-	{failed during information extraction from article}
+        -4
+        {empty html while fetching feed}
 
-	-2
-	{dom parse error for article html}
+        -3
+        {failed during information extraction from article}
 
-	-1 
-	{zero-length body}
+        -2
+        {dom parse error for article html}
 
-	1 
-	{Unsupported protocol. This build of TclCurl has no support for this protocol.}
-	
-	2 
-	{Very early initialization code failed. This is likely to be and internal error or problem.}
+        -1 
+        {zero-length body}
 
-	3
-	{URL malformat. The syntax was not correct.}
+        1 
+        {Unsupported protocol. This build of TclCurl has no support for this protocol.}
 
-	4
-	{URL user malformatted. The user-part of the URL syntax was not correct.}
+        2 
+        {Very early initialization code failed. This is likely to be and internal error or problem.}
 
-	5
-	{Couldn't resolve proxy. The given proxy host could not be resolved.}
+        3
+        {URL malformat. The syntax was not correct.}
 
-	6
-	{Couldn't resolve host. The given remote host was not resolved.}
+        4
+        {URL user malformatted. The user-part of the URL syntax was not correct.}
 
-	7
-	{Failed to connect to host or proxy.}
+        5
+        {Couldn't resolve proxy. The given proxy host could not be resolved.}
 
-	8
-	{FTP weird server reply. The server sent data TclCurl couldn't parse. The given remote server is probably not an OK FTP server.}
+        6
+        {Couldn't resolve host. The given remote host was not resolved.}
 
-	9
-	{We were denied access when trying to login to a FTP server or when trying to change working directory to the one given in the URL.}
+        7
+        {Failed to connect to host or proxy.}
 
-	10
-	{FTP user/password incorrect. Either one or both were not accepted by the server.}
+        8
+        {FTP weird server reply. The server sent data TclCurl couldn't parse. The given remote server is probably not an OK FTP server.}
 
-	11
-	{FTP weird PASS reply. TclCurl couldn't parse the reply sent to the PASS request.}
+        9
+        {We were denied access when trying to login to a FTP server or when trying to change working directory to the one given in the URL.}
 
-	12
-	{FTP weird USER reply. TclCurl couldn't parse the reply sent to the USER request.}
+        10
+        {FTP user/password incorrect. Either one or both were not accepted by the server.}
 
-	13
-	{FTP weird PASV reply, TclCurl couldn't parse the reply sent to the PASV request.}
+        11
+        {FTP weird PASS reply. TclCurl couldn't parse the reply sent to the PASS request.}
 
-	14
-	{FTP weird 227 format. TclCurl couldn't parse the 227-line the server sent.}
+        12
+        {FTP weird USER reply. TclCurl couldn't parse the reply sent to the USER request.}
 
-	15
-	{FTP can't get host. Couldn't resolve the host IP we got in the 227-line.}
+        13
+        {FTP weird PASV reply, TclCurl couldn't parse the reply sent to the PASV request.}
 
-	16
-	{FTP can't reconnect. A bad return code on either PASV or EPSV was sent by the FTP server, preventing TclCurl from being able to continue.}
+        14
+        {FTP weird 227 format. TclCurl couldn't parse the 227-line the server sent.}
 
-	17
-	{FTP couldn't set binary. Couldn't change transfer method to binary.}
+        15
+        {FTP can't get host. Couldn't resolve the host IP we got in the 227-line.}
 
-	18
-	{Partial file. Only a part of the file was transfered, this happens when the server first reports an expected transfer size and then delivers data that doesn't match the given size.}
+        16
+        {FTP can't reconnect. A bad return code on either PASV or EPSV was sent by the FTP server, preventing TclCurl from being able to continue.}
 
-	19
-	{FTP couldn't RETR file, we either got a weird reply to a 'RETR' command or a zero byte transfer.}
+        17
+        {FTP couldn't set binary. Couldn't change transfer method to binary.}
 
-	20
-	{FTP write error. After a completed file transferm the FTP server did not respond properly.}
+        18
+        {Partial file. Only a part of the file was transfered, this happens when the server first reports an expected transfer size and then delivers data that doesn't match the given size.}
 
-	21
-	{FTP quote error. A custom 'QUOTE' returned error code 400 or higher from the server.}
+        19
+        {FTP couldn't RETR file, we either got a weird reply to a 'RETR' command or a zero byte transfer.}
 
-	22
-	{HTTP not found. The requested page was not found. This return code only appears if --fail is used and the HTTP server returns an error code that is 400 or higher.}
+        20
+        {FTP write error. After a completed file transferm the FTP server did not respond properly.}
 
-	23
-	{Write error. TclCurl couldn't write data to a local filesystem or an error was returned from a write callback.}
+        21
+        {FTP quote error. A custom 'QUOTE' returned error code 400 or higher from the server.}
 
-	24
-	{Malformat user. User name badly specified. Not in use anymore}
+        22
+        {HTTP not found. The requested page was not found. This return code only appears if --fail is used and the HTTP server returns an error code that is 400 or higher.}
 
-	25
-	{FTP couldn't STOR file. The server denied the STOR operation, the error buffer will usually have the server explanation.}
+        23
+        {Write error. TclCurl couldn't write data to a local filesystem or an error was returned from a write callback.}
 
-	26
-	{Read error. There was a problem reading from a local file or an error was returned from the read callback.}
+        24
+        {Malformat user. User name badly specified. Not in use anymore}
 
-	27
-	{Out of memory. A memory allocation request failed. This should never happen unless something weird is going on in your computer.}
+        25
+        {FTP couldn't STOR file. The server denied the STOR operation, the error buffer will usually have the server explanation.}
 
-	28
-	{Operation timeout. The specified time-out period was reached according to the conditions.}
+        26
+        {Read error. There was a problem reading from a local file or an error was returned from the read callback.}
 
-	29
-	{FTP couldn't set ASCII. The server returned an unknown reply.}
+        27
+        {Out of memory. A memory allocation request failed. This should never happen unless something weird is going on in your computer.}
 
-	30
-	{FTP PORT command failed, this usually happens when you haven't specified a good enough address for TclCurl to use.}
+        28
+        {Operation timeout. The specified time-out period was reached according to the conditions.}
 
-	31
-	{FTP couldn't use REST. This should never happen is the server is sane.}
+        29
+        {FTP couldn't set ASCII. The server returned an unknown reply.}
 
-	32
-	{FTP couldn't use the SIZE command. The command is an extension to the original FTP spec RFC 959, so not all servers support it.}
+        30
+        {FTP PORT command failed, this usually happens when you haven't specified a good enough address for TclCurl to use.}
 
-	33
-	{HTTP range error. The server doesn't support or accept range requests.}
+        31
+        {FTP couldn't use REST. This should never happen is the server is sane.}
 
-	34
-	{HTTP post error. Internal post-request generation error.}
+        32
+        {FTP couldn't use the SIZE command. The command is an extension to the original FTP spec RFC 959, so not all servers support it.}
 
-	35
-	{SSL connect error. The SSL handshaking failed, the error buffer may have a clue to the reason, could be certificates, passwords, ...}
+        33
+        {HTTP range error. The server doesn't support or accept range requests.}
 
-	36
-	{FTP bad download resume. Couldn't continue an earlier aborted download, probably because you are trying to resume beyond the file size.}
+        34
+        {HTTP post error. Internal post-request generation error.}
 
-	37
-	{A file given with FILE:// couldn't be read. Did you checked the permissions?}
+        35
+        {SSL connect error. The SSL handshaking failed, the error buffer may have a clue to the reason, could be certificates, passwords, ...}
 
-	38
-	{LDAP cannot bind. LDAP bind operation failed.}
+        36
+        {FTP bad download resume. Couldn't continue an earlier aborted download, probably because you are trying to resume beyond the file size.}
 
-	39
-	{LDAP search failed.}
+        37
+        {A file given with FILE:// couldn't be read. Did you checked the permissions?}
 
-	40
-	{Library not found. The LDAP library was not found.}
+        38
+        {LDAP cannot bind. LDAP bind operation failed.}
 
-	41
-	{A required LDAP function was not found.}
+        39
+        {LDAP search failed.}
 
-	42
-	{Aborted by callback. An application told TclCurl to abort the operation.}
+        40
+        {Library not found. The LDAP library was not found.}
 
-	43
-	{Internal error. A function was called with a bad parameter.}
+        41
+        {A required LDAP function was not found.}
 
-	44
-	{Internal error. A function was called in a bad order.}
+        42
+        {Aborted by callback. An application told TclCurl to abort the operation.}
 
-	45
-	{Interface error. A specified outgoing interface could not be used.}
+        43
+        {Internal error. A function was called with a bad parameter.}
 
-	46
-	{Bad password entered. An error was signalled when the password was entered.}
+        44
+        {Internal error. A function was called in a bad order.}
 
-	47
-	{Too many redirects. When following redirects, TclCurl hit the maximum amount, set your limit with --maxredirs}
+        45
+        {Interface error. A specified outgoing interface could not be used.}
 
-	48
-	{Unknown TELNET option specified.}
+        46
+        {Bad password entered. An error was signalled when the password was entered.}
 
-	49
-	{A telnet option string was illegally formatted.}
+        47
+        {Too many redirects. When following redirects, TclCurl hit the maximum amount, set your limit with --maxredirs}
 
-	50
-	{Currently not used.}
+        48
+        {Unknown TELNET option specified.}
 
-	51
-	{The remote peer's SSL certificate wasn't ok}
+        49
+        {A telnet option string was illegally formatted.}
 
-	52
-	{The server didn't reply anything, which here is considered an error.}
+        50
+        {Currently not used.}
 
-	53
-	{The specified crypto engine wasn't found.}
+        51
+        {The remote peer's SSL certificate wasn't ok}
 
-	54
-	{Failed setting the selected SSL crypto engine as default!}
+        52
+        {The server didn't reply anything, which here is considered an error.}
 
-	55
-	{Failed sending network data.}
+        53
+        {The specified crypto engine wasn't found.}
 
-	56
-	{Failure with receiving network data.}
+        54
+        {Failed setting the selected SSL crypto engine as default!}
 
-	57
-	{Share is in use (internal error)}
+        55
+        {Failed sending network data.}
 
-	58
-	{Problem with the local certificate}
+        56
+        {Failure with receiving network data.}
 
-	59
-	{Couldn't use specified SSL cipher}
+        57
+        {Share is in use (internal error)}
 
-	60
-	{Problem with the CA cert (path? permission?)}
+        58
+        {Problem with the local certificate}
 
-	61
-	{Unrecognized transfer encoding}
+        59
+        {Couldn't use specified SSL cipher}
+
+        60
+        {Problem with the CA cert (path? permission?)}
+
+        61
+        {Unrecognized transfer encoding}
 
     }
 
@@ -2198,6 +2207,8 @@ proc ::feed_reader::test_feed {news_source {limit "3"} {fetch_item_p "1"}} {
 
     set feed_files [get_feed_files ${news_source}]
     foreach feed_file ${feed_files} {
+
+        puts "feed_file=$feed_file"
 
         array set feed [::util::readfile ${feed_file}]
 

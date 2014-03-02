@@ -1,0 +1,11 @@
+url http://prin.gr/
+include_re {/\?p=[0-9]{4,}$}
+htmltidy_feed_p 0
+htmltidy_article_p 0
+xpath_article_title {returnstring(//div[@class="single_title"]/h1)}
+xpath_article_body {returntext(//div[@class="single_text"])}
+xpath_article_image {
+    {values(//div[@class="single_thumbnail_350"]//a/@href)}
+}
+xpath_article_date {normalizedate(substring-before(substring-after(//div[@class="single_textmeta"],"Posted: "), " / in:"),"en_US","auto")}
+xpath_article_modified_time {}

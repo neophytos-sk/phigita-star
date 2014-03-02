@@ -509,7 +509,7 @@ int naivebayes_LearnCmd(ClientData clientData,Tcl_Interp *interp,int objc,Tcl_Ob
 
     // mark top 300 words for removal
 
-    arraylist_t *remove_words_listPtr = arraylist_new(1000, sizeof(object_t *));
+    arraylist_t *remove_words_listPtr = arraylist_new(1000);
 
     mark_frequent_words(interp, remove_words_listPtr, &vocabulary, 300);
 
