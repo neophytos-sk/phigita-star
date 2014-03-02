@@ -264,9 +264,10 @@ proc ::feed_reader::exec_xpath {resultVar doc xpath} {
 
     set result ""
     if { ${xpath} ne {} } {
-	set result [string trim [${doc} selectNodes "${xpath}"] " \n\r\t"]
+        set result [string trim [${doc} selectNodes "${xpath}"] " \n\r\t"]
     }
 
+    # puts "$resultVar=$result"
 }
 
 
@@ -308,64 +309,64 @@ proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar infoVa
     set encoding [get_value_if feed(encoding) utf-8]
 
     set htmltidy_article_p [get_value_if \
-				feed(htmltidy_article_p) \
-				0]
+        feed(htmltidy_article_p) \
+        0]
 
     set keep_title_from_feed_p [get_value_if \
-				    feed(keep_title_from_feed_p) \
-				    0]
+        feed(keep_title_from_feed_p) \
+        0]
 
-    # {//meta[@property="og:title"]}
+        # {//meta[@property="og:title"]}
 
     set xpath_article_prefix [get_value_if feed(xpath_article_prefix) ""]
 
     set xpath_article_title [get_value_if \
-				 feed(xpath_article_title) \
-				 {string(//meta[@property="og:title"]/@content)}]
+        feed(xpath_article_title) \
+        {string(//meta[@property="og:title"]/@content)}]
 
     set xpath_article_body [get_value_if \
-				feed(xpath_article_body) \
-				{}]
+        feed(xpath_article_body) \
+        {}]
 
     set xpath_article_cleanup [get_value_if \
-				   feed(xpath_article_cleanup) \
-				   {}]
+        feed(xpath_article_cleanup) \
+        {}]
 
     set xpath_article_author [get_value_if \
-				  feed(xpath_article_author) \
-				  {}]
+        feed(xpath_article_author) \
+        {}]
 
     set xpath_article_image [get_value_if \
-				 feed(xpath_article_image) \
-				 {string(//meta[@property="og:image"]/@content)}]
+        feed(xpath_article_image) \
+        {string(//meta[@property="og:image"]/@content)}]
 
     set xpath_article_video [get_value_if \
-				 feed(xpath_article_video) \
-				 {values(//iframe[@src]/@src)}]
+        feed(xpath_article_video) \
+        {values(//iframe[@src]/@src)}]
 
     ::util::prepend ${xpath_article_prefix} xpath_article_video
 
     set xpath_article_attachment [get_value_if \
-				      feed(xpath_article_attachment) \
-				      {}]
+        feed(xpath_article_attachment) \
+        {}]
 
     set xpath_article_description [get_value_if \
-				       feed(xpath_article_description) \
-				       {string(//meta[@property="og:description"]/@content)}]
+        feed(xpath_article_description) \
+        {string(//meta[@property="og:description"]/@content)}]
 
 
     set xpath_article_date [get_value_if \
-				feed(xpath_article_date) \
-				{returndate(string(//meta[@property="article:published_time"]/@content),"%Y-%m-%d %H:%M")}]
+        feed(xpath_article_date) \
+        {returndate(string(//meta[@property="article:published_time"]/@content),"%Y-%m-%d %H:%M")}]
 
     set xpath_article_modified_time [get_value_if \
-				feed(xpath_article_modified_time) \
-				{returndate(string(//meta[@property="article:modified_time"]/@content),"%Y-%m-%d %H:%M")}]
+        feed(xpath_article_modified_time) \
+        {returndate(string(//meta[@property="article:modified_time"]/@content),"%Y-%m-%d %H:%M")}]
 
 
     set xpath_article_tags [get_value_if \
-				feed(xpath_article_tags) \
-				{string(//meta[@property="og:keywords"]/@content)}]
+        feed(xpath_article_tags) \
+        {string(//meta[@property="og:keywords"]/@content)}]
 
 
     set html ""
@@ -375,20 +376,20 @@ proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar infoVa
     unset options
 
     if { ${errorcode} } {
-	return ${errorcode}
+        return ${errorcode}
     }
 
     set html [encoding convertfrom ${encoding} ${html}]
 
     if { ${htmltidy_article_p} } {
-	set html [::htmltidy::tidy ${html}]
+        set html [::htmltidy::tidy ${html}]
     }
 
     if { [catch {
-	set doc [dom parse -html ${html}]
+        set doc [dom parse -html ${html}]
     } errmsg] } {
-	puts errmsg=$errmsg
-	return -2 ;# error parsing article html
+        puts errmsg=$errmsg
+        return -2 ;# error parsing article html
     }
 
     ${doc} baseURI ${link}
@@ -397,59 +398,58 @@ proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar infoVa
     exec_xpath author_in_article $doc $xpath_article_author
 
     if { ${keep_title_from_feed_p} || ${title_in_article} eq {} } {
-	set article_title ${title_in_feed}
+        set article_title ${title_in_feed}
     } else {
-	set article_title ${title_in_article}
+        set article_title ${title_in_article}
     }
 
     set article_image [list]
     if { ${xpath_article_image} ne {} } {
 
-	set image_stoplist [get_value_if feed(image_stoplist) ""]
+        set image_stoplist [get_value_if feed(image_stoplist) ""]
 
-	foreach image_xpath ${xpath_article_image} {
-	    foreach image_url [${doc} selectNodes ${image_xpath}] {
-		set canonical_image_url \
-		    [::uri::canonicalize \
-			 [::uri::resolve \
-			      $link \
-			      $image_url]]
+        foreach image_xpath ${xpath_article_image} {
+            foreach image_url [${doc} selectNodes ${image_xpath}] {
+                set canonical_image_url \
+                    [::uri::canonicalize \
+                    [::uri::resolve \
+                    $link \
+                    $image_url]]
 
-		if { ${image_stoplist} ne {} && ${canonical_image_url} in ${image_stoplist} } {
-		    continue
-		}
+                if { ${image_stoplist} ne {} && ${canonical_image_url} in ${image_stoplist} } {
+                    continue
+                }
 
-		lappend article_image ${canonical_image_url}
-	    }
-	}
+                lappend article_image ${canonical_image_url}
+            }
+        }
     }
 
     set article_attachment [list]
     if { ${xpath_article_attachment} ne {} } {
-	foreach attachment_xpath ${xpath_article_attachment} {
-	    foreach attachment_url [${doc} selectNodes ${attachment_xpath}] {
-		# TODO: schedule to fetch and recognize content type
-		# TODO: include_attachment_re, e.g. for stockwatch /media/announce_pdf
-		lappend article_attachment [::uri::canonicalize \
-						[::uri::resolve \
-						     $link \
-						     $attachment_url]]
-	    }
-	}
+        foreach attachment_xpath ${xpath_article_attachment} {
+            foreach attachment_url [${doc} selectNodes ${attachment_xpath}] {
+            # TODO: schedule to fetch and recognize content type
+            # TODO: include_attachment_re, e.g. for stockwatch /media/announce_pdf
+                lappend article_attachment [::uri::canonicalize \
+                    [::uri::resolve \
+                    $link \
+                    $attachment_url]]
+            }
+        }
     }
 
     set article_video [list]
     if { ${xpath_article_video} ne {} } {
-	foreach video_xpath ${xpath_article_video} {
-	    foreach video_url [${doc} selectNodes ${video_xpath}] {
-		# TODO: extract video id and convert to video url (if possible)
-		if { [is_video_url_p ${video_url} video_url_rewritten] } {
-		    lappend article_video ${video_url_rewritten}
-		}
-	    }
-	}
+        foreach video_xpath ${xpath_article_video} {
+            foreach video_url [${doc} selectNodes ${video_xpath}] {
+            # TODO: extract video id and convert to video url (if possible)
+                if { [is_video_url_p ${video_url} video_url_rewritten] } {
+                    lappend article_video ${video_url_rewritten}
+                }
+            }
+        }
     }
-
 
     exec_xpath article_date $doc $xpath_article_date
     exec_xpath article_modified_time $doc $xpath_article_modified_time
@@ -462,38 +462,38 @@ proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar infoVa
     lappend xpath_article_cleanup {//style}
     lappend xpath_article_cleanup {//link}
     foreach cleanup_xpath ${xpath_article_cleanup} {
-	foreach cleanup_node [${doc} selectNodes ${cleanup_xpath}] {
-	    if { ${cleanup_node} ne {} } {
-		# might have been deleted inside another node
-		catch { ${cleanup_node} delete }
-	    }
-	}
+        foreach cleanup_node [${doc} selectNodes ${cleanup_xpath}] {
+            if { ${cleanup_node} ne {} } {
+            # might have been deleted inside another node
+                catch { ${cleanup_node} delete }
+            }
+        }
     }
 
     exec_xpath article_body $doc $xpath_article_body
 
     if { [get_value_if feed(end_of_text_cleanup_p) "0"] } {
-	# if end_of_string is found after the 1/3 of the article body
-	# then drop text beyond that point
-	#
+    # if end_of_string is found after the 1/3 of the article body
+    # then drop text beyond that point
+    #
 
-	set end_of_text_cleanup_coeff [get_value_if feed(end_of_text_cleanup_coeff) "0.3"]
-	set article_body_len [string length ${article_body}]
-	set startIndex [expr { int( ${article_body_len} * ${end_of_text_cleanup_coeff} ) } ]
+    set end_of_text_cleanup_coeff [get_value_if feed(end_of_text_cleanup_coeff) "0.3"]
+    set article_body_len [string length ${article_body}]
+    set startIndex [expr { int( ${article_body_len} * ${end_of_text_cleanup_coeff} ) } ]
 
-	foreach end_of_text_string $meta(end_of_text_strings) {
-	    set index [string first ${end_of_text_string} ${article_body} ${startIndex}]
-	    if { -1 != ${index} } {
-		set article_body [string trim [string range ${article_body} 0 [expr { ${index} - 1 }]]]
-		set index 0
-	    }
-	}
+    foreach end_of_text_string $meta(end_of_text_strings) {
+        set index [string first ${end_of_text_string} ${article_body} ${startIndex}]
+        if { -1 != ${index} } {
+            set article_body [string trim [string range ${article_body} 0 [expr { ${index} - 1 }]]]
+            set index 0
+        }
+    }
     }
 
     set article_langclass [get_value_if feed(article_langclass) "el.utf8"]
 
     if { ${article_langclass} eq {auto} } {
-	set article_langclass [::ttext::langclass "$article_title $article_body"]
+        set article_langclass [::ttext::langclass "$article_title $article_body"]
     }
 
     set domain [::util::domain_from_url ${link}]
@@ -501,28 +501,28 @@ proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar infoVa
     set body_length [string length ${article_body}]
 
     array set item [list \
-			domain ${domain} \
-			link $link \
-			langclass $article_langclass \
-			title $article_title \
-			description $article_description \
-			body $article_body \
-			body_length ${body_length} \
-			tags ${article_tags} \
-			author $author_in_article \
-			image $article_image \
-			video $article_video \
-			attachment $article_attachment \
-			date $article_date \
-			modified_time $article_modified_time]
+        domain ${domain} \
+        link $link \
+        langclass $article_langclass \
+        title $article_title \
+        description $article_description \
+        body $article_body \
+        body_length ${body_length} \
+        tags ${article_tags} \
+        author $author_in_article \
+        image $article_image \
+        video $article_video \
+        attachment $article_attachment \
+        date $article_date \
+        modified_time $article_modified_time]
 
 
     $doc delete
 
     set allow_empty_body_p [get_value_if feed(allow_empty_body_p) 0]
     if { ${body_length} == 0 && !${allow_empty_body_p} } {
-	# puts "--->>> zero-length body"
-	return -1 ;# error due to zero-length body
+    # puts "--->>> zero-length body"
+        return -1 ;# error due to zero-length body
     }
 
     return 0 ;# no errors
