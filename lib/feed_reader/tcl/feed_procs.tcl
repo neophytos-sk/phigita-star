@@ -1284,70 +1284,70 @@ proc ::feed_reader::read_integer_between {from to msg} {
 proc ::feed_reader::search_callback=label_content {contentsha1 axis label {need_confirm_p "1"}} {
 
     ::persistence::get_column \
-	"newsdb"\
-	"content_item/by_contentsha1_and_const" \
-	"${contentsha1}" \
-	"_data_" \
-	"column_data"
+        "newsdb"\
+        "content_item/by_contentsha1_and_const" \
+        "${contentsha1}" \
+        "_data_" \
+        "column_data"
 
     if { ${label} eq {} || ${need_confirm_p} } {
-	set content [join ${column_data}]
-	::naivebayes::wordcount_helper count content true ;# filter_stopwords
-	::naivebayes::print_words [::naivebayes::wordcount_topN count 40]
+        set content [join ${column_data}]
+        ::naivebayes::wordcount_helper count content true ;# filter_stopwords
+        ::naivebayes::print_words [::naivebayes::wordcount_topN count 40]
 
-	set max_category [classifier::classify ${axis} content]
+        set max_category [classifier::classify ${axis} content]
 
-	puts ""
+        puts ""
     }
 
     if { ${label} eq {} } {
-	set labels [classifier::get_training_labels ${axis}]
-	set num_labels [llength ${labels}]
-	set index 0
-	foreach label ${labels} {
+        set labels [classifier::get_training_labels ${axis}]
+        set num_labels [llength ${labels}]
+        set index 0
+        foreach label ${labels} {
 
-	    if { 
-		${num_labels} > 10 
-		&& [string first {/} ${label}] != -1 
-		&& ![string match ${max_category}* ${label}] 
-	    } {
+            if { 
+                ${num_labels} > 10 
+                && [string first {/} ${label}] != -1 
+                && ![string match ${max_category}* ${label}] 
+            } {
 
-		# do nothing
+            # do nothing
 
-	    } else {
+            } else {
 
-		set preferred ""
-		if { ${label} eq ${max_category} } {
-		    set preferred {(*)}
-		}
+                set preferred ""
+                if { ${label} eq ${max_category} } {
+                    set preferred {(*)}
+                }
 
-		puts [format "%10s %-40s" "${preferred} ${index}." ${label}]
+                puts [format "%10s %-40s" "${preferred} ${index}." ${label}]
 
-	    }
+            }
 
-	    incr index
+            incr index
 
-	}
+        }
 
-	set selection [read_integer_between 0 $num_labels "--->>> your choice (-1 to skip):"]
-	if { ${selection} ne {} } {
-	    set label [lindex ${labels} ${selection}]
-	    puts "your selection: ${label}"
-	    set need_confirm_p 0
-	} else {
-	    return
-	}
-	puts ""
+        set selection [read_integer_between 0 $num_labels "--->>> your choice (-1 to skip):"]
+        if { ${selection} ne {} } {
+            set label [lindex ${labels} ${selection}]
+            puts "your selection: ${label}"
+            set need_confirm_p 0
+        } else {
+            return
+        }
+        puts ""
     }
 
     if { !${need_confirm_p} || [confirm] } {
 
-	::persistence::insert_column \
-	    "newsdb" \
-	    "train_item" \
-	    "${axis}" \
-	    "${label}/${contentsha1}" \
-	    ""
+        ::persistence::insert_column \
+            "newsdb" \
+            "train_item" \
+            "${axis}" \
+            "${label}/${contentsha1}" \
+            ""
 
     }
 
@@ -1358,34 +1358,34 @@ proc ::feed_reader::search_callback=label_content {contentsha1 axis label {need_
 proc ::feed_reader::search_callback=unlabel_content {contentsha1 axis label {need_confirm_p "1"}} {
 
     if { ${label} eq {} } {
-	error "unlabel_content: empty label name"
+        error "unlabel_content: empty label name"
     }
 
     ::persistence::get_column \
-	"newsdb"\
-	"content_item/by_contentsha1_and_const" \
-	"${contentsha1}" \
-	"_data_" \
-	"column_data"
+        "newsdb"\
+        "content_item/by_contentsha1_and_const" \
+        "${contentsha1}" \
+        "_data_" \
+        "column_data"
 
     if { ${need_confirm_p} } {
-	set content [join ${column_data}]
-	::naivebayes::wordcount_helper count content true ;# filter_stopwords
-	::naivebayes::print_words [::naivebayes::wordcount_topN count 40]
+        set content [join ${column_data}]
+        ::naivebayes::wordcount_helper count content true ;# filter_stopwords
+        ::naivebayes::print_words [::naivebayes::wordcount_topN count 40]
 
-	set max_category [classifier::classify ${axis} content]
+        set max_category [classifier::classify ${axis} content]
 
-	puts ""
+        puts ""
     }
 
     if { !${need_confirm_p} || [confirm] } {
 
-	::persistence::delete_column \
-	    "newsdb" \
-	    "train_item" \
-	    "${axis}" \
-	    "${label}/${contentsha1}" \
-	    ""
+        ::persistence::delete_column \
+            "newsdb" \
+            "train_item" \
+            "${axis}" \
+            "${label}/${contentsha1}" \
+            ""
 
     }
 
@@ -1534,14 +1534,10 @@ proc ::feed_reader::classify_content {axis contentsha1_list} {
 
     foreach contentsha1 ${contentsha1_list} {
 
-	::persistence::get_column \
-	    "newsdb" \
-	    "content_item/by_contentsha1_and_const" \
-	    "${contentsha1}" \
-	    "_data_" \
-	    "content"
-
-	classifier::classify ${axis} content
+        load_content item ${contentsha1}
+	    set content [concat $item(title) $item(body)]
+        puts [classifier::classify ${axis} content]
+        unset item
 
     }
 
@@ -1585,11 +1581,11 @@ proc ::feed_reader::load_content {itemVar contentsha1 {include_labels_p "1"}} {
     upvar $itemVar item
 
     ::persistence::get_column \
-	"newsdb" \
-	"content_item/by_contentsha1_and_const" \
-	"${contentsha1}" \
-	"_data_" \
-	"column_data"
+        "newsdb" \
+        "content_item/by_contentsha1_and_const" \
+        "${contentsha1}" \
+        "_data_" \
+        "column_data"
 
     lassign ${column_data} item(title) item(body)
 
@@ -1600,7 +1596,7 @@ proc ::feed_reader::load_content {itemVar contentsha1 {include_labels_p "1"}} {
 
     set contentsha1_to_label_filename [get_contentsha1_to_label_dir]/${contentsha1}
     if { [file exists ${contentsha1_to_label_filename}] } {
-	set item(label) [lsearch -inline -all -not [split [::util::readfile $contentsha1_to_label_filename] "\n"] {}]
+        set item(label) [lsearch -inline -all -not [split [::util::readfile $contentsha1_to_label_filename] "\n"] {}]
     }
 
 }
@@ -1746,9 +1742,10 @@ proc ::feed_reader::show_item {urlsha1_list} {
 proc ::feed_reader::classify {axis urlsha1_list} {
     set contentsha1_list [list]
     foreach urlsha1 ${urlsha1_list} {
-	load_item item ${urlsha1}
-	lappend contentsha1_list $item(contentsha1)
-	unset item
+        load_item item ${urlsha1}
+        # lappend contentsha1_list $item(contentsha1)
+        classify_content $axis $item(contentsha1)
+        unset item
     }
 
 }

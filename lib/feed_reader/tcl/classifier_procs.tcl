@@ -288,11 +288,11 @@ proc ::feed_reader::classifier::classify {axis contentVar} {
     # category classification
 
     set filename \
-	[::persistence::get_column \
-	     "newsdb" \
-	     "classifier/model" \
-	     "${axis}" \
-	     "_data_"]
+        [::persistence::get_column \
+        "newsdb" \
+        "classifier/model" \
+        "${axis}" \
+        "_data_"]
 
     variable __nb_model_${axis}
     if { ![info exists __nb_model_${axis}] } {
@@ -301,15 +301,14 @@ proc ::feed_reader::classifier::classify {axis contentVar} {
 
     set category [::naivebayes::classify_naive_bayes_text __nb_model_${axis} content]
 
-
     # sub-category classification
 
     set subcategory_filename \
-	[::persistence::get_column \
-	     "newsdb" \
-	     "classifier/model" \
-	     "${axis}" \
-	     "[file join ${category} _data_]"]
+        [::persistence::get_column \
+        "newsdb" \
+        "classifier/model" \
+        "${axis}" \
+        "[file join ${category} _data_]"]
 
     set subcategory ""
     if { [::persistence::exists_data_p ${subcategory_filename}] } {
@@ -317,7 +316,7 @@ proc ::feed_reader::classifier::classify {axis contentVar} {
         if { ![info exists __nb_model_${axis}_${category}] } {
             ::naivebayes::load_naive_bayes_model __nb_model_${axis}_${category} ${subcategory_filename}
         }
-        
+
         set subcategory [::naivebayes::classify_naive_bayes_text __nb_model_${axis}_${category} content]
     }
 

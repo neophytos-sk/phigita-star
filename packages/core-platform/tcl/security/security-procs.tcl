@@ -1307,30 +1307,30 @@ ad_proc -private sec_get_token { token_id } {
     thread-persistent TCL cache.
 
 } {
-    
+
     global tcl_secret_tokens
 
     #ns_log notice passed_secret_token "token_id=$token_id"
 
     if { [info exists tcl_secret_tokens($token_id)] } {
-	return $tcl_secret_tokens($token_id)
+        return $tcl_secret_tokens($token_id)
     } else {
-	set token [ns_cache_eval secret_tokens $token_id {
-	    set token [::xo::db::value -statement_name get_token -default 0 "select token from secret_tokens where token_id = [ns_dbquotevalue $token_id]"]
+        set token [ns_cache_eval secret_tokens $token_id {
+            set token [::xo::db::value -statement_name get_token -default 0 "select token from secret_tokens where token_id = [ns_dbquotevalue $token_id]"]
 
-	    # Very important to throw the error here if $token == 0
-	    # see: http://www.arsdigita.com/sdm/one-ticket?ticket_id=10760
+            # Very important to throw the error here if $token == 0
+            # see: http://www.arsdigita.com/sdm/one-ticket?ticket_id=10760
 
             if { $token == 0 } {
-	        error "Invalid token ID"
-	    }
+                error "Invalid token ID"
+            }
 
-	    return $token
-	}]
+            return $token
+        }]
 
-	set tcl_secret_tokens($token_id) $token
-	return $token
-	
+        set tcl_secret_tokens($token_id) $token
+        return $token
+
     }
 
 }
@@ -1359,14 +1359,14 @@ ad_proc -private populate_secret_tokens_cache {} {
     # this is called directly from security-init.tcl,
     # so it runs during the install before the data model has been loaded
     if { [db_table_exists secret_tokens] } {
-	db_foreach get_secret_tokens {
-	    select token_id, token
-	    from secret_tokens,
-	    (select trunc(random()*(select count(1)-15 from secret_tokens))::integer as first) r
-	    where token_id >= r.first and r.first+15 > token_id;
-	} {
-	    ns_cache_eval secret_tokens $token_id { return $token }
-	}
+        db_foreach get_secret_tokens {
+            select token_id, token
+            from secret_tokens,
+            (select trunc(random()*(select count(1)-15 from secret_tokens))::integer as first) r
+            where token_id >= r.first and r.first+15 > token_id;
+        } {
+            ns_cache_eval secret_tokens $token_id { return $token }
+        }
     }
 }
 

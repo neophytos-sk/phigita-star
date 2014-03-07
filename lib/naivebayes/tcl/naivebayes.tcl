@@ -181,8 +181,9 @@ proc ::util::tokenize {text} {
     set removeChars_re {[^[:alnum:]]+}
     regsub -all -- ${removeChars_re} ${text} { } text
 
+    return [lsearch -inline -all -not [split ${text}] {}]
     #return [lsearch -inline -all -not [split [string tolower [::ttext::unaccent utf-8 ${text}]]] {}]
-    return [lsearch -inline -all -not [split [string tolower [greek_utf8_to_greeklish ${text}]]] {}]
+    #return [lsearch -inline -all -not [split [string tolower [greek_utf8_to_greeklish ${text}]]] {}]
 }
 
 
@@ -197,12 +198,12 @@ proc ::naivebayes::clean_and_tokenize {contentVar {filter_stopwords_p 0}} {
 
     # remove embedded content and urls
     foreach re {
-	{\{[^\}]+:\s*[^\}]+\}}
-	{\{[^\}]+:\s*https?://[^\s]+\}}
-	{\{[^\}]+:\s*https?://[^\s]+\}}
-	{\"([^\}]+)\":[^\s]+}
-	{https?://[^\s]+}
-	{[^[:alnum:]]}
+        {\{[^\}]+:\s*[^\}]+\}}
+        {\{[^\}]+:\s*https?://[^\s]+\}}
+        {\{[^\}]+:\s*https?://[^\s]+\}}
+        {\"([^\}]+)\":[^\s]+}
+        {https?://[^\s]+}
+        {[^[:alnum:]]}
     } {
         regsub -all -- ${re} ${content} {\1 } content
     }

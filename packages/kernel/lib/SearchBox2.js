@@ -87,7 +87,7 @@ SearchBox.keydown = function(e,target,options) {
     if (e.keyCode == xo.Event.ENTER) {
 	if (SearchBox.__NR && !SearchBox.__hidden) {
 	    xo.Event.stopEvent(e);
-	    url = SearchBox.__resultEl[SearchBox.__menuIndex].url;
+	    var url = SearchBox.__resultEl[SearchBox.__menuIndex].url;
 	    top.location.href=url;
 	    return;
 	}
