@@ -1,0 +1,31 @@
+# generate private key
+openssl genrsa -des3 -out phigita.net.key 2048
+
+# generate CSR
+openssl req -new -key phigita.net.key -out phigita.net.csr
+
+Enter pass phrase for phigita.net.key:
+You are about to be asked to enter information that will be incorporated
+into your certificate request.
+What you are about to enter is what is called a Distinguished Name or a DN.
+There are quite a few fields but you can leave some blank
+For some fields there will be a default value,
+If you enter '.', the field will be left blank.
+-----
+Country Name (2 letter code) [AU]:CY
+State or Province Name (full name) [Some-State]:Paphos
+Locality Name (eg, city) []:      
+Organization Name (eg, company) [Internet Widgits Pty Ltd]:PHIGITA LTD
+Organizational Unit Name (eg, section) []:
+Common Name (e.g. server FQDN or YOUR name) []:*.phigita.net
+Email Address []:
+
+Please enter the following 'extra' attributes
+to be sent with your certificate request
+A challenge password []:
+An optional company name []:
+
+# nsssl
+cat phigita.net.cert phigita.net.key > phigita.net.pem
+rm -rf phigita.net.cert phigita.net.key phigita.net.csr
+openssl dhparam 2048 >> phigita.net.pem

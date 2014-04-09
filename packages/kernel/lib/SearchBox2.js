@@ -146,8 +146,7 @@ SearchBox.clear = function(){
 
 SearchBox.handle_click = function(e,target,options) {
     if (SearchBox.__NR && !SearchBox.__hidden) {
-	url = SearchBox.__resultEl[SearchBox.__menuIndex].url;
-	top.location.href=url;
+	top.location.href = SearchBox.__resultEl[SearchBox.__menuIndex].url;
     }
 };
 
