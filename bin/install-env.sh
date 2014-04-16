@@ -96,7 +96,8 @@ TCLCURL=TclCurl-7.22.0
 #NAVISERVER=naviserver-phigita-2014.1
 #NAVISERVER=naviserver-phigita-2014.2
 #NAVISERVER=naviserver-phigita-2014.3
-NAVISERVER=naviserver-phigita-2014.4
+#NAVISERVER=naviserver-phigita-2014.4
+NAVISERVER=naviserver-phigita-2014.5
 
 
 #MAPSERVER=mapserver-5.0.2

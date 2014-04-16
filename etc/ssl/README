@@ -1,5 +1,5 @@
 # generate private key
-openssl genrsa -des3 -out phigita.net.key 2048
+openssl genrsa -out phigita.net.key 2048
 
 # generate CSR
 openssl req -new -key phigita.net.key -out phigita.net.csr
@@ -24,6 +24,10 @@ Please enter the following 'extra' attributes
 to be sent with your certificate request
 A challenge password []:
 An optional company name []:
+
+# get certificate
+cat > phigita.net.cert
+# paste certificate and then press ctrl-d
 
 # nsssl
 cat phigita.net.cert phigita.net.key > phigita.net.pem

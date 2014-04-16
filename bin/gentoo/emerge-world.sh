@@ -1,7 +1,7 @@
 #emerge --quiet --sync
 #emerge --noreplace portage
 
-emerge $* -avuDN world
+emerge $* -auDN world
 echo "=== REMINDER ==="
 echo "emerge @preserved-rebuild"
 echo "emerge --depclean -a"
