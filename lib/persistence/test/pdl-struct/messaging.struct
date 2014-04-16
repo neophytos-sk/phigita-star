@@ -1,0 +1,20 @@
+struct -id echo.Message -is_final_if_no_scope "1" {
+
+    #attr -type "sometype" -name "somename" -default "someval" -defaultExpr "somefunc() || 'hello'"
+
+    # string device = "sms"
+    # rel -name attachment -type File
+
+    attr -name device -type string -default "sms"
+    attr -name cnt_comment -type int32 -default "0"
+    attr -name public_p -type bool -default "f"
+    attr -name attachment -type string -optional "1"
+
+    extends -ref content.Object
+    extends -ref content.Content
+    extends -ref auditing.Auditing
+
+    index -attr public_p
+
+}
+
