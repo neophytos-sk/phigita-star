@@ -2222,9 +2222,9 @@ proc ::feed_reader::test_feed {news_source {limit "3"} {fetch_item_p "1"}} {
                     break
                 }
 
-                puts ""
-                puts ${title_in_feed}
-                puts ${link}
+                puts "==="
+                puts "title in feed: ${title_in_feed}"
+                puts "link in feed: ${link}"
                 puts "---"
 
 
@@ -2232,7 +2232,7 @@ proc ::feed_reader::test_feed {news_source {limit "3"} {fetch_item_p "1"}} {
                     set errorcode [fetch_item ${link} ${title_in_feed} feed item info]
                     if { ${errorcode} } {
                         puts "fetch_item failed errorcode=$errorcode link=$link"
-			puts "info=[array get info]"
+                        puts "info=[array get info]"
                         continue
                     }
                     print_item item 

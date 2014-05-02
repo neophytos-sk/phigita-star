@@ -50,7 +50,7 @@ js -deps {
     shared
 
     editor noteEditor nameEditor selectedEditor doneEditor twoLevelsDownEditor fixed hovered
-    selected done doneEditor editing highlighted moveHovered parent moving
+    selected done editing highlighted moveHovered parent moving
 
     name
 
