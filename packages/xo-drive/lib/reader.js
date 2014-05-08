@@ -263,7 +263,7 @@ DR.savePrefs = function(){
 DR.loadPrefs = function(){
     if (typeof window.localStorage != 'undefined') {
 	var key = DR['docId'] + '.size';
-	value=window.localStorage.getItem(key);
+	var value=window.localStorage.getItem(key);
     } else {
 	if(document.cookie==null)return;
 	var c=document.cookie.split(";");

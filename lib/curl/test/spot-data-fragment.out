@@ -1,0 +1,24 @@
+Usage: ./spot-data-fragment.tcl filename
+--->>> proceeding with example url
+--->>> errorcode=0
+--->>> title=Polo Ralph Lauren Jacket, Elmwood Down Jacket - Coats & Jackets - Men - Macy's
+--->> xpath={body[@class="member"]/script[6]}
+--->> highlighted_text=
+{
+-~-~-~-
+var navigation={
+"pageName":"PRODUCT:>>> Polo Ralph Lauren Jacket,Elmwood Down <<< Jacket(1059603)",
+"pageID":"3763",
+"registryMode":"NO"
+};
+
+-~-~-~-
+var product={
+"productID":"1059603",
+"productCategoryID":pdpProdCategoryId,
+"productName":">>> Polo Ralph Lauren Jacket,Elmwood Down <<< Jacket",
+"productType":"SINGLE ITEM",
+"trueFitSize":"false",
+"video":"false"
+};
+}

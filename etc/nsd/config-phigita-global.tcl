@@ -4,6 +4,9 @@ ns_param $server_static $servername_static
 if { {nssmtpd} in ${modules} } {
     ns_param $server_mail   $servername_mail
 }
+if { {nsdns} in ${modules} } {
+    ns_param $server_dns   $servername_dns
+}
 
 
 
@@ -87,6 +90,9 @@ ns_param      defaultserver     $server_web
 
         # https://hynek.me/articles/hardening-your-web-servers-ssl-ciphers/
        ns_param      ciphers        "ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS"
+
+       # https://github.com/cloudflare/sslconfig 
+       ns_param     ciphers     "ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-RC4-SHA:ECDHE-RSA-AES128-SHA:AES128-GCM-SHA256:RC4-SHA:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:AES256-GCM-SHA384:AES256-SHA256:AES256-SHA:ECDHE-RSA-DES-CBC3-SHA:DES-CBC3-SHA:ECDHE-RSA-AES128-SHA256:AES128-SHA256:AES128-SHA;"
 
        ns_param      protocols          "SSLv3:TLSv1:TLSv1.1:TLSv1.2:!SSLv2"
 

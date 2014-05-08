@@ -88,6 +88,10 @@ make install NSHOME=${NSHOME} NAVISERVER=${NSHOME} POSTGRES=${PGHOME_SHORT} PGIN
 cd ${WORKDIR}/modules-${NAVISERVER}/nsssl
 make install NAVISERVER=${NSHOME}
 
+### nsdns
+cd ${WORKDIR}/modules-${NAVISERVER}/nsdns
+make install NSHOME=${NSHOME} NAVISERVER=${NSHOME} POSTGRES=${PGHOME_SHORT} PGINCLUDE=${PGHOME_SHORT}/include/ PGLIB=${PGHOME_SHORT}/lib/
+
 ### nsstats
 #cd ${WORKDIR}/modules-${NAVISERVER}/nsstats
 #make install NSHOME=${NSHOME} NAVISERVER=${NSHOME}

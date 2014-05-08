@@ -74,21 +74,22 @@ set max_file_upload_min        5
 ns_log notice "done reading configuration settings"
 
 
-set modules {nssmtpd}
+set modules {nssmtpd nsdns}
 
 
 set server_web "phigita-web"
 set server_secure_web "phigita-secure-web"
 set server_mail "phigita-mail"
+set server_dns "phigita-dns"
 set server_static "phigita-static"
 set server_secure_static "phigita-secure-static"
 
 set servername_web    "phigita web server"
 set servername_secure_web "phigita secure web server"
 set servername_mail   "phigita mail server"
+set servername_dns "phigita dns server"
 set servername_static "phigita static server"
 set servername_secure_static "phigita secure static server"
-
 
 set server_static_host "static.phigita.net"
 set server_static_host_and_port ${server_static_host}
@@ -144,5 +145,9 @@ config_phigita_static config_static
 
 if { {nssmtpd} in ${modules} } {
     source [file join $serverroot etc/nsd/config-phigita-mail.tcl]
+}
+
+if { {nsdns} in ${modules} } {
+    source [file join $serverroot etc/nsd/config-phigita-dns.tcl]
 }
 

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <title> - jsFiddle demo</title>
+  
+  <script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js'></script>
+  
+  
+  
+  <link rel="stylesheet" type="text/css" href="/css/result-light.css">
+  
+  <style type='text/css'>
+    .slot-machine__reel-wrapper {
+    margin:0 auto;
+    width: 170px;
+    height:400px;
+    float:left;    
+}
+
+.slot-machine__reel {
+    /* required settings */
+    position:relative;
+    overflow:hidden;
+    width: 150px;
+    height:370px;
+    /* custom decorations */
+    border:1px solid #ccc;
+    background: #eee;
+}
+
+.slot-machine__reel .items {
+    /* this cannot be too large */
+    height:20000em;
+    position:absolute;
+    clear:both;
+}
+
+.items div {
+    height:125px;
+}
+
+ .slot-machine__reel img {
+    float:left;
+    margin:8px 20px 11px 20px;
+    background-color:#fff;
+    padding:2px;
+    border:1px solid #ccc;
+    width:100px;
+    height:100px;
+    -moz-border-radius:4px;
+    -webkit-border-radius:4px;
+}
+
+.slot-machine__reel .active {
+    border:2px solid #000;
+    position:relative;
+    cursor:default;
+}
+
+.slot-machine.-winner .active {
+    border:2px solid #f00;
+}
+
+.slot-machine__spin-btn {
+}
+  </style>
+  
+
+
+<script type='text/javascript'>//<![CDATA[ 
+$(window).load(function(){
+var Game = (function($,document,window,undefined) {
+
+    var SlotMachine = function ($container) {
+    
+        if (!(this instanceof SlotMachine)) {
+            throw "constructor called without new";
+        }
+    
+        var uniqueId = 0;
+        var $reels = $container.find(".slot-machine__reel");
+        var $spinBtn = $container.find(".slot-machine__spin-btn");
+        var numReels = $reels.length;
+        var beverages = $container.attr("data-beverages").split(" ");
+    
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+    
+        var SlotMachineReel = function ($root, reelOrder) {
+            
+            if (!(this instanceof SlotMachineReel)) {
+                throw "constructor called without new";
+            }
+    
+            var index = 0;
+            var id = uniqueId++;
+            var order = reelOrder;
+            var self = this;
+            var itemWrap = $root.find('.items');
+            var originalItems = itemWrap.children();
+    
+            originalItems.clone().appendTo(itemWrap);
+            originalItems.clone().appendTo(itemWrap);
+            var items = $root.find('.items').children();
+    
+            var vertical = true;
+            var remaining = 0;
+    
+            var onAnimationEnd = function () {
+    
+                // animation is done, reset position to save us the trouble
+                // of creating new nodes
+                if (index >= originalItems.length) {
+                    index = index % originalItems.length;
+                    seekTo(index); // no animation, reset to item
+                }
+    
+                remaining--;
+                if (remaining) {
+                    rollOnce();
+                } else {
+    
+                    getItem(index - 1).addClass('active');
+                    $root.trigger('rollEnd', {
+                        reelOrder: order,
+                        value: getValue()
+                    });
+                }
+    
+            };
+    
+    
+            function getValue() {
+                return ((1 + items.length - index - originalItems.length) % originalItems.length);
+            }
+    
+            function getItem(i) {
+                return items.eq(items.length - i - originalItems.length);
+            }
+    
+            function seekTo(i, time, easing) {
+    
+                index = i;
+                var item = getItem(i);
+                var props = {
+                    top: -item.position().top
+                };
+                if (time) {
+                    itemWrap.animate(props, time, easing, onAnimationEnd);
+                } else {
+                    itemWrap.attr('style', 'top:' + props.top + 'px');
+                }
+            }
+    
+            function rollOnce() {
+                var offset, easing, time;
+                if (remaining === 1) {
+                    time = 300;
+                    easing = 'swing';
+                    offset = 1 + getRandomInt(10, 100) % originalItems.length;
+                } else {
+                    time = 100;
+                    easing = 'linear';
+                    offset = originalItems.length;
+                }
+    
+                seekTo(index + offset, time, easing); // animate to item
+            }
+    
+            seekTo(0);
+    
+            return {
+                roll: function () {
+                    items.removeClass("active");
+                    remaining = getRandomInt(10, 20);
+                    rollOnce('linear');
+                }
+            }
+        }
+    
+        function allEqual(arr) {
+            for (var i = 1; i < arr.length; i++) {
+                if (arr[i] !== arr[i - 1]) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    
+        var checkState = function () {
+            if (allEqual(state)) {
+                var index = state[0];
+                var beverage = beverages[index];
+                $container.addClass('-winner');
+                alert('You Won! Your beverage is ' + beverage);
+            }
+            if (window['console']) {
+                console.log(state.toString());
+            }
+        }
+    
+        var state = [];
+    
+        var semaphore = 0;
+        var onRollEnd = function (e, data) {
+            var thisreel = this;
+            state[data.reelOrder] = data.value;
+            semaphore--;
+            if (semaphore == 0) {
+                checkState();
+                $container.trigger('spinEnd', {
+                    state: state
+                });
+                $spinBtn.show();
+                $spinBtn.focus();
+            }
+        }
+    
+        var reels = [];
+        for (var i = 0; i < numReels; i++) {
+            var $root = $reels.eq(i);
+            var reel = new SlotMachineReel($root, i);
+            $root.on("rollEnd", onRollEnd);
+            reels.push(reel);
+            state[i] = 0;
+        }
+    
+        var spin = function () {
+            $container.removeClass('-winner');
+            $spinBtn.hide();
+            semaphore = reels.length;
+            for (var i = 0; i < reels.length; i++) {
+                state[i] = reels[i].roll();
+            }
+        };
+    
+        $spinBtn.hide();
+        $spinBtn.on("click", spin.bind(this));
+        $spinBtn.show();
+        $spinBtn.focus();
+
+    };
+
+    return {SlotMachine:SlotMachine};    
+
+})(jQuery,document,window);
+
+var slotMachine = new Game.SlotMachine($("#my-slot-machine"));
+});//]]>  
+
+</script>
+
+
+</head>
+<body>
+  <div class="slot-machine" id="my-slot-machine" data-beverages="coffee tea espresso">
+    <div class="slot-machine__reel-wrapper">
+        <div class="slot-machine__reel">
+            <div class="items">
+                <div>
+                    <img title="coffee maker" src="http://farm9.staticflickr.com/8288/7655849646_cb949e516e.jpg" />
+                </div>
+                <div>
+                    <img title="teapot" src="http://farm4.staticflickr.com/3536/4009281688_8175d5c1d7.jpg" />
+                </div>
+                <div>
+                    <img title="espresso machine" src="http://farm3.staticflickr.com/2788/5774854958_f677e145da.jpg" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="slot-machine__reel-wrapper">
+        <div class="slot-machine__reel">
+            <div class="items">
+                <div>
+                    <img title="coffee filters" src="http://farm3.staticflickr.com/2520/4072460691_94029ef5d0.jpg" />
+                </div>
+                <div>
+                    <img title="tea strainer" src="http://farm6.staticflickr.com/5188/5635502942_4d52c4f908.jpg" />
+                </div>
+                <div>
+                    <img title="espresso tamper" src="http://farm3.staticflickr.com/2391/2532197569_dc0833a9e8.jpg" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="slot-machine__reel-wrapper">
+        <div class="slot-machine__reel">
+            <div class="items">
+                <div>
+                    <img title="coffee grounds" src="http://farm3.staticflickr.com/2724/4169364663_f791933a2d.jpg" />
+                </div>
+                <div>
+                    <img title="loose tea" src="http://farm8.staticflickr.com/7072/7377166212_a3e4e9282e_z.jpg" />
+                </div>
+                <div>
+                    <img title="espresso beans" src="http://farm6.staticflickr.com/5023/5598388155_c5e207ac6d.jpg" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <button class="slot-machine__spin-btn">START</button>
+</div>
+  
+</body>
+
+
+</html>
+

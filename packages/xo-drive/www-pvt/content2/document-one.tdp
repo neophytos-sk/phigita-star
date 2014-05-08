@@ -1,0 +1,38 @@
+contract -require_secure_conn 1 {
+    param -id "id" -check "naturalnum notnull" 
+}
+
+datastore \
+    -id "docdata" \
+    -scope {user} \
+    -singleton true \
+    -select {
+        id 
+        title 
+        {extra->'XO.File.Type' as filetype} 
+        {extra->'XO.Info.page_size' as page_size} 
+        {extra->'XO.Info.pages' as pages}
+    } -from_class ::Content_Item \
+    -where [list "id = :id"]
+
+guard { return @{docdata:rowcount} }
+
+val -id pages {
+    return [xo::fun::map x [iota @{docdata.pages}] { expr { 1 + $x } }]
+
+}
+
+set title "One Document: @{docdata.title}"
+
+js -deps {
+    kernel/lib/base.js
+    kernel/lib/event.js
+    kernel/lib/DomHelper.js
+    xo-drive/lib/reader.js
+} -names {}
+
+master -src "/templates/blank-master.inc" -title ${title} -onload "" {
+    tpl -for "pages" {
+        img -style "width: 800px;" -src "../view/@{docdata.id}/?size=800&p=@{_}"
+    }
+}
