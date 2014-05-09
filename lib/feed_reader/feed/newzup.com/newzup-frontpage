@@ -1,5 +1,5 @@
 url http://www.newzup.com/index.php?id=1
-include_re {index\.php\?id=[0-9]{4}}
+include_re {index\.php\?id=[0-9]{4,}}
 check_for_revisions 1
 htmltidy_feed_p 1
 htmltidy_article_p 1
