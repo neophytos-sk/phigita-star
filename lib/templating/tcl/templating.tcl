@@ -609,11 +609,11 @@ proc ::xo::tdp::compile_doc_in_c {codearrVar templateDoc filename} {
 
     set init_code [subst -nocommands -nobackslashes {
 
-	// init_text
-	DBG(fprintf(stderr,"templating initializing... $tcl_cmd_name\n"));
+        // init_text
+        DBG(fprintf(stderr,"templating initializing... $tcl_cmd_name\n"));
 
-	RegisterExitHandlers(ip); // interp
-	tdp_InitModule(ip);
+        tdp_RegisterExitHandlers(ip); // interp
+        tdp_InitModule(ip);
 
     }]
 
@@ -819,19 +819,19 @@ proc ::xo::tdp::compile_to_c {codearrVar templateDoc c_cmd_name tcl_cmd_name} {
 
     set c_cmd_code [subst -nocommands -nobackslashes {
 
-	${result}
+        ${result}
 
-	Ns_Conn *conn = Ns_GetConn();
-	const int status = 200;
-	const char type[] = "${mime_type}";
-	int len = Tcl_DStringLength(dsPtr);
-	const char *data = Tcl_DStringValue(dsPtr);
-	DBG(fprintf(stderr,"page size/length=%d\n",len));
-	int result = Ns_ConnReturnCharData(conn, status,data,len,type);
-	return Result(interp,result);
+        Ns_Conn *conn = Ns_GetConn();
+        const int status = 200;
+        const char type[] = "${mime_type}";
+        int len = Tcl_DStringLength(dsPtr);
+        const char *data = Tcl_DStringValue(dsPtr);
+        DBG(fprintf(stderr,"page size/length=%d\n",len));
+        int result = Ns_ConnReturnCharData(conn, status,data,len,type);
+        return tdp_Result(interp,result);
 
-	// Tcl_DStringResult(interp,dsPtr);
-	// return TCL_OK;
+        // Tcl_DStringResult(interp,dsPtr);
+        // return TCL_OK;
 
 
 
@@ -851,511 +851,112 @@ proc ::xo::tdp::compile_to_c {codearrVar templateDoc c_cmd_name tcl_cmd_name} {
     }	
 
     return [subst -nocommands -nobackslashes {
-	#include "tcl.h"
-	#include "ns.h"
-
-	#define TDP_ERROR TCL_ERROR
-	#define TDP_OK    TCL_OK
-	#define TDP_ABORT TCL_RETURN
-
-	#define BOOL_LITERAL_false 0
-	#define BOOL_LITERAL_true  1
-	#define BOOL_LITERAL_off   0
-	#define BOOL_LITERAL_on    1
-
-	$codearr(macros)
-
-	/*----------------------------------------------------------------------------
-	|   Debug Macros
-	|
-	\---------------------------------------------------------------------------*/
-	#ifdef DEBUG
-	# define DBG(x) x
-	#else
-	# define DBG(x) 
-	#endif
-
-	#ifdef REUSE_DSTRING
-	# define DSTRING_FREE(x)
-	#else
-	# define DSTRING_FREE(x) Tcl_DStringFree((x))
-	#endif
-
-	static const char *const global_strings[] = { 
-	    $c_global_strings 
-	};
-
-	static const int global_string_len[] = {
-	    $c_global_strings_len_arr
-	};
-
-
-	static inline int tdp_ReturnBlank() {
-	    Ns_Conn *connPtr = (Ns_Conn *) Ns_GetConn();
-	    if (connPtr->flags & NS_CONN_CLOSED) {
-		DBG(fprintf(stderr,"NS_CONN_CLOSED, likely a redirect, do nothing\n"));
-		return TCL_OK;
-	    } else {
-		return Ns_ConnReturnNotice(connPtr, 204, "No Content", NULL);
-	    }
-	}
-
-
-	static void
-	tdp_cleanup(Tcl_Interp *interp) {
-	    DBG(fprintf(stderr,"--->>> tdp_cleanup\n"));
-
-	    Tcl_Obj **global_objects = 
-	        (Tcl_Obj **) Tcl_GetAssocData(interp, ASSOC_DATA_KEY_go, NULL);
-
-	    if (!global_objects) {
-		DBG(fprintf(stderr,"--->>> tdp_cleanup: no global_objects to clean file=$codearr(file)\n"));
-		return;
-	    }
-
-	    int i;
-	    for(i = 0; i < $codearr(global_strings_len); i++) 
-	    {
-	     Tcl_DecrRefCount(global_objects[i]);
-	    }
-
-	    Tcl_Free((char *) global_objects);
-	    Tcl_DeleteAssocData(interp,ASSOC_DATA_KEY_go);
-
-	    #ifdef REUSE_DSTRING
-	    Tcl_Obj *dsPtr = (Tcl_DString *) Tcl_GetAssocData(interp, ASSOC_DATA_KEY_ds, NULL);
-	    if (!dsPtr) {
-		DBG(fprintf(stderr,"--->>> tdp_cleanup: no dstring to clean file=$codearr(file)\n"));
-		return;
-	    }
-	    Tcl_DStringFree(dsPtr);
-	    Tcl_Free((char *) dsPtr);
-	    Tcl_DeleteAssocData(interp,ASSOC_DATA_KEY_ds);
-	    #endif
-
-	}
-
-	static void
-	ExitHandler(ClientData clientData) {
-	    Tcl_Interp *interp = (Tcl_Interp *) clientData;
-	    tdp_cleanup(interp);
-	    Tcl_Release(interp);
-	}
-
-	static void
-	tdp_ThreadExitProc(ClientData clientData) {
-	    void tdp_ExitProc(ClientData clientData);
-	    Tcl_DeleteExitHandler(tdp_ExitProc, clientData);
-	    ExitHandler(clientData);
-	}
-
-	void
-	tdp_ExitProc(ClientData clientData) {
-	    Tcl_DeleteThreadExitHandler(tdp_ThreadExitProc, clientData);
-	    ExitHandler(clientData);
-	}
-
-	static void
-	RegisterExitHandlers(ClientData clientData) {
-	    Tcl_Preserve(clientData);
-	    Tcl_CreateThreadExitHandler(tdp_ThreadExitProc, clientData);
-	    Tcl_CreateExitHandler(tdp_ExitProc,clientData);
-	}
-
-
-	// ----------------------------------- auxiliary ----------------------------------------
-
-
-	int strcmp_eq(const char *s1, const char *s2) {
-	    return 0 == strcmp(s1,s2);
-	}
-
-	int strcmp_ne(const char *s1, const char *s2) {
-	    return 0 != strcmp(s1,s2);
-	}
-
-	int intcmp_eq(int x, int y) {
-	    return x==y;
-	}
-
-	int intcmp_ne(int x, int y) {
-	    return x!=y;
-	}
-
-	const char *getstr(Tcl_Obj *objPtr) {
-	    return Tcl_GetString(objPtr);
-	}
-
-
-	/* fetch value from "::__data__" array */
-	static
-	Tcl_Obj *getvar_0 /* tclvar */ (Tcl_Interp *interp, Tcl_Obj **global_objects, Tcl_Obj *const objPtr, Tcl_Obj *const objPtr2) {
-	    return Tcl_ObjGetVar2(interp,objPtr,objPtr2,TCL_GLOBAL_ONLY);
-	}
-
-
-	#ifdef USE_NSF
-	/* fetch value from xotcl object */
-	static
-	Tcl_Obj *getvar_1 /* nsfvar */ (Tcl_Interp *interp, Tcl_Obj **global_objects, Tcl_Obj *const objPtr1, Tcl_Obj *const objPtr2) {
-
-	    Tcl_IncrRefCount(objPtr1);
-	    Tcl_IncrRefCount(objPtr2);
-
-	    Tcl_Obj *const objv[] = { 
-		global_objects[OBJECT_NSF_VAR_SET], 
-		objPtr1, 
-		objPtr2 
-	    };
-
-	    if ( TCL_ERROR == Tcl_EvalObjv(interp, 3, objv, TCL_EVAL_GLOBAL) ) {
-		Tcl_DecrRefCount(objPtr1);
-		Tcl_DecrRefCount(objPtr2);
-		return NULL;
-	    }
-
-	    Tcl_DecrRefCount(objPtr1);
-	    Tcl_DecrRefCount(objPtr2);
-
-	    return Tcl_DuplicateObj(Tcl_GetObjResult(interp));
-	}
-	#else
-	/* fetch value from TCL dictionary */
-	static
-	Tcl_Obj *getvar_1 /* dict_elem_var */ (Tcl_Interp *interp, Tcl_Obj **global_objects, Tcl_Obj *const dictPtr, Tcl_Obj *const keyPtr) {
-
-	    Tcl_Obj *valuePtr;
-	    if (TCL_ERROR == Tcl_DictObjGet(interp,dictPtr,keyPtr,&valuePtr)) {
-		DBG(fprintf(stderr,"DictObjGet error"));
-		return NULL;
-	    }
-	    return valuePtr;
-	}
-	#endif
-
-
-	static
-	void append_quoted_html(Tcl_DString *dsPtr, const char *string, int length) {
-	    while (length--) {
-		switch (*string) {
-		    case '<':
-		    Tcl_DStringAppend(dsPtr, "&lt;",4);
-		    break;
-
-		    case '>':
-		    Tcl_DStringAppend(dsPtr, "&gt;",4);
-		    break;
-
-		    case '&':
-		    Tcl_DStringAppend(dsPtr, "&amp;",5);
-		    break;
-
-		    case '\'':
-		    Tcl_DStringAppend(dsPtr, "&#39;",5);
-		    break;
-
-		    case '"': /* '" */
-		    Tcl_DStringAppend(dsPtr, "&#34;",5);
-		    break;
-            
-		    default:
-		    Tcl_DStringAppend(dsPtr, string, 1);
-		    break;
-		}
-		++string;
-	    }
-	}
-
-	/* append value from "::__data__" array */
-	static
-	void append_0 /* tclvar */ (Tcl_Interp *interp, Tcl_Obj **global_objects, Tcl_Obj *objPtr1, Tcl_Obj *objPtr2, Tcl_DString *dsPtr, int noquote) {
-
-	    if (!objPtr1 || !objPtr2)  return;
-
-	    Tcl_Obj *objPtr = Tcl_ObjGetVar2(interp,objPtr1,objPtr2,TCL_GLOBAL_ONLY);
-	    if (objPtr) {
-		int length;
-		const char *bytes = Tcl_GetStringFromObj(objPtr,&length);
-		if (noquote) 
-		  Tcl_DStringAppend(dsPtr,bytes,length);
-		else
-		  append_quoted_html(dsPtr,bytes,length);
-	    }
-
-	    // if (error) Tcl_DStringAppend(dsPtr,"-ERROR-",7);
-	}
-
-	#ifdef USE_NSF
-	/* append value from xotcl object to dsPtr */
-	static
-	void append_1 /* nsfvar */ (Tcl_Interp *interp, Tcl_Obj **global_objects, Tcl_Obj *const objPtr1, Tcl_Obj *const objPtr2, Tcl_DString *const dsPtr, int noquote) {
-	    Tcl_IncrRefCount(objPtr1);
-	    Tcl_IncrRefCount(objPtr2);
-
-	    Tcl_Obj *const objv[] = { global_objects[OBJECT_NSF_VAR_SET], objPtr1, objPtr2 };
-
-	    if ( TCL_ERROR == Tcl_EvalObjv(interp, 3, objv, TCL_EVAL_GLOBAL) ) {
-		Tcl_DecrRefCount(objPtr1);
-		Tcl_DecrRefCount(objPtr2);
-		return;
-	    }
-
-	    int length;
-	    const char *bytes = Tcl_GetStringFromObj(Tcl_GetObjResult(interp),&length);
-	    if (noquote) 
-	      Tcl_DStringAppend(dsPtr,bytes,length);
-	    else
-	      append_quoted_html(dsPtr,bytes,length);
-
-
-	    Tcl_DecrRefCount(objPtr1);
-	    Tcl_DecrRefCount(objPtr2);
-	}
-	#else
-	/* append value from TCL dictionary to dsPtr */
-	static
-	void append_1 /* dict_elem_var */ (Tcl_Interp *interp, Tcl_Obj **global_objects, Tcl_Obj *const dictPtr, Tcl_Obj *const keyPtr, Tcl_DString *const dsPtr, int noquote) {
-
-	    Tcl_Obj *valuePtr;
-	    if (TCL_ERROR == Tcl_DictObjGet(interp,dictPtr,keyPtr,&valuePtr)) {
-            DBG(fprintf(stderr,"DictObjGet error in append_1"));
-            return /* NULL */;
-	    }
-
-	    int length;
-	    const char *bytes = Tcl_GetStringFromObj(valuePtr,&length);
-	    if (noquote) 
-	      Tcl_DStringAppend(dsPtr,bytes,length);
-	    else
-	      append_quoted_html(dsPtr,bytes,length);
-
-	}
-	#endif
-
-
-	static
-	void append_obj(Tcl_Obj *objPtr, Tcl_DString *dsPtr, int noquote) {
-	    int length;
-	    const char *bytes = Tcl_GetStringFromObj(objPtr,&length);
-	    if (noquote) 
-	      Tcl_DStringAppend(dsPtr,bytes,length);
-	    else
-	      append_quoted_html(dsPtr,bytes,length);
-	}
-
-	static
-	void append_obj_element(Tcl_Interp *interp,Tcl_Obj *objPtr, int index, Tcl_DString *dsPtr, int noquote) {
-	    Tcl_Obj *elemPtr;
-	    Tcl_ListObjIndex(interp,objPtr,index,&elemPtr);
-	    if (!elemPtr) {
-		// TODO: possibly raise error
-		return;
-	    }
-	    int length;
-	    const char *bytes = Tcl_GetStringFromObj(elemPtr,&length);
-	    if (noquote) 
-	      Tcl_DStringAppend(dsPtr,bytes,length);
-	    else
-	      append_quoted_html(dsPtr,bytes,length);
-	}
-
-	static
-	Tcl_Obj *getvar_obj_element(Tcl_Interp *interp,Tcl_Obj *objPtr, int index) {
-	    Tcl_Obj *elemPtr;
-	    Tcl_ListObjIndex(interp,objPtr,index,&elemPtr);
-	    if (!elemPtr) {
-		// TODO: possibly raise error
-		return;
-	    }
-	    return elemPtr;
-	}
-
-	static
-	int getint_0 /* tclvar */ (Tcl_Interp *interp, Tcl_Obj **global_objects, Tcl_Obj *part1Ptr, Tcl_Obj *part2Ptr) {
-
-
-	    Tcl_Obj *objPtr = Tcl_ObjGetVar2(interp,part1Ptr,part2Ptr,TCL_GLOBAL_ONLY);
-	    // TODO: check if objPtr is null
-	    if (!objPtr) {
-		DBG(fprintf(stderr,"getint_0 / tclvar / error\n"));
-	    }
-	    Tcl_IncrRefCount(objPtr);
-
-
-	    int intValue;
-	    if (TCL_OK != Tcl_GetIntFromObj(interp,objPtr,&intValue)) {
-		// return TCL_ERROR;
-		Tcl_DecrRefCount(objPtr);
-		return 0;
-	    }
-
-	    Tcl_DecrRefCount(objPtr);
-	    return intValue;
-	}
-
-	static
-	int getint_1 /* nsfvar */ (Tcl_Interp *interp, Tcl_Obj **global_objects, Tcl_Obj *part1Ptr, Tcl_Obj *part2Ptr) {
-
-	    Tcl_Obj *objPtr = getvar_1 /* nsfvar */ (interp,global_objects,part1Ptr,part2Ptr);
-	    // TODO: check if objPtr is null
-	    if (!objPtr) {
-		DBG(fprintf(stderr,"getint_1 / nsfvar / error\n"));
-	    }
-	    Tcl_IncrRefCount(objPtr);
-
-	    int intValue;
-	    if (TCL_OK != Tcl_GetIntFromObj(interp,objPtr,&intValue)) {
-		// return TCL_ERROR;
-		Tcl_DecrRefCount(objPtr);
-		return 0;
-	    }
-
-	    Tcl_DecrRefCount(objPtr);
-	    return intValue;
-
-	}
-
-	static
-	int getint_2 /* tclobj */ (Tcl_Interp *interp, Tcl_Obj *objPtr) {
-	    if (!objPtr) {
-		// TODO: raise error somehow, use 'goto' perhaps?
-		return 0;
-	    }
-
-	    int intValue;
-	    if (TCL_OK != Tcl_GetIntFromObj(interp,objPtr,&intValue)) {
-		// return TCL_ERROR;
-		return 0;
-	    }
-	    return intValue;
-	}
-
-	static
-	int getbool_0 /* tclvar */ (Tcl_Interp *interp, Tcl_Obj **global_objects, Tcl_Obj *part1Ptr, Tcl_Obj *part2Ptr) {
-
-
-	    Tcl_Obj *objPtr = Tcl_ObjGetVar2(interp,part1Ptr,part2Ptr,TCL_GLOBAL_ONLY);
-	    // TODO: check if objPtr is null
-	    if (!objPtr) {
-		DBG(fprintf(stderr,"getbool_0 / tclvar / error\n"));
-	    }
-	    Tcl_IncrRefCount(objPtr);
-
-	    int boolValue;
-	    if (TCL_OK != Tcl_GetBooleanFromObj(interp,objPtr,&boolValue)) {
-		// return TCL_ERROR;
-		Tcl_DecrRefCount(objPtr);
-		return 0;
-	    }
-
-	    Tcl_DecrRefCount(objPtr);
-	    return boolValue;
-
-	}
-
-	static
-	int getbool_1 /* nsfvar */ (Tcl_Interp *interp, Tcl_Obj **global_objects, Tcl_Obj *part1Ptr, Tcl_Obj *part2Ptr) {
-
-	    Tcl_Obj *objPtr = getvar_1 /* nsfvar */ (interp,global_objects,part1Ptr,part2Ptr);
-	    // TODO: check if objPtr is null
-	    if (!objPtr) {
-		DBG(fprintf(stderr,"getbool_1 / nsfvar / error\n"));
-		return 0;
-	    }
-	    Tcl_IncrRefCount(objPtr);
-
-	    int boolValue;
-	    if (TCL_OK != Tcl_GetBooleanFromObj(interp,objPtr,&boolValue)) {
-		// return TCL_ERROR;
-		Tcl_DecrRefCount(objPtr);
-		return 0;
-	    }
-
-	    Tcl_DecrRefCount(objPtr);
-	    return boolValue;
-
-	}
-
-	int getbool_2 /* tclobj */ (Tcl_Interp *interp, Tcl_Obj *objPtr) {
-	    if (!objPtr) {
-		// TODO: raise error somehow, use 'goto' perhaps?
-		return 0;
-	    }
-
-	    int boolValue;
-	    if (TCL_OK != Tcl_GetBooleanFromObj(interp,objPtr,&boolValue)) {
-		// return TCL_ERROR;
-		return 0;
-	    }
-	    return boolValue;
-	}
-
-
-	// ----------------------------------- widgets ----------------------------------------
-
-	$codearr(defs)
-
-	// ----------------------------------- www_{ino}_Cmd ----------------------------------
-
-
-	static int
-	Result(Tcl_Interp *interp, int result)
-	{
-	    Tcl_SetObjResult(interp, Tcl_NewBooleanObj(result == TCL_OK ? 1 : 0));
-	    return TCL_OK;
-	}
-
-	static int
-	${c_cmd_name} (ClientData  clientData, Tcl_Interp *interp, int objc, Tcl_Obj * const objv[] ) {
-
-	    Tcl_Obj **global_objects = 
-	        (Tcl_Obj **) Tcl_GetAssocData(interp, ASSOC_DATA_KEY_go, NULL);
-
-	    #ifdef REUSE_DSTRING
-
-	    Tcl_DString *dsPtr = 
-	        (Tcl_DString *) Tcl_GetAssocData(interp, ASSOC_DATA_KEY_ds, NULL);
-
-	    DBG(fprintf(stderr,"dstring length after GetAssocData = %d\n",Tcl_DStringLength(dsPtr)));
-
-	    Tcl_DStringSetLength(dsPtr,0);
-
-	    #else
-
-	    Tcl_DString ds;
-	    Tcl_DString *dsPtr = &ds;
-	    Tcl_DStringInit(dsPtr);
-	    // EXPERIMENTAL - allocate a large initial buffer
-	    // Tcl_DStringSetLength(dsPtr,3*8192);
-	    // Tcl_DStringSetLength(dsPtr,0);
-
-	    #endif
-
-	    ${c_cmd_code}
-	}
-
-
-	static void 
-	tdp_InitModule(Tcl_Interp *interp) {
-	    Tcl_Obj **global_objects = (Tcl_Obj **) Tcl_Alloc($codearr(global_strings_len) * sizeof(Tcl_Obj *));
-
-	    int i;
-	    for(i = 0; i < $codearr(global_strings_len); i++) 
-	    {
-	     global_objects[i] = Tcl_NewStringObj(global_strings[i],global_string_len[i]);
-	     Tcl_IncrRefCount(global_objects[i]);
-	    }
-	
-	    Tcl_SetAssocData(interp, ASSOC_DATA_KEY_go, NULL, global_objects);
-
-	    #ifdef REUSE_DSTRING
-	    Tcl_DString *dsPtr = (Tcl_DString *) Tcl_Alloc(sizeof(Tcl_DString));
-	    Tcl_DStringInit(dsPtr);
-	    Tcl_SetAssocData(interp, ASSOC_DATA_KEY_ds, NULL, dsPtr);
-	    #endif
-
-	    Tcl_CreateObjCommand(interp, "${tcl_cmd_name}", $c_cmd_name, NULL, NULL);
-	}
+
+        $codearr(macros)
+
+        #include "/web/servers/service-phigita/lib/templating/c/tdp.h"
+
+        static const char *const global_strings[] = { 
+            $c_global_strings 
+        };
+
+        static const int global_string_len[] = {
+            $c_global_strings_len_arr
+        };
+
+        static void
+        tdp_cleanup(Tcl_Interp *interp) {
+            DBG(fprintf(stderr,"--->>> tdp_cleanup\n"));
+
+            Tcl_Obj **global_objects = 
+            (Tcl_Obj **) Tcl_GetAssocData(interp, ASSOC_DATA_KEY_go, NULL);
+
+            if (!global_objects) {
+                DBG(fprintf(stderr,"--->>> tdp_cleanup: no global_objects to clean file=$codearr(file)\n"));
+                return;
+            }
+
+            int i;
+            for(i = 0; i < $codearr(global_strings_len); i++) 
+            {
+                Tcl_DecrRefCount(global_objects[i]);
+            }
+
+            Tcl_Free((char *) global_objects);
+            Tcl_DeleteAssocData(interp,ASSOC_DATA_KEY_go);
+
+            #ifdef REUSE_DSTRING
+            Tcl_Obj *dsPtr = (Tcl_DString *) Tcl_GetAssocData(interp, ASSOC_DATA_KEY_ds, NULL);
+            if (!dsPtr) {
+                DBG(fprintf(stderr,"--->>> tdp_cleanup: no dstring to clean file=$codearr(file)\n"));
+                return;
+            }
+            Tcl_DStringFree(dsPtr);
+            Tcl_Free((char *) dsPtr);
+            Tcl_DeleteAssocData(interp,ASSOC_DATA_KEY_ds);
+            #endif
+
+        }
+
+
+        // ----------------------------------- widgets ----------------------------------------
+
+        $codearr(defs)
+
+        // ----------------------------------- www_{ino}_Cmd ----------------------------------
+
+
+        static int
+        ${c_cmd_name} (ClientData  clientData, Tcl_Interp *interp, int objc, Tcl_Obj * const objv[] ) {
+
+            Tcl_Obj **global_objects = 
+            (Tcl_Obj **) Tcl_GetAssocData(interp, ASSOC_DATA_KEY_go, NULL);
+
+            #ifdef REUSE_DSTRING
+
+            Tcl_DString *dsPtr = 
+            (Tcl_DString *) Tcl_GetAssocData(interp, ASSOC_DATA_KEY_ds, NULL);
+
+            DBG(fprintf(stderr,"dstring length after GetAssocData = %d\n",Tcl_DStringLength(dsPtr)));
+
+            Tcl_DStringSetLength(dsPtr,0);
+
+            #else
+
+            Tcl_DString ds;
+            Tcl_DString *dsPtr = &ds;
+            Tcl_DStringInit(dsPtr);
+            // EXPERIMENTAL - allocate a large initial buffer
+            // Tcl_DStringSetLength(dsPtr,3*8192);
+            // Tcl_DStringSetLength(dsPtr,0);
+
+            #endif
+
+            ${c_cmd_code}
+        }
+
+
+        static void 
+        tdp_InitModule(Tcl_Interp *interp) {
+            Tcl_Obj **global_objects = (Tcl_Obj **) Tcl_Alloc($codearr(global_strings_len) * sizeof(Tcl_Obj *));
+
+            int i;
+            for(i = 0; i < $codearr(global_strings_len); i++) 
+            {
+                global_objects[i] = Tcl_NewStringObj(global_strings[i],global_string_len[i]);
+                Tcl_IncrRefCount(global_objects[i]);
+            }
+
+            Tcl_SetAssocData(interp, ASSOC_DATA_KEY_go, NULL, global_objects);
+
+            #ifdef REUSE_DSTRING
+            Tcl_DString *dsPtr = (Tcl_DString *) Tcl_Alloc(sizeof(Tcl_DString));
+            Tcl_DStringInit(dsPtr);
+            Tcl_SetAssocData(interp, ASSOC_DATA_KEY_ds, NULL, dsPtr);
+            #endif
+
+            Tcl_CreateObjCommand(interp, "${tcl_cmd_name}", $c_cmd_name, NULL, NULL);
+        }
 
 
 
@@ -1368,7 +969,7 @@ proc ::xo::tdp::compile_helper {codearrVar node procName} {
     upvar $codearrVar codearr
 
     if { ${procName} ni {deps initial_rewrite final_rewrite} } {
-	error "compile_helper: procName must be 'deps' or 'initial_rewrite' or 'final_rewrite'"
+        error "compile_helper: procName must be 'deps' or 'initial_rewrite' or 'final_rewrite'"
     }
 
     set cmdName [$node @type]
@@ -1376,9 +977,9 @@ proc ::xo::tdp::compile_helper {codearrVar node procName} {
 
     set result ""
     if { [info procs ${cmd}] ne {} } {
-	if { [catch {set result [$cmd codearr $node]} errMsg] } {
-	    ns_log error "--->>> cmd=$cmd node=[$node nodeName] attributes=[$node attributes] \n\n errMsg=$errMsg \n\n"
-	}
+        if { [catch {set result [$cmd codearr $node]} errMsg] } {
+            ns_log error "--->>> cmd=$cmd node=[$node nodeName] attributes=[$node attributes] \n\n errMsg=$errMsg \n\n"
+        }
     }
     return $result
 }
@@ -1388,7 +989,7 @@ proc ::xo::tdp::compile_helper {codearrVar node procName} {
 proc ::xo::tdp::excludeClassesFromRenaming {selectors} {
     ::templating::css::keepCss ${selectors}
     foreach selector ${selectors} {
-	set ::__CSS_EXCLUDE__(${selector}) 1
+        set ::__CSS_EXCLUDE__(${selector}) 1
     }
 }
 

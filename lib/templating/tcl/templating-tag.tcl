@@ -215,7 +215,7 @@ proc ::templating::tag::val::final_rewrite {codearrVar node} {
 
     set with [$node @with ""]
     if { ${with} ne {} } {
-	set script [prepend_with_object $script $with]
+        set script [prepend_with_object $script $with]
     }
 
     set doc [$node ownerDocument]
@@ -230,14 +230,14 @@ proc ::templating::tag::val::final_rewrite {codearrVar node} {
     # replace this by a specialized tag in the future
     set valuefrom [$node @x-value-from ""]
     if { ${valuefrom} ne {} } {
-	set codearr(${name},attributes) $codearr(${valuefrom},attributes)
+        set codearr(${name},attributes) $codearr(${valuefrom},attributes)
     }
 
     # we have situation in which we setup a list of objects-dictionaries
     # and we need to specify the attributes for the elements in that list
     set attributes [$node @x-value-attributes ""]
     foreach attname ${attributes} {
-	lappend codearr(${name},attributes) ${attname}
+        lappend codearr(${name},attributes) ${attname}
     }
 
 }
@@ -255,7 +255,7 @@ proc ::templating::tag::val::to_c {codearrVar node} {
 
     set timeout [$node @cache_timeout ""]
     if { $timeout ne {} && [string is integer -strict $timeout] } {
-	set script "util_memoize \{${script}\} ${timeout}"
+        set script "util_memoize \{${script}\} ${timeout}"
     }
 
     add_global_string codearr OBJECT_DATA "::__data__"
@@ -263,48 +263,26 @@ proc ::templating::tag::val::to_c {codearrVar node} {
 
     set found_p [exists_indexed_script codearr ${script} ref_id]
     if ${found_p} {
-	if { ${ref_id} eq ${id} } {
-	    # if same script and same id, skip the call
-	    return
-	} else {
-	    # uses the same script but still makes the call
-	    return "val(interp,global_objects,OBJECT_SCRIPT_${ref_id},OBJECT_VARNAME_${name})"
-	}
+        if { ${ref_id} eq ${id} } {
+        # if same script and same id, skip the call
+            return
+        } else {
+        # uses the same script but still makes the call
+            return "tdp_val(interp,global_objects,OBJECT_SCRIPT_${ref_id},OBJECT_VARNAME_${name})"
+        }
     }
 
     add_indexed_script codearr ${id} ${script}
 
-    if { [incr codearr(count,val) 0] == 0 } {
-	# tag=val id=${id}
-	append codearr(defs) [subst -nocommands -nobackslashes {
-	    // just set the data for other widgets to use
-	    static
-	    int val(Tcl_Interp *interp, Tcl_Obj **global_objects, int script_index, int var_index) {
-
-		if ( TCL_ERROR == Tcl_EvalObjEx(interp, global_objects[script_index], TCL_EVAL_GLOBAL) ) {
-		    return TDP_ERROR;
-		} else {
-		    Tcl_Obj *newValuePtr = Tcl_DuplicateObj(Tcl_GetObjResult(interp));
-		    if (!newValuePtr) {
-			return TDP_ERROR;
-		    }
-		    
-		    Tcl_IncrRefCount(newValuePtr);
-		    Tcl_Obj *objPtr = Tcl_ObjSetVar2(interp,global_objects[OBJECT_DATA],global_objects[var_index],newValuePtr,TCL_GLOBAL_ONLY);
-		    if (!objPtr) {
-			Tcl_DecrRefCount(newValuePtr);
-			return TDP_ERROR;
-		    }
-		    Tcl_DecrRefCount(newValuePtr);
-		    return TDP_OK;
-		}
-	    }
-	}]
-    }
+    # c code for val is now included in tdp.h
+    # if { [incr codearr(count,val) 0] == 0 } {
+    # #tag=val id=${id}
+    # append codearr(defs) [subst -nocommands -nobackslashes {}]
+    # }
 
     incr codearr(count,val)
 
-    return "val(interp,global_objects,OBJECT_SCRIPT_${id},OBJECT_VARNAME_${name})"
+    return "tdp_val(interp,global_objects,OBJECT_SCRIPT_${id},OBJECT_VARNAME_${name})"
 }
 
 
@@ -324,102 +302,102 @@ proc ::templating::tag::contract::initial_rewrite {codearrVar node} {
 
     set has_accept_proto_p [$node hasAttribute accept_proto]
     if { ${has_accept_proto_p} } {
-	set accept_proto_for_script  [list [$node @accept_proto ""]]
-	set script [subst -nocommands -nobackslashes {
-	    if { -1 == [lsearch -exact -nocase ${accept_proto_for_script} [::util::coalesce [ad_conn protocol] {http}]] } {
-		return 0
-	    }
-	    return 1
-	}]
-	$pn insertBeforeFromScript { 
-	    guard -id contract__check_conn_proto ${script}
-	} $node
+        set accept_proto_for_script  [list [$node @accept_proto ""]]
+        set script [subst -nocommands -nobackslashes {
+            if { -1 == [lsearch -exact -nocase ${accept_proto_for_script} [::util::coalesce [ad_conn protocol] {http}]] } {
+                return 0
+            }
+            return 1
+        }]
+        $pn insertBeforeFromScript { 
+            guard -id contract__check_conn_proto ${script}
+        } $node
     }
 
     if { [$node hasAttribute accept_method] } {
-	set accept_method_for_script [list [$node @accept_method ""]]
-	set script [subst -nocommands -nobackslashes {
-	    if { -1 == [lsearch -exact -nocase ${accept_method_for_script} [ad_conn method]] } {
-		return 0
-	    }
-	    return 1
-	}]
-	$pn insertBeforeFromScript { 
-	    guard -id contract__check_conn_method ${script}
-	} $node
+        set accept_method_for_script [list [$node @accept_method ""]]
+        set script [subst -nocommands -nobackslashes {
+            if { -1 == [lsearch -exact -nocase ${accept_method_for_script} [ad_conn method]] } {
+                return 0
+            }
+            return 1
+        }]
+        $pn insertBeforeFromScript { 
+            guard -id contract__check_conn_method ${script}
+        } $node
     }
 
     set require_secure_conn_p [$node @require_secure_conn "0"] 
     if { ${require_secure_conn_p} } {
-	$pn insertBeforeFromScript { 
-	    guard -id contract__require_secure_conn {::xo::kit::require_secure_conn}
-	} $node
+        $pn insertBeforeFromScript { 
+            guard -id contract__require_secure_conn {::xo::kit::require_secure_conn}
+        } $node
     }
 
     set require_registration_p [$node @require_registration "0"]
     if { ${require_registration_p} } {
-	$pn insertBeforeFromScript { 
-	    guard -id contract__require_registration {::xo::kit::require_registration}
-	} $node
+        $pn insertBeforeFromScript { 
+            guard -id contract__require_registration {::xo::kit::require_registration}
+        } $node
     }
 
     #error "you cannot require_secure_conn and not accept protocol 'https'"
 
     foreach child [$node childNodes] {
 
-	set tagname [$child nodeName]
-	if { $tagname eq {param} } {
-	    set id         [$child @id]
-	    set name       [$child @name $id]
-	    set strict_p   [::util::coalesce [$child @strict_p "0"] "1"]
-	    set optional_p [::util::coalesce [$child @optional "0"] "1"]
-	    set default    [$child @default ""]
-	    set vlist      [$child @check ""]
-	    set proclist   [$child @transform ""]
+        set tagname [$child nodeName]
+        if { $tagname eq {param} } {
+            set id         [$child @id]
+            set name       [$child @name $id]
+            set strict_p   [::util::coalesce [$child @strict_p "0"] "1"]
+            set optional_p [::util::coalesce [$child @optional "0"] "1"]
+            set default    [$child @default ""]
+            set vlist      [$child @check ""]
+            set proclist   [$child @transform ""]
 
-	    # TODO: remove this when you implement check with xmlint
-	    # or incorporate the check there
-	    foreach vcheck $vlist { 
-		set re {[[:alnum:]_]}
-		if { ![regexp -- $re $vcheck] } {
-		    # complain about it
-		    error "vcheck '${vcheck}' must be an alphanumeric+underscore string"
-		}
-		if { [info procs ::templating::validation::check=${vcheck}] eq {} } {
-		    error "no matching proc for '${vcheck}' in ::templating::validation::check=*"
-		}
-	    }
+            # TODO: remove this when you implement check with xmlint
+            # or incorporate the check there
+            foreach vcheck $vlist { 
+                set re {[[:alnum:]_]}
+                if { ![regexp -- $re $vcheck] } {
+                # complain about it
+                    error "vcheck '${vcheck}' must be an alphanumeric+underscore string"
+                }
+                if { [info procs ::templating::validation::check=${vcheck}] eq {} } {
+                    error "no matching proc for '${vcheck}' in ::templating::validation::check=*"
+                }
+            }
 
-	    add_global_string codearr OBJECT_VARNAME_${name} ${name}
+            add_global_string codearr OBJECT_VARNAME_${name} ${name}
 
-	    set script [list ::templating::get_and_check_param ${id} ${name} ${strict_p} ${optional_p} ${default} ${vlist} ${proclist}]
+            set script [list ::templating::get_and_check_param ${id} ${name} ${strict_p} ${optional_p} ${default} ${vlist} ${proclist}]
 
-	    $pn insertBeforeFromScript { 
-		guard -id check_param_${id} ${script}
-	    } $node
+            $pn insertBeforeFromScript { 
+                guard -id check_param_${id} ${script}
+            } $node
 
-	    $child delete
+            $child delete
 
-	} elseif { $tagname eq {pragma} } {
+        } elseif { $tagname eq {pragma} } {
 
-	    set id [$child @id]
-	    set value [$child @value]
+            set id [$child @id]
+            set value [$child @value]
 
-	    set codearr(pragma.${id}) ${value}
+            set codearr(pragma.${id}) ${value}
 
-	} elseif { $tagname eq {auth} } {
-	    # require regisration
-	    # group / community membership
-	} elseif { $tagname eq {perm} } {
-	    # check permission
-	} elseif { $tagname eq {conn} } {
-	    # accepted protocol
-	    # accepted method
-	    # require secure conn
-	} elseif { $tagname eq {inst} } {
-	    # instantiate well known vars, 
-	    # e.g. registered_p, user_id, context_username, screen_name
-	}
+        } elseif { $tagname eq {auth} } {
+        # require regisration
+        # group / community membership
+        } elseif { $tagname eq {perm} } {
+        # check permission
+        } elseif { $tagname eq {conn} } {
+        # accepted protocol
+        # accepted method
+        # require secure conn
+        } elseif { $tagname eq {inst} } {
+        # instantiate well known vars, 
+        # e.g. registered_p, user_id, context_username, screen_name
+        }
 
     }
 }
@@ -454,41 +432,28 @@ proc ::templating::tag::guard::to_c {codearrVar node} {
 
     set found_p [exists_indexed_script codearr ${script} ref_id]
     if ${found_p} {
-	if { ${ref_id} eq ${id} } {
-	    # if same script and same id, skip the call
-	    return
-	} else {
-	    # uses the same script but still makes the call
-	    return "guard(interp,global_objects,OBJECT_SCRIPT_${ref_id},OBJECT_VARNAME_${name})"
-	}
+        if { ${ref_id} eq ${id} } {
+        # if same script and same id, skip the call
+            return
+        } else {
+        # uses the same script but still makes the call
+            return "tdp_guard(interp,global_objects,OBJECT_SCRIPT_${ref_id},OBJECT_VARNAME_${name})"
+        }
     }
 
     add_global_string codearr OBJECT_DATA "::__data__"
     add_indexed_script codearr ${id} ${script}
 
-    if { [incr codearr(count,guard) 0] == 0 } {
-	# tag=guard id=${id}
-	# _xo_${other_id}
-	append codearr(defs) [subst -nocommands -nobackslashes {
-	    static
-	    int guard(Tcl_Interp *interp, Tcl_Obj **global_objects, int script_index) {
-		if ( TCL_ERROR == Tcl_EvalObjEx(interp, global_objects[script_index], TCL_EVAL_GLOBAL) ) {
-		    return TDP_ERROR;
-		} else {
-		    int boolValue;
-		    if (TCL_OK != Tcl_GetBooleanFromObj(interp,Tcl_GetObjResult(interp),&boolValue)) {
-			return TDP_ERROR;
-		    }
-		    if (!boolValue) return TDP_ABORT;
-		    return TDP_OK;
-		}
-	    }
-	}]
-    }
+    # c code for guard now in tdp.h
+    # if { [incr codearr(count,guard) 0] == 0 } {
+    # # tag=guard id=${id}
+    # # _xo_${other_id}
+    #    append codearr(defs) [subst -nocommands -nobackslashes {}]
+    # }
 
     incr codearr(count,guard)
 
-    return "guard(interp,global_objects,OBJECT_SCRIPT_${id});"
+    return "tdp_guard(interp,global_objects,OBJECT_SCRIPT_${id});"
 }
 
 
@@ -590,7 +555,7 @@ proc ::templating::tag::datastore::to_c {codearrVar node} {
 
     # substitute bind vars in sql script, id=:id
     set sql_script_quoted_vars [sql_bind_var_substitution $sql_script_orig]
-    
+
     # transform any other refs, e.g. -where @{extra_clause}
     set sql [transform_refs codearr $sql_script_quoted_vars]
 
@@ -602,14 +567,14 @@ proc ::templating::tag::datastore::to_c {codearrVar node} {
 
     set cache_expr [list]
     if { $cache ne {} } {
-	set num_of_refs 0
-	lappend cache_expr [transform_refs codearr ${cache} num_of_refs]
-	lappend cache_expr $num_of_refs
+        set num_of_refs 0
+        lappend cache_expr [transform_refs codearr ${cache} num_of_refs]
+        lappend cache_expr $num_of_refs
 
-	set timeout [$node @cache_timeout ""]
-	if { $timeout ne {} } {
-	    lappend cache_expr ${timeout}
-	}
+        set timeout [$node @cache_timeout ""]
+        if { $timeout ne {} } {
+            lappend cache_expr ${timeout}
+        }
 
     }
 
@@ -632,179 +597,179 @@ proc ::templating::tag::datastore::to_c {codearrVar node} {
     set c_extend_code ""
     if { $extend ne {} } {
 
-	set data_object_type [::templating::config::get_option "data_object_type"]
+        set data_object_type [::templating::config::get_option "data_object_type"]
 
-	if { $data_object_type eq {DICT} } {
-
-
-	    lassign [intersect3 \
-			 $codearr(${name},extend_attributes) \
-			 $codearr(${name},sql_attributes)] \
-		added_attrs \
-		common_attrs \
-		deleted_attrs
+        if { $data_object_type eq {DICT} } {
 
 
-	    set extend_dict_extra ""
-	    set extend_keyc 0
-	    foreach att $added_attrs {
-		add_global_string codearr OBJECT_DICT_KEY_${att} ${att}
-		#append extend_keyv_extra "global_objects\[OBJECT_DICT_KEY_${att}\]"
-		append extend_dict_extra "\n" "Tcl_DictObjPut(interp,dictPtr,global_objects\[OBJECT_DICT_KEY_${att}\],global_objects\[OBJECT_EMPTY\]);"
-		incr extend_keyc
-	    }
+            lassign [intersect3 \
+                $codearr(${name},extend_attributes) \
+                $codearr(${name},sql_attributes)] \
+                added_attrs \
+                common_attrs \
+                deleted_attrs
 
-	    set c_extend_code [subst -nocommands -nobackslashes {
 
-	    Tcl_Obj *const extend_objv[] = {
-		global_objects[OBJECT_DICT_KEYWORD],
-		global_objects[OBJECT_WITH_KEYWORD],
-		global_objects[OBJECT_TMPNAME_dictionaryVariable],
-		global_objects[OBJECT_EXTEND_${id}]
-	    };
+            set extend_dict_extra ""
+            set extend_keyc 0
+            foreach att $added_attrs {
+                add_global_string codearr OBJECT_DICT_KEY_${att} ${att}
+                #append extend_keyv_extra "global_objects\[OBJECT_DICT_KEY_${att}\]"
+                append extend_dict_extra "\n" "Tcl_DictObjPut(interp,dictPtr,global_objects\[OBJECT_DICT_KEY_${att}\],global_objects\[OBJECT_EMPTY\]);"
+                incr extend_keyc
+            }
 
-	    int i;
-	    Tcl_Obj *objPtr_i;
-	    for (i = 0; i < length; i++) 
-	    {
-	      Tcl_ListObjIndex(interp,listPtr,i,&objPtr_i);
-	      Tcl_IncrRefCount(objPtr_i);
+            set c_extend_code [subst -nocommands -nobackslashes {
 
-	      Tcl_Obj *dictPtr = Tcl_ObjSetVar2(interp,
-			    global_objects[OBJECT_TMPNAME_dictionaryVariable],
-			    NULL,
-			    Tcl_DuplicateObj(objPtr_i),
-			    TCL_LEAVE_ERR_MSG);
+                Tcl_Obj *const extend_objv[] = {
+                    global_objects[OBJECT_DICT_KEYWORD],
+                    global_objects[OBJECT_WITH_KEYWORD],
+                    global_objects[OBJECT_TMPNAME_dictionaryVariable],
+                    global_objects[OBJECT_EXTEND_${id}]
+                };
 
-	      #if ${extend_keyc}
-	      ${extend_dict_extra}
-	      #endif
+                int i;
+                Tcl_Obj *objPtr_i;
+                for (i = 0; i < length; i++) 
+                {
+                    Tcl_ListObjIndex(interp,listPtr,i,&objPtr_i);
+                    Tcl_IncrRefCount(objPtr_i);
 
-	      if (TCL_ERROR == Tcl_EvalObjv(interp, 4, extend_objv, TCL_EVAL_GLOBAL)) {
-		  int j;
-		  DBG(fprintf(stderr,"FAILURE interp_result=%s\n",Tcl_GetStringResult(interp)));
-	 	  // Tcl_DecrRefCount(objPtr_i);
-		  Tcl_DecrRefCount(listPtr);
-		  return TDP_ERROR;
-	      }
+                    Tcl_Obj *dictPtr = Tcl_ObjSetVar2(interp,
+                    global_objects[OBJECT_TMPNAME_dictionaryVariable],
+                    NULL,
+                    Tcl_DuplicateObj(objPtr_i),
+                    TCL_LEAVE_ERR_MSG);
 
-	      #if ${extend_keyc}
-	      Tcl_ListObjReplace(interp,
-				 listPtr,
-				 i,
-				 1,
-				 1,
-				 (Tcl_Obj **) &dictPtr);
-	      #endif
-			     
-	      // DBG(fprintf(stderr,"extend iteration i=%d dict=%s\n",i,Tcl_GetString(objPtr_i)));
+                    #if ${extend_keyc}
+                    ${extend_dict_extra}
+                    #endif
 
-	      Tcl_DecrRefCount(objPtr_i);
-	    }
+                    if (TCL_ERROR == Tcl_EvalObjv(interp, 4, extend_objv, TCL_EVAL_GLOBAL)) {
+                        int j;
+                        DBG(fprintf(stderr,"FAILURE interp_result=%s\n",Tcl_GetStringResult(interp)));
+                        // Tcl_DecrRefCount(objPtr_i);
+                        Tcl_DecrRefCount(listPtr);
+                        return TDP_ERROR;
+                    }
 
-	  }]
+                    #if ${extend_keyc}
+                    Tcl_ListObjReplace(interp,
+                    listPtr,
+                    i,
+                    1,
+                    1,
+                    (Tcl_Obj **) &dictPtr);
+                    #endif
 
-	} elseif { $data_object_type eq {NSF} } {
+                    // DBG(fprintf(stderr,"extend iteration i=%d dict=%s\n",i,Tcl_GetString(objPtr_i)));
 
-	    set c_extend_code [subst -nocommands -nobackslashes {
+                    Tcl_DecrRefCount(objPtr_i);
+                }
 
-		Tcl_Obj * extend_objv[] = {
-		    NULL,
-		    global_objects[OBJECT_EVAL_METHOD],
-		    global_objects[OBJECT_EXTEND_${id}]
-		};
+            }]
 
-		int i;
-		
-		Tcl_Obj *objPtr_i;
-		for (i = 0; i < length; i++) 
-		{
-		 Tcl_ListObjIndex(interp,listPtr,i,&objPtr_i);
-		 Tcl_IncrRefCount(objPtr_i);
-		 extend_objv[0] = objPtr_i;
-		 if (TCL_ERROR == Tcl_EvalObjv(interp,3,extend_objv,TCL_EVAL_GLOBAL)) {
-		     Tcl_DecrRefCount(objPtr_i);
-		     Tcl_DecrRefCount(listPtr);
-		     return TDP_ERROR;
-		 }
-		 Tcl_DecrRefCount(objPtr_i);
-	     }
+        } elseif { $data_object_type eq {NSF} } {
 
-	    }]
+            set c_extend_code [subst -nocommands -nobackslashes {
 
-	}
+                Tcl_Obj * extend_objv[] = {
+                    NULL,
+                    global_objects[OBJECT_EVAL_METHOD],
+                    global_objects[OBJECT_EXTEND_${id}]
+                };
+
+                int i;
+
+                Tcl_Obj *objPtr_i;
+                for (i = 0; i < length; i++) 
+                {
+                    Tcl_ListObjIndex(interp,listPtr,i,&objPtr_i);
+                    Tcl_IncrRefCount(objPtr_i);
+                    extend_objv[0] = objPtr_i;
+                    if (TCL_ERROR == Tcl_EvalObjv(interp,3,extend_objv,TCL_EVAL_GLOBAL)) {
+                        Tcl_DecrRefCount(objPtr_i);
+                        Tcl_DecrRefCount(listPtr);
+                        return TDP_ERROR;
+                    }
+                    Tcl_DecrRefCount(objPtr_i);
+                }
+
+            }]
+
+        }
     }
 
     if { ${singleton} } {
-	# save the head of the list
-	# in most cases singleton should be accompanied with limit=1
-	# and thus the listPtr would contain just one element
-	set c_save_result [subst -nocommands -nobackslashes {
+    # save the head of the list
+    # in most cases singleton should be accompanied with limit=1
+    # and thus the listPtr would contain just one element
+        set c_save_result [subst -nocommands -nobackslashes {
 
-	    if (length) {
-		// return the head of the list
-		Tcl_Obj *newValuePtr;
-		Tcl_ListObjIndex(interp,listPtr,0, &newValuePtr);
-		Tcl_IncrRefCount(newValuePtr);
-		Tcl_Obj *objPtr = Tcl_ObjSetVar2(interp, part1Ptr, part2Ptr,newValuePtr,TCL_GLOBAL_ONLY);
-		if (!objPtr) {
-		    Tcl_DecrRefCount(newValuePtr);
-		    Tcl_DecrRefCount(listPtr);
-		    return TDP_ERROR;
-		}
-		Tcl_DecrRefCount(newValuePtr);
-	    } else {
-		Tcl_Obj *objPtr = Tcl_ObjSetVar2(interp, part1Ptr, part2Ptr,listPtr,TCL_GLOBAL_ONLY);
-		if (!objPtr) {
-		    Tcl_DecrRefCount(listPtr);
-		    return TDP_ERROR;
-		}
-	    }
-	}]
+            if (length) {
+                // return the head of the list
+                Tcl_Obj *newValuePtr;
+                Tcl_ListObjIndex(interp,listPtr,0, &newValuePtr);
+                Tcl_IncrRefCount(newValuePtr);
+                Tcl_Obj *objPtr = Tcl_ObjSetVar2(interp, part1Ptr, part2Ptr,newValuePtr,TCL_GLOBAL_ONLY);
+                if (!objPtr) {
+                    Tcl_DecrRefCount(newValuePtr);
+                    Tcl_DecrRefCount(listPtr);
+                    return TDP_ERROR;
+                }
+                Tcl_DecrRefCount(newValuePtr);
+            } else {
+                Tcl_Obj *objPtr = Tcl_ObjSetVar2(interp, part1Ptr, part2Ptr,listPtr,TCL_GLOBAL_ONLY);
+                if (!objPtr) {
+                    Tcl_DecrRefCount(listPtr);
+                    return TDP_ERROR;
+                }
+            }
+        }]
     } else {
-	# save the whole list
-	set c_save_result [subst -nocommands -nobackslashes {
-	    Tcl_Obj *objPtr = Tcl_ObjSetVar2(interp, part1Ptr, part2Ptr,listPtr,TCL_GLOBAL_ONLY);
-	    if (!objPtr) {
-		Tcl_DecrRefCount(listPtr);
-		return TDP_ERROR;
-	    }
-	}]
+    # save the whole list
+        set c_save_result [subst -nocommands -nobackslashes {
+            Tcl_Obj *objPtr = Tcl_ObjSetVar2(interp, part1Ptr, part2Ptr,listPtr,TCL_GLOBAL_ONLY);
+            if (!objPtr) {
+                Tcl_DecrRefCount(listPtr);
+                return TDP_ERROR;
+            }
+        }]
     }
 
     append codearr(defs) [subst -nocommands -nobackslashes {
-	// tag=datastore id=${id}
-	// wrap code in functions to avoid name clashes
-	static
-	int _xo_${other_id}(Tcl_Interp *interp, Tcl_Obj **global_objects) {
+        // tag=datastore id=${id}
+        // wrap code in functions to avoid name clashes
+        static
+        int _xo_${other_id}(Tcl_Interp *interp, Tcl_Obj **global_objects) {
 
-	    Tcl_Obj *const objv[] = {
-		global_objects[OBJECT_DATA_FROM_SQL_SCRIPT_CMD],
-		global_objects[OBJECT_VARNAME_${name}],
-		global_objects[OBJECT_POOL_${pool}],
-		global_objects[OBJECT_SQL_${id}],
-		global_objects[OBJECT_CACHE_${id}]
-	    };
+            Tcl_Obj *const objv[] = {
+                global_objects[OBJECT_DATA_FROM_SQL_SCRIPT_CMD],
+                global_objects[OBJECT_VARNAME_${name}],
+                global_objects[OBJECT_POOL_${pool}],
+                global_objects[OBJECT_SQL_${id}],
+                global_objects[OBJECT_CACHE_${id}]
+            };
 
 
-	    if ( TCL_ERROR == Tcl_EvalObjv(interp,5,objv,TCL_EVAL_GLOBAL) ) {
-		return TDP_ERROR;
-	    }
+            if ( TCL_ERROR == Tcl_EvalObjv(interp,5,objv,TCL_EVAL_GLOBAL) ) {
+                return TDP_ERROR;
+            }
 
-	    Tcl_Obj *listPtr = Tcl_DuplicateObj(Tcl_GetObjResult(interp));
-	    Tcl_IncrRefCount(listPtr);
+            Tcl_Obj *listPtr = Tcl_DuplicateObj(Tcl_GetObjResult(interp));
+            Tcl_IncrRefCount(listPtr);
 
-	    int length;
-	    Tcl_ListObjLength(interp, listPtr, &length);
+            int length;
+            Tcl_ListObjLength(interp, listPtr, &length);
 
-	    ${c_extend_code}
+            ${c_extend_code}
 
-	    Tcl_Obj *part1Ptr = global_objects[OBJECT_DATA];
-	    Tcl_Obj *part2Ptr = global_objects[OBJECT_VARNAME_${name}];
-	    ${c_save_result}
-	    Tcl_DecrRefCount(listPtr);
-	    return TDP_OK;
-	}
+            Tcl_Obj *part1Ptr = global_objects[OBJECT_DATA];
+            Tcl_Obj *part2Ptr = global_objects[OBJECT_VARNAME_${name}];
+            ${c_save_result}
+            Tcl_DecrRefCount(listPtr);
+            return TDP_OK;
+        }
     }]
 
     return "_xo_${other_id}(interp,global_objects)"
@@ -820,12 +785,12 @@ proc ::templating::tag::layout::final_rewrite {codearrVar node} {
     # check @class in {"container" "container-fluid"}
 
     [$node parentNode] insertBeforeFromScript {
-	set pn [::tmpl::div -class [$node @class "container"]]
+        set pn [::tmpl::div -class [$node @class "container"]]
     } $node
 
     set childNodes [$node childNodes]
     foreach child $childNodes {
-	$pn appendChild $child
+        $pn appendChild $child
     }
 
 }
@@ -836,24 +801,24 @@ proc ::templating::tag::layout_row::final_rewrite {codearrVar node} {
 
     # check @class in {"row" "row-fluid"}
     if { [$node @class ""] eq {} } {
-	$node setAttribute class "row"
+        $node setAttribute class "row"
     }
 
     [$node parentNode] insertBeforeFromScript {
-	set pn [::tmpl::div]
+        set pn [::tmpl::div]
     } $node
 
     foreach att [$node attributes] {
-	if { $att ne {type} } {
-	    $pn setAttribute $att [$node @${att}]
-	}
+        if { $att ne {type} } {
+            $pn setAttribute $att [$node @${att}]
+        }
     }
 
     set childNodes [$node childNodes]
     foreach child $childNodes {
-	$pn appendChild $child
+        $pn appendChild $child
     }
-    
+
     $node setAttribute __todelete 1
 }
 
@@ -872,19 +837,19 @@ proc ::templating::tag::layout_col::final_rewrite {codearrVar node} {
     # check @class matches "offset*"
 
     [$node parentNode] insertBeforeFromScript {
-	set pn [::tmpl::div]
+        set pn [::tmpl::div]
     } $node
 
 
     foreach att [$node attributes] {
-	if { $att ne {type} } {
-	    $pn setAttribute $att [$node @${att}]
-	}
+        if { $att ne {type} } {
+            $pn setAttribute $att [$node @${att}]
+        }
     }
 
     set childNodes [$node childNodes]
     foreach child $childNodes {
-	$pn appendChild $child
+        $pn appendChild $child
     }
 
     $node setAttribute __todelete 1
@@ -912,28 +877,28 @@ proc ::templating::tag::dataview::to_c {codearrVar node} {
 
     foreach widget $widgets {
 
-	#ns_log notice "(dataview) ::to_c [$widget @type ""] [$widget @id ""]"
+    #ns_log notice "(dataview) ::to_c [$widget @type ""] [$widget @id ""]"
 
-	if { $widget eq $node } continue
+        if { $widget eq $node } continue
 
-	set cmdName [${widget} @type]
-	set cmd "::templating::tag::${cmdName}::to_c"
+        set cmdName [${widget} @type]
+        set cmd "::templating::tag::${cmdName}::to_c"
 
-	if { [info procs ${cmd}] ne {} } {
-	    set call_string [${cmd} codearr ${widget}]
-	    [$widget parentNode] insertBeforeFromScript {
-		tpl -id [$widget @id ""] -call "${call_string}"
-	    } $widget
-	
-	    # mark it so that we won't process it twice
+        if { [info procs ${cmd}] ne {} } {
+            set call_string [${cmd} codearr ${widget}]
+            [$widget parentNode] insertBeforeFromScript {
+                tpl -id [$widget @id ""] -call "${call_string}"
+            } $widget
 
-	    $widget setAttribute skip 1
-	
-	    # move it out of the template that is being compiled
-	    # it will get deleted in compile_to_c_helper
+            # mark it so that we won't process it twice
 
-	    [$node parentNode] appendChild $widget
-	}
+            $widget setAttribute skip 1
+
+            # move it out of the template that is being compiled
+            # it will get deleted in compile_to_c_helper
+
+            [$node parentNode] appendChild $widget
+        }
 
     }
     # end of widgets inside this dataview
@@ -944,16 +909,16 @@ proc ::templating::tag::dataview::to_c {codearrVar node} {
     # temp remove
     #::util::writefile /tmp/test_compiled_template_[$node @id ""].c [$node text]
 
-    
+
     set code [$node text]
     set other_id [$node @other_id]
 
     append codearr(defs) [subst -nocommands -nobackslashes {
-	// tag=dataview
-	int
-	_xo_${other_id}(Tcl_Interp *interp, Tcl_Obj **global_objects, Tcl_DString *dsPtr) {
-	    ${code}
-	}
+        // tag=dataview
+        int
+        _xo_${other_id}(Tcl_Interp *interp, Tcl_Obj **global_objects, Tcl_DString *dsPtr) {
+            ${code}
+        }
     }]
     return "_xo_${other_id}(interp,global_objects,dsPtr)"
 
