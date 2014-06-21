@@ -45,6 +45,7 @@ proc require_template_procs {} {
     ::templating::createNodeCmd master
     ::templating::createNodeCmd contract
     ::templating::createNodeCmd include
+    ::templating::createNodeCmd action
 
     ::templating::createNodeCmd val 1 ;# isTextElement
     ::templating::createNodeCmd guard 1 ;# isTextElement

@@ -75,24 +75,24 @@ div -id "blogs" {
     #layout_row {
 	#layout_col -class span3 {
 	    div {
-		dataview {
-		    tpl -for "blogdata" -limit "3" {
-			dl {
-			    dt {
-				a -href "/~@{screen_name}/blog/@{object_id}" {
-				    t @{title}
-				}
-			    }
-			    dd {
-				a -href "/~@{screen_name}/" {
-				    t @{full_name}
-				}
-				## CHAT presence &nbsp; getStatusImg o set user_id o set status
-				t " (~@{screen_name})"
-			    }
-			}
+            dataview -id "somename" {
+                tpl -for "blogdata" -limit "3" {
+                    dl {
+                        dt {
+                        a -href "/~@{screen_name}/blog/@{object_id}" {
+                            t @{title}
+                        }
+                        }
+                        dd {
+                        a -href "/~@{screen_name}/" {
+                            t @{full_name}
+                        }
+                        ## CHAT presence &nbsp; getStatusImg o set user_id o set status
+                        t " (~@{screen_name})"
+                        }
+                    }
+                }
 		    }
-		}
 	    }
 	#}
 	#layout_col -class span3 {
@@ -106,13 +106,11 @@ div -id "blogs" {
     a -class "btn btn-link btn-mini" -href "http://blogs.phigita.net/" {
 	t "More Blogs"
     }
-    dataview {
 	tpl -if @{val.registered_p} {
 	    t " "
 	    a -class "btn btn-link btn-mini" -href "http://my.phigita.net/blog/" {
 		t "Your Blog"
 	    }
 	}
-    }
 
 }

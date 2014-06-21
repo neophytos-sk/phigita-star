@@ -26,7 +26,7 @@ proc ::templating::compiler::push_block {codearrVar block} {
 }
 
 
-proc ::templating::compiler::incr_block_count {codearrVar depth} {
+proc ::templating::compiler::incr_block_count {codearrVar} {
 
     upvar $codearrVar codearr
 
@@ -330,17 +330,16 @@ proc ::templating::compiler::getter_for_varname {codearrVar block in_text {prefi
 }
 
 
-proc ::templating::compiler::compile_template_for {codearrVar node depth inside_code_block} {
+proc ::templating::compiler::compile_template_for {codearrVar node inside_code_block} {
 
     upvar $codearrVar codearr
 
     set parent_block [top_block codearr]
-    set block_count [incr_block_count codearr $depth]
-    set new_depth [expr {1+$depth}]
-    set block "block${block_count}_o${new_depth}"
+    set block_count [incr_block_count codearr]
+    set block "block${block_count}"
 
     set varname [$node @for]
-    set listvar "block${block_count}_listPtr${depth}"
+    set listvar "block${block_count}_listPtr"
     if { $varname eq {.} || ${varname} eq {} } {
 	set_block_store codearr $block [get_block_store codearr $parent_block]
 	set list_expr ""
@@ -381,7 +380,7 @@ proc ::templating::compiler::compile_template_for {codearrVar node depth inside_
     append compiled_tpl "\n" "for (${indexvar}=${offset}; ${indexvar}<${lenvar} ${extra_condition}; ${indexvar}++) \{"
     append compiled_tpl "\n" "  Tcl_ListObjIndex(interp,${listvar},${indexvar},&${block});"
     append compiled_tpl "\xfe"
-    append compiled_tpl [compile_template_children codearr $node $new_depth $inside_code_block]
+    append compiled_tpl [compile_template_children codearr $node $inside_code_block]
     append compiled_tpl "\xff" "\n" "\}"
     append compiled_tpl "\n" "Tcl_DecrRefCount(${listvar});" "\xfe"
 
@@ -391,14 +390,13 @@ proc ::templating::compiler::compile_template_for {codearrVar node depth inside_
 
 }
 
-proc ::templating::compiler::compile_template_with {codearrVar node depth inside_code_block} {
+proc ::templating::compiler::compile_template_with {codearrVar node inside_code_block} {
 
     upvar $codearrVar codearr
 
     set parent_block [top_block codearr]
-    set block_count [incr_block_count codearr $depth]
-    set new_depth [expr {1+$depth}]
-    set block  "block${block_count}_o${new_depth}"
+    set block_count [incr_block_count codearr]
+    set block  "block${block_count}"
 
     push_block codearr $block
     set_parent_block codearr ${block} ${parent_block}
@@ -428,7 +426,7 @@ proc ::templating::compiler::compile_template_with {codearrVar node depth inside
     append compiled_tpl "\xff" 
     append compiled_tpl "\n" ${obj_expr}
     append compiled_tpl "\xfe"
-    append compiled_tpl [compile_template_children codearr $node $new_depth $inside_code_block]
+    append compiled_tpl [compile_template_children codearr $node $inside_code_block]
     append compiled_tpl "\xff" "\n" "\xfe"
 
     pop_block codearr
@@ -439,7 +437,7 @@ proc ::templating::compiler::compile_template_with {codearrVar node depth inside
 
 
 
-proc ::templating::compiler::compile_template_if_expr {codearrVar expr_tpl depth inside_code_block} {
+proc ::templating::compiler::compile_template_if_expr {codearrVar expr_tpl inside_code_block} {
 
     upvar $codearrVar codearr
 
@@ -541,35 +539,35 @@ proc ::templating::compiler::compile_template_if_expr {codearrVar expr_tpl depth
 }
 
 
-proc ::templating::compiler::compile_template_if {codearrVar node depth inside_code_block} {
+proc ::templating::compiler::compile_template_if {codearrVar node inside_code_block} {
 
     upvar $codearrVar codearr
 
     set expr_tpl [$node @if]
-    set conditional_expr [compile_template_if_expr codearr $expr_tpl $depth $inside_code_block]
+    set conditional_expr [compile_template_if_expr codearr $expr_tpl $inside_code_block]
 
     set compiled_tpl ""
     #append compiled_tpl "\xff" "\n" "DBG(fprintf(stderr,\"expr_tpl=${expr_tpl}\\n\"));" "\xfe"
     append compiled_tpl "\xff" "\n" "if \( $conditional_expr \) \{ " "\xfe"
-    append compiled_tpl [compile_template_children codearr $node $depth $inside_code_block]
+    append compiled_tpl [compile_template_children codearr $node $inside_code_block]
     append compiled_tpl "\xff" "\n" "\} " "\xfe"
     return $compiled_tpl
 
 }
 
-proc ::templating::compiler::compile_template_else {codearrVar node depth inside_code_block} {
+proc ::templating::compiler::compile_template_else {codearrVar node inside_code_block} {
 
     upvar $codearrVar codearr
 
     set compiled_tpl ""
     append compiled_tpl "\xff" "\n" "else \{ " "\xfe"
-    append compiled_tpl [compile_template_children codearr $node $depth $inside_code_block]
+    append compiled_tpl [compile_template_children codearr $node $inside_code_block]
     append compiled_tpl "\xff" "\n" "\} " "\xfe"
     return $compiled_tpl
 
 }
 
-proc ::templating::compiler::compile_template_binding {codearrVar bindarrVar attvalue node depth inside_code_block} {
+proc ::templating::compiler::compile_template_binding {codearrVar bindarrVar attvalue node inside_code_block} {
 
     upvar $codearrVar codearr
     upvar $bindarrVar bindarr
@@ -580,7 +578,6 @@ proc ::templating::compiler::compile_template_binding {codearrVar bindarrVar att
 	    set conditional_expr [compile_template_if_expr \
 				      codearr \
 				      $binding_expr \
-				      $depth \
 				      $inside_code_block]
 
 	    set code ""
@@ -594,7 +591,6 @@ proc ::templating::compiler::compile_template_binding {codearrVar bindarrVar att
 	    set conditional_expr [compile_template_if_expr \
 				      codearr \
 				      $binding_expr \
-				      $depth \
 				      $inside_code_block]
 
 	    set code ""
@@ -701,13 +697,11 @@ proc ::templating::compiler::compile_template_binding {codearrVar bindarrVar att
 	    set conditional_expr [compile_template_if_expr \
 				      codearr \
 				      $binding_if_expr \
-				      $depth \
 				      $inside_code_block]
 
 	    set subst_binding_value [compile_template_subst \
 					 codearr \
 					 $binding_value \
-					 $depth \
 					 $inside_code_block]
 
 	    set tagname [$node tagName]
@@ -724,7 +718,6 @@ proc ::templating::compiler::compile_template_binding {codearrVar bindarrVar att
 		    set subst_value [compile_template_subst \
 					 codearr \
 					 [$node @value] \
-					 $depth \
 					 $inside_code_block]
 
 		    append code "\xff" "\n" "else \{ " "\xfe"
@@ -749,7 +742,6 @@ proc ::templating::compiler::compile_template_binding {codearrVar bindarrVar att
 		    set subst_value [compile_template_subst \
 					 codearr \
 					 [$node text] \
-					 $depth \
 					 $inside_code_block]
 
 		    append code "\xff" "\n" "else \{ " "\xfe"
@@ -774,7 +766,7 @@ proc ::templating::compiler::compile_template_binding {codearrVar bindarrVar att
 
 
 
-proc ::templating::compiler::compile_template_call {codearrVar node depth inside_code_block} {
+proc ::templating::compiler::compile_template_call {codearrVar node inside_code_block} {
     upvar $codearrVar codearr
 
     set code [$node @call ""]
@@ -787,7 +779,7 @@ proc ::templating::compiler::compile_template_call {codearrVar node depth inside
 
 
 
-proc ::templating::compiler::compile_template_exec {codearrVar node depth inside_code_block} {
+proc ::templating::compiler::compile_template_exec {codearrVar node inside_code_block} {
 
     upvar $codearrVar codearr
 
@@ -843,7 +835,7 @@ proc ::templating::compiler::compile_template_exec {codearrVar node depth inside
 # 2. the special character \xfd is used to denote that 
 # the block is a substitution and thus not a control structure
 #
-proc ::templating::compiler::compile_template_subst {codearrVar text depth inside_code_block} {
+proc ::templating::compiler::compile_template_subst {codearrVar text inside_code_block} {
 
     upvar $codearrVar codearr
 
@@ -853,52 +845,50 @@ proc ::templating::compiler::compile_template_subst {codearrVar text depth insid
 
 	# inside_code_block=1, noquote_p=0
 	set parent_block [top_block codearr]
-	set compiled_tpl [regsub -all -- $re $text "\xff\xfe\xfd ${depth} \\1 1 ${parent_block} \xff\xfe"]
+	set compiled_tpl [regsub -all -- $re $text "\xff\xfe\xfd \\1 1 ${parent_block} \xff\xfe"]
 
 	# inside_code_block=1, noquote_p=1
-	#set compiled_tpl [regsub -all -- $re_noquote $compiled_tpl "\xff\xfe\xfd ${depth} \\1 1 ${parent_block} 1 1\xff\xfe"]
 
     } else {
 
 	# inside_code_block=0, noquote_p=0
-	set compiled_tpl [regsub -all -- $re $text "\xfe\xfd ${depth} \\1 0 \xff"]
+	set compiled_tpl [regsub -all -- $re $text "\xfe\xfd \\1 0 \xff"]
 
 	# inside_code_block=0, noquote_p=1
-	#set compiled_tpl [regsub -all -- $re_noquote $compiled_tpl "\xfe\xfd ${depth} \\1 0 1\xff"]
 
     }
     return $compiled_tpl
 }
 
-proc ::templating::compiler::compile_template_children {codearrVar node depth inside_code_block} {
+proc ::templating::compiler::compile_template_children {codearrVar node inside_code_block} {
 
     upvar $codearrVar codearr
 
     set compiled_tpl ""
     foreach child [$node childNodes] {
-	append compiled_tpl [compile_template_helper codearr $child $depth $inside_code_block]
+	append compiled_tpl [compile_template_helper codearr $child $inside_code_block]
     }
     return $compiled_tpl
 }
 
-proc ::templating::compiler::compile_template_statement {codearrVar node depth inside_code_block} {
+proc ::templating::compiler::compile_template_statement {codearrVar node inside_code_block} {
 
     upvar $codearrVar codearr
 
     if { [$node hasAttribute "for"] } {
-	set compiled_tpl [compile_template_for codearr $node $depth true]
+	set compiled_tpl [compile_template_for codearr $node true]
     } elseif { [$node hasAttribute "with"] } {
-	set compiled_tpl [compile_template_with codearr $node $depth true]
+	set compiled_tpl [compile_template_with codearr $node true]
     } elseif { [$node hasAttribute "if"] } {
-	set compiled_tpl [compile_template_if codearr $node $depth true]
+	set compiled_tpl [compile_template_if codearr $node true]
     } elseif { [$node hasAttribute "else"] } {
-	set compiled_tpl [compile_template_else codearr $node $depth true]
+	set compiled_tpl [compile_template_else codearr $node true]
     } elseif { [$node hasAttribute "exec"] } {
-	set compiled_tpl [compile_template_exec codearr $node $depth true]
+	set compiled_tpl [compile_template_exec codearr $node true]
     } elseif { [$node hasAttribute "call"] } {
-	set compiled_tpl [compile_template_call codearr $node $depth true]
+	set compiled_tpl [compile_template_call codearr $node true]
     } else {
-	set compiled_tpl [compile_template_children codearr $node $depth $inside_code_block]
+	set compiled_tpl [compile_template_children codearr $node $inside_code_block]
 	#error "unknown template tag"
     }
 
@@ -906,7 +896,7 @@ proc ::templating::compiler::compile_template_statement {codearrVar node depth i
 }
 
 
-proc ::templating::compiler::compile_template_element {codearrVar node depth inside_code_block} {
+proc ::templating::compiler::compile_template_element {codearrVar node inside_code_block} {
 
     upvar $codearrVar codearr
 
@@ -925,7 +915,6 @@ proc ::templating::compiler::compile_template_element {codearrVar node depth ins
 			 bindarr \
 			 ${attvalue} \
 			 ${node} \
-			 ${depth} \
 			 ${inside_code_block}]
 
     }
@@ -944,7 +933,6 @@ proc ::templating::compiler::compile_template_element {codearrVar node depth ins
 	    set compiled_attvalue [compile_template_subst \
 				       codearr \
 				       ${attvalue} \
-				       ${depth} \
 				       $inside_code_block]
 
 	    if { [info exists bindarr(${att},code)] } {
@@ -990,7 +978,6 @@ proc ::templating::compiler::compile_template_element {codearrVar node depth ins
 	append compiled_tpl [compile_template_children \
 				 codearr \
 				 $node \
-				 $depth \
 				 $inside_code_block]
 
     }
@@ -1001,7 +988,7 @@ proc ::templating::compiler::compile_template_element {codearrVar node depth ins
 
 }
 
-proc ::templating::compiler::compile_template_helper {codearrVar node {depth 0} {inside_code_block "false"}} {
+proc ::templating::compiler::compile_template_helper {codearrVar node {inside_code_block "false"}} {
 
     upvar $codearrVar codearr
 
@@ -1013,7 +1000,6 @@ proc ::templating::compiler::compile_template_helper {codearrVar node {depth 0} 
 	append compiled_tpl [compile_template_subst \
 				 codearr \
 				 [$node nodeValue] \
-				 $depth \
 				 $inside_code_block]
 
     } elseif { $nodeType eq {ELEMENT_NODE} } {
@@ -1024,7 +1010,6 @@ proc ::templating::compiler::compile_template_helper {codearrVar node {depth 0} 
 	    append compiled_tpl [compile_template_statement \
 				     codearr \
 				     $node \
-				     $depth \
 				     $inside_code_block]
 
 	} else {
@@ -1032,7 +1017,6 @@ proc ::templating::compiler::compile_template_helper {codearrVar node {depth 0} 
 	    append compiled_tpl [compile_template_element \
 				     codearr \
 				     $node \
-				     $depth \
 				     $inside_code_block]
 
 	}
@@ -1065,7 +1049,7 @@ proc ::templating::compiler::compiled_template_to_c {codearrVar text} {
 	set in_text [string range $text $subStart $subEnd]
 	if { $in_text eq {} } {
 	} elseif { [string index $in_text 0] eq "\xfd" } {
-	    lassign [split [string trim [string range $in_text 1 end]]] depth varname_expr inside_code_block parent_block
+	    lassign [split [string trim [string range $in_text 1 end]]] varname_expr inside_code_block parent_block
 
 	    # example output: 
 	    set var_expr "[append_for_varname codearr $parent_block $varname_expr];"
@@ -1115,9 +1099,8 @@ proc ::templating::compiler::compile_template {codearrVar node} {
 
     add_global_string codearr OBJECT_DATA "::__data__"
 
-    set depth 0
     set inside_code_block true
-    set block block0_o0
+    set block block0
     set storeId [$node @store ""]
     if { $storeId eq {} || $storeId eq {.} } {
 	set_block_store codearr $block ""
@@ -1131,7 +1114,7 @@ proc ::templating::compiler::compile_template {codearrVar node} {
 
     push_block codearr ${block}
 
-    set compiled_tpl [::templating::compiler::compiled_template_to_c codearr \xfe[::templating::compiler::compile_template_helper codearr $root $depth $inside_code_block]\xff]
+    set compiled_tpl [::templating::compiler::compiled_template_to_c codearr \xfe[::templating::compiler::compile_template_helper codearr $root $inside_code_block]\xff]
 
     set c_code [subst -nocommands -nobackslashes {
 
