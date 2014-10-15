@@ -1,12 +1,13 @@
 #!/bin/sh
 
 emerge xf86-input-synaptics xf86-input-keyboard xf86-input-mouse xf86-input-evdev
-emerge xf86-video-vmware xf86-video-intel xf86-video-nouveau
-emerge vmware-modules vmware-tools
+emerge xf86-video-intel xf86-video-nouveau
+#emerge xf86-video-vmware xf86-video-intel xf86-video-nouveau
+#emerge vmware-modules vmware-tools
 emerge xorg-server xorg-drivers
 emerge mesa
-USE="additions qt4 extensions" emerge virtualbox 
-emerge virtualbox-modules virtualbox-additions
+# USE="additions qt4 extensions" emerge virtualbox 
+# emerge virtualbox-modules virtualbox-additions
 emerge iwl6050-ucode
 
 # NOW USING nouveau driver (open-source nvidia driver)

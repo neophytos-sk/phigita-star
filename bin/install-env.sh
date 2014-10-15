@@ -4,8 +4,10 @@ BUILD_DATE=`date -u +%Y-%m-%d`
 
 UNPACK=/web/bin/unpack.sh
 
-export WEBHOME=~nsadmin
+export WEBHOME=/web
 FILEDIR=${WEBHOME}/files/
+PORTAGE_DIR=$FILEDIR/portage
+
 SRCDIR=${WEBHOME}/code/
 
 SSLDIR=/web/data/ssl
@@ -27,8 +29,13 @@ MONGODB_HOME=${PREFIX}/mongodb-${BUILD_DATE}
 #PGSQL=postgresql-8.2.3
 #PGSQL=postgresql-8.3.1
 PGSQL=postgresql-8.3.7
+PGVERSION=8.3
+
 #PGSQL=postgresql-9.0.1
 PGSQL=postgresql-9.0.4
+PGVERSION=9.0
+
+
 #POSTGIS=postgis-1.3.3
 POSTGIS=postgis-1.4.1
 
@@ -46,7 +53,8 @@ AOLSERVER=aolserver-4.5.1
 #TCL=tcl8.5.12
 #TCL=tcl8.6b2
 #TCL=tcl8.5.14
-TCL=tcl8.6.0
+#TCL=tcl8.6.0
+TCL=tcl8.6.2
 
 # TCL_THREAD_LIB=thread2.6.6
 TCL_THREAD_LIB=thread2.6.7

@@ -15,7 +15,7 @@ su - postgres -c '/opt/postgresql/bin/createuser -s nsadmin'
 
 ###################################################################
 
-#WEBHOME=~nsadmin
+#WEBHOME=/web
 WEBHOME=/web
 source ${WEBHOME}/bin/install-env.sh
 
