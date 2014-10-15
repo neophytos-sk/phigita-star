@@ -1,0 +1,1 @@
+ps -auxf | sort -nr -k 3 | head -10

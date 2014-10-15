@@ -1,0 +1,1 @@
+/opt/mongodb/bin/mongo $*
