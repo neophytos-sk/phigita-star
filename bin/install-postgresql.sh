@@ -10,7 +10,7 @@ mkdir -p ${WORKDIR}
 
 PN=postgresql
 
-PKGDIR=$PORTAGE_DIR/dev-db/$PN
+PKGDIR=$FILEDIR/$PN
 
 ### PostgreSQL
 
@@ -39,10 +39,11 @@ PG_INITDB_OPTS="--locale=$PGLOCALE"
 PGHOME=/opt/postgresql-${PGSLOT}/
 
 PGUSER=postgres
+PGGROUP=postgres
 
 
 cd ${WORKDIR}
-tar -xjf ${FILEDIR}/postgresql/postgresql-${PGSLOT}.tar.bz2
+tar -xjf ${PKGDIR}/postgresql-${PGSLOT}.tar.bz2
 cd postgresql-${PGSLOT}*
 
 ./configure \
@@ -59,9 +60,13 @@ if [ ! -d $DATA_DIR ]; then
     echo "initdb"
     # cp ${FILEDIR}/tsearch2_data/* ${PGHOME}/share/tsearch_data/
     mkdir -p $DATA_DIR
-    useradd -d /var/lib/postgresql $PGUSER
-    chown $PGUSER /var/lib/postgresql/
-    chown $PGUSER $DATA_DIR
+
+    newgroup $PGGROUP 70
+    newuser $PGUSER 70 /bin/bash /var/lib/postgresql $PGGROUP
+
+    chown $PGUSER:$PGGROUP /var/lib/postgresql/
+    chown $PGUSER:$PGGROUP $DATA_DIR
+
     su - $PGUSER -c "${PGHOME}/bin/initdb -D $DATA_DIR $PG_INITDB_OPTS"
 fi
 
@@ -86,7 +91,7 @@ PGUSER=$PGUSER
 PGOPTS="-p $PGPORT"
 EOF
 
-cp ${PKGDIR}/files/init.d-postgresql /etc/init.d/postgresql-${PGSLOT}
+cp ${PKGDIR}/init.d-postgresql /etc/init.d/postgresql-${PGSLOT}
 
 chmod +x /etc/init.d/postgresql-${PGSLOT}
 

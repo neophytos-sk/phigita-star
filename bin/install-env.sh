@@ -6,7 +6,6 @@ UNPACK=/web/bin/unpack.sh
 
 export WEBHOME=/web
 FILEDIR=${WEBHOME}/files/
-PORTAGE_DIR=$FILEDIR/portage
 
 SRCDIR=${WEBHOME}/code/
 
@@ -15,25 +14,24 @@ SSLDIR=/web/data/ssl
 
 
 PREFIX=/opt
-WORKDIR=/usr/local/src/squanti-install-${BUILD_DATE}
+WORKDIR=/usr/local/src/squanti-${BUILD_DATE}
 SUFFIX=cvs-20070128
 
 
 NAMESPACE=XO
 
-MONGODB=mongodb-src-r1.8.2
-MONGODB_HOME=${PREFIX}/mongodb-${BUILD_DATE}
+#MONGODB=mongodb-src-r1.8.2
+#MONGODB_HOME=${PREFIX}/mongodb-${BUILD_DATE}
 
 
 
 #PGSQL=postgresql-8.2.3
 #PGSQL=postgresql-8.3.1
-PGSQL=postgresql-8.3.7
-PGVERSION=8.3
-
+#PGSQL=postgresql-8.3.7
+#PGVERSION=8.3
 #PGSQL=postgresql-9.0.1
-PGSQL=postgresql-9.0.4
-PGVERSION=9.0
+#PGSQL=postgresql-9.0.4
+#PGVERSION=9.0
 
 
 #POSTGIS=postgis-1.3.3
@@ -181,6 +179,46 @@ TCLHOME=/opt/${TCL}
 
 WEBSERVER=naviserver
 NSHOME=${PREFIX}/${NAVISERVER}-${BUILD_DATE}
+
+
+# functions
+newgroup () {
+    local group=$1 gid=$2
+    groupadd $group -g $gid 
+}
+
+newuser () {
+    local user=$1 uid=$2 shell=$3 homedir=$4 groups=$5
+
+    local opts=()
+
+    opts+=( -u $uid )
+    opts+=( -s $shell )
+    opts+=( -d $homedir )
+
+    read -r -a groups_arr <<<"${groups}"
+    if [[ ${#groups_arr[@]} -gt 0 ]] ; then
+
+        local defgroup xgroups
+
+        for g in "${groups_arr[@]}" ; do
+            if [[ -z ${defgroup} ]] ; then
+                defgroup=${g}
+            else
+                xgroups+=",${g}"
+            fi
+        done
+
+        opts+=( -g "${defgroup}" )
+
+        if [[ ! -z ${xgroups} ]] ; then
+            opts+=( -G "${xgroups:1}" )
+        fi
+
+    fi
+
+    useradd "$user" "${opts[@]}"
+}
 
 
 
