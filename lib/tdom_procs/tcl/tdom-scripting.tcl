@@ -21,7 +21,23 @@ proc ::dom::scripting::text_cmd {cmd_name {default_string ""}} {
 
     namespace eval $shadow_nsp [list ${nsp}::node_cmd $cmd_name]
 
-    proc ${nsp}::$cmd_name [list [list str $default_string]] [list ${shadow_nsp}::$cmd_name { t $str }]
+    # proc ${nsp}::$cmd_name [list [list str $default_string]] [list ${shadow_nsp}::$cmd_name { t $str }]
+
+    proc ${nsp}::$cmd_name {args} [subst -nocommands -nobackslashes {
+
+        set str {}
+        if { [llength [set args]] % 2 == 1 } {
+            set str [lindex [set args] end]
+            set args [lrange [set args] 0 end-1]
+        }
+
+        set node [${shadow_nsp}::$cmd_name {*}[set args]]
+
+        if { [set str] ne {} } {
+            [set node] appendFromScript { t [set str] }
+        }
+
+    }]
 
 }
 
@@ -29,7 +45,7 @@ proc ::dom::scripting::proc_cmd {cmd_name proc_name} {
 
     set nsp [uplevel { namespace current }]
     
-    proc ${nsp}::$cmd_name {args} "$proc_name ${cmd_name} {*}\${args}"
+    proc ${nsp}::$cmd_name {args} "uplevel \[list $proc_name ${cmd_name} {*}\${args}\]"
 
 }
 
@@ -68,6 +84,12 @@ proc ::dom::scripting::require_lang {nsp} {
     }
 
     ${nsp}::require_procs
+
+}
+
+proc ::dom::scripting::source_inscope {filename nsp} {
+
+    namespace inscope ${nsp} [list source $filename]
 
 }
 
@@ -154,6 +176,7 @@ proc ::dom::scripting::validate {nsp xml} {
 namespace import -force \
     ::dom::scripting::define_lang \
     ::dom::scripting::require_lang \
+    ::dom::scripting::source_inscope \
     ::dom::scripting::source_tdom
 
 

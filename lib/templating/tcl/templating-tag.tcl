@@ -4,12 +4,17 @@ namespace eval ::templating::runtime {;}
 
 define_lang ::templating::lang {
 
+    #node_cmd master
+    #node_cmd include
+
+    #node_cmd contract
+    node_cmd param
+    node_cmd pragma
+
     node_cmd widget  ;# datastore, dataview, grid
     node_cmd tpl     ;# if, for, with
     node_cmd item
     node_cmd column
-    node_cmd param
-    node_cmd pragma
 
     text_cmd val
     text_cmd guard
@@ -17,20 +22,14 @@ define_lang ::templating::lang {
     text_cmd css
     text_cmd tcl
 
-    proc_cmd layout     alias_helper
-    proc_cmd layout_row alias_helper
-    proc_cmd layout_col alias_helper
-    proc_cmd grid       alias_helper
-    proc_cmd toolbar    alias_helper
-    proc_cmd datastore  alias_helper
-    proc_cmd dataview   alias_helper
-    proc_cmd master     alias_helper
-    proc_cmd contract   alias_helper
-    proc_cmd include    alias_helper
-    proc_cmd action     alias_helper
-
-    proc alias_helper {widget_type args} {
-        widget -type $widget_type {*}${args}
+    foreach cmd_name {
+        layout layout_row layout_col
+        grid toolbar datastore dataview
+        action
+        master include
+        contract
+    } {
+        interp alias {} $cmd_name {} ::templating::lang::widget -type $cmd_name
     }
 
     dtd {
@@ -38,14 +37,22 @@ define_lang ::templating::lang {
 #TODO
 
         <!DOCTYPE html [
+
             <!ELEMENT html (widget | tpl | val | guard | js | css | tcl)*>
+
             <!ELEMENT widget (#PCDATA)>
+
             <!ELEMENT contract (param | pragma)*>
+
             <!ELEMENT grid (column)*>
+
+            <!ELEMENT master (#PCDATA)>
+            <!ATTLIST master src #CDATA>
 
             <!ELEMENT include EMPTY>
             <!ATTLIST include src #CDATA>
 
+            <!ELEMENT slave EMPTY>
         ]>
     }
 }
@@ -76,12 +83,12 @@ proc ::templating::tag::master::initial_rewrite {codearrVar node {argVar ""}} {
     upvar $codearrVar codearr
 
     if { ${argVar} ne {} } {
-	upvar ${argVar} arg
+        upvar ${argVar} arg
     }
 
     $node setAttribute __todelete 1
 
-    proc slave {} "widget -type slave -id slave_$node"
+    proc ::templating::lang::slave {} "widget -type slave -id slave_$node"
 
     set default_src "templates/default-master.inc"
     set src [$node @src $default_src]
@@ -91,19 +98,22 @@ proc ::templating::tag::master::initial_rewrite {codearrVar node {argVar ""}} {
     # slave script can make use of these attributes
     array set arg [list]
     foreach att [$node attributes] {
-	set arg($att) [$node @${att}]
+        set arg($att) [$node @${att}]
     }
 
     set pn [$node parentNode]
     $pn insertBeforeFromScript { 
-	source ${filename} 
+        source_inscope ${filename} ::templating::lang
     } $node
 
     # move children before the 'slave' placeholder
     set placeholder [tdom_getElementById $pn "slave_${node}"]
+    if { $placeholder eq {} } {
+        error "did not find slave node with id slave_${node}"
+    }
     set childNodes [$node childNodes]
     foreach child $childNodes {
-	[$placeholder parentNode] insertBefore $child $placeholder
+        [$placeholder parentNode] insertBefore $child $placeholder
     }
     $placeholder setAttribute __todelete 1
     $placeholder delete
@@ -114,9 +124,9 @@ proc ::templating::tag::master::initial_rewrite {codearrVar node {argVar ""}} {
     set new_nodes [${node} selectNodes {preceding-sibling::*/descendant-or-self::widget[@type='include' or @type='master']}]
     foreach new_node $new_nodes {
 
-	if { [${new_node} @__todelete 0] } continue
+        if { [${new_node} @__todelete 0] } continue
 
-	initial_rewrite codearr ${new_node} arg
+        initial_rewrite codearr ${new_node} arg
 
     }
 
@@ -124,14 +134,14 @@ proc ::templating::tag::master::initial_rewrite {codearrVar node {argVar ""}} {
     # look for descendant nodes that have the x-master-renderTo attribute
     set rendernodes [$node selectNodes {preceding-sibling::*/descendant-or-self::*[@x-master-renderTo != ""]}]
     foreach descendant $rendernodes {
-	set renderTo [$descendant @x-master-renderTo]
-	set x [tdom_getElementById $pn $renderTo]
-	if { $x ne {} } {
-	    $x appendChild $descendant
-	    $descendant removeAttribute "x-master-renderTo"
-	} else {
-	    error "master::initial_rewrite --->>> x-master-renderTo=${renderTo} not found in the descendants of the master node with src=${src}"
-	} 	
+        set renderTo [$descendant @x-master-renderTo]
+        set x [tdom_getElementById $pn $renderTo]
+        if { $x ne {} } {
+            $x appendChild $descendant
+            $descendant removeAttribute "x-master-renderTo"
+        } else {
+            error "master::initial_rewrite --->>> x-master-renderTo=${renderTo} not found in the descendants of the master node with src=${src}"
+        } 	
     }
 
 }
@@ -148,7 +158,7 @@ proc ::templating::tag::include::initial_rewrite {codearrVar node {argVar ""}} {
     upvar $codearrVar codearr
 
     if { ${argVar} ne {} } {
-	upvar ${argVar} arg
+        upvar ${argVar} arg
     }
 
     $node setAttribute __todelete 1
@@ -159,12 +169,12 @@ proc ::templating::tag::include::initial_rewrite {codearrVar node {argVar ""}} {
     # script being included can make use of these attributes
     array set arg [list]
     foreach att [$node attributes] {
-	set arg($att) [$node @${att}]
+        set arg($att) [$node @${att}]
     }
 
     set pn [$node parentNode]
     $pn insertBeforeFromScript {
-	source ${filename}
+        source_inscope ${filename} ::templating::lang
     } $node
 
 
@@ -173,9 +183,9 @@ proc ::templating::tag::include::initial_rewrite {codearrVar node {argVar ""}} {
     set new_nodes [$node selectNodes {preceding-sibling::*/descendant-or-self::widget[@type='include' or @type='master']}]
     foreach new_node $new_nodes {
 
-	if { [${new_node} @__todelete 0] } continue
+        if { [${new_node} @__todelete 0] } continue
 
-	initial_rewrite codearr ${new_node} arg
+        initial_rewrite codearr ${new_node} arg
 
     }
 

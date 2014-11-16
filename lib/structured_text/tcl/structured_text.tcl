@@ -110,29 +110,29 @@ proc ::xo::structured_text::init_css {} {
 }
 
 proc ::xo::structured_text::init_css_for_tweb {} {
-    css {
-	.z-bold {font-weight:bold;}
-	.z-italic {font-style:italic;}
-	.z-highlight {background:#dee7ec;}
-	.z-align-left {display:block;margin-right:auto;}
-	.z-align-right {display:block;margin-left:auto;}
-	.z-align-center {display:block;margin:0pt auto;}
-	.z-image-caption {font-style:italic;color:#666666;}
-	.z-pre {font-family:"Arial Unicode MS",Arial; padding: 1em; border: 1px solid #8cacbb; color: Black; background-color: #dee7ec;}
-	.z-code {
-	    background-color: #feffca;
-	    border:1px dashed #999;
-	    color: #333;
-	    font-family: "Courier New", Courier, monospace;
-	    margin: 1em 0;
-	    overflow-x: auto;
-	    white-space:pre-wrap;
-	    white-space: -moz-pre-wrap !important;
-	    white-space: -pre-wrap;
-	    white-space: -o-pre-wrap;
-	    width:99%;
-	    word-wrap:break-word;
-	}
+    ::templating::lang::css {
+        .z-bold {font-weight:bold;}
+        .z-italic {font-style:italic;}
+        .z-highlight {background:#dee7ec;}
+        .z-align-left {display:block;margin-right:auto;}
+        .z-align-right {display:block;margin-left:auto;}
+        .z-align-center {display:block;margin:0pt auto;}
+        .z-image-caption {font-style:italic;color:#666666;}
+        .z-pre {font-family:"Arial Unicode MS",Arial; padding: 1em; border: 1px solid #8cacbb; color: Black; background-color: #dee7ec;}
+        .z-code {
+            background-color: #feffca;
+            border:1px dashed #999;
+            color: #333;
+            font-family: "Courier New", Courier, monospace;
+            margin: 1em 0;
+            overflow-x: auto;
+            white-space:pre-wrap;
+            white-space: -moz-pre-wrap !important;
+            white-space: -pre-wrap;
+            white-space: -o-pre-wrap;
+            width:99%;
+            word-wrap:break-word;
+        }
     }
     ::xo::tdp::excludeClassesFromRenaming {
 	z-bold z-italic z-highlight

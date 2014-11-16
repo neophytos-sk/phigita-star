@@ -320,18 +320,6 @@ proc ::xo::tdp::compile_and_load {filename} {
 
     set doc [source_tdom $filename ::templating::lang "html"]
 
-    # set doc [dom createDocument "html"]
-    # set root [$doc documentElement]
-    #
-    # if { [catch {$root appendFromScript "source $filename"} errMsg] } {
-    #    $doc delete
-    #    error $errMsg
-	#    return
-    # } else {
-	#    ::util::writefile $specfile [$doc asHTML]
-	#    ::xo::tdp::compile_doc $doc $filename
-    # }
-
 	::util::writefile $specfile [$doc asHTML]
 
 	::xo::tdp::compile_doc $doc $filename
@@ -364,54 +352,61 @@ proc ::xo::tdp::compile_doc {templateDoc filename} {
     set rootname [::critcl::ext::get_build_rootname $filename]
 
     array set codearr [list \
-			   build_rootname $rootname \
-			   file $filename \
-			   defs "" \
-			   global_strings "" \
-			   global_strings_len 0 \
-			   macros ""]
+        build_rootname $rootname \
+        file $filename \
+        defs "" \
+        global_strings "" \
+        global_strings_len 0 \
+        macros ""]
 
     set ::__CSS_FILE__ [list]
 
     set start [clock milliseconds]
 
 
+    #set xpath_all_widgets {//master|//include|//contract|//widget}
+    set xpath_all_widgets {//widget}
+
     # get widgets from dom tree
-    set widgets [$templateDoc selectNodes {//widget}]
+    set widgets [$templateDoc selectNodes $xpath_all_widgets]
 
     # get some dependencies here, 
     # e.g. from master and include nodes, 
     # before we delete any widget
     set deps [list]
     foreach widget $widgets {
-	set deps [concat ${deps} [::xo::tdp::compile_helper codearr $widget "deps"]]
+        set deps [concat ${deps} [::xo::tdp::compile_helper codearr $widget "deps"]]
     }
 
 
-    set include_widgets [$templateDoc selectNodes {//widget[@type = 'include']}]
+    set include_widgets [$templateDoc selectNodes {//include}]
     foreach widget $include_widgets {
 
-	if { [catch {::xo::tdp::compile_helper codearr $widget "initial_rewrite"} errmsg] } {
-	    ::xo::kit::log "--->>>" \n\n errmsg=$errmsg \n\n widget=[$widget nodeName]
-	}
-	if { [$widget @__todelete "0"] } {
-	    $widget delete
-	}
+        if { [catch {
+            ::xo::tdp::compile_helper codearr $widget "initial_rewrite"
+        } errmsg options] } {
+            ::xo::kit::log "--->>>" \n\n errmsg=$errmsg widget=[$widget nodeName]
+        }
+        if { [$widget @__todelete "0"] } {
+            $widget delete
+        }
     }
 
     ::util::writefile ${rootname}.tdp_spec_inc [$templateDoc asHTML]
 
     # initial rewrite
     #set sorted_widgets [lsort -command initial_rewrite_compare $widgets]
-    set widgets [$templateDoc selectNodes {//widget}]
+    set widgets [$templateDoc selectNodes $xpath_all_widgets]
     foreach widget $widgets {
-	if { [catch {::xo::tdp::compile_helper codearr $widget "initial_rewrite"} errmsg] } {
-	    ::xo::kit::log "--->>>" \n\n errmsg=$errmsg \n\n widget=[$widget nodeName]
-	}
+        if { [catch {
+            ::xo::tdp::compile_helper codearr $widget "initial_rewrite"
+        } errmsg options] } {
+            ::xo::kit::log "--->>>" \n\n errmsg=$errmsg \n\n widget=[$widget nodeName]
+        }
 
-	if { [$widget @__todelete "0"] } {
-	    $widget delete
-	}
+        if { [$widget @__todelete "0"] } {
+            $widget delete
+        }
     }
 
     ::util::writefile ${rootname}.tdp_spec_ini [$templateDoc asHTML]
@@ -425,7 +420,7 @@ proc ::xo::tdp::compile_doc {templateDoc filename} {
     # get any new dependencies
     # e.g. css with '-src' attribute inside master file
     foreach widget $widgets {
-	set deps [concat ${deps} [::xo::tdp::compile_helper codearr $widget "deps"]]
+        set deps [concat ${deps} [::xo::tdp::compile_helper codearr $widget "deps"]]
     }
 
     ::util::writefile ${rootname}.tdp_dep [lsort -unique ${deps}]
@@ -433,15 +428,15 @@ proc ::xo::tdp::compile_doc {templateDoc filename} {
 
     # final rewrite
     foreach widget $widgets {
-	if { [catch {::xo::tdp::compile_helper codearr $widget "final_rewrite"} errmsg] } {
-	    ::xo::kit::log "--->>>" \n\n errmsg=$errmsg \n\n widget=[$widget nodeName]
-	}
+        if { [catch {::xo::tdp::compile_helper codearr $widget "final_rewrite"} errmsg] } {
+            ::xo::kit::log "--->>>" \n\n errmsg=$errmsg \n\n widget=[$widget nodeName]
+        }
 
-	if { ![$widget @__todelete "0"] } {
-	    $widget setAttribute other_id [next_other_id]
-	}
+        if { ![$widget @__todelete "0"] } {
+            $widget setAttribute other_id [next_other_id]
+        }
 
-	# Do not delete widget here. Other widgets may depend on it.
+        # Do not delete widget here. Other widgets may depend on it.
 
     }
 
@@ -449,9 +444,9 @@ proc ::xo::tdp::compile_doc {templateDoc filename} {
 
     # Delete and catch errors by nested widgets (may have been deleted already)
     foreach widget $widgets {
-	if { [$widget @__todelete "0"] } {
-	    $widget delete
-	}
+        if { [$widget @__todelete "0"] } {
+            $widget delete
+        }
     }
 
 
@@ -469,7 +464,7 @@ proc ::xo::tdp::compile_doc {templateDoc filename} {
     # 1. using rename_map to do the renaming
     # 2. updates seen var that is used in the next stage for more optimizations
     #
-    
+
     ::templating::css::rename_doc_classes $templateDoc rename_map seen
 
 
@@ -479,17 +474,17 @@ proc ::xo::tdp::compile_doc {templateDoc filename} {
     # setCssMapping is called by get_compiled_script
 
     if { $css_min ne {} } {
-	set css_min_final [::templating::css::optimize_css codearr $templateDoc $filename $css_min seen]
-	set css_min_final_len [string bytelength $css_min_final]
+        set css_min_final [::templating::css::optimize_css codearr $templateDoc $filename $css_min seen]
+        set css_min_final_len [string bytelength $css_min_final]
 
-	set css_md5_hex [::util::md5_hex $css_min_final]
-	set css_public_file ${css_md5_hex}.css
-	set cdn_css_min_file [get_css_dir]/${css_public_file}
-	::util::writefile $cdn_css_min_file $css_min_final
+        set css_md5_hex [::util::md5_hex $css_min_final]
+        set css_public_file ${css_md5_hex}.css
+        set cdn_css_min_file [get_css_dir]/${css_public_file}
+        ::util::writefile $cdn_css_min_file $css_min_final
 
-	exec "/bin/gzip -9 -c ${cdn_css_min_file} > ${cdn_css_min_file}.gz"
+        exec "/bin/gzip -9 -c ${cdn_css_min_file} > ${cdn_css_min_file}.gz"
 
-	set css_min_final_url [get_cdn_url "/css/${css_public_file}"]
+        set css_min_final_url [get_cdn_url "/css/${css_public_file}"]
     }
 
     # set preload ""
@@ -503,90 +498,90 @@ proc ::xo::tdp::compile_doc {templateDoc filename} {
     set head [lindex [$templateDoc selectNodes {//head}] 0]
     set body [lindex [$templateDoc selectNodes {//body}] 0]
     if { $head ne {} } {
-	$head appendFromScript {
+        $head appendFromScript {
 
-	    if { $css_min ne {} } {
-		if { [xo::kit::debug_mode_p] || ${css_min_final_len} < 8192 } {
-		    style -type text/css { nt ${css_min_final} }
-		} else {
-		    link -rel "stylesheet" -type "text/css" -href $css_min_final_url
-		}
-	    }
+            if { $css_min ne {} } {
+                if { [xo::kit::debug_mode_p] || ${css_min_final_len} < 8192 } {
+                    style -type text/css { nt ${css_min_final} }
+                } else {
+                    link -rel "stylesheet" -type "text/css" -href $css_min_final_url
+                }
+            }
 
-	    # javascript: start
+            # javascript: start
 
-	    if { $js(public) } {
+            if { $js(public) } {
 
-		val -id registered_p -other_id [next_other_id] { ::xo::kit::is_registered_p }
-		tpl -if "not @{val.registered_p}" {
+                val -id registered_p -other_id [next_other_id] { ::xo::kit::is_registered_p }
+                tpl -if "not @{val.registered_p}" {
 
-		    ## we have some js code for the public
+                ## we have some js code for the public
 
-		    if { $js(internal-0) ne {} } {
-			script -type text/javascript { nt $js(internal-0) }
-		    }
+                    if { $js(internal-0) ne {} } {
+                        script -type text/javascript { nt $js(internal-0) }
+                    }
 
-		    ## there can only be only one external url for the public
-		    ## but the code seems to be cleaner written in this way
+                    ## there can only be only one external url for the public
+                    ## but the code seems to be cleaner written in this way
 
-		    foreach url $js(external-0) {
-			script -src $url
-		    }
+                    foreach url $js(external-0) {
+                        script -src $url
+                    }
 
-		    ## there can only be one deferred url for the public
-		    ## but the code seems to be cleaner written in this way
-		    foreach url $js(deferred-0) {
+                    ## there can only be one deferred url for the public
+                    ## but the code seems to be cleaner written in this way
+                    foreach url $js(deferred-0) {
 
-			set deferred_js [subst -nocommands -nobackslashes {function _xo_0(){var e=document.createElement('script');e.src='${url}';document.body.appendChild(e);};}]
+                        set deferred_js [subst -nocommands -nobackslashes {function _xo_0(){var e=document.createElement('script');e.src='${url}';document.body.appendChild(e);};}]
 
-			append deferred_js {window.addEventListener?window.addEventListener("load",_xo_0,0):(window.attachEvent?window.attachEvent("onload",_xo_0):window.onload=_xo_0);}
+                        append deferred_js {window.addEventListener?window.addEventListener("load",_xo_0,0):(window.attachEvent?window.attachEvent("onload",_xo_0):window.onload=_xo_0);}
 
-			script -type text/javascript { nt $deferred_js }
-
-
-		    }
-
-		}
-
-	    }
-
-	    if { $js(private) } {
-
-		## we have some js code for registered users
-
-		val -id registered_p -other_id [next_other_id] { ::xo::kit::is_registered_p }
-		tpl -if "@{val.registered_p}" {
-
-		    if { $js(internal-1) ne {} } {
-			script -type text/javascript { nt $js(internal-1) }
-		    }
-
-		    ## there can only be only one external url for registered users
-		    ## but the code seems to be cleaner written in this way
-
-		    foreach url $js(external-1) {
-			script -src $url
-		    }
-
-		    ## there can only be one deferred url for the registered users
-		    ## but the code seems to be cleaner written in this way
-		    foreach url $js(deferred-1) {
-
-			set deferred_js [subst -nocommands -nobackslashes {function _xo_1(){var e=document.createElement('script');e.src='${url}';document.body.appendChild(e);};}]
-
-			append deferred_js {window.addEventListener?window.addEventListener("load",_xo_1,0):(window.attachEvent?window.attachEvent("onload",_xo_1):window.onload=_xo_1);}
-
-			script -type text/javascript { nt $deferred_js }
-
-		    }
-
-		}
-	    }
-
-	    # javascript: end
+                        script -type text/javascript { nt $deferred_js }
 
 
-	}
+                    }
+
+                }
+
+            }
+
+            if { $js(private) } {
+
+            ## we have some js code for registered users
+
+                val -id registered_p -other_id [next_other_id] { ::xo::kit::is_registered_p }
+                tpl -if "@{val.registered_p}" {
+
+                    if { $js(internal-1) ne {} } {
+                        script -type text/javascript { nt $js(internal-1) }
+                    }
+
+                    ## there can only be only one external url for registered users
+                    ## but the code seems to be cleaner written in this way
+
+                    foreach url $js(external-1) {
+                        script -src $url
+                    }
+
+                    ## there can only be one deferred url for the registered users
+                    ## but the code seems to be cleaner written in this way
+                    foreach url $js(deferred-1) {
+
+                        set deferred_js [subst -nocommands -nobackslashes {function _xo_1(){var e=document.createElement('script');e.src='${url}';document.body.appendChild(e);};}]
+
+                        append deferred_js {window.addEventListener?window.addEventListener("load",_xo_1,0):(window.attachEvent?window.attachEvent("onload",_xo_1):window.onload=_xo_1);}
+
+                        script -type text/javascript { nt $deferred_js }
+
+                    }
+
+                }
+            }
+
+            # javascript: end
+
+
+        }
     }
 
     set finish [clock milliseconds]
@@ -984,8 +979,18 @@ proc ::xo::tdp::compile_helper {codearrVar node procName} {
 
     set result ""
     if { [info procs ${cmd}] ne {} } {
-        if { [catch {set result [$cmd codearr $node]} errMsg] } {
-            ns_log error "--->>> cmd=$cmd node=[$node nodeName] attributes=[$node attributes] \n\n errMsg=$errMsg \n\n"
+        if { [catch {
+            set result [$cmd codearr $node]
+        } errmsg options] } {
+
+            array set options_arr $options
+
+            set errorinfo $options_arr(-errorinfo)
+
+            ::xo::kit::log error "\n--->>> cmd=$cmd \nnode=[$node nodeName] \nattributes=[$node attributes] \n\n \nerrmsg=$errmsg \n$errorinfo\n\n"
+
+            error "cmd=$cmd node=[$node nodeName] attributes=[$node attributes]" $errorinfo
+
         }
     }
     return $result
