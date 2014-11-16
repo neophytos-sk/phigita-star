@@ -318,7 +318,7 @@ proc ::xo::tdp::compile_and_load {filename} {
     ::xo::tdp::init_globals
 
 
-    set doc [source_tdom ::templating::lang $filename "html"]
+    set doc [source_tdom $filename ::templating::lang "html"]
 
     # set doc [dom createDocument "html"]
     # set root [$doc documentElement]
