@@ -388,7 +388,7 @@ ns_param   checkinterval 600
     ns_param nslog           ${bindir}/nslog.so 
     ns_param nsdb            ${bindir}/nsdb.so
     ns_param nsproxy         ${bindir}/nsproxy.so
-    ns_param nsaspell        ${bindir}/nsaspell.so
+    #ns_param nsaspell        ${bindir}/nsaspell.so
 
     if { !${production_mode_p} } {
 	ns_param nscp         ${bindir}/nscp.so

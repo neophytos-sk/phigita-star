@@ -2,16 +2,6 @@
 
 
 #mkdir /web
-#groupadd web
-#useradd nsadmin
-NSADMIN_GROUPS=`groups nsadmin`
-if [ $NSADMIN_GROUPS != "web" ]; then
-    echo "add nsadmin to group web"
-    usermod -g web -d /web nsadmin
-fi
-su - postgres -c '/opt/postgresql/bin/createuser -s nsadmin'
-#chown -R nsadmin:web /web
-#chmod -R 755 /web
 
 ###################################################################
 
@@ -23,35 +13,40 @@ source ${WEBHOME}/bin/install-env.sh
 
 function usage_info {
     echo "USAGE: "
-    echo "  $0 NEW_BRANCH  (to build a new naviserver dir)"
-    echo "  $0 CURRENT_BRANCH  (to build inside the current naviserver dir)"
+    echo "  $0 ?PGSLOT?"
 }
 
-if [ $# -lt 1 ]; then 
+if [ $# -gt 1 ]; then 
     usage_info
     exit
 fi
 
-if [ $1 = "NEW_BRANCH" ]; then
-    NSHOME=${NSHOME} 
-    rm -f /opt/naviserver
-    ln -sf ${NSHOME} /opt/naviserver
-elif [ $1 = "CURRENT_BRANCH" ]; then
-    NSHOME=/opt/${WEBSERVER}/
-else
-    usage_info
-    exit
-fi
+rm -f /opt/naviserver
+ln -sf ${NSHOME} /opt/naviserver
 
-
-PGHOME_SHORT="/opt/postgresql"
+PGSLOT=${1:-8.4}
+PGHOME_SHORT="/opt/postgresql-${PGSLOT}"
 NSHOME_SHORT="/opt/naviserver"
+
+if [ `grep nsadmin: /etc/passwd | cut -f 1 -d ":"` != 'nsadmin' ]; then
+    groupadd web
+    useradd nsadmin
+    NSADMIN_GROUPS=`groups nsadmin`
+    if [ $NSADMIN_GROUPS != "web" ]; then
+        echo "add nsadmin to group web"
+        usermod -g web -d /web nsadmin
+    fi
+    su - postgres -c "${PGHOME_SHORT}/bin/createuser -s nsadmin"
+    #chown -R nsadmin:web /web
+    #chmod -R 755 /web
+else
+    echo "nsadmin user already exists"
+fi
 
 echo WEBSERVER=$WEBSERVER
 echo NSHOME=$NSHOME
 echo PGHOME_SHORT=$PGHOME_SHORT
 echo NSHOME_SHORT=$NSHOME_SHORT
-
 
 mkdir -p ${WORKDIR}
 

@@ -13,7 +13,7 @@ ${WEBHOME}/bin/install-imagemagick.sh
 
 # for naviserver
 ${WEBHOME}/bin/install-tcl.sh ${NSHOME} naviserver-
-${WEBHOME}/bin/install-naviserver.sh NEW_BRANCH
+${WEBHOME}/bin/install-naviserver.sh 
 ${WEBHOME}/bin/install-libthread.sh ${NSHOME} naviserver-
 ${WEBHOME}/bin/install-tdom.sh ${NSHOME} naviserver- --with-aolserver=${NSHOME}
 ${WEBHOME}/bin/install-xotcl.sh ${NSHOME} naviserver-

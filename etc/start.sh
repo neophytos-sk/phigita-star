@@ -1,4 +1,4 @@
-STATUS=`/etc/init.d/postgresql status`
+STATUS=`/etc/init.d/postgresql-8.4 status`
 if [ $(expr match "$STATUS" ".*status:\s*started.*") -eq 0 ]; then
     echo "Please start PostgreSQL:"
     echo "/etc/init.d/postgresql start"

@@ -27,8 +27,6 @@ ns_log notice "pwd=[pwd]"
 
 #ns_eval {
 
-#    package require tdom
-    package require TclCurl
     package require textutil
 
 ::xo::lib::require critcl
@@ -36,17 +34,15 @@ ns_log notice "pwd=[pwd]"
 ::xo::lib::require structured_text
 ::xo::lib::require critbit_tree
 ::xo::lib::require geoip
-::xo::lib::require curl
-::xo::lib::require ttext
+#::xo::lib::require curl
+#::xo::lib::require ttext
 ::xo::lib::require tcalc
 ::xo::lib::require htmltidy
 ::xo::lib::require util_procs
 ::xo::lib::require html_procs
 ::xo::lib::require tdom_procs
-::xo::lib::require tlucene
+#::xo::lib::require tlucene
 
-#::xo::lib::require nssmtpd
-#::xo::lib::require tspam
 
 #}
 

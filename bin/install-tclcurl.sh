@@ -29,7 +29,7 @@ echo "PREFIX=$PREFIX ALT=$ALT"
 mkdir -p ${WORKDIR}
 
 CMD="emerge --noreplace --deep"
-USE="threads" ${CMD} curl
+USE="threads" ${CMD} net-misc/curl
 
 ### TclCurl
 cd ${WORKDIR}
