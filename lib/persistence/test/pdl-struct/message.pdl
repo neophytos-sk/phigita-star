@@ -1,11 +1,10 @@
 struct -id message -is_final_if_no_scope "1" {
 
-    #attr -type "sometype" -name "somename" -default "someval" -defaultExpr "somefunc() || 'hello'"
-
-    # string device = "sms"
     # rel -name attachment -type File
 
-    string hello world
+    string device = "sms"
+
+    integer num_comments = 0
 
     attribute {
         name device

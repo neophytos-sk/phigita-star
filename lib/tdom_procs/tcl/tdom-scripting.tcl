@@ -87,11 +87,13 @@ proc ::dom::scripting::source_tdom {filename nsp {root_element_name ""}} {
 
     set script "namespace inscope ${nsp} { source $filename }"
 
-    if { [catch {$root appendFromScript $script} errmsg] } {
+    if { [catch {$root appendFromScript $script} errmsg options] } {
 
         $doc delete
 
-        error $errmsg
+        array set options_arr $options
+
+        error $errmsg $options_arr(-errorinfo)
 
     } else {
 

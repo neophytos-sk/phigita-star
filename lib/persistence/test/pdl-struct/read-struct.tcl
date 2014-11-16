@@ -16,7 +16,18 @@ define_lang ::persistence::lang {
     proc_cmd "integer" attribute_helper
     proc_cmd "boolean" attribute_helper
 
-    proc attribute_helper {datatype name {default_value ""}} {
+    proc attribute_helper {datatype name args} {
+
+        if { $args ne {} } {
+
+            if { [llength $args] != 2 || [lindex $args 0] ne {=} } {
+                error "usage: datatype name = default_value"
+            }
+
+            set default_value [lindex $args 1]
+
+        }
+
         attribute {
             name ${name}
             datatype ${datatype}

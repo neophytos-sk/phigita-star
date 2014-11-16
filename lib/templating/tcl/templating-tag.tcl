@@ -33,6 +33,21 @@ define_lang ::templating::lang {
         widget -type $widget_type {*}${args}
     }
 
+    dtd {
+
+#TODO
+
+        <!DOCTYPE html [
+            <!ELEMENT html (widget | tpl | val | guard | js | css | tcl)*>
+            <!ELEMENT widget (#PCDATA)>
+            <!ELEMENT contract (param | pragma)*>
+            <!ELEMENT grid (column)*>
+
+            <!ELEMENT include EMPTY>
+            <!ATTLIST include src #CDATA>
+
+        ]>
+    }
 }
 
 proc require_template_procs {} {
