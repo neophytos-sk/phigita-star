@@ -1,9 +1,8 @@
 package provide templating 0.1
 
-package require tdom
-
 ::xo::lib::require critcl
 ::xo::lib::require util_procs
+::xo::lib::require tdom_procs
 
 set dir [file dirname [info script]]
 

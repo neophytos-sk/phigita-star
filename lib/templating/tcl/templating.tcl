@@ -13,7 +13,7 @@ proc tdom_attributesDict {node} {
 
     set mydict [dict create]
     foreach att [$node attributes] {
-	dict append mydict $att [$node getAttribute $att ""]
+        dict append mydict $att [$node getAttribute $att ""]
     }
     return $mydict
 }
@@ -21,7 +21,7 @@ proc tdom_attributesDict {node} {
 proc tdom_innerHTML {node} {
     set html ""
     foreach child [$node childNodes] {
-	append html [$child asHTML]
+        append html [$child asHTML]
     }
     return $html
 }
@@ -317,25 +317,32 @@ proc ::xo::tdp::compile_and_load {filename} {
 
     ::xo::tdp::init_globals
 
-    set doc [dom createDocument "html"]
-    set root [$doc documentElement]
-    if { [catch {$root appendFromScript "source $filename"} errMsg] } {
-	$doc delete
-	error $errMsg
-	return
-    } else {
-	::util::writefile $specfile [$doc asHTML]
-	::xo::tdp::compile_doc $doc $filename
-    }
 
+    set doc [source_tdom ::templating::lang $filename "html"]
+
+    # set doc [dom createDocument "html"]
+    # set root [$doc documentElement]
+    #
+    # if { [catch {$root appendFromScript "source $filename"} errMsg] } {
+    #    $doc delete
+    #    error $errMsg
+	#    return
+    # } else {
+	#    ::util::writefile $specfile [$doc asHTML]
+	#    ::xo::tdp::compile_doc $doc $filename
+    # }
+
+	::util::writefile $specfile [$doc asHTML]
+
+	::xo::tdp::compile_doc $doc $filename
 
     ::util::writefile $xmlfile [::xo::tdp::as_xml $doc]
 
     ::util::writefile $htmlfile [$doc asHTML]
+
     $doc delete
     
     # we also explicitly set load=0 while calling cbuild
-
 
     # latest mtime may have changed because of the deps
     # get those names again, taking the new deps into consideration

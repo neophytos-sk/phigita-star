@@ -32,6 +32,7 @@ define_lang ::persistence::lang {
 }
 
 set filename "message.pdl"
+
 set doc [source_tdom $filename ::persistence::lang]
 
 puts [$doc asXML]

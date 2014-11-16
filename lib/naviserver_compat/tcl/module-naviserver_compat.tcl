@@ -12,6 +12,9 @@ proc ::xo::kit::performance_mode_p {} {
 proc ::xo::kit::debug_mode_p {} {
     return [expr {![::xo::kit::performance_mode_p]}]
 }
+proc ::xo::kit::production_mode_p {} { 
+    return 0 
+}
 
 
 proc acs_root_dir {} {

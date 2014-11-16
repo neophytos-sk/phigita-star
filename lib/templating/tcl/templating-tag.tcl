@@ -1,23 +1,36 @@
 namespace eval ::templating {;}
 namespace eval ::templating::runtime {;}
 
-# withText is a shortcut for the text of an ELEMENT_NODE
-proc ::templating::createNodeCmd {cmdName {isTextElement 0}} {
 
-    if { $isTextElement } {
-	set nsp [uplevel {namespace current}]
+define_lang ::templating::lang {
 
-	proc ${nsp}${cmdName} {args} [subst {
-	    if { \[llength \$args\] % 2 == 0 } {
-	        widget -type ${cmdName} {*}\${args}
-	    } else {
-	        widget -type ${cmdName} {*}\[lrange \${args} 0 end-1\] \{ 
-	            t \[lindex \$args end\] 
-	        \}
-	    }
-	}]
-    } else {
-	interp alias {} ${cmdName} {} widget -type ${cmdName}
+    node_cmd widget  ;# datastore, dataview, grid
+    node_cmd tpl     ;# if, for, with
+    node_cmd item
+    node_cmd column
+    node_cmd param
+    node_cmd pragma
+
+    text_cmd val
+    text_cmd guard
+    text_cmd js
+    text_cmd css
+    text_cmd tcl
+
+    proc_cmd layout     alias_helper
+    proc_cmd layout_row alias_helper
+    proc_cmd layout_col alias_helper
+    proc_cmd grid       alias_helper
+    proc_cmd toolbar    alias_helper
+    proc_cmd datastore  alias_helper
+    proc_cmd dataview   alias_helper
+    proc_cmd master     alias_helper
+    proc_cmd contract   alias_helper
+    proc_cmd include    alias_helper
+    proc_cmd action     alias_helper
+
+    proc alias_helper {widget_type args} {
+        widget -type $widget_type {*}${args}
     }
 
 }
@@ -28,30 +41,7 @@ proc require_template_procs {} {
 
     require_html_procs
 
-    dom createNodeCmd elementNode widget  ;# datastore, dataview, grid
-    dom createNodeCmd elementNode tpl     ;# if, for
-    dom createNodeCmd elementNode item
-    dom createNodeCmd elementNode column
-    dom createNodeCmd elementNode param
-    dom createNodeCmd elementNode pragma
-
-    ::templating::createNodeCmd layout
-    ::templating::createNodeCmd layout_row
-    ::templating::createNodeCmd layout_col
-    ::templating::createNodeCmd grid ;# {-id:optional -store:required,dom_node_exists}
-    ::templating::createNodeCmd toolbar
-    ::templating::createNodeCmd datastore
-    ::templating::createNodeCmd dataview
-    ::templating::createNodeCmd master
-    ::templating::createNodeCmd contract
-    ::templating::createNodeCmd include
-    ::templating::createNodeCmd action
-
-    ::templating::createNodeCmd val 1 ;# isTextElement
-    ::templating::createNodeCmd guard 1 ;# isTextElement
-    ::templating::createNodeCmd js 1 ;# isTextElement 
-    ::templating::createNodeCmd css 1 ;# isTextElement
-    ::templating::createNodeCmd tcl 1 ;# isTextElement
+    require_lang ::templating::lang
 
 }
 
