@@ -1,21 +1,37 @@
-package require tdom
+source ../../../naviserver_compat/tcl/module-naviserver_compat.tcl
 
-set filename "messaging.struct"
+::xo::lib::require tdom_procs
 
-dom createNodeCmd elementNode struct
-dom createNodeCmd elementNode attr
-dom createNodeCmd elementNode index
-dom createNodeCmd elementNode extends
+define_lang ::persistence::lang {
 
-set doc [dom createDocument "pdl"]
-set root [$doc documentElement]
-if { [catch {$root appendFromScript "source $filename"} errMsg] } {
-    $doc delete
-    error $errMsg
-    return
-} else {
-    puts [$doc asXML]
-    # ::util::writefile $specfile [$doc asHTML]
-    # ::xo::tdp::compile_doc $doc $filename
+    node_cmd "struct"
+    node_cmd "attribute"
+    
+    text_cmd "name"
+    text_cmd "datatype"
+    text_cmd "default"
+    text_cmd "optional_p" "true"
+
+    proc_cmd "string" attribute_helper
+    proc_cmd "integer" attribute_helper
+    proc_cmd "boolean" attribute_helper
+
+    proc attribute_helper {datatype name {default_value ""}} {
+        attribute {
+            name ${name}
+            datatype ${datatype}
+            if { $default_value ne {} } {
+                default ${default_value}
+            }
+        }
+    }
+
+    node_cmd index
+    node_cmd extends
+
 }
 
+set filename "message.pdl"
+set doc [source_tdom $filename ::persistence::lang]
+
+puts [$doc asXML]

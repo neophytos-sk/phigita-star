@@ -1,0 +1,41 @@
+struct -id message -is_final_if_no_scope "1" {
+
+    #attr -type "sometype" -name "somename" -default "someval" -defaultExpr "somefunc() || 'hello'"
+
+    # string device = "sms"
+    # rel -name attachment -type File
+
+    string hello world
+
+    attribute {
+        name device
+        datatype string
+        default sms
+    }
+
+    attribute {
+        name cnt_comment
+        datatype uint32
+        default 0
+    }
+
+    attribute {
+        name public_p
+        datatype boolean
+        default false
+    }
+
+    attribute {
+        name attachment
+        datatype string
+        optional_p
+    }
+
+    extends -ref content.Object
+    extends -ref content.Content
+    extends -ref auditing.Auditing
+
+    index -attr public_p
+
+}
+

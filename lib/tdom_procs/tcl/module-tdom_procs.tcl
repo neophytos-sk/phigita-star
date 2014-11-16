@@ -4,6 +4,7 @@ package require tdom
 
 set dir [file dirname [info script]]
 
+source [file join $dir tdom-scripting.tcl]
 source [file join $dir xpathfunc.tcl]
 source [file join $dir html-extract.tcl]
 
