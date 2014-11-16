@@ -29,10 +29,34 @@ define_lang ::persistence::lang {
     node_cmd index
     node_cmd extends
 
+    dtd {
+        <!DOCTYPE struct [
+            <!ELEMENT struct (attribute | extends | index)*>
+            <!ATTLIST struct id CDATA #REQUIRED
+                      is_final_if_no_scope CDATA #IMPLIED>
+
+            <!ELEMENT attribute (name, datatype, default?, optional_p?)>
+            <!ELEMENT name (#PCDATA)>
+            <!ELEMENT datatype (#PCDATA)>
+            <!ELEMENT default (#PCDATA)>
+            <!ELEMENT optional_p (#PCDATA)>
+
+            <!ELEMENT extends EMPTY>
+            <!ATTLIST extends ref CDATA #REQUIRED>
+
+            <!ELEMENT index EMPTY>
+            <!ATTLIST index attr CDATA #REQUIRED>
+        ]>
+    }
+
 }
 
 set filename "message.pdl"
 
 set doc [source_tdom $filename ::persistence::lang]
 
-puts [$doc asXML]
+# puts [$doc asXML]
+
+set struct_node [$doc selectNodes {//struct}]
+
+::dom::scripting::validate ::persistence::lang [$struct_node asXML]

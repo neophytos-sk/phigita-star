@@ -33,6 +33,13 @@ proc ::dom::scripting::proc_cmd {cmd_name proc_name} {
 
 }
 
+proc ::dom::scripting::dtd {dtd} {
+
+    set nsp [uplevel { namespace current }]
+
+    namespace eval ${nsp} [list variable dtd $dtd]
+}
+
 proc ::dom::scripting::define_lang {nsp script} {
 
     if { [string range ${nsp} 0 1] ne {::} } {
@@ -43,7 +50,8 @@ proc ::dom::scripting::define_lang {nsp script} {
         namespace import -force \
             ::dom::scripting::node_cmd \
             ::dom::scripting::text_cmd \
-            ::dom::scripting::proc_cmd
+            ::dom::scripting::proc_cmd \
+            ::dom::scripting::dtd
 
     }
 
@@ -88,6 +96,54 @@ proc ::dom::scripting::source_tdom {filename nsp {root_element_name ""}} {
     } else {
 
         return $doc
+
+    }
+
+}
+
+proc ::dom::scripting::validate {nsp xml} {
+
+    variable ${nsp}::dtd
+
+    set tmpfile /tmp/somelang.xml
+
+    set fp [open $tmpfile w]
+    puts $fp "${dtd}\n${xml}"
+    close $fp
+
+    if { [catch {exec /usr/bin/xmllint --valid --noout $tmpfile} errmsg options] } {
+
+        array set options_arr $options
+
+        lassign $options_arr(-errorcode) _childstatus_ _pid_ errorcode
+
+        array set errortext {
+            0 "No error"
+            1 "Unclassified"
+            2 "Error in DTD"
+            3 "Validation error"
+            4 "Validation error"
+            5 "Error in schema compilation"
+            6 "Error writing output"
+            7 "Error in pattern (generated when --pattern option is used)"
+            8 "Error in Reader registration (generated when --chkregister option is used)"
+            9 "Out of memory error"
+        }
+
+        puts "--->>> $errortext($errorcode)"
+
+        set lines [regsub -all {\n\/} $errmsg "\x01\/"]
+        set lines [split $lines "\x01"]
+        foreach line $lines {
+
+            lassign [split $line {:}] filename line_number which_element what_error error_message 
+
+            puts "filename: $filename"
+            puts "line: $line_number"
+            puts "which element: $which_element"
+            puts "what error: $what_error"
+            puts "error message: $error_message"
+        }
 
     }
 

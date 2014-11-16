@@ -33,9 +33,9 @@ struct -id message -is_final_if_no_scope "1" {
 
     extends -ref content.Object
     extends -ref content.Content
-    extends -ref auditing.Auditing
+    extends -ref auditing.Auditing -hi world
 
-    index -attr public_p
+    index -attr public_p -abc 123
 
 }
 
