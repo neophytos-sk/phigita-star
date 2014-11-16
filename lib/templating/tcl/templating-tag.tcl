@@ -16,11 +16,24 @@ define_lang ::templating::lang {
     node_cmd item
     node_cmd column
 
-    text_cmd val
-    text_cmd guard
-    text_cmd js
-    text_cmd css
-    text_cmd tcl
+    proc_cmd val   leaf_node_helper
+    proc_cmd guard leaf_node_helper
+    proc_cmd js    leaf_node_helper
+    proc_cmd css   leaf_node_helper
+    proc_cmd tcl   leaf_node_helper
+
+    proc leaf_node_helper {cmd_name args} {
+
+        set str ""
+
+        if { [llength $args] % 2 == 1 } {
+            set str [lindex $args end]
+            set args [lrange $args 0 end-1]
+        }
+
+        uplevel [list ::templating::lang::widget -type $cmd_name {*}$args [list t $str ]]
+
+    }
 
     foreach cmd_name {
         layout layout_row layout_col
@@ -88,11 +101,13 @@ proc ::templating::tag::master::initial_rewrite {codearrVar node {argVar ""}} {
 
     $node setAttribute __todelete 1
 
-    proc ::templating::lang::slave {} "widget -type slave -id slave_$node"
-
     set default_src "templates/default-master.inc"
     set src [$node @src $default_src]
     set filename [file normalize [acs_root_dir]/${src}]
+
+    # proc ::templating::lang::slave {} "ns_log notice \"--->slave_$node (src=$src)\"; widget -type slave -id slave_$node"
+    proc ::templating::lang::slave {} "widget -type slave -id slave_$node"
+
 
     # save master node attributes into an array
     # slave script can make use of these attributes
@@ -109,7 +124,7 @@ proc ::templating::tag::master::initial_rewrite {codearrVar node {argVar ""}} {
     # move children before the 'slave' placeholder
     set placeholder [tdom_getElementById $pn "slave_${node}"]
     if { $placeholder eq {} } {
-        error "did not find slave node with id slave_${node}"
+        error "did not find slave node with id slave_${node} (src=$src)"
     }
     set childNodes [$node childNodes]
     foreach child $childNodes {
@@ -126,7 +141,7 @@ proc ::templating::tag::master::initial_rewrite {codearrVar node {argVar ""}} {
 
         if { [${new_node} @__todelete 0] } continue
 
-        initial_rewrite codearr ${new_node} arg
+        ::templating::tag::[$new_node @type]::initial_rewrite codearr ${new_node} arg
 
     }
 
@@ -902,7 +917,7 @@ proc ::templating::tag::dataview::to_c {codearrVar node} {
         if { [info procs ${cmd}] ne {} } {
             set call_string [${cmd} codearr ${widget}]
             [$widget parentNode] insertBeforeFromScript {
-                tpl -id [$widget @id ""] -call "${call_string}"
+                ::templating::lang::tpl -id [$widget @id ""] -call "${call_string}"
             } $widget
 
             # mark it so that we won't process it twice
@@ -988,14 +1003,14 @@ proc ::templating::tag::grid::to_c {codearrVar node} {
 		}
 	    }
 	    tbody {
-		tpl -for "." {
+		::templating::lang::tpl -for "." {
 		    tr {
 			set index 0
 			foreach child $childNodes {
 			    set tdNode [tmpl::td {
 				set renderer [$child @renderer ""]
 				set child_id "${other_id}_column${index}"
-				tpl \
+				::templating::lang::tpl \
 				    -exec $renderer \
 				    -config [tdom_attributesDict $child] \
 				    -id ${child_id} { 

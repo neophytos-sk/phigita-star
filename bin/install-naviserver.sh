@@ -113,7 +113,7 @@ make install NAVISERVER=${NSHOME}
 
 ### TRF for faster base encoding
 cd ${WORKDIR}
-tar -xzvf ${FILEDIR}/trf-${SUFFIX}.tar.gz
+tar -xzvf ${FILEDIR}/naviserver/trf-${SUFFIX}.tar.gz
 cd trf/
 ./configure --enable-threads --prefix=${NSHOME} --exec-prefix=${NSHOME} --with-tcl=${NSHOME}/lib
 make

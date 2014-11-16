@@ -187,16 +187,19 @@ void append_0 /* tclvar */ (Tcl_Interp *interp, Tcl_Obj **global_objects, Tcl_Ob
     if (!objPtr1 || !objPtr2)  return;
 
     Tcl_Obj *objPtr = Tcl_ObjGetVar2(interp,objPtr1,objPtr2,TCL_GLOBAL_ONLY);
-    if (objPtr) {
-        int length;
-        const char *bytes = Tcl_GetStringFromObj(objPtr,&length);
-        if (noquote) 
-            Tcl_DStringAppend(dsPtr,bytes,length);
-        else
-            append_quoted_html(dsPtr,bytes,length);
+    if (!objPtr) {
+        DBG(fprintf(stderr,"append_0: objPtr is null"));
+        Tcl_DStringAppend(dsPtr,"-ERROR-",7);
+        return;
     }
+    
+    int length;
+    const char *bytes = Tcl_GetStringFromObj(objPtr,&length);
+    if (noquote) 
+        Tcl_DStringAppend(dsPtr,bytes,length);
+    else
+        append_quoted_html(dsPtr,bytes,length);
 
-    // if (error) Tcl_DStringAppend(dsPtr,"-ERROR-",7);
 }
 
 #ifdef USE_NSF

@@ -364,7 +364,7 @@ proc ::xo::tdp::compile_doc {templateDoc filename} {
     set start [clock milliseconds]
 
 
-    #set xpath_all_widgets {//master|//include|//contract|//widget}
+    #set xpath_all_widgets {//master|//include|//contract|//val|//guard|//js|//css|//tcl|//widget}
     set xpath_all_widgets {//widget}
 
     # get widgets from dom tree
@@ -450,41 +450,49 @@ proc ::xo::tdp::compile_doc {templateDoc filename} {
     }
 
 
-    # -------------------------- compile css -----------------------------------
+    if {0} {
 
-    set css_min [::templating::css::compile_css codearr $templateDoc $filename rename_map seen]
+        # -------------------------- compile css -----------------------------------
+        
+        set css_min [::templating::css::compile_css codearr $templateDoc $filename rename_map seen]
 
-    # -------------------------- compile js ------------------------------------
+        # -------------------------- compile js ------------------------------------
 
-    set rootname [::critcl::ext::get_build_rootname $filename]
-    ::templating::js::get_compiled_script ${rootname} rename_map js
+        set rootname [::critcl::ext::get_build_rootname $filename]
+        ::templating::js::get_compiled_script ${rootname} rename_map js
 
-    # ---------------- rename classes in the template doc ----------------------
-    #
-    # 1. using rename_map to do the renaming
-    # 2. updates seen var that is used in the next stage for more optimizations
-    #
+        # ---------------- rename classes in the template doc ----------------------
+        #
+        # 1. using rename_map to do the renaming
+        # 2. updates seen var that is used in the next stage for more optimizations
+        #
 
-    ::templating::css::rename_doc_classes $templateDoc rename_map seen
+        ::templating::css::rename_doc_classes $templateDoc rename_map seen
 
 
-    # ---------------- further css optimizations -------------------------------
-    #
-    # css_min_final needs '__CSS_KEEP__' that keeps values set by setCssMappping
-    # setCssMapping is called by get_compiled_script
+        # ---------------- further css optimizations -------------------------------
+        #
+        # css_min_final needs '__CSS_KEEP__' that keeps values set by setCssMappping
+        # setCssMapping is called by get_compiled_script
 
-    if { $css_min ne {} } {
-        set css_min_final [::templating::css::optimize_css codearr $templateDoc $filename $css_min seen]
-        set css_min_final_len [string bytelength $css_min_final]
+        if { $css_min ne {} } {
+            set css_min_final [::templating::css::optimize_css codearr $templateDoc $filename $css_min seen]
+            set css_min_final_len [string bytelength $css_min_final]
 
-        set css_md5_hex [::util::md5_hex $css_min_final]
-        set css_public_file ${css_md5_hex}.css
-        set cdn_css_min_file [get_css_dir]/${css_public_file}
-        ::util::writefile $cdn_css_min_file $css_min_final
+            set css_md5_hex [::util::md5_hex $css_min_final]
+            set css_public_file ${css_md5_hex}.css
+            set cdn_css_min_file [get_css_dir]/${css_public_file}
+            ::util::writefile $cdn_css_min_file $css_min_final
 
-        exec "/bin/gzip -9 -c ${cdn_css_min_file} > ${cdn_css_min_file}.gz"
+            exec "/bin/gzip -9 -c ${cdn_css_min_file} > ${cdn_css_min_file}.gz"
 
-        set css_min_final_url [get_cdn_url "/css/${css_public_file}"]
+            set css_min_final_url [get_cdn_url "/css/${css_public_file}"]
+        }
+
+    } else {
+        ::xo::kit::log notice "--->>> DISABLED CSS/JS COMPILATION TO EASE DEVELOPMENT"
+        set css_min ""
+        array set js [list private false public false]
     }
 
     # set preload ""
@@ -513,7 +521,7 @@ proc ::xo::tdp::compile_doc {templateDoc filename} {
             if { $js(public) } {
 
                 val -id registered_p -other_id [next_other_id] { ::xo::kit::is_registered_p }
-                tpl -if "not @{val.registered_p}" {
+                ::templating::lang::tpl -if "not @{val.registered_p}" {
 
                 ## we have some js code for the public
 
@@ -550,7 +558,7 @@ proc ::xo::tdp::compile_doc {templateDoc filename} {
             ## we have some js code for registered users
 
                 val -id registered_p -other_id [next_other_id] { ::xo::kit::is_registered_p }
-                tpl -if "@{val.registered_p}" {
+                ::templating::lang::tpl -if "@{val.registered_p}" {
 
                     if { $js(internal-1) ne {} } {
                         script -type text/javascript { nt $js(internal-1) }

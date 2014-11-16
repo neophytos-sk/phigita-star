@@ -45,7 +45,7 @@ proc ::dom::scripting::proc_cmd {cmd_name proc_name} {
 
     set nsp [uplevel { namespace current }]
     
-    proc ${nsp}::$cmd_name {args} "uplevel \[list $proc_name ${cmd_name} {*}\${args}\]"
+    proc ${nsp}::$cmd_name {args} "uplevel \[list ${nsp}::$proc_name ${cmd_name} {*}\${args}\]"
 
 }
 
