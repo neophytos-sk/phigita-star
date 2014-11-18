@@ -77,6 +77,24 @@ proc ::dom::scripting::define_lang {nsp script} {
 
 }
 
+proc ::dom::scripting::extend_lang {nsp script} {
+
+    set i 0
+    while { [info proc ${nsp}::_require_procs_${i}] ne {} } {
+        incr i
+        if { $i > 100 } {
+            error "something is wrong or too many extension to the language"
+        }
+    }
+
+    rename ${nsp}::require_procs ${nsp}::_require_procs_${i}
+
+    proc ${nsp}::require_procs {} [list ${nsp}::_require_procs_${i}; namespace eval ${nsp} ${script}]
+
+    ${nsp}::require_procs
+
+}
+
 proc ::dom::scripting::require_lang {nsp} {
 
     if { ![namespace exists ${nsp}] } {
@@ -105,11 +123,15 @@ proc ::dom::scripting::source_tdom {filename nsp {root_element_name ""}} {
 
     set doc [dom createDocument $root_element_name]
 
+    set ::__source_tdom_doc $doc
+
     set root [$doc documentElement]
 
     set script "namespace inscope ${nsp} { source $filename }"
 
     if { [catch {$root appendFromScript $script} errmsg options] } {
+
+        unset ::__source_tdom_doc
 
         $doc delete
 
@@ -118,6 +140,8 @@ proc ::dom::scripting::source_tdom {filename nsp {root_element_name ""}} {
         error $errmsg $options_arr(-errorinfo)
 
     } else {
+
+        unset ::__source_tdom_doc
 
         return $doc
 
@@ -173,9 +197,25 @@ proc ::dom::scripting::validate {nsp xml} {
 
 }
 
+proc ::dom::scripting::serialize {nsp struct dict} {
+    
+    foreach slot [set ${nsp}::slots($struct)] {
+        lassign $slot name type default optional_p container_type
+        if { [dict exists $dict $name] } {
+            set value [dict get $dict $name]
+            puts "$name = $value"
+        } elseif { $default ne {} } {
+            puts "$name = $default"
+        } elseif { $optional_p ne {true} } {
+            error "required slot missing $name"
+        }
+    }
+}
+
 namespace import -force \
     ::dom::scripting::define_lang \
     ::dom::scripting::require_lang \
+    ::dom::scripting::extend_lang \
     ::dom::scripting::source_inscope \
     ::dom::scripting::source_tdom
 

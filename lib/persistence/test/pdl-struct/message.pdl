@@ -1,40 +1,59 @@
-struct -id message -is_final_if_no_scope "1" {
+struct -name struct {
+    string name
+    set<slot> slots = {}
+}
 
-    # rel -name attachment -type File
+struct -name slot {
+    string name
+    string type
+    string default
+    bool optional_p = false
+    string container_type
+}
+
+struct -name email {
+    string name = ""
+    string address
+}
+
+struct -name file {
+    string name
+    string mime_type
+    i32 size
+}
+
+struct -name folder {
+    string name
+}
+
+struct -name message -is_final_if_no_scope "1" {
 
     string device = "sms"
 
-    integer num_comments = 0
+    i16 num_comments = 0
 
-    attribute {
-        name device
-        datatype string
-        default sms
-    }
+    email from
+    list<email> to
+    list<email> cc = {}
+    list<email> bcc = {}
 
-    attribute {
-        name cnt_comment
-        datatype uint32
-        default 0
-    }
+    string subject
+    string body
 
-    attribute {
-        name public_p
-        datatype boolean
-        default false
-    }
+    bool public_p = false
 
-    attribute {
-        name attachment
-        datatype string
-        optional_p
-    }
+    set<category> categories
+    set<folder> folders
+    set<string> tags
+    set<file> attachment = {}
 
-    extends -ref content.Object
-    extends -ref content.Content
-    extends -ref auditing.Auditing -hi world
+    map<string,i32> wordcount
 
-    index -attr public_p -abc 123
+    #extends -ref content.Object
+    #extends -ref content.Content
+    #extends -ref auditing.Auditing -hi world
+
+    #index -attr public_p -abc 123
 
 }
 
