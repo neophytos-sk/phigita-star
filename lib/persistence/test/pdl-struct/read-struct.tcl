@@ -9,7 +9,7 @@ define_lang ::persistence::lang {
     
     text_cmd "name"
     text_cmd "type"
-    text_cmd "default"
+    text_cmd "default_value"
     text_cmd "optional_p" "true"
     text_cmd "container_type"
 
@@ -34,7 +34,7 @@ define_lang ::persistence::lang {
     # a text string encoded using UTF-8 encoding
     proc_cmd "string" attribute_helper
 
-    proc attribute_helper {datatype name args} {
+    proc attribute_helper {type name args} {
 
         set default_value {}
 
@@ -48,18 +48,16 @@ define_lang ::persistence::lang {
 
         }
 
-        slot {
-            name ${name}
-            type ${datatype}
-            if { $default_value ne {} } {
-                default ${default_value}
-                optional_p true
-            }
-        }
-    }
+        # set nsp [uplevel {namespace current}]
+        # namespace eval ${nsp} "text_cmd _${name}"
 
-    node_cmd index
-    node_cmd extends
+        set node [slot -name $name -type $type]
+        if { $default_value ne {} } {
+            $node setAttribute default_value ${default_value}
+            $node setAttribute optional_p true
+        }
+        return $node
+    }
 
     namespace unknown unknown_handler
 
@@ -95,7 +93,7 @@ define_lang ::persistence::lang {
             set node [attribute_helper $datatype $field_name {*}${args}]
 
             if { $container_type ne {} } {
-                $node appendFromScript { container_type $container_type }
+                $node @container_type $container_type
             }
 
         } else {
@@ -108,8 +106,6 @@ define_lang ::persistence::lang {
 
                 attribute_helper $field_type $field_name {*}${args}
 
-                #extend_lang ::persistence::lang "text_cmd $field_type"
-                #namespace inscope ::persistence::lang "${field_type} ${field_name}"
             }
         }
 
@@ -119,16 +115,17 @@ define_lang ::persistence::lang {
         <!DOCTYPE pdl [
 
             <!ELEMENT pdl (struct*)>
-            <!ELEMENT struct (slot | extends | index)*>
+            <!ELEMENT struct (slot | struct)*>
             <!ATTLIST struct name CDATA #REQUIRED
-                      is_final_if_no_scope CDATA #IMPLIED>
+                             pk CDATA #IMPLIED
+                             is_final_if_no_scope CDATA #IMPLIED>
 
-            <!ELEMENT slot (name, type, default?, optional_p?, container_type?)>
-            <!ELEMENT name (#PCDATA)>
-            <!ELEMENT type (#PCDATA)>
-            <!ELEMENT default (#PCDATA)>
-            <!ELEMENT optional_p (#PCDATA)>
-            <!ELEMENT container_type (#PCDATA)>
+            <!ELEMENT slot EMPTY>
+            <!ATTLIST slot name CDATA #REQUIRED
+                           type CDATA #REQUIRED
+                           default_value CDATA #IMPLIED
+                           optional_p CDATA #IMPLIED
+                           container_type CDATA #IMPLIED>
 
             <!ELEMENT extends EMPTY>
             <!ATTLIST extends ref CDATA #REQUIRED>
@@ -158,16 +155,16 @@ foreach node $nodes {
 
     set name ""
     set type ""
-    set default ""
+    set default_value ""
     set optional_p ""
     set container_type ""
 
-    set childnodes [$node childNodes]
-    foreach child $childnodes {
-        set [$child nodeName] [$child text]
+    set attributes [$node attributes]
+    foreach attname $attributes {
+        set ${attname} [$node @${attname}]
     }
 
-    lappend slots [list $name $type $default $optional_p $container_type]
+    lappend slots [list $name $type $default_value $optional_p $container_type]
 
 }
 

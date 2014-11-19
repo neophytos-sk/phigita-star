@@ -1,5 +1,7 @@
 struct -name struct {
     string name
+    string pk
+    bool is_final_if_no_scope
     set<slot> slots = {}
 }
 
@@ -11,7 +13,7 @@ struct -name slot {
     string container_type
 }
 
-struct -name email {
+struct -name email -pk address {
     string name = ""
     string address
 }
@@ -32,13 +34,27 @@ struct -name message -is_final_if_no_scope "1" {
 
     i16 num_comments = 0
 
-    email from
+    string subject
+
+    string body
+
+    # example of an instance:
+    # email -name "zena wow" -address "zena@example.com"
+    #
+    # example of slot definition:
+    # email from
+    #
+    slot -name from -type email
+
+    # embedded object mapping for slot email
+    # struct -name from {
+    #     string name = ""
+    #     string email
+    # }
+
     list<email> to
     list<email> cc = {}
     list<email> bcc = {}
-
-    string subject
-    string body
 
     bool public_p = false
 
@@ -57,3 +73,4 @@ struct -name message -is_final_if_no_scope "1" {
 
 }
 
+#message -subject "hello"

@@ -13,15 +13,42 @@ proc ::dom::scripting::node_cmd {cmd_name} {
 
 }
 
+# type_cmd struct
+#
+# creates ::persistence::lang::shadow::struct node command
+# creates ::persistence::lang::struct proc
+# - calls the shadow command
+# - node_cmd @name
+#
+proc ::dom::scripting::type_cmd {cmd_name} {
+
+    set nsp [uplevel { namespace current }]
+
+    set shadow_nsp ${nsp}::shadow
+
+    namespace eval $shadow_nsp [list ${nsp}::node_cmd $cmd_name]
+
+    proc ${nsp}::$cmd_name {args} [subst -nocommands -nobackslashes {
+        set node [uplevel [list ${shadow_nsp}::$cmd_name {*}[set args]]]
+        set typename [[set node] @name]
+        if { [set typename] ne {${cmd_name}} } {
+
+            puts "--->>> $cmd_name [set typename]"
+
+            namespace eval ${nsp} "node_cmd [set typename]"
+
+        }
+    }]
+
+}
+
 proc ::dom::scripting::text_cmd {cmd_name {default_string ""}} {
 
     set nsp [uplevel { namespace current }]
 
-    set shadow_nsp ${nsp}::shadow 
+    set shadow_nsp ${nsp}::shadow
 
     namespace eval $shadow_nsp [list ${nsp}::node_cmd $cmd_name]
-
-    # proc ${nsp}::$cmd_name [list [list str $default_string]] [list ${shadow_nsp}::$cmd_name { t $str }]
 
     proc ${nsp}::$cmd_name {args} [subst -nocommands -nobackslashes {
 
@@ -31,7 +58,7 @@ proc ::dom::scripting::text_cmd {cmd_name {default_string ""}} {
             set args [lrange [set args] 0 end-1]
         }
 
-        set node [${shadow_nsp}::$cmd_name {*}[set args]]
+        set node [uplevel [list ${shadow_nsp}::$cmd_name {*}[set args]]]
 
         if { [set str] ne {} } {
             [set node] appendFromScript { t [set str] }
@@ -64,6 +91,7 @@ proc ::dom::scripting::define_lang {nsp script} {
 
     namespace eval ${nsp} {
         namespace import -force \
+            ::dom::scripting::type_cmd \
             ::dom::scripting::node_cmd \
             ::dom::scripting::text_cmd \
             ::dom::scripting::proc_cmd \
@@ -198,18 +226,50 @@ proc ::dom::scripting::validate {nsp xml} {
 }
 
 proc ::dom::scripting::serialize {nsp struct dict} {
-    
-    foreach slot [set ${nsp}::slots($struct)] {
-        lassign $slot name type default optional_p container_type
+
+    set slots [set ${nsp}::slots($struct)]
+
+    set values [list]
+    foreach slot $slots {
+
+        lassign $slot name type default_value optional_p container_type
+
         if { [dict exists $dict $name] } {
+
             set value [dict get $dict $name]
-            puts "$name = $value"
-        } elseif { $default ne {} } {
-            puts "$name = $default"
+
+        } elseif { $default_value ne {} } {
+
+            set value $default_value
+
         } elseif { $optional_p ne {true} } {
-            error "required slot missing $name"
+
+            error "required slot missing name=$name"
+
         }
+
+        puts "$name = $value"
+
+        lappend values $value
+
     }
+
+    # header
+    foreach slot $slots {
+
+        lassign $slot name type default optional_p container_type
+
+        puts -nonewline ${name}\t
+
+    }
+    puts ""
+
+
+    foreach value $values {
+        set nonewlines_value [string map {\n ""} $value]
+        puts -nonewline ${nonewlines_value}\t
+    }
+    puts ""
 }
 
 namespace import -force \
