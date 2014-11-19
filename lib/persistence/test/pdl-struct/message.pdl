@@ -1,11 +1,11 @@
-struct -name struct {
+struct struct {
     string name
     string pk
     bool is_final_if_no_scope
     set<slot> slots = {}
 }
 
-struct -name slot {
+struct slot {
     string name
     string type
     string default
@@ -13,22 +13,22 @@ struct -name slot {
     string container_type
 }
 
-struct -name email -pk address {
+struct email -pk address {
     string name = ""
     string address
 }
 
-struct -name file {
+struct file {
     string name
     string mime_type
     i32 size
 }
 
-struct -name folder {
+struct folder {
     string name
 }
 
-struct -name message -is_final_if_no_scope "1" {
+struct message -is_final_if_no_scope "1" {
 
     string device = "sms"
 

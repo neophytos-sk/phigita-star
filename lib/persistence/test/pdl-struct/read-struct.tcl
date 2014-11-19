@@ -4,7 +4,7 @@ source ../../../naviserver_compat/tcl/module-naviserver_compat.tcl
 
 define_lang ::persistence::lang {
 
-    node_cmd "struct"
+    meta_cmd "struct" struct_helper
     node_cmd "slot"
     
     text_cmd "name"
@@ -33,6 +33,10 @@ define_lang ::persistence::lang {
 
     # a text string encoded using UTF-8 encoding
     proc_cmd "string" attribute_helper
+
+    proc struct_helper {when node} {
+        puts "struct_helper: args=$node typename=[$node @name]"
+    }
 
     proc attribute_helper {type name args} {
 

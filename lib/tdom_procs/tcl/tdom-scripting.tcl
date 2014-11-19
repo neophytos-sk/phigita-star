@@ -1,3 +1,32 @@
+namespace eval ::dom {;}
+
+# tDOM does not provide such a proc,
+# so we had to write one for cases like
+# the following:
+#
+# $doc appendFromScript {
+#   dom createNodeInContext elementNode somecmdname
+# }
+#
+proc ::dom::createNodeInContext {node_type cmd_name args} {
+
+    set nsp "::dom::_temp_::$node_type"
+
+    if { [info proc "${nsp}::$cmd_name"] eq {} } {
+        namespace eval ${nsp} [list dom createNodeCmd -returnNodeCmd $node_type $cmd_name]
+    }
+
+    set uplevel_nsp [uplevel [list namespace current]]
+    set old_nsp_path [namespace path]
+    namespace path ${uplevel_nsp}
+    set node [uplevel [list ${nsp}::$cmd_name {*}${args}]]
+    namespace path $old_nsp_path
+
+    rename ${nsp}::$cmd_name {}
+
+    return $node
+
+}
 
 namespace eval ::dom::scripting {
     namespace export *
@@ -17,40 +46,11 @@ proc ::dom::scripting::node_cmd {cmd_name} {
 
 }
 
-# type_cmd struct
-#
-# creates ::persistence::lang::shadow::struct node command
-# creates ::persistence::lang::struct proc
-# - calls the shadow command
-# - node_cmd @name
-#
-proc ::dom::scripting::type_cmd {cmd_name} {
-
-    set nsp [uplevel { namespace current }]
-
-    set shadow_nsp ${nsp}::shadow
-
-    namespace eval $shadow_nsp [list ${nsp}::node_cmd $cmd_name]
-
-    proc ${nsp}::$cmd_name {args} [subst -nocommands -nobackslashes {
-        set node [uplevel [list ${shadow_nsp}::$cmd_name {*}[set args]]]
-        set typename [[set node] @name]
-        if { [set typename] ne {${cmd_name}} } {
-
-            puts "--->>> $cmd_name [set typename]"
-
-            namespace eval ${nsp} "node_cmd [set typename]"
-
-        }
-    }]
-
-}
-
 proc ::dom::scripting::text_cmd {cmd_name {default_string ""}} {
 
     set nsp [uplevel { namespace current }]
 
-    set shadow_nsp ${nsp}::shadow
+    set shadow_nsp ${nsp}::_shadow_
 
     namespace eval $shadow_nsp [list ${nsp}::node_cmd $cmd_name]
 
@@ -72,11 +72,44 @@ proc ::dom::scripting::text_cmd {cmd_name {default_string ""}} {
 
 }
 
-proc ::dom::scripting::proc_cmd {cmd_name proc_name} {
+proc ::dom::scripting::proc_cmd {cmd_name cmd_handler args} {
 
     set nsp [uplevel { namespace current }]
     
-    proc ${nsp}::$cmd_name {args} "uplevel \[list ${nsp}::$proc_name ${cmd_name} {*}\${args}\]"
+    proc ${nsp}::$cmd_name {args} [subst -nocommands -nobackslashes {
+        uplevel "$cmd_handler $cmd_name ${args} [set args]"
+    }]
+
+}
+
+# meta_cmd struct
+#
+# creates ::persistence::lang::shadow::struct node command
+# creates ::persistence::lang::struct proc
+# - calls the shadow command
+# - node_cmd @name
+#
+proc ::dom::scripting::meta_cmd {cmd_name {cmd_handler ""}} {
+
+    set nsp [uplevel { namespace current }]
+
+    set shadow_nsp ${nsp}::_shadow_
+
+    set init_script {}
+    if { $cmd_handler ne {} } {
+        set init_script [subst -nocommands -nobackslashes {
+            namespace eval ${nsp} [list $cmd_handler init [set node]]
+        }]
+    }
+
+    namespace eval $shadow_nsp [subst -nocommands -nobackslashes {
+        proc $cmd_name {args} {
+            set node [uplevel "::dom::createNodeInContext elementNode {*}[set args]"]
+            ${init_script}
+        }
+    }]
+
+    uplevel [list proc_cmd $cmd_name ${shadow_nsp}::$cmd_name "-name"]
 
 }
 
@@ -95,7 +128,7 @@ proc ::dom::scripting::define_lang {nsp script} {
 
     namespace eval ${nsp} {
         namespace import -force \
-            ::dom::scripting::type_cmd \
+            ::dom::scripting::meta_cmd \
             ::dom::scripting::node_cmd \
             ::dom::scripting::text_cmd \
             ::dom::scripting::proc_cmd \
