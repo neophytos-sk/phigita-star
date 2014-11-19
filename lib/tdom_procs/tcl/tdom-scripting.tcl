@@ -3,7 +3,11 @@ namespace eval ::dom::scripting {
     namespace export *
 }
 
-dom createNodeCmd textNode t
+proc ::dom::scripting::init {} {
+    # TODO: define_lang ::html::lang { text_cmd t; proc nt {text} { t "..." } }
+    dom createNodeCmd textNode ::t
+    proc ::nt {text} { t -disableOutputEscaping ${text} }
+}
 
 proc ::dom::scripting::node_cmd {cmd_name} {
 
