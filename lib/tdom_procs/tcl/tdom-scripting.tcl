@@ -82,36 +82,27 @@ proc ::dom::scripting::proc_cmd {cmd_name cmd_handler args} {
 
 }
 
-# meta_cmd struct
-#
-# creates ::persistence::lang::shadow::struct node command
-# creates ::persistence::lang::struct proc
-# - calls the shadow command
-# - node_cmd @name
-#
-proc ::dom::scripting::meta_cmd {cmd_name {cmd_handler ""}} {
+proc ::dom::scripting::meta_cmd {cmd_name cmd_handler} {
 
-    set nsp [uplevel { namespace current }]
+    set nsp [uplevel {namespace current}]
 
-    set shadow_nsp ${nsp}::_shadow_
-
-    set init_script {}
-    if { $cmd_handler ne {} } {
-        set init_script [subst -nocommands -nobackslashes {
-            namespace eval ${nsp} [list $cmd_handler init [set node]]
+    if { [info proc ${nsp}::${cmd_handler}::define] eq {} } {
+        namespace eval ${nsp} [subst -nocommands -nobackslashes {
+            namespace eval $cmd_handler {
+                proc define {args} {
+                    # create node 
+                    set node [uplevel "::dom::createNodeInContext elementNode {*}[set args]"]
+                    # init
+                    namespace eval ${nsp}::$cmd_handler init [set node]
+                }
+            }
         }]
     }
 
-    namespace eval $shadow_nsp [subst -nocommands -nobackslashes {
-        proc $cmd_name {args} {
-            set node [uplevel "::dom::createNodeInContext elementNode {*}[set args]"]
-            ${init_script}
-        }
-    }]
-
-    uplevel [list proc_cmd $cmd_name ${shadow_nsp}::$cmd_name "-name"]
+    uplevel [list proc_cmd $cmd_name ${nsp}::${cmd_handler}::define "-name"]
 
 }
+
 
 proc ::dom::scripting::dtd {dtd} {
 
@@ -214,12 +205,12 @@ proc ::dom::scripting::source_tdom {filename nsp {root_element_name ""}} {
 
 }
 
-proc ::dom::scripting::validate {nsp xml} {
+proc ::dom::scripting::validate {lang_nsp node} {
 
-    variable ${nsp}::dtd
+    variable ${lang_nsp}::dtd
 
+    set xml [$node asXML]
     set tmpfile /tmp/somelang.xml
-
     set fp [open $tmpfile w]
     puts $fp "${dtd}\n${xml}"
     close $fp
@@ -260,53 +251,6 @@ proc ::dom::scripting::validate {nsp xml} {
 
     }
 
-}
-
-proc ::dom::scripting::serialize {nsp struct dict} {
-
-    set slots [set ${nsp}::slots($struct)]
-
-    set values [list]
-    foreach slot $slots {
-
-        lassign $slot name type default_value optional_p container_type
-
-        if { [dict exists $dict $name] } {
-
-            set value [dict get $dict $name]
-
-        } elseif { $default_value ne {} } {
-
-            set value $default_value
-
-        } elseif { $optional_p ne {true} } {
-
-            error "required slot missing name=$name"
-
-        }
-
-        puts "$name = $value"
-
-        lappend values $value
-
-    }
-
-    # header
-    foreach slot $slots {
-
-        lassign $slot name type default optional_p container_type
-
-        puts -nonewline ${name}\t
-
-    }
-    puts ""
-
-
-    foreach value $values {
-        set nonewlines_value [string map {\n ""} $value]
-        puts -nonewline ${nonewlines_value}\t
-    }
-    puts ""
 }
 
 namespace import -force \

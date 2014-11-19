@@ -9,7 +9,13 @@ proc ::persistence::get_package_dir {} "return ${package_dir}"
 
 proc ::persistence::get_conf_dir {} "return ${package_dir}/conf"
 
-source [file join $dir data_procs.tcl]
-source [file join $dir orm_procs.tcl]
-source [file join $dir sysdb_pdl.tcl]
 
+set filelist [list \
+    [file join $dir pdl-lang.tcl] \
+    [file join $dir data_procs.tcl] \
+    [file join $dir orm_procs.tcl] \
+    [file join $dir sysdb_pdl.tcl]]
+
+foreach filename $filelist {
+    source $filename
+}

@@ -9,8 +9,6 @@ namespace eval ::persistence {
 
 }
 
-
-
 proc ::persistence::get_keyspace_dir {keyspace} {
 
     variable base_dir
@@ -977,3 +975,44 @@ proc ::persistence::link {keyspace column_family target_path link_path {force_p 
     ::persistence::link_data ${target_supercolumn_dir} ${link_supercolumn_dir}
 
 }
+
+
+namespace eval ::persistence::lang::_info_ {;}
+
+proc ::persistence::serialize {struct dict} {
+
+    set attributes [set ::persistence::lang::_info_::${struct}(attributes)]
+
+    set values [list]
+
+    foreach att $attributes {
+
+        lassign $att name type default_value optional_p container_type
+
+        if { [dict exists $dict $name] } {
+
+            set value [dict get $dict $name]
+
+        } elseif { $default_value ne {} } {
+
+            set value $default_value
+
+        } elseif { $optional_p ne {true} } {
+
+            error "required attribute (=${name}) missing"
+
+        }
+
+        # puts "$name = $value"
+
+        lappend header ${name}
+        lappend values ${value}
+
+    }
+
+    puts $header
+    puts [string map {"\n" "\\n"} $values]
+}
+
+
+

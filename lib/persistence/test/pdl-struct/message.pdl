@@ -11,6 +11,7 @@ struct slot {
     string default
     bool optional_p = false
     string container_type
+    string subtype
 }
 
 struct email -pk address {
