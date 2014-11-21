@@ -79,19 +79,21 @@ proc ::dom::scripting::proc_cmd {cmd_name cmd_handler args} {
     set nsp [uplevel { namespace current }]
     
     proc ${nsp}::$cmd_name {args} [subst -nocommands -nobackslashes {
-        uplevel "$cmd_handler $cmd_name ${args} [set args]"
+        uplevel "{*}$cmd_handler $cmd_name ${args} [set args]"
     }]
 
 }
 
-proc ::dom::scripting::meta_cmd {cmd_name cmd_handler} {
+proc ::dom::scripting::meta_cmd {cmd_name cmd_handler args} {
+
+    # puts "meta_cmd $cmd_name $cmd_handler args=$args"
 
     set nsp [uplevel {namespace current}]
 
     if { [info proc ${nsp}::${cmd_handler}::define] eq {} } {
         namespace eval ${nsp} [subst -nocommands -nobackslashes {
             namespace eval $cmd_handler {
-                proc define {args} {
+                proc define {typename args} {
                     # args = nodename -nsp somensp -name somename
                     # e.g. struct -nsp ::persistence::lang -name message { ... }
                     if { [string index [lindex [set args] 4] 0] eq {-} } {
@@ -100,13 +102,16 @@ proc ::dom::scripting::meta_cmd {cmd_name cmd_handler} {
                     # create node 
                     set node [uplevel "::dom::createNodeInContext elementNode {*}[set args]"]
                     # init
-                    namespace eval ${nsp}::$cmd_handler init [set node]
+                    namespace eval ${nsp}::$cmd_handler init [set node] {*}$args
                 }
             }
         }]
     }
 
-    uplevel [list proc_cmd $cmd_name ${nsp}::${cmd_handler}::define -nsp ${nsp} -name]
+
+    # when called, it will be as follows:
+    # ::persistence::lang::class_helper::define struct somename -nsp ::persistence::lang -name somename ... { ... }
+    uplevel [list proc_cmd $cmd_name "${nsp}::${cmd_handler}::define $cmd_name" -nsp ${nsp} -name]
 
 }
 

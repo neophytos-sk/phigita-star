@@ -16,7 +16,7 @@ define_lang ::persistence::lang {
 
     namespace import ::db::lang::*
 
-    meta_cmd "struct" struct_helper
+    meta_cmd "struct" class_helper object_helper
     #node_cmd "slot"
     # node_cmd "attribute" -isa slot
     
@@ -47,9 +47,9 @@ define_lang ::persistence::lang {
     # a text string encoded using UTF-8 encoding
     proc_cmd "string" attribute_helper
 
-    namespace eval struct_helper {
+    namespace eval class_helper {
 
-        proc init {node} {
+        proc init {node args} {
             set attributes [list]
             set attnodes [$node selectNodes {descendant::slot}]
             foreach attnode $attnodes {
@@ -69,7 +69,7 @@ define_lang ::persistence::lang {
 
             # puts "creating meta_cmd $typename with struct_helper"
 
-            namespace eval ${lang_nsp} [list meta_cmd $typename struct_helper]
+            namespace eval ${lang_nsp} [list meta_cmd $typename {*}$args]
 
             set varname ::persistence::lang::_info_::${typename}(attributes)
             set $varname $attributes
@@ -81,6 +81,53 @@ define_lang ::persistence::lang {
         }
 
         namespace unknown unknown
+
+    }
+
+    namespace eval object_helper {
+
+        proc typenode {typename} {
+            set xpath "//struct\[@name=\"${typename}\"\]"
+            set typenode [$::__source_tdom_doc selectNodes $xpath]
+            if { $typenode eq {} } {
+                error "no such struct: $typename"
+            }
+            return $typenode
+        }
+
+        proc init {node args} {}
+
+        proc define {typename name args} {
+            set typenode [typenode $typename]
+            set super_cmd [$typenode @super_cmd ""]
+            if { $super_cmd ne {} } {
+                set nsp  [uplevel {namespace current}]
+                uplevel "${nsp}::${super_cmd}::define $typename $name {*}${args}"
+            }
+        }
+
+        # TO BE REMOVED
+        proc next {args} {
+
+            array set callerofcallerframe [info frame [expr { [info frame] - 2 }]]
+            array set callerframe [info frame [expr { [info frame] - 1 }]]
+
+            # There is an expander in the beginning of the callerofcaller(cmd) string 
+            # that "confuses" list manipulation commands, in particular lindex and lrange.
+            #
+            # Here's what the command string looks like:.
+            # {*}::persistence::lang::object_helper::define struct message -nsp ::persistence::lang -name message ...
+            #
+            set called_args [string range $callerofcallerframe(cmd) [string first " " $callerofcallerframe(cmd)] end]
+            set called_proc [namespace tail $callerframe(proc)]
+
+            # MISSING node VARIABLE HERE
+            set typenode [$node @name ""]
+            set super_cmd [$typenode @super_cmd ""]
+
+            return [$super_cmd $called_proc {*}$called_args]
+
+        }
 
     }
 

@@ -1,6 +1,7 @@
-struct struct {
+struct struct -super_cmd "class_helper" {
     string nsp
     string name
+    string class_cmd
     string pk
     bool is_final_if_no_scope
     set<slot> slots = {}
