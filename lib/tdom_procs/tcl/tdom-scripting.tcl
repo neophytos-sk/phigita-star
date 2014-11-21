@@ -82,6 +82,7 @@ proc ::dom::scripting::text_cmd {cmd_name {default_string ""}} {
 
 }
 
+# should be called something else, maybe alias_cmd or forward_cmd
 proc ::dom::scripting::proc_cmd {cmd_name cmd_handler args} {
 
     set nsp [uplevel { namespace current }]

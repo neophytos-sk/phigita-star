@@ -1,6 +1,63 @@
 
 ::xo::lib::require tdom_procs
 
+define_lang ::metasys::lang {
+
+    namespace export class_helper object_helper
+
+    proc class_helper {object_helper class_name object_name args} {
+
+        # create dom node 
+        set node [uplevel [list ::dom::createNodeInContext elementNode $class_name -name $object_name {*}${args}]]
+
+        # create object handler
+        set super_helper [$node @super_helper ""]
+        set lang_nsp [uplevel {namespace current}]
+        namespace inscope ${lang_nsp} [list proc_cmd $object_name [list ${object_helper} $super_helper]]
+
+        return $node
+
+    }
+
+    proc object_helper {super_helper class_name object_name args} {
+
+        puts "--->>> object_helper->define super_helper=$super_helper class_name=$class_name object_name=$object_name args=$args"
+
+        # create dom node 
+        set node [uplevel [list ::dom::createNodeInContext elementNode $class_name -name $object_name {*}${args}]]
+
+        if { $super_helper ne {} } {
+
+            set lang_nsp  [uplevel {namespace current}]
+
+            # Object-oriented languages would query the object_helper of the super_helper,
+            # only they wouldn't be called that way, most likely class and superclass.
+            #
+            # We can do the same here with variable ${nsp}::${super_helper}::object_helper
+            # but it raises the question of what we put in the representation and what
+            # in the interpretation. Remember object_helper is an attribute of the meta command.
+
+            variable ::metasys::lang::${super_helper}::object_helper
+
+            uplevel [list ${lang_nsp}::${super_helper} $object_helper $class_name $object_name {*}${args}]
+        }
+
+        return $node
+
+    }
+
+    namespace eval class_helper {
+        # queried by object_helper
+        variable object_helper "object_helper"
+    }
+
+    namespace eval object_helper {
+        # queried by object_helper::define
+        variable object_helper ""
+    }
+
+}
+
 define_lang ::dom::lang {
 
     proc_cmd "meta" meta_helper
@@ -12,7 +69,7 @@ define_lang ::dom::lang {
         set class_helper [$node @class_helper]
         set object_helper [$node @object_helper]
 
-        uplevel [list proc_cmd $cmd_name "namespace inscope ${lang_nsp} ${class_helper}::define $object_helper"]
+        uplevel [list proc_cmd $cmd_name "namespace inscope ${lang_nsp} ${class_helper} $object_helper"]
 
     }
 
@@ -32,8 +89,15 @@ define_lang ::db::lang {
 
 define_lang ::persistence::lang {
 
+    # provides meta keyword
     namespace import ::dom::lang::*
+
+    # provides database-related keywords
     namespace import ::db::lang::*
+
+    # provides class_helper and object_helper
+    # both used by meta struct below
+    namespace import ::metasys::lang::*
 
     # a varying-length text string encoded using UTF-8 encoding
     proc_cmd "varchar" attribute_helper
@@ -73,95 +137,34 @@ define_lang ::persistence::lang {
     # HELPERS
     #
 
-    namespace eval class_helper {
+    # maybe it does not belong here, will move it out once we have proc filters in place
+    # side-effects of init_class are used by ::persistence::serialize
+    proc init_class {node} {
+        set attributes [list]
+        set attnodes [$node selectNodes {descendant::slot}]
+        foreach attnode $attnodes {
 
-        # queried by object_helper::define
-        variable object_helper "object_helper"
+            set name [$attnode @name]
+            set type [$attnode @type]
+            set default_value [$attnode @default_value ""]
+            set optional_p [$attnode @optional_p ""]
+            set container_type [$attnode @container_type ""]
+            set subtype [$attnode @subtype ""]
 
-        proc self {} {
-            return [uplevel {namespace current}]
+            lappend attributes [list $name $type $default_value $optional_p $container_type $subtype]
         }
 
-        proc define {object_helper class_name object_name args} {
+        set class_name [$node @name]
 
-            # create dom node 
-            set node [uplevel [list ::dom::createNodeInContext elementNode $class_name -name $object_name {*}${args}]]
-
-            # create object handler
-            set super_helper [$node @super_helper ""]
-            set lang_nsp [uplevel {namespace current}]
-
-            #puts "$object_name super_helper=$super_helper args=$args"
-
-            namespace inscope ${lang_nsp} [list proc_cmd $object_name [list ${object_helper}::define $super_helper]]
-
-            # init
-            namespace inscope [self] init $node {*}$args
-
-        }
-
-        proc init {node args} {
-            set attributes [list]
-            set attnodes [$node selectNodes {descendant::slot}]
-            foreach attnode $attnodes {
-
-                set name [$attnode @name]
-                set type [$attnode @type]
-                set default_value [$attnode @default_value ""]
-                set optional_p [$attnode @optional_p ""]
-                set container_type [$attnode @container_type ""]
-                set subtype [$attnode @subtype ""]
-
-                lappend attributes [list $name $type $default_value $optional_p $container_type $subtype]
-            }
-
-            set class_name [$node @name]
-
-            set varname ::persistence::lang::_info_::${class_name}(attributes)
-            set $varname $attributes
-
-        }
-
-        proc unknown {args} {
-            error "no such command: $args"
-        }
-
-        namespace unknown unknown
+        set varname ::persistence::lang::_info_::${class_name}(attributes)
+        set $varname $attributes
 
     }
 
-    namespace eval object_helper {
-
-        # queried by object_helper::define
-        variable object_helper ""
-
-        proc init {args} {}
-
-        proc define {super_helper class_name object_name args} {
-set nsp [uplevel {namespace current}]
-puts "--->>> object_helper->define (nsp=$nsp) super_helper=$super_helper class_name=$class_name object_name=$object_name args=$args"
-
-            # create dom node 
-            set node [uplevel [list ::dom::createNodeInContext elementNode $class_name -name $object_name {*}${args}]]
-
-            if { $super_helper ne {} } {
-
-                #set lang_nsp  [uplevel {namespace current}]
-                set lang_nsp ::persistence::lang
-
-                # Object-oriented languages would query the object_helper of the super_helper,
-                # only they wouldn't be called that way, most likely class and superclass.
-                #
-                # We can do the same here with variable ${nsp}::${super_helper}::object_helper
-                # but it raises the question of what we put in the representation and what
-                # in the interpretation. Remember object_helper is an attribute of the meta command.
-
-                variable ${lang_nsp}::${super_helper}::object_helper
-
-                uplevel [list ${lang_nsp}::${super_helper}::define $object_helper $class_name $object_name {*}${args}]
-            }
-        }
-
+    rename class_helper _class_helper
+    proc class_helper {args} {
+        set node [uplevel [list _class_helper {*}${args}]]
+        init_class $node
     }
 
     proc attribute_helper {type name args} {
@@ -178,10 +181,7 @@ puts "--->>> object_helper->define (nsp=$nsp) super_helper=$super_helper class_n
 
         }
 
-        set lang_nsp [uplevel {namespace current}]
-        # namespace eval ${nsp} "text_cmd _${name}"
-
-        set node [::dom::createNodeInContext elementNode slot -lang_nsp $lang_nsp -name $name -type $type -subtype attribute]
+        set node [::dom::createNodeInContext elementNode slot -name $name -type $type -subtype attribute]
         if { $default_value ne {} } {
             $node setAttribute default_value ${default_value}
             $node setAttribute optional_p true
@@ -189,9 +189,11 @@ puts "--->>> object_helper->define (nsp=$nsp) super_helper=$super_helper class_n
         return $node
     }
 
-    namespace unknown unknown_handler
+    namespace unknown unknown
 
-    proc unknown_handler {field_type field_name args} {
+    proc unknown {field_type field_name args} {
+
+        puts "--->>> (unknown) $field_type $field_name args=$args"
 
         # re is such to allow for expressions of the form set<file>
         set type_re {[_a-zA-Z][_a-zA-Z0-9]*}
@@ -223,7 +225,7 @@ puts "--->>> object_helper->define (nsp=$nsp) super_helper=$super_helper class_n
             set node [attribute_helper $datatype $field_name {*}${args}]
 
             if { $container_type ne {} } {
-                $node @container_type $container_type
+                $node setAttribute container_type $container_type
             }
 
         } else {
