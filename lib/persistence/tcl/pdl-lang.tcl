@@ -135,15 +135,6 @@ define_lang ::persistence::lang {
         # queried by object_helper::define
         variable object_helper ""
 
-        proc class_node {typename} {
-            set xpath "//struct\[@name=\"${typename}\"\]"
-            set class_node [$::__source_tdom_doc selectNodes $xpath]
-            if { $class_node eq {} } {
-                error "no such struct: $typename"
-            }
-            return $class_node
-        }
-
         proc init {args} {}
 
         proc define {super_helper class_name object_name args} {
