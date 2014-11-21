@@ -1,5 +1,11 @@
 namespace eval ::dom {;}
 
+proc ::dom::createDocumentFromScript {rootname script} {
+    set doc [dom createDocument $rootname]
+    $doc appendFromScript $script
+    return $doc
+}
+
 # tDOM does not provide such a proc,
 # so we had to write one for cases like
 # the following:
@@ -10,17 +16,19 @@ namespace eval ::dom {;}
 #
 proc ::dom::createNodeInContext {node_type cmd_name args} {
 
+    #puts "createNodeInContext uplevel_nsp=[uplevel {namespace current}]"
+
     set nsp "::dom::_temp_::$node_type"
 
     if { [info proc "${nsp}::$cmd_name"] eq {} } {
         namespace eval ${nsp} [list dom createNodeCmd -returnNodeCmd $node_type $cmd_name]
     }
 
-    set uplevel_nsp [uplevel [list namespace current]]
-    set old_nsp_path [namespace path]
-    namespace path ${uplevel_nsp}
+    #set uplevel_nsp [uplevel [list namespace current]]
+    #set old_nsp_path [namespace path]
+    #namespace path ${uplevel_nsp}
     set node [uplevel [list ${nsp}::$cmd_name {*}${args}]]
-    namespace path $old_nsp_path
+    #namespace path $old_nsp_path
 
     rename ${nsp}::$cmd_name {}
 
@@ -77,41 +85,16 @@ proc ::dom::scripting::text_cmd {cmd_name {default_string ""}} {
 proc ::dom::scripting::proc_cmd {cmd_name cmd_handler args} {
 
     set nsp [uplevel { namespace current }]
-    
+
+    set arg0 $cmd_name
+
     proc ${nsp}::$cmd_name {args} [subst -nocommands -nobackslashes {
-        uplevel "{*}$cmd_handler $cmd_name ${args} [set args]"
+        puts "--->>> (proc_cmd $cmd_name) $cmd_handler arg0=$arg0 runtime_args=$args deftime_args=[set args]"
+        uplevel "{*}$cmd_handler $arg0 ${args} [set args]"
+        # we need to capture the namespace here for importing in other namespaces to work
+        # right without having to import the helpers as well
+        # namespace inscope ${nsp} [list {*}$cmd_handler $cmd_name ${args} {*}[set args]]
     }]
-
-}
-
-proc ::dom::scripting::meta_cmd {cmd_name cmd_handler args} {
-
-    # puts "meta_cmd $cmd_name $cmd_handler args=$args"
-
-    set nsp [uplevel {namespace current}]
-
-    if { [info proc ${nsp}::${cmd_handler}::define] eq {} } {
-        namespace eval ${nsp} [subst -nocommands -nobackslashes {
-            namespace eval $cmd_handler {
-                proc define {typename args} {
-                    # args = nodename -nsp somensp -name somename
-                    # e.g. struct -nsp ::persistence::lang -name message { ... }
-                    if { [string index [lindex [set args] 4] 0] eq {-} } {
-                        error "usage: ${cmd_name} name ?-attname attvalue ...? ?script?"
-                    }
-                    # create node 
-                    set node [uplevel "::dom::createNodeInContext elementNode {*}[set args]"]
-                    # init
-                    namespace eval ${nsp}::$cmd_handler init [set node] {*}$args
-                }
-            }
-        }]
-    }
-
-
-    # when called, it will be as follows:
-    # ::persistence::lang::class_helper::define struct somename -nsp ::persistence::lang -name somename ... { ... }
-    uplevel [list proc_cmd $cmd_name "${nsp}::${cmd_handler}::define $cmd_name" -nsp ${nsp} -name]
 
 }
 
@@ -123,7 +106,11 @@ proc ::dom::scripting::dtd {dtd} {
     namespace eval ${nsp} [list variable dtd $dtd]
 }
 
-proc ::dom::scripting::define_lang {nsp script} {
+proc ::dom::scripting::define_lang {nsp script {docVar ""}} {
+
+    if { $docVar ne {} } {
+        upvar $docVar doc
+    }
 
     if { [string range ${nsp} 0 1] ne {::} } {
         error "lang namespace must be fully qualified name"
@@ -139,9 +126,11 @@ proc ::dom::scripting::define_lang {nsp script} {
 
     }
 
-    proc ${nsp}::require_procs {} [list namespace eval ${nsp} ${script}]
+    proc ${nsp}::require_procs {} [list ::dom::createDocumentFromScript "lang" [list namespace eval ${nsp} ${script}]]
 
-    ${nsp}::require_procs
+    set doc [${nsp}::require_procs]
+
+    return $doc
 
 }
 

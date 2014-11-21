@@ -1,45 +1,45 @@
-struct struct -super_cmd "class_helper" {
-    string nsp
-    string name
-    string class_cmd
-    string pk
+struct struct -super_helper "class_helper" {
+    varchar nsp
+    varchar name
+    varchar class_cmd
+    varchar pk
     bool is_final_if_no_scope
     set<slot> slots = {}
 }
 
 struct slot {
-    string name
-    string type
-    string default
+    varchar name
+    varchar type
+    varchar default
     bool optional_p = false
-    string container_type
-    string subtype
+    varchar container_type
+    varchar subtype
 }
 
 struct email -pk address {
-    string name = ""
-    string address
+    varchar name = ""
+    varchar address
 }
 
 struct file {
-    string name
-    string mime_type
-    i32 size
+    varchar name
+    varchar mime_type
+    int32 size
 }
 
 struct folder {
-    string name
+    varchar name
 }
 
 struct message -is_final_if_no_scope "1" {
 
-    string device = "sms"
+    varchar device = "sms"
 
-    i16 num_comments = 0
+    int16 num_comments = 0
 
-    string subject
+    varchar subject
 
-    string body
+    varchar body
 
     # example of an instance:
     # email -name "zena wow" -address "zena@example.com"
@@ -54,8 +54,8 @@ struct message -is_final_if_no_scope "1" {
 
     # embedded object mapping for slot email
     # struct -name from {
-    #     string name = ""
-    #     string email
+    #     varchar name = ""
+    #     varchar email
     # }
 
     list<email> to
@@ -66,10 +66,10 @@ struct message -is_final_if_no_scope "1" {
 
     set<category> categories
     set<folder> folders
-    set<string> tags
+    set<varchar> tags
     set<file> attachment = {}
 
-    map<string,i32> wordcount
+    map<varchar,i32> wordcount
 
     #extends -ref content.Object
     #extends -ref content.Content
