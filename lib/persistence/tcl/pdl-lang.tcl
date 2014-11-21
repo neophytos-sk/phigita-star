@@ -168,25 +168,11 @@ define_lang ::persistence::lang {
     }
 
     proc attribute_helper {type name args} {
-
-        set default_value {}
-
-        if { $args ne {} } {
-
-            if { [llength $args] != 2 || [lindex $args 0] ne {=} } {
-                error "usage: datatype name = default_value"
-            }
-
-            set default_value [lindex $args 1]
-
+        if { [llength $args] && [lindex $args 0] eq {=} } {
+            # we don't make any claims about the field being optional or not
+            set args [concat -default_value [lrange $args 1 end]]
         }
-
-        set node [::dom::createNodeInContext elementNode slot -name $name -type $type -subtype attribute]
-        if { $default_value ne {} } {
-            $node setAttribute default_value ${default_value}
-            $node setAttribute optional_p true
-        }
-        return $node
+        return [::dom::createNodeInContext elementNode slot -name $name -type $type -subtype attributei {*}${args}]
     }
 
     namespace unknown unknown
@@ -229,21 +215,11 @@ define_lang ::persistence::lang {
             }
 
         } else {
-            set doc $::__source_tdom_doc
-            set xpath "//struct\[@name=\"${field_type}\"\]"
-            set nodes [$doc selectNodes ${xpath}]
-            if { $nodes eq {} } {
-                error "no such field type: $field_type nodes=[list $nodes]"
-            } else {
-
-                attribute_helper $field_type $field_name {*}${args}
-
-            }
+            error "no such field_type: $field_type"
         }
     }
 
     meta "struct" -class_helper class_helper -object_helper object_helper {
-        puts "current nsp=[namespace current]"
         varchar super_helper
     }
 
