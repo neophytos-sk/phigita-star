@@ -32,11 +32,13 @@ namespace eval ::dom::scripting {
     namespace export *
 }
 
-proc ::dom::scripting::init {} {
-    # TODO: define_lang ::html::lang { text_cmd t; proc nt {text} { t "..." } }
-    dom createNodeCmd textNode ::t
-    proc ::nt {text} { t -disableOutputEscaping ${text} }
+proc ::dom::scripting::require_procs {} {
+    namespace eval ::dom::scripting {
+        dom createNodeCmd textNode t
+        proc nt {text} { t -disableOutputEscaping ${text} }
+    }
 }
+::dom::scripting::require_procs
 
 proc ::dom::scripting::node_cmd {cmd_name} {
 
@@ -65,7 +67,7 @@ proc ::dom::scripting::text_cmd {cmd_name {default_string ""}} {
         set node [uplevel [list ${shadow_nsp}::$cmd_name {*}[set args]]]
 
         if { [set str] ne {} } {
-            [set node] appendFromScript { t [set str] }
+            [set node] appendFromScript { ::dom::scripting::t [set str] }
         }
 
     }]
@@ -90,6 +92,11 @@ proc ::dom::scripting::meta_cmd {cmd_name cmd_handler} {
         namespace eval ${nsp} [subst -nocommands -nobackslashes {
             namespace eval $cmd_handler {
                 proc define {args} {
+                    # args = nodename -nsp somensp -name somename
+                    # e.g. struct -nsp ::persistence::lang -name message { ... }
+                    if { [string index [lindex [set args] 4] 0] eq {-} } {
+                        error "usage: ${cmd_name} name ?-attname attvalue ...? ?script?"
+                    }
                     # create node 
                     set node [uplevel "::dom::createNodeInContext elementNode {*}[set args]"]
                     # init
@@ -99,7 +106,7 @@ proc ::dom::scripting::meta_cmd {cmd_name cmd_handler} {
         }]
     }
 
-    uplevel [list proc_cmd $cmd_name ${nsp}::${cmd_handler}::define "-name"]
+    uplevel [list proc_cmd $cmd_name ${nsp}::${cmd_handler}::define -nsp ${nsp} -name]
 
 }
 
@@ -259,5 +266,6 @@ namespace import -force \
     ::dom::scripting::extend_lang \
     ::dom::scripting::source_inscope \
     ::dom::scripting::source_tdom
+
 
 

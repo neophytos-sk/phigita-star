@@ -1,10 +1,23 @@
 
 ::xo::lib::require tdom_procs
 
+
+define_lang ::db::lang {
+
+    text_cmd "db_insert"
+    text_cmd "db_update"
+    text_cmd "db_delete"
+
+    namespace export db_insert db_update db_delete
+
+}
+
 define_lang ::persistence::lang {
 
+    namespace import ::db::lang::*
+
     meta_cmd "struct" struct_helper
-    node_cmd "slot"
+    #node_cmd "slot"
     # node_cmd "attribute" -isa slot
     
     text_cmd "name"
@@ -51,7 +64,13 @@ define_lang ::persistence::lang {
                 lappend attributes [list $name $type $default_value $optional_p $container_type $subtype]
             }
 
+            set lang_nsp [$node @nsp]
             set typename [$node @name]
+
+            # puts "creating meta_cmd $typename with struct_helper"
+
+            namespace eval ${lang_nsp} [list meta_cmd $typename struct_helper]
+
             set varname ::persistence::lang::_info_::${typename}(attributes)
             set $varname $attributes
 
@@ -79,10 +98,10 @@ define_lang ::persistence::lang {
 
         }
 
-        # set nsp [uplevel {namespace current}]
+        set nsp [uplevel {namespace current}]
         # namespace eval ${nsp} "text_cmd _${name}"
 
-        set node [slot -name $name -type $type -subtype attribute]
+        set node [::dom::createNodeInContext elementNode slot -nsp $nsp -name $name -type $type -subtype attribute]
         if { $default_value ne {} } {
             $node setAttribute default_value ${default_value}
             $node setAttribute optional_p true
@@ -148,11 +167,13 @@ define_lang ::persistence::lang {
             <!ELEMENT pdl (struct*)>
             <!ELEMENT struct (slot | struct)*>
             <!ATTLIST struct name CDATA #REQUIRED
+                             nsp CDATA #IMPLIED
                              pk CDATA #IMPLIED
                              is_final_if_no_scope CDATA #IMPLIED>
 
             <!ELEMENT slot EMPTY>
             <!ATTLIST slot name CDATA #REQUIRED
+                           nsp CDATA #IMPLIED
                            type CDATA #REQUIRED
                            default_value CDATA #IMPLIED
                            optional_p CDATA #IMPLIED

@@ -1,4 +1,5 @@
 struct struct {
+    string nsp
     string name
     string pk
     bool is_final_if_no_scope
@@ -45,7 +46,10 @@ struct message -is_final_if_no_scope "1" {
     # example of slot definition:
     # email from
     #
-    slot -name from -type email
+    # slot from -type email
+    attribute_helper email from
+
+    slot from -type email
 
     # embedded object mapping for slot email
     # struct -name from {
@@ -74,4 +78,6 @@ struct message -is_final_if_no_scope "1" {
 
 }
 
-#message -subject "hello"
+message msg1 -subject "hello"
+
+db_insert -scope {user} -what msg1
