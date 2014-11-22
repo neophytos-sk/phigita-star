@@ -46,10 +46,7 @@ define_lang ::basesys::lang {
 
     proc import_helper {import_tag import_name args} {
 
-        set uplevel_nsp [uplevel {namespace current}]
-
-        set node [namespace inscope ${uplevel_nsp} \
-            [list ::dom::createNodeInContext elementNode $import_tag -name $import_name {*}${args}]]
+        set node [uplevel [list ::dom::createNodeInContext elementNode $import_tag -name $import_name {*}${args}]]
 
         uplevel [list namespace import ::${import_name}::lang::*]
 
