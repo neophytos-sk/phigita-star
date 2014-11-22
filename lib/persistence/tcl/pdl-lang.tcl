@@ -35,6 +35,9 @@ define_lang ::metasys::lang {
     }
 
     proc meta_helper {meta_tag meta_name nest args} {
+        set mode_name $meta_name
+        #return [uplevel [list with_mode [list nest_helper $nest] $mode_name $meta_tag $meta_name {*}$args]]
+        set nest [list with_mode $nest $mode_name]
         return [uplevel [list nest_helper $nest $meta_tag $meta_name {*}$args]]
     }
 
@@ -84,7 +87,7 @@ define_lang ::metasys::lang {
 
     meta "typeinst" typeinst_helper
 
-    namespace export meta meta_helper typedecl typedecl_helper typedecl_args typeinst typeinst_helper nest_helper node_helper mode_helper
+    namespace export meta meta_helper typedecl typedecl_helper typedecl_args typeinst typeinst_helper nest_helper node_helper mode_helper with_mode
 
 }
 
@@ -119,7 +122,7 @@ define_lang ::typesys::lang {
     proc type_helper {tag name args} {
 
         puts "--->>> type_helper (declaration_mode_p=[declaration_mode_p]) tag=$tag name=$name {*}$args"
-
+        
         set type $tag
         if { [declaration_mode_p] } {
             return [uplevel [list typedecl_helper $tag $type $name {*}$args]]

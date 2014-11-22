@@ -1,4 +1,11 @@
-struct struct -super_helper "class_helper" {
+
+# Note that the meta "struct" command is destroyed
+# as soon as we redefine it below. It ceases to exist
+# and the new struct command follows the unfolding
+# of the nested ("nest") calls just like any other 
+# struct in this file.
+
+struct struct {
     varchar nsp
     varchar name
     varchar class_cmd
