@@ -11,10 +11,10 @@ struct struct {
     varchar class_cmd
     varchar pk
     bool is_final_if_no_scope
-    set<decl> slots = {}
+    set<typedecl> slots = {}
 }
 
-struct decl {
+struct typedecl {
     varchar name
     varchar type
     varchar default

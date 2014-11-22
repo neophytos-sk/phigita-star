@@ -36,7 +36,6 @@ define_lang ::metasys::lang {
 
     proc meta_helper {meta_tag meta_name nest args} {
         set mode_name $meta_name
-        #return [uplevel [list with_mode [list nest_helper $nest] $mode_name $meta_tag $meta_name {*}$args]]
         set nest [list with_mode $nest $mode_name]
         return [uplevel [list nest_helper $nest $meta_tag $meta_name {*}$args]]
     }
@@ -69,7 +68,7 @@ define_lang ::metasys::lang {
         #   varchar body { t "this is a test" }
 
         if { [llength $args] == 2 && [lindex $args 0] eq {=} } {
-            set args [list [list ::dom::scripting::t [lrange $args 1 end]]]
+            set args [list [list ::dom::scripting::t [lindex $args 1]]]
         }
     }
 
@@ -87,7 +86,7 @@ define_lang ::metasys::lang {
 
     meta "typeinst" typeinst_helper
 
-    namespace export meta meta_helper typedecl typedecl_helper typedecl_args typeinst typeinst_helper nest_helper node_helper mode_helper with_mode
+    namespace export meta meta_helper typedecl typedecl_helper typeinst typeinst_helper nest_helper node_helper mode_helper with_mode
 
 }
 
@@ -129,11 +128,6 @@ define_lang ::typesys::lang {
         } else {
             return [uplevel [list typeinst_helper $tag $type $name {*}$args]]
         }
-    }
-
-    proc typeargs_helper {nest tag name args} {
-        typedecl_args args
-        return [uplevel "$nest $tag $name $args"]
     }
 
     meta "type" {nest_helper {type_helper}}
