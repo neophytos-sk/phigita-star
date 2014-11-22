@@ -3,80 +3,32 @@
 
 define_lang ::metasys::lang {
 
-    namespace export class_helper object_helper slot_class_helper slot_object_helper
+    namespace export metaclass_helper class_helper object_helper slot_helper
+
+    proc metaclass_helper {class_helper object_helper class_name object_name args} {
+        puts "--->>> metaclass_helper $object_name"
+        set node [uplevel [list ::dom::createNodeInContext elementNode $class_name -name $object_name {*}${args}]]
+        uplevel [list proc_cmd $object_name [list $class_helper $object_helper]]
+        return $node
+    }
 
     proc class_helper {object_helper class_name object_name args} {
-
-        # create dom node 
+        puts "--->>> class_helper $object_name"
         set node [uplevel [list ::dom::createNodeInContext elementNode $class_name -name $object_name {*}${args}]]
-
-        # create object handler
-        set uplevel_nsp [uplevel {namespace current}]
-        set super_helper [$node @super_helper ""]
-        namespace inscope ${uplevel_nsp} [list proc_cmd $object_name [list ${object_helper} $super_helper]]
-
+        uplevel [list proc_cmd $object_name [list $object_helper]]
         return $node
-
     }
 
-    proc object_helper {super_helper class_name object_name args} {
-
-        puts "--->>> object_helper->define super_helper=$super_helper class_name=$class_name object_name=$object_name args=$args"
-
-        if { $super_helper ne {} } {
-
-            set uplevel_nsp  [uplevel {namespace current}]
-
-            # Object-oriented languages would query the object_helper of the super_helper,
-            # only they wouldn't be called that way, most likely class and superclass.
-            #
-            # We can do the same here with variable ${nsp}::${super_helper}::object_helper
-            # but it raises the question of what we put in the representation and what
-            # in the interpretation. Remember object_helper is an attribute of the meta command.
-
-            variable ::metasys::lang::${super_helper}::object_helper
-
-            set node [uplevel [list ${uplevel_nsp}::${super_helper} $object_helper $class_name $object_name {*}${args}]]
-        } else {
-            # create dom node 
-            set node [uplevel [list ::dom::createNodeInContext elementNode $class_name -name $object_name {*}${args}]]
-        }
-
-
+    proc object_helper {class_name object_name args} {
+        puts "--->>> object_helper $object_name"
+        set node [uplevel [list ::dom::createNodeInContext elementNode $class_name -name $object_name {*}${args}]]
         return $node
-
     }
 
-    proc slot_class_helper {object_helper class_name object_name args} {
-        return [uplevel [list class_helper $object_helper $class_name $object_name {*}$args]]
-    }
-
-    proc slot_object_helper {super_helper class_name object_name args} {
-
+    proc slot_helper {class_name object_name args} {
         set node [uplevel [list ::dom::createNodeInContext elementNode slot -type $class_name -name $object_name {*}${args}]]
-
+        return $node
     }
-
-    namespace eval class_helper {
-        # queried by object_helper
-        variable object_helper "object_helper"
-    }
-
-    namespace eval object_helper {
-        # queried by object_helper::define
-        variable object_helper ""
-    }
-
-    namespace eval slot_class_helper {
-        # queried by object_helper
-        variable object_helper "slot_object_helper"
-    }
-
-    namespace eval slot_object_helper {
-        # queried by object_helper
-        variable object_helper ""
-    }
-
 
 }
 
@@ -85,13 +37,9 @@ define_lang ::basesys::lang {
     proc_cmd "meta" meta_helper
 
     proc meta_helper {meta_tag meta_name args} {
-
         set uplevel_nsp [uplevel {namespace current}]
-        set node [namespace inscope ${uplevel_nsp} [list ::dom::createNodeInContext elementNode $meta_name {*}${args}]]
-        set class_helper [$node @class_helper]
-        set object_helper [$node @object_helper]
-        uplevel [list proc_cmd $meta_name [list namespace inscope ${uplevel_nsp} ${class_helper} $object_helper]]
-
+        set node [namespace inscope ${uplevel_nsp} [list ::dom::createNodeInContext elementNode $meta_tag -name $meta_name]]
+        uplevel [list proc_cmd $meta_name [list namespace inscope ${uplevel_nsp} {*}${args}]]
     }
 
     proc_cmd "import" import_helper
@@ -119,16 +67,14 @@ define_lang ::typesys::lang {
     namespace import ::basesys::lang::*
     import metasys
 
-    meta type -class_helper typedef_helper -object_helper typedecl_helper
+    meta type typedef_helper typedecl_helper
     
-    # typedef_helper typedecl_helper type type varchar
     proc typedef_helper {object_helper class_name object_name args} {
-        set args [concat -super_helper slot_object_helper $args]
         return [class_helper $object_helper $class_name $object_name {*}$args]
     }
 
     # typedecl_helper object_helper type varchar device = "sms"
-    proc typedecl_helper {super_helper class_name object_name args} {
+    proc typedecl_helper {class_name object_name args} {
 
         # support declarations of the form:
         # varchar device = "sms"
@@ -141,7 +87,7 @@ define_lang ::typesys::lang {
         #set class_name "slot"
         #set args [concat -x-struct slot $args]
 
-        return [object_helper $super_helper $class_name $object_name {*}${args}]
+        return [slot_helper $class_name $object_name {*}${args}]
     }
 
     # a varying-length text string encoded using UTF-8 encoding
@@ -273,9 +219,7 @@ define_lang ::persistence::lang {
         }
     }
 
-    meta struct -class_helper class_helper -object_helper object_helper {
-        varchar super_helper
-    }
+    meta struct metaclass_helper class_helper slot_helper
 
     dtd {
         <!DOCTYPE pdl [

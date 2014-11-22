@@ -1,4 +1,4 @@
-struct struct -super_helper "slot_class_helper" {
+struct struct -super_helper "class_helper" {
     varchar nsp
     varchar name
     varchar class_cmd
