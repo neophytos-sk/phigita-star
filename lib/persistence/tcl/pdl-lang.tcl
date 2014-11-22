@@ -5,17 +5,10 @@ define_lang ::metasys::lang {
 
     namespace export metaclass_helper class_helper object_helper slot_helper
 
-    proc metaclass_helper {class_helper object_helper class_name object_name args} {
-        puts "--->>> metaclass_helper $object_name"
-        set node [uplevel [list ::dom::createNodeInContext elementNode $class_name -name $object_name {*}${args}]]
-        uplevel [list proc_cmd $object_name [list $class_helper $object_helper]]
-        return $node
-    }
-
-    proc class_helper {object_helper class_name object_name args} {
+    proc class_helper {nested_calls class_name object_name args} {
         puts "--->>> class_helper $object_name"
         set node [uplevel [list ::dom::createNodeInContext elementNode $class_name -name $object_name {*}${args}]]
-        uplevel [list proc_cmd $object_name [list $object_helper]]
+        uplevel [list proc_cmd $object_name $nested_calls]
         return $node
     }
 
@@ -64,11 +57,7 @@ define_lang ::typesys::lang {
     namespace import ::basesys::lang::*
     import metasys
 
-    meta type typedef_helper typedecl_helper
-    
-    proc typedef_helper {object_helper class_name object_name args} {
-        return [class_helper $object_helper $class_name $object_name {*}$args]
-    }
+    meta type {class_helper typedecl_helper}
 
     # typedecl_helper object_helper type varchar device = "sms"
     proc typedecl_helper {class_name object_name args} {
@@ -216,7 +205,7 @@ define_lang ::persistence::lang {
         }
     }
 
-    meta struct metaclass_helper class_helper slot_helper
+    meta struct {class_helper {class_helper {slot_helper}}}
 
     dtd {
         <!DOCTYPE pdl [
