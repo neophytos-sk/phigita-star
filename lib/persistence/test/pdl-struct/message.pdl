@@ -1,4 +1,4 @@
-struct struct -super_helper "class_helper" {
+struct struct -super_helper "slot_class_helper" {
     varchar nsp
     varchar name
     varchar class_cmd
@@ -48,9 +48,9 @@ struct message -is_final_if_no_scope "1" {
     # email from
     #
     # slot from -type email
-    attribute_helper email from
+    email from
 
-    slot from -type email
+    # slot from -type email
 
     # embedded object mapping for slot email
     # struct -name from {

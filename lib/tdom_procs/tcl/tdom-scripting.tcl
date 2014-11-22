@@ -30,7 +30,9 @@ proc ::dom::createNodeInContext {node_type cmd_name args} {
     set node [uplevel [list ${nsp}::$cmd_name {*}${args}]]
     #namespace path $old_nsp_path
 
-    rename ${nsp}::$cmd_name {}
+    if { [info proc ${nsp}::$cmd_name] ne {} } {
+        rename ${nsp}::$cmd_name {}
+    }
 
     return $node
 
@@ -90,11 +92,12 @@ proc ::dom::scripting::proc_cmd {cmd_name cmd_handler args} {
     set arg0 $cmd_name
 
     proc ${nsp}::$cmd_name {args} [subst -nocommands -nobackslashes {
-        puts "--->>> (proc_cmd $cmd_name) $cmd_handler arg0=$arg0 runtime_args=$args deftime_args=[set args]"
-        uplevel "{*}$cmd_handler $arg0 ${args} [set args]"
-        # we need to capture the namespace here for importing in other namespaces to work
-        # right without having to import the helpers as well
-        # namespace inscope ${nsp} [list {*}$cmd_handler $cmd_name ${args} {*}[set args]]
+        puts "--->>> (proc_cmd $cmd_name) $cmd_handler arg0=$arg0 deftime_args=$args runtime_args=[set args]"
+        #if { [list $args] ne {} } {
+        #    set index 1
+        #    set args [linsert [set args] [set index] $args]
+        #}
+        uplevel "{*}$cmd_handler $arg0 [set args]"
     }]
 
 }

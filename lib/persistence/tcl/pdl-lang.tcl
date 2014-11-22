@@ -3,7 +3,7 @@
 
 define_lang ::metasys::lang {
 
-    namespace export class_helper object_helper
+    namespace export class_helper object_helper slot_class_helper slot_object_helper
 
     proc class_helper {object_helper class_name object_name args} {
 
@@ -11,9 +11,9 @@ define_lang ::metasys::lang {
         set node [uplevel [list ::dom::createNodeInContext elementNode $class_name -name $object_name {*}${args}]]
 
         # create object handler
+        set uplevel_nsp [uplevel {namespace current}]
         set super_helper [$node @super_helper ""]
-        set lang_nsp [uplevel {namespace current}]
-        namespace inscope ${lang_nsp} [list proc_cmd $object_name [list ${object_helper} $super_helper]]
+        namespace inscope ${uplevel_nsp} [list proc_cmd $object_name [list ${object_helper} $super_helper]]
 
         return $node
 
@@ -23,12 +23,9 @@ define_lang ::metasys::lang {
 
         puts "--->>> object_helper->define super_helper=$super_helper class_name=$class_name object_name=$object_name args=$args"
 
-        # create dom node 
-        set node [uplevel [list ::dom::createNodeInContext elementNode $class_name -name $object_name {*}${args}]]
-
         if { $super_helper ne {} } {
 
-            set lang_nsp  [uplevel {namespace current}]
+            set uplevel_nsp  [uplevel {namespace current}]
 
             # Object-oriented languages would query the object_helper of the super_helper,
             # only they wouldn't be called that way, most likely class and superclass.
@@ -39,10 +36,24 @@ define_lang ::metasys::lang {
 
             variable ::metasys::lang::${super_helper}::object_helper
 
-            uplevel [list ${lang_nsp}::${super_helper} $object_helper $class_name $object_name {*}${args}]
+            set node [uplevel [list ${uplevel_nsp}::${super_helper} $object_helper $class_name $object_name {*}${args}]]
+        } else {
+            # create dom node 
+            set node [uplevel [list ::dom::createNodeInContext elementNode $class_name -name $object_name {*}${args}]]
         }
 
+
         return $node
+
+    }
+
+    proc slot_class_helper {object_helper class_name object_name args} {
+        return [uplevel [list class_helper $object_helper $class_name $object_name {*}$args]]
+    }
+
+    proc slot_object_helper {super_helper class_name object_name args} {
+
+        set node [uplevel [list ::dom::createNodeInContext elementNode slot -type $class_name -name $object_name {*}${args}]]
 
     }
 
@@ -56,81 +67,131 @@ define_lang ::metasys::lang {
         variable object_helper ""
     }
 
+    namespace eval slot_class_helper {
+        # queried by object_helper
+        variable object_helper "slot_object_helper"
+    }
+
+    namespace eval slot_object_helper {
+        # queried by object_helper
+        variable object_helper ""
+    }
+
+
 }
 
-define_lang ::dom::lang {
+define_lang ::basesys::lang {
 
     proc_cmd "meta" meta_helper
 
-    proc meta_helper {cmd_type cmd_name args} {
+    proc meta_helper {meta_tag meta_name args} {
 
-        set lang_nsp [uplevel {namespace current}]
-        set node [namespace inscope ${lang_nsp} [list ::dom::createNodeInContext elementNode $cmd_name {*}${args}]]
+        set uplevel_nsp [uplevel {namespace current}]
+        set node [namespace inscope ${uplevel_nsp} [list ::dom::createNodeInContext elementNode $meta_name {*}${args}]]
         set class_helper [$node @class_helper]
         set object_helper [$node @object_helper]
-
-        uplevel [list proc_cmd $cmd_name "namespace inscope ${lang_nsp} ${class_helper} $object_helper"]
+        uplevel [list proc_cmd $meta_name [list namespace inscope ${uplevel_nsp} ${class_helper} $object_helper]]
 
     }
 
-    namespace export meta meta_helper
+    proc_cmd "import" import_helper
+
+    proc import_helper {import_tag import_name args} {
+
+        set uplevel_nsp [uplevel {namespace current}]
+
+        set node [namespace inscope ${uplevel_nsp} \
+            [list ::dom::createNodeInContext elementNode $import_tag -name $import_name {*}${args}]]
+
+        uplevel [list namespace import ::${import_name}::lang::*]
+
+    }
+
+    namespace export meta meta_helper import import_helper
+
+}
+
+
+define_lang ::typesys::lang {
+
+    namespace export type typedecl_helper typeinst_helper varchar bool varint byte int16 int32 int64 double
+
+    namespace import ::basesys::lang::*
+    import metasys
+
+    meta type -class_helper typedef_helper -object_helper typedecl_helper
+    
+    # typedef_helper typedecl_helper type type varchar
+    proc typedef_helper {object_helper class_name object_name args} {
+        set args [concat -super_helper slot_object_helper $args]
+        return [class_helper $object_helper $class_name $object_name {*}$args]
+    }
+
+    # typedecl_helper object_helper type varchar device = "sms"
+    proc typedecl_helper {super_helper class_name object_name args} {
+
+        # support declarations of the form:
+        # varchar device = "sms"
+        if { [llength $args] && [lindex $args 0] eq {=} } {
+            # we don't make any claims about the field being optional or not
+            set args [concat -default_value [lrange $args 1 end]]
+        }
+
+        #set args [concat -value_type $class_name $args]
+        #set class_name "slot"
+        #set args [concat -x-struct slot $args]
+
+        return [object_helper $super_helper $class_name $object_name {*}${args}]
+    }
+
+    # a varying-length text string encoded using UTF-8 encoding
+    type "varchar"
+
+    # a boolean value (true or false)
+    type "bool"
+
+    # a varying-bit signed integer
+    type "varint"
+
+    # an 8-bit signed integer
+    type "byte"
+
+    # an 16-bit signed integer
+    type "int16"
+
+    # an 32-bit signed integer
+    type "int32"
+
+    # an 64-bit signed integer
+    type "int64"
+
+    # a 64-bit floating point number
+    type "double"
 
 }
 
 define_lang ::db::lang {
 
+    namespace export db_insert db_update db_delete
+
     text_cmd "db_insert"
     text_cmd "db_update"
     text_cmd "db_delete"
-
-    namespace export db_insert db_update db_delete
 
 }
 
 define_lang ::persistence::lang {
 
-    # provides meta keyword
-    namespace import ::dom::lang::*
+    namespace import ::basesys::lang::*
+    import metasys
+    import typesys
+    import db
 
-    # provides database-related keywords
-    namespace import ::db::lang::*
-
-    # provides class_helper and object_helper
-    # both used by meta struct below
-    namespace import ::metasys::lang::*
-
-    # a varying-length text string encoded using UTF-8 encoding
-    proc_cmd "varchar" attribute_helper
-
-    # a boolean value (true or false)
-    proc_cmd "bool" attribute_helper
-
-    # a varying-bit signed integer
-    proc_cmd "varint" attribute_helper
-
-    # an 8-bit signed integer
-    proc_cmd "byte" attribute_helper
-
-    # an 16-bit signed integer
-    proc_cmd "int16" attribute_helper
-
-    # an 32-bit signed integer
-    proc_cmd "int32" attribute_helper
-
-    # an 64-bit signed integer
-    proc_cmd "int64" attribute_helper
-
-    # a 64-bit floating point number
-    proc_cmd "double" attribute_helper
-
-    #node_cmd "slot"
-    # node_cmd "attribute" -isa slot
-    
-    text_cmd "name"
-    text_cmd "type"
-    text_cmd "default_value"
-    text_cmd "optional_p" "true"
-    text_cmd "container_type"
+    #text_cmd "name"
+    #text_cmd "type"
+    #text_cmd "default_value"
+    #text_cmd "optional_p" "true"
+    #text_cmd "container_type"
 
 
     #
@@ -167,14 +228,6 @@ define_lang ::persistence::lang {
         init_class $node
     }
 
-    proc attribute_helper {type name args} {
-        if { [llength $args] && [lindex $args 0] eq {=} } {
-            # we don't make any claims about the field being optional or not
-            set args [concat -default_value [lrange $args 1 end]]
-        }
-        return [::dom::createNodeInContext elementNode slot -name $name -type $type -subtype attributei {*}${args}]
-    }
-
     namespace unknown unknown
 
     proc unknown {field_type field_name args} {
@@ -208,7 +261,8 @@ define_lang ::persistence::lang {
             #
             # puts "sm1=$sm1 sm2=$sm2 sm3=$sm3 sm4=$sm4 sm5=$sm5 sm6=$sm6 sm7=$sm7"
 
-            set node [attribute_helper $datatype $field_name {*}${args}]
+            return
+            set node [typedecl_helper slot_class_helper "" slot $field_name -type $datatype {*}${args}]
 
             if { $container_type ne {} } {
                 $node setAttribute container_type $container_type
@@ -219,10 +273,9 @@ define_lang ::persistence::lang {
         }
     }
 
-    meta "struct" -class_helper class_helper -object_helper object_helper {
+    meta struct -class_helper class_helper -object_helper object_helper {
         varchar super_helper
     }
-
 
     dtd {
         <!DOCTYPE pdl [
