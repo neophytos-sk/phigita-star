@@ -3,26 +3,88 @@
 
 define_lang ::metasys::lang {
 
-    proc node_helper {class_name object_name args} {
-        set node [uplevel [list ::dom::createNodeInContext elementNode $class_name -name $object_name {*}${args}]]
+    # nest argument holds nested calls in the procs below
+    # i.e nest_helper, mode_helper, meta_helper
+
+    variable stack [list]
+
+    proc with_mode {nest mode_name args} {
+        variable stack
+        set stack [linsert $stack 0 $mode_name]
+        set cmd "[lindex $nest 0] [lrange $nest 1 end] $args"
+        set result [uplevel $cmd]
+        set stack [lreplace $stack 0 0]
+        return $result
+    }
+
+    proc node_helper {tag name args} {
+        set node [uplevel [list ::dom::createNodeInContext elementNode $tag -x-name $name {*}$args]]
         return $node
     }
 
-    # nest argument holds nested calls
-    proc nest_helper {nest class_name object_name args} {
-        set node [uplevel [list ::dom::createNodeInContext elementNode $class_name -name $object_name {*}${args}]]
-        uplevel [list proc_cmd $object_name $nest]
+    proc nest_helper {nest tag name args} {
+        set node [uplevel [list node_helper $tag $name {*}$args]]
+        uplevel [list proc_cmd $name $nest]
         return $node
     }
 
-    # nest argument holds nested calls
+    proc mode_helper {nest tag name args} {
+        set node [uplevel [list node_helper $tag $name {*}$args]]
+        uplevel [list proc_cmd $name [list ::metasys::lang::with_mode $nest $name]]
+        return $node
+    }
+
     proc meta_helper {meta_tag meta_name nest args} {
-        return [uplevel [list nest_helper $nest $meta_tag $meta_name {*}${args}]]
+        return [uplevel [list nest_helper $nest $meta_tag $meta_name {*}$args]]
     }
 
     proc_cmd "meta" meta_helper 
 
-    namespace export meta meta_helper nest_helper node_helper
+    # rewrite typedecl args
+    proc typedecl_args {argsVar} {
+
+        upvar $argsVar args
+
+        # rewrite args of the form
+        #   varchar device = "sms"
+        # to
+        #   varchar device -default_value "sms"
+
+        if { [llength $args] && [lindex $args 0] eq {=} } {
+            # we don't make any claims about the field being optional or not
+            set args [concat -default_value [lrange $args 1 end]]
+        }
+    }
+
+    proc typeinst_args {argsVar} {
+
+        upvar $argsVar args
+
+        # rewrite args of the form
+        #   varchar body = "this is a test"
+        # to
+        #   varchar body { t "this is a test" }
+
+        if { [llength $args] == 2 && [lindex $args 0] eq {=} } {
+            set args [list [list ::dom::scripting::t [lrange $args 1 end]]]
+        }
+    }
+
+    proc typedecl_helper {decl_tag decl_type decl_name args} {
+        typedecl_args args
+        return [uplevel [list node_helper typedecl $decl_name -x-type $decl_type {*}$args]]
+    }
+    
+    meta "typedecl" typedecl_helper
+
+    proc typeinst_helper {inst_tag inst_type inst_name args} {
+        typeinst_args args
+        return [uplevel [list node_helper typeinst $inst_name -x-type $inst_type {*}$args]]
+    }
+
+    meta "typeinst" typeinst_helper
+
+    namespace export meta meta_helper typedecl typedecl_helper typedecl_args typeinst typeinst_helper nest_helper node_helper mode_helper
 
 }
 
@@ -31,7 +93,7 @@ define_lang ::basesys::lang {
     proc_cmd "import" import_helper
 
     proc import_helper {import_tag import_name args} {
-        set node [uplevel [list ::dom::createNodeInContext elementNode $import_tag -name $import_name {*}${args}]]
+        set node [uplevel [list ::dom::createNodeInContext elementNode $import_tag -name $import_name {*}$args]]
         uplevel [list namespace import ::${import_name}::lang::*]
         return $node
     }
@@ -45,19 +107,34 @@ define_lang ::typesys::lang {
     namespace import ::basesys::lang::*
     import metasys
 
-    proc typedecl_helper {class_name object_name args} {
-
-        # support declarations of the form:
-        # varchar device = "sms"
-        if { [llength $args] && [lindex $args 0] eq {=} } {
-            # we don't make any claims about the field being optional or not
-            set args [concat -default_value [lrange $args 1 end]]
+    proc declaration_mode_p {} {
+        variable ::metasys::lang::stack
+        set mode [lindex $stack end]
+        if { $mode eq {struct} } {
+            return 1
         }
-
-        return [node_helper slot $object_name -type $class_name {*}${args}]
+        return 0
     }
 
-    meta "type" {nest_helper {typedecl_helper}}
+    proc type_helper {tag name args} {
+
+        puts "--->>> type_helper (declaration_mode_p=[declaration_mode_p]) tag=$tag name=$name {*}$args"
+
+        set type $tag
+        if { [declaration_mode_p] } {
+            return [uplevel [list typedecl_helper $tag $type $name {*}$args]]
+        } else {
+            return [uplevel [list typeinst_helper $tag $type $name {*}$args]]
+        }
+    }
+
+    proc typeargs_helper {nest tag name args} {
+        typedecl_args args
+        return [uplevel "$nest $tag $name $args"]
+    }
+
+    meta "type" {nest_helper {type_helper}}
+    #meta "type" {mode_helper {type_helper}}
 
     # a varying-length text string encoded using UTF-8 encoding
     type "varchar"
@@ -71,19 +148,19 @@ define_lang ::typesys::lang {
     # an 8-bit signed integer
     type "byte"
 
-    # an 16-bit signed integer
+    # a 16-bit signed integer
     type "int16"
 
-    # an 32-bit signed integer
+    # a 32-bit signed integer
     type "int32"
 
-    # an 64-bit signed integer
+    # a 64-bit signed integer
     type "int64"
 
     # a 64-bit floating point number
     type "double"
 
-    namespace export type typedecl_helper varchar bool varint byte int16 int32 int64 double
+    namespace export type type_helper varchar bool varint byte int16 int32 int64 double
 
 }
 
@@ -153,28 +230,46 @@ define_lang ::persistence::lang {
         }
     }
 
-    meta "struct" {nest_helper {nest_helper {typedecl_helper}}}
+    # The following commented out line should have worked already 
+    # as the meta "type" is equivalent to {nest_helper {type_helper}}
+    # but the nest_helper does not seem to preserve the namespace 
+    # at the moment (2014-11-22).
+    #
+    # TODO: meta "struct" {nest_helper {type}}
+
+    # OLD: meta "struct" {nest_helper {nest_helper {type_helper}}}
+
+    meta "struct" {mode_helper {nest_helper {type_helper}}}
 
     dtd {
         <!DOCTYPE pdl [
 
-            <!ELEMENT pdl (struct*)>
-            <!ELEMENT struct (slot | struct)*>
-            <!ATTLIST struct name CDATA #REQUIRED
+            <!ELEMENT pdl (struct | typeinst)*>
+            <!ELEMENT struct (typedecl)*>
+            <!ATTLIST struct x-name CDATA #REQUIRED
+                             name CDATA #IMPLIED
                              nsp CDATA #IMPLIED
                              pk CDATA #IMPLIED
                              is_final_if_no_scope CDATA #IMPLIED
                              super_helper CDATA #IMPLIED>
 
-            <!ELEMENT slot EMPTY>
-            <!ATTLIST slot name CDATA #REQUIRED
+            <!ELEMENT typedecl EMPTY>
+            <!ATTLIST typedecl x-name CDATA #REQUIRED
+                           x-type CDATA #REQUIRED
+                           name CDATA #IMPLIED
+                           type CDATA #IMPLIED
                            nsp CDATA #IMPLIED
-                           type CDATA #REQUIRED
                            default_value CDATA #IMPLIED
                            optional_p CDATA #IMPLIED
                            container_type CDATA #IMPLIED
                            subtype CDATA #IMPLIED
                            lang_nsp CDATA #IMPLIED>
+
+            <!ELEMENT typeinst ANY>
+            <!ATTLIST typeinst x-name CDATA #REQUIRED
+                               x-type CDATA #REQUIRED
+                               name CDATA #IMPLIED
+                               type CDATA #IMPLIED>
 
             <!ELEMENT extends EMPTY>
             <!ATTLIST extends ref CDATA #REQUIRED>

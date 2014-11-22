@@ -4,10 +4,10 @@ struct struct -super_helper "class_helper" {
     varchar class_cmd
     varchar pk
     bool is_final_if_no_scope
-    set<slot> slots = {}
+    set<decl> slots = {}
 }
 
-struct slot {
+struct decl {
     varchar name
     varchar type
     varchar default
@@ -79,6 +79,51 @@ struct message -is_final_if_no_scope "1" {
 
 }
 
-message msg1 -subject "hello"
+# we can have an x-format attribute that specifies which format to 
+# express in the body of the typeinst
+#   typeinst message msg1 -x-format "tdom" { ... }
+#   typeinst message msg1 -x-format "xml" { ... }
+#   typeinst message msg1 -x-format "dict" { ... }
+#   typeinst message msg1 -x-format "csv" { ... }
+#   typeinst message msg1 -x-format "list" { ... }
+#   typeinst message msg1 -x-format "object" { ... }
 
-db_insert -scope {user} -what msg1
+typeinst message msg1 {
+
+    typeinst varchar subject = "hello"
+
+    typeinst email from {
+        typeinst varchar name { ::dom::scripting::t "zena wow" }
+        typeinst varchar address { ::dom::scripting::t "zena@example.com" }
+    }
+
+    typeinst varchar body = "this is a test"
+
+}
+
+#email from -name "zena wow" -address "zena@example.com"
+message msg2 {
+    varchar subject = "hello"
+    email from {
+        varchar name = "zena wow"
+        varchar address = "zena@example.com"
+    }
+    varchar body = "this is a test"
+}
+
+if {0} {
+    message msg3 {
+        subject "hello"
+        from {
+            name "zena wow"
+            address "zena@example.com"
+        }
+        body "this is a test"
+    }
+}
+
+message msg4 -subject "hello" -body "this is a test" {
+    email from -name "zena wow" -address "zena@example.com"
+}
+
+#db_insert -scope {user} -what msg1

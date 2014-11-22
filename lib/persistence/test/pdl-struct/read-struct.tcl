@@ -84,8 +84,8 @@ proc init_struct {node} {
     set attnodes [$node selectNodes {descendant::slot}]
     foreach attnode $attnodes {
 
-        set name [$attnode @name]
-        set type [$attnode @type]
+        set name [$attnode @x-name]
+        set type [$attnode @x-type]
         set default_value [$attnode @default_value ""]
         set optional_p [$attnode @optional_p ""]
         set container_type [$attnode @container_type ""]
@@ -94,7 +94,7 @@ proc init_struct {node} {
         lappend attributes [list $name $type $default_value $optional_p $container_type $subtype]
     }
 
-    set class_name [$node @name]
+    set class_name [$node @x-name]
 
     # puts "init_struct $class_name"
 

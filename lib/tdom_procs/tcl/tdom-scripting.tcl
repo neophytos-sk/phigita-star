@@ -122,7 +122,6 @@ proc ::dom::scripting::define_lang {nsp script {docVar ""}} {
 
     namespace eval ${nsp} {
         namespace import -force \
-            ::dom::scripting::meta_cmd \
             ::dom::scripting::node_cmd \
             ::dom::scripting::text_cmd \
             ::dom::scripting::proc_cmd \
