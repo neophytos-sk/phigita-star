@@ -3,63 +3,52 @@
 
 define_lang ::metasys::lang {
 
-    namespace export metaclass_helper class_helper object_helper slot_helper
+    namespace export meta meta_helper nest_helper node_helper
 
-    proc class_helper {nested_calls class_name object_name args} {
-        puts "--->>> class_helper $object_name"
-        set node [uplevel [list ::dom::createNodeInContext elementNode $class_name -name $object_name {*}${args}]]
-        uplevel [list proc_cmd $object_name $nested_calls]
-        return $node
-    }
-
-    proc object_helper {class_name object_name args} {
-        puts "--->>> object_helper $object_name"
+    proc node_helper {class_name object_name args} {
         set node [uplevel [list ::dom::createNodeInContext elementNode $class_name -name $object_name {*}${args}]]
         return $node
     }
 
-    proc slot_helper {class_name object_name args} {
-        set node [uplevel [list ::dom::createNodeInContext elementNode slot -type $class_name -name $object_name {*}${args}]]
+    # nest argument holds nested calls
+    proc nest_helper {nest class_name object_name args} {
+        set node [uplevel [list ::dom::createNodeInContext elementNode $class_name -name $object_name {*}${args}]]
+        uplevel [list proc_cmd $object_name $nest]
         return $node
     }
+
+    # nest argument holds nested calls
+    proc meta_helper {meta_tag meta_name nest args} {
+        return [uplevel [list nest_helper $nest $meta_tag $meta_name {*}${args}]]
+    }
+
+    proc_cmd "meta" meta_helper 
 
 }
 
 define_lang ::basesys::lang {
 
-    proc_cmd "meta" meta_helper
-
-    proc meta_helper {meta_tag meta_name args} {
-        set uplevel_nsp [uplevel {namespace current}]
-        set node [namespace inscope ${uplevel_nsp} [list ::dom::createNodeInContext elementNode $meta_tag -name $meta_name]]
-        uplevel [list proc_cmd $meta_name [list namespace inscope ${uplevel_nsp} {*}${args}]]
-    }
+    namespace export import import_helper export export_helper
 
     proc_cmd "import" import_helper
 
     proc import_helper {import_tag import_name args} {
-
         set node [uplevel [list ::dom::createNodeInContext elementNode $import_tag -name $import_name {*}${args}]]
-
         uplevel [list namespace import ::${import_name}::lang::*]
-
+        return $node
     }
-
-    namespace export meta meta_helper import import_helper
 
 }
 
-
 define_lang ::typesys::lang {
 
-    namespace export type typedecl_helper typeinst_helper varchar bool varint byte int16 int32 int64 double
+    namespace export type typedecl_helper varchar bool varint byte int16 int32 int64 double
 
     namespace import ::basesys::lang::*
     import metasys
 
-    meta type {class_helper typedecl_helper}
+    meta "type" {nest_helper {typedecl_helper}}
 
-    # typedecl_helper object_helper type varchar device = "sms"
     proc typedecl_helper {class_name object_name args} {
 
         # support declarations of the form:
@@ -69,11 +58,7 @@ define_lang ::typesys::lang {
             set args [concat -default_value [lrange $args 1 end]]
         }
 
-        #set args [concat -value_type $class_name $args]
-        #set class_name "slot"
-        #set args [concat -x-struct slot $args]
-
-        return [slot_helper $class_name $object_name {*}${args}]
+        return [node_helper slot $object_name -type $class_name {*}${args}]
     }
 
     # a varying-length text string encoded using UTF-8 encoding
@@ -119,46 +104,9 @@ define_lang ::persistence::lang {
     import typesys
     import db
 
-    #text_cmd "name"
-    #text_cmd "type"
-    #text_cmd "default_value"
-    #text_cmd "optional_p" "true"
-    #text_cmd "container_type"
-
-
     #
     # HELPERS
     #
-
-    # maybe it does not belong here, will move it out once we have proc filters in place
-    # side-effects of init_class are used by ::persistence::serialize
-    proc init_class {node} {
-        set attributes [list]
-        set attnodes [$node selectNodes {descendant::slot}]
-        foreach attnode $attnodes {
-
-            set name [$attnode @name]
-            set type [$attnode @type]
-            set default_value [$attnode @default_value ""]
-            set optional_p [$attnode @optional_p ""]
-            set container_type [$attnode @container_type ""]
-            set subtype [$attnode @subtype ""]
-
-            lappend attributes [list $name $type $default_value $optional_p $container_type $subtype]
-        }
-
-        set class_name [$node @name]
-
-        set varname ::persistence::lang::_info_::${class_name}(attributes)
-        set $varname $attributes
-
-    }
-
-    rename class_helper _class_helper
-    proc class_helper {args} {
-        set node [uplevel [list _class_helper {*}${args}]]
-        init_class $node
-    }
 
     namespace unknown unknown
 
@@ -205,7 +153,7 @@ define_lang ::persistence::lang {
         }
     }
 
-    meta struct {class_helper {class_helper {slot_helper}}}
+    meta "struct" {nest_helper {nest_helper {typedecl_helper}}}
 
     dtd {
         <!DOCTYPE pdl [

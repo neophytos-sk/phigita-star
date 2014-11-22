@@ -76,4 +76,73 @@ set message_dict {
 
 }
 
-::persistence::serialize message $message_dict
+
+namespace eval ::persistence::lang::_info_ {;}
+
+proc init_struct {node} {
+    set attributes [list]
+    set attnodes [$node selectNodes {descendant::slot}]
+    foreach attnode $attnodes {
+
+        set name [$attnode @name]
+        set type [$attnode @type]
+        set default_value [$attnode @default_value ""]
+        set optional_p [$attnode @optional_p ""]
+        set container_type [$attnode @container_type ""]
+        set subtype [$attnode @subtype ""]
+
+        lappend attributes [list $name $type $default_value $optional_p $container_type $subtype]
+    }
+
+    set class_name [$node @name]
+
+    # puts "init_struct $class_name"
+
+    set varname ::persistence::lang::_info_::${class_name}(attributes)
+    set $varname $attributes
+}
+
+proc init_struct_all {doc} {
+    set nodes [$doc selectNodes "//struct"]
+    foreach node $nodes {
+        init_struct $node
+    }
+}
+
+proc serialize {struct dict} {
+
+    set attributes [set ::persistence::lang::_info_::${struct}(attributes)]
+
+    set values [list]
+
+    foreach att $attributes {
+
+        lassign $att name type default_value optional_p container_type
+
+        if { [dict exists $dict $name] } {
+
+            set value [dict get $dict $name]
+
+        } elseif { $default_value ne {} } {
+
+            set value $default_value
+
+        } elseif { $optional_p ne {true} } {
+
+            error "required attribute (=${name}) missing"
+
+        }
+
+        # puts "$name = $value"
+
+        lappend header ${name}
+        lappend values ${value}
+
+    }
+
+    puts $header
+    puts [string map {"\n" "\\n"} $values]
+}
+
+init_struct_all $doc
+serialize message $message_dict
