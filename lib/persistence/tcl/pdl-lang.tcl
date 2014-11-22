@@ -3,8 +3,6 @@
 
 define_lang ::metasys::lang {
 
-    namespace export meta meta_helper nest_helper node_helper
-
     proc node_helper {class_name object_name args} {
         set node [uplevel [list ::dom::createNodeInContext elementNode $class_name -name $object_name {*}${args}]]
         return $node
@@ -24,11 +22,11 @@ define_lang ::metasys::lang {
 
     proc_cmd "meta" meta_helper 
 
+    namespace export meta meta_helper nest_helper node_helper
+
 }
 
 define_lang ::basesys::lang {
-
-    namespace export import import_helper export export_helper
 
     proc_cmd "import" import_helper
 
@@ -38,16 +36,14 @@ define_lang ::basesys::lang {
         return $node
     }
 
+    namespace export import import_helper export export_helper
+
 }
 
 define_lang ::typesys::lang {
 
-    namespace export type typedecl_helper varchar bool varint byte int16 int32 int64 double
-
     namespace import ::basesys::lang::*
     import metasys
-
-    meta "type" {nest_helper {typedecl_helper}}
 
     proc typedecl_helper {class_name object_name args} {
 
@@ -60,6 +56,8 @@ define_lang ::typesys::lang {
 
         return [node_helper slot $object_name -type $class_name {*}${args}]
     }
+
+    meta "type" {nest_helper {typedecl_helper}}
 
     # a varying-length text string encoded using UTF-8 encoding
     type "varchar"
@@ -85,15 +83,17 @@ define_lang ::typesys::lang {
     # a 64-bit floating point number
     type "double"
 
+    namespace export type typedecl_helper varchar bool varint byte int16 int32 int64 double
+
 }
 
 define_lang ::db::lang {
 
-    namespace export db_insert db_update db_delete
-
     text_cmd "db_insert"
     text_cmd "db_update"
     text_cmd "db_delete"
+
+    namespace export db_insert db_update db_delete
 
 }
 
