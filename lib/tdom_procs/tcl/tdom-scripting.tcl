@@ -14,24 +14,23 @@ proc ::dom::createDocumentFromScript {rootname script} {
 #   dom createNodeInContext elementNode somecmdname
 # }
 #
-proc ::dom::createNodeInContext {node_type cmd_name args} {
+proc ::dom::createNodeInContext {node_type node_tag args} {
 
-    #puts "createNodeInContext uplevel_nsp=[uplevel {namespace current}]"
+    set nsp "::dom::_${node_type}Cmd"
+    set counter_var "${nsp}::count(${node_tag})"
 
-    set nsp "::dom::_temp_::$node_type"
+    namespace eval $nsp {;}
 
-    if { [info proc "${nsp}::$cmd_name"] eq {} } {
-        namespace eval ${nsp} [list dom createNodeCmd -returnNodeCmd $node_type $cmd_name]
+    if { [incr $counter_var] == 1 } {
+        set cmd [list dom createNodeCmd -returnNodeCmd $node_type $node_tag]
+        namespace eval ${nsp} $cmd
     }
 
-    #set uplevel_nsp [uplevel [list namespace current]]
-    #set old_nsp_path [namespace path]
-    #namespace path ${uplevel_nsp}
-    set node [uplevel [list ${nsp}::$cmd_name {*}${args}]]
-    #namespace path $old_nsp_path
+    set cmd [list ${nsp}::$node_tag {*}$args]
+    set node [uplevel $cmd]
 
-    if { [info proc ${nsp}::$cmd_name] ne {} } {
-        rename ${nsp}::$cmd_name {}
+    if { [incr $counter_var -1] == 0 } {
+        rename ${nsp}::$node_tag {}
     }
 
     return $node
@@ -46,6 +45,7 @@ proc ::dom::scripting::require_procs {} {
     namespace eval ::dom::scripting {
         dom createNodeCmd textNode t
         proc nt {text} { t -disableOutputEscaping ${text} }
+        namespace export t nt
     }
 }
 ::dom::scripting::require_procs
@@ -122,6 +122,8 @@ proc ::dom::scripting::define_lang {nsp script {docVar ""}} {
 
     namespace eval ${nsp} {
         namespace import -force \
+            ::dom::scripting::t \
+            ::dom::scripting::nt \
             ::dom::scripting::node_cmd \
             ::dom::scripting::text_cmd \
             ::dom::scripting::proc_cmd \

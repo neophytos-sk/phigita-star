@@ -1,9 +1,10 @@
 
-# Note that the meta "struct" command is destroyed
-# as soon as we redefine it below. It ceases to exist
-# and the new struct command follows the unfolding
-# of the nested ("nest") calls just like any other 
-# struct in this file.
+# Note that the meta "::typesys::lang::struct" command
+# is only used to define the new "struct" command,
+# which follows the unfolding of the nested ("nest")
+# calls dictated by "::typesys::lang::struct".
+#
+# ::typesys::lang::struct struct { ... }
 
 struct struct {
     varchar nsp
@@ -100,8 +101,8 @@ typeinst message msg1 {
     typeinst varchar subject = "hello"
 
     typeinst email from {
-        typeinst varchar name { ::dom::scripting::t "zena wow" }
-        typeinst varchar address { ::dom::scripting::t "zena@example.com" }
+        typeinst varchar name { t "zena wow" }
+        typeinst varchar address { t "zena@example.com" }
     }
 
     typeinst varchar body = "this is a test"

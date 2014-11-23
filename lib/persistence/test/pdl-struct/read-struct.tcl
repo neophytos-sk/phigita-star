@@ -13,7 +13,7 @@ puts [$doc asXML]
 
 set root [$doc documentElement]
 
-::dom::scripting::validate ::persistence::lang $root
+::dom::scripting::validate ::typesys::lang $root
 
 # ::dom::scripting::create_value ::persistence::lang message [list from [list find_by email "someone@example.com"]]
 set message_dict {

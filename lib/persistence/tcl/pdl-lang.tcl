@@ -1,14 +1,28 @@
 
 ::xo::lib::require tdom_procs
 
-define_lang ::metasys::lang {
+define_lang ::basesys::lang {
+
+    proc_cmd "import" ::basesys::lang::import_helper
+
+    proc import_helper {import_tag import_name args} {
+        set node [uplevel [list ::dom::createNodeInContext elementNode $import_tag -name $import_name {*}$args]]
+        uplevel [list namespace import ::${import_name}::lang::*]
+        return $node
+    }
+
+    namespace export "import"
+
+}
+
+define_lang ::typesys::lang {
+
+    variable stack [list]
 
     # nest argument holds nested calls in the procs below
     # i.e nest_helper, mode_helper, meta_helper
 
-    variable stack [list]
-
-    proc with_mode {nest mode_name args} {
+    proc with_tag {nest mode_name args} {
         variable stack
         set stack [linsert $stack 0 $mode_name]
         set cmd "[lindex $nest 0] [lrange $nest 1 end] $args"
@@ -18,31 +32,29 @@ define_lang ::metasys::lang {
     }
 
     proc node_helper {tag name args} {
-        set node [uplevel [list ::dom::createNodeInContext elementNode $tag -x-name $name {*}$args]]
+        set cmd \
+            [list ::dom::createNodeInContext elementNode $tag -x-name $name {*}$args]
+        set node [uplevel $cmd]
         return $node
     }
 
     proc nest_helper {nest tag name args} {
-        set node [uplevel [list node_helper $tag $name {*}$args]]
+        set cmd [list [namespace which node_helper] $tag $name {*}$args]
+        set node [uplevel $cmd]
+        set nest [list [namespace which with_tag] $nest $name]
         uplevel [list proc_cmd $name $nest]
-        return $node
-    }
-
-    proc mode_helper {nest tag name args} {
-        set node [uplevel [list node_helper $tag $name {*}$args]]
-        uplevel [list proc_cmd $name [list ::metasys::lang::with_mode $nest $name]]
         return $node
     }
 
     proc meta_helper {meta_tag meta_name nest args} {
         set mode_name $meta_name
-        set nest [list with_mode $nest $mode_name]
-        return [uplevel [list nest_helper $nest $meta_tag $meta_name {*}$args]]
+        set nest [list [namespace which with_tag] $nest $mode_name]
+        set cmd [list nest_helper $nest $meta_tag $meta_name {*}$args]
+        return [uplevel $cmd]
     }
 
-    proc_cmd "meta" meta_helper 
+    proc_cmd "meta" [namespace which meta_helper]
 
-    # rewrite typedecl args
     proc typedecl_args {argsVar} {
 
         upvar $argsVar args
@@ -58,6 +70,14 @@ define_lang ::metasys::lang {
         }
     }
 
+    proc typedecl_helper {decl_tag decl_type decl_name args} {
+        typedecl_args args
+        set cmd [list [namespace which node_helper] typedecl $decl_name -x-type $decl_type {*}$args]
+        return [uplevel $cmd]
+    }
+    
+    meta "typedecl" [namespace which typedecl_helper]
+
     proc typeinst_args {argsVar} {
 
         upvar $argsVar args
@@ -72,45 +92,17 @@ define_lang ::metasys::lang {
         }
     }
 
-    proc typedecl_helper {decl_tag decl_type decl_name args} {
-        typedecl_args args
-        return [uplevel [list node_helper typedecl $decl_name -x-type $decl_type {*}$args]]
-    }
-    
-    meta "typedecl" typedecl_helper
-
     proc typeinst_helper {inst_tag inst_type inst_name args} {
         typeinst_args args
-        return [uplevel [list node_helper typeinst $inst_name -x-type $inst_type {*}$args]]
+        set cmd [list [namespace which node_helper] typeinst $inst_name -x-type $inst_type {*}$args]
+        return [uplevel $cmd]
     }
 
-    meta "typeinst" typeinst_helper
+    meta "typeinst" [namespace which typeinst_helper]
 
-    namespace export meta meta_helper typedecl typedecl_helper typeinst typeinst_helper nest_helper node_helper mode_helper with_mode
-
-}
-
-define_lang ::basesys::lang {
-
-    proc_cmd "import" import_helper
-
-    proc import_helper {import_tag import_name args} {
-        set node [uplevel [list ::dom::createNodeInContext elementNode $import_tag -name $import_name {*}$args]]
-        uplevel [list namespace import ::${import_name}::lang::*]
-        return $node
-    }
-
-    namespace export import import_helper export export_helper
-
-}
-
-define_lang ::typesys::lang {
-
-    namespace import ::basesys::lang::*
-    import metasys
 
     proc declaration_mode_p {} {
-        variable ::metasys::lang::stack
+        variable ::typesys::lang::stack
         set mode [lindex $stack end]
         if { $mode eq {struct} } {
             return 1
@@ -124,40 +116,91 @@ define_lang ::typesys::lang {
         
         set type $tag
         if { [declaration_mode_p] } {
-            return [uplevel [list typedecl_helper $tag $type $name {*}$args]]
+            set cmd [list [namespace which typedecl_helper] $tag $type $name {*}$args]
+            return [uplevel $cmd]
         } else {
-            return [uplevel [list typeinst_helper $tag $type $name {*}$args]]
+            set cmd [list [namespace which typeinst_helper] $tag $type $name {*}$args]
+            return [uplevel $cmd]
         }
     }
 
-    meta "type" {nest_helper {type_helper}}
-    #meta "type" {mode_helper {type_helper}}
+    # meta "base_type" {nest_helper {type_helper}}
+    meta "base_type" [list [namespace which nest_helper] [list [namespace which type_helper]]]
 
     # a varying-length text string encoded using UTF-8 encoding
-    type "varchar"
+    base_type "varchar"
 
     # a boolean value (true or false)
-    type "bool"
+    base_type "bool"
 
     # a varying-bit signed integer
-    type "varint"
+    base_type "varint"
 
     # an 8-bit signed integer
-    type "byte"
+    base_type "byte"
 
     # a 16-bit signed integer
-    type "int16"
+    base_type "int16"
 
     # a 32-bit signed integer
-    type "int32"
+    base_type "int32"
 
     # a 64-bit signed integer
-    type "int64"
+    base_type "int64"
 
     # a 64-bit floating point number
-    type "double"
+    base_type "double"
 
-    namespace export type type_helper varchar bool varint byte int16 int32 int64 double
+    # The following commented out line should have worked already 
+    # as the meta "type" is equivalent to {nest_helper {type_helper}}
+    # but the nest_helper does not seem to preserve the namespace 
+    # at the moment (2014-11-22).
+    #
+    # TODO: meta "struct" {nest_helper {base_type}}
+
+    # meta "struct" {nest_helper {nest_helper {type_helper}}}
+    meta "struct" [list [namespace which nest_helper] [list [namespace which nest_helper] [list [namespace which type_helper]]]]
+
+    dtd {
+        <!DOCTYPE pdl [
+
+            <!ELEMENT pdl (struct | typeinst)*>
+            <!ELEMENT struct (typedecl)*>
+            <!ATTLIST struct x-name CDATA #REQUIRED
+                             name CDATA #IMPLIED
+                             nsp CDATA #IMPLIED
+                             pk CDATA #IMPLIED
+                             is_final_if_no_scope CDATA #IMPLIED
+                             super_helper CDATA #IMPLIED>
+
+            <!ELEMENT typedecl EMPTY>
+            <!ATTLIST typedecl x-name CDATA #REQUIRED
+                           x-type CDATA #REQUIRED
+                           name CDATA #IMPLIED
+                           type CDATA #IMPLIED
+                           nsp CDATA #IMPLIED
+                           default_value CDATA #IMPLIED
+                           optional_p CDATA #IMPLIED
+                           container_type CDATA #IMPLIED
+                           subtype CDATA #IMPLIED
+                           lang_nsp CDATA #IMPLIED>
+
+            <!ELEMENT typeinst ANY>
+            <!ATTLIST typeinst x-name CDATA #REQUIRED
+                               x-type CDATA #REQUIRED
+                               name CDATA #IMPLIED
+                               type CDATA #IMPLIED>
+
+        ]>
+    }
+
+    proc unknown {args} {
+        error "--->>> [namespace current]->unknown: $args"
+    }
+    
+    namespace unknown unknown
+
+    namespace export struct typedecl typeinst varchar bool varint byte int16 int32 int64 double
 
 }
 
@@ -174,7 +217,6 @@ define_lang ::db::lang {
 define_lang ::persistence::lang {
 
     namespace import ::basesys::lang::*
-    import metasys
     import typesys
     import db
 
@@ -225,59 +267,6 @@ define_lang ::persistence::lang {
         } else {
             error "no such field_type: $field_type"
         }
-    }
-
-    # The following commented out line should have worked already 
-    # as the meta "type" is equivalent to {nest_helper {type_helper}}
-    # but the nest_helper does not seem to preserve the namespace 
-    # at the moment (2014-11-22).
-    #
-    # TODO: meta "struct" {nest_helper {type}}
-
-    # OLD: meta "struct" {nest_helper {nest_helper {type_helper}}}
-
-    meta "struct" {mode_helper {nest_helper {type_helper}}}
-
-    dtd {
-        <!DOCTYPE pdl [
-
-            <!ELEMENT pdl (struct | typeinst)*>
-            <!ELEMENT struct (typedecl)*>
-            <!ATTLIST struct x-name CDATA #REQUIRED
-                             name CDATA #IMPLIED
-                             nsp CDATA #IMPLIED
-                             pk CDATA #IMPLIED
-                             is_final_if_no_scope CDATA #IMPLIED
-                             super_helper CDATA #IMPLIED>
-
-            <!ELEMENT typedecl EMPTY>
-            <!ATTLIST typedecl x-name CDATA #REQUIRED
-                           x-type CDATA #REQUIRED
-                           name CDATA #IMPLIED
-                           type CDATA #IMPLIED
-                           nsp CDATA #IMPLIED
-                           default_value CDATA #IMPLIED
-                           optional_p CDATA #IMPLIED
-                           container_type CDATA #IMPLIED
-                           subtype CDATA #IMPLIED
-                           lang_nsp CDATA #IMPLIED>
-
-            <!ELEMENT typeinst ANY>
-            <!ATTLIST typeinst x-name CDATA #REQUIRED
-                               x-type CDATA #REQUIRED
-                               name CDATA #IMPLIED
-                               type CDATA #IMPLIED>
-
-            <!ELEMENT extends EMPTY>
-            <!ATTLIST extends ref CDATA #REQUIRED>
-
-            <!ELEMENT index EMPTY>
-            <!ATTLIST index attr CDATA #REQUIRED>
-
-            <!ELEMENT db_insert EMPTY>
-            <!ATTLIST db_insert scope CDATA #IMPLIED
-                                what CDATA #REQUIRED>
-        ]>
     }
 
 }
