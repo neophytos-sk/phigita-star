@@ -11,16 +11,16 @@ struct struct {
     varchar name
     varchar pk
     bool is_final_if_no_scope
-    set<typedecl> slots = {}
+    # list<typedecl> slot = {}
+    # multiple typedecl slot = {}
+    multiple typedecl slot = {}
 }
 
 struct typedecl {
     varchar name
     varchar type
-    varchar default
+    varchar default_value = ""
     bool optional_p = false
-    varchar container_type
-    varchar subtype
 }
 
 struct email -pk address {
@@ -36,9 +36,40 @@ struct file {
 
 struct folder {
     varchar name
+    int32 num_items
 }
 
-struct message -is_final_if_no_scope "1" {
+struct category {
+    varchar category_name
+    varchar parent_category
+}
+
+struct message {
+
+    # typeinst section
+    pk "message_id"
+    is_final_if_no_scope "yes"
+
+    slot {
+        name "message_id"
+        type "varint"
+    }
+
+    slot {
+        name "device"
+        type "varchar"
+        default_value "sms"
+    }
+
+    slot {
+        name "num_comments"
+        type "int16"
+        default_value 0
+    }
+
+    # typedecl section
+ 
+    varint message_id
 
     varchar device = "sms"
 
@@ -48,33 +79,24 @@ struct message -is_final_if_no_scope "1" {
 
     varchar body
 
-    # example of an instance:
-    # email -name "zena wow" -address "zena@example.com"
-    #
-    # example of slot definition:
-    # email from
-    #
-    # slot from -type email
     email from
 
-    # slot from -type email
-
-    # embedded object mapping for slot email
+    # embedded object
     # struct -name from {
     #     varchar name = ""
     #     varchar email
     # }
 
-    list<email> to
-    list<email> cc = {}
-    list<email> bcc = {}
+    multiple email to
+    multiple email cc = {}
+    multiple email bcc = {}
 
     bool public_p = false
 
-    set<category> categories
-    set<folder> folders
-    set<varchar> tags
-    set<file> attachment = {}
+    multiple category categories = {}
+    multiple folder folders = {}
+    multiple varchar tags = {}
+    multiple file attachment = {}
 
     map<varchar,i32> wordcount
 
@@ -85,15 +107,6 @@ struct message -is_final_if_no_scope "1" {
     #index -attr public_p -abc 123
 
 }
-
-# we can have an x-format attribute that specifies which format to 
-# express in the body of the typeinst
-#   typeinst message msg1 -x-format "tdom" { ... }
-#   typeinst message msg1 -x-format "xml" { ... }
-#   typeinst message msg1 -x-format "dict" { ... }
-#   typeinst message msg1 -x-format "csv" { ... }
-#   typeinst message msg1 -x-format "list" { ... }
-#   typeinst message msg1 -x-format "object" { ... }
 
 typeinst message msg1 {
 
@@ -117,15 +130,39 @@ message msg2 {
     varchar body = "this is a test"
 }
 
+# CORRECT
 message msg3 {
     message.subject "hello"
     message.from {
         email.name "zena wow"
         email.address "zena@example.com"
     }
+    message.to {
+        email.name "paris love"
+        email.address "bff@example.com"
+    }
     message.body = "this is a test"
+    message.cc { 
+        name "jane awesome"
+        address "jane@example.com"
+    }
+    message.cc { 
+        name "someone great" 
+        address "someone@example.com" 
+    }
+    multiple message.bcc {{
+        name "vera cool"
+        email "vera@example.com"
+    } {
+        name "greg wise"
+        email "greg@example.com"
+    } {
+        name "max loyal"
+        email "max@example.com"
+    }}
 }
 
+# CORRECT
 message msg4 {
     subject "hello"
     from {
@@ -133,10 +170,32 @@ message msg4 {
         address "zena@example.com"
     }
     body "this is a test"
+    to {
+        name "paris love"
+        address "bff@example.com"
+    }
+    cc { 
+        name "jane awesome"
+        address "jane@example.com"
+    }
+    cc { 
+        name "someone great" 
+        address "someone@example.com" 
+    }
+    multiple bcc {{
+        name "vera cool"
+        email "vera@example.com"
+    } {
+        name "greg wise"
+        email "greg@example.com"
+    } {
+        name "max loyal"
+        email "max@example.com"
+    }}
 }
 
-message msg5 -subject "hello" -body "this is a test" {
-    email from -name "zena wow" -address "zena@example.com"
-}
+#message msg5 -subject "hello" -body "this is a test" {
+#    email from -name "zena wow" -address "zena@example.com"
+#}
 
 #db_insert -scope {user} -what msg1

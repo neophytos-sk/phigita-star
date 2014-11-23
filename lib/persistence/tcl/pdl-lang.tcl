@@ -44,7 +44,7 @@ define_lang ::typesys::lang {
     }
 
     # nest argument holds nested calls in the procs below
-    # i.e nest_helper, mode_helper, meta_helper
+    # i.e. with_context, nest_helper, meta_helper
 
     proc with_context {nest context_type context_tag context_name args} {
 
@@ -92,15 +92,10 @@ define_lang ::typesys::lang {
     }
 
     proc node_helper {tag name args} {
-
         push_context "eval" $tag $name
-
-        set cmd \
-            [list ::dom::createNodeInContext elementNode $tag -x-name $name {*}$args]
+        set cmd  [list ::dom::createNodeInContext elementNode $tag -x-name $name {*}$args]
         set node [uplevel $cmd]
-
         pop_context
-
         return $node
     }
 
@@ -120,6 +115,94 @@ define_lang ::typesys::lang {
 
     proc_cmd "meta" [namespace which meta_helper]
 
+    proc multiple_helper {_dummy_multiple_tag_ arg0 args} {
+
+        # remove {proc meta multiple} from the top of the context stack
+        # and at the bottom, put it back so that it will be removed from with_context
+        # where it applies
+        set top_context [top_context]
+        pop_context
+
+        set nodes [list]
+        set llength_args [llength $args]
+
+        # if { $llength_args=="TODO:NOT-IMPLEMENTED-YET-1" || $llength_args == 3 }
+        if { [is_declaration_mode_p] && ( $llength_args == 1 || $llength_args == 3 ) } {
+
+            # EXAMPLE 1:
+            #   struct message {
+            #     ...
+            #     multiple email to
+            #     ...
+            #   }
+            #
+            # EXAMPLE 2:
+            #   struct message {
+            #     ...
+            #     multiple email cc = {}
+            #     ...
+            #   }
+
+
+            set type $arg0
+            set tag $type
+            set args [lassign $args name]
+
+            # push a temporary context so that typedecl_helper gets it right
+            # context = {eval struct message}
+            # lookahead_context of message = {proc struct message}
+
+            set context [top_context_of_type "eval"]
+            lassign $context context_type context_tag context_name
+            set lookahead_context [get_lookahead_context $context_name]
+            push_context {*}$lookahead_context 
+
+            puts "+++++ (multiple declaration) tag=type=$type name=$name args=$args stack=$::typesys::lang::stack context=$context"
+
+            typedecl_args args
+            set args [concat -x-multiple_p true $args] 
+            set cmd [list [namespace which typedecl_helper] $tag $type $name {*}$args]
+            lappend nodes [uplevel $cmd]
+
+            # now pop the temporary context
+            pop_context
+
+        } elseif { $llength_args == 1 } {
+
+            # EXAMPLE:
+            #   multiple cc {{ 
+            #       name "jane awesome"
+            #       address "jane@example.com"
+            #   } {
+            #   } { 
+            #       name "someone great" 
+            #       address "someone@example.com" 
+            #   }}
+
+            set name $arg0
+
+            puts "+++++ (multiple instantiation) name=$name args=$args"
+
+            lassign $args argv
+            foreach arg $argv {
+                set cmd [list $name $arg]
+                lappend nodes [uplevel $cmd]
+            }
+
+        } else {
+            error "Usage:\n\tmultiple tag type name = default_value\n\tmultiple name inst_script"
+        }
+
+        # push the {proc meta multiple} context back to the top of the context stack
+        # as it were before we removed it in the beginning of this proc
+        push_context {*}$top_context
+
+        return $nodes
+
+    }
+
+    meta "multiple" multiple_helper
+
     proc typedecl_args {argsVar} {
 
         upvar $argsVar args
@@ -127,24 +210,24 @@ define_lang ::typesys::lang {
         # rewrite args of the form
         #   varchar device = "sms"
         # to
-        #   varchar device -default_value "sms"
+        #   varchar device -x-default_value "sms"
 
         if { [llength $args] && [lindex $args 0] eq {=} } {
             # we don't make any claims about the field being optional or not
-            set args [concat -default_value [lrange $args 1 end]]
+            set args [concat -x-default_value [lrange $args 1 end]]
         }
     }
 
     proc typedecl_helper {decl_tag decl_type decl_name args} {
         typedecl_args args
         set cmd [list [namespace which node_helper] typedecl $decl_name -x-type $decl_type {*}$args]
-        set result [uplevel $cmd]
+        set node [uplevel $cmd]
 
         set context [top_context_of_type "eval"]
         set context_tag [lindex $context 1]
         set context_name [lindex $context 2]
 
-        # puts "--->>> context=$context stack=$::typesys::lang::stack"
+        puts "--->>> (typedecl_helper) context=[list $context] stack=[list $::typesys::lang::stack]"
 
         set dotted_name "${context_name}.$decl_name"
         # OBSOLETE: set_lookahead_context $dotted_name "proc" $decl_tag $dotted_name
@@ -152,6 +235,8 @@ define_lang ::typesys::lang {
         set dotted_nest [list [namespace which with_context] $dotted_nest "proc" $decl_tag $dotted_name]
         set cmd [list proc_cmd $dotted_name $dotted_nest]
         uplevel $cmd
+
+        return $node
 
     }
     
@@ -193,8 +278,16 @@ define_lang ::typesys::lang {
 
     proc typeinst_helper {inst_tag inst_type inst_name args} {
         typeinst_args $inst_type args
+
+        set context [top_context_of_type "proc"]
+        set context_tag [lindex $context 1]
+        set context_name [lindex $context 2]
+
+        puts "--->>> (typeinst_helper) context=[list $context] stack=[list $::typesys::lang::stack]"
+        
         set cmd [list [namespace which node_helper] typeinst $inst_name -x-type $inst_type {*}$args]
         return [uplevel $cmd]
+
     }
 
     meta "typeinst" [namespace which typeinst_helper]
@@ -204,9 +297,12 @@ define_lang ::typesys::lang {
     }
 
     proc is_declaration_mode_p {} {
-        set context [top_context_of_type "eval"]
-        lassign $context context_type context_tag context_name
-        if { $context_tag in {struct} } {
+        # set context [top_context_of_type "eval"]
+        variable stack
+        set context [lindex $stack end]
+        #lassign $context context_type context_tag context_name
+        #if { $context_tag in {struct} }
+        if { $context eq {proc struct struct} || $context eq {proc meta struct} } {
             return 1
         }
         return 0
@@ -267,7 +363,7 @@ define_lang ::typesys::lang {
         <!DOCTYPE pdl [
 
             <!ELEMENT pdl (struct | typeinst)*>
-            <!ELEMENT struct (typedecl)*>
+            <!ELEMENT struct (typedecl | typeinst)*>
             <!ATTLIST struct x-name CDATA #REQUIRED
                              name CDATA #IMPLIED
                              nsp CDATA #IMPLIED
@@ -278,6 +374,8 @@ define_lang ::typesys::lang {
             <!ELEMENT typedecl EMPTY>
             <!ATTLIST typedecl x-name CDATA #REQUIRED
                            x-type CDATA #REQUIRED
+                           x-default_value CDATA #IMPLIED
+                           x-multiple_p CDATA #IMPLIED
                            name CDATA #IMPLIED
                            type CDATA #IMPLIED
                            nsp CDATA #IMPLIED
@@ -290,6 +388,7 @@ define_lang ::typesys::lang {
             <!ELEMENT typeinst ANY>
             <!ATTLIST typeinst x-name CDATA #REQUIRED
                                x-type CDATA #REQUIRED
+                               x-multiple_p CDATA #IMPLIED
                                name CDATA #IMPLIED
                                type CDATA #IMPLIED>
 

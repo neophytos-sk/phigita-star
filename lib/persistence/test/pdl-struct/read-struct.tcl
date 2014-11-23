@@ -18,6 +18,8 @@ set root [$doc documentElement]
 # ::dom::scripting::create_value ::persistence::lang message [list from [list find_by email "someone@example.com"]]
 set message_dict {
 
+    message_id "12345"
+
     device "sms"
 
     num_comments 123
