@@ -100,8 +100,8 @@ typeinst message msg1 {
     typeinst varchar subject = "hello"
 
     typeinst email from {
-        typeinst varchar name { t "zena wow" }
-        typeinst varchar address { t "zena@example.com" }
+        typeinst varchar name = "zena wow"
+        typeinst varchar address = "zena@example.com"
     }
 
     typeinst varchar body = "this is a test"
@@ -119,10 +119,10 @@ message msg2 {
 }
 
 message msg3 {
-    message.subject = "hello"
+    message.subject "hello"
     message.from {
-        email.name = "zena wow"
-        email.address = "zena@example.com"
+        email.name "zena wow"
+        email.address "zena@example.com"
     }
     message.body = "this is a test"
 }

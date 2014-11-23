@@ -18,6 +18,7 @@ define_lang ::basesys::lang {
 define_lang ::typesys::lang {
 
     variable stack [list]
+    array set lookahead_context [list]
 
     proc push_context {context_type context_tag context_name} {
         variable stack
@@ -82,6 +83,14 @@ define_lang ::typesys::lang {
 
     }
 
+    proc set_lookahead_context {name context_type context_tag context_name} {
+        set ::typesys::lang::lookahead_context($name) [list $context_type $context_tag $context_name]
+    }
+
+    proc get_lookahead_context {name} {
+        return $::typesys::lang::lookahead_context($name)
+    }
+
     proc node_helper {tag name args} {
 
         push_context "eval" $tag $name
@@ -96,6 +105,7 @@ define_lang ::typesys::lang {
     }
 
     proc nest_helper {nest tag name args} {
+        set_lookahead_context $name "proc" $tag $name
         set cmd [list [namespace which node_helper] $tag $name {*}$args]
         set node [uplevel $cmd]
         set nest [list [namespace which with_context] $nest "proc" $tag $name]
@@ -139,7 +149,6 @@ define_lang ::typesys::lang {
         puts "--->>> context=$context stack=$::typesys::lang::stack"
 
         set cmd [list proc_cmd ${context_name}.$decl_name [list [namespace which typeinst_helper] typeinst $decl_type]]
-        puts "+++++ cmd=$cmd uplevel_nsp=[uplevel {namespace current}]"
         uplevel $cmd
 
         #set cmd [list namespace_cmd $top_tag $decl_name [namespace which typeinst_helper] $decl_type]
@@ -148,7 +157,7 @@ define_lang ::typesys::lang {
     
     meta "typedecl" [namespace which typedecl_helper]
 
-    proc typeinst_args {argsVar} {
+    proc typeinst_args {inst_type argsVar} {
 
         upvar $argsVar args
 
@@ -156,26 +165,35 @@ define_lang ::typesys::lang {
         #   varchar body = "this is a test"
         # to
         #   varchar body { t "this is a test" }
+
         set llength_args [llength $args]
         if { $llength_args == 2 } {
             if { [lindex $args 0] eq {=} } {
                 set args [list [list ::dom::scripting::t [lindex $args 1]]]
             }
         } elseif { $llength_args == 1 } {
+
             # we don't know which of the following two cases we are in
             # and the stack does not have the context info for this call
             # i.e. the stack is {proc meta typeinst}
             #
             # message.subject "hello"
             # message.from { ... }
+            #
+            # so we check the lookahead_context for the upcoming command
+            # we know already that typeinst_helper calls the given inst_type command
 
-            # set context [top_context]
+            set lookahead_context [get_lookahead_context $inst_type]
+            lassign $lookahead_context lookahead_context_type lookahead_context_tag lookahead_context_name
+            if { $lookahead_context_tag eq {base_type} } {
+                set args [list [list ::dom::scripting::t [lindex $args 0]]]
+            }
             # error "context=$context stack=$::typesys::lang::stack"
         }
     }
 
     proc typeinst_helper {inst_tag inst_type inst_name args} {
-        typeinst_args args
+        typeinst_args $inst_type args
         set cmd [list [namespace which node_helper] typeinst $inst_name -x-type $inst_type {*}$args]
         return [uplevel $cmd]
     }
