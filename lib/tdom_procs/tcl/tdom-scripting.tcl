@@ -84,31 +84,6 @@ proc ::dom::scripting::text_cmd {cmd_name {default_string ""}} {
 
 }
 
-# should be called something else, maybe alias_cmd or forward_cmd
-proc ::dom::scripting::proc_cmd {cmd_name cmd_handler args} {
-
-    set nsp [uplevel { namespace current }]
-
-    set arg0 $cmd_name
-
-    proc ${nsp}::$cmd_name {args} [subst -nocommands -nobackslashes {
-        puts "--->>> (proc_cmd $cmd_name) $cmd_handler arg0=$arg0 deftime_args=$args runtime_args=[set args]"
-        #if { [list $args] ne {} } {
-        #    set index 1
-        #    set args [linsert [set args] [set index] $args]
-        #}
-        uplevel "{*}$cmd_handler $arg0 [set args]"
-    }]
-
-}
-
-
-proc ::dom::scripting::dtd {dtd} {
-
-    set nsp [uplevel { namespace current }]
-
-    namespace eval ${nsp} [list variable dtd $dtd]
-}
 
 proc ::dom::scripting::define_lang {nsp script {docVar ""}} {
 
@@ -126,8 +101,7 @@ proc ::dom::scripting::define_lang {nsp script {docVar ""}} {
             ::dom::scripting::nt \
             ::dom::scripting::node_cmd \
             ::dom::scripting::text_cmd \
-            ::dom::scripting::proc_cmd \
-            ::dom::scripting::dtd
+            ::dom::scripting::proc_cmd
 
     }
 
@@ -213,7 +187,7 @@ proc ::dom::scripting::source_tdom {filename nsp {root_element_name ""}} {
 
 proc ::dom::scripting::validate {lang_nsp node} {
 
-    variable ${lang_nsp}::dtd
+    set dtd [${lang_nsp}::dtd]
 
     set xml [$node asXML]
     set tmpfile /tmp/somelang.xml

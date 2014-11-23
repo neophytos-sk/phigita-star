@@ -1,21 +1,8 @@
 
 ::xo::lib::require tdom_procs
 
+
 define_lang ::basesys::lang {
-
-    proc_cmd "import" ::basesys::lang::import_helper
-
-    proc import_helper {import_tag import_name args} {
-        set node [uplevel [list ::dom::createNodeInContext elementNode $import_tag -name $import_name {*}$args]]
-        uplevel [list namespace import ::${import_name}::lang::*]
-        return $node
-    }
-
-    namespace export "import"
-
-}
-
-define_lang ::typesys::lang {
 
     variable stack [list]
     array set lookahead_context [list]
@@ -44,7 +31,7 @@ define_lang ::typesys::lang {
     }
 
     # nest argument holds nested calls in the procs below
-    # i.e. with_context, nest_helper, meta_helper
+    # i.e. with_context, nest, meta_helper
 
     proc with_context {nest context_type context_tag context_name args} {
 
@@ -84,11 +71,11 @@ define_lang ::typesys::lang {
     }
 
     proc set_lookahead_context {name context_type context_tag context_name} {
-        set ::typesys::lang::lookahead_context($name) [list $context_type $context_tag $context_name]
+        set ::basesys::lang::lookahead_context($name) [list $context_type $context_tag $context_name]
     }
 
     proc get_lookahead_context {name} {
-        return $::typesys::lang::lookahead_context($name)
+        return $::basesys::lang::lookahead_context($name)
     }
 
     proc node_helper {tag name args} {
@@ -99,21 +86,38 @@ define_lang ::typesys::lang {
         return $node
     }
 
-    proc nest_helper {nest tag name args} {
+    proc forward {cmd_name cmd_handler args} {
+
+        set nsp [uplevel {namespace current}]
+
+        set arg0 $cmd_name
+
+        proc ${nsp}::$cmd_name {args} [subst -nocommands -nobackslashes {
+            puts "--->>> (forward $cmd_name) $cmd_handler arg0=$arg0 deftime_args=$args runtime_args=[set args]"
+            #if { [list $args] ne {} } {
+            #    set index 1
+            #    set args [linsert [set args] [set index] $args]
+            #}
+            uplevel "{*}$cmd_handler $arg0 [set args]"
+        }]
+
+    }
+
+    proc nest {nest tag name args} {
         set_lookahead_context $name "proc" $tag $name
         set cmd [list [namespace which node_helper] $tag $name {*}$args]
         set node [uplevel $cmd]
         set nest [list [namespace which with_context] $nest "proc" $tag $name]
-        uplevel [list proc_cmd $name $nest]
+        uplevel [list [namespace which forward] $name $nest]
         return $node
     }
 
     proc meta_helper {meta_tag meta_name nest args} {
-        set cmd [list nest_helper $nest $meta_tag $meta_name {*}$args]
+        set cmd [list nest $nest $meta_tag $meta_name {*}$args]
         return [uplevel $cmd]
     }
 
-    proc_cmd "meta" [namespace which meta_helper]
+    forward "meta" [namespace which meta_helper]
 
     proc multiple_helper {_dummy_multiple_tag_ arg0 args} {
 
@@ -157,7 +161,7 @@ define_lang ::typesys::lang {
             set lookahead_context [get_lookahead_context $context_name]
             push_context {*}$lookahead_context 
 
-            puts "+++++ (multiple declaration) tag=type=$type name=$name args=$args stack=$::typesys::lang::stack context=$context"
+            puts "+++++ (multiple declaration) tag=type=$type name=$name args=$args stack=$::basesys::lang::stack context=$context"
 
             typedecl_args args
             set args [concat -x-multiple_p true $args] 
@@ -201,7 +205,7 @@ define_lang ::typesys::lang {
 
     }
 
-    meta "multiple" multiple_helper
+    meta "multiple" [namespace which multiple_helper]
 
     proc typedecl_args {argsVar} {
 
@@ -227,13 +231,13 @@ define_lang ::typesys::lang {
         set context_tag [lindex $context 1]
         set context_name [lindex $context 2]
 
-        puts "--->>> (typedecl_helper) context=[list $context] stack=[list $::typesys::lang::stack]"
+        puts "--->>> (typedecl_helper) context=[list $context] stack=[list $::basesys::lang::stack]"
 
         set dotted_name "${context_name}.$decl_name"
         # OBSOLETE: set_lookahead_context $dotted_name "proc" $decl_tag $dotted_name
         set dotted_nest [list [namespace which typeinst_helper] typeinst $decl_type]
         set dotted_nest [list [namespace which with_context] $dotted_nest "proc" $decl_tag $dotted_name]
-        set cmd [list proc_cmd $dotted_name $dotted_nest]
+        set cmd [list [namespace which forward] $dotted_name $dotted_nest]
         uplevel $cmd
 
         return $node
@@ -283,7 +287,7 @@ define_lang ::typesys::lang {
         set context_tag [lindex $context 1]
         set context_name [lindex $context 2]
 
-        puts "--->>> (typeinst_helper) context=[list $context] stack=[list $::typesys::lang::stack]"
+        puts "--->>> (typeinst_helper) context=[list $context] stack=[list $::basesys::lang::stack]"
         
         set cmd [list [namespace which node_helper] typeinst $inst_name -x-type $inst_type {*}$args]
         return [uplevel $cmd]
@@ -322,8 +326,8 @@ define_lang ::typesys::lang {
         }
     }
 
-    # meta "base_type" {nest_helper {type_helper}}
-    meta "base_type" [list [namespace which nest_helper] [list [namespace which type_helper]]]
+    # meta "base_type" {nest {type_helper}}
+    meta "base_type" [list [namespace which nest] [list [namespace which type_helper]]]
 
     # a varying-length text string encoded using UTF-8 encoding
     base_type "varchar"
@@ -350,14 +354,99 @@ define_lang ::typesys::lang {
     base_type "double"
 
     # The following commented out line should have worked already 
-    # as the meta "type" is equivalent to {nest_helper {type_helper}}
-    # but the nest_helper does not seem to preserve the namespace 
+    # as the meta "type" is equivalent to {nest {type_helper}}
+    # but the nest does not seem to preserve the namespace 
     # at the moment (2014-11-22).
     #
-    # TODO: meta "struct" {nest_helper {base_type}}
+    # TODO: meta "struct" {nest {base_type}}
 
-    # meta "struct" {nest_helper {nest_helper {type_helper}}}
-    meta "struct" [list [namespace which nest_helper] [list [namespace which nest_helper] [list [namespace which type_helper]]]]
+    # meta "struct" {nest {nest {type_helper}}}
+    meta "struct" [list [namespace which nest] [list [namespace which nest] [list [namespace which type_helper]]]]
+
+    proc unknown {field_type field_name args} {
+
+        puts "--->>> (unknown) $field_type $field_name args=$args"
+
+        # re is such to allow for expressions of the form set<file>
+        set type_re {[_a-zA-Z][_a-zA-Z0-9]*}
+
+        # recognizes expressions of the following forms:
+        # set<i32>
+        # map<string,i32>
+        set re "^(?:(set)<(${type_re})>|(map)<(${type_re}),(${type_re})>)\$"
+
+        if { [regexp -- $re $field_type _dummy_ sm1 sm2 sm3 sm4 sm5] } {
+            if { $sm1 ne {} && $sm2 ne {} } {
+                set container_type "set"
+                set datatype $sm2
+            } elseif { $sm3 ne {} && $sm4 ne {} && $sm5 ne {} } {
+                set container_type "map"
+                set datatype [list $sm4 $sm5]
+            }
+
+            # (is_set_p)  sm1=set sm2=string sm3= sm4= sm5= 
+            # (is_map_p)  sm1= sm2= sm3=map sm4=string sm5=i32 
+            #
+            # puts "sm1=$sm1 sm2=$sm2 sm3=$sm3 sm4=$sm4 sm5=$sm5"
+
+            return
+            set node [typedecl_helper slot_class_helper "" slot $field_name -type $datatype {*}${args}]
+
+            if { $container_type ne {} } {
+                $node setAttribute container_type $container_type
+            }
+
+        } else {
+            if { [llength [split $field_type {.}]] == 1 } {
+
+                set context [::basesys::lang::top_context_of_type "proc"]
+                lassign $context context_type context_tag context_name
+
+                if { $context_type eq {unknown} } {
+                    error "unknown: been here, done that"
+                }
+
+                # for example, if context_name = message.from then the dotted_name 
+                # would have been message.from.name as opposed to email.name that
+                # it is going to be now
+
+                if { [::basesys::lang::is_dotted_p $context_name] } {
+                    set dotted_name ${context_tag}.$field_type
+                } else {
+                    set dotted_name ${context_name}.$field_type
+                }
+
+                ::basesys::lang::push_context "unknown" $context_tag $dotted_name
+                set cmd [list $dotted_name $field_name {*}$args]
+                uplevel $cmd
+                ::basesys::lang::pop_context
+
+            } else {
+                error "no such field_type: $field_type stack=$::basesys::lang::stack"
+            }
+        }
+    }
+
+    namespace unknown unknown
+
+    proc import_helper {import_tag import_name args} {
+        set node [uplevel [list ::dom::createNodeInContext elementNode $import_tag -name $import_name {*}$args]]
+        uplevel [list namespace import ::${import_name}::lang::*]
+        return $node
+    }
+
+    forward "import" [namespace which import_helper]
+
+    proc dtd_helper {dtd_tag args} {
+        variable dtd
+        if { $args eq {} } {
+            return $dtd
+        } else {
+            set dtd {*}$args
+        }
+    }
+
+    forward "dtd" [namespace which dtd_helper]
 
     dtd {
         <!DOCTYPE pdl [
@@ -395,79 +484,14 @@ define_lang ::typesys::lang {
         ]>
     }
 
-    proc unknown {field_type field_name args} {
+    namespace export "import" "struct" "typedecl" "typeinst" "varchar" "bool" "varint" "byte" "int16" "int32" "int64" "double" "multiple" "dtd"
 
-        puts "--->>> (unknown) $field_type $field_name args=$args"
+}
 
-        # re is such to allow for expressions of the form set<file>
-        set type_re {[_a-zA-Z][_a-zA-Z0-9]*}
-
-        # recognizes expressions of the following forms:
-        # set<i32>
-        # map<string,i32>
-        # list<string>
-        set re "^(?:(set)<(${type_re})>|(map)<(${type_re}),(${type_re})>|(list)<(${type_re})>)\$"
-
-        if { [regexp -- $re $field_type _dummy_ sm1 sm2 sm3 sm4 sm5 sm6 sm7] } {
-            if { $sm1 ne {} && $sm2 ne {} } {
-                set container_type "set"
-                set datatype $sm2
-            } elseif { $sm3 ne {} && $sm4 ne {} && $sm5 ne {} } {
-                set container_type "map"
-                set datatype [list $sm4 $sm5]
-            } elseif { $sm6 ne {} && $sm7 ne {} } {
-                set container_type "list"
-                set datatype $sm7
-            }
-
-            # (is_set_p)  sm1=set sm2=string sm3= sm4= sm5= sm6=
-            # (is_map_p)  sm1= sm2= sm3=map sm4=string sm5=i32 sm6=
-            # (is_list_p) sm1= sm2= sm3= sm4= sm5= sm6=list
-            #
-            # puts "sm1=$sm1 sm2=$sm2 sm3=$sm3 sm4=$sm4 sm5=$sm5 sm6=$sm6 sm7=$sm7"
-
-            return
-            set node [typedecl_helper slot_class_helper "" slot $field_name -type $datatype {*}${args}]
-
-            if { $container_type ne {} } {
-                $node setAttribute container_type $container_type
-            }
-
-        } else {
-            if { [llength [split $field_type {.}]] == 1 } {
-
-                set context [::typesys::lang::top_context_of_type "proc"]
-                lassign $context context_type context_tag context_name
-
-                if { $context_type eq {unknown} } {
-                    error "unknown: been here, done that"
-                }
-
-                # for example, if context_name = message.from then the dotted_name 
-                # would have been message.from.name as opposed to email.name that
-                # it is going to be now
-
-                if { [::typesys::lang::is_dotted_p $context_name] } {
-                    set dotted_name ${context_tag}.$field_type
-                } else {
-                    set dotted_name ${context_name}.$field_type
-                }
-
-                ::typesys::lang::push_context "unknown" $context_tag $dotted_name
-                set cmd [list $dotted_name $field_name {*}$args]
-                uplevel $cmd
-                ::typesys::lang::pop_context
-
-            } else {
-                error "no such field_type: $field_type stack=$::typesys::lang::stack"
-            }
-        }
-    }
-
-    namespace unknown unknown
-
-    namespace export struct typedecl typeinst varchar bool varint byte int16 int32 int64 double
-
+define_lang ::datasys::lang {
+    namespace import ::basesys::lang::*
+    namespace path [list ::datasys::lang ::basesys::lang ::]
+    namespace unknown ::basesys::lang::unknown
 }
 
 define_lang ::db::lang {

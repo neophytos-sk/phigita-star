@@ -4,7 +4,9 @@ source ../../../naviserver_compat/tcl/module-naviserver_compat.tcl
 
 set filename "message.pdl"
 
-set doc [source_tdom $filename ::typesys::lang]
+set lang_nsp ::datasys::lang
+
+set doc [source_tdom $filename $lang_nsp]
 
 puts [$doc asXML]
 
@@ -13,7 +15,7 @@ puts [$doc asXML]
 
 set root [$doc documentElement]
 
-::dom::scripting::validate ::typesys::lang $root
+::dom::scripting::validate $lang_nsp $root
 
 # ::dom::scripting::create_value ::persistence::lang message [list from [list find_by email "someone@example.com"]]
 set message_dict {
