@@ -130,7 +130,6 @@ define_lang ::basesys::lang {
         set nodes [list]
         set llength_args [llength $args]
 
-        # if { $llength_args=="TODO:NOT-IMPLEMENTED-YET-1" || $llength_args == 3 }
         if { [is_declaration_mode_p] && ( $llength_args == 1 || $llength_args == 3 ) } {
 
             # EXAMPLE 1:
@@ -194,7 +193,7 @@ define_lang ::basesys::lang {
             }
 
         } else {
-            error "Usage:\n\tmultiple tag type name = default_value\n\tmultiple name inst_script"
+            error "Usage:\n\tmultiple type name = default_value\n\tmultiple name inst_script"
         }
 
         # push the {proc meta multiple} context back to the top of the context stack
@@ -206,6 +205,106 @@ define_lang ::basesys::lang {
     }
 
     meta "multiple" [namespace which multiple_helper]
+
+    proc map_helper {_dummy_map_tag_ arg0 args} {
+
+        # remove {proc meta map} from the top of the context stack
+        # and at the bottom, put it back so that it will be removed from with_context
+        # where it applies
+        set top_context [top_context]
+        pop_context
+
+        set nodes [list]
+        set llength_args [llength $args]
+
+        if { [is_declaration_mode_p] && ( $llength_args == 1 || $llength_args == 3 ) } {
+
+            # EXAMPLE 1:
+            #   struct message {
+            #     ...
+            #     map word_count_pair wordcount
+            #     ...
+            #   }
+            #
+            # EXAMPLE 2:
+            #   struct message {
+            #     ...
+            #     map word_count_pair wordcount = {}
+            #     ...
+            #   }
+            #
+            # EXAMPLE 3 (TODO):
+            #   struct message {
+            #     ...
+            #     map struct { ... } wordcount = {}
+            #     ...
+            #   }
+            #
+            # EXAMPLE 4 (TODO):
+            #   struct message {
+            #     ...
+            #     map pair { ... } wordcount = {}
+            #     ...
+            #   }
+
+
+            set type $arg0
+            set tag $type
+            set args [lassign $args name]
+
+            # push a temporary context so that typedecl_helper gets it right
+            # context = {eval struct message}
+            # lookahead_context of message = {proc struct message}
+
+            set context [top_context_of_type "eval"]
+            lassign $context context_type context_tag context_name
+            set lookahead_context [get_lookahead_context $context_name]
+            push_context {*}$lookahead_context 
+
+            puts "----- (map declaration) tag=type=$type name=$name args=$args stack=$::basesys::lang::stack context=$context"
+
+            typedecl_args args
+            set args [concat -x-map_p true $args] 
+            set cmd [list [namespace which typedecl_helper] $tag $type $name {*}$args]
+            lappend nodes [uplevel $cmd]
+
+            # now pop the temporary context
+            pop_context
+
+        } elseif { $llength_args == 1 } {
+
+            # EXAMPLE:
+            #   map wordcount {{ 
+            #       word "the"
+            #       count "123"
+            #   } {
+            #   } { 
+            #       word "and" 
+            #       count "54" 
+            #   }}
+
+            set name $arg0
+
+            puts "----- (map instantiation) name=$name args=$args"
+
+            lassign $args argv
+            foreach arg $argv {
+                set cmd [list $name $arg]
+                lappend nodes [uplevel $cmd]
+            }
+
+        } else {
+            error "Usage:\n\tmap type name = default_value\n\tmap name inst_script"
+        }
+
+        # push the {proc meta map} context back to the top of the context stack
+        # as it were before we removed it in the beginning of this proc
+        push_context {*}$top_context
+
+        return $nodes
+
+    }
+    meta "map" [namespace which map_helper]
 
     proc typedecl_args {argsVar} {
 
@@ -246,6 +345,10 @@ define_lang ::basesys::lang {
     
     meta "typedecl" [namespace which typedecl_helper]
 
+    text_cmd t
+
+    proc nt {text} { t -disableOutputEscaping ${text} }
+
     proc typeinst_args {inst_type argsVar} {
 
         upvar $argsVar args
@@ -258,7 +361,7 @@ define_lang ::basesys::lang {
         set llength_args [llength $args]
         if { $llength_args == 2 } {
             if { [lindex $args 0] eq {=} } {
-                set args [list [list ::dom::scripting::t [lindex $args 1]]]
+                set args [list [list [namespace which t] [lindex $args 1]]]
             }
         } elseif { $llength_args == 1 } {
 
@@ -275,7 +378,7 @@ define_lang ::basesys::lang {
             set lookahead_context [get_lookahead_context $inst_type]
             lassign $lookahead_context lookahead_context_type lookahead_context_tag lookahead_context_name
             if { $lookahead_context_tag eq {base_type} } {
-                set args [list [list ::dom::scripting::t [lindex $args 0]]]
+                set args [list [list [namespace which t] [lindex $args 0]]]
             }
         }
     }
@@ -452,7 +555,7 @@ define_lang ::basesys::lang {
         <!DOCTYPE pdl [
 
             <!ELEMENT pdl (struct | typeinst)*>
-            <!ELEMENT struct (typedecl | typeinst)*>
+            <!ELEMENT struct (struct | typedecl | typeinst)*>
             <!ATTLIST struct x-name CDATA #REQUIRED
                              name CDATA #IMPLIED
                              nsp CDATA #IMPLIED
@@ -465,6 +568,7 @@ define_lang ::basesys::lang {
                            x-type CDATA #REQUIRED
                            x-default_value CDATA #IMPLIED
                            x-multiple_p CDATA #IMPLIED
+                           x-map_p CDATA #IMPLIED
                            name CDATA #IMPLIED
                            type CDATA #IMPLIED
                            nsp CDATA #IMPLIED
@@ -478,6 +582,7 @@ define_lang ::basesys::lang {
             <!ATTLIST typeinst x-name CDATA #REQUIRED
                                x-type CDATA #REQUIRED
                                x-multiple_p CDATA #IMPLIED
+                               x-map_p CDATA #IMPLIED
                                name CDATA #IMPLIED
                                type CDATA #IMPLIED>
 

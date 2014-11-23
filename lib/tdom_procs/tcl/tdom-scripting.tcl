@@ -48,7 +48,7 @@ proc ::dom::scripting::require_procs {} {
         namespace export t nt
     }
 }
-::dom::scripting::require_procs
+#::dom::scripting::require_procs
 
 proc ::dom::scripting::node_cmd {cmd_name} {
 
@@ -58,7 +58,16 @@ proc ::dom::scripting::node_cmd {cmd_name} {
 
 }
 
-proc ::dom::scripting::text_cmd {cmd_name {default_string ""}} {
+proc ::dom::scripting::text_cmd {cmd_name} {
+
+    set nsp [uplevel { namespace current }]
+
+    namespace eval ${nsp} [list dom createNodeCmd -returnNodeCmd textNode $cmd_name]
+
+}
+
+
+proc ::dom::scripting::textnode_cmd {cmd_name {default_string ""}} {
 
     set nsp [uplevel { namespace current }]
 
@@ -97,11 +106,9 @@ proc ::dom::scripting::define_lang {nsp script {docVar ""}} {
 
     namespace eval ${nsp} {
         namespace import -force \
-            ::dom::scripting::t \
-            ::dom::scripting::nt \
             ::dom::scripting::node_cmd \
             ::dom::scripting::text_cmd \
-            ::dom::scripting::proc_cmd
+            ::dom::scripting::textnode_cmd
 
     }
 

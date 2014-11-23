@@ -4,6 +4,8 @@ namespace eval ::templating::runtime {;}
 
 define_lang ::templating::lang {
 
+    namespace import ::basesys::lang::forward
+
     #node_cmd master
     #node_cmd include
 
@@ -16,11 +18,11 @@ define_lang ::templating::lang {
     node_cmd item
     node_cmd column
 
-    proc_cmd val   leaf_node_helper
-    proc_cmd guard leaf_node_helper
-    proc_cmd js    leaf_node_helper
-    proc_cmd css   leaf_node_helper
-    proc_cmd tcl   leaf_node_helper
+    forward val   leaf_node_helper
+    forward guard leaf_node_helper
+    forward js    leaf_node_helper
+    forward css   leaf_node_helper
+    forward tcl   leaf_node_helper
 
     proc leaf_node_helper {cmd_name args} {
 

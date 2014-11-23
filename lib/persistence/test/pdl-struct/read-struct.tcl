@@ -85,7 +85,7 @@ namespace eval ::persistence::lang::_info_ {;}
 
 proc init_struct {node} {
     set attributes [list]
-    set attnodes [$node selectNodes {descendant::typedecl}]
+    set attnodes [$node selectNodes {child::typedecl}]
     foreach attnode $attnodes {
 
         set name [$attnode @x-name]

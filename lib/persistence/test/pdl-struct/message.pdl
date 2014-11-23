@@ -21,6 +21,8 @@ struct typedecl {
     varchar type
     varchar default_value = ""
     bool optional_p = false
+    bool multiple_p = false
+    bool map_p = false
 }
 
 struct email -pk address {
@@ -42,6 +44,11 @@ struct folder {
 struct category {
     varchar category_name
     varchar parent_category
+}
+
+struct word_count_pair {
+    varchar word
+    varint count
 }
 
 struct message {
@@ -98,7 +105,11 @@ struct message {
     multiple varchar tags = {}
     multiple file attachment = {}
 
-    map<varchar,i32> wordcount
+    map<varchar,int32> wordcount
+# map struct wordcount { varchar word; int32 count }
+map word_count_pair wordcount
+
+    set<varchar> words
 
     #extends -ref content.Object
     #extends -ref content.Content
@@ -160,6 +171,13 @@ message msg3 {
         name "max loyal"
         email "max@example.com"
     }}
+    map message.wordcount {{
+        word "the"
+        count "123"
+    } {
+        word "and"
+        count "54"
+    }}
 }
 
 # CORRECT
@@ -191,6 +209,13 @@ message msg4 {
     } {
         name "max loyal"
         email "max@example.com"
+    }}
+    map wordcount {{
+        word "the"
+        count "123"
+    } {
+        word "and"
+        count "54"
     }}
 }
 
