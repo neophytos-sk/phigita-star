@@ -108,7 +108,6 @@ typeinst message msg1 {
 
 }
 
-#email from -name "zena wow" -address "zena@example.com"
 message msg2 {
     varchar subject = "hello"
     email from {
@@ -127,15 +126,13 @@ message msg3 {
     message.body = "this is a test"
 }
 
-if {0} {
-    message msg4 {
-        subject "hello"
-        from {
-            name "zena wow"
-            address "zena@example.com"
-        }
-        body "this is a test"
+message msg4 {
+    subject "hello"
+    from {
+        name "zena wow"
+        address "zena@example.com"
     }
+    body "this is a test"
 }
 
 message msg5 -subject "hello" -body "this is a test" {

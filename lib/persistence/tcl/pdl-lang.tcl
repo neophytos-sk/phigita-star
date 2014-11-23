@@ -146,7 +146,11 @@ define_lang ::typesys::lang {
 
         # puts "--->>> context=$context stack=$::typesys::lang::stack"
 
-        set cmd [list proc_cmd ${context_name}.$decl_name [list [namespace which typeinst_helper] typeinst $decl_type]]
+        set dotted_name "${context_name}.$decl_name"
+        # OBSOLETE: set_lookahead_context $dotted_name "proc" $decl_tag $dotted_name
+        set dotted_nest [list [namespace which typeinst_helper] typeinst $decl_type]
+        set dotted_nest [list [namespace which with_context] $dotted_nest "proc" $decl_tag $dotted_name]
+        set cmd [list proc_cmd $dotted_name $dotted_nest]
         uplevel $cmd
 
     }
@@ -195,8 +199,11 @@ define_lang ::typesys::lang {
 
     meta "typeinst" [namespace which typeinst_helper]
 
+    proc is_dotted_p {name} {
+        return [expr { [llength [split ${name} {.}]] > 1 }]
+    }
 
-    proc declaration_mode_p {} {
+    proc is_declaration_mode_p {} {
         set context [top_context_of_type "eval"]
         lassign $context context_type context_tag context_name
         if { $context_tag in {struct} } {
@@ -207,10 +214,10 @@ define_lang ::typesys::lang {
 
     proc type_helper {tag name args} {
 
-        puts "--->>> type_helper (declaration_mode_p=[declaration_mode_p]) tag=$tag name=$name {*}$args"
+        puts "--->>> type_helper (is_declaration_mode_p=[is_declaration_mode_p]) tag=$tag name=$name {*}$args"
         
         set type $tag
-        if { [declaration_mode_p] } {
+        if { [is_declaration_mode_p] } {
             set cmd [list [namespace which typedecl_helper] $tag $type $name {*}$args]
             return [uplevel $cmd]
         } else {
@@ -289,38 +296,6 @@ define_lang ::typesys::lang {
         ]>
     }
 
-    proc unknown {args} {
-        error "--->>> [namespace current]->unknown: $args"
-    }
-    
-    namespace unknown unknown
-
-    namespace export struct typedecl typeinst varchar bool varint byte int16 int32 int64 double
-
-}
-
-define_lang ::db::lang {
-
-    text_cmd "db_insert"
-    text_cmd "db_update"
-    text_cmd "db_delete"
-
-    namespace export db_insert db_update db_delete
-
-}
-
-define_lang ::persistence::lang {
-
-    namespace import ::basesys::lang::*
-    import typesys
-    import db
-
-    #
-    # HELPERS
-    #
-
-    namespace unknown unknown
-
     proc unknown {field_type field_name args} {
 
         puts "--->>> (unknown) $field_type $field_name args=$args"
@@ -360,10 +335,52 @@ define_lang ::persistence::lang {
             }
 
         } else {
-            error "no such field_type: $field_type"
+            if { [llength [split $field_type {.}]] == 1 } {
+
+                set context [::typesys::lang::top_context_of_type "proc"]
+                lassign $context context_type context_tag context_name
+
+                if { $context_type eq {unknown} } {
+                    error "unknown: been here, done that"
+                }
+
+                # for example, if context_name = message.from then the dotted_name 
+                # would have been message.from.name as opposed to email.name that
+                # it is going to be now
+
+                if { [::typesys::lang::is_dotted_p $context_name] } {
+                    set dotted_name ${context_tag}.$field_type
+                } else {
+                    set dotted_name ${context_name}.$field_type
+                }
+
+                ::typesys::lang::push_context "unknown" $context_tag $dotted_name
+                set cmd [list $dotted_name $field_name {*}$args]
+                uplevel $cmd
+                ::typesys::lang::pop_context
+
+            } else {
+                error "no such field_type: $field_type stack=$::typesys::lang::stack"
+            }
         }
     }
 
+    namespace unknown unknown
+
+    namespace export struct typedecl typeinst varchar bool varint byte int16 int32 int64 double
+
 }
+
+define_lang ::db::lang {
+
+    text_cmd "db_insert"
+    text_cmd "db_update"
+    text_cmd "db_delete"
+
+    namespace export db_insert db_update db_delete
+
+}
+
+
 
 

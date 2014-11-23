@@ -4,7 +4,7 @@ source ../../../naviserver_compat/tcl/module-naviserver_compat.tcl
 
 set filename "message.pdl"
 
-set doc [source_tdom $filename ::persistence::lang]
+set doc [source_tdom $filename ::typesys::lang]
 
 puts [$doc asXML]
 
@@ -81,7 +81,7 @@ namespace eval ::persistence::lang::_info_ {;}
 
 proc init_struct {node} {
     set attributes [list]
-    set attnodes [$node selectNodes {descendant::slot}]
+    set attnodes [$node selectNodes {descendant::typedecl}]
     foreach attnode $attnodes {
 
         set name [$attnode @x-name]
@@ -113,6 +113,7 @@ proc serialize {struct dict} {
 
     set attributes [set ::persistence::lang::_info_::${struct}(attributes)]
 
+    set header [list]
     set values [list]
 
     foreach att $attributes {
