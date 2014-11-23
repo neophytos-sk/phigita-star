@@ -146,13 +146,11 @@ define_lang ::typesys::lang {
         set context_tag [lindex $context 1]
         set context_name [lindex $context 2]
 
-        puts "--->>> context=$context stack=$::typesys::lang::stack"
+        # puts "--->>> context=$context stack=$::typesys::lang::stack"
 
         set cmd [list proc_cmd ${context_name}.$decl_name [list [namespace which typeinst_helper] typeinst $decl_type]]
         uplevel $cmd
 
-        #set cmd [list namespace_cmd $top_tag $decl_name [namespace which typeinst_helper] $decl_type]
-        #set cmd [list namespace eval $top_tag [list proc $decl_name {args} [list [namespace which typeinst_helper] $decl_type \$args]
     }
     
     meta "typedecl" [namespace which typedecl_helper]
@@ -188,7 +186,6 @@ define_lang ::typesys::lang {
             if { $lookahead_context_tag eq {base_type} } {
                 set args [list [list ::dom::scripting::t [lindex $args 0]]]
             }
-            # error "context=$context stack=$::typesys::lang::stack"
         }
     }
 
