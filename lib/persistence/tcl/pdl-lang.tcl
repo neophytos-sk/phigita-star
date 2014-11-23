@@ -140,8 +140,6 @@ define_lang ::typesys::lang {
         set cmd [list [namespace which node_helper] typedecl $decl_name -x-type $decl_type {*}$args]
         set result [uplevel $cmd]
 
-        # TODO: for msg3 example in message.pdl to work
-
         set context [top_context_of_type "eval"]
         set context_tag [lindex $context 1]
         set context_name [lindex $context 2]
