@@ -156,9 +156,21 @@ define_lang ::typesys::lang {
         #   varchar body = "this is a test"
         # to
         #   varchar body { t "this is a test" }
+        set llength_args [llength $args]
+        if { $llength_args == 2 } {
+            if { [lindex $args 0] eq {=} } {
+                set args [list [list ::dom::scripting::t [lindex $args 1]]]
+            }
+        } elseif { $llength_args == 1 } {
+            # we don't know which of the following two cases we are in
+            # and the stack does not have the context info for this call
+            # i.e. the stack is {proc meta typeinst}
+            #
+            # message.subject "hello"
+            # message.from { ... }
 
-        if { [llength $args] == 2 && [lindex $args 0] eq {=} } {
-            set args [list [list ::dom::scripting::t [lindex $args 1]]]
+            # set context [top_context]
+            # error "context=$context stack=$::typesys::lang::stack"
         }
     }
 
