@@ -19,36 +19,91 @@ define_lang ::typesys::lang {
 
     variable stack [list]
 
+    proc push_context {context_type context_tag context_name} {
+        variable stack
+        set context [list $context_type $context_tag $context_name]
+        set stack [linsert $stack 0 $context]
+    }
+
+    proc pop_context {} {
+        variable stack
+        set stack [lreplace $stack 0 0]
+    }
+
+    proc top_context {} {
+        variable stack
+        return [lindex $stack 0]
+    }
+
+    proc top_context_of_type {context_type} {
+        variable stack
+        set indexList 0 ;# match first element of nested list
+        set index [lsearch -exact -index $indexList $stack $context_type]
+        return [lindex $stack $index]
+    }
+
     # nest argument holds nested calls in the procs below
     # i.e nest_helper, mode_helper, meta_helper
 
-    proc with_tag {nest mode_name args} {
+    proc with_context {nest context_type context_tag context_name args} {
+
+        # EXAMPLE 1:
+        #
+        # struct typedecl {
+        #     varchar name
+        #     varchar type
+        #     varchar default
+        #     -> bool optional_p = false
+        #     varchar container_type
+        #     varchar subtype
+        # }
+        # 
+        # stack = {proc base_type bool} {eval struct typedecl} {proc struct struct}
+        #
+        # EXAMPLE 2:
+        # 
+        # struct email {
+        #   varchar name
+        #   -> varchar address
+        # }
+        #
+        # stack = {proc base_type varchar} {eval struct email} {proc struct struct}
+
         variable stack
-        set stack [linsert $stack 0 $mode_name]
+
+        push_context $context_type $context_tag $context_name
+
         set cmd "[lindex $nest 0] [lrange $nest 1 end] $args"
         set result [uplevel $cmd]
-        set stack [lreplace $stack 0 0]
+
+        pop_context
+
         return $result
+
     }
 
     proc node_helper {tag name args} {
+
+        push_context "eval" $tag $name
+
         set cmd \
             [list ::dom::createNodeInContext elementNode $tag -x-name $name {*}$args]
         set node [uplevel $cmd]
+
+        pop_context
+
         return $node
     }
 
     proc nest_helper {nest tag name args} {
         set cmd [list [namespace which node_helper] $tag $name {*}$args]
         set node [uplevel $cmd]
-        set nest [list [namespace which with_tag] $nest $name]
+        set nest [list [namespace which with_context] $nest "proc" $tag $name]
         uplevel [list proc_cmd $name $nest]
         return $node
     }
 
     proc meta_helper {meta_tag meta_name nest args} {
-        set mode_name $meta_name
-        set nest [list [namespace which with_tag] $nest $mode_name]
         set cmd [list nest_helper $nest $meta_tag $meta_name {*}$args]
         return [uplevel $cmd]
     }
@@ -73,7 +128,22 @@ define_lang ::typesys::lang {
     proc typedecl_helper {decl_tag decl_type decl_name args} {
         typedecl_args args
         set cmd [list [namespace which node_helper] typedecl $decl_name -x-type $decl_type {*}$args]
-        return [uplevel $cmd]
+        set result [uplevel $cmd]
+
+        # TODO: for msg3 example in message.pdl to work
+
+        set context [top_context_of_type "eval"]
+        set context_tag [lindex $context 1]
+        set context_name [lindex $context 2]
+
+        puts "--->>> context=$context stack=$::typesys::lang::stack"
+
+        set cmd [list proc_cmd ${context_name}.$decl_name [list [namespace which typeinst_helper] typeinst $decl_type]]
+        puts "+++++ cmd=$cmd uplevel_nsp=[uplevel {namespace current}]"
+        uplevel $cmd
+
+        #set cmd [list namespace_cmd $top_tag $decl_name [namespace which typeinst_helper] $decl_type]
+        #set cmd [list namespace eval $top_tag [list proc $decl_name {args} [list [namespace which typeinst_helper] $decl_type \$args]
     }
     
     meta "typedecl" [namespace which typedecl_helper]
@@ -102,9 +172,9 @@ define_lang ::typesys::lang {
 
 
     proc declaration_mode_p {} {
-        variable ::typesys::lang::stack
-        set mode [lindex $stack end]
-        if { $mode eq {struct} } {
+        set context [top_context_of_type "eval"]
+        lassign $context context_type context_tag context_name
+        if { $context_tag in {struct} } {
             return 1
         }
         return 0

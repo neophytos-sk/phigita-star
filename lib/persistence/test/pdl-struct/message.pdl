@@ -9,7 +9,6 @@
 struct struct {
     varchar nsp
     varchar name
-    varchar class_cmd
     varchar pk
     bool is_final_if_no_scope
     set<typedecl> slots = {}
@@ -119,8 +118,17 @@ message msg2 {
     varchar body = "this is a test"
 }
 
+message msg3 {
+    message.subject = "hello"
+    message.from {
+        email.name = "zena wow"
+        email.address = "zena@example.com"
+    }
+    message.body = "this is a test"
+}
+
 if {0} {
-    message msg3 {
+    message msg4 {
         subject "hello"
         from {
             name "zena wow"
@@ -130,7 +138,7 @@ if {0} {
     }
 }
 
-message msg4 -subject "hello" -body "this is a test" {
+message msg5 -subject "hello" -body "this is a test" {
     email from -name "zena wow" -address "zena@example.com"
 }
 
