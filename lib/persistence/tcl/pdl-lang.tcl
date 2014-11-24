@@ -73,10 +73,8 @@ define_lang ::basesys::lang {
         variable stack
 
         push_context $context_type $context_tag $context_name
-
         set cmd "[lindex $nest 0] [lrange $nest 1 end] $args"
         set result [uplevel $cmd]
-
         pop_context
 
         return $result
@@ -84,11 +82,13 @@ define_lang ::basesys::lang {
     }
 
     proc set_lookahead_context {name context_type context_tag context_name} {
-        set ::basesys::lang::lookahead_context($name) [list $context_type $context_tag $context_name]
+        set varname "::basesys::lang::lookahead_context($name)"
+        set $varname [list $context_type $context_tag $context_name]
     }
 
     proc get_lookahead_context {name} {
-        return $::basesys::lang::lookahead_context($name)
+        set varname "::basesys::lang::lookahead_context($name)"
+        set $varname
     }
 
     proc node_helper {tag name args} {
@@ -99,28 +99,24 @@ define_lang ::basesys::lang {
         return $node
     }
 
-    proc forward {cmd_name cmd_handler args} {
+    proc forward {name cmd args} {
 
-        if { [info exists ::basesys::lang::forward($cmd_name)] } {
-            puts "!!! forward with that name (=$cmd_name) already exists"
+        puts "--->>> (def forward $name) cmd_handler=[list $cmd] def_args=$args"
+
+        # register forward
+
+        set varname "::basesys::lang::forward($name)"
+        if { [info exists $varname] } {
+            puts "!!! forward with that name (=$name) already exists"
         }
+        set $varname ""
 
-        set ::basesys::lang::forward($cmd_name) ""
+        # create handler proc
 
         set nsp [uplevel {namespace current}]
+        set arg0 $name
 
-        set arg0 $cmd_name
-
-        puts "--->>> (define forward $cmd_name) cmd_handler=[list $cmd_handler] deftime_args=$args"
-
-        proc ${nsp}::$cmd_name {args} [subst -nocommands -nobackslashes {
-            puts "--->>> (forward $cmd_name) $cmd_handler arg0=$arg0 deftime_args=$args runtime_args=[set args]"
-            #if { [list $args] ne {} } {
-            #    set index 1
-            #    set args [linsert [set args] [set index] $args]
-            #}
-            uplevel "{*}$cmd_handler $arg0 [set args]"
-        }]
+        proc ${nsp}::$name {args} "uplevel [list $cmd] $arg0 \$args"
 
     }
 
@@ -133,19 +129,34 @@ define_lang ::basesys::lang {
         return $node
     }
 
-    proc nest_without_context {nest tag name args} {
-        set cmd [list [namespace which node_helper] $tag $name {*}$args]
-        set node [uplevel $cmd]
-        uplevel [list [namespace which forward] $name $nest]
-        return $node
+    proc lambda {params body args} {
+        set pre {}
+        while { ($params ne {} && $args ne {}) || $params eq {args} } { 
+            if { $params eq {args} } {
+                append pre "set args [list $args] ; "
+                set params {}
+                set args {}
+            } else {
+                set params [lassign $params param]
+                set args [lassign $args arg]
+                append pre "set $param [list $arg] ; "
+            }
+        }   
+        set body [concat $pre $body]
+        if { $params ne {} } { 
+            puts "+++++ lambda returns = [list lambda $params $body]"
+            return [list lambda $params $body]
+        }   
+        uplevel $body $args
     }
 
-    proc meta_helper {meta_tag meta_name nest args} {
-        set cmd [list nest $nest $meta_tag $meta_name {*}$args]
-        return [uplevel $cmd]
-    }
+    #proc meta_helper {meta_tag meta_name nest args} {
+    #    set cmd [list nest $nest $meta_tag $meta_name {*}$args]
+    #    return [uplevel $cmd]
+    #}
+    #forward "meta" [namespace which meta_helper]
 
-    forward "meta" [namespace which meta_helper]
+    forward "meta" {lambda {tag name nest args} {nest $nest $tag $name {*}$args}}
 
     proc multiple_helper {_dummy_multiple_tag_ arg0 args} {
 
@@ -468,8 +479,9 @@ define_lang ::basesys::lang {
         }
     }
 
-    # meta "base_type" {nest {type_helper}}
-    meta "base_type" [list [namespace which nest] [list [namespace which type_helper]]]
+    meta "base_type" {nest {type_helper}}
+    # OLD: meta "base_type" [list [namespace which nest] [list [namespace which type_helper]]]
+    # ALT: meta "base_type" {lambda {} {nest {type_helper}}}
 
     # a varying-length text string encoded using UTF-8 encoding
     base_type "varchar"
@@ -508,8 +520,8 @@ define_lang ::basesys::lang {
     #
     # TODO: meta "struct" {nest {base_type}}
 
-    # meta "struct" {nest {nest {type_helper}}}
-    meta "struct" [list [namespace which nest] [list [namespace which nest] [list [namespace which type_helper]]]]
+    meta "struct" {nest {nest {type_helper}}}
+    # OLD: meta "struct" [list [namespace which nest] [list [namespace which nest] [list [namespace which type_helper]]]]
 
     proc unknown {field_type field_name args} {
 
