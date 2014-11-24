@@ -21,9 +21,20 @@ struct typedecl {
     varchar type
     varchar default_value = ""
     bool optional_p = false
-    bool multiple_p = false
-    bool map_p = false
+    varchar container = ""
 }
+
+# If any of our other structs has a slot named email
+# then we have to qualify the name, otherwise the struct
+# instance takes precedence (TODO: workaround needed).
+#
+# In fact, we have to qualify it in order to be able to 
+# use both forms to instantiate an instance of the struct
+# in one hand, and a value of base_type in the other hand.
+#
+# In other words, msg3 would produce the correct output
+# in any case, whereas msg4 would require the use of the
+# qualified name.
 
 struct email -pk address {
     varchar name = ""
@@ -105,9 +116,20 @@ struct message {
     multiple varchar tags = {}
     multiple file attachment = {}
 
-    map<varchar,int32> wordcount
-# map struct wordcount { varchar word; int32 count }
-map word_count_pair wordcount
+    list<varchar> something
+
+    # map<varchar,int32> gets rewritten to:
+    # map pair {varchar varint} wordcount_U
+    map<varchar,int32> wordcount_W
+
+    map struct wordcount_X = {} {
+        varchar word
+        int32 count
+    }
+
+    map word_count_pair wordcount_Y
+
+    map word_count_pair wordcount_Z = {}
 
     set<varchar> words
 
@@ -154,29 +176,36 @@ message msg3 {
     }
     message.body = "this is a test"
     message.cc { 
-        name "jane awesome"
-        address "jane@example.com"
+        email.name "jane awesome"
+        email.address "jane@example.com"
     }
     message.cc { 
-        name "someone great" 
-        address "someone@example.com" 
+        email.name "someone great" 
+        email.address "someone@example.com" 
     }
     multiple message.bcc {{
-        name "vera cool"
-        email "vera@example.com"
+        email.name "vera cool"
+        email.address "vera@example.com"
     } {
-        name "greg wise"
-        email "greg@example.com"
+        email.name "greg wise"
+        email.address "greg@example.com"
     } {
-        name "max loyal"
-        email "max@example.com"
+        email.name "max loyal"
+        email.address "max@example.com"
     }}
-    map message.wordcount {{
-        word "the"
-        count "123"
+    map message.wordcount_X {{
+        message.wordcount_X.word "the"
+        message.wordcount_X.count "123"
     } {
-        word "and"
-        count "54"
+        message.wordcount_X.word "and"
+        message.wordcount_X.count "54"
+    }}
+    map message.wordcount_Y {{
+        word_count_pair.word "the"
+        word_count_pair.count "123"
+    } {
+        word_count_pair.word "and"
+        word_count_pair.count "54"
     }}
 }
 
@@ -202,15 +231,22 @@ message msg4 {
     }
     multiple bcc {{
         name "vera cool"
-        email "vera@example.com"
+        address "vera@example.com"
     } {
         name "greg wise"
-        email "greg@example.com"
+        address "greg@example.com"
     } {
         name "max loyal"
-        email "max@example.com"
+        address "max@example.com"
     }}
-    map wordcount {{
+    map wordcount_X {{
+        word "the"
+        count "123"
+    } {
+        word "and"
+        count "54"
+    }}
+    map wordcount_Y {{
         word "the"
         count "123"
     } {

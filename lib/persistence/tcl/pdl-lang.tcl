@@ -6,6 +6,7 @@ define_lang ::basesys::lang {
 
     variable stack [list]
     array set lookahead_context [list]
+    array set forward [list]
 
     proc push_context {context_type context_tag context_name} {
         variable stack
@@ -28,6 +29,18 @@ define_lang ::basesys::lang {
         set indexList 0 ;# match first element of nested list
         set index [lsearch -exact -index $indexList $stack $context_type]
         return [lindex $stack $index]
+    }
+
+    proc get_context_path_of_type {context_type} {
+        variable stack
+        set indexList 0 ;# match first element of nested list
+        set contextList [lsearch -all -inline -exact -index $indexList $stack $context_type]
+        set context_path ""
+        foreach context [lreverse $contextList] {
+            lassign $context context_type context_tag context_name
+            append context_path $context_name "."
+        }
+        return [string trimright $context_path "."]
     }
 
     # nest argument holds nested calls in the procs below
@@ -88,9 +101,17 @@ define_lang ::basesys::lang {
 
     proc forward {cmd_name cmd_handler args} {
 
+        if { [info exists ::basesys::lang::forward($cmd_name)] } {
+            puts "!!! forward with that name (=$cmd_name) already exists"
+        }
+
+        set ::basesys::lang::forward($cmd_name) ""
+
         set nsp [uplevel {namespace current}]
 
         set arg0 $cmd_name
+
+        puts "--->>> (define forward $cmd_name) cmd_handler=[list $cmd_handler] deftime_args=$args"
 
         proc ${nsp}::$cmd_name {args} [subst -nocommands -nobackslashes {
             puts "--->>> (forward $cmd_name) $cmd_handler arg0=$arg0 deftime_args=$args runtime_args=[set args]"
@@ -108,6 +129,13 @@ define_lang ::basesys::lang {
         set cmd [list [namespace which node_helper] $tag $name {*}$args]
         set node [uplevel $cmd]
         set nest [list [namespace which with_context] $nest "proc" $tag $name]
+        uplevel [list [namespace which forward] $name $nest]
+        return $node
+    }
+
+    proc nest_without_context {nest tag name args} {
+        set cmd [list [namespace which node_helper] $tag $name {*}$args]
+        set node [uplevel $cmd]
         uplevel [list [namespace which forward] $name $nest]
         return $node
     }
@@ -163,7 +191,7 @@ define_lang ::basesys::lang {
             puts "+++++ (multiple declaration) tag=type=$type name=$name args=$args stack=$::basesys::lang::stack context=$context"
 
             typedecl_args args
-            set args [concat -x-multiple_p true $args] 
+            set args [concat -x-container "multiple" $args] 
             set cmd [list [namespace which typedecl_helper] $tag $type $name {*}$args]
             lappend nodes [uplevel $cmd]
 
@@ -217,7 +245,7 @@ define_lang ::basesys::lang {
         set nodes [list]
         set llength_args [llength $args]
 
-        if { [is_declaration_mode_p] && ( $llength_args == 1 || $llength_args == 3 ) } {
+        if { [is_declaration_mode_p] } {
 
             # EXAMPLE 1:
             #   struct message {
@@ -236,14 +264,27 @@ define_lang ::basesys::lang {
             # EXAMPLE 3 (TODO):
             #   struct message {
             #     ...
-            #     map struct { ... } wordcount = {}
+            #     map pair "from_type to_type" wordcount = {}
             #     ...
             #   }
             #
-            # EXAMPLE 4 (TODO):
+            # EXAMPLE 4:
             #   struct message {
             #     ...
-            #     map pair { ... } wordcount = {}
+            #     map struct wordcount { 
+            #       varchar word
+            #       varint count
+            #     }
+            #     ...
+            #   }
+            #
+            # EXAMPLE 5:
+            #   struct message {
+            #     ...
+            #     map struct wordcount = {} { 
+            #       varchar word
+            #       varint count
+            #     }
             #     ...
             #   }
 
@@ -264,7 +305,7 @@ define_lang ::basesys::lang {
             puts "----- (map declaration) tag=type=$type name=$name args=$args stack=$::basesys::lang::stack context=$context"
 
             typedecl_args args
-            set args [concat -x-map_p true $args] 
+            set args [concat -x-container "map" $args] 
             set cmd [list [namespace which typedecl_helper] $tag $type $name {*}$args]
             lappend nodes [uplevel $cmd]
 
@@ -326,13 +367,11 @@ define_lang ::basesys::lang {
         set cmd [list [namespace which node_helper] typedecl $decl_name -x-type $decl_type {*}$args]
         set node [uplevel $cmd]
 
-        set context [top_context_of_type "eval"]
-        set context_tag [lindex $context 1]
-        set context_name [lindex $context 2]
+        set context_path [get_context_path_of_type "eval"]
 
-        puts "--->>> (typedecl_helper) context=[list $context] stack=[list $::basesys::lang::stack]"
+        puts "--->>> (typedecl_helper) context_path=[list $context_path] stack=[list $::basesys::lang::stack]"
 
-        set dotted_name "${context_name}.$decl_name"
+        set dotted_name "${context_path}.$decl_name"
         # OBSOLETE: set_lookahead_context $dotted_name "proc" $decl_tag $dotted_name
         set dotted_nest [list [namespace which typeinst_helper] typeinst $decl_type]
         set dotted_nest [list [namespace which with_context] $dotted_nest "proc" $decl_tag $dotted_name]
@@ -456,6 +495,12 @@ define_lang ::basesys::lang {
     # a 64-bit floating point number
     base_type "double"
 
+    # EXPERIMENTAL
+    # pair
+    # tuple
+    # record
+
+
     # The following commented out line should have worked already 
     # as the meta "type" is equivalent to {nest {type_helper}}
     # but the nest does not seem to preserve the namespace 
@@ -476,15 +521,22 @@ define_lang ::basesys::lang {
         # recognizes expressions of the following forms:
         # set<i32>
         # map<string,i32>
-        set re "^(?:(set)<(${type_re})>|(map)<(${type_re}),(${type_re})>)\$"
+        set re ""
+        append re "(set)<(${type_re})>" "|"
+        append re "(map)<(${type_re}),(${type_re})>" "|"
+        append re "(list)<(${type_re})>"
+        set re "^(?:${re})\$"
 
-        if { [regexp -- $re $field_type _dummy_ sm1 sm2 sm3 sm4 sm5] } {
+        if { [regexp -- $re $field_type _dummy_ sm1 sm2 sm3 sm4 sm5 sm6 sm7] } {
             if { $sm1 ne {} && $sm2 ne {} } {
                 set container_type "set"
                 set datatype $sm2
             } elseif { $sm3 ne {} && $sm4 ne {} && $sm5 ne {} } {
                 set container_type "map"
                 set datatype [list $sm4 $sm5]
+            } elseif { $sm6 ne {} && $sm7 ne {} } {
+                set container_type "list"
+                set datatype $sm7
             }
 
             # (is_set_p)  sm1=set sm2=string sm3= sm4= sm5= 
@@ -500,23 +552,25 @@ define_lang ::basesys::lang {
             }
 
         } else {
-            if { [llength [split $field_type {.}]] == 1 } {
+            if { ![is_dotted_p $field_type] } {
 
-                set context [::basesys::lang::top_context_of_type "proc"]
+                set context [top_context_of_type "proc"]
                 lassign $context context_type context_tag context_name
 
-                if { $context_type eq {unknown} } {
-                    error "unknown: been here, done that"
+                set redirect_name "${context_name}.$field_type"
+
+                if { 0 } {
+                    puts "+++ stack=[list $::basesys::lang::stack]"
+                    puts "+++ info proc=[uplevel [list info proc $redirect_name]]"
+                    puts "+++ forward=[array get ::basesys::lang::forward]"
+                    puts "+++ forward_exists_p=[info exists ::basesys::lang::forward($redirect_name)]"
                 }
 
-                # for example, if context_name = message.from then the dotted_name 
-                # would have been message.from.name as opposed to email.name that
-                # it is going to be now
-
-                if { [::basesys::lang::is_dotted_p $context_name] } {
-                    set dotted_name ${context_tag}.$field_type
+                set forward_exists_p [info exists ::basesys::lang::forward($redirect_name)]
+                if { $forward_exists_p } {
+                    set dotted_name $redirect_name
                 } else {
-                    set dotted_name ${context_name}.$field_type
+                    set dotted_name ${context_tag}.$field_type
                 }
 
                 ::basesys::lang::push_context "unknown" $context_tag $dotted_name
@@ -563,12 +617,11 @@ define_lang ::basesys::lang {
                              is_final_if_no_scope CDATA #IMPLIED
                              super_helper CDATA #IMPLIED>
 
-            <!ELEMENT typedecl EMPTY>
+            <!ELEMENT typedecl (typedecl)*>
             <!ATTLIST typedecl x-name CDATA #REQUIRED
                            x-type CDATA #REQUIRED
                            x-default_value CDATA #IMPLIED
-                           x-multiple_p CDATA #IMPLIED
-                           x-map_p CDATA #IMPLIED
+                           x-container CDATA #IMPLIED
                            name CDATA #IMPLIED
                            type CDATA #IMPLIED
                            nsp CDATA #IMPLIED
@@ -581,7 +634,7 @@ define_lang ::basesys::lang {
             <!ELEMENT typeinst ANY>
             <!ATTLIST typeinst x-name CDATA #REQUIRED
                                x-type CDATA #REQUIRED
-                               x-multiple_p CDATA #IMPLIED
+                               x-container CDATA #IMPLIED
                                x-map_p CDATA #IMPLIED
                                name CDATA #IMPLIED
                                type CDATA #IMPLIED>
@@ -601,9 +654,9 @@ define_lang ::datasys::lang {
 
 define_lang ::db::lang {
 
-    text_cmd "db_insert"
-    text_cmd "db_update"
-    text_cmd "db_delete"
+    textnode_cmd "db_insert"
+    textnode_cmd "db_update"
+    textnode_cmd "db_delete"
 
     namespace export db_insert db_update db_delete
 

@@ -77,6 +77,30 @@ set message_dict {
         "a" 55 
         "test" 1
     }
+    wordcount_X {
+        "hello" 12 
+        "world" 5 
+        "this" 18 
+        "is" 22 
+        "a" 55 
+        "test" 1
+    }
+    wordcount_Y {
+        "hello" 12 
+        "world" 5 
+        "this" 18 
+        "is" 22 
+        "a" 55 
+        "test" 1
+    }
+    wordcount_Z {
+        "hello" 12 
+        "world" 5 
+        "this" 18 
+        "is" 22 
+        "a" 55 
+        "test" 1
+    }
 
 }
 
