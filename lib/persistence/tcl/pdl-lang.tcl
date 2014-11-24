@@ -91,44 +91,6 @@ define_lang ::basesys::lang {
         set $varname
     }
 
-    proc node_helper {tag name args} {
-        push_context "eval" $tag $name
-        set cmd  [list ::dom::createNodeInContext elementNode $tag -x-name $name {*}$args]
-        set node [uplevel $cmd]
-        pop_context
-        return $node
-    }
-
-    proc forward {name cmd args} {
-
-        puts "--->>> (def forward $name) cmd_handler=[list $cmd] def_args=$args"
-
-        # register forward
-
-        set varname "::basesys::lang::forward($name)"
-        if { [info exists $varname] } {
-            puts "!!! forward with that name (=$name) already exists"
-        }
-        set $varname ""
-
-        # create handler proc
-
-        set nsp [uplevel {namespace current}]
-        set arg0 $name
-
-        proc ${nsp}::$name {args} "uplevel [list $cmd] $arg0 \$args"
-
-    }
-
-    proc nest {nest tag name args} {
-        set_lookahead_context $name "proc" $tag $name
-        set cmd [list [namespace which node_helper] $tag $name {*}$args]
-        set node [uplevel $cmd]
-        set nest [list [namespace which with_context] $nest "proc" $tag $name]
-        uplevel [list [namespace which forward] $name $nest]
-        return $node
-    }
-
     proc lambda {params body args} {
         set pre {}
         while { ($params ne {} && $args ne {}) || $params eq {args} } { 
@@ -150,13 +112,47 @@ define_lang ::basesys::lang {
         uplevel $body $args
     }
 
-    #proc meta_helper {meta_tag meta_name nest args} {
-    #    set cmd [list nest $nest $meta_tag $meta_name {*}$args]
-    #    return [uplevel $cmd]
-    #}
-    #forward "meta" [namespace which meta_helper]
+    proc node_helper {tag name args} {
+        push_context "eval" $tag $name
+        set cmd [list ::dom::execNodeCmd elementNode $tag -x-name $name {*}$args]
+        set node [uplevel $cmd]
+        pop_context
+        return $node
+    }
+
+    proc nest {nest tag name args} {
+        keyword $name
+        set_lookahead_context $name "proc" $tag $name
+        set cmd [list [namespace which node_helper] $tag $name {*}$args]
+        set node [uplevel $cmd]
+        set nest [list [namespace which with_context] $nest "proc" $tag $name]
+        uplevel [list [namespace which forward] $name $nest]
+        return $node
+    }
+
+    proc forward {name cmd args} {
+
+        puts "--->>> (def forward $name) cmd_handler=[list $cmd] def_args=$args"
+
+        # register forward
+        set varname "::basesys::lang::forward($name)"
+        if { [info exists $varname] } {
+            puts "!!! forward with that name (=$name) already exists"
+        }
+        set $varname ""
+
+        # create handler proc
+        set nsp [uplevel {namespace current}]
+        set arg0 $name
+        proc ${nsp}::$name {args} "uplevel [list $cmd] $arg0 \$args"
+
+    }
+
+    forward "keyword" {lambda {_keyword_ name} {::dom::createNodeCmd elementNode $name}}
 
     forward "meta" {lambda {tag name nest args} {nest $nest $tag $name {*}$args}}
+
+    keyword "meta"
 
     proc multiple_helper {_dummy_multiple_tag_ arg0 args} {
 

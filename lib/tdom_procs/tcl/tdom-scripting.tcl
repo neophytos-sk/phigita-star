@@ -1,9 +1,23 @@
 namespace eval ::dom {;}
 
-proc ::dom::createDocumentFromScript {rootname script} {
-    set doc [dom createDocument $rootname]
-    $doc appendFromScript $script
-    return $doc
+namespace eval ::dom {
+    namespace eval _elementNodeCmd {;}
+    namespace eval _textNodeCmd {;}
+    namespace eval _cdataNode {;}
+    namespace eval _commentNode {;}
+    namespace eval _piNode {;}
+    namespace eval _parserNode {;}
+}
+
+proc ::dom::createNodeCmd {node_type node_tag} {
+    set nsp "::dom::_${node_type}Cmd"
+    namespace eval $nsp [list dom createNodeCmd -returnNodeCmd $node_type $node_tag]
+}
+
+proc ::dom::execNodeCmd {node_type node_tag args} {
+    set nsp "::dom::_${node_type}Cmd"
+    set cmd [list ${nsp}::$node_tag {*}$args]
+    set node [uplevel $cmd]
 }
 
 # tDOM does not provide such a proc,
@@ -36,6 +50,13 @@ proc ::dom::createNodeInContext {node_type node_tag args} {
     return $node
 
 }
+
+proc ::dom::createDocumentFromScript {rootname script} {
+    set doc [dom createDocument $rootname]
+    $doc appendFromScript $script
+    return $doc
+}
+
 
 namespace eval ::dom::scripting {
     namespace export *
