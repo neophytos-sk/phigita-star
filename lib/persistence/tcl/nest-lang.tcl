@@ -123,9 +123,9 @@ define_lang ::basesys::lang {
             puts "+++++ lambda returns = [list lambda $params $body]"
             return [list lambda $params $body]
         }   
-        # THIS OVERWRITES OUR UPLEVEL STATE
-        # WE NEED TO CONTAIN IT SOMEHOW
-        uplevel $body $args
+        # NOTE THAT WE ARE USING uplevel 0 IN ORDER TO PROTECT
+        # VARS IN THE UPPER STACK FRAME FROM BEING OVERWRITTEN
+        uplevel 0 $body $args
     }
 
     # proc forward {name cmd} {
