@@ -4,37 +4,88 @@
 
 define_lang ::basesys::lang {
 
-    variable stack [list]
-    array set lookahead_context [list]
+    variable stack_ctx [list]
+    variable stack_fwd [list]
+
+    array set lookahead_ctx [list]
     array set forward [list]
 
-    proc push_context {context_type context_tag context_name} {
-        variable stack
-        set context [list $context_type $context_tag $context_name]
-        set stack [linsert $stack 0 $context]
+    proc push_fwd {name} {
+        variable stack_fwd
+        set stack_fwd [linsert $stack_fwd 0 $name]
+    }
+    proc pop_fwd {} {
+        variable stack_fwd
+        set stack_fwd [lreplace $stack_fwd 0 0]
+    }
+    proc top_fwd {} {
+        variable stack_fwd
+        lindex $stack_fwd 0
+    }
+    proc with_fwd {name args} {
+        push_fwd $name
+        set result [uplevel $args]
+        pop_fwd
+        return $result
     }
 
-    proc pop_context {} {
-        variable stack
-        set stack [lreplace $stack 0 0]
-    }
 
-    proc top_context {} {
-        variable stack
-        return [lindex $stack 0]
+    # =========
+    # stack_ctx
+    # =========
+    #
+    # EXAMPLE 1:
+    #
+    # struct typedecl {
+    #     varchar name
+    #     varchar type
+    #     varchar default
+    #     -> bool optional_p = false
+    #     varchar container_type
+    #     varchar subtype
+    # }
+    # 
+    # stack_ctx = {proc base_type bool} {eval struct typedecl} {proc struct struct}
+    #
+    # EXAMPLE 2:
+    # 
+    # struct email {
+    #   varchar name
+    #   -> varchar address
+    # }
+    #
+    # stack_ctx = {proc base_type varchar} {eval struct email} {proc struct struct}
+
+    proc push_ctx {ctx} {
+        variable stack_ctx
+        set stack_ctx [linsert $stack_ctx 0 $ctx]
+    }
+    proc pop_ctx {} {
+        variable stack_ctx
+        set stack_ctx [lreplace $stack_ctx 0 0]
+    }
+    proc top_ctx {} { 
+        variable stack_ctx
+        lindex $stack_ctx 0
+    }
+    proc with_ctx {context args} {
+        push_ctx $context
+        set result [uplevel $args]
+        pop_ctx
+        return $result
     }
 
     proc top_context_of_type {context_type} {
-        variable stack
+        variable stack_ctx
         set indexList 0 ;# match first element of nested list
-        set index [lsearch -exact -index $indexList $stack $context_type]
-        return [lindex $stack $index]
+        set index [lsearch -exact -index $indexList $stack_ctx $context_type]
+        return [lindex $stack_ctx $index]
     }
 
     proc get_context_path_of_type {context_type} {
-        variable stack
+        variable stack_ctx
         set indexList 0 ;# match first element of nested list
-        set contextList [lsearch -all -inline -exact -index $indexList $stack $context_type]
+        set contextList [lsearch -all -inline -exact -index $indexList $stack_ctx $context_type]
         set context_path ""
         foreach context [lreverse $contextList] {
             lassign $context context_type context_tag context_name
@@ -43,51 +94,13 @@ define_lang ::basesys::lang {
         return [string trimright $context_path "."]
     }
 
-    # nest argument holds nested calls in the procs below
-    # i.e. with_context, nest, meta_helper
-
-    proc with_context {nest context_type context_tag context_name args} {
-
-        # EXAMPLE 1:
-        #
-        # struct typedecl {
-        #     varchar name
-        #     varchar type
-        #     varchar default
-        #     -> bool optional_p = false
-        #     varchar container_type
-        #     varchar subtype
-        # }
-        # 
-        # stack = {proc base_type bool} {eval struct typedecl} {proc struct struct}
-        #
-        # EXAMPLE 2:
-        # 
-        # struct email {
-        #   varchar name
-        #   -> varchar address
-        # }
-        #
-        # stack = {proc base_type varchar} {eval struct email} {proc struct struct}
-
-        variable stack
-
-        push_context $context_type $context_tag $context_name
-        set cmd "[lindex $nest 0] [lrange $nest 1 end] $args"
-        set result [uplevel $cmd]
-        pop_context
-
-        return $result
-
-    }
-
-    proc set_lookahead_context {name context_type context_tag context_name} {
-        set varname "::basesys::lang::lookahead_context($name)"
+    proc set_lookahead_ctx {name context_type context_tag context_name} {
+        set varname "::basesys::lang::lookahead_ctx($name)"
         set $varname [list $context_type $context_tag $context_name]
     }
 
-    proc get_lookahead_context {name} {
-        set varname "::basesys::lang::lookahead_context($name)"
+    proc get_lookahead_ctx {name} {
+        set varname "::basesys::lang::lookahead_ctx($name)"
         set $varname
     }
 
@@ -113,19 +126,25 @@ define_lang ::basesys::lang {
     }
 
     proc node_helper {tag name args} {
-        push_context "eval" $tag $name
+        push_ctx [list "eval" $tag $name]
         set cmd [list ::dom::execNodeCmd elementNode $tag -x-name $name {*}$args]
         set node [uplevel $cmd]
-        pop_context
+        pop_ctx
         return $node
     }
 
-    proc nest {nest tag name args} {
+    # OLD: proc nest {nest tag name args}
+    # nest argument holds nested calls in the procs below
+    # i.e. with_context, nest, meta_helper
+    proc nest {nest name args} {
+        set tag [top_fwd]
         keyword $name
-        set_lookahead_context $name "proc" $tag $name
+        set_lookahead_ctx $name "proc" $tag $name
         set cmd [list [namespace which node_helper] $tag $name {*}$args]
         set node [uplevel $cmd]
-        set nest [list [namespace which with_context] $nest "proc" $tag $name]
+        # OLD: set nest [list [namespace which with_context] $nest "proc" $tag $name]
+        set nest [list with_ctx [list "proc" $tag $name] {*}$nest]
+        puts "!!! nest: $name -> $nest"
         uplevel [list [namespace which forward] $name $nest]
         return $node
     }
@@ -136,31 +155,57 @@ define_lang ::basesys::lang {
 
         # register forward
         set varname "::basesys::lang::forward($name)"
-        if { [info exists $varname] } {
-            puts "!!! forward with that name (=$name) already exists"
+        if { [info exists $varname] && $name ni {struct typedecl} } {
+            puts "!!! stack_fwd=$::basesys::lang::stack_fwd"
+            puts "!!! stack_ctx=$::basesys::lang::stack_ctx"
+            error "!!! forward with that name (=$name) already exists"
         }
         set $varname ""
 
         # create handler proc
         set nsp [uplevel {namespace current}]
-        set arg0 $name
-        proc ${nsp}::$name {args} "uplevel [list $cmd] $arg0 \$args"
+        proc ${nsp}::$name {args} "puts \"fwd $name runargs=\$args\"; push_fwd $name ; uplevel [list $cmd] \$args ; pop_fwd"
+        # interp alias {} ${nsp}::$name {} with_fwd $name uplevel [list $cmd]
+
+        # OLD: set arg0 $name  ;# _forwarder_
+        # OLD: proc ${nsp}::$name {args} "uplevel [list $cmd] $arg0 \$args"
 
     }
 
-    forward "keyword" {lambda {_keyword_ name} {::dom::createNodeCmd elementNode $name}}
 
-    forward "meta" {lambda {tag name nest args} {nest $nest $tag $name {*}$args}}
+
+    # 1st way
+    # OLD: forward "keyword" {lambda {_forwarder_ name} {::dom::createNodeCmd elementNode $name}}
+    forward "keyword" {::dom::createNodeCmd elementNode}
+
+    # 2nd way
+    #forward "shiftl_call" {lambda {_forwarder_ _ args} {{*}$args}}
+    #forward "keyword" {shiftl_call {::dom::createNodeCmd elementNode}}
+
+    # 3rd way
+    ##forward "shiftl" {lambda {_forwarder_ args} {lassign $args _}}
+    #forward "shiftl" {lambda {_forwarder_ _ args} {return $args}}
+    #forward "chain" {lambda {_forwarder_ args} {foreach arg $args {set args [{*}$arg {*}$args]}}}
+    #forward "keyword" {chain {shiftl} {::dom::createNodeCmd elementNode}}
+
+    # 4th way
+    #forward "foreach" {lambda {a b body} {set b [lassign $b a] ; uplevel $body $a}}
+    #forward "chain" {foreach arg $args {set args [{*}$arg {*}$args]}}
+
+
+    forward "meta" {lambda {name nest args} {nest $nest $name {*}$args}}
+    #forward "meta" {lambda {tag name nest args} {nest $nest $tag $name {*}$args}}
 
     keyword "meta"
 
-    proc multiple_helper {_dummy_multiple_tag_ arg0 args} {
+    # OLD: proc multiple_helper {_forwarder_ arg0 args}
+    proc multiple_helper {arg0 args} {
 
         # remove {proc meta multiple} from the top of the context stack
-        # and at the bottom, put it back so that it will be removed from with_context
-        # where it applies
-        set top_context [top_context]
-        pop_context
+        # and at the bottom, put it back so that it will be removed 
+        # from whatever put it there
+        set top_ctx [top_ctx]
+        pop_ctx
 
         set nodes [list]
         set llength_args [llength $args]
@@ -192,18 +237,19 @@ define_lang ::basesys::lang {
 
             set context [top_context_of_type "eval"]
             lassign $context context_type context_tag context_name
-            set lookahead_context [get_lookahead_context $context_name]
-            push_context {*}$lookahead_context 
+            set lookahead_ctx [get_lookahead_ctx $context_name]
+            push_ctx $lookahead_ctx 
 
-            puts "+++++ (multiple declaration) tag=type=$type name=$name args=$args stack=$::basesys::lang::stack context=$context"
+            puts "+++++ (multiple declaration) tag=type=$type name=$name args=$args stack_ctx=$::basesys::lang::stack_ctx context=$context"
 
             typedecl_args args
             set args [concat -x-container "multiple" $args] 
-            set cmd [list [namespace which typedecl_helper] $tag $type $name {*}$args]
-            lappend nodes [uplevel $cmd]
+            set cmd [list [namespace which typedecl_helper] $type $name {*}$args]
+            #lappend nodes [with_fwd $tag uplevel $cmd]
+            lappend nodes [with_fwd $tag uplevel $cmd]
 
             # now pop the temporary context
-            pop_context
+            pop_ctx
 
         } elseif { $llength_args == 1 } {
 
@@ -233,7 +279,7 @@ define_lang ::basesys::lang {
 
         # push the {proc meta multiple} context back to the top of the context stack
         # as it were before we removed it in the beginning of this proc
-        push_context {*}$top_context
+        push_ctx $top_ctx
 
         return $nodes
 
@@ -241,13 +287,14 @@ define_lang ::basesys::lang {
 
     meta "multiple" [namespace which multiple_helper]
 
-    proc map_helper {_dummy_map_tag_ arg0 args} {
+    # OLD: proc map_helper {_forwarder_ arg0 args}
+    proc map_helper {arg0 args} {
 
         # remove {proc meta map} from the top of the context stack
-        # and at the bottom, put it back so that it will be removed from with_context
-        # where it applies
-        set top_context [top_context]
-        pop_context
+        # and at the bottom, put it back so that it will be removed 
+        # from whatever put it there
+        set top_ctx [top_ctx]
+        pop_ctx
 
         set nodes [list]
         set llength_args [llength $args]
@@ -306,18 +353,18 @@ define_lang ::basesys::lang {
 
             set context [top_context_of_type "eval"]
             lassign $context context_type context_tag context_name
-            set lookahead_context [get_lookahead_context $context_name]
-            push_context {*}$lookahead_context 
+            set lookahead_ctx [get_lookahead_ctx $context_name]
+            push_ctx $lookahead_ctx 
 
-            puts "----- (map declaration) tag=type=$type name=$name args=$args stack=$::basesys::lang::stack context=$context"
+            puts "----- (map declaration) tag=type=$type name=$name args=$args stack_ctx=$::basesys::lang::stack_ctx context=$context"
 
             typedecl_args args
             set args [concat -x-container "map" $args] 
-            set cmd [list [namespace which typedecl_helper] $tag $type $name {*}$args]
-            lappend nodes [uplevel $cmd]
+            set cmd [list [namespace which typedecl_helper] $type $name {*}$args]
+            lappend nodes [with_fwd $tag uplevel $cmd]
 
             # now pop the temporary context
-            pop_context
+            pop_ctx
 
         } elseif { $llength_args == 1 } {
 
@@ -347,7 +394,7 @@ define_lang ::basesys::lang {
 
         # push the {proc meta map} context back to the top of the context stack
         # as it were before we removed it in the beginning of this proc
-        push_context {*}$top_context
+        push_ctx $top_ctx
 
         return $nodes
 
@@ -369,19 +416,23 @@ define_lang ::basesys::lang {
         }
     }
 
-    proc typedecl_helper {decl_tag decl_type decl_name args} {
+    # OLD: proc typedecl_helper {decl_tag decl_type decl_name args}
+    proc typedecl_helper {decl_type decl_name args} {
+        set decl_tag [top_fwd]
+
         typedecl_args args
         set cmd [list [namespace which node_helper] typedecl $decl_name -x-type $decl_type {*}$args]
         set node [uplevel $cmd]
 
         set context_path [get_context_path_of_type "eval"]
 
-        puts "--->>> (typedecl_helper) context_path=[list $context_path] stack=[list $::basesys::lang::stack]"
+        puts "--->>> (typedecl_helper) context_path=[list $context_path] stack_ctx=[list $::basesys::lang::stack_ctx]"
 
         set dotted_name "${context_path}.$decl_name"
-        # OBSOLETE: set_lookahead_context $dotted_name "proc" $decl_tag $dotted_name
-        set dotted_nest [list [namespace which typeinst_helper] typeinst $decl_type]
-        set dotted_nest [list [namespace which with_context] $dotted_nest "proc" $decl_tag $dotted_name]
+        # OBSOLETE: set_lookahead_ctx $dotted_name "proc" $decl_tag $dotted_name
+        set dotted_nest [list with_fwd "typeinst" [namespace which typeinst_helper] $decl_tag $decl_type]
+        # OLD: set dotted_nest [list [namespace which with_context] $dotted_nest "proc" $decl_tag $dotted_name]
+        set dotted_nest [list with_ctx [list "proc" $decl_tag $dotted_name] {*}$dotted_nest] 
         set cmd [list [namespace which forward] $dotted_name $dotted_nest]
         uplevel $cmd
 
@@ -421,22 +472,25 @@ define_lang ::basesys::lang {
             # so we check the lookahead_context for the upcoming command
             # we know already that typeinst_helper calls the given inst_type command
 
-            set lookahead_context [get_lookahead_context $inst_type]
-            lassign $lookahead_context lookahead_context_type lookahead_context_tag lookahead_context_name
-            if { $lookahead_context_tag eq {base_type} } {
+            set lookahead_ctx [get_lookahead_ctx $inst_type]
+            lassign $lookahead_ctx lookahead_ctx_type lookahead_ctx_tag lookahead_ctx_name
+            if { $lookahead_ctx_tag eq {base_type} } {
                 set args [list [list [namespace which t] [lindex $args 0]]]
             }
         }
     }
 
-    proc typeinst_helper {inst_tag inst_type inst_name args} {
+    # OLD: proc typeinst_helper {inst_tag inst_type inst_name args}
+    proc typeinst_helper {inst_type inst_name args} {
+        set inst_tag [top_fwd]
+
         typeinst_args $inst_type args
 
         set context [top_context_of_type "proc"]
         set context_tag [lindex $context 1]
         set context_name [lindex $context 2]
 
-        puts "--->>> (typeinst_helper) context=[list $context] stack=[list $::basesys::lang::stack]"
+        puts "--->>> (typeinst_helper) context=[list $context] stack_ctx=[list $::basesys::lang::stack_ctx]"
         
         set cmd [list [namespace which node_helper] typeinst $inst_name -x-type $inst_type {*}$args]
         return [uplevel $cmd]
@@ -451,8 +505,8 @@ define_lang ::basesys::lang {
 
     proc is_declaration_mode_p {} {
         # set context [top_context_of_type "eval"]
-        variable stack
-        set context [lindex $stack end]
+        variable stack_ctx
+        set context [lindex $stack_ctx end]
         #lassign $context context_type context_tag context_name
         #if { $context_tag in {struct} }
         if { $context eq {proc struct struct} || $context eq {proc meta struct} } {
@@ -461,17 +515,22 @@ define_lang ::basesys::lang {
         return 0
     }
 
-    proc type_helper {tag name args} {
+    # OLD: proc type_helper {tag name args}
+    proc type_helper {name args} {
+        set tag [top_fwd]
 
         puts "--->>> type_helper (is_declaration_mode_p=[is_declaration_mode_p]) tag=$tag name=$name {*}$args"
         
         set type $tag
         if { [is_declaration_mode_p] } {
-            set cmd [list [namespace which typedecl_helper] $tag $type $name {*}$args]
-            return [uplevel $cmd]
+            set cmd [list [namespace which typedecl_helper] $type $name {*}$args]
+            return [with_fwd $tag uplevel $cmd]
         } else {
-            set cmd [list [namespace which typeinst_helper] $tag $type $name {*}$args]
-            return [uplevel $cmd]
+            push_fwd $tag
+            set cmd [list [namespace which typeinst_helper] $type $name {*}$args]
+            set result [uplevel $cmd]
+            pop_fwd
+            return $result
         }
     }
 
@@ -553,7 +612,7 @@ define_lang ::basesys::lang {
             # puts "sm1=$sm1 sm2=$sm2 sm3=$sm3 sm4=$sm4 sm5=$sm5"
 
             return
-            set node [typedecl_helper slot_class_helper "" slot $field_name -type $datatype {*}${args}]
+            # VERY OLD: set node [typedecl_helper ---slot_class_helper--- "" slot $field_name -type $datatype {*}${args}]
 
             if { $container_type ne {} } {
                 $node setAttribute container_type $container_type
@@ -567,8 +626,10 @@ define_lang ::basesys::lang {
 
                 set redirect_name "${context_name}.$field_type"
 
+                puts "+++ $field_type $field_name $args -> redirect_name=$redirect_name"
+
                 if { 0 } {
-                    puts "+++ stack=[list $::basesys::lang::stack]"
+                    puts "+++ stack_ctx=[list $::basesys::lang::stack_ctx]"
                     puts "+++ info proc=[uplevel [list info proc $redirect_name]]"
                     puts "+++ forward=[array get ::basesys::lang::forward]"
                     puts "+++ forward_exists_p=[info exists ::basesys::lang::forward($redirect_name)]"
@@ -581,13 +642,12 @@ define_lang ::basesys::lang {
                     set dotted_name ${context_tag}.$field_type
                 }
 
-                ::basesys::lang::push_context "unknown" $context_tag $dotted_name
+                set context [list "unknown" $context_tag $dotted_name]
                 set cmd [list $dotted_name $field_name {*}$args]
-                uplevel $cmd
-                ::basesys::lang::pop_context
+                with_ctx $context uplevel $cmd
 
             } else {
-                error "no such field_type: $field_type stack=$::basesys::lang::stack"
+                error "no such field_type: $field_type stack_ctx=$::basesys::lang::stack_ctx"
             }
         }
     }
@@ -602,7 +662,8 @@ define_lang ::basesys::lang {
 
     forward "import" [namespace which import_helper]
 
-    proc dtd_helper {dtd_tag args} {
+    variable dtd
+    proc dtd_helper {args} {
         variable dtd
         if { $args eq {} } {
             return $dtd
