@@ -126,29 +126,9 @@ define_lang ::basesys::lang {
         uplevel $body $args
     }
 
-    proc node_helper {tag name args} {
-        set cmd [list ::dom::execNodeCmd elementNode $tag -x-name $name {*}$args]
-        return [with_ctx [list "eval" $tag $name] uplevel $cmd]
-    }
+    proc OLD_forward {name cmd} {
 
-    # nest argument holds nested calls in the procs below
-    # i.e. with_context, nest, meta_helper
-    proc nest {nest name args} {
-        set tag [top_fwd]
-        keyword $name
-        set context [list "proc" $tag $name]
-        set_lookahead_ctx $name $context
-        set cmd [list [namespace which node_helper] $tag $name {*}$args]
-        set node [uplevel $cmd]
-        set nest [list with_ctx $context {*}$nest]
-        puts "!!! nest: $name -> $nest"
-        uplevel [list [namespace which forward] $name $nest]
-        return $node
-    }
-
-    proc forward {name cmd args} {
-
-        puts "--->>> (def forward $name) cmd_handler=[list $cmd] def_args=$args"
+        puts "--->>> (def forward $name) cmd_handler=[list $cmd]"
 
         # register forward
         set varname "::basesys::lang::forward($name)"
@@ -159,16 +139,59 @@ define_lang ::basesys::lang {
         }
         set $varname ""
 
-        set nsp [uplevel {namespace current}]
+        # set nsp [uplevel {namespace current}]
         # proc ${nsp}::$name {args} "puts \"fwd $name runargs=\$args\"; with_fwd $name uplevel [list $cmd] \$args"
-        interp alias {} ${nsp}::$name {} [namespace which with_fwd] $name {*}$cmd
+
+        # node [top_fwd] $name
+        interp alias {} [uplevel {namespace current}]::$name {} "::basesys::lang::with_fwd" $name {*}$cmd
 
     }
+    proc set_alias {name cmd} {
+        variable alias
+        set alias($name) "" ;# set alias($name) $cmd
+    }
+    proc get_alias {name} {
+        variable alias
+        set alias($name)
+    }
+    proc check_alias {name} {
+        variable alias
+        info exists alias($name)
+    }
+
+    # Wow!!!
+    set name "forward"
+    set cmd [list [namespace which "lambda"] {name cmd} {
+        set_alias $name $cmd
+        interp alias {} [namespace current]::${name} {} [namespace which "with_fwd"] ${name} {*}${cmd}
+    }]
+    {*}${cmd} ${name} ${cmd}
+    # set_alias $name $cmd
+    # interp alias {} [namespace current]::${name} {} [namespace which "with_fwd"] ${name} {*}${cmd}
+
+    forward "node" {lambda {tag name args} {with_ctx [list "eval" $tag $name] ::dom::execNodeCmd elementNode $tag -x-name $name {*}$args}}
+
+    forward "keyword" {::dom::createNodeCmd elementNode}
+
+    # nest argument holds nested calls in the procs below
+    # i.e. with_context, nest, meta_helper
+    proc nest {nest name args} {
+        set tag [top_fwd]
+        keyword $name
+        set context [list "proc" $tag $name]
+        set_lookahead_ctx $name $context
+        set cmd [list [namespace which "node"] $tag $name {*}$args]
+        set node [uplevel $cmd]
+        set nest [list with_ctx $context {*}$nest]
+        puts "!!! nest: $name -> $nest"
+        uplevel [list [namespace which "forward"] $name $nest]
+        return $node
+    }
+
 
     #forward "shiftl" {lambda {_ args} {return $args}}
     #forward "chain" {lambda {args} {foreach arg $args {set args [{*}$arg {*}$args]}}}
 
-    forward "keyword" {::dom::createNodeCmd elementNode}
     forward "meta" {lambda {name nest args} {nest $nest $name {*}$args}}
     keyword "meta"
 
@@ -217,7 +240,7 @@ define_lang ::basesys::lang {
 
             typedecl_args args
             set args [concat -x-container "multiple" $args] 
-            set cmd [list [namespace which typedecl_helper] $type $name {*}$args]
+            set cmd [list [namespace which "typedecl_helper"] $type $name {*}$args]
             #lappend nodes [with_fwd $tag uplevel $cmd]
             lappend nodes [with_fwd $tag uplevel $cmd]
 
@@ -258,7 +281,7 @@ define_lang ::basesys::lang {
 
     }
 
-    meta "multiple" [namespace which multiple_helper]
+    meta "multiple" [namespace which "multiple_helper"]
 
     proc map_helper {arg0 args} {
 
@@ -332,7 +355,7 @@ define_lang ::basesys::lang {
 
             typedecl_args args
             set args [concat -x-container "map" $args] 
-            set cmd [list [namespace which typedecl_helper] $type $name {*}$args]
+            set cmd [list [namespace which "typedecl_helper"] $type $name {*}$args]
             lappend nodes [with_fwd $tag uplevel $cmd]
 
             # now pop the temporary context
@@ -371,7 +394,7 @@ define_lang ::basesys::lang {
         return $nodes
 
     }
-    meta "map" [namespace which map_helper]
+    meta "map" [namespace which "map_helper"]
 
     proc typedecl_args {argsVar} {
 
@@ -392,7 +415,7 @@ define_lang ::basesys::lang {
         set decl_tag [top_fwd]
 
         typedecl_args args
-        set cmd [list [namespace which node_helper] typedecl $decl_name -x-type $decl_type {*}$args]
+        set cmd [list [namespace which "node"] typedecl $decl_name -x-type $decl_type {*}$args]
         set node [uplevel $cmd]
 
         set context_path [get_context_path_of_type "eval"]
@@ -401,16 +424,16 @@ define_lang ::basesys::lang {
 
         set dotted_name "${context_path}.$decl_name"
         # OBSOLETE: set_lookahead_ctx $dotted_name "proc" $decl_tag $dotted_name
-        set dotted_nest [list with_fwd "typeinst" [namespace which typeinst_helper] $decl_tag $decl_type]
+        set dotted_nest [list with_fwd "typeinst" [namespace which "typeinst_helper"] $decl_tag $decl_type]
         set dotted_nest [list with_ctx [list "proc" $decl_tag $dotted_name] {*}$dotted_nest] 
-        set cmd [list [namespace which forward] $dotted_name $dotted_nest]
+        set cmd [list [namespace which "forward"] $dotted_name $dotted_nest]
         uplevel $cmd
 
         return $node
 
     }
     
-    meta "typedecl" [namespace which typedecl_helper]
+    meta "typedecl" [namespace which "typedecl_helper"]
 
     text_cmd t
 
@@ -428,7 +451,7 @@ define_lang ::basesys::lang {
         set llength_args [llength $args]
         if { $llength_args == 2 } {
             if { [lindex $args 0] eq {=} } {
-                set args [list [list [namespace which t] [lindex $args 1]]]
+                set args [list [list [namespace which "t"] [lindex $args 1]]]
             }
         } elseif { $llength_args == 1 } {
 
@@ -445,7 +468,7 @@ define_lang ::basesys::lang {
             set lookahead_ctx [get_lookahead_ctx $inst_type]
             lassign $lookahead_ctx lookahead_ctx_type lookahead_ctx_tag lookahead_ctx_name
             if { $lookahead_ctx_tag eq {base_type} } {
-                set args [list [list [namespace which t] [lindex $args 0]]]
+                set args [list [list [namespace which "t"] [lindex $args 0]]]
             }
         }
     }
@@ -461,12 +484,12 @@ define_lang ::basesys::lang {
 
         puts "--->>> (typeinst_helper) context=[list $context] stack_ctx=[list $::basesys::lang::stack_ctx]"
         
-        set cmd [list [namespace which node_helper] typeinst $inst_name -x-type $inst_type {*}$args]
+        set cmd [list [namespace which "node"] typeinst $inst_name -x-type $inst_type {*}$args]
         return [uplevel $cmd]
 
     }
 
-    meta "typeinst" [namespace which typeinst_helper]
+    meta "typeinst" [namespace which "typeinst_helper"]
 
     proc is_dotted_p {name} {
         return [expr { [llength [split ${name} {.}]] > 1 }]
@@ -491,11 +514,11 @@ define_lang ::basesys::lang {
         
         set type $tag
         if { [is_declaration_mode_p] } {
-            set cmd [list [namespace which typedecl_helper] $type $name {*}$args]
+            set cmd [list [namespace which "typedecl_helper"] $type $name {*}$args]
             return [with_fwd $tag uplevel $cmd]
         } else {
             push_fwd $tag
-            set cmd [list [namespace which typeinst_helper] $type $name {*}$args]
+            set cmd [list [namespace which "typeinst_helper"] $type $name {*}$args]
             set result [uplevel $cmd]
             pop_fwd
             return $result
@@ -597,12 +620,12 @@ define_lang ::basesys::lang {
                 if { 0 } {
                     puts "+++ stack_ctx=[list $::basesys::lang::stack_ctx]"
                     puts "+++ info proc=[uplevel [list info proc $redirect_name]]"
-                    puts "+++ forward=[array get ::basesys::lang::forward]"
-                    puts "+++ forward_exists_p=[info exists ::basesys::lang::forward($redirect_name)]"
+                    puts "+++ alias=[array get ::basesys::lang::alias]"
+                    puts "+++ alias_exists_p=[[namespace which check_alias] $redirect_name]"
                 }
 
-                set forward_exists_p [info exists ::basesys::lang::forward($redirect_name)]
-                if { $forward_exists_p } {
+                set alias_exists_p [[namespace which check_alias] $redirect_name]
+                if { $alias_exists_p } {
                     set dotted_name $redirect_name
                 } else {
                     set dotted_name ${context_tag}.$field_type
@@ -626,7 +649,7 @@ define_lang ::basesys::lang {
         return $node
     }
 
-    forward "import" [namespace which import_helper]
+    forward "import" [namespace which "import_helper"]
 
     variable dtd
     proc dtd_helper {args} {
@@ -638,7 +661,7 @@ define_lang ::basesys::lang {
         }
     }
 
-    forward "dtd" [namespace which dtd_helper]
+    forward "dtd" [namespace which "dtd_helper"]
 
     dtd {
         <!DOCTYPE pdl [
