@@ -126,11 +126,9 @@ define_lang ::basesys::lang {
     }
 
     proc node_helper {tag name args} {
-        push_ctx [list "eval" $tag $name]
+        set context [list "eval" $tag $name]
         set cmd [list ::dom::execNodeCmd elementNode $tag -x-name $name {*}$args]
-        set node [uplevel $cmd]
-        pop_ctx
-        return $node
+        return [with_ctx $context uplevel $cmd]
     }
 
     # OLD: proc nest {nest tag name args}
