@@ -131,7 +131,6 @@ define_lang ::basesys::lang {
         return [with_ctx $context uplevel $cmd]
     }
 
-    # OLD: proc nest {nest tag name args}
     # nest argument holds nested calls in the procs below
     # i.e. with_context, nest, meta_helper
     proc nest {nest name args} {
@@ -140,7 +139,6 @@ define_lang ::basesys::lang {
         set_lookahead_ctx $name "proc" $tag $name
         set cmd [list [namespace which node_helper] $tag $name {*}$args]
         set node [uplevel $cmd]
-        # OLD: set nest [list [namespace which with_context] $nest "proc" $tag $name]
         set nest [list with_ctx [list "proc" $tag $name] {*}$nest]
         puts "!!! nest: $name -> $nest"
         uplevel [list [namespace which forward] $name $nest]
@@ -165,9 +163,6 @@ define_lang ::basesys::lang {
         #proc ${nsp}::$name {args} "puts \"fwd $name runargs=\$args\"; push_fwd $name ; uplevel [list $cmd] \$args ; pop_fwd"
         proc ${nsp}::$name {args} "puts \"fwd $name runargs=\$args\"; with_fwd $name uplevel [list $cmd] \$args"
         # interp alias {} ${nsp}::$name {} with_fwd $name uplevel [list $cmd]
-
-        # OLD: set arg0 $name  ;# _forwarder_
-        # OLD: proc ${nsp}::$name {args} "uplevel [list $cmd] $arg0 \$args"
 
     }
 
@@ -286,7 +281,6 @@ define_lang ::basesys::lang {
 
     meta "multiple" [namespace which multiple_helper]
 
-    # OLD: proc map_helper {_forwarder_ arg0 args}
     proc map_helper {arg0 args} {
 
         # remove {proc meta map} from the top of the context stack
@@ -415,7 +409,6 @@ define_lang ::basesys::lang {
         }
     }
 
-    # OLD: proc typedecl_helper {decl_tag decl_type decl_name args}
     proc typedecl_helper {decl_type decl_name args} {
         set decl_tag [top_fwd]
 
@@ -430,7 +423,6 @@ define_lang ::basesys::lang {
         set dotted_name "${context_path}.$decl_name"
         # OBSOLETE: set_lookahead_ctx $dotted_name "proc" $decl_tag $dotted_name
         set dotted_nest [list with_fwd "typeinst" [namespace which typeinst_helper] $decl_tag $decl_type]
-        # OLD: set dotted_nest [list [namespace which with_context] $dotted_nest "proc" $decl_tag $dotted_name]
         set dotted_nest [list with_ctx [list "proc" $decl_tag $dotted_name] {*}$dotted_nest] 
         set cmd [list [namespace which forward] $dotted_name $dotted_nest]
         uplevel $cmd
@@ -479,7 +471,6 @@ define_lang ::basesys::lang {
         }
     }
 
-    # OLD: proc typeinst_helper {inst_tag inst_type inst_name args}
     proc typeinst_helper {inst_type inst_name args} {
         set inst_tag [top_fwd]
 
@@ -514,7 +505,6 @@ define_lang ::basesys::lang {
         return 0
     }
 
-    # OLD: proc type_helper {tag name args}
     proc type_helper {name args} {
         set tag [top_fwd]
 
@@ -534,7 +524,6 @@ define_lang ::basesys::lang {
     }
 
     meta "base_type" {nest {type_helper}}
-    # OLD: meta "base_type" [list [namespace which nest] [list [namespace which type_helper]]]
     # ALT: meta "base_type" {lambda {} {nest {type_helper}}}
 
     # a varying-length text string encoded using UTF-8 encoding
@@ -575,7 +564,6 @@ define_lang ::basesys::lang {
     # TODO: meta "struct" {nest {base_type}}
 
     meta "struct" {nest {nest {type_helper}}}
-    # OLD: meta "struct" [list [namespace which nest] [list [namespace which nest] [list [namespace which type_helper]]]]
 
     proc unknown {field_type field_name args} {
 
