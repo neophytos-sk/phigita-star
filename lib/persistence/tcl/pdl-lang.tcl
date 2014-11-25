@@ -158,7 +158,6 @@ define_lang ::basesys::lang {
         }
         set $varname ""
 
-        # create handler proc
         set nsp [uplevel {namespace current}]
         # proc ${nsp}::$name {args} "puts \"fwd $name runargs=\$args\"; with_fwd $name uplevel [list $cmd] \$args"
         interp alias {} ${nsp}::$name {} [namespace which with_fwd] $name {*}$cmd
