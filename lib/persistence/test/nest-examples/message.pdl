@@ -1,0 +1,262 @@
+
+# Note that the meta "::typesys::lang::struct" command
+# is only used to define the new "struct" command,
+# which follows the unfolding of the nested ("nest")
+# calls dictated by "::typesys::lang::struct".
+#
+# ::typesys::lang::struct struct { ... }
+
+struct struct {
+    varchar nsp
+    varchar name
+    varchar pk
+    bool is_final_if_no_scope
+    # list<typedecl> slot = {}
+    # multiple typedecl slot = {}
+    multiple typedecl slot = {}
+}
+
+struct typedecl {
+    varchar name
+    varchar type
+    varchar default_value = ""
+    bool optional_p = false
+    varchar container = ""
+}
+
+# If any of our other structs has a slot named email
+# then we have to qualify the name, otherwise the struct
+# instance takes precedence (TODO: workaround needed).
+#
+# In fact, we have to qualify it in order to be able to 
+# use both forms to instantiate an instance of the struct
+# in one hand, and a value of base_type in the other hand.
+#
+# In other words, msg3 would produce the correct output
+# in any case, whereas msg4 would require the use of the
+# qualified name.
+
+struct email -pk address {
+    varchar name = ""
+    varchar address
+}
+
+struct file {
+    varchar name
+    varchar mime_type
+    int32 size
+}
+
+struct folder {
+    varchar name
+    int32 num_items
+}
+
+struct category {
+    varchar category_name
+    varchar parent_category
+}
+
+struct word_count_pair {
+    varchar word
+    varint count
+}
+
+struct message {
+
+    # typeinst section
+    pk "message_id"
+    is_final_if_no_scope "yes"
+
+    slot {
+        name "message_id"
+        type "varint"
+    }
+
+    slot {
+        name "device"
+        type "varchar"
+        default_value "sms"
+    }
+
+    slot {
+        name "num_comments"
+        type "int16"
+        default_value 0
+    }
+
+    # typedecl section
+ 
+    varint message_id
+
+    varchar device = "sms"
+
+    int16 num_comments = 0
+
+    varchar subject
+
+    varchar body
+
+    email from
+
+    # embedded object
+    # struct -name from {
+    #     varchar name = ""
+    #     varchar email
+    # }
+
+    multiple email to
+    multiple email cc = {}
+    multiple email bcc = {}
+
+    bool public_p = false
+
+    multiple category categories = {}
+    multiple folder folders = {}
+    multiple varchar tags = {}
+    multiple file attachment = {}
+
+    list<varchar> something
+
+    # map<varchar,int32> gets rewritten to:
+    # map pair {varchar varint} wordcount_U
+    map<varchar,int32> wordcount_W
+
+    map struct wordcount_X = {} {
+        varchar word
+        int32 count
+    }
+
+    map word_count_pair wordcount_Y
+
+    map word_count_pair wordcount_Z = {}
+
+    set<varchar> words
+
+    #extends -ref content.Object
+    #extends -ref content.Content
+    #extends -ref auditing.Auditing -hi world
+
+    #index -attr public_p -abc 123
+
+}
+
+typeinst message msg1 {
+
+    typeinst varchar subject = "hello"
+
+    typeinst email from {
+        typeinst varchar name = "zena wow"
+        typeinst varchar address = "zena@example.com"
+    }
+
+    typeinst varchar body = "this is a test"
+
+}
+
+message msg2 {
+    varchar subject = "hello"
+    email from {
+        varchar name = "zena wow"
+        varchar address = "zena@example.com"
+    }
+    varchar body = "this is a test"
+}
+
+# CORRECT
+message msg3 {
+    message.subject "hello"
+    message.from {
+        email.name "zena wow"
+        email.address "zena@example.com"
+    }
+    message.to {
+        email.name "paris love"
+        email.address "bff@example.com"
+    }
+    message.body = "this is a test"
+    message.cc { 
+        email.name "jane awesome"
+        email.address "jane@example.com"
+    }
+    message.cc { 
+        email.name "someone great" 
+        email.address "someone@example.com" 
+    }
+    multiple message.bcc {{
+        email.name "vera cool"
+        email.address "vera@example.com"
+    } {
+        email.name "greg wise"
+        email.address "greg@example.com"
+    } {
+        email.name "max loyal"
+        email.address "max@example.com"
+    }}
+    map message.wordcount_X {{
+        message.wordcount_X.word "the"
+        message.wordcount_X.count "123"
+    } {
+        message.wordcount_X.word "and"
+        message.wordcount_X.count "54"
+    }}
+    map message.wordcount_Y {{
+        word_count_pair.word "the"
+        word_count_pair.count "123"
+    } {
+        word_count_pair.word "and"
+        word_count_pair.count "54"
+    }}
+}
+
+# CORRECT
+message msg4 {
+    subject "hello"
+    from {
+        name "zena wow"
+        address "zena@example.com"
+    }
+    body "this is a test"
+    to {
+        name "paris love"
+        address "bff@example.com"
+    }
+    cc { 
+        name "jane awesome"
+        address "jane@example.com"
+    }
+    cc { 
+        name "someone great" 
+        address "someone@example.com" 
+    }
+    multiple bcc {{
+        name "vera cool"
+        address "vera@example.com"
+    } {
+        name "greg wise"
+        address "greg@example.com"
+    } {
+        name "max loyal"
+        address "max@example.com"
+    }}
+    map wordcount_X {{
+        word "the"
+        count "123"
+    } {
+        word "and"
+        count "54"
+    }}
+    map wordcount_Y {{
+        word "the"
+        count "123"
+    } {
+        word "and"
+        count "54"
+    }}
+}
+
+#message msg5 -subject "hello" -body "this is a test" {
+#    email from -name "zena wow" -address "zena@example.com"
+#}
+
+#db_insert -scope {user} -what msg1
