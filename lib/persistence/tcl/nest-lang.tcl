@@ -128,27 +128,36 @@ define_lang ::basesys::lang {
     #    uplevel 0 $body $args
     #}
     proc lambda {params body args} {
+
         set {llength_params} [llength ${params}]
         set {llength_args} [llength ${args}]
-        set {last_param} {}
-        if { ${llength_params} == ${llength_args} || (${llength_params} - 1 <= ${llength_args} && [set {last_param} [lindex ${params} {end}]] eq {args}) } {
-            unset {llength_params} {llength_args}
-            return [uplevel 0 ${body} [if {${params} eq {}} {
-                concat ${args} [unset {last_param} {params} {body} {args}]
-            } elseif { ${last_param} ne {} } {
-                set {args} [lassign ${args} {*}[lrange [concat ${params} [unset {last_param} {params} {body} {args}]] 0 {end-1}]]
-                set {} {}
-            } else {
-                lassign ${args} {*}[concat ${params} [unset {last_param} {params} {body} {args}]]
-            }]]
 
-        } else {
-            if { ${args} eq {} } {
-                return [list {lambda} ${params} ${body}]
-            } else {
-                return [list {lambda} [lrange ${params} ${llength_args} {end}] [concat [list lassign ${args} {*}[lrange ${params} 0 [expr {${llength_args} - 1}]]] { ; } ${body}]]
+        if { ${llength_params} - 1 <= ${llength_args} } {
+            set {last_param} [lindex ${params} {end}]
+            if { ${llength_params} == ${llength_args} || ${last_param} eq {args} } {
+                unset {llength_params} {llength_args}
+                return [uplevel 0 ${body} [if {${params} eq {}} {
+                    # llength_params == 0 and llength_args == 0
+                    unset {last_param} {params} {body} {args}
+                } elseif { ${last_param} ne {args} } {
+                    # llength_params == llength_args
+                    lassign ${args} {*}[concat ${params} [unset {last_param} {params} {body} {args}]]
+                } else {
+                    # (llength_params - 1 <= llength_args) and last_param eq {args}
+                    set {args} [lassign ${args} {*}[lrange [concat ${params} [unset {last_param} {params} {body} {args}]] 0 {end-1}]]
+                    set {} {}
+                }]]
             }
         }
+
+        if { ${args} eq {} } {
+            return [list {lambda} ${params} ${body}]
+        } elseif {${llength_params} >= ${llength_args}} {
+            return [list {lambda} [lrange ${params} ${llength_args} {end}] [concat [list lassign ${args} {*}[lrange ${params} 0 [expr {${llength_args} - 1}]]] { ; } ${body}]]
+        } else {
+            error "lambda: more args than params"
+        }
+
     } 
 
     # proc forward {name cmd} {
