@@ -160,39 +160,22 @@ define_lang ::basesys::lang {
 
         # create handler proc
         set nsp [uplevel {namespace current}]
-        #proc ${nsp}::$name {args} "puts \"fwd $name runargs=\$args\"; push_fwd $name ; uplevel [list $cmd] \$args ; pop_fwd"
-        proc ${nsp}::$name {args} "puts \"fwd $name runargs=\$args\"; with_fwd $name uplevel [list $cmd] \$args"
-        # interp alias {} ${nsp}::$name {} with_fwd $name uplevel [list $cmd]
+        # proc ${nsp}::$name {args} "puts \"fwd $name runargs=\$args\"; with_fwd $name uplevel [list $cmd] \$args"
+        interp alias {} ${nsp}::$name {} [namespace which with_fwd] $name {*}$cmd
 
     }
 
 
+    #forward "shiftl" {lambda {_ args} {return $args}}
+    #forward "chain" {lambda {args} {foreach arg $args {set args [{*}$arg {*}$args]}}}
 
-    # 1st way
-    # OLD: forward "keyword" {lambda {_forwarder_ name} {::dom::createNodeCmd elementNode $name}}
+
     forward "keyword" {::dom::createNodeCmd elementNode}
 
-    # 2nd way
-    #forward "shiftl_call" {lambda {_forwarder_ _ args} {{*}$args}}
-    #forward "keyword" {shiftl_call {::dom::createNodeCmd elementNode}}
-
-    # 3rd way
-    ##forward "shiftl" {lambda {_forwarder_ args} {lassign $args _}}
-    #forward "shiftl" {lambda {_forwarder_ _ args} {return $args}}
-    #forward "chain" {lambda {_forwarder_ args} {foreach arg $args {set args [{*}$arg {*}$args]}}}
-    #forward "keyword" {chain {shiftl} {::dom::createNodeCmd elementNode}}
-
-    # 4th way
-    #forward "foreach" {lambda {a b body} {set b [lassign $b a] ; uplevel $body $a}}
-    #forward "chain" {foreach arg $args {set args [{*}$arg {*}$args]}}
-
-
     forward "meta" {lambda {name nest args} {nest $nest $name {*}$args}}
-    #forward "meta" {lambda {tag name nest args} {nest $nest $tag $name {*}$args}}
 
     keyword "meta"
 
-    # OLD: proc multiple_helper {_forwarder_ arg0 args}
     proc multiple_helper {arg0 args} {
 
         # remove {proc meta multiple} from the top of the context stack
@@ -698,7 +681,7 @@ define_lang ::basesys::lang {
         ]>
     }
 
-    namespace export "import" "struct" "typedecl" "typeinst" "varchar" "bool" "varint" "byte" "int16" "int32" "int64" "double" "multiple" "dtd"
+    namespace export "import" "struct" "typedecl" "typeinst" "varchar" "bool" "varint" "byte" "int16" "int32" "int64" "double" "multiple" "dtd" "lambda"
 
 }
 
