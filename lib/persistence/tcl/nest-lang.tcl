@@ -105,28 +105,51 @@ define_lang ::basesys::lang {
         set $varname
     }
 
+    #proc lambda {params body args} {
+    #    set pre {}
+    #    while { ($params ne {} && $args ne {}) || $params eq {args} } { 
+    #        if { $params eq {args} } {
+    #            append pre "set args [list $args] ; "
+    #            set params {}
+    #            set args {}
+    #        } else {
+    #            set params [lassign $params param]
+    #            set args [lassign $args arg]
+    #            append pre "set $param [list $arg] ; "
+    #        }
+    #    }   
+    #    set body [concat $pre $body]
+    #    if { $params ne {} } { 
+    #        puts "+++++ lambda returns = [list lambda $params $body]"
+    #        return [list lambda $params $body]
+    #    }   
+    #    # NOTE THAT WE ARE USING uplevel 0 IN ORDER TO PROTECT
+    #    # VARS IN THE UPPER STACK FRAME FROM BEING OVERWRITTEN
+    #    uplevel 0 $body $args
+    #}
     proc lambda {params body args} {
-        set pre {}
-        while { ($params ne {} && $args ne {}) || $params eq {args} } { 
-            if { $params eq {args} } {
-                append pre "set args [list $args] ; "
-                set params {}
-                set args {}
+        set {llength_params} [llength ${params}]
+        set {llength_args} [llength ${args}]
+        set {last_param} {}
+        if { ${llength_params} == ${llength_args} || (${llength_params} - 1 <= ${llength_args} && [set {last_param} [lindex ${params} {end}]] eq {args}) } {
+            unset {llength_params} {llength_args}
+            return [uplevel 0 ${body} [if {${params} eq {}} {
+                concat ${args} [unset {last_param} {params} {body} {args}]
+            } elseif { ${last_param} ne {} } {
+                set {args} [lassign ${args} {*}[lrange [concat ${params} [unset {last_param} {params} {body} {args}]] 0 {end-1}]]
+                set {} {}
             } else {
-                set params [lassign $params param]
-                set args [lassign $args arg]
-                append pre "set $param [list $arg] ; "
+                lassign ${args} {*}[concat ${params} [unset {last_param} {params} {body} {args}]]
+            }]]
+
+        } else {
+            if { ${args} eq {} } {
+                return [list {lambda} ${params} ${body}]
+            } else {
+                return [list {lambda} [lrange ${params} ${llength_args} {end}] [concat [list lassign ${args} {*}[lrange ${params} 0 [expr {${llength_args} - 1}]]] { ; } ${body}]]
             }
-        }   
-        set body [concat $pre $body]
-        if { $params ne {} } { 
-            puts "+++++ lambda returns = [list lambda $params $body]"
-            return [list lambda $params $body]
-        }   
-        # NOTE THAT WE ARE USING uplevel 0 IN ORDER TO PROTECT
-        # VARS IN THE UPPER STACK FRAME FROM BEING OVERWRITTEN
-        uplevel 0 $body $args
-    }
+        }
+    } 
 
     # proc forward {name cmd} {
     #    #puts "--->>> (def forward $name) cmd_handler=[list $cmd]"
