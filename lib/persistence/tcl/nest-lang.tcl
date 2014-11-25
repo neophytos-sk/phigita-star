@@ -454,7 +454,7 @@ define_lang ::basesys::lang {
 
         set dotted_name "${context_path}.$decl_name"
         # OBSOLETE: set_lookahead_ctx $dotted_name "proc" $decl_tag $dotted_name
-        set dotted_nest [list with_fwd "typeinst" [namespace which "typeinst_helper"] $decl_tag $decl_type]
+        set dotted_nest [list with_fwd "typeinst" [namespace which "typeinst_helper"] $decl_type $dotted_name]
         set dotted_nest [list with_ctx [list "proc" $decl_tag $dotted_name] {*}$dotted_nest] 
         set cmd [list [namespace which "forward"] $dotted_name $dotted_nest]
         uplevel $cmd
