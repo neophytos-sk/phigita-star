@@ -126,26 +126,21 @@ define_lang ::basesys::lang {
         uplevel $body $args
     }
 
-    proc OLD_forward {name cmd} {
-
-        puts "--->>> (def forward $name) cmd_handler=[list $cmd]"
-
-        # register forward
-        set varname "::basesys::lang::forward($name)"
-        if { [info exists $varname] && $name ni {struct typedecl} } {
-            puts "!!! stack_fwd=$::basesys::lang::stack_fwd"
-            puts "!!! stack_ctx=$::basesys::lang::stack_ctx"
-            error "!!! forward with that name (=$name) already exists"
-        }
-        set $varname ""
-
-        # set nsp [uplevel {namespace current}]
-        # proc ${nsp}::$name {args} "puts \"fwd $name runargs=\$args\"; with_fwd $name uplevel [list $cmd] \$args"
-
-        # node [top_fwd] $name
-        interp alias {} [uplevel {namespace current}]::$name {} "::basesys::lang::with_fwd" $name {*}$cmd
-
-    }
+    # proc forward {name cmd} {
+    #    #puts "--->>> (def forward $name) cmd_handler=[list $cmd]"
+    #    # register forward
+    #    set varname "::basesys::lang::alias($name)"
+    #    if { [info exists $varname] && $name ni {struct typedecl} } {
+    #        puts "!!! stack_fwd=$::basesys::lang::stack_fwd"
+    #        puts "!!! stack_ctx=$::basesys::lang::stack_ctx"
+    #        error "!!! forward with that name (=$name) already exists"
+    #    }
+    #    set $varname ""
+    #    # set nsp [uplevel {namespace current}]
+    #    # proc ${nsp}::$name {args} "puts \"fwd $name runargs=\$args\"; with_fwd $name uplevel [list $cmd] \$args"
+    #    # node [top_fwd] $name
+    #    interp alias {} [uplevel {namespace current}]::$name {} "::basesys::lang::with_fwd" $name {*}$cmd
+    #}
     proc set_alias {name cmd} {
         variable alias
         set alias($name) "" ;# set alias($name) $cmd
@@ -166,8 +161,10 @@ define_lang ::basesys::lang {
         interp alias {} [namespace current]::${name} {} [namespace which "with_fwd"] ${name} {*}${cmd}
     }]
     {*}${cmd} ${name} ${cmd}
-    # set_alias $name $cmd
-    # interp alias {} [namespace current]::${name} {} [namespace which "with_fwd"] ${name} {*}${cmd}
+    # with_fwd forward lambda {name cmd} {
+    #   set_alias $name $cmd
+    #   interp alias {} [namespace current]::${name} {} [namespace which "with_fwd"] ${name} {*}${cmd}
+    # }
 
     forward "node" {lambda {tag name args} {with_ctx [list "eval" $tag $name] ::dom::execNodeCmd elementNode $tag -x-name $name {*}$args}}
 
