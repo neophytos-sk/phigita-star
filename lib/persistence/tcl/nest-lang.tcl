@@ -123,6 +123,8 @@ define_lang ::basesys::lang {
             puts "+++++ lambda returns = [list lambda $params $body]"
             return [list lambda $params $body]
         }   
+        # THIS OVERWRITES OUR UPLEVEL STATE
+        # WE NEED TO CONTAIN IT SOMEHOW
         uplevel $body $args
     }
 
@@ -167,7 +169,6 @@ define_lang ::basesys::lang {
     # }
 
     forward "node" {lambda {tag name args} {with_ctx [list "eval" $tag $name] ::dom::execNodeCmd elementNode $tag -x-name $name {*}$args}}
-
     forward "keyword" {::dom::createNodeCmd elementNode}
 
     # nest argument holds nested calls in the procs below
