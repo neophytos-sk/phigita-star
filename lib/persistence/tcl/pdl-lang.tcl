@@ -164,7 +164,8 @@ define_lang ::basesys::lang {
 
         # create handler proc
         set nsp [uplevel {namespace current}]
-        proc ${nsp}::$name {args} "puts \"fwd $name runargs=\$args\"; push_fwd $name ; uplevel [list $cmd] \$args ; pop_fwd"
+        #proc ${nsp}::$name {args} "puts \"fwd $name runargs=\$args\"; push_fwd $name ; uplevel [list $cmd] \$args ; pop_fwd"
+        proc ${nsp}::$name {args} "puts \"fwd $name runargs=\$args\"; with_fwd $name uplevel [list $cmd] \$args"
         # interp alias {} ${nsp}::$name {} with_fwd $name uplevel [list $cmd]
 
         # OLD: set arg0 $name  ;# _forwarder_
@@ -668,7 +669,7 @@ define_lang ::basesys::lang {
         if { $args eq {} } {
             return $dtd
         } else {
-            set dtd {*}$args
+            set dtd [lindex $args 0]
         }
     }
 
