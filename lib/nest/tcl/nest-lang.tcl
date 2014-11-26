@@ -1,11 +1,19 @@
+package require tdom
 
-::xo::lib::require tdom_procs
+package provide nest 0.1
 
+define_lang ::nest::lang {
 
-define_lang ::basesys::lang {
-
+    variable debug 0
     variable stack_ctx [list]
     variable stack_fwd [list]
+
+    proc log {msg} {
+        variable debug
+        if {$debug} {
+            puts $msg
+        }
+    }
 
     array set lookahead_ctx [list]
     array set alias [list]
@@ -96,12 +104,12 @@ define_lang ::basesys::lang {
 
     # context := {context_type context_tag context_name}
     proc set_lookahead_ctx {name context} {
-        set varname "::basesys::lang::lookahead_ctx($name)"
+        set varname "::nest::lang::lookahead_ctx($name)"
         set $varname $context
     }
 
     proc get_lookahead_ctx {name} {
-        set varname "::basesys::lang::lookahead_ctx($name)"
+        set varname "::nest::lang::lookahead_ctx($name)"
         set $varname
     }
 
@@ -120,7 +128,7 @@ define_lang ::basesys::lang {
     #    }   
     #    set body [concat $pre $body]
     #    if { $params ne {} } { 
-    #        puts "+++++ lambda returns = [list lambda $params $body]"
+    #        log "+++++ lambda returns = [list lambda $params $body]"
     #        return [list lambda $params $body]
     #    }   
     #    # NOTE THAT WE ARE USING uplevel 0 IN ORDER TO PROTECT
@@ -214,7 +222,7 @@ define_lang ::basesys::lang {
         #set cmd [list [namespace which "node"] "typeinst" $name -x-type $type -x-nsp $nsp {*}$args]
         set node [uplevel $cmd]
 
-        puts "!!! nest: $name -> $nest"
+        log "!!! nest: $name -> $nest"
         set nest [list with_ctx $context {*}$nest]
         uplevel [list [namespace which "alias"] $name $nest]
 
@@ -322,7 +330,7 @@ define_lang ::basesys::lang {
             set lookahead_ctx [get_lookahead_ctx $context_name]
             push_ctx $lookahead_ctx 
 
-            puts "----- (container declaration) tag=type=$type name=$name args=$args stack_ctx=$::basesys::lang::stack_ctx context=$context"
+            log "----- (container declaration) tag=type=$type name=$name args=$args stack_ctx=$::nest::lang::stack_ctx context=$context"
 
             typedecl_args args
             set args [concat -x-container $container_type $args] 
@@ -346,7 +354,7 @@ define_lang ::basesys::lang {
 
             set name $arg0
 
-            puts "----- (container instantiation) name=$name args=$args"
+            log "----- (container instantiation) name=$name args=$args"
 
             lassign $args argv
             foreach arg $argv {
@@ -392,7 +400,7 @@ define_lang ::basesys::lang {
 
         set context_path [get_context_path_of_type "eval"]
 
-        puts "--->>> (typedecl_helper) context_path=[list $context_path] stack_ctx=[list $::basesys::lang::stack_ctx]"
+        log "--->>> (typedecl_helper) context_path=[list $context_path] stack_ctx=[list $::nest::lang::stack_ctx]"
 
         set dotted_name "${context_path}.$decl_name"
         # OBSOLETE: set_lookahead_ctx $dotted_name "proc" $decl_tag $dotted_name
@@ -407,7 +415,7 @@ define_lang ::basesys::lang {
     
     meta "typedecl" [namespace which "typedecl_helper"]
 
-    text_cmd t
+    ::dom::createNodeCmd textNode t
 
     proc nt {text} { t -disableOutputEscaping ${text} }
 
@@ -454,7 +462,7 @@ define_lang ::basesys::lang {
         set context_tag [lindex $context 1]
         set context_name [lindex $context 2]
 
-        puts "--->>> (typeinst_helper) context=[list $context] stack_ctx=[list $::basesys::lang::stack_ctx]"
+        log "--->>> (typeinst_helper) context=[list $context] stack_ctx=[list $::nest::lang::stack_ctx]"
         
         set cmd [list [namespace which "node"] typeinst $inst_name -x-type $inst_type {*}$args]
         return [uplevel $cmd]
@@ -481,7 +489,7 @@ define_lang ::basesys::lang {
     proc type_helper {name args} {
         set tag [top_fwd]
 
-        puts "--->>> type_helper (is_declaration_mode_p=[is_declaration_mode_p]) tag=$tag name=$name {*}$args"
+        log "--->>> type_helper (is_declaration_mode_p=[is_declaration_mode_p]) tag=$tag name=$name {*}$args"
         
         set type $tag
         if { [is_declaration_mode_p] } {
@@ -531,7 +539,7 @@ define_lang ::basesys::lang {
 
     proc unknown {field_type field_name args} {
 
-        puts "--->>> (unknown) $field_type $field_name args=$args"
+        log "--->>> (unknown) $field_type $field_name args=$args"
 
         # re is such to allow for expressions of the form set<file>
         set type_re {[_a-zA-Z][_a-zA-Z0-9]*}
@@ -553,14 +561,14 @@ define_lang ::basesys::lang {
                 set container_type "map"
                 set datatype [list $sm4 $sm5]
             } elseif { $sm6 ne {} && $sm7 ne {} } {
-                set container_type "list"
+                set container_type "multiple"
                 set datatype $sm7
             }
 
             # (is_set_p)  sm1=set sm2=string sm3= sm4= sm5= 
             # (is_map_p)  sm1= sm2= sm3=map sm4=string sm5=i32 
             #
-            # puts "sm1=$sm1 sm2=$sm2 sm3=$sm3 sm4=$sm4 sm5=$sm5"
+            # log "sm1=$sm1 sm2=$sm2 sm3=$sm3 sm4=$sm4 sm5=$sm5"
 
             return
             # VERY OLD: set node [typedecl_helper ---slot_class_helper--- "" slot $field_name -type $datatype {*}${args}]
@@ -572,26 +580,26 @@ define_lang ::basesys::lang {
         } else {
             if { ![is_dotted_p $field_type] } {
 
-                set stack_ctx $::basesys::lang::stack_ctx
+                set stack_ctx $::nest::lang::stack_ctx
 
                 set stack_proc_ctx [lsearch -all -inline -index 0 $stack_ctx {proc}]
-                puts $stack_proc_ctx
+                log $stack_proc_ctx
                 foreach context $stack_proc_ctx {
-                    puts "--->>> context=$context"
+                    log "--->>> context=$context"
                     lassign $context context_type context_tag context_name
 
                     set redirect_name "${context_name}.$field_type"
 
                     if { 0 } {
-                        puts "+++ stack_ctx=[list $::basesys::lang::stack_ctx]"
-                        puts "+++ info proc=[uplevel [list info proc $redirect_name]]"
-                        puts "+++ alias=[array get ::basesys::lang::alias]"
-                        puts "+++ alias_exists_p=[[namespace which check_alias] $redirect_name]"
+                        log "+++ stack_ctx=[list $::nest::lang::stack_ctx]"
+                        log "+++ info proc=[uplevel [list info proc $redirect_name]]"
+                        log "+++ alias=[array get ::nest::lang::alias]"
+                        log "+++ alias_exists_p=[[namespace which check_alias] $redirect_name]"
                     }
 
                     set redirect_exists_p [[namespace which check_alias] $redirect_name]
                     if { $redirect_exists_p } {
-                        puts "+++ $field_type $field_name $args -> redirect_name=$redirect_name"
+                        log "+++ $field_type $field_name $args -> redirect_name=$redirect_name"
                         set context [list "unknown" "unknown" $redirect_name]
                         set cmd [list $redirect_name $field_name {*}$args]
                         with_ctx $context uplevel $cmd
@@ -600,7 +608,7 @@ define_lang ::basesys::lang {
                         set redirect_name "${context_tag}.${field_type}"
                         set redirect_exists_p [[namespace which check_alias] $redirect_name]
                         if { $redirect_exists_p } {
-                            puts "+++ $field_type $field_name $args -> redirect_name=$redirect_name"
+                            log "+++ $field_type $field_name $args -> redirect_name=$redirect_name"
                             set cmd [list $redirect_name $field_name {*}$args]
                             with_ctx [list "unknown" "unknown" $redirect_name] uplevel $cmd
                             return
@@ -609,7 +617,7 @@ define_lang ::basesys::lang {
                 }
 
             } else {
-                error "no such field_type: $field_type stack_ctx=$::basesys::lang::stack_ctx"
+                error "no such field_type: $field_type stack_ctx=$::nest::lang::stack_ctx"
             }
         }
     }
@@ -637,9 +645,9 @@ define_lang ::basesys::lang {
     alias "dtd" [namespace which "dtd_helper"]
 
     dtd {
-        <!DOCTYPE pdl [
+        <!DOCTYPE nest [
 
-            <!ELEMENT pdl (struct | typeinst)*>
+            <!ELEMENT nest (struct | typeinst)*>
             <!ELEMENT struct (struct | typedecl | typeinst)*>
             <!ATTLIST struct x-name CDATA #IMPLIED>
 
@@ -672,22 +680,11 @@ define_lang ::basesys::lang {
 
 }
 
-define_lang ::datasys::lang {
-    namespace import ::basesys::lang::*
-    namespace path [list ::datasys::lang ::basesys::lang ::]
-    namespace unknown ::basesys::lang::unknown
+define_lang ::nest::data {
+    namespace import ::nest::lang::*
+    namespace path [list ::nest::data ::nest::lang ::]
+    namespace unknown ::nest::lang::unknown
 }
-
-define_lang ::db::lang {
-
-    textnode_cmd "db_insert"
-    textnode_cmd "db_update"
-    textnode_cmd "db_delete"
-
-    namespace export db_insert db_update db_delete
-
-}
-
 
 
 
