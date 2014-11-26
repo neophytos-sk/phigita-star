@@ -10,8 +10,7 @@ struct struct {
     varchar name
     varchar type
     varchar nsp
-    # list<typedecl> slot = {}
-    # multiple struct typedecl slot = {} typedecl
+
     multiple struct slot = {} {
         varchar name
         varchar type
@@ -72,22 +71,11 @@ struct message {
     # typedecl section
  
     varint message_id
-
     varchar device = "sms"
-
     int16 num_comments = 0
-
     varchar subject
-
     varchar body
-
     email from
-
-    # embedded object
-    # struct -name from {
-    #     varchar name = ""
-    #     varchar email
-    # }
 
     multiple email to
     multiple email cc = {}
@@ -100,28 +88,14 @@ struct message {
     multiple varchar tags = {}
     multiple file attachment = {}
 
-    list<varchar> something
-
-    # map<varchar,int32> gets rewritten to:
-    # map pair {varchar varint} wordcount_U
-    map<varchar,int32> wordcount_W
-
     map struct wordcount_X = {} {
         varchar word
         int32 count
     }
 
     map word_count_pair wordcount_Y
-
     map word_count_pair wordcount_Z = {}
-
-    set<varchar> words
-
-    #extends -ref content.Object
-    #extends -ref content.Content
-    #extends -ref auditing.Auditing -hi world
-
-    #index -attr public_p -abc 123
+    multiple varchar words
 
 }
 

@@ -530,107 +530,57 @@ define_lang ::nest::lang {
     # a 64-bit floating point number
     base_type "double"
 
-    # EXPERIMENTAL
-    # pair
-    # tuple
-    # record
-
     meta "struct" {nest {nest {type_helper}}}
 
     proc unknown {field_type field_name args} {
 
         log "--->>> (unknown) $field_type $field_name args=$args"
 
-        # re is such to allow for expressions of the form set<file>
-        set type_re {[_a-zA-Z][_a-zA-Z0-9]*}
+        if { ![is_dotted_p $field_type] } {
 
-        # recognizes expressions of the following forms:
-        # set<i32>
-        # map<string,i32>
-        set re ""
-        append re "(set)<(${type_re})>" "|"
-        append re "(map)<(${type_re}),(${type_re})>" "|"
-        append re "(list)<(${type_re})>"
-        set re "^(?:${re})\$"
+            set stack_ctx $::nest::lang::stack_ctx
 
-        if { [regexp -- $re $field_type _dummy_ sm1 sm2 sm3 sm4 sm5 sm6 sm7] } {
-            if { $sm1 ne {} && $sm2 ne {} } {
-                set container_type "set"
-                set datatype $sm2
-            } elseif { $sm3 ne {} && $sm4 ne {} && $sm5 ne {} } {
-                set container_type "map"
-                set datatype [list $sm4 $sm5]
-            } elseif { $sm6 ne {} && $sm7 ne {} } {
-                set container_type "multiple"
-                set datatype $sm7
-            }
+            set stack_proc_ctx [lsearch -all -inline -index 0 $stack_ctx {proc}]
+            log $stack_proc_ctx
+            foreach context $stack_proc_ctx {
+                log "--->>> context=$context"
+                lassign $context context_type context_tag context_name
 
-            # (is_set_p)  sm1=set sm2=string sm3= sm4= sm5= 
-            # (is_map_p)  sm1= sm2= sm3=map sm4=string sm5=i32 
-            #
-            # log "sm1=$sm1 sm2=$sm2 sm3=$sm3 sm4=$sm4 sm5=$sm5"
+                set redirect_name "${context_name}.$field_type"
 
-            return
-            # VERY OLD: set node [typedecl_helper ---slot_class_helper--- "" slot $field_name -type $datatype {*}${args}]
+                if { 0 } {
+                    log "+++ stack_ctx=[list $::nest::lang::stack_ctx]"
+                    log "+++ info proc=[uplevel [list info proc $redirect_name]]"
+                    log "+++ alias=[array get ::nest::lang::alias]"
+                    log "+++ alias_exists_p=[[namespace which check_alias] $redirect_name]"
+                }
 
-            if { $container_type ne {} } {
-                $node setAttribute container_type $container_type
-            }
-
-        } else {
-            if { ![is_dotted_p $field_type] } {
-
-                set stack_ctx $::nest::lang::stack_ctx
-
-                set stack_proc_ctx [lsearch -all -inline -index 0 $stack_ctx {proc}]
-                log $stack_proc_ctx
-                foreach context $stack_proc_ctx {
-                    log "--->>> context=$context"
-                    lassign $context context_type context_tag context_name
-
-                    set redirect_name "${context_name}.$field_type"
-
-                    if { 0 } {
-                        log "+++ stack_ctx=[list $::nest::lang::stack_ctx]"
-                        log "+++ info proc=[uplevel [list info proc $redirect_name]]"
-                        log "+++ alias=[array get ::nest::lang::alias]"
-                        log "+++ alias_exists_p=[[namespace which check_alias] $redirect_name]"
-                    }
-
+                set redirect_exists_p [[namespace which check_alias] $redirect_name]
+                if { $redirect_exists_p } {
+                    log "+++ $field_type $field_name $args -> redirect_name=$redirect_name"
+                    set context [list "unknown" "unknown" $redirect_name]
+                    set cmd [list $redirect_name $field_name {*}$args]
+                    with_ctx $context uplevel $cmd
+                    return
+                } else {
+                    set redirect_name "${context_tag}.${field_type}"
                     set redirect_exists_p [[namespace which check_alias] $redirect_name]
                     if { $redirect_exists_p } {
                         log "+++ $field_type $field_name $args -> redirect_name=$redirect_name"
-                        set context [list "unknown" "unknown" $redirect_name]
                         set cmd [list $redirect_name $field_name {*}$args]
-                        with_ctx $context uplevel $cmd
+                        with_ctx [list "unknown" "unknown" $redirect_name] uplevel $cmd
                         return
-                    } else {
-                        set redirect_name "${context_tag}.${field_type}"
-                        set redirect_exists_p [[namespace which check_alias] $redirect_name]
-                        if { $redirect_exists_p } {
-                            log "+++ $field_type $field_name $args -> redirect_name=$redirect_name"
-                            set cmd [list $redirect_name $field_name {*}$args]
-                            with_ctx [list "unknown" "unknown" $redirect_name] uplevel $cmd
-                            return
-                        }
                     }
                 }
-
-            } else {
-                error "no such field_type: $field_type stack_ctx=$::nest::lang::stack_ctx"
             }
+
+        } else {
+            error "no such field_type: $field_type stack_ctx=$::nest::lang::stack_ctx"
         }
+
     }
 
     namespace unknown unknown
-
-    proc import_helper {import_tag import_name args} {
-        set node [uplevel [list ::dom::createNodeInContext elementNode $import_tag -name $import_name {*}$args]]
-        uplevel [list namespace import ::${import_name}::lang::*]
-        return $node
-    }
-
-    alias "import" [namespace which "import_helper"]
 
     variable dtd
     proc dtd_helper {args} {
@@ -676,7 +626,7 @@ define_lang ::nest::lang {
         ]>
     }
 
-    namespace export "import" "struct" "varchar" "bool" "varint" "byte" "int16" "int32" "int64" "double" "multiple" "dtd" "lambda"
+    namespace export "struct" "varchar" "bool" "varint" "byte" "int16" "int32" "int64" "double" "multiple" "dtd" "lambda"
 
 }
 
