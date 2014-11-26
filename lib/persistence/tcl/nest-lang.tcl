@@ -45,7 +45,7 @@ define_lang ::basesys::lang {
     #     varchar subtype
     # }
     # 
-    # stack_ctx = {proc basetype bool} {eval struct typedecl} {proc struct struct}
+    # stack_ctx = {proc base_type bool} {eval struct typedecl} {proc struct struct}
     #
     # EXAMPLE 2:
     # 
@@ -54,7 +54,7 @@ define_lang ::basesys::lang {
     #   -> varchar address
     # }
     #
-    # stack_ctx = {proc basetype varchar} {eval struct email} {proc struct struct}
+    # stack_ctx = {proc base_type varchar} {eval struct email} {proc struct struct}
 
     proc push_ctx {ctx} {
         variable stack_ctx
@@ -218,7 +218,7 @@ define_lang ::basesys::lang {
         set nest [list with_ctx $context {*}$nest]
         uplevel [list [namespace which "alias"] $name $nest]
 
-        if { $type ni {meta basetype} } {
+        if { $type ni {meta base_type} } {
             $node appendFromScript {
                 ${type}.type $tag
                 name $name
@@ -439,7 +439,7 @@ define_lang ::basesys::lang {
 
             set lookahead_ctx [get_lookahead_ctx $inst_type]
             lassign $lookahead_ctx lookahead_ctx_type lookahead_ctx_tag lookahead_ctx_name
-            if { $lookahead_ctx_tag eq {basetype} } {
+            if { $lookahead_ctx_tag eq {base_type} } {
                 set args [list [list [namespace which "t"] [lindex $args 0]]]
             }
         }
@@ -496,31 +496,31 @@ define_lang ::basesys::lang {
         }
     }
 
-    meta "basetype" {nest {type_helper}}
+    meta "base_type" {nest {type_helper}}
 
     # a varying-length text string encoded using UTF-8 encoding
-    basetype "varchar"
+    base_type "varchar"
 
     # a boolean value (true or false)
-    basetype "bool"
+    base_type "bool"
 
     # a varying-bit signed integer
-    basetype "varint"
+    base_type "varint"
 
     # an 8-bit signed integer
-    basetype "byte"
+    base_type "byte"
 
     # a 16-bit signed integer
-    basetype "int16"
+    base_type "int16"
 
     # a 32-bit signed integer
-    basetype "int32"
+    base_type "int32"
 
     # a 64-bit signed integer
-    basetype "int64"
+    base_type "int64"
 
     # a 64-bit floating point number
-    basetype "double"
+    base_type "double"
 
     # EXPERIMENTAL
     # pair
