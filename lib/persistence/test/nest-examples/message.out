@@ -1,0 +1,731 @@
+!!! nest: multiple -> with_ctx {proc meta multiple} ::basesys::lang::multiple_helper
+!!! nest: map -> with_ctx {proc meta map} ::basesys::lang::map_helper
+!!! nest: typedecl -> with_ctx {proc meta typedecl} ::basesys::lang::typedecl_helper
+!!! nest: typeinst -> with_ctx {proc meta typeinst} ::basesys::lang::typeinst_helper
+!!! nest: base_type -> with_ctx {proc meta base_type} nest type_helper
+!!! nest: varchar -> with_ctx {proc base_type varchar} type_helper
+!!! nest: bool -> with_ctx {proc base_type bool} type_helper
+!!! nest: varint -> with_ctx {proc base_type varint} type_helper
+!!! nest: byte -> with_ctx {proc base_type byte} type_helper
+!!! nest: int16 -> with_ctx {proc base_type int16} type_helper
+!!! nest: int32 -> with_ctx {proc base_type int32} type_helper
+!!! nest: int64 -> with_ctx {proc base_type int64} type_helper
+!!! nest: double -> with_ctx {proc base_type double} type_helper
+!!! nest: struct -> with_ctx {proc meta struct} nest {nest {type_helper}}
+--->>> type_helper (is_declaration_mode_p=1) tag=varchar name=nsp {*}
+--->>> (typedecl_helper) context_path=struct stack_ctx={{proc base_type varchar} {eval struct struct} {proc meta struct}}
+--->>> type_helper (is_declaration_mode_p=1) tag=varchar name=name {*}
+--->>> (typedecl_helper) context_path=struct stack_ctx={{proc base_type varchar} {eval struct struct} {proc meta struct}}
+--->>> type_helper (is_declaration_mode_p=1) tag=varchar name=pk {*}
+--->>> (typedecl_helper) context_path=struct stack_ctx={{proc base_type varchar} {eval struct struct} {proc meta struct}}
+--->>> type_helper (is_declaration_mode_p=1) tag=bool name=is_final_if_no_scope {*}
+--->>> (typedecl_helper) context_path=struct stack_ctx={{proc base_type bool} {eval struct struct} {proc meta struct}}
++++++ (multiple declaration) tag=type=typedecl name=slot args== {} stack_ctx={proc struct struct} {eval struct struct} {proc meta struct} context=eval struct struct
+--->>> (typedecl_helper) context_path=struct stack_ctx={{proc struct struct} {eval struct struct} {proc meta struct}}
+!!! nest: struct -> with_ctx {proc struct struct} nest type_helper
+--->>> type_helper (is_declaration_mode_p=1) tag=varchar name=name {*}
+--->>> (typedecl_helper) context_path=typedecl stack_ctx={{proc base_type varchar} {eval struct typedecl} {proc struct struct}}
+--->>> type_helper (is_declaration_mode_p=1) tag=varchar name=type {*}
+--->>> (typedecl_helper) context_path=typedecl stack_ctx={{proc base_type varchar} {eval struct typedecl} {proc struct struct}}
+--->>> type_helper (is_declaration_mode_p=1) tag=varchar name=default_value {*}= {}
+--->>> (typedecl_helper) context_path=typedecl stack_ctx={{proc base_type varchar} {eval struct typedecl} {proc struct struct}}
+--->>> type_helper (is_declaration_mode_p=1) tag=bool name=optional_p {*}= false
+--->>> (typedecl_helper) context_path=typedecl stack_ctx={{proc base_type bool} {eval struct typedecl} {proc struct struct}}
+--->>> type_helper (is_declaration_mode_p=1) tag=varchar name=container {*}= {}
+--->>> (typedecl_helper) context_path=typedecl stack_ctx={{proc base_type varchar} {eval struct typedecl} {proc struct struct}}
+!!! nest: typedecl -> with_ctx {proc struct typedecl} type_helper
+--->>> type_helper (is_declaration_mode_p=1) tag=varchar name=name {*}= {}
+--->>> (typedecl_helper) context_path=email stack_ctx={{proc base_type varchar} {eval struct email} {proc struct struct}}
+--->>> type_helper (is_declaration_mode_p=1) tag=varchar name=address {*}
+--->>> (typedecl_helper) context_path=email stack_ctx={{proc base_type varchar} {eval struct email} {proc struct struct}}
+!!! nest: email -> with_ctx {proc struct email} type_helper
+--->>> type_helper (is_declaration_mode_p=1) tag=varchar name=name {*}
+--->>> (typedecl_helper) context_path=file stack_ctx={{proc base_type varchar} {eval struct file} {proc struct struct}}
+--->>> type_helper (is_declaration_mode_p=1) tag=varchar name=mime_type {*}
+--->>> (typedecl_helper) context_path=file stack_ctx={{proc base_type varchar} {eval struct file} {proc struct struct}}
+--->>> type_helper (is_declaration_mode_p=1) tag=int32 name=size {*}
+--->>> (typedecl_helper) context_path=file stack_ctx={{proc base_type int32} {eval struct file} {proc struct struct}}
+!!! nest: file -> with_ctx {proc struct file} type_helper
+--->>> type_helper (is_declaration_mode_p=1) tag=varchar name=name {*}
+--->>> (typedecl_helper) context_path=folder stack_ctx={{proc base_type varchar} {eval struct folder} {proc struct struct}}
+--->>> type_helper (is_declaration_mode_p=1) tag=int32 name=num_items {*}
+--->>> (typedecl_helper) context_path=folder stack_ctx={{proc base_type int32} {eval struct folder} {proc struct struct}}
+!!! nest: folder -> with_ctx {proc struct folder} type_helper
+--->>> type_helper (is_declaration_mode_p=1) tag=varchar name=category_name {*}
+--->>> (typedecl_helper) context_path=category stack_ctx={{proc base_type varchar} {eval struct category} {proc struct struct}}
+--->>> type_helper (is_declaration_mode_p=1) tag=varchar name=parent_category {*}
+--->>> (typedecl_helper) context_path=category stack_ctx={{proc base_type varchar} {eval struct category} {proc struct struct}}
+!!! nest: category -> with_ctx {proc struct category} type_helper
+--->>> type_helper (is_declaration_mode_p=1) tag=varchar name=word {*}
+--->>> (typedecl_helper) context_path=word_count_pair stack_ctx={{proc base_type varchar} {eval struct word_count_pair} {proc struct struct}}
+--->>> type_helper (is_declaration_mode_p=1) tag=varint name=count {*}
+--->>> (typedecl_helper) context_path=word_count_pair stack_ctx={{proc base_type varint} {eval struct word_count_pair} {proc struct struct}}
+!!! nest: word_count_pair -> with_ctx {proc struct word_count_pair} type_helper
+--->>> (unknown) pk message_id args=
++++ pk message_id  -> redirect_name=struct.pk
+--->>> (typeinst_helper) context={proc varchar struct.pk} stack_ctx={{proc varchar struct.pk} {unknown struct struct.pk} {eval struct message} {proc struct struct}}
+--->>> (unknown) is_final_if_no_scope yes args=
++++ is_final_if_no_scope yes  -> redirect_name=struct.is_final_if_no_scope
+--->>> (typeinst_helper) context={proc bool struct.is_final_if_no_scope} stack_ctx={{proc bool struct.is_final_if_no_scope} {unknown struct struct.is_final_if_no_scope} {eval struct message} {proc struct struct}}
+--->>> (unknown) slot 
+        name "message_id"
+        type "varint"
+     args=
++++ slot 
+        name "message_id"
+        type "varint"
+      -> redirect_name=struct.slot
+--->>> (typeinst_helper) context={proc typedecl struct.slot} stack_ctx={{proc typedecl struct.slot} {unknown struct struct.slot} {eval struct message} {proc struct struct}}
+--->>> (unknown) name message_id args=
++++ name message_id  -> redirect_name=struct.slot.name
+--->>> (typeinst_helper) context={proc varchar typedecl.name} stack_ctx={{proc varchar typedecl.name} {unknown typedecl typedecl.name} {eval typeinst struct.slot} {proc typedecl struct.slot} {unknown struct struct.slot} {eval struct message} {proc struct struct}}
+--->>> (unknown) type varint args=
++++ type varint  -> redirect_name=struct.slot.type
+--->>> (typeinst_helper) context={proc varchar typedecl.type} stack_ctx={{proc varchar typedecl.type} {unknown typedecl typedecl.type} {eval typeinst struct.slot} {proc typedecl struct.slot} {unknown struct struct.slot} {eval struct message} {proc struct struct}}
+--->>> (unknown) slot 
+        name "device"
+        type "varchar"
+        default_value "sms"
+     args=
++++ slot 
+        name "device"
+        type "varchar"
+        default_value "sms"
+      -> redirect_name=struct.slot
+--->>> (typeinst_helper) context={proc typedecl struct.slot} stack_ctx={{proc typedecl struct.slot} {unknown struct struct.slot} {eval struct message} {proc struct struct}}
+--->>> (unknown) name device args=
++++ name device  -> redirect_name=struct.slot.name
+--->>> (typeinst_helper) context={proc varchar typedecl.name} stack_ctx={{proc varchar typedecl.name} {unknown typedecl typedecl.name} {eval typeinst struct.slot} {proc typedecl struct.slot} {unknown struct struct.slot} {eval struct message} {proc struct struct}}
+--->>> (unknown) type varchar args=
++++ type varchar  -> redirect_name=struct.slot.type
+--->>> (typeinst_helper) context={proc varchar typedecl.type} stack_ctx={{proc varchar typedecl.type} {unknown typedecl typedecl.type} {eval typeinst struct.slot} {proc typedecl struct.slot} {unknown struct struct.slot} {eval struct message} {proc struct struct}}
+--->>> (unknown) default_value sms args=
++++ default_value sms  -> redirect_name=struct.slot.default_value
+--->>> (typeinst_helper) context={proc varchar typedecl.default_value} stack_ctx={{proc varchar typedecl.default_value} {unknown typedecl typedecl.default_value} {eval typeinst struct.slot} {proc typedecl struct.slot} {unknown struct struct.slot} {eval struct message} {proc struct struct}}
+--->>> (unknown) slot 
+        name "num_comments"
+        type "int16"
+        default_value 0
+     args=
++++ slot 
+        name "num_comments"
+        type "int16"
+        default_value 0
+      -> redirect_name=struct.slot
+--->>> (typeinst_helper) context={proc typedecl struct.slot} stack_ctx={{proc typedecl struct.slot} {unknown struct struct.slot} {eval struct message} {proc struct struct}}
+--->>> (unknown) name num_comments args=
++++ name num_comments  -> redirect_name=struct.slot.name
+--->>> (typeinst_helper) context={proc varchar typedecl.name} stack_ctx={{proc varchar typedecl.name} {unknown typedecl typedecl.name} {eval typeinst struct.slot} {proc typedecl struct.slot} {unknown struct struct.slot} {eval struct message} {proc struct struct}}
+--->>> (unknown) type int16 args=
++++ type int16  -> redirect_name=struct.slot.type
+--->>> (typeinst_helper) context={proc varchar typedecl.type} stack_ctx={{proc varchar typedecl.type} {unknown typedecl typedecl.type} {eval typeinst struct.slot} {proc typedecl struct.slot} {unknown struct struct.slot} {eval struct message} {proc struct struct}}
+--->>> (unknown) default_value 0 args=
++++ default_value 0  -> redirect_name=struct.slot.default_value
+--->>> (typeinst_helper) context={proc varchar typedecl.default_value} stack_ctx={{proc varchar typedecl.default_value} {unknown typedecl typedecl.default_value} {eval typeinst struct.slot} {proc typedecl struct.slot} {unknown struct struct.slot} {eval struct message} {proc struct struct}}
+--->>> type_helper (is_declaration_mode_p=1) tag=varint name=message_id {*}
+--->>> (typedecl_helper) context_path=message stack_ctx={{proc base_type varint} {eval struct message} {proc struct struct}}
+--->>> type_helper (is_declaration_mode_p=1) tag=varchar name=device {*}= sms
+--->>> (typedecl_helper) context_path=message stack_ctx={{proc base_type varchar} {eval struct message} {proc struct struct}}
+--->>> type_helper (is_declaration_mode_p=1) tag=int16 name=num_comments {*}= 0
+--->>> (typedecl_helper) context_path=message stack_ctx={{proc base_type int16} {eval struct message} {proc struct struct}}
+--->>> type_helper (is_declaration_mode_p=1) tag=varchar name=subject {*}
+--->>> (typedecl_helper) context_path=message stack_ctx={{proc base_type varchar} {eval struct message} {proc struct struct}}
+--->>> type_helper (is_declaration_mode_p=1) tag=varchar name=body {*}
+--->>> (typedecl_helper) context_path=message stack_ctx={{proc base_type varchar} {eval struct message} {proc struct struct}}
+--->>> type_helper (is_declaration_mode_p=1) tag=email name=from {*}
+--->>> (typedecl_helper) context_path=message stack_ctx={{proc struct email} {eval struct message} {proc struct struct}}
++++++ (multiple declaration) tag=type=email name=to args= stack_ctx={proc struct message} {eval struct message} {proc struct struct} context=eval struct message
+--->>> (typedecl_helper) context_path=message stack_ctx={{proc struct message} {eval struct message} {proc struct struct}}
++++++ (multiple declaration) tag=type=email name=cc args== {} stack_ctx={proc struct message} {eval struct message} {proc struct struct} context=eval struct message
+--->>> (typedecl_helper) context_path=message stack_ctx={{proc struct message} {eval struct message} {proc struct struct}}
++++++ (multiple declaration) tag=type=email name=bcc args== {} stack_ctx={proc struct message} {eval struct message} {proc struct struct} context=eval struct message
+--->>> (typedecl_helper) context_path=message stack_ctx={{proc struct message} {eval struct message} {proc struct struct}}
+--->>> type_helper (is_declaration_mode_p=1) tag=bool name=public_p {*}= false
+--->>> (typedecl_helper) context_path=message stack_ctx={{proc base_type bool} {eval struct message} {proc struct struct}}
++++++ (multiple declaration) tag=type=category name=categories args== {} stack_ctx={proc struct message} {eval struct message} {proc struct struct} context=eval struct message
+--->>> (typedecl_helper) context_path=message stack_ctx={{proc struct message} {eval struct message} {proc struct struct}}
++++++ (multiple declaration) tag=type=folder name=folders args== {} stack_ctx={proc struct message} {eval struct message} {proc struct struct} context=eval struct message
+--->>> (typedecl_helper) context_path=message stack_ctx={{proc struct message} {eval struct message} {proc struct struct}}
++++++ (multiple declaration) tag=type=varchar name=tags args== {} stack_ctx={proc struct message} {eval struct message} {proc struct struct} context=eval struct message
+--->>> (typedecl_helper) context_path=message stack_ctx={{proc struct message} {eval struct message} {proc struct struct}}
++++++ (multiple declaration) tag=type=file name=attachment args== {} stack_ctx={proc struct message} {eval struct message} {proc struct struct} context=eval struct message
+--->>> (typedecl_helper) context_path=message stack_ctx={{proc struct message} {eval struct message} {proc struct struct}}
+--->>> (unknown) list<varchar> something args=
+--->>> (unknown) map<varchar,int32> wordcount_W args=
+----- (map declaration) tag=type=struct name=wordcount_X args== {} {
+        varchar word
+        int32 count
+    } stack_ctx={proc struct message} {eval struct message} {proc struct struct} context=eval struct message
+--->>> type_helper (is_declaration_mode_p=1) tag=varchar name=word {*}
+--->>> (typedecl_helper) context_path=message.wordcount_X stack_ctx={{proc base_type varchar} {eval typedecl wordcount_X} {proc struct message} {eval struct message} {proc struct struct}}
+--->>> type_helper (is_declaration_mode_p=1) tag=int32 name=count {*}
+--->>> (typedecl_helper) context_path=message.wordcount_X stack_ctx={{proc base_type int32} {eval typedecl wordcount_X} {proc struct message} {eval struct message} {proc struct struct}}
+--->>> (typedecl_helper) context_path=message stack_ctx={{proc struct message} {eval struct message} {proc struct struct}}
+----- (map declaration) tag=type=word_count_pair name=wordcount_Y args= stack_ctx={proc struct message} {eval struct message} {proc struct struct} context=eval struct message
+--->>> (typedecl_helper) context_path=message stack_ctx={{proc struct message} {eval struct message} {proc struct struct}}
+----- (map declaration) tag=type=word_count_pair name=wordcount_Z args== {} stack_ctx={proc struct message} {eval struct message} {proc struct struct} context=eval struct message
+--->>> (typedecl_helper) context_path=message stack_ctx={{proc struct message} {eval struct message} {proc struct struct}}
+--->>> (unknown) set<varchar> words args=
+!!! nest: message -> with_ctx {proc struct message} type_helper
+--->>> (typeinst_helper) context={proc meta typeinst} stack_ctx={{proc meta typeinst}}
+--->>> (typeinst_helper) context={proc meta typeinst} stack_ctx={{proc meta typeinst} {eval typeinst msg1} {proc meta typeinst}}
+--->>> (typeinst_helper) context={proc meta typeinst} stack_ctx={{proc meta typeinst} {eval typeinst msg1} {proc meta typeinst}}
+--->>> (typeinst_helper) context={proc meta typeinst} stack_ctx={{proc meta typeinst} {eval typeinst from} {proc meta typeinst} {eval typeinst msg1} {proc meta typeinst}}
+--->>> (typeinst_helper) context={proc meta typeinst} stack_ctx={{proc meta typeinst} {eval typeinst from} {proc meta typeinst} {eval typeinst msg1} {proc meta typeinst}}
+--->>> (typeinst_helper) context={proc meta typeinst} stack_ctx={{proc meta typeinst} {eval typeinst msg1} {proc meta typeinst}}
+--->>> type_helper (is_declaration_mode_p=0) tag=message name=msg2 {*}{
+    varchar subject = "hello"
+    email from {
+        varchar name = "zena wow"
+        varchar address = "zena@example.com"
+    }
+    varchar body = "this is a test"
+}
+--->>> (typeinst_helper) context={proc struct message} stack_ctx={{proc struct message}}
+--->>> type_helper (is_declaration_mode_p=0) tag=varchar name=subject {*}= hello
+--->>> (typeinst_helper) context={proc base_type varchar} stack_ctx={{proc base_type varchar} {eval typeinst msg2} {proc struct message}}
+--->>> type_helper (is_declaration_mode_p=0) tag=email name=from {*}{
+        varchar name = "zena wow"
+        varchar address = "zena@example.com"
+    }
+--->>> (typeinst_helper) context={proc struct email} stack_ctx={{proc struct email} {eval typeinst msg2} {proc struct message}}
+--->>> type_helper (is_declaration_mode_p=0) tag=varchar name=name {*}= {zena wow}
+--->>> (typeinst_helper) context={proc base_type varchar} stack_ctx={{proc base_type varchar} {eval typeinst from} {proc struct email} {eval typeinst msg2} {proc struct message}}
+--->>> type_helper (is_declaration_mode_p=0) tag=varchar name=address {*}= zena@example.com
+--->>> (typeinst_helper) context={proc base_type varchar} stack_ctx={{proc base_type varchar} {eval typeinst from} {proc struct email} {eval typeinst msg2} {proc struct message}}
+--->>> type_helper (is_declaration_mode_p=0) tag=varchar name=body {*}= {this is a test}
+--->>> (typeinst_helper) context={proc base_type varchar} stack_ctx={{proc base_type varchar} {eval typeinst msg2} {proc struct message}}
+--->>> type_helper (is_declaration_mode_p=0) tag=message name=msg3 {*}{
+    message.subject "hello"
+    message.from {
+        email.name "zena wow"
+        email.address "zena@example.com"
+    }
+    message.to {
+        email.name "paris love"
+        email.address "bff@example.com"
+    }
+    message.body = "this is a test"
+    message.cc { 
+        email.name "jane awesome"
+        email.address "jane@example.com"
+    }
+    message.cc { 
+        email.name "someone great" 
+        email.address "someone@example.com" 
+    }
+    multiple message.bcc {{
+        email.name "vera cool"
+        email.address "vera@example.com"
+    } {
+        email.name "greg wise"
+        email.address "greg@example.com"
+    } {
+        email.name "max loyal"
+        email.address "max@example.com"
+    }}
+    map message.wordcount_X {{
+        message.wordcount_X.word "the"
+        message.wordcount_X.count "123"
+    } {
+        message.wordcount_X.word "and"
+        message.wordcount_X.count "54"
+    }}
+    map message.wordcount_Y {{
+        word_count_pair.word "the"
+        word_count_pair.count "123"
+    } {
+        word_count_pair.word "and"
+        word_count_pair.count "54"
+    }}
+}
+--->>> (typeinst_helper) context={proc struct message} stack_ctx={{proc struct message}}
+--->>> (typeinst_helper) context={proc varchar message.subject} stack_ctx={{proc varchar message.subject} {eval typeinst msg3} {proc struct message}}
+--->>> (typeinst_helper) context={proc email message.from} stack_ctx={{proc email message.from} {eval typeinst msg3} {proc struct message}}
+--->>> (typeinst_helper) context={proc varchar email.name} stack_ctx={{proc varchar email.name} {eval typeinst message.from} {proc email message.from} {eval typeinst msg3} {proc struct message}}
+--->>> (typeinst_helper) context={proc varchar email.address} stack_ctx={{proc varchar email.address} {eval typeinst message.from} {proc email message.from} {eval typeinst msg3} {proc struct message}}
+--->>> (typeinst_helper) context={proc email message.to} stack_ctx={{proc email message.to} {eval typeinst msg3} {proc struct message}}
+--->>> (typeinst_helper) context={proc varchar email.name} stack_ctx={{proc varchar email.name} {eval typeinst message.to} {proc email message.to} {eval typeinst msg3} {proc struct message}}
+--->>> (typeinst_helper) context={proc varchar email.address} stack_ctx={{proc varchar email.address} {eval typeinst message.to} {proc email message.to} {eval typeinst msg3} {proc struct message}}
+--->>> (typeinst_helper) context={proc varchar message.body} stack_ctx={{proc varchar message.body} {eval typeinst msg3} {proc struct message}}
+--->>> (typeinst_helper) context={proc email message.cc} stack_ctx={{proc email message.cc} {eval typeinst msg3} {proc struct message}}
+--->>> (typeinst_helper) context={proc varchar email.name} stack_ctx={{proc varchar email.name} {eval typeinst message.cc} {proc email message.cc} {eval typeinst msg3} {proc struct message}}
+--->>> (typeinst_helper) context={proc varchar email.address} stack_ctx={{proc varchar email.address} {eval typeinst message.cc} {proc email message.cc} {eval typeinst msg3} {proc struct message}}
+--->>> (typeinst_helper) context={proc email message.cc} stack_ctx={{proc email message.cc} {eval typeinst msg3} {proc struct message}}
+--->>> (typeinst_helper) context={proc varchar email.name} stack_ctx={{proc varchar email.name} {eval typeinst message.cc} {proc email message.cc} {eval typeinst msg3} {proc struct message}}
+--->>> (typeinst_helper) context={proc varchar email.address} stack_ctx={{proc varchar email.address} {eval typeinst message.cc} {proc email message.cc} {eval typeinst msg3} {proc struct message}}
++++++ (multiple instantiation) name=message.bcc args={{
+        email.name "vera cool"
+        email.address "vera@example.com"
+    } {
+        email.name "greg wise"
+        email.address "greg@example.com"
+    } {
+        email.name "max loyal"
+        email.address "max@example.com"
+    }}
+--->>> (typeinst_helper) context={proc email message.bcc} stack_ctx={{proc email message.bcc} {eval typeinst msg3} {proc struct message}}
+--->>> (typeinst_helper) context={proc varchar email.name} stack_ctx={{proc varchar email.name} {eval typeinst message.bcc} {proc email message.bcc} {eval typeinst msg3} {proc struct message}}
+--->>> (typeinst_helper) context={proc varchar email.address} stack_ctx={{proc varchar email.address} {eval typeinst message.bcc} {proc email message.bcc} {eval typeinst msg3} {proc struct message}}
+--->>> (typeinst_helper) context={proc email message.bcc} stack_ctx={{proc email message.bcc} {eval typeinst msg3} {proc struct message}}
+--->>> (typeinst_helper) context={proc varchar email.name} stack_ctx={{proc varchar email.name} {eval typeinst message.bcc} {proc email message.bcc} {eval typeinst msg3} {proc struct message}}
+--->>> (typeinst_helper) context={proc varchar email.address} stack_ctx={{proc varchar email.address} {eval typeinst message.bcc} {proc email message.bcc} {eval typeinst msg3} {proc struct message}}
+--->>> (typeinst_helper) context={proc email message.bcc} stack_ctx={{proc email message.bcc} {eval typeinst msg3} {proc struct message}}
+--->>> (typeinst_helper) context={proc varchar email.name} stack_ctx={{proc varchar email.name} {eval typeinst message.bcc} {proc email message.bcc} {eval typeinst msg3} {proc struct message}}
+--->>> (typeinst_helper) context={proc varchar email.address} stack_ctx={{proc varchar email.address} {eval typeinst message.bcc} {proc email message.bcc} {eval typeinst msg3} {proc struct message}}
+----- (map instantiation) name=message.wordcount_X args={{
+        message.wordcount_X.word "the"
+        message.wordcount_X.count "123"
+    } {
+        message.wordcount_X.word "and"
+        message.wordcount_X.count "54"
+    }}
+--->>> (typeinst_helper) context={proc struct message.wordcount_X} stack_ctx={{proc struct message.wordcount_X} {eval typeinst msg3} {proc struct message}}
+--->>> (typeinst_helper) context={proc varchar message.wordcount_X.word} stack_ctx={{proc varchar message.wordcount_X.word} {eval typeinst message.wordcount_X} {proc struct message.wordcount_X} {eval typeinst msg3} {proc struct message}}
+--->>> (typeinst_helper) context={proc int32 message.wordcount_X.count} stack_ctx={{proc int32 message.wordcount_X.count} {eval typeinst message.wordcount_X} {proc struct message.wordcount_X} {eval typeinst msg3} {proc struct message}}
+--->>> (typeinst_helper) context={proc struct message.wordcount_X} stack_ctx={{proc struct message.wordcount_X} {eval typeinst msg3} {proc struct message}}
+--->>> (typeinst_helper) context={proc varchar message.wordcount_X.word} stack_ctx={{proc varchar message.wordcount_X.word} {eval typeinst message.wordcount_X} {proc struct message.wordcount_X} {eval typeinst msg3} {proc struct message}}
+--->>> (typeinst_helper) context={proc int32 message.wordcount_X.count} stack_ctx={{proc int32 message.wordcount_X.count} {eval typeinst message.wordcount_X} {proc struct message.wordcount_X} {eval typeinst msg3} {proc struct message}}
+----- (map instantiation) name=message.wordcount_Y args={{
+        word_count_pair.word "the"
+        word_count_pair.count "123"
+    } {
+        word_count_pair.word "and"
+        word_count_pair.count "54"
+    }}
+--->>> (typeinst_helper) context={proc word_count_pair message.wordcount_Y} stack_ctx={{proc word_count_pair message.wordcount_Y} {eval typeinst msg3} {proc struct message}}
+--->>> (typeinst_helper) context={proc varchar word_count_pair.word} stack_ctx={{proc varchar word_count_pair.word} {eval typeinst message.wordcount_Y} {proc word_count_pair message.wordcount_Y} {eval typeinst msg3} {proc struct message}}
+--->>> (typeinst_helper) context={proc varint word_count_pair.count} stack_ctx={{proc varint word_count_pair.count} {eval typeinst message.wordcount_Y} {proc word_count_pair message.wordcount_Y} {eval typeinst msg3} {proc struct message}}
+--->>> (typeinst_helper) context={proc word_count_pair message.wordcount_Y} stack_ctx={{proc word_count_pair message.wordcount_Y} {eval typeinst msg3} {proc struct message}}
+--->>> (typeinst_helper) context={proc varchar word_count_pair.word} stack_ctx={{proc varchar word_count_pair.word} {eval typeinst message.wordcount_Y} {proc word_count_pair message.wordcount_Y} {eval typeinst msg3} {proc struct message}}
+--->>> (typeinst_helper) context={proc varint word_count_pair.count} stack_ctx={{proc varint word_count_pair.count} {eval typeinst message.wordcount_Y} {proc word_count_pair message.wordcount_Y} {eval typeinst msg3} {proc struct message}}
+--->>> type_helper (is_declaration_mode_p=0) tag=message name=msg4 {*}{
+    subject "hello"
+    from {
+        name "zena wow"
+        address "zena@example.com"
+    }
+    body "this is a test"
+    to {
+        name "paris love"
+        address "bff@example.com"
+    }
+    cc { 
+        name "jane awesome"
+        address "jane@example.com"
+    }
+    cc { 
+        name "someone great" 
+        address "someone@example.com" 
+    }
+    multiple bcc {{
+        name "vera cool"
+        address "vera@example.com"
+    } {
+        name "greg wise"
+        address "greg@example.com"
+    } {
+        name "max loyal"
+        address "max@example.com"
+    }}
+    map wordcount_X {{
+        word "the"
+        count "123"
+    } {
+        word "and"
+        count "54"
+    }}
+    map wordcount_Y {{
+        word "the"
+        count "123"
+    } {
+        word "and"
+        count "54"
+    }}
+}
+--->>> (typeinst_helper) context={proc struct message} stack_ctx={{proc struct message}}
+--->>> (unknown) subject hello args=
++++ subject hello  -> redirect_name=message.subject
+--->>> (typeinst_helper) context={proc varchar message.subject} stack_ctx={{proc varchar message.subject} {unknown struct message.subject} {eval typeinst msg4} {proc struct message}}
+--->>> (unknown) from 
+        name "zena wow"
+        address "zena@example.com"
+     args=
++++ from 
+        name "zena wow"
+        address "zena@example.com"
+      -> redirect_name=message.from
+--->>> (typeinst_helper) context={proc email message.from} stack_ctx={{proc email message.from} {unknown struct message.from} {eval typeinst msg4} {proc struct message}}
+--->>> (unknown) name zena wow args=
++++ name zena wow  -> redirect_name=message.from.name
+--->>> (typeinst_helper) context={proc varchar email.name} stack_ctx={{proc varchar email.name} {unknown email email.name} {eval typeinst message.from} {proc email message.from} {unknown struct message.from} {eval typeinst msg4} {proc struct message}}
+--->>> (unknown) address zena@example.com args=
++++ address zena@example.com  -> redirect_name=message.from.address
+--->>> (typeinst_helper) context={proc varchar email.address} stack_ctx={{proc varchar email.address} {unknown email email.address} {eval typeinst message.from} {proc email message.from} {unknown struct message.from} {eval typeinst msg4} {proc struct message}}
+--->>> (unknown) body this is a test args=
++++ body this is a test  -> redirect_name=message.body
+--->>> (typeinst_helper) context={proc varchar message.body} stack_ctx={{proc varchar message.body} {unknown struct message.body} {eval typeinst msg4} {proc struct message}}
+--->>> (unknown) to 
+        name "paris love"
+        address "bff@example.com"
+     args=
++++ to 
+        name "paris love"
+        address "bff@example.com"
+      -> redirect_name=message.to
+--->>> (typeinst_helper) context={proc email message.to} stack_ctx={{proc email message.to} {unknown struct message.to} {eval typeinst msg4} {proc struct message}}
+--->>> (unknown) name paris love args=
++++ name paris love  -> redirect_name=message.to.name
+--->>> (typeinst_helper) context={proc varchar email.name} stack_ctx={{proc varchar email.name} {unknown email email.name} {eval typeinst message.to} {proc email message.to} {unknown struct message.to} {eval typeinst msg4} {proc struct message}}
+--->>> (unknown) address bff@example.com args=
++++ address bff@example.com  -> redirect_name=message.to.address
+--->>> (typeinst_helper) context={proc varchar email.address} stack_ctx={{proc varchar email.address} {unknown email email.address} {eval typeinst message.to} {proc email message.to} {unknown struct message.to} {eval typeinst msg4} {proc struct message}}
+--->>> (unknown) cc  
+        name "jane awesome"
+        address "jane@example.com"
+     args=
++++ cc  
+        name "jane awesome"
+        address "jane@example.com"
+      -> redirect_name=message.cc
+--->>> (typeinst_helper) context={proc email message.cc} stack_ctx={{proc email message.cc} {unknown struct message.cc} {eval typeinst msg4} {proc struct message}}
+--->>> (unknown) name jane awesome args=
++++ name jane awesome  -> redirect_name=message.cc.name
+--->>> (typeinst_helper) context={proc varchar email.name} stack_ctx={{proc varchar email.name} {unknown email email.name} {eval typeinst message.cc} {proc email message.cc} {unknown struct message.cc} {eval typeinst msg4} {proc struct message}}
+--->>> (unknown) address jane@example.com args=
++++ address jane@example.com  -> redirect_name=message.cc.address
+--->>> (typeinst_helper) context={proc varchar email.address} stack_ctx={{proc varchar email.address} {unknown email email.address} {eval typeinst message.cc} {proc email message.cc} {unknown struct message.cc} {eval typeinst msg4} {proc struct message}}
+--->>> (unknown) cc  
+        name "someone great" 
+        address "someone@example.com" 
+     args=
++++ cc  
+        name "someone great" 
+        address "someone@example.com" 
+      -> redirect_name=message.cc
+--->>> (typeinst_helper) context={proc email message.cc} stack_ctx={{proc email message.cc} {unknown struct message.cc} {eval typeinst msg4} {proc struct message}}
+--->>> (unknown) name someone great args=
++++ name someone great  -> redirect_name=message.cc.name
+--->>> (typeinst_helper) context={proc varchar email.name} stack_ctx={{proc varchar email.name} {unknown email email.name} {eval typeinst message.cc} {proc email message.cc} {unknown struct message.cc} {eval typeinst msg4} {proc struct message}}
+--->>> (unknown) address someone@example.com args=
++++ address someone@example.com  -> redirect_name=message.cc.address
+--->>> (typeinst_helper) context={proc varchar email.address} stack_ctx={{proc varchar email.address} {unknown email email.address} {eval typeinst message.cc} {proc email message.cc} {unknown struct message.cc} {eval typeinst msg4} {proc struct message}}
++++++ (multiple instantiation) name=bcc args={{
+        name "vera cool"
+        address "vera@example.com"
+    } {
+        name "greg wise"
+        address "greg@example.com"
+    } {
+        name "max loyal"
+        address "max@example.com"
+    }}
+--->>> (unknown) bcc 
+        name "vera cool"
+        address "vera@example.com"
+     args=
++++ bcc 
+        name "vera cool"
+        address "vera@example.com"
+      -> redirect_name=message.bcc
+--->>> (typeinst_helper) context={proc email message.bcc} stack_ctx={{proc email message.bcc} {unknown struct message.bcc} {eval typeinst msg4} {proc struct message}}
+--->>> (unknown) name vera cool args=
++++ name vera cool  -> redirect_name=message.bcc.name
+--->>> (typeinst_helper) context={proc varchar email.name} stack_ctx={{proc varchar email.name} {unknown email email.name} {eval typeinst message.bcc} {proc email message.bcc} {unknown struct message.bcc} {eval typeinst msg4} {proc struct message}}
+--->>> (unknown) address vera@example.com args=
++++ address vera@example.com  -> redirect_name=message.bcc.address
+--->>> (typeinst_helper) context={proc varchar email.address} stack_ctx={{proc varchar email.address} {unknown email email.address} {eval typeinst message.bcc} {proc email message.bcc} {unknown struct message.bcc} {eval typeinst msg4} {proc struct message}}
+--->>> (unknown) bcc 
+        name "greg wise"
+        address "greg@example.com"
+     args=
++++ bcc 
+        name "greg wise"
+        address "greg@example.com"
+      -> redirect_name=message.bcc
+--->>> (typeinst_helper) context={proc email message.bcc} stack_ctx={{proc email message.bcc} {unknown struct message.bcc} {eval typeinst msg4} {proc struct message}}
+--->>> (unknown) name greg wise args=
++++ name greg wise  -> redirect_name=message.bcc.name
+--->>> (typeinst_helper) context={proc varchar email.name} stack_ctx={{proc varchar email.name} {unknown email email.name} {eval typeinst message.bcc} {proc email message.bcc} {unknown struct message.bcc} {eval typeinst msg4} {proc struct message}}
+--->>> (unknown) address greg@example.com args=
++++ address greg@example.com  -> redirect_name=message.bcc.address
+--->>> (typeinst_helper) context={proc varchar email.address} stack_ctx={{proc varchar email.address} {unknown email email.address} {eval typeinst message.bcc} {proc email message.bcc} {unknown struct message.bcc} {eval typeinst msg4} {proc struct message}}
+--->>> (unknown) bcc 
+        name "max loyal"
+        address "max@example.com"
+     args=
++++ bcc 
+        name "max loyal"
+        address "max@example.com"
+      -> redirect_name=message.bcc
+--->>> (typeinst_helper) context={proc email message.bcc} stack_ctx={{proc email message.bcc} {unknown struct message.bcc} {eval typeinst msg4} {proc struct message}}
+--->>> (unknown) name max loyal args=
++++ name max loyal  -> redirect_name=message.bcc.name
+--->>> (typeinst_helper) context={proc varchar email.name} stack_ctx={{proc varchar email.name} {unknown email email.name} {eval typeinst message.bcc} {proc email message.bcc} {unknown struct message.bcc} {eval typeinst msg4} {proc struct message}}
+--->>> (unknown) address max@example.com args=
++++ address max@example.com  -> redirect_name=message.bcc.address
+--->>> (typeinst_helper) context={proc varchar email.address} stack_ctx={{proc varchar email.address} {unknown email email.address} {eval typeinst message.bcc} {proc email message.bcc} {unknown struct message.bcc} {eval typeinst msg4} {proc struct message}}
+----- (map instantiation) name=wordcount_X args={{
+        word "the"
+        count "123"
+    } {
+        word "and"
+        count "54"
+    }}
+--->>> (unknown) wordcount_X 
+        word "the"
+        count "123"
+     args=
++++ wordcount_X 
+        word "the"
+        count "123"
+      -> redirect_name=message.wordcount_X
+--->>> (typeinst_helper) context={proc struct message.wordcount_X} stack_ctx={{proc struct message.wordcount_X} {unknown struct message.wordcount_X} {eval typeinst msg4} {proc struct message}}
+--->>> (unknown) word the args=
++++ word the  -> redirect_name=message.wordcount_X.word
+--->>> (typeinst_helper) context={proc varchar message.wordcount_X.word} stack_ctx={{proc varchar message.wordcount_X.word} {unknown struct message.wordcount_X.word} {eval typeinst message.wordcount_X} {proc struct message.wordcount_X} {unknown struct message.wordcount_X} {eval typeinst msg4} {proc struct message}}
+--->>> (unknown) count 123 args=
++++ count 123  -> redirect_name=message.wordcount_X.count
+--->>> (typeinst_helper) context={proc int32 message.wordcount_X.count} stack_ctx={{proc int32 message.wordcount_X.count} {unknown struct message.wordcount_X.count} {eval typeinst message.wordcount_X} {proc struct message.wordcount_X} {unknown struct message.wordcount_X} {eval typeinst msg4} {proc struct message}}
+--->>> (unknown) wordcount_X 
+        word "and"
+        count "54"
+     args=
++++ wordcount_X 
+        word "and"
+        count "54"
+      -> redirect_name=message.wordcount_X
+--->>> (typeinst_helper) context={proc struct message.wordcount_X} stack_ctx={{proc struct message.wordcount_X} {unknown struct message.wordcount_X} {eval typeinst msg4} {proc struct message}}
+--->>> (unknown) word and args=
++++ word and  -> redirect_name=message.wordcount_X.word
+--->>> (typeinst_helper) context={proc varchar message.wordcount_X.word} stack_ctx={{proc varchar message.wordcount_X.word} {unknown struct message.wordcount_X.word} {eval typeinst message.wordcount_X} {proc struct message.wordcount_X} {unknown struct message.wordcount_X} {eval typeinst msg4} {proc struct message}}
+--->>> (unknown) count 54 args=
++++ count 54  -> redirect_name=message.wordcount_X.count
+--->>> (typeinst_helper) context={proc int32 message.wordcount_X.count} stack_ctx={{proc int32 message.wordcount_X.count} {unknown struct message.wordcount_X.count} {eval typeinst message.wordcount_X} {proc struct message.wordcount_X} {unknown struct message.wordcount_X} {eval typeinst msg4} {proc struct message}}
+----- (map instantiation) name=wordcount_Y args={{
+        word "the"
+        count "123"
+    } {
+        word "and"
+        count "54"
+    }}
+--->>> (unknown) wordcount_Y 
+        word "the"
+        count "123"
+     args=
++++ wordcount_Y 
+        word "the"
+        count "123"
+      -> redirect_name=message.wordcount_Y
+--->>> (typeinst_helper) context={proc word_count_pair message.wordcount_Y} stack_ctx={{proc word_count_pair message.wordcount_Y} {unknown struct message.wordcount_Y} {eval typeinst msg4} {proc struct message}}
+--->>> (unknown) word the args=
++++ word the  -> redirect_name=message.wordcount_Y.word
+--->>> (typeinst_helper) context={proc varchar word_count_pair.word} stack_ctx={{proc varchar word_count_pair.word} {unknown word_count_pair word_count_pair.word} {eval typeinst message.wordcount_Y} {proc word_count_pair message.wordcount_Y} {unknown struct message.wordcount_Y} {eval typeinst msg4} {proc struct message}}
+--->>> (unknown) count 123 args=
++++ count 123  -> redirect_name=message.wordcount_Y.count
+--->>> (typeinst_helper) context={proc varint word_count_pair.count} stack_ctx={{proc varint word_count_pair.count} {unknown word_count_pair word_count_pair.count} {eval typeinst message.wordcount_Y} {proc word_count_pair message.wordcount_Y} {unknown struct message.wordcount_Y} {eval typeinst msg4} {proc struct message}}
+--->>> (unknown) wordcount_Y 
+        word "and"
+        count "54"
+     args=
++++ wordcount_Y 
+        word "and"
+        count "54"
+      -> redirect_name=message.wordcount_Y
+--->>> (typeinst_helper) context={proc word_count_pair message.wordcount_Y} stack_ctx={{proc word_count_pair message.wordcount_Y} {unknown struct message.wordcount_Y} {eval typeinst msg4} {proc struct message}}
+--->>> (unknown) word and args=
++++ word and  -> redirect_name=message.wordcount_Y.word
+--->>> (typeinst_helper) context={proc varchar word_count_pair.word} stack_ctx={{proc varchar word_count_pair.word} {unknown word_count_pair word_count_pair.word} {eval typeinst message.wordcount_Y} {proc word_count_pair message.wordcount_Y} {unknown struct message.wordcount_Y} {eval typeinst msg4} {proc struct message}}
+--->>> (unknown) count 54 args=
++++ count 54  -> redirect_name=message.wordcount_Y.count
+--->>> (typeinst_helper) context={proc varint word_count_pair.count} stack_ctx={{proc varint word_count_pair.count} {unknown word_count_pair word_count_pair.count} {eval typeinst message.wordcount_Y} {proc word_count_pair message.wordcount_Y} {unknown struct message.wordcount_Y} {eval typeinst msg4} {proc struct message}}
+<pdl>
+    <struct x-name="struct">
+        <typedecl x-name="nsp" x-type="varchar"/>
+        <typedecl x-name="name" x-type="varchar"/>
+        <typedecl x-name="pk" x-type="varchar"/>
+        <typedecl x-name="is_final_if_no_scope" x-type="bool"/>
+        <typedecl x-name="slot" x-type="typedecl" x-container="multiple" x-default_value=""/>
+    </struct>
+    <struct x-name="typedecl">
+        <typedecl x-name="name" x-type="varchar"/>
+        <typedecl x-name="type" x-type="varchar"/>
+        <typedecl x-name="default_value" x-type="varchar" x-default_value=""/>
+        <typedecl x-name="optional_p" x-type="bool" x-default_value="false"/>
+        <typedecl x-name="container" x-type="varchar" x-default_value=""/>
+    </struct>
+    <struct x-name="email" pk="address">
+        <typedecl x-name="name" x-type="varchar" x-default_value=""/>
+        <typedecl x-name="address" x-type="varchar"/>
+    </struct>
+    <struct x-name="file">
+        <typedecl x-name="name" x-type="varchar"/>
+        <typedecl x-name="mime_type" x-type="varchar"/>
+        <typedecl x-name="size" x-type="int32"/>
+    </struct>
+    <struct x-name="folder">
+        <typedecl x-name="name" x-type="varchar"/>
+        <typedecl x-name="num_items" x-type="int32"/>
+    </struct>
+    <struct x-name="category">
+        <typedecl x-name="category_name" x-type="varchar"/>
+        <typedecl x-name="parent_category" x-type="varchar"/>
+    </struct>
+    <struct x-name="word_count_pair">
+        <typedecl x-name="word" x-type="varchar"/>
+        <typedecl x-name="count" x-type="varint"/>
+    </struct>
+    <struct x-name="message">
+        <typeinst x-name="struct.pk" x-type="varchar">message_id</typeinst>
+        <typeinst x-name="struct.is_final_if_no_scope" x-type="bool">yes</typeinst>
+        <typeinst x-name="struct.slot" x-type="typedecl">
+            <typeinst x-name="typedecl.name" x-type="varchar">message_id</typeinst>
+            <typeinst x-name="typedecl.type" x-type="varchar">varint</typeinst>
+        </typeinst>
+        <typeinst x-name="struct.slot" x-type="typedecl">
+            <typeinst x-name="typedecl.name" x-type="varchar">device</typeinst>
+            <typeinst x-name="typedecl.type" x-type="varchar">varchar</typeinst>
+            <typeinst x-name="typedecl.default_value" x-type="varchar">sms</typeinst>
+        </typeinst>
+        <typeinst x-name="struct.slot" x-type="typedecl">
+            <typeinst x-name="typedecl.name" x-type="varchar">num_comments</typeinst>
+            <typeinst x-name="typedecl.type" x-type="varchar">int16</typeinst>
+            <typeinst x-name="typedecl.default_value" x-type="varchar">0</typeinst>
+        </typeinst>
+        <typedecl x-name="message_id" x-type="varint"/>
+        <typedecl x-name="device" x-type="varchar" x-default_value="sms"/>
+        <typedecl x-name="num_comments" x-type="int16" x-default_value="0"/>
+        <typedecl x-name="subject" x-type="varchar"/>
+        <typedecl x-name="body" x-type="varchar"/>
+        <typedecl x-name="from" x-type="email"/>
+        <typedecl x-name="to" x-type="email" x-container="multiple"/>
+        <typedecl x-name="cc" x-type="email" x-container="multiple" x-default_value=""/>
+        <typedecl x-name="bcc" x-type="email" x-container="multiple" x-default_value=""/>
+        <typedecl x-name="public_p" x-type="bool" x-default_value="false"/>
+        <typedecl x-name="categories" x-type="category" x-container="multiple" x-default_value=""/>
+        <typedecl x-name="folders" x-type="folder" x-container="multiple" x-default_value=""/>
+        <typedecl x-name="tags" x-type="varchar" x-container="multiple" x-default_value=""/>
+        <typedecl x-name="attachment" x-type="file" x-container="multiple" x-default_value=""/>
+        <typedecl x-name="wordcount_X" x-type="struct" x-container="map" x-default_value="">
+            <typedecl x-name="word" x-type="varchar"/>
+            <typedecl x-name="count" x-type="int32"/>
+        </typedecl>
+        <typedecl x-name="wordcount_Y" x-type="word_count_pair" x-container="map"/>
+        <typedecl x-name="wordcount_Z" x-type="word_count_pair" x-container="map" x-default_value=""/>
+    </struct>
+    <typeinst x-name="msg1" x-type="message">
+        <typeinst x-name="subject" x-type="varchar">hello</typeinst>
+        <typeinst x-name="from" x-type="email">
+            <typeinst x-name="name" x-type="varchar">zena wow</typeinst>
+            <typeinst x-name="address" x-type="varchar">zena@example.com</typeinst>
+        </typeinst>
+        <typeinst x-name="body" x-type="varchar">this is a test</typeinst>
+    </typeinst>
+    <typeinst x-name="msg2" x-type="message">
+        <typeinst x-name="subject" x-type="varchar">hello</typeinst>
+        <typeinst x-name="from" x-type="email">
+            <typeinst x-name="name" x-type="varchar">zena wow</typeinst>
+            <typeinst x-name="address" x-type="varchar">zena@example.com</typeinst>
+        </typeinst>
+        <typeinst x-name="body" x-type="varchar">this is a test</typeinst>
+    </typeinst>
+    <typeinst x-name="msg3" x-type="message">
+        <typeinst x-name="message.subject" x-type="varchar">hello</typeinst>
+        <typeinst x-name="message.from" x-type="email">
+            <typeinst x-name="email.name" x-type="varchar">zena wow</typeinst>
+            <typeinst x-name="email.address" x-type="varchar">zena@example.com</typeinst>
+        </typeinst>
+        <typeinst x-name="message.to" x-type="email">
+            <typeinst x-name="email.name" x-type="varchar">paris love</typeinst>
+            <typeinst x-name="email.address" x-type="varchar">bff@example.com</typeinst>
+        </typeinst>
+        <typeinst x-name="message.body" x-type="varchar">this is a test</typeinst>
+        <typeinst x-name="message.cc" x-type="email">
+            <typeinst x-name="email.name" x-type="varchar">jane awesome</typeinst>
+            <typeinst x-name="email.address" x-type="varchar">jane@example.com</typeinst>
+        </typeinst>
+        <typeinst x-name="message.cc" x-type="email">
+            <typeinst x-name="email.name" x-type="varchar">someone great</typeinst>
+            <typeinst x-name="email.address" x-type="varchar">someone@example.com</typeinst>
+        </typeinst>
+        <typeinst x-name="message.bcc" x-type="email">
+            <typeinst x-name="email.name" x-type="varchar">vera cool</typeinst>
+            <typeinst x-name="email.address" x-type="varchar">vera@example.com</typeinst>
+        </typeinst>
+        <typeinst x-name="message.bcc" x-type="email">
+            <typeinst x-name="email.name" x-type="varchar">greg wise</typeinst>
+            <typeinst x-name="email.address" x-type="varchar">greg@example.com</typeinst>
+        </typeinst>
+        <typeinst x-name="message.bcc" x-type="email">
+            <typeinst x-name="email.name" x-type="varchar">max loyal</typeinst>
+            <typeinst x-name="email.address" x-type="varchar">max@example.com</typeinst>
+        </typeinst>
+        <typeinst x-name="message.wordcount_X" x-type="struct">
+            <typeinst x-name="message.wordcount_X.word" x-type="varchar">the</typeinst>
+            <typeinst x-name="message.wordcount_X.count" x-type="int32">123</typeinst>
+        </typeinst>
+        <typeinst x-name="message.wordcount_X" x-type="struct">
+            <typeinst x-name="message.wordcount_X.word" x-type="varchar">and</typeinst>
+            <typeinst x-name="message.wordcount_X.count" x-type="int32">54</typeinst>
+        </typeinst>
+        <typeinst x-name="message.wordcount_Y" x-type="word_count_pair">
+            <typeinst x-name="word_count_pair.word" x-type="varchar">the</typeinst>
+            <typeinst x-name="word_count_pair.count" x-type="varint">123</typeinst>
+        </typeinst>
+        <typeinst x-name="message.wordcount_Y" x-type="word_count_pair">
+            <typeinst x-name="word_count_pair.word" x-type="varchar">and</typeinst>
+            <typeinst x-name="word_count_pair.count" x-type="varint">54</typeinst>
+        </typeinst>
+    </typeinst>
+    <typeinst x-name="msg4" x-type="message">
+        <typeinst x-name="message.subject" x-type="varchar">hello</typeinst>
+        <typeinst x-name="message.from" x-type="email">
+            <typeinst x-name="email.name" x-type="varchar">zena wow</typeinst>
+            <typeinst x-name="email.address" x-type="varchar">zena@example.com</typeinst>
+        </typeinst>
+        <typeinst x-name="message.body" x-type="varchar">this is a test</typeinst>
+        <typeinst x-name="message.to" x-type="email">
+            <typeinst x-name="email.name" x-type="varchar">paris love</typeinst>
+            <typeinst x-name="email.address" x-type="varchar">bff@example.com</typeinst>
+        </typeinst>
+        <typeinst x-name="message.cc" x-type="email">
+            <typeinst x-name="email.name" x-type="varchar">jane awesome</typeinst>
+            <typeinst x-name="email.address" x-type="varchar">jane@example.com</typeinst>
+        </typeinst>
+        <typeinst x-name="message.cc" x-type="email">
+            <typeinst x-name="email.name" x-type="varchar">someone great</typeinst>
+            <typeinst x-name="email.address" x-type="varchar">someone@example.com</typeinst>
+        </typeinst>
+        <typeinst x-name="message.bcc" x-type="email">
+            <typeinst x-name="email.name" x-type="varchar">vera cool</typeinst>
+            <typeinst x-name="email.address" x-type="varchar">vera@example.com</typeinst>
+        </typeinst>
+        <typeinst x-name="message.bcc" x-type="email">
+            <typeinst x-name="email.name" x-type="varchar">greg wise</typeinst>
+            <typeinst x-name="email.address" x-type="varchar">greg@example.com</typeinst>
+        </typeinst>
+        <typeinst x-name="message.bcc" x-type="email">
+            <typeinst x-name="email.name" x-type="varchar">max loyal</typeinst>
+            <typeinst x-name="email.address" x-type="varchar">max@example.com</typeinst>
+        </typeinst>
+        <typeinst x-name="message.wordcount_X" x-type="struct">
+            <typeinst x-name="message.wordcount_X.word" x-type="varchar">the</typeinst>
+            <typeinst x-name="message.wordcount_X.count" x-type="int32">123</typeinst>
+        </typeinst>
+        <typeinst x-name="message.wordcount_X" x-type="struct">
+            <typeinst x-name="message.wordcount_X.word" x-type="varchar">and</typeinst>
+            <typeinst x-name="message.wordcount_X.count" x-type="int32">54</typeinst>
+        </typeinst>
+        <typeinst x-name="message.wordcount_Y" x-type="word_count_pair">
+            <typeinst x-name="word_count_pair.word" x-type="varchar">the</typeinst>
+            <typeinst x-name="word_count_pair.count" x-type="varint">123</typeinst>
+        </typeinst>
+        <typeinst x-name="message.wordcount_Y" x-type="word_count_pair">
+            <typeinst x-name="word_count_pair.word" x-type="varchar">and</typeinst>
+            <typeinst x-name="word_count_pair.count" x-type="varint">54</typeinst>
+        </typeinst>
+    </typeinst>
+</pdl>
+
+message_id device num_comments subject body from to cc bcc public_p categories folders tags attachment wordcount_X wordcount_Y wordcount_Z
+12345 sms 123 {hello world} {hello world this is a test ... repeat many times ...} { email "someone@example.com" } { {email "zena@example.com"} {email "jane@example.com"} } {} {} false { {name "sports"} {name "technology"} {"culture"} } { {name "works"} {name "somefolder"} {"anotherfolder"} } {\n        "#sports" \n        "#event"\n    } {\n        name "/tmp/somefile"\n        size 12345\n    } {\n        "hello" 12 \n        "world" 5 \n        "this" 18 \n        "is" 22 \n        "a" 55 \n        "test" 1\n    } {\n        "hello" 12 \n        "world" 5 \n        "this" 18 \n        "is" 22 \n        "a" 55 \n        "test" 1\n    } {\n        "hello" 12 \n        "world" 5 \n        "this" 18 \n        "is" 22 \n        "a" 55 \n        "test" 1\n    }

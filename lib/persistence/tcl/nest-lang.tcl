@@ -8,7 +8,7 @@ define_lang ::basesys::lang {
     variable stack_fwd [list]
 
     array set lookahead_ctx [list]
-    array set forward [list]
+    array set alias [list]
 
     proc push_fwd {name} {
         variable stack_fwd
@@ -160,14 +160,14 @@ define_lang ::basesys::lang {
 
     } 
 
-    # proc forward {name cmd} {
-    #    #puts "--->>> (def forward $name) cmd_handler=[list $cmd]"
-    #    # register forward
+    # proc alias {name cmd} {
+    #    #puts "--->>> (def alias $name) cmd_handler=[list $cmd]"
+    #    # register alias
     #    set varname "::basesys::lang::alias($name)"
     #    if { [info exists $varname] && $name ni {struct typedecl} } {
     #        puts "!!! stack_fwd=$::basesys::lang::stack_fwd"
     #        puts "!!! stack_ctx=$::basesys::lang::stack_ctx"
-    #        error "!!! forward with that name (=$name) already exists"
+    #        error "!!! alias with that name (=$name) already exists"
     #    }
     #    set $varname ""
     #    # set nsp [uplevel {namespace current}]
@@ -189,19 +189,20 @@ define_lang ::basesys::lang {
     }
 
     # Wow!!!
-    set name "forward"
+    set name "alias"
     set cmd [list [namespace which "lambda"] {name cmd} {
         set_alias $name $cmd
         interp alias {} [namespace current]::${name} {} [namespace which "with_fwd"] ${name} {*}${cmd}
+        keyword ${name}
     }]
+    {*}${cmd} "keyword" {::dom::createNodeCmd elementNode}
     {*}${cmd} ${name} ${cmd}
-    # with_fwd forward lambda {name cmd} {
+    # with_fwd alias lambda {name cmd} {
     #   set_alias $name $cmd
     #   interp alias {} [namespace current]::${name} {} [namespace which "with_fwd"] ${name} {*}${cmd}
     # }
 
-    forward "node" {lambda {tag name args} {with_ctx [list "eval" $tag $name] ::dom::execNodeCmd elementNode $tag -x-name $name {*}$args}}
-    forward "keyword" {::dom::createNodeCmd elementNode}
+    alias "node" {lambda {tag name args} {with_ctx [list "eval" $tag $name] ::dom::execNodeCmd elementNode $tag -x-name $name {*}$args}}
 
     # nest argument holds nested calls in the procs below
     # i.e. with_context, nest, meta_helper
@@ -214,16 +215,15 @@ define_lang ::basesys::lang {
         set node [uplevel $cmd]
         set nest [list with_ctx $context {*}$nest]
         puts "!!! nest: $name -> $nest"
-        uplevel [list [namespace which "forward"] $name $nest]
+        uplevel [list [namespace which "alias"] $name $nest]
         return $node
     }
 
 
-    #forward "shiftl" {lambda {_ args} {return $args}}
-    #forward "chain" {lambda {args} {foreach arg $args {set args [{*}$arg {*}$args]}}}
+    #alias "shiftl" {lambda {_ args} {return $args}}
+    #alias "chain" {lambda {args} {foreach arg $args {set args [{*}$arg {*}$args]}}}
 
-    forward "meta" {lambda {name nest args} {nest $nest $name {*}$args}}
-    keyword "meta"
+    alias "meta" {lambda {name nest args} {nest $nest $name {*}$args}}
 
     proc multiple_helper {arg0 args} {
 
@@ -456,7 +456,7 @@ define_lang ::basesys::lang {
         # OBSOLETE: set_lookahead_ctx $dotted_name "proc" $decl_tag $dotted_name
         set dotted_nest [list with_fwd "typeinst" [namespace which "typeinst_helper"] $decl_type $dotted_name]
         set dotted_nest [list with_ctx [list "proc" $decl_tag $dotted_name] {*}$dotted_nest] 
-        set cmd [list [namespace which "forward"] $dotted_name $dotted_nest]
+        set cmd [list [namespace which "alias"] $dotted_name $dotted_nest]
         uplevel $cmd
 
         return $node
@@ -679,7 +679,7 @@ define_lang ::basesys::lang {
         return $node
     }
 
-    forward "import" [namespace which "import_helper"]
+    alias "import" [namespace which "import_helper"]
 
     variable dtd
     proc dtd_helper {args} {
@@ -691,7 +691,7 @@ define_lang ::basesys::lang {
         }
     }
 
-    forward "dtd" [namespace which "dtd_helper"]
+    alias "dtd" [namespace which "dtd_helper"]
 
     dtd {
         <!DOCTYPE pdl [
