@@ -141,10 +141,12 @@ define_lang ::basesys::lang {
                     unset {last_param} {params} {body} {args}
                 } elseif { ${last_param} ne {args} } {
                     # llength_params == llength_args
-                    lassign ${args} {*}[concat ${params} [unset {last_param} {params} {body} {args}]]
+                    lassign ${args} {*}[concat ${params} \
+                        [unset {last_param} {params} {body} {args}]]
                 } else {
                     # (llength_params - 1 <= llength_args) and last_param eq {args}
-                    set {args} [lassign ${args} {*}[lrange [concat ${params} [unset {last_param} {params} {body} {args}]] 0 {end-1}]]
+                    set {args} [lassign ${args} {*}[lrange [concat ${params} \
+                        [unset {last_param} {params} {body} {args}]] 0 {end-1}]]
                     set {} {}
                 }]]
             }
@@ -153,7 +155,13 @@ define_lang ::basesys::lang {
         if { ${args} eq {} } {
             return [list {lambda} ${params} ${body}]
         } elseif {${llength_params} >= ${llength_args}} {
-            return [list {lambda} [lrange ${params} ${llength_args} {end}] [concat [list lassign ${args} {*}[lrange ${params} 0 [expr {${llength_args} - 1}]]] { ; } ${body}]]
+            return \
+                [list {lambda} [lrange ${params} ${llength_args} {end}] \
+                    [concat \
+                        [list lassign ${args} \
+                            {*}[lrange ${params} 0 [expr {${llength_args} - 1}]]] 
+                    { ; } 
+                    ${body}]]
         } else {
             error "lambda: more args than params"
         }
