@@ -1,172 +1,1656 @@
-!!! nest: multiple -> with_ctx {proc meta multiple} ::basesys::lang::multiple_helper
-!!! nest: map -> with_ctx {proc meta map} ::basesys::lang::map_helper
-!!! nest: typedecl -> with_ctx {proc meta typedecl} ::basesys::lang::typedecl_helper
-!!! nest: typeinst -> with_ctx {proc meta typeinst} ::basesys::lang::typeinst_helper
-!!! nest: base_type -> with_ctx {proc meta base_type} nest type_helper
-!!! nest: varchar -> with_ctx {proc base_type varchar} type_helper
-!!! nest: bool -> with_ctx {proc base_type bool} type_helper
-!!! nest: varint -> with_ctx {proc base_type varint} type_helper
-!!! nest: byte -> with_ctx {proc base_type byte} type_helper
-!!! nest: int16 -> with_ctx {proc base_type int16} type_helper
-!!! nest: int32 -> with_ctx {proc base_type int32} type_helper
-!!! nest: int64 -> with_ctx {proc base_type int64} type_helper
-!!! nest: double -> with_ctx {proc base_type double} type_helper
-!!! nest: struct -> with_ctx {proc meta struct} nest {nest {type_helper}}
---->>> type_helper (is_declaration_mode_p=1) tag=varchar name=nsp {*}
---->>> (typedecl_helper) context_path=struct stack_ctx={{proc base_type varchar} {eval struct struct} {proc meta struct}}
+!!! nest: multiple -> ::basesys::lang::container_helper
+!!! nest: map -> ::basesys::lang::container_helper
+!!! nest: typedecl -> ::basesys::lang::typedecl_helper
+!!! nest: typeinst -> ::basesys::lang::typeinst_helper
+!!! nest: basetype -> nest {type_helper}
+!!! nest: varchar -> type_helper
+!!! nest: bool -> type_helper
+!!! nest: varint -> type_helper
+!!! nest: byte -> type_helper
+!!! nest: int16 -> type_helper
+!!! nest: int32 -> type_helper
+!!! nest: int64 -> type_helper
+!!! nest: double -> type_helper
+!!! nest: struct -> nest {nest {type_helper}}
 --->>> type_helper (is_declaration_mode_p=1) tag=varchar name=name {*}
---->>> (typedecl_helper) context_path=struct stack_ctx={{proc base_type varchar} {eval struct struct} {proc meta struct}}
---->>> type_helper (is_declaration_mode_p=1) tag=varchar name=pk {*}
---->>> (typedecl_helper) context_path=struct stack_ctx={{proc base_type varchar} {eval struct struct} {proc meta struct}}
---->>> type_helper (is_declaration_mode_p=1) tag=bool name=is_final_if_no_scope {*}
---->>> (typedecl_helper) context_path=struct stack_ctx={{proc base_type bool} {eval struct struct} {proc meta struct}}
-+++++ (multiple declaration) tag=type=typedecl name=slot args== {} stack_ctx={proc struct struct} {eval struct struct} {proc meta struct} context=eval struct struct
---->>> (typedecl_helper) context_path=struct stack_ctx={{proc struct struct} {eval struct struct} {proc meta struct}}
-!!! nest: struct -> with_ctx {proc struct struct} nest type_helper
---->>> type_helper (is_declaration_mode_p=1) tag=varchar name=name {*}
---->>> (typedecl_helper) context_path=typedecl stack_ctx={{proc base_type varchar} {eval struct typedecl} {proc struct struct}}
+--->>> (typedecl_helper) context_path=struct stack_ctx={{proc basetype varchar} {eval struct struct} {proc meta struct}}
 --->>> type_helper (is_declaration_mode_p=1) tag=varchar name=type {*}
---->>> (typedecl_helper) context_path=typedecl stack_ctx={{proc base_type varchar} {eval struct typedecl} {proc struct struct}}
+--->>> (typedecl_helper) context_path=struct stack_ctx={{proc basetype varchar} {eval struct struct} {proc meta struct}}
+--->>> type_helper (is_declaration_mode_p=1) tag=varchar name=nsp {*}
+--->>> (typedecl_helper) context_path=struct stack_ctx={{proc basetype varchar} {eval struct struct} {proc meta struct}}
+----- (container declaration) tag=type=struct name=slot args== {} {
+        varchar name
+        varchar type
+        varchar default_value = ""
+        bool optional_p = false
+        varchar container = ""
+    } stack_ctx={proc struct struct} {eval struct struct} {proc meta struct} context=eval struct struct
+--->>> type_helper (is_declaration_mode_p=1) tag=varchar name=name {*}
+--->>> (typedecl_helper) context_path=struct.slot stack_ctx={{proc basetype varchar} {eval typedecl slot} {proc struct struct} {eval struct struct} {proc meta struct}}
+--->>> type_helper (is_declaration_mode_p=1) tag=varchar name=type {*}
+--->>> (typedecl_helper) context_path=struct.slot stack_ctx={{proc basetype varchar} {eval typedecl slot} {proc struct struct} {eval struct struct} {proc meta struct}}
 --->>> type_helper (is_declaration_mode_p=1) tag=varchar name=default_value {*}= {}
---->>> (typedecl_helper) context_path=typedecl stack_ctx={{proc base_type varchar} {eval struct typedecl} {proc struct struct}}
+--->>> (typedecl_helper) context_path=struct.slot stack_ctx={{proc basetype varchar} {eval typedecl slot} {proc struct struct} {eval struct struct} {proc meta struct}}
 --->>> type_helper (is_declaration_mode_p=1) tag=bool name=optional_p {*}= false
---->>> (typedecl_helper) context_path=typedecl stack_ctx={{proc base_type bool} {eval struct typedecl} {proc struct struct}}
+--->>> (typedecl_helper) context_path=struct.slot stack_ctx={{proc basetype bool} {eval typedecl slot} {proc struct struct} {eval struct struct} {proc meta struct}}
 --->>> type_helper (is_declaration_mode_p=1) tag=varchar name=container {*}= {}
---->>> (typedecl_helper) context_path=typedecl stack_ctx={{proc base_type varchar} {eval struct typedecl} {proc struct struct}}
-!!! nest: typedecl -> with_ctx {proc struct typedecl} type_helper
---->>> type_helper (is_declaration_mode_p=1) tag=varchar name=name {*}= {}
---->>> (typedecl_helper) context_path=email stack_ctx={{proc base_type varchar} {eval struct email} {proc struct struct}}
---->>> type_helper (is_declaration_mode_p=1) tag=varchar name=address {*}
---->>> (typedecl_helper) context_path=email stack_ctx={{proc base_type varchar} {eval struct email} {proc struct struct}}
-!!! nest: email -> with_ctx {proc struct email} type_helper
---->>> type_helper (is_declaration_mode_p=1) tag=varchar name=name {*}
---->>> (typedecl_helper) context_path=file stack_ctx={{proc base_type varchar} {eval struct file} {proc struct struct}}
---->>> type_helper (is_declaration_mode_p=1) tag=varchar name=mime_type {*}
---->>> (typedecl_helper) context_path=file stack_ctx={{proc base_type varchar} {eval struct file} {proc struct struct}}
---->>> type_helper (is_declaration_mode_p=1) tag=int32 name=size {*}
---->>> (typedecl_helper) context_path=file stack_ctx={{proc base_type int32} {eval struct file} {proc struct struct}}
-!!! nest: file -> with_ctx {proc struct file} type_helper
---->>> type_helper (is_declaration_mode_p=1) tag=varchar name=name {*}
---->>> (typedecl_helper) context_path=folder stack_ctx={{proc base_type varchar} {eval struct folder} {proc struct struct}}
---->>> type_helper (is_declaration_mode_p=1) tag=int32 name=num_items {*}
---->>> (typedecl_helper) context_path=folder stack_ctx={{proc base_type int32} {eval struct folder} {proc struct struct}}
-!!! nest: folder -> with_ctx {proc struct folder} type_helper
---->>> type_helper (is_declaration_mode_p=1) tag=varchar name=category_name {*}
---->>> (typedecl_helper) context_path=category stack_ctx={{proc base_type varchar} {eval struct category} {proc struct struct}}
---->>> type_helper (is_declaration_mode_p=1) tag=varchar name=parent_category {*}
---->>> (typedecl_helper) context_path=category stack_ctx={{proc base_type varchar} {eval struct category} {proc struct struct}}
-!!! nest: category -> with_ctx {proc struct category} type_helper
---->>> type_helper (is_declaration_mode_p=1) tag=varchar name=word {*}
---->>> (typedecl_helper) context_path=word_count_pair stack_ctx={{proc base_type varchar} {eval struct word_count_pair} {proc struct struct}}
---->>> type_helper (is_declaration_mode_p=1) tag=varint name=count {*}
---->>> (typedecl_helper) context_path=word_count_pair stack_ctx={{proc base_type varint} {eval struct word_count_pair} {proc struct struct}}
-!!! nest: word_count_pair -> with_ctx {proc struct word_count_pair} type_helper
---->>> (unknown) pk message_id args=
-+++ pk message_id  -> redirect_name=struct.pk
---->>> (typeinst_helper) context={proc varchar struct.pk} stack_ctx={{proc varchar struct.pk} {unknown struct struct.pk} {eval struct message} {proc struct struct}}
---->>> (unknown) is_final_if_no_scope yes args=
-+++ is_final_if_no_scope yes  -> redirect_name=struct.is_final_if_no_scope
---->>> (typeinst_helper) context={proc bool struct.is_final_if_no_scope} stack_ctx={{proc bool struct.is_final_if_no_scope} {unknown struct struct.is_final_if_no_scope} {eval struct message} {proc struct struct}}
+--->>> (typedecl_helper) context_path=struct.slot stack_ctx={{proc basetype varchar} {eval typedecl slot} {proc struct struct} {eval struct struct} {proc meta struct}}
+--->>> (typedecl_helper) context_path=struct stack_ctx={{proc struct struct} {eval struct struct} {proc meta struct}}
+--->>> type_helper (is_declaration_mode_p=1) tag=varchar name=pk {*}
+--->>> (typedecl_helper) context_path=struct stack_ctx={{proc basetype varchar} {eval struct struct} {proc meta struct}}
+--->>> type_helper (is_declaration_mode_p=1) tag=bool name=is_final_if_no_scope {*}
+--->>> (typedecl_helper) context_path=struct stack_ctx={{proc basetype bool} {eval struct struct} {proc meta struct}}
+!!! nest: struct -> nest {type_helper}
+--->>> (typeinst_helper) context={proc varchar struct.type} stack_ctx={{proc varchar struct.type} {proc meta struct}}
+--->>> (unknown) name struct args=
+{proc meta struct}
+--->>> context=proc meta struct
++++ name struct  -> redirect_name=struct.name
+--->>> (typeinst_helper) context={proc varchar struct.name} stack_ctx={{proc varchar struct.name} {unknown unknown struct.name} {proc meta struct}}
+--->>> (unknown) nsp ::datasys::lang args=
+{proc meta struct}
+--->>> context=proc meta struct
++++ nsp ::datasys::lang  -> redirect_name=struct.nsp
+--->>> (typeinst_helper) context={proc varchar struct.nsp} stack_ctx={{proc varchar struct.nsp} {unknown unknown struct.nsp} {proc meta struct}}
 --->>> (unknown) slot 
-        name "message_id"
-        type "varint"
-     args=
+                        name [domNode0x1b0a280 @x-name]
+                        type [domNode0x1b0a280 @x-type]
+                        if { [domNode0x1b0a280 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1b0a280 @x-default_value ""]
+                        }
+                        if { [domNode0x1b0a280 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1b0a280 @x-optional_p ""]
+                        }
+                        if { [domNode0x1b0a280 hasAttribute "x-container"] } {
+                            container [domNode0x1b0a280 @x-container ""]
+                        }
+                     args=
+{proc meta struct}
+--->>> context=proc meta struct
 +++ slot 
-        name "message_id"
-        type "varint"
-      -> redirect_name=struct.slot
---->>> (typeinst_helper) context={proc typedecl struct.slot} stack_ctx={{proc typedecl struct.slot} {unknown struct struct.slot} {eval struct message} {proc struct struct}}
---->>> (unknown) name message_id args=
-+++ name message_id  -> redirect_name=struct.slot.name
---->>> (typeinst_helper) context={proc varchar typedecl.name} stack_ctx={{proc varchar typedecl.name} {unknown typedecl typedecl.name} {eval typeinst struct.slot} {proc typedecl struct.slot} {unknown struct struct.slot} {eval struct message} {proc struct struct}}
---->>> (unknown) type varint args=
-+++ type varint  -> redirect_name=struct.slot.type
---->>> (typeinst_helper) context={proc varchar typedecl.type} stack_ctx={{proc varchar typedecl.type} {unknown typedecl typedecl.type} {eval typeinst struct.slot} {proc typedecl struct.slot} {unknown struct struct.slot} {eval struct message} {proc struct struct}}
---->>> (unknown) slot 
-        name "device"
-        type "varchar"
-        default_value "sms"
-     args=
-+++ slot 
-        name "device"
-        type "varchar"
-        default_value "sms"
-      -> redirect_name=struct.slot
---->>> (typeinst_helper) context={proc typedecl struct.slot} stack_ctx={{proc typedecl struct.slot} {unknown struct struct.slot} {eval struct message} {proc struct struct}}
---->>> (unknown) name device args=
-+++ name device  -> redirect_name=struct.slot.name
---->>> (typeinst_helper) context={proc varchar typedecl.name} stack_ctx={{proc varchar typedecl.name} {unknown typedecl typedecl.name} {eval typeinst struct.slot} {proc typedecl struct.slot} {unknown struct struct.slot} {eval struct message} {proc struct struct}}
+                        name [domNode0x1b0a280 @x-name]
+                        type [domNode0x1b0a280 @x-type]
+                        if { [domNode0x1b0a280 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1b0a280 @x-default_value ""]
+                        }
+                        if { [domNode0x1b0a280 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1b0a280 @x-optional_p ""]
+                        }
+                        if { [domNode0x1b0a280 hasAttribute "x-container"] } {
+                            container [domNode0x1b0a280 @x-container ""]
+                        }
+                      -> redirect_name=struct.slot
+--->>> (typeinst_helper) context={proc struct struct.slot} stack_ctx={{proc struct struct.slot} {unknown unknown struct.slot} {proc meta struct}}
+--->>> (unknown) name name args=
+{proc struct struct.slot} {proc meta struct}
+--->>> context=proc struct struct.slot
++++ name name  -> redirect_name=struct.slot.name
+--->>> (typeinst_helper) context={proc varchar struct.slot.name} stack_ctx={{proc varchar struct.slot.name} {unknown unknown struct.slot.name} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc meta struct}}
 --->>> (unknown) type varchar args=
+{proc struct struct.slot} {proc meta struct}
+--->>> context=proc struct struct.slot
 +++ type varchar  -> redirect_name=struct.slot.type
---->>> (typeinst_helper) context={proc varchar typedecl.type} stack_ctx={{proc varchar typedecl.type} {unknown typedecl typedecl.type} {eval typeinst struct.slot} {proc typedecl struct.slot} {unknown struct struct.slot} {eval struct message} {proc struct struct}}
---->>> (unknown) default_value sms args=
-+++ default_value sms  -> redirect_name=struct.slot.default_value
---->>> (typeinst_helper) context={proc varchar typedecl.default_value} stack_ctx={{proc varchar typedecl.default_value} {unknown typedecl typedecl.default_value} {eval typeinst struct.slot} {proc typedecl struct.slot} {unknown struct struct.slot} {eval struct message} {proc struct struct}}
+--->>> (typeinst_helper) context={proc varchar struct.slot.type} stack_ctx={{proc varchar struct.slot.type} {unknown unknown struct.slot.type} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc meta struct}}
 --->>> (unknown) slot 
-        name "num_comments"
-        type "int16"
-        default_value 0
-     args=
+                        name [domNode0x1b0a3c0 @x-name]
+                        type [domNode0x1b0a3c0 @x-type]
+                        if { [domNode0x1b0a3c0 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1b0a3c0 @x-default_value ""]
+                        }
+                        if { [domNode0x1b0a3c0 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1b0a3c0 @x-optional_p ""]
+                        }
+                        if { [domNode0x1b0a3c0 hasAttribute "x-container"] } {
+                            container [domNode0x1b0a3c0 @x-container ""]
+                        }
+                     args=
+{proc meta struct}
+--->>> context=proc meta struct
 +++ slot 
-        name "num_comments"
-        type "int16"
-        default_value 0
-      -> redirect_name=struct.slot
---->>> (typeinst_helper) context={proc typedecl struct.slot} stack_ctx={{proc typedecl struct.slot} {unknown struct struct.slot} {eval struct message} {proc struct struct}}
---->>> (unknown) name num_comments args=
-+++ name num_comments  -> redirect_name=struct.slot.name
---->>> (typeinst_helper) context={proc varchar typedecl.name} stack_ctx={{proc varchar typedecl.name} {unknown typedecl typedecl.name} {eval typeinst struct.slot} {proc typedecl struct.slot} {unknown struct struct.slot} {eval struct message} {proc struct struct}}
---->>> (unknown) type int16 args=
-+++ type int16  -> redirect_name=struct.slot.type
---->>> (typeinst_helper) context={proc varchar typedecl.type} stack_ctx={{proc varchar typedecl.type} {unknown typedecl typedecl.type} {eval typeinst struct.slot} {proc typedecl struct.slot} {unknown struct struct.slot} {eval struct message} {proc struct struct}}
---->>> (unknown) default_value 0 args=
-+++ default_value 0  -> redirect_name=struct.slot.default_value
---->>> (typeinst_helper) context={proc varchar typedecl.default_value} stack_ctx={{proc varchar typedecl.default_value} {unknown typedecl typedecl.default_value} {eval typeinst struct.slot} {proc typedecl struct.slot} {unknown struct struct.slot} {eval struct message} {proc struct struct}}
+                        name [domNode0x1b0a3c0 @x-name]
+                        type [domNode0x1b0a3c0 @x-type]
+                        if { [domNode0x1b0a3c0 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1b0a3c0 @x-default_value ""]
+                        }
+                        if { [domNode0x1b0a3c0 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1b0a3c0 @x-optional_p ""]
+                        }
+                        if { [domNode0x1b0a3c0 hasAttribute "x-container"] } {
+                            container [domNode0x1b0a3c0 @x-container ""]
+                        }
+                      -> redirect_name=struct.slot
+--->>> (typeinst_helper) context={proc struct struct.slot} stack_ctx={{proc struct struct.slot} {unknown unknown struct.slot} {proc meta struct}}
+--->>> (unknown) name type args=
+{proc struct struct.slot} {proc meta struct}
+--->>> context=proc struct struct.slot
++++ name type  -> redirect_name=struct.slot.name
+--->>> (typeinst_helper) context={proc varchar struct.slot.name} stack_ctx={{proc varchar struct.slot.name} {unknown unknown struct.slot.name} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc meta struct}}
+--->>> (unknown) type varchar args=
+{proc struct struct.slot} {proc meta struct}
+--->>> context=proc struct struct.slot
++++ type varchar  -> redirect_name=struct.slot.type
+--->>> (typeinst_helper) context={proc varchar struct.slot.type} stack_ctx={{proc varchar struct.slot.type} {unknown unknown struct.slot.type} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc meta struct}}
+--->>> (unknown) slot 
+                        name [domNode0x1b0a500 @x-name]
+                        type [domNode0x1b0a500 @x-type]
+                        if { [domNode0x1b0a500 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1b0a500 @x-default_value ""]
+                        }
+                        if { [domNode0x1b0a500 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1b0a500 @x-optional_p ""]
+                        }
+                        if { [domNode0x1b0a500 hasAttribute "x-container"] } {
+                            container [domNode0x1b0a500 @x-container ""]
+                        }
+                     args=
+{proc meta struct}
+--->>> context=proc meta struct
++++ slot 
+                        name [domNode0x1b0a500 @x-name]
+                        type [domNode0x1b0a500 @x-type]
+                        if { [domNode0x1b0a500 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1b0a500 @x-default_value ""]
+                        }
+                        if { [domNode0x1b0a500 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1b0a500 @x-optional_p ""]
+                        }
+                        if { [domNode0x1b0a500 hasAttribute "x-container"] } {
+                            container [domNode0x1b0a500 @x-container ""]
+                        }
+                      -> redirect_name=struct.slot
+--->>> (typeinst_helper) context={proc struct struct.slot} stack_ctx={{proc struct struct.slot} {unknown unknown struct.slot} {proc meta struct}}
+--->>> (unknown) name nsp args=
+{proc struct struct.slot} {proc meta struct}
+--->>> context=proc struct struct.slot
++++ name nsp  -> redirect_name=struct.slot.name
+--->>> (typeinst_helper) context={proc varchar struct.slot.name} stack_ctx={{proc varchar struct.slot.name} {unknown unknown struct.slot.name} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc meta struct}}
+--->>> (unknown) type varchar args=
+{proc struct struct.slot} {proc meta struct}
+--->>> context=proc struct struct.slot
++++ type varchar  -> redirect_name=struct.slot.type
+--->>> (typeinst_helper) context={proc varchar struct.slot.type} stack_ctx={{proc varchar struct.slot.type} {unknown unknown struct.slot.type} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc meta struct}}
+--->>> (unknown) slot 
+                        name [domNode0x1b0a640 @x-name]
+                        type [domNode0x1b0a640 @x-type]
+                        if { [domNode0x1b0a640 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1b0a640 @x-default_value ""]
+                        }
+                        if { [domNode0x1b0a640 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1b0a640 @x-optional_p ""]
+                        }
+                        if { [domNode0x1b0a640 hasAttribute "x-container"] } {
+                            container [domNode0x1b0a640 @x-container ""]
+                        }
+                     args=
+{proc meta struct}
+--->>> context=proc meta struct
++++ slot 
+                        name [domNode0x1b0a640 @x-name]
+                        type [domNode0x1b0a640 @x-type]
+                        if { [domNode0x1b0a640 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1b0a640 @x-default_value ""]
+                        }
+                        if { [domNode0x1b0a640 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1b0a640 @x-optional_p ""]
+                        }
+                        if { [domNode0x1b0a640 hasAttribute "x-container"] } {
+                            container [domNode0x1b0a640 @x-container ""]
+                        }
+                      -> redirect_name=struct.slot
+--->>> (typeinst_helper) context={proc struct struct.slot} stack_ctx={{proc struct struct.slot} {unknown unknown struct.slot} {proc meta struct}}
+--->>> (unknown) name slot args=
+{proc struct struct.slot} {proc meta struct}
+--->>> context=proc struct struct.slot
++++ name slot  -> redirect_name=struct.slot.name
+--->>> (typeinst_helper) context={proc varchar struct.slot.name} stack_ctx={{proc varchar struct.slot.name} {unknown unknown struct.slot.name} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc meta struct}}
+--->>> (unknown) type struct args=
+{proc struct struct.slot} {proc meta struct}
+--->>> context=proc struct struct.slot
++++ type struct  -> redirect_name=struct.slot.type
+--->>> (typeinst_helper) context={proc varchar struct.slot.type} stack_ctx={{proc varchar struct.slot.type} {unknown unknown struct.slot.type} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc meta struct}}
+--->>> (unknown) default_value  args=
+{proc struct struct.slot} {proc meta struct}
+--->>> context=proc struct struct.slot
++++ default_value   -> redirect_name=struct.slot.default_value
+--->>> (typeinst_helper) context={proc varchar struct.slot.default_value} stack_ctx={{proc varchar struct.slot.default_value} {unknown unknown struct.slot.default_value} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc meta struct}}
+--->>> (unknown) container multiple args=
+{proc struct struct.slot} {proc meta struct}
+--->>> context=proc struct struct.slot
++++ container multiple  -> redirect_name=struct.slot.container
+--->>> (typeinst_helper) context={proc varchar struct.slot.container} stack_ctx={{proc varchar struct.slot.container} {unknown unknown struct.slot.container} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc meta struct}}
+--->>> (unknown) slot 
+                        name [domNode0x1b0afc0 @x-name]
+                        type [domNode0x1b0afc0 @x-type]
+                        if { [domNode0x1b0afc0 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1b0afc0 @x-default_value ""]
+                        }
+                        if { [domNode0x1b0afc0 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1b0afc0 @x-optional_p ""]
+                        }
+                        if { [domNode0x1b0afc0 hasAttribute "x-container"] } {
+                            container [domNode0x1b0afc0 @x-container ""]
+                        }
+                     args=
+{proc meta struct}
+--->>> context=proc meta struct
++++ slot 
+                        name [domNode0x1b0afc0 @x-name]
+                        type [domNode0x1b0afc0 @x-type]
+                        if { [domNode0x1b0afc0 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1b0afc0 @x-default_value ""]
+                        }
+                        if { [domNode0x1b0afc0 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1b0afc0 @x-optional_p ""]
+                        }
+                        if { [domNode0x1b0afc0 hasAttribute "x-container"] } {
+                            container [domNode0x1b0afc0 @x-container ""]
+                        }
+                      -> redirect_name=struct.slot
+--->>> (typeinst_helper) context={proc struct struct.slot} stack_ctx={{proc struct struct.slot} {unknown unknown struct.slot} {proc meta struct}}
+--->>> (unknown) name pk args=
+{proc struct struct.slot} {proc meta struct}
+--->>> context=proc struct struct.slot
++++ name pk  -> redirect_name=struct.slot.name
+--->>> (typeinst_helper) context={proc varchar struct.slot.name} stack_ctx={{proc varchar struct.slot.name} {unknown unknown struct.slot.name} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc meta struct}}
+--->>> (unknown) type varchar args=
+{proc struct struct.slot} {proc meta struct}
+--->>> context=proc struct struct.slot
++++ type varchar  -> redirect_name=struct.slot.type
+--->>> (typeinst_helper) context={proc varchar struct.slot.type} stack_ctx={{proc varchar struct.slot.type} {unknown unknown struct.slot.type} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc meta struct}}
+--->>> (unknown) slot 
+                        name [domNode0x1b0b100 @x-name]
+                        type [domNode0x1b0b100 @x-type]
+                        if { [domNode0x1b0b100 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1b0b100 @x-default_value ""]
+                        }
+                        if { [domNode0x1b0b100 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1b0b100 @x-optional_p ""]
+                        }
+                        if { [domNode0x1b0b100 hasAttribute "x-container"] } {
+                            container [domNode0x1b0b100 @x-container ""]
+                        }
+                     args=
+{proc meta struct}
+--->>> context=proc meta struct
++++ slot 
+                        name [domNode0x1b0b100 @x-name]
+                        type [domNode0x1b0b100 @x-type]
+                        if { [domNode0x1b0b100 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1b0b100 @x-default_value ""]
+                        }
+                        if { [domNode0x1b0b100 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1b0b100 @x-optional_p ""]
+                        }
+                        if { [domNode0x1b0b100 hasAttribute "x-container"] } {
+                            container [domNode0x1b0b100 @x-container ""]
+                        }
+                      -> redirect_name=struct.slot
+--->>> (typeinst_helper) context={proc struct struct.slot} stack_ctx={{proc struct struct.slot} {unknown unknown struct.slot} {proc meta struct}}
+--->>> (unknown) name is_final_if_no_scope args=
+{proc struct struct.slot} {proc meta struct}
+--->>> context=proc struct struct.slot
++++ name is_final_if_no_scope  -> redirect_name=struct.slot.name
+--->>> (typeinst_helper) context={proc varchar struct.slot.name} stack_ctx={{proc varchar struct.slot.name} {unknown unknown struct.slot.name} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc meta struct}}
+--->>> (unknown) type bool args=
+{proc struct struct.slot} {proc meta struct}
+--->>> context=proc struct struct.slot
++++ type bool  -> redirect_name=struct.slot.type
+--->>> (typeinst_helper) context={proc varchar struct.slot.type} stack_ctx={{proc varchar struct.slot.type} {unknown unknown struct.slot.type} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc meta struct}}
+--->>> type_helper (is_declaration_mode_p=1) tag=varchar name=name {*}= {}
+--->>> (typedecl_helper) context_path=email stack_ctx={{proc basetype varchar} {eval struct email} {proc struct struct}}
+--->>> type_helper (is_declaration_mode_p=1) tag=varchar name=address {*}
+--->>> (typedecl_helper) context_path=email stack_ctx={{proc basetype varchar} {eval struct email} {proc struct struct}}
+--->>> (unknown) pk address args=
+{proc struct struct}
+--->>> context=proc struct struct
++++ pk address  -> redirect_name=struct.pk
+--->>> (typeinst_helper) context={proc varchar struct.pk} stack_ctx={{proc varchar struct.pk} {unknown unknown struct.pk} {eval struct email} {proc struct struct}}
+!!! nest: email -> type_helper
+--->>> (typeinst_helper) context={proc varchar struct.type} stack_ctx={{proc varchar struct.type} {proc struct struct}}
+--->>> (unknown) name email args=
+{proc struct struct}
+--->>> context=proc struct struct
++++ name email  -> redirect_name=struct.name
+--->>> (typeinst_helper) context={proc varchar struct.name} stack_ctx={{proc varchar struct.name} {unknown unknown struct.name} {proc struct struct}}
+--->>> (unknown) nsp ::datasys::lang args=
+{proc struct struct}
+--->>> context=proc struct struct
++++ nsp ::datasys::lang  -> redirect_name=struct.nsp
+--->>> (typeinst_helper) context={proc varchar struct.nsp} stack_ctx={{proc varchar struct.nsp} {unknown unknown struct.nsp} {proc struct struct}}
+--->>> (unknown) slot 
+                        name [domNode0x1a6e540 @x-name]
+                        type [domNode0x1a6e540 @x-type]
+                        if { [domNode0x1a6e540 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1a6e540 @x-default_value ""]
+                        }
+                        if { [domNode0x1a6e540 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1a6e540 @x-optional_p ""]
+                        }
+                        if { [domNode0x1a6e540 hasAttribute "x-container"] } {
+                            container [domNode0x1a6e540 @x-container ""]
+                        }
+                     args=
+{proc struct struct}
+--->>> context=proc struct struct
++++ slot 
+                        name [domNode0x1a6e540 @x-name]
+                        type [domNode0x1a6e540 @x-type]
+                        if { [domNode0x1a6e540 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1a6e540 @x-default_value ""]
+                        }
+                        if { [domNode0x1a6e540 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1a6e540 @x-optional_p ""]
+                        }
+                        if { [domNode0x1a6e540 hasAttribute "x-container"] } {
+                            container [domNode0x1a6e540 @x-container ""]
+                        }
+                      -> redirect_name=struct.slot
+--->>> (typeinst_helper) context={proc struct struct.slot} stack_ctx={{proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) name name args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ name name  -> redirect_name=struct.slot.name
+--->>> (typeinst_helper) context={proc varchar struct.slot.name} stack_ctx={{proc varchar struct.slot.name} {unknown unknown struct.slot.name} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) type varchar args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ type varchar  -> redirect_name=struct.slot.type
+--->>> (typeinst_helper) context={proc varchar struct.slot.type} stack_ctx={{proc varchar struct.slot.type} {unknown unknown struct.slot.type} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) default_value  args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ default_value   -> redirect_name=struct.slot.default_value
+--->>> (typeinst_helper) context={proc varchar struct.slot.default_value} stack_ctx={{proc varchar struct.slot.default_value} {unknown unknown struct.slot.default_value} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) slot 
+                        name [domNode0x1a6e6e0 @x-name]
+                        type [domNode0x1a6e6e0 @x-type]
+                        if { [domNode0x1a6e6e0 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1a6e6e0 @x-default_value ""]
+                        }
+                        if { [domNode0x1a6e6e0 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1a6e6e0 @x-optional_p ""]
+                        }
+                        if { [domNode0x1a6e6e0 hasAttribute "x-container"] } {
+                            container [domNode0x1a6e6e0 @x-container ""]
+                        }
+                     args=
+{proc struct struct}
+--->>> context=proc struct struct
++++ slot 
+                        name [domNode0x1a6e6e0 @x-name]
+                        type [domNode0x1a6e6e0 @x-type]
+                        if { [domNode0x1a6e6e0 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1a6e6e0 @x-default_value ""]
+                        }
+                        if { [domNode0x1a6e6e0 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1a6e6e0 @x-optional_p ""]
+                        }
+                        if { [domNode0x1a6e6e0 hasAttribute "x-container"] } {
+                            container [domNode0x1a6e6e0 @x-container ""]
+                        }
+                      -> redirect_name=struct.slot
+--->>> (typeinst_helper) context={proc struct struct.slot} stack_ctx={{proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) name address args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ name address  -> redirect_name=struct.slot.name
+--->>> (typeinst_helper) context={proc varchar struct.slot.name} stack_ctx={{proc varchar struct.slot.name} {unknown unknown struct.slot.name} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) type varchar args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ type varchar  -> redirect_name=struct.slot.type
+--->>> (typeinst_helper) context={proc varchar struct.slot.type} stack_ctx={{proc varchar struct.slot.type} {unknown unknown struct.slot.type} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> type_helper (is_declaration_mode_p=1) tag=varchar name=name {*}
+--->>> (typedecl_helper) context_path=file stack_ctx={{proc basetype varchar} {eval struct file} {proc struct struct}}
+--->>> type_helper (is_declaration_mode_p=1) tag=varchar name=mime_type {*}
+--->>> (typedecl_helper) context_path=file stack_ctx={{proc basetype varchar} {eval struct file} {proc struct struct}}
+--->>> type_helper (is_declaration_mode_p=1) tag=int32 name=size {*}
+--->>> (typedecl_helper) context_path=file stack_ctx={{proc basetype int32} {eval struct file} {proc struct struct}}
+!!! nest: file -> type_helper
+--->>> (typeinst_helper) context={proc varchar struct.type} stack_ctx={{proc varchar struct.type} {proc struct struct}}
+--->>> (unknown) name file args=
+{proc struct struct}
+--->>> context=proc struct struct
++++ name file  -> redirect_name=struct.name
+--->>> (typeinst_helper) context={proc varchar struct.name} stack_ctx={{proc varchar struct.name} {unknown unknown struct.name} {proc struct struct}}
+--->>> (unknown) nsp ::datasys::lang args=
+{proc struct struct}
+--->>> context=proc struct struct
++++ nsp ::datasys::lang  -> redirect_name=struct.nsp
+--->>> (typeinst_helper) context={proc varchar struct.nsp} stack_ctx={{proc varchar struct.nsp} {unknown unknown struct.nsp} {proc struct struct}}
+--->>> (unknown) slot 
+                        name [domNode0x1a6f320 @x-name]
+                        type [domNode0x1a6f320 @x-type]
+                        if { [domNode0x1a6f320 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1a6f320 @x-default_value ""]
+                        }
+                        if { [domNode0x1a6f320 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1a6f320 @x-optional_p ""]
+                        }
+                        if { [domNode0x1a6f320 hasAttribute "x-container"] } {
+                            container [domNode0x1a6f320 @x-container ""]
+                        }
+                     args=
+{proc struct struct}
+--->>> context=proc struct struct
++++ slot 
+                        name [domNode0x1a6f320 @x-name]
+                        type [domNode0x1a6f320 @x-type]
+                        if { [domNode0x1a6f320 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1a6f320 @x-default_value ""]
+                        }
+                        if { [domNode0x1a6f320 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1a6f320 @x-optional_p ""]
+                        }
+                        if { [domNode0x1a6f320 hasAttribute "x-container"] } {
+                            container [domNode0x1a6f320 @x-container ""]
+                        }
+                      -> redirect_name=struct.slot
+--->>> (typeinst_helper) context={proc struct struct.slot} stack_ctx={{proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) name name args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ name name  -> redirect_name=struct.slot.name
+--->>> (typeinst_helper) context={proc varchar struct.slot.name} stack_ctx={{proc varchar struct.slot.name} {unknown unknown struct.slot.name} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) type varchar args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ type varchar  -> redirect_name=struct.slot.type
+--->>> (typeinst_helper) context={proc varchar struct.slot.type} stack_ctx={{proc varchar struct.slot.type} {unknown unknown struct.slot.type} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) slot 
+                        name [domNode0x1a6f460 @x-name]
+                        type [domNode0x1a6f460 @x-type]
+                        if { [domNode0x1a6f460 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1a6f460 @x-default_value ""]
+                        }
+                        if { [domNode0x1a6f460 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1a6f460 @x-optional_p ""]
+                        }
+                        if { [domNode0x1a6f460 hasAttribute "x-container"] } {
+                            container [domNode0x1a6f460 @x-container ""]
+                        }
+                     args=
+{proc struct struct}
+--->>> context=proc struct struct
++++ slot 
+                        name [domNode0x1a6f460 @x-name]
+                        type [domNode0x1a6f460 @x-type]
+                        if { [domNode0x1a6f460 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1a6f460 @x-default_value ""]
+                        }
+                        if { [domNode0x1a6f460 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1a6f460 @x-optional_p ""]
+                        }
+                        if { [domNode0x1a6f460 hasAttribute "x-container"] } {
+                            container [domNode0x1a6f460 @x-container ""]
+                        }
+                      -> redirect_name=struct.slot
+--->>> (typeinst_helper) context={proc struct struct.slot} stack_ctx={{proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) name mime_type args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ name mime_type  -> redirect_name=struct.slot.name
+--->>> (typeinst_helper) context={proc varchar struct.slot.name} stack_ctx={{proc varchar struct.slot.name} {unknown unknown struct.slot.name} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) type varchar args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ type varchar  -> redirect_name=struct.slot.type
+--->>> (typeinst_helper) context={proc varchar struct.slot.type} stack_ctx={{proc varchar struct.slot.type} {unknown unknown struct.slot.type} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) slot 
+                        name [domNode0x1a6f5a0 @x-name]
+                        type [domNode0x1a6f5a0 @x-type]
+                        if { [domNode0x1a6f5a0 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1a6f5a0 @x-default_value ""]
+                        }
+                        if { [domNode0x1a6f5a0 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1a6f5a0 @x-optional_p ""]
+                        }
+                        if { [domNode0x1a6f5a0 hasAttribute "x-container"] } {
+                            container [domNode0x1a6f5a0 @x-container ""]
+                        }
+                     args=
+{proc struct struct}
+--->>> context=proc struct struct
++++ slot 
+                        name [domNode0x1a6f5a0 @x-name]
+                        type [domNode0x1a6f5a0 @x-type]
+                        if { [domNode0x1a6f5a0 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1a6f5a0 @x-default_value ""]
+                        }
+                        if { [domNode0x1a6f5a0 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1a6f5a0 @x-optional_p ""]
+                        }
+                        if { [domNode0x1a6f5a0 hasAttribute "x-container"] } {
+                            container [domNode0x1a6f5a0 @x-container ""]
+                        }
+                      -> redirect_name=struct.slot
+--->>> (typeinst_helper) context={proc struct struct.slot} stack_ctx={{proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) name size args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ name size  -> redirect_name=struct.slot.name
+--->>> (typeinst_helper) context={proc varchar struct.slot.name} stack_ctx={{proc varchar struct.slot.name} {unknown unknown struct.slot.name} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) type int32 args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ type int32  -> redirect_name=struct.slot.type
+--->>> (typeinst_helper) context={proc varchar struct.slot.type} stack_ctx={{proc varchar struct.slot.type} {unknown unknown struct.slot.type} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> type_helper (is_declaration_mode_p=1) tag=varchar name=name {*}
+--->>> (typedecl_helper) context_path=folder stack_ctx={{proc basetype varchar} {eval struct folder} {proc struct struct}}
+--->>> type_helper (is_declaration_mode_p=1) tag=int32 name=num_items {*}
+--->>> (typedecl_helper) context_path=folder stack_ctx={{proc basetype int32} {eval struct folder} {proc struct struct}}
+!!! nest: folder -> type_helper
+--->>> (typeinst_helper) context={proc varchar struct.type} stack_ctx={{proc varchar struct.type} {proc struct struct}}
+--->>> (unknown) name folder args=
+{proc struct struct}
+--->>> context=proc struct struct
++++ name folder  -> redirect_name=struct.name
+--->>> (typeinst_helper) context={proc varchar struct.name} stack_ctx={{proc varchar struct.name} {unknown unknown struct.name} {proc struct struct}}
+--->>> (unknown) nsp ::datasys::lang args=
+{proc struct struct}
+--->>> context=proc struct struct
++++ nsp ::datasys::lang  -> redirect_name=struct.nsp
+--->>> (typeinst_helper) context={proc varchar struct.nsp} stack_ctx={{proc varchar struct.nsp} {unknown unknown struct.nsp} {proc struct struct}}
+--->>> (unknown) slot 
+                        name [domNode0x1b45700 @x-name]
+                        type [domNode0x1b45700 @x-type]
+                        if { [domNode0x1b45700 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1b45700 @x-default_value ""]
+                        }
+                        if { [domNode0x1b45700 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1b45700 @x-optional_p ""]
+                        }
+                        if { [domNode0x1b45700 hasAttribute "x-container"] } {
+                            container [domNode0x1b45700 @x-container ""]
+                        }
+                     args=
+{proc struct struct}
+--->>> context=proc struct struct
++++ slot 
+                        name [domNode0x1b45700 @x-name]
+                        type [domNode0x1b45700 @x-type]
+                        if { [domNode0x1b45700 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1b45700 @x-default_value ""]
+                        }
+                        if { [domNode0x1b45700 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1b45700 @x-optional_p ""]
+                        }
+                        if { [domNode0x1b45700 hasAttribute "x-container"] } {
+                            container [domNode0x1b45700 @x-container ""]
+                        }
+                      -> redirect_name=struct.slot
+--->>> (typeinst_helper) context={proc struct struct.slot} stack_ctx={{proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) name name args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ name name  -> redirect_name=struct.slot.name
+--->>> (typeinst_helper) context={proc varchar struct.slot.name} stack_ctx={{proc varchar struct.slot.name} {unknown unknown struct.slot.name} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) type varchar args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ type varchar  -> redirect_name=struct.slot.type
+--->>> (typeinst_helper) context={proc varchar struct.slot.type} stack_ctx={{proc varchar struct.slot.type} {unknown unknown struct.slot.type} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) slot 
+                        name [domNode0x1b45840 @x-name]
+                        type [domNode0x1b45840 @x-type]
+                        if { [domNode0x1b45840 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1b45840 @x-default_value ""]
+                        }
+                        if { [domNode0x1b45840 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1b45840 @x-optional_p ""]
+                        }
+                        if { [domNode0x1b45840 hasAttribute "x-container"] } {
+                            container [domNode0x1b45840 @x-container ""]
+                        }
+                     args=
+{proc struct struct}
+--->>> context=proc struct struct
++++ slot 
+                        name [domNode0x1b45840 @x-name]
+                        type [domNode0x1b45840 @x-type]
+                        if { [domNode0x1b45840 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1b45840 @x-default_value ""]
+                        }
+                        if { [domNode0x1b45840 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1b45840 @x-optional_p ""]
+                        }
+                        if { [domNode0x1b45840 hasAttribute "x-container"] } {
+                            container [domNode0x1b45840 @x-container ""]
+                        }
+                      -> redirect_name=struct.slot
+--->>> (typeinst_helper) context={proc struct struct.slot} stack_ctx={{proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) name num_items args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ name num_items  -> redirect_name=struct.slot.name
+--->>> (typeinst_helper) context={proc varchar struct.slot.name} stack_ctx={{proc varchar struct.slot.name} {unknown unknown struct.slot.name} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) type int32 args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ type int32  -> redirect_name=struct.slot.type
+--->>> (typeinst_helper) context={proc varchar struct.slot.type} stack_ctx={{proc varchar struct.slot.type} {unknown unknown struct.slot.type} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> type_helper (is_declaration_mode_p=1) tag=varchar name=category_name {*}
+--->>> (typedecl_helper) context_path=category stack_ctx={{proc basetype varchar} {eval struct category} {proc struct struct}}
+--->>> type_helper (is_declaration_mode_p=1) tag=varchar name=parent_category {*}
+--->>> (typedecl_helper) context_path=category stack_ctx={{proc basetype varchar} {eval struct category} {proc struct struct}}
+!!! nest: category -> type_helper
+--->>> (typeinst_helper) context={proc varchar struct.type} stack_ctx={{proc varchar struct.type} {proc struct struct}}
+--->>> (unknown) name category args=
+{proc struct struct}
+--->>> context=proc struct struct
++++ name category  -> redirect_name=struct.name
+--->>> (typeinst_helper) context={proc varchar struct.name} stack_ctx={{proc varchar struct.name} {unknown unknown struct.name} {proc struct struct}}
+--->>> (unknown) nsp ::datasys::lang args=
+{proc struct struct}
+--->>> context=proc struct struct
++++ nsp ::datasys::lang  -> redirect_name=struct.nsp
+--->>> (typeinst_helper) context={proc varchar struct.nsp} stack_ctx={{proc varchar struct.nsp} {unknown unknown struct.nsp} {proc struct struct}}
+--->>> (unknown) slot 
+                        name [domNode0x1b46720 @x-name]
+                        type [domNode0x1b46720 @x-type]
+                        if { [domNode0x1b46720 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1b46720 @x-default_value ""]
+                        }
+                        if { [domNode0x1b46720 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1b46720 @x-optional_p ""]
+                        }
+                        if { [domNode0x1b46720 hasAttribute "x-container"] } {
+                            container [domNode0x1b46720 @x-container ""]
+                        }
+                     args=
+{proc struct struct}
+--->>> context=proc struct struct
++++ slot 
+                        name [domNode0x1b46720 @x-name]
+                        type [domNode0x1b46720 @x-type]
+                        if { [domNode0x1b46720 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1b46720 @x-default_value ""]
+                        }
+                        if { [domNode0x1b46720 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1b46720 @x-optional_p ""]
+                        }
+                        if { [domNode0x1b46720 hasAttribute "x-container"] } {
+                            container [domNode0x1b46720 @x-container ""]
+                        }
+                      -> redirect_name=struct.slot
+--->>> (typeinst_helper) context={proc struct struct.slot} stack_ctx={{proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) name category_name args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ name category_name  -> redirect_name=struct.slot.name
+--->>> (typeinst_helper) context={proc varchar struct.slot.name} stack_ctx={{proc varchar struct.slot.name} {unknown unknown struct.slot.name} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) type varchar args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ type varchar  -> redirect_name=struct.slot.type
+--->>> (typeinst_helper) context={proc varchar struct.slot.type} stack_ctx={{proc varchar struct.slot.type} {unknown unknown struct.slot.type} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) slot 
+                        name [domNode0x1b46860 @x-name]
+                        type [domNode0x1b46860 @x-type]
+                        if { [domNode0x1b46860 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1b46860 @x-default_value ""]
+                        }
+                        if { [domNode0x1b46860 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1b46860 @x-optional_p ""]
+                        }
+                        if { [domNode0x1b46860 hasAttribute "x-container"] } {
+                            container [domNode0x1b46860 @x-container ""]
+                        }
+                     args=
+{proc struct struct}
+--->>> context=proc struct struct
++++ slot 
+                        name [domNode0x1b46860 @x-name]
+                        type [domNode0x1b46860 @x-type]
+                        if { [domNode0x1b46860 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1b46860 @x-default_value ""]
+                        }
+                        if { [domNode0x1b46860 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1b46860 @x-optional_p ""]
+                        }
+                        if { [domNode0x1b46860 hasAttribute "x-container"] } {
+                            container [domNode0x1b46860 @x-container ""]
+                        }
+                      -> redirect_name=struct.slot
+--->>> (typeinst_helper) context={proc struct struct.slot} stack_ctx={{proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) name parent_category args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ name parent_category  -> redirect_name=struct.slot.name
+--->>> (typeinst_helper) context={proc varchar struct.slot.name} stack_ctx={{proc varchar struct.slot.name} {unknown unknown struct.slot.name} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) type varchar args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ type varchar  -> redirect_name=struct.slot.type
+--->>> (typeinst_helper) context={proc varchar struct.slot.type} stack_ctx={{proc varchar struct.slot.type} {unknown unknown struct.slot.type} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> type_helper (is_declaration_mode_p=1) tag=varchar name=word {*}
+--->>> (typedecl_helper) context_path=word_count_pair stack_ctx={{proc basetype varchar} {eval struct word_count_pair} {proc struct struct}}
+--->>> type_helper (is_declaration_mode_p=1) tag=varint name=count {*}
+--->>> (typedecl_helper) context_path=word_count_pair stack_ctx={{proc basetype varint} {eval struct word_count_pair} {proc struct struct}}
+!!! nest: word_count_pair -> type_helper
+--->>> (typeinst_helper) context={proc varchar struct.type} stack_ctx={{proc varchar struct.type} {proc struct struct}}
+--->>> (unknown) name word_count_pair args=
+{proc struct struct}
+--->>> context=proc struct struct
++++ name word_count_pair  -> redirect_name=struct.name
+--->>> (typeinst_helper) context={proc varchar struct.name} stack_ctx={{proc varchar struct.name} {unknown unknown struct.name} {proc struct struct}}
+--->>> (unknown) nsp ::datasys::lang args=
+{proc struct struct}
+--->>> context=proc struct struct
++++ nsp ::datasys::lang  -> redirect_name=struct.nsp
+--->>> (typeinst_helper) context={proc varchar struct.nsp} stack_ctx={{proc varchar struct.nsp} {unknown unknown struct.nsp} {proc struct struct}}
+--->>> (unknown) slot 
+                        name [domNode0x1ad7ac0 @x-name]
+                        type [domNode0x1ad7ac0 @x-type]
+                        if { [domNode0x1ad7ac0 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1ad7ac0 @x-default_value ""]
+                        }
+                        if { [domNode0x1ad7ac0 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1ad7ac0 @x-optional_p ""]
+                        }
+                        if { [domNode0x1ad7ac0 hasAttribute "x-container"] } {
+                            container [domNode0x1ad7ac0 @x-container ""]
+                        }
+                     args=
+{proc struct struct}
+--->>> context=proc struct struct
++++ slot 
+                        name [domNode0x1ad7ac0 @x-name]
+                        type [domNode0x1ad7ac0 @x-type]
+                        if { [domNode0x1ad7ac0 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1ad7ac0 @x-default_value ""]
+                        }
+                        if { [domNode0x1ad7ac0 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1ad7ac0 @x-optional_p ""]
+                        }
+                        if { [domNode0x1ad7ac0 hasAttribute "x-container"] } {
+                            container [domNode0x1ad7ac0 @x-container ""]
+                        }
+                      -> redirect_name=struct.slot
+--->>> (typeinst_helper) context={proc struct struct.slot} stack_ctx={{proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) name word args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ name word  -> redirect_name=struct.slot.name
+--->>> (typeinst_helper) context={proc varchar struct.slot.name} stack_ctx={{proc varchar struct.slot.name} {unknown unknown struct.slot.name} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) type varchar args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ type varchar  -> redirect_name=struct.slot.type
+--->>> (typeinst_helper) context={proc varchar struct.slot.type} stack_ctx={{proc varchar struct.slot.type} {unknown unknown struct.slot.type} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) slot 
+                        name [domNode0x1ad7c00 @x-name]
+                        type [domNode0x1ad7c00 @x-type]
+                        if { [domNode0x1ad7c00 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1ad7c00 @x-default_value ""]
+                        }
+                        if { [domNode0x1ad7c00 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1ad7c00 @x-optional_p ""]
+                        }
+                        if { [domNode0x1ad7c00 hasAttribute "x-container"] } {
+                            container [domNode0x1ad7c00 @x-container ""]
+                        }
+                     args=
+{proc struct struct}
+--->>> context=proc struct struct
++++ slot 
+                        name [domNode0x1ad7c00 @x-name]
+                        type [domNode0x1ad7c00 @x-type]
+                        if { [domNode0x1ad7c00 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1ad7c00 @x-default_value ""]
+                        }
+                        if { [domNode0x1ad7c00 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1ad7c00 @x-optional_p ""]
+                        }
+                        if { [domNode0x1ad7c00 hasAttribute "x-container"] } {
+                            container [domNode0x1ad7c00 @x-container ""]
+                        }
+                      -> redirect_name=struct.slot
+--->>> (typeinst_helper) context={proc struct struct.slot} stack_ctx={{proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) name count args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ name count  -> redirect_name=struct.slot.name
+--->>> (typeinst_helper) context={proc varchar struct.slot.name} stack_ctx={{proc varchar struct.slot.name} {unknown unknown struct.slot.name} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) type varint args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ type varint  -> redirect_name=struct.slot.type
+--->>> (typeinst_helper) context={proc varchar struct.slot.type} stack_ctx={{proc varchar struct.slot.type} {unknown unknown struct.slot.type} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) pk message_id args=
+{proc struct struct}
+--->>> context=proc struct struct
++++ pk message_id  -> redirect_name=struct.pk
+--->>> (typeinst_helper) context={proc varchar struct.pk} stack_ctx={{proc varchar struct.pk} {unknown unknown struct.pk} {eval struct message} {proc struct struct}}
+--->>> (unknown) is_final_if_no_scope yes args=
+{proc struct struct}
+--->>> context=proc struct struct
++++ is_final_if_no_scope yes  -> redirect_name=struct.is_final_if_no_scope
+--->>> (typeinst_helper) context={proc bool struct.is_final_if_no_scope} stack_ctx={{proc bool struct.is_final_if_no_scope} {unknown unknown struct.is_final_if_no_scope} {eval struct message} {proc struct struct}}
 --->>> type_helper (is_declaration_mode_p=1) tag=varint name=message_id {*}
---->>> (typedecl_helper) context_path=message stack_ctx={{proc base_type varint} {eval struct message} {proc struct struct}}
+--->>> (typedecl_helper) context_path=message stack_ctx={{proc basetype varint} {eval struct message} {proc struct struct}}
 --->>> type_helper (is_declaration_mode_p=1) tag=varchar name=device {*}= sms
---->>> (typedecl_helper) context_path=message stack_ctx={{proc base_type varchar} {eval struct message} {proc struct struct}}
+--->>> (typedecl_helper) context_path=message stack_ctx={{proc basetype varchar} {eval struct message} {proc struct struct}}
 --->>> type_helper (is_declaration_mode_p=1) tag=int16 name=num_comments {*}= 0
---->>> (typedecl_helper) context_path=message stack_ctx={{proc base_type int16} {eval struct message} {proc struct struct}}
+--->>> (typedecl_helper) context_path=message stack_ctx={{proc basetype int16} {eval struct message} {proc struct struct}}
 --->>> type_helper (is_declaration_mode_p=1) tag=varchar name=subject {*}
---->>> (typedecl_helper) context_path=message stack_ctx={{proc base_type varchar} {eval struct message} {proc struct struct}}
+--->>> (typedecl_helper) context_path=message stack_ctx={{proc basetype varchar} {eval struct message} {proc struct struct}}
 --->>> type_helper (is_declaration_mode_p=1) tag=varchar name=body {*}
---->>> (typedecl_helper) context_path=message stack_ctx={{proc base_type varchar} {eval struct message} {proc struct struct}}
+--->>> (typedecl_helper) context_path=message stack_ctx={{proc basetype varchar} {eval struct message} {proc struct struct}}
 --->>> type_helper (is_declaration_mode_p=1) tag=email name=from {*}
 --->>> (typedecl_helper) context_path=message stack_ctx={{proc struct email} {eval struct message} {proc struct struct}}
-+++++ (multiple declaration) tag=type=email name=to args= stack_ctx={proc struct message} {eval struct message} {proc struct struct} context=eval struct message
+----- (container declaration) tag=type=email name=to args= stack_ctx={proc struct message} {eval struct message} {proc struct struct} context=eval struct message
 --->>> (typedecl_helper) context_path=message stack_ctx={{proc struct message} {eval struct message} {proc struct struct}}
-+++++ (multiple declaration) tag=type=email name=cc args== {} stack_ctx={proc struct message} {eval struct message} {proc struct struct} context=eval struct message
+----- (container declaration) tag=type=email name=cc args== {} stack_ctx={proc struct message} {eval struct message} {proc struct struct} context=eval struct message
 --->>> (typedecl_helper) context_path=message stack_ctx={{proc struct message} {eval struct message} {proc struct struct}}
-+++++ (multiple declaration) tag=type=email name=bcc args== {} stack_ctx={proc struct message} {eval struct message} {proc struct struct} context=eval struct message
+----- (container declaration) tag=type=email name=bcc args== {} stack_ctx={proc struct message} {eval struct message} {proc struct struct} context=eval struct message
 --->>> (typedecl_helper) context_path=message stack_ctx={{proc struct message} {eval struct message} {proc struct struct}}
 --->>> type_helper (is_declaration_mode_p=1) tag=bool name=public_p {*}= false
---->>> (typedecl_helper) context_path=message stack_ctx={{proc base_type bool} {eval struct message} {proc struct struct}}
-+++++ (multiple declaration) tag=type=category name=categories args== {} stack_ctx={proc struct message} {eval struct message} {proc struct struct} context=eval struct message
+--->>> (typedecl_helper) context_path=message stack_ctx={{proc basetype bool} {eval struct message} {proc struct struct}}
+----- (container declaration) tag=type=category name=categories args== {} stack_ctx={proc struct message} {eval struct message} {proc struct struct} context=eval struct message
 --->>> (typedecl_helper) context_path=message stack_ctx={{proc struct message} {eval struct message} {proc struct struct}}
-+++++ (multiple declaration) tag=type=folder name=folders args== {} stack_ctx={proc struct message} {eval struct message} {proc struct struct} context=eval struct message
+----- (container declaration) tag=type=folder name=folders args== {} stack_ctx={proc struct message} {eval struct message} {proc struct struct} context=eval struct message
 --->>> (typedecl_helper) context_path=message stack_ctx={{proc struct message} {eval struct message} {proc struct struct}}
-+++++ (multiple declaration) tag=type=varchar name=tags args== {} stack_ctx={proc struct message} {eval struct message} {proc struct struct} context=eval struct message
+----- (container declaration) tag=type=varchar name=tags args== {} stack_ctx={proc struct message} {eval struct message} {proc struct struct} context=eval struct message
 --->>> (typedecl_helper) context_path=message stack_ctx={{proc struct message} {eval struct message} {proc struct struct}}
-+++++ (multiple declaration) tag=type=file name=attachment args== {} stack_ctx={proc struct message} {eval struct message} {proc struct struct} context=eval struct message
+----- (container declaration) tag=type=file name=attachment args== {} stack_ctx={proc struct message} {eval struct message} {proc struct struct} context=eval struct message
 --->>> (typedecl_helper) context_path=message stack_ctx={{proc struct message} {eval struct message} {proc struct struct}}
 --->>> (unknown) list<varchar> something args=
 --->>> (unknown) map<varchar,int32> wordcount_W args=
------ (map declaration) tag=type=struct name=wordcount_X args== {} {
+----- (container declaration) tag=type=struct name=wordcount_X args== {} {
         varchar word
         int32 count
     } stack_ctx={proc struct message} {eval struct message} {proc struct struct} context=eval struct message
 --->>> type_helper (is_declaration_mode_p=1) tag=varchar name=word {*}
---->>> (typedecl_helper) context_path=message.wordcount_X stack_ctx={{proc base_type varchar} {eval typedecl wordcount_X} {proc struct message} {eval struct message} {proc struct struct}}
+--->>> (typedecl_helper) context_path=message.wordcount_X stack_ctx={{proc basetype varchar} {eval typedecl wordcount_X} {proc struct message} {eval struct message} {proc struct struct}}
 --->>> type_helper (is_declaration_mode_p=1) tag=int32 name=count {*}
---->>> (typedecl_helper) context_path=message.wordcount_X stack_ctx={{proc base_type int32} {eval typedecl wordcount_X} {proc struct message} {eval struct message} {proc struct struct}}
+--->>> (typedecl_helper) context_path=message.wordcount_X stack_ctx={{proc basetype int32} {eval typedecl wordcount_X} {proc struct message} {eval struct message} {proc struct struct}}
 --->>> (typedecl_helper) context_path=message stack_ctx={{proc struct message} {eval struct message} {proc struct struct}}
------ (map declaration) tag=type=word_count_pair name=wordcount_Y args= stack_ctx={proc struct message} {eval struct message} {proc struct struct} context=eval struct message
+----- (container declaration) tag=type=word_count_pair name=wordcount_Y args= stack_ctx={proc struct message} {eval struct message} {proc struct struct} context=eval struct message
 --->>> (typedecl_helper) context_path=message stack_ctx={{proc struct message} {eval struct message} {proc struct struct}}
------ (map declaration) tag=type=word_count_pair name=wordcount_Z args== {} stack_ctx={proc struct message} {eval struct message} {proc struct struct} context=eval struct message
+----- (container declaration) tag=type=word_count_pair name=wordcount_Z args== {} stack_ctx={proc struct message} {eval struct message} {proc struct struct} context=eval struct message
 --->>> (typedecl_helper) context_path=message stack_ctx={{proc struct message} {eval struct message} {proc struct struct}}
 --->>> (unknown) set<varchar> words args=
-!!! nest: message -> with_ctx {proc struct message} type_helper
+!!! nest: message -> type_helper
+--->>> (typeinst_helper) context={proc varchar struct.type} stack_ctx={{proc varchar struct.type} {proc struct struct}}
+--->>> (unknown) name message args=
+{proc struct struct}
+--->>> context=proc struct struct
++++ name message  -> redirect_name=struct.name
+--->>> (typeinst_helper) context={proc varchar struct.name} stack_ctx={{proc varchar struct.name} {unknown unknown struct.name} {proc struct struct}}
+--->>> (unknown) nsp ::datasys::lang args=
+{proc struct struct}
+--->>> context=proc struct struct
++++ nsp ::datasys::lang  -> redirect_name=struct.nsp
+--->>> (typeinst_helper) context={proc varchar struct.nsp} stack_ctx={{proc varchar struct.nsp} {unknown unknown struct.nsp} {proc struct struct}}
+--->>> (unknown) slot 
+                        name [domNode0x1ad6ff0 @x-name]
+                        type [domNode0x1ad6ff0 @x-type]
+                        if { [domNode0x1ad6ff0 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1ad6ff0 @x-default_value ""]
+                        }
+                        if { [domNode0x1ad6ff0 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1ad6ff0 @x-optional_p ""]
+                        }
+                        if { [domNode0x1ad6ff0 hasAttribute "x-container"] } {
+                            container [domNode0x1ad6ff0 @x-container ""]
+                        }
+                     args=
+{proc struct struct}
+--->>> context=proc struct struct
++++ slot 
+                        name [domNode0x1ad6ff0 @x-name]
+                        type [domNode0x1ad6ff0 @x-type]
+                        if { [domNode0x1ad6ff0 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1ad6ff0 @x-default_value ""]
+                        }
+                        if { [domNode0x1ad6ff0 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1ad6ff0 @x-optional_p ""]
+                        }
+                        if { [domNode0x1ad6ff0 hasAttribute "x-container"] } {
+                            container [domNode0x1ad6ff0 @x-container ""]
+                        }
+                      -> redirect_name=struct.slot
+--->>> (typeinst_helper) context={proc struct struct.slot} stack_ctx={{proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) name message_id args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ name message_id  -> redirect_name=struct.slot.name
+--->>> (typeinst_helper) context={proc varchar struct.slot.name} stack_ctx={{proc varchar struct.slot.name} {unknown unknown struct.slot.name} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) type varint args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ type varint  -> redirect_name=struct.slot.type
+--->>> (typeinst_helper) context={proc varchar struct.slot.type} stack_ctx={{proc varchar struct.slot.type} {unknown unknown struct.slot.type} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) slot 
+                        name [domNode0x1ad7130 @x-name]
+                        type [domNode0x1ad7130 @x-type]
+                        if { [domNode0x1ad7130 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1ad7130 @x-default_value ""]
+                        }
+                        if { [domNode0x1ad7130 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1ad7130 @x-optional_p ""]
+                        }
+                        if { [domNode0x1ad7130 hasAttribute "x-container"] } {
+                            container [domNode0x1ad7130 @x-container ""]
+                        }
+                     args=
+{proc struct struct}
+--->>> context=proc struct struct
++++ slot 
+                        name [domNode0x1ad7130 @x-name]
+                        type [domNode0x1ad7130 @x-type]
+                        if { [domNode0x1ad7130 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1ad7130 @x-default_value ""]
+                        }
+                        if { [domNode0x1ad7130 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1ad7130 @x-optional_p ""]
+                        }
+                        if { [domNode0x1ad7130 hasAttribute "x-container"] } {
+                            container [domNode0x1ad7130 @x-container ""]
+                        }
+                      -> redirect_name=struct.slot
+--->>> (typeinst_helper) context={proc struct struct.slot} stack_ctx={{proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) name device args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ name device  -> redirect_name=struct.slot.name
+--->>> (typeinst_helper) context={proc varchar struct.slot.name} stack_ctx={{proc varchar struct.slot.name} {unknown unknown struct.slot.name} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) type varchar args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ type varchar  -> redirect_name=struct.slot.type
+--->>> (typeinst_helper) context={proc varchar struct.slot.type} stack_ctx={{proc varchar struct.slot.type} {unknown unknown struct.slot.type} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) default_value sms args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ default_value sms  -> redirect_name=struct.slot.default_value
+--->>> (typeinst_helper) context={proc varchar struct.slot.default_value} stack_ctx={{proc varchar struct.slot.default_value} {unknown unknown struct.slot.default_value} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) slot 
+                        name [domNode0x1bdaf80 @x-name]
+                        type [domNode0x1bdaf80 @x-type]
+                        if { [domNode0x1bdaf80 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1bdaf80 @x-default_value ""]
+                        }
+                        if { [domNode0x1bdaf80 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1bdaf80 @x-optional_p ""]
+                        }
+                        if { [domNode0x1bdaf80 hasAttribute "x-container"] } {
+                            container [domNode0x1bdaf80 @x-container ""]
+                        }
+                     args=
+{proc struct struct}
+--->>> context=proc struct struct
++++ slot 
+                        name [domNode0x1bdaf80 @x-name]
+                        type [domNode0x1bdaf80 @x-type]
+                        if { [domNode0x1bdaf80 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1bdaf80 @x-default_value ""]
+                        }
+                        if { [domNode0x1bdaf80 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1bdaf80 @x-optional_p ""]
+                        }
+                        if { [domNode0x1bdaf80 hasAttribute "x-container"] } {
+                            container [domNode0x1bdaf80 @x-container ""]
+                        }
+                      -> redirect_name=struct.slot
+--->>> (typeinst_helper) context={proc struct struct.slot} stack_ctx={{proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) name num_comments args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ name num_comments  -> redirect_name=struct.slot.name
+--->>> (typeinst_helper) context={proc varchar struct.slot.name} stack_ctx={{proc varchar struct.slot.name} {unknown unknown struct.slot.name} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) type int16 args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ type int16  -> redirect_name=struct.slot.type
+--->>> (typeinst_helper) context={proc varchar struct.slot.type} stack_ctx={{proc varchar struct.slot.type} {unknown unknown struct.slot.type} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) default_value 0 args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ default_value 0  -> redirect_name=struct.slot.default_value
+--->>> (typeinst_helper) context={proc varchar struct.slot.default_value} stack_ctx={{proc varchar struct.slot.default_value} {unknown unknown struct.slot.default_value} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) slot 
+                        name [domNode0x1bdb120 @x-name]
+                        type [domNode0x1bdb120 @x-type]
+                        if { [domNode0x1bdb120 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1bdb120 @x-default_value ""]
+                        }
+                        if { [domNode0x1bdb120 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1bdb120 @x-optional_p ""]
+                        }
+                        if { [domNode0x1bdb120 hasAttribute "x-container"] } {
+                            container [domNode0x1bdb120 @x-container ""]
+                        }
+                     args=
+{proc struct struct}
+--->>> context=proc struct struct
++++ slot 
+                        name [domNode0x1bdb120 @x-name]
+                        type [domNode0x1bdb120 @x-type]
+                        if { [domNode0x1bdb120 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1bdb120 @x-default_value ""]
+                        }
+                        if { [domNode0x1bdb120 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1bdb120 @x-optional_p ""]
+                        }
+                        if { [domNode0x1bdb120 hasAttribute "x-container"] } {
+                            container [domNode0x1bdb120 @x-container ""]
+                        }
+                      -> redirect_name=struct.slot
+--->>> (typeinst_helper) context={proc struct struct.slot} stack_ctx={{proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) name subject args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ name subject  -> redirect_name=struct.slot.name
+--->>> (typeinst_helper) context={proc varchar struct.slot.name} stack_ctx={{proc varchar struct.slot.name} {unknown unknown struct.slot.name} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) type varchar args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ type varchar  -> redirect_name=struct.slot.type
+--->>> (typeinst_helper) context={proc varchar struct.slot.type} stack_ctx={{proc varchar struct.slot.type} {unknown unknown struct.slot.type} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) slot 
+                        name [domNode0x1bdb260 @x-name]
+                        type [domNode0x1bdb260 @x-type]
+                        if { [domNode0x1bdb260 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1bdb260 @x-default_value ""]
+                        }
+                        if { [domNode0x1bdb260 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1bdb260 @x-optional_p ""]
+                        }
+                        if { [domNode0x1bdb260 hasAttribute "x-container"] } {
+                            container [domNode0x1bdb260 @x-container ""]
+                        }
+                     args=
+{proc struct struct}
+--->>> context=proc struct struct
++++ slot 
+                        name [domNode0x1bdb260 @x-name]
+                        type [domNode0x1bdb260 @x-type]
+                        if { [domNode0x1bdb260 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1bdb260 @x-default_value ""]
+                        }
+                        if { [domNode0x1bdb260 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1bdb260 @x-optional_p ""]
+                        }
+                        if { [domNode0x1bdb260 hasAttribute "x-container"] } {
+                            container [domNode0x1bdb260 @x-container ""]
+                        }
+                      -> redirect_name=struct.slot
+--->>> (typeinst_helper) context={proc struct struct.slot} stack_ctx={{proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) name body args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ name body  -> redirect_name=struct.slot.name
+--->>> (typeinst_helper) context={proc varchar struct.slot.name} stack_ctx={{proc varchar struct.slot.name} {unknown unknown struct.slot.name} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) type varchar args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ type varchar  -> redirect_name=struct.slot.type
+--->>> (typeinst_helper) context={proc varchar struct.slot.type} stack_ctx={{proc varchar struct.slot.type} {unknown unknown struct.slot.type} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) slot 
+                        name [domNode0x1bdb3a0 @x-name]
+                        type [domNode0x1bdb3a0 @x-type]
+                        if { [domNode0x1bdb3a0 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1bdb3a0 @x-default_value ""]
+                        }
+                        if { [domNode0x1bdb3a0 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1bdb3a0 @x-optional_p ""]
+                        }
+                        if { [domNode0x1bdb3a0 hasAttribute "x-container"] } {
+                            container [domNode0x1bdb3a0 @x-container ""]
+                        }
+                     args=
+{proc struct struct}
+--->>> context=proc struct struct
++++ slot 
+                        name [domNode0x1bdb3a0 @x-name]
+                        type [domNode0x1bdb3a0 @x-type]
+                        if { [domNode0x1bdb3a0 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1bdb3a0 @x-default_value ""]
+                        }
+                        if { [domNode0x1bdb3a0 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1bdb3a0 @x-optional_p ""]
+                        }
+                        if { [domNode0x1bdb3a0 hasAttribute "x-container"] } {
+                            container [domNode0x1bdb3a0 @x-container ""]
+                        }
+                      -> redirect_name=struct.slot
+--->>> (typeinst_helper) context={proc struct struct.slot} stack_ctx={{proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) name from args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ name from  -> redirect_name=struct.slot.name
+--->>> (typeinst_helper) context={proc varchar struct.slot.name} stack_ctx={{proc varchar struct.slot.name} {unknown unknown struct.slot.name} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) type email args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ type email  -> redirect_name=struct.slot.type
+--->>> (typeinst_helper) context={proc varchar struct.slot.type} stack_ctx={{proc varchar struct.slot.type} {unknown unknown struct.slot.type} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) slot 
+                        name [domNode0x1bdb4e0 @x-name]
+                        type [domNode0x1bdb4e0 @x-type]
+                        if { [domNode0x1bdb4e0 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1bdb4e0 @x-default_value ""]
+                        }
+                        if { [domNode0x1bdb4e0 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1bdb4e0 @x-optional_p ""]
+                        }
+                        if { [domNode0x1bdb4e0 hasAttribute "x-container"] } {
+                            container [domNode0x1bdb4e0 @x-container ""]
+                        }
+                     args=
+{proc struct struct}
+--->>> context=proc struct struct
++++ slot 
+                        name [domNode0x1bdb4e0 @x-name]
+                        type [domNode0x1bdb4e0 @x-type]
+                        if { [domNode0x1bdb4e0 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1bdb4e0 @x-default_value ""]
+                        }
+                        if { [domNode0x1bdb4e0 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1bdb4e0 @x-optional_p ""]
+                        }
+                        if { [domNode0x1bdb4e0 hasAttribute "x-container"] } {
+                            container [domNode0x1bdb4e0 @x-container ""]
+                        }
+                      -> redirect_name=struct.slot
+--->>> (typeinst_helper) context={proc struct struct.slot} stack_ctx={{proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) name to args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ name to  -> redirect_name=struct.slot.name
+--->>> (typeinst_helper) context={proc varchar struct.slot.name} stack_ctx={{proc varchar struct.slot.name} {unknown unknown struct.slot.name} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) type email args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ type email  -> redirect_name=struct.slot.type
+--->>> (typeinst_helper) context={proc varchar struct.slot.type} stack_ctx={{proc varchar struct.slot.type} {unknown unknown struct.slot.type} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) container multiple args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ container multiple  -> redirect_name=struct.slot.container
+--->>> (typeinst_helper) context={proc varchar struct.slot.container} stack_ctx={{proc varchar struct.slot.container} {unknown unknown struct.slot.container} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) slot 
+                        name [domNode0x1bdb680 @x-name]
+                        type [domNode0x1bdb680 @x-type]
+                        if { [domNode0x1bdb680 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1bdb680 @x-default_value ""]
+                        }
+                        if { [domNode0x1bdb680 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1bdb680 @x-optional_p ""]
+                        }
+                        if { [domNode0x1bdb680 hasAttribute "x-container"] } {
+                            container [domNode0x1bdb680 @x-container ""]
+                        }
+                     args=
+{proc struct struct}
+--->>> context=proc struct struct
++++ slot 
+                        name [domNode0x1bdb680 @x-name]
+                        type [domNode0x1bdb680 @x-type]
+                        if { [domNode0x1bdb680 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1bdb680 @x-default_value ""]
+                        }
+                        if { [domNode0x1bdb680 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1bdb680 @x-optional_p ""]
+                        }
+                        if { [domNode0x1bdb680 hasAttribute "x-container"] } {
+                            container [domNode0x1bdb680 @x-container ""]
+                        }
+                      -> redirect_name=struct.slot
+--->>> (typeinst_helper) context={proc struct struct.slot} stack_ctx={{proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) name cc args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ name cc  -> redirect_name=struct.slot.name
+--->>> (typeinst_helper) context={proc varchar struct.slot.name} stack_ctx={{proc varchar struct.slot.name} {unknown unknown struct.slot.name} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) type email args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ type email  -> redirect_name=struct.slot.type
+--->>> (typeinst_helper) context={proc varchar struct.slot.type} stack_ctx={{proc varchar struct.slot.type} {unknown unknown struct.slot.type} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) default_value  args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ default_value   -> redirect_name=struct.slot.default_value
+--->>> (typeinst_helper) context={proc varchar struct.slot.default_value} stack_ctx={{proc varchar struct.slot.default_value} {unknown unknown struct.slot.default_value} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) container multiple args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ container multiple  -> redirect_name=struct.slot.container
+--->>> (typeinst_helper) context={proc varchar struct.slot.container} stack_ctx={{proc varchar struct.slot.container} {unknown unknown struct.slot.container} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) slot 
+                        name [domNode0x1bdb880 @x-name]
+                        type [domNode0x1bdb880 @x-type]
+                        if { [domNode0x1bdb880 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1bdb880 @x-default_value ""]
+                        }
+                        if { [domNode0x1bdb880 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1bdb880 @x-optional_p ""]
+                        }
+                        if { [domNode0x1bdb880 hasAttribute "x-container"] } {
+                            container [domNode0x1bdb880 @x-container ""]
+                        }
+                     args=
+{proc struct struct}
+--->>> context=proc struct struct
++++ slot 
+                        name [domNode0x1bdb880 @x-name]
+                        type [domNode0x1bdb880 @x-type]
+                        if { [domNode0x1bdb880 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1bdb880 @x-default_value ""]
+                        }
+                        if { [domNode0x1bdb880 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1bdb880 @x-optional_p ""]
+                        }
+                        if { [domNode0x1bdb880 hasAttribute "x-container"] } {
+                            container [domNode0x1bdb880 @x-container ""]
+                        }
+                      -> redirect_name=struct.slot
+--->>> (typeinst_helper) context={proc struct struct.slot} stack_ctx={{proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) name bcc args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ name bcc  -> redirect_name=struct.slot.name
+--->>> (typeinst_helper) context={proc varchar struct.slot.name} stack_ctx={{proc varchar struct.slot.name} {unknown unknown struct.slot.name} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) type email args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ type email  -> redirect_name=struct.slot.type
+--->>> (typeinst_helper) context={proc varchar struct.slot.type} stack_ctx={{proc varchar struct.slot.type} {unknown unknown struct.slot.type} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) default_value  args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ default_value   -> redirect_name=struct.slot.default_value
+--->>> (typeinst_helper) context={proc varchar struct.slot.default_value} stack_ctx={{proc varchar struct.slot.default_value} {unknown unknown struct.slot.default_value} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) container multiple args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ container multiple  -> redirect_name=struct.slot.container
+--->>> (typeinst_helper) context={proc varchar struct.slot.container} stack_ctx={{proc varchar struct.slot.container} {unknown unknown struct.slot.container} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) slot 
+                        name [domNode0x1bdba80 @x-name]
+                        type [domNode0x1bdba80 @x-type]
+                        if { [domNode0x1bdba80 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1bdba80 @x-default_value ""]
+                        }
+                        if { [domNode0x1bdba80 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1bdba80 @x-optional_p ""]
+                        }
+                        if { [domNode0x1bdba80 hasAttribute "x-container"] } {
+                            container [domNode0x1bdba80 @x-container ""]
+                        }
+                     args=
+{proc struct struct}
+--->>> context=proc struct struct
++++ slot 
+                        name [domNode0x1bdba80 @x-name]
+                        type [domNode0x1bdba80 @x-type]
+                        if { [domNode0x1bdba80 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1bdba80 @x-default_value ""]
+                        }
+                        if { [domNode0x1bdba80 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1bdba80 @x-optional_p ""]
+                        }
+                        if { [domNode0x1bdba80 hasAttribute "x-container"] } {
+                            container [domNode0x1bdba80 @x-container ""]
+                        }
+                      -> redirect_name=struct.slot
+--->>> (typeinst_helper) context={proc struct struct.slot} stack_ctx={{proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) name public_p args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ name public_p  -> redirect_name=struct.slot.name
+--->>> (typeinst_helper) context={proc varchar struct.slot.name} stack_ctx={{proc varchar struct.slot.name} {unknown unknown struct.slot.name} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) type bool args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ type bool  -> redirect_name=struct.slot.type
+--->>> (typeinst_helper) context={proc varchar struct.slot.type} stack_ctx={{proc varchar struct.slot.type} {unknown unknown struct.slot.type} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) default_value false args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ default_value false  -> redirect_name=struct.slot.default_value
+--->>> (typeinst_helper) context={proc varchar struct.slot.default_value} stack_ctx={{proc varchar struct.slot.default_value} {unknown unknown struct.slot.default_value} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) slot 
+                        name [domNode0x1bdbc20 @x-name]
+                        type [domNode0x1bdbc20 @x-type]
+                        if { [domNode0x1bdbc20 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1bdbc20 @x-default_value ""]
+                        }
+                        if { [domNode0x1bdbc20 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1bdbc20 @x-optional_p ""]
+                        }
+                        if { [domNode0x1bdbc20 hasAttribute "x-container"] } {
+                            container [domNode0x1bdbc20 @x-container ""]
+                        }
+                     args=
+{proc struct struct}
+--->>> context=proc struct struct
++++ slot 
+                        name [domNode0x1bdbc20 @x-name]
+                        type [domNode0x1bdbc20 @x-type]
+                        if { [domNode0x1bdbc20 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1bdbc20 @x-default_value ""]
+                        }
+                        if { [domNode0x1bdbc20 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1bdbc20 @x-optional_p ""]
+                        }
+                        if { [domNode0x1bdbc20 hasAttribute "x-container"] } {
+                            container [domNode0x1bdbc20 @x-container ""]
+                        }
+                      -> redirect_name=struct.slot
+--->>> (typeinst_helper) context={proc struct struct.slot} stack_ctx={{proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) name categories args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ name categories  -> redirect_name=struct.slot.name
+--->>> (typeinst_helper) context={proc varchar struct.slot.name} stack_ctx={{proc varchar struct.slot.name} {unknown unknown struct.slot.name} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) type category args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ type category  -> redirect_name=struct.slot.type
+--->>> (typeinst_helper) context={proc varchar struct.slot.type} stack_ctx={{proc varchar struct.slot.type} {unknown unknown struct.slot.type} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) default_value  args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ default_value   -> redirect_name=struct.slot.default_value
+--->>> (typeinst_helper) context={proc varchar struct.slot.default_value} stack_ctx={{proc varchar struct.slot.default_value} {unknown unknown struct.slot.default_value} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) container multiple args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ container multiple  -> redirect_name=struct.slot.container
+--->>> (typeinst_helper) context={proc varchar struct.slot.container} stack_ctx={{proc varchar struct.slot.container} {unknown unknown struct.slot.container} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) slot 
+                        name [domNode0x1bdbe20 @x-name]
+                        type [domNode0x1bdbe20 @x-type]
+                        if { [domNode0x1bdbe20 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1bdbe20 @x-default_value ""]
+                        }
+                        if { [domNode0x1bdbe20 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1bdbe20 @x-optional_p ""]
+                        }
+                        if { [domNode0x1bdbe20 hasAttribute "x-container"] } {
+                            container [domNode0x1bdbe20 @x-container ""]
+                        }
+                     args=
+{proc struct struct}
+--->>> context=proc struct struct
++++ slot 
+                        name [domNode0x1bdbe20 @x-name]
+                        type [domNode0x1bdbe20 @x-type]
+                        if { [domNode0x1bdbe20 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1bdbe20 @x-default_value ""]
+                        }
+                        if { [domNode0x1bdbe20 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1bdbe20 @x-optional_p ""]
+                        }
+                        if { [domNode0x1bdbe20 hasAttribute "x-container"] } {
+                            container [domNode0x1bdbe20 @x-container ""]
+                        }
+                      -> redirect_name=struct.slot
+--->>> (typeinst_helper) context={proc struct struct.slot} stack_ctx={{proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) name folders args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ name folders  -> redirect_name=struct.slot.name
+--->>> (typeinst_helper) context={proc varchar struct.slot.name} stack_ctx={{proc varchar struct.slot.name} {unknown unknown struct.slot.name} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) type folder args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ type folder  -> redirect_name=struct.slot.type
+--->>> (typeinst_helper) context={proc varchar struct.slot.type} stack_ctx={{proc varchar struct.slot.type} {unknown unknown struct.slot.type} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) default_value  args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ default_value   -> redirect_name=struct.slot.default_value
+--->>> (typeinst_helper) context={proc varchar struct.slot.default_value} stack_ctx={{proc varchar struct.slot.default_value} {unknown unknown struct.slot.default_value} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) container multiple args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ container multiple  -> redirect_name=struct.slot.container
+--->>> (typeinst_helper) context={proc varchar struct.slot.container} stack_ctx={{proc varchar struct.slot.container} {unknown unknown struct.slot.container} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) slot 
+                        name [domNode0x1bdc020 @x-name]
+                        type [domNode0x1bdc020 @x-type]
+                        if { [domNode0x1bdc020 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1bdc020 @x-default_value ""]
+                        }
+                        if { [domNode0x1bdc020 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1bdc020 @x-optional_p ""]
+                        }
+                        if { [domNode0x1bdc020 hasAttribute "x-container"] } {
+                            container [domNode0x1bdc020 @x-container ""]
+                        }
+                     args=
+{proc struct struct}
+--->>> context=proc struct struct
++++ slot 
+                        name [domNode0x1bdc020 @x-name]
+                        type [domNode0x1bdc020 @x-type]
+                        if { [domNode0x1bdc020 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1bdc020 @x-default_value ""]
+                        }
+                        if { [domNode0x1bdc020 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1bdc020 @x-optional_p ""]
+                        }
+                        if { [domNode0x1bdc020 hasAttribute "x-container"] } {
+                            container [domNode0x1bdc020 @x-container ""]
+                        }
+                      -> redirect_name=struct.slot
+--->>> (typeinst_helper) context={proc struct struct.slot} stack_ctx={{proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) name tags args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ name tags  -> redirect_name=struct.slot.name
+--->>> (typeinst_helper) context={proc varchar struct.slot.name} stack_ctx={{proc varchar struct.slot.name} {unknown unknown struct.slot.name} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) type varchar args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ type varchar  -> redirect_name=struct.slot.type
+--->>> (typeinst_helper) context={proc varchar struct.slot.type} stack_ctx={{proc varchar struct.slot.type} {unknown unknown struct.slot.type} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) default_value  args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ default_value   -> redirect_name=struct.slot.default_value
+--->>> (typeinst_helper) context={proc varchar struct.slot.default_value} stack_ctx={{proc varchar struct.slot.default_value} {unknown unknown struct.slot.default_value} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) container multiple args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ container multiple  -> redirect_name=struct.slot.container
+--->>> (typeinst_helper) context={proc varchar struct.slot.container} stack_ctx={{proc varchar struct.slot.container} {unknown unknown struct.slot.container} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) slot 
+                        name [domNode0x1bdc220 @x-name]
+                        type [domNode0x1bdc220 @x-type]
+                        if { [domNode0x1bdc220 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1bdc220 @x-default_value ""]
+                        }
+                        if { [domNode0x1bdc220 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1bdc220 @x-optional_p ""]
+                        }
+                        if { [domNode0x1bdc220 hasAttribute "x-container"] } {
+                            container [domNode0x1bdc220 @x-container ""]
+                        }
+                     args=
+{proc struct struct}
+--->>> context=proc struct struct
++++ slot 
+                        name [domNode0x1bdc220 @x-name]
+                        type [domNode0x1bdc220 @x-type]
+                        if { [domNode0x1bdc220 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1bdc220 @x-default_value ""]
+                        }
+                        if { [domNode0x1bdc220 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1bdc220 @x-optional_p ""]
+                        }
+                        if { [domNode0x1bdc220 hasAttribute "x-container"] } {
+                            container [domNode0x1bdc220 @x-container ""]
+                        }
+                      -> redirect_name=struct.slot
+--->>> (typeinst_helper) context={proc struct struct.slot} stack_ctx={{proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) name attachment args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ name attachment  -> redirect_name=struct.slot.name
+--->>> (typeinst_helper) context={proc varchar struct.slot.name} stack_ctx={{proc varchar struct.slot.name} {unknown unknown struct.slot.name} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) type file args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ type file  -> redirect_name=struct.slot.type
+--->>> (typeinst_helper) context={proc varchar struct.slot.type} stack_ctx={{proc varchar struct.slot.type} {unknown unknown struct.slot.type} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) default_value  args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ default_value   -> redirect_name=struct.slot.default_value
+--->>> (typeinst_helper) context={proc varchar struct.slot.default_value} stack_ctx={{proc varchar struct.slot.default_value} {unknown unknown struct.slot.default_value} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) container multiple args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ container multiple  -> redirect_name=struct.slot.container
+--->>> (typeinst_helper) context={proc varchar struct.slot.container} stack_ctx={{proc varchar struct.slot.container} {unknown unknown struct.slot.container} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) slot 
+                        name [domNode0x1be0430 @x-name]
+                        type [domNode0x1be0430 @x-type]
+                        if { [domNode0x1be0430 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1be0430 @x-default_value ""]
+                        }
+                        if { [domNode0x1be0430 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1be0430 @x-optional_p ""]
+                        }
+                        if { [domNode0x1be0430 hasAttribute "x-container"] } {
+                            container [domNode0x1be0430 @x-container ""]
+                        }
+                     args=
+{proc struct struct}
+--->>> context=proc struct struct
++++ slot 
+                        name [domNode0x1be0430 @x-name]
+                        type [domNode0x1be0430 @x-type]
+                        if { [domNode0x1be0430 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1be0430 @x-default_value ""]
+                        }
+                        if { [domNode0x1be0430 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1be0430 @x-optional_p ""]
+                        }
+                        if { [domNode0x1be0430 hasAttribute "x-container"] } {
+                            container [domNode0x1be0430 @x-container ""]
+                        }
+                      -> redirect_name=struct.slot
+--->>> (typeinst_helper) context={proc struct struct.slot} stack_ctx={{proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) name wordcount_X args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ name wordcount_X  -> redirect_name=struct.slot.name
+--->>> (typeinst_helper) context={proc varchar struct.slot.name} stack_ctx={{proc varchar struct.slot.name} {unknown unknown struct.slot.name} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) type struct args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ type struct  -> redirect_name=struct.slot.type
+--->>> (typeinst_helper) context={proc varchar struct.slot.type} stack_ctx={{proc varchar struct.slot.type} {unknown unknown struct.slot.type} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) default_value  args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ default_value   -> redirect_name=struct.slot.default_value
+--->>> (typeinst_helper) context={proc varchar struct.slot.default_value} stack_ctx={{proc varchar struct.slot.default_value} {unknown unknown struct.slot.default_value} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) container map args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ container map  -> redirect_name=struct.slot.container
+--->>> (typeinst_helper) context={proc varchar struct.slot.container} stack_ctx={{proc varchar struct.slot.container} {unknown unknown struct.slot.container} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) slot 
+                        name [domNode0x1be08b0 @x-name]
+                        type [domNode0x1be08b0 @x-type]
+                        if { [domNode0x1be08b0 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1be08b0 @x-default_value ""]
+                        }
+                        if { [domNode0x1be08b0 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1be08b0 @x-optional_p ""]
+                        }
+                        if { [domNode0x1be08b0 hasAttribute "x-container"] } {
+                            container [domNode0x1be08b0 @x-container ""]
+                        }
+                     args=
+{proc struct struct}
+--->>> context=proc struct struct
++++ slot 
+                        name [domNode0x1be08b0 @x-name]
+                        type [domNode0x1be08b0 @x-type]
+                        if { [domNode0x1be08b0 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1be08b0 @x-default_value ""]
+                        }
+                        if { [domNode0x1be08b0 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1be08b0 @x-optional_p ""]
+                        }
+                        if { [domNode0x1be08b0 hasAttribute "x-container"] } {
+                            container [domNode0x1be08b0 @x-container ""]
+                        }
+                      -> redirect_name=struct.slot
+--->>> (typeinst_helper) context={proc struct struct.slot} stack_ctx={{proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) name wordcount_Y args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ name wordcount_Y  -> redirect_name=struct.slot.name
+--->>> (typeinst_helper) context={proc varchar struct.slot.name} stack_ctx={{proc varchar struct.slot.name} {unknown unknown struct.slot.name} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) type word_count_pair args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ type word_count_pair  -> redirect_name=struct.slot.type
+--->>> (typeinst_helper) context={proc varchar struct.slot.type} stack_ctx={{proc varchar struct.slot.type} {unknown unknown struct.slot.type} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) container map args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ container map  -> redirect_name=struct.slot.container
+--->>> (typeinst_helper) context={proc varchar struct.slot.container} stack_ctx={{proc varchar struct.slot.container} {unknown unknown struct.slot.container} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) slot 
+                        name [domNode0x1be0a50 @x-name]
+                        type [domNode0x1be0a50 @x-type]
+                        if { [domNode0x1be0a50 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1be0a50 @x-default_value ""]
+                        }
+                        if { [domNode0x1be0a50 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1be0a50 @x-optional_p ""]
+                        }
+                        if { [domNode0x1be0a50 hasAttribute "x-container"] } {
+                            container [domNode0x1be0a50 @x-container ""]
+                        }
+                     args=
+{proc struct struct}
+--->>> context=proc struct struct
++++ slot 
+                        name [domNode0x1be0a50 @x-name]
+                        type [domNode0x1be0a50 @x-type]
+                        if { [domNode0x1be0a50 hasAttribute "x-default_value"] } {
+                            default_value [domNode0x1be0a50 @x-default_value ""]
+                        }
+                        if { [domNode0x1be0a50 hasAttribute "x-optional_p"] } {
+                            optional_p [domNode0x1be0a50 @x-optional_p ""]
+                        }
+                        if { [domNode0x1be0a50 hasAttribute "x-container"] } {
+                            container [domNode0x1be0a50 @x-container ""]
+                        }
+                      -> redirect_name=struct.slot
+--->>> (typeinst_helper) context={proc struct struct.slot} stack_ctx={{proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) name wordcount_Z args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ name wordcount_Z  -> redirect_name=struct.slot.name
+--->>> (typeinst_helper) context={proc varchar struct.slot.name} stack_ctx={{proc varchar struct.slot.name} {unknown unknown struct.slot.name} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) type word_count_pair args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ type word_count_pair  -> redirect_name=struct.slot.type
+--->>> (typeinst_helper) context={proc varchar struct.slot.type} stack_ctx={{proc varchar struct.slot.type} {unknown unknown struct.slot.type} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) default_value  args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ default_value   -> redirect_name=struct.slot.default_value
+--->>> (typeinst_helper) context={proc varchar struct.slot.default_value} stack_ctx={{proc varchar struct.slot.default_value} {unknown unknown struct.slot.default_value} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
+--->>> (unknown) container map args=
+{proc struct struct.slot} {proc struct struct}
+--->>> context=proc struct struct.slot
++++ container map  -> redirect_name=struct.slot.container
+--->>> (typeinst_helper) context={proc varchar struct.slot.container} stack_ctx={{proc varchar struct.slot.container} {unknown unknown struct.slot.container} {eval typeinst struct.slot} {proc struct struct.slot} {unknown unknown struct.slot} {proc struct struct}}
 --->>> (typeinst_helper) context={proc meta typeinst} stack_ctx={{proc meta typeinst}}
 --->>> (typeinst_helper) context={proc meta typeinst} stack_ctx={{proc meta typeinst} {eval typeinst msg1} {proc meta typeinst}}
 --->>> (typeinst_helper) context={proc meta typeinst} stack_ctx={{proc meta typeinst} {eval typeinst msg1} {proc meta typeinst}}
@@ -183,18 +1667,18 @@
 }
 --->>> (typeinst_helper) context={proc struct message} stack_ctx={{proc struct message}}
 --->>> type_helper (is_declaration_mode_p=0) tag=varchar name=subject {*}= hello
---->>> (typeinst_helper) context={proc base_type varchar} stack_ctx={{proc base_type varchar} {eval typeinst msg2} {proc struct message}}
+--->>> (typeinst_helper) context={proc basetype varchar} stack_ctx={{proc basetype varchar} {eval typeinst msg2} {proc struct message}}
 --->>> type_helper (is_declaration_mode_p=0) tag=email name=from {*}{
         varchar name = "zena wow"
         varchar address = "zena@example.com"
     }
 --->>> (typeinst_helper) context={proc struct email} stack_ctx={{proc struct email} {eval typeinst msg2} {proc struct message}}
 --->>> type_helper (is_declaration_mode_p=0) tag=varchar name=name {*}= {zena wow}
---->>> (typeinst_helper) context={proc base_type varchar} stack_ctx={{proc base_type varchar} {eval typeinst from} {proc struct email} {eval typeinst msg2} {proc struct message}}
+--->>> (typeinst_helper) context={proc basetype varchar} stack_ctx={{proc basetype varchar} {eval typeinst from} {proc struct email} {eval typeinst msg2} {proc struct message}}
 --->>> type_helper (is_declaration_mode_p=0) tag=varchar name=address {*}= zena@example.com
---->>> (typeinst_helper) context={proc base_type varchar} stack_ctx={{proc base_type varchar} {eval typeinst from} {proc struct email} {eval typeinst msg2} {proc struct message}}
+--->>> (typeinst_helper) context={proc basetype varchar} stack_ctx={{proc basetype varchar} {eval typeinst from} {proc struct email} {eval typeinst msg2} {proc struct message}}
 --->>> type_helper (is_declaration_mode_p=0) tag=varchar name=body {*}= {this is a test}
---->>> (typeinst_helper) context={proc base_type varchar} stack_ctx={{proc base_type varchar} {eval typeinst msg2} {proc struct message}}
+--->>> (typeinst_helper) context={proc basetype varchar} stack_ctx={{proc basetype varchar} {eval typeinst msg2} {proc struct message}}
 --->>> type_helper (is_declaration_mode_p=0) tag=message name=msg3 {*}{
     message.subject "hello"
     message.from {
@@ -254,7 +1738,7 @@
 --->>> (typeinst_helper) context={proc email message.cc} stack_ctx={{proc email message.cc} {eval typeinst msg3} {proc struct message}}
 --->>> (typeinst_helper) context={proc varchar email.name} stack_ctx={{proc varchar email.name} {eval typeinst message.cc} {proc email message.cc} {eval typeinst msg3} {proc struct message}}
 --->>> (typeinst_helper) context={proc varchar email.address} stack_ctx={{proc varchar email.address} {eval typeinst message.cc} {proc email message.cc} {eval typeinst msg3} {proc struct message}}
-+++++ (multiple instantiation) name=message.bcc args={{
+----- (container instantiation) name=message.bcc args={{
         email.name "vera cool"
         email.address "vera@example.com"
     } {
@@ -273,7 +1757,7 @@
 --->>> (typeinst_helper) context={proc email message.bcc} stack_ctx={{proc email message.bcc} {eval typeinst msg3} {proc struct message}}
 --->>> (typeinst_helper) context={proc varchar email.name} stack_ctx={{proc varchar email.name} {eval typeinst message.bcc} {proc email message.bcc} {eval typeinst msg3} {proc struct message}}
 --->>> (typeinst_helper) context={proc varchar email.address} stack_ctx={{proc varchar email.address} {eval typeinst message.bcc} {proc email message.bcc} {eval typeinst msg3} {proc struct message}}
------ (map instantiation) name=message.wordcount_X args={{
+----- (container instantiation) name=message.wordcount_X args={{
         message.wordcount_X.word "the"
         message.wordcount_X.count "123"
     } {
@@ -286,7 +1770,7 @@
 --->>> (typeinst_helper) context={proc struct message.wordcount_X} stack_ctx={{proc struct message.wordcount_X} {eval typeinst msg3} {proc struct message}}
 --->>> (typeinst_helper) context={proc varchar message.wordcount_X.word} stack_ctx={{proc varchar message.wordcount_X.word} {eval typeinst message.wordcount_X} {proc struct message.wordcount_X} {eval typeinst msg3} {proc struct message}}
 --->>> (typeinst_helper) context={proc int32 message.wordcount_X.count} stack_ctx={{proc int32 message.wordcount_X.count} {eval typeinst message.wordcount_X} {proc struct message.wordcount_X} {eval typeinst msg3} {proc struct message}}
------ (map instantiation) name=message.wordcount_Y args={{
+----- (container instantiation) name=message.wordcount_Y args={{
         word_count_pair.word "the"
         word_count_pair.count "123"
     } {
@@ -345,72 +1829,100 @@
 }
 --->>> (typeinst_helper) context={proc struct message} stack_ctx={{proc struct message}}
 --->>> (unknown) subject hello args=
+{proc struct message}
+--->>> context=proc struct message
 +++ subject hello  -> redirect_name=message.subject
---->>> (typeinst_helper) context={proc varchar message.subject} stack_ctx={{proc varchar message.subject} {unknown struct message.subject} {eval typeinst msg4} {proc struct message}}
+--->>> (typeinst_helper) context={proc varchar message.subject} stack_ctx={{proc varchar message.subject} {unknown unknown message.subject} {eval typeinst msg4} {proc struct message}}
 --->>> (unknown) from 
         name "zena wow"
         address "zena@example.com"
      args=
+{proc struct message}
+--->>> context=proc struct message
 +++ from 
         name "zena wow"
         address "zena@example.com"
       -> redirect_name=message.from
---->>> (typeinst_helper) context={proc email message.from} stack_ctx={{proc email message.from} {unknown struct message.from} {eval typeinst msg4} {proc struct message}}
+--->>> (typeinst_helper) context={proc email message.from} stack_ctx={{proc email message.from} {unknown unknown message.from} {eval typeinst msg4} {proc struct message}}
 --->>> (unknown) name zena wow args=
-+++ name zena wow  -> redirect_name=message.from.name
---->>> (typeinst_helper) context={proc varchar email.name} stack_ctx={{proc varchar email.name} {unknown email email.name} {eval typeinst message.from} {proc email message.from} {unknown struct message.from} {eval typeinst msg4} {proc struct message}}
+{proc email message.from} {proc struct message}
+--->>> context=proc email message.from
++++ name zena wow  -> redirect_name=email.name
+--->>> (typeinst_helper) context={proc varchar email.name} stack_ctx={{proc varchar email.name} {unknown unknown email.name} {eval typeinst message.from} {proc email message.from} {unknown unknown message.from} {eval typeinst msg4} {proc struct message}}
 --->>> (unknown) address zena@example.com args=
-+++ address zena@example.com  -> redirect_name=message.from.address
---->>> (typeinst_helper) context={proc varchar email.address} stack_ctx={{proc varchar email.address} {unknown email email.address} {eval typeinst message.from} {proc email message.from} {unknown struct message.from} {eval typeinst msg4} {proc struct message}}
+{proc email message.from} {proc struct message}
+--->>> context=proc email message.from
++++ address zena@example.com  -> redirect_name=email.address
+--->>> (typeinst_helper) context={proc varchar email.address} stack_ctx={{proc varchar email.address} {unknown unknown email.address} {eval typeinst message.from} {proc email message.from} {unknown unknown message.from} {eval typeinst msg4} {proc struct message}}
 --->>> (unknown) body this is a test args=
+{proc struct message}
+--->>> context=proc struct message
 +++ body this is a test  -> redirect_name=message.body
---->>> (typeinst_helper) context={proc varchar message.body} stack_ctx={{proc varchar message.body} {unknown struct message.body} {eval typeinst msg4} {proc struct message}}
+--->>> (typeinst_helper) context={proc varchar message.body} stack_ctx={{proc varchar message.body} {unknown unknown message.body} {eval typeinst msg4} {proc struct message}}
 --->>> (unknown) to 
         name "paris love"
         address "bff@example.com"
      args=
+{proc struct message}
+--->>> context=proc struct message
 +++ to 
         name "paris love"
         address "bff@example.com"
       -> redirect_name=message.to
---->>> (typeinst_helper) context={proc email message.to} stack_ctx={{proc email message.to} {unknown struct message.to} {eval typeinst msg4} {proc struct message}}
+--->>> (typeinst_helper) context={proc email message.to} stack_ctx={{proc email message.to} {unknown unknown message.to} {eval typeinst msg4} {proc struct message}}
 --->>> (unknown) name paris love args=
-+++ name paris love  -> redirect_name=message.to.name
---->>> (typeinst_helper) context={proc varchar email.name} stack_ctx={{proc varchar email.name} {unknown email email.name} {eval typeinst message.to} {proc email message.to} {unknown struct message.to} {eval typeinst msg4} {proc struct message}}
+{proc email message.to} {proc struct message}
+--->>> context=proc email message.to
++++ name paris love  -> redirect_name=email.name
+--->>> (typeinst_helper) context={proc varchar email.name} stack_ctx={{proc varchar email.name} {unknown unknown email.name} {eval typeinst message.to} {proc email message.to} {unknown unknown message.to} {eval typeinst msg4} {proc struct message}}
 --->>> (unknown) address bff@example.com args=
-+++ address bff@example.com  -> redirect_name=message.to.address
---->>> (typeinst_helper) context={proc varchar email.address} stack_ctx={{proc varchar email.address} {unknown email email.address} {eval typeinst message.to} {proc email message.to} {unknown struct message.to} {eval typeinst msg4} {proc struct message}}
+{proc email message.to} {proc struct message}
+--->>> context=proc email message.to
++++ address bff@example.com  -> redirect_name=email.address
+--->>> (typeinst_helper) context={proc varchar email.address} stack_ctx={{proc varchar email.address} {unknown unknown email.address} {eval typeinst message.to} {proc email message.to} {unknown unknown message.to} {eval typeinst msg4} {proc struct message}}
 --->>> (unknown) cc  
         name "jane awesome"
         address "jane@example.com"
      args=
+{proc struct message}
+--->>> context=proc struct message
 +++ cc  
         name "jane awesome"
         address "jane@example.com"
       -> redirect_name=message.cc
---->>> (typeinst_helper) context={proc email message.cc} stack_ctx={{proc email message.cc} {unknown struct message.cc} {eval typeinst msg4} {proc struct message}}
+--->>> (typeinst_helper) context={proc email message.cc} stack_ctx={{proc email message.cc} {unknown unknown message.cc} {eval typeinst msg4} {proc struct message}}
 --->>> (unknown) name jane awesome args=
-+++ name jane awesome  -> redirect_name=message.cc.name
---->>> (typeinst_helper) context={proc varchar email.name} stack_ctx={{proc varchar email.name} {unknown email email.name} {eval typeinst message.cc} {proc email message.cc} {unknown struct message.cc} {eval typeinst msg4} {proc struct message}}
+{proc email message.cc} {proc struct message}
+--->>> context=proc email message.cc
++++ name jane awesome  -> redirect_name=email.name
+--->>> (typeinst_helper) context={proc varchar email.name} stack_ctx={{proc varchar email.name} {unknown unknown email.name} {eval typeinst message.cc} {proc email message.cc} {unknown unknown message.cc} {eval typeinst msg4} {proc struct message}}
 --->>> (unknown) address jane@example.com args=
-+++ address jane@example.com  -> redirect_name=message.cc.address
---->>> (typeinst_helper) context={proc varchar email.address} stack_ctx={{proc varchar email.address} {unknown email email.address} {eval typeinst message.cc} {proc email message.cc} {unknown struct message.cc} {eval typeinst msg4} {proc struct message}}
+{proc email message.cc} {proc struct message}
+--->>> context=proc email message.cc
++++ address jane@example.com  -> redirect_name=email.address
+--->>> (typeinst_helper) context={proc varchar email.address} stack_ctx={{proc varchar email.address} {unknown unknown email.address} {eval typeinst message.cc} {proc email message.cc} {unknown unknown message.cc} {eval typeinst msg4} {proc struct message}}
 --->>> (unknown) cc  
         name "someone great" 
         address "someone@example.com" 
      args=
+{proc struct message}
+--->>> context=proc struct message
 +++ cc  
         name "someone great" 
         address "someone@example.com" 
       -> redirect_name=message.cc
---->>> (typeinst_helper) context={proc email message.cc} stack_ctx={{proc email message.cc} {unknown struct message.cc} {eval typeinst msg4} {proc struct message}}
+--->>> (typeinst_helper) context={proc email message.cc} stack_ctx={{proc email message.cc} {unknown unknown message.cc} {eval typeinst msg4} {proc struct message}}
 --->>> (unknown) name someone great args=
-+++ name someone great  -> redirect_name=message.cc.name
---->>> (typeinst_helper) context={proc varchar email.name} stack_ctx={{proc varchar email.name} {unknown email email.name} {eval typeinst message.cc} {proc email message.cc} {unknown struct message.cc} {eval typeinst msg4} {proc struct message}}
+{proc email message.cc} {proc struct message}
+--->>> context=proc email message.cc
++++ name someone great  -> redirect_name=email.name
+--->>> (typeinst_helper) context={proc varchar email.name} stack_ctx={{proc varchar email.name} {unknown unknown email.name} {eval typeinst message.cc} {proc email message.cc} {unknown unknown message.cc} {eval typeinst msg4} {proc struct message}}
 --->>> (unknown) address someone@example.com args=
-+++ address someone@example.com  -> redirect_name=message.cc.address
---->>> (typeinst_helper) context={proc varchar email.address} stack_ctx={{proc varchar email.address} {unknown email email.address} {eval typeinst message.cc} {proc email message.cc} {unknown struct message.cc} {eval typeinst msg4} {proc struct message}}
-+++++ (multiple instantiation) name=bcc args={{
+{proc email message.cc} {proc struct message}
+--->>> context=proc email message.cc
++++ address someone@example.com  -> redirect_name=email.address
+--->>> (typeinst_helper) context={proc varchar email.address} stack_ctx={{proc varchar email.address} {unknown unknown email.address} {eval typeinst message.cc} {proc email message.cc} {unknown unknown message.cc} {eval typeinst msg4} {proc struct message}}
+----- (container instantiation) name=bcc args={{
         name "vera cool"
         address "vera@example.com"
     } {
@@ -424,48 +1936,66 @@
         name "vera cool"
         address "vera@example.com"
      args=
+{proc struct message}
+--->>> context=proc struct message
 +++ bcc 
         name "vera cool"
         address "vera@example.com"
       -> redirect_name=message.bcc
---->>> (typeinst_helper) context={proc email message.bcc} stack_ctx={{proc email message.bcc} {unknown struct message.bcc} {eval typeinst msg4} {proc struct message}}
+--->>> (typeinst_helper) context={proc email message.bcc} stack_ctx={{proc email message.bcc} {unknown unknown message.bcc} {eval typeinst msg4} {proc struct message}}
 --->>> (unknown) name vera cool args=
-+++ name vera cool  -> redirect_name=message.bcc.name
---->>> (typeinst_helper) context={proc varchar email.name} stack_ctx={{proc varchar email.name} {unknown email email.name} {eval typeinst message.bcc} {proc email message.bcc} {unknown struct message.bcc} {eval typeinst msg4} {proc struct message}}
+{proc email message.bcc} {proc struct message}
+--->>> context=proc email message.bcc
++++ name vera cool  -> redirect_name=email.name
+--->>> (typeinst_helper) context={proc varchar email.name} stack_ctx={{proc varchar email.name} {unknown unknown email.name} {eval typeinst message.bcc} {proc email message.bcc} {unknown unknown message.bcc} {eval typeinst msg4} {proc struct message}}
 --->>> (unknown) address vera@example.com args=
-+++ address vera@example.com  -> redirect_name=message.bcc.address
---->>> (typeinst_helper) context={proc varchar email.address} stack_ctx={{proc varchar email.address} {unknown email email.address} {eval typeinst message.bcc} {proc email message.bcc} {unknown struct message.bcc} {eval typeinst msg4} {proc struct message}}
+{proc email message.bcc} {proc struct message}
+--->>> context=proc email message.bcc
++++ address vera@example.com  -> redirect_name=email.address
+--->>> (typeinst_helper) context={proc varchar email.address} stack_ctx={{proc varchar email.address} {unknown unknown email.address} {eval typeinst message.bcc} {proc email message.bcc} {unknown unknown message.bcc} {eval typeinst msg4} {proc struct message}}
 --->>> (unknown) bcc 
         name "greg wise"
         address "greg@example.com"
      args=
+{proc struct message}
+--->>> context=proc struct message
 +++ bcc 
         name "greg wise"
         address "greg@example.com"
       -> redirect_name=message.bcc
---->>> (typeinst_helper) context={proc email message.bcc} stack_ctx={{proc email message.bcc} {unknown struct message.bcc} {eval typeinst msg4} {proc struct message}}
+--->>> (typeinst_helper) context={proc email message.bcc} stack_ctx={{proc email message.bcc} {unknown unknown message.bcc} {eval typeinst msg4} {proc struct message}}
 --->>> (unknown) name greg wise args=
-+++ name greg wise  -> redirect_name=message.bcc.name
---->>> (typeinst_helper) context={proc varchar email.name} stack_ctx={{proc varchar email.name} {unknown email email.name} {eval typeinst message.bcc} {proc email message.bcc} {unknown struct message.bcc} {eval typeinst msg4} {proc struct message}}
+{proc email message.bcc} {proc struct message}
+--->>> context=proc email message.bcc
++++ name greg wise  -> redirect_name=email.name
+--->>> (typeinst_helper) context={proc varchar email.name} stack_ctx={{proc varchar email.name} {unknown unknown email.name} {eval typeinst message.bcc} {proc email message.bcc} {unknown unknown message.bcc} {eval typeinst msg4} {proc struct message}}
 --->>> (unknown) address greg@example.com args=
-+++ address greg@example.com  -> redirect_name=message.bcc.address
---->>> (typeinst_helper) context={proc varchar email.address} stack_ctx={{proc varchar email.address} {unknown email email.address} {eval typeinst message.bcc} {proc email message.bcc} {unknown struct message.bcc} {eval typeinst msg4} {proc struct message}}
+{proc email message.bcc} {proc struct message}
+--->>> context=proc email message.bcc
++++ address greg@example.com  -> redirect_name=email.address
+--->>> (typeinst_helper) context={proc varchar email.address} stack_ctx={{proc varchar email.address} {unknown unknown email.address} {eval typeinst message.bcc} {proc email message.bcc} {unknown unknown message.bcc} {eval typeinst msg4} {proc struct message}}
 --->>> (unknown) bcc 
         name "max loyal"
         address "max@example.com"
      args=
+{proc struct message}
+--->>> context=proc struct message
 +++ bcc 
         name "max loyal"
         address "max@example.com"
       -> redirect_name=message.bcc
---->>> (typeinst_helper) context={proc email message.bcc} stack_ctx={{proc email message.bcc} {unknown struct message.bcc} {eval typeinst msg4} {proc struct message}}
+--->>> (typeinst_helper) context={proc email message.bcc} stack_ctx={{proc email message.bcc} {unknown unknown message.bcc} {eval typeinst msg4} {proc struct message}}
 --->>> (unknown) name max loyal args=
-+++ name max loyal  -> redirect_name=message.bcc.name
---->>> (typeinst_helper) context={proc varchar email.name} stack_ctx={{proc varchar email.name} {unknown email email.name} {eval typeinst message.bcc} {proc email message.bcc} {unknown struct message.bcc} {eval typeinst msg4} {proc struct message}}
+{proc email message.bcc} {proc struct message}
+--->>> context=proc email message.bcc
++++ name max loyal  -> redirect_name=email.name
+--->>> (typeinst_helper) context={proc varchar email.name} stack_ctx={{proc varchar email.name} {unknown unknown email.name} {eval typeinst message.bcc} {proc email message.bcc} {unknown unknown message.bcc} {eval typeinst msg4} {proc struct message}}
 --->>> (unknown) address max@example.com args=
-+++ address max@example.com  -> redirect_name=message.bcc.address
---->>> (typeinst_helper) context={proc varchar email.address} stack_ctx={{proc varchar email.address} {unknown email email.address} {eval typeinst message.bcc} {proc email message.bcc} {unknown struct message.bcc} {eval typeinst msg4} {proc struct message}}
------ (map instantiation) name=wordcount_X args={{
+{proc email message.bcc} {proc struct message}
+--->>> context=proc email message.bcc
++++ address max@example.com  -> redirect_name=email.address
+--->>> (typeinst_helper) context={proc varchar email.address} stack_ctx={{proc varchar email.address} {unknown unknown email.address} {eval typeinst message.bcc} {proc email message.bcc} {unknown unknown message.bcc} {eval typeinst msg4} {proc struct message}}
+----- (container instantiation) name=wordcount_X args={{
         word "the"
         count "123"
     } {
@@ -476,33 +2006,45 @@
         word "the"
         count "123"
      args=
+{proc struct message}
+--->>> context=proc struct message
 +++ wordcount_X 
         word "the"
         count "123"
       -> redirect_name=message.wordcount_X
---->>> (typeinst_helper) context={proc struct message.wordcount_X} stack_ctx={{proc struct message.wordcount_X} {unknown struct message.wordcount_X} {eval typeinst msg4} {proc struct message}}
+--->>> (typeinst_helper) context={proc struct message.wordcount_X} stack_ctx={{proc struct message.wordcount_X} {unknown unknown message.wordcount_X} {eval typeinst msg4} {proc struct message}}
 --->>> (unknown) word the args=
+{proc struct message.wordcount_X} {proc struct message}
+--->>> context=proc struct message.wordcount_X
 +++ word the  -> redirect_name=message.wordcount_X.word
---->>> (typeinst_helper) context={proc varchar message.wordcount_X.word} stack_ctx={{proc varchar message.wordcount_X.word} {unknown struct message.wordcount_X.word} {eval typeinst message.wordcount_X} {proc struct message.wordcount_X} {unknown struct message.wordcount_X} {eval typeinst msg4} {proc struct message}}
+--->>> (typeinst_helper) context={proc varchar message.wordcount_X.word} stack_ctx={{proc varchar message.wordcount_X.word} {unknown unknown message.wordcount_X.word} {eval typeinst message.wordcount_X} {proc struct message.wordcount_X} {unknown unknown message.wordcount_X} {eval typeinst msg4} {proc struct message}}
 --->>> (unknown) count 123 args=
+{proc struct message.wordcount_X} {proc struct message}
+--->>> context=proc struct message.wordcount_X
 +++ count 123  -> redirect_name=message.wordcount_X.count
---->>> (typeinst_helper) context={proc int32 message.wordcount_X.count} stack_ctx={{proc int32 message.wordcount_X.count} {unknown struct message.wordcount_X.count} {eval typeinst message.wordcount_X} {proc struct message.wordcount_X} {unknown struct message.wordcount_X} {eval typeinst msg4} {proc struct message}}
+--->>> (typeinst_helper) context={proc int32 message.wordcount_X.count} stack_ctx={{proc int32 message.wordcount_X.count} {unknown unknown message.wordcount_X.count} {eval typeinst message.wordcount_X} {proc struct message.wordcount_X} {unknown unknown message.wordcount_X} {eval typeinst msg4} {proc struct message}}
 --->>> (unknown) wordcount_X 
         word "and"
         count "54"
      args=
+{proc struct message}
+--->>> context=proc struct message
 +++ wordcount_X 
         word "and"
         count "54"
       -> redirect_name=message.wordcount_X
---->>> (typeinst_helper) context={proc struct message.wordcount_X} stack_ctx={{proc struct message.wordcount_X} {unknown struct message.wordcount_X} {eval typeinst msg4} {proc struct message}}
+--->>> (typeinst_helper) context={proc struct message.wordcount_X} stack_ctx={{proc struct message.wordcount_X} {unknown unknown message.wordcount_X} {eval typeinst msg4} {proc struct message}}
 --->>> (unknown) word and args=
+{proc struct message.wordcount_X} {proc struct message}
+--->>> context=proc struct message.wordcount_X
 +++ word and  -> redirect_name=message.wordcount_X.word
---->>> (typeinst_helper) context={proc varchar message.wordcount_X.word} stack_ctx={{proc varchar message.wordcount_X.word} {unknown struct message.wordcount_X.word} {eval typeinst message.wordcount_X} {proc struct message.wordcount_X} {unknown struct message.wordcount_X} {eval typeinst msg4} {proc struct message}}
+--->>> (typeinst_helper) context={proc varchar message.wordcount_X.word} stack_ctx={{proc varchar message.wordcount_X.word} {unknown unknown message.wordcount_X.word} {eval typeinst message.wordcount_X} {proc struct message.wordcount_X} {unknown unknown message.wordcount_X} {eval typeinst msg4} {proc struct message}}
 --->>> (unknown) count 54 args=
+{proc struct message.wordcount_X} {proc struct message}
+--->>> context=proc struct message.wordcount_X
 +++ count 54  -> redirect_name=message.wordcount_X.count
---->>> (typeinst_helper) context={proc int32 message.wordcount_X.count} stack_ctx={{proc int32 message.wordcount_X.count} {unknown struct message.wordcount_X.count} {eval typeinst message.wordcount_X} {proc struct message.wordcount_X} {unknown struct message.wordcount_X} {eval typeinst msg4} {proc struct message}}
------ (map instantiation) name=wordcount_Y args={{
+--->>> (typeinst_helper) context={proc int32 message.wordcount_X.count} stack_ctx={{proc int32 message.wordcount_X.count} {unknown unknown message.wordcount_X.count} {eval typeinst message.wordcount_X} {proc struct message.wordcount_X} {unknown unknown message.wordcount_X} {eval typeinst msg4} {proc struct message}}
+----- (container instantiation) name=wordcount_Y args={{
         word "the"
         count "123"
     } {
@@ -513,85 +2055,173 @@
         word "the"
         count "123"
      args=
+{proc struct message}
+--->>> context=proc struct message
 +++ wordcount_Y 
         word "the"
         count "123"
       -> redirect_name=message.wordcount_Y
---->>> (typeinst_helper) context={proc word_count_pair message.wordcount_Y} stack_ctx={{proc word_count_pair message.wordcount_Y} {unknown struct message.wordcount_Y} {eval typeinst msg4} {proc struct message}}
+--->>> (typeinst_helper) context={proc word_count_pair message.wordcount_Y} stack_ctx={{proc word_count_pair message.wordcount_Y} {unknown unknown message.wordcount_Y} {eval typeinst msg4} {proc struct message}}
 --->>> (unknown) word the args=
-+++ word the  -> redirect_name=message.wordcount_Y.word
---->>> (typeinst_helper) context={proc varchar word_count_pair.word} stack_ctx={{proc varchar word_count_pair.word} {unknown word_count_pair word_count_pair.word} {eval typeinst message.wordcount_Y} {proc word_count_pair message.wordcount_Y} {unknown struct message.wordcount_Y} {eval typeinst msg4} {proc struct message}}
+{proc word_count_pair message.wordcount_Y} {proc struct message}
+--->>> context=proc word_count_pair message.wordcount_Y
++++ word the  -> redirect_name=word_count_pair.word
+--->>> (typeinst_helper) context={proc varchar word_count_pair.word} stack_ctx={{proc varchar word_count_pair.word} {unknown unknown word_count_pair.word} {eval typeinst message.wordcount_Y} {proc word_count_pair message.wordcount_Y} {unknown unknown message.wordcount_Y} {eval typeinst msg4} {proc struct message}}
 --->>> (unknown) count 123 args=
-+++ count 123  -> redirect_name=message.wordcount_Y.count
---->>> (typeinst_helper) context={proc varint word_count_pair.count} stack_ctx={{proc varint word_count_pair.count} {unknown word_count_pair word_count_pair.count} {eval typeinst message.wordcount_Y} {proc word_count_pair message.wordcount_Y} {unknown struct message.wordcount_Y} {eval typeinst msg4} {proc struct message}}
+{proc word_count_pair message.wordcount_Y} {proc struct message}
+--->>> context=proc word_count_pair message.wordcount_Y
++++ count 123  -> redirect_name=word_count_pair.count
+--->>> (typeinst_helper) context={proc varint word_count_pair.count} stack_ctx={{proc varint word_count_pair.count} {unknown unknown word_count_pair.count} {eval typeinst message.wordcount_Y} {proc word_count_pair message.wordcount_Y} {unknown unknown message.wordcount_Y} {eval typeinst msg4} {proc struct message}}
 --->>> (unknown) wordcount_Y 
         word "and"
         count "54"
      args=
+{proc struct message}
+--->>> context=proc struct message
 +++ wordcount_Y 
         word "and"
         count "54"
       -> redirect_name=message.wordcount_Y
---->>> (typeinst_helper) context={proc word_count_pair message.wordcount_Y} stack_ctx={{proc word_count_pair message.wordcount_Y} {unknown struct message.wordcount_Y} {eval typeinst msg4} {proc struct message}}
+--->>> (typeinst_helper) context={proc word_count_pair message.wordcount_Y} stack_ctx={{proc word_count_pair message.wordcount_Y} {unknown unknown message.wordcount_Y} {eval typeinst msg4} {proc struct message}}
 --->>> (unknown) word and args=
-+++ word and  -> redirect_name=message.wordcount_Y.word
---->>> (typeinst_helper) context={proc varchar word_count_pair.word} stack_ctx={{proc varchar word_count_pair.word} {unknown word_count_pair word_count_pair.word} {eval typeinst message.wordcount_Y} {proc word_count_pair message.wordcount_Y} {unknown struct message.wordcount_Y} {eval typeinst msg4} {proc struct message}}
+{proc word_count_pair message.wordcount_Y} {proc struct message}
+--->>> context=proc word_count_pair message.wordcount_Y
++++ word and  -> redirect_name=word_count_pair.word
+--->>> (typeinst_helper) context={proc varchar word_count_pair.word} stack_ctx={{proc varchar word_count_pair.word} {unknown unknown word_count_pair.word} {eval typeinst message.wordcount_Y} {proc word_count_pair message.wordcount_Y} {unknown unknown message.wordcount_Y} {eval typeinst msg4} {proc struct message}}
 --->>> (unknown) count 54 args=
-+++ count 54  -> redirect_name=message.wordcount_Y.count
---->>> (typeinst_helper) context={proc varint word_count_pair.count} stack_ctx={{proc varint word_count_pair.count} {unknown word_count_pair word_count_pair.count} {eval typeinst message.wordcount_Y} {proc word_count_pair message.wordcount_Y} {unknown struct message.wordcount_Y} {eval typeinst msg4} {proc struct message}}
+{proc word_count_pair message.wordcount_Y} {proc struct message}
+--->>> context=proc word_count_pair message.wordcount_Y
++++ count 54  -> redirect_name=word_count_pair.count
+--->>> (typeinst_helper) context={proc varint word_count_pair.count} stack_ctx={{proc varint word_count_pair.count} {unknown unknown word_count_pair.count} {eval typeinst message.wordcount_Y} {proc word_count_pair message.wordcount_Y} {unknown unknown message.wordcount_Y} {eval typeinst msg4} {proc struct message}}
 <pdl>
     <struct x-name="struct">
-        <typedecl x-name="nsp" x-type="varchar"/>
-        <typedecl x-name="name" x-type="varchar"/>
-        <typedecl x-name="pk" x-type="varchar"/>
-        <typedecl x-name="is_final_if_no_scope" x-type="bool"/>
-        <typedecl x-name="slot" x-type="typedecl" x-container="multiple" x-default_value=""/>
-    </struct>
-    <struct x-name="typedecl">
         <typedecl x-name="name" x-type="varchar"/>
         <typedecl x-name="type" x-type="varchar"/>
-        <typedecl x-name="default_value" x-type="varchar" x-default_value=""/>
-        <typedecl x-name="optional_p" x-type="bool" x-default_value="false"/>
-        <typedecl x-name="container" x-type="varchar" x-default_value=""/>
+        <typedecl x-name="nsp" x-type="varchar"/>
+        <typedecl x-name="slot" x-type="struct" x-container="multiple" x-default_value="">
+            <typedecl x-name="name" x-type="varchar"/>
+            <typedecl x-name="type" x-type="varchar"/>
+            <typedecl x-name="default_value" x-type="varchar" x-default_value=""/>
+            <typedecl x-name="optional_p" x-type="bool" x-default_value="false"/>
+            <typedecl x-name="container" x-type="varchar" x-default_value=""/>
+        </typedecl>
+        <typedecl x-name="pk" x-type="varchar"/>
+        <typedecl x-name="is_final_if_no_scope" x-type="bool"/>
+        <typeinst x-name="struct.type" x-type="varchar">struct</typeinst>
+        <typeinst x-name="struct.name" x-type="varchar">struct</typeinst>
+        <typeinst x-name="struct.nsp" x-type="varchar">::datasys::lang</typeinst>
+        <typeinst x-name="struct.slot" x-type="struct">
+            <typeinst x-name="struct.slot.name" x-type="varchar">name</typeinst>
+            <typeinst x-name="struct.slot.type" x-type="varchar">varchar</typeinst>
+        </typeinst>
+        <typeinst x-name="struct.slot" x-type="struct">
+            <typeinst x-name="struct.slot.name" x-type="varchar">type</typeinst>
+            <typeinst x-name="struct.slot.type" x-type="varchar">varchar</typeinst>
+        </typeinst>
+        <typeinst x-name="struct.slot" x-type="struct">
+            <typeinst x-name="struct.slot.name" x-type="varchar">nsp</typeinst>
+            <typeinst x-name="struct.slot.type" x-type="varchar">varchar</typeinst>
+        </typeinst>
+        <typeinst x-name="struct.slot" x-type="struct">
+            <typeinst x-name="struct.slot.name" x-type="varchar">slot</typeinst>
+            <typeinst x-name="struct.slot.type" x-type="varchar">struct</typeinst>
+            <typeinst x-name="struct.slot.default_value" x-type="varchar"></typeinst>
+            <typeinst x-name="struct.slot.container" x-type="varchar">multiple</typeinst>
+        </typeinst>
+        <typeinst x-name="struct.slot" x-type="struct">
+            <typeinst x-name="struct.slot.name" x-type="varchar">pk</typeinst>
+            <typeinst x-name="struct.slot.type" x-type="varchar">varchar</typeinst>
+        </typeinst>
+        <typeinst x-name="struct.slot" x-type="struct">
+            <typeinst x-name="struct.slot.name" x-type="varchar">is_final_if_no_scope</typeinst>
+            <typeinst x-name="struct.slot.type" x-type="varchar">bool</typeinst>
+        </typeinst>
     </struct>
-    <struct x-name="email" pk="address">
+    <struct x-name="email">
         <typedecl x-name="name" x-type="varchar" x-default_value=""/>
         <typedecl x-name="address" x-type="varchar"/>
+        <typeinst x-name="struct.pk" x-type="varchar">address</typeinst>
+        <typeinst x-name="struct.type" x-type="varchar">struct</typeinst>
+        <typeinst x-name="struct.name" x-type="varchar">email</typeinst>
+        <typeinst x-name="struct.nsp" x-type="varchar">::datasys::lang</typeinst>
+        <typeinst x-name="struct.slot" x-type="struct">
+            <typeinst x-name="struct.slot.name" x-type="varchar">name</typeinst>
+            <typeinst x-name="struct.slot.type" x-type="varchar">varchar</typeinst>
+            <typeinst x-name="struct.slot.default_value" x-type="varchar"></typeinst>
+        </typeinst>
+        <typeinst x-name="struct.slot" x-type="struct">
+            <typeinst x-name="struct.slot.name" x-type="varchar">address</typeinst>
+            <typeinst x-name="struct.slot.type" x-type="varchar">varchar</typeinst>
+        </typeinst>
     </struct>
     <struct x-name="file">
         <typedecl x-name="name" x-type="varchar"/>
         <typedecl x-name="mime_type" x-type="varchar"/>
         <typedecl x-name="size" x-type="int32"/>
+        <typeinst x-name="struct.type" x-type="varchar">struct</typeinst>
+        <typeinst x-name="struct.name" x-type="varchar">file</typeinst>
+        <typeinst x-name="struct.nsp" x-type="varchar">::datasys::lang</typeinst>
+        <typeinst x-name="struct.slot" x-type="struct">
+            <typeinst x-name="struct.slot.name" x-type="varchar">name</typeinst>
+            <typeinst x-name="struct.slot.type" x-type="varchar">varchar</typeinst>
+        </typeinst>
+        <typeinst x-name="struct.slot" x-type="struct">
+            <typeinst x-name="struct.slot.name" x-type="varchar">mime_type</typeinst>
+            <typeinst x-name="struct.slot.type" x-type="varchar">varchar</typeinst>
+        </typeinst>
+        <typeinst x-name="struct.slot" x-type="struct">
+            <typeinst x-name="struct.slot.name" x-type="varchar">size</typeinst>
+            <typeinst x-name="struct.slot.type" x-type="varchar">int32</typeinst>
+        </typeinst>
     </struct>
     <struct x-name="folder">
         <typedecl x-name="name" x-type="varchar"/>
         <typedecl x-name="num_items" x-type="int32"/>
+        <typeinst x-name="struct.type" x-type="varchar">struct</typeinst>
+        <typeinst x-name="struct.name" x-type="varchar">folder</typeinst>
+        <typeinst x-name="struct.nsp" x-type="varchar">::datasys::lang</typeinst>
+        <typeinst x-name="struct.slot" x-type="struct">
+            <typeinst x-name="struct.slot.name" x-type="varchar">name</typeinst>
+            <typeinst x-name="struct.slot.type" x-type="varchar">varchar</typeinst>
+        </typeinst>
+        <typeinst x-name="struct.slot" x-type="struct">
+            <typeinst x-name="struct.slot.name" x-type="varchar">num_items</typeinst>
+            <typeinst x-name="struct.slot.type" x-type="varchar">int32</typeinst>
+        </typeinst>
     </struct>
     <struct x-name="category">
         <typedecl x-name="category_name" x-type="varchar"/>
         <typedecl x-name="parent_category" x-type="varchar"/>
+        <typeinst x-name="struct.type" x-type="varchar">struct</typeinst>
+        <typeinst x-name="struct.name" x-type="varchar">category</typeinst>
+        <typeinst x-name="struct.nsp" x-type="varchar">::datasys::lang</typeinst>
+        <typeinst x-name="struct.slot" x-type="struct">
+            <typeinst x-name="struct.slot.name" x-type="varchar">category_name</typeinst>
+            <typeinst x-name="struct.slot.type" x-type="varchar">varchar</typeinst>
+        </typeinst>
+        <typeinst x-name="struct.slot" x-type="struct">
+            <typeinst x-name="struct.slot.name" x-type="varchar">parent_category</typeinst>
+            <typeinst x-name="struct.slot.type" x-type="varchar">varchar</typeinst>
+        </typeinst>
     </struct>
     <struct x-name="word_count_pair">
         <typedecl x-name="word" x-type="varchar"/>
         <typedecl x-name="count" x-type="varint"/>
+        <typeinst x-name="struct.type" x-type="varchar">struct</typeinst>
+        <typeinst x-name="struct.name" x-type="varchar">word_count_pair</typeinst>
+        <typeinst x-name="struct.nsp" x-type="varchar">::datasys::lang</typeinst>
+        <typeinst x-name="struct.slot" x-type="struct">
+            <typeinst x-name="struct.slot.name" x-type="varchar">word</typeinst>
+            <typeinst x-name="struct.slot.type" x-type="varchar">varchar</typeinst>
+        </typeinst>
+        <typeinst x-name="struct.slot" x-type="struct">
+            <typeinst x-name="struct.slot.name" x-type="varchar">count</typeinst>
+            <typeinst x-name="struct.slot.type" x-type="varchar">varint</typeinst>
+        </typeinst>
     </struct>
     <struct x-name="message">
         <typeinst x-name="struct.pk" x-type="varchar">message_id</typeinst>
         <typeinst x-name="struct.is_final_if_no_scope" x-type="bool">yes</typeinst>
-        <typeinst x-name="struct.slot" x-type="typedecl">
-            <typeinst x-name="typedecl.name" x-type="varchar">message_id</typeinst>
-            <typeinst x-name="typedecl.type" x-type="varchar">varint</typeinst>
-        </typeinst>
-        <typeinst x-name="struct.slot" x-type="typedecl">
-            <typeinst x-name="typedecl.name" x-type="varchar">device</typeinst>
-            <typeinst x-name="typedecl.type" x-type="varchar">varchar</typeinst>
-            <typeinst x-name="typedecl.default_value" x-type="varchar">sms</typeinst>
-        </typeinst>
-        <typeinst x-name="struct.slot" x-type="typedecl">
-            <typeinst x-name="typedecl.name" x-type="varchar">num_comments</typeinst>
-            <typeinst x-name="typedecl.type" x-type="varchar">int16</typeinst>
-            <typeinst x-name="typedecl.default_value" x-type="varchar">0</typeinst>
-        </typeinst>
         <typedecl x-name="message_id" x-type="varint"/>
         <typedecl x-name="device" x-type="varchar" x-default_value="sms"/>
         <typedecl x-name="num_comments" x-type="int16" x-default_value="0"/>
@@ -612,6 +2242,98 @@
         </typedecl>
         <typedecl x-name="wordcount_Y" x-type="word_count_pair" x-container="map"/>
         <typedecl x-name="wordcount_Z" x-type="word_count_pair" x-container="map" x-default_value=""/>
+        <typeinst x-name="struct.type" x-type="varchar">struct</typeinst>
+        <typeinst x-name="struct.name" x-type="varchar">message</typeinst>
+        <typeinst x-name="struct.nsp" x-type="varchar">::datasys::lang</typeinst>
+        <typeinst x-name="struct.slot" x-type="struct">
+            <typeinst x-name="struct.slot.name" x-type="varchar">message_id</typeinst>
+            <typeinst x-name="struct.slot.type" x-type="varchar">varint</typeinst>
+        </typeinst>
+        <typeinst x-name="struct.slot" x-type="struct">
+            <typeinst x-name="struct.slot.name" x-type="varchar">device</typeinst>
+            <typeinst x-name="struct.slot.type" x-type="varchar">varchar</typeinst>
+            <typeinst x-name="struct.slot.default_value" x-type="varchar">sms</typeinst>
+        </typeinst>
+        <typeinst x-name="struct.slot" x-type="struct">
+            <typeinst x-name="struct.slot.name" x-type="varchar">num_comments</typeinst>
+            <typeinst x-name="struct.slot.type" x-type="varchar">int16</typeinst>
+            <typeinst x-name="struct.slot.default_value" x-type="varchar">0</typeinst>
+        </typeinst>
+        <typeinst x-name="struct.slot" x-type="struct">
+            <typeinst x-name="struct.slot.name" x-type="varchar">subject</typeinst>
+            <typeinst x-name="struct.slot.type" x-type="varchar">varchar</typeinst>
+        </typeinst>
+        <typeinst x-name="struct.slot" x-type="struct">
+            <typeinst x-name="struct.slot.name" x-type="varchar">body</typeinst>
+            <typeinst x-name="struct.slot.type" x-type="varchar">varchar</typeinst>
+        </typeinst>
+        <typeinst x-name="struct.slot" x-type="struct">
+            <typeinst x-name="struct.slot.name" x-type="varchar">from</typeinst>
+            <typeinst x-name="struct.slot.type" x-type="varchar">email</typeinst>
+        </typeinst>
+        <typeinst x-name="struct.slot" x-type="struct">
+            <typeinst x-name="struct.slot.name" x-type="varchar">to</typeinst>
+            <typeinst x-name="struct.slot.type" x-type="varchar">email</typeinst>
+            <typeinst x-name="struct.slot.container" x-type="varchar">multiple</typeinst>
+        </typeinst>
+        <typeinst x-name="struct.slot" x-type="struct">
+            <typeinst x-name="struct.slot.name" x-type="varchar">cc</typeinst>
+            <typeinst x-name="struct.slot.type" x-type="varchar">email</typeinst>
+            <typeinst x-name="struct.slot.default_value" x-type="varchar"></typeinst>
+            <typeinst x-name="struct.slot.container" x-type="varchar">multiple</typeinst>
+        </typeinst>
+        <typeinst x-name="struct.slot" x-type="struct">
+            <typeinst x-name="struct.slot.name" x-type="varchar">bcc</typeinst>
+            <typeinst x-name="struct.slot.type" x-type="varchar">email</typeinst>
+            <typeinst x-name="struct.slot.default_value" x-type="varchar"></typeinst>
+            <typeinst x-name="struct.slot.container" x-type="varchar">multiple</typeinst>
+        </typeinst>
+        <typeinst x-name="struct.slot" x-type="struct">
+            <typeinst x-name="struct.slot.name" x-type="varchar">public_p</typeinst>
+            <typeinst x-name="struct.slot.type" x-type="varchar">bool</typeinst>
+            <typeinst x-name="struct.slot.default_value" x-type="varchar">false</typeinst>
+        </typeinst>
+        <typeinst x-name="struct.slot" x-type="struct">
+            <typeinst x-name="struct.slot.name" x-type="varchar">categories</typeinst>
+            <typeinst x-name="struct.slot.type" x-type="varchar">category</typeinst>
+            <typeinst x-name="struct.slot.default_value" x-type="varchar"></typeinst>
+            <typeinst x-name="struct.slot.container" x-type="varchar">multiple</typeinst>
+        </typeinst>
+        <typeinst x-name="struct.slot" x-type="struct">
+            <typeinst x-name="struct.slot.name" x-type="varchar">folders</typeinst>
+            <typeinst x-name="struct.slot.type" x-type="varchar">folder</typeinst>
+            <typeinst x-name="struct.slot.default_value" x-type="varchar"></typeinst>
+            <typeinst x-name="struct.slot.container" x-type="varchar">multiple</typeinst>
+        </typeinst>
+        <typeinst x-name="struct.slot" x-type="struct">
+            <typeinst x-name="struct.slot.name" x-type="varchar">tags</typeinst>
+            <typeinst x-name="struct.slot.type" x-type="varchar">varchar</typeinst>
+            <typeinst x-name="struct.slot.default_value" x-type="varchar"></typeinst>
+            <typeinst x-name="struct.slot.container" x-type="varchar">multiple</typeinst>
+        </typeinst>
+        <typeinst x-name="struct.slot" x-type="struct">
+            <typeinst x-name="struct.slot.name" x-type="varchar">attachment</typeinst>
+            <typeinst x-name="struct.slot.type" x-type="varchar">file</typeinst>
+            <typeinst x-name="struct.slot.default_value" x-type="varchar"></typeinst>
+            <typeinst x-name="struct.slot.container" x-type="varchar">multiple</typeinst>
+        </typeinst>
+        <typeinst x-name="struct.slot" x-type="struct">
+            <typeinst x-name="struct.slot.name" x-type="varchar">wordcount_X</typeinst>
+            <typeinst x-name="struct.slot.type" x-type="varchar">struct</typeinst>
+            <typeinst x-name="struct.slot.default_value" x-type="varchar"></typeinst>
+            <typeinst x-name="struct.slot.container" x-type="varchar">map</typeinst>
+        </typeinst>
+        <typeinst x-name="struct.slot" x-type="struct">
+            <typeinst x-name="struct.slot.name" x-type="varchar">wordcount_Y</typeinst>
+            <typeinst x-name="struct.slot.type" x-type="varchar">word_count_pair</typeinst>
+            <typeinst x-name="struct.slot.container" x-type="varchar">map</typeinst>
+        </typeinst>
+        <typeinst x-name="struct.slot" x-type="struct">
+            <typeinst x-name="struct.slot.name" x-type="varchar">wordcount_Z</typeinst>
+            <typeinst x-name="struct.slot.type" x-type="varchar">word_count_pair</typeinst>
+            <typeinst x-name="struct.slot.default_value" x-type="varchar"></typeinst>
+            <typeinst x-name="struct.slot.container" x-type="varchar">map</typeinst>
+        </typeinst>
     </struct>
     <typeinst x-name="msg1" x-type="message">
         <typeinst x-name="subject" x-type="varchar">hello</typeinst>
