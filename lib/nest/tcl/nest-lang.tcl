@@ -113,28 +113,6 @@ define_lang ::nest::lang {
         set $varname
     }
 
-    #proc lambda {params body args} {
-    #    set pre {}
-    #    while { ($params ne {} && $args ne {}) || $params eq {args} } { 
-    #        if { $params eq {args} } {
-    #            append pre "set args [list $args] ; "
-    #            set params {}
-    #            set args {}
-    #        } else {
-    #            set params [lassign $params param]
-    #            set args [lassign $args arg]
-    #            append pre "set $param [list $arg] ; "
-    #        }
-    #    }   
-    #    set body [concat $pre $body]
-    #    if { $params ne {} } { 
-    #        log "+++++ lambda returns = [list lambda $params $body]"
-    #        return [list lambda $params $body]
-    #    }   
-    #    # NOTE THAT WE ARE USING uplevel 0 IN ORDER TO PROTECT
-    #    # VARS IN THE UPPER STACK FRAME FROM BEING OVERWRITTEN
-    #    uplevel 0 $body $args
-    #}
     proc lambda {params body args} {
 
         set {llength_params} [llength ${params}]
