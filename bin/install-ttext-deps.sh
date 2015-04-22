@@ -35,10 +35,13 @@ mkdir -p ${WORKDIR}
 # htmltidy
 #USE="xml" ${CMD} htmltidy 
 cd ${WORKDIR}
-tar -xjvf ${FILEDIR}/app-text/htmltidy/tidy-20090325.tar.bz2
-cd tidy-20090325
-/bin/sh build/gnuauto/setup.sh
-./configure --enable-threads --prefix=${PREFIX} --includedir=${PREFIX}/include/tidy/
+# tar -xjvf ${FILEDIR}/app-text/htmltidy/tidy-20090325.tar.bz2
+# cd tidy-20090325
+# /bin/sh build/gnuauto/setup.sh
+# ./configure --enable-threads --prefix=${PREFIX} --includedir=${PREFIX}/include/tidy/
+tar -xjvf ${FILEDIR}/app-text/htmltidy/tidy-html5.tar.bz2
+cd tidy-html5/build/cmake
+cmake ../../ -D-DCMAKE_INSTALL_PREFIX=/opt/naviserver/
 make install
 
 # unac

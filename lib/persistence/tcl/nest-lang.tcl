@@ -120,7 +120,7 @@ define_lang ::basesys::lang {
         }   
         set body [concat $pre $body]
         if { $params ne {} } { 
-            puts "+++++ lambda returns = [list lambda $params $body]"
+            #puts "+++++ lambda returns = [list lambda $params $body]"
             return [list lambda $params $body]
         }   
         uplevel $body $args
@@ -141,20 +141,20 @@ define_lang ::basesys::lang {
         set cmd [list [namespace which node_helper] $tag $name {*}$args]
         set node [uplevel $cmd]
         set nest [list with_ctx $context {*}$nest]
-        puts "!!! nest: $name -> $nest"
+        #puts "!!! nest: $name -> $nest"
         uplevel [list [namespace which forward] $name $nest]
         return $node
     }
 
     proc forward {name cmd args} {
 
-        puts "--->>> (def forward $name) cmd_handler=[list $cmd] def_args=$args"
+        #puts "--->>> (def forward $name) cmd_handler=[list $cmd] def_args=$args"
 
         # register forward
         set varname "::basesys::lang::forward($name)"
         if { [info exists $varname] && $name ni {struct typedecl} } {
-            puts "!!! stack_fwd=$::basesys::lang::stack_fwd"
-            puts "!!! stack_ctx=$::basesys::lang::stack_ctx"
+            #puts "!!! stack_fwd=$::basesys::lang::stack_fwd"
+            #puts "!!! stack_ctx=$::basesys::lang::stack_ctx"
             error "!!! forward with that name (=$name) already exists"
         }
         set $varname ""
@@ -213,7 +213,7 @@ define_lang ::basesys::lang {
             set lookahead_ctx [get_lookahead_ctx $context_name]
             push_ctx $lookahead_ctx 
 
-            puts "+++++ (multiple declaration) tag=type=$type name=$name args=$args stack_ctx=$::basesys::lang::stack_ctx context=$context"
+            #puts "+++++ (multiple declaration) tag=type=$type name=$name args=$args stack_ctx=$::basesys::lang::stack_ctx context=$context"
 
             typedecl_args args
             set args [concat -x-container "multiple" $args] 
@@ -238,7 +238,7 @@ define_lang ::basesys::lang {
 
             set name $arg0
 
-            puts "+++++ (multiple instantiation) name=$name args=$args"
+            #puts "+++++ (multiple instantiation) name=$name args=$args"
 
             lassign $args argv
             foreach arg $argv {
@@ -328,7 +328,7 @@ define_lang ::basesys::lang {
             set lookahead_ctx [get_lookahead_ctx $context_name]
             push_ctx $lookahead_ctx 
 
-            puts "----- (map declaration) tag=type=$type name=$name args=$args stack_ctx=$::basesys::lang::stack_ctx context=$context"
+            #puts "----- (map declaration) tag=type=$type name=$name args=$args stack_ctx=$::basesys::lang::stack_ctx context=$context"
 
             typedecl_args args
             set args [concat -x-container "map" $args] 
@@ -352,7 +352,7 @@ define_lang ::basesys::lang {
 
             set name $arg0
 
-            puts "----- (map instantiation) name=$name args=$args"
+            #puts "----- (map instantiation) name=$name args=$args"
 
             lassign $args argv
             foreach arg $argv {
@@ -397,7 +397,7 @@ define_lang ::basesys::lang {
 
         set context_path [get_context_path_of_type "eval"]
 
-        puts "--->>> (typedecl_helper) context_path=[list $context_path] stack_ctx=[list $::basesys::lang::stack_ctx]"
+        #puts "--->>> (typedecl_helper) context_path=[list $context_path] stack_ctx=[list $::basesys::lang::stack_ctx]"
 
         set dotted_name "${context_path}.$decl_name"
         # OBSOLETE: set_lookahead_ctx $dotted_name "proc" $decl_tag $dotted_name
@@ -459,7 +459,7 @@ define_lang ::basesys::lang {
         set context_tag [lindex $context 1]
         set context_name [lindex $context 2]
 
-        puts "--->>> (typeinst_helper) context=[list $context] stack_ctx=[list $::basesys::lang::stack_ctx]"
+        #puts "--->>> (typeinst_helper) context=[list $context] stack_ctx=[list $::basesys::lang::stack_ctx]"
         
         set cmd [list [namespace which node_helper] typeinst $inst_name -x-type $inst_type {*}$args]
         return [uplevel $cmd]
@@ -487,7 +487,7 @@ define_lang ::basesys::lang {
     proc type_helper {name args} {
         set tag [top_fwd]
 
-        puts "--->>> type_helper (is_declaration_mode_p=[is_declaration_mode_p]) tag=$tag name=$name {*}$args"
+        #puts "--->>> type_helper (is_declaration_mode_p=[is_declaration_mode_p]) tag=$tag name=$name {*}$args"
         
         set type $tag
         if { [is_declaration_mode_p] } {
@@ -546,7 +546,7 @@ define_lang ::basesys::lang {
 
     proc unknown {field_type field_name args} {
 
-        puts "--->>> (unknown) $field_type $field_name args=$args"
+        #puts "--->>> (unknown) $field_type $field_name args=$args"
 
         # re is such to allow for expressions of the form set<file>
         set type_re {[_a-zA-Z][_a-zA-Z0-9]*}

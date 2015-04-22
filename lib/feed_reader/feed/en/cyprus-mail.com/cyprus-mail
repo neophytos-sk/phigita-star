@@ -1,9 +1,9 @@
 url http://cyprus-mail.com/
-include_re {/[0-9]{4}/[0-9]{2}/[0-9]{2}/[[:alnum:]\-]+/$}
+include_re {p=[0-9]+$}
 htmltidy_feed_p 1
 htmltidy_article_p 1
 article_langclass {en.utf8}
-xpath_article_title {returnstring(//h1[@class="entry-title"])}
+xpath_article_title {returnstring(//h1)}
 xpath_article_date {returndate(//div[@id="entry-post"]/descendant::span[@class="meta-time"],"%B %d, %Y")}
 xpath_article_tags {values(//div[@class="entry-tags"]/a[@rel="tag"]/text())}
 xpath_article_image {

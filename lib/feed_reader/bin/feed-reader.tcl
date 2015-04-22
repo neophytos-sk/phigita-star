@@ -44,6 +44,7 @@ proc print_usage_info {} {
 			   "fex" "?limit? ?offset?" \
 			   "stats" "?domain? ?...?" \
 			   "wc" "?contentsha1? ?...?" \
+			   "curl" "url" \
 			   "test-article" "domain feed_name article_url" \
 			   "generate-feed" "feed_url"]
 
@@ -249,6 +250,11 @@ if { ${argc} < 1 } {
         
 
         ::feed_reader::feature_extraction {*}[lrange ${argv} 1 end]
+
+    } elseif { ${cmd} eq {curl} && ${argc} == 2 } {
+
+        set url [lindex ${argv} 1]
+        ::feed_reader::curl $url
 
     } else {
 

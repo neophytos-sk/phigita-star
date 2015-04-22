@@ -155,10 +155,12 @@ proc ::feed_reader::fetch_feed {resultVar feedVar {stoptitlesVar ""}} {
 
     set errorcode [::xo::http::fetch html $url]
     if { ${errorcode} } {
+        puts "error fetching feed: errocode=$errorcode"
         return $errorcode
     }
 
     if { ${html} eq {} } {
+        puts "empty html while fetching feed"
         return -4  ;# empty html while fetching feed
     }
 
@@ -174,6 +176,10 @@ proc ::feed_reader::fetch_feed {resultVar feedVar {stoptitlesVar ""}} {
         set doc [dom parse ${html}]
     }
 
+    if { [string length $html] < 10000 } {
+        puts "url = $url"
+        puts "html = $html"
+    }
 
     foreach cleanup_xpath ${xpath_feed_cleanup} {
         foreach cleanup_node [${doc} selectNodes $cleanup_xpath] {
@@ -2194,6 +2200,17 @@ proc ::feed_reader::sync_feeds {{news_sources ""} {debug_p "0"}} {
 
 }
 
+
+proc ::feed_reader::curl {url} {
+    set errorcode [::xo::http::fetch html $url]
+    if { ${errorcode} } {
+        puts "error fetching $url"
+        return $errorcode
+    }
+
+    puts "html=[string range $html 0 1000]"
+    
+}
 
 
 #TODO: we need a way to test feed (before starting to store it)

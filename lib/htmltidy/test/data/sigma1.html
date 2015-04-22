@@ -1,0 +1,3170 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><script type="text/javascript">(window.NREUM||(NREUM={})).loader_config={xpid:"VwICWFRRGwAAVFdaBwA="};window.NREUM||(NREUM={}),__nr_require=function(t,e,n){function r(n){if(!e[n]){var o=e[n]={exports:{}};t[n][0].call(o.exports,function(e){var o=t[n][1][e];return r(o?o:e)},o,o.exports)}return e[n].exports}if("function"==typeof __nr_require)return __nr_require;for(var o=0;o<n.length;o++)r(n[o]);return r}({QJf3ax:[function(t,e){function n(t){function e(e,n,a){t&&t(e,n,a),a||(a={});for(var c=s(e),u=c.length,f=i(a,o,r),d=0;u>d;d++)c[d].apply(f,n);return f}function a(t,e){u[t]=s(t).concat(e)}function s(t){return u[t]||[]}function c(){return n(e)}var u={};return{on:a,emit:e,create:c,listeners:s,_events:u}}function r(){return{}}var o="nr@context",i=t("gos");e.exports=n()},{gos:"7eSDFh"}],ee:[function(t,e){e.exports=t("QJf3ax")},{}],3:[function(t){function e(t,e,n,i,s){try{c?c-=1:r("err",[s||new UncaughtException(t,e,n)])}catch(u){try{r("ierr",[u,(new Date).getTime(),!0])}catch(f){}}return"function"==typeof a?a.apply(this,o(arguments)):!1}function UncaughtException(t,e,n){this.message=t||"Uncaught error with no additional information",this.sourceURL=e,this.line=n}function n(t){r("err",[t,(new Date).getTime()])}var r=t("handle"),o=t(5),i=t("ee"),a=window.onerror,s=!1,c=0;t("loader").features.err=!0,window.onerror=e;try{throw new Error}catch(u){"stack"in u&&(t(3),t(4),"addEventListener"in window&&t(1),window.XMLHttpRequest&&XMLHttpRequest.prototype&&XMLHttpRequest.prototype.addEventListener&&t(2),s=!0)}i.on("fn-start",function(){s&&(c+=1)}),i.on("fn-err",function(t,e,r){s&&(this.thrown=!0,n(r))}),i.on("fn-end",function(){s&&!this.thrown&&c>0&&(c-=1)}),i.on("internal-error",function(t){r("ierr",[t,(new Date).getTime(),!0])})},{1:4,2:7,3:6,4:5,5:20,ee:"QJf3ax",handle:"D5DuLP",loader:"G9z0Bl"}],4:[function(t,e){function n(t){i.inPlace(t,["addEventListener","removeEventListener"],"-",r)}function r(t){return t[1]}var o=(t(1),t("ee").create()),i=t(2)(o),a=t("gos");if(e.exports=o,n(window),"getPrototypeOf"in Object){for(var s=document;s&&!s.hasOwnProperty("addEventListener");)s=Object.getPrototypeOf(s);s&&n(s);for(var c=XMLHttpRequest.prototype;c&&!c.hasOwnProperty("addEventListener");)c=Object.getPrototypeOf(c);c&&n(c)}else XMLHttpRequest.prototype.hasOwnProperty("addEventListener")&&n(XMLHttpRequest.prototype);o.on("addEventListener-start",function(t){if(t[1]){var e=t[1];"function"==typeof e?this.wrapped=t[1]=a(e,"nr@wrapped",function(){return i(e,"fn-",null,e.name||"anonymous")}):"function"==typeof e.handleEvent&&i.inPlace(e,["handleEvent"],"fn-")}}),o.on("removeEventListener-start",function(t){var e=this.wrapped;e&&(t[1]=e)})},{1:20,2:21,ee:"QJf3ax",gos:"7eSDFh"}],5:[function(t,e){var n=(t(2),t("ee").create()),r=t(1)(n);e.exports=n,r.inPlace(window,["requestAnimationFrame","mozRequestAnimationFrame","webkitRequestAnimationFrame","msRequestAnimationFrame"],"raf-"),n.on("raf-start",function(t){t[0]=r(t[0],"fn-")})},{1:21,2:20,ee:"QJf3ax"}],6:[function(t,e){function n(t,e,n){var r=t[0];"string"==typeof r&&(r=new Function(r)),t[0]=o(r,"fn-",null,n)}var r=(t(2),t("ee").create()),o=t(1)(r);e.exports=r,o.inPlace(window,["setTimeout","setInterval","setImmediate"],"setTimer-"),r.on("setTimer-start",n)},{1:21,2:20,ee:"QJf3ax"}],7:[function(t,e){function n(){c.inPlace(this,d,"fn-")}function r(t,e){c.inPlace(e,["onreadystatechange"],"fn-")}function o(t,e){return e}var i=t("ee").create(),a=t(1),s=t(2),c=s(i),u=s(a),f=window.XMLHttpRequest,d=["onload","onerror","onabort","onloadstart","onloadend","onprogress","ontimeout"];e.exports=i,window.XMLHttpRequest=function(t){var e=new f(t);try{i.emit("new-xhr",[],e),u.inPlace(e,["addEventListener","removeEventListener"],"-",function(t,e){return e}),e.addEventListener("readystatechange",n,!1)}catch(r){try{i.emit("internal-error",[r])}catch(o){}}return e},window.XMLHttpRequest.prototype=f.prototype,c.inPlace(XMLHttpRequest.prototype,["open","send"],"-xhr-",o),i.on("send-xhr-start",r),i.on("open-xhr-start",r)},{1:4,2:21,ee:"QJf3ax"}],8:[function(t){function e(t){if("string"==typeof t&&t.length)return t.length;if("object"!=typeof t)return void 0;if("undefined"!=typeof ArrayBuffer&&t instanceof ArrayBuffer&&t.byteLength)return t.byteLength;if("undefined"!=typeof Blob&&t instanceof Blob&&t.size)return t.size;if("undefined"!=typeof FormData&&t instanceof FormData)return void 0;try{return JSON.stringify(t).length}catch(e){return void 0}}function n(t){var n=this.params,r=this.metrics;if(!this.ended){this.ended=!0;for(var i=0;c>i;i++)t.removeEventListener(s[i],this.listener,!1);if(!n.aborted){if(r.duration=(new Date).getTime()-this.startTime,4===t.readyState){n.status=t.status;var a=t.responseType,u="arraybuffer"===a||"blob"===a||"json"===a?t.response:t.responseText,f=e(u);if(f&&(r.rxSize=f),this.sameOrigin){var d=t.getResponseHeader("X-NewRelic-App-Data");d&&(n.cat=d.split(", ").pop())}}else n.status=0;r.cbTime=this.cbTime,o("xhr",[n,r,this.startTime])}}}function r(t,e){var n=i(e),r=t.params;r.host=n.hostname+":"+n.port,r.pathname=n.pathname,t.sameOrigin=n.sameOrigin}if(window.XMLHttpRequest&&XMLHttpRequest.prototype&&XMLHttpRequest.prototype.addEventListener&&!/CriOS/.test(navigator.userAgent)){t("loader").features.xhr=!0;var o=t("handle"),i=t(2),a=t("ee"),s=["load","error","abort","timeout"],c=s.length,u=t(1);t(4),t(3),a.on("new-xhr",function(){this.totalCbs=0,this.called=0,this.cbTime=0,this.end=n,this.ended=!1,this.xhrGuids={}}),a.on("open-xhr-start",function(t){this.params={method:t[0]},r(this,t[1]),this.metrics={}}),a.on("open-xhr-end",function(t,e){"loader_config"in NREUM&&"xpid"in NREUM.loader_config&&this.sameOrigin&&e.setRequestHeader("X-NewRelic-ID",NREUM.loader_config.xpid)}),a.on("send-xhr-start",function(t,n){var r=this.metrics,o=t[0],i=this;if(r&&o){var u=e(o);u&&(r.txSize=u)}this.startTime=(new Date).getTime(),this.listener=function(t){try{"abort"===t.type&&(i.params.aborted=!0),("load"!==t.type||i.called===i.totalCbs&&(i.onloadCalled||"function"!=typeof n.onload))&&i.end(n)}catch(e){try{a.emit("internal-error",[e])}catch(r){}}};for(var f=0;c>f;f++)n.addEventListener(s[f],this.listener,!1)}),a.on("xhr-cb-time",function(t,e,n){this.cbTime+=t,e?this.onloadCalled=!0:this.called+=1,this.called!==this.totalCbs||!this.onloadCalled&&"function"==typeof n.onload||this.end(n)}),a.on("xhr-load-added",function(t,e){var n=""+u(t)+!!e;this.xhrGuids&&!this.xhrGuids[n]&&(this.xhrGuids[n]=!0,this.totalCbs+=1)}),a.on("xhr-load-removed",function(t,e){var n=""+u(t)+!!e;this.xhrGuids&&this.xhrGuids[n]&&(delete this.xhrGuids[n],this.totalCbs-=1)}),a.on("addEventListener-end",function(t,e){e instanceof XMLHttpRequest&&"load"===t[0]&&a.emit("xhr-load-added",[t[1],t[2]],e)}),a.on("removeEventListener-end",function(t,e){e instanceof XMLHttpRequest&&"load"===t[0]&&a.emit("xhr-load-removed",[t[1],t[2]],e)}),a.on("fn-start",function(t,e,n){e instanceof XMLHttpRequest&&("onload"===n&&(this.onload=!0),("load"===(t[0]&&t[0].type)||this.onload)&&(this.xhrCbStart=(new Date).getTime()))}),a.on("fn-end",function(t,e){this.xhrCbStart&&a.emit("xhr-cb-time",[(new Date).getTime()-this.xhrCbStart,this.onload,e],e)})}},{1:"XL7HBI",2:9,3:7,4:4,ee:"QJf3ax",handle:"D5DuLP",loader:"G9z0Bl"}],9:[function(t,e){e.exports=function(t){var e=document.createElement("a"),n=window.location,r={};e.href=t,r.port=e.port;var o=e.href.split("://");return!r.port&&o[1]&&(r.port=o[1].split("/")[0].split("@").pop().split(":")[1]),r.port&&"0"!==r.port||(r.port="https"===o[0]?"443":"80"),r.hostname=e.hostname||n.hostname,r.pathname=e.pathname,r.protocol=o[0],"/"!==r.pathname.charAt(0)&&(r.pathname="/"+r.pathname),r.sameOrigin=!e.hostname||e.hostname===document.domain&&e.port===n.port&&e.protocol===n.protocol,r}},{}],10:[function(t,e){function n(t){return function(){r(t,[(new Date).getTime()].concat(i(arguments)))}}var r=t("handle"),o=t(1),i=t(2);"undefined"==typeof window.newrelic&&(newrelic=window.NREUM);var a=["setPageViewName","trackUserAction","finished","traceEvent","inlineHit","noticeError"];o(a,function(t,e){window.NREUM[e]=n("api-"+e)}),e.exports=window.NREUM},{1:19,2:20,handle:"D5DuLP"}],gos:[function(t,e){e.exports=t("7eSDFh")},{}],"7eSDFh":[function(t,e){function n(t,e,n){if(r.call(t,e))return t[e];var o=n();if(Object.defineProperty&&Object.keys)try{return Object.defineProperty(t,e,{value:o,writable:!0,enumerable:!1}),o}catch(i){}return t[e]=o,o}var r=Object.prototype.hasOwnProperty;e.exports=n},{}],D5DuLP:[function(t,e){function n(t,e,n){return r.listeners(t).length?r.emit(t,e,n):(o[t]||(o[t]=[]),void o[t].push(e))}var r=t("ee").create(),o={};e.exports=n,n.ee=r,r.q=o},{ee:"QJf3ax"}],handle:[function(t,e){e.exports=t("D5DuLP")},{}],XL7HBI:[function(t,e){function n(t){var e=typeof t;return!t||"object"!==e&&"function"!==e?-1:t===window?0:i(t,o,function(){return r++})}var r=1,o="nr@id",i=t("gos");e.exports=n},{gos:"7eSDFh"}],id:[function(t,e){e.exports=t("XL7HBI")},{}],G9z0Bl:[function(t,e){function n(){var t=l.info=NREUM.info;if(t&&t.licenseKey&&t.applicationID&&u&&u.body){s(h,function(e,n){e in t||(t[e]=n)}),l.proto="https"===p.split(":")[0]||t.sslForHttp?"https://":"http://",a("mark",["onload",i()]);var e=u.createElement("script");e.src=l.proto+t.agent,u.body.appendChild(e)}}function r(){"complete"===u.readyState&&o()}function o(){a("mark",["domContent",i()])}function i(){return(new Date).getTime()}var a=t("handle"),s=t(1),c=(t(2),window),u=c.document,f="addEventListener",d="attachEvent",p=(""+location).split("?")[0],h={beacon:"bam.nr-data.net",errorBeacon:"bam.nr-data.net",agent:"js-agent.newrelic.com/nr-536.min.js"},l=e.exports={offset:i(),origin:p,features:{}};u[f]?(u[f]("DOMContentLoaded",o,!1),c[f]("load",n,!1)):(u[d]("onreadystatechange",r),c[d]("onload",n)),a("mark",["firstbyte",i()])},{1:19,2:10,handle:"D5DuLP"}],loader:[function(t,e){e.exports=t("G9z0Bl")},{}],19:[function(t,e){function n(t,e){var n=[],o="",i=0;for(o in t)r.call(t,o)&&(n[i]=e(o,t[o]),i+=1);return n}var r=Object.prototype.hasOwnProperty;e.exports=n},{}],20:[function(t,e){function n(t,e,n){e||(e=0),"undefined"==typeof n&&(n=t?t.length:0);for(var r=-1,o=n-e||0,i=Array(0>o?0:o);++r<o;)i[r]=t[e+r];return i}e.exports=n},{}],21:[function(t,e){function n(t){return!(t&&"function"==typeof t&&t.apply&&!t[i])}var r=t("ee"),o=t(1),i="nr@wrapper",a=Object.prototype.hasOwnProperty;e.exports=function(t){function e(t,e,r,a){function nrWrapper(){var n,i,s,u;try{i=this,n=o(arguments),s=r&&r(n,i)||{}}catch(d){f([d,"",[n,i,a],s])}c(e+"start",[n,i,a],s);try{return u=t.apply(i,n)}catch(p){throw c(e+"err",[n,i,p],s),p}finally{c(e+"end",[n,i,u],s)}}return n(t)?t:(e||(e=""),nrWrapper[i]=!0,u(t,nrWrapper),nrWrapper)}function s(t,r,o,i){o||(o="");var a,s,c,u="-"===o.charAt(0);for(c=0;c<r.length;c++)s=r[c],a=t[s],n(a)||(t[s]=e(a,u?s+o:o,i,s,t))}function c(e,n,r){try{t.emit(e,n,r)}catch(o){f([o,e,n,r])}}function u(t,e){if(Object.defineProperty&&Object.keys)try{var n=Object.keys(t);return n.forEach(function(n){Object.defineProperty(e,n,{get:function(){return t[n]},set:function(e){return t[n]=e,e}})}),e}catch(r){f([r])}for(var o in t)a.call(t,o)&&(e[o]=t[o]);return e}function f(e){try{t.emit("internal-error",e)}catch(n){}}return t||(t=r),e.inPlace=s,e.flag=i,e}},{1:20,ee:"QJf3ax"}]},{},["G9z0Bl",3,8]);</script>
+
+<title>Βρετανία: Προβάδισμα Κάμερον δείχνουν οι δημοσκοπήσεις | News</title>
+
+
+
+<meta property="og:url" content="http://www.sigmalive.com/news/international/225841/vretania-provadisma-kameron-deixnoun-oi-dimoskopiseis" />
+<meta property="og:title" content="Βρετανία: Προβάδισμα Κάμερον δείχνουν οι δημοσκοπήσεις | News" />
+
+<meta property="og:description" content="Προβάδισμα μιας μονάδας των συντηρητικών του Ντέιβιντ Κάμερον έναντι του εργατικού κόμματος δείχνει δημοσκόπηση της εφημερίδας The Sun, ενόψει των..." />
+
+<link rel="image_src" href="http://www.sigmalive.com/application/cache/default/images/news/600x331/David-Cameron-Nick-Clegg--012.jpg" />
+<meta property="og:image" content="http://www.sigmalive.com/application/cache/default/images/news/600x331/David-Cameron-Nick-Clegg--012.jpg" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+
+<!--[if lt IE 9]>
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script>
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/selectivizr/1.0.2/selectivizr-min.js"></script>
+    <script type="text/javascript" src="http://www.sigmalive.com/application/themes/default/js/wedia/calc.polyfill.js"></script>
+<![endif]-->
+
+<link href='http://fonts.googleapis.com/css?family=Roboto+Condensed:400,300,700|Roboto:400,100,300,400italic,500,700,900&subset=latin,greek' rel='stylesheet' type='text/css'>
+<meta name="apple-mobile-web-app-title" content="Sigmalive">
+<link rel="shortcut icon" href="http://www.sigmalive.com/favicon.ico" type="image/vnd.microsoft.icon"  />   
+<link rel="apple-touch-icon" href="http://www.sigmalive.com/touch-icon-iphone.png">
+<link rel="apple-touch-icon" sizes="76x76" href="http://www.sigmalive.com/touch-icon-ipad.png">
+
+<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false&extension=.js"></script>
+<script type="text/javascript" src="http://www.sigmalive.com/application/themes/default/js/wedia/modernizr.js"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript" src="http://www.sigmalive.com/application/themes/default/js/wedia/plugins.min.js"></script>
+
+<!-- not from theme -->
+<script type="text/javascript">var switchTo5x=true;</script>
+<script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
+<script type="text/javascript">stLight.options({publisher: "edcbb23f-8ad8-4e41-b63d-532f3476999b", doNotHash: false, doNotCopy: false, hashAddressBar: false});</script>
+
+<script type="text/javascript" src="/assets/js/poll.js"></script>
+
+<script type="text/javascript" src="/assets/js/jquery.cycle.all.min.js"></script>
+<script type="text/javascript" src="/assets/js/jquery.touchwipe.min.js"></script>
+       
+<script type="text/javascript" src="/assets/js/slides_init.js"></script>
+
+<script type="text/javascript" src="http://www.sigmalive.com/application/themes/default/js/wedia/jquery.prettyPhoto.js"></script>
+<link href="http://www.sigmalive.com/application/themes/default/css/wedia/css/prettyPhoto.css" type="text/css" rel="stylesheet" />
+     
+
+<script type="text/javascript" src="/assets/js/jquery.cookie.js"></script>
+<script type="text/javascript" src="http://www.youtube.com/iframe_api"></script>
+<script type="text/javascript" src="/assets/js/youtube.ga.js"></script>
+
+<script type='text/javascript'>
+    var googletag = googletag || {};
+    googletag.cmd = googletag.cmd || [];
+    (function() {
+        var gads    = document.createElement('script');
+        gads.async  = true;
+        gads.type   = 'text/javascript';
+        var useSSL  = 'https:' == document.location.protocol;
+        gads.src    = (useSSL ? 'https:' : 'http:') + '//www.googletagservices.com/tag/js/gpt.js';
+        var node    = document.getElementsByTagName('script')[0];
+        node.parentNode.insertBefore(gads, node);
+    })();
+    
+    
+    var gptAdSlots = [];
+    googletag.cmd.push(function() {
+    	
+    	var isiPad = navigator.userAgent.match(/iPad/i) != null;
+    	var is_safari = navigator.userAgent.indexOf("Safari") > -1;
+    	var is_chrome = navigator.userAgent.indexOf('Chrome') > -1;
+    	
+        // Define a size mapping object. The first parameter to addSize is
+		// a viewport size, while the second is a list of allowed ad sizes.
+		var mapping_center_300x250 = googletag.sizeMapping().
+		//The smaller size of 300x250
+		addSize([100, 200], []). /*NON EXISTING AD SIZE*/
+		addSize([600, 200], [468, 60]).
+		addSize([770, 200], [728, 90]).
+		addSize([884, 200], [468, 60]).
+		addSize([990, 200], [728, 90])./*990*/
+		addSize([1025, 200], [200, 200]). /*correct 1008 <-- MAKE THIS LARGER*/
+		//Just before we serve the smaller 300x250 
+		addSize([1244, 200], [300, 250]). /*correct 1244*/
+		// Desktop
+		build();
+		
+		/*
+		//BEFORE 728x90 and 468x60
+		var mapping_center_300x250 = googletag.sizeMapping().
+		addSize([100, 200], []). 
+		addSize([1008, 200], [[200, 200]]). 
+		addSize([1244, 200], [[300, 250]]). 
+		build();
+		*/
+		
+		
+
+		
+		//Change settings for both safari and ipad
+		if ((isiPad) || ((!is_chrome)&&(is_safari))) {
+			//alert('Change browser settings...');
+			
+			var mapping_center_leaderbord_bc_news_lifestyle = googletag.sizeMapping().
+			addSize([100, 200], []). 
+			addSize([600, 200], [468, 60]).
+			addSize([770, 200], [728, 90]).
+			addSize([901, 200], [468, 60]). 
+			addSize([990, 200], [728, 90]). //OK
+			addSize([1025, 200], [468, 60]). 
+			addSize([1500, 200], [[728, 90]]). 
+			build();
+			
+			var mapping_center_300x250_news_lifestyle = googletag.sizeMapping().
+			//The smaller size of 300x250
+			addSize([100, 200], []). /*NON EXISTING AD SIZE*/
+			addSize([600, 200], [468, 60]).
+			addSize([770, 200], [728, 90]).
+			addSize([901, 200], [468, 60]). 
+			addSize([990, 200], [728, 90]). /*correct 1008*/
+			addSize([1025, 200], [200, 200]). /*correct 1008*/
+			//Just before we serve the smaller 300x250 
+			addSize([1330, 200], [300, 250]). /*correct 1244*/
+			// Desktop
+			build();
+			
+			
+		}else{
+			
+			var mapping_center_leaderbord_bc_news_lifestyle = googletag.sizeMapping().
+			//The smaller size of 300x250
+			addSize([100, 200], []). 
+			addSize([600, 200], [468, 60]).
+			addSize([770, 200], [728, 90]).
+			addSize([884, 200], [468, 60]). 
+			addSize([990, 200], [728, 90]). 
+			addSize([1008, 200], [468, 60]). 
+			addSize([1500, 200], [[728, 90]]). 
+			/*
+			addSize([100, 200], []). 
+			addSize([600, 200], [468, 60]).
+			addSize([770, 200], [728, 90]).
+			addSize([884, 200], [468, 60]). 
+			addSize([990, 200], [728, 90]). 
+			addSize([990, 200], [468, 60]). 
+			addSize([1420, 200], [[728, 90]]). 
+			*/
+			// Desktop
+			build();
+			
+			var mapping_center_300x250_news_lifestyle = googletag.sizeMapping().
+			//The smaller size of 300x250
+			addSize([100, 200], []). /*NON EXISTING AD SIZE*/
+			addSize([600, 200], [468, 60]).
+			addSize([770, 200], [728, 90]).
+			addSize([884, 200], [468, 60]). 
+			addSize([990, 200], [728, 90]). /*correct 1008*/
+			addSize([1008, 200], [200, 200]). /*correct 1008*/
+			//Just before we serve the smaller 300x250 
+			addSize([1330, 200], [300, 250]). /*correct 1244*/
+			// Desktop
+			build();
+			
+			/*
+			var mapping_center_300x250_news_lifestyle = googletag.sizeMapping().
+			addSize([100, 200], []). 
+			addSize([1008, 200], [[200, 200]]). 
+			addSize([1330, 200], [[300, 250]]). 
+			build();
+			*/
+			
+		}
+		/*
+		var mapping_center_leaderbord_b_sports = googletag.sizeMapping().
+		//The smaller size of 300x250
+		addSize([100, 200], []). 
+		addSize([600, 200], [468, 60]).
+		addSize([770, 200], [728, 90]).
+		addSize([884, 200], [468, 60]).
+		addSize([1500, 200], [[728, 90]]). 
+		// Desktop
+		build();
+		*/
+		
+		
+		var mapping_top_leaderbord = googletag.sizeMapping().
+		//The smaller size of 300x250
+		addSize([100, 200], []). 
+		//addSize([884, 200], [[468, 60], [245, 90]]).
+		addSize([978, 200], [[728, 90], [245, 90]]). 
+		
+		/*
+		//OLD SETTINGS ON IPAD
+		addSize([100, 200], []). 
+		addSize([1008, 200], [[728, 90], [245, 90]]). 
+		addSize([1244, 200], [[728, 90], [245, 90]]). 
+		*/
+		
+		build();
+		
+		
+		
+		var mapping_center_leaderbord_bc = googletag.sizeMapping().
+		//The smaller size of 300x250
+		
+		//addSize([1008, 200], [[200, 200]]). /*correct 1008*/
+		addSize([100, 200], [234, 60]). /*NON EXISTING AD SIZE*/
+		addSize([600, 200], [468, 60]).
+		addSize([770, 200], [728, 90]).
+		addSize([884, 200], [468, 60]). /*to switch to 468x60 --> if less than 750 dont show (1x1)*/ 
+		addSize([990, 200], [728, 90]). /*correct 1244*/
+		// Desktop
+		build();
+		
+		/*
+		var mapping_center_leaderbord_bc = googletag.sizeMapping().
+		addSize([100, 200], [234, 60]). 
+		addSize([750, 200], [468, 60]).  
+		addSize([1130, 200], [[728, 90]]). 
+		// Desktop
+		build();
+		*/
+		
+		
+		var mapping_center_leaderbord_de = googletag.sizeMapping().
+		//The smaller size of 300x250
+		
+		//addSize([1008, 200], [[200, 200]]). /*correct 1008*/
+		addSize([100, 200], []). /*NON EXISTING AD SIZE*/
+		addSize([1008, 200], [468, 60]). /*to switch to 468x60  --> if less than 1008 dont show (1x1)*/
+		addSize([1130, 200], [[728, 90], [245, 90]]). /*correct 1244*/
+		// Desktop
+		build();
+		
+		
+		
+		var mapping_sidebar = googletag.sizeMapping().
+		//The smaller size of 300x250
+		
+		//addSize([1008, 200], [[200, 200]]). /*correct 1008*/
+		addSize([100, 200], []). /*NON EXISTING AD SIZE*/
+		//addSize([750, 200], [[300,250], [300,184], [300,100]]). /*1010 dixnei 728x90 1020 dixnei 245x90 */ 
+		addSize([884, 200], [[200, 200], [200,184]]). /*correct 1008*/
+		addSize([1284, 200], [[300,250], [300,184], [300,100]]). /*correct 1244*/
+		// Desktop
+		build();
+		
+		
+		var mapping_inline_article = googletag.sizeMapping().
+		//The smaller size of 300x250
+		
+		//addSize([1008, 200], [[200, 200]]). /*correct 1008*/
+		addSize([100, 200], []). /*NON EXISTING AD SIZE*/
+		addSize([750, 200], [200, 70]). /*1010 dixnei 728x90 1020 dixnei 245x90 */ 
+		addSize([1244, 200], [200, 70]). /*correct 1244*/
+		// Desktop
+		build();
+		
+		
+		var mapping_article_leaderbord = googletag.sizeMapping().
+		//The smaller size of 300x250
+		
+		//addSize([1008, 200], [[200, 200]]). /*correct 1008*/
+		addSize([100, 200], [234, 60]). /*mobile banner*/
+		addSize([750, 200], [468, 60]). /*to switch to 468x60 --> if less than 750 dont show (1x1)*/ 
+		addSize([1000, 200], [[728, 90]]). /*correct 1244*/
+		// Desktop
+		build();
+		
+		
+		var mapping_takeover = googletag.sizeMapping().
+		//The smaller size of 300x250
+		
+		//addSize([1008, 200], [[200, 200]]). /*correct 1008*/
+		addSize([100, 200], []). /*NON EXISTING AD SIZE*/
+		addSize([750, 200], [1, 1]). /*to switch to 468x60 --> if less than 750 dont show (1x1)*/ 
+		addSize([800, 200], [[1, 1]]). /*correct 1244*/
+		// Desktop
+		build();
+		
+		var mapping_catfish = googletag.sizeMapping().
+		//The smaller size of 300x250
+		
+		//addSize([1008, 200], [[200, 200]]). /*correct 1008*/
+		addSize([100, 200], []). /*NON EXISTING AD SIZE*/
+		addSize([750, 200], [[400, 100], [300, 100]]). /*to switch to 468x60 --> if less than 750 dont show (1x1)*/ 
+		addSize([800, 200], [[400, 100], [300, 100]]). /*correct 1244*/
+		// Desktop
+		build();
+		
+		var mapping_skins = googletag.sizeMapping().
+		//The smaller size of 300x250
+		
+		addSize([100, 200], []). /*NON EXISTING AD SIZE*/
+		addSize([1008, 200], []). /*1010 dixnei 728x90 1020 dixnei 245x90 */ 
+		addSize([1240, 200], [[300, 600]]). /*correct 1244*/
+		
+		// Desktop
+		build();
+		
+		
+        gptAdSlots.push(googletag.defineSlot('/45099537/News_main_Header_leaderboard', [728, 90], 'div-gpt-ad-1363945873394-5').defineSizeMapping(mapping_top_leaderbord).addService(googletag.pubads()));
+gptAdSlots.push(googletag.defineSlot('/45099537/News_Small_Leaderboard_245x90', [245, 90], 'div-gpt-ad-1364387077110-2').defineSizeMapping(mapping_top_leaderbord).addService(googletag.pubads()));
+
+gptAdSlots.push(googletag.defineSlot('/45099537/News_Article_Leaderboard_A', [[234, 60], [468, 60], [728, 90]], 'div-gpt-ad-1411044380679-0').defineSizeMapping(mapping_article_leaderbord).addService(googletag.pubads()));
+gptAdSlots.push(googletag.defineSlot('/45099537/News_Article_Leaderboard_B', [[234, 60], [468, 60], [728, 90]], 'div-gpt-ad-1411044432265-0').defineSizeMapping(mapping_article_leaderbord).addService(googletag.pubads()));
+
+
+gptAdSlots.push(googletag.defineSlot('/45099537/News_TopA', [[200, 200], [300, 250]], 'div-gpt-ad-1363870551351-2').defineSizeMapping(mapping_sidebar).addService(googletag.pubads()));
+gptAdSlots.push(googletag.defineSlot('/45099537/News_B', [[200, 200], [300, 250]], 'div-gpt-ad-1363855261779-1').defineSizeMapping(mapping_sidebar).addService(googletag.pubads()));
+gptAdSlots.push(googletag.defineSlot('/45099537/News_C', [[200, 200], [300, 250]], 'div-gpt-ad-1363860207198-1').defineSizeMapping(mapping_sidebar).addService(googletag.pubads()));
+gptAdSlots.push(googletag.defineSlot('/45099537/ApTinAnapodi_300x184', [[300, 184], [200, 184]], 'div-gpt-ad-1414149798405-0').defineSizeMapping(mapping_sidebar).addService(googletag.pubads()));
+gptAdSlots.push(googletag.defineSlot('/45099537/News_Sigmalive_News_300x250', [300, 250], 'div-gpt-ad-1414577881317-0').defineSizeMapping(mapping_sidebar).addService(googletag.pubads()));
+
+gptAdSlots.push(googletag.defineSlot('/45099537/News_inline_ads', [200, 70], 'div-gpt-ad-1363945873394-4').defineSizeMapping(mapping_inline_article).addService(googletag.pubads()));
+
+
+gptAdSlots.push(googletag.defineSlot('/45099537/MainConstes300x250', [[200, 200], [300, 250]], 'div-gpt-ad-1417011288329-0').defineSizeMapping(mapping_sidebar).addService(googletag.pubads()).setCollapseEmptyDiv(true));
+
+
+		gptAdSlots.push(googletag.defineSlot('/45099537/News_Article_A', [300, 250], 'div-gpt-ad-1411029146303-0').defineSizeMapping(mapping_sidebar).addService(googletag.pubads()));
+
+
+
+/*googletag.defineSlot('/45099537/News_D', [300, 250], 'div-gpt-ad-1363957014301-1').addService(googletag.pubads());*/
+
+/*googletag.defineSlot('/45099537/News_Button_A', [120, 90], 'div-gpt-ad-1363877159524-2').addService(googletag.pubads());*/
+/*googletag.defineSlot('/45099537/News_small_button_B', [120, 90], 'div-gpt-ad-1363877159524-3').addService(googletag.pubads());*/
+
+/*
+googletag.defineSlot('/45099537/News_300x100_A', [300, 100], 'div-gpt-ad-1380009338097-0').addService(googletag.pubads());
+
+
+googletag.defineSlot('/45099537/News_inline_ads', [200, 70], 'div-gpt-ad-1363945873394-4').addService(googletag.pubads());
+
+googletag.defineSlot('/45099537/News_Bottom_Article_609x120', [609, 120], 'div-gpt-ad-1364475915363-0').addService(googletag.pubads());
+
+googletag.defineSlot('/45099537/News_Article_top_651x90', [651, 90], 'div-gpt-ad-1365494028174-1').addService(googletag.pubads());
+
+googletag.defineSlot('/45099537/NewsSkinLeft', [300, 600], 'div-gpt-ad-1369917479202-0').addService(googletag.pubads());
+googletag.defineSlot('/45099537/NewsSkinRight', [300, 600], 'div-gpt-ad-1369917479202-1').addService(googletag.pubads());
+
+googletag.defineSlot('/45099537/MetricsNewsArticle1x1', [1, 1], 'div-gpt-ad-1375104371894-1').addService(googletag.pubads());
+googletag.defineSlot('/45099537/CatFish_300x100', [300, 100], 'div-gpt-ad-1384501975222-0').addService(googletag.pubads());
+googletag.defineSlot('/45099537/CatFish_400x100', [400, 100], 'div-gpt-ad-1389862664759-0').addService(googletag.pubads());
+googletag.defineSlot('/45099537/ApTinAnapodi285x200', [285, 200], 'div-gpt-ad-1403690484161-0').addService(googletag.pubads());
+*/
+
+/*googletag.defineSlot('/45099537/HomeOccasional300x250', [300, 250], 'div-gpt-ad-1398340331351-0').addService(googletag.pubads());*/
+/*googletag.defineSlot('/45099537/News_top_Skyscraper', [120, 600], 'div-gpt-ad-1363945873394-6').addService(googletag.pubads());*/
+        
+        googletag.defineSlot('/45099537/InformationBox1', [1, 1], 'div-gpt-ad-1411658176257-0').addService(googletag.pubads());
+        googletag.defineSlot('/45099537/InformationBox2', [1, 1], 'div-gpt-ad-1411733193192-0').addService(googletag.pubads());
+        gptAdSlots.push(googletag.defineSlot('/45099537/CatFish_300x100', [300, 100], 'div-gpt-ad-1384501975222-0').defineSizeMapping(mapping_catfish).addService(googletag.pubads()));
+        /*gptAdSlots.push(googletag.defineSlot('/45099537/CatFish_400x100', [400, 100], 'div-gpt-ad-1389862664759-0').defineSizeMapping(mapping_catfish).addService(googletag.pubads()));*/
+        /*googletag.pubads().collapseEmptyDivs();*/
+        googletag.pubads().enableSingleRequest();
+        //googletag.pubads().setTargeting("test","responsive");
+        googletag.enableServices();
+    });
+</script>
+<script type="text/javascript" src="/assets/js/responsive_ads.js"></script>
+
+<script>
+jQuery(document).ready(function($) {
+    $('.social a').click(function(e) {
+        e.preventDefault();
+        return false;
+    });
+});   
+</script>
+
+<link href="http://www.sigmalive.com/application/themes/default/css/wedia/css/main.css" type="text/css" rel="stylesheet" />
+<link href="http://www.sigmalive.com/application/themes/default/css/wedia/css/print.css" type="text/css" media="print" rel="stylesheet" />
+<link href="http://www.sigmalive.com/application/themes/default/css/wedia/css/overwrite.css" type="text/css" rel="stylesheet" />
+
+
+				<script type="text/javascript">
+					var APPPATH_URI = "/";
+					var BASE_URI = "http://www.sigmalive.com";
+				</script>
+		<link rel="canonical" href="http://www.sigmalive.com/news/international/225841" />
+		<meta name="article_id" content="225841" />
+		<meta name="keywords" content="βουλευτικές εκλογές, βρετανία, καμερον" />
+		<meta name="pubdate" content="20150422" />
+		<meta name="pubdatetime" content="201504220746" />
+		<meta name="section" content="news" />
+		<meta name="type" content="article" />
+		<meta name="ptitle" content="Βρετανία: Προβάδισμα Κάμερον δείχνουν οι δημοσκοπήσεις" />
+		<meta name="author" content="SigmaLive" />
+<script type="text/javascript" src="/assets/js/jquery.live.js"></script>
+    </head>
+
+<body>
+	 
+
+<!-- Google Tag Manager container - Used to deploy ga.js and dc.js -->
+<!-- VERSION: GTM_Nov_v1 -->
+<!-- WEBSITE: www.sigmalive.com -->
+<!-- CATEGORY: publishing -->
+<!-- MARKET: Cyprus -->
+<!-- GTM-LIVE: UA-2971319-3 -->
+<!-- GTM-DEV: UA-2971319-3 -->
+<!-- Replace GTM-xxxx with GTM-WX8JML for DEV, or GTM-WX8JML for live -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-WX8JML');
+</script>
+<noscript>
+<iframe src="//www.googletagmanager.com/ns.html?id=GTM-WX8JML" height="0" width="0" style="display:none;visibility:hidden">
+</iframe>
+</noscript>
+<!-- End Google Tag Manager -->	<div class="sigma--content with--top banners">
+		<div class="banners--onntop main--centered clearfix">
+	<div class="banners--onntop--inner clearfix">
+		<div class="big_banner">
+							<!-- Leaderboard -->
+				<div id='div-gpt-ad-1363945873394-5'>
+				<script type='text/javascript'>
+				googletag.cmd.push(function() { googletag.display('div-gpt-ad-1363945873394-5'); });
+				</script>
+				</div>					</div>
+		<div class="small-banner">
+							<div id='div-gpt-ad-1364387077110-2'>
+				<script type='text/javascript'>
+				googletag.cmd.push(function() { googletag.display('div-gpt-ad-1364387077110-2'); });
+				</script>
+				</div>					</div>
+	</div>
+</div>
+
+<header class="darkblue_bg"><div class="infobox1"><div id='div-gpt-ad-1411658176257-0'>
+				<script type='text/javascript'>
+				googletag.cmd.push(function() { googletag.display('div-gpt-ad-1411658176257-0'); });
+				</script>
+				</div></div>
+	<div class="row headerwow clearfix">
+		<div class="logocontainer col col--1-3 col--normargin">
+			<div class="controls">
+				<span id="burger" class="animatehalf"><span class="animatehalf iconfont iconfont-uniF20E"></span></span>
+				<span id="logocontainer">
+					<a href="http://www.sigmalive.com/" id="logo">SigmaLive</a>
+				</span>
+			</div>
+		</div>
+		<div class="restofheader col col--2-3 col--normargin">
+			<div class="fright">
+				<div class="srcbtn"><span class="sb-icon-search"></span></div>	
+				<nav class="menu topmenu">
+					<!-- You may use your backend solution to generate listitem number -->
+					<ul>
+                        	<li>
+		<a href="http://www.sigmatv.com">Sigma Tv</a>
+	</li>
+	<li>
+		<a href="http://city.sigmalive.com">City</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/simerini" target="_blank">Σημερινή</a>
+	</li>
+	<li>
+		<a href="http://www.radioproto.com.cy/" target="_blank">Ράδιο Πρώτο</a>
+	</li>
+	<li>
+		<a href="http://www.superfmradio.com/" target="_blank">Super FM</a>
+	</li>
+	<li>
+		<a href="http://www.ilovestyle.com" target="_blank">I Love Style</a>
+	</li>
+	<li>
+		<a href="http://www.timeoutcyprus.com/" target="_blank">Time Out</a>
+	</li>
+	<li>
+		<a href="http://www.paidiatros.com/">Paidiatros.com</a>
+	</li>
+					</ul>
+				</nav>
+				
+			</div>
+		</div>
+	</div>
+</header>
+
+<!--src -->
+<div class="expanding--serc">
+	<div class="expanding-srcinner">
+		<div id="searchbox-container">
+            <script>$(document).ready(function(){$('#searchmini').submit(function(fields) {var url = '/search/#/'; url += encodeURIComponent( $('#searchmini input[name=s]').val() ).split('%20').join('+'); document.location.href = url; if($('#fsearch').length > 0) {document.location.reload(true);} return false;});})</script>
+			<div id="sb-search" class="sb-search">
+			    <form id="searchmini" action="http://www.sigmalive.com/search" method="get">
+			        <input class="sb-search-input darkblue_bg" placeholder="Αναζητήστε στο SigmaLive" type="search" value="" name="s" id="search">
+			        <input class="sb-search-submit" type="submit" value="">
+			        
+			    </form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- -->
+<div class="aftermenu clearfix">
+	<div class="aftermenuinner">
+		<ul>
+			            	<li>
+		<a href="http://www.sigmalive.com/home">Αρχική</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/news">Ειδήσεις</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/news/local">Κύπρος</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/news/greece">Ελλάδα</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/news/international">Διεθνή</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/sports">Αθλητικά</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/inbusiness" target="_blank">InBusinessNews</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/lifestyle">Lifestyle</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/media">Videos</a>
+	</li>
+            		</ul>
+	</div>	
+</div>
+<!--burger menu following in the body -->		<main>
+			<div id="main">
+				<div id="burger--sidebar" class="col white_bg">
+	<div id="burger--sidebar--inner white_bg">
+		<div id="burger--sidebar--inner--contents white_bg">
+			<nav id="burger-nav">
+				<ul>
+        			                    	<li>
+		<a href="http://www.sigmalive.com/home">Αρχική</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/news">Ειδήσεις</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/news/local">Κύπρος</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/news/greece">Ελλάδα</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/news/international">Διεθνή</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/sports">Αθλητικά</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/inbusiness" target="_blank">InBusinessNews</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/lifestyle">Lifestyle</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/media">Videos</a>
+	</li>
+                    				</ul>
+			</nav>
+			<div id="navrestlinks">
+				<h4>ΑΛΛΟΙ ΣΥΝΔΕΣΜΟΙ</h4>
+				<ul id="morelinks">
+                    	<li>
+		<a href="http://www.sigmatv.com">Sigma Tv</a>
+	</li>
+	<li>
+		<a href="http://city.sigmalive.com">City</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/simerini" target="_blank">Σημερινή</a>
+	</li>
+	<li>
+		<a href="http://www.radioproto.com.cy/" target="_blank">Ράδιο Πρώτο</a>
+	</li>
+	<li>
+		<a href="http://www.superfmradio.com/" target="_blank">Super FM</a>
+	</li>
+	<li>
+		<a href="http://www.ilovestyle.com" target="_blank">I Love Style</a>
+	</li>
+	<li>
+		<a href="http://www.timeoutcyprus.com/" target="_blank">Time Out</a>
+	</li>
+	<li>
+		<a href="http://www.paidiatros.com/">Paidiatros.com</a>
+	</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>				
+				<div id="sliding--sidebar" class="col col__hidden-phone nocontent">
+	<div id="handler">
+		<div class="infobox2">
+			<!-- InformationBox2 -->
+			<div id='div-gpt-ad-1411733193192-0'>
+				<script type='text/javascript'>
+				googletag.cmd.push(function() { googletag.display('div-gpt-ad-1411733193192-0'); });
+				</script>
+				</div>		</div>
+		<a href="#" id="sidebar_handler_link"><span></span></a>
+	</div>
+	
+	<div id="sliding--sidebar--inner">
+		<div id="sliding--sidebar--inner--contents">
+             <div class="sidebar--block latest clearfix">
+	<h3 class="red_color size_large"><span>Τελευταία Νέα</span></h3>
+	<div class="blck--article-list">
+		
+					<div class="blck--article-list--row clearfix">
+				<time class="time font_weight_900" datetime="2015-04-22">08:07</time>
+				<cite class="cite">
+					<a href="/sports/football/champions-league/225851/lopetegki-stenoxorimenoi-alla-kaname-spoudaia-poreia">
+						Λοπετέγκι: «Στενοχωρημένοι, αλλά κάναμε σπουδαία πορεία»					</a>
+				</cite>		
+			</div>
+					<div class="blck--article-list--row clearfix">
+				<time class="time font_weight_900" datetime="2015-04-22">08:04</time>
+				<cite class="cite">
+					<a href="/sports/football/cyprus/a-league/225727/apollon-perimenei-antidrasi-o-kaanen">
+						Απόλλων: Περιμένει αντίδραση ο Κάανεν					</a>
+				</cite>		
+			</div>
+					<div class="blck--article-list--row clearfix">
+				<time class="time font_weight_900" datetime="2015-04-22">08:04</time>
+				<cite class="cite">
+					<a href="/sports/football/champions-league/225849/gkouarntiola-panta-to-pisteva">
+						Γκουαρντιόλα: «Πάντα το πίστευα»					</a>
+				</cite>		
+			</div>
+					<div class="blck--article-list--row clearfix">
+				<time class="time font_weight_900" datetime="2015-04-22">08:04</time>
+				<cite class="cite">
+					<a href="/lifestyle/health/225850/h-epidrasi-ton-vioktonon-sta-paidia-mas">
+						H επίδραση των βιοκτόνων στα παιδιά μας					</a>
+				</cite>		
+			</div>
+					<div class="blck--article-list--row clearfix">
+				<time class="time font_weight_900" datetime="2015-04-22">08:00</time>
+				<cite class="cite">
+					<a href="/lifestyle/health/225848/tritogenes-kapnisma-kai-paidia">
+						Τριτογενές κάπνισμα και παιδιά					</a>
+				</cite>		
+			</div>
+					<div class="blck--article-list--row clearfix">
+				<time class="time font_weight_900" datetime="2015-04-22">07:55</time>
+				<cite class="cite">
+					<a href="/news/energia/225842/kina-apofasi-gia-kataskevi-68-pyrinikon-antidrastiron">
+						Κίνα: Απόφαση για κατασκευή 6-8 πυρηνικών αντιδραστήρων					</a>
+				</cite>		
+			</div>
+				
+	</div>
+</div>	        <div class="sidebar--block clearfix">
+				<div class="imgbanner">
+					<!-- News_TopA -->
+					<div id='div-gpt-ad-1363870551351-2'>
+				<script type='text/javascript'>
+				googletag.cmd.push(function() { googletag.display('div-gpt-ad-1363870551351-2'); });
+				</script>
+				</div>				</div>
+			</div>
+			
+			﻿
+<div class="sidebar--block imagerows clearfix">
+	<h3 class="red_color size_large"><span><a href="/videos?cat=hangouts">Hangouts</a></span></h3>
+	<div class="blck--article-list">
+		
+								<div class="blck--article-list--row clearfix">
+					<div class="imagerow clearfix">
+						<div class="article--image fleft">
+							<a href="/media?show=TkmnmzY2Xow"><img src="http://i.ytimg.com/vi/TkmnmzY2Xow/1.jpg" alt="" class="hangout_img"/></a>
+						</div>
+
+
+						<div class="article--rest fleft">
+							<cite class="cite">
+								<a href="/media?show=TkmnmzY2Xow">
+									Τουρκοκύπριοι δημοσιογράφοι σχολιάζουντ τον 1ο γύρο εκλογών στα κατεχόμενα								</a>
+							</cite>
+							<div class="article--time--author">
+								<time class="time" datetime="2014-6-24">Απρίλιος 20, 2015</time>
+								
+							</div>
+						</div>
+
+
+					</div>
+				</div>
+										<div class="blck--article-list--row clearfix">
+					<div class="imagerow clearfix">
+						<div class="article--image fleft">
+							<a href="/media?show=Oi9i8zGZ_vc"><img src="http://i.ytimg.com/vi/Oi9i8zGZ_vc/1.jpg" alt="" class="hangout_img"/></a>
+						</div>
+
+
+						<div class="article--rest fleft">
+							<cite class="cite">
+								<a href="/media?show=Oi9i8zGZ_vc">
+									Business Power Summit: Φέρτε τις ιδέες σας								</a>
+							</cite>
+							<div class="article--time--author">
+								<time class="time" datetime="2014-6-24">Απρίλιος 15, 2015</time>
+								
+							</div>
+						</div>
+
+
+					</div>
+				</div>
+										<div class="blck--article-list--row clearfix">
+					<div class="imagerow clearfix">
+						<div class="article--image fleft">
+							<a href="/media?show=FX73D3Zp3Kc"><img src="http://i.ytimg.com/vi/FX73D3Zp3Kc/1.jpg" alt="" class="hangout_img"/></a>
+						</div>
+
+
+						<div class="article--rest fleft">
+							<cite class="cite">
+								<a href="/media?show=FX73D3Zp3Kc">
+									Η Ακτινογραφία των Παράνομων Εκλογών στα Κατεχόμενα								</a>
+							</cite>
+							<div class="article--time--author">
+								<time class="time" datetime="2014-6-24">Απρίλιος 14, 2015</time>
+								
+							</div>
+						</div>
+
+
+					</div>
+				</div>
+																																																														
+	</div>
+</div>			
+			<div class="sidebar--block clearfix">
+				<div class="imgbanner">
+					<!-- News_Sigmalive_News_300x250 -->
+					<div id='div-gpt-ad-1414577881317-0'>
+				<script type='text/javascript'>
+				googletag.cmd.push(function() { googletag.display('div-gpt-ad-1414577881317-0'); });
+				</script>
+				</div>				</div>
+			</div>
+            
+            
+<div class="sidebar--block poll clearfix">
+	<h3 class="red_color size_large"><span>Poll</span></h3>
+	<div id="poll-cont" class="polls"></div>
+</div>
+
+<script>
+$(document).ready(function() {
+	$.get('/polls/ajax/news/1', function(data) {
+		$('#poll-cont').html(data);
+	});
+});
+</script>	        <div class="sidebar--block clearfix">
+				<div class="imgbanner">
+					<!-- News_B -->
+					<div id='div-gpt-ad-1363855261779-1'>
+				<script type='text/javascript'>
+				googletag.cmd.push(function() { googletag.display('div-gpt-ad-1363855261779-1'); });
+				</script>
+				</div>				</div>
+			</div>
+			 ﻿<div class="sidebar--block imagerows clearfix">
+	<h3 class="red_color size_large"><span><a href="/news/opinions_sigmalive">Η Γνώμη σας</a></span></h3>
+	<div class="blck--article-list">
+		﻿		<div class="blck--article-list--row clearfix">
+			<div class="imagerow clearfix">
+				<div class="article--image fleft">
+					<a href="/news/opinions_sigmalive/225838/i-oikiaki-oikonomia-agogi-ygeias-zei"><img src="/application/cache/default/images/news/68x68/οικιακή_οικονομια.png" alt=""></a>
+				</div>
+				<div class="article--rest fleft">
+					<cite class="cite">
+						<a href="/news/opinions_sigmalive/225838/i-oikiaki-oikonomia-agogi-ygeias-zei" >
+							Η Οικιακή Οικονομία / Αγωγή Υγείας ζει!						</a>
+					</cite>
+					<div class="article--time--author">
+						<time class="time" datetime="2014-6-24">03:25</time>
+						<a href="/news/opinions_sigmalive/225838/i-oikiaki-oikonomia-agogi-ygeias-zei" >Ελισάβετ Μαρουδα</a>
+					</div>
+				</div>
+			</div>		
+	</div>
+		<div class="blck--article-list--row clearfix">
+			<div class="imagerow clearfix">
+				<div class="article--image fleft">
+					<a href="/news/opinions_sigmalive/225670/volidoskopoun-tin-antistasi-i-tin-ethelodoulia-mas"><img src="/application/cache/default/images/news/68x68/αιντα_κυπριακο_συνομιλιες.jpg" alt=""></a>
+				</div>
+				<div class="article--rest fleft">
+					<cite class="cite">
+						<a href="/news/opinions_sigmalive/225670/volidoskopoun-tin-antistasi-i-tin-ethelodoulia-mas" >
+							Βολιδοσκοπούν την αντίσταση ή την εθελοδουλία μας;						</a>
+					</cite>
+					<div class="article--time--author">
+						<time class="time" datetime="2014-6-24">03:25</time>
+						<a href="/news/opinions_sigmalive/225670/volidoskopoun-tin-antistasi-i-tin-ethelodoulia-mas" >Πέτρος Θ. Παντελίδης</a>
+					</div>
+				</div>
+			</div>		
+	</div>
+		<div class="blck--article-list--row clearfix">
+			<div class="imagerow clearfix">
+				<div class="article--image fleft">
+					<a href="/news/opinions_sigmalive/225570/kyprosfyrdin-migdin"><img src="/application/cache/default/images/news/68x68/κυπρος_απο_ψηλά.jpg" alt=""></a>
+				</div>
+				<div class="article--rest fleft">
+					<cite class="cite">
+						<a href="/news/opinions_sigmalive/225570/kyprosfyrdin-migdin" >
+							Κύπρος….φύρδην μίγδην!						</a>
+					</cite>
+					<div class="article--time--author">
+						<time class="time" datetime="2014-6-24">03:25</time>
+						<a href="/news/opinions_sigmalive/225570/kyprosfyrdin-migdin" >Σταύρος Πιερουλλή</a>
+					</div>
+				</div>
+			</div>		
+	</div>
+		</div>
+</div>	        <div class="sidebar--block clearfix">
+				<div class="imgbanner">
+					<!-- News_C -->
+					<div id='div-gpt-ad-1363860207198-1'>
+				<script type='text/javascript'>
+				googletag.cmd.push(function() { googletag.display('div-gpt-ad-1363860207198-1'); });
+				</script>
+				</div>				</div>
+			</div>
+			﻿<div class="sidebar--block imagerows bloggers clearfix">
+	<h3 class="red_color size_large"><span><a href="/blog">Blogs</a></span></h3>
+	<div class="blck--article-list">
+	﻿		
+	<div class="blck--article-list--row clearfix">
+			<div class="imagerow clearfix">
+				<div class="article--image fleft">
+					<a href="http://www.sigmalive.com/blog/ycioannou"><img src="/application/cache/default/images/blogs/68x68/strovoliotis.jpg" alt=""></a>
+				</div>
+				<div class="article--rest fleft">
+					<div class="article--time--author">
+						<a href="http://www.sigmalive.com/blog/ycioannou" >strovoliotis</a>
+					</div>
+					<cite class="cite">
+						<a href="http://www.sigmalive.com/blog/ycioannou/2015/04/1340/akintzi" >
+							Ακιντζί						</a>
+					</cite>
+				</div>
+			</div>		
+		</div>
+			
+	<div class="blck--article-list--row clearfix">
+			<div class="imagerow clearfix">
+				<div class="article--image fleft">
+					<a href="http://www.sigmalive.com/blog/athanasiout"><img src="/application/cache/default/images/blogs/68x68/thanasis.jpg" alt=""></a>
+				</div>
+				<div class="article--rest fleft">
+					<div class="article--time--author">
+						<a href="http://www.sigmalive.com/blog/athanasiout" >Θανάσης Αθανασίου</a>
+					</div>
+					<cite class="cite">
+						<a href="http://www.sigmalive.com/blog/athanasiout/2015/04/1338/maxi-metaksy-epoikon-kyprion-sta-katexomena" >
+							«Μάχη» μεταξύ εποίκων – Κυπρίων στα κατεχόμενα;						</a>
+					</cite>
+				</div>
+			</div>		
+		</div>
+			
+	<div class="blck--article-list--row clearfix">
+			<div class="imagerow clearfix">
+				<div class="article--image fleft">
+					<a href="http://www.sigmalive.com/blog/tsouroullis"><img src="/application/cache/default/images/blogs/68x68/tsouroulis2.jpg" alt=""></a>
+				</div>
+				<div class="article--rest fleft">
+					<div class="article--time--author">
+						<a href="http://www.sigmalive.com/blog/tsouroullis" >Χρύσανθος Τσουρούλλης</a>
+					</div>
+					<cite class="cite">
+						<a href="http://www.sigmalive.com/blog/tsouroullis/2015/04/1336/to-apolyto-adieksodo-me-tis-nomikes-saltses-tou" >
+							Το απόλυτο αδιέξοδο με τις νομικές σάλτσες του						</a>
+					</cite>
+				</div>
+			</div>		
+		</div>
+			
+	<div class="blck--article-list--row clearfix">
+			<div class="imagerow clearfix">
+				<div class="article--image fleft">
+					<a href="http://www.sigmalive.com/blog/popi.vaki"><img src="/application/cache/default/images/blogs/68x68/popy.jpg" alt=""></a>
+				</div>
+				<div class="article--rest fleft">
+					<div class="article--time--author">
+						<a href="http://www.sigmalive.com/blog/popi.vaki" >Vakina</a>
+					</div>
+					<cite class="cite">
+						<a href="http://www.sigmalive.com/blog/popi.vaki/2015/04/1334/lardi-paxy-kai-mpoliko" >
+							Λαρδί, παχύ και μπόλικο						</a>
+					</cite>
+				</div>
+			</div>		
+		</div>
+				
+	</div>
+</div>			
+			<div class="sidebar--block clearfix">
+				<div class="imgbanner"-->
+					<!-- MainConstes300x250 -->
+					<div id='div-gpt-ad-1417011288329-0'>
+				<script type='text/javascript'>
+				googletag.cmd.push(function() { googletag.display('div-gpt-ad-1417011288329-0'); });
+				</script>
+				</div>				</div>
+			</div>
+			
+			        	
+	        <div class="sidebar--block clearfix sidebar_width300">
+				<div class="imgbanner">
+					<a href="/videos?cat=documentaries" target="_blank">
+						<img src="/assets/img/documentaries.jpg" alt="documentaries" />
+					</a>
+				</div>
+			</div>
+			<div class="sidebar--block clearfix sidebar_width200">
+				<div class="imgbanner">
+					<a href="/videos?cat=documentaries" target="_blank">
+						<img src="/assets/img/documentaries_200x210.jpg" alt="documentaries_200x210" />
+					</a>
+				</div>
+			</div>
+			<div class="sidebar--block clearfix">
+				<div class="imgbanner">
+					<!-- ApTinAnapodi_300x184 -->
+					<div id='div-gpt-ad-1414149798405-0'>
+				<script type='text/javascript'>
+				googletag.cmd.push(function() { googletag.display('div-gpt-ad-1414149798405-0'); });
+				</script>
+				</div>
+				</div>
+			</div>
+			
+			<div class="sidebar--block clearfix sidebar_width300">
+				<div class="imgbanner">
+					<iframe style="border:0px;" src="http://www.paidiatros.com/widget.html" width="300" height="250" scrolling="no"></iframe>
+				</div>
+			</div>
+			
+			<div class="sidebar--block clearfix sidebar_width300">
+				<div class="imgbanner">
+					<iframe src="http://city.sigmalive.com/latestnews_widget" style="border:0px #FFFFFF none;" name="myiFrame" scrolling="no" frameborder="0" marginheight="0px" marginwidth="0px" height="388px" width="303px"></iframe>
+				</div>
+			</div>
+			
+			<div class="sidebar--block clearfix sidebar_width300">
+				<div class="imgbanner">
+					<iframe src="http://www1.sigmalive.com/manual_uploads/Timeliner/widget/timeline_widget.htm" width="303" height="380" seamless="seamless" scrolling="no" frameborder="0" allowtransparency="true"></iframe>
+				</div>
+			</div>
+			
+		</div>
+	</div>
+</div>				
+				<div id="main--content">
+					<div id="article" class="main--centered white_bg clearfix">
+	<div id="breaking--news">
+	<div id="breaking--news--inner" class="clearfix">
+		<span class="red_color alerticon iconfont iconfont-uniF2AC"></span>
+		<span class="red_color roboto--condensed--font font_weight_700" id="breaking--news--title">Breaking News:</span>
+		<span id="breaking--news--body">
+			
+		</span>
+		<span class="displayNone" id="breakingnewsticker">
+			<ul>
+                				<li><a href="/news/kypriako/225813/proodo-sto-kypriako-vlepei-o-keri-entos-2015">Πρόοδο στο κυπριακό βλέπει ο Κέρι εντός 2015</a></li>
+								<li><a href="/news/oikonomia/225803/ksenos-o-antikatastatis-tou-tzon-xourikan-stin-trapeza-kyprou">Ξένος ο αντικαταστάτης του Τζον Χούρικαν στην Τράπεζα Κύπρου</a></li>
+								<li><a href="/news/oikonomia/225802/pyra-syllouri-kata-nomikis-ypiresias-kratoun-pisini">Πυρά Συλλούρη κατά Νομικής Υπηρεσίας: «Κρατούν πισινή»</a></li>
+								<li><a href="/news/energia/225815/arxisan-oi-syzitiseis-elladasrosias-gia-agogo-fa">Άρχισαν οι συζητήσεις Ελλάδας-Ρωσίας για αγωγό ΦΑ</a></li>
+								<li><a href="/news/greece/225811/ksekathari-sygklisi-me-tous-daneistes-vlepei-o-varoufakis">Ξεκάθαρη σύγκλιση με τους δανειστές βλέπει ο Βαρουφάκης</a></li>
+							</ul>
+		</span>
+
+		<span id="breaking--news--controls" class="fright">
+			<span class="controlwrapper">
+				<span class="iconfont iconfont-uniF107 control animatequarter" id="breaking--news--left"></span>
+			</span>
+			<span class="controlwrapper">
+				<span class="iconfont iconfont-uniF10A control animatequarter" id="breaking--news--right"></span>
+			</span>
+		</span>
+
+	</div>
+</div>	
+	<div class="main--content--inner smallpaddingtop">
+		<article itemscope itemtype="http://schema.org/Article">
+						<div class="top--banner--wrap top--banner--wrap--mobile">
+				<div class="widebanner widebanner_mobile">
+											<!-- *****_Article_Leaderboard_A -->
+						<div id='div-gpt-ad-1411044380679-0'>
+				<script type='text/javascript'>
+				googletag.cmd.push(function() { googletag.display('div-gpt-ad-1411044380679-0'); });
+				</script>
+				</div>									</div>
+			</div>
+			
+			<div id="article-content">
+				<div class="article-cats">
+					<span>
+																<a href="/news">News</a>
+																						<a href="/news/international">International Sl</a>
+																						<a href="#">Βρετανία: Προβάδισμα Κάμερον δείχνουν οι δημοσκοπήσεις</a>
+											
+					</span>
+				</div>
+				
+				<h1 itemprop="name">Βρετανία: Προβάδισμα Κάμερον δείχνουν οι δημοσκοπήσεις</h1>
+				<div class="breadcrumb-cats">
+					<time class="time font_weight_900" datetime="2015-04-22">22.04.2015 07:46</time>
+					<span class="main--cat"><a href="http://www.sigmalive.com/news/international">Διεθνή</a></span>
+					<span class="main--cat clearfix" id="grey"><a href="#">SigmaLive</a></span>
+				</div>
+				
+				<div class="article--main-img original--photo--size">
+					
+					
+		        				            <img src="/application/cache/default/images/news/900x450/David-Cameron-Nick-Clegg--012.jpg" alt="">
+		            				</div>
+				
+				<div class="articlesocial clearfix">
+				    					<div class="articlesocial--inner">
+						<ul>
+							<li class="social fb">
+								<a href="http://www.sharethis.com/share?publisher=edcbb23f-8ad8-4e41-b63d-532f3476999b&url=http://www.sigmalive.com/news/international/225841/vretania-provadisma-kameron-deixnoun-oi-dimoskopiseis">
+									<span class='st_facebook_custom iconfont iconfont-uniF231'><span class="tip">Facebook</span></span>
+								</a>
+							</li>
+							
+							<li class="social tw">
+								<a href="http://www.sharethis.com/share?publisher=edcbb23f-8ad8-4e41-b63d-532f3476999b&url=http://www.sigmalive.com/news/international/225841/vretania-provadisma-kameron-deixnoun-oi-dimoskopiseis">
+									<span class='st_twitter_custom iconfont iconfont-uniF243'><span class="tip">Twitter</span></span>
+								</a>
+							</li>
+							
+							<li class="social gp">
+								<a href="http://www.sharethis.com/share?publisher=edcbb23f-8ad8-4e41-b63d-532f3476999b&url=http://www.sigmalive.com/news/international/225841/vretania-provadisma-kameron-deixnoun-oi-dimoskopiseis">
+									<span class='st_googleplus_custom iconfont iconfont-uniF235'><span class="tip">Google+</span></span>
+								</a>
+							</li>
+							
+							<li class="social ma">
+								<a href="http://www.sharethis.com/share?publisher=edcbb23f-8ad8-4e41-b63d-532f3476999b&url=http://www.sigmalive.com/news/international/225841/vretania-provadisma-kameron-deixnoun-oi-dimoskopiseis">
+									<span class="st_email_custom iconfont iconfont-uniF132" ><span class="tip">Email</span></span>
+								</a>
+							</li>
+							
+							<li class="social pr">
+								<a href="#" onclick="window.print();return false;">
+									<span class="iconfont iconfont-uniF21A" ></span>
+									<span class="tip">Print</span>
+								</a>
+							</li>
+							
+							<li class="social zo">
+								<a href="#">
+									<span class="small">A</span>
+									<span class="big">A</span>
+									<span class="tip">Zoom</span>
+								</a>
+							</li>
+							<li class="social co">
+								<div style="position: relative;">
+										<span class="comment-holder">
+											<a href="#"> <span class="iconfont iconfont-uniF11B"></span></a>
+											<span class="comments-count comment-count">
+												<a href="http://www.sigmalive.com/news/international/225841/vretania-provadisma-kameron-deixnoun-oi-dimoskopiseis#disqus_thread" style="color: white;"></a>
+											</span>
+										</span>
+									
+									<!--div style="position: absolute; margin-top: -36px; margin-left: 12px;">
+										<a href="http://www.sigmalive.com/news/international/225841/vretania-provadisma-kameron-deixnoun-oi-dimoskopiseis#disqus_thread" style="color: white;"></a>
+									</div-->
+								</div>
+							</li>
+						</ul>
+					</div>
+					<!--div class="fancylike-fb-like"></div>
+					<div class="fancylike-fb-like-count"></div-->				</div>
+				
+				<!--article description -->
+
+				<div class="article--main--content tinos--font-all clearfix">
+					<!--relative articles and banner -->
+					
+					<div class="relative--articles--clear"></div>
+                    <div class="relative--articles">
+					   					   ﻿<div class="relative--articles--inner nocontent">
+	<h3 class="red_color">ΣΧΕΤΙΚΑ ΑΡΘΡΑ</h3>
+		<div class="relative--articles--row clearfix">
+		<!--div class="article--image fleft">
+            <a href="/news/greece/200517"><img src="/application/cache/default/images/news/68x68/συνταγμα_εκλογες1.jpg" alt=""></a>
+		</div-->
+		
+		<div class="relative-wrap">
+			<a href="/news/greece/200517/ekloges-ellada-protognores-oikonomikopolitikes-prokliseis"><span class="related--title">Εκλογές Ελλάδα: Πρωτόγνωρες οικονομικοπολιτικές...</span></a>
+			<div class="relative--cats">
+				<a href="/news/greece/200517"><span>Ελλάδα</span></a>
+			</div>
+		</div>
+	</div>
+		<div class="relative--articles--row clearfix">
+		<!--div class="article--image fleft">
+            <a href="/news/greece/199775"><img src="/application/cache/default/images/news/68x68/σαμαρας41.jpg" alt=""></a>
+		</div-->
+		
+		<div class="relative-wrap">
+			<a href="/news/greece/199775/to-epixeirima-tis-quotxamenis-psifouquot-anadeiknyei-o-asamaras"><span class="related--title">To επιχείρημα της "χαμένης ψήφου" αναδεικνύει ο...</span></a>
+			<div class="relative--cats">
+				<a href="/news/greece/199775"><span>Ελλάδα</span></a>
+			</div>
+		</div>
+	</div>
+		<div class="relative--articles--row clearfix">
+		<!--div class="article--image fleft">
+            <a href="/news/greece/196528"><img src="/application/cache/default/images/news/68x68/σαμαρας_σποτ2.jpg" alt=""></a>
+		</div-->
+		
+		<div class="relative-wrap">
+			<a href="/news/greece/196528/asamaras-quotemeis-ftiaxnoume-to-gipedoquot-vinteo"><span class="related--title">Α.Σαμαράς: "Εμείς φτιάχνουμε το γήπεδο" - ΒΙΝΤΕΟ</span></a>
+			<div class="relative--cats">
+				<a href="/news/greece/196528"><span>Ελλάδα</span></a>
+			</div>
+		</div>
+	</div>
+		<div class="relative--articles--row clearfix">
+		<!--div class="article--image fleft">
+            <a href="/news/international/179404"><img src="/application/cache/default/images/news/68x68/ballot.jpg" alt=""></a>
+		</div-->
+		
+		<div class="relative-wrap">
+			<a href="/news/international/179404/ton-martio-tou-2015-oi-vouleftikes-stin-aigypto"><span class="related--title">Τον Μάρτιο του 2015 οι βουλευτικές στην Αίγυπτο</span></a>
+			<div class="relative--cats">
+				<a href="/news/international/179404"><span>Διεθνή</span></a>
+			</div>
+		</div>
+	</div>
+	</div>					   						<div class="smallbanner">
+							<!-- *****_Article_A -->
+							<div id='div-gpt-ad-1411029146303-0'>
+				<script type='text/javascript'>
+				googletag.cmd.push(function() { googletag.display('div-gpt-ad-1411029146303-0'); });
+				</script>
+				</div>						</div>
+						                    </div>
+                    <div style="float: right; margin-left: 10px;"><div id='div-gpt-ad-1363945873394-4'>
+				<script type='text/javascript'>
+				googletag.cmd.push(function() { googletag.display('div-gpt-ad-1363945873394-4'); });
+				</script>
+				</div></div>
+					<div class="article--body">
+                        <p>
+	Προβάδισμα μιας μονάδας των συντηρητικών του Ντέιβιντ Κάμερον έναντι του εργατικού κόμματος δείχνει δημοσκόπηση της εφημερίδας The Sun, ενόψει των βουλευτικών εκλογών της 7<sup>ης</sup> Μαΐου.</p>
+<p>
+	Οι Συντηρητικοί συγκεντρώνουν το 35% των προθέσεων ψήφου, μια μονάδα περισσότερη από ό,τι στην έρευνα της προηγουμένης, ενώ οι Εργατικοί 34% (1%), έγραψε η Σαν. Αυτή είναι η πρώτη φορά που η καθημερινή δημοσκόπηση της YouGov καταγράφει προβάδισμα των Τόρις ύστερα από 13 ημέρες, διευκρίνισε η εφημερίδα.</p>
+<p>
+	Το Κόμμα Ανεξαρτησίας του Ηνωμένου Βασιλείου (UKIP) συγκεντρώνει το 13%, οι Φιλελεύθεροι Δημοκράτες 7% και οι Πράσινοι 5%, σύμφωνα με τα στοιχεία της δημοσκόπησης που δημοσίευσε η Σαν.</p>
+<p>
+	Πηγή ΚΥΠΕ</p>						
+												
+						
+					</div>
+				</div>
+				
+				<!-------------------->
+				<div class="articlesocial_bottom clearfix">
+										<!--div class="articlesocial--inner"-->
+						<ul>
+							<li class="social fb">
+								<a href="http://www.sharethis.com/share?publisher=edcbb23f-8ad8-4e41-b63d-532f3476999b&url=http://www.sigmalive.com/news/international/225841/vretania-provadisma-kameron-deixnoun-oi-dimoskopiseis">
+									<span class='st_facebook_custom iconfont iconfont-uniF231'><span class="tip">Facebook</span></span>
+								</a>
+							</li>
+							
+							<li class="social tw">
+								<a href="http://www.sharethis.com/share?publisher=edcbb23f-8ad8-4e41-b63d-532f3476999b&url=http://www.sigmalive.com/news/international/225841/vretania-provadisma-kameron-deixnoun-oi-dimoskopiseis">
+									<span class='st_twitter_custom iconfont iconfont-uniF243'><span class="tip">Twitter</span></span>
+								</a>
+							</li>
+							
+							<li class="social gp">
+								<a href="http://www.sharethis.com/share?publisher=edcbb23f-8ad8-4e41-b63d-532f3476999b&url=http://www.sigmalive.com/news/international/225841/vretania-provadisma-kameron-deixnoun-oi-dimoskopiseis">
+									<span class='st_googleplus_custom iconfont iconfont-uniF235'><span class="tip">Google+</span></span>
+								</a>
+							</li>
+							
+							<li class="social ma">
+								<a href="http://www.sharethis.com/share?publisher=edcbb23f-8ad8-4e41-b63d-532f3476999b&url=http://www.sigmalive.com/news/international/225841/vretania-provadisma-kameron-deixnoun-oi-dimoskopiseis">
+									<span class="st_email_custom iconfont iconfont-uniF132" ><span class="tip">Email</span></span>
+								</a>
+							</li>
+							
+							<li class="social pr">
+								<a href="#" onclick="window.print();return false;">
+									<span class="iconfont iconfont-uniF21A" ></span>
+									<span class="tip">Print</span>
+								</a>
+							</li>
+							
+							<li class="social zo">
+								<a href="#">
+									<span class="small">A</span>
+									<span class="big">A</span>
+									<span class="tip">Zoom</span>
+								</a>
+							</li>
+							<li class="social co">
+								<div style="position: relative;">
+										<span class="comment-holder">
+											<a href="#"> <span class="iconfont iconfont-uniF11B"></span></a>
+											<span class="comments-count comment-count">
+												<a href="http://www.sigmalive.com/news/international/225841/vretania-provadisma-kameron-deixnoun-oi-dimoskopiseis#disqus_thread" style="color: white;"></a>
+											</span>
+										</span>
+									
+									<!--div style="position: absolute; margin-top: -36px; margin-left: 12px;">
+										<a href="http://www.sigmalive.com/news/international/225841/vretania-provadisma-kameron-deixnoun-oi-dimoskopiseis#disqus_thread" style="color: white;"></a>
+									</div-->
+								</div>
+							</li>
+						</ul>
+					<!--/div-->				</div>
+				<!-------------------->
+				
+				<div class="article--suggested--articles clearfix nocontent">
+	<div class="article--suggested--articles--inner clearfix">
+				<div class="col--1-2 col--normargin suggested--row">
+					<div class="link--block fleft">
+				<a href="/news/international/225840/foniki-kakokairia-sto-sidnei">
+					<span class="arrowholder">
+						<span class="iconfont iconfont-uniF153"></span>
+					</span>
+					<span class="textholder">
+						<span class="textholder--inner">Φονική κακοκαιρία στο Σίδνεϊ</span>
+					</span>
+				</a>		
+			</div>
+		</div>
+					</div>
+</div>					
+				
+				<!-- widebanner -->
+				<div class="widebanner widebanner_mobile widebanner_below_article">
+											<!-- *****_Article_Leaderboard_B -->
+						<div id='div-gpt-ad-1411044432265-0'>
+				<script type='text/javascript'>
+				googletag.cmd.push(function() { googletag.display('div-gpt-ad-1411044432265-0'); });
+				</script>
+				</div>									</div>
+				
+				
+				<div class="more-articles--from-the-category nocontent">
+	<div class="more-articles--from-the-category--inner">
+		<h3 class="darkblue_color font_weight_900 nomargin nopadding">Διεθνή</h3>
+		<div class="more-articles--from-the-category--row clearfix">
+            			<div class="col--1-2 col1 col--even first more--articles">
+				
+								<div class="more--articles--img fleft">
+					<img src="/application/cache/default/images/news/143x100/συδνευ_βροχές.jpg" alt="">
+				</div>
+									
+				<div class="articles--info">
+					<a href="/news/international/225840/foniki-kakokairia-sto-sidnei">
+						<span>
+                            Φονική κακοκαιρία στο Σίδνεϊ						</span>
+					</a>
+					<time class="time" datetime="2015-04-22">07:37</time>
+				</div>
+			</div>
+			
+			
+						<div class="col--2-2 col2 col--odd more--articles">
+				
+								<div class="more--articles--img fleft">
+					<img src="/application/cache/default/images/news/143x100/air6.jpg" alt="">
+				</div>
+									
+				<div class="articles--info">
+					<a href="/news/international/225839/ikanopoiisi-hpa-gia-termatismo-epidromon-kata-yemenis">
+						<span>
+                            Ικανοποίηση ΗΠΑ για τερματισμό επιδρομών κατά Υεμένης						</span>
+					</a>
+					<time class="time" datetime="2015-04-22">07:27</time>
+				</div>
+			</div>
+			
+						<div class="clear">
+				<div class="col--1-2"></div>
+				<div class="col--2-2"></div>
+			</div>			
+			
+						<div class="col--1-2 col3 col--even more--articles">
+				
+									
+				<div class="articles--info">
+					<a href="/news/international/225837/kameron-na-termatistoun-ta-fortia-thanatou-sti-mesogeio">
+						<span>
+                            Κάμερον: Να τερματιστούν τα φορτία θανάτου στη Μεσόγειο						</span>
+					</a>
+					<time class="time" datetime="2015-04-22">07:25</time>
+				</div>
+			</div>
+			
+			
+						<div class="col--2-2 col4 col--odd last more--articles">
+				
+									
+				<div class="articles--info">
+					<a href="/news/international/225834/sa-synergasia-gia-antimetopisi-tis-metanasteftikis-krisis">
+						<span>
+                            ΣΑ: Συνεργασία για αντιμετώπιση της μεταναστευτικής κρίσης						</span>
+					</a>
+					<time class="time" datetime="2015-04-22">07:03</time>
+				</div>
+			</div>
+			
+			
+					</div>
+	</div>
+</div>
+				
+				<div class="col col__hidden-tablet col__hidden-desktop related--afterwards clearfix">
+									</div>
+				
+				
+				<!-- comments -->
+				
+<div class="disqus--wrapper nocontent" id="comments" >
+	<div class="disqus">
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+            var disqus_shortname = 'wwwsigmalivecom'; // required: replace example with your forum shortname
+			var disqus_identifier = '225841';
+            /* * * DON'T EDIT BELOW THIS LINE * * */
+            (function() {
+                var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+	</div>
+</div>			</div>
+					
+			<!-- video slider -->
+			<div id="video--slider" class="clearfix darkbrown_bg nocontent">
+	<h4 class="white_color siel_bg"><span><a href="http://www.sigmalive.com/media">Videos</a></span></h4>
+	<div id="video--slider--tabs">	
+		<div id="video--slider--tabs--inner" class="clearfix">
+			<ul>
+                				<li><a href="#" data-slide="0">Ειδήσεις</a></li>
+								<li><a href="#" data-slide="1">Αθλητικά</a></li>
+								<li><a href="#" data-slide="2">Hangouts</a></li>
+								<li><a href="#" data-slide="3">Documentaries</a></li>
+								<li><a href="#" data-slide="4">Sports Express</a></li>
+								<li><a href="#" data-slide="5">Απ' την ανάποδη</a></li>
+								<li><a href="#" data-slide="6">UNIC Κυπριακό</a></li>
+								
+			</ul>
+		</div>
+	</div>
+	
+	<div class="clear clearzero"></div>
+	
+	<div id="video--slider--inner">
+        		<!--slide--set -->
+		<div class="slide--set">
+                        
+                        <div class="slide--items--ofthrees">
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=uvu4pXgQ9u0"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/uvu4pXgQ9u0/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=uvu4pXgQ9u0">Δικηγορικός Σύλλογος: Η δικαιοσύνη είναι η μόνη ζημιωμένη</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=news">Ειδήσεις</a>
+				</div>
+			</div>
+			
+						
+						
+			            
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=jh5fC0hQeIk"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/jh5fC0hQeIk/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=jh5fC0hQeIk">Πυρά Συλλούρη κατά της Νομικής Υπηρεσίας</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=news">Ειδήσεις</a>
+				</div>
+			</div>
+			
+						
+						
+			            
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=Wgiicscdp-8"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/Wgiicscdp-8/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=Wgiicscdp-8">Θα αποκόπτουν από μισθούς των δημοσίων για τα ανείσπρακτα εντάλματα</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=news">Ειδήσεις</a>
+				</div>
+			</div>
+			
+						
+			            </div>
+            			
+			            
+                        <div class="slide--items--ofthrees">
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=mydmj9_X_6Q"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/mydmj9_X_6Q/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=mydmj9_X_6Q">Aρχίζει η διερεύνηση των καταγγελιών του Ρίκκου Ερωτοκρίτου</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=news">Ειδήσεις</a>
+				</div>
+			</div>
+			
+						
+						
+			            
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=V1XaBKMISSQ"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/V1XaBKMISSQ/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=V1XaBKMISSQ">Προς ναυάγιο οι συζητήσεις στη βουλή για την FBME</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=news">Ειδήσεις</a>
+				</div>
+			</div>
+			
+						
+						
+			            
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=4FUymBrrNQU"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/4FUymBrrNQU/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=4FUymBrrNQU">Eντός Μαϊου ο διαγωνισμός για το Λιμάνι Λεμεσού</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=news">Ειδήσεις</a>
+				</div>
+			</div>
+			
+						
+			            </div>
+            			
+			            
+                        <div class="slide--items--ofthrees">
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=WvzTBEDmY2A"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/WvzTBEDmY2A/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=WvzTBEDmY2A">Tι κάνει η Κύπρος για τους θανάτους μεταναστών στη Μεσόγειο</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=news">Ειδήσεις</a>
+				</div>
+			</div>
+			
+						
+						
+			            
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=fYri0yTHLk8"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/fYri0yTHLk8/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=fYri0yTHLk8">Διαδοχικές επαφές Ακιντζί στα κατεχόμενα</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=news">Ειδήσεις</a>
+				</div>
+			</div>
+			
+						
+						
+			            
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=HFnmaRt8w68"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/HFnmaRt8w68/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=HFnmaRt8w68">Υπ. Συγκοινωνιών: Απάντηση στην Cobalt σε 2-4 μήνες</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=news">Ειδήσεις</a>
+				</div>
+			</div>
+			
+						
+			            </div>
+            			
+			            
+                        <div class="slide--items--ofthrees">
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=5KLqy0Z1nBo"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/5KLqy0Z1nBo/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=5KLqy0Z1nBo">Aυθεντικός ο πίνακας "Μπαλαρίνα"</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=news">Ειδήσεις</a>
+				</div>
+			</div>
+			
+						
+						
+			            
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=Qmofu0ZJTWw"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/Qmofu0ZJTWw/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=Qmofu0ZJTWw">Βγαίνει από το ψυγείο η αξιολόγηση του κυπριακού προγράμματος</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=news">Ειδήσεις</a>
+				</div>
+			</div>
+			
+						
+						
+			            
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=3368nQpZgRc"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/3368nQpZgRc/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=3368nQpZgRc">Ενώπιον Δικαστηρίου στις 27 Απριλίου ο Σαρίκας</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=news">Ειδήσεις</a>
+				</div>
+			</div>
+			
+						
+			            </div>
+            			
+					</div>
+		<!--end of slide set -->
+				<!--slide--set -->
+		<div class="slide--set">
+                        
+                        <div class="slide--items--ofthrees">
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=_EVOXDArjUo"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/_EVOXDArjUo/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=_EVOXDArjUo">Πρωταθλήτρια η ΑΕΚ</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=sports">Αθλητικά</a>
+				</div>
+			</div>
+			
+						
+						
+			            
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=wd3c0_C_x_4"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/wd3c0_C_x_4/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=wd3c0_C_x_4">Ο Νεκτάριος Πετεβίνος στο Ράδιο Πρώτο</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=sports">Αθλητικά</a>
+				</div>
+			</div>
+			
+						
+						
+			            
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=SHeyK41NZN0"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/SHeyK41NZN0/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=SHeyK41NZN0">«Θέλουμε να κερδίσουμε…τίποτα άλλο»</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=sports">Αθλητικά</a>
+				</div>
+			</div>
+			
+						
+			            </div>
+            			
+			            
+                        <div class="slide--items--ofthrees">
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=RITv16Kc0Mw"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/RITv16Kc0Mw/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=RITv16Kc0Mw">«Ο πρωταθλητισμός είναι ψυχοφθόρος»</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=sports">Αθλητικά</a>
+				</div>
+			</div>
+			
+						
+						
+			            
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=kG78qSI6_Xs"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/kG78qSI6_Xs/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=kG78qSI6_Xs">Ο Κυριάκος Δημητρίου στο Ράδιο Πρώτο</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=sports">Αθλητικά</a>
+				</div>
+			</div>
+			
+						
+						
+			            
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=WzYyq8yHo78"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/WzYyq8yHo78/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=WzYyq8yHo78">Rec064</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=sports">Αθλητικά</a>
+				</div>
+			</div>
+			
+						
+			            </div>
+            			
+			            
+                        <div class="slide--items--ofthrees">
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=kNg2N0htFkY"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/kNg2N0htFkY/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=kNg2N0htFkY">Ο Ανδρέας Δημητρίου στο Ράδιο Πρώτο</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=sports">Αθλητικά</a>
+				</div>
+			</div>
+			
+						
+						
+			            
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=swVL7xF7wJc"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/swVL7xF7wJc/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=swVL7xF7wJc">Ο Νεκταρίος Πετεβίνος στο Ράδιο Πρώτο</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=sports">Αθλητικά</a>
+				</div>
+			</div>
+			
+						
+						
+			            
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=HkuKbIm2P3A"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/HkuKbIm2P3A/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=HkuKbIm2P3A">Κλήρωση Τζόκερ 19/04/2015</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=sports">Αθλητικά</a>
+				</div>
+			</div>
+			
+						
+			            </div>
+            			
+			            
+                        <div class="slide--items--ofthrees">
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=1TVDeAu9jKU"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/1TVDeAu9jKU/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=1TVDeAu9jKU">ΑΠΟΕΛ-Ερμής 3-0</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=sports">Αθλητικά</a>
+				</div>
+			</div>
+			
+						
+						
+			            
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=wU2gTRzLvJg"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/wU2gTRzLvJg/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=wU2gTRzLvJg">«Πετύχαμε το τρίποντο και βλέπουμε Ομόνοια» (βιντεο)</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=sports">Αθλητικά</a>
+				</div>
+			</div>
+			
+						
+						
+			            
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=7x5hXtz_vzM"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/7x5hXtz_vzM/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=7x5hXtz_vzM">Οθέλλος-Αγία Νάπα 2-2</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=sports">Αθλητικά</a>
+				</div>
+			</div>
+			
+						
+			            </div>
+            			
+					</div>
+		<!--end of slide set -->
+				<!--slide--set -->
+		<div class="slide--set">
+                        
+                        <div class="slide--items--ofthrees">
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=TkmnmzY2Xow"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/TkmnmzY2Xow/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=TkmnmzY2Xow">Τουρκοκύπριοι δημοσιογράφοι σχολιάζουντ τον 1ο γύρο εκλογών στα κατεχόμενα</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=hangouts">Hangouts</a>
+				</div>
+			</div>
+			
+						
+						
+			            
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=Oi9i8zGZ_vc"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/Oi9i8zGZ_vc/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=Oi9i8zGZ_vc">Business Power Summit: Φέρτε τις ιδέες σας</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=hangouts">Hangouts</a>
+				</div>
+			</div>
+			
+						
+						
+			            
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=FX73D3Zp3Kc"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/FX73D3Zp3Kc/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=FX73D3Zp3Kc">Η Ακτινογραφία των Παράνομων Εκλογών στα Κατεχόμενα</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=hangouts">Hangouts</a>
+				</div>
+			</div>
+			
+						
+			            </div>
+            			
+			            
+                        <div class="slide--items--ofthrees">
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=xD3uH2Z5jh4"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/xD3uH2Z5jh4/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=xD3uH2Z5jh4">Μαρτυρία νεαρού που ακρωτηριάστηκε από έκρηξη κροτίδας</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=hangouts">Hangouts</a>
+				</div>
+			</div>
+			
+						
+						
+			            
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=nJdb6A6jjZU"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/nJdb6A6jjZU/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=nJdb6A6jjZU">"Η Κύπρος επέστρεψε στην Ευρωζώνη"</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=hangouts">Hangouts</a>
+				</div>
+			</div>
+			
+						
+						
+			            
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=q-oQBR1WGLs"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/q-oQBR1WGLs/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=q-oQBR1WGLs">StopKleptocracy - Η Διαφθορά στη Κύπρο καλά κρατεί</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=hangouts">Hangouts</a>
+				</div>
+			</div>
+			
+						
+			            </div>
+            			
+			            
+                        <div class="slide--items--ofthrees">
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=0ZKJXT88bZs"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/0ZKJXT88bZs/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=0ZKJXT88bZs">Germanwings: Η μοιραία πτήση με τα "εκατομμύρια" σενάρια</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=hangouts">Hangouts</a>
+				</div>
+			</div>
+			
+						
+						
+			            
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=S3uMetvbbB8"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/S3uMetvbbB8/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=S3uMetvbbB8">Germanwings: Η ΠΑΣΥΠΙ σχολάζει την αεροπορική τραγωδία</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=hangouts">Hangouts</a>
+				</div>
+			</div>
+			
+						
+						
+			            
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=Bq4dsdnTfNg"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/Bq4dsdnTfNg/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=Bq4dsdnTfNg">Να δώσουμε χρόνο στην ΕΝΙ;</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=hangouts">Hangouts</a>
+				</div>
+			</div>
+			
+						
+			            </div>
+            			
+			            
+                        <div class="slide--items--ofthrees">
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=bjnfEHcK2B4"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/bjnfEHcK2B4/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=bjnfEHcK2B4">ΓΓ ΑΚΕΛ: Εκποιήσεις, Focus και η «συμβουλή» στην Χρ. Ερωτοκρίτου</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=hangouts">Hangouts</a>
+				</div>
+			</div>
+			
+						
+						
+			            
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=0v1BrwSgQKI"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/0v1BrwSgQKI/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=0v1BrwSgQKI">Επικείμενες αλλαγές στην Παιδεία: Η θέση ΟΕΛΜΕΚ ΠΟΕΔ</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=hangouts">Hangouts</a>
+				</div>
+			</div>
+			
+						
+						
+			            
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=JUZ3MfWTNbw"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/JUZ3MfWTNbw/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=JUZ3MfWTNbw">Εκφοβισμός: Ποιες οι πραγματικές του διαστάσεις;</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=hangouts">Hangouts</a>
+				</div>
+			</div>
+			
+						
+			            </div>
+            			
+					</div>
+		<!--end of slide set -->
+				<!--slide--set -->
+		<div class="slide--set">
+                        
+                        <div class="slide--items--ofthrees">
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=zVBh85ndngI"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/zVBh85ndngI/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=zVBh85ndngI">Στα Άδυτα της Πολιτικής Αεροπορίας - Ντοκιμαντέρ</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=documentaries">Documentaries</a>
+				</div>
+			</div>
+			
+						
+						
+			            
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=FGV2UnCbHmc"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/FGV2UnCbHmc/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=FGV2UnCbHmc">ΙΣΑΑΚ - ΣΟΛΩΜΟΥ: Δεκαοχτώ χρόνια μετά</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=documentaries">Documentaries</a>
+				</div>
+			</div>
+			
+						
+						
+			            
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=bfJkIn2ZmiM"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/bfJkIn2ZmiM/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=bfJkIn2ZmiM">Ντοκιμαντέρ για την τραγική έκρηξη στο Μαρί</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=documentaries">Documentaries</a>
+				</div>
+			</div>
+			
+						
+			            </div>
+            			
+					</div>
+		<!--end of slide set -->
+				<!--slide--set -->
+		<div class="slide--set">
+                        
+                        <div class="slide--items--ofthrees">
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=UYspCItLW7k"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/UYspCItLW7k/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=UYspCItLW7k">Sports Express 20-04-2015 (27η Αγωνιστική)</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=sports_express">Sports Express</a>
+				</div>
+			</div>
+			
+						
+						
+			            
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=8vHLnqnOcVI"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/8vHLnqnOcVI/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=8vHLnqnOcVI">Sports Express 06-04 2015 26η Αγωνιστική</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=sports_express">Sports Express</a>
+				</div>
+			</div>
+			
+						
+						
+			            
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=7unWvG9wHOs"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/7unWvG9wHOs/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=7unWvG9wHOs">Sports Express 30-03-2015</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=sports_express">Sports Express</a>
+				</div>
+			</div>
+			
+						
+			            </div>
+            			
+			            
+                        <div class="slide--items--ofthrees">
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=RFNhpUHiphc"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/RFNhpUHiphc/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=RFNhpUHiphc">Sports Express 23-03-2015 (25η Αγωνιστική)</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=sports_express">Sports Express</a>
+				</div>
+			</div>
+			
+						
+						
+			            
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=LME9cioLG90"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/LME9cioLG90/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=LME9cioLG90">Sports Express 17-03-2015 (24η Αγωνιστική)</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=sports_express">Sports Express</a>
+				</div>
+			</div>
+			
+						
+						
+			            
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=cWoQQLUbLr0"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/cWoQQLUbLr0/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=cWoQQLUbLr0">Ο ΄Αντρος Καραπατάκης μιλά για πρώτη φορά</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=sports_express">Sports Express</a>
+				</div>
+			</div>
+			
+						
+			            </div>
+            			
+			            
+                        <div class="slide--items--ofthrees">
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=sulp-7JEhJs"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/sulp-7JEhJs/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=sulp-7JEhJs">Χρίστος Πουλλαΐδης: ο πρόεδρος της Ανόρθωσης μιλά για όλα</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=sports_express">Sports Express</a>
+				</div>
+			</div>
+			
+						
+						
+			            
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=48xBQspQWqc"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/48xBQspQWqc/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=48xBQspQWqc">Σεραφείμ μιλά για όλα</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=sports_express">Sports Express</a>
+				</div>
+			</div>
+			
+						
+						
+			            
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=QNPFPpxLCCk"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/QNPFPpxLCCk/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=QNPFPpxLCCk">Αποκαλυπτικός ο Πρόδρομος Πετρίδης</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=sports_express">Sports Express</a>
+				</div>
+			</div>
+			
+						
+			            </div>
+            			
+			            
+                        <div class="slide--items--ofthrees">
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=Q0FQjBwtblc"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/Q0FQjBwtblc/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=Q0FQjBwtblc">Οι εισηγήσεις του Μιχαηλίδη και οι απειλές του ΠΑΣΠ</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=sports_express">Sports Express</a>
+				</div>
+			</div>
+			
+						
+						
+			            
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=UQLATt66ZXo"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/UQLATt66ZXo/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=UQLATt66ZXo">Το Κύπελο & ο Π. Πετρίδης στο στούντιο του Sports Expess</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=sports_express">Sports Express</a>
+				</div>
+			</div>
+			
+						
+						
+			            
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=unHyb-uBHo4"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/unHyb-uBHo4/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=unHyb-uBHo4">Κωστάκης Κουτσοκούμνης εφ' όλης της ύλης</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=sports_express">Sports Express</a>
+				</div>
+			</div>
+			
+						
+			            </div>
+            			
+					</div>
+		<!--end of slide set -->
+				<!--slide--set -->
+		<div class="slide--set">
+                        
+                        <div class="slide--items--ofthrees">
+                        
+			<div class="slide--item item ">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=j7TtTnuHOl4"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/j7TtTnuHOl4/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=j7TtTnuHOl4">Ρίκο Ρίκο Ρίκοκο</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=apatinanapodi">Απ' την ανάποδη</a>
+				</div>
+			</div>
+			
+						
+						
+			            
+                        
+			<div class="slide--item item ">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=hjdw-EwiSiU"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/hjdw-EwiSiU/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=hjdw-EwiSiU">Ψέματα, ψέματα παντού ψέματα</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=apatinanapodi">Απ' την ανάποδη</a>
+				</div>
+			</div>
+			
+						
+						
+			            
+                        
+			<div class="slide--item item ">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=px0rsossYs0"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/px0rsossYs0/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=px0rsossYs0">Φούλλης Look</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=apatinanapodi">Απ' την ανάποδη</a>
+				</div>
+			</div>
+			
+						
+			            </div>
+            			
+			            
+                        <div class="slide--items--ofthrees">
+                        
+			<div class="slide--item item ">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=F2t150UuU0I"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/F2t150UuU0I/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=F2t150UuU0I">Παρούμπας Vs Κουλίας</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=apatinanapodi">Απ' την ανάποδη</a>
+				</div>
+			</div>
+			
+						
+						
+			            
+                        
+			<div class="slide--item item ">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=defjsW_bALw"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/defjsW_bALw/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=defjsW_bALw">ΕΔΕΚ Λαός Πρωτάθλημα</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=apatinanapodi">Απ' την ανάποδη</a>
+				</div>
+			</div>
+			
+						
+						
+			            
+                        
+			<div class="slide--item item ">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=-sIPE8RHUOs"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/-sIPE8RHUOs/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=-sIPE8RHUOs">Ρόδα, βότκα και παπούσκα</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=apatinanapodi">Απ' την ανάποδη</a>
+				</div>
+			</div>
+			
+						
+			            </div>
+            			
+			            
+                        <div class="slide--items--ofthrees">
+                        
+			<div class="slide--item item ">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=e3Pd7mhc9WY"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/e3Pd7mhc9WY/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=e3Pd7mhc9WY">Fifty Shades of Nicos</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=apatinanapodi">Απ' την ανάποδη</a>
+				</div>
+			</div>
+			
+						
+						
+			            
+                        
+			<div class="slide--item item ">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=gr7aZ_Z4r7I"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/gr7aZ_Z4r7I/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=gr7aZ_Z4r7I">Eurogroup.gr</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=apatinanapodi">Απ' την ανάποδη</a>
+				</div>
+			</div>
+			
+						
+						
+			            
+                        
+			<div class="slide--item item ">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=hPqEeCnYJTg"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/hPqEeCnYJTg/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=hPqEeCnYJTg">Υδατάνθρακας ο θησαυρός!</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=apatinanapodi">Απ' την ανάποδη</a>
+				</div>
+			</div>
+			
+						
+			            </div>
+            			
+			            
+                        <div class="slide--items--ofthrees">
+                        
+			<div class="slide--item item ">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=GMo5YJV2Zkc"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/GMo5YJV2Zkc/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=GMo5YJV2Zkc">ΤΣΙΠΡΙΣΤΑΝ</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=apatinanapodi">Απ' την ανάποδη</a>
+				</div>
+			</div>
+			
+						
+						
+			            
+                        
+			<div class="slide--item item ">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=6tKYtv6cO_g"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/6tKYtv6cO_g/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=6tKYtv6cO_g">Total Over!</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=apatinanapodi">Απ' την ανάποδη</a>
+				</div>
+			</div>
+			
+						
+						
+			            
+                        
+			<div class="slide--item item ">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=ufTgqbmfKgw"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/ufTgqbmfKgw/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=ufTgqbmfKgw">Τα Ομηρολόγια</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=apatinanapodi">Απ' την ανάποδη</a>
+				</div>
+			</div>
+			
+						
+			            </div>
+            			
+					</div>
+		<!--end of slide set -->
+				<!--slide--set -->
+		<div class="slide--set">
+                        
+                        <div class="slide--items--ofthrees">
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=Cbtth5bJu8s"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/Cbtth5bJu8s/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=Cbtth5bJu8s">Εισαγωγή:Το Κυπριακό-Μία Διεθνολογική προσέγγιση</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=unic_kypriako">UNIC Κυπριακό</a>
+				</div>
+			</div>
+			
+						
+						
+			            
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=y9crc4Rtn_c"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/y9crc4Rtn_c/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=y9crc4Rtn_c">ΠΩΣ ΗΤΑΝ ΟΙΚΟΔΟΜΗΜΕΝΗ Η ΤΟΥΡΚΟΚΥΠΡΙΑΚΗ ΚΟΙΝΟΤΗΤΑ ΠΡΙΝ ΤΗΝ ΕΙΣΒΟΛΗ;</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=unic_kypriako">UNIC Κυπριακό</a>
+				</div>
+			</div>
+			
+						
+						
+			            
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=1tZfDabzwvA"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/1tZfDabzwvA/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=1tZfDabzwvA">ΠΩΣ ΔΗΜΙΟΥΡΓΗΘΗΚΕ Ο ΜΗΧΑΝΙΣΜΟΣ ΤΗΣ ‘ΕΝΩΣΗΣ’ ΚΑΙ ΠΟΙΟΣ Ο ΡΟΛΟΣ ΤΗΣ ΕΚΚΛΗΣΙΑΣ;</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=unic_kypriako">UNIC Κυπριακό</a>
+				</div>
+			</div>
+			
+						
+			            </div>
+            			
+			            
+                        <div class="slide--items--ofthrees">
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=DUfo3Vh1xkM"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/DUfo3Vh1xkM/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=DUfo3Vh1xkM">ΠΟΙΟΣ Ο ΡΟΛΟΣ ΚΑΙ Η ΘΕΣΗ ΤΗΣ ΑΡΙΣΤΕΡΑΣ ΣΤΗ ΔΗΜΙΟΥΡΓΙΑ ΚΑΙ ΕΞΕΛΙΞΗ ΤΟΥ ΕΝΩΤΙΚΟΥ ΚΙΝΗΜΑΤΟΣ ΣΤΗΝ ΚΥΠΡΟ;</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=unic_kypriako">UNIC Κυπριακό</a>
+				</div>
+			</div>
+			
+						
+						
+			            
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=H_cVr2YKFhs"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/H_cVr2YKFhs/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=H_cVr2YKFhs">ΠΟΙΑ Η ΕΜΠΛΟΚΗ ΤΩΝ ΤΟΥΡΚΟΚΥΠΡΙΩΝ ΚΑΙ ΤΗΣ ΤΟΥΡΚΙΑΣ ΣΤΟΝ ΑΓΩΝΑ ΤΗΣ ΕΟΚΑ 1955-59;</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=unic_kypriako">UNIC Κυπριακό</a>
+				</div>
+			</div>
+			
+						
+						
+			            
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=JAEY-AwNLLQ"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/JAEY-AwNLLQ/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=JAEY-AwNLLQ">ΜΠΟΡΟΥΣΕ ΤΟ ΚΥΠΡΙΑΚΟ ΣΥΝΤΑΓΜΑ ΤΟΥ 1960 ΝΑ ΕΠΙΒΙΩΣΕΙ; Πόλυς Πολυβίου, Νομικός-Συνταγματολόγος</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=unic_kypriako">UNIC Κυπριακό</a>
+				</div>
+			</div>
+			
+						
+			            </div>
+            			
+			            
+                        <div class="slide--items--ofthrees">
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=v8DSWLBP7Sk"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/v8DSWLBP7Sk/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=v8DSWLBP7Sk">ΗΤΑΝ ΑΝΑΠΟΦΕΥΚΤΗ Η ΣΥΓΚΡΟΥΣΗ ΕΛΛΗΝΟΚΥΠΡΙΩΝ-ΤΟΥΡΚΟΚΥΠΡΙΩΝ ΤΗ ΔΕΚΑΕΤΙΑ ΤΟΥ ‘60;</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=unic_kypriako">UNIC Κυπριακό</a>
+				</div>
+			</div>
+			
+						
+						
+			            
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=Q3bSRcTf444"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/Q3bSRcTf444/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=Q3bSRcTf444">ΠΟΙΑ Η ΣΥΝΔΕΣΗ ΤΗΣ ΚΡΙΣΗΣ ΣΤΟ ΑΙΓΑΙΟ, ΤΟΥ ΠΡΑΞΙΚΟΠΗΜΑΤΟΣ ΚΑΙ ΤΗΣ ΕΙΣΒΟΛΗΣ</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=unic_kypriako">UNIC Κυπριακό</a>
+				</div>
+			</div>
+			
+						
+						
+			            
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=ozjmlLruHyE"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/ozjmlLruHyE/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=ozjmlLruHyE">ΟΙ ΣΧΕΣΕΙΣ ΑΘΗΝΩΝ-ΛΕΥΚΩΣΙΑΣ ΚΑΙ ΤΟ ΕΝΔΟΕΛΛΗΝΟΚΥΠΡΙΑΚΟ ΜΕΤΩΠΟ – ΗΤΑΝ ΑΝΑΠΟΦΕΥΚΤΟ ΤΟ ΠΡΑΞΙΚΟΠΗΜΑ;</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=unic_kypriako">UNIC Κυπριακό</a>
+				</div>
+			</div>
+			
+						
+			            </div>
+            			
+			            
+                        <div class="slide--items--ofthrees">
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=ZeYKB2l8yv4"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/ZeYKB2l8yv4/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=ZeYKB2l8yv4">ΜΕΤΑ ΤΗΝ ΕΙΣΒΟΛΗ – ΚΑΙ ΤΩΡΑ ΤΙ;</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=unic_kypriako">UNIC Κυπριακό</a>
+				</div>
+			</div>
+			
+						
+						
+			            
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=fJOFfct8lJ4"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/fJOFfct8lJ4/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=fJOFfct8lJ4">ΟΙ ΥΦΙΣΤΑΜΕΝΕΣ ΠΡΟΚΛΗΣΕΙΣ ΤΗΣ ΚΥΠΡΙΑΚΗΣ ΔΗΜΟΚΡΑΤΙΑΣ</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=unic_kypriako">UNIC Κυπριακό</a>
+				</div>
+			</div>
+			
+						
+						
+			            
+                        
+			<div class="slide--item item power_of_threes_0">
+				<div class="slide--img">
+                    <a href="http://www.sigmalive.com/media?show=ZPpZoIN-ki8"><span class="video--icon"><span class="iconfont iconfont-uniF10A"></span></span><img src="https://i.ytimg.com/vi/ZPpZoIN-ki8/mqdefault.jpg" /></a>
+				</div>
+				
+				<div class="slide--txt">
+					<a href="http://www.sigmalive.com/media?show=ZPpZoIN-ki8">ΣΥΝΕΧΙΖΕΙ Η ΚΥΠΡΙΑΚΗ ΔΗΜΟΚΡΑΤΙΑ ΝΑ ΔΙΑΠΡΑΓΜΑΤΕΥΕΤΑΙ ΜΕ ‘ΣΗΜΑΔΕΜΕΝΗ ΤΡΑΠΟΥΛΑ’;</a>
+				</div>
+				
+				<div class="slide--cat">
+					<a href="/videos?cat=unic_kypriako">UNIC Κυπριακό</a>
+				</div>
+			</div>
+			
+						
+			            </div>
+            			
+					</div>
+		<!--end of slide set -->
+			</div>
+</div>			
+			
+			
+			
+			<!--content footer App newsleterr etc-->
+			<div class="clear"></div>
+<div class="separator"></div>
+
+<div id="content_footer" class="clearfix nocontent">
+	<div class="col--1-3 app">
+		<h2>SigmaLive App</h2>
+		<div class="info--txt">	
+		Κατεβάστε την εφαρμογή στο κινητό σας για άμεση και γρήγορη ενημέρωση.
+		</div>
+		<span class="phone--icon"></span>
+		<div class="app--link">
+			<a href="https://itunes.apple.com/cy/app/sigmalive/id501663210?mt=8">App link</a>
+		</div>
+		<div class="app--link1">
+			<a href="https://play.google.com/store/apps/details?id=com.sigmalive.iphone&hl=en">App link</a>
+		</div>
+	</div>
+	<div class="col--1-3 follow col col__hidden-phone">
+		<h2>Ακολουθήστε μας</h2>
+		<div class="info--txt">	
+		Παρακολουθήστε τις εξελίξεις μέσω των social media του SigmaLive
+		</div>
+		<div id="socialfooter" class="col col__hidden-phone">
+			<span class="circled fb"><a target="_blank" href="https://www.facebook.com/sigmalivecy"><span class="iconfont iconfont-G"></span></a></span>
+			<span class="circled tw"><a target="_blank" href="https://twitter.com/sigmalivecom"><span class="iconfont iconfont-uniF243"></span></a></span>
+			<span class="circled yt"><a target="_blank" href="http://www.youtube.com/user/sigmalivevideo"><span class="iconfont iconfont-uni79"></span></a></span>
+			<span class="circled gp"><a target="_blank" href="https://plus.google.com/u/0/+sigmalive"><span class="iconfont iconfont-uniF146"></span></a></span>
+			<span class="circled rss"><a target="_blank" href="http://www.sigmalive.com/rss"><span class="iconfont iconfont-rss"></span></a></span>
+		</div>
+	</div>
+	<div class="col--1-3 newsletter col col__hidden-phone">
+		<h2>Newsletter</h2>
+		<div class="info--txt">	
+		Εγγραφείτε στο Newsletter και μείνετε πάντα ενήμεροι!
+		</div>
+		<div id="newsletter" class="clearfix">	
+		<form action="/subscribe" method="POST" />
+			<input type="text" name="mail" placeholder="Eγγραφή στο Newsletter" />
+			<button type="submit" class="btn">Εγγραφή</button>	
+		</form>
+		</div>
+	</div>
+</div>		</article>
+	</div>
+</div>
+				</div>
+			</div>
+		</main>
+		
+<div class="prefooter clearfix nocontent">
+	<div class="prefooterinner main--centered clearfix">
+		<div id="weather" class="col col--2-4 col--normargin">
+			<div class="inneweather">
+				<div class="weather__block darkblue_bg weather__block--1 weather__block--first">
+					<div class="weather__block--inner">
+						<div class="weather--icn--container">
+							<span class="wi wi-day-cloudy"></span>
+							<div class="city--name">Λευκωσία</div>
+							<div class="city--temp">11°C</div>
+						</div>
+					</div>					
+				</div>
+				<div class="weather__block darkblue_bg weather__block--2">
+					<div class="weather__block--inner">
+						<div class="weather--icn--container">
+							<span class="wi wi-day-cloudy"></span>
+							<div class="city--name">Λεμεσός</div>
+							<div class="city--temp">17°C</div>
+						</div>
+					</div>					
+				</div>
+				<div class="weather__block darkblue_bg weather__block--3 weather__block--last">
+					<div class="weather__block--inner">
+						<div class="weather--icn--container">
+							<span class="wi wi-day-cloudy"></span>
+							<div class="city--name">Λάρνακα</div>
+							<div class="city--temp">15°C</div>
+						</div>
+					</div>					
+				</div>
+				<div class="weather__block darkblue_bg weather__block--3 weather__block--last">
+					<div class="weather__block--inner">
+						<div class="weather--icn--container">
+							<span class="wi wi-day-cloudy"></span>
+							<div class="city--name">Πάφος</div>
+							<div class="city--temp">17°C</div>
+						</div>
+					</div>					
+				</div>
+			</div>
+			<div class="weather--more">
+				<a href="http://www.sigmalive.com/weather">Δείτε αναλυτικά τον καιρό</a>
+			</div>
+		</div>
+		<div id="usefullinks" class="col col--2-4 col--normargin">
+			<div id="useful" class="fright">
+				<a href="http://www.sigmalive.com/pharmacies" id="pharmacy">
+					<span class="icn">
+						<span class="iconfont iconfont-pharmacy"></span>
+					</span>
+					<span class="txt">Φαρμακεία</span>
+				</a>
+				<a href="http://www.sigmalive.com/titloi-efhmeridwn" id="newstitle">
+					<span class="icn">
+						<span class="iconfont iconfont-newspaper"></span>
+					</span>
+					<span class="txt">Τίτλοι Ειδήσεων</span>
+				</a>
+				<a href="http://www.sigmalive.com/flights" id="flights">
+					<span class="icn">
+						<span class="iconfont iconfont-flights"></span>
+					</span>
+					<span class="txt">Πτήσεις</span>
+				</a>
+			</div>
+		</div>	
+	</div>
+
+</div>
+<footer class="darkblue_bg">
+	<div id="footer" class="nocontent">
+		<div id='div-gpt-ad-1384501975222-0'>
+				<script type='text/javascript'>
+				googletag.cmd.push(function() { googletag.display('div-gpt-ad-1384501975222-0'); });
+				</script>
+				</div>				<div class="footer--inner main--centered clearfix">
+			<div class="footer--inner--links col col__hidden-tablet col__hidden-phone">
+				<!--links column -->
+								<div class="col--normargin col--1-5 footer--links-column">
+					<h4>ΕΙΔΗΣΕΙΣ</h4>
+					<ul>
+					   	<li>
+		<a href="http://www.sigmalive.com/news/local">Κύπρος</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/news/kypriako">Κυπριακό</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/news/greece">Ελλάδα</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/news/international">Διεθνή</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/news/oikonomia">Οικονομία</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/news/energia">Ενέργεια</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/news/environment">Περιβάλλον</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/news/europ">Ευρώπη</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/news/mesi-anatoli">Μέση Ανατολή</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/news/politics">Πολιτική</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/opinions">Απόψεις</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/news/opinions_sigmalive">Η Γνώμη σας</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/news/scitech">Τεχνολογία</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/lifestyle/health">Υγεία</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/news/perierga">Περίεργα</a>
+	</li>
+					</ul>
+				</div>
+				
+				<!--links column -->
+								<div class="col--normargin col--1-5 footer--links-column">
+					<h4>ΑΘΛΗΤΙΚΑ</h4>
+					<ul>
+					   	<li>
+		<a href="http://www.sigmalive.com/sports/football/cyprus">Ποδόσφαιρο Κύπρος</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/sports/football/greece">Ελλάδα</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/sports/football/international/england">Αγγλία</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/sports/football/international/spain">Ισπανία</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/sports/football/international">Διεθνές Ποδόσφαιρο</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/sports/all-other-sports">Άλλα Αθλήματα</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/sports/all-other-sports/basketball">Μπάσκετ</a>
+	</li>
+					</ul>
+				</div>
+								
+				<!--links column -->
+								<div class="col--normargin col--1-5 footer--links-column">
+					<h4>LIFESTYLE</h4>
+					<ul>
+					   	<li>
+		<a href="http://www.sigmalive.com/lifestyle/culture">Πολιτισμός</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/lifestyle/culture/books">Βιβλία</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/lifestyle/culture/music">Μουσική</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/lifestyle/culture/cinema">Σινεμά</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/lifestyle/culture/art">Τέχνη</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/lifestyle/culture/theater">Θέατρο</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/lifestyle/subjects">Θέματα</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/lifestyle/showbiz">Showbiz</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/lifestyle/travel">Ταξίδια</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/lifestyle/cooking">Cooking</a>
+	</li>
+					</ul>
+				</div>
+								
+				<!--links column -->
+								<div class="col--normargin col--1-5 footer--links-column">
+					<h4>ΑΛΛΑ</h4>
+					<ul>
+					   	<li>
+		<a href="http://www.sigmalive.com/inbusiness">In Business News</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/liveradio">Live Radio</a>
+	</li>
+	<li>
+		<a href="http://www.sigmatv.com/" target="_blank">Sigma TV</a>
+	</li>
+	<li>
+		<a href="http://city.sigmalive.com/" target="_blank">Cityfreepress</a>
+	</li>
+					</ul>
+				</div>
+				
+				<!--links column -->
+								<div class="col--normargin col--1-5 footer--links-column">
+					<h4>ΧΡΗΣΤΙΚΑ</h4>
+					<ul>
+					   	<li>
+		<a href="http://www.sigmalive.com/pharmacies">Φαρμακεία</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/flights">Αεροδρόμια</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/weather">Καιρός</a>
+	</li>
+					</ul>
+				</div>
+							</div>
+			
+			<div class="footer--row">
+				<div class="footer--inner--row">
+					<ul>
+                        	<li>
+		<a href="http://www.sigmalive.com/personal-data-policy">Προσωπικά Δεδομένα</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/terms-and-conditions">Όροι Χρήσης</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/applications">Applications</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/about">Ταυτότητα</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/contact">Επικοινωνία</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/site-credits">Site Credits</a>
+	</li>
+	<li>
+		<a href="http://www.sigmalive.com/diafimistite">Διαφημιστείτε</a>
+	</li>
+					</ul>
+				</div>
+			</div>
+			<div id="copyright">
+				<div class="col--2-3 col--normargin copy--left">
+					© 2015 Powered By SigmaLive, <a href="#">Part of Dias Group of Companies.</a>
+				</div>
+				<div class="col--1-3 col--normargin copy--left">
+					<div class="wedia_footer">
+							Designed by<a href="http://wedia.gr" target="_blank">Wedia</a>
+					</div>
+					<div class="clear"></div>
+					<div class="kondiment_footer">Developed by<a href="http://kondiment.com.cy/" target="_blank">Kondiment</a></div>
+					<div class="clear"></div>
+					<div class="comit_footer">Infrastructure by<a href="http://www.comit.com.cy/" target="_blank">COMIT</a></div>
+					<div class="clear"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</footer>
+
+<!-- main scripts -->
+<script type="text/javascript" src="http://www.sigmalive.com/application/themes/default/js/wedia/main.js"></script>
+
+<script type="text/javascript">
+var disqus_shortname = 'wwwsigmalivecom';
+
+/* * * DON'T EDIT BELOW THIS LINE * * */
+(function () {
+	var s = document.createElement('script'); s.async = true;
+	s.type = 'text/javascript';
+	s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+	(document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>	</div>
+	<a href="#0" class="cd-top">Top</a>
+<script type="text/javascript">window.NREUM||(NREUM={});NREUM.info={"beacon":"bam.nr-data.net","licenseKey":"a6b223e43b","applicationID":"3006801","transactionName":"ZFFbZhZUXURTVhEMXV0bbEANGlpZVlAdS0JbRA==","queueTime":0,"applicationTime":1367,"atts":"SBZYEF5OTko=","errorBeacon":"bam.nr-data.net","agent":"js-agent.newrelic.com\/nr-536.min.js"}</script></body>
+</html>
