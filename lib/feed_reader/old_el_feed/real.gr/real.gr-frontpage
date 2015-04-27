@@ -1,0 +1,9 @@
+url http://www.real.gr/default.aspx?page=home
+include_re {/DefaultArthro\.aspx\?page=[a-z]+&id=[0-9]{4,}&catID=[0-9]{1,3}$}
+htmltidy_feed_p 1
+htmltidy_article_p 1
+xpath_article_title {returnstring(//td[@class="real_article_header_1stline"])}
+xpath_article_body {returntext(//div[@id="mytxt"]/div[@class="article_pure_text"][last()])}
+xpath_article_image {{values(//div[@id="_ctl26__ctl0_Article"]//img/@src)}}
+xpath_article_date {returndate(//td[@class="real_article_2ndline"],"%d/%m/%Y %H:%M:%S %p","el_GR")}
+xpath_article_modified_time {}

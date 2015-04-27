@@ -1,0 +1,12 @@
+url http://auto.in.gr/
+include_re {/article/\?aid=[0-9]{4,}$}
+htmltidy_feed_p 0
+htmltidy_article_p 0
+xpath_article_title {returnstring(//div[@id="main"]//h1)}
+xpath_article_body {returntext(//div[@id="intext_content_tag"])}
+xpath_article_image {
+    {values(//div[@id="main"]/dl[@class="article-photo-main-hor"]//img[@width]/@src)}
+}
+xpath_article_date {returndate(string(//div[@id="main"]//ins/@datetime),"%Y-%m-%dT%H:%M:%SZ")}
+xpath_article_modified_time {}
+

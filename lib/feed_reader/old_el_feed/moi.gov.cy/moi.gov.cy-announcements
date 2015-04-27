@@ -1,0 +1,12 @@
+url http://www.moi.gov.cy/moi/moi.nsf/page91_gr/page91_gr?OpenDocument
+include_re {/moi\.nsf/All/[A-Z0-9]{32}\?OpenDocument$}
+xpath_feed_item {//a[@href and @class="titlesmall"]}
+htmltidy_feed_p 0
+htmltidy_article_p 0
+xpath_article_title {returnstring(//a[@class="simpletitle"])}
+xpath_article_body {returntext(//td[@width="644" and @bgcolor="#FFFFFF" and @colspan="2"]/div[@align="justify"])}
+xpath_article_image {
+    {values(//td[@width="644" and @bgcolor="#FFFFFF" and @colspan="2"]/div[@align="justify"]//img/@src)}
+}
+xpath_article_date {returndate(//td[@width="644" and @bgcolor="#FFFFFF" and @colspan="2"]/span[@class="titlesmall"],"%d/%m/%Y")}
+xpath_article_modified_time {}

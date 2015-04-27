@@ -1,0 +1,10 @@
+url http://www.zougla.gr/
+include_re {[[:alnum:]\-]+/article/[[:alnum:]\-]+$}
+htmltidy_feed_p 0
+htmltidy_article_p 0
+xpath_article_title {returnstring(//div[@class="article_canvas"]/h1[@class="article_title"])}
+xpath_article_body {returntext(//div[@class="article_canvas"]/div[@class="description"])}
+xpath_article_image {{values(//div[@class="article_canvas"]/div[@class="article_image"]/a/img/@src)}}
+xpath_article_date {normalizedate(substring-after(//div[@class="article_canvas"]/div[@class="top_date"],":"),"el_GR", "%A, %d %B %Y, %H:%M")}
+xpath_article_modified_time {normalizedate(substring-after(//div[@class="article_canvas"]/div[@class="date"],":"),"el_GR", "%A, %d %B %Y, %H:%M")}
+

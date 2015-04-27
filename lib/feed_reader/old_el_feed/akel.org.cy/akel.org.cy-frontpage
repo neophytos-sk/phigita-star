@@ -1,0 +1,11 @@
+url http://www.akel.org.cy/nqcontent.cfm?a_id=1&lang=l1
+xpath_feed_item {//div[@class="homenews"]//a[@href]}
+include_re {/nqcontent\.cfm\?.*d=[0-9]{4,}}
+htmltidy_feed_p 1
+htmltidy_article_p 1
+xpath_article_title {returnstring(//div[@id="il_title"]/h1)}
+xpath_article_description {returnstring(//div[@id="il_summary"]/i)}
+xpath_article_body {returntext(//div[@id="il_text"])}
+xpath_article_image {}
+xpath_article_date {normalizedate(substring-after(//div[@id="il_pub_date"]/i, ":"),"el_GR", "%B %d, %Y")}
+xpath_article_modified_time {}

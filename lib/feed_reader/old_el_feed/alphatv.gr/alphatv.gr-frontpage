@@ -1,0 +1,13 @@
+url http://www.alphatv.gr/Home.aspx
+include_re {/Newsroom/Alpha-News/[[:alnum:]]+/.*.aspx$}
+htmltidy_feed_p 1
+htmltidy_article_p 1
+xpath_article_title {returnstring(//div[@class="inner-news"]/h1)}
+xpath_article_body {returntext(//div[@class="inner-news"]/div[@class="row" and position()=2])}
+xpath_article_image {{values(//div[@class="inner-news"]/div[@class="row"]//li/img/@src)}}
+xpath_article_date {returndate(string(//dl[@class="news-info"]/dd/ul/li[2]),"%d/%m/%Y%H:%M")}
+xpath_article_modified_time {}
+xpath_article_cleanup {
+    {//div[@class="gallery-news carousel"]}
+    {//div[@class="video-news"]}
+}

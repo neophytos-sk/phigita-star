@@ -1,0 +1,10 @@
+url http://www.madata.gr/
+include_re {/[[:alnum:]\-]+/[0-9]{4,}\.html$}
+htmltidy_feed_p 0
+htmltidy_article_p 0
+xpath_article_title {returnstring(//div[@class="article node"]/h1[@class="title"])}
+xpath_article_body {returntext(//div[@id="art_cont1"])}
+xpath_article_image {{values(//div[@class="article node"]//div[@class="section content"]/img[@width]/@src)}}
+xpath_article_date {normalizedate(//p[@class="date date_main"]/text(), "el_GR","%d %B %Y | %H:%M")}
+xpath_article_modified_time {}
+

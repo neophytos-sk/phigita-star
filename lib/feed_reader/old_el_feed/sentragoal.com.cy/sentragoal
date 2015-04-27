@@ -1,0 +1,20 @@
+url "http://www.sentragoal.com.cy/default.asp"
+include_re {article.asp\?catid=[0-9]+&subid=[0-9]+&pubid=[0-9]+}
+encoding {cp1253}
+article_langclass {el.utf8}
+htmltidy_feed_p 1
+htmltidy_article_p 1
+xpath_article_title {returnstring(//div[@class="arttop"]/h1)}
+xpath_article_body {returntext(//div[@id="arttext"])}
+xpath_article_date {returndate(values(split-string(//div[@class="date"]," ")[position() != 1]),"%H:%M %d/%m")}
+xpath_article_image {
+    {values(//div[@class="PHOTOmain"]//img/@src)}
+    {values(//div[@id="arttext"]//img/@src)}
+}
+xpath_article_cleanup {
+    {//div[@class="arttop"]}
+    {//div[@class="PHOTOmain"]}
+    {//div[@class="banrelbox"]}
+    {//div[@id="socialbox"]/following-sibling::*}
+    {//div[@id="socialbox"]}
+}

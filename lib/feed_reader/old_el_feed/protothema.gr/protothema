@@ -1,0 +1,16 @@
+url http://www.protothema.gr/
+include_re {/article/[0-9]{4,}/[[:alnum:]\-]+/$}
+htmltidy_feed_p 1
+htmltidy_article_p 1
+check_for_revisions_p 1
+xpath_article_title {returnstring(//div[@class="article-title"]/h2[@class="h-big"])}
+xpath_article_body {returntext(//div[@class="col span_8 leftbar"]/div[@class="article-content"])}
+xpath_article_image {{values(//a[@rel="mainphotos"]/img/@src)}}
+xpath_article_date {returndate(concat(//div[@class="article-info"]/span[@class="time"][1]," ",//div[@class="article-info"]/span[@class="time"][2]),"%d/%m/%Y %H:%M")}
+xpath_article_modified_time {returndate(concat(//div[@class="article-info"]/span[@class="time"][3]," ",substring-before(//div[@class="article-info"]/span[@class="time"][4],"(upd)")),"%d/%m/%Y %H:%M")}
+xpath_article_author {returnstring(//div[@class="article-info"]/span[@class="name"])}
+xpath_article_cleanup {
+    {//div[@class="article-content"]/h3}
+    {//div[@class="adtext"]}
+}
+

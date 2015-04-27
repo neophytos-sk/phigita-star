@@ -1,0 +1,17 @@
+url http://www.iefimerida.gr/
+include_re {/news/[0-9]{4,}/}
+htmltidy_feed_p 0
+htmltidy_article_p 0
+xpath_article_title {returnstring(//span[@class="field-content"]/h1)}
+xpath_article_body {returntext(//div[@id="node-inner-left"]//div[@class="content clear-block"])}
+xpath_article_tags {values(//div[@id="the-content"]//a[@rel="tag"]/text())}
+xpath_article_image {
+    {values(//div[@id="content-top"]//div[@class="content"]//a/img/@src)}
+    {values(//div[@id="the-content"]//img/@src)}
+}
+xpath_article_date {returndate(//div[@class="views-field-created"]/span[@class="field-content"], "%d.%m.%Y %H:%M")}
+xpath_article_modified_time {}
+xpath_article_cleanup {
+    {//table[@id="attachments"]}
+    {//table[@class="sticky-header"]}
+}

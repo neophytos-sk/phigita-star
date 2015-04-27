@@ -1,0 +1,16 @@
+url http://www.neakriti.gr/?Page=home
+include_re {/\?page=newsdetail&DocID=[0-9]{4,}&srv=[0-9]{1,3}$}
+htmltidy_feed_p 0
+htmltidy_article_p 0
+xpath_article_title {returnstring(//span[@class="NA_NewsItem_HomeHeadline__ctl12"])}
+xpath_article_body {returntext(//div[@class="NA_NewsItem_NAText__ctl12"])}
+xpath_article_image {
+    {//td[@id="_ctl12__ctl0_NAMainImage"]/img/@src}    
+}
+xpath_article_date {
+    coalesce(
+        returndate(//span[@class="NA_NewsItem_DateTime__ctl12"]/text(),"%d/%m/%Y, %H:%M"),
+        returndate(//span[@class="NA_NewsItem_DateTime__ctl12"]/strong/following-sibling::text(),"%d/%m/%Y, %H:%M")
+    )
+}
+xpath_article_modified_time {returndate(//span[@class="NA_NewsItem_DateTime__ctl12"]/strong[2]/following-sibling::text(),"%d/%m/%Y, %H:%M")}

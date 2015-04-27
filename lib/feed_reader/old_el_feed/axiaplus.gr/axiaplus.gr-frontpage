@@ -1,0 +1,17 @@
+url http://www.axiaplus.gr/
+include_re {/article/[0-9]{4,}/[[:alnum:]\-]+/$}
+encoding {cp1253}
+htmltidy_feed_p 0
+htmltidy_article_p 0
+xpath_article_title {returnstring(//div[@id="content"]/h1[@class="article_heading"])}
+xpath_article_body {returntext(//div[@id="content"]/p)}
+xpath_article_image {{values(//div[@id="content"]/div[@class="article_images_wrapper"]/div[@class="image"]/a/img/@src)}}
+xpath_article_date {returndate(//div[@id="content"]/p[@class="article_date"],"%d/%m/%Y - %H:%M")}
+xpath_article_tags {values(//div[@id="content"]/p[@class="tags"]/a/text())}
+xpath_article_modified_time {}
+xpath_article_cleanup {
+    {//div[@id="content"]/div[@class="article_images_wrapper"]/preceding-sibling::*}
+    {//div[@id="content"]/div[@style="clear:both;"]/following-sibling::*}
+}
+
+
