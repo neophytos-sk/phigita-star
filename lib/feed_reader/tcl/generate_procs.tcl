@@ -634,7 +634,7 @@ proc ::feed_reader::generate_xpath {feedVar xpathVar matching_pairsVar encoding}
             }
         }
 
-        if { $xpath(article_title) eq {//title_from_feed} } { {
+        if { $xpath(article_title) eq {//title_from_feed} } {
             set feed(keep_title_from_feed) 1
         }
 
