@@ -155,10 +155,12 @@ proc ::feed_reader::fetch_feed {resultVar feedVar {stoptitlesVar ""}} {
 
     set errorcode [::xo::http::fetch html $url]
     if { ${errorcode} } {
+        puts "error fetching feed: errocode=$errorcode"
         return $errorcode
     }
 
     if { ${html} eq {} } {
+        puts "empty html while fetching feed"
         return -4  ;# empty html while fetching feed
     }
 
@@ -174,6 +176,10 @@ proc ::feed_reader::fetch_feed {resultVar feedVar {stoptitlesVar ""}} {
         set doc [dom parse ${html}]
     }
 
+    if { [string length $html] < 10000 } {
+        puts "url = $url"
+        puts "html = $html"
+    }
 
     foreach cleanup_xpath ${xpath_feed_cleanup} {
         foreach cleanup_node [${doc} selectNodes $cleanup_xpath] {
@@ -1601,14 +1607,16 @@ proc ::feed_reader::load_content {itemVar contentsha1 {include_labels_p "1"}} {
 
 }
 
-proc ::feed_reader::print_item {itemVar} {
+proc ::feed_reader::print_item {itemVar {exclude_keys ""}} {
     upvar $itemVar item
 
     puts "--"
     foreach {key value} [array get item] {
-	if { ${value} ne {} } {
-	    puts "* ${key}: ${value}"
-	}
+        if { $key ni $exclude_keys } {
+            if { ${value} ne {} } {
+                puts "* ${key}: ${value}"
+            }
+        }
     }
 }
 
@@ -2195,9 +2203,20 @@ proc ::feed_reader::sync_feeds {{news_sources ""} {debug_p "0"}} {
 }
 
 
+proc ::feed_reader::curl {url} {
+    set errorcode [::xo::http::fetch html $url]
+    if { ${errorcode} } {
+        puts "error fetching $url"
+        return $errorcode
+    }
+
+    puts "html=[string range $html 0 1000]"
+    
+}
+
 
 #TODO: we need a way to test feed (before starting to store it)
-proc ::feed_reader::test_feed {news_source {limit "3"} {fetch_item_p "1"}} {
+proc ::feed_reader::test_feed {news_source {limit "3"} {fetch_item_p "1"} {exclude_keys ""}} {
 
     variable meta
     variable stoptitles
@@ -2235,7 +2254,8 @@ proc ::feed_reader::test_feed {news_source {limit "3"} {fetch_item_p "1"}} {
                         puts "info=[array get info]"
                         continue
                     }
-                    print_item item 
+                    #puts $item(date)
+                    print_item item $exclude_keys
                 }
 		unset item
 		unset info

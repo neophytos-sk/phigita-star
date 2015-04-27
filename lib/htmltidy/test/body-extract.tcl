@@ -1,3 +1,4 @@
+#!/usr/bin/tclsh
 source ../../naviserver_compat/tcl/module-naviserver_compat.tcl
 
 ::xo::lib::require htmltidy

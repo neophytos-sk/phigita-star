@@ -20,6 +20,8 @@ proc ::xo::http::fetch {contentVar url {optionsVar ""} {infoVar ""}} {
     if { [catch {
 	set errorcode [curl::transfer \
 			   -nosignal 1 \
+               -noprogress 1 \
+               -encoding "identity" \
 			   -url ${url} \
 			   -timeout ${timeout} \
 			   -httpversion ${httpversion} \

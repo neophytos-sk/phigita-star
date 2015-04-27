@@ -1,3 +1,6 @@
+::persistence::define_ks "web_cache_db"
+::persistence::define_cf "web_cache_db" "web_page"
+
 ::persistence::define_ks "newsdb"
 
 foreach column_family {

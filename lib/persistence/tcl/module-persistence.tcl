@@ -9,9 +9,9 @@ proc ::persistence::get_package_dir {} "return ${package_dir}"
 
 proc ::persistence::get_conf_dir {} "return ${package_dir}/conf"
 
+# file join $dir nest-lang.tcl
 
 set filelist [list \
-    [file join $dir nest-lang.tcl] \
     [file join $dir data_procs.tcl] \
     [file join $dir orm_procs.tcl] \
     [file join $dir sysdb_pdl.tcl]]

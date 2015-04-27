@@ -2,6 +2,8 @@ url http://www.sigmalive.com/
 include_re {/[0-9]+}
 exclude_re {/inbusiness/}
 keep_title_from_feed_p 0
+htmltidy_feed_p 1
+htmltidy_article_p 1
 check_for_revisions 1
 xpath_article_title {returnstring(//h2[@class="cat_article_title"]/a)}
 xpath_article_body {returntext(//div[@id="article_content"])}
