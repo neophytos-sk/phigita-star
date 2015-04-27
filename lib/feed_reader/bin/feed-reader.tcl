@@ -30,7 +30,7 @@ proc print_usage_info {} {
 			   "revisions" "urlsha1" \
 			   "register-axis" "axis_name" \
 			   "register-label" "axis_name label_name" \
-			   "test" "news_source ?limit? ?fetch_item_p?" \
+			   "test" "news_source ?limit? ?fetch_item_p? ?exclude_keys?" \
 			   "remove-feed-items" "domain ?sort_date.urlsha1? ?...?" \
 			   "cluster" "?limit? ?offset?" \
 			   "label-interactive" "axis label keywords ?offset? ?limit? ?callback?" \

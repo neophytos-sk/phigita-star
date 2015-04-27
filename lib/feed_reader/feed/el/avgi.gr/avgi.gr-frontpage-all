@@ -1,35 +1,40 @@
 url http://www.avgi.gr/
+
 feed_type {html}
 encoding {utf-8}
-include_re {/article/[0-9]{4}/[[:alnum:]\-]+$}
-exclude_re {}
-normalize_link_re {}
+check_for_revisions 1
+
 htmltidy_feed_p 1
 htmltidy_article_p 1
-check_for_revisions 1
-keep_title_from_feed_p 0
-article_langclass {auto}
-xpath_feed_cleanup {
-}
-xpath_article_title {returnstring()}
-xpath_article_date {returndate()}
-xpath_article_modified_time {returndate()}
-xpath_article_description {returnstring()}
-xpath_article_tags {values()}
+
+include_re {/article/[0-9]+}
+exclude_re {}
+
+xpath_article_date {returndate(//div[@class="portlet-body"]/ul/li[3],"%d.%m.%Y")}
+xpath_article_title {returnstring(//div[@class="portlet-body"]/h1)}
+xpath_article_body {returntext(//div[@class="article-text"])}
 xpath_article_image {
-    {values()}
+    {values(//div[@class="fullstory-photos-main-photo"]/a/img/@src)}
 }
-xpath_article_attachment {
-    {values()}
-}
-xpath_article_cleanup {
-}
-xpath_article_body {returntext()}
-xpath_article_video {
-    {values()}
-}
-xpath_article_author {string()}
-end_of_text_cleanup_p 0
-end_of_text_coeff "0.3"
+
 comment {
+    normalize_link_re {}
+    keep_title_from_feed_p 0
+    article_langclass {auto}
+    xpath_feed_cleanup {
+    }
+    xpath_article_modified_time {returndate()}
+    xpath_article_description {returnstring()}
+    xpath_article_tags {values()}
+    xpath_article_attachment {
+        {values()}
+    }
+    xpath_article_cleanup {
+    }
+    xpath_article_video {
+        {values()}
+    }
+    xpath_article_author {string()}
+    end_of_text_cleanup_p 0
+    end_of_text_coeff "0.3"
 }

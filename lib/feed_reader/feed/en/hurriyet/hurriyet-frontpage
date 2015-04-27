@@ -3,7 +3,7 @@ include_re {.*pageID=[0-9]+\&nID=[0-9]+\&NewsCatID=[0-9]+$}
 htmltidy_feed_p 0
 htmltidy_article_p 0
 article_langclass {en.utf8}
-xpath_article_title {returnstring(//h1)}
+xpath_article_title {returnstring(//div[@class="NewsDetail"]//h1)}
 comment {
     xpath_article_category {//span[@class="category-item"]/a/text()}
     xpath_article_date {returndate(//div[@id="entry-post"]/descendant::span[@class="meta-time"],"%B %d, %Y")}
