@@ -4,24 +4,23 @@
 # which follows the unfolding of the nested ("nest")
 # calls dictated by "::typesys::lang::struct".
 #
-# ::typesys::lang::struct struct { ... }
+# ::basesys::lang::struct struct { ... }
 
 struct struct {
-    varchar nsp
-    varchar name
-    varchar pk
-    bool is_final_if_no_scope
-    # list<typedecl> slot = {}
-    # multiple typedecl slot = {}
-    multiple typedecl slot = {}
-}
-
-struct typedecl {
     varchar name
     varchar type
-    varchar default_value = ""
-    bool optional_p = false
-    varchar container = ""
+    varchar nsp
+
+    multiple struct slot = {} {
+        varchar name
+        varchar type
+        varchar default_value = ""
+        bool optional_p = false
+        varchar container = ""
+    }
+
+    varchar pk
+    bool is_final_if_no_scope
 }
 
 # If any of our other structs has a slot named email
@@ -36,9 +35,10 @@ struct typedecl {
 # in any case, whereas msg4 would require the use of the
 # qualified name.
 
-struct email -pk address {
+struct email {
     varchar name = ""
     varchar address
+    pk "address"
 }
 
 struct file {
@@ -68,42 +68,14 @@ struct message {
     pk "message_id"
     is_final_if_no_scope "yes"
 
-    slot {
-        name "message_id"
-        type "varint"
-    }
-
-    slot {
-        name "device"
-        type "varchar"
-        default_value "sms"
-    }
-
-    slot {
-        name "num_comments"
-        type "int16"
-        default_value 0
-    }
-
     # typedecl section
  
     varint message_id
-
     varchar device = "sms"
-
     int16 num_comments = 0
-
     varchar subject
-
     varchar body
-
     email from
-
-    # embedded object
-    # struct -name from {
-    #     varchar name = ""
-    #     varchar email
-    # }
 
     multiple email to
     multiple email cc = {}
@@ -116,28 +88,14 @@ struct message {
     multiple varchar tags = {}
     multiple file attachment = {}
 
-    list<varchar> something
-
-    # map<varchar,int32> gets rewritten to:
-    # map pair {varchar varint} wordcount_U
-    map<varchar,int32> wordcount_W
-
     map struct wordcount_X = {} {
         varchar word
         int32 count
     }
 
     map word_count_pair wordcount_Y
-
     map word_count_pair wordcount_Z = {}
-
-    set<varchar> words
-
-    #extends -ref content.Object
-    #extends -ref content.Content
-    #extends -ref auditing.Auditing -hi world
-
-    #index -attr public_p -abc 123
+    multiple varchar words
 
 }
 
