@@ -1692,12 +1692,16 @@ proc ::feed_reader::print_log_entry {itemVar {contextVar ""}} {
 	set is_revision_string "upd"
     }
 
-
     load_content item $item(contentsha1)
-    set content [concat $item(title) $item(body)]
-    set topic_and_subtopic [classifier::classify el/topic content]
-    set edition [classifier::classify el/edition content]
-    #set edition ""
+
+    set content ""
+    set topic_and_subtopic ""
+    set edition ""
+    if { [classifier::is_enabled_p el/topic] && [classifier::is_enabled_p el/edition] } {
+        set content [concat $item(title) $item(body)]
+        set topic_and_subtopic [classifier::classify el/topic content]
+        set edition [classifier::classify el/edition content]
+    }
 
     lassign [split ${topic_and_subtopic} {/}] topic subtopic
 
@@ -2090,7 +2094,7 @@ proc ::feed_reader::sync_feeds {{news_sources ""} {debug_p "0"}} {
     set feeds_dir [get_package_dir]/feed
     set check_fetch_feed_p 0
     if { ${news_sources} eq {} } {
-        set news_sources [glob -nocomplain -tails -directory ${feeds_dir} *]
+        set news_sources [glob -nocomplain -tails -directory ${feeds_dir} */*]
         set check_fetch_feed_p 1
     }
 

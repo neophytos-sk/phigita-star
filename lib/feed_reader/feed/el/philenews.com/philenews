@@ -1,12 +1,15 @@
 url http://www.philenews.com/
 include_re {/el-gr/.+/[0-9]+/[0-9]+/}
-exclude_re {vid=$}
+exclude_re {/el-gr/gallery/.+|vid=$}
 check_for_revisions 1
 xpath_article_body {returntext(//div[@class="article-body"])}
 xpath_article_author {string(//div[@class="article-author"])}
 xpath_article_tags {values(//meta[@property="article:section"]/@content)}
 xpath_article_image {
    {values(//div[@class="fullarclimg"]/div/a/img/@src)}
+}
+xpath_article_cleanup {
+    {//div[@class="fullarclimg"]/div[matches(@class,"^google","ix")]}
 }
 end_of_text_cleanup_p 1
 end_of_text_cleanup_coeff "0.3"

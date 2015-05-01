@@ -281,6 +281,18 @@ proc ::feed_reader::classifier::train {axis {supercolumn_path ""} {remaining_lev
 
 }
 
+proc ::feed_reader::classifier::is_enabled_p {axis} {
+
+    return \
+        [::persistence::exists_column_p \
+        "newsdb" \
+        "classifier/model" \
+        "${axis}" \
+        "_data_"]
+
+}
+
+
 proc ::feed_reader::classifier::classify {axis contentVar} {
 
     upvar $contentVar content
