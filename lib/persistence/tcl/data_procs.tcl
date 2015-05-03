@@ -10,13 +10,10 @@ namespace eval ::persistence {
 }
 
 proc ::persistence::get_keyspace_dir {keyspace} {
-
     variable base_dir
     set keyspace_dir ${base_dir}/${keyspace}
     return ${keyspace_dir}
-
 }
-
 
 proc ::persistence::get_cf_dir {keyspace column_family} {
     set keyspace_dir [get_keyspace_dir ${keyspace}]
@@ -24,126 +21,97 @@ proc ::persistence::get_cf_dir {keyspace column_family} {
     return ${cf_dir}
 }
 
-
-
 proc ::persistence::exists_ks_p {keyspace} {
-
     variable ks
-
     #return [file isdirectory [get_keyspace_dir ${keyspace}]]
     return [info exists ks(${keyspace})]
-
 }
-
 
 proc ::persistence::assert_ks {keyspace} {
     if { ![exists_ks_p ${keyspace}] } {
-	error "assert_ks: no such keyspace (${keyspace})"
+        error "assert_ks: no such keyspace (${keyspace})"
     }
 }
 
+proc ::persistence::list_ks {} {
+    variable base_dir
+    return [::util::fs::ls ${base_dir}]
+}
 
 proc ::persistence::exists_cf_p {keyspace column_family} {
-
     variable ks
     variable cf
-
     #return [file isdirectory [get_cf_dir ${keyspace} ${column_family}]]
     return [info exists cf(${keyspace},${column_family})]
-
 }
 
 proc ::persistence::assert_cf {keyspace column_family} {
     if { ![exists_cf_p ${keyspace} ${column_family}] } {
-	error "assert_cf: no such column family (${keyspace},${column_family})"
+        error "assert_cf: no such column family (${keyspace},${column_family})"
     }
 }
 
+proc ::persistence::list_cf {ks} {
+    return [::util::fs::ls [get_keyspace_dir ${ks}]]
+}
 
 proc ::persistence::exists_row_p {args} {
-
     set row_dir [get_row {*}${args}]
-
     return [file isdirectory ${row_dir}]
-
 }
-
-
-proc ::persistence::exists_supercolumn_p {args} {
-
-    set supercolumn_dir [get_supercolumn {*}${args}]
-
-    return [file isdirectory ${supercolumn_dir}]
-
-}
-
 
 proc ::persistence::assert_row {keyspace column_family row_key} {
-
     assert_cf ${keyspace} ${column_family}
-
     if { ![exists_row_p ${keyspace} ${column_family} ${row_key}] } {
-	error "assert_row: no such row (${keyspace},${column_family},${row_key})"
+        error "assert_row: no such row (${keyspace},${column_family},${row_key})"
     }
+}
+
+proc ::persistence::list_row {ks cf} {
+    return [::util::fs::ls [get_cf_dir ${ks} ${cf}]]
+}
+
+proc ::persistence::exists_supercolumn_p {args} {
+    set supercolumn_dir [get_supercolumn {*}${args}]
+    return [file isdirectory ${supercolumn_dir}]
 }
 
 proc ::persistence::assert_supercolumn {keyspace column_family row_key supercolumn_path} {
-
     assert_row ${keyspace} ${column_family} ${row_key}
-
     if { ![exists_supercolumn_p ${keyspace} ${column_family} ${row_key} ${supercolumn_path}] } {
-	error "assert_supercolumn: no such supercolumn (${keyspace},${column_family},${row_key},${supercolumn_path})"
+        error "assert_supercolumn: no such supercolumn (${keyspace},${column_family},${row_key},${supercolumn_path})"
     }
 }
-
 
 proc ::persistence::create_ks_if {keyspace {replication_factor "3"}} {
-
     if { ![exists_ks_p ${keyspace}] } {
-	file mkdir [get_keyspace_dir ${keyspace}]
-	return 1
+        file mkdir [get_keyspace_dir ${keyspace}]
+        return 1
     }
-
     return 0
-
 }
-
 
 proc ::persistence::create_cf_if {keyspace column_family} {
-
     if { ![exists_cf_p ${keyspace} ${column_family}] } {
-	file mkdir [get_cf_dir ${keyspace} ${column_family}]
-	return 1
+        file mkdir [get_cf_dir ${keyspace} ${column_family}]
+        return 1
     }
-
     return 0
-
 }
-
 
 proc ::persistence::define_ks {keyspace} {
-
     variable ks
-
     create_ks_if ${keyspace}
-
     set ks(${keyspace}) 1
-    
 }
 
-
-proc ::persistence::define_cf {keyspace column_family} {
-
+proc ::persistence::define_cf {keyspace column_family {spec {}}} {
     variable cf
-
     if { ![exists_ks_p ${keyspace}] } {
-	error "define_cf: no such keyspace (${keyspace})"
+        error "define_cf: no such keyspace (${keyspace})"
     }
-
     create_cf_if ${keyspace} ${column_family}
-
-    set cf(${keyspace},${column_family}) 1
-
+    set cf(${keyspace},${column_family}) ${spec}
 }
 
 proc ::persistence::get_row {keyspace column_family row_key} {
@@ -162,16 +130,10 @@ proc ::persistence::get_row {keyspace column_family row_key} {
 }
 
 proc ::persistence::get_supercolumn {keyspace column_family row_key supercolumn_path} {
-
     set row_dir [get_row ${keyspace} ${column_family} ${row_key}]
-
     set supercolumn_dir ${row_dir}/${supercolumn_path}
-
     return ${supercolumn_dir}
-
 }
-
-
 
 proc ::persistence::create_row_if {keyspace column_family row_key row_dirVar} {
 
@@ -179,12 +141,12 @@ proc ::persistence::create_row_if {keyspace column_family row_key row_dirVar} {
 
     # ensure keyspace exists
     if { ![exists_ks_p ${keyspace}] } {
-	error "create_row_if: no such keyspace (${keyspace})"
+        error "create_row_if: no such keyspace (${keyspace})"
     }
 
     # ensure ${cf_dir} exists
     if { ![exists_cf_p ${keyspace} ${column_family}] } {
-	error "create_row_if: no such column family (${keyspace},${column_family})"
+        error "create_row_if: no such column family (${keyspace},${column_family})"
     }
 
     set row_dir [get_row ${keyspace} ${column_family} ${row_key}]
@@ -217,40 +179,30 @@ proc ::persistence::insert_column {keyspace column_family row_key column_path da
 
     # if it applies, mkdir super_column_dir
     if { [set super_column_dir [file dirname ${filename}]] ne ${row_dir} } {
-
-	# it's a supecolumn
-	file mkdir ${super_column_dir}
-
+        # it's a supecolumn
+        file mkdir ${super_column_dir}
     }
 
     set_data ${filename} ${data}
 
     if { ${timestamp} ne {} } {
-	file mtime ${filename} ${timestamp}
+        file mtime ${filename} ${timestamp}
     }
 
 }
 
-
 proc ::persistence::exists_data_p {filename} {
-
     return [file exists ${filename}]
-
 }
 
 # TODO: consider renaming it to put_data
 proc ::persistence::set_data {filename data} {
-
     file mkdir [file dirname ${filename}]
-
     return [::util::writefile ${filename} ${data}]
-
 }
 
 proc ::persistence::get_data {filename} {
-
     return [::util::readfile ${filename}]
-
 }
 
 proc ::persistence::incr_refcount {target_filename_or_dir link_filename_or_dir} {
@@ -260,11 +212,11 @@ proc ::persistence::incr_refcount {target_filename_or_dir link_filename_or_dir} 
     set link_name [string map ${mapping} ${link_filename_or_dir}]
 
     ::persistence::insert_column \
-	"sysdb" \
-	"refcount_item" \
-	"target-${target_name}" \
-	"link-${link_name}" \
-	"${link_filename_or_dir}"
+        "sysdb" \
+        "refcount_item" \
+        "target-${target_name}" \
+        "link-${link_name}" \
+        "${link_filename_or_dir}"
 
 }
 
@@ -273,48 +225,38 @@ proc ::persistence::assert_refcount_is_zero {target_filename_or_dir} {
     set target_name [string map ${mapping} ${target_filename_or_dir}]
 
     set slice \
-	[::persistence::get_slice \
-	     "sysdb" \
-	     "refcount_item" \
-	     "target-${target_name}"]
+        [::persistence::get_slice \
+             "sysdb" \
+             "refcount_item" \
+             "target-${target_name}"]
 
     if { ${slice} ne {} } {
-	error "assert_refcount: there one or more items linking to this object"
+        error "assert_refcount: there one or more items linking to this object"
     }
 
 }
 
 proc ::persistence::link_data {target_filename_or_dir link_filename_or_dir} {
-
     file link -symbolic ${link_filename_or_dir} ${target_filename_or_dir}
-
     incr_refcount ${target_filename_or_dir} ${link_filename_or_dir} 
-
 }
 
 proc ::persistence::rename_data {old_supercolumn_dir new_supercolumn_dir} {
-
     assert_refcount_is_zero ${old_supercolumn_dir}
-
     file rename ${old_supercolumn_dir} ${new_supercolumn_dir}
-
 }
 
 proc ::persistence::get_name {filename_or_dir} {
-
     return [file tail ${filename_or_dir}]
-
 }
 
 proc ::persistence::delete_data {filename_or_dir} {
-
     assert_refcount_is_zero ${filename_or_dir}
-
     return [file delete ${filename_or_dir}]
-
 }
 
 
+# TODO: replace glob with ::util::fs::ls
 proc ::persistence::empty_row_p {row_dir} {
     return [expr { [glob -nocomplain -directory ${row_dir} *] eq {} }]
 }
@@ -325,14 +267,12 @@ proc ::persistence::predicate=lrange {slicelistVar offset {limit ""}} {
     upvar ${slicelistVar} slicelist
 
     set first ${offset}
-
     set last "end"
     if { ${limit} ne {} } {
-	set last [expr { ${offset} + ${limit} - 1 }]
+        set last [expr { ${offset} + ${limit} - 1 }]
     }
-
     set slicelist [lrange ${slicelist} ${first} ${last}]
-    
+
 }
 
 proc ::persistence::predicate=match {slicelistVar pattern} {
@@ -341,12 +281,12 @@ proc ::persistence::predicate=match {slicelistVar pattern} {
 
     set result [list]
     foreach filename ${slicelist} {
-	if { [string match ${pattern} ${filename}] } {
-	    lappend result ${filename}
-	}
+        if { [string match ${pattern} ${filename}] } {
+            lappend result ${filename}
+        }
     }
     set slicelist ${result}
-    
+
 }
 
 proc ::persistence::predicate=match_name {slicelistVar pattern} {
@@ -355,13 +295,13 @@ proc ::persistence::predicate=match_name {slicelistVar pattern} {
 
     set result [list]
     foreach filename ${slicelist} {
-	set name [::persistence::get_name ${filename}]
-	if { [string match ${pattern} ${name}] } {
-	    lappend result ${filename}
-	}
+        set name [::persistence::get_name ${filename}]
+        if { [string match ${pattern} ${name}] } {
+            lappend result ${filename}
+        }
     }
     set slicelist ${result}
-    
+
 }
 
 
@@ -397,10 +337,12 @@ proc ::persistence::predicate=lsort {slicelistVar args} {
 }
 
 
+# TODO: replace glob with ::util::fs::ls
 proc ::persistence::get_files {dir} {
     return [glob -types {f} -nocomplain -directory ${dir} *]
 }
 
+# TODO: replace glob with ::util::fs::ls
 proc ::persistence::get_subdirs {dir} {
     return [glob -types {d} -nocomplain -directory ${dir} *]
 }
@@ -412,13 +354,11 @@ proc ::persistence::get_recursive_subdirs {dir resultVar} {
 
     set subdirs [get_subdirs ${dir}]
     foreach subdir ${subdirs} {
-	lappend result ${subdir}
-	get_recursive_subdirs ${subdir} result
+        lappend result ${subdir}
+        get_recursive_subdirs ${subdir} result
     }
 
 }
-
-
 
 
 proc ::persistence::get_slice_from_supercolumn {supercolumn_dir {slice_predicate ""}} {
@@ -429,42 +369,28 @@ proc ::persistence::get_slice_from_supercolumn {supercolumn_dir {slice_predicate
 
     set slicelist [list]
     foreach dir ${dirs} {
-	foreach filename [get_files ${dir}] {
-	    lappend slicelist ${filename}
-	}
+        foreach filename [get_files ${dir}] {
+            lappend slicelist ${filename}
+        }
     }
 
     set slicelist [lsort -decreasing ${slicelist}]
-
     if { ${slice_predicate} ne {} } {
-
-	lassign ${slice_predicate} cmd args
-
-	predicate=${cmd} slicelist {*}${args}
-
+        lassign ${slice_predicate} cmd args
+        predicate=${cmd} slicelist {*}${args}
     }
-
     return ${slicelist}
-
 }
 
 
 proc ::persistence::get_slice_from_row {row_dir {slice_predicate ""}} {
-
     set slicelist [get_files ${row_dir}]
-
     set slicelist [lsort -decreasing ${slicelist}]
-
     if { ${slice_predicate} ne {} } {
-
-	lassign ${slice_predicate} cmd args
-
-	predicate=${cmd} slicelist {*}${args}
-
+        lassign ${slice_predicate} cmd args
+        predicate=${cmd} slicelist {*}${args}
     }
-
     return ${slicelist}
-
 }
 
 proc ::persistence::get_slice {keyspace column_family row_key {slice_predicate ""}} {
@@ -485,7 +411,7 @@ proc ::persistence::get_slice_names {args} {
 
     foreach filename ${slicelist} {
 
-	lappend result [::persistence::get_name ${filename}]
+        lappend result [::persistence::get_name ${filename}]
 
     }
 
@@ -504,21 +430,21 @@ proc ::persistence::get_column {keyspace column_family row_key column_path {data
 
     if { ${dataVar} ne {} } {
 
-	if { ${exists_pVar} ne {} } {
+        if { ${exists_pVar} ne {} } {
 
-	    upvar ${exists_pVar} exists_p
+            upvar ${exists_pVar} exists_p
 
-	}
+        }
 
-	set exists_p [exists_data_p ${filename}]
+        set exists_p [exists_data_p ${filename}]
 
-	if { ${exists_p} } {
+        if { ${exists_p} } {
 
-	    upvar ${dataVar} data
+            upvar ${dataVar} data
 
-	    set data [get_data ${filename}]
+            set data [get_data ${filename}]
 
-	}
+        }
 
     }
 
@@ -668,6 +594,8 @@ proc ::persistence::names__directed_join {multirow_slice_names keyspace column_f
 
 ################ multirow
 
+# TODO: replace glob with ::util::fs::ls
+# TODO: replace ::util::fs::ls with ::persistence::list_rows
 proc ::persistence::get_multirow {keyspace column_family {predicate ""}} {
 
 
@@ -885,11 +813,11 @@ proc ::persistence::get_supercolumns_slice_names {args} {
 
     set supercolumns_slice_names [list]
     foreach slicelist ${supercolumns_slice} {
-	set names [list]
-	foreach filename ${slicelist} {
-	    lappend names [::persistence::get_name ${filename}]
-	}
-	lappend supercolumns_slice_names ${names}
+        set names [list]
+        foreach filename ${slicelist} {
+            lappend names [::persistence::get_name ${filename}]
+        }
+        lappend supercolumns_slice_names ${names}
     }
     return ${supercolumns_slice_names}
 
@@ -901,25 +829,25 @@ proc ::persistence::get_supercolumns_slice_names {args} {
 proc ::persistence::rename_supercolumn {keyspace column_family row_key old_name_path new_name_path} {
 
     set old_supercolumn_dir \
-	[::persistence::get_supercolumn \
-	     "${keyspace}" \
-	     "${column_family}" \
-	     "${row_key}" \
-	     "${old_name_path}"]
+        [::persistence::get_supercolumn \
+            "${keyspace}" \
+            "${column_family}" \
+            "${row_key}" \
+            "${old_name_path}"]
 
     set new_supercolumn_dir \
-	[::persistence::get_supercolumn \
-	     "${keyspace}" \
-	     "${column_family}" \
-	     "${row_key}" \
-	     "${new_name_path}"]
+        [::persistence::get_supercolumn \
+            "${keyspace}" \
+            "${column_family}" \
+            "${row_key}" \
+            "${new_name_path}"]
 
 
     puts old_supercolumn_dir=$old_supercolumn_dir
     puts new_supercolumn_dir=$new_supercolumn_dir
 
     ::persistence::rename_data ${old_supercolumn_dir} ${new_supercolumn_dir}
-	
+
 }
 
 
@@ -943,33 +871,33 @@ proc ::persistence::link {keyspace column_family target_path link_path {force_p 
     set link_supercolumn_path [string trimleft ${link_supercolumn_path} {/}]
 
     assert_supercolumn \
-	${keyspace} \
-	${column_family} \
-	${target_row} \
-	${target_supercolumn_path}
+        ${keyspace} \
+        ${column_family} \
+        ${target_row} \
+        ${target_supercolumn_path}
 
     assert_row \
-	${keyspace} \
-	${column_family} \
-	${link_row}
+        ${keyspace} \
+        ${column_family} \
+        ${link_row}
 
 
     set target_supercolumn_dir \
-	[::persistence::get_supercolumn \
-	     "${keyspace}" \
-	     "${column_family}" \
-	     "${target_row}" \
-	     "${target_supercolumn_path}"]
+        [::persistence::get_supercolumn \
+            "${keyspace}" \
+            "${column_family}" \
+            "${target_row}" \
+            "${target_supercolumn_path}"]
 
     set link_supercolumn_dir \
-	[::persistence::get_supercolumn \
-	     "${keyspace}" \
-	     "${column_family}" \
-	     "${link_row}" \
-	     "${link_supercolumn_path}"]
+        [::persistence::get_supercolumn \
+            "${keyspace}" \
+            "${column_family}" \
+            "${link_row}" \
+            "${link_supercolumn_path}"]
 
     if { !${force_p} && [::persistence::exists_data_p ${link_supercolumn_dir}] } {
-	error "::persistence::link - data already exists at ${link_supercolumn_dir}"
+        error "::persistence::link - data already exists at ${link_supercolumn_dir}"
     }
 
     ::persistence::link_data ${target_supercolumn_dir} ${link_supercolumn_dir}

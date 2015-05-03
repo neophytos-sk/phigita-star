@@ -9,7 +9,7 @@ xpath_article_image {
    {values(//div[@class="fullarclimg"]/div/a/img/@src)}
 }
 xpath_article_cleanup {
-    {//div[@class="fullarclimg"]/div[matches(@class,"^google","ix")]}
+    {starts-with(//div[@class="fullarclimg"]/div[@class]/@class,"google")}
 }
 end_of_text_cleanup_p 1
 end_of_text_cleanup_coeff "0.3"

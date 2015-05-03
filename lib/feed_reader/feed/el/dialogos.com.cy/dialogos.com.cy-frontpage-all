@@ -1,21 +1,21 @@
-url http://www.avgi.gr/
+url http://dialogos.com.cy/
 
 feed_type {html}
 encoding {utf-8}
 check_for_revisions 1
-allow_empty_body_p 1
+allow_empty_body_p 0
 
 htmltidy_feed_p 1
 htmltidy_article_p 1
 
-include_re {/article/[0-9]+}
-exclude_re {}
+include_re {/blog/[[:alnum:]\-]+}
+exclude_re {/blog/(?:category|author)/}
 
-xpath_article_date {returndate(//div[@class="portlet-body"]/ul/li[3],"%d.%m.%Y")}
-xpath_article_title {returnstring(//div[@class="portlet-body"]/h1)}
-xpath_article_body {returntext(//div[@class="article-text"])}
+xpath_article_date {returndate(//time[@itemprop="dateCreated"],"%d/%m/%Y %H:%M %p")}
+xpath_article_title {returnstring(//h1[@itemprop="name"])}
+xpath_article_body {returntext(//div[@class="td-post-text-content"])}
 xpath_article_image {
-    {values(//div[@class="fullstory-photos-main-photo"]/a/img/@src)}
+    {values(//div[@class="td-post-featured-image"]/a/img/@src)}
 }
 
 comment {

@@ -37,7 +37,6 @@ foreach column_family {
     ::persistence::define_cf "newsdb" ${column_family}
 }
 
-
 ::persistence::define_ks "crawldb"
 
 foreach column_family {

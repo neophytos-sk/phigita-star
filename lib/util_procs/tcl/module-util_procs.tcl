@@ -217,6 +217,13 @@ proc ::util::dt::age_to_timestamp {age timeval} {
 
 # ---------------------------------- files ------------------------------
 
+namespace eval ::util::fs {;}
+
+proc ::util::fs::ls {dir {types "d"}} {
+    return [glob -nocomplain -tails -types ${types} -directory ${dir} -- "*"]
+}
+
+# TODO: move fs commands under ::util::fs
 proc ::util::readfile {filename} {
     set fp [open ${filename}]
     set data [read $fp [file size ${filename}]]

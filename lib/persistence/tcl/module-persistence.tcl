@@ -1,3 +1,5 @@
+::xo::lib::require util_procs
+
 package provide persistence 0.1
 
 set dir [file dirname [info script]]
