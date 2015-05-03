@@ -14,6 +14,8 @@ proc ::persistence::get_conf_dir {} "return ${package_dir}/conf"
 # file join $dir nest-lang.tcl
 
 set filelist [list \
+    [file join $dir storage_fs.tcl] \
+    [file join $dir storage_ss.tcl] \
     [file join $dir data_procs.tcl] \
     [file join $dir orm_procs.tcl] \
     [file join $dir sysdb_pdl.tcl]]

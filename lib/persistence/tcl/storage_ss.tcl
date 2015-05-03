@@ -1,0 +1,2 @@
+namespace eval ::persistence::ss {;}
+

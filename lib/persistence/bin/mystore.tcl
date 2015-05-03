@@ -4,7 +4,6 @@ source ../../naviserver_compat/tcl/module-naviserver_compat.tcl
 
 ::xo::lib::require persistence
 
-
 namespace eval ::persistence::shell {
 }
 
@@ -23,4 +22,3 @@ foreach ks $keyspaces {
         }
     }
 }
-
