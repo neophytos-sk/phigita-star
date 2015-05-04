@@ -1,0 +1,16 @@
+url http://www.thelocal.es/
+include_re {/[0-9]{8}/[[:alnum:]\-]+$}
+
+htmltidy_feed_p 1
+htmltidy_article_p 1
+
+article_langclass {en.utf8}
+
+xpath_article_title {returnstring(//h1[@id="page_title"])}
+xpath_article_date {returndate(//p[@class="date"],"%b %d, %Y")}
+xpath_article_body {returntext(//div[@class="articleContent"])}
+xpath_article_image {
+    {values(//a[@id="main_picture_article"]/img/@src)}
+}
+xpath_article_cleanup {}
+comment {}
