@@ -1,0 +1,17 @@
+url http://www.kathimerini.com.cy/
+include_re {/index\.php\?pageaction=kat\&modid=[0-9]+\&artid=[0-9]+$}
+encoding {utf-8}
+htmltidy_feed_p 1
+htmltidy_article_p 1
+xpath_article_title {returnstring(//td[@class="title_xbig"])}
+xpath_article_body {returntext(//span[@class="body"])}
+xpath_article_description {returntext(//td[@class="title2"])}
+xpath_article_image {
+    {//div[@class="gal_img"]//a/img/@src}
+}
+xpath_article_date {returndate(string(//article[@id="item-article"]//time/@title), "%d.%m.%Y - %H:%M")}
+xpath_article_modified_time {}
+xpath_article_cleanup {
+    //span[@class="body"]//script
+    //span[@class="body"]//iframe
+}

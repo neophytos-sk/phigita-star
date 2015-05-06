@@ -1,0 +1,17 @@
+url http://atimes.com/
+include_re {/[0-9]{4}/[0-9]{2}/[[:alnum:]\-]+/$}
+
+htmltidy_feed_p 1
+htmltidy_article_p 1
+
+article_langclass {en.utf8}
+
+xpath_article_title {returnstring(//h1[@id="entry-headline"])}
+xpath_article_date {returndate(//div[@class="post-info-date"],"%b %d, %Y")}
+xpath_article_body {returntext(//div[@class="entry-content"])}
+xpath_article_image {}
+xpath_article_cleanup {
+    //div[@class="entry-content-inner"]/*[@class]
+    //div[@class="entry-content-inner"]/p[last()]
+}
+comment {}
