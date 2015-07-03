@@ -20,9 +20,6 @@ foreach ks $keyspaces {
         foreach row [::persistence::list_row $ks $cf] {
             set num_cols [::persistence::num_cols $ks $cf $row]
             puts "    . $row $num_cols"
-            #foreach col [::persistence::get_slice_names $ks $cf $row] {
-            #puts $col
-            #}
             foreach path [::persistence::list_path $ks $cf $row] {
                 puts "      - $path"
                 #set data ""
