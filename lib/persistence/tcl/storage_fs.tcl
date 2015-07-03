@@ -77,20 +77,20 @@ proc ::persistence::fs::list_axis {ks cf} {
     return [::util::fs::ls [get_cf_dir ${ks} ${cf}]]
 }
 
-proc ::persistence::fs::list_row {ks cf} {
-    return [::util::fs::ls [get_cf_dir ${ks} ${cf}]]
+proc ::persistence::fs::list_row {ks cf_axis} {
+    return [::util::fs::ls [get_cf_dir ${ks} ${cf_axis}]]
 }
 
-proc ::persistence::fs::list_col {ks cf row_key} {
-    return [::util::fs::ls [get_row_dir ${ks} ${cf} ${row_key}]]
-}
-
-proc ::persistence::fs::list_path {ks cf row_key} {
-    return [get_paths [get_row_dir ${ks} ${cf} ${row_key}]]
+proc ::persistence::fs::list_path {ks cf_axis row_key} {
+    return [get_paths [get_row_dir ${ks} ${cf_axis} ${row_key}]]
 }
 
 proc ::persistence::fs::num_rows {ks cf} {
     return [llength [list_row ${ks} ${cf}]]
+}
+
+proc ::persistence::fs::list_col {ks cf_axis row} {
+    return [::util::fs::ls [get_row_dir ${ks} ${cf_axis} ${row}]]
 }
 
 proc ::persistence::fs::num_cols {ks cf row} {
