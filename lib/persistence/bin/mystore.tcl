@@ -16,9 +16,12 @@ puts "---------------"
 foreach ks $keyspaces {
     puts "* $ks"
     foreach cf [::persistence::list_cf $ks] {
-        puts "  + $cf"
-        foreach row [::persistence::list_row $ks $cf] {
-            puts "    . $row"
+        foreach axis [::persistence::list_axis $ks $cf] {
+            set num_rows [::persistence::num_rows $ks $cf/$axis]
+            puts "  + $cf/$axis $num_rows"
+            #foreach row [::persistence::list_row $ks $cf/$axis] {
+            #    puts "    . $row"
+            #}
         }
     }
 }

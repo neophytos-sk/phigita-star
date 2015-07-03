@@ -11,7 +11,8 @@ namespace eval ::persistence::fs {
         get_multirow get_multirow_names get_multirow_slice get_multirow_slice_names \
         get_row get_column get_supercolumn \
         get_slice_names get_slice_from_row get_slice_from_supercolumn get_slice \
-        list_ks list_cf list_row
+        list_ks list_cf list_axis list_row list_columns \
+        num_rows
 }
 
 proc ::persistence::fs::get_keyspace_dir {keyspace} {
@@ -72,8 +73,20 @@ proc ::persistence::fs::assert_row {keyspace column_family row_key} {
     }
 }
 
+proc ::persistence::fs::list_axis {ks cf} {
+    return [::util::fs::ls [get_cf_dir ${ks} ${cf}]]
+}
+
 proc ::persistence::fs::list_row {ks cf} {
     return [::util::fs::ls [get_cf_dir ${ks} ${cf}]]
+}
+
+proc ::persistence::fs::list_column_paths {ks cf row_key} {
+    return [::util::fs::ls [get_row ${ks} ${cf} ${row_key}]]
+}
+
+proc ::persistence::fs::num_rows {ks cf} {
+    return [llength [list_row ${ks} ${cf}]]
 }
 
 proc ::persistence::fs::exists_supercolumn_p {args} {
