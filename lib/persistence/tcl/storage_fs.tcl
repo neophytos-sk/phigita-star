@@ -11,8 +11,8 @@ namespace eval ::persistence::fs {
         get_multirow get_multirow_names get_multirow_slice get_multirow_slice_names \
         get_row get_column get_supercolumn \
         get_slice_names get_slice_from_row get_slice_from_supercolumn get_slice \
-        list_ks list_cf list_axis list_row list_columns \
-        num_rows
+        list_ks list_cf list_axis list_row list_col list_path \
+        num_rows num_cols
 }
 
 proc ::persistence::fs::get_keyspace_dir {keyspace} {
@@ -81,12 +81,20 @@ proc ::persistence::fs::list_row {ks cf} {
     return [::util::fs::ls [get_cf_dir ${ks} ${cf}]]
 }
 
-proc ::persistence::fs::list_column_paths {ks cf row_key} {
-    return [::util::fs::ls [get_row ${ks} ${cf} ${row_key}]]
+proc ::persistence::fs::list_col {ks cf row_key} {
+    return [::util::fs::ls [get_row_dir ${ks} ${cf} ${row_key}]]
+}
+
+proc ::persistence::fs::list_path {ks cf row_key} {
+    return [get_paths [get_row_dir ${ks} ${cf} ${row_key}]]
 }
 
 proc ::persistence::fs::num_rows {ks cf} {
     return [llength [list_row ${ks} ${cf}]]
+}
+
+proc ::persistence::fs::num_cols {ks cf row} {
+    return [llength [list_col ${ks} ${cf} ${row}]]
 }
 
 proc ::persistence::fs::exists_supercolumn_p {args} {
@@ -132,18 +140,22 @@ proc ::persistence::fs::define_cf {keyspace column_family {spec {}}} {
     set cf(${keyspace},${column_family}) ${spec}
 }
 
-proc ::persistence::fs::get_row {keyspace column_family row_key} {
-
+proc ::persistence::fs::get_row_dir {keyspace column_family row_key} {
     # aka snapshot directory
     set cf_dir [get_cf_dir ${keyspace} ${column_family}]
+    set row_dir "${cf_dir}/${row_key}"
+    return ${row_dir}
+}
+
+proc ::persistence::fs::get_row {keyspace column_family row_key} {
 
     # TODO: depending on keyspace settings, 
     # we can setup other storage strategies
 
     set delimiter {+}
-    set row_dir "${cf_dir}/${row_key}/${delimiter}"
 
-    return ${row_dir}
+    set row_dir [get_row_dir ${keyspace} ${column_family} ${row_key}]
+    return ${row_dir}/${delimiter}
 
 }
 
@@ -365,6 +377,20 @@ proc ::persistence::fs::get_subdirs {dir} {
     return [glob -types {d} -nocomplain -directory ${dir} *]
 }
 
+proc ::persistence::fs::get_paths {dir} {
+    set paths [list]
+    set files_or_dirs [glob -tails -types {d f} -nocomplain -directory ${dir} *]
+    foreach name ${files_or_dirs} {
+        if { [file type ${dir}/${name}] eq {file} } {
+            lappend paths ${name}
+        } else {
+            foreach path [get_paths ${dir}/${name}] {
+                lappend paths ${name}/${path}
+            }
+        }
+    }
+    return ${paths}
+}
 
 proc ::persistence::fs::get_recursive_subdirs {dir resultVar} {
 
@@ -414,27 +440,17 @@ proc ::persistence::fs::get_slice_from_row {row_dir {slice_predicate ""}} {
 proc ::persistence::fs::get_slice {keyspace column_family row_key {slice_predicate ""}} {
 
     set row_dir [get_row ${keyspace} ${column_family} ${row_key}]
-
-    return [get_slice_from_row \
-		"${row_dir}" \
-		"${slice_predicate}"]
+    return [get_slice_from_row ${row_dir} ${slice_predicate}]
 
 }
 
 proc ::persistence::fs::get_slice_names {args} {
-
     set result [list]
-
     set slicelist [get_slice {*}${args}]
-
     foreach filename ${slicelist} {
-
         lappend result [::persistence::fs::get_name ${filename}]
-
     }
-
     return ${result}
-
 }
 
 
@@ -517,7 +533,7 @@ proc ::persistence::fs::delete_row_if {args} {
     set empty_row_p [empty_row_p ${row_dir}]
 
     if { ${empty_row_p} } {
-	delete_row_dir ${row_dir}
+        delete_row_dir ${row_dir}
     }
 
     return ${empty_row_p}
@@ -530,12 +546,12 @@ proc ::persistence::fs::delete_slice {keyspace column_family row_key {slice_pred
     set slicelist [get_slice_from_row ${row_dir} ${slice_predicate}]
 
     foreach filename ${slicelist} {
-	::persistence::fs::delete_data ${filename}
+        ::persistence::fs::delete_data ${filename}
     }
 
 
     if { [empty_row_p ${row_dir}] } {
-	delete_data ${row_dir}
+        delete_data ${row_dir}
     }
 
     return ${slicelist}
@@ -543,13 +559,9 @@ proc ::persistence::fs::delete_slice {keyspace column_family row_key {slice_pred
 
 
 proc ::persistence::fs::exists_column_p {keyspace column_family row_key column_path} {
-
     set row_dir [get_row ${keyspace} ${column_family} ${row_key}]
-
     set filename ${row_dir}/${column_path}
-
     return [file exists ${filename}]
-
 }
 
 
@@ -558,12 +570,9 @@ proc ::persistence::fs::multiget_slice {keyspace column_family row_keys {slice_p
     set result [list]
 
     foreach row_key ${row_keys} {
-
-	set slicelist [get_slice ${keyspace} ${column_family} ${row_key} ${slice_predicate}]
-
-	lappend result ${row_key}
-	lappend result ${slicelist}
-
+        set slicelist [get_slice ${keyspace} ${column_family} ${row_key} ${slice_predicate}]
+        lappend result ${row_key}
+        lappend result ${slicelist}
     }
 
     return ${result}
