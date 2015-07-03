@@ -1,7 +1,7 @@
 #!/usr/bin/tclsh
 
 source ../../naviserver_compat/tcl/module-naviserver_compat.tcl
-source /web/repos/phigita/service-phigita/packages/kernel/tcl/20-xo/10-io/00-readwrite-procs.tcl
+source [acs_root_dir]/packages/kernel/tcl/20-xo/10-io/00-readwrite-procs.tcl
 
 ::xo::lib::require persistence
 ::xo::lib::require util_procs

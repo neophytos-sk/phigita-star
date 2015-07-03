@@ -1,6 +1,6 @@
 namespace eval ::xo::lib {;}
 proc ::xo::lib::require {module_name} {
-    source /web/servers/service-phigita/lib/${module_name}/pkgIndex.tcl
+    source [acs_root_dir]/lib/${module_name}/pkgIndex.tcl
     package require $module_name
 }
 
@@ -17,9 +17,9 @@ proc ::xo::kit::production_mode_p {} {
 }
 
 
-proc acs_root_dir {} {
-    return /web/servers/service-phigita/
-}
+proc acs_root_dir {} "return [file normalize [file join [file dirname [info script]] ../../..]]"
+
+puts [acs_root_dir]
 
 proc ns_log {level args} {
     puts "${level}: {*}$args"
