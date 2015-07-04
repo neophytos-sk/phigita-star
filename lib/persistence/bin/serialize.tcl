@@ -3,6 +3,7 @@
 source ../../naviserver_compat/tcl/module-naviserver_compat.tcl
 
 ::xo::lib::require persistence
+::xo::lib::require util_procs
 
 namespace eval ::persistence::shell {
 }
@@ -26,17 +27,18 @@ foreach ks $keyspaces {
             set cf_axis ${cf}/${axis}
             set num_rows [::persistence::num_rows $ks $cf_axis]
             puts "    . $cf_axis $num_rows"
+            ::util::io::write_int $fp $num_rows
             foreach row [::persistence::list_row $ks $cf_axis] {
                 set num_cols [::persistence::num_cols $ks $cf_axis $row]
                 puts "      - $row $num_cols"
-                puts -nonewline $fp $row
-                puts -nonewline $fp $num_cols
+                ::util::io::write_vartext $fp $row
+                ::util::io::write_int $fp $num_cols
                 foreach path [::persistence::list_path $ks $cf_axis $row] {
                     puts "          $path"
                     set data ""
                     set filename [::persistence::get_column $ks $cf_axis $row [string trimleft $path {+/}] data]
-                    puts -nonewline $fp $path
-                    puts -nonewline $fp $data
+                    ::util::io::write_utf8 $fp $path
+                    ::util::io::write_utf8 $fp $data
                     puts $filename
                 }
             }
