@@ -15,21 +15,15 @@ namespace eval ::persistence::fs {
         num_rows num_cols
 }
 
-proc ::persistence::fs::get_keyspace_dir {keyspace} {
+proc ::persistence::fs::get_dir {args} {
     variable base_dir
-    set keyspace_dir ${base_dir}/${keyspace}
-    return ${keyspace_dir}
-}
-
-proc ::persistence::fs::get_cf_dir {keyspace column_family} {
-    set keyspace_dir [get_keyspace_dir ${keyspace}]
-    set cf_dir ${keyspace_dir}/${column_family}
-    return ${cf_dir}
+    set dir [join [list ${base_dir} {*}${args}] {/}]
+    return ${dir}
 }
 
 proc ::persistence::fs::exists_ks_p {keyspace} {
     variable ks
-    #return [file isdirectory [get_keyspace_dir ${keyspace}]]
+    #return [file isdirectory [get_dir ${keyspace}]]
     return [info exists ks(${keyspace})]
 }
 
@@ -47,7 +41,7 @@ proc ::persistence::fs::list_ks {} {
 proc ::persistence::fs::exists_cf_p {keyspace column_family} {
     variable ks
     variable cf
-    #return [file isdirectory [get_cf_dir ${keyspace} ${column_family}]]
+    #return [file isdirectory [get_dir ${keyspace} ${column_family}]]
     return [info exists cf(${keyspace},${column_family})]
 }
 
@@ -58,7 +52,7 @@ proc ::persistence::fs::assert_cf {keyspace column_family} {
 }
 
 proc ::persistence::fs::list_cf {ks} {
-    return [::util::fs::ls [get_keyspace_dir ${ks}]]
+    return [::util::fs::ls [get_dir ${ks}]]
 }
 
 proc ::persistence::fs::exists_row_p {args} {
@@ -74,15 +68,15 @@ proc ::persistence::fs::assert_row {keyspace column_family row_key} {
 }
 
 proc ::persistence::fs::list_axis {ks cf} {
-    return [::util::fs::ls [get_cf_dir ${ks} ${cf}]]
+    return [::util::fs::ls [get_dir ${ks} ${cf}]]
 }
 
 proc ::persistence::fs::list_row {ks cf_axis} {
-    return [::util::fs::ls [get_cf_dir ${ks} ${cf_axis}]]
+    return [::util::fs::ls [get_dir ${ks} ${cf_axis}]]
 }
 
 proc ::persistence::fs::list_path {ks cf_axis row_key} {
-    return [get_paths [get_row_dir ${ks} ${cf_axis} ${row_key}]]
+    return [get_paths [get_dir ${ks} ${cf_axis} ${row_key}]]
 }
 
 proc ::persistence::fs::num_rows {ks cf} {
@@ -90,7 +84,7 @@ proc ::persistence::fs::num_rows {ks cf} {
 }
 
 proc ::persistence::fs::list_col {ks cf_axis row} {
-    return [::util::fs::ls [get_row_dir ${ks} ${cf_axis} ${row}]]
+    return [::util::fs::ls [get_dir ${ks} ${cf_axis} ${row}]]
 }
 
 proc ::persistence::fs::num_cols {ks cf row} {
@@ -111,7 +105,7 @@ proc ::persistence::fs::assert_supercolumn {keyspace column_family row_key super
 
 proc ::persistence::fs::create_ks_if {keyspace {replication_factor "3"}} {
     if { ![exists_ks_p ${keyspace}] } {
-        file mkdir [get_keyspace_dir ${keyspace}]
+        file mkdir [get_dir ${keyspace}]
         return 1
     }
     return 0
@@ -119,7 +113,7 @@ proc ::persistence::fs::create_ks_if {keyspace {replication_factor "3"}} {
 
 proc ::persistence::fs::create_cf_if {keyspace column_family} {
     if { ![exists_cf_p ${keyspace} ${column_family}] } {
-        file mkdir [get_cf_dir ${keyspace} ${column_family}]
+        file mkdir [get_dir ${keyspace} ${column_family}]
         return 1
     }
     return 0
@@ -140,13 +134,6 @@ proc ::persistence::fs::define_cf {keyspace column_family {spec {}}} {
     set cf(${keyspace},${column_family}) ${spec}
 }
 
-proc ::persistence::fs::get_row_dir {keyspace column_family row_key} {
-    # aka snapshot directory
-    set cf_dir [get_cf_dir ${keyspace} ${column_family}]
-    set row_dir "${cf_dir}/${row_key}"
-    return ${row_dir}
-}
-
 proc ::persistence::fs::get_row {keyspace column_family row_key} {
 
     # TODO: depending on keyspace settings, 
@@ -154,7 +141,7 @@ proc ::persistence::fs::get_row {keyspace column_family row_key} {
 
     set delimiter {+}
 
-    set row_dir [get_row_dir ${keyspace} ${column_family} ${row_key}]
+    set row_dir [get_dir ${keyspace} ${column_family} ${row_key}]
     return ${row_dir}/${delimiter}
 
 }
@@ -629,7 +616,7 @@ proc ::persistence::fs::get_multirow {keyspace column_family {predicate ""}} {
     assert_cf ${keyspace} ${column_family}
 
 
-    set cf_dir [get_cf_dir ${keyspace} ${column_family}]
+    set cf_dir [get_dir ${keyspace} ${column_family}]
 
     set multirow [lsort -decreasing [glob -types {d} -nocomplain -directory ${cf_dir} *]]
 
