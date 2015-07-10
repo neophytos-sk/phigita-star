@@ -11,7 +11,7 @@ namespace eval ::persistence::fs {
         get_multirow get_multirow_names get_multirow_slice get_multirow_slice_names \
         get_row get_column get_supercolumn \
         get_slice_names get_slice_from_row get_slice_from_supercolumn get_slice \
-        list_ks list_cf list_axis list_row list_col list_path \
+        ls list_ks list_cf list_axis list_row list_col list_path \
         num_rows num_cols
 }
 
@@ -65,6 +65,10 @@ proc ::persistence::fs::assert_row {keyspace column_family row_key} {
     if { ![exists_row_p ${keyspace} ${column_family} ${row_key}] } {
         error "assert_row: no such row (${keyspace},${column_family},${row_key})"
     }
+}
+
+proc ::persistence::fs::ls {args} {
+    return [::util::fs::ls [get_dir {*}${args}]]
 }
 
 proc ::persistence::fs::list_axis {ks cf} {
@@ -127,23 +131,15 @@ proc ::persistence::fs::define_ks {keyspace} {
 
 proc ::persistence::fs::define_cf {keyspace column_family {spec {}}} {
     variable cf
-    if { ![exists_ks_p ${keyspace}] } {
-        error "define_cf: no such keyspace (${keyspace})"
-    }
+    assert_ks ${keyspace}
     create_cf_if ${keyspace} ${column_family}
     set cf(${keyspace},${column_family}) ${spec}
 }
 
 proc ::persistence::fs::get_row {keyspace column_family row_key} {
-
-    # TODO: depending on keyspace settings, 
-    # we can setup other storage strategies
-
     set delimiter {+}
-
-    set row_dir [get_dir ${keyspace} ${column_family} ${row_key}]
-    return ${row_dir}/${delimiter}
-
+    set row_dir [get_dir ${keyspace} ${column_family} ${row_key} ${delimiter}]
+    return ${row_dir}
 }
 
 proc ::persistence::fs::get_supercolumn {keyspace column_family row_key supercolumn_path} {
@@ -154,17 +150,11 @@ proc ::persistence::fs::get_supercolumn {keyspace column_family row_key supercol
 
 proc ::persistence::fs::create_row_if {keyspace column_family row_key row_dirVar} {
 
-    upvar ${row_dirVar} row_dir
-
     # ensure keyspace exists
-    if { ![exists_ks_p ${keyspace}] } {
-        error "create_row_if: no such keyspace (${keyspace})"
-    }
+    assert_ks ${keyspace}
+    assert_cf ${keyspace} ${column_family}
 
-    # ensure ${cf_dir} exists
-    if { ![exists_cf_p ${keyspace} ${column_family}] } {
-        error "create_row_if: no such column family (${keyspace},${column_family})"
-    }
+    upvar ${row_dirVar} row_dir
 
     set row_dir [get_row ${keyspace} ${column_family} ${row_key}]
 

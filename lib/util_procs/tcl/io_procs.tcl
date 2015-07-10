@@ -25,11 +25,11 @@ proc ::util::io::write_vartext {channelId line {encoding ""}} {
     set len [string length $line]
     ###ns_log notice "writeVawrite_vartext $len line"
     if { $encoding ne {} } {
-	fconfigure $channelId -encoding binary
+        fconfigure $channelId -encoding binary
     }
     ::util::io::write_int $channelId $len
     if { $encoding ne {} } {
-	fconfigure $channelId -encoding $encoding
+        fconfigure $channelId -encoding $encoding
     }
     ::util::io::write_text $channelId $line
     return ${len}
@@ -81,9 +81,10 @@ proc ::util::io::read_vartext {channelId {lineVar ""} {encoding ""}} {
     #ns_log notice "read_vartext $len line"
     ::util::io::read_text $channelId $len line
 }
-proc ::util::io::readJavaUTF {channelId {lineVar ""}} {
+
+proc ::util::io::read_java_utf {channelId {lineVar ""}} {
     if { $lineVar ne {} } {
-	upvar $lineVar line
+        upvar $lineVar line
     }
     set len [read $channelId 2]
     binary scan $len S length
@@ -93,16 +94,16 @@ proc ::util::io::readJavaUTF {channelId {lineVar ""}} {
 
 proc ::util::io::read_string {channelId {lineVar ""} {encoding ""}} {
     if { $lineVar ne {} } {
-	upvar $lineVar line
+        upvar $lineVar line
     }
     set len [::util::io::read_int $channelId]
     if { $encoding ne {} } {
-	fconfigure $channelId -encoding $encoding
+        fconfigure $channelId -encoding $encoding
     }
     set line [read $channelId $len]
 }
 
-proc ::util::io::skipString {channelId} {
+proc ::util::io::skip_string {channelId} {
     set len [::util::io::read_int $channelId]
     seek ${channelId} ${len} current
 }
@@ -111,7 +112,19 @@ proc ::util::io::skip_int {channelId} {
     seek ${channelId} 4 current
 }
 
-proc ::util::io::skipVarText {channelId encoding} {
+proc ::util::io::rskip_int {channelId} {
+    seek ${channelId} -4 current
+}
+
+proc ::util::io::skip_long {channelId} {
+    seek ${channelId} 8 current
+}
+
+proc ::util::io::rskip_long {channelId} {
+    seek ${channelId} -8 current
+}
+
+proc ::util::io::skip_vartext {channelId encoding} {
     fconfigure $channelId -encoding binary
     set len [::util::io::read_int $channelId]
     fconfigure $channelId -encoding $encoding
@@ -128,5 +141,5 @@ proc ::util::io::write_utf8 {fp str} {
 proc ::util::io::read_utf8 {fp} {
     binary scan [read $fp 4] i len
     set str [read ${fp} ${len}]
-    return [encoding convertfrom $str]
+    return [encoding convertfrom utf-8 $str]
 }
