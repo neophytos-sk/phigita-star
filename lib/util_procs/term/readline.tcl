@@ -3,7 +3,7 @@
 set dir [file dirname [info script]]
 source [file join $dir "term_procs.tcl"]
 
-proc command_handler {line} {
+proc command_handler {line {stateVar ""}} {
     if { $line eq {sayhi} } {
         puts "hello world"
     }

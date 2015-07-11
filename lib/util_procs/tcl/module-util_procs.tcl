@@ -388,7 +388,7 @@ namespace eval ::util::var {;}
 proc ::util::var::get_value_if {varname {default ""}} {
     upvar $varname var
     if { [info exists var] } {
-	return ${var}
+        return ${var}
     }
     return ${default}
 }

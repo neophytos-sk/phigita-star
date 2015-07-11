@@ -13,7 +13,7 @@ proc ::util::term::clear_screen {} {
 # 0 Clear line from current cursor position to end of line
 # 1 Clear line from beginning to current cursor position
 # 2 Clear whole line (cursor position unchanged)
-proc ::util::term::clear_line {{mode "0"}} {
+proc ::util::term::clear_line {{mode "2"}} {
     puts -nonewline "\x1b\[${mode}K" ; # erase current line
 }
 
@@ -33,11 +33,11 @@ proc ::util::term::move_cursor_up {{num_lines "1"}} {
     puts -nonewline "\x1b\[${num_cols}B"
 }
 # Move the cursor forward N columns
-proc ::util::term::move_cursor_up {{num_lines "1"}} {
+proc ::util::term::move_cursor_right {{num_cols "1"}} {
     puts -nonewline "\x1b\[${num_cols}C"
 }
 # Move the cursor backward N columns
-proc ::util::term::move_cursor_backwards {{num_cols "1"}} {
+proc ::util::term::move_cursor_left {{num_cols "1"}} {
     puts -nonewline "\x1b\[${num_cols}D"
 }
 # Save cursor position
@@ -54,46 +54,56 @@ proc ::util::term::reset {} {
     puts -nonewline "\033c"
 }
 
-proc ::util::term::readline {fid} {
+proc ::util::term::readline {fid {stateVar ""}} {
 
-    set BUFFER ""
+    if { $stateVar ne {} } {
+        upvar $stateVar state
+    }
 
     set viewRow 1    ; # row idx into view area, 1-based
     set viewCol 1    ; # col idx into view area, 1-based
-    set bufRow 0    ; # row idx into full buffer, 0-based
-    set bufCol 0    ; # col idx into full buffer, 0-based
     set IDX(ROWLAST) -1    ; # last row most recently displayed in view
     set IDX(COLLAST) -1    ; # last col most recently displayed in view
-    set char ""        ; # last char received
-    set line [lindex $BUFFER $bufRow] ; # line data of current line
 
+    set pos $state(pos)    ; # col idx into full buffer, 0-based
+    set line $state(init_value)
+
+    if { $line ne {} } {
+        puts -nonewline "$line"
+        flush stdout
+    }
+
+    set char ""        ; # last char received
     while {$char ni "\x11 \x0d"} {
         set char [read $fid 1]
         if { [eof $fid] } {
+            set key ""
             break
         }
-        switch -- $char {
+        switch -exact -- $char {
             \n -
             \r {
+                set key "ENTER"
                 puts -nonewline $char
-                return $line
+                break
             }
             \x11 { # ^q - quit
-                return exit
+                set key "ESC"
+                break
             }
             \x01 { # ^a - beginning of line
-                set bufCol 0
+                set pos 0
             }
             \x04 { # ^d - delete
-             if {$bufCol > [string length $line]} {
-                 set bufCol [string length $line]
-             }
-             set line [string replace $line $bufCol $bufCol]
-             set BUFFER [lreplace $BUFFER $bufRow $bufRow $line]
-             set IDX(COLLAST) -1 ; # force redraw
+                if {$pos > [string length $line]} {
+                    set pos [string length $line]
+                }
+                set line [string replace $line $pos $pos]
+                #set buffer [lreplace $buffer $bufRow $bufRow $line]
+                #set IDX(COLLAST) -1 ; # force redraw
             }
             \x05 { # ^e - end of line
-             set bufCol [string length $line]
+                set pos [string length $line]
             }
             \x06 { ;# ^f - find/search
              global searchpattern
@@ -106,7 +116,7 @@ proc ::util::term::readline {fid} {
                  if {$bufRow < $viewRow} {
                      set viewRow 0
                  } else {
-                     set len [llength $BUFFER]
+                     set len [llength $buffer]
                      if {$bufRow > $len} {
                          set bufRow [expr {$len-1}]
                      }
@@ -114,34 +124,36 @@ proc ::util::term::readline {fid} {
              }
             }
             \x0a { # ^j - insert last yank
-             set currline [string range $line 0 [expr {$bufCol - 1}]]
-             set BUFFER [lreplace $BUFFER $bufRow $bufRow $currline]
+             set currline [string range $line 0 [expr {$pos - 1}]]
+             #set buffer [lreplace $buffer $bufRow $bufRow $currline]
 
              incr bufRow
              incr viewRow
-             set BUFFER [linsert $BUFFER $bufRow \
-                     [string range $line $bufCol end]]
+             set buffer [linsert $buffer $bufRow \
+                     [string range $line $pos end]]
              set IDX(COLLAST) -1 ; # force redraw
-             set line [lindex $BUFFER $bufRow]
-             set bufCol 0
+             set line [lindex $buffer $bufRow]
+             set pos 0
             }
             \x19 { # ^y - yank line
-             if {$bufRow < [llength $BUFFER]} {
-                 set BUFFER [lreplace $BUFFER $bufRow $bufRow]
+             if {$bufRow < [llength $buffer]} {
+                 #set buffer [lreplace $buffer $bufRow $bufRow]
                  set IDX(COLLAST) -1 ; # force redraw
              }
             }
             \x08 -
             \x7f { # ^h && backspace ?
-             if {$bufCol != 0} {
-                 if {$bufCol > [string length $line]} {
-                 set bufCol [string length $line]
-                 }
-                 incr bufCol -1
-                 set line [string replace $line $bufCol $bufCol]
-                 set BUFFER [lreplace $BUFFER $bufRow $bufRow $line]
-                 set IDX(COLLAST) -1 ; # force redraw
-             }
+                   set key "BACKSPACE"
+                if {$pos != 0} {
+                    if {$pos > [string length $line]} {
+                        set pos [string length $line]
+                    }
+                    incr pos -1
+                    set line [string replace $line $pos $pos]
+                    move_cursor_left
+                    clear_line 0 ;# clear line from current position to end
+                    flush stdout
+                }
             }
             \x1b { # ESC - handle escape sequences
                 set next [read $fid 1]
@@ -149,30 +161,33 @@ proc ::util::term::readline {fid} {
                     set next [read $fid 1]
                     switch -exact -- $next {
                         A { # Cursor Up (cuu1,up)
-                            if {$bufRow > 0} {
-                                incr bufRow -1
-                                incr viewRow -1
-                            }
+                            set key "UP"
+                            break
                         }
                         B { # Cursor Down
-                            if {$bufRow < [expr {[llength $BUFFER] - 1}]} {
-                                incr bufRow 1
-                                incr viewRow 1
-                            }
+                            set key "DOWN"
+                            break
                         }
                         C { # Cursor Right (cuf1,nd)
-                            if {$bufCol < [string length $line]} {
-                                incr bufCol 1
+                            if {$pos < [string length $line]} {
+                                incr pos 1
+                                move_cursor_right
+                                flush stdout
                             }
                         }
                         D { # Cursor Left
-                            if {$bufCol > [string length $line]} {
-                                set bufCol [string length $line]
+                            if {$pos > [string length $line]} {
+                                set pos [string length $line]
                             }
-                            if {$bufCol > 0} { incr bufCol -1 }
+                            if {$pos > 0} {
+                                incr pos -1 
+                                move_cursor_left
+                                flush stdout
+                            }
                         }
                         H { # Cursor Home
-                            set bufCol 0
+                            move_cursor_left $pos
+                            set pos 0
                             set bufRow 0
                             set viewRow 1
                         }
@@ -180,10 +195,10 @@ proc ::util::term::readline {fid} {
                             set next [read $fid 1]
                             if {$next == "~"} {
                                 # Home:
-                                set bufCol [regexp -indices -inline -- \
+                                set pos [regexp -indices -inline -- \
                                     {^[[:space:]]*} $line]
-                                set bufCol [lindex [lindex $bufCol 0] 1]
-                                incr bufCol 1
+                                set pos [lindex [lindex $pos 0] 1]
+                                incr pos 1
                             } elseif {$next == "3" && [read $fid 1] == "~"} {
                                 # F3:
                                 handleSearch
@@ -191,16 +206,16 @@ proc ::util::term::readline {fid} {
                         }
                         3 { # delete
                             set next [read $fid 1]
-                            if {$bufCol > [string length $line]} {
-                                set bufCol [string length $line]
+                            if {$pos > [string length $line]} {
+                                set pos [string length $line]
                             }
-                            set line [string replace $line $bufCol $bufCol]
-                            set BUFFER [lreplace $BUFFER $bufRow $bufRow $line]
+                            set line [string replace $line $pos $pos]
+                            #set buffer [lreplace $buffer $bufRow $bufRow $line]
                             set IDX(COLLAST) -1 ; # force redraw
                         }
                         4 { # end
                             if {[read $fid 1] == "~"} {
-                                set bufCol [string length $line]
+                                set pos [string length $line]
                             }
                         }
                         5 { # 5 Prev screen
@@ -220,39 +235,40 @@ proc ::util::term::readline {fid} {
                                 set size [expr {$IDX(ROWMAX) - 1}]
                                 incr bufRow  $size
                                 incr viewRow $size
-                                if {$bufRow >= [llength $BUFFER]} {
-                                    set viewRow [llength $BUFFER]
+                                if {$bufRow >= [llength $buffer]} {
+                                    set viewRow [llength $buffer]
                                     set bufRow  [expr {$viewRow - 1}]
                                 }
                             }
                         }
                     }
                 }
-                # most of the above cause a BUFFER row change
-                set line [lindex $BUFFER $bufRow]
+                # most of the above cause a buffer row change
+                #set line [lindex $buffer $bufRow]
             }
             default {
-                set before_chars [string range $line 0 [expr $bufCol - 1]]
-                set after_chars [string range $line $bufCol end]
+                set before_chars [string range $line 0 [expr $pos - 1]]
+                set after_chars [string range $line $pos end]
 
                 set line ""
                 append line $before_chars $char $after_chars
 
-                set BUFFER [lreplace $BUFFER $bufRow $bufRow $line]
-                incr bufCol [string length $char]
-                if {$bufCol > [string length $line]} {
-                    set bufCol [string length $line]
+                #set buffer [lreplace $buffer $bufRow $bufRow $line]
+                incr pos [string length $char]
+                if {$pos > [string length $line]} {
+                    set pos [string length $line]
                 }
                 set IDX(COLLAST) -1 ; # force redraw
 
-                ::util::term::clear_line
-                ::util::term::move_cursor_backwards $bufCol
-                puts -nonewline $line
-                #puts "\x1b\[41m$line" ;# red
+                puts -nonewline $char
                 flush stdout
             }
         }
+        
     }
+
+    set state(key) $key
+    set state(pos) $pos
     return $line
 }
 
@@ -268,10 +284,32 @@ proc ::util::term::read_eval_print_loop {callback} {
     flush stdout
     exec stty raw -echo
 
+    array set state [list key "" pos "0" init_value ""]
+    set buffer [list]
+    set bufRow 0
     set line ""
-    while { [set line [readline stdin]] ne {exit} } {
-puts $line
-        $callback $line
+    while { [set line [readline stdin state]] ne {exit} } {
+        set buffer [lreplace $buffer $bufRow $bufRow $line]
+        switch -exact -- $state(key) {
+            UP {
+                if { $bufRow > 0 } {
+                    incr bufRow -1
+                    set state(init_value) [lindex $buffer $bufRow]
+                }
+            }
+            DOWN {
+                if { $bufRow < [llength $buffer] - 1 } {
+                    incr bufRow
+                    set state(init_value) [lindex $buffer $bufRow]
+                }
+            }
+            default {
+                lappend buffer ""
+                incr bufRow
+                $callback $line
+                set state(init_value) ""
+            }
+        }
     }
 
     #after 10000
