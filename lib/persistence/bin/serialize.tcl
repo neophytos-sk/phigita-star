@@ -22,7 +22,8 @@ foreach ks $keyspaces {
     foreach cf [::persistence::ls $ks] {
         puts "  * $cf"
         foreach axis [::persistence::ls $ks $cf] {
-            set outfile ${dir}/${ks}-${cf}-${axis}
+            file mkdir ${dir}/${ks}
+            set outfile ${dir}/${ks}/${cf}:${axis}
             set fp [open $outfile w]
             set cf_axis ${cf}/${axis}
             set num_rows [::persistence::num_rows $ks $cf_axis]

@@ -1,0 +1,480 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>ASCII Table &#45; ANSI Escape sequences</title>
+
+	<meta name="description"		content="ASCII Table - All ASCII codes and symbols with control characters explained, for easy reference - includes conversion tables, codepages and UNICODE, ANSI, EBCDIC and HTML codes" />
+	<meta name="keywords"			content="ascii,ascii table,ascii code,ascii characters,ascii codes,unicode,ansi,ebcdic,html,codepage,charts,computer,control characters,control codes,ascii symbols,american standard code for information interchange,ascii utility,ascii help,char,html,ansi,ebcdic,char table,html table,ansi table,ebcdic table,conversion,character,text,american,standard,information,interchange,extended,binary,decimal,dec,hexadecimal,hex,octal,ISO" />
+	<meta name="classification"		content="ascii codes" />
+	<meta name="distribution"		content="Global" />
+	<meta name="rating"				content="General" />
+	<meta name="content"			content="General" />
+	<meta name="author"				content="ascii-table.com" />
+	<meta name="copyright"			content="ascii-table.com" />
+	<meta name="robots"				content="all" />
+	<meta name="revisit-after"		content="14 days" />
+
+	<meta http-equiv="Content-Type"			content="text/html; charset=utf-8" />
+	<meta http-equiv="Content-Language"		content="en" />
+	<meta http-equiv="Content-Script-Type"	content="text/javascript" />
+
+	<link rel="icon"			href="/favicon.ico"			type="image/x-icon"	/>
+	<link rel="shortcut icon"	href="/favicon.ico"			type="image/x-icon"	/>
+	<link rel="stylesheet"		href="/inc/styles.css.php"	type="text/css"		/>
+</head>
+
+
+
+
+
+<body>
+	<a name="top"></a>
+
+	<div id="header">
+		<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=5,0,0,0" width="800" height="110">
+			<param name="movie"		value="/inc/ascii-table.swf" />
+			<param name="quality"	value="high"	/>
+			<param name="menu"		value="false"	/>
+			<embed src="/inc/ascii-table.swf" quality="high" width="800" height="110" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/shockwave/download/index.cgi?P1_Prod_Version=ShockwaveFlash" menu="false" />
+		</object>
+	</div>
+
+
+
+	<table id="template" cellpadding="0" cellspacing="0">
+		<tr>
+			<td id="content" class="narrow_p">
+				<div id="content-inner">
+
+
+
+
+
+
+
+
+
+
+
+
+
+	<h1 class="thin">ANSI Escape sequences</h1>
+	<h2>(ANSI Escape codes)</h2>
+
+<div class="nav_bar">
+	<a href="ansi-escape-sequences.php"				><b>ANSI Escape sequences</b></a>		&nbsp;&#124;&nbsp;
+	<a href="ansi-escape-sequences-vt-100.php"		>VT100 / VT52 ANSI escape sequences</a>	&nbsp;&#124;&nbsp;
+	<a href="documents/vt100/"						>VT100 User Guide</a>
+</div>
+&nbsp;<br />
+
+	<p>
+		These sequences define functions that change display graphics, control cursor movement, and
+		reassign keys.
+	</p>
+	<p>
+		ANSI escape sequence is a sequence of ASCII characters, the first two of which
+		are the ASCII <b>"Escape"</b> character 27 (1Bh) and the left-bracket character <b>" [ "</b> (5Bh). The
+		character or characters following the escape and left-bracket characters
+		specify an alphanumeric code that controls a keyboard or display function.
+	</p>
+	<p>
+		ANSI escape sequences distinguish between uppercase and lowercase letters.
+	</p>
+	<p>
+		Information is also available on <a href="ansi-escape-sequences-vt-100.php">VT100 / VT52 ANSI escape sequences</a>.
+	</p>
+
+	<p>&nbsp;</p>
+
+	<table class="items">
+		<tr>
+			<th><span class="light">Esc</span>[<span class="light">Line</span>;<span class="light">Column</span>H<br />
+				<span class="light">Esc</span>[<span class="light">Line</span>;<span class="light">Column</span>f</th>
+			<td>
+				<b>Cursor Position:</b><br />
+				Moves the cursor to the specified position (coordinates).<br />
+				If you do not specify a position, the cursor moves to the
+				home position at the upper-left corner of the screen (line 0, column
+				0). This escape sequence works the same way as the following Cursor
+				Position escape sequence.
+			</td>
+		</tr>
+		<tr>
+			<th><span class="light">Esc</span>[<span class="light">Value</span>A</th>
+			<td>
+				<b>Cursor Up:</b><br />
+				Moves the cursor up by the specified number of lines without
+				changing columns. If the cursor is already on the top line, ANSI.SYS
+				ignores this sequence.
+			</td>
+		</tr>
+		<tr>
+			<th><span class="light">Esc</span>[<span class="light">Value</span>B</th>
+			<td>
+				<b>Cursor Down:</b><br />
+				Moves the cursor down by the specified number of lines
+				without changing columns. If the cursor is already on the bottom line,
+				ANSI.SYS ignores this sequence.
+			</td>
+		</tr>
+		<tr>
+			<th><span class="light">Esc</span>[<span class="light">Value</span>C</th>
+			<td>
+				<b>Cursor Forward:</b><br />
+				Moves the cursor forward by the specified number of
+				columns without changing lines. If the cursor is already in the
+				rightmost column, ANSI.SYS ignores this sequence.
+			</td>
+		</tr>
+		<tr>
+			<th><span class="light">Esc</span>[<span class="light">Value</span>D</th>
+			<td>
+				<b>Cursor Backward:</b><br />
+				Moves the cursor back by the specified number of
+				columns without changing lines. If the cursor is already in the leftmost
+				column, ANSI.SYS ignores this sequence.
+			</td>
+		</tr>
+		<tr>
+			<th><span class="light">Esc</span>[s	</th>
+			<td>
+				<b>Save Cursor Position:</b><br />
+				Saves the current cursor position. You can move
+				the cursor to the saved cursor position by using the Restore Cursor
+				Position sequence.
+			</td>
+		</tr>
+		<tr>
+			<th><span class="light">Esc</span>[u	</th>
+			<td>
+				<b>Restore Cursor Position:</b><br />
+				Returns the cursor to the position stored
+				by the Save Cursor Position sequence.
+			</td>
+		</tr>
+		<tr>
+			<th><span class="light">Esc</span>[2J	</th>
+			<td>
+				<b>Erase Display:</b><br />
+				Clears the screen and moves the cursor to the home
+				position (line 0, column 0).
+			</td>
+		</tr>
+		<tr>
+			<th><span class="light">Esc</span>[K	</th>
+			<td>
+				<b>Erase Line:</b><br />
+				Clears all characters from the cursor position to the
+				end of the line (including the character at the cursor position).
+			</td>
+		</tr>
+		<tr>
+			<th><span class="light">Esc</span>[<span class="light">Value</span>;<span class="light">...</span>;<span class="light">Value</span>m	</th>
+			<td>
+				<b>Set Graphics Mode:</b><br />
+				Calls the graphics functions specified by the
+				following values. These specified functions remain active until the next
+				occurrence of this escape sequence. Graphics mode changes the colors and
+				attributes of text (such as bold and underline) displayed on the
+				screen.<br />
+				&nbsp;<br />
+
+				<table class="narrow table small_font">
+					<tr class="title"><th colspan="2">Text attributes					</th></tr>
+					<tr><th>0</th><td>All attributes off								</td></tr>
+					<tr><th>1</th><td>Bold on											</td></tr>
+					<tr><th>4</th><td>Underscore (on monochrome display adapter only)	</td></tr>
+					<tr><th>5</th><td>Blink on											</td></tr>
+					<tr><th>7</th><td>Reverse video on									</td></tr>
+					<tr><th>8</th><td>Concealed on										</td></tr>
+
+					<tr><td colspan="2">&nbsp;</td></tr>
+
+					<tr class="title"><th colspan="2">Foreground colors	</th></tr>
+					<tr><th>30</th><td>Black				</td></tr>
+					<tr><th>31</th><td>Red					</td></tr>
+					<tr><th>32</th><td>Green				</td></tr>
+					<tr><th>33</th><td>Yellow				</td></tr>
+					<tr><th>34</th><td>Blue					</td></tr>
+					<tr><th>35</th><td>Magenta				</td></tr>
+					<tr><th>36</th><td>Cyan					</td></tr>
+					<tr><th>37</th><td>White				</td></tr>
+
+					<tr><td colspan="2">&nbsp;</td></tr>
+
+					<tr class="title"><th colspan="2">Background colors	</th></tr>
+					<tr><th>40</th><td>Black				</td></tr>
+					<tr><th>41</th><td>Red					</td></tr>
+					<tr><th>42</th><td>Green				</td></tr>
+					<tr><th>43</th><td>Yellow				</td></tr>
+					<tr><th>44</th><td>Blue					</td></tr>
+					<tr><th>45</th><td>Magenta				</td></tr>
+					<tr><th>46</th><td>Cyan					</td></tr>
+					<tr><th>47</th><td>White				</td></tr>
+				</table>
+
+				&nbsp;<br />
+				Parameters 30 through 47 meet the ISO 6429 standard.<br />
+				&nbsp;<br />
+			</td>
+		</tr>
+		<tr>
+			<th><span class="light">Esc</span>[=<span class="light">Value</span>h	</th>
+			<td>
+				<b>Set Mode:</b><br />
+				Changes the screen width or type to the mode specified
+				by one of the following values:<br />
+				&nbsp;<br />
+
+				<table class="narrow table small_font">
+					<tr class="title"><th colspan="2">Screen resolution	</th></tr>
+					<tr><th> 0</th><td> 40 x  25 monochrome (text)				</td></tr>
+					<tr><th> 1</th><td> 40 x  25 color (text)					</td></tr>
+					<tr><th> 2</th><td> 80 x  25 monochrome (text)				</td></tr>
+					<tr><th> 3</th><td> 80 x  25 color (text)					</td></tr>
+					<tr><th> 4</th><td>320 x 200 4-color (graphics)				</td></tr>
+					<tr><th> 5</th><td>320 x 200 monochrome (graphics)			</td></tr>
+					<tr><th> 6</th><td>640 x 200 monochrome (graphics)			</td></tr>
+					<tr><th> 7</th><td>Enables line wrapping					</td></tr>
+					<tr><th>13</th><td>320 x 200 color (graphics)				</td></tr>
+					<tr><th>14</th><td>640 x 200 color (16-color graphics)		</td></tr>
+					<tr><th>15</th><td>640 x 350 monochrome (2-color graphics)	</td></tr>
+					<tr><th>16</th><td>640 x 350 color (16-color graphics)		</td></tr>
+					<tr><th>17</th><td>640 x 480 monochrome (2-color graphics)	</td></tr>
+					<tr><th>18</th><td>640 x 480 color (16-color graphics)		</td></tr>
+					<tr><th>19</th><td>320 x 200 color (256-color graphics)		</td></tr>
+				</table>
+				&nbsp;<br />
+				&nbsp;
+			</td>
+		</tr>
+		<tr>
+			<th><span class="light">Esc</span>[=<span class="light">Value</span>l	</th>
+			<td>
+				<b>Reset Mode:</b><br />
+				Resets the mode by using the same values that Set Mode
+				uses, except for 7, which disables line wrapping<br />
+				(the last character in this escape sequence is a lowercase L).
+			</td>
+		</tr>
+		<tr>
+			<th><span class="light">Esc</span>[<span class="light">Code</span>;<span class="light">String</span>;<span class="light">...</span>p	</th>
+			<td>
+				<b>Set Keyboard Strings:</b><br />
+				Redefines a keyboard key to a specified string.<br />
+				&nbsp;<br />
+				The parameters for this escape sequence are defined as follows:<br />
+				&nbsp;<br />
+				Code is one or more of the values listed in the following table.
+				These values represent keyboard keys and key combinations. When using
+				these values in a command, you must type the semicolons shown in this
+				table in addition to the semicolons required by the escape sequence.
+				The codes in parentheses are not available on some keyboards.
+				ANSI.SYS will not interpret the codes in parentheses for those
+				keyboards unless you specify the /X switch in the DEVICE command for
+				ANSI.SYS.<br />
+				&nbsp;<br />
+
+				String is either the ASCII code for a single character or a string
+				contained in quotation marks. For example, both 65 and "A" can be
+				used to represent an uppercase A.<br />
+				&nbsp;<br />
+
+				IMPORTANT:  Some of the values in the following table are not valid for all
+				computers. Check your computer's documentation for values that
+				are different.<br />
+				&nbsp;<br />
+
+				<table class="narrow table small_font">
+					<tr class="title"><th>Key		</th><th>Code		</th><th>SHIFT+code	</th><th>CTRL+code	</th><th>ALT+code		</th></tr>
+					<tr><th>F1						</th><td>0;59		</td><td>0;84		</td><td>0;94		</td><td>0;104			</td></tr>
+					<tr><th>F2						</th><td>0;60		</td><td>0;85		</td><td>0;95		</td><td>0;105			</td></tr>
+					<tr><th>F3						</th><td>0;61		</td><td>0;86		</td><td>0;96		</td><td>0;106			</td></tr>
+					<tr><th>F4						</th><td>0;62		</td><td>0;87		</td><td>0;97		</td><td>0;107			</td></tr>
+					<tr><th>F5						</th><td>0;63		</td><td>0;88		</td><td>0;98		</td><td>0;108			</td></tr>
+					<tr><th>F6						</th><td>0;64		</td><td>0;89		</td><td>0;99		</td><td>0;109			</td></tr>
+					<tr><th>F7						</th><td>0;65		</td><td>0;90		</td><td>0;100		</td><td>0;110			</td></tr>
+					<tr><th>F8						</th><td>0;66		</td><td>0;91		</td><td>0;101		</td><td>0;111			</td></tr>
+					<tr><th>F9						</th><td>0;67		</td><td>0;92		</td><td>0;102		</td><td>0;112			</td></tr>
+					<tr><th>F10						</th><td>0;68		</td><td>0;93		</td><td>0;103		</td><td>0;113			</td></tr>
+					<tr><th>F11						</th><td>0;133		</td><td>0;135		</td><td>0;137		</td><td>0;139			</td></tr>
+					<tr><th>F12						</th><td>0;134		</td><td>0;136		</td><td>0;138		</td><td>0;140			</td></tr>
+					<tr><th>HOME (num keypad)		</th><td>0;71		</td><td>55			</td><td>0;119		</td><td>--				</td></tr>
+					<tr><th>UP ARROW (num keypad)	</th><td>0;72		</td><td>56			</td><td>(0;141)	</td><td>--				</td></tr>
+					<tr><th>PAGE UP (num keypad)	</th><td>0;73		</td><td>57			</td><td>0;132		</td><td>--				</td></tr>
+					<tr><th>LEFT ARROW (num keypad)	</th><td>0;75		</td><td>52			</td><td>0;115		</td><td>--				</td></tr>
+					<tr><th>RIGHT ARROW (num keypad)</th><td>0;77		</td><td>54			</td><td>0;116		</td><td>--				</td></tr>
+					<tr><th>END (num keypad)		</th><td>0;79		</td><td>49			</td><td>0;117		</td><td>--				</td></tr>
+					<tr><th>DOWN ARROW (num keypad)	</th><td>0;80		</td><td>50			</td><td>(0;145)	</td><td>--				</td></tr>
+					<tr><th>PAGE DOWN (num keypad)	</th><td>0;81		</td><td>51			</td><td>0;118		</td><td>--				</td></tr>
+					<tr><th>INSERT (num keypad)		</th><td>0;82		</td><td>48			</td><td>(0;146)	</td><td>--				</td></tr>
+					<tr><th>DELETE	(num keypad)	</th><td>0;83		</td><td>46			</td><td>(0;147)	</td><td>--				</td></tr>
+					<tr><th>HOME					</th><td>(224;71)	</td><td>(224;71)	</td><td>(224;119)	</td><td>(224;151)		</td></tr>
+					<tr><th>UP ARROW				</th><td>(224;72)	</td><td>(224;72)	</td><td>(224;141)	</td><td>(224;152)		</td></tr>
+					<tr><th>PAGE UP					</th><td>(224;73)	</td><td>(224;73)	</td><td>(224;132)	</td><td>(224;153)		</td></tr>
+					<tr><th>LEFT ARROW				</th><td>(224;75)	</td><td>(224;75)	</td><td>(224;115)	</td><td>(224;155)		</td></tr>
+					<tr><th>RIGHT ARROW				</th><td>(224;77)	</td><td>(224;77)	</td><td>(224;116)	</td><td>(224;157)		</td></tr>
+					<tr><th>END						</th><td>(224;79)	</td><td>(224;79)	</td><td>(224;117)	</td><td>(224;159)		</td></tr>
+					<tr><th>DOWN ARROW				</th><td>(224;80)	</td><td>(224;80)	</td><td>(224;145)	</td><td>(224;154)		</td></tr>
+					<tr><th>PAGE DOWN				</th><td>(224;81)	</td><td>(224;81)	</td><td>(224;118)	</td><td>(224;161)		</td></tr>
+					<tr><th>INSERT					</th><td>(224;82)	</td><td>(224;82)	</td><td>(224;146)	</td><td>(224;162)		</td></tr>
+					<tr><th>DELETE					</th><td>(224;83)	</td><td>(224;83)	</td><td>(224;147)	</td><td>(224;163)		</td></tr>
+					<tr><th>PRINT SCREEN			</th><td>--			</td><td>--			</td><td>0;114		</td><td>--				</td></tr>
+					<tr><th>PAUSE/BREAK				</th><td>--			</td><td>--			</td><td>0;0		</td><td>--				</td></tr>
+					<tr><th>BACKSPACE				</th><td>8			</td><td> 8			</td><td>127		</td><td>(0)			</td></tr>
+					<tr><th>ENTER					</th><td>13			</td><td>--			</td><td>10			</td><td>(0				</td></tr>
+					<tr><th>TAB						</th><td>9			</td><td> 0;15		</td><td>(0;148)	</td><td>(0;165)		</td></tr>
+					<tr><th>NULL					</th><td>0;3		</td><td>--			</td><td>--			</td><td>--				</td></tr>
+					<tr><th>A						</th><td> 97		</td><td>65			</td><td>1			</td><td>0;30			</td></tr>
+					<tr><th>B						</th><td> 98		</td><td>66			</td><td>2			</td><td>0;48			</td></tr>
+					<tr><th>C						</th><td> 99		</td><td>66			</td><td>3			</td><td>0;46			</td></tr>
+					<tr><th>D						</th><td>100		</td><td>68			</td><td>4			</td><td>0;32			</td></tr>
+					<tr><th>E						</th><td>101		</td><td>69			</td><td>5			</td><td>0;18			</td></tr>
+					<tr><th>F						</th><td>102		</td><td>70			</td><td>6			</td><td>0;33			</td></tr>
+					<tr><th>G						</th><td>103		</td><td>71			</td><td>7			</td><td>0;34			</td></tr>
+					<tr><th>H						</th><td>104		</td><td>72			</td><td>8			</td><td>0;35			</td></tr>
+					<tr><th>I						</th><td>105		</td><td>73			</td><td>9			</td><td>0;23			</td></tr>
+					<tr><th>J						</th><td>106		</td><td>74			</td><td>10			</td><td>0;36			</td></tr>
+					<tr><th>K						</th><td>107		</td><td>75			</td><td>11			</td><td>0;37			</td></tr>
+					<tr><th>L						</th><td>108		</td><td>76			</td><td>12			</td><td>0;38			</td></tr>
+					<tr><th>M						</th><td>109		</td><td>77			</td><td>13			</td><td>0;50			</td></tr>
+					<tr><th>N						</th><td>110		</td><td>78			</td><td>14			</td><td>0;49			</td></tr>
+					<tr><th>O						</th><td>111		</td><td>79			</td><td>15			</td><td>0;24			</td></tr>
+					<tr><th>P						</th><td>112		</td><td>80			</td><td>16			</td><td>0;25			</td></tr>
+					<tr><th>Q						</th><td>113		</td><td>81			</td><td>17			</td><td>0;16			</td></tr>
+					<tr><th>R						</th><td>114		</td><td>82			</td><td>18			</td><td>0;19			</td></tr>
+					<tr><th>S						</th><td>115		</td><td>83			</td><td>19			</td><td>0;31			</td></tr>
+					<tr><th>T						</th><td>116		</td><td>84			</td><td>20			</td><td>0;20			</td></tr>
+					<tr><th>U						</th><td>117		</td><td>85			</td><td>21			</td><td>0;22			</td></tr>
+					<tr><th>V						</th><td>118		</td><td>86			</td><td>22			</td><td>0;47			</td></tr>
+					<tr><th>W						</th><td>119		</td><td>87			</td><td>23			</td><td>0;17			</td></tr>
+					<tr><th>X						</th><td>120		</td><td>88			</td><td>24			</td><td>0;45			</td></tr>
+					<tr><th>Y						</th><td>121		</td><td>89			</td><td>25			</td><td>0;21			</td></tr>
+					<tr><th>Z						</th><td>122		</td><td>90			</td><td>26			</td><td>0;44			</td></tr>
+					<tr><th>1						</th><td> 49		</td><td>33			</td><td>--			</td><td>0;120			</td></tr>
+					<tr><th>2						</th><td> 50		</td><td>64			</td><td>0			</td><td>0;121			</td></tr>
+					<tr><th>3						</th><td> 51		</td><td>35			</td><td>--			</td><td>0;122			</td></tr>
+					<tr><th>4						</th><td> 52		</td><td>36			</td><td>--			</td><td>0;123			</td></tr>
+					<tr><th>5						</th><td> 53		</td><td>37			</td><td>--			</td><td>0;124			</td></tr>
+					<tr><th>6						</th><td> 54		</td><td>94			</td><td>30			</td><td>0;125			</td></tr>
+					<tr><th>7						</th><td> 55		</td><td>38			</td><td>--			</td><td>0;126			</td></tr>
+					<tr><th>8						</th><td> 56		</td><td>42			</td><td>--			</td><td>0;126			</td></tr>
+					<tr><th>9						</th><td> 57		</td><td>40			</td><td>--			</td><td>0;127			</td></tr>
+					<tr><th>0						</th><td> 48		</td><td>41			</td><td>--			</td><td>0;129			</td></tr>
+					<tr><th>-						</th><td> 45		</td><td>95			</td><td>31			</td><td>0;130			</td></tr>
+					<tr><th>=						</th><td> 61		</td><td>43			</td><td>---		</td><td>0;131			</td></tr>
+					<tr><th>[						</th><td> 91		</td><td>123		</td><td>27			</td><td>0;26			</td></tr>
+					<tr><th>]						</th><td> 93		</td><td>125		</td><td>29			</td><td>0;27			</td></tr>
+					<tr><th>						</th><td> 92		</td><td>124		</td><td>28			</td><td>0;43			</td></tr>
+					<tr><th>;						</th><td> 59		</td><td>58			</td><td>--			</td><td>0;39			</td></tr>
+					<tr><th>'						</th><td> 39		</td><td>34			</td><td>--			</td><td>0;40			</td></tr>
+					<tr><th>,						</th><td> 44		</td><td>60			</td><td>--			</td><td>0;51			</td></tr>
+					<tr><th>.						</th><td> 46		</td><td>62			</td><td>--			</td><td>0;52			</td></tr>
+					<tr><th>/						</th><td> 47		</td><td>63			</td><td>--			</td><td>0;53			</td></tr>
+					<tr><th>`						</th><td> 96		</td><td>126		</td><td>--			</td><td>(0;41)			</td></tr>
+					<tr><th>ENTER (keypad)			</th><td>13			</td><td>--			</td><td>10			</td><td>(0;166)		</td></tr>
+					<tr><th>/ (keypad)				</th><td>47			</td><td>47			</td><td>(0;142)	</td><td>(0;74)			</td></tr>
+					<tr><th>* (keypad)				</th><td>42			</td><td>(0;144)	</td><td>(0;78)		</td><td>--				</td></tr>
+					<tr><th>- (keypad)				</th><td>45			</td><td>45			</td><td>(0;149)	</td><td>(0;164)		</td></tr>
+					<tr><th>+ (keypad)				</th><td>43			</td><td>43			</td><td>(0;150)	</td><td>(0;55)			</td></tr>
+					<tr><th>5 (keypad)				</th><td>(0;76)		</td><td>53			</td><td>(0;143)	</td><td>--				</td></tr>
+				</table>
+
+				<p>&nbsp;</p>
+			</td>
+		</tr>
+	</table>
+
+					<p>&nbsp;</p>
+				</div>
+			</td>
+			<td rowspan="2" id="ads">
+
+				&nbsp;<br />
+
+<script type="text/javascript"><!--
+google_ad_client = "pub-9241470791040687";
+/* Ascii-Table.com - 160x600 */
+google_ad_slot = "0424475180";
+google_ad_width = 160;
+google_ad_height = 600;
+//-->
+</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<script type="text/javascript"><!--
+google_ad_client = "pub-9241470791040687";
+/* Ascii-Table.com - 160x600 */
+google_ad_slot = "0424475180";
+google_ad_width = 160;
+google_ad_height = 600;
+//-->
+</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<script type="text/javascript"><!--
+google_ad_client = "pub-9241470791040687";
+/* Ascii-Table.com - 160x600 */
+google_ad_slot = "0424475180";
+google_ad_width = 160;
+google_ad_height = 600;
+//-->
+</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+			</td>
+		</tr>
+		<tr>
+			<td class="center" valign="bottom">
+
+			</td>
+		</tr>
+		<tr>
+			<td id="tags" colspan="2">
+<div id="tags_links"><a href="morse-code.php">Morse</a> <a href="conversions.php">Binary</a> <a href="bcd-punch-card.php">Punch&nbsp;Card</a> <a href="papertape.php">Papertape</a> <a href="ascii-extended-pc-table.php">IBM&nbsp;PC</a> <a href="unicode.php"><b>Unicode</b></a> <a href="ansi-escape-sequences-vt-100.php">VT100&nbsp;Escape</a> <a href="ascii-extended.php"><b>Extended</b></a> <a href="conversions.php">Hexadecimal</a> <a href="index.php"><b>ASCII</b></a> <a href="pronunciation-guide.php">Pronunciation</a> <a href="phonetic-alphabets.php">Phonetic</a> <a href="html-table.php"><b>HTML</b></a> <a href="ascii-extended-mac-table.php">Apple</a> <a href="conversions.php">Octal</a> <a href="char-tables.php">Tables</a> <a href="keyboards.php"><b>Keyboards</b></a> <a href="ansi-codes.php"><b>ANSI</b></a> <a href="ansi-escape-sequences.php">ANSI&nbsp;Escape</a> <a href="calculator.php">Calculator</a> <a href="documents/vt100/">VT100</a> <br />&nbsp;</div>			</td>
+		</tr>
+	</table>
+
+
+
+	<div class="center">
+
+<p>&nbsp;</p>	</div>
+
+
+
+	<div id="footer">
+		<div class="float-left">
+			&nbsp; &nbsp;&copy;&nbsp;2015		</div>
+		<div class="float-left">
+			&nbsp;&nbsp;<img src="/img/logo-bottom.gif" alt="ASCII-Table" width="103" height="11" />
+		</div>
+		<div class="float-right">
+			<a href="site-info.php"	><b>Site Info	</b></a>&nbsp;|&nbsp;
+			<a href="disclaimer.php"><b>Disclaimer	</b></a>&nbsp;|&nbsp;
+			<a href="map.php"		><b>Map			</b></a>&nbsp;|&nbsp;
+			<a href="contact-us.php"><b>Contact Us	</b></a>&nbsp;&nbsp;&nbsp;
+		</div>
+	</div>
+
+
+	<p>&nbsp;</p>
+	<p>&nbsp;</p>
+	<p>&nbsp;</p>
+
+
+
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript"></script>
+<script type="text/javascript">
+	_uacct = "UA-2590974-2";
+	urchinTracker();
+</script>
+
+
+
+<!-- e-pla.net::website monitoring -->
+
+
+</body>
+</html>
+

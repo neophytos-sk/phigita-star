@@ -542,7 +542,7 @@ proc ::feed_reader::cache_fetch {htmlVar url} {
     set urlencoded_path [::util::urlencode $uri(path)]
 
     set keyspace "web_cache_db"
-    set column_family "web_page"
+    set column_family "web_page/by_domain"
     set row_key $reverse_domain
     set column_path $urlencoded_path
 

@@ -1,4 +1,4 @@
-url http://tech.in.gr/
+url http://www.in.gr/tech/
 include_re {/article/\?aid=[0-9]{4,}$}
 htmltidy_feed_p 0
 htmltidy_article_p 0

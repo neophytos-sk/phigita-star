@@ -5,7 +5,6 @@ source ../../naviserver_compat/tcl/module-naviserver_compat.tcl
 ::xo::lib::require persistence
 ::xo::lib::require util_procs
 
-
 if { [llength $argv] ni {1 2} } {
     puts "usage: $argv0 filename ?row?"
     exit

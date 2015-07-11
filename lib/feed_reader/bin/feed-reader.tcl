@@ -1,4 +1,5 @@
-#!/usr/bin/tclsh
+#!/bin/sh
+exec tclsh $0 ${@}
 
 # TODO: extract comments from article pages
 
@@ -50,7 +51,7 @@ proc print_usage_info {} {
 
 
     foreach cmd [lsort [array names cmdinfo]] {
-	puts "Usage: $argv0 ${cmd} $cmdinfo(${cmd})"
+        puts "Usage: $argv0 ${cmd} $cmdinfo(${cmd})"
     }
 
 }
