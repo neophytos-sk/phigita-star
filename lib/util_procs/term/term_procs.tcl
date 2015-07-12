@@ -69,12 +69,21 @@ proc ::util::term::readline {fid {stateVar ""}} {
     set line $state(init_value)
 
     if { $line ne {} } {
-        puts -nonewline "$line"
+        clear_line 2
+        save_cursor_position
+        move_cursor_left $pos
+        puts -nonewline $line
+        set len [string length $line]
+        restore_cursor_position
+        if { $pos > $len } {
+            move_cursor_left [expr { $len - $pos }]
+            set pos $len
+        }
         flush stdout
     }
 
     set char ""        ; # last char received
-    while {$char ni "\x11 \x0d"} {
+    while {$char ne "\x11"} {
         set char [read $fid 1]
         if { [eof $fid] } {
             set key ""
@@ -88,7 +97,7 @@ proc ::util::term::readline {fid {stateVar ""}} {
                 break
             }
             \x11 { # ^q - quit
-                set key "ESC"
+                set key "DC1" ;# device control 1
                 break
             }
             \x01 { # ^a - beginning of line
@@ -151,7 +160,13 @@ proc ::util::term::readline {fid {stateVar ""}} {
                     incr pos -1
                     set line [string replace $line $pos $pos]
                     move_cursor_left
+                    save_cursor_position
+                    set len [string length $line]
+                    if { $pos < $len } {
+                        puts -nonewline [string range $line $pos end]
+                    }
                     clear_line 0 ;# clear line from current position to end
+                    restore_cursor_position
                     flush stdout
                 }
             }
@@ -169,6 +184,7 @@ proc ::util::term::readline {fid {stateVar ""}} {
                             break
                         }
                         C { # Cursor Right (cuf1,nd)
+                            set key "RIGHT"
                             if {$pos < [string length $line]} {
                                 incr pos 1
                                 move_cursor_right
@@ -176,6 +192,7 @@ proc ::util::term::readline {fid {stateVar ""}} {
                             }
                         }
                         D { # Cursor Left
+                            set key "LEFT"
                             if {$pos > [string length $line]} {
                                 set pos [string length $line]
                             }
@@ -186,6 +203,7 @@ proc ::util::term::readline {fid {stateVar ""}} {
                             }
                         }
                         H { # Cursor Home
+                            set key "HOME"
                             move_cursor_left $pos
                             set pos 0
                             set bufRow 0
@@ -205,41 +223,47 @@ proc ::util::term::readline {fid {stateVar ""}} {
                             }
                         }
                         3 { # delete
+                            set key "DELETE"
                             set next [read $fid 1]
-                            if {$pos > [string length $line]} {
-                                set pos [string length $line]
+                            set len [string length $line]
+                            if { $pos < $len } {
+                                set line [string replace $line $pos $pos]
+                                save_cursor_position
+                                puts -nonewline [string range $line $pos end]
+                                clear_line 0 ;# clear line from current cursor position to end
+                                restore_cursor_position
+                                flush stdout
                             }
-                            set line [string replace $line $pos $pos]
-                            #set buffer [lreplace $buffer $bufRow $bufRow $line]
-                            set IDX(COLLAST) -1 ; # force redraw
                         }
-                        4 { # end
+                        7 {
+                            # home
+                            set key "HOME"
                             if {[read $fid 1] == "~"} {
-                                set pos [string length $line]
+                                move_cursor_left $pos
+                                set pos 0
+                                flush stdout
+                            }
+                        }
+                        8 -
+                        4 { # end
+                            set key "END"
+                            if {[read $fid 1] == "~"} {
+                                set len [string length $line]
+                                move_cursor_right [expr { $len - $pos }]
+                                set pos $len
+                                flush stdout
                             }
                         }
                         5 { # 5 Prev screen
-                            if {[read $fid 1] == "~"} {
-                                set size [expr {$IDX(ROWMAX) - 1}]
-                                if {$bufRow < $size} {
-                                    set bufRow  0
-                                    set viewRow 1
-                                } else {
-                                    incr bufRow  -$size
-                                    incr viewRow -$size
-                                }
-                            }
+                            set key "PAGE_UP"
+                            break
                         }
                         6 { # 6 Next screen
-                            if {[read $fid 1] == "~"} {
-                                set size [expr {$IDX(ROWMAX) - 1}]
-                                incr bufRow  $size
-                                incr viewRow $size
-                                if {$bufRow >= [llength $buffer]} {
-                                    set viewRow [llength $buffer]
-                                    set bufRow  [expr {$viewRow - 1}]
-                                }
-                            }
+                            set key "PAGE_DOWN"
+                            break
+                        }
+                        default {
+                            puts esc_char=$next
                         }
                     }
                 }
@@ -261,6 +285,9 @@ proc ::util::term::readline {fid {stateVar ""}} {
                 set IDX(COLLAST) -1 ; # force redraw
 
                 puts -nonewline $char
+                save_cursor_position
+                puts -nonewline $after_chars
+                restore_cursor_position
                 flush stdout
             }
         }
@@ -304,10 +331,36 @@ proc ::util::term::read_eval_print_loop {callback} {
                 }
             }
             default {
+                set firstChar [string index $line 0]
+                switch -exact -- $firstChar {
+                    ! {
+                        set buffer [lreplace $buffer $bufRow $bufRow]
+                        set secondChar [string index $line 1]
+                        if { $secondChar eq {?} } {
+                            set pattern "[string range $line 2 end]"
+                        } else {
+                            set pattern "^[string range $line 1 end]"
+                        }
+                        # start a history substitution
+                        set index [lsearch -regexp [lreverse $buffer] $pattern]
+                        if { $index == -1 } {
+                            puts "event not found"
+                            exit
+                        } else {
+                            set offset [expr { [llength $buffer] - $index - 1 }]
+                            set line [lindex $buffer $offset]
+                            lappend buffer $line
+                            puts $line
+                        }
+                    }
+                }
+
+                $callback $line
+
                 lappend buffer ""
                 incr bufRow
-                $callback $line
                 set state(init_value) ""
+                set state(pos) 0
             }
         }
     }
