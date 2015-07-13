@@ -1,5 +1,4 @@
-#!/bin/sh
-exec tclsh $0 ${@}
+#!/usr/bin/tclsh
 
 # TODO: extract comments from article pages
 
