@@ -1,0 +1,7 @@
+set dir [file dirname [info script]]
+
+source [file join $dir ../tcl/mathfunc_procs.tcl]
+
+set abc "123"
+set qwerty "987654"
+assert {exists("abc") && !exists("qwerty")}
