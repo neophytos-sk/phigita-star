@@ -56,6 +56,28 @@ proc print_usage_info {} {
 
 }
 
+# IN PROGRESS
+proc ls {args} {
+
+    @arg {boolean} -a --all
+    @arg {boolean} -A --almost-all
+    @arg {boolean} -l --long-listing
+    @arg {ascii} feed_name
+
+    assert { vcheck("bool", ${long-listing}) }
+
+    assert { !( exists("all") && exists("almost-all") ) } {
+        ## Conflict Resolution
+        #  prefer exists(all) over exists(almost-all)
+        disable_flag almost-all
+    }
+
+    upvar $argVar arg
+
+    parse_args args
+
+}
+
 set argc [llength $argv]
 if { ${argc} < 1 } {
 

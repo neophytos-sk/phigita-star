@@ -1,0 +1,41 @@
+set dir [file dirname [info script]]
+
+source [file join $dir ../tcl/mathfunc.tcl]
+source [file join $dir ../tcl/assert.tcl]
+
+proc disable_flag {varname} {
+    upvar $varname _
+    set _ false
+}
+
+proc enable_flag {varname} {
+    upvar $varname _
+    set _ true
+}
+
+proc toggle_flag {varname} {
+    upvar $varname _
+    set _ [expr { !${_} }]
+}
+
+set all "true"
+set almost-all "true"
+
+assert { !( exists("all") && exists("almost-all") ) } {
+    ## Conflict Resolution
+    #  prefer exists(all) over exists(almost-all)
+    disable_flag almost-all
+}
+
+puts almost-all=${almost-all}
+
+set num a12345
+assert { vcheck("integer", ${num}) }
+
+puts test-1
+assert true
+puts test-2
+assert false
+puts test-3
+
+

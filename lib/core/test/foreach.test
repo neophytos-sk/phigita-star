@@ -1,0 +1,11 @@
+set dir [file dirname [info script]]
+
+source [file join $dir ../tcl/mathfunc_procs.tcl]
+
+
+set a 1
+#set b 2
+set c 3
+
+assert { foreach("x",{a b c},"exists(\"\$x\")") }
+
