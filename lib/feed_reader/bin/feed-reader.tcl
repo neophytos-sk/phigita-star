@@ -2,6 +2,8 @@
 
 # TODO: extract comments from article pages
 
+package require core
+
 source ../../naviserver_compat/tcl/module-naviserver_compat.tcl
 
 ::xo::lib::require feed_reader

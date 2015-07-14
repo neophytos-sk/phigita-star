@@ -656,7 +656,7 @@ proc ::feed_reader::generate_feed {feed_url {encoding "utf-8"}} {
             htmltidy_article_p 0]
 
 
-    if { [set errorcode [::xo::http::fetch html $feed_url]] } {
+    if { [set errorcode [::xo::http::fetch html $feed_url options info]] } {
         return $errorcode
     }
 
@@ -674,6 +674,21 @@ proc ::feed_reader::generate_feed {feed_url {encoding "utf-8"}} {
     }
 
     set anchor_nodes [${doc} selectNodes {//a[@href]}]
+    set num_links [llength $anchor_nodes]
+    puts "#links = $num_links"
+
+    if { $num_links == 0 } {
+        puts [$doc asHTML]
+        error "no anchor links found: \
+            \n\tresponsecode=$info(responsecode) \
+            \n\t[join [map {x y} [array get info] {list $x $y}] \n\t]"
+    }
+
+    foreach node $anchor_nodes {
+        puts [$node @href ""]
+        puts [$node text]
+        puts ""
+    }
 
     # generate include_re
 
