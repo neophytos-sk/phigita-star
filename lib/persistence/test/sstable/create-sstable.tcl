@@ -1,6 +1,6 @@
 #!/usr/bin/tclsh
 
-source ../../naviserver_compat/tcl/module-naviserver_compat.tcl
+package require core
 source [acs_root_dir]/packages/kernel/tcl/20-xo/10-io/00-readwrite-procs.tcl
 
 ::xo::lib::require persistence

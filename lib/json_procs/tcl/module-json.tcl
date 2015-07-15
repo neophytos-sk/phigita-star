@@ -1,6 +1,8 @@
+puts "json package loaded"
+
 package provide json 0.1
 
-
+package require core
 ::xo::lib::require critcl
 
 set dir [file dirname [info script]]

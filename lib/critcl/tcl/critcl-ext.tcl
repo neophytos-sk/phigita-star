@@ -1,5 +1,5 @@
-
-::xo::lib::require util_procs
+package require core
+package require util_procs
 
 namespace eval ::critcl::ext {;}
 

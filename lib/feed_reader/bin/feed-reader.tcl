@@ -4,8 +4,6 @@
 
 package require core
 
-source ../../naviserver_compat/tcl/module-naviserver_compat.tcl
-
 ::xo::lib::require feed_reader
 
 #set dir [file dirname [info script]]
@@ -61,7 +59,29 @@ proc parse_args {{argsVar "args"}} {
     upvar $argsVar args
 }
 
-proc ls {args} {
+proc ::feed_reader::ls {args} {
+
+    getopt::init {
+        {all            a   {all_p}}
+        {almost-all     A   {almost_all_p}}
+        {long_listing_p l   {long_listing_p}}
+        feed_reader
+    }
+    set args [getopt::getopt $args]
+
+    foreach v [info vars] {
+        puts "$v=[set $v]"
+    }
+
+    assert { vcheck("ascii",${feed_name}) }
+
+    assert { !( exists("all_p") && exists("almost_all_p") ) } {
+        ## Conflict Resolution
+        #  prefer exists(all_p) over exists(almost_all_p)
+        disable_flag almost_all_p
+    }
+
+exit
 
     rewrite_args {
         -a,--all        => -all_p
@@ -77,7 +97,7 @@ proc ls {args} {
         feed_name
     }
 
-    vcheck_vars {
+    check_args {
         all_p {boolean}
         almost_all_p {boolean}
         long_p {boolean}
@@ -87,34 +107,23 @@ proc ls {args} {
 
     assert { vcheck("boolean",${all_p}) }
 
-    # argtype varname vcheck_list 
-    @opt {-a --all}         all_p           {boolean}
-    @opt {-A --almost-all}  almost_all_p    {boolean}
-    @opt {-l}               long_p          {boolean} "use long listing format"
-    @arg {}                 feed_name       {ascii}
+    ## argtype | short/long options | varname | vchecklist 
 
-    @arg feed_name {ascii}
+    ## if @sep is on, then options and nonPosArgs must precede posArgs
 
-    # @arg vcheck_list varname short_option long_option
-    foreach {quantifier argtype varname vcheck_list short_option long_option} {
-        optional flag all_p -a --all
-        optional flag almost_all_p -A --almost-all
-        optional flag long_listing_p -s "l" -l "long-listing"
-        required arg feed_name {ascii}
-    } {
-        set $varname [ns_set get args $long_option $argtype]
-        foreach pattern_name $vcheck_list {
-            assert { vcheck(${pattern_name}, ${long-listing}) }
-        }
+    ## an opt either exists or it does not
+    # ls -la
+    # ls -l --all
+    @opt all_p          {-a --all}
+    @opt almost_all_p   {-A --almost-all}
+    @opt long_listing_p {-l}
 
-    }
+    ## an arg is either a posArg or a nonPosArg
+    # ls -n example.com
+    # ls --feed-name=example.com
+    # ls example.com
+    @arg feed_name      {ascii}
 
-
-    assert { !( exists("all_p") && exists("almost_all_p") ) } {
-        ## Conflict Resolution
-        #  prefer exists(all_p) over exists(almost_all_p)
-        disable_flag almost_all_p
-    }
 
 }
 

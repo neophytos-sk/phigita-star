@@ -19,7 +19,7 @@ proc ::xo::kit::production_mode_p {} {
 
 proc acs_root_dir {} "return [file normalize [file join [file dirname [info script]] ../../..]]"
 
-puts [acs_root_dir]
+#puts [acs_root_dir]
 
 proc ns_log {level args} {
     puts "${level}: {*}$args"

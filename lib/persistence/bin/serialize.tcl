@@ -1,9 +1,8 @@
 #!/usr/bin/tclsh
 
-source ../../naviserver_compat/tcl/module-naviserver_compat.tcl
 
-::xo::lib::require persistence
-::xo::lib::require util_procs
+package require core
+package require persistence
 
 namespace eval ::persistence::shell {
 }

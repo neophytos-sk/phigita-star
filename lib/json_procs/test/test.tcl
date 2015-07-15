@@ -1,6 +1,6 @@
-source ../../naviserver_compat/tcl/module-naviserver_compat.tcl
 
-::xo::lib::require json
+package require core
+package require json_procs
 
 set fp [open ../data/cs373.json]
 set data [read $fp]
