@@ -77,7 +77,6 @@ proc ::util::prepend {prefix textVar} {
 # ---------------------------------- uri ------------------------------
 
 proc ::util::host_from_url {url} {
-
     set host ""
     set re {://([^/]+)}
     regexp -- ${re} ${url} match host
@@ -93,7 +92,7 @@ proc ::util::domain_from_host {host} {
     set re {([^\.]+\.)(com\.cy|ac.cy|gov.cy|org.cy|gr|com|net|org|info|coop|int|co\.uk|org\.uk|ac\.uk|uk|co|eu|__and so on__)$}
 
     if { [regexp -- ${re} ${host} whole domain tld] } {
-	return ${domain}${tld}
+        return ${domain}${tld}
     }
 
     #puts "could not match regexp to host=${host}"
@@ -104,17 +103,17 @@ proc ::util::domain_from_host {host} {
 proc ::util::domain_from_url {url} {
 
     if { ${url} eq {} } {
-	return
+        return
     }
 
     set index [string first {:} ${url}]
     if { ${index} == -1 } {
-	return
+        return
     }
 
     set scheme [string range ${url} 0 ${index}]
     if { ${scheme} ne {http:} && ${scheme} ne {https:} } {
-	return
+        return
     }
 
     set host [host_from_url ${url}]

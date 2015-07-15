@@ -48,7 +48,7 @@ proc print_usage_info {} {
 			   "wc" "?contentsha1? ?...?" \
 			   "curl" "url" \
 			   "test-article" "domain feed_name article_url" \
-			   "generate-feed" "feed_url"]
+			   "generate-feed" "feed_url ?anchor_link_keyword? ?encoding?"]
 
 
     foreach cmd [lsort [array names cmdinfo]] {
@@ -57,25 +57,64 @@ proc print_usage_info {} {
 
 }
 
-# IN PROGRESS
+proc parse_args {{argsVar "args"}} {
+    upvar $argsVar args
+}
+
 proc ls {args} {
 
-    @arg {boolean} -a --all
-    @arg {boolean} -A --almost-all
-    @arg {boolean} -l --long-listing
-    @arg {ascii} feed_name
-
-    assert { vcheck("bool", ${long-listing}) }
-
-    assert { !( exists("all") && exists("almost-all") ) } {
-        ## Conflict Resolution
-        #  prefer exists(all) over exists(almost-all)
-        disable_flag almost-all
+    rewrite_args {
+        -a,--all        => -all_p
+        -l,--long       => -long_p
+        -A,--almost-all => -almost_all_p
     }
 
-    upvar $argVar arg
+    parse_args {
+        -all_p
+        -almost_all_p
+        -long_p
+        {-something "123"}
+        feed_name
+    }
 
-    parse_args args
+    vcheck_vars {
+        all_p {boolean}
+        almost_all_p {boolean}
+        long_p {boolean}
+        something {naturalnum}
+        feed_name {ascii}
+    }
+
+    assert { vcheck("boolean",${all_p}) }
+
+    # argtype varname vcheck_list 
+    @opt {-a --all}         all_p           {boolean}
+    @opt {-A --almost-all}  almost_all_p    {boolean}
+    @opt {-l}               long_p          {boolean} "use long listing format"
+    @arg {}                 feed_name       {ascii}
+
+    @arg feed_name {ascii}
+
+    # @arg vcheck_list varname short_option long_option
+    foreach {quantifier argtype varname vcheck_list short_option long_option} {
+        optional flag all_p -a --all
+        optional flag almost_all_p -A --almost-all
+        optional flag long_listing_p -s "l" -l "long-listing"
+        required arg feed_name {ascii}
+    } {
+        set $varname [ns_set get args $long_option $argtype]
+        foreach pattern_name $vcheck_list {
+            assert { vcheck(${pattern_name}, ${long-listing}) }
+        }
+
+    }
+
+
+    assert { !( exists("all_p") && exists("almost_all_p") ) } {
+        ## Conflict Resolution
+        #  prefer exists(all_p) over exists(almost_all_p)
+        disable_flag almost_all_p
+    }
 
 }
 

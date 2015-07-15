@@ -21,7 +21,8 @@ proc filter {varlist list script} {
     set lambdaExpr [list ${varlist} [list {expr} ${script}]]
     foreach ${varlist} ${list} {
         set _ [value_if ${varlist}]
-        if { [apply ${lambdaExpr} {*}${_}] } {
+        set cmd [list apply ${lambdaExpr} {*}${_}]
+        if { [uplevel ${cmd}] } {
             lappend result ${_}
         }
     }

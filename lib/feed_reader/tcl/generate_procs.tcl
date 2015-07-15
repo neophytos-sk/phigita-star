@@ -7,8 +7,11 @@ proc ::feed_reader::generate_include_re {anchor_nodesVar feed_url matching_pairs
     upvar $anchor_nodesVar anchor_nodes
     upvar $matching_pairsVar matching_pairs
 
-    set domain [::util::domain_from_url ${feed_url}]
+    puts feed_url=$feed_url
 
+    set feed_url [url normalize ${feed_url}]
+    set domain [::util::domain_from_url ${feed_url}]
+    
     array set url_shape [list]
     set max 0
     set max_path {}
@@ -23,8 +26,9 @@ proc ::feed_reader::generate_include_re {anchor_nodesVar feed_url matching_pairs
                 [::uri::resolve \
                     ${feed_url} \
                     ${link}]]
-
+                
         if { ${domain} ne [::util::domain_from_url ${canonical_link}] } {
+            error "domain=$domain domain_from_url=[::util::domain_from_url $canonical_link]"
             continue
         }
 
@@ -60,7 +64,8 @@ proc ::feed_reader::generate_include_re {anchor_nodesVar feed_url matching_pairs
         }
 
         #regsub -all -- {[[:alpha:]]+} ${path} {o} path
-        #puts ${path}
+        puts ${link}
+        puts ${path}
 
         set count [incr url_shape(${path})]
         if { ${count} > ${max} && -1 != [string first {N} ${path}] } {
@@ -74,19 +79,25 @@ proc ::feed_reader::generate_include_re {anchor_nodesVar feed_url matching_pairs
 
     }
 
+    puts ""
+    puts "Top 5 URL shapes"
+    puts "================"
+    puts [join [lrange [lsort -index 1 [map {x y} [array get url_shape] {list $x $y}]] 0 4] "\n"]
+    puts ""
+
     set include_re ""
     if { ${max} } {
 
-    # if more than ${coeff} of links are recognized by ${max_path}
-    # then turn it into a regular expression
+        # if more than ${coeff} of links are recognized by ${max_path}
+        # then turn it into a regular expression
 
-    #puts "url_shape=${max_path} count=${max}"
+        puts "url_shape=${max_path} count=${max}"
 
         set include_re ${max_path}
 
         foreach {re subSpec} {
-            {N}     {[0-9]{4,}}
-            {D}     {[0-9]{1,3}}
+            {N}     {\d{4,}}
+            {D}     {\d{1,3}}
             {y}     {[a-z]+}
             {Y}     {[A-Z]+}
             {w}     {[a-z][a-zA-Z]+}
@@ -645,7 +656,7 @@ proc ::feed_reader::generate_xpath {feedVar xpathVar matching_pairsVar encoding}
 }
 
 
-proc ::feed_reader::generate_feed {feed_url {encoding "utf-8"}} {
+proc ::feed_reader::generate_feed {feed_url {anchor_link_pattern ""} {encoding "utf-8"}} {
 
     array set feed  \
         [list \
@@ -674,19 +685,27 @@ proc ::feed_reader::generate_feed {feed_url {encoding "utf-8"}} {
     }
 
     set anchor_nodes [${doc} selectNodes {//a[@href]}]
+    if { $anchor_link_pattern ne {} } {
+        set result [list]
+        foreach node $anchor_nodes {
+            if { [string match $anchor_link_pattern [$node @href ""]] } {
+                lappend result $node
+            }
+        }
+        set anchor_nodes $result
+    }
     set num_links [llength $anchor_nodes]
     puts "#links = $num_links"
 
     if { $num_links == 0 } {
-        puts [$doc asHTML]
         error "no anchor links found: \
             \n\tresponsecode=$info(responsecode) \
             \n\t[join [map {x y} [array get info] {list $x $y}] \n\t]"
     }
 
     foreach node $anchor_nodes {
+        puts [$node asText]
         puts [$node @href ""]
-        puts [$node text]
         puts ""
     }
 
