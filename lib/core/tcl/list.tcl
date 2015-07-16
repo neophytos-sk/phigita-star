@@ -119,13 +119,13 @@ proc lunion {a b} {
 
 proc ldifference {a b} {
     foreach e ${b} {
-	set x(${e}) {}
+        set x(${e}) {}
     }
     set result {}
     foreach e ${a} {
-	if {![info exists x(${e})]} {
-	    lappend result ${e}
-	}
+        if {![info exists x(${e})]} {
+            lappend result ${e}
+        }
     }
     return ${result}
 }
