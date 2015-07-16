@@ -34,6 +34,7 @@
 #
 # getopt::init accepts a list of items of the following form:
 #   {longName shortName varList}
+#   posArg
 #
 # longName is the long option name (without the initial '--')
 # shortName is the short (one character) option name (without the initial '-')
@@ -46,129 +47,162 @@
 
 namespace eval getopt {
         # list of option vars (keys are long option names)
-        variable optlist
+        variable optargs
 
-        # residual arguments
+        # positional arguments
         variable posArgs
 
-        # map short option names to long option names
-        variable stl_map
+        # map option names to long option names
+        variable map
 }
 
 proc getopt::init {optdata} {
-    variable optlist
+    variable optargs
+    variable map
     variable posArgs
-    variable stl_map
-    array set optlist {}
-    array set stl_map {}
+
+    set posArgs {}
+    array set optargs {}
+    array set map {}
+
     foreach item $optdata {
         set len [llength $item]
         if { $len == 3 } {
             lassign $item longname shortname varlist
-            set optlist($longname) $varlist
             set stl_map($shortname) $longname
+
+            set argname [lindex $varlist 0]
+            set map(-$shortname) $argname
+            set map(--$longname) $argname
+            set optargs($argname) $varlist
+
+
         } else {
             lappend posArgs $item
         }
     }
 }
 
-proc getopt::expandOptNames {argv} {
-        variable optlist
-        variable stl_map
-        set argv2 {}
+proc getopt::getopt {argVar argv} {
+
+    upvar $argVar arg
+
+    variable map
+    variable posArgs
+
+    if { [array size map] } {
+
         set argc [llength $argv]
-        for {set i 0} {$i < $argc} {} {
-                set argv_i [lindex $argv $i]
-                incr i
-
-                if [isShortOpt $argv_i] {
-                        set argv_i_opts [split [regsub {^-} $argv_i {}] {}]
-                        foreach shortOpt $argv_i_opts {
-                                if [info exists stl_map($shortOpt)] {
-                                        set longOpt $stl_map($shortOpt)
-                                        lappend argv2 --$longOpt
-                                        set n_required_opt_args [expr {-1+[llength $optlist($longOpt)]}]
-                                        while {$n_required_opt_args > 0} {
-                                                incr n_required_opt_args -1
-                                                if {$i >= $argc} {
-                                                        puts "error: not enough arguments for option -$shortOpt"
-                                                        exit 3
-                                                }
-                                                lappend argv2 [lindex $argv $i]
-                                                incr i
-                                        }
-                                } else {
-                                        puts "error: unknown option: -$shortOpt"
-                                        exit 2
-                                }
-                        }
-                        continue
-                }
-
-                lappend argv2 $argv_i
-        }
-        return $argv2
-}
-
-proc getopt::isShortOpt {o} {
-        return [regexp {^-[a-zA-Z0-9]+} $o]
-}
-
-proc getopt::isLongOpt {o} {
-        return [regexp {^--[a-zA-Z0-9][a-zA-Z0-9]*} $o]
-}
-
-proc getopt::getopt {argv} {
-        variable optlist
-        variable posArgs
-
-        set argv [expandOptNames $argv]
-        set argc [llength $argv]
-
-        set residualArgs {}
-
         for {set i 0} {$i < $argc} {} {
             set argv_i [lindex $argv $i]
-            incr i
 
-            if [isLongOpt $argv_i] {
-                set optName [regsub {^--} $argv_i {}]
-                if [info exists optlist($optName)] {
-                    set varlist $optlist($optName)
-                    upvar [lindex $optlist($optName) 0] _
-                    set _ ""
-                    set n_required_opt_args [expr {-1+[llength $varlist]}]
-                    set j 1
-                    while {$n_required_opt_args > 0} {
-                        incr n_required_opt_args -1
-                        if {$i >= $argc} {
-                            puts "error: not enough arguments for option --$optName"
-                            exit 5
-                        }
-                        uplevel [list set [lindex $varlist $j] [lindex $argv $i]]
-                        incr j
-                        incr i
+            if { [string index $argv_i 0] ne {-} } {
+
+                # nonPosArgs shall precede posArgs
+                # first occurrence of an argument
+                # that does not start with a dash
+                # terminates nonPosArgs processing
+
+                set argv [lrange $argv $i end]
+                break
+
+            } else {
+
+                incr i
+
+                if { $argv_i eq {--} && ${posArgs} ne {} } {
+
+                    # separator (--) terminates nonPosArgs processing
+                    # in cases that we also have posArgs
+
+                    set argv [lrange $argv $i end]
+                    break
+
+                } elseif { [string range $argv_i 0 1] eq {--} } {
+
+                    if { ![info exists map($argv_i)] } {
+
+                        # nonPosArgs must have an entry
+                        # in the array that maps options
+                        # to variable names
+
+                        error "no such option: $argv_i"
+
                     }
-                } else {
-                    puts "error: unknown option: --$optName"
-                    exit 4
+
+                    # isLongOpt - starts with two dashes
+                    # and entry exists in map array
+
+                    set argname $map($argv_i)
+                    set arg($argname) ""
+                    set i [getoptargs arg $argname $argc $argv $i]
+
+                } elseif { [string index $argv_i 0] eq {-} } {
+
+                    set argv_i_opts [split [regsub {^-} $argv_i {}] {}]
+                    foreach shortOpt $argv_i_opts {
+
+                        if { [info exists map(-$shortOpt)] } {
+
+                            # isShortOpt - starts with two dashes
+                            # and entry exists in map array
+
+                            set argname $map(-$shortOpt)
+                            set arg($argname) ""
+                            set i [getoptargs arg $argname $argc $argv $i]
+
+                        } else {
+
+                            # nonPosArgs must have an entry
+                            # in the array that maps options
+                            # to variable name
+
+                            puts "error: unknown option: -$shortOpt"
+                            exit 2
+                        }
+                    }
+                    #continue
                 }
-                continue
             }
+        }
+    }
 
-            lappend residualArgs $argv_i
+    while { $argv ne {} && $posArgs ne {} } {
+        set posArgs [lassign $posArgs argv_i]
+        upvar $argv_i _
+        set argv [lassign $argv {_}]
+    }
+
+    if { $posArgs ne {} } {
+        error "not enough arguments for posArgs: $posArgs"
+    }
+
+    return $argv
+
+}
+
+proc getopt::getoptargs {argVar argname argc argv i} {
+    upvar $argVar arg
+    variable optargs
+
+    set varlist $optargs($argname)
+    set n_required_opt_args [expr {-1+[llength $varlist]}]
+    set j 1
+    while {$n_required_opt_args > 0} {
+        incr n_required_opt_args -1
+        if {$i >= $argc} {
+            puts "not enough arguments for option: $argname"
+            exit 3
         }
 
-        while { $residualArgs ne {} && $posArgs ne {} } {
-            set posArgs [lassign $posArgs argv_i]
-            upvar $argv_i _
-            set residualArgs [lassign $residualArgs {_}]
-        }
+        # Note: if it's a multiple, we need to use lappend or some
+        # other form of setter that preserves mutliple values
 
-        if { $posArgs ne {} } {
-            error "not enough arguments for posArgs: $posArgs"
-        }
+        set varname [lindex $varlist $j]
+        set arg($varname) [lindex $argv $i]
 
-        return $residualArgs
+        incr j
+        incr i
+    }
+    return $i
 }

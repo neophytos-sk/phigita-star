@@ -69,6 +69,10 @@ proc ::feed_reader::ls {args} {
     }
     set args [getopt::getopt $args]
 
+    getopt add --long-option "all" --short-option "a" -varlist {all_p}
+    getopt add --long-option "almost-all" --short-option "A" -varlist {almost_all_p}
+    getopt add -sv "a" {all_p}
+
     foreach v [info vars] {
         puts "$v=[set $v]"
     }
