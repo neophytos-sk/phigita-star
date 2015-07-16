@@ -7,7 +7,7 @@ proc ::feed_reader::generate_include_re {anchor_nodesVar feed_url matching_pairs
     upvar $anchor_nodesVar anchor_nodes
     upvar $matching_pairsVar matching_pairs
 
-    puts feed_url=$feed_url
+    #puts feed_url=$feed_url
 
     set feed_url [url normalize ${feed_url}]
     set domain [::util::domain_from_url ${feed_url}]
@@ -28,7 +28,8 @@ proc ::feed_reader::generate_include_re {anchor_nodesVar feed_url matching_pairs
                     ${link}]]
                 
         if { ${domain} ne [::util::domain_from_url ${canonical_link}] } {
-            error "domain=$domain domain_from_url=[::util::domain_from_url $canonical_link]"
+            #puts "canonical_link=$canonical_link"
+            #error "domain=$domain domain_from_url=[::util::domain_from_url $canonical_link]" 
             continue
         }
 
@@ -37,7 +38,7 @@ proc ::feed_reader::generate_include_re {anchor_nodesVar feed_url matching_pairs
         }
 
         # store it before it changes
-        lappend pairs [list $title $path]
+        set orig_path $path
 
         foreach {re subSpec} {
             {[[:lower:]]} {x}
@@ -51,12 +52,12 @@ proc ::feed_reader::generate_include_re {anchor_nodesVar feed_url matching_pairs
             {=X[Xx]+(&|$)} {=W\1}
             {x+} {P}
             {X+} {Q}
-            {[Xx]+} {R}
+            {[QP]+} {R}
             {[^[:alpha:]\/?&=.\-]+} {o}
             {([.?])} {\\\1}
-            {[PQR\-]{2,}} {T}
+            {[PQRD\-]{3,}} {T}
             {(Po|oP|Qo|oQ|Ro|oR|oDo|oNo|oTo)+} {o}
-            {/[PQRT](/[PQRT])+} {/T}
+            {/[PQRT]} {/T}
         } {
 
             regsub -all -- ${re} ${path} ${subSpec} path
@@ -64,10 +65,11 @@ proc ::feed_reader::generate_include_re {anchor_nodesVar feed_url matching_pairs
         }
 
         #regsub -all -- {[[:alpha:]]+} ${path} {o} path
-        puts ${link}
-        puts ${path}
+        #puts ${link}
+        #puts ${path}
 
         set count [incr url_shape(${path})]
+        lappend url_pairs($path) [list $title $orig_path]
         if { ${count} > ${max} && -1 != [string first {N} ${path}] } {
             set max ${count}
             set max_path ${path}
@@ -82,7 +84,15 @@ proc ::feed_reader::generate_include_re {anchor_nodesVar feed_url matching_pairs
     puts ""
     puts "Top 5 URL shapes"
     puts "================"
-    puts [join [lrange [lsort -index 1 [map {x y} [array get url_shape] {list $x $y}]] 0 4] "\n"]
+    set top5_url_shapes [lrange [lsort -decreasing -integer -index 1 [map {x y} [array get url_shape] {list $x $y}]] 0 4]
+    foreach shape $top5_url_shapes {
+        lassign $shape pattern count
+        lassign [lindex $url_pairs($pattern) 0] title link
+        puts "$pattern count=$count log=[expr { log($count) }]"
+        puts $title
+        puts $link
+        puts ""
+    }
     puts ""
 
     set include_re ""
@@ -91,13 +101,26 @@ proc ::feed_reader::generate_include_re {anchor_nodesVar feed_url matching_pairs
         # if more than ${coeff} of links are recognized by ${max_path}
         # then turn it into a regular expression
 
+        puts ""
+        puts "Chosen URL shape"
+        puts "================"
         puts "url_shape=${max_path} count=${max}"
+        if {0} {
+            foreach pair $url_pairs($max_path) {
+                lassign $pair title link
+                puts ""
+                puts $title
+                puts $link
+            }
+        }
 
         set include_re ${max_path}
 
+        #   {N}     {\d{4,}}
+        #   {D}     {\d{1,3}}
         foreach {re subSpec} {
-            {N}     {\d{4,}}
-            {D}     {\d{1,3}}
+            {N}     {\d+}
+            {D}     {\d+}
             {y}     {[a-z]+}
             {Y}     {[A-Z]+}
             {w}     {[a-z][a-zA-Z]+}
@@ -119,7 +142,7 @@ proc ::feed_reader::generate_include_re {anchor_nodesVar feed_url matching_pairs
         set max_inline_match [list]
         set second_best_inline_match [list]
         set matching_pairs [list]
-        foreach title_path_pair $pairs {
+        foreach title_path_pair $url_pairs($max_path) {
             lassign $title_path_pair title path
 
             # lrange is there to ensure that we exclude whole match from inline parts
@@ -160,7 +183,7 @@ proc ::feed_reader::generate_include_re {anchor_nodesVar feed_url matching_pairs
             }
 
         }
-        #puts "---"
+        puts ""
         puts include_re=${include_re}
 
     } else {
