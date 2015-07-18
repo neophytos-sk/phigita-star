@@ -69,23 +69,31 @@ proc ::pattern::annotate_url {url} {
     puts $url
 
     set path_fmt_list [list]
-    foreach pattern_name [annotate_path_parts $url] {
-        if { $pattern_name eq {} } {
+    foreach pattern_name_list [annotate_path_parts $url] {
+        if { $pattern_name_list eq {} } {
             # TODO: temporary hack, needs to be fixed
             continue
         }
-        lappend path_fmt_list $pattern_to_fmt($pattern_name)
+        set pattern_fmt_list [list]
+        foreach pattern_name $pattern_name_list {
+            lappend pattern_fmt_list $pattern_to_fmt($pattern_name)
+        }
+        lappend path_fmt_list [list $pattern_fmt_list]
     }
     set path_fmt [join $path_fmt_list "/"]
 
     set query_fmt_list [list]
     foreach item [annotate_query_params $url] {
-        lassign $item param_name pattern_name
-        if { $pattern_name eq {} } {
+        lassign $item param_name pattern_name_list
+        if { $pattern_name_list eq {} } {
             # TODO: temporary hack, needs to be fixed
             continue
         }
-        lappend query_fmt_list ${param_name}=$pattern_to_fmt($pattern_name)
+        set pattern_fmt_list [list]
+        foreach pattern_name $pattern_name_list {
+            lappend pattern_fmt_list $pattern_to_fmt($pattern_name)
+        }
+        lappend query_fmt_list ${param_name}=[list $pattern_fmt_list]
     }
     set query_fmt [join $query_fmt_list "&"]
 
@@ -116,10 +124,11 @@ proc ::pattern::match_url {fmt url} {
         }
         set str $fmt_query($name)
         set firstChar [string index $str 0] 
-        if { $firstChar eq {%} } {
-            set format_group $str
-            if { $format_group ne {} && ![::pattern::match_format $format_group $url_query($name)] } {
-                return false
+        if { $firstChar in "% \\\{" } {
+            foreach format_group [join $str] {
+                if { $format_group ne {} && ![::pattern::match_format $format_group $url_query($name)] } {
+                    return false
+                }
             }
         } elseif { $str ne $url_query($name) } {
             return false
@@ -145,5 +154,6 @@ puts "match_url($fmt2,$url2) => [::pattern::match_url $fmt2 $url2]"
 puts "match_url($fmt2,$url1) => [::pattern::match_url $fmt2 $url1]"
 puts "match_url($fmt1,$url2) => [::pattern::match_url $fmt1 $url2]"
 
-set url "http://www.kepa.gov.cy/em/BusinessDirectory/Company/CompanyProduct.aspx?CompanyId=2b674aab-7c3e-4e12-ab09-6d852b507a56&ProductId=cffcf1e6-efcc-41df-8e6d-46efbeabf097"
-puts [pattern::annotate_url $url]
+set url3 "http://www.kepa.gov.cy/em/BusinessDirectory/Company/CompanyProduct.aspx?CompanyId=2b674aab-7c3e-4e12-ab09-6d852b507a56&ProductId=cffcf1e6-efcc-41df-8e6d-46efbeabf097"
+set fmt3 [pattern::annotate_url $url3]
+puts "match_url($fmt3,$url3) => [::pattern::match_url $fmt3 $url3]"
