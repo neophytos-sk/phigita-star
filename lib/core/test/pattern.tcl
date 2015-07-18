@@ -24,6 +24,7 @@ namespace eval ::pattern {
 
     array set fmt_to_pattern {
         %A alpha
+        %F alnum_plus_ext
         %T lc_alnum_dash_title_optional_ext
         %N naturalnum
         %U uuid
@@ -43,7 +44,7 @@ proc ::pattern::annotate_query_params {url} {
     puts ""
     puts "#annotate_query_params"
     set list [url parse_query $urlarr(query)]
-    set types [map x $list {list $x [::pattern::typeof [lindex $x 1] {alpha naturalnum lc_alnum_dash_title_optional_ext sha1_hex uuid}]}]
+    set types [map x $list {list $x [::pattern::typeof [lindex $x 1] {alpha naturalnum lc_alnum_dash_title_optional_ext sha1_hex uuid alnum_plus_ext}]}]
     puts $types
     puts "=> [set types [map x $types {list [lindex [lindex $x 0] 0] [lindex $x 1]}]]"
     return $types
@@ -55,7 +56,7 @@ proc ::pattern::annotate_path_parts {url} {
     puts "#annotate_path_parts"
     array set urlarr [::uri::split $url]
     puts $urlarr(path)
-    set values_and_types [map x [split $urlarr(path) {/}] {list $x [::pattern::typeof $x {alpha naturalnum lc_alnum_dash_title_optional_ext sha1_hex uuid}]}]
+    set values_and_types [map x [split $urlarr(path) {/}] {list $x [::pattern::typeof $x {alpha naturalnum lc_alnum_dash_title_optional_ext sha1_hex uuid alnum_plus_ext}]}]
     puts $values_and_types
     set types [map x $values_and_types {lindex $x 1}]
     puts "=> $types"

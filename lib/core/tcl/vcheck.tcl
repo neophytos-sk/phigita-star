@@ -138,7 +138,13 @@ proc ::pattern::check=md5_hex {valueVar} {
 
 proc ::pattern::check=lc_alnum_dash_title_optional_ext {valueVar} {
     upvar ${valueVar} value
-    set re {^-?(?:[a-z0-9]+-)+[a-z0-9]+-?(?:\.[a-z0-9]+)?$}
+    set re {^-?(?:[a-z0-9]+-)+[a-z0-9]+-?(?:\.[a-z0-9]{1,4})?$}
+    return [regexp -- ${re} ${value}]
+}
+
+proc ::pattern::check=alnum_plus_ext {valueVar} {
+    upvar ${valueVar} value
+    set re {^[A-Za-z0-9]+\.[a-z0-9]{1,4}$}
     return [regexp -- ${re} ${value}]
 }
 
