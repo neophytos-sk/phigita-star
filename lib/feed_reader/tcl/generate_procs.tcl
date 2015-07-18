@@ -21,6 +21,10 @@ proc ::feed_reader::generate_include_re {anchor_nodesVar feed_url matching_pairs
         set link [$anchor_node @href ""]
         set title [$anchor_node @title [$anchor_node text]]
 
+        if { [string match -nocase "javascript:*" $link] } {
+            continue
+        }
+
         set canonical_link \
             [::uri::canonicalize \
                 [::uri::resolve \
@@ -37,27 +41,39 @@ proc ::feed_reader::generate_include_re {anchor_nodesVar feed_url matching_pairs
             continue
         }
 
+        foreach {key value} [uri::split $canonical_link] {
+            if { $value ne {} } {
+                puts "${key}->typeof($value) = [::pattern::typeof $value]"
+            }
+        }
+
         # store it before it changes
         set orig_path $path
 
+        # I => hexadecimal unique id
+        # x => encoded url hexadecimal character
+        # 
+        #    {=a+(&|$)} {=y\1}
+        #    {=A+(&|$)} {=Y\1}
+        #    {[^[:alpha:]\/?&=.\-]+} {o}
+        #    {(?:o[PQRDNT]+o?|o?[PQRDNT]o)+} {o}
+
         foreach {re subSpec} {
-            {[[:lower:]]} {x}
-            {[[:upper:]]} {X}
+            {[[:xdigit:]]{8}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{6,}} {_}
+            {[[:xdigit:]]{40}} {_}
+            {\%[[:xdigit:]]{2}} {x}
+            {[[:lower:]]} {a}
+            {[[:upper:]]} {A}
             {[0-9]} {d}
-            {d{4,}} {N\1}
-            {d{1,3}} {D\1}
-            {=x+(&|$)} {=y\1}
-            {=X+(&|$)} {=Y\1}
-            {=x[Xx]+(&|$)} {=w\1}
-            {=X[Xx]+(&|$)} {=W\1}
-            {x+} {P}
-            {X+} {Q}
+            {d{5,}} {N\1}
+            {d{1,4}} {D\1}
+            {=a[Aa]+(&|$)} {=w\1}
+            {=A[Aa]+(&|$)} {=W\1}
+            {a+} {P}
+            {A+} {Q}
             {[QP]+} {R}
-            {[^[:alpha:]\/?&=.\-]+} {o}
             {([.?])} {\\\1}
-            {[PQRD\-]{3,}} {T}
-            {(Po|oP|Qo|oQ|Ro|oR|oDo|oNo|oTo)+} {o}
-            {/[PQRT]} {/T}
+            {(?:-[PQRDN]+-?|-?[PQRDN]+-)+[PQRDN]?} {T}
         } {
 
             regsub -all -- ${re} ${path} ${subSpec} path

@@ -1,6 +1,4 @@
-set dir [file dirname [info script]]
-
-source [file join $dir ../tcl/data/pattern.tcl]
+package require core
 
 foreach str {
     12345
@@ -15,5 +13,137 @@ foreach str {
     phigita.net
     my.phigita.net
 } {
-    puts "typeof('${str}') = [::data::pattern::typeof $str]"
+    puts "typeof('${str}') = [::pattern::typeof $str]"
 }
+
+
+
+namespace eval ::pattern {
+    variable fmt_to_pattern
+    variable pattern_to_fmt
+
+    array set fmt_to_pattern {
+        %A alpha
+        %T lc_alnum_dash_title_optional_ext
+        %N naturalnum
+        %U uuid
+        %H sha1_hex
+    }
+
+    foreach {format_group pattern_name} [array get fmt_to_pattern] {
+        set pattern_to_fmt($pattern_name) $format_group
+    }
+}
+
+proc ::pattern::annotate_query_params {url} {
+    array set urlarr [url split $url]
+    if { $urlarr(query) eq {} } {
+        return
+    }
+    puts ""
+    puts "#annotate_query_params"
+    set list [url parse_query $urlarr(query)]
+    set types [map x $list {list $x [::pattern::typeof [lindex $x 1] {alpha naturalnum lc_alnum_dash_title_optional_ext sha1_hex uuid}]}]
+    puts $types
+    puts "=> [set types [map x $types {list [lindex [lindex $x 0] 0] [lindex $x 1]}]]"
+    return $types
+}
+
+
+proc ::pattern::annotate_path_parts {url} {
+    puts ""
+    puts "#annotate_path_parts"
+    array set urlarr [::uri::split $url]
+    puts $urlarr(path)
+    set values_and_types [map x [split $urlarr(path) {/}] {list $x [::pattern::typeof $x {alpha naturalnum lc_alnum_dash_title_optional_ext sha1_hex uuid}]}]
+    puts $values_and_types
+    set types [map x $values_and_types {lindex $x 1}]
+    puts "=> $types"
+    return $types
+}
+
+proc ::pattern::annotate_url {url} {
+    variable pattern_to_fmt
+    puts ""
+    puts "#annotate_url"
+    puts $url
+
+    set path_fmt_list [list]
+    foreach pattern_name [annotate_path_parts $url] {
+        if { $pattern_name eq {} } {
+            # TODO: temporary hack, needs to be fixed
+            continue
+        }
+        lappend path_fmt_list $pattern_to_fmt($pattern_name)
+    }
+    set path_fmt [join $path_fmt_list "/"]
+
+    set query_fmt_list [list]
+    foreach item [annotate_query_params $url] {
+        lassign $item param_name pattern_name
+        if { $pattern_name eq {} } {
+            # TODO: temporary hack, needs to be fixed
+            continue
+        }
+        lappend query_fmt_list ${param_name}=$pattern_to_fmt($pattern_name)
+    }
+    set query_fmt [join $query_fmt_list "&"]
+
+    set fmt $path_fmt
+    if { $query_fmt ne {} } {
+        append fmt "?" $query_fmt
+    }
+    return $fmt
+}
+
+proc ::pattern::match_format {format_group str} {
+    variable fmt_to_pattern
+    set pattern_name $fmt_to_pattern($format_group)
+    return [::pattern::check=$pattern_name str]
+}
+
+proc ::pattern::match_url {fmt url} {
+    array set fmt_a [url split $fmt]
+    array set url_a [url split $url]
+
+    array set fmt_query [join [url parse_query $fmt_a(query)]]
+    array set url_query [join [url parse_query $url_a(query)]]
+
+    set count_matched 0
+    foreach name [array names url_query] {
+        if { ![info exists fmt_query($name)] } {
+            return false
+        }
+        set str $fmt_query($name)
+        set firstChar [string index $str 0] 
+        if { $firstChar eq {%} } {
+            set format_group $str
+            if { $format_group ne {} && ![::pattern::match_format $format_group $url_query($name)] } {
+                return false
+            }
+        } elseif { $str ne $url_query($name) } {
+            return false
+        }
+        incr count_matched
+    }
+    
+    if { $count_matched != [array size fmt_query] } {
+        return false
+    }
+
+    return true
+}
+
+set url1 "http://www.japantimes.co.jp/news/2015/07/18/national/tokyo-opens-citys-first-swimming-beach-since-1960s/"
+set fmt1 [pattern::annotate_url $url1]
+puts "match_url($fmt1,$url1) => [::pattern::match_url $fmt1 $url1]"
+
+set url2 "http://www.hurriyetdailynews.com/shifts-to-shuffles.aspx?pageID=238&nID=85330&NewsCatID=473"
+set fmt2 [pattern::annotate_url $url2]
+#set fmt2 "%T?pageID=%N&nID=%N&NewsCatID=%N"
+puts "match_url($fmt2,$url2) => [::pattern::match_url $fmt2 $url2]"
+puts "match_url($fmt2,$url1) => [::pattern::match_url $fmt2 $url1]"
+puts "match_url($fmt1,$url2) => [::pattern::match_url $fmt1 $url2]"
+
+set url "http://www.kepa.gov.cy/em/BusinessDirectory/Company/CompanyProduct.aspx?CompanyId=2b674aab-7c3e-4e12-ab09-6d852b507a56&ProductId=cffcf1e6-efcc-41df-8e6d-46efbeabf097"
+puts [pattern::annotate_url $url]
