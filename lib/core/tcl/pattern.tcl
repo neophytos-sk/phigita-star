@@ -1,16 +1,45 @@
-namespace eval ::pattern {;}
+namespace eval ::pattern {
+    namespace ensemble create -subcommands {to_fmt from_fmt match}
 
-proc ::pattern::match_format {fmt list} {
-    foreach {key value} $list {
-        lappend result $key [typeof $value]
+    variable fmt_to_pattern
+    variable pattern_to_fmt
+
+    array set fmt_to_pattern {
+        %A alpha
+        %F alnum_plus_ext
+        %T lc_alnum_dash_title_optional_ext
+        %N naturalnum
+        %U uuid
+        %H sha1_hex
     }
 
-    set len [string length $str]
-    set first 0
-    set last [string first {%} ${fmt}]
-    while { $first < $last } {
+    foreach {format_group pattern_name} [array get fmt_to_pattern] {
+        set pattern_to_fmt($pattern_name) $format_group
+    }
+
+}
+
+proc ::pattern::to_fmt {pattern_names} {
+    variable pattern_to_fmt
+    set result [list]
+    foreach pattern_name $pattern_names {
+        lappend result $pattern_to_fmt($pattern_name)
     }
     return $result
+}
+
+proc ::pattern::from_fmt {format_groups} {
+    variable fmt_to_pattern
+    set result [list]
+    foreach format_group $format_groups {
+        lappend result $fmt_to_pattern($format_group)
+    }
+    return $result
+}
+
+
+proc ::pattern::match {pattern_name str} {
+    return [::pattern::check=$pattern_name str]
 }
 
 proc ::pattern::typeof {value {names ""}} {
