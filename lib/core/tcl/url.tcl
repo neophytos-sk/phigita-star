@@ -46,33 +46,33 @@ proc ::url::query_fmt_ex {url} {
     if { $urlarr(query) eq {} } {
         return
     }
-    puts ""
-    puts "#annotate_query_params"
+    #puts ""
+    #puts "#annotate_query_params"
     set list [url parse_query $urlarr(query)]
     set types [map {x y} $list {list [list $x $y] [::pattern::typeof $y {alpha naturalnum lc_alnum_dash_title_optional_ext sha1_hex uuid alnum_plus_ext}]}]
-    puts $types
-    puts "=> [set types [map x $types {list [lindex [lindex $x 0] 0] [lindex $x 1]}]]"
+    #puts $types
+    set types [map x $types {list [lindex [lindex $x 0] 0] [lindex $x 1]}]
     return $types
 }
 
 
 proc ::url::path_fmt_ex {url} {
-    puts ""
-    puts "#annotate_path_parts"
+    #puts ""
+    #puts "#annotate_path_parts"
     array set urlarr [::uri::split $url]
-    puts $urlarr(path)
+    #puts $urlarr(path)
     set values_and_types [map x [::split $urlarr(path) {/}] {list $x [::pattern::typeof $x {alpha naturalnum lc_alnum_dash_title_optional_ext sha1_hex uuid alnum_plus_ext}]}]
-    puts $values_and_types
+    #puts $values_and_types
     set types [map x $values_and_types {lindex $x 1}]
-    puts "=> $types"
+    #puts "=> $types"
     return $types
 }
 
 proc ::url::fmt_ex {url} {
 
-    puts ""
-    puts "#annotate_url"
-    puts $url
+    #puts ""
+    #puts "#annotate_url"
+    #puts $url
 
     set path_fmt_list [list]
     foreach pattern_name_list [path_fmt_ex $url] {
@@ -146,9 +146,21 @@ proc ::url::match {pattern url} {
         }
         incr count_matched
     }
-    
+
     if { $count_matched != [array size fmt_query] } {
         return false
+    }
+
+    # match path with fmt
+    foreach str1 [::split $fmt_a(path) {/}] str2 [::split $url_a(path) {/}] {
+        if { [string index $str1 0] eq {%} } {
+            set match_p [pattern match [pattern from_fmt $str1] $str2]
+            if { !$match_p } {
+                return false
+            }
+        } elseif { $str1 ne $str2 } {
+            return false
+        }
     }
 
     return true

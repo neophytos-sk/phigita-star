@@ -16,6 +16,52 @@ proc ::feed_reader::generate_include_re {anchor_nodesVar feed_url matching_pairs
     set max 0
     set max_path {}
 
+    array set count_matched [list]
+    set first_node [lindex $anchor_nodes 0]
+    set fmt [url fmt_ex [$first_node @href ""]]
+    set queue [list]
+    lappend queue $fmt
+    set count_matched($fmt) 0
+
+    while { $queue ne {} } {
+        set fmt [lindex $queue 0]
+        set queue [lreplace $queue 0 0]
+
+        foreach anchor_node $anchor_nodes {
+            set link [$anchor_node @href ""]
+            set title [$anchor_node @title [$anchor_node text]]
+
+            if { [string match -nocase "javascript:*" $link] } {
+                continue
+            }
+
+            set canonical_link \
+                [::uri::canonicalize \
+                    [::uri::resolve \
+                        ${feed_url} \
+                        ${link}]]
+
+            if { ![url match $fmt $canonical_link] } {
+                set new_fmt [url fmt_ex $canonical_link]
+                if { ![info exists count_matched($new_fmt)] } {
+                    lappend queue $new_fmt
+                    set count_matched($new_fmt) 0
+                }
+
+                #puts "match failed: $canonical_link"
+                #exit
+            } else {
+                incr count_matched($fmt)
+            }
+
+        }
+        #puts $queue
+        
+    }
+
+    puts [join [map {x y} [array get count_matched] {list $x $y}] "\n"]
+    exit
+
     set pairs [list]
     foreach anchor_node $anchor_nodes {
         set link [$anchor_node @href ""]
@@ -723,7 +769,7 @@ proc ::feed_reader::generate_feed {feed_url {anchor_link_pattern ""} {encoding "
 
     }
 
-    set anchor_nodes [${doc} selectNodes {//a[@href]}]
+    set anchor_nodes [${doc} selectNodes {//a[not(starts-with(@href,'javascript:'))]}]
     if { $anchor_link_pattern ne {} } {
         set result [list]
         foreach node $anchor_nodes {
