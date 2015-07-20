@@ -1,6 +1,6 @@
 source ../../naviserver_compat/tcl/module-naviserver_compat.tcl
 
-package require http
+package require curl
 package require tdom_procs
 package require util_procs
 package require htmltidy
