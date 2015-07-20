@@ -6,7 +6,7 @@ proc ::load_package {package_name dir {version "0.1"}} {
 
     package provide ${package_name} ${version}
 
-    set filelist [glob -types {f} -directory [file join ${dir} tcl] *.tcl]
+    set filelist [lsort [glob -types {f} -directory [file join ${dir} tcl] *.tcl]]
     foreach {filename} ${filelist} {
         source ${filename}
     }
