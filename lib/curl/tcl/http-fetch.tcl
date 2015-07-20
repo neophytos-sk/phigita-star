@@ -1,7 +1,7 @@
 package require core
 
 namespace eval ::http {
-    namespace create ensemble -subcommands {fetch cache_fetch}
+    namespace ensemble create -subcommands {fetch cache_fetch}
 }
 
 proc ::http::fetch {contentVar url {optionsVar ""} {infoVar ""}} {
