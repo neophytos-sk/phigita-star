@@ -190,7 +190,7 @@ proc find_data_fragment {url highlight_textVar {numContextTokens 20}} {
     set dir [file dirname [info script]]
     set options(cookiefile) [file join ${dir} "cookies.txt"]
 
-    set errorcode [::xo::http::fetch html $url options info]
+    set errorcode [::http::fetch html $url options info]
 
     puts "--->>> errorcode=$errorcode"
 

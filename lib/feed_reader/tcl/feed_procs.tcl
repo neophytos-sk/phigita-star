@@ -153,7 +153,7 @@ proc ::feed_reader::fetch_feed {resultVar feedVar {stoptitlesVar ""}} {
         set encoding $feed(encoding)
     }
 
-    set errorcode [::xo::http::fetch html $url]
+    set errorcode [::http::fetch html $url]
     if { ${errorcode} } {
         puts "error fetching feed: errocode=$errorcode"
         return $errorcode
@@ -378,7 +378,7 @@ proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar infoVa
     set html ""
 
     array set options [get_value_if feed(http_options) ""]
-    set errorcode [::xo::http::fetch html ${link} options info]
+    set errorcode [::http::fetch html ${link} options info]
     unset options
 
     if { ${errorcode} } {
@@ -551,7 +551,7 @@ proc ::feed_reader::get_cookielist_and_try_again {link title_in_feed feedVar ite
 	    
 	    if { [catch {
 
-		set redirect_retcode [::xo::http::fetch _dummy_ ${redirect_url} "" redirect_info]
+		set redirect_retcode [::http::fetch _dummy_ ${redirect_url} "" redirect_info]
 
 	    } errmsg] } {
 
@@ -2208,7 +2208,7 @@ proc ::feed_reader::sync_feeds {{news_sources ""} {debug_p "0"}} {
 
 
 proc ::feed_reader::curl {url} {
-    set errorcode [::xo::http::fetch html $url]
+    set errorcode [::http::fetch html $url]
     if { ${errorcode} } {
         puts "error fetching $url"
         return $errorcode

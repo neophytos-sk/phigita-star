@@ -149,7 +149,7 @@ proc get_feed_items {resultVar feedVar {stoptitlesVar ""}} {
 	set encoding $feed(encoding)
     }
 
-    ::xo::http::fetch html $url
+    ::http::fetch html $url
     
     set html [encoding convertfrom ${encoding} ${html}]
 
@@ -250,7 +250,7 @@ foreach link $result(links) title_in_feed $result(titles) {
 
 
     set html ""
-    ::xo::http::fetch html ${link}
+    ::http::fetch html ${link}
 
     set html [encoding convertfrom ${encoding} ${html}]
 

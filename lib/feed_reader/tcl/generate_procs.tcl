@@ -627,51 +627,6 @@ proc ::feed_reader::generate_xpath_article_body_using_bte {doc} {
 
 }
 
-
-proc ::feed_reader::cache_fetch {htmlVar url} {
-
-    upvar $htmlVar html
-
-    set domain [::util::domain_from_url $url]
-    set reverse_domain [reversedomain $domain]
-    array set uri [::uri::split ${url}]
-    set urlencoded_path [::util::urlencode $uri(path)]
-
-    set keyspace "web_cache_db"
-    set column_family "web_page/by_domain"
-    set row_key $reverse_domain
-    set column_path $urlencoded_path
-
-    ::persistence::get_column \
-        $keyspace \
-        $column_family \
-        $row_key \
-        $column_path \
-        html \
-        exists_column_p
-
-    if { $exists_column_p } {
-        # returns content of web page as upvar with the given name
-
-        log "fetching page from cache: $url"
-
-        return 0
-    }
-
-    if { ![set errorcode [::xo::http::fetch html $url]] } {
-
-        ::persistence::insert_column \
-            $keyspace \
-            $column_family \
-            $row_key \
-            $column_path \
-            $html
-    }
-
-    return $errorcode
-
-}
-
 proc ::feed_reader::generate_xpath {feedVar xpathVar matching_pairsVar encoding} {
 
     upvar $feedVar feed
@@ -752,7 +707,7 @@ proc ::feed_reader::generate_feed {feed_url {anchor_link_pattern ""} {encoding "
             htmltidy_article_p 0]
 
 
-    if { [set errorcode [::xo::http::fetch html $feed_url options info]] } {
+    if { [set errorcode [::http::fetch html $feed_url options info]] } {
         return $errorcode
     }
 
@@ -769,16 +724,39 @@ proc ::feed_reader::generate_feed {feed_url {anchor_link_pattern ""} {encoding "
 
     }
 
-    set anchor_nodes [${doc} selectNodes {//a[not(starts-with(@href,'javascript:'))]}]
-    if { $anchor_link_pattern ne {} } {
-        set result [list]
-        foreach node $anchor_nodes {
-            if { [string match $anchor_link_pattern [$node @href ""]] } {
-                lappend result $node
+    set anchor_nodes [${doc} selectNodes {//a[@href]}]
+
+    set result [list]
+    foreach node $anchor_nodes {
+        set link [$node @href ""]
+
+        if { [string match -nocase "javascript:*" $link] } {
+            continue
+        }
+        if { $anchor_link_pattern ne {} } {
+            if { ![string match $anchor_link_pattern $link] } {
+                continue
             }
         }
-        set anchor_nodes $result
+
+        set canonical_link \
+            [::uri::canonicalize \
+                [::uri::resolve \
+                    ${feed_url} \
+                    ${link}]]
+
+
+        set domain [::util::domain_from_url ${feed_url}]
+        if { ${domain} ne [::util::domain_from_url ${canonical_link}] } {
+            continue
+        }
+
+        lappend result $node
+
     }
+    set anchor_nodes $result
+
+
     set num_links [llength $anchor_nodes]
     puts "#links = $num_links"
 

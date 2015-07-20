@@ -19,7 +19,7 @@ array set feed [dict get $feeds philenews]
 set re $feed(re)
 set url $feed(url)
 
-::xo::http::fetch html $url
+::http::fetch html $url
 
 proc same_origin_links {resultVar htmlVar url} {
     upvar $resultVar result

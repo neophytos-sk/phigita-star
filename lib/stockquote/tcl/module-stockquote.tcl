@@ -337,7 +337,7 @@ proc ::ext::StockQuote::Yahoo.get_splits {metadataVar dataVar exchange symbol st
     set url "http://ichart.yahoo.com/x?s=${symbol}&f=${to_y}&d=${to_m}&e=${to_d}&c=${from_y}&a=${from_m}&b=${from_d}&g=v&y=0&z=30000&ignore=.csv"
     puts "getSplits: $url"
 
-    set errorcode [::xo::http::fetch days $url]
+    set errorcode [::http::fetch days $url]
     if { $errorcode == 0 } {
 
 
@@ -374,7 +374,7 @@ proc ::ext::StockQuote::Yahoo.get_dividends {metadataVar dataVar exchange symbol
     set url "http://ichart.yahoo.com/x?s=${symbol}&f=${to_y}&d=${to_m}&e=${to_d}&c=${from_y}&a=${from_m}&b=${from_d}&g=v&y=0&z=30000&ignore=.csv"
     puts "getSplits: $url"
 
-    set errorcode [::xo::http::fetch days $url]
+    set errorcode [::http::fetch days $url]
     if { $errorcode == 0 } {
 
 
@@ -415,7 +415,7 @@ proc ::ext::StockQuote::Yahoo.get_historical_prices {metadataVar dataVar exchang
     set url "http://ichart.yahoo.com/table.csv?s=${symbol}&c=${from_y}&a=${from_m}&b=${from_d}&f=${to_y}&d=${to_m}&e=${to_d}&g=d&ignore=.csv"
     ns_log notice url=$url
 
-    set errorcode [::xo::http::fetch days $url]
+    set errorcode [::http::fetch days $url]
     if { $errorcode == 0 } {
 
 	set data [list]
@@ -461,7 +461,7 @@ proc ::ext::StockQuote::Google.get_historical_prices {metadataVar dataVar exchan
     set url "http://www.google.com/finance/historical?q=${exchange}:${symbol}&startdate=${url_start_date}&enddate=${url_end_date}&output=csv"
     ns_log notice "url=$url"
 
-    set errorcode [::xo::http::fetch days $url]
+    set errorcode [::http::fetch days $url]
     if { $errorcode == 0 } {
 
 	set data [list]
@@ -552,7 +552,7 @@ proc ::ext::StockQuote::Investopedia.get_historical_prices {metadataVar dataVar 
     set url "http://www.investopedia.com/markets/stocks/${symbol}/historical/?searchtype=Daily&startdate=${start_date}&enddate=${end_date}&download=1"
     ns_log notice url=$url
  
-    set errorcode [::xo::http::fetch html $url]
+    set errorcode [::http::fetch html $url]
     if { $errorcode == 0 } {
 
 	::xo::html::extract days html {//tr/td[@class='text-align-right']} "" "returnstring"
@@ -590,7 +590,7 @@ proc ::ext::StockQuote::QuoteMedia.get_historical_prices {metadataVar dataVar ex
 
     ns_log notice url=$url
 
-    set errorcode [::xo::http::fetch days $url]
+    set errorcode [::http::fetch days $url]
     if { $errorcode == 0 } {
 
 	set data [list]
@@ -632,7 +632,7 @@ proc ::ext::StockQuote::OANDA.get_historical_prices {metadataVar dataVar exchang
     set date ${end_month}/${end_day}/[string range ${end_year} end-1 end]
     set url "http://www.oanda.com/currency/historical-rates?date_fmt=us&date=${date}&date1=${date1}&exch=${base_currency}&expr=${counter_currency}&margin_fixed=${margin_fixed}&format=${output_format}&redirected=${redirected}"
 
-    set errorcode [::xo::http::fetch html $url]
+    set errorcode [::http::fetch html $url]
 
     if { $errorcode == 0 } {
 
@@ -737,7 +737,7 @@ proc ::ext::StockQuote::Xak.get_intraday_prices {metadataVar dataVar exchange sy
 
 	set url "http://www.xak.com/main/QuotesTransactionsWin.asp?s=${symbol}&cp=${i}&d=${MM}/${DD}/${YYYY}"
 
-	set errorcode [::xo::http::fetch html $url]
+	set errorcode [::http::fetch html $url]
 	
 	::xo::html::extract htmltable html {//table[@cellspacing=2 and @cellpadding=0 and @width='90%']}
 	::xo::html::table_to_multilist transactions_chunk htmltable

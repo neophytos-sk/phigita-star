@@ -9,7 +9,7 @@ package require htmltidy
 set url [lindex $argv 0]
 set xpath [lindex $argv 1]
 
-xo::http::fetch html $url
+http::fetch html $url
 
 set html [htmltidy::tidy $html]
 

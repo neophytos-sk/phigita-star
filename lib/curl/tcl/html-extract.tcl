@@ -1,6 +1,6 @@
-namespace eval ::xo::http {;}
+namespace eval ::http {;}
 
-proc ::xo::http::fetch {contentVar url} {
+proc ::http::fetch {contentVar url} {
     upvar ${contentVar} content
 
     set errorcode [curl::transfer -url $url \

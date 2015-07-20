@@ -1,8 +1,10 @@
 package require core
 
-namespace eval ::xo::http {;}
+namespace eval ::http {
+    namespace create ensemble -subcommands {fetch cache_fetch}
+}
 
-proc ::xo::http::fetch {contentVar url {optionsVar ""} {infoVar ""}} {
+proc ::http::fetch {contentVar url {optionsVar ""} {infoVar ""}} {
     upvar ${contentVar} content
 
     if { ${optionsVar} ne {} } {
@@ -62,4 +64,50 @@ proc ::xo::http::fetch {contentVar url {optionsVar ""} {infoVar ""}} {
 
     return $errorcode
 }
+
+
+proc ::http::cache_fetch {htmlVar url} {
+
+    upvar $htmlVar html
+
+    set domain [::util::domain_from_url $url]
+    set reverse_domain [reversedomain $domain]
+    array set uri [::uri::split ${url}]
+    set urlencoded_path [::util::urlencode $uri(path)]
+
+    set keyspace "web_cache_db"
+    set column_family "web_page/by_domain"
+    set row_key $reverse_domain
+    set column_path $urlencoded_path
+
+    ::persistence::get_column \
+        $keyspace \
+        $column_family \
+        $row_key \
+        $column_path \
+        html \
+        exists_column_p
+
+    if { $exists_column_p } {
+        # returns content of web page as upvar with the given name
+
+        log "fetching page from cache: $url"
+
+        return 0
+    }
+
+    if { ![set errorcode [::http::fetch html $url]] } {
+
+        ::persistence::insert_column \
+            $keyspace \
+            $column_family \
+            $row_key \
+            $column_path \
+            $html
+    }
+
+    return $errorcode
+
+}
+
 
