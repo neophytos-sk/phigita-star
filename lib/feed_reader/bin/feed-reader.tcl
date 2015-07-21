@@ -55,10 +55,6 @@ proc print_usage_info {} {
 
 }
 
-proc parse_args {{argsVar "args"}} {
-    upvar $argsVar args
-}
-
 proc ::feed_reader::ls {args} {
 
     getopt::init {

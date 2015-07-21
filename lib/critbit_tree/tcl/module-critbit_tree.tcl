@@ -5,8 +5,7 @@
 package provide critbit_tree 0.1
 
 
-#package require critcl
-::xo::lib::require critcl
+package require critcl
 
 
 set dir [file dirname [info script]]

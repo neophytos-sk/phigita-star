@@ -1,6 +1,7 @@
-source ../../naviserver_compat/tcl/module-naviserver_compat.tcl
+package require core
 
-::xo::lib::require geoip
+package require geoip
+
 ::xo::geoip::init
 
 

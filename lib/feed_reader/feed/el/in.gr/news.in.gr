@@ -2,7 +2,7 @@ url http://www.in.gr/
 include_re {/article/\?aid=[0-9]{4,}$}
 htmltidy_feed_p 0
 htmltidy_article_p 0
-xpath_article_title {returnstring(//div[@id="main"]//h1)}
+xpath_article_title {returnstring(//div[@id="in-news-main"]//h1)}
 xpath_article_body {returntext(//div[@id="intext_content_tag"])}
 xpath_article_image {
     {values(//div[@id="main"]/dl[@class="article-photo-main-hor"]//img[@width]/@src)}

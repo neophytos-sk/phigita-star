@@ -1004,11 +1004,11 @@ proc ::feed_reader::compare_mtime {file_or_dir1 file_or_dir2} {
     set mtime2 [file mtime $file_or_dir2]
 
     if { ${mtime1} < ${mtime2} } {
-	return -1
+        return -1
     } elseif { ${mtime1} > ${mtime2} } {
-	return 1
+        return 1
     } else {
-	return 0
+        return 0
     }
 
 }
@@ -1034,16 +1034,16 @@ proc ::feed_reader::list_site {domain {offset "0"} {limit "20"}} {
     set reversedomain [reversedomain ${domain}]
 
     set slicelist [::persistence::get_slice         \
-		       "newsdb"                     \
-		       "news_item/by_site_and_date" \
-		       "${reversedomain}"           \
-		       "${slice_predicate}"]
-    
+        "newsdb"                     \
+        "news_item/by_site_and_date" \
+        "${reversedomain}"           \
+        "${slice_predicate}"]
+
 
     foreach filename ${slicelist} {
-	array set item [::persistence::get_data ${filename}]
-	print_log_entry item context
-	unset item
+        array set item [::persistence::get_data ${filename}]
+        print_log_entry item context
+        unset item
     }
 
     print_log_footer context
