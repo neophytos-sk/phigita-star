@@ -1105,6 +1105,15 @@ namespace eval ::cbt {
     variable UINT64_STRING [expr { $UINT64_KEYS + $STRING_VALS }]
     variable STRING_UINT32 [expr { $STRING_KEYS + $UINT32_VALS }]
 
+    namespace ensemble create -subcommands {
+        create destroy
+        extend insert delete get exists prefix_match
+        segment_match id size dump restore
+        info extend
+        contains to_string bytes
+        write_to_file
+        read_from_file
+    }
 }
 
 
