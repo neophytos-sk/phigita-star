@@ -1,5 +1,5 @@
 CC     = gcc
-CFLAGS = -Wall -O3 -DNDEBUG -I../c -I/opt/naviserver/include -I../../struct/include -ltcl 
+CFLAGS = -Wall -O3 -DNDEBUG -I../c -I/opt/tcl/include -L/opt/tcl/lib -I../../struct/include -ltcl 
 DEPS   = structured_text.h
 OBJ    = stx-main.o structured_text.o
 EXT    = c
