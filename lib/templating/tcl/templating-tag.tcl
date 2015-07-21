@@ -15,6 +15,9 @@ define_lang ::templating::lang {
         ::dom::createNodeCmd elementNode $tag
     }
 
+    dom createNodeCmd textNode t
+    proc nt {text} { t -disableOutputEscaping $text}
+
     #node_cmd param
     #node_cmd pragma
 
@@ -23,8 +26,8 @@ define_lang ::templating::lang {
     #node_cmd item
     #node_cmd column
 
-    foreach cmd {val guard js css tcl} {
-        interp alias {} val {} leaf_node_helper
+    foreach tag {val guard js css tcl} {
+        interp alias {} $tag {} ::templating::lang::leaf_node_helper $tag
     }
 
     proc leaf_node_helper {cmd_name args} {
