@@ -1,3 +1,5 @@
+# TODO: replace file with pattern.tcl procs
+#
 namespace eval ::templating::validation {;}
 
 
@@ -172,7 +174,7 @@ proc ::templating::validation::check=float_optional_exp {valueVar} {
 
 # -------------------------------- dates ------------------------------------------
 
-proc ::data::pattern::is_valid_date {valueVar re submatch_vars} {
+proc ::templating::validation::is_valid_date {valueVar re submatch_vars} {
     upvar ${valueVar} value
 
     set match_p [regexp -nocase -- ${re} ${value} _dummy_ {*}${submatch_vars}] 

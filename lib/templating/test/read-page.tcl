@@ -1,6 +1,4 @@
-source ../../naviserver_compat/tcl/module-naviserver_compat.tcl
-
-::xo::lib::require templating
+package require templating
 
 if { [llength $argv] } {
     set filename [lindex $argv 0]

@@ -4,25 +4,28 @@ namespace eval ::templating::runtime {;}
 
 define_lang ::templating::lang {
 
-    namespace import ::basesys::lang::forward
+    #namespace import ::basesys::lang::forward
 
-    #node_cmd master
-    #node_cmd include
+    ##node_cmd master
+    ##node_cmd include
 
-    #node_cmd contract
-    node_cmd param
-    node_cmd pragma
+    ##node_cmd contract
 
-    node_cmd widget  ;# datastore, dataview, grid
-    node_cmd tpl     ;# if, for, with
-    node_cmd item
-    node_cmd column
+    foreach tag {param pragma widget tpl item column} {
+        ::dom::createNodeCmd elementNode $tag
+    }
 
-    forward val   leaf_node_helper
-    forward guard leaf_node_helper
-    forward js    leaf_node_helper
-    forward css   leaf_node_helper
-    forward tcl   leaf_node_helper
+    #node_cmd param
+    #node_cmd pragma
+
+    #node_cmd widget  ;# datastore, dataview, grid
+    #node_cmd tpl     ;# if, for, with
+    #node_cmd item
+    #node_cmd column
+
+    foreach cmd {val guard js css tcl} {
+        interp alias {} val {} leaf_node_helper
+    }
 
     proc leaf_node_helper {cmd_name args} {
 
@@ -33,7 +36,7 @@ define_lang ::templating::lang {
             set args [lrange $args 0 end-1]
         }
 
-        uplevel [list ::templating::lang::widget -type $cmd_name {*}$args [list t $str ]]
+        uplevel [list ::dom::execNodeCmd elementNode widget -type $cmd_name {*}$args [list t $str ]]
 
     }
 
@@ -44,31 +47,33 @@ define_lang ::templating::lang {
         master include
         contract
     } {
-        interp alias {} $cmd_name {} ::templating::lang::widget -type $cmd_name
+        interp alias {} $cmd_name {} ::dom::execNodeCmd elementNode widget -type $cmd_name
     }
 
-    dtd {
+    if {0} {
+        dtd {
 
-#TODO
+        #TODO
 
         <!DOCTYPE html [
 
-            <!ELEMENT html (widget | tpl | val | guard | js | css | tcl)*>
+        <!ELEMENT html (widget | tpl | val | guard | js | css | tcl)*>
 
-            <!ELEMENT widget (#PCDATA)>
+        <!ELEMENT widget (#PCDATA)>
 
-            <!ELEMENT contract (param | pragma)*>
+        <!ELEMENT contract (param | pragma)*>
 
-            <!ELEMENT grid (column)*>
+        <!ELEMENT grid (column)*>
 
-            <!ELEMENT master (#PCDATA)>
-            <!ATTLIST master src #CDATA>
+        <!ELEMENT master (#PCDATA)>
+        <!ATTLIST master src #CDATA>
 
-            <!ELEMENT include EMPTY>
-            <!ATTLIST include src #CDATA>
+        <!ELEMENT include EMPTY>
+        <!ATTLIST include src #CDATA>
 
-            <!ELEMENT slave EMPTY>
+        <!ELEMENT slave EMPTY>
         ]>
+        }
     }
 }
 
