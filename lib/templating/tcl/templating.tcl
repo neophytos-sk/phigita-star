@@ -30,11 +30,11 @@ proc tdom_innerHTML {node} {
 namespace eval ::templating {;}
 
 proc ::templating::compile_and_load_all {dir} {
-    set files [::util::findFiles $dir *.tdp]
+    set files [fs find $dir *.tdp]
     foreach filename $files {
-	if { [catch {compile_and_load $filename} errMsg] } {
-	    ns_log notice "failed to ::templating::compile_and_load $filename errMsg=$errMsg"
-	}
+        if { [catch {compile_and_load $filename} errMsg] } {
+            ns_log notice "failed to ::templating::compile_and_load $filename errMsg=$errMsg"
+        }
     }
 }
 

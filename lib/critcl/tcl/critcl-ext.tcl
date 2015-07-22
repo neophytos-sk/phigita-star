@@ -50,7 +50,7 @@ proc ::critcl::ext::latest_mtime {inputfile} {
     set templatingdir [file join [acs_root_dir] lib/templating]
 
     # latest mtime for the files in the templating package
-    set filelist [::util::findFiles $templatingdir *]
+    set filelist [fs find $templatingdir *]
 
     # add the source file
     lappend filelist $inputfile
