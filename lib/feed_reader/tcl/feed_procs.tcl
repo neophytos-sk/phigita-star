@@ -1090,11 +1090,13 @@ proc ::feed_reader::ls {args} {
     assert { vcheck("limit","integer") }
     assert { vcheck_if("lang","langclass") }
 
+    set predicates [list]
     if { exists("__arg_lang") } {
-        set predicate [list "in_slice" [list "newsdb/news_item/by_langclass/$lang"]]
-    } else {
-        set predicate [list "lrange" [list $offset $limit]]
+        lappend predicates [list "in_slice" [list "newsdb/news_item/by_langclass/$lang"]]
     }
+    lappend predicates [list "lrange" [list $offset $limit]]
+
+    set predicate [list "forall" [list $predicates]]
 
     set slicelist [::persistence::get_slice  \
 		       "newsdb"                      \

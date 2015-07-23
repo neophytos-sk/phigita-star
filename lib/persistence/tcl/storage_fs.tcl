@@ -334,6 +334,14 @@ proc ::persistence::fs::predicate=lindex {slicelistVar index} {
 
 }
 
+proc ::persistence::fs::predicate=forall {slicelistVar predicates} {
+    upvar $slicelistVar _
+    foreach predicate $predicates {
+        lassign ${predicate} cmd args
+        predicate=$cmd _ {*}$args
+    }
+}
+
 proc ::persistence::fs::predicate=in_slice {slicelistVar row_expression {predicate ""}} {
     upvar $slicelistVar _
 
