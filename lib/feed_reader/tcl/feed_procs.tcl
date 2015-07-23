@@ -1,5 +1,9 @@
 package require util_procs
 
+
+# using textalign::adjust command
+package require algo
+
 namespace eval ::feed_reader {
 
     array set meta [list]
@@ -1612,7 +1616,11 @@ proc ::feed_reader::print_item {itemVar {exclude_keys ""}} {
     foreach {key value} [array get item] {
         if { $key ni $exclude_keys } {
             if { ${value} ne {} } {
-                puts "* ${key}: ${value}"
+                if { $key eq {body} } {
+                    puts "* ${key}: [::textalign::adjust ${value} 80]"
+                } else {
+                    puts "* ${key}: ${value}"
+                }
             }
         }
     }

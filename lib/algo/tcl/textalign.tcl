@@ -45,25 +45,26 @@ proc ::textalign::breakline {text L} {
     array set s [list]
 
     # the actual algorithm
+    #
+    # At the end m(n) denotes the total badness of the full text
+    #
+    # In the optimal splitting of text l_1, ..., l_i,
+    # s(i) has the meaning that the last line starts with l_k.
     set max_penalty [expr { 2*pow($L,3) }]
     for {set i 1} { $i < $n + 1 } {incr i} {
-        array set sums [list $max_penalty 1]
+
+        set m($i) $max_penalty
+        set s($i) 1
 
         set k $i
         while { ([length $wl $k $i] <= $L) && ($k > 0) } {
-            set index [expr { entier(pow(($L - [length $wl $k $i]),3) + $m([expr { $k - 1 }])) }]
-            set sums($index) $k
+            set penalty [expr { entier(pow(($L - [length $wl $k $i]),3) + $m([expr { $k - 1 }])) }]
+            if { $penalty < $m($i) } {
+                set m($i) $penalty
+                set s($i) $k
+            }
             incr k -1
         }
-
-        # At the end m(n) denotes the total badness of the full text
-        set m($i) [lmin sums]
-
-        # In the optimal splitting of text l_1, ..., l_i,
-        # s(i) has the meaning that the last line starts with l_k.
-        set s($i) $sums($m($i))
-
-        array unset sums
     }
 
     #printvars
@@ -72,7 +73,6 @@ proc ::textalign::breakline {text L} {
     set result ""
     set line 1
     while { $n > 1 } {
-        #puts "line $line : $s($n) -> $n"
         set from [expr { $s($n) - 1 }]
         set to [expr { $n - 1 }]
         set result "[lrange $words $from $to] \n $result"
@@ -84,11 +84,12 @@ proc ::textalign::breakline {text L} {
 }
 
 
-proc ::textalign::adjust {text {L 40}} {
+proc ::textalign::adjust {text {L 80}} {
+    set result ""
     set paragraphs [str splitx $text "\n\n"]
     foreach paragraph $paragraphs {
         set paragraph [string map {\x0a " " \xa0 " " \n " " \r " "} $paragraph]
-        puts [breakline $paragraph $L]
-        puts ""
+        append result [breakline $paragraph $L] "\n"
     }
+    return $result
 }
