@@ -1037,7 +1037,7 @@ proc ::feed_reader::list_site {domain {offset "0"} {limit "20"}} {
 
     set slicelist [::persistence::get_slice         \
         "newsdb"                     \
-        "news_item/by_site_and_date" \
+        "news_item/by_domain" \
         "${reversedomain}"           \
         "${slice_predicate}"]
 
@@ -1091,9 +1091,16 @@ proc ::feed_reader::ls {args} {
     assert { vcheck_if("lang","langclass") }
 
     set predicates [list]
+
     if { exists("__arg_lang") } {
         lappend predicates [list "in_slice" [list "newsdb/news_item/by_langclass/$lang"]]
     }
+
+    if { exists("__arg_domain") } {
+        set reversedomain [reversedomain $domain]
+        lappend predicates [list "in_slice" [list "newsdb/news_item/by_domain/$reversedomain"]]
+    }
+
     lappend predicates [list "lrange" [list $offset $limit]]
 
     set predicate [list "forall" [list $predicates]]
@@ -1998,7 +2005,7 @@ proc ::feed_reader::write_item {timestamp normalized_link feedVar itemVar resync
 
          ::persistence::delete_column       \
              "newsdb"                       \
-             "news_item/by_site_and_date"   \
+             "news_item/by_domain"   \
              "${reversedomain}"             \
              "${column_name}"
 
@@ -2011,13 +2018,6 @@ proc ::feed_reader::write_item {timestamp normalized_link feedVar itemVar resync
         "$item(sort_date).${urlsha1}" \
         "${data}"
 
-
-    ::persistence::insert_column       \
-        "newsdb"                       \
-        "news_item/by_site_and_date"   \
-        "${reversedomain}"             \
-        "$item(sort_date).${urlsha1}"  \
-        "${data}"
 
     ::persistence::insert_column \
         "newsdb" \
@@ -2032,6 +2032,11 @@ proc ::feed_reader::write_item {timestamp normalized_link feedVar itemVar resync
         "${urlsha1}"               \
         "${contentsha1}"           \
         "${data}"
+
+    ::persistence::insert_link       \
+        "newsdb/news_item/by_domain/${reversedomain}/+/${urlsha1}" \
+        "newsdb/news_item/by_const_and_date/log/+/$item(sort_date).$urlsha1"
+
 
     ::persistence::insert_link \
         "newsdb/news_item/by_langclass/$item(langclass)/+/${urlsha1}" \
@@ -2434,7 +2439,7 @@ proc ::feed_reader::remove_item {filename} {
 
     ::persistence::delete_column       \
         "newsdb"                       \
-        "news_item/by_site_and_date"   \
+        "news_item/by_domain"   \
         "${reversedomain}"             \
         "$item(sort_date).${urlsha1}"
 
@@ -2481,7 +2486,7 @@ proc ::feed_reader::remove_feed_items {domain {urlsha1_list ""}} {
 
     set slicelist [::persistence::get_slice         \
         "newsdb"                     \
-        "news_item/by_site_and_date" \
+        "news_item/by_domain" \
         "${reversedomain}"           \
         "${slice_predicate}"]
 
@@ -2495,7 +2500,7 @@ proc ::feed_reader::remove_feed_items {domain {urlsha1_list ""}} {
         set domain_dir                        \
             [::persistence::get_row           \
             "newsdb"                     \
-            "news_item/by_site_and_date" \
+            "news_item/by_domain" \
             "${domain}"]
 
         ::persistence::delete_data ${domain_dir}
