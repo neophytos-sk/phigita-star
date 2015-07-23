@@ -47,20 +47,22 @@ proc getopt::init {optdata} {
             set stl_map($shortname) $longname
 
             set argname [lindex $varlist 0]
-            set map(-$shortname) $argname
+            if { $shortname ne {} } {
+                set map(-$shortname) $argname
+            }
             set map(--$longname) $argname
             set optargs($argname) $varlist
-
-
         } else {
             lappend posArgs $item
         }
     }
 }
 
-proc getopt::getopt {argVar argv} {
+proc getopt::getopt {argv {argVar ""} } {
 
-    upvar $argVar arg
+    if { $argVar ne {} } {
+        upvar $argVar arg
+    }
 
     variable map
     variable posArgs
@@ -142,14 +144,23 @@ proc getopt::getopt {argVar argv} {
         }
     }
 
+    # TODO: deal with args argument
+
     while { $argv ne {} && $posArgs ne {} } {
         set posArgs [lassign $posArgs argv_i]
-        upvar $argv_i _
-        set argv [lassign $argv {_}]
+        set argv [lassign $argv arg($argv_i)]
     }
 
     if { $posArgs ne {} } {
         error "not enough arguments for posArgs: $posArgs"
+    }
+
+    if { $argVar eq {} } {
+        # instantiate variables from array
+        foreach {varname value} [array get arg] {
+            upvar ${varname} _
+            set _ ${value}
+        }
     }
 
     return $argv

@@ -55,77 +55,6 @@ proc print_usage_info {} {
 
 }
 
-proc ::feed_reader::ls {args} {
-
-    getopt::init {
-        {all            a   {all_p}}
-        {almost-all     A   {almost_all_p}}
-        {long_listing_p l   {long_listing_p}}
-        feed_reader
-    }
-    set args [getopt::getopt $args]
-
-    getopt add --long-option "all" --short-option "a" -varlist {all_p}
-    getopt add --long-option "almost-all" --short-option "A" -varlist {almost_all_p}
-    getopt add -sv "a" {all_p}
-
-    foreach v [info vars] {
-        puts "$v=[set $v]"
-    }
-
-    assert { vcheck("ascii",${feed_name}) }
-
-    assert { !( exists("all_p") && exists("almost_all_p") ) } {
-        ## Conflict Resolution
-        #  prefer exists(all_p) over exists(almost_all_p)
-        disable_flag almost_all_p
-    }
-
-exit
-
-    rewrite_args {
-        -a,--all        => -all_p
-        -l,--long       => -long_p
-        -A,--almost-all => -almost_all_p
-    }
-
-    parse_args {
-        -all_p
-        -almost_all_p
-        -long_p
-        {-something "123"}
-        feed_name
-    }
-
-    check_args {
-        all_p {boolean}
-        almost_all_p {boolean}
-        long_p {boolean}
-        something {naturalnum}
-        feed_name {ascii}
-    }
-
-    assert { vcheck("boolean",${all_p}) }
-
-    ## argtype | short/long options | varname | vchecklist 
-
-    ## if @sep is on, then options and nonPosArgs must precede posArgs
-
-    ## an opt either exists or it does not
-    # ls -la
-    # ls -l --all
-    @opt all_p          {-a --all}
-    @opt almost_all_p   {-A --almost-all}
-    @opt long_listing_p {-l}
-
-    ## an arg is either a posArg or a nonPosArg
-    # ls -n example.com
-    # ls --feed-name=example.com
-    # ls example.com
-    @arg feed_name      {ascii}
-
-
-}
 
 set argc [llength $argv]
 if { ${argc} < 1 } {
@@ -252,9 +181,9 @@ if { ${argc} < 1 } {
         set contentsha1_list [lrange ${argv} 1 end]
         ::feed_reader::uses_content ${contentsha1_list}	
 
-    } elseif { ${cmd} eq {list} && ${argc} >= 1 } {
+    } elseif { ${cmd} eq {ls} && ${argc} >= 1 } {
 
-        ::feed_reader::list_all {*}[lrange ${argv} 1 end]
+        ::feed_reader::ls {*}[lrange ${argv} 1 end]
 
     } elseif { ${cmd} eq {list-site} && ${argc} >= 2 } {
 

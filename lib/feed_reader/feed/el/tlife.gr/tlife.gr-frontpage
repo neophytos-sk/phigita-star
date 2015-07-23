@@ -1,9 +1,0 @@
-url http://www.tlife.gr/
-include_re {/Article/.*[0-9]{4,}\.html$}
-htmltidy_feed_p 1
-htmltidy_article_p 1
-xpath_article_title {returnstring(//div[@class="mainarticle"]/h1[@class="mainarticle-title01"])}
-xpath_article_body {returntext(//div[@id="intext_content_tag"])}
-xpath_article_image {{values(//div[@class="main-photo"]/img/@src)}}
-xpath_article_date {returndate(//div[@class="mainarticle"]/div[@class="date"], "%d.%m.%Y | %H:%M")}
-xpath_article_modified_time {}

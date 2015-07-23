@@ -7,6 +7,7 @@ namespace eval ::persistence::fs {
         define_ks define_cf \
         exists_data_p set_data get_data \
         exists_column_p insert_column get_column get_column_name \
+        insert_link \
         delete_row delete_column delete_slice \
         multiget_slice \
         get_multirow get_multirow_names get_multirow_slice get_multirow_slice_names \
@@ -200,6 +201,14 @@ proc ::persistence::fs::insert_column {keyspace column_family row_key column_pat
 
 }
 
+proc ::persistence::fs::insert_link {src target} {
+    variable base_dir
+    set src [file join $base_dir $src] 
+    set target [file join $base_dir $target]
+    file mkdir [file dirname $src]
+    file link $src $target
+}
+
 proc ::persistence::fs::exists_data_p {filename} {
     return [file exists ${filename}]
 }
@@ -256,6 +265,9 @@ proc ::persistence::fs::rename_data {old_supercolumn_dir new_supercolumn_dir} {
 }
 
 proc ::persistence::fs::get_name {filename_or_dir} {
+    if { [file type ${filename_or_dir}] eq {link} } {
+        set filename_or_dir [file link ${filename_or_dir}]
+    }
     return [file tail ${filename_or_dir}]
 }
 
@@ -322,21 +334,35 @@ proc ::persistence::fs::predicate=lindex {slicelistVar index} {
 
 }
 
-proc ::persistence::fs::predicate=in {slicelistVar column_names} {
+proc ::persistence::fs::predicate=in_slice {slicelistVar row_expression {predicate ""}} {
+    upvar $slicelistVar _
 
-    upvar ${slicelistVar} slicelist
+    lassign [split $row_expression {/}] ks cf axis row
 
-    set result [list]
+    set slicelist2 [::persistence::get_slice \
+		       "$ks"                         \
+		       "$cf/$axis"                   \
+		       "$row"                        \
+		       "${predicate}"]
 
-    foreach filename ${slicelist} {
-
-	if { [file tail ${filename}] in ${column_names} } {
-	    lappend result ${filename}
-	}
+    set column_names [list]
+    foreach filename $slicelist2 {
+        lappend column_names [get_name $filename]
     }
 
-    set slicelist ${result}
+    predicate=in _ $column_names
+}
 
+proc ::persistence::fs::predicate=in {slicelistVar column_names} {
+    upvar ${slicelistVar} _
+
+    set result [list]
+    foreach filename ${_} {
+        if { [get_name ${filename}] in ${column_names} } {
+            lappend result ${filename}
+        }
+    }
+    set _ ${result}
 }
 
 proc ::persistence::fs::predicate=lsort {slicelistVar args} {

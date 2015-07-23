@@ -71,13 +71,11 @@ proc ::textalign::breakline {text L} {
 
     # actually do the splitting by working backwards
     set result ""
-    set line 1
     while { $n > 1 } {
         set from [expr { $s($n) - 1 }]
         set to [expr { $n - 1 }]
-        set result "[lrange $words $from $to] \n $result"
+        set result "[join [lrange $words $from $to] { }]\n${result}"
         set n $from
-        incr line 1
     }
 
     return $result

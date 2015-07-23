@@ -56,6 +56,17 @@ proc ::pattern::typeof {value {names ""}} {
     return ${result}
 }
 
+proc ::pattern::check=langclass {valueVar} {
+    upvar ${valueVar} value
+    # todo: get all valid language codes from db
+    # or check the given one with a db query
+    lassign [split $value {.}] lang enc
+    if { ([string length ${lang}] == 2) && [string is alpha -strict $lang] && $enc in {utf8} } {
+        return 1
+    }
+    return 0
+}
+
 proc ::pattern::check=month {valueVar} {
     upvar ${valueVar} value
     if { [string is integer -strict ${value}] && ${value} >= 1 && ${value} <= 12 } {

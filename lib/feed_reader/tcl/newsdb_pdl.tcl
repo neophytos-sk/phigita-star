@@ -12,6 +12,7 @@ foreach {ks spec} {
             by_urlsha1_and_const
             by_urlsha1_and_contentsha1
             by_site_and_date
+            by_langclass
         }
 
         content_item {

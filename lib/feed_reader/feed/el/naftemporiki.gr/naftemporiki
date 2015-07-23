@@ -1,9 +1,0 @@
-url http://www.naftemporiki.gr/
-include_re {/story/[0-9]{4,}$}
-htmltidy_feed_p 1
-htmltidy_article_p 1
-xpath_article_title {returnstring(//h1[@id="CPMain_sTitle" or @id="leftPHArea_sTitle"])}
-xpath_article_body {returntext(//div[@id="CPMain_sBody" or @id="leftPHArea_sBody"])}
-xpath_article_image {{values(//div[@id="CPMain_divMediaAsset" or @id="leftPHArea_divMediaAsset"]/img[@border="0"]/@src)}}
-xpath_article_date {normalizedate(//div[@id="CPMain_sDate" or @id="leftPHArea_sDate"], "el_GR","%A, %d %B %Y %H:%M")}
-xpath_article_modified_time {normalizedate(//div[@id="CPMain_sModified" or @id="leftPHArea_sModified"], "el_GR","%A, %d %B %Y %H:%M")}

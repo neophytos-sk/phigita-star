@@ -1,12 +1,3 @@
-proc value_if {varlist {defaults ""}} {
-    set result [list]
-    foreach varname $varlist default_value $defaults {
-        upvar $varname _
-        lappend result [if { [info exists _] } { set _ } else { set default_value }]
-    }
-    return ${result}
-}
-
 proc map {varlist list script} {
     set result [list]
     set lambdaExpr [list ${varlist} ${script}]

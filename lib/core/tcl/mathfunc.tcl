@@ -3,8 +3,14 @@ proc ::tcl::mathfunc::exists {varname} {
     return [info exists _]
 }
 
-proc ::tcl::mathfunc::vcheck {datatype value} {
-    return [::ext::data::vcheck.${datatype} value]
+proc ::tcl::mathfunc::vcheck {valueVar pattern_name} {
+    upvar $valueVar _
+    return [pattern match ${pattern_name} $_]
+}
+
+proc ::tcl::mathfunc::vcheck_if {valueVar pattern_name} {
+    upvar $valueVar _
+    return [expr { ![info exists _] || [pattern match ${pattern_name} $_] }]
 }
 
 # IN PROGRESS
