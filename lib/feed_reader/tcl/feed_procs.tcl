@@ -1707,7 +1707,7 @@ proc ::feed_reader::print_log_header {} {
 }
 
 proc ::feed_reader::print_short_log_header {} {
-    puts [format "%6s %-60s %3s %3s %-20s" len title "" "" domain]
+    puts [format "%3s %3s %-60s %20s" "cpy" "rev" title domain]
 }
 
 proc ::feed_reader::print_log_footer {contextVar} {
@@ -1831,14 +1831,12 @@ proc ::feed_reader::print_short_log_entry {itemVar {contextVar ""}} {
     set context(from_date) $item(sort_date)
 
     set lang [lindex [split [get_value_if item(langclass) "el.utf8"] {.}] 0]
-    set pretty_length [::util::pretty_length [get_value_if item(body_length) ""]]
 
-    puts [format "%6s %20s %3s %3s %-60s" \
-        ${pretty_length}\
-        ${domain} \
+    puts [format "%3s %3s %-60s %20s" \
         ${is_copy_string} \
         ${is_revision_string} \
-        ${title_first_line}] 
+        ${title_first_line} \
+        ${domain}]
 
 }
 
