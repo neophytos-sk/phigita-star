@@ -502,7 +502,7 @@ proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar infoVa
     }
     }
 
-    set article_langclass [get_value_if feed(article_langclass) "el.utf8"]
+    set article_langclass [get_value_if feed(article_langclass) "auto"]
 
     if { ${article_langclass} eq {auto} } {
         set article_langclass [::ttext::langclass "$article_title $article_body"]
