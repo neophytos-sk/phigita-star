@@ -5,14 +5,13 @@ keep_title_from_feed_p 0
 htmltidy_feed_p 1
 htmltidy_article_p 1
 check_for_revisions 1
-xpath_article_title {returnstring(//h2[@class="cat_article_title"]/a)}
-xpath_article_body {returntext(//div[@id="article_content"])}
+xpath_article_title {returnstring(//h1[@itemprop="name"])}
+xpath_article_body {returntext(//div[@class="article--body"])}
 xpath_article_image {
-    {values(//div[@id="article_content"]/img/@src)}
-    {values(//div[@id="article_content"]//img[@class="pyro-image"]/@src)}
+    {values(//div[@id="article--main-img original--photo--size"]/img/@src)}
 }
-xpath_article_author {returnstring(//div[@class="article_meta"]/span[@class="meta_author"]/a/text())}
-xpath_article_date {normalizedate(//div[@class="article_meta"]/span[@class="meta_date"]/strong/text(),"el_GR","%B %d, %Y %H:%M")}
+xpath_article_author {returnstring(//div[@class="main--cat clearfix"]/a/text())}
+xpath_article_date {normalizedate(//time/text(),"el_GR","%d.%m.%Y %H:%M")}
 xpath_article_cleanup {
     {//div[@class="soSialIcons"]}
     {//div[@class="article_meta"]}

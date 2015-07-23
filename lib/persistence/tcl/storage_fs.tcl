@@ -1,5 +1,6 @@
 namespace eval ::persistence::fs {
 
+    variable base_dir
     set base_dir "/web/data/mystore"
 
     namespace export -clear \
@@ -12,7 +13,8 @@ namespace eval ::persistence::fs {
         get_row get_column get_supercolumn \
         get_slice_names get_slice_from_row get_slice_from_supercolumn get_slice \
         ls list_ks list_cf list_axis list_row list_col list_path \
-        num_rows num_cols
+        num_rows num_cols \
+        get_name delete_data 
 }
 
 proc ::persistence::fs::get_dir {args} {

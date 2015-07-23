@@ -1,10 +1,12 @@
 package require core
+package require util_procs
+package require persistence
 
-namespace eval ::http {
+namespace eval ::web {
     namespace ensemble create -subcommands {fetch cache_fetch}
 }
 
-proc ::http::fetch {contentVar url {optionsVar ""} {infoVar ""}} {
+proc ::web::fetch {contentVar url {optionsVar ""} {infoVar ""}} {
     upvar ${contentVar} content
 
     if { ${optionsVar} ne {} } {
@@ -66,37 +68,50 @@ proc ::http::fetch {contentVar url {optionsVar ""} {infoVar ""}} {
 }
 
 
-proc ::http::cache_fetch {htmlVar url} {
+proc ::web::cache_fetch {htmlVar url {optionsVar ""} {infoVar ""}} {
 
     upvar $htmlVar html
 
+    if { ${optionsVar} ne {} } {
+        upvar ${optionsVar} options
+    }
+
+    if { ${infoVar} ne {} } {
+        upvar ${infoVar} info
+    }
+
     set domain [::util::domain_from_url $url]
     set reverse_domain [reversedomain $domain]
-    array set uri [::uri::split ${url}]
-    set urlencoded_path [::util::urlencode $uri(path)]
+    array set url_a [url split ${url}]
+    set urlencoded_path [url encode $url_a(path)]
+    set urlencoded_query [url encode $url_a(query)]
 
     set keyspace "web_cache_db"
     set column_family "web_page/by_domain"
     set row_key $reverse_domain
-    set column_path $urlencoded_path
+    set column_path [list $urlencoded_path $urlencoded_query]
 
-    ::persistence::get_column \
-        $keyspace \
-        $column_family \
-        $row_key \
-        $column_path \
-        html \
-        exists_column_p
+    set filename \
+        [::persistence::get_column \
+            $keyspace \
+            $column_family \
+            $row_key \
+            $column_path \
+            html \
+            exists_column_p]
 
     if { $exists_column_p } {
-        # returns content of web page as upvar with the given name
-
-        log "fetching page from cache: $url"
-
-        return 0
+        set mtime [file mtime $filename]
+        set timeout [expr { 15 * 60 }]
+        set now [clock seconds]
+        if { $mtime + $timeout > $now } {
+            # returns content of web page as upvar with the given name
+            log "fetching page from cache: $url"
+            return 0
+        }
     }
 
-    if { ![set errorcode [::http::fetch html $url]] } {
+    if { ![set errorcode [::web::fetch html $url]] } {
 
         ::persistence::insert_column \
             $keyspace \

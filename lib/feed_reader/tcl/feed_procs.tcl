@@ -1,3 +1,5 @@
+package require util_procs
+
 namespace eval ::feed_reader {
 
     array set meta [list]
@@ -153,7 +155,7 @@ proc ::feed_reader::fetch_feed {resultVar feedVar {stoptitlesVar ""}} {
         set encoding $feed(encoding)
     }
 
-    set errorcode [::http::fetch html $url]
+    set errorcode [web cache_fetch html $url]
     if { ${errorcode} } {
         puts "error fetching feed: errocode=$errorcode"
         return $errorcode
@@ -378,7 +380,7 @@ proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar infoVa
     set html ""
 
     array set options [get_value_if feed(http_options) ""]
-    set errorcode [::http::fetch html ${link} options info]
+    set errorcode [web cache_fetch html ${link} options info]
     unset options
 
     if { ${errorcode} } {
@@ -551,7 +553,7 @@ proc ::feed_reader::get_cookielist_and_try_again {link title_in_feed feedVar ite
 	    
 	    if { [catch {
 
-		set redirect_retcode [::http::fetch _dummy_ ${redirect_url} "" redirect_info]
+		set redirect_retcode [web cache_fetch _dummy_ ${redirect_url} "" redirect_info]
 
 	    } errmsg] } {
 
@@ -613,8 +615,8 @@ proc ::feed_reader::fetch_item {link title_in_feed feedVar itemVar infoVar {redi
     upvar $infoVar info
 
     if { [get_value_if feed(article_link_urlencode_p) "0"] } {
-	array set uri [::uri::split ${link}]
-	set ue_path [::util::urlencode $uri(path)]
+	array set uri [url split ${link}]
+	set ue_path [url encode $uri(path)]
 	set ue_link "$uri(scheme)://$uri(host)/${ue_path}"
 	if { $uri(query) ne {} } {
 	    append ue_link "?$uri(query)"
@@ -968,10 +970,6 @@ proc ::feed_reader::fetch_and_write_item {timestamp link title_in_feed feedVar} 
 
 proc ::feed_reader::get_base_dir {} {
     return {/web/data/mystore/newsdb}
-}
-
-proc ::feed_reader::reversedomain {domain} {
-    return [join [lreverse [split ${domain} {.}]] {.}]
 }
 
 proc ::feed_reader::get_urlsha1 {link} {
@@ -1678,18 +1676,18 @@ proc ::feed_reader::print_log_entry {itemVar {contextVar ""}} {
     upvar $itemVar item
 
     if { ${contextVar} ne {} } {
-	upvar ${contextVar} context
+        upvar ${contextVar} context
     }
 
     set domain [::util::domain_from_url $item(link)]
 
     set is_copy_string ""
     if { [get_value_if item(is_copy_p) 0] } {
-	set is_copy_string "(*)"
+        set is_copy_string "(*)"
     }
     set is_revision_string ""
     if { [get_value_if item(is_revision_p) 0] } {
-	set is_revision_string "upd"
+        set is_revision_string "upd"
     }
 
     load_content item $item(contentsha1)
@@ -1714,22 +1712,22 @@ proc ::feed_reader::print_log_entry {itemVar {contextVar ""}} {
 
 
     if { ![info exists context(to_date)] } {
-	set context(to_date) $item(sort_date)
+        set context(to_date) $item(sort_date)
     }
     set context(from_date) $item(sort_date)
 
     set lang [lindex [split [get_value_if item(langclass) "el.utf8"] {.}] 0]
     puts [format "%2s %40s %6s %-14s %30s %10s %3s %3s %-60s %20s" \
-	      ${lang} \
-	      $item(urlsha1) \
-	      [::util::pretty_length [get_value_if item(body_length) ""]] \
-	      ${topic} \
-	      ${subtopic} \
-          ${edition} \
-	      ${is_copy_string} \
-	      ${is_revision_string} \
-	      ${title_first_line} \
-	      ${domain}]
+        ${lang} \
+        $item(urlsha1) \
+        [::util::pretty_length [get_value_if item(body_length) ""]] \
+        ${topic} \
+        ${subtopic} \
+        ${edition} \
+        ${is_copy_string} \
+        ${is_revision_string} \
+        ${title_first_line} \
+        ${domain}]
 
 }
 
@@ -1951,25 +1949,25 @@ proc ::feed_reader::write_item {timestamp normalized_link feedVar itemVar resync
     # we might have missed some and thus
     # why the need for the loop
 
-    foreach filename ${slicelist} {
+     foreach filename ${slicelist} {
 
-	set column_name [::persistence::get_name ${filename}]
+         set column_name [::persistence::get_name ${filename}]
 
-	::persistence::delete_data ${filename}
+         ::persistence::delete_data ${filename}
 
-	::persistence::delete_column      \
-	    "newsdb"                      \
-	    "news_item/by_const_and_date" \
-	    "log"                         \
-	    "${column_name}"
+         ::persistence::delete_column      \
+             "newsdb"                      \
+             "news_item/by_const_and_date" \
+             "log"                         \
+             "${column_name}"
 
-	::persistence::delete_column       \
-	    "newsdb"                       \
-	    "news_item/by_site_and_date"   \
-	    "${reversedomain}"             \
-	    "${column_name}"
+         ::persistence::delete_column       \
+             "newsdb"                       \
+             "news_item/by_site_and_date"   \
+             "${reversedomain}"             \
+             "${column_name}"
 
-    }
+     }
 
     ::persistence::insert_column      \
 	"newsdb"                      \
@@ -2208,7 +2206,7 @@ proc ::feed_reader::sync_feeds {{news_sources ""} {debug_p "0"}} {
 
 
 proc ::feed_reader::curl {url} {
-    set errorcode [::http::fetch html $url]
+    set errorcode [web cache_fetch html $url]
     if { ${errorcode} } {
         puts "error fetching $url"
         return $errorcode
