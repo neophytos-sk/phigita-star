@@ -1071,11 +1071,12 @@ proc ::feed_reader::ls {args} {
     # parse args
     #
     getopt::init {
-        {offset "" {__arg_offset offset}}
-        {limit  "" {__arg_limit  limit}}
-        {domain "" {__arg_domain domain}}
-        {lang   "" {__arg_lang   lang}}
-        {since  "" {__arg_since  since_date}}
+        {offset ""  {__arg_offset offset}}
+        {limit  ""  {__arg_limit  limit}}
+        {domain ""  {__arg_domain domain}}
+        {lang   ""  {__arg_lang   lang}}
+        {since  ""  {__arg_since  since_date}}
+        {long   "l" {__arg_long_listing}}
     }
     set args [getopt::getopt $args]
 
@@ -1111,11 +1112,19 @@ proc ::feed_reader::ls {args} {
 		       "log"                         \
 		       "${predicate}"]
 
-    print_log_header
 
+    if { exists("__arg_long_listing") } {
+        print_log_header
+    } else {
+        print_short_log_header
+    }
     foreach logfilename ${slicelist} {
         array set item [::persistence::get_data ${logfilename}]
-        print_log_entry item context
+        if { exists("__arg_long_listing") } {
+            print_log_entry item context
+        } else {
+            print_short_log_entry item context 
+        }
         unset item
     }
 
@@ -1694,9 +1703,11 @@ proc ::util::pretty_length {chars} {
 
 
 proc ::feed_reader::print_log_header {} {
-
     puts [format "%2s %40s %6s %-14s %30s %10s %3s %3s %-60s %20s" lc urlsha1 len topic subtopic edition "" "" title domain]
+}
 
+proc ::feed_reader::print_short_log_header {} {
+    puts [format "%6s %-60s %3s %3s %-20s" len title "" "" domain]
 }
 
 proc ::feed_reader::print_log_footer {contextVar} {
@@ -1772,6 +1783,65 @@ proc ::feed_reader::print_log_entry {itemVar {contextVar ""}} {
         ${domain}]
 
 }
+
+proc ::feed_reader::print_short_log_entry {itemVar {contextVar ""}} {
+    upvar $itemVar item
+
+    if { ${contextVar} ne {} } {
+        upvar ${contextVar} context
+    }
+
+    set domain [::util::domain_from_url $item(link)]
+
+    set is_copy_string ""
+    if { [get_value_if item(is_copy_p) 0] } {
+        set is_copy_string "(*)"
+    }
+    set is_revision_string ""
+    if { [get_value_if item(is_revision_p) 0] } {
+        set is_revision_string "upd"
+    }
+
+    load_content item $item(contentsha1)
+
+    if {0} {
+        set content ""
+        set topic_and_subtopic ""
+        set edition ""
+        if { [classifier::is_enabled_p el/topic] && [classifier::is_enabled_p el/edition] } {
+            set content [concat $item(title) $item(body)]
+            set topic_and_subtopic [classifier::classify el/topic content]
+            set edition [classifier::classify el/edition content]
+        }
+        lassign [split ${topic_and_subtopic} {/}] topic subtopic
+    }
+
+
+    set domain_prefix "${domain} -- "
+    set num_spaces [string length ${domain_prefix}]
+
+    set title $item(title)
+    set title_first_line [string range ${title} 0 59]
+    set title_second_line [string range ${title} 60 end]
+
+
+    if { ![info exists context(to_date)] } {
+        set context(to_date) $item(sort_date)
+    }
+    set context(from_date) $item(sort_date)
+
+    set lang [lindex [split [get_value_if item(langclass) "el.utf8"] {.}] 0]
+    set pretty_length [::util::pretty_length [get_value_if item(body_length) ""]]
+
+    puts [format "%6s %20s %3s %3s %-60s" \
+        ${pretty_length}\
+        ${domain} \
+        ${is_copy_string} \
+        ${is_revision_string} \
+        ${title_first_line}] 
+
+}
+
 
 proc ::feed_reader::show_item {urlsha1_list} {
     foreach urlsha1 ${urlsha1_list} {
