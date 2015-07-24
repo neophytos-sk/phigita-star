@@ -7,7 +7,7 @@ namespace eval ::persistence::fs {
         define_ks define_cf \
         exists_data_p set_data get_data \
         exists_column_p insert_column get_column get_column_name \
-        insert_link \
+        insert_link delete_link \
         delete_row delete_column delete_slice \
         multiget_slice \
         get_multirow get_multirow_names get_multirow_slice get_multirow_slice_names \
@@ -199,6 +199,12 @@ proc ::persistence::fs::insert_column {keyspace column_family row_key column_pat
         file mtime ${filename} ${timestamp}
     }
 
+}
+
+proc ::persistence::fs::delete_link {src} {
+    variable base_dir
+    set src [file join $base_dir $src]
+    ::persistence::delete_data $src
 }
 
 proc ::persistence::fs::insert_link {src target} {

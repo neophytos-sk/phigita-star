@@ -54,7 +54,54 @@ proc ::util::term::reset {} {
     puts -nonewline "\033c"
 }
 
+# Sets multiple display attribute settings.
+# The following lists standard attributes:
+#
+# 0   Reset all attributes
+# 1   Bright
+# 2   Dim
+# 4   Underscore  
+# 5   Blink
+# 7   Reverse
+# 8   Hidden
+#     Foreground Colours
+# 30  Black
+# 31  Red
+# 32  Green
+# 33  Yellow
+# 34  Blue
+# 35  Magenta
+# 36  Cyan
+# 37  White
+#     Background Colours
+# 40  Black
+# 41  Red
+# 42  Green
+# 43  Yellow
+# 44  Blue
+# 45  Magenta
+# 46  Cyan
+# 47  White
+
+proc ::util::term::set_attribute_mode {args} {
+    # Set Attribute Mode  <ESC>[{attr1};...;{attrn}m
+
+    set attrlist [join ${args} {;}]
+    puts -nonewline "\x1b\[${attrlist}m"
+}
+
+proc ::util::term::color {color_number} {
+    set_attribute_mode [expr { 30 + $color_number }]
+}
+
+proc ::util::term::bgcolor {color_number} {
+    set_attribute_mode [expr { 40 + $color_number }]
+}
+
 proc ::util::term::readline {fid {stateVar ""}} {
+
+color 0
+bgcolor 7
 
     if { $stateVar ne {} } {
         upvar $stateVar state
@@ -62,8 +109,6 @@ proc ::util::term::readline {fid {stateVar ""}} {
 
     set viewRow 1    ; # row idx into view area, 1-based
     set viewCol 1    ; # col idx into view area, 1-based
-    set IDX(ROWLAST) -1    ; # last row most recently displayed in view
-    set IDX(COLLAST) -1    ; # last col most recently displayed in view
 
     set pos $state(pos)    ; # col idx into full buffer, 0-based
     set line $state(init_value)
@@ -101,7 +146,14 @@ proc ::util::term::readline {fid {stateVar ""}} {
                 break
             }
             \x01 { # ^a - beginning of line
+               set key "CTRL-A"
                 set pos 0
+                break
+            }
+            \x03 { # ^c - break
+                puts "ctrl+c pressed"
+                set key "CTRL-C"
+                break
             }
             \x04 { # ^d - delete
                 if {$pos > [string length $line]} {
@@ -109,12 +161,13 @@ proc ::util::term::readline {fid {stateVar ""}} {
                 }
                 set line [string replace $line $pos $pos]
                 #set buffer [lreplace $buffer $bufRow $bufRow $line]
-                #set IDX(COLLAST) -1 ; # force redraw
             }
             \x05 { # ^e - end of line
+                   set key "CTRL-E"
                 set pos [string length $line]
             }
             \x06 { ;# ^f - find/search
+                   set key "CTRL-F"
              global searchpattern
              set searchpattern [getInput fid "Search:"]
              handleSearch
@@ -140,14 +193,12 @@ proc ::util::term::readline {fid {stateVar ""}} {
              incr viewRow
              set buffer [linsert $buffer $bufRow \
                      [string range $line $pos end]]
-             set IDX(COLLAST) -1 ; # force redraw
              set line [lindex $buffer $bufRow]
              set pos 0
             }
             \x19 { # ^y - yank line
              if {$bufRow < [llength $buffer]} {
                  #set buffer [lreplace $buffer $bufRow $bufRow]
-                 set IDX(COLLAST) -1 ; # force redraw
              }
             }
             \x08 -
@@ -282,7 +333,6 @@ proc ::util::term::readline {fid {stateVar ""}} {
                 if {$pos > [string length $line]} {
                     set pos [string length $line]
                 }
-                set IDX(COLLAST) -1 ; # force redraw
 
                 puts -nonewline $char
                 save_cursor_position

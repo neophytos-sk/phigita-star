@@ -2049,10 +2049,10 @@ proc ::feed_reader::write_item {timestamp normalized_link feedVar itemVar resync
 
 
     set slicelist \
-	[::persistence::get_slice       \
-	     "newsdb"                   \
-	     "index/urlsha1_to_date_sk" \
-	     "${urlsha1}"]
+        [::persistence::get_slice       \
+             "newsdb"                   \
+             "index/urlsha1_to_date_sk" \
+             "${urlsha1}"]
 
     # there should only be one column
     # but since this is still under development
@@ -2073,9 +2073,15 @@ proc ::feed_reader::write_item {timestamp normalized_link feedVar itemVar resync
 
          ::persistence::delete_column       \
              "newsdb"                       \
-             "news_item/by_domain"   \
+             "news_item/by_domain"          \
              "${reversedomain}"             \
              "${column_name}"
+
+         ::persistence::delete_link \
+            "newsdb/news_item/by_langclass/$item(langclass)/+/${urlsha1}"
+
+         ::persistence::delete_link \
+            "newsdb/news_item/by_domain/${reversedomain}/+/${urlsha1}"
 
      }
 
