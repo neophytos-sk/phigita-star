@@ -22,15 +22,15 @@ proc ::feed_reader::init {} {
     read_meta meta
 
     if { $meta(stoptitles) ne {} } {
-	foreach title $meta(stoptitles) {
-	    set stoptitles(${title}) 1
-	}
+        foreach title $meta(stoptitles) {
+            set stoptitles(${title}) 1
+        }
     }
 
     if { $meta(stopwords) ne {} } {
-	foreach token $meta(stopwords) {
-	    set stopwords(${token}) 1
-	}
+        foreach token $meta(stopwords) {
+            set stopwords(${token}) 1
+        }
     }
 
 }
@@ -43,23 +43,23 @@ proc ::feed_reader::read_meta {metaVar} {
 
     set stoptitles [list]
     foreach title [split [::util::readfile ${conf_dir}/stoptitles.txt] "\n"] {
-	lappend stoptitles [trim_title ${title}]
+        lappend stoptitles [trim_title ${title}]
     }
-    
+
     set stopwords [::util::readfile ${conf_dir}/stopwords.txt]
 
     set end_of_text_strings [list]
     foreach end_of_text_string [split [::util::readfile ${conf_dir}/article_body_end_of_text_strings] "\n"] {
-	if { ${end_of_text_string} ne {} } {
-	    lappend end_of_text_strings ${end_of_text_string}
-	}
+        if { ${end_of_text_string} ne {} } {
+            lappend end_of_text_strings ${end_of_text_string}
+        }
     }
 
     array set meta \
-	[list \
-	     stoptitles ${stoptitles} \
-	     end_of_text_strings ${end_of_text_strings} \
-	     stopwords ${stopwords}]
+        [list \
+        stoptitles ${stoptitles} \
+        end_of_text_strings ${end_of_text_strings} \
+        stopwords ${stopwords}]
 
 }
 
@@ -514,7 +514,8 @@ proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar infoVa
 
     array set item [list \
         domain ${domain} \
-        link $link \
+        reversedomain [reversedomain $domain] \
+        url $link \
         langclass $article_langclass \
         title $article_title \
         description $article_description \
@@ -550,28 +551,17 @@ proc ::feed_reader::get_cookielist_and_try_again {link title_in_feed feedVar ite
     upvar $infoVar info
 
     if { [get_value_if feed(article_redirect_policy) ""] eq {GET_COOKIELIST_AND_TRY_AGAIN} } {
-
-	set redirect_url [get_value_if info(redirecturl) ""]
-
-	if { ${redirect_url} ne {} } {
-	    
-	    if { [catch {
-
-		set redirect_retcode [web cache_fetch _dummy_ ${redirect_url} "" redirect_info]
-
-	    } errmsg] } {
-
-		puts "--->>> tried redirect but it failed redirect_info=[array get redirect_info] errmsg=$errmsg"
-
-	    } else {
-
-		#redirect succeeded, get the cookielist and try again
-		puts "redirect_info=[array get redirect_info]"
-
-	    }
-
-	}
-
+        set redirect_url [get_value_if info(redirecturl) ""]
+        if { ${redirect_url} ne {} } {
+            if { [catch {
+                set redirect_retcode [web cache_fetch _dummy_ ${redirect_url} "" redirect_info]
+            } errmsg] } {
+                puts "--->>> tried redirect but it failed redirect_info=[array get redirect_info] errmsg=$errmsg"
+            } else {
+                #redirect succeeded, get the cookielist and try again
+                puts "redirect_info=[array get redirect_info]"
+            }
+        }
     }
 
 }
@@ -583,28 +573,28 @@ proc ::feed_reader::handle_redirect_item {link title_in_feed feedVar itemVar inf
 
     if { ${redirect_count} <= 1} {
 
-	set redirect_url $info(redirecturl)
+        set redirect_url $info(redirecturl)
 
-	# 1. mark given link as a redirect item
+        # 1. mark given link as a redirect item
 
-	set item(urlsha1) [get_urlsha1 ${link}]
-	set item(responsecode) $info(responsecode)
-	set item(redirect_url) ${redirect_url}
+        set item(urlsha1) [get_urlsha1 ${link}]
+        set item(responsecode) $info(responsecode)
+        set item(redirect_url) ${redirect_url}
 
-	::persistence::insert_column         \
-	    "newsdb"                         \
-	    "news_item/by_urlsha1_and_const" \
-	    "$item(urlsha1)"                 \
-	    "_data_"                         \
-	    "[array get item]"
+        ::persistence::insert_column         \
+            "newsdb"                         \
+            "news_item/by_urlsha1_and_const" \
+            "$item(urlsha1)"                 \
+            "_data_"                         \
+            "[array get item]"
 
-	unset item
+        unset item
 
-	# 2. fetch item at redirect url
+        # 2. fetch item at redirect url
 
-	array set item [list]
+        array set item [list]
 
-	return [fetch_item ${redirect_url} ${title_in_feed} feed item info [incr redirect_count]]
+        return [fetch_item ${redirect_url} ${title_in_feed} feed item info [incr redirect_count]]
 
     }
 
@@ -619,252 +609,45 @@ proc ::feed_reader::fetch_item {link title_in_feed feedVar itemVar infoVar {redi
     upvar $infoVar info
 
     if { [get_value_if feed(article_link_urlencode_p) "0"] } {
-	array set uri [url split ${link}]
-	set ue_path [url encode $uri(path)]
-	set ue_link "$uri(scheme)://$uri(host)/${ue_path}"
-	if { $uri(query) ne {} } {
-	    append ue_link "?$uri(query)"
-	}
-	set link ${ue_link}
+        array set uri [url split ${link}]
+        set ue_path [url encode $uri(path)]
+        set ue_link "$uri(scheme)://$uri(host)/${ue_path}"
+        if { $uri(query) ne {} } {
+            append ue_link "?$uri(query)"
+        }
+        set link ${ue_link}
     }
 
     if { [catch {
 
-	set retcode [fetch_item_helper ${link} ${title_in_feed} feed item info]
+        set retcode [fetch_item_helper ${link} ${title_in_feed} feed item info]
 
     } errmsg] } {
 
-	puts errmsg=$errmsg
+        puts errmsg=$errmsg
 
-	array set item [list \
-			    link $link \
-			    title $title_in_feed \
-			    status failure \
-			    errno 1 \
-			    errmsg $errmsg]
+        array set item [list \
+            link $link \
+            title $title_in_feed \
+            status failure \
+            errno 1 \
+            errmsg $errmsg]
 
-	return -3 ;# failed with errors
+        return -3 ;# failed with errors
     }
 
     if { [get_value_if info(responsecode) ""] eq {302} && [get_value_if feed(handle_redirect_item_p) "0"] } {
 
-	return [handle_redirect_item ${link} ${title_in_feed} feed item info ${redirect_count}]
+        return [handle_redirect_item ${link} ${title_in_feed} feed item info ${redirect_count}]
 
     }
 
     return ${retcode}
 }
 
-
-namespace eval ::feed_reader {
-
-    array set errorcode_messages {
-
-        -4
-        {empty html while fetching feed}
-
-        -3
-        {failed during information extraction from article}
-
-        -2
-        {dom parse error for article html}
-
-        -1 
-        {zero-length body}
-
-        1 
-        {Unsupported protocol. This build of TclCurl has no support for this protocol.}
-
-        2 
-        {Very early initialization code failed. This is likely to be and internal error or problem.}
-
-        3
-        {URL malformat. The syntax was not correct.}
-
-        4
-        {URL user malformatted. The user-part of the URL syntax was not correct.}
-
-        5
-        {Couldn't resolve proxy. The given proxy host could not be resolved.}
-
-        6
-        {Couldn't resolve host. The given remote host was not resolved.}
-
-        7
-        {Failed to connect to host or proxy.}
-
-        8
-        {FTP weird server reply. The server sent data TclCurl couldn't parse. The given remote server is probably not an OK FTP server.}
-
-        9
-        {We were denied access when trying to login to a FTP server or when trying to change working directory to the one given in the URL.}
-
-        10
-        {FTP user/password incorrect. Either one or both were not accepted by the server.}
-
-        11
-        {FTP weird PASS reply. TclCurl couldn't parse the reply sent to the PASS request.}
-
-        12
-        {FTP weird USER reply. TclCurl couldn't parse the reply sent to the USER request.}
-
-        13
-        {FTP weird PASV reply, TclCurl couldn't parse the reply sent to the PASV request.}
-
-        14
-        {FTP weird 227 format. TclCurl couldn't parse the 227-line the server sent.}
-
-        15
-        {FTP can't get host. Couldn't resolve the host IP we got in the 227-line.}
-
-        16
-        {FTP can't reconnect. A bad return code on either PASV or EPSV was sent by the FTP server, preventing TclCurl from being able to continue.}
-
-        17
-        {FTP couldn't set binary. Couldn't change transfer method to binary.}
-
-        18
-        {Partial file. Only a part of the file was transfered, this happens when the server first reports an expected transfer size and then delivers data that doesn't match the given size.}
-
-        19
-        {FTP couldn't RETR file, we either got a weird reply to a 'RETR' command or a zero byte transfer.}
-
-        20
-        {FTP write error. After a completed file transferm the FTP server did not respond properly.}
-
-        21
-        {FTP quote error. A custom 'QUOTE' returned error code 400 or higher from the server.}
-
-        22
-        {HTTP not found. The requested page was not found. This return code only appears if --fail is used and the HTTP server returns an error code that is 400 or higher.}
-
-        23
-        {Write error. TclCurl couldn't write data to a local filesystem or an error was returned from a write callback.}
-
-        24
-        {Malformat user. User name badly specified. Not in use anymore}
-
-        25
-        {FTP couldn't STOR file. The server denied the STOR operation, the error buffer will usually have the server explanation.}
-
-        26
-        {Read error. There was a problem reading from a local file or an error was returned from the read callback.}
-
-        27
-        {Out of memory. A memory allocation request failed. This should never happen unless something weird is going on in your computer.}
-
-        28
-        {Operation timeout. The specified time-out period was reached according to the conditions.}
-
-        29
-        {FTP couldn't set ASCII. The server returned an unknown reply.}
-
-        30
-        {FTP PORT command failed, this usually happens when you haven't specified a good enough address for TclCurl to use.}
-
-        31
-        {FTP couldn't use REST. This should never happen is the server is sane.}
-
-        32
-        {FTP couldn't use the SIZE command. The command is an extension to the original FTP spec RFC 959, so not all servers support it.}
-
-        33
-        {HTTP range error. The server doesn't support or accept range requests.}
-
-        34
-        {HTTP post error. Internal post-request generation error.}
-
-        35
-        {SSL connect error. The SSL handshaking failed, the error buffer may have a clue to the reason, could be certificates, passwords, ...}
-
-        36
-        {FTP bad download resume. Couldn't continue an earlier aborted download, probably because you are trying to resume beyond the file size.}
-
-        37
-        {A file given with FILE:// couldn't be read. Did you checked the permissions?}
-
-        38
-        {LDAP cannot bind. LDAP bind operation failed.}
-
-        39
-        {LDAP search failed.}
-
-        40
-        {Library not found. The LDAP library was not found.}
-
-        41
-        {A required LDAP function was not found.}
-
-        42
-        {Aborted by callback. An application told TclCurl to abort the operation.}
-
-        43
-        {Internal error. A function was called with a bad parameter.}
-
-        44
-        {Internal error. A function was called in a bad order.}
-
-        45
-        {Interface error. A specified outgoing interface could not be used.}
-
-        46
-        {Bad password entered. An error was signalled when the password was entered.}
-
-        47
-        {Too many redirects. When following redirects, TclCurl hit the maximum amount, set your limit with --maxredirs}
-
-        48
-        {Unknown TELNET option specified.}
-
-        49
-        {A telnet option string was illegally formatted.}
-
-        50
-        {Currently not used.}
-
-        51
-        {The remote peer's SSL certificate wasn't ok}
-
-        52
-        {The server didn't reply anything, which here is considered an error.}
-
-        53
-        {The specified crypto engine wasn't found.}
-
-        54
-        {Failed setting the selected SSL crypto engine as default!}
-
-        55
-        {Failed sending network data.}
-
-        56
-        {Failure with receiving network data.}
-
-        57
-        {Share is in use (internal error)}
-
-        58
-        {Problem with the local certificate}
-
-        59
-        {Couldn't use specified SSL cipher}
-
-        60
-        {Problem with the CA cert (path? permission?)}
-
-        61
-        {Unrecognized transfer encoding}
-
-    }
-
-
-}
-
 proc ::feed_reader::translate_error_code {error_code} {
 
-    variable errorcode_messages
-
-    return [get_value_if errorcode_messages(${error_code}) ""]
+    return [get_value_if ::curl::errorcode_messages(${error_code}) ""]
 
 }
 
@@ -875,9 +658,9 @@ proc ::feed_reader::fetch_and_write_item {timestamp link title_in_feed feedVar} 
 
     set normalize_link_re [get_value_if feed(normalize_link_re) ""]
     if { ${normalize_link_re} ne {} } {
-	regexp -- ${normalize_link_re} ${link} whole normalized_link
+        regexp -- ${normalize_link_re} ${link} whole normalized_link
     } else {
-	set normalized_link ${link}
+        set normalized_link ${link}
     }
 
     # TODO: if it exists and it's the first item in the feed,
@@ -888,84 +671,84 @@ proc ::feed_reader::fetch_and_write_item {timestamp link title_in_feed feedVar} 
 
     set resync_p 0
     if { 
-	![exists_item ${normalized_link}] 
-	|| ( ${can_resync_p} && [set resync_p [auto_resync_p feed ${normalized_link}]] ) 
+        ![exists_item ${normalized_link}] 
+        || ( ${can_resync_p} && [set resync_p [auto_resync_p feed ${normalized_link}]] ) 
     } {
 
-	set errorcode [fetch_item ${link} ${title_in_feed} feed item info]
-	if { ${errorcode} } {
+        set errorcode [fetch_item ${link} ${title_in_feed} feed item info]
+        if { ${errorcode} } {
 
-	    set error_message [translate_error_code ${errorcode}]
+            set error_message [translate_error_code ${errorcode}]
 
-	    puts "--->>> errorcode=$errorcode error_message=${error_message}"
-	    puts "--->>> error ${link}"
-	    puts "--->>> info=[array get info]"
+            puts "--->>> errorcode=$errorcode error_message=${error_message}"
+            puts "--->>> error ${link}"
+            puts "--->>> info=[array get info]"
 
-	    set urlsha1 [get_urlsha1 ${link}]
-	    set errordata [list \
-			       errorcode ${errorcode} \
-			       link ${link} \
-			       urlsha1 ${urlsha1} \
-			       http_fetch_info [array get info] \
-			       title_in_feed ${title_in_feed} \
-			       item [array get item]]
-
-
-	    ::persistence::insert_column \
-		"newsdb" \
-		"error_item/by_urlsha1_and_timestamp" \
-		"${urlsha1}"\
-		"${timestamp}" \
-		"${errordata}"
-
-	    set slicelist \
-		[::persistence::get_slice \
-		     "newsdb" \
-		     "error_item/by_urlsha1_and_timestamp" \
-		     "[get_urlsha1 ${link}]"]
-
-	    if { [llength ${slicelist}] >= 3 } {
-
-		puts "--->>> marking this item as fetched... (${urlsha1})"
-
-		::persistence::insert_column \
-		    "newsdb" \
-		    "news_item/by_urlsha1_and_const" \
-		    "${urlsha1}" \
-		    "_data_" \
-		    "${errordata}"
-
-	    }
-			       
+            set urlsha1 [get_urlsha1 ${link}]
+            set errordata [list \
+                errorcode ${errorcode} \
+                link ${link} \
+                urlsha1 ${urlsha1} \
+                http_fetch_info [array get info] \
+                title_in_feed ${title_in_feed} \
+                item [array get item]]
 
 
-	    # unset item
-	    # unset info
-	    return {ERROR_FETCH}
-	}
+            ::persistence::insert_column \
+                "newsdb" \
+                "error_item/by_urlsha1_and_timestamp" \
+                "${urlsha1}"\
+                "${timestamp}" \
+                "${errordata}"
 
-	if { ${normalized_link} ne ${link} } {
-	    set item(normalized_link) ${normalized_link}
-	}
+            set slicelist \
+                [::persistence::get_slice \
+                    "newsdb" \
+                    "error_item/by_urlsha1_and_timestamp" \
+                    "[get_urlsha1 ${link}]"]
 
-	if { $item(link) ne ${link} } {
-	    set item(original_link) ${link}
-	}
+            if { [llength ${slicelist}] >= 3 } {
 
-	set written_p [write_item ${timestamp} ${normalized_link} feed item ${resync_p}]
-	
-	#unset item
-	#unset info
+                puts "--->>> marking this item as fetched... (${urlsha1})"
 
-	if { ${written_p} } {
-	    return {FETCH_AND_WRITE}
-	} else {
-	    return {NO_WRITE}
-	}
+                ::persistence::insert_column \
+                    "newsdb" \
+                    "news_item/by_urlsha1_and_const" \
+                    "${urlsha1}" \
+                    "_data_" \
+                    "${errordata}"
+
+            }
+
+
+
+            # unset item
+            # unset info
+            return {ERROR_FETCH}
+        }
+
+        if { ${normalized_link} ne ${link} } {
+            set item(normalized_link) ${normalized_link}
+        }
+
+        if { $item(url) ne ${link} } {
+            set item(original_link) ${link}
+        }
+
+        set written_p [write_item ${timestamp} ${normalized_link} feed item ${resync_p}]
+
+        #unset item
+        #unset info
+
+        if { ${written_p} } {
+            return {FETCH_AND_WRITE}
+        } else {
+            return {NO_WRITE}
+        }
 
     } else {
 
-	return {NO_FETCH}
+        return {NO_FETCH}
 
     }
 
@@ -980,12 +763,6 @@ proc ::feed_reader::get_urlsha1 {link} {
     set urlsha1 [::sha1::sha1 -hex ${link}]
     return ${urlsha1}
 }
-
-
-proc ::feed_reader::get_content_dir {} {
-    return [get_base_dir]/content_item/by_contentsha1_and_const
-}
-
 
 proc ::feed_reader::get_crawler_dir {} {
     return [get_base_dir]/crawler
@@ -1027,45 +804,6 @@ proc ::feed_reader::get_feed_files {news_source} {
 }
 
 
-
-
-proc ::feed_reader::list_site {domain {offset "0"} {limit "20"}} {
-
-    set slice_predicate [list "lrange" [list "${offset}" "${limit}"]]
-
-    set reversedomain [reversedomain ${domain}]
-
-    set slicelist [::persistence::get_slice         \
-        "newsdb"                     \
-        "news_item/by_domain" \
-        "${reversedomain}"           \
-        "${slice_predicate}"]
-
-
-    foreach filename ${slicelist} {
-        array set item [::persistence::get_data ${filename}]
-        print_log_entry item context
-        unset item
-    }
-
-    print_log_footer context
-
-}
-
-
-
-proc ::feed_reader::get_contentfilelist {sortedlistVar} {
-
-    upvar $sortedlistVar sortedlist
-
-    set content_dir [get_content_dir]
-
-    set contentfilelist [glob -directory ${content_dir} *]
-
-    set sortedlist [lsort -decreasing -command compare_mtime ${contentfilelist}]
-
-}
-
 proc ::feed_reader::ls {args} {
 
     # parse args
@@ -1102,15 +840,28 @@ proc ::feed_reader::ls {args} {
         lappend predicates [list "in_slice" [list "newsdb/news_item/by_domain/$reversedomain"]]
     }
 
-    lappend predicates [list "lrange" [list $offset $limit]]
+    # TODO: sort and get range for each filter, e.g. by_langclass
+    # in order to avoid returning huge result sets in between
+    # processing and the final sorting and range selection. 
+    #
+    # lappend predicates [list "lrange" [list $offset $limit]]
 
     set predicate [list "forall" [list $predicates]]
 
-    set slicelist [::persistence::get_slice  \
-		       "newsdb"                      \
-		       "news_item/by_const_and_date" \
-		       "log"                         \
-		       "${predicate}"]
+    set row_names \
+        [::persistence::get_multirow_names  \
+            "newsdb"                        \
+            "news_item/by_urlsha1"]
+
+    set slicelist \
+        [::persistence::multiget_slice    \
+            "newsdb"                      \
+            "news_item/by_urlsha1"        \
+            ${row_names}                  \
+            ${predicate}]
+
+    set slicelist [::persistence::sort_slice_by $slicelist "sort_date" "decreasing"]
+    set slicelist [lrange $slicelist $offset $limit]
 
 
     if { exists("__arg_long_listing") } {
@@ -1118,8 +869,9 @@ proc ::feed_reader::ls {args} {
     } else {
         print_short_log_header
     }
-    foreach logfilename ${slicelist} {
-        array set item [::persistence::get_data ${logfilename}]
+
+    foreach filename $slicelist {
+        array set item [::persistence::get_data $filename]
         if { exists("__arg_long_listing") } {
             print_log_entry item context
         } else {
@@ -1613,12 +1365,13 @@ proc ::feed_reader::uses_content {contentsha1_list} {
     # contentsha1_to_urlsha1
     foreach contentsha1 ${contentsha1_list} {
 
-	set slicelist [::persistence::get_slice_names \
+	set slicelist [::persistence::get_slice \
 			   "newsdb" \
 			   "index/contentsha1_to_urlsha1" \
 			   "${contentsha1}"]
 
-        foreach urlsha1 ${slicelist} {
+        foreach filename ${slicelist} {
+            set urlsha1 [::persistence::get_name $filename]
             load_item item ${urlsha1}
             print_item item
         }
@@ -1639,11 +1392,6 @@ proc ::feed_reader::load_content {itemVar contentsha1 {include_labels_p "1"}} {
         "column_data"
 
     lassign ${column_data} item(title) item(body)
-
-
-    # set contentfilename [get_content_dir]/${contentsha1}
-    # array set item [list]
-    # lassign [::util::readfile $contentfilename] item(title) item(body)
 
     set contentsha1_to_label_filename [get_contentsha1_to_label_dir]/${contentsha1}
     if { [file exists ${contentsha1_to_label_filename}] } {
@@ -1707,7 +1455,7 @@ proc ::feed_reader::print_log_header {} {
 }
 
 proc ::feed_reader::print_short_log_header {} {
-    puts [format "%3s %3s %-60s %20s" "cpy" "rev" title domain]
+    puts [format "%20s %3s %3s %-60s %20s" date cpy rev title domain]
 }
 
 proc ::feed_reader::print_log_footer {contextVar} {
@@ -1732,7 +1480,7 @@ proc ::feed_reader::print_log_entry {itemVar {contextVar ""}} {
         upvar ${contextVar} context
     }
 
-    set domain [::util::domain_from_url $item(link)]
+    set domain [::util::domain_from_url $item(url)]
 
     set is_copy_string ""
     if { [get_value_if item(is_copy_p) 0] } {
@@ -1791,7 +1539,7 @@ proc ::feed_reader::print_short_log_entry {itemVar {contextVar ""}} {
         upvar ${contextVar} context
     }
 
-    set domain [::util::domain_from_url $item(link)]
+    set domain [::util::domain_from_url $item(url)]
 
     set is_copy_string ""
     if { [get_value_if item(is_copy_p) 0] } {
@@ -1832,7 +1580,8 @@ proc ::feed_reader::print_short_log_entry {itemVar {contextVar ""}} {
 
     set lang [lindex [split [get_value_if item(langclass) "el.utf8"] {.}] 0]
 
-    puts [format "%3s %3s %-60s %20s" \
+    puts [format "%20s %3s %3s %-60s %20s" \
+        $item(sort_date) \
         ${is_copy_string} \
         ${is_revision_string} \
         ${title_first_line} \
@@ -1873,15 +1622,16 @@ proc ::feed_reader::classify {axis urlsha1_list} {
 
 proc ::feed_reader::show_revisions {urlsha1} {
 
-    set slicelist [::persistence::get_slice       \
-		       "newsdb"                   \
-		       "news_item/by_urlsha1_and_contentsha1" \
-		       "${urlsha1}"]
+    set slicelist [::persistence::get_supercolumn_slice \
+        "newsdb"                                        \
+        "news_item/by_urlsha1_and_contentsha1"          \
+        "__default_row__"                               \
+        "${urlsha1}"]
 
     foreach {filename} ${slicelist} {
-	set timestamp [file mtime ${filename}]
-	set column_name [file tail ${filename}]
-	puts "${timestamp} ${column_name}"
+        set timestamp [file mtime ${filename}]
+        set column_name [file tail ${filename}]
+        puts "${timestamp} ${column_name}"
     }
 
 }
@@ -1908,16 +1658,15 @@ proc ::feed_reader::write_item {timestamp normalized_link feedVar itemVar resync
         "${timestamp_datetime}"          \
         ""
 
-
     set content [list $item(title) $item(body)]
     set contentsha1 [::sha1::sha1 -hex ${content}]
 
     set exists_revision_p \
         [::persistence::exists_column_p \
              "newsdb"                   \
-             "news_item/by_urlsha1_and_contentsha1" \
-             "${urlsha1}"               \
-             "${contentsha1}"]
+             "news_item/by_contentsha1" \
+             ${contentsha1}             \
+             ${urlsha1}]
 
 
     if { ${exists_revision_p} } {
@@ -2025,65 +1774,28 @@ proc ::feed_reader::write_item {timestamp normalized_link feedVar itemVar resync
         set item(sort_date) ${timestamp_datetime}
     }
 
-
-
     set data [array get item]
 
 
-    # contentsha1 to urlsha1, i.e. which links lead to the same content
-    # TODO: consider having simhash
+    set pk [string trim $::news_item(pk)]
+    foreach index_item $::news_item(indexes) {
+        lassign $index_item axis attributes __tags__
 
-    ::persistence::insert_column \
-	"newsdb" \
-	"index/contentsha1_to_urlsha1" \
-	"${contentsha1}" \
-	"${urlsha1}" \
-	""
+        set row_key [list]
+        foreach attname $attributes {
+            lappend row_key $item($attname)
+        }
 
-    ::persistence::insert_column         \
-	"newsdb"                         \
-	"news_item/by_urlsha1_and_const" \
-	"${urlsha1}"                     \
-	"_data_"                         \
-	"${data}"
-
-
-    set slicelist \
-        [::persistence::get_slice       \
-             "newsdb"                   \
-             "index/urlsha1_to_date_sk" \
-             "${urlsha1}"]
-
-    # there should only be one column
-    # but since this is still under development
-    # we might have missed some and thus
-    # why the need for the loop
-
-     foreach filename ${slicelist} {
-
-         set column_name [::persistence::get_name ${filename}]
-
-         ::persistence::delete_data ${filename}
-
-         ::persistence::delete_column      \
-             "newsdb"                      \
-             "news_item/by_const_and_date" \
-             "log"                         \
-             "${column_name}"
-
-         ::persistence::delete_column       \
-             "newsdb"                       \
-             "news_item/by_domain"          \
-             "${reversedomain}"             \
-             "${column_name}"
-
-         ::persistence::delete_link \
-            "newsdb/news_item/by_langclass/$item(langclass)/+/${urlsha1}"
-
-         ::persistence::delete_link \
-            "newsdb/news_item/by_domain/${reversedomain}/+/${urlsha1}"
+        ::persistence::insert_column \
+            "newsdb"                 \
+            "news_item/${axis}"      \
+            ${row_key}               \
+            $item($pk)               \
+            ${data}
 
      }
+
+     return 1
 
     ::persistence::insert_column      \
         "newsdb"                      \
@@ -2100,12 +1812,9 @@ proc ::feed_reader::write_item {timestamp normalized_link feedVar itemVar resync
         "$item(sort_date).${urlsha1}" \
         ""
 
-    ::persistence::insert_column   \
-        "newsdb"                   \
-        "news_item/by_urlsha1_and_contentsha1" \
-        "${urlsha1}"               \
-        "${contentsha1}"           \
-        "${data}"
+    ::persistence::insert_link   \
+        "newsdb/news_item/by_urlsha1_and_contentsha1/__default_row__/+/${urlsha1}/${contentsha1}" \
+        "newsdb/news_item/by_const_and_date/log/+/$item(sort_date).$urlsha1"
 
     ::persistence::insert_link       \
         "newsdb/news_item/by_domain/${reversedomain}/+/${urlsha1}" \
@@ -2127,8 +1836,8 @@ proc ::feed_reader::resync_item {filename} {
 
     set domain [get_value_if item(domain) ""]
     if { ${domain} eq {} } {
-	set domain [::util::domain_from_url $item(link)]
-	set item(domain) ${domain}
+        set domain [::util::domain_from_url $item(url)]
+        set item(domain) ${domain}
     }
 
 
@@ -2141,39 +1850,39 @@ proc ::feed_reader::resync_item {filename} {
     set title_in_feed [get_value_if item(title) ""]
 
     if { ${title_in_feed} eq {} } {
-	#most likely an error item
-	set errorcode [get_value_if item(errorcode) ""]
-	if { ${errorcode} ne {} } {
-	    return
-	} else {
-	    puts "----->>>>> no title and no errorcode - strange"
-	}
+    #most likely an error item
+        set errorcode [get_value_if item(errorcode) ""]
+        if { ${errorcode} ne {} } {
+            return
+        } else {
+            puts "----->>>>> no title and no errorcode - strange"
+        }
     }
 
-    set errorcode [fetch_item $item(link) ${title_in_feed} feed new_item info]
+    set errorcode [fetch_item $item(url) ${title_in_feed} feed new_item info]
 
     if { !${errorcode} } {
 
-	set item(body) $new_item(body)
-	set item(video) [get_value_if new_item(video)]
-	set item(feed) [file tail $feedfilename]
-	if { [get_value_if item(timestamp) ""] eq {} } {
-	    set item(timestamp) [file mtime ${filename}]
-	}
+        set item(body) $new_item(body)
+        set item(video) [get_value_if new_item(video)]
+        set item(feed) [file tail $feedfilename]
+        if { [get_value_if item(timestamp) ""] eq {} } {
+            set item(timestamp) [file mtime ${filename}]
+        }
 
-	remove_item $filename
+        remove_item $filename
 
-	# resync_p is different than what we are doing here
-	# it is meant for checking for revisions
-	#
+        # resync_p is different than what we are doing here
+        # it is meant for checking for revisions
+        #
 
-	set normalized_link [get_value_if item(normalized_link) $item(link)]
-	set resync_p [get_value_if item(is_revision_p) 0]
+        set normalized_link [get_value_if item(normalized_link) $item(url)]
+        set resync_p [get_value_if item(is_revision_p) 0]
 
 
-	write_item $item(timestamp) ${normalized_link} feed item ${resync_p}
+        write_item $item(timestamp) ${normalized_link} feed item ${resync_p}
 
-	puts [format "%40s %s" $item(urlsha1) $item(link)]
+        puts [format "%40s %s" $item(urlsha1) $item(url)]
 
     }
 
@@ -2420,26 +2129,27 @@ proc ::feed_reader::remove_item {filename} {
 
     set urlsha1 $item(urlsha1)
 
-    set reversedomain [reversedomain [::util::domain_from_url $item(link)]]
+    set reversedomain [reversedomain [::util::domain_from_url $item(url)]]
 
-    ::persistence::delete_slice               \
+    ::persistence::delete_slice          \
         "crawldb"                        \
         "sync_info/by_urlsha1_and_const" \
         "${urlsha1}"
 
         # the following we use to determine whether 
         # an item is already downloaded or not
-    ::persistence::delete_slice                  \
+    ::persistence::delete_slice          \
         "newsdb"                         \
         "news_item/by_urlsha1_and_const" \
         "${urlsha1}"
 
 
-    set contentslicelist                            \
-        [::persistence::delete_slice                \
-        "newsdb"                               \
-        "news_item/by_urlsha1_and_contentsha1" \
-        "${urlsha1}"]
+    set contentslicelist                           \
+        [::persistence::delete_supercolumn         \
+            "newsdb"                               \
+            "news_item/by_urlsha1_and_contentsha1" \
+            "__default_row__" \
+            "${urlsha1}"]
 
     foreach contentfilename ${contentslicelist} {    
 
@@ -2454,18 +2164,17 @@ proc ::feed_reader::remove_item {filename} {
             "${contentsha1}"          \
             "${urlsha1}"
 
-        set deleted_row_p \
+        set deleted_row_p                 \
             [::persistence::delete_row_if \
-            "newsdb"                 \
-            "${cf_variant}"          \
-            "${contentsha1}"]
+                "newsdb"                  \
+                "${cf_variant}"           \
+                "${contentsha1}"]
 
         if { ${deleted_row_p} } {
 
-
-        # no more references for this content
-        # delete it so that we won't get any 
-        # is_copy_p set to true because of it
+            # no more references for this content
+            # delete it so that we won't get any 
+            # is_copy_p set to true because of it
 
             set cf_variant2 "content_item/by_contentsha1_and_const"
 
@@ -2500,7 +2209,6 @@ proc ::feed_reader::remove_item {filename} {
 
             }
 
-
         }
 
     }
@@ -2523,9 +2231,10 @@ proc ::feed_reader::remove_item {filename} {
         "${urlsha1}" \
         "$item(sort_date).${urlsha1}"
 
-    ::persistence::delete_slice   \
-        "newsdb"                   \
+    ::persistence::delete_supercolumn   \
+        "newsdb"                        \
         "news_item/by_urlsha1_and_contentsha1" \
+        "__default_row__"               \
         "${urlsha1}"
 
 

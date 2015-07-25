@@ -8,7 +8,7 @@ namespace eval ::persistence::fs {
         exists_data_p set_data get_data \
         exists_column_p insert_column get_column get_column_name \
         insert_link delete_link \
-        delete_row delete_column delete_slice \
+        delete_row delete_column delete_slice delete_supercolumn \
         multiget_slice \
         get_multirow get_multirow_names get_multirow_slice get_multirow_slice_names \
         get_row get_column get_supercolumn \
@@ -558,6 +558,17 @@ proc ::persistence::fs::delete_row_if {args} {
     return ${empty_row_p}
 }
 
+proc ::persistence::fs::delete_supercolumn {args} {
+    set supercolumn_dir [get_supercolumn {*}${args}]
+    delete_supercolumn_dir ${row_dir}
+}
+
+proc ::persistence::fs::delete_supercolumn_dir {supercolumn_dir} {
+
+    delete_data ${supercolumn_dir}
+    #delete_data [file dirname ${supercolumn_dir}]
+
+}
 
 proc ::persistence::fs::delete_slice {keyspace column_family row_key {slice_predicate ""}} {
 
@@ -567,7 +578,6 @@ proc ::persistence::fs::delete_slice {keyspace column_family row_key {slice_pred
     foreach filename ${slicelist} {
         ::persistence::fs::delete_data ${filename}
     }
-
 
     if { [empty_row_p ${row_dir}] } {
         delete_data ${row_dir}
@@ -583,6 +593,19 @@ proc ::persistence::fs::exists_column_p {keyspace column_family row_key column_p
     return [file exists ${filename}]
 }
 
+# work in progress
+proc ::persistence::fs::exec_query {ks cf args} {
+    getopt::init {
+        {--where-row "" {__arg_where_row row_predicate}}
+        {--where-col "" {__arg_where_col col_predicate}}
+        {--where-sup "" {__arg_where_sup sup_predicate}}
+    }
+    set args [getopt::getopt $args]
+
+    set row_keys [get_multirow_names $ks $cf $row_predicate] 
+    set slicelist [multiget_slice $ks $cf $row_keys $col_predicate]
+
+}
 
 proc ::persistence::fs::multiget_slice {keyspace column_family row_keys {slice_predicate ""}} {
 
@@ -590,13 +613,33 @@ proc ::persistence::fs::multiget_slice {keyspace column_family row_keys {slice_p
 
     foreach row_key ${row_keys} {
         set slicelist [get_slice ${keyspace} ${column_family} ${row_key} ${slice_predicate}]
-        lappend result ${row_key}
-        lappend result ${slicelist}
+        # row_key can be extracted from the filename from the given slicelist, if needed
+        #lappend result ${row_key}
+        foreach filename ${slicelist} {
+            lappend result $filename
+        }
     }
 
     return ${result}
 
 }
+
+proc ::persistence::sort_slice_by {slicelist attname sort_direction} {
+    set sortlist [list]
+    set index 0
+    foreach filename $slicelist {
+        array set item [::persistence::get_data ${filename}]
+        lappend sortlist [list $index $item(sort_date) $filename]
+        incr index
+    }
+    set sortlist [lsort -${sort_direction} -index 1 $sortlist] 
+
+    set sorted_slicelist [map x $sortlist {lindex $x 2}]
+    return $sorted_slicelist 
+}
+
+
+
 
 #::persistence::fs::directed_join newsdb
 #  get_multirow_slice_names classifier/${axis}
@@ -605,27 +648,27 @@ proc ::persistence::fs::multiget_slice {keyspace column_family row_keys {slice_p
 proc ::persistence::fs::names__directed_join {multirow_slice_names keyspace column_family {include_empty_p "0"}} {
     set multirow_filelist [list]
     foreach names ${multirow_slice_names} { 
-	set filelist [list]
-	foreach name ${names} {
+        set filelist [list]
+        foreach name ${names} {
 
-	    set get_slice_args [concat ${keyspace} ${column_family} ${name}]
+            set get_slice_args [concat ${keyspace} ${column_family} ${name}]
 
-	    # if the relationship is one to one, i.e. if one name
-	    # in the left-hand side corresponds to one item in the
-	    # right-hand side then slicelist should be a list a
-	    # list of length at most one
-	    set slicelist [::persistence::fs::get_slice {*}${get_slice_args}]
+            # if the relationship is one to one, i.e. if one name
+            # in the left-hand side corresponds to one item in the
+            # right-hand side then slicelist should be a list a
+            # list of length at most one
+            set slicelist [::persistence::fs::get_slice {*}${get_slice_args}]
 
-	    # note that slicelist can be empty if no match was found
-	    if { ${slicelist} ne {} || ${include_empty_p} } {
-		lappend filelist ${slicelist}
-		#puts "${name} -> ${slicelist}"
-	    }
+            # note that slicelist can be empty if no match was found
+            if { ${slicelist} ne {} || ${include_empty_p} } {
+                lappend filelist ${slicelist}
+                #puts "${name} -> ${slicelist}"
+            }
 
 
-	} 
+        } 
 
-	lappend multirow_filelist ${filelist}
+        lappend multirow_filelist ${filelist}
     }
     return ${multirow_filelist}
 }
@@ -647,17 +690,13 @@ proc ::persistence::fs::get_multirow {keyspace column_family {predicate ""}} {
 
     assert_cf ${keyspace} ${column_family}
 
-
     set cf_dir [get_dir ${keyspace} ${column_family}]
 
     set multirow [lsort -decreasing [glob -types {d} -nocomplain -directory ${cf_dir} *]]
 
     if { ${predicate} ne {} } {
-
-	lassign ${predicate} cmd args
-
-	predicate=${cmd} multirow {*}${args}
-
+        lassign ${predicate} cmd args
+        predicate=${cmd} multirow {*}${args}
     }
 
     return ${multirow}
@@ -670,7 +709,7 @@ proc ::persistence::fs::get_multirow_names {args} {
     set multirow [get_multirow {*}${args}]
     set result [list]
     foreach row ${multirow} {
-	lappend result [get_name ${row}]
+        lappend result [get_name ${row}]
     }
     return ${result}
 }
@@ -733,9 +772,9 @@ proc ::persistence::fs::get_supercolumns {keyspace column_family row_key {superc
 
     if { ${predicate} ne {} } {
 
-	lassign ${predicate} cmd args
+        lassign ${predicate} cmd args
 
-	predicate=${cmd} supercolumns {*}${args}
+        predicate=${cmd} supercolumns {*}${args}
 
     }
 
@@ -768,10 +807,10 @@ proc ::persistence::fs::get_column_path_with_status {column_parent_dir} {
     file lstat ${column_parent_dir} lstat
 
     if { $lstat(type) eq {link} } {
-	#variable base_dir
-	#set fromIndex [string length ${base_dir}]
-	#set lstat(target) [string range [file readlink ${column_parent_dir}] $fromIndex end]
-	set lstat(target) [file readlink ${column_parent_dir}]
+    #variable base_dir
+    #set fromIndex [string length ${base_dir}]
+    #set lstat(target) [string range [file readlink ${column_parent_dir}] $fromIndex end]
+        set lstat(target) [file readlink ${column_parent_dir}]
     }
 
     return [list ${result_path} [array get lstat]]
@@ -796,13 +835,13 @@ proc ::persistence::fs::get_supercolumns_paths {args} {
     set supercolumns [get_supercolumns {*}${args}]
     set subdirs [list]
     foreach supercolumn_dir ${supercolumns} {
-	lappend subdirs ${supercolumn_dir}
-	get_recursive_subdirs ${supercolumn_dir} subdirs
+        lappend subdirs ${supercolumn_dir}
+        get_recursive_subdirs ${supercolumn_dir} subdirs
     }
 
     set result [list]
     foreach subdir ${subdirs} {
-	lappend result [get_column_path ${subdir}]
+        lappend result [get_column_path ${subdir}]
     }
     return ${result}
 
@@ -814,13 +853,13 @@ proc ::persistence::fs::get_supercolumns_paths_with_status {args} {
     set supercolumns [get_supercolumns {*}${args}]
     set subdirs [list]
     foreach supercolumn_dir ${supercolumns} {
-	lappend subdirs ${supercolumn_dir}
-	get_recursive_subdirs ${supercolumn_dir} subdirs
+        lappend subdirs ${supercolumn_dir}
+        get_recursive_subdirs ${supercolumn_dir} subdirs
     }
 
     set result [list]
     foreach subdir ${subdirs} {
-	lappend result [get_column_path_with_status ${subdir}]
+        lappend result [get_column_path_with_status ${subdir}]
     }
     return ${result}
 
@@ -837,15 +876,14 @@ proc ::persistence::fs::get_supercolumns_slice {keyspace column_family row_key {
 			  ${supercolumns_predicate}]
 
     set supercolumns_slice [list]
-
     foreach supercolumn_dir ${supercolumns} {
 
-	set slicelist \
-	    [get_slice_from_supercolumn \
-		 "${supercolumn_dir}" \
-		 "${slice_predicate}"]
+        set slicelist \
+            [get_slice_from_supercolumn \
+            "${supercolumn_dir}" \
+            "${slice_predicate}"]
 
-	lappend supercolumns_slice ${slicelist}
+        lappend supercolumns_slice ${slicelist}
 
     }
 

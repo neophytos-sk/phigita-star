@@ -1,17 +1,18 @@
 package provide feed_reader 0.1
 
-::xo::lib::require curl
-::xo::lib::require tdom_procs
-::xo::lib::require util_procs
-::xo::lib::require htmltidy
-::xo::lib::require persistence
+package require curl
+package require tdom_procs
+package require util_procs
+package require htmltidy
+package require persistence
 
 
+# tcllib
 package require uri
 package require sha1
 
-::xo::lib::require util_procs
-::xo::lib::require ttext
+package require util_procs
+package require ttext
 
 set dir [file dirname [info script]]
 set package_dir [file normalize [file join ${dir} ..]]

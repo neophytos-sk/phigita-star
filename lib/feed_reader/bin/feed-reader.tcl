@@ -25,8 +25,7 @@ proc print_usage_info {} {
 			   "classify-content" "axis contentsha1 ?...?" \
 			   "uses-content" "contentsha1 ?...?" \
 			   "diff-content" "contentsha1_old contentsha1_new" \
-			   "list" "?offset? ?limit?" \
-			   "list-site" "domain ?offset? ?limit?" \
+			   "ls" "?--lang langclass? ?--domain domain_name? ?--offset num? ?--limit num? ?-l,--long_listing" \
 			   "revisions" "urlsha1" \
 			   "register-axis" "axis_name" \
 			   "register-label" "axis_name label_name" \
@@ -184,11 +183,6 @@ if { ${argc} < 1 } {
     } elseif { ${cmd} eq {ls} && ${argc} >= 1 } {
 
         ::feed_reader::ls {*}[lrange ${argv} 1 end]
-
-    } elseif { ${cmd} eq {list-site} && ${argc} >= 2 } {
-
-        set news_source [lindex ${argv} 1]
-        ::feed_reader::list_site ${news_source} {*}[lrange ${argv} 2 end]
 
     } elseif { ${cmd} eq {remove-feed-items} && ${argc} >= 2 } {
 

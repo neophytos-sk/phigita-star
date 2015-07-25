@@ -1,3 +1,47 @@
+# derived_attribute id creates a table with the given attributes
+# and a third one that is the application of the fn for the given
+# attributes.
+# {derived_attribute id --datatype sha1_hex --fn_args {reversedomain url} --fn sha1_hex --fn_alternative serial_int --pk }
+
+array set ::news_item {
+    pk { urlsha1 }
+    attributes {
+        urlsha1
+        contentsha1
+        site
+        date
+        langclass
+
+        url
+        title
+        body
+        first_sync
+        last_sync
+        is_revision_p
+        is_copy_p
+
+        timestamp
+        date
+        sort_date
+
+        domain
+        reversedomain
+    }
+    indexes {
+        {by_urlsha1                  {urlsha1}                  "all"}
+        {by_domain                   {reversedomain}            "summary"}
+        {by_langclass                {langclass}                "summary"}
+        {by_contentsha1              {contentsha1}              "summary"}
+        {by_sort_date                {sort_date}                "summary"}
+    }
+    aggregates {
+    }
+}
+
+# by_const_and_date
+# by_urlsha1_and_const
+# by_urlsha1_and_contentsha1
+# by_langclass
 foreach {ks spec} {
 
     web_cache_db {
@@ -8,11 +52,11 @@ foreach {ks spec} {
 
     newsdb {
         news_item {
-            by_const_and_date
-            by_urlsha1_and_const
-            by_urlsha1_and_contentsha1
-            by_site_and_date
+            by_urlsha1
+            by_domain
             by_langclass
+            by_contentsha1
+            by_sort_date
         }
 
         content_item {
