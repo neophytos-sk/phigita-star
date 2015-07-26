@@ -1786,12 +1786,18 @@ proc ::feed_reader::write_item {timestamp normalized_link feedVar itemVar resync
             lappend row_key $item($attname)
         }
 
-        ::persistence::insert_column \
-            "newsdb"                 \
-            "news_item/${axis}"      \
-            ${row_key}               \
-            $item($pk)               \
-            ${data}
+        if { $row_key eq $item($pk) } {
+            ::persistence::insert_column \
+                "newsdb"                 \
+                "news_item/${axis}"      \
+                ${row_key}               \
+                $item($pk)               \
+                ${data}
+        } else {
+            ::persistence::insert_link \
+                "newsdb/news_item/${axis}/${row_key}/+/$item($pk)" \
+                "newsdb/news_item/by_${pk}/$item($pk)/+/$item($pk)"
+        }
 
      }
 
