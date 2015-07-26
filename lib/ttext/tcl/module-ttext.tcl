@@ -7,8 +7,8 @@ source [file join $dir ttext-langclass.tcl]
 ::xo::lib::require critcl
 
 array set conf [list]
-set conf(clibraries) "-L/opt/naviserver/lib -lunac -lexttextcat"
-set conf(includedirs) [list /opt/naviserver/include]
+set conf(clibraries) "-L/opt/tcl8.6.0/lib -lunac -lexttextcat"
+set conf(includedirs) [list /opt/tcl8.6.0/include]
 
 
 if { [::xo::kit::debug_mode_p] } {
