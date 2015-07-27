@@ -5,6 +5,9 @@
 
 namespace eval ::newsdb::news_item_t {
 
+    # see core/tcl/namespace.tcl for "mixin" details
+    namespace __mixin ::persistence::orm
+
     namespace ensemble create -subcommands {get insert from_path to_path}
 
     variable ks "newsdb"
@@ -53,87 +56,6 @@ namespace eval ::newsdb::news_item_t {
         aggregates {
         }
     }
-
-}
-
-proc ::newsdb::news_item_t::to_path {id} {
-    variable ks
-    variable cf
-    variable metadata
-
-    set axis by_$metadata(pk)
-    set target "${ks}/${cf}.${axis}"
-    if {1} {
-        # if datatype of primary key attribute exceeds a certain threshold
-        # then we map the primary key attribute to row keys
-        append target "/${id}/+/__data__"
-    } else {
-        # otherwise, map the primary key attribute to column names
-        append target "/__data__/+/${id}"
-    }
-}
-
-proc ::newsdb::news_item_t::from_path {path} {
-    set column_key [lassign [split ${path} {/}] _ks _cf row_key __delimiter__]
-    if {1} {
-        return ${row_key}
-    } else {
-        return ${column_key}
-    }
-}
-
-
-proc ::newsdb::news_item_t::get {id {dataVar ""}} {
-    variable ks
-    variable cf
-    variable metadata
-
-    set varname {}
-    if { $dataVar ne {} } {
-
-        upvar $dataVar _
-
-        # get/get_column only gets the data 
-        # (as opposed to just the filename)
-        # if a non-empty dataVar argument is given 
-
-        set varname {_}
-    }
-
-    set path [to_path ${id}]
-    set filename [::persistence::get $path {*}${varname}]
-
-    return $filename
-
-}
-
-proc ::newsdb::news_item_t::insert {itemVar} {
-
-    variable ks
-    variable cf
-    variable metadata
-
-    upvar $itemVar item
-
-    set data [array get item]
-
-    set pk $metadata(pk)
-    set target [to_path $item($pk)]
-
-    ::persistence::insert $target $data
-
-    foreach index_item $metadata(indexes) {
-        lassign $index_item axis attributes __tags__
-
-        set row_key [list]
-        foreach attname $attributes {
-            lappend row_key $item($attname)
-        }
-
-        set src "${ks}/${cf}.${axis}/${row_key}/+/$item($pk)"
-        ::persistence::insert_link $src $target
-
-     }
 
 }
 
