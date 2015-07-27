@@ -45,7 +45,7 @@ proc ::feed_reader::stats {{news_sources ""}} {
 
 	    ::persistence::get_column          \
 		"crawldb"                      \
-		"feed_stats/by_feed_and_const" \
+		"feed_stats.by_feed_and_const" \
 		"${feed_name}"                 \
 		"_stats"                       \
 		"column_data"
@@ -301,7 +301,7 @@ proc ::feed_reader::fetch_feed_p {feed_name timestamp {coeff "0.3"}} {
 	set filename \
 	    [::persistence::get_column           \
 		 "crawldb"                       \
-		 "feed_stats/by_feed_and_period" \
+		 "feed_stats.by_feed_and_period" \
 		 "${feed_name}"                  \
 		 "${pretty_timeval}"]
 
@@ -325,7 +325,7 @@ proc ::feed_reader::fetch_feed_p {feed_name timestamp {coeff "0.3"}} {
 
     set filename [::persistence::get_column           \
 		      "crawldb"                       \
-		      "feed_stats/by_feed_and_const"  \
+		      "feed_stats.by_feed_and_const"  \
 		      "${feed_name}"                  \
 		      "_stats"]
     
@@ -405,7 +405,7 @@ proc ::feed_reader::update_crawler_stats {timestamp feed_name statsVar} {
 	
 	incr_array_in_column                \
 	    "crawldb"                       \
-	    "feed_stats/by_feed_and_period" \
+	    "feed_stats.by_feed_and_period" \
 	    "${feed_name}"                  \
 	    "${pretty_timeval}"            \
 	    "stats"
@@ -414,7 +414,7 @@ proc ::feed_reader::update_crawler_stats {timestamp feed_name statsVar} {
 
     incr_array_in_column                \
 	"crawldb"                       \
-	"feed_stats/by_feed_and_const" \
+	"feed_stats.by_feed_and_const" \
 	"${feed_name}"                  \
 	"_stats"                        \
 	stats

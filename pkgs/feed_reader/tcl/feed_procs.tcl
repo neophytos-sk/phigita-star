@@ -1310,12 +1310,7 @@ proc ::feed_reader::load_item {itemVar urlsha1} {
 
     upvar $itemVar item
 
-    ::persistence::get_column            \
-	"newsdb"                         \
-	"news_item.by_urlsha1_and_const" \
-	"${urlsha1}"                     \
-	"_data_"                         \
-	"column_data"
+    ::newsdb::news_item_t get $urlsha1 column_data
 
     array set item ${column_data}
 
@@ -1592,19 +1587,19 @@ proc ::feed_reader::print_short_log_entry {itemVar {contextVar ""}} {
 
 proc ::feed_reader::show_item {urlsha1_list} {
     foreach urlsha1 ${urlsha1_list} {
-	load_item item ${urlsha1}
-	print_item item
+        load_item item ${urlsha1}
+        print_item item
 
-	if { $item(langclass) eq {el.utf8} } {
+        if { $item(langclass) eq {el.utf8} } {
 
-	    set content [concat $item(title) $item(body)]
-	    set item(el/topic) [classifier::classify el/topic content]
+            set content [concat $item(title) $item(body)]
+            set item(el/topic) [classifier::classify el/topic content]
 
-	    puts $item(el/topic)
-	}
+            puts $item(el/topic)
+        }
 
 
-	unset item
+        unset item
     }
 }
 
@@ -1774,69 +1769,9 @@ proc ::feed_reader::write_item {timestamp normalized_link feedVar itemVar resync
         set item(sort_date) ${timestamp_datetime}
     }
 
-    set data [array get item]
-
-    # newsdb::news_item_t insert item
-
-    set pk [string trim $::news_item(pk)]
-
-    if {1} {
-        # if datatype of primary key attribute exceeds a certain threshold
-        # then we map the primary key attribute to row keys
-        set target "newsdb/news_item.by_${pk}/$item($pk)/+/__data__"
-    } else {
-        # otherwise, map the primary key attribute to column names
-        set target "newsdb/news_item.by_${pk}/__data__/+/$item($pk)"
-    }
-
-    ::persistence::insert $target $data
-
-    foreach index_item $::news_item(indexes) {
-        lassign $index_item axis attributes __tags__
-
-        set row_key [list]
-        foreach attname $attributes {
-            lappend row_key $item($attname)
-        }
-
-        set src "newsdb/news_item.${axis}/${row_key}/+/$item($pk)"
-        ::persistence::insert_link $src $target
-
-     }
+    ::newsdb::news_item_t insert item
 
      return 1
-
-    ::persistence::insert_column      \
-        "newsdb"                      \
-        "news_item.by_const_and_date" \
-        "log"                         \
-        "$item(sort_date).${urlsha1}" \
-        "${data}"
-
-
-    ::persistence::insert_column \
-        "newsdb" \
-        "index/urlsha1_to_date_sk" \
-        "${urlsha1}" \
-        "$item(sort_date).${urlsha1}" \
-        ""
-
-    ::persistence::insert_link   \
-        "newsdb/news_item.by_urlsha1_and_contentsha1/__default_row__/+/${urlsha1}/${contentsha1}" \
-        "newsdb/news_item.by_const_and_date/log/+/$item(sort_date).$urlsha1"
-
-    ::persistence::insert_link       \
-        "newsdb/news_item.by_domain/${reversedomain}/+/${urlsha1}" \
-        "newsdb/news_item.by_const_and_date/log/+/$item(sort_date).$urlsha1"
-
-
-    ::persistence::insert_link \
-        "newsdb/news_item.by_langclass/$item(langclass)/+/${urlsha1}" \
-        "newsdb/news_item.by_const_and_date/log/+/$item(sort_date).$urlsha1"
-
-
-    return 1
-
 }
 
 proc ::feed_reader::resync_item {filename} {

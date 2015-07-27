@@ -216,11 +216,14 @@ proc ::persistence::fs::insert_link {src target} {
         if { [file exists $src] } {
             set old_target [file link $src] 
             log "file node (link) exists: $src"
-            log "checking to see if link points to the same target"
+            log "checking to see if link points to the same target: $old_target"
             if { $old_target ne $target } {
                 log "deleting link $src -> $old_target"
                 log "new target for link: $target"
                 file delete $src
+            } else {
+                log "link already exists and points to the same target"
+                return
             }
         }
         file mkdir [file dirname $src]
@@ -367,20 +370,42 @@ proc ::persistence::fs::predicate=forall {slicelistVar predicates} {
 proc ::persistence::fs::predicate=in_slice {slicelistVar row_expression {predicate ""}} {
     upvar $slicelistVar _
 
-    lassign [split $row_expression {/}] ks cf axis row
+    set column_path [lassign [split $row_expression {/}] ks cf_axis row_key]
 
-    set slicelist2 [::persistence::get_slice \
-		       "$ks"                         \
-		       "$cf/$axis"                   \
-		       "$row"                        \
-		       "${predicate}"]
+    assert { $column_path eq {} }
 
-    set column_names [list]
-    foreach filename $slicelist2 {
-        lappend column_names [get_name $filename]
+    if { 0 } {
+        # no bloom filter capability
+    } else {
+
+        set result [list]
+        foreach filename $_ {
+
+            # This kind of predicate does not belong in this file, 
+            # most likely would have to be moved to orm_procs.tcl
+            #
+            # newsdb::news_item_t filename_to_id $filename
+            #
+            # (so that it uses the same kind of mechanism as the one in pk_path
+
+            set _row_key [lindex [split [lindex [split $filename {+}] 0] {/}] end-1]
+            set column_name $_row_key
+
+            set exists_p \
+                [::persistence::exists_column_p \
+                    ${ks} \
+                    ${cf_axis} \
+                    ${row_key} \
+                    ${column_name}]
+
+            if { $exists_p } {
+                lappend result $filename
+            }
+
+        }
+        set _ $result
+
     }
-
-    predicate=in _ $column_names
 }
 
 proc ::persistence::fs::predicate=in {slicelistVar column_names} {
@@ -396,9 +421,8 @@ proc ::persistence::fs::predicate=in {slicelistVar column_names} {
 }
 
 proc ::persistence::fs::predicate=lsort {slicelistVar args} {
-
-    set slicelist [lsort {*}${args} ${slicelist}]
-
+    upvar $slicelistVar _
+    set _ [lsort {*}${args} ${_}]
 }
 
 
@@ -498,23 +522,14 @@ proc ::persistence::fs::get_column {keyspace column_family row_key column_path {
     # puts "filename = $filename"
 
     if { ${dataVar} ne {} } {
-
         if { ${exists_pVar} ne {} } {
-
             upvar ${exists_pVar} exists_p
-
         }
-
         set exists_p [exists_data_p ${filename}]
-
         if { ${exists_p} } {
-
-            upvar ${dataVar} data
-
+            upvar $dataVar data
             set data [get_data ${filename}]
-
         }
-
     }
 
     return ${filename}
@@ -1004,6 +1019,26 @@ proc ::persistence::fs::link {keyspace column_family target_path link_path {forc
 
 }
 
+
+proc ::persistence::get {path {dataVar ""}} {
+
+    set varname {}
+
+    if { $dataVar ne {} } {
+
+        upvar $dataVar _
+
+        # get/get_column only gets the data 
+        # (as opposed to just the filename)
+        # if a non-empty dataVar argument is given 
+
+        set varname {_}
+    }
+
+    set column_path [lassign [split $path {/}] ks cf row_key __delimiter__]
+    set filename [get_column $ks $cf $row_key $column_path {*}$varname]
+    return $filename
+}
 
 proc ::persistence::insert {path data} {
     set column_path [lassign [split $path {/}] ks cf row_key __delimiter__]
