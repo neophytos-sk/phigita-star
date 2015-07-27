@@ -1007,6 +1007,5 @@ proc ::persistence::fs::link {keyspace column_family target_path link_path {forc
 
 proc ::persistence::insert {path data} {
     set column_path [lassign [split $path {/}] ks cf row_key __delimiter__]
-    printvars
     insert_column $ks $cf $row_key $column_path $data
 }

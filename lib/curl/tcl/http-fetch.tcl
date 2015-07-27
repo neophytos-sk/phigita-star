@@ -87,7 +87,7 @@ proc ::web::cache_fetch {htmlVar url {optionsVar ""} {infoVar ""}} {
     set urlencoded_query [url encode $url_a(query)]
 
     set keyspace "web_cache_db"
-    set column_family "web_page/by_domain"
+    set column_family "web_page.by_domain"
     set row_key $reverse_domain
     #set column_path [list $urlencoded_path $urlencoded_query]
     set column_path [::sha1::sha1 -hex $url]

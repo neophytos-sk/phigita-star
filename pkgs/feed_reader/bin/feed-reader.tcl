@@ -3,8 +3,7 @@
 # TODO: extract comments from article pages
 
 package require core
-
-::xo::lib::require feed_reader
+package require feed_reader
 
 #set dir [file dirname [info script]]
 #source [file join ${dir} feed-procs.tcl]
