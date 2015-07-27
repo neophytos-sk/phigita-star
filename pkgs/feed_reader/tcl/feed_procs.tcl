@@ -583,7 +583,7 @@ proc ::feed_reader::handle_redirect_item {link title_in_feed feedVar itemVar inf
 
         ::persistence::insert_column         \
             "newsdb"                         \
-            "news_item/by_urlsha1_and_const" \
+            "news_item.by_urlsha1_and_const" \
             "$item(urlsha1)"                 \
             "_data_"                         \
             "[array get item]"
@@ -696,7 +696,7 @@ proc ::feed_reader::fetch_and_write_item {timestamp link title_in_feed feedVar} 
 
             ::persistence::insert_column \
                 "newsdb" \
-                "error_item/by_urlsha1_and_timestamp" \
+                "error_item.by_urlsha1_and_timestamp" \
                 "${urlsha1}"\
                 "${timestamp}" \
                 "${errordata}"
@@ -713,7 +713,7 @@ proc ::feed_reader::fetch_and_write_item {timestamp link title_in_feed feedVar} 
 
                 ::persistence::insert_column \
                     "newsdb" \
-                    "news_item/by_urlsha1_and_const" \
+                    "news_item.by_urlsha1_and_const" \
                     "${urlsha1}" \
                     "_data_" \
                     "${errordata}"
@@ -832,12 +832,12 @@ proc ::feed_reader::ls {args} {
     set predicates [list]
 
     if { exists("__arg_lang") } {
-        lappend predicates [list "in_slice" [list "newsdb/news_item/by_langclass/$lang"]]
+        lappend predicates [list "in_slice" [list "newsdb/news_item.by_langclass/$lang"]]
     }
 
     if { exists("__arg_domain") } {
         set reversedomain [reversedomain $domain]
-        lappend predicates [list "in_slice" [list "newsdb/news_item/by_domain/$reversedomain"]]
+        lappend predicates [list "in_slice" [list "newsdb/news_item.by_domain/$reversedomain"]]
     }
 
     # TODO: sort and get range for each filter, e.g. by_langclass
@@ -851,12 +851,12 @@ proc ::feed_reader::ls {args} {
     set row_names \
         [::persistence::get_multirow_names  \
             "newsdb"                        \
-            "news_item/by_urlsha1"]
+            "news_item.by_urlsha1"]
 
     set slicelist \
         [::persistence::multiget_slice    \
             "newsdb"                      \
-            "news_item/by_urlsha1"        \
+            "news_item.by_urlsha1"        \
             ${row_names}                  \
             ${predicate}]
 
@@ -994,7 +994,7 @@ proc ::feed_reader::search {keywords {offset "0"} {limit "20"} {callback ""}} {
 	set filelist \
 	    [::persistence::get_slice \
 		 "newsdb" \
-		 "news_item/by_const_and_date" \
+		 "news_item.by_const_and_date" \
 		 "log"]
 
     }
@@ -1087,7 +1087,7 @@ proc ::feed_reader::search_callback=label_content {contentsha1 axis label {need_
 
     ::persistence::get_column \
         "newsdb"\
-        "content_item/by_contentsha1_and_const" \
+        "content_item.by_contentsha1_and_const" \
         "${contentsha1}" \
         "_data_" \
         "column_data"
@@ -1165,7 +1165,7 @@ proc ::feed_reader::search_callback=unlabel_content {contentsha1 axis label {nee
 
     ::persistence::get_column \
         "newsdb"\
-        "content_item/by_contentsha1_and_const" \
+        "content_item.by_contentsha1_and_const" \
         "${contentsha1}" \
         "_data_" \
         "column_data"
@@ -1257,7 +1257,7 @@ proc ::feed_reader::cluster {{offset "0"} {limit "10"} {k ""} {num_iter "3"}} {
 
     set slicelist [::persistence::get_slice \
 		       "newsdb" \
-		       "news_item/by_const_and_date" \
+		       "news_item.by_const_and_date" \
 		       "log" \
 		       "${slice_predicate}"]
 
@@ -1270,7 +1270,7 @@ proc ::feed_reader::cluster {{offset "0"} {limit "10"} {k ""} {num_iter "3"}} {
 	set contentfilename \
 	    [::persistence::get_column \
 		 "newsdb" \
-		 "content_item/by_contentsha1_and_const" \
+		 "content_item.by_contentsha1_and_const" \
 		 "$item(contentsha1)" \
 		 "_data_"]
 
@@ -1299,7 +1299,7 @@ proc ::feed_reader::exists_item {link} {
 
     return [::persistence::exists_column_p \
 		"newsdb" \
-		"news_item/by_urlsha1_and_const" \
+		"news_item.by_urlsha1_and_const" \
 		"${urlsha1}" \
 		"_data_"]
 
@@ -1312,7 +1312,7 @@ proc ::feed_reader::load_item {itemVar urlsha1} {
 
     ::persistence::get_column            \
 	"newsdb"                         \
-	"news_item/by_urlsha1_and_const" \
+	"news_item.by_urlsha1_and_const" \
 	"${urlsha1}"                     \
 	"_data_"                         \
 	"column_data"
@@ -1386,7 +1386,7 @@ proc ::feed_reader::load_content {itemVar contentsha1 {include_labels_p "1"}} {
 
     ::persistence::get_column \
         "newsdb" \
-        "content_item/by_contentsha1_and_const" \
+        "content_item.by_contentsha1_and_const" \
         "${contentsha1}" \
         "_data_" \
         "column_data"
@@ -1624,7 +1624,7 @@ proc ::feed_reader::show_revisions {urlsha1} {
 
     set slicelist [::persistence::get_supercolumn_slice \
         "newsdb"                                        \
-        "news_item/by_urlsha1_and_contentsha1"          \
+        "news_item.by_urlsha1_and_contentsha1"          \
         "__default_row__"                               \
         "${urlsha1}"]
 
@@ -1653,7 +1653,7 @@ proc ::feed_reader::write_item {timestamp normalized_link feedVar itemVar resync
 
     ::persistence::insert_column         \
         "crawldb"                        \
-        "sync_info/by_urlsha1_and_const" \
+        "sync_info.by_urlsha1_and_const" \
         "${urlsha1}"                     \
         "${timestamp_datetime}"          \
         ""
@@ -1664,7 +1664,7 @@ proc ::feed_reader::write_item {timestamp normalized_link feedVar itemVar resync
     set exists_revision_p \
         [::persistence::exists_column_p \
              "newsdb"                   \
-             "news_item/by_contentsha1" \
+             "news_item.by_contentsha1" \
              ${contentsha1}             \
              ${urlsha1}]
 
@@ -1692,7 +1692,7 @@ proc ::feed_reader::write_item {timestamp normalized_link feedVar itemVar resync
     set contentfilename \
         [::persistence::get_column                   \
              "newsdb"                                \
-             "content_item/by_contentsha1_and_const" \
+             "content_item.by_contentsha1_and_const" \
              "${contentsha1}"                        \
              "_data_"]
 
@@ -1776,8 +1776,21 @@ proc ::feed_reader::write_item {timestamp normalized_link feedVar itemVar resync
 
     set data [array get item]
 
+    # newsdb::news_item_t insert item
 
     set pk [string trim $::news_item(pk)]
+
+    if {1} {
+        # if datatype of primary key attribute exceeds a certain threshold
+        # then we map the primary key attribute to row keys
+        set target "newsdb/news_item.by_${pk}/$item($pk)/+/__data__"
+    } else {
+        # otherwise, map the primary key attribute to column names
+        set target "newsdb/news_item.by_${pk}/__data__/+/$item($pk)"
+    }
+
+    ::persistence::insert $target $data
+
     foreach index_item $::news_item(indexes) {
         lassign $index_item axis attributes __tags__
 
@@ -1786,18 +1799,8 @@ proc ::feed_reader::write_item {timestamp normalized_link feedVar itemVar resync
             lappend row_key $item($attname)
         }
 
-        if { $row_key eq $item($pk) } {
-            ::persistence::insert_column \
-                "newsdb"                 \
-                "news_item/${axis}"      \
-                ${row_key}               \
-                $item($pk)               \
-                ${data}
-        } else {
-            ::persistence::insert_link \
-                "newsdb/news_item/${axis}/${row_key}/+/$item($pk)" \
-                "newsdb/news_item/by_${pk}/$item($pk)/+/$item($pk)"
-        }
+        set src "newsdb/news_item.${axis}/${row_key}/+/$item($pk)"
+        ::persistence::insert_link $src $target
 
      }
 
@@ -1805,7 +1808,7 @@ proc ::feed_reader::write_item {timestamp normalized_link feedVar itemVar resync
 
     ::persistence::insert_column      \
         "newsdb"                      \
-        "news_item/by_const_and_date" \
+        "news_item.by_const_and_date" \
         "log"                         \
         "$item(sort_date).${urlsha1}" \
         "${data}"
@@ -1819,17 +1822,17 @@ proc ::feed_reader::write_item {timestamp normalized_link feedVar itemVar resync
         ""
 
     ::persistence::insert_link   \
-        "newsdb/news_item/by_urlsha1_and_contentsha1/__default_row__/+/${urlsha1}/${contentsha1}" \
-        "newsdb/news_item/by_const_and_date/log/+/$item(sort_date).$urlsha1"
+        "newsdb/news_item.by_urlsha1_and_contentsha1/__default_row__/+/${urlsha1}/${contentsha1}" \
+        "newsdb/news_item.by_const_and_date/log/+/$item(sort_date).$urlsha1"
 
     ::persistence::insert_link       \
-        "newsdb/news_item/by_domain/${reversedomain}/+/${urlsha1}" \
-        "newsdb/news_item/by_const_and_date/log/+/$item(sort_date).$urlsha1"
+        "newsdb/news_item.by_domain/${reversedomain}/+/${urlsha1}" \
+        "newsdb/news_item.by_const_and_date/log/+/$item(sort_date).$urlsha1"
 
 
     ::persistence::insert_link \
-        "newsdb/news_item/by_langclass/$item(langclass)/+/${urlsha1}" \
-        "newsdb/news_item/by_const_and_date/log/+/$item(sort_date).$urlsha1"
+        "newsdb/news_item.by_langclass/$item(langclass)/+/${urlsha1}" \
+        "newsdb/news_item.by_const_and_date/log/+/$item(sort_date).$urlsha1"
 
 
     return 1
@@ -1900,7 +1903,7 @@ proc ::feed_reader::resync {} {
     set multirow_slicelists \
 	[::persistence::get_multirow_slice \
 	     "newsdb" \
-	     "news_item/by_urlsha1_and_const"]
+	     "news_item.by_urlsha1_and_const"]
 
 
     foreach slicelist ${multirow_slicelists} {
@@ -2025,7 +2028,7 @@ proc ::feed_reader::sync_feeds {{news_sources ""} {debug_p "0"}} {
 
     ::persistence::insert_column              \
 	"crawldb"                             \
-	"round_stats/by_timestamp_and_const"  \
+	"round_stats.by_timestamp_and_const"  \
 	"${round}"                            \
 	"_data_"                              \
 	"[array get round_stats]"
@@ -2146,14 +2149,14 @@ proc ::feed_reader::remove_item {filename} {
         # an item is already downloaded or not
     ::persistence::delete_slice          \
         "newsdb"                         \
-        "news_item/by_urlsha1_and_const" \
+        "news_item.by_urlsha1_and_const" \
         "${urlsha1}"
 
 
     set contentslicelist                           \
         [::persistence::delete_supercolumn         \
             "newsdb"                               \
-            "news_item/by_urlsha1_and_contentsha1" \
+            "news_item.by_urlsha1_and_contentsha1" \
             "__default_row__" \
             "${urlsha1}"]
 
@@ -2221,13 +2224,13 @@ proc ::feed_reader::remove_item {filename} {
 
     ::persistence::delete_column      \
         "newsdb"                      \
-        "news_item/by_const_and_date" \
+        "news_item.by_const_and_date" \
         "log"                         \
         "$item(sort_date).${urlsha1}"
 
     ::persistence::delete_column       \
         "newsdb"                       \
-        "news_item/by_domain"   \
+        "news_item.by_domain"   \
         "${reversedomain}"             \
         "$item(sort_date).${urlsha1}"
 
@@ -2239,7 +2242,7 @@ proc ::feed_reader::remove_item {filename} {
 
     ::persistence::delete_supercolumn   \
         "newsdb"                        \
-        "news_item/by_urlsha1_and_contentsha1" \
+        "news_item.by_urlsha1_and_contentsha1" \
         "__default_row__"               \
         "${urlsha1}"
 
@@ -2275,7 +2278,7 @@ proc ::feed_reader::remove_feed_items {domain {urlsha1_list ""}} {
 
     set slicelist [::persistence::get_slice         \
         "newsdb"                     \
-        "news_item/by_domain" \
+        "news_item.by_domain" \
         "${reversedomain}"           \
         "${slice_predicate}"]
 
@@ -2289,7 +2292,7 @@ proc ::feed_reader::remove_feed_items {domain {urlsha1_list ""}} {
         set domain_dir                        \
             [::persistence::get_row           \
             "newsdb"                     \
-            "news_item/by_domain" \
+            "news_item.by_domain" \
             "${domain}"]
 
         ::persistence::delete_data ${domain_dir}

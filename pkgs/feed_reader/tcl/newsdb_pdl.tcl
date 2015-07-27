@@ -5,6 +5,10 @@
 
 array set ::news_item {
     pk { urlsha1 }
+    comment_pk {
+        creates the following index:
+        {by_urlsha1 {urlsha1} "all"}
+    }
     attributes {
         urlsha1
         contentsha1
@@ -28,7 +32,6 @@ array set ::news_item {
         reversedomain
     }
     indexes {
-        {by_urlsha1                  {urlsha1}                  "all"}
         {by_domain                   {reversedomain}            "summary"}
         {by_langclass                {langclass}                "summary"}
         {by_contentsha1              {contentsha1}              "summary"}
@@ -101,7 +104,7 @@ foreach {ks spec} {
 
     foreach {column_family axis_list} ${spec} {
         foreach axis $axis_list {
-            ::persistence::define_cf $ks ${column_family}/${axis}
+            ::persistence::define_cf $ks ${column_family}.${axis}
         }
     }
 }

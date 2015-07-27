@@ -209,10 +209,26 @@ proc ::persistence::fs::delete_link {src} {
 
 proc ::persistence::fs::insert_link {src target} {
     variable base_dir
-    set src [file join $base_dir $src] 
-    set target [file join $base_dir $target]
-    file mkdir [file dirname $src]
-    file link $src $target
+    if { 1 } {
+        # if data is on a single host, then create a symbolic link
+        set src [file join $base_dir $src] 
+        set target [file join $base_dir $target]
+        if { [file exists $src] } {
+            set old_target [file link $src] 
+            log "file node (link) exists: $src"
+            log "checking to see if link points to the same target"
+            if { $old_target ne $target } {
+                log "deleting link $src -> $old_target"
+                log "new target for link: $target"
+                file delete $src
+            }
+        }
+        file mkdir [file dirname $src]
+        file link $src $target
+    } else {
+        # otherwise, use insert_column to replicate the data
+        insert_column $src [get_data $target]
+    }
 }
 
 proc ::persistence::fs::exists_data_p {filename} {
@@ -988,3 +1004,9 @@ proc ::persistence::fs::link {keyspace column_family target_path link_path {forc
 
 }
 
+
+proc ::persistence::insert {path data} {
+    set column_path [lassign [split $path {/}] ks cf row_key __delimiter__]
+    printvars
+    insert_column $ks $cf $row_key $column_path $data
+}
