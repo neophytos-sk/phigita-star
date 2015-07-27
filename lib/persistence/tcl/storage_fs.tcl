@@ -15,13 +15,28 @@ namespace eval ::persistence::fs {
         get_slice_names get_slice_from_row get_slice_from_supercolumn get_slice \
         ls list_ks list_cf list_axis list_row list_col list_path \
         num_rows num_cols \
-        get_name delete_data 
+        get_name delete_data \
+        get_mtime
 }
 
+proc ::persistence::fs::get_path {args} {
+    variable base_dir
+    set dir [join ${args} {/}]
+    return ${dir}
+}
 proc ::persistence::fs::get_dir {args} {
     variable base_dir
     set dir [join [list ${base_dir} {*}${args}] {/}]
     return ${dir}
+}
+
+proc ::persistence::fs::get_file {path} {
+    variable base_dir
+    return [file normalize ${base_dir}/${path}]
+}
+
+proc ::persistence::fs::get_mtime {path} {
+    return [file mtime [get_file $path]]
 }
 
 proc ::persistence::fs::exists_ks_p {keyspace} {
@@ -141,7 +156,7 @@ proc ::persistence::fs::define_cf {keyspace column_family {spec {}}} {
 
 proc ::persistence::fs::get_row {keyspace column_family row_key} {
     set delimiter {+}
-    set row_dir [get_dir ${keyspace} ${column_family} ${row_key} ${delimiter}]
+    set row_dir [get_path ${keyspace} ${column_family} ${row_key} ${delimiter}]
     return ${row_dir}
 }
 
@@ -234,17 +249,20 @@ proc ::persistence::fs::insert_link {src target} {
     }
 }
 
-proc ::persistence::fs::exists_data_p {filename} {
-    return [file exists ${filename}]
+proc ::persistence::fs::exists_data_p {path} {
+    return [file exists [get_file ${path}]]
 }
 
+
 # TODO: consider renaming it to put_data
-proc ::persistence::fs::set_data {filename data} {
+proc ::persistence::fs::set_data {path data} {
+    set filename [get_file ${path}]
     file mkdir [file dirname ${filename}]
     return [::util::writefile ${filename} ${data}]
 }
 
-proc ::persistence::fs::get_data {filename} {
+proc ::persistence::fs::get_data {path} {
+    set filename [get_file ${path}]
     return [::util::readfile ${filename}]
 }
 
@@ -371,41 +389,34 @@ proc ::persistence::fs::predicate=in_slice {slicelistVar row_expression {predica
     upvar $slicelistVar _
 
     set column_path [lassign [split $row_expression {/}] ks cf_axis row_key]
+    lassign [split $cf_axis {.}] cf axis
 
     assert { $column_path eq {} }
 
-    if { 0 } {
-        # no bloom filter capability
-    } else {
+    # ::newsdb::news_item_t
+    set type_nsp ::${ks}::${cf}_t
 
-        set result [list]
-        foreach filename $_ {
+    set result [list]
+    foreach filename $_ {
 
-            # This kind of predicate does not belong in this file, 
-            # most likely would have to be moved to orm_procs.tcl
-            #
-            # newsdb::news_item_t filename_to_id $filename
-            #
-            # (so that it uses the same kind of mechanism as the one in pk_path
+        #set _row_key [lindex [split [lindex [split $filename {+}] 0] {/}] end-1]
+        #set column_name $_row_key
+        set column_name [$type_nsp from_path $filename]
 
-            set _row_key [lindex [split [lindex [split $filename {+}] 0] {/}] end-1]
-            set column_name $_row_key
+        set exists_p \
+            [::persistence::exists_column_p \
+                ${ks} \
+                ${cf_axis} \
+                ${row_key} \
+                ${column_name}]
 
-            set exists_p \
-                [::persistence::exists_column_p \
-                    ${ks} \
-                    ${cf_axis} \
-                    ${row_key} \
-                    ${column_name}]
-
-            if { $exists_p } {
-                lappend result $filename
-            }
-
+        if { $exists_p } {
+            lappend result $filename
         }
-        set _ $result
 
     }
+    set _ $result
+
 }
 
 proc ::persistence::fs::predicate=in {slicelistVar column_names} {
@@ -427,13 +438,27 @@ proc ::persistence::fs::predicate=lsort {slicelistVar args} {
 
 
 # TODO: replace glob with ::util::fs::ls
-proc ::persistence::fs::get_files {dir} {
-    return [glob -types {f} -nocomplain -directory ${dir} *]
+proc ::persistence::fs::get_files {path} {
+    variable base_dir
+    set dir [file normalize ${base_dir}/${path}]
+    set names [glob -tails -types {f} -nocomplain -directory ${dir} *]
+    set result [list]
+    foreach name $names {
+        lappend result ${path}/${name}
+    }
+    return $result
 }
 
 # TODO: replace glob with ::util::fs::ls
-proc ::persistence::fs::get_subdirs {dir} {
-    return [glob -types {d} -nocomplain -directory ${dir} *]
+proc ::persistence::fs::get_subdirs {path} {
+    variable base_dir
+    set dir [file normalize ${base_dir}/${path}]
+    set names [glob -types {d} -nocomplain -directory ${dir} *]
+    set result [list]
+    foreach name $names {
+        lappend result ${path}/${name}
+    }
+    return $result
 }
 
 proc ::persistence::fs::get_paths {dir} {
@@ -488,6 +513,7 @@ proc ::persistence::fs::get_slice_from_supercolumn {supercolumn_dir {slice_predi
 
 proc ::persistence::fs::get_slice_from_row {row_dir {slice_predicate ""}} {
     set slicelist [get_files ${row_dir}]
+
     set slicelist [lsort -decreasing ${slicelist}]
     if { ${slice_predicate} ne {} } {
         lassign ${slice_predicate} cmd args
@@ -515,24 +541,23 @@ proc ::persistence::fs::get_slice_names {args} {
 
 proc ::persistence::fs::get_column {keyspace column_family row_key column_path {dataVar ""} {exists_pVar ""}} {
 
-    set row_dir [get_row ${keyspace} ${column_family} ${row_key}]
+    # row_path includes the "+" delimiter
+    set row_path [get_row ${keyspace} ${column_family} ${row_key}]
 
-    set filename ${row_dir}/${column_path}
-
-    # puts "filename = $filename"
+    set path ${row_path}/${column_path}
 
     if { ${dataVar} ne {} } {
         if { ${exists_pVar} ne {} } {
             upvar ${exists_pVar} exists_p
         }
-        set exists_p [exists_data_p ${filename}]
+        set exists_p [exists_data_p ${path}]
         if { ${exists_p} } {
             upvar $dataVar data
-            set data [get_data ${filename}]
+            set data [get_data ${path}]
         }
     }
 
-    return ${filename}
+    return ${path}
 
 }
 
@@ -619,9 +644,15 @@ proc ::persistence::fs::delete_slice {keyspace column_family row_key {slice_pred
 
 
 proc ::persistence::fs::exists_column_p {keyspace column_family row_key column_path} {
-    set row_dir [get_row ${keyspace} ${column_family} ${row_key}]
-    set filename ${row_dir}/${column_path}
-    return [file exists ${filename}]
+    if { 0 } {
+        # bloom filter capability
+        # if { ![bloom_filter may_contain $row_bf $column_path] } {
+        #   return 0
+        # }
+    }
+    set row_path [get_row ${keyspace} ${column_family} ${row_key}]
+    set path ${row_path}/${column_path}
+    return [file exists [get_file ${path}]]
 }
 
 # work in progress

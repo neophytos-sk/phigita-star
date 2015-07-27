@@ -102,7 +102,7 @@ proc ::web::cache_fetch {htmlVar url {optionsVar ""} {infoVar ""}} {
             exists_column_p]
 
     if { $exists_column_p } {
-        set mtime [file mtime $filename]
+        set mtime [::persistence::get_mtime $filename]
         set timeout [expr { 15 * 60 }]
         set now [clock seconds]
         if { $mtime + $timeout > $now } {

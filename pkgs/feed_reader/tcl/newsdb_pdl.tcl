@@ -5,7 +5,7 @@
 
 namespace eval ::newsdb::news_item_t {
 
-    namespace ensemble create -subcommands {get insert}
+    namespace ensemble create -subcommands {get insert from_path to_path}
 
     variable ks "newsdb"
     variable cf "news_item"
@@ -56,7 +56,7 @@ namespace eval ::newsdb::news_item_t {
 
 }
 
-proc ::newsdb::news_item_t::pk_path {id} {
+proc ::newsdb::news_item_t::to_path {id} {
     variable ks
     variable cf
     variable metadata
@@ -72,6 +72,16 @@ proc ::newsdb::news_item_t::pk_path {id} {
         append target "/__data__/+/${id}"
     }
 }
+
+proc ::newsdb::news_item_t::from_path {path} {
+    set column_key [lassign [split ${path} {/}] _ks _cf row_key __delimiter__]
+    if {1} {
+        return ${row_key}
+    } else {
+        return ${column_key}
+    }
+}
+
 
 proc ::newsdb::news_item_t::get {id {dataVar ""}} {
     variable ks
@@ -90,7 +100,7 @@ proc ::newsdb::news_item_t::get {id {dataVar ""}} {
         set varname {_}
     }
 
-    set path [pk_path ${id}]
+    set path [to_path ${id}]
     set filename [::persistence::get $path {*}${varname}]
 
     return $filename
@@ -107,7 +117,8 @@ proc ::newsdb::news_item_t::insert {itemVar} {
 
     set data [array get item]
 
-    set target [pk_path ${id}]
+    set pk $metadata(pk)
+    set target [to_path $item($pk)]
 
     ::persistence::insert $target $data
 
