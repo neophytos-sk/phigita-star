@@ -17,7 +17,7 @@ proc ::persistence::orm::init_type {} {
     variable [namespace __this]::cf
     variable [namespace __this]::indexes
 
-    puts "persistence (ORM): initializing [namespace __this] ensemble/type"
+    log "persistence (ORM): initializing [namespace __this] ensemble/type"
 
     ::persistence::define_ks $ks
     foreach {index_name index_item} [array get indexes] {
