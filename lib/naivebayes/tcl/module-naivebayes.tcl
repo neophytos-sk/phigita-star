@@ -1,7 +1,7 @@
 package provide naivebayes 0.1
 
-::xo::lib::require critcl
-::xo::lib::require persistence
+package require critcl
+package require persistence
 
 ####
 set dir [file dirname [info script]]

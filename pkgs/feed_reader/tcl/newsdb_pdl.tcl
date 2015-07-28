@@ -5,7 +5,7 @@
 
 namespace eval ::newsdb::news_item_t {
 
-    # see core/tcl/namespace.tcl for "mixin" details
+    # see core/tcl/namespace.tcl for details about "mixin" namespaces
     namespace __mixin ::persistence::orm
 
     namespace ensemble create -subcommands {
@@ -14,98 +14,231 @@ namespace eval ::newsdb::news_item_t {
         insert
         find
         find_by
+        init_type
     }
 
     variable ks "newsdb"
     variable cf "news_item"
     variable pk "urlsha1"
 
-    # pk creates the following index:
-    #   {by_urlsha1                 {urlsha1}                   "all"}
+    variable indexes
+    array set indexes {
 
-    variable indexes {
-        {by_domain                  {reversedomain}             "summary"}
-        {by_langclass               {langclass}                 "summary"}
-        {by_contentsha1             {contentsha1}               "summary"}
-        {by_sort_date               {sort_date}                 "summary"}
+        by_urlsha1 {
+            type "unique_index"
+            atts "urlsha1"
+            tags "all"
+        }
+
+        by_domain {         
+            type "index"
+            atts "reversedomain"
+            tags "summary"
+        }
+
+        by_langclass {
+            type "index"
+            atts "langclass"
+            tags "summary"
+        }
+
+        by_contentsha1 {
+            type "unique_index"
+            atts "contentsha1"
+            tags "summary"
+        }
+
+        by_sort_date {
+            type "index"
+            atts "sort_date"
+            tags "summary"
+        }
+
     }
 
-    # pk is expected to have no spaces before and after the attribute name
-    # i.e. the value is used as such (i.e. no trim) to figure out the main axis
-    # in the ORM procs (insert, get, and so forth)
-
-    variable metadata
-    array set metadata [list ks $ks cf $cf pk $pk indexes $indexes]
-    array set metadata {
-        comment_pk {
-            creates the following index:
-            {by_urlsha1 {urlsha1} "all"}
+    variable attributes
+    array set attributes {
+        urlsha1 {
+            datatype "sha1_hex"
         }
-        attributes {
-            urlsha1
-            contentsha1
-            site
-            date
-            langclass
-
-            url
-            title
-            body
-            first_sync
-            last_sync
-            is_revision_p
-            is_copy_p
-
-            timestamp
-            date
-            sort_date
-
-            domain
-            reversedomain
+        contentsha1 {
+            datatype "sha1_hex"
         }
-        aggregates {
+        site {}
+        date {}
+        langclass {
+            datatype "langclass"
         }
+        url {
+            datatype "url"
+        }
+        title {
+            datatype "text"
+        }
+        body {
+            datatype "text"
+        }
+
+        first_sync {}
+        last_sync {}
+        is_revision_p {}
+        is_copy_p {}
+
+        timestamp {}
+        date {}
+        sort_date {}
+
+        domain {}
+        reversedomain {}
     }
+
+    variable aggregates
+    array set aggregates [list]
 
 }
 
+::newsdb::news_item_t init_type
 
+namespace eval ::newsdb::content_item_t {
 
-# by_const_and_date
-# by_urlsha1_and_const
-# by_urlsha1_and_contentsha1
-# by_langclass
-foreach {ks spec} {
+    # see core/tcl/namespace.tcl for details about "mixin" namespaces
+    namespace __mixin ::persistence::orm
 
-    web_cache_db {
-        web_page {
-            by_domain
+    namespace ensemble create -subcommands {
+        to_path
+        from_path
+        insert
+        find
+        find_by
+        init_type
+    }
+
+    variable ks "newsdb"
+    variable cf "content_item"
+    variable pk "contentsha1"
+
+    variable indexes
+    array set indexes {
+
+        by_contentsha1 {
+            type "unique_index"
+            atts "contentsha1"
+            tags "all"
+        }
+
+    }
+
+    variable attributes
+    array set attributes {
+        contentsha1 {
+            datatype "sha1_hex"
+            validate "notnull"
+        }
+        title {
+            datatype "text"
+            validate "notnull"
+        }
+        body {
+            datatype "text"
+            validate "notnull"
         }
     }
 
+    variable aggregates
+    array set aggregates [list]
+
+    
+}
+
+::newsdb::content_item_t init_type
+
+namespace eval ::newsdb::error_item_t {
+
+    # see core/tcl/namespace.tcl for details about "mixin" namespaces
+    namespace __mixin ::persistence::orm
+
+    namespace ensemble create -subcommands {
+        to_path
+        from_path
+        insert
+        find
+        find_by
+        init_type
+    }
+
+    variable ks "newsdb"
+    variable cf "error_item"
+    variable pk "urlsha1_timestamp"
+
+    variable indexes
+    array set indexes {
+
+        by_urlsha1 {
+            type "index"
+            atts "urlsha1"
+            tags "all"
+        }
+
+        by_urlsha1_timestamp {
+            type "unique_index"
+            atts "urlsha1 timestamp"
+            tags "all"
+        }
+
+    }
+
+    variable attributes
+    array set attributes {
+        urlsha1 {
+            datatype "sha1_hex"
+            validate "notnull"
+        }
+        timestamp {
+            datatype "timestamp"
+            validate "notnull"
+        }
+        urlsha1_timestamp {
+            datatype "sha1_hex timestamp"
+            validate "notnull"
+        }
+        body {
+            datatype "text"
+            validate "notnull"
+        }
+        errorcode {
+            datatype "integer"
+        }
+        url {
+            datatype "url"
+        }
+        http_fetch_info {
+            validate "key_value_map"
+        }
+        title_in_feed {
+            datatype "text"
+        }
+        item {
+            validate "key_value_map"
+        }
+    }
+
+    variable aggregates
+    array set aggregates [list]
+
+}
+
+::newsdb::error_item_t init_type
+
+
+# index {
+#     contentsha1_to_label
+#     contentsha1_to_urlsha1
+#     urlsha1_to_date_sk
+# }
+
+foreach {ks spec} {
+
     newsdb {
-        news_item {
-            by_urlsha1
-            by_domain
-            by_langclass
-            by_contentsha1
-            by_sort_date
-        }
-
-        content_item {
-            by_contentsha1_and_const
-        }
-
-        error_item {
-            by_urlsha1_and_timestamp
-        }
-
-        index {
-            contentsha1_to_label
-            contentsha1_to_urlsha1
-            urlsha1_to_date_sk
-        }
-
         classifier {
             model
         }
@@ -116,9 +249,6 @@ foreach {ks spec} {
     }
 
     crawldb {
-        sync_info {
-            by_urlsha1_and_const
-        }
         round_stats {
             by_timestamp_and_const
         }

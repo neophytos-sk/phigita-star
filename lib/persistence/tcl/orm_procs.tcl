@@ -8,38 +8,49 @@ namespace eval ::persistence::orm {
         from_path \
         insert \
         find \
-        find_by
+        find_by \
+        init_type
 }
 
-proc ::persistence::orm::to_path_by {key args} {
+proc ::persistence::orm::init_type {} {
+    variable [namespace __this]::ks
+    variable [namespace __this]::cf
+    variable [namespace __this]::indexes
+
+    puts "persistence (ORM): initializing [namespace __this] ensemble/type"
+
+    ::persistence::define_ks $ks
+    foreach {index_name index_item} [array get indexes] {
+        set axis $index_name
+        ::persistence::define_cf $ks $cf.$axis
+    }
+}
+
+proc ::persistence::orm::to_path_by {axis args} {
     variable [namespace __this]::ks
     variable [namespace __this]::cf
 
-    set axis by_${key}
     set target "${ks}/${cf}.${axis}"
     if {1} {
         # if datatype of first arg/attribute exceeds a certain threshold
         # then we map the attribute values to row keys
         set args [lassign $args row_key]
         #set column_path [::persistence::to_column_path $args]
-        if { $args eq {} } {
-            set column_path "__data__"
-        } else {
-            set column_path [join $args {/}]
-        }
+        set column_path [join $args {/}]
         append target "/${row_key}/+/$column_path"
     } else {
         # check that supercolumns are allowed for the given axis
         #set column_path [::persistence::to_column_path $args]
         set column_path [join $args {/}]
-        append target "__data__/+/$column_path"
+        append target "__default__/+/$column_path"
     }
 
 }
 
 proc ::persistence::orm::to_path {id} {
     variable [namespace __this]::pk
-    return [to_path_by $pk $id]
+    set axis "by_$pk"
+    return [to_path_by $axis $id "__data__"]
 }
 
 proc ::persistence::orm::from_path {path} {
@@ -53,45 +64,91 @@ proc ::persistence::orm::from_path {path} {
 
 
 # finds the first record matching some conditions
-proc ::persistence::orm::find_by {key value {dataVar ""}} {
-    set varname {}
-    if { $dataVar ne {} } {
+# set slicelist [::newsdb::news_item_t find_by contentsha1 $contentsha1]
+# set oid [::newsdb::news_item_t find_by contentsha1 $contentsha1 $urlsha1] "" exists_revision_p]
+proc ::persistence::orm::find_by {args} {
+    variable [namespace __this]::indexes
 
-        upvar $dataVar _
+    set argc [llength $args]
+    assert { $argc in {5 4 3 2 1} }
 
-        # get/get_column only gets the data 
-        # (as opposed to just the filename)
-        # if a non-empty dataVar argument is given 
+    if { $argc >= 3 } {
 
-        set varname {_}
+        lassign $args attname attvalue id dataVar exists_pVar
+        set varname ""
+        if { $dataVar ne {} } {
+            upvar $dataVar _
+            set varname _
+        }
+        if { $exists_pVar ne {} } {
+            upvar $exists_pVar exists_p
+        }
+        set path [to_path_by by_$attname $attvalue $id]
+        set oid [::persistence::get_column $path ${varname} exists_p]
+        return $oid
+
+    } elseif { $argc == 2 } {
+
+        lassign $args attname attvalue
+        set path [to_path_by by_$attname $attvalue]
+        set predicate ""
+        set slicelist [::persistence::get_slice $path $predicate]
+        return $slicelist
+
+    } elseif { $argc == 1 } {
+
+        lassign $args attname
+        set path [to_path_by by_$attname]
+        set predicate ""
+        set slicelist [::persistence::multiget_slice $path $predicate]
+
     }
 
-    set path [to_path_by ${key} ${value}]
-    set filename [::persistence::get $path {*}${varname}]
+    # set axis "by_${key}"
+    # assert { exists("indexes($axis)") }
+    # array set idx $indexes($axis)
 
-    puts path=$path
-    puts filename=$filename
+    set predicate ""
+    set path [to_path_by ${axis} ${value}]
 
-    return $filename
+    # puts path=$path
+    # puts slicelist=$slicelist
+
+    return $slicelist
 
 }
 
 # finds the record corresponding to the specified primary key
-proc ::persistence::orm::find {id {dataVar ""}} {
+proc ::persistence::orm::find {id {itemVar ""} {exists_pVar ""}} {
     variable [namespace __this]::pk
+    variable [namespace __this]::attributes
 
-    if { $dataVar ne {} } {
+    array set attinfo $attributes($pk)
+    foreach datatype $attinfo(datatype) {
+        assert { vcheck("id",$datatype) }
+    }
 
-        upvar $dataVar _
+    # get_column will only retrieve the data
+    # if a non-empty itemVar argument is given 
 
-        # get/get_column only gets the data 
-        # (as opposed to just the filename)
-        # if a non-empty dataVar argument is given 
-
+    set varname ""
+    if { $itemVar ne {} } {
+        upvar $itemVar item
         set varname {_}
     }
 
-    return [find_by $pk $id {*}$varname]
+    if { $exists_pVar ne {} } {
+        upvar $exists_pVar exists_p
+    }
+
+    set path [to_path $id]
+    set oid [::persistence::get_column $path ${varname} exists_p]
+
+    if { $exists_p && $itemVar ne {} } {
+        array set item ${_}
+    }
+
+    return $oid
 }
 
 
@@ -107,16 +164,22 @@ proc ::persistence::orm::insert {itemVar} {
 
     set target [to_path $item($pk)]
 
-    ::persistence::insert $target $data
+    ::persistence::insert_column $target $data
 
-    foreach index_item $indexes {
-        lassign $index_item axis attributes __tags__
+    foreach {index_name index_item} [array get indexes] {
+        if { $index_name eq "by_$pk" } {
+            continue
+        }
+
+        array set idx $index_item
+        set attributes $idx(atts)
 
         set row_key [list]
         foreach attname $attributes {
             lappend row_key $item($attname)
         }
 
+        set axis $index_name
         set src [to_path_by ${axis} ${row_key} $item($pk)]
         ::persistence::insert_link $src $target
 

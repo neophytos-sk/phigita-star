@@ -75,11 +75,15 @@ proc ::feed_reader::get_first_sync_timestamp {linkVar} {
 
     set urlsha1 [get_urlsha1 ${link}]
 
+    set paths [::crawldb::sync_info_t find_by urlsha1 $urlsha1]
+    set path [lindex $paths 0]
+    set revision_datetime [::crawldb::sync_info_t from_path_by urlsha1 $path {datetime}]
+
     set slice_predicate [list "lindex" "0"]
 
     set slicelist [::persistence::get_slice_names       \
 		       "crawldb"                        \
-		       "sync_info/by_urlsha1_and_const" \
+		       "sync_info.by_urlsha1_and_const" \
 		       "${urlsha1}"                     \
 		       "${slice_predicate}"]
 
@@ -88,7 +92,7 @@ proc ::feed_reader::get_first_sync_timestamp {linkVar} {
     #puts "get_first_sync_timestamp: urlsha1=$urlsha1 revision_datetime=$revision_datetime link=$link"
 
     if { ${revision_datetime} eq {} } {
-	return 0
+        return 0
     }
 
     return [clock scan ${revision_datetime} -format "%Y%m%dT%H%M"]
@@ -106,7 +110,7 @@ proc ::feed_reader::get_last_sync_timestamp {linkVar} {
 
     set slicelist [::persistence::get_slice_names       \
 		       "crawldb"                        \
-		       "sync_info/by_urlsha1_and_const" \
+		       "sync_info.by_urlsha1_and_const" \
 		       "${urlsha1}"                     \
 		       "${slice_predicate}"]
 
@@ -351,40 +355,26 @@ proc ::feed_reader::fetch_feed_p {feed_name timestamp {coeff "0.3"}} {
 }
 
 
-proc ::feed_reader::incr_array_in_column {keyspace column_family row_key column_path incrementVar} {
+proc ::feed_reader::incr_array_in_column {ks cf_axis row_key column_path incrementVar} {
 
     upvar $incrementVar increment
 
-    ::persistence::get_column     \
-	"${keyspace}"             \
-	"${column_family}"        \
-	"${row_key}"              \
-	"${column_path}"          \
-	"column_data"             \
-	"exists_column_p"
-    
-    if { ${exists_column_p} } {
+    set oid "${ks}/${cf_axis}/${row_key}/+/${column_path}"
+    ::persistence::get_column $oid column_data exists_p
 
-	array set count ${column_data}
-
+    if { ${exists_p} } {
+        array set count ${column_data}
     } else {
-
-	array set count [list]
-
+        array set count [list]
     }
 
     foreach name [array names increment] {
-	incr count(${name}) $increment(${name})
+        incr count(${name}) $increment(${name})
     }
 
     set stats [array get count]
 
-    ::persistence::insert_column  \
-	"${keyspace}"             \
-	"${column_family}"        \
-	"${row_key}"              \
-	"${column_path}"          \
-	"${stats}"
+    ::persistence::insert_column $oid $stats
 
     return ${stats}
 
@@ -413,10 +403,10 @@ proc ::feed_reader::update_crawler_stats {timestamp feed_name statsVar} {
     }
 
     incr_array_in_column                \
-	"crawldb"                       \
-	"feed_stats.by_feed_and_const" \
-	"${feed_name}"                  \
-	"_stats"                        \
-	stats
+        "crawldb"                       \
+        "feed_stats.by_feed_and_const" \
+        "${feed_name}"                  \
+        "_stats"                        \
+        stats
 
 }

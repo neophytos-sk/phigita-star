@@ -1,0 +1,2 @@
+::feed_reader::init
+

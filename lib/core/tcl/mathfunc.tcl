@@ -10,7 +10,7 @@ proc ::tcl::mathfunc::vcheck {valueVar pattern_name} {
 
 proc ::tcl::mathfunc::vcheck_if {valueVar pattern_name} {
     upvar $valueVar _
-    return [expr { ![info exists _] || [pattern match ${pattern_name} $_] }]
+    return [expr { ![info exists _] || [vcheck _ ${pattern_name}] }]
 }
 
 # IN PROGRESS

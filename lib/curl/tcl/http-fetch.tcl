@@ -68,9 +68,9 @@ proc ::web::fetch {contentVar url {optionsVar ""} {infoVar ""}} {
 }
 
 
-proc ::web::cache_fetch {htmlVar url {optionsVar ""} {infoVar ""}} {
+proc ::web::cache_fetch {contentVar url {optionsVar ""} {infoVar ""}} {
 
-    upvar $htmlVar html
+    upvar $contentVar content
 
     if { ${optionsVar} ne {} } {
         upvar ${optionsVar} options
@@ -80,46 +80,44 @@ proc ::web::cache_fetch {htmlVar url {optionsVar ""} {infoVar ""}} {
         upvar ${infoVar} info
     }
 
-    set domain [::util::domain_from_url $url]
-    set reverse_domain [reversedomain $domain]
-    array set url_a [url split ${url}]
-    set urlencoded_path [url encode $url_a(path)]
-    set urlencoded_query [url encode $url_a(query)]
+    # set domain [::util::domain_from_url $url]
+    # set reversedomain [reversedomain $domain]
+    # set path "webdb/web_page.by_domain/${reversedomain}/${urlsha1}"
+    # set oid [::persistence::get_column $path html exists_p]
 
-    set keyspace "web_cache_db"
-    set column_family "web_page.by_domain"
-    set row_key $reverse_domain
-    #set column_path [list $urlencoded_path $urlencoded_query]
-    set column_path [::sha1::sha1 -hex $url]
+    array set item [list]
+    set urlsha1 [::sha1::sha1 -hex $url]
+    set oid [::webdb::web_page_t find $urlsha1 item exists_p]
 
-    set filename \
-        [::persistence::get_column \
-            $keyspace \
-            $column_family \
-            $row_key \
-            $column_path \
-            html \
-            exists_column_p]
-
-    if { $exists_column_p } {
-        set mtime [::persistence::get_mtime $filename]
+    if { $exists_p } {
+        set mtime [::persistence::get_mtime $oid]
         set timeout [expr { 15 * 60 }]
         set now [clock seconds]
         if { $mtime + $timeout > $now } {
             # returns content of web page as upvar with the given name
             log "fetching page from cache: $url"
+            set content $item(content)
             return 0
         }
     }
 
-    if { ![set errorcode [::web::fetch html $url]] } {
+    if { ![set errorcode [::web::fetch content $url options info]] } {
 
-        ::persistence::insert_column \
-            $keyspace \
-            $column_family \
-            $row_key \
-            $column_path \
-            $html
+        array set item [list    \
+            urlsha1 $urlsha1    \
+            url $url            \
+            content $content]
+            
+        ::webdb::web_page_t insert item
+
+        if {0} {
+            ::persistence::insert_column \
+                $keyspace \
+                $column_family \
+                $row_key \
+                $column_path \
+                $html
+        }
     }
 
     return $errorcode

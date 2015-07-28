@@ -6,7 +6,7 @@ namespace eval ::persistence::fs {
     namespace export -clear \
         define_ks define_cf \
         exists_data_p set_data get_data \
-        exists_column_p insert_column get_column get_column_name \
+        exists_column_p insert_column __get_column get_column_name \
         insert_link delete_link \
         delete_row delete_column delete_slice delete_supercolumn \
         multiget_slice \
@@ -16,7 +16,7 @@ namespace eval ::persistence::fs {
         ls list_ks list_cf list_axis list_row list_col list_path \
         num_rows num_cols \
         get_name delete_data \
-        get_mtime
+        get_mtime get_filename
 }
 
 proc ::persistence::fs::get_path {args} {
@@ -193,7 +193,7 @@ proc ::persistence::fs::create_row_if {keyspace column_family row_key row_dirVar
 # name := keyspace/row_key/column_path
 # column_path := super_column_name/column_name or just column_name
 #
-proc ::persistence::fs::insert_column {keyspace column_family row_key column_path data {timestamp ""}} {
+proc ::persistence::fs::__insert_column {keyspace column_family row_key column_path data {timestamp ""}} {
 
     create_row_if ${keyspace} ${column_family} ${row_key} row_dir
 
@@ -271,7 +271,7 @@ proc ::persistence::fs::incr_refcount {target_filename_or_dir link_filename_or_d
     set target_name [string map ${mapping} ${target_filename_or_dir}]
     set link_name [string map ${mapping} ${link_filename_or_dir}]
 
-    ::persistence::fs::insert_column \
+    ::persistence::fs::__insert_column \
         "sysdb" \
         "refcount_item" \
         "target-${target_name}" \
@@ -285,7 +285,7 @@ proc ::persistence::fs::assert_refcount_is_zero {target_filename_or_dir} {
     set target_name [string map ${mapping} ${target_filename_or_dir}]
 
     set slice \
-        [::persistence::fs::get_slice \
+        [::persistence::fs::__get_slice \
              "sysdb" \
              "refcount_item" \
              "target-${target_name}"]
@@ -488,7 +488,7 @@ proc ::persistence::fs::get_recursive_subdirs {dir resultVar} {
 }
 
 
-proc ::persistence::fs::get_slice_from_supercolumn {supercolumn_dir {slice_predicate ""}} {
+proc ::persistence::fs::__get_slice_from_supercolumn {supercolumn_dir {slice_predicate ""}} {
 
     set dirs [list ${supercolumn_dir}]
 
@@ -510,7 +510,7 @@ proc ::persistence::fs::get_slice_from_supercolumn {supercolumn_dir {slice_predi
 }
 
 
-proc ::persistence::fs::get_slice_from_row {row_dir {slice_predicate ""}} {
+proc ::persistence::fs::__get_slice_from_row {row_dir {slice_predicate ""}} {
     set slicelist [get_files ${row_dir}]
 
     set slicelist [lsort -decreasing ${slicelist}]
@@ -521,16 +521,16 @@ proc ::persistence::fs::get_slice_from_row {row_dir {slice_predicate ""}} {
     return ${slicelist}
 }
 
-proc ::persistence::fs::get_slice {keyspace column_family row_key {slice_predicate ""}} {
+proc ::persistence::fs::__get_slice {keyspace column_family row_key {slice_predicate ""}} {
 
     set row_dir [get_row ${keyspace} ${column_family} ${row_key}]
-    return [get_slice_from_row ${row_dir} ${slice_predicate}]
+    return [__get_slice_from_row ${row_dir} ${slice_predicate}]
 
 }
 
-proc ::persistence::fs::get_slice_names {args} {
+proc ::persistence::fs::__get_slice_names {args} {
     set result [list]
-    set slicelist [get_slice {*}${args}]
+    set slicelist [__get_slice {*}${args}]
     foreach filename ${slicelist} {
         lappend result [::persistence::fs::get_name ${filename}]
     }
@@ -538,7 +538,7 @@ proc ::persistence::fs::get_slice_names {args} {
 }
 
 
-proc ::persistence::fs::get_column {keyspace column_family row_key column_path {dataVar ""} {exists_pVar ""}} {
+proc ::persistence::fs::__get_column {keyspace column_family row_key column_path {dataVar ""} {exists_pVar ""}} {
 
     # row_path includes the "+" delimiter
     set row_path [get_row ${keyspace} ${column_family} ${row_key}]
@@ -546,25 +546,28 @@ proc ::persistence::fs::get_column {keyspace column_family row_key column_path {
     set path ${row_path}/${column_path}
 
     if { ${dataVar} ne {} } {
-        if { ${exists_pVar} ne {} } {
-            upvar ${exists_pVar} exists_p
-        }
-        set exists_p [exists_data_p ${path}]
-        if { ${exists_p} } {
-            upvar $dataVar data
-            set data [get_data ${path}]
-        }
+        upvar $dataVar data
     }
 
-    return ${path}
+    if { ${exists_pVar} ne {} } {
+        upvar ${exists_pVar} exists_p
+    }
+
+    set exists_p [exists_data_p ${path}]
+    if { ${exists_p} } {
+        set data [get_data ${path}]
+        return ${path}
+    } else {
+        return
+    }
 
 }
 
-proc ::persistence::fs::get_column_name {args} {
+proc ::persistence::fs::__get_column_name {args} {
 
     set result [list]
 
-    set column [get_column {*}${args}]
+    set column [__get_column {*}${args}]
 
     set result [file tail ${column}]
 
@@ -575,7 +578,7 @@ proc ::persistence::fs::get_column_name {args} {
 
 proc ::persistence::fs::delete_column {args} {
 
-    set filename [get_column {*}${args}]
+    set filename [__get_column {*}${args}]
 
     delete_data ${filename}
 
@@ -628,7 +631,7 @@ proc ::persistence::fs::delete_supercolumn_dir {supercolumn_dir} {
 proc ::persistence::fs::delete_slice {keyspace column_family row_key {slice_predicate ""}} {
 
     set row_dir [get_row ${keyspace} ${column_family} ${row_key}]
-    set slicelist [get_slice_from_row ${row_dir} ${slice_predicate}]
+    set slicelist [__get_slice_from_row ${row_dir} ${slice_predicate}]
 
     foreach filename ${slicelist} {
         ::persistence::fs::delete_data ${filename}
@@ -673,7 +676,7 @@ proc ::persistence::fs::multiget_slice {keyspace column_family row_keys {slice_p
     set result [list]
 
     foreach row_key ${row_keys} {
-        set slicelist [get_slice ${keyspace} ${column_family} ${row_key} ${slice_predicate}]
+        set slicelist [__get_slice ${keyspace} ${column_family} ${row_key} ${slice_predicate}]
         # row_key can be extracted from the filename from the given slicelist, if needed
         #lappend result ${row_key}
         foreach filename ${slicelist} {
@@ -704,7 +707,7 @@ proc ::persistence::sort_slice_by {slicelist attname sort_direction} {
 
 #::persistence::fs::directed_join newsdb
 #  get_multirow_slice_names classifier/${axis}
-#  get_column content_item/by_contentsha1_and_const/%s/_data_
+#  __get_column content_item/by_contentsha1_and_const/%s/_data_
 
 proc ::persistence::fs::names__directed_join {multirow_slice_names keyspace column_family {include_empty_p "0"}} {
     set multirow_filelist [list]
@@ -712,13 +715,13 @@ proc ::persistence::fs::names__directed_join {multirow_slice_names keyspace colu
         set filelist [list]
         foreach name ${names} {
 
-            set get_slice_args [concat ${keyspace} ${column_family} ${name}]
+            set __get_slice_args [concat ${keyspace} ${column_family} ${name}]
 
             # if the relationship is one to one, i.e. if one name
             # in the left-hand side corresponds to one item in the
             # right-hand side then slicelist should be a list a
             # list of length at most one
-            set slicelist [::persistence::fs::get_slice {*}${get_slice_args}]
+            set slicelist [::persistence::fs::__get_slice {*}${get_slice_args}]
 
             # note that slicelist can be empty if no match was found
             if { ${slicelist} ne {} || ${include_empty_p} } {
@@ -785,7 +788,7 @@ proc ::persistence::fs::get_multirow_slice {keyspace column_family {multirow_pre
     foreach row_dir ${multirow} {
 
 	set slicelist \
-	    [get_slice_from_row \
+	    [__get_slice_from_row \
 		 "${row_dir}" \
 		 "${slice_predicate}"]
 
@@ -845,7 +848,7 @@ proc ::persistence::fs::get_supercolumns {keyspace column_family row_key {superc
 
 
 
-proc ::persistence::fs::get_column_path {column_parent_dir} {
+proc ::persistence::fs::__get_column_path {column_parent_dir} {
 
     set delimiter {+}
     lassign [split ${column_parent_dir} ${delimiter}] row_dir column_path
@@ -856,7 +859,7 @@ proc ::persistence::fs::get_column_path {column_parent_dir} {
 
 }
 
-proc ::persistence::fs::get_column_path_with_status {column_parent_dir} {
+proc ::persistence::fs::__get_column_path_with_status {column_parent_dir} {
 
     set delimiter {+}
     lassign [split ${column_parent_dir} ${delimiter}] row_dir column_path
@@ -902,7 +905,7 @@ proc ::persistence::fs::get_supercolumns_paths {args} {
 
     set result [list]
     foreach subdir ${subdirs} {
-        lappend result [get_column_path ${subdir}]
+        lappend result [__get_column_path ${subdir}]
     }
     return ${result}
 
@@ -920,7 +923,7 @@ proc ::persistence::fs::get_supercolumns_paths_with_status {args} {
 
     set result [list]
     foreach subdir ${subdirs} {
-        lappend result [get_column_path_with_status ${subdir}]
+        lappend result [__get_column_path_with_status ${subdir}]
     }
     return ${result}
 
@@ -940,7 +943,7 @@ proc ::persistence::fs::get_supercolumns_slice {keyspace column_family row_key {
     foreach supercolumn_dir ${supercolumns} {
 
         set slicelist \
-            [get_slice_from_supercolumn \
+            [__get_slice_from_supercolumn \
             "${supercolumn_dir}" \
             "${slice_predicate}"]
 
@@ -1049,29 +1052,33 @@ proc ::persistence::fs::link {keyspace column_family target_path link_path {forc
 
 }
 
-proc ::persistence::get {path {dataVar ""}} {
+proc ::persistence::fs::get_column {path {dataVar ""} {exists_pVar ""}} {
 
     set varname {}
 
+    set varname ""
     if { $dataVar ne {} } {
-
         upvar $dataVar _
-
-        # get/get_column only gets the data 
-        # (as opposed to just the filename)
-        # if a non-empty dataVar argument is given 
-
         set varname {_}
     }
 
+    if { $exists_pVar ne {} } {
+        upvar $exists_pVar exists_p
+    }
+
     set column_path [lassign [split $path {/}] ks cf row_key __delimiter__]
-    set filename [get_column $ks $cf $row_key $column_path {*}$varname]
+    set filename [__get_column $ks $cf $row_key $column_path ${varname} exists_p]
     return $filename
 }
 
-proc ::persistence::insert {path data} {
+proc ::persistence::fs::insert_column {path data} {
     set column_path [lassign [split $path {/}] ks cf row_key __delimiter__]
-    insert_column $ks $cf $row_key $column_path $data
+    __insert_column $ks $cf $row_key $column_path $data
 }
 
+proc ::persistence::fs::get_slice {path {dataVar ""}} {
+    set column_path [lassign [split $path {/}] ks cf row_key __delimiter__]
+    set slicelist [__get_slice $ks $cf $row_key]
+    return $slicelist
+}
 

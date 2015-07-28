@@ -129,3 +129,55 @@ proc ldifference {a b} {
     }
     return ${result}
 }
+
+# keylget --
+#   returns value associated with key from the keyed list in the
+#   variable listvar
+#
+# Syntax
+#
+#   keylget listvar [key] [retvar | {}]
+#
+# Description
+#
+#   Returns the value associated with key from the keyed list in 
+#   the variable listvar. If retvar is not specified, then the 
+#   value will be returned as the result of the command. In this
+#   case, if key is not found in the list, an error will result.
+#   
+#   If retvar is specified and key is in the list, then the value 
+#   is returned in the variable retvar and the command returns 1 
+#   if the key was present within the list. If key is not in the 
+#   list, the command will return 0, and retvar will be left 
+#   unchanged.
+#
+# NOT IMPLEMENTED:
+#
+#   If {} is specified for retvar, the value is not returned, 
+#   allowing the Tcl programmer to determine if a key is present 
+#   in a keyed list without setting a variable as a side-effect.
+#
+#   If key is omitted, then a list of all the keys in the keyed 
+#   list is returned.
+# 
+proc keylget {listVar key {resultVar ""}} {
+    upvar $listVar _
+    set pos 0
+    foreach {k v} $_ {
+        if { $key eq $k } {
+            if { $resultVar ne {} } {
+                upvar $resultVar result
+                set result $v
+                return 1
+            } else {
+                return $v
+            }
+        }
+    }
+
+    if { $resultVar eq {} } {
+        error "no such key (=$key) in list"
+    }
+
+    return 0
+}

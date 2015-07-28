@@ -1,4 +1,4 @@
-::xo::lib::require naivebayes
+package require naivebayes
 
 namespace eval ::feed_reader::classifier {;}
 
