@@ -76,8 +76,12 @@ proc ::feed_reader::get_first_sync_timestamp {linkVar} {
     set urlsha1 [get_urlsha1 ${link}]
 
     set paths [::crawldb::sync_info_t find_by urlsha1 $urlsha1]
+    if { $paths eq {} } {
+        return 0
+    }
     set path [lindex $paths 0]
-    set revision_datetime [::crawldb::sync_info_t from_path_by urlsha1 $path {datetime}]
+    set atts [::crawldb::sync_info_t from_path $path] 
+    set revision_datetime [keylget atts "datetime"]
 
     set slice_predicate [list "lindex" "0"]
 
@@ -323,7 +327,7 @@ proc ::feed_reader::fetch_feed_p {feed_name timestamp {coeff "0.3"}} {
         set max_times 4
         lassign [get_sync_info count ${reference_interval} ${max_times}] pr num_times interval 
 
-        set last_sync [file mtime ${filename}]
+        set last_sync [::persistence::get_mtime $oid]
         if { ${pr} > 0 && ${last_sync} + ${interval} < ${timestamp} } {
             return 1
         }
@@ -331,19 +335,19 @@ proc ::feed_reader::fetch_feed_p {feed_name timestamp {coeff "0.3"}} {
         unset count
     }
 
-    set filename [::persistence::__get_column           \
+    set oid [::persistence::__get_column      \
 		      "crawldb"                       \
 		      "feed_stats.by_feed_and_const"  \
 		      "${feed_name}"                  \
 		      "_stats"]
     
-    if { ![::persistence::exists_data_p ${filename}] } {
+    if { ![::persistence::exists_data_p ${oid}] } {
         return 1
     }
 
-    array set count [::persistence::get_data ${filename}]
+    array set count [::persistence::get_data ${oid}]
 
-    set last_sync [file mtime ${filename}]
+    set last_sync [::persistence::get_mtime ${oid}]
 
     set reference_interval 86400
     set max_times 96

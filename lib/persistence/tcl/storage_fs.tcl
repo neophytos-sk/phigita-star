@@ -385,7 +385,7 @@ proc ::persistence::fs::predicate=forall {slicelistVar predicates} {
     }
 }
 
-proc ::persistence::fs::predicate=in_slice {slicelistVar row_expression {predicate ""}} {
+proc ::persistence::fs::predicate=in_slice {slicelistVar attname row_expression {predicate ""}} {
     upvar $slicelistVar _
 
     set column_path [lassign [split $row_expression {/}] ks cf_axis row_key]
@@ -397,21 +397,20 @@ proc ::persistence::fs::predicate=in_slice {slicelistVar row_expression {predica
     set type_nsp ::${ks}::${cf}_t
 
     set result [list]
-    foreach filename $_ {
+    foreach oid $_ {
 
-        #set _row_key [lindex [split [lindex [split $filename {+}] 0] {/}] end-1]
-        #set column_name $_row_key
-        set column_name [$type_nsp from_path $filename]
+        set atts [$type_nsp from_path $oid]
+        set attvalue [keylget atts $attname]
 
         set exists_p \
             [::persistence::exists_column_p \
                 ${ks} \
                 ${cf_axis} \
                 ${row_key} \
-                ${column_name}]
+                ${attvalue}]
 
         if { $exists_p } {
-            lappend result $filename
+            lappend result $oid
         }
 
     }
@@ -511,8 +510,8 @@ proc ::persistence::fs::__get_slice_from_supercolumn {supercolumn_dir {slice_pre
 }
 
 
-proc ::persistence::fs::__get_slice_from_row {row_dir {slice_predicate ""}} {
-    set slicelist [get_files ${row_dir}]
+proc ::persistence::fs::__get_slice_from_row {row_path {slice_predicate ""}} {
+    set slicelist [get_files ${row_path}]
 
     set slicelist [lsort -decreasing ${slicelist}]
     if { ${slice_predicate} ne {} } {
@@ -524,8 +523,8 @@ proc ::persistence::fs::__get_slice_from_row {row_dir {slice_predicate ""}} {
 
 proc ::persistence::fs::__get_slice {keyspace column_family row_key {slice_predicate ""}} {
 
-    set row_dir [get_row ${keyspace} ${column_family} ${row_key}]
-    return [__get_slice_from_row ${row_dir} ${slice_predicate}]
+    set row_path [get_row ${keyspace} ${column_family} ${row_key}]
+    return [__get_slice_from_row ${row_path} ${slice_predicate}]
 
 }
 
@@ -680,8 +679,8 @@ proc ::persistence::fs::multiget_slice {keyspace column_family row_keys {slice_p
         set slicelist [__get_slice ${keyspace} ${column_family} ${row_key} ${slice_predicate}]
         # row_key can be extracted from the filename from the given slicelist, if needed
         #lappend result ${row_key}
-        foreach filename ${slicelist} {
-            lappend result $filename
+        foreach oid ${slicelist} {
+            lappend result $oid
         }
     }
 

@@ -17,15 +17,6 @@ namespace eval ::crawldb::sync_info_t {
     # see core/tcl/namespace.tcl for details about "mixin" namespaces
     namespace __mixin ::persistence::orm
 
-    namespace ensemble create -subcommands {
-        to_path
-        from_path
-        insert
-        find
-        find_by
-        init_type
-    }
-
     variable ks "crawldb"
     variable cf "sync_info"
     variable pk "datetime_urlsha1"

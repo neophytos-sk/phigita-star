@@ -844,12 +844,12 @@ proc ::feed_reader::ls {args} {
     set predicates [list]
 
     if { exists("__arg_lang") } {
-        lappend predicates [list "in_slice" [list "newsdb/news_item.by_langclass/$lang"]]
+        lappend predicates [list "in_slice" [list "urlsha1" "newsdb/news_item.by_langclass/$lang"]]
     }
 
     if { exists("__arg_domain") } {
         set reversedomain [reversedomain $domain]
-        lappend predicates [list "in_slice" [list "newsdb/news_item.by_domain/$reversedomain"]]
+        lappend predicates [list "in_slice" [list "urlsha1" "newsdb/news_item.by_domain/$reversedomain"]]
     }
 
     # TODO: sort and get range for each filter, e.g. by_langclass
@@ -1454,7 +1454,7 @@ proc ::feed_reader::print_log_header {} {
 }
 
 proc ::feed_reader::print_short_log_header {} {
-    puts [format "%20s %3s %3s %-60s %20s" date cpy rev title domain]
+    puts [format "%15s %3s %3s %-60s %20s" date cpy rev title domain]
 }
 
 proc ::feed_reader::print_log_footer {contextVar} {
@@ -1579,7 +1579,7 @@ proc ::feed_reader::print_short_log_entry {itemVar {contextVar ""}} {
 
     set lang [lindex [split [get_value_if item(langclass) "el.utf8"] {.}] 0]
 
-    puts [format "%20s %3s %3s %-60s %20s" \
+    puts [format "%15s %3s %3s %-60s %20s" \
         $item(sort_date) \
         ${is_copy_string} \
         ${is_revision_string} \

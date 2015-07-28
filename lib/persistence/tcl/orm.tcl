@@ -65,12 +65,43 @@ proc ::persistence::orm::to_path {id} {
 }
 
 proc ::persistence::orm::from_path {path} {
-    set column_key [lassign [split ${path} {/}] _ks _cf row_key __delimiter__]
-    if {1} {
-        return ${row_key}
-    } else {
-        return ${column_key}
+    variable [namespace __this]::ks
+    variable [namespace __this]::cf
+    variable [namespace __this]::pk
+    variable [namespace __this]::indexes
+
+    set column_path [lassign [split ${path} {/}] _ks _cf_axis row_key __delimiter__]
+    lassign [split $_cf_axis {.}] _cf axis
+
+    assert { $ks eq ${_ks} }
+    assert { $cf eq ${_cf} }
+    assert { exists("indexes($axis)") }
+
+    # process index attributes
+    set args [split $column_path {/}]
+    if { $row_key ne {__default__} } {
+        set args [concat [split ${row_key} { }] $args]
     }
+    
+    set result [list]
+    array set idx $indexes($axis)
+    foreach attname $idx(atts) {
+        set args [lassign $args attvalue]
+        lappend result $attname $attvalue
+    }
+
+    # TODO: case when (#args > 1), process supercolumns
+
+    assert { [llength $args] == 1 }
+
+    set args [lassign $args last_arg]
+
+    if { $last_arg ne {__data__} } {
+        # a link, the pk
+        lappend result $pk $last_arg
+    }
+
+    return $result
 }
 
 
