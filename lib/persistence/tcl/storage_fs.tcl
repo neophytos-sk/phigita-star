@@ -30,13 +30,13 @@ proc ::persistence::fs::get_dir {args} {
     return ${dir}
 }
 
-proc ::persistence::fs::get_file {path} {
+proc ::persistence::fs::get_filename {path} {
     variable base_dir
     return [file normalize ${base_dir}/${path}]
 }
 
 proc ::persistence::fs::get_mtime {path} {
-    return [file mtime [get_file $path]]
+    return [file mtime [get_filename $path]]
 }
 
 proc ::persistence::fs::exists_ks_p {keyspace} {
@@ -223,12 +223,11 @@ proc ::persistence::fs::delete_link {src} {
 }
 
 proc ::persistence::fs::insert_link {src target} {
-    variable base_dir
     if { 1 } {
         # if data is on a single host, then create a symbolic link
-        set src [file join $base_dir $src] 
-        set target [file join $base_dir $target]
-        if { [file exists $src] } {
+        set src [get_filename $src] 
+        set target [get_filename $target]
+        if { [exists_data_p $src] } {
             set old_target [file link $src] 
             log "file node (link) exists: $src"
             log "checking to see if link points to the same target: $old_target"
@@ -250,19 +249,19 @@ proc ::persistence::fs::insert_link {src target} {
 }
 
 proc ::persistence::fs::exists_data_p {path} {
-    return [file exists [get_file ${path}]]
+    return [file exists [get_filename ${path}]]
 }
 
 
 # TODO: consider renaming it to put_data
 proc ::persistence::fs::set_data {path data} {
-    set filename [get_file ${path}]
+    set filename [get_filename ${path}]
     file mkdir [file dirname ${filename}]
     return [::util::writefile ${filename} ${data}]
 }
 
 proc ::persistence::fs::get_data {path} {
-    set filename [get_file ${path}]
+    set filename [get_filename ${path}]
     return [::util::readfile ${filename}]
 }
 
@@ -652,7 +651,7 @@ proc ::persistence::fs::exists_column_p {keyspace column_family row_key column_p
     }
     set row_path [get_row ${keyspace} ${column_family} ${row_key}]
     set path ${row_path}/${column_path}
-    return [file exists [get_file ${path}]]
+    return [exists_data_p ${path}]
 }
 
 # work in progress
@@ -689,9 +688,9 @@ proc ::persistence::fs::multiget_slice {keyspace column_family row_keys {slice_p
 proc ::persistence::sort_slice_by {slicelist attname sort_direction} {
     set sortlist [list]
     set index 0
-    foreach filename $slicelist {
-        array set item [::persistence::get_data ${filename}]
-        lappend sortlist [list $index $item(sort_date) $filename]
+    foreach path $slicelist {
+        array set item [::persistence::get_data ${path}]
+        lappend sortlist [list $index $item(sort_date) $path]
         incr index
     }
     set sortlist [lsort -${sort_direction} -index 1 $sortlist] 
@@ -1050,7 +1049,6 @@ proc ::persistence::fs::link {keyspace column_family target_path link_path {forc
 
 }
 
-
 proc ::persistence::get {path {dataVar ""}} {
 
     set varname {}
@@ -1075,3 +1073,5 @@ proc ::persistence::insert {path data} {
     set column_path [lassign [split $path {/}] ks cf row_key __delimiter__]
     insert_column $ks $cf $row_key $column_path $data
 }
+
+

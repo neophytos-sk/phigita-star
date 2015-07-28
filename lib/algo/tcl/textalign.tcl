@@ -84,7 +84,7 @@ proc ::textalign::breakline {text L} {
 
 proc ::textalign::adjust {text {L 80}} {
     set result ""
-    set paragraphs [str splitx $text "\n\n"]
+    set paragraphs [string __splitx $text "\n\n"]
     foreach paragraph $paragraphs {
         set paragraph [string map {\x0a " " \xa0 " " \n " " \r " "} $paragraph]
         append result [breakline $paragraph $L] "\n"

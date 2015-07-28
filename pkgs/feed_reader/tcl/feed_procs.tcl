@@ -1310,7 +1310,7 @@ proc ::feed_reader::load_item {itemVar urlsha1} {
 
     upvar $itemVar item
 
-    ::newsdb::news_item_t get $urlsha1 column_data
+    ::newsdb::news_item_t find $urlsha1 column_data
 
     array set item ${column_data}
 
@@ -1732,12 +1732,12 @@ proc ::feed_reader::write_item {timestamp normalized_link feedVar itemVar resync
 
             set timeval [clock scan $item(date) -format "%Y%m%dT%H%M"]
 
-                if { ${timestamp} - ${timeval} > 900 } {
+            if { ${timestamp} - ${timeval} > 900 } {
 
-            set item(sort_date) $item(date)
-                    # puts "item(date)=$item(date) is older than 15 mins - using that date for sorting..."
+                set item(sort_date) $item(date)
+                # puts "item(date)=$item(date) is older than 15 mins - using that date for sorting..."
 
-                }
+            }
 
             # otherwise, including item(date) in the future,
             # use computed date for sorting

@@ -20,8 +20,10 @@ proc ::persistence::init_db {db storage_type} {
     if { ${storage_type} ni ${storage_types} } {
         error "error persistence->init: no such storage_type '${storage_type}'"
     }
-    #namespace eval ::persistence::${db} "namespace import -force ::persistence::${storage_type}::*"
     namespace eval ::persistence "namespace import -force ::persistence::${storage_type}::*"
 }
 
+# after_package_load ::persistence::init_db mystore fs
 ::persistence::init_db mystore fs
+
+

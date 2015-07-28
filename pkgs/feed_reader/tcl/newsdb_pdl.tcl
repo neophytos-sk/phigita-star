@@ -8,19 +8,35 @@ namespace eval ::newsdb::news_item_t {
     # see core/tcl/namespace.tcl for "mixin" details
     namespace __mixin ::persistence::orm
 
-    namespace ensemble create -subcommands {get insert from_path to_path}
+    namespace ensemble create -subcommands {
+        to_path
+        from_path
+        insert
+        find
+        find_by
+    }
 
     variable ks "newsdb"
     variable cf "news_item"
+    variable pk "urlsha1"
+
+    # pk creates the following index:
+    #   {by_urlsha1                 {urlsha1}                   "all"}
+
+    variable indexes {
+        {by_domain                  {reversedomain}             "summary"}
+        {by_langclass               {langclass}                 "summary"}
+        {by_contentsha1             {contentsha1}               "summary"}
+        {by_sort_date               {sort_date}                 "summary"}
+    }
 
     # pk is expected to have no spaces before and after the attribute name
     # i.e. the value is used as such (i.e. no trim) to figure out the main axis
     # in the ORM procs (insert, get, and so forth)
 
     variable metadata
-    array set metadata [list ks $ks cf $cf]
+    array set metadata [list ks $ks cf $cf pk $pk indexes $indexes]
     array set metadata {
-        pk {urlsha1}
         comment_pk {
             creates the following index:
             {by_urlsha1 {urlsha1} "all"}
@@ -46,12 +62,6 @@ namespace eval ::newsdb::news_item_t {
 
             domain
             reversedomain
-        }
-        indexes {
-            {by_domain                   {reversedomain}            "summary"}
-            {by_langclass                {langclass}                "summary"}
-            {by_contentsha1              {contentsha1}              "summary"}
-            {by_sort_date                {sort_date}                "summary"}
         }
         aggregates {
         }

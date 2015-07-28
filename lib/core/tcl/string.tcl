@@ -1,7 +1,3 @@
-namespace eval ::str {
-    namespace ensemble create -subcommands {splitx splitn}
-}
-
 # This one was written by Bob Techentin (RWT in Tcl'ers Wiki):
 # http://www.techentin.net
 # mailto:techentin.robert@mayo.edu
@@ -32,7 +28,7 @@ namespace eval ::str {
 #     puts [time {splitx $s .}]
 # }
 #
-proc ::str::splitx {str {regexp {[\t \r\n]+}}} {
+proc ::tcl::string::__splitx {str {regexp {[\t \r\n]+}}} {
     # Bugfix 476988
     if {[string length $str] == 0} {
         return {}
@@ -83,7 +79,7 @@ proc ::str::splitx {str {regexp {[\t \r\n]+}}} {
 #
 # -- Robert Suetterlin (robert@mpe.mpg.de)
 #
-proc ::str::splitn {str {len 1}} {
+proc ::tcl::string::__splitn {str {len 1}} {
 
     if {$len <= 0} {
         return -code error "len must be > 0"
@@ -105,4 +101,10 @@ proc ::str::splitn {str {len 1}} {
 
     return $result
 }
+
+set __config_map [namespace ensemble configure string -map]
+lappend __config_map "__splitx" "::tcl::string::__splitx"
+lappend __config_map "__splitn" "::tcl::string::__splitn"
+namespace ensemble configure string -map $__config_map
+unset __config_map
 

@@ -15,9 +15,9 @@ proc ::tcl::namespace::__this {} {
     return [::runtime::stack_top __nsp]
 }
 
-array set __config [namespace ensemble configure namespace]
-lappend __config(-map) "__mixin" "::tcl::namespace::__mixin"
-lappend __config(-map) "__this" "::tcl::namespace::__this"
-namespace ensemble configure namespace -map $__config(-map)
-unset __config
+set __config_map [namespace ensemble configure namespace -map]
+lappend __config_map "__mixin" "::tcl::namespace::__mixin"
+lappend __config_map "__this" "::tcl::namespace::__this"
+namespace ensemble configure namespace -map $__config_map
+unset __config_map
 

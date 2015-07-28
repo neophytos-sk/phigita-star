@@ -3,24 +3,43 @@
 # persistence package, i.e. no storage system-specific calls here
 
 namespace eval ::persistence::orm {
-    namespace export to_path from_path insert get
+    namespace export \
+        to_path \
+        from_path \
+        insert \
+        find \
+        find_by
+}
+
+proc ::persistence::orm::to_path_by {key args} {
+    variable [namespace __this]::ks
+    variable [namespace __this]::cf
+
+    set axis by_${key}
+    set target "${ks}/${cf}.${axis}"
+    if {1} {
+        # if datatype of first arg/attribute exceeds a certain threshold
+        # then we map the attribute values to row keys
+        set args [lassign $args row_key]
+        #set column_path [::persistence::to_column_path $args]
+        if { $args eq {} } {
+            set column_path "__data__"
+        } else {
+            set column_path [join $args {/}]
+        }
+        append target "/${row_key}/+/$column_path"
+    } else {
+        # check that supercolumns are allowed for the given axis
+        #set column_path [::persistence::to_column_path $args]
+        set column_path [join $args {/}]
+        append target "__data__/+/$column_path"
+    }
+
 }
 
 proc ::persistence::orm::to_path {id} {
-    variable [namespace __this]::ks
-    variable [namespace __this]::cf
-    variable [namespace __this]::metadata
-
-    set axis by_$metadata(pk)
-    set target "${ks}/${cf}.${axis}"
-    if {1} {
-        # if datatype of primary key attribute exceeds a certain threshold
-        # then we map the primary key attribute to row keys
-        append target "/${id}/+/__data__"
-    } else {
-        # otherwise, map the primary key attribute to column names
-        append target "/__data__/+/${id}"
-    }
+    variable [namespace __this]::pk
+    return [to_path_by $pk $id]
 }
 
 proc ::persistence::orm::from_path {path} {
@@ -33,11 +52,8 @@ proc ::persistence::orm::from_path {path} {
 }
 
 
-proc ::persistence::orm::get {id {dataVar ""}} {
-    variable [namespace __this]::ks
-    variable [namespace __this]::cf
-    variable [namespace __this]::metadata
-
+# finds the first record matching some conditions
+proc ::persistence::orm::find_by {key value {dataVar ""}} {
     set varname {}
     if { $dataVar ne {} } {
 
@@ -50,28 +66,50 @@ proc ::persistence::orm::get {id {dataVar ""}} {
         set varname {_}
     }
 
-    set path [to_path ${id}]
+    set path [to_path_by ${key} ${value}]
     set filename [::persistence::get $path {*}${varname}]
+
+    puts path=$path
+    puts filename=$filename
 
     return $filename
 
 }
 
+# finds the record corresponding to the specified primary key
+proc ::persistence::orm::find {id {dataVar ""}} {
+    variable [namespace __this]::pk
+
+    if { $dataVar ne {} } {
+
+        upvar $dataVar _
+
+        # get/get_column only gets the data 
+        # (as opposed to just the filename)
+        # if a non-empty dataVar argument is given 
+
+        set varname {_}
+    }
+
+    return [find_by $pk $id {*}$varname]
+}
+
+
 proc ::persistence::orm::insert {itemVar} {
     variable [namespace __this]::ks
     variable [namespace __this]::cf
-    variable [namespace __this]::metadata
+    variable [namespace __this]::pk
+    variable [namespace __this]::indexes
 
     upvar $itemVar item
 
     set data [array get item]
 
-    set pk $metadata(pk)
     set target [to_path $item($pk)]
 
     ::persistence::insert $target $data
 
-    foreach index_item $metadata(indexes) {
+    foreach index_item $indexes {
         lassign $index_item axis attributes __tags__
 
         set row_key [list]
@@ -79,7 +117,7 @@ proc ::persistence::orm::insert {itemVar} {
             lappend row_key $item($attname)
         }
 
-        set src "${ks}/${cf}.${axis}/${row_key}/+/$item($pk)"
+        set src [to_path_by ${axis} ${row_key} $item($pk)]
         ::persistence::insert_link $src $target
 
      }
