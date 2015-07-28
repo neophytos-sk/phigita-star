@@ -166,13 +166,13 @@ proc ::persistence::fs::get_supercolumn {keyspace column_family row_key supercol
     return ${supercolumn_dir}
 }
 
-proc ::persistence::fs::create_row_if {keyspace column_family row_key row_dirVar} {
+proc ::persistence::fs::create_row_if {keyspace column_family row_key row_pathVar} {
 
     # ensure keyspace exists
     assert_ks ${keyspace}
     assert_cf ${keyspace} ${column_family}
 
-    upvar ${row_dirVar} row_dir
+    upvar ${row_pathVar} row_path
 
     set row_path [get_row ${keyspace} ${column_family} ${row_key}]
 
@@ -195,20 +195,20 @@ proc ::persistence::fs::create_row_if {keyspace column_family row_key row_dirVar
 #
 proc ::persistence::fs::__insert_column {keyspace column_family row_key column_path data {timestamp ""}} {
 
-    create_row_if ${keyspace} ${column_family} ${row_key} row_dir
+    create_row_if ${keyspace} ${column_family} ${row_key} row_path
 
     # path to file that will hold the data
-    set filename ${row_dir}/${column_path}
+    set oid ${row_path}/${column_path}
 
-    #puts "filename = $filename"
+    #puts "oid = $oid"
 
     # if it applies, mkdir super_column_dir
-    if { [set super_column_dir [file dirname ${filename}]] ne ${row_dir} } {
+    #if { [set super_column_dir [file dirname ${filename}]] ne ${row_dir} } {
         # it's a supecolumn
-        file mkdir ${super_column_dir}
-    }
+    #    file mkdir ${super_column_dir}
+    #}
 
-    set_data ${filename} ${data}
+    set_data ${oid} ${data}
 
     if { ${timestamp} ne {} } {
         file mtime ${filename} ${timestamp}

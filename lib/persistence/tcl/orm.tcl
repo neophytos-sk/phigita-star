@@ -22,7 +22,9 @@ proc ::persistence::orm::init_type {} {
     set nsp [namespace __this]
     set oid [::sysdb::object_type_t find $nsp "" exists_p]
 
-    if { !$exists_p } {
+    if { 0 && $exists_p } {
+        # TODO: integrity check
+    } else {
         ::persistence::define_ks $ks
         foreach {index_name index_item} [array get indexes] {
             set axis $index_name
@@ -38,21 +40,22 @@ proc ::persistence::orm::to_path_by {axis args} {
     variable [namespace __this]::ks
     variable [namespace __this]::cf
 
-    set target "${ks}/${cf}.${axis}"
     if {1} {
         # if datatype of first arg/attribute exceeds a certain threshold
         # then we map the attribute values to row keys
         set args [lassign $args row_key]
         #set column_path [::persistence::to_column_path $args]
         set column_path [join $args {/}]
-        append target "/${row_key}/+/$column_path"
     } else {
         # check that supercolumns are allowed for the given axis
         #set column_path [::persistence::to_column_path $args]
         set column_path [join $args {/}]
-        append target "__default__/+/$column_path"
+        set row_key "__default__"
     }
 
+    set target "${ks}/${cf}.${axis}/${row_key}/+/${column_path}"
+
+    return $target
 }
 
 proc ::persistence::orm::to_path {id} {
