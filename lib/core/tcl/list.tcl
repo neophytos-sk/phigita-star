@@ -176,7 +176,7 @@ proc keylget {listVar key {resultVar ""}} {
     }
 
     if { $resultVar eq {} } {
-        error "no such key (=$key) in list"
+        error "no such key (=$key) in list: $_"
     }
 
     return 0

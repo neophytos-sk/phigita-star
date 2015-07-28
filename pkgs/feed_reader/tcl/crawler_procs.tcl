@@ -81,19 +81,9 @@ proc ::feed_reader::get_first_sync_timestamp {linkVar} {
     }
     set path [lindex $paths 0]
     set atts [::crawldb::sync_info_t from_path $path] 
-    set revision_datetime [keylget atts "datetime"]
+    lassign [split [join [keylget atts "datetime_urlsha1"]] { }] revision_datetime
 
-    set slice_predicate [list "lindex" "0"]
-
-    set slicelist [::persistence::get_slice_names       \
-		       "crawldb"                        \
-		       "sync_info.by_urlsha1_and_const" \
-		       "${urlsha1}"                     \
-		       "${slice_predicate}"]
-
-    set revision_datetime ${slicelist}
-
-    #puts "get_first_sync_timestamp: urlsha1=$urlsha1 revision_datetime=$revision_datetime link=$link"
+    # puts "get_first_sync_timestamp: urlsha1=$urlsha1 revision_datetime=$revision_datetime link=$link"
 
     if { ${revision_datetime} eq {} } {
         return 0
@@ -110,15 +100,13 @@ proc ::feed_reader::get_last_sync_timestamp {linkVar} {
 
     set urlsha1 [get_urlsha1 ${link}]
 
-    set slice_predicate [list "lindex" "end"]
-
-    set slicelist [::persistence::get_slice_names       \
-		       "crawldb"                        \
-		       "sync_info.by_urlsha1_and_const" \
-		       "${urlsha1}"                     \
-		       "${slice_predicate}"]
-
-    set revision_datetime ${slicelist}
+    set paths [::crawldb::sync_info_t find_by urlsha1 $urlsha1]
+    if { $paths eq {} } {
+        return 0
+    }
+    set path [lindex $paths end]
+    set atts [::crawldb::sync_info_t from_path $path] 
+    lassign [split [join [keylget atts "datetime_urlsha1"]] { }] revision_datetime
 
     return [clock scan ${revision_datetime} -format "%Y%m%dT%H%M"]
 
