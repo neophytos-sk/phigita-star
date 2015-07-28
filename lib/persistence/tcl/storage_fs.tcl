@@ -41,8 +41,8 @@ proc ::persistence::fs::get_mtime {path} {
 
 proc ::persistence::fs::exists_ks_p {keyspace} {
     variable ks
-    #return [file isdirectory [get_dir ${keyspace}]]
-    return [info exists ks(${keyspace})]
+    return [file isdirectory [get_dir ${keyspace}]]
+    # return [info exists ks(${keyspace})]
 }
 
 proc ::persistence::fs::assert_ks {keyspace} {
@@ -59,8 +59,8 @@ proc ::persistence::fs::list_ks {} {
 proc ::persistence::fs::exists_cf_p {keyspace column_family} {
     variable ks
     variable cf
-    #return [file isdirectory [get_dir ${keyspace} ${column_family}]]
-    return [info exists cf(${keyspace},${column_family})]
+    return [file isdirectory [get_dir ${keyspace} ${column_family}]]
+    # return [info exists cf(${keyspace},${column_family})]
 }
 
 proc ::persistence::fs::assert_cf {keyspace column_family} {
@@ -144,14 +144,14 @@ proc ::persistence::fs::create_cf_if {keyspace column_family} {
 proc ::persistence::fs::define_ks {keyspace} {
     variable ks
     create_ks_if ${keyspace}
-    set ks(${keyspace}) 1
+    # set ks(${keyspace}) 1
 }
 
 proc ::persistence::fs::define_cf {keyspace column_family {spec {}}} {
     variable cf
     assert_ks ${keyspace}
     create_cf_if ${keyspace} ${column_family}
-    set cf(${keyspace},${column_family}) ${spec}
+    # set cf(${keyspace},${column_family}) ${spec}
 }
 
 proc ::persistence::fs::get_row {keyspace column_family row_key} {
@@ -265,6 +265,7 @@ proc ::persistence::fs::get_data {path} {
     return [::util::readfile ${filename}]
 }
 
+# TODO: create sysdb::refcount_item_t
 proc ::persistence::fs::incr_refcount {target_filename_or_dir link_filename_or_dir} {
 
     set mapping {{/} {.}}

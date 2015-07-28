@@ -17,12 +17,20 @@ proc ::persistence::orm::init_type {} {
     variable [namespace __this]::cf
     variable [namespace __this]::indexes
 
-    log "persistence (ORM): initializing [namespace __this] ensemble/type"
+    # log "persistence (ORM): initializing [namespace __this] ensemble/type"
 
-    ::persistence::define_ks $ks
-    foreach {index_name index_item} [array get indexes] {
-        set axis $index_name
-        ::persistence::define_cf $ks $cf.$axis
+    set nsp [namespace __this]
+    set oid [::sysdb::object_type_t find $nsp "" exists_p]
+
+    if { !$exists_p } {
+        ::persistence::define_ks $ks
+        foreach {index_name index_item} [array get indexes] {
+            set axis $index_name
+            ::persistence::define_cf $ks $cf.$axis
+        }
+
+        array set item [list ks $ks cf $cf nsp $nsp]
+        ::sysdb::object_type_t insert item
     }
 }
 

@@ -56,6 +56,12 @@ proc ::pattern::typeof {value {names ""}} {
     return ${result}
 }
 
+proc ::pattern::check=sysdb_namespace {valueVar} {
+    upvar $valueVar value
+    set re {^(?:\:\:[a-zA-Z_][a-zA-Z_0-9]*)+$}
+    return [regexp -- $re $value]
+}
+
 proc ::pattern::check=langclass {valueVar} {
     upvar ${valueVar} value
     # todo: get all valid language codes from db

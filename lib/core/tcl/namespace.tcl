@@ -9,6 +9,9 @@ proc ::tcl::namespace::__mixin {imported_nsp} {
             {} ::runtime::stack_with __nsp ${nsp} ${imported_nsp}::${exported_proc}
     }
 
+    namespace inscope ${nsp} [list \
+        namespace ensemble create -subcommands $exported_procs]
+
 }
 
 proc ::tcl::namespace::__this {} {

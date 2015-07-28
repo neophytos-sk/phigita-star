@@ -9,15 +9,6 @@ namespace eval ::webdb::web_page_t {
     # see core/tcl/namespace.tcl for details about "mixin" namespaces
     namespace __mixin ::persistence::orm
 
-    namespace ensemble create -subcommands {
-        to_path
-        from_path
-        insert
-        find
-        find_by
-        init_type
-    }
-
     variable ks "webdb"
     variable cf "web_page"
     variable pk "urlsha1"

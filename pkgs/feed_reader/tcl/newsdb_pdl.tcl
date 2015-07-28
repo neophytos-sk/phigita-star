@@ -8,15 +8,6 @@ namespace eval ::newsdb::news_item_t {
     # see core/tcl/namespace.tcl for details about "mixin" namespaces
     namespace __mixin ::persistence::orm
 
-    namespace ensemble create -subcommands {
-        to_path
-        from_path
-        insert
-        find
-        find_by
-        init_type
-    }
-
     variable ks "newsdb"
     variable cf "news_item"
     variable pk "urlsha1"
