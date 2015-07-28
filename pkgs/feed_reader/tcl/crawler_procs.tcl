@@ -43,12 +43,12 @@ proc ::feed_reader::stats {{news_sources ""}} {
             set feed_name [file tail ${feed_file}]
 
 
-	    ::persistence::get_column          \
-		"crawldb"                      \
-		"feed_stats.by_feed_and_const" \
-		"${feed_name}"                 \
-		"_stats"                       \
-		"column_data"
+	    ::persistence::__get_column          \
+            "crawldb"                      \
+            "feed_stats.by_feed_and_const" \
+            "${feed_name}"                 \
+            "_stats"                       \
+            "column_data"
 
             array set count ${column_data}
 
@@ -302,18 +302,22 @@ proc ::feed_reader::fetch_feed_p {feed_name timestamp {coeff "0.3"}} {
 
         set pretty_timeval [clock format ${timestamp} -format ${format}]
 
-	set filename \
-	    [::persistence::get_column           \
-		 "crawldb"                       \
-		 "feed_stats.by_feed_and_period" \
-		 "${feed_name}"                  \
-		 "${pretty_timeval}"]
+        # set oid [::crawldb::stat_info_t find_by feed_name $feed_name $pretty_timeval]
+        
+        set oid \
+            [::persistence::__get_column        \
+                "crawldb"                       \
+                "feed_stats.by_feed_and_period" \
+                ${feed_name}                    \
+                ${pretty_timeval}               \
+                ""                              \
+                exists_p]
 
-	if { ![::persistence::exists_data_p ${filename}] } {
-	    return 1
-	}
+        if { !$exists_p } {
+            return 1
+        }
 
-        array set count [::persistence::get_data ${filename}]
+        array set count [::persistence::get_data ${oid}]
 
         set reference_interval 3600
         set max_times 4
@@ -327,14 +331,14 @@ proc ::feed_reader::fetch_feed_p {feed_name timestamp {coeff "0.3"}} {
         unset count
     }
 
-    set filename [::persistence::get_column           \
+    set filename [::persistence::__get_column           \
 		      "crawldb"                       \
 		      "feed_stats.by_feed_and_const"  \
 		      "${feed_name}"                  \
 		      "_stats"]
     
     if { ![::persistence::exists_data_p ${filename}] } {
-	return 1
+        return 1
     }
 
     array set count [::persistence::get_data ${filename}]
