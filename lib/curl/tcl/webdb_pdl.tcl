@@ -19,7 +19,7 @@ namespace eval ::webdb::web_page_t {
     }
 
     variable ks "webdb"
-    variable cf "web_page_t"
+    variable cf "web_page"
     variable pk "urlsha1"
 
     variable indexes
