@@ -176,7 +176,8 @@ proc ::persistence::fs::create_row_if {keyspace column_family row_key row_dirVar
 
     set row_path [get_row ${keyspace} ${column_family} ${row_key}]
 
-    file mkdir [get_filename ${row_path}]
+    set row_dir [get_filename ${row_path}]
+    file mkdir $row_dir
 
 }
 
