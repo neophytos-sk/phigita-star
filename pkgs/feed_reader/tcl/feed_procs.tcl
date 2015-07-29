@@ -638,6 +638,8 @@ proc ::feed_reader::fetch_item {link title_in_feed feedVar itemVar infoVar {redi
 
     if { [get_value_if info(responsecode) ""] eq {302} && [get_value_if feed(handle_redirect_item_p) "0"] } {
 
+        return -4 ;# redirect item
+        # TODO: move redirect handling to curl/webdb
         return [handle_redirect_item ${link} ${title_in_feed} feed item info ${redirect_count}]
 
     }
@@ -791,8 +793,8 @@ proc ::feed_reader::get_contentsha1_to_label_dir {} {
 
 proc ::feed_reader::compare_mtime {file_or_dir1 file_or_dir2} {
 
-    set mtime1 [::persistence::get_mtime $file_or_dir1]
-    set mtime2 [::persistence::get_mtime $file_or_dir2]
+    set mtime1 [::persistence::mtime $file_or_dir1]
+    set mtime2 [::persistence::mtime $file_or_dir2]
 
     if { ${mtime1} < ${mtime2} } {
         return -1
@@ -841,36 +843,25 @@ proc ::feed_reader::ls {args} {
     assert { vcheck("limit","integer") }
     assert { vcheck_if("lang","langclass") }
 
-    set predicates [list]
+    set predicate [list]
 
     if { exists("__arg_lang") } {
-        lappend predicates [list "in_slice" [list "urlsha1" "newsdb/news_item.by_langclass/$lang"]]
+        lappend predicate [list langclass = $lang]
     }
 
     if { exists("__arg_domain") } {
         set reversedomain [reversedomain $domain]
-        lappend predicates [list "in_slice" [list "urlsha1" "newsdb/news_item.by_domain/$reversedomain"]]
+        lappend predicate [list reversedomain = $reversedomain]
     }
 
     # TODO: sort and get range for each filter, e.g. by_langclass
     # in order to avoid returning huge result sets in between
     # processing and the final sorting and range selection. 
     #
-    # lappend predicates [list "lrange" [list $offset $limit]]
+    # lappend predicate [list "lrange" [list $offset $limit]]
 
-    set predicate [list "forall" [list $predicates]]
+    set slicelist [::newsdb::news_item_t find $predicate]
 
-    set row_names \
-        [::persistence::get_multirow_names  \
-            "newsdb"                        \
-            "news_item.by_urlsha1"]
-
-    set slicelist \
-        [::persistence::multiget_slice    \
-            "newsdb"                      \
-            "news_item.by_urlsha1"        \
-            ${row_names}                  \
-            ${predicate}]
 
     set slicelist [::persistence::sort_slice_by $slicelist "sort_date" "decreasing"]
     set slicelist [lrange $slicelist $offset $limit]
@@ -882,8 +873,8 @@ proc ::feed_reader::ls {args} {
         print_short_log_header
     }
 
-    foreach filename $slicelist {
-        array set item [::persistence::get_data $filename]
+    foreach oid $slicelist {
+        array set item [::persistence::get_data $oid]
         if { exists("__arg_long_listing") } {
             print_log_entry item context
         } else {
@@ -1265,36 +1256,19 @@ puts limit=$limit
 
 proc ::feed_reader::cluster {{offset "0"} {limit "10"} {k ""} {num_iter "3"}} {
 
-    set slicelist [::newsdb::news_item_t find_by sort_date ""]
-    predicate=lrange slicelist $offset $limit
-
-    if {0} {
-        set slice_predicate [list "lrange" [list "${offset}" "${limit}"]]
-        set slicelist [::persistence::__get_slice \
-                   "newsdb" \
-                   "news_item.by_const_and_date" \
-                   "log" \
-                   "${slice_predicate}"]
-    }
-
+    set slicelist [::newsdb::news_item_t find_by sort_date]
+    ::persistence::fs::predicate=lrange slicelist $offset $limit
 
     set contentfilelist [list]
-    foreach logfilename ${slicelist} {
+    foreach oid ${slicelist} {
 
-        array set item [::util::readfile ${logfilename}]
+        array set item [list]
+
+        ::newsdb::news_item_t get $oid item
 
         set contentfilename \
             [::persistence::get_filename \
                 [::newsdb::content_item_t find $item(contentsha1)]]
-
-        if {0} {
-            set contentfilename \
-                [::persistence::__get_column \
-                "newsdb" \
-                "content_item.by_contentsha1_and_const" \
-                "$item(contentsha1)" \
-                "_data_"]
-        }
 
         lappend contentfilelist ${contentfilename}
 
@@ -1304,7 +1278,7 @@ proc ::feed_reader::cluster {{offset "0"} {limit "10"} {k ""} {num_iter "3"}} {
     }
 
     set dir [file dirname [info script]]
-    set cmd [file join $dir "../../document_clustering/cc/test_main"]
+    set cmd [file join $dir "../../../lib/document_clustering/cc/test_main"]
     if { ${k} eq {} } {
         set k [expr { int(log(${limit}) * sqrt(${limit})) }]
     }
@@ -1317,8 +1291,8 @@ proc ::feed_reader::cluster {{offset "0"} {limit "10"} {k ""} {num_iter "3"}} {
 
 proc ::feed_reader::exists_item {link} {
     set urlsha1 [get_urlsha1 ${link}]
-    set oid [::newsdb::news_item_t find $urlsha1 "" exists_p]
-    return $exists_p
+    set oid [::newsdb::news_item_t find $urlsha1]
+    return [expr { $oid ne {} }]
 }
 
 
@@ -1326,7 +1300,8 @@ proc ::feed_reader::load_item {itemVar urlsha1} {
 
     upvar $itemVar item
 
-    ::newsdb::news_item_t find $urlsha1 item
+    set oid [::newsdb::news_item_t find $urlsha1]
+    ::newsdb::news_item_t get $oid item
 
     load_content item $item(contentsha1)
 
@@ -1390,7 +1365,8 @@ proc ::feed_reader::load_content {itemVar contentsha1 {include_labels_p "1"}} {
 
     upvar $itemVar item
 
-    set oid [::newsdb::content_item_t find $contentsha1 item]
+    set oid [::newsdb::content_item_t find $contentsha1]
+    ::newsdb::content_item_t get $oid item
 
     set contentsha1_to_label_filename [get_contentsha1_to_label_dir]/${contentsha1}
     if { [file exists ${contentsha1_to_label_filename}] } {
@@ -1619,6 +1595,7 @@ proc ::feed_reader::classify {axis urlsha1_list} {
 }
 
 
+# TO BE FIXED
 proc ::feed_reader::show_revisions {urlsha1} {
 
     set slicelist [::persistence::get_supercolumn_slice \
@@ -1628,7 +1605,7 @@ proc ::feed_reader::show_revisions {urlsha1} {
         "${urlsha1}"]
 
     foreach {filename} ${slicelist} {
-        set timestamp [persistence::get_mtime ${filename}]
+        set timestamp [persistence::mtime ${filename}]
         set column_name [file tail ${filename}]
         puts "${timestamp} ${column_name}"
     }
@@ -1692,7 +1669,7 @@ proc ::feed_reader::write_item {timestamp normalized_link feedVar itemVar resync
 
     # TODO: each image,attachment,video,etc should get its own content file in the future
 
-    set oid [::newsdb::content_item_t find $contentsha1 "" exists_content_item_p]
+    set oid [::newsdb::content_item_t find $contentsha1]
 
     if { 0 } {
         set contentfilename \
@@ -1703,7 +1680,7 @@ proc ::feed_reader::write_item {timestamp normalized_link feedVar itemVar resync
                  "_data_"]
     }
 
-    if { $exists_content_item_p } {
+    if { $oid ne {} } {
         # we have seen this item before from a different url
         set item(is_copy_p) 1
     } else {
@@ -1788,9 +1765,9 @@ proc ::feed_reader::write_item {timestamp normalized_link feedVar itemVar resync
      return 1
 }
 
-proc ::feed_reader::resync_item {filename} {
+proc ::feed_reader::resync_item {oid} {
 
-    array set item [::persistence::get_data ${filename}]
+    array set item [::persistence::get_data ${oid}]
 
     set domain [get_value_if item(domain) ""]
     if { ${domain} eq {} } {
@@ -1825,10 +1802,10 @@ proc ::feed_reader::resync_item {filename} {
         set item(video) [get_value_if new_item(video)]
         set item(feed) [file tail $feedfilename]
         if { [get_value_if item(timestamp) ""] eq {} } {
-            set item(timestamp) [::persistence::get_mtime ${filename}]
+            set item(timestamp) [::persistence::mtime ${oid}]
         }
 
-        remove_item $filename
+        remove_item $oid
 
         # resync_p is different than what we are doing here
         # it is meant for checking for revisions
@@ -2070,16 +2047,16 @@ proc ::feed_reader::test_article {news_source feed_name link} {
 }
 
 
-proc ::feed_reader::remove_item {filename} {
+proc ::feed_reader::remove_item {oid} {
 
-    puts "remove_item ${filename}"
+    puts "remove_item ${oid}"
 
-    array set item [::persistence::get_data ${filename}]
+    array set item [::persistence::get_data ${oid}]
 
     if { ![info exists item(sort_date)] } {
         set timestamp [get_value_if item(timestamp) ""]
         if { ${timestamp} eq {} } {
-            set timestamp [::persistence::get_mtime ${filename}]
+            set timestamp [::persistence::mtime ${oid}]
         }
         set item(sort_date) [clock format ${timestamp} -format "%Y%m%dT%H%M"]
     }

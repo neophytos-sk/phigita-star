@@ -1,5 +1,5 @@
 namespace eval ::pattern {
-    namespace ensemble create -subcommands {to_fmt from_fmt match}
+    namespace ensemble create -subcommands {to_fmt from_fmt match check}
 
     variable fmt_to_pattern
     variable pattern_to_fmt
@@ -37,6 +37,15 @@ proc ::pattern::from_fmt {format_groups} {
     return $result
 }
 
+proc ::pattern::check {valueVar pattern_names} {
+    upvar $valueVar value
+    foreach pattern_name ${pattern_names} {
+        if { ![::pattern::check=$pattern_name value] } {
+            return 0
+        }
+    }
+    return 1
+}
 
 proc ::pattern::match {pattern_name str} {
     return [::pattern::check=$pattern_name str]
@@ -56,9 +65,17 @@ proc ::pattern::typeof {value {names ""}} {
     return ${result}
 }
 
+# TODO: sysdb_namespace and sysdb_slot_name belongs to persistence package
+# TODO: implement "pattern register" and "pattern unregister" 
 proc ::pattern::check=sysdb_namespace {valueVar} {
     upvar $valueVar value
     set re {^(?:\:\:[a-zA-Z_][a-zA-Z_0-9]*)+$}
+    return [regexp -- $re $value]
+}
+
+proc ::pattern::check=sysdb_slot_name {valueVar} {
+    upvar $valueVar value
+    set re {^[a-zA-Z_][a-zA-Z_0-9]*$}
     return [regexp -- $re $value]
 }
 
@@ -201,10 +218,12 @@ proc ::pattern::check=boolean {valueVar} {
 
 proc ::pattern::check=notnull {valueVar} {
     upvar ${valueVar} value
-    if { $value ne {} } {
-        return 1
-    }
-    return 0
+    return [expr { $value ne {} }]
+}
+
+proc ::pattern::check=required {valueVar} {
+    upvar ${valueVar} value
+    return [info exists {value}]
 }
 
 proc ::pattern::check=uuid {valueVar} {

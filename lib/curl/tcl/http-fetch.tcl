@@ -87,10 +87,14 @@ proc ::web::cache_fetch {contentVar url {optionsVar ""} {infoVar ""}} {
 
     array set item [list]
     set urlsha1 [::sha1::sha1 -hex $url]
-    set oid [::webdb::web_page_t find $urlsha1 item exists_p]
+    set oid [::webdb::web_page_t find $urlsha1]
 
-    if { $exists_p } {
-        set mtime [::persistence::get_mtime $oid]
+    if { $oid ne {} } {
+
+        ::webdb::web_page_t get $oid item
+
+        set mtime [::webdb::web_page_t mtime $oid]
+
         set timeout [expr { 15 * 60 }]
         set now [clock seconds]
         if { $mtime + $timeout > $now } {

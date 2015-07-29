@@ -21,7 +21,7 @@ namespace eval ::newsdb::news_item_t {
             tags "all"
         }
 
-        by_domain {         
+        by_reversedomain {         
             type "index"
             atts "reversedomain"
             tags "summary"

@@ -9,7 +9,6 @@
 #include <fstream>
 #include <sstream>
 
-
 void strip_punctuation(std::string& input) {
   input.erase(std::remove_if(input.begin(),input.end(),ispunct),input.end());
 }
@@ -83,7 +82,7 @@ void pretty_print(const vector<cluster>& clusters,char *argv[]) {
 
 int main(int argc, char *argv[]) {
   if (argc < 4) {
-    fprintf(stderr, "Usage: %s k num_iter file1 ... fileN\n", argv[0]);
+    fprintf(stderr, "Usage: %s k num_iter dir file1 ... fileN\n", argv[0]);
     return 1;
   }
   
@@ -96,6 +95,7 @@ int main(int argc, char *argv[]) {
   vector<datapoint> dps;
   for (int i=3; i<argc; ++i) {
     word_list_t word_list;
+
     read_words_from_file(argv[i], word_list, stopwords);
     dps.push_back(datapoint(i-3,word_list));
   }

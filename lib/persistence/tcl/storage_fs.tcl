@@ -16,7 +16,7 @@ namespace eval ::persistence::fs {
         ls list_ks list_cf list_axis list_row list_col list_path \
         num_rows num_cols \
         get_name delete_data \
-        get_mtime get_filename
+        mtime get_filename
 }
 
 proc ::persistence::fs::get_path {args} {
@@ -30,13 +30,13 @@ proc ::persistence::fs::get_dir {args} {
     return ${dir}
 }
 
-proc ::persistence::fs::get_filename {path} {
+proc ::persistence::fs::get_filename {oid} {
     variable base_dir
-    return [file normalize ${base_dir}/${path}]
+    return [file normalize ${base_dir}/${oid}]
 }
 
-proc ::persistence::fs::get_mtime {path} {
-    return [file mtime [get_filename $path]]
+proc ::persistence::fs::mtime {oid} {
+    return [file mtime [get_filename $oid]]
 }
 
 proc ::persistence::fs::exists_ks_p {keyspace} {
@@ -222,12 +222,12 @@ proc ::persistence::fs::delete_link {src} {
     ::persistence::delete_data $src
 }
 
-proc ::persistence::fs::insert_link {src target} {
+proc ::persistence::fs::insert_link {src_oid target_oid} {
     if { 1 } {
         # if data is on a single host, then create a symbolic link
-        set src [get_filename $src] 
-        set target [get_filename $target]
-        if { [exists_data_p $src] } {
+        set src [get_filename $src_oid] 
+        set target [get_filename $target_oid]
+        if { [exists_data_p $src_oid] } {
             set old_target [file link $src] 
             log "file node (link) exists: $src"
             log "checking to see if link points to the same target: $old_target"
@@ -248,20 +248,20 @@ proc ::persistence::fs::insert_link {src target} {
     }
 }
 
-proc ::persistence::fs::exists_data_p {path} {
-    return [file exists [get_filename ${path}]]
+proc ::persistence::fs::exists_data_p {oid} {
+    return [file exists [get_filename ${oid}]]
 }
 
 
 # TODO: consider renaming it to put_data
-proc ::persistence::fs::set_data {path data} {
-    set filename [get_filename ${path}]
+proc ::persistence::fs::set_data {oid data} {
+    set filename [get_filename ${oid}]
     file mkdir [file dirname ${filename}]
     return [::util::writefile ${filename} ${data}]
 }
 
-proc ::persistence::fs::get_data {path} {
-    set filename [get_filename ${path}]
+proc ::persistence::fs::get_data {oid} {
+    set filename [get_filename ${oid}]
     return [::util::readfile ${filename}]
 }
 
@@ -307,7 +307,8 @@ proc ::persistence::fs::rename_data {old_supercolumn_dir new_supercolumn_dir} {
     file rename ${old_supercolumn_dir} ${new_supercolumn_dir}
 }
 
-proc ::persistence::fs::get_name {filename_or_dir} {
+proc ::persistence::fs::get_name {oid} {
+    set filename_or_dir [get_filename $oid]
     if { [file type ${filename_or_dir}] eq {link} } {
         set filename_or_dir [file link ${filename_or_dir}]
     }
@@ -378,43 +379,45 @@ proc ::persistence::fs::predicate=lindex {slicelistVar index} {
 }
 
 proc ::persistence::fs::predicate=forall {slicelistVar predicates} {
-    upvar $slicelistVar _
+    upvar $slicelistVar slicelist
     foreach predicate $predicates {
-        lassign ${predicate} cmd args
-        predicate=$cmd _ {*}$args
+        lassign ${predicate} cmd argv
+        predicate=$cmd slicelist {*}$argv
     }
 }
 
-proc ::persistence::fs::predicate=in_slice {slicelistVar attname row_expression {predicate ""}} {
-    upvar $slicelistVar _
-
-    set column_path [lassign [split $row_expression {/}] ks cf_axis row_key]
-    lassign [split $cf_axis {.}] cf axis
-
-    assert { $column_path eq {} }
-
-    # ::newsdb::news_item_t
-    set type_nsp ::${ks}::${cf}_t
+proc ::persistence::fs::predicate=maybe_in_path {slicelistVar parent_path {predicate ""}} {
+    upvar $slicelistVar slicelist
 
     set result [list]
-    foreach oid $_ {
+    foreach oid $slicelist {
+        set name [get_name $oid]
+        set other_oid "${parent_path}${name}"
 
-        set atts [$type_nsp from_path $oid]
-        set attvalue [keylget atts $attname]
+        # TODO: get_bf __bf__ $parent_path
+        # TODO: set may_contain_p [bloom_filter may_contain __bf__ $name]
 
-        set exists_p \
-            [::persistence::exists_column_p \
-                ${ks} \
-                ${cf_axis} \
-                ${row_key} \
-                ${attvalue}]
+        set may_contain_p 1
+        if { $may_contain_p } {
+            lappend result $oid
+        }
+    }
+    set slicelist $result
+}
 
+proc ::persistence::fs::predicate=in_path {slicelistVar parent_path {predicate ""}} {
+    upvar $slicelistVar slicelist
+
+    set result [list]
+    foreach oid $slicelist {
+        set name [get_name $oid]
+        set other_oid "${parent_path}${name}"
+        set exists_p [exists_data_p $other_oid]
         if { $exists_p } {
             lappend result $oid
         }
-
     }
-    set _ $result
+    set slicelist $result
 
 }
 
@@ -437,10 +440,10 @@ proc ::persistence::fs::predicate=lsort {slicelistVar args} {
 
 
 # TODO: replace glob with ::util::fs::ls
-proc ::persistence::fs::get_files {path} {
+proc ::persistence::fs::get_files {path {types "f d"}} {
     variable base_dir
     set dir [file normalize ${base_dir}/${path}]
-    set names [glob -tails -types {f} -nocomplain -directory ${dir} *]
+    set names [glob -tails -nocomplain -types ${types} -directory ${dir} "*"]
     set result [list]
     foreach name $names {
         lappend result ${path}/${name}
@@ -512,17 +515,14 @@ proc ::persistence::fs::__get_slice_from_supercolumn {supercolumn_dir {slice_pre
 
 proc ::persistence::fs::__get_slice_from_row {row_path {slice_predicate ""}} {
     set slicelist [get_files ${row_path}]
-
     set slicelist [lsort -decreasing ${slicelist}]
     if { ${slice_predicate} ne {} } {
-        lassign ${slice_predicate} cmd args
-        predicate=${cmd} slicelist {*}${args}
+        predicate=forall slicelist $slice_predicate
     }
     return ${slicelist}
 }
 
 proc ::persistence::fs::__get_slice {keyspace column_family row_key {slice_predicate ""}} {
-
     set row_path [get_row ${keyspace} ${column_family} ${row_key}]
     return [__get_slice_from_row ${row_path} ${slice_predicate}]
 
@@ -667,11 +667,11 @@ proc ::persistence::fs::exec_query {ks cf args} {
     set args [getopt::getopt $args]
 
     set row_keys [get_multirow_names $ks $cf $row_predicate] 
-    set slicelist [multiget_slice $ks $cf $row_keys $col_predicate]
+    set slicelist [__multiget_slice $ks $cf $row_keys $col_predicate]
 
 }
 
-proc ::persistence::fs::multiget_slice {keyspace column_family row_keys {slice_predicate ""}} {
+proc ::persistence::fs::__multiget_slice {keyspace column_family row_keys {slice_predicate ""}} {
 
     set result [list]
 
@@ -749,14 +749,11 @@ proc ::persistence::fs::names__directed_join {multirow_slice_names keyspace colu
 
 # TODO: replace glob with ::util::fs::ls
 # TODO: replace ::util::fs::ls with ::persistence::fs::list_rows
-proc ::persistence::fs::get_multirow {keyspace column_family {predicate ""}} {
+proc ::persistence::fs::get_multirow {ks cf_axis {predicate ""}} {
 
+    assert_cf ${ks} ${cf_axis}
 
-    assert_cf ${keyspace} ${column_family}
-
-    set cf_dir [get_dir ${keyspace} ${column_family}]
-
-    set multirow [lsort -decreasing [glob -types {d} -nocomplain -directory ${cf_dir} *]]
+    set multirow [get_files ${ks}/${cf_axis} {d}]
 
     if { ${predicate} ne {} } {
         lassign ${predicate} cmd args
@@ -1073,12 +1070,27 @@ proc ::persistence::fs::get_column {path {dataVar ""} {exists_pVar ""}} {
 
 proc ::persistence::fs::insert_column {path data} {
     set column_path [lassign [split $path {/}] ks cf row_key __delimiter__]
+    set column_path [join $column_path {/}]
     __insert_column $ks $cf $row_key $column_path $data
 }
 
-proc ::persistence::fs::get_slice {path {dataVar ""}} {
+proc ::persistence::fs::get_slice {path {predicate ""}} {
     set column_path [lassign [split $path {/}] ks cf row_key __delimiter__]
-    set slicelist [__get_slice $ks $cf $row_key]
+    set slicelist [__get_slice $ks $cf $row_key $predicate]
+    return $slicelist
+}
+
+# TODO: xpath expressions for querying
+proc ::persistence::fs::multiget_slice {xpath {predicate ""}} {
+    set residual_path [lassign [split $xpath {/}] ks cf_axis]
+
+    #puts residual_path=$residual_path
+    #assert { $residual_path eq {} }
+
+    set row_predicate ""
+    set row_keys [get_multirow_names $ks $cf_axis $row_predicate] 
+
+    set slicelist [__multiget_slice $ks $cf_axis $row_keys $predicate]
     return $slicelist
 }
 
