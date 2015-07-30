@@ -709,8 +709,8 @@ proc ::feed_reader::fetch_and_write_item {timestamp link title_in_feed feedVar} 
                     "${errordata}"
             }
 
-
-            set slicelist [::newsdb::error_item_t find_by urlsha1 $urlsha1]
+            set where_clause [list [list urlsha1 = $urlsha1]]
+            set slicelist [::newsdb::error_item_t find $where_clause]
 
             if {0} {
                 set slicelist [::persistence::__get_slice \
@@ -843,15 +843,15 @@ proc ::feed_reader::ls {args} {
     assert { vcheck("limit","integer") }
     assert { vcheck_if("lang","langclass") }
 
-    set predicate [list]
+    set where_clause [list]
 
     if { exists("__arg_lang") } {
-        lappend predicate [list langclass = $lang]
+        lappend where_clause [list langclass = $lang]
     }
 
     if { exists("__arg_domain") } {
         set reversedomain [reversedomain $domain]
-        lappend predicate [list reversedomain = $reversedomain]
+        lappend where_clause [list reversedomain = $reversedomain]
     }
 
     # TODO: sort and get range for each filter, e.g. by_langclass
@@ -860,7 +860,7 @@ proc ::feed_reader::ls {args} {
     #
     # lappend predicate [list "lrange" [list $offset $limit]]
 
-    set slicelist [::newsdb::news_item_t find $predicate]
+    set slicelist [::newsdb::news_item_t find $where_clause]
 
 
     set slicelist [::persistence::sort_slice_by $slicelist "sort_date" "decreasing"]
@@ -1256,7 +1256,7 @@ puts limit=$limit
 
 proc ::feed_reader::cluster {{offset "0"} {limit "10"} {k ""} {num_iter "3"}} {
 
-    set slicelist [::newsdb::news_item_t find_by sort_date]
+    set slicelist [::newsdb::news_item_t find_by_axis sort_date]
     ::persistence::fs::predicate=lrange slicelist $offset $limit
 
     set contentfilelist [list]
@@ -1268,7 +1268,7 @@ proc ::feed_reader::cluster {{offset "0"} {limit "10"} {k ""} {num_iter "3"}} {
 
         set contentfilename \
             [::persistence::get_filename \
-                [::newsdb::content_item_t find $item(contentsha1)]]
+                [::newsdb::content_item_t find_by_id $item(contentsha1)]]
 
         lappend contentfilelist ${contentfilename}
 
@@ -1291,7 +1291,7 @@ proc ::feed_reader::cluster {{offset "0"} {limit "10"} {k ""} {num_iter "3"}} {
 
 proc ::feed_reader::exists_item {link} {
     set urlsha1 [get_urlsha1 ${link}]
-    set oid [::newsdb::news_item_t find $urlsha1]
+    set oid [::newsdb::news_item_t find_by_id $urlsha1]
     return [expr { $oid ne {} }]
 }
 
@@ -1300,7 +1300,7 @@ proc ::feed_reader::load_item {itemVar urlsha1} {
 
     upvar $itemVar item
 
-    set oid [::newsdb::news_item_t find $urlsha1]
+    set oid [::newsdb::news_item_t find_by_id $urlsha1]
     ::newsdb::news_item_t get $oid item
 
     load_content item $item(contentsha1)
@@ -1349,7 +1349,8 @@ proc ::feed_reader::uses_content {contentsha1_list} {
     # contentsha1_to_urlsha1
     foreach contentsha1 ${contentsha1_list} {
 
-        set slicelist [::newsdb::news_item_t find_by contentsha1 $contentsha1]
+        set where_clause [list [list contentsha1 = $contentsha1]]
+        set slicelist [::newsdb::news_item_t find $where_clause]
 
         foreach filename ${slicelist} {
             set urlsha1 [::persistence::get_name $filename]
@@ -1365,7 +1366,7 @@ proc ::feed_reader::load_content {itemVar contentsha1 {include_labels_p "1"}} {
 
     upvar $itemVar item
 
-    set oid [::newsdb::content_item_t find $contentsha1]
+    set oid [::newsdb::content_item_t find_by_id $contentsha1]
     ::newsdb::content_item_t get $oid item
 
     set contentsha1_to_label_filename [get_contentsha1_to_label_dir]/${contentsha1}
@@ -1637,20 +1638,13 @@ proc ::feed_reader::write_item {timestamp normalized_link feedVar itemVar resync
     set content [list $item(title) $item(body)]
     set contentsha1 [::sha1::sha1 -hex ${content}]
 
-    #set oid [::newsdb::content_item_t find $contentsha1 "" exists_revision_p]
-    set oid  [::newsdb::news_item_t find_by contentsha1 $contentsha1 $urlsha1 "" exists_revision_p]
-
-    if {0} {
-        set exists_revision_p \
-            [::persistence::exists_column_p \
-                 "newsdb"                   \
-                 "news_item.by_contentsha1" \
-                 ${contentsha1}             \
-                 ${urlsha1}]
-    }
+    set where_clause [list]
+    lappend where_clause [list contentsha1 = $contentsha1]
+    lappend where_clause [list urlsha1 = $urlsha1]
+    set news_item_oid [::newsdb::news_item_t find $where_clause]
 
 
-    if { ${exists_revision_p} } {
+    if { $news_item_oid ne {} } {
         # revision content is the same as a previous one
         # no need to overwrite the revisionfilename,
         # nor the contentfilename and indexfilename
@@ -1669,18 +1663,9 @@ proc ::feed_reader::write_item {timestamp normalized_link feedVar itemVar resync
 
     # TODO: each image,attachment,video,etc should get its own content file in the future
 
-    set oid [::newsdb::content_item_t find $contentsha1]
+    set content_item_oid [::newsdb::content_item_t find_by_id $contentsha1]
 
-    if { 0 } {
-        set contentfilename \
-            [::persistence::__get_column                   \
-                 "newsdb"                                \
-                 "content_item.by_contentsha1_and_const" \
-                 "${contentsha1}"                        \
-                 "_data_"]
-    }
-
-    if { $oid ne {} } {
+    if { $content_item_oid ne {} } {
         # we have seen this item before from a different url
         set item(is_copy_p) 1
     } else {
@@ -2196,17 +2181,9 @@ proc ::feed_reader::remove_feed_items {domain {urlsha1_list ""}} {
         set slice_predicate [list "custom_composite_in" [list ${urlsha1_list}]]
     }
 
-    set slicelist [::newsdb::news_item_t find_by domain ${reversedomain}]
+    set where_clause [list [list domain = ${reversedomain}]]
+    set slicelist [::newsdb::news_item_t find $where_clause]
     predicate=custom_composite_in slicelist $urlsha1_list
-
-    if {0} {
-        set slicelist [::persistence::__get_slice         \
-            "newsdb"                     \
-            "news_item.by_domain" \
-            "${reversedomain}"           \
-            "${slice_predicate}"]
-    }
-
 
     foreach filename ${slicelist} {
         remove_item ${filename}

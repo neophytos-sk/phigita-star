@@ -75,7 +75,8 @@ proc ::feed_reader::get_first_sync_timestamp {linkVar} {
 
     set urlsha1 [get_urlsha1 ${link}]
 
-    set paths [::crawldb::sync_info_t find_by urlsha1 $urlsha1]
+    set where_clause [list [list urlsha1 = $urlsha1]]
+    set paths [::crawldb::sync_info_t find $where_clause]
     if { $paths eq {} } {
         return 0
     }
@@ -100,7 +101,8 @@ proc ::feed_reader::get_last_sync_timestamp {linkVar} {
 
     set urlsha1 [get_urlsha1 ${link}]
 
-    set paths [::crawldb::sync_info_t find_by urlsha1 $urlsha1]
+    set where_clause [list [list urlsha1 = $urlsha1]]
+    set paths [::crawldb::sync_info_t find $where_clause]
     if { $paths eq {} } {
         return 0
     }

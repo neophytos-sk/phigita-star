@@ -87,7 +87,7 @@ proc ::web::cache_fetch {contentVar url {optionsVar ""} {infoVar ""}} {
 
     array set item [list]
     set urlsha1 [::sha1::sha1 -hex $url]
-    set oid [::webdb::web_page_t find $urlsha1]
+    set oid [::webdb::web_page_t find_by_id $urlsha1]
 
     if { $oid ne {} } {
 

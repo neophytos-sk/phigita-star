@@ -7,8 +7,9 @@ namespace eval ::persistence::orm {
         to_path \
         from_path \
         insert \
-        find_by \
         init_type \
+        find_by_id \
+        find_by_axis \
         find \
         get \
         mtime
@@ -177,16 +178,7 @@ proc ::persistence::orm::mtime {oid} {
     return [::persistence::mtime $oid]
 }
 
-proc ::persistence::orm::__find_all {} {
-    variable [namespace __this]::pk
-    variable [namespace __this]::indexes
-
-    assert { exists("indexes(by_${pk})") }
-
-    return [__find_by_axis ${pk}]
-}
-
-proc ::persistence::orm::__find_by_id {value} {
+proc ::persistence::orm::find_by_id {value} {
     variable [namespace __this]::pk
     variable [namespace __this]::attributes
 
@@ -201,7 +193,7 @@ proc ::persistence::orm::__find_by_id {value} {
     return $oid
 }
 
-proc ::persistence::orm::__find_by_axis {argv {predicate ""}} {
+proc ::persistence::orm::find_by_axis {argv {predicate ""}} {
     variable [namespace __this]::indexes
 
     set argc [llength $argv]
@@ -243,21 +235,36 @@ proc ::persistence::orm::__find_by_axis {argv {predicate ""}} {
 
 
 # finds the records satisfying the specified predicate(s)
-proc ::persistence::orm::find {{argv ""}} {
-    if { $argv eq {} } {
-        return [__find_all]
+proc ::persistence::orm::find {{where_clause_argv ""} {optionsVar ""}} {
+    if { $optionsVar ne {} } {
+        upvar $optionsVar options
+    }
+
+    if { $where_clause_argv eq {} } {
+
+        # __find_all starting from the given axis
+        variable [namespace __this]::pk
+        variable [namespace __this]::indexes
+
+        set axis_attname [value_if options(axis_attname) ${pk}]
+        assert { exists("indexes(by_${axis_attname})") }
+        return [find_by_axis ${axis_attname}]
+
     } else {
-        set n_clauses [llength $argv]
-        if { $n_clauses == 1 && [llength [lindex $argv 0]] == 1 } {
-            return [__find_by_id [lindex $argv 0]]
+
+        set n_clauses [llength $where_clause_argv]
+        if { $n_clauses == 1 && [llength [lindex $where_clause_argv 0]] == 1 } {
+            return [find_by_id [lindex $where_clause_argv 0]]
         } else {
-            set attname [__choose_axis $argv find_by_axis_args]
-            set predicate [__rewrite_where_clause $attname $argv]
+            set find_by_axis_args [list]
+            set attname [__choose_axis $where_clause_argv find_by_axis_args]
+            set predicate [__rewrite_where_clause $attname $where_clause_argv]
             log "chosen axis (attribute) = $attname"
             log "chosen axis (args) = $find_by_axis_args"
             log "rewritten predicate = $predicate"
-            return [__find_by_axis $find_by_axis_args $predicate]
+            return [find_by_axis $find_by_axis_args $predicate]
         }
+
     }
 }
 
