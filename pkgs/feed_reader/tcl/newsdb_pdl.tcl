@@ -1,7 +1,7 @@
 # derived_attribute id creates a table with the given attributes
 # and a third one that is the application of the fn for the given
 # attributes.
-# {derived_attribute id --datatype sha1_hex --fn_args {reversedomain url} --fn sha1_hex --fn_alternative serial_int --pk }
+# {derived_attribute id --type sha1_hex --fn_args {reversedomain url} --fn sha1_hex --fn_alternative serial_int --pk }
 
 namespace eval ::newsdb::news_item_t {
 
@@ -10,64 +10,91 @@ namespace eval ::newsdb::news_item_t {
 
     variable ks "newsdb"
     variable cf "news_item"
-    variable pk "urlsha1"
+    #TODO: variable pk "urlsha1_contentsha1" ;# supercolumns for by_urlsha1, by_contentsha1
+    variable pk "urlsha1_contentsha1"
 
-    variable indexes
-    array set indexes {
+    # type ::= indextype
+    variable idx
+    array set idx {
+
+        by_urlsha1_contentsha1 {
+            atts "urlsha1 contentsha1"
+            func "list"
+            tags "one_to_one unique"
+        }
 
         by_urlsha1 {
-            type "unique_index"
             atts "urlsha1"
             tags "all"
-        }
+            tags "one_to_many"
 
-        by_reversedomain {         
-            type "index"
-            atts "reversedomain"
-            tags "summary"
-        }
-
-        by_langclass {
-            type "index"
-            atts "langclass"
-            tags "summary"
+            comment "one_to_many: same urlsha1 different contentsha1"
+            comment "TODO: strategy to resolve conflicts, i.e. which contentsha1 to point to"
+            keep "latest"
+            comment "keep ::= (latest | all)"
+            comment "keep is used to specify which records to return when we query by urlsha1"
+            comment "keep belongs elsewhere, maybe in type variables, to resolve mtime conflicts"
+            comment "tags is used to specify which attributes to save upon denormalization"
         }
 
         by_contentsha1 {
-            type "unique_index"
             atts "contentsha1"
-            tags "summary"
+            tags "one_to_many"
+
+            comment "one_to_many: same contentsha1 different urlsha1"
+            comment "TODO: strategy to resolve conflicts, i.e. which urlsha1 to point to"
+        }
+
+        by_reversedomain {         
+            atts "reversedomain"
+            tags "one_to_many"
+            comment "one_to_many: many urlsha1 for each reversedomain"
+        }
+
+        by_langclass {
+            atts "langclass"
+            tags "one_to_many"
         }
 
         by_sort_date {
-            type "index"
             atts "sort_date"
-            tags "summary"
+            tags "one_to_many"
         }
 
     }
 
-    variable attributes
-    array set attributes {
+    #by_ts_vector {
+    #    atts "ts_vector"
+    #    func "tokenize???"
+    #    tags "eventual_consistency"
+    #}
+
+    # type ::= type
+    variable att
+    array set att {
+        urlsha1_contentsha1 {
+            type "sha1_hex sha1_hex"
+            func {{itemVar} {upvar $itemVar item; list $item(urlsha1) $item(contentsha1)}}
+        }
         urlsha1 {
-            datatype "sha1_hex"
+            type "sha1_hex"
         }
         contentsha1 {
-            datatype "sha1_hex"
+            type "sha1_hex"
         }
         site {}
         date {}
         langclass {
-            datatype "langclass"
+            type "langclass"
         }
         url {
-            datatype "url"
+            type "url"
         }
         title {
-            datatype "text"
+            type "varchar"
         }
         body {
-            datatype "text"
+            type "varchar"
         }
 
         first_sync {}
@@ -81,6 +108,12 @@ namespace eval ::newsdb::news_item_t {
 
         domain {}
         reversedomain {}
+
+        ts_vector {
+            type "vector<varchar>"
+            TODO_func {{text body} {tokenize [list $text $body]}}
+            tags "eventual_consistency"
+        }
     }
 
     variable aggregates
@@ -99,8 +132,8 @@ namespace eval ::newsdb::content_item_t {
     variable cf "content_item"
     variable pk "contentsha1"
 
-    variable indexes
-    array set indexes {
+    variable idx
+    array set idx {
 
         by_contentsha1 {
             type "unique_index"
@@ -110,18 +143,18 @@ namespace eval ::newsdb::content_item_t {
 
     }
 
-    variable attributes
-    array set attributes {
+    variable att
+    array set att {
         contentsha1 {
-            datatype "sha1_hex"
+            type "sha1_hex"
             validate "notnull"
         }
         title {
-            datatype "text"
+            type "text"
             validate "notnull"
         }
         body {
-            datatype "text"
+            type "text"
             validate "notnull"
         }
     }
@@ -143,8 +176,8 @@ namespace eval ::newsdb::error_item_t {
     variable cf "error_item"
     variable pk "urlsha1_timestamp"
 
-    variable indexes
-    array set indexes {
+    variable idx
+    array set idx {
 
         by_urlsha1 {
             type "index"
@@ -160,35 +193,35 @@ namespace eval ::newsdb::error_item_t {
 
     }
 
-    variable attributes
-    array set attributes {
+    variable att
+    array set att {
         urlsha1 {
-            datatype "sha1_hex"
+            type "sha1_hex"
             validate "notnull"
         }
         timestamp {
-            datatype "timestamp"
+            type "timestamp"
             validate "notnull"
         }
         urlsha1_timestamp {
-            datatype "sha1_hex timestamp"
+            type "sha1_hex timestamp"
             validate "notnull"
         }
         body {
-            datatype "text"
+            type "text"
             validate "notnull"
         }
         errorcode {
-            datatype "integer"
+            type "integer"
         }
         url {
-            datatype "url"
+            type "url"
         }
         http_fetch_info {
             validate "key_value_map"
         }
         title_in_feed {
-            datatype "text"
+            type "text"
         }
         item {
             validate "key_value_map"

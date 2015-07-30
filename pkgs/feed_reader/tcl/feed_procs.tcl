@@ -863,7 +863,7 @@ proc ::feed_reader::ls {args} {
     set slicelist [::newsdb::news_item_t find $where_clause]
 
 
-    set slicelist [::persistence::sort_slice_by $slicelist "sort_date" "decreasing"]
+    set slicelist [::persistence::sort $slicelist "sort_date" "decreasing"]
     set slicelist [lrange $slicelist $offset $limit]
 
 
@@ -874,7 +874,12 @@ proc ::feed_reader::ls {args} {
     }
 
     foreach oid $slicelist {
-        array set item [::persistence::get_data $oid]
+        # set data [lindex [::persistence::get_data $oid] 0]
+        # log $data
+        # log ----
+        set data [::newsdb::news_item_t get $oid]
+
+        array set item [lindex $data 0]
         if { exists("__arg_long_listing") } {
             print_log_entry item context
         } else {
@@ -1367,7 +1372,7 @@ proc ::feed_reader::load_content {itemVar contentsha1 {include_labels_p "1"}} {
     upvar $itemVar item
 
     set oid [::newsdb::content_item_t find_by_id $contentsha1]
-    ::newsdb::content_item_t get $oid item
+    array set item [lindex [::newsdb::content_item_t get $oid] 0]
 
     set contentsha1_to_label_filename [get_contentsha1_to_label_dir]/${contentsha1}
     if { [file exists ${contentsha1_to_label_filename}] } {
@@ -1596,8 +1601,12 @@ proc ::feed_reader::classify {axis urlsha1_list} {
 }
 
 
-# TO BE FIXED
 proc ::feed_reader::show_revisions {urlsha1} {
+
+
+    #set where_clause [list [list urlsha1 = $urlsha1]]
+    #set slicelist [::newsdb::item_revision_t find $where_clause]
+    #puts $slicelist
 
     set slicelist [::persistence::get_supercolumn_slice \
         "newsdb"                                        \

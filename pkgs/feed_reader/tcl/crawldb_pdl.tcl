@@ -21,8 +21,8 @@ namespace eval ::crawldb::sync_info_t {
     variable cf "sync_info"
     variable pk "datetime_urlsha1"
 
-    variable indexes
-    array set indexes {
+    variable idx
+    array set idx {
 
         by_datetime_urlsha1 {
             type "unique_index"
@@ -44,11 +44,11 @@ namespace eval ::crawldb::sync_info_t {
 
     }
 
-    variable attributes
-    array set attributes {
+    variable att
+    array set att {
         datetime_urlsha1 {
             type "datetime sha1_hex"
-            lambda {{datetime urlsha1} {list $datetime $urlsha1}}
+            func {{datetime urlsha1} {list $datetime $urlsha1}}
             comment "derived attribute from datetime and urlsha1"
         }
         urlsha1 {

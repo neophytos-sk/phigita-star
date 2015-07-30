@@ -7,8 +7,8 @@ namespace eval ::sysdb::object_type_t {
     variable cf "object_type"
     variable pk "nsp"
 
-    variable indexes
-    array set indexes {
+    variable idx
+    array set idx {
 
         by_nsp {
             type "unique_index"
@@ -18,10 +18,10 @@ namespace eval ::sysdb::object_type_t {
 
     }
 
-    variable attributes
-    array set attributes {
+    variable att
+    array set att {
         nsp {
-            datatype "sysdb_namespace"
+            type "sysdb_namespace"
         }
         ks {}
         cf {}

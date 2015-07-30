@@ -13,8 +13,8 @@ namespace eval ::webdb::web_page_t {
     variable cf "web_page"
     variable pk "urlsha1"
 
-    variable indexes
-    array set indexes {
+    variable idx
+    array set idx {
 
         by_urlsha1 {
             type "unique_index"
@@ -24,10 +24,10 @@ namespace eval ::webdb::web_page_t {
 
     }
 
-    variable attributes
-    array set attributes {
+    variable att
+    array set att {
         urlsha1 {
-            datatype "sha1_hex"
+            type "sha1_hex"
         }
         url {}
         content {}

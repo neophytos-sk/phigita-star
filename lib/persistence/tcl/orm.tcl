@@ -22,7 +22,7 @@ proc ::persistence::orm::init_type {} {
     variable [namespace __this]::ks
     variable [namespace __this]::cf
     variable [namespace __this]::pk
-    variable [namespace __this]::indexes
+    variable [namespace __this]::idx
 
     # log "persistence (ORM): initializing [namespace __this] ensemble/type"
 
@@ -37,7 +37,7 @@ proc ::persistence::orm::init_type {} {
         # TODO: integrity check
     } else {
         ::persistence::define_ks $ks
-        foreach {index_name index_item} [array get indexes] {
+        foreach {index_name index_item} [array get idx] {
             set axis $index_name
             ::persistence::define_cf $ks $cf.$axis
         }
@@ -72,7 +72,7 @@ proc ::persistence::orm::to_path_by {axis args} {
 proc ::persistence::orm::to_path {id} {
     variable [namespace __this]::pk
     set axis "by_$pk"
-    return [to_path_by $axis $id $id]
+    return [to_path_by $axis $id {*}$id]
     #return [to_path_by $axis $id "__data__"]
 }
 
@@ -80,14 +80,14 @@ proc ::persistence::orm::from_path {path} {
     variable [namespace __this]::ks
     variable [namespace __this]::cf
     variable [namespace __this]::pk
-    variable [namespace __this]::indexes
+    variable [namespace __this]::idx
 
     set column_path [lassign [split ${path} {/}] _ks _cf_axis row_key __delimiter__]
     lassign [split $_cf_axis {.}] _cf axis
 
     assert { $ks eq ${_ks} }
     assert { $cf eq ${_cf} }
-    assert { exists("indexes($axis)") }
+    assert { exists("idx($axis)") }
 
     # process index attributes
     set args [split $column_path {/}]
@@ -96,7 +96,7 @@ proc ::persistence::orm::from_path {path} {
     }
     
     set result [list]
-    array set idx $indexes($axis)
+    array set idx $idx($axis)
     foreach attname $idx(atts) {
         set args [lassign $args attvalue]
         lappend result $attname $attvalue
@@ -121,26 +121,40 @@ proc ::persistence::orm::insert {itemVar} {
     variable [namespace __this]::ks
     variable [namespace __this]::cf
     variable [namespace __this]::pk
-    variable [namespace __this]::indexes
+    variable [namespace __this]::idx
+    variable [namespace __this]::att
 
     upvar $itemVar item
+
+    # compute derived attributes
+    set derived_attributes [list]
+    foreach attname [array names att] {
+        array set attinfo $att($attname)
+        if { [info exists attinfo(func)] && ![info exists item($attname)] } {
+            # log $attinfo(func)
+            set item($attname) [apply $attinfo(func) item]
+        }
+        array unset attinfo
+    }
 
     set data [array get item]
 
     set target [to_path $item($pk)]
 
-    ::persistence::insert_column $target $data
+    # log target=$target
 
-    foreach {index_name index_item} [array get indexes] {
+    ::persistence::insert_column $target $data
+    
+    foreach {index_name index_item} [array get idx] {
         if { $index_name eq "by_$pk" } {
             continue
         }
 
-        array set idx $index_item
-        set attributes $idx(atts)
+        array set idxinfo $index_item
+        set atts $idxinfo(atts)
 
         set row_key [list]
-        foreach attname $attributes {
+        foreach attname $atts {
             lappend row_key $item($attname)
         }
 
@@ -152,23 +166,18 @@ proc ::persistence::orm::insert {itemVar} {
 
 }
 
-proc ::persistence::orm::get {oid {itemVar ""} {exists_pVar ""}} {
-    if { $itemVar ne {} } {
-        upvar $itemVar item
-    }
+# TODO: options or filter tags for get proc
+# get some_oid {{offset ""} {limit ""} {order_by ""}}
+proc ::persistence::orm::get {oid {exists_pVar ""}} {
     if { $exists_pVar ne {} } {
         upvar $exists_pVar exists_p
     }
 
     set exists_p [::persistence::exists_data_p $oid]
     if { $exists_p } {
+        # TODO: options for get_data
         set data [::persistence::get_data $oid]
-        if { $itemVar ne {} } {
-            array set item $data
-            return
-        } else {
-            return $data
-        }
+        return $data
     } else {
         error "no such oid (=$oid) in storage system (=mystore)"
     }
@@ -180,10 +189,10 @@ proc ::persistence::orm::mtime {oid} {
 
 proc ::persistence::orm::find_by_id {value} {
     variable [namespace __this]::pk
-    variable [namespace __this]::attributes
+    variable [namespace __this]::att
 
-    array set attinfo $attributes($pk)
-    foreach datatype $attinfo(datatype) {
+    array set attinfo $att($pk)
+    foreach datatype $attinfo(type) {
         assert { vcheck("value",$datatype) }
     }
 
@@ -194,7 +203,7 @@ proc ::persistence::orm::find_by_id {value} {
 }
 
 proc ::persistence::orm::find_by_axis {argv {predicate ""}} {
-    variable [namespace __this]::indexes
+    variable [namespace __this]::idx
 
     set argc [llength $argv]
     assert { $argc in {5 4 3 2 1} }
@@ -244,10 +253,10 @@ proc ::persistence::orm::find {{where_clause_argv ""} {optionsVar ""}} {
 
         # __find_all starting from the given axis
         variable [namespace __this]::pk
-        variable [namespace __this]::indexes
+        variable [namespace __this]::idx
 
         set axis_attname [value_if options(axis_attname) ${pk}]
-        assert { exists("indexes(by_${axis_attname})") }
+        assert { exists("idx(by_${axis_attname})") }
         return [find_by_axis ${axis_attname}]
 
     } else {
@@ -270,7 +279,7 @@ proc ::persistence::orm::find {{where_clause_argv ""} {optionsVar ""}} {
 
 proc ::persistence::orm::__choose_axis {argv find_by_axis_argsVar} {
     variable [namespace __this]::pk
-    variable [namespace __this]::indexes
+    variable [namespace __this]::idx
 
     upvar $find_by_axis_argsVar find_by_axis_args
 
@@ -279,7 +288,7 @@ proc ::persistence::orm::__choose_axis {argv find_by_axis_argsVar} {
         if { $attname eq $pk } { 
             continue
         }
-        if { $op eq {=} && [info exists indexes(by_$attname)] } {
+        if { $op eq {=} && [info exists idx(by_$attname)] } {
             set find_by_axis_args [list $attname $attvalue]
             return $attname
         }
@@ -289,7 +298,7 @@ proc ::persistence::orm::__choose_axis {argv find_by_axis_argsVar} {
 }
 
 # TODO: reorder/group expressions in argv/predicate
-# based on the indexes/counter we have at our disposal
+# based on the idx/counter we have at our disposal
 # rewrites expressions in terms of persistence::predicate=* procs
 proc ::persistence::orm::__rewrite_where_clause {axis_attname argv} {
     set predicate [list]

@@ -248,8 +248,24 @@ proc ::persistence::fs::insert_link {src_oid target_oid} {
     }
 }
 
-proc ::persistence::fs::exists_data_p {oid} {
+proc ::persistence::fs::exists_supercolumn_data_p {oid} {
+    # assert_supercolumn $oid
     return [file exists [get_filename ${oid}]]
+}
+
+proc ::persistence::fs::exists_column_data_p {oid} {
+    # assert_column $oid
+    return [file exists [get_filename ${oid}]]
+}
+
+proc ::persistence::fs::exists_data_p {oid} {
+    if { [is_supercolumn_p $oid] } {
+        return [exists_supercolumn_data_p $oid]
+    } elseif { [is_column_p $oid] } {
+        return [exists_column_data_p $oid]
+    } else {
+        error "no such data node (=$oid)"
+    }
 }
 
 
@@ -260,9 +276,44 @@ proc ::persistence::fs::set_data {oid data} {
     return [::util::writefile ${filename} ${data}]
 }
 
-proc ::persistence::fs::get_data {oid} {
+proc ::persistence::fs::get_column_data {oid} {
     set filename [get_filename ${oid}]
-    return [::util::readfile ${filename}]
+    set result [list]
+    lappend result [::util::readfile ${filename}]
+    return $result
+}
+
+proc ::persistence::fs::get_supercolumn_data {oid} {
+
+    # assert_supercolumn $oid
+
+    set slicelist [get_leaf_nodes $oid]
+
+    set result [list]
+    foreach leaf_oid $slicelist {
+        set filename [get_filename ${leaf_oid}]
+        lappend result [::util::readfile ${filename}]
+    }
+    return $result
+}
+
+proc ::persistence::fs::is_supercolumn_p {oid} {
+    # TODO: more checks needed here
+    return [file isdirectory [get_filename $oid]]
+}
+
+proc ::persistence::fs::is_column_p {oid} {
+    # TODO: more checks needed here
+    # isfile returns true for files and symbolic links
+    return [file isfile [get_filename $oid]]
+}
+
+proc ::persistence::fs::get_data {oid} {
+    if { [is_supercolumn_p $oid] } {
+        return [get_supercolumn_data $oid]
+    } else {
+        return [get_column_data $oid]
+    }
 }
 
 # TODO: create sysdb::refcount_item_t
@@ -407,11 +458,13 @@ proc ::persistence::fs::predicate=maybe_in_path {slicelistVar parent_path {predi
 
 proc ::persistence::fs::predicate=in_path {slicelistVar parent_path {predicate ""}} {
     upvar $slicelistVar slicelist
-
     set result [list]
     foreach oid $slicelist {
-        set name [get_name $oid]
-        set other_oid "${parent_path}${name}"
+        set column_path [get_column_path $oid]
+        puts parent_path=$parent_path
+        puts column_path=$column_path
+        set other_oid "${parent_path}${column_path}"
+        puts other_oid=$other_oid
         set exists_p [exists_data_p $other_oid]
         if { $exists_p } {
             lappend result $oid
@@ -438,6 +491,20 @@ proc ::persistence::fs::predicate=lsort {slicelistVar args} {
     set _ [lsort {*}${args} ${_}]
 }
 
+proc ::persistence::fs::get_leaf_nodes {path} {
+    set subdirs [get_subdirs $path]
+    if { $subdirs eq {} } {
+        return [get_files $path]
+    } else {
+        set result [list]
+        foreach path $subdirs {
+            foreach oid [get_leaf_nodes $path] {
+                lappend result $oid
+            }
+        }
+        return $result
+    }
+}
 
 # TODO: replace glob with ::util::fs::ls
 proc ::persistence::fs::get_files {path {types "f d"}} {
@@ -688,13 +755,18 @@ proc ::persistence::fs::__multiget_slice {keyspace column_family row_keys {slice
 
 }
 
-proc ::persistence::sort_slice_by {slicelist attname sort_direction} {
+proc ::persistence::sort {slicelist attname sort_direction} {
+
+    assert { $sort_direction in {decreasing increasing} }
+
     set sortlist [list]
-    set index 0
-    foreach path $slicelist {
-        array set item [::persistence::get_data ${path}]
-        lappend sortlist [list $index $item(sort_date) $path]
-        incr index
+    set i 0
+    foreach oid $slicelist {
+        # lindex used as "oid" can be a supercolumn
+        # TODO: improve proc to specify strategy/policy to use in such cases
+        array set item [lindex [::persistence::get_data ${oid}] 0]
+        lappend sortlist [list $i $item(sort_date) $oid]
+        incr i
     }
     set sortlist [lsort -${sort_direction} -index 1 $sortlist] 
 
@@ -845,14 +917,13 @@ proc ::persistence::fs::get_supercolumns {keyspace column_family row_key {superc
 
 
 
-proc ::persistence::fs::__get_column_path {column_parent_dir} {
+proc ::persistence::fs::get_column_path {oid} {
 
-    set delimiter {+}
-    lassign [split ${column_parent_dir} ${delimiter}] row_dir column_path
+    # assert { [is_column_p $oid] || [is_supercolumn_p $oid] }
 
-    # alternatively, we could just trimleft {/} but for
-    # some reason we expect the following would be faster
-    return [string range ${column_path} 1 end]
+    set index [string first {+} $oid]
+    incr index 2 ;# skip the delimiter and the slash i.e. "+/"
+    return [string range $oid $index end]
 
 }
 
