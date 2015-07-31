@@ -815,26 +815,6 @@ proc ::persistence::fs::__multiget_slice {keyspace column_family row_keys {slice
 
 }
 
-proc ::persistence::sort {slicelist attname sort_direction} {
-
-    assert { $sort_direction in {decreasing increasing} }
-
-    set sortlist [list]
-    set i 0
-    foreach oid $slicelist {
-        # lindex used as "oid" can be a supercolumn
-        # TODO: improve proc to specify strategy/policy to use in such cases
-        array set item [lindex [::persistence::get_data ${oid}] 0]
-        lappend sortlist [list $i $item(sort_date) $oid]
-        incr i
-    }
-    set sortlist [lsort -${sort_direction} -index 1 $sortlist] 
-
-    set sorted_slicelist [map x $sortlist {lindex $x 2}]
-    return $sorted_slicelist 
-}
-
-
 
 
 #::persistence::fs::directed_join newsdb
@@ -1224,4 +1204,25 @@ proc ::persistence::fs::multiget_slice {xpath {predicate ""}} {
     set slicelist [__multiget_slice $ks $cf_axis $row_keys $predicate]
     return $slicelist
 }
+
+proc ::persistence::sort {slicelist attname sort_direction} {
+
+    assert { $sort_direction in {decreasing increasing} }
+
+    set sortlist [list]
+    set i 0
+    foreach oid $slicelist {
+        # lindex used, for "oid" can be a supercolumn
+        # TODO: improve proc to specify strategy/policy to use in such cases
+        array set item [lindex [::persistence::get_data ${oid}] 0]
+        lappend sortlist [list $i $item(sort_date) $oid]
+        incr i
+    }
+    set sortlist [lsort -${sort_direction} -index 1 $sortlist] 
+
+    set sorted_slicelist [map x $sortlist {lindex $x 2}]
+    return $sorted_slicelist 
+}
+
+
 

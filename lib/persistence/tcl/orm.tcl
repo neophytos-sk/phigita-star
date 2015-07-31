@@ -23,6 +23,61 @@ proc ::persistence::orm::init_type {} {
     variable [namespace __this]::cf
     variable [namespace __this]::pk
     variable [namespace __this]::idx
+    variable [namespace __this]::att
+    variable [namespace __this]::__attributes
+    variable [namespace __this]::__derived_attributes
+    variable [namespace __this]::__attinfo
+    variable [namespace __this]::__indexes
+    variable [namespace __this]::__idxinfo
+
+    ## 
+    # helpers and speedups
+    #
+
+    # attributes
+
+    set __attributes [array names att]
+    set __derived_attributes [list]
+    array set __attinfo [list]
+
+    foreach attname $__attributes {
+        array set attinfo $att($attname)
+
+        set type [get_value_if attinfo(type) ""]
+        set func [get_value_if attinfo(func) ""]
+        set null [get_value_if attinfo(null) "1"]
+        set maxlen [get_value_if attinfo(maxlen) ""]
+
+        set __attinfo(${attname},type) $type
+        set __attinfo(${attname},func) $func
+        set __attinfo(${attname},null) $null
+        set __attinfo(${attname},maxlen) $maxlen
+
+        if { $func ne {} } {
+            lappend __derived_attributes $attname
+        }
+
+        array unset attinfo
+    }
+
+    # indexes
+    set __indexes [array names idx]
+    array set __idxinfo [list]
+    foreach idxname $__indexes {
+        array set idxinfo $idx($idxname)
+
+        set atts [get_value_if idxinfo(atts) ""]
+        set type [get_value_if idxinfo(type) ""]
+
+        assert { $atts ne {} }
+        # TODO: assert { $type ne {} }
+
+        set __idxinfo(${idxname},atts) $atts
+
+        array unset idxinfo
+    }
+
+
 
     # log "persistence (ORM): initializing [namespace __this] ensemble/type"
 
@@ -45,6 +100,7 @@ proc ::persistence::orm::init_type {} {
         array set item [list ks $ks cf $cf nsp $nsp]
         ::sysdb::object_type_t insert item
     }
+
 }
 
 proc ::persistence::orm::to_path_by {axis args} {
@@ -124,6 +180,11 @@ proc ::persistence::orm::insert {itemVar {optionsVar ""}} {
     variable [namespace __this]::pk
     variable [namespace __this]::idx
     variable [namespace __this]::att
+    variable [namespace __this]::__attributes
+    variable [namespace __this]::__derived_attributes
+    variable [namespace __this]::__attinfo
+    variable [namespace __this]::__indexes
+    variable [namespace __this]::__idxinfo
 
     upvar $itemVar item
 
@@ -131,46 +192,40 @@ proc ::persistence::orm::insert {itemVar {optionsVar ""}} {
         upvar $optionsVar options
     }
 
-    set attributes [array names att]
-
     # compute derived attributes
-    set derived_attributes [list]
-    foreach attname $attributes {
-        array set attinfo $att($attname)
-        if { [info exists attinfo(func)] && ![info exists item($attname)] } {
-            # log $attinfo(func)
-            set item($attname) [apply $attinfo(func) item]
+    foreach attname $__derived_attributes {
+        set func $__attinfo(${attname},func)
+        if { $func ne {} && ![info exists item($attname)] } {
+            set item($attname) [apply $func item]
         }
-        array unset attinfo
     }
 
 
     # validate attribute values
     set option_validate_p [get_value_if options(validate_p) "1"]
-    foreach attname $attributes {
-        array set attinfo $att($attname)
+    if { $option_validate_p } {
+        foreach attname $__attributes {
 
-        set optional_p [get_value_if attinfo(null) "1"]
-        if { $optional_p && [get_value_if item($attname) ""] eq {} } {
-            array unset attinfo
-            continue
-        }
-        assert { exists("item($attname)") }
+            set optional_p $__attinfo(${attname},null)
+            if { $optional_p && [get_value_if item($attname) ""] eq {} } {
+                continue
+            }
+            assert { exists("item($attname)") }
 
-        set maxlen [get_value_if attinfo(maxlen) ""]
-        if { $maxlen ne {} } {
-            assert { [string length $item($attname)] < $maxlen }
-        }
+            set maxlen $__attinfo(${attname},maxlen)
+            if { $maxlen ne {} } {
+                assert { [string length $item($attname)] < $maxlen }
+            }
 
-        set datatype [get_value_if attinfo(type) ""]
-        if { $datatype ne {} } {
-            assert { [pattern matchall [list $datatype] item($attname)] } {
-                printvars
+            set datatype $__attinfo(${attname},type)
+            if { $datatype ne {} } {
+                assert { [pattern matchall [list $datatype] item($attname)] } {
+                    printvars
+                }
+
             }
 
         }
-
-        array unset attinfo
     }
 
     set target [to_path $item($pk)]
@@ -182,20 +237,19 @@ proc ::persistence::orm::insert {itemVar {optionsVar ""}} {
 
     ::persistence::insert_column $target $data
     
-    foreach {index_name index_item} [array get idx] {
-        if { $index_name eq "by_$pk" } {
+    foreach idxname $__indexes {
+        if { $idxname eq "by_$pk" } {
             continue
         }
 
-        array set idxinfo $index_item
-        set atts $idxinfo(atts)
+        set atts $__idxinfo(${idxname},atts)
 
         set row_key [list]
         foreach attname $atts {
             lappend row_key $item($attname)
         }
 
-        set axis $index_name
+        set axis $idxname
         set src [to_path_by ${axis} ${row_key} $item($pk)]
         ::persistence::insert_link $src $target
 

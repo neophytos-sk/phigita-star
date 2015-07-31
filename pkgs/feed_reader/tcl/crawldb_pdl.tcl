@@ -58,7 +58,6 @@ namespace eval ::crawldb::sync_info_t {
         }
         datetime {
             type "datetime"
-            fmt  "%Y%m%dT%H%M"
         }
     }
 

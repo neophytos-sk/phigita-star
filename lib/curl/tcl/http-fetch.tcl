@@ -100,7 +100,9 @@ proc ::web::cache_fetch {contentVar url {optionsVar ""} {infoVar ""}} {
 
         set timeout [expr { 15 * 60 }]
         set now [clock seconds]
-        if { $mtime + $timeout > $now } {
+        set recent_fetch_p [expr { $mtime + $timeout > $now }]
+
+        if { $recent_fetch_p } {
             # returns content of web page as upvar with the given name
             log "fetching page from cache: $url"
             set content $item(content)
