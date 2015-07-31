@@ -16,7 +16,8 @@ namespace eval ::persistence::fs {
         ls list_ks list_cf list_axis list_row list_col list_path \
         num_rows num_cols \
         get_name delete_data \
-        mtime get_filename
+        mtime get_filename \
+        expand_slice expand_oid
 }
 
 proc ::persistence::fs::get_path {args} {
@@ -249,22 +250,30 @@ proc ::persistence::fs::insert_link {src_oid target_oid} {
 }
 
 proc ::persistence::fs::exists_supercolumn_data_p {oid} {
-    # assert_supercolumn $oid
-    return [file exists [get_filename ${oid}]]
+    assert { [is_supercolumn_oid_p $oid] }
+    set filename [get_filename $oid]
+    return [expr { [file exists $filename] && [file isdirectory $filename] }]
 }
 
 proc ::persistence::fs::exists_column_data_p {oid} {
-    # assert_column $oid
-    return [file exists [get_filename ${oid}]]
+    assert { [is_column_oid_p $oid] }
+    set filename [get_filename $oid]
+    return [file exists $filename]
+}
+
+proc ::persistence::fs::exists_row_data_p {oid} {
+    assert { [is_row_oid_p $oid] }
+    set filename [get_filename $oid]
+    return [file exists $filename]
 }
 
 proc ::persistence::fs::exists_data_p {oid} {
-    if { [is_supercolumn_p $oid] } {
-        return [exists_supercolumn_data_p $oid]
-    } elseif { [is_column_p $oid] } {
-        return [exists_column_data_p $oid]
+    if { [is_row_oid_p $oid] } {
+        return [exists_row_data_p $oid]
+    } elseif { [is_column_oid_p $oid] || [is_supercolumn_oid_p $oid] } {
+        return [expr { [exists_column_data_p $oid] || [exists_supercolumn_data_p $oid] }]
     } else {
-        error "no such data node (=$oid)"
+        error "unknown oid (=$oid) type: must be row, column, or supercolumn"
     }
 }
 
@@ -283,6 +292,48 @@ proc ::persistence::fs::get_column_data {oid} {
     return $result
 }
 
+proc ::persistence::fs::expand_oid {oid} {
+    if { [is_row_oid_p $oid] && [exists_row_data_p $oid] } {
+        return [get_leaf_nodes $oid]
+    } elseif { [is_supercolumn_oid_p $oid] && [exists_supercolumn_data_p $oid] } {
+        return [get_leaf_nodes $oid]
+    } else {
+        return $oid
+    }
+}
+
+proc ::persistence::fs::is_expanded_p {slicelist} {
+    set llen [llength $slicelist]
+    if { $llen == 0 } {
+        return 1
+    }
+    
+    set oid [lindex $slicelist 0]
+    if { [is_row_oid_p $oid] && [exists_row_data_p $oid] } {
+        return 0
+    } elseif { [is_supercolumn_oid_p $oid] && [exists_supercolumn_data_p $oid] } {
+        return 0
+    } else {
+        return 1
+    }
+
+}
+
+proc ::persistence::fs::expand_slice {slicelist} {
+
+    if { [is_expanded_p $slicelist] } {
+        return $slicelist
+    }
+
+    set result [list]
+    foreach oid $slicelist {
+        foreach leaf_oid [expand_oid $oid] {
+            lappend result $leaf_oid
+        }
+    }
+    return $result
+}
+
 proc ::persistence::fs::get_supercolumn_data {oid} {
 
     # assert_supercolumn $oid
@@ -297,22 +348,31 @@ proc ::persistence::fs::get_supercolumn_data {oid} {
     return $result
 }
 
-proc ::persistence::fs::is_supercolumn_p {oid} {
+proc ::persistence::fs::is_supercolumn_oid_p {oid} {
     # TODO: more checks needed here
-    return [file isdirectory [get_filename $oid]]
+    set column_path [lassign [split $oid {/}] ks cf_axis row_path __delimiter__]
+    return [expr { $column_path ne {} }]
 }
 
-proc ::persistence::fs::is_column_p {oid} {
+proc ::persistence::fs::is_column_oid_p {oid} {
     # TODO: more checks needed here
-    # isfile returns true for files and symbolic links
-    return [file isfile [get_filename $oid]]
+    set column_path [lassign [split $oid {/}] ks cf_axis row_path __delimiter__]
+    return [expr { $column_path ne {} }]
+}
+
+proc ::persistence::fs::is_row_oid_p {oid} {
+    # TODO: more checks needed here
+    set column_path [lassign [split $oid {/}] ks cf_axis row_path __delimiter__]
+    return [expr { $column_path eq {} }]
 }
 
 proc ::persistence::fs::get_data {oid} {
-    if { [is_supercolumn_p $oid] } {
+    if { [is_supercolumn_oid_p $oid] && [exists_supercolumn_data_p $oid] } {
         return [get_supercolumn_data $oid]
-    } else {
+    } elseif { [is_column_oid_p $oid] && [exists_column_data_p $oid] } {
         return [get_column_data $oid]
+    } else {
+        error "no such data node (=$oid) in the store"
     }
 }
 
@@ -461,10 +521,10 @@ proc ::persistence::fs::predicate=in_path {slicelistVar parent_path {predicate "
     set result [list]
     foreach oid $slicelist {
         set column_path [get_column_path $oid]
-        puts parent_path=$parent_path
-        puts column_path=$column_path
+        # log parent_path=$parent_path
+        # log column_path=$column_path
         set other_oid "${parent_path}${column_path}"
-        puts other_oid=$other_oid
+        # log other_oid=$other_oid
         set exists_p [exists_data_p $other_oid]
         if { $exists_p } {
             lappend result $oid
@@ -620,9 +680,9 @@ proc ::persistence::fs::__get_column {keyspace column_family row_key column_path
         upvar ${exists_pVar} exists_p
     }
 
-    set exists_p [exists_data_p ${path}]
+    set exists_p [exists_column_data_p ${path}]
     if { ${exists_p} } {
-        set data [get_data ${path}]
+        set data [lindex [get_column_data ${path}] 0]
         return ${path}
     } else {
         return

@@ -66,6 +66,8 @@ proc ::persistence::orm::to_path_by {axis args} {
 
     set target "${ks}/${cf}.${axis}/${row_key}/+/${column_path}"
 
+    #puts target=$target
+
     return $target
 }
 
@@ -116,8 +118,7 @@ proc ::persistence::orm::from_path {path} {
     return $result
 }
 
-
-proc ::persistence::orm::insert {itemVar} {
+proc ::persistence::orm::insert {itemVar {optionsVar ""}} {
     variable [namespace __this]::ks
     variable [namespace __this]::cf
     variable [namespace __this]::pk
@@ -126,9 +127,15 @@ proc ::persistence::orm::insert {itemVar} {
 
     upvar $itemVar item
 
+    if { $optionsVar ne {} } {
+        upvar $optionsVar options
+    }
+
+    set attributes [array names att]
+
     # compute derived attributes
     set derived_attributes [list]
-    foreach attname [array names att] {
+    foreach attname $attributes {
         array set attinfo $att($attname)
         if { [info exists attinfo(func)] && ![info exists item($attname)] } {
             # log $attinfo(func)
@@ -137,11 +144,41 @@ proc ::persistence::orm::insert {itemVar} {
         array unset attinfo
     }
 
-    set data [array get item]
+
+    # validate attribute values
+    set option_validate_p [get_value_if options(validate_p) "1"]
+    foreach attname $attributes {
+        array set attinfo $att($attname)
+
+        set optional_p [get_value_if attinfo(null) "1"]
+        if { $optional_p && [get_value_if item($attname) ""] eq {} } {
+            array unset attinfo
+            continue
+        }
+        assert { exists("item($attname)") }
+
+        set maxlen [get_value_if attinfo(maxlen) ""]
+        if { $maxlen ne {} } {
+            assert { [string length $item($attname)] < $maxlen }
+        }
+
+        set datatype [get_value_if attinfo(type) ""]
+        if { $datatype ne {} } {
+            assert { [pattern matchall [list $datatype] item($attname)] } {
+                printvars
+            }
+
+        }
+
+        array unset attinfo
+    }
 
     set target [to_path $item($pk)]
 
     # log target=$target
+
+    # TODO: encode item data
+    set data [array get item]
 
     ::persistence::insert_column $target $data
     
@@ -175,12 +212,42 @@ proc ::persistence::orm::get {oid {exists_pVar ""}} {
 
     set exists_p [::persistence::exists_data_p $oid]
     if { $exists_p } {
-        # TODO: options for get_data
-        set data [::persistence::get_data $oid]
-        return $data
+        return [::persistence::get_data $oid]
     } else {
         error "no such oid (=$oid) in storage system (=mystore)"
     }
+}
+
+# TODO: expand/unfold oid to column oids (in case it is a supercolumn or row oid)
+# 0or1row -
+# * returns a single record for the given oid, if it exists
+proc ::persistence::orm::0or1row {where_clause_argv {exists_pVar ""}} {
+    if { $exists_pVar ne {} } {
+        upvar $exists_pVar exists_p
+    }
+
+    set slicelist [find $where_clause_argv]
+
+    set llen [llength $slicelist]
+
+    if { $llen > 1 } {
+        error "persistence (ORM): more records in slice than expected (0or1row)"
+    }
+
+    # note that lindex returns "" if no elements in the list
+    return [lindex $slicelist 0]
+
+}
+
+
+# retrieves a record without any explicit ordering
+proc ::persistence::orm::take {oid {num 1}} {
+    set data [get $oid]
+    set llen [llength $data]
+    if { $llen < $num } {
+        error "not enough items: oid (=$oid), req (=$num), llen (=$llen)"
+    }
+    return [lrange [get $oid] 0 [expr { $num - 1 }]]
 }
 
 proc ::persistence::orm::mtime {oid} {
@@ -243,7 +310,8 @@ proc ::persistence::orm::find_by_axis {argv {predicate ""}} {
 }
 
 
-# finds the records satisfying the specified predicate(s)
+# find -
+# * finds all nodes matching some conditions
 proc ::persistence::orm::find {{where_clause_argv ""} {optionsVar ""}} {
     if { $optionsVar ne {} } {
         upvar $optionsVar options
@@ -257,7 +325,7 @@ proc ::persistence::orm::find {{where_clause_argv ""} {optionsVar ""}} {
 
         set axis_attname [value_if options(axis_attname) ${pk}]
         assert { exists("idx(by_${axis_attname})") }
-        return [find_by_axis ${axis_attname}]
+        set slicelist [find_by_axis ${axis_attname}]
 
     } else {
 
@@ -271,10 +339,35 @@ proc ::persistence::orm::find {{where_clause_argv ""} {optionsVar ""}} {
             log "chosen axis (attribute) = $attname"
             log "chosen axis (args) = $find_by_axis_args"
             log "rewritten predicate = $predicate"
-            return [find_by_axis $find_by_axis_args $predicate]
+            set slicelist [find_by_axis $find_by_axis_args $predicate]
         }
 
     }
+
+    set option_expand_p [get_value_if options(expand_p) "1"] 
+    set option_order_by [get_value_if options(order_by) ""]
+
+    if { $option_expand_p } {
+        set slicelist [::persistence::expand_slice $slicelist]
+    }
+
+    if { $option_order_by ne {} } {
+        assert { $option_expand_p }
+        
+        lassign $option_order_by sort_attname sort_direction
+
+        assert { $sort_direction in {increasing decreasing} }
+
+        set slicelist [::persistence::sort $slicelist $sort_attname $sort_direction]
+    }
+
+    if { exists("options(offset)") || exists("options(limit)") } {
+        set offset [get_value_if options(offset) "0"]
+        set limit [get_value_if options(limit) "end"]
+        set slicelist [lrange $slicelist $offset $limit]
+    }
+
+    return $slicelist
 }
 
 proc ::persistence::orm::__choose_axis {argv find_by_axis_argsVar} {
@@ -318,5 +411,70 @@ proc ::persistence::orm::__rewrite_where_clause {axis_attname argv} {
         }
     }
     return $predicate
+}
+
+
+if {0} {
+    proc write_x {dataVar type value} {
+        upvar $dataVar data
+        set len [string bytelength $value]
+        append data [binary format i $len]
+        append data $value
+        return
+    }
+
+    proc read_x {dataVar valueVar} {
+        upvar $dataVar data
+        upvar $valueVar value
+
+        set binval ""
+        binary scan $binval i len
+        set value [string range $data $i [expr { $i + $len }]]
+        return
+    }
+
+    proc ::persistence::orm::encode {itemVar dataVar} {
+        variable [namespace __this]::att
+
+        upvar $itemVar item
+        upvar $dataVar data
+
+        set data ""
+        set names [array names item]
+        foreach name $names {
+            array set attinfo $att($name)
+            set datatype [value_if attinfo(type) "varchar"]
+            write_x data $datatype $item($name)
+            array unset attinfo
+        }
+    }
+
+    proc ::persistence::orm::decode {dataVar itemVar} {
+        upvar $dataVar
+        upvar $itemVar
+        
+        array set item [list]
+        set datalen [string bytelength $data]
+        while { $i < $datalen } {
+            incr i [read_x data name]
+            incr i [read_x data item($name)]
+        }
+
+        return
+    }
+
+    # first -
+    # * retrieves the first record ordered by the primary key
+    # * you can pass a numerical argument to return up to that
+    #   number of results
+    proc ::persistence::orm::first {oid {num 1}} {}
+
+    # last -
+    # * retrieves the last record ordered by the primary key
+    # * you can pass a numerical argument to return up to that
+    #   number of results
+    proc ::persistence::orm::last {oid {num 1}} {}
+
+
 }
 

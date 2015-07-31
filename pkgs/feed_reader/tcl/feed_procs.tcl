@@ -860,11 +860,14 @@ proc ::feed_reader::ls {args} {
     #
     # lappend predicate [list "lrange" [list $offset $limit]]
 
-    set slicelist [::newsdb::news_item_t find $where_clause]
+    array set options [list]
+    set options(order_by) "sort_date decreasing"
+    set options(offset) $offset
+    set options(limit) $limit
+
+    set slicelist [::newsdb::news_item_t find $where_clause options]
 
 
-    set slicelist [::persistence::sort $slicelist "sort_date" "decreasing"]
-    set slicelist [lrange $slicelist $offset $limit]
 
 
     if { exists("__arg_long_listing") } {
@@ -1305,8 +1308,11 @@ proc ::feed_reader::load_item {itemVar urlsha1} {
 
     upvar $itemVar item
 
-    set oid [::newsdb::news_item_t find_by_id $urlsha1]
-    ::newsdb::news_item_t get $oid item
+    set where_clause [list [list urlsha1 = $urlsha1]]
+    set slicelist [::newsdb::news_item_t find $where_clause]
+    set oid [lindex $slicelist 0]
+    # set oid [lindex [::persistence::expand_slice $slicelist] 0]
+    array set item [lindex [::newsdb::news_item_t get $oid] 0]
 
     load_content item $item(contentsha1)
 

@@ -87,11 +87,14 @@ proc ::web::cache_fetch {contentVar url {optionsVar ""} {infoVar ""}} {
 
     array set item [list]
     set urlsha1 [::sha1::sha1 -hex $url]
-    set oid [::webdb::web_page_t find_by_id $urlsha1]
+    set where_clause [list [list urlsha1 = $urlsha1]]
+    set slicelist [::webdb::web_page_t find $where_clause]
 
-    if { $oid ne {} } {
+    if { $slicelist ne {} } {
+        set oid [lindex $slicelist 0]
 
-        ::webdb::web_page_t get $oid item
+        set data [::webdb::web_page_t get $oid]
+        array set item [lindex $data 0]
 
         set mtime [::webdb::web_page_t mtime $oid]
 
@@ -111,17 +114,9 @@ proc ::web::cache_fetch {contentVar url {optionsVar ""} {infoVar ""}} {
             urlsha1 $urlsha1    \
             url $url            \
             content $content]
-            
+
         ::webdb::web_page_t insert item
 
-        if {0} {
-            ::persistence::insert_column \
-                $keyspace \
-                $column_family \
-                $row_key \
-                $column_path \
-                $html
-        }
     }
 
     return $errorcode

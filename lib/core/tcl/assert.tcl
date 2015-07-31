@@ -10,11 +10,17 @@
 #
 proc assert {expression {script ""}} {
 
-    if { ${script} eq {} } {
-        set script [list error "failed to assert expression: $expression"]
+    if { $script ne {} } {
+        if { ![uplevel [list {expr} ${expression}]] } {
+            uplevel ${script}
+        } else {
+            return
+        }
     }
+
     
     if { ![uplevel [list {expr} ${expression}]] } {
+        set script [list error "failed to assert expression: $expression"]
         uplevel ${script}
     }
 

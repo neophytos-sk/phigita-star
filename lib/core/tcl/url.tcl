@@ -153,7 +153,7 @@ proc ::url::match {pattern url} {
                 if { $format_group eq {} } {
                     continue
                 }
-                set match_p [pattern match [pattern from_fmt $format_group] $url_query($name)]
+                set match_p [pattern match [pattern from_fmt $format_group] url_query($name)]
                 if { !$match_p } {
                     return false
                 }
@@ -171,7 +171,7 @@ proc ::url::match {pattern url} {
     # match path with fmt
     foreach str1 [::split $fmt_a(path) {/}] str2 [::split $url_a(path) {/}] {
         if { [string index $str1 0] eq {%} } {
-            set match_p [pattern match [pattern from_fmt $str1] $str2]
+            set match_p [pattern match [pattern from_fmt $str1] str2]
             if { !$match_p } {
                 return false
             }

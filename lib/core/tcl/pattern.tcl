@@ -1,5 +1,5 @@
 namespace eval ::pattern {
-    namespace ensemble create -subcommands {to_fmt from_fmt match check}
+    namespace ensemble create -subcommands {to_fmt from_fmt match matchall}
 
     variable fmt_to_pattern
     variable pattern_to_fmt
@@ -37,18 +37,45 @@ proc ::pattern::from_fmt {format_groups} {
     return $result
 }
 
-proc ::pattern::check {valueVar pattern_names} {
+proc ::pattern::matchall {pattern_names valueVar} {
     upvar $valueVar value
+
     foreach pattern_name ${pattern_names} {
-        if { ![::pattern::check=$pattern_name value] } {
+        if { ![::pattern::match $pattern_name value] } {
             return 0
         }
     }
     return 1
 }
 
-proc ::pattern::match {pattern_name str} {
-    return [::pattern::check=$pattern_name str]
+proc ::pattern::match {pattern_name valueVar} {
+    upvar $valueVar value
+
+    set llen_pattern [llength $pattern_name]
+
+    if { $llen_pattern > 1 } {
+
+        # composite pattern name
+
+        set llen_value [llength $value]
+        if { $llen_value != $llen_pattern } {
+            return 0
+        }
+
+        foreach p $pattern_name v $value {
+            if { ![::pattern::match $p v] } {
+                return 0
+            }
+        }
+
+    } else {
+
+        if { ![::pattern::check=$pattern_name value] } {
+            return 0
+        }
+
+    }
+    return 1
 }
 
 proc ::pattern::typeof {value {names ""}} {
@@ -180,6 +207,12 @@ proc ::pattern::check=domain {valueVar} {
 
 }
 
+proc ::pattern::check=reversedomain {valueVar} {
+    upvar ${valueVar} value
+    set domain [join [lreverse [split ${value} {.}]] {.}]
+    return [check=domain domain]
+}
+
 
 proc ::pattern::check=sha1_hex {valueVar} {
     upvar ${valueVar} value
@@ -282,6 +315,13 @@ proc ::pattern::check=naturalnum {valueVar} {
     return 0
 }
 
+# clock format 0 -format "%Y%m%dT%H:%M"
+# => 19700101T03:01
+proc ::pattern::check=timestamp {valueVar} {
+    upvar ${valueVar} value
+    return [check=naturalnum value]
+}
+
 proc ::pattern::check=double {valueVar} {
     upvar ${valueVar} value
     return [string is double -strict ${value}]
@@ -361,6 +401,37 @@ proc ::pattern::check=dd-mm-yyyy {valueVar} {
     upvar ${valueVar} value
     set re {^(0[1-9]|[12][0-9]|3[01])([- /.])(0[1-9]|1[012])\2((?:19|20)\d\d)$}
     return [is_valid_date value ${re} {day delimiter month year}]
+}
+
+proc ::pattern::check=date_YYYYmmdd {valueVar} {
+    upvar ${valueVar} value
+    set re {^((?:19|20)\d\d)(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[01])$}
+    return [is_valid_date value ${re} {year month day}]
+}
+
+proc ::pattern::check=time_HHMM {valueVar} {
+    upvar ${valueVar} value
+
+    if { [string length $value] != 4 } {
+        return 0
+    }
+
+    set hours [string range $value 0 1]
+    set minutes [string range $value 2 3]
+    
+    if { $hours >= 0 && $hours <= 23 } {
+        if { $minutes >= 0 && $minutes <= 59 } {
+            return 1
+        }
+    }
+    return 0
+}
+
+# datetime_YYYYmmddTHH:MM
+proc ::pattern::check=datetime {valueVar} {
+    upvar $valueVar value
+    lassign [split $value {T}] date time
+    return [expr { [check=date_YYYYmmdd date] && [check=time_HHMM time] }]
 }
 
 

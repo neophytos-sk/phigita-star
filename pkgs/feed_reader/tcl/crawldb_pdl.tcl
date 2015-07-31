@@ -50,6 +50,8 @@ namespace eval ::crawldb::sync_info_t {
             type "datetime sha1_hex"
             func {{datetime urlsha1} {list $datetime $urlsha1}}
             comment "derived attribute from datetime and urlsha1"
+            null "0"
+            skip "1"  ;# do not save???
         }
         urlsha1 {
             type "sha1_hex"

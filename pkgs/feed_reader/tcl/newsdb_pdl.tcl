@@ -69,12 +69,18 @@ namespace eval ::newsdb::news_item_t {
     #    tags "eventual_consistency"
     #}
 
+    #attribute add urlsha1_contentsha1 --type {sha1_hex_t sha1_hex_t}
+    #attribute add urlsha1 --type sha1_hex_t
+
     # type ::= type
     variable att
     array set att {
         urlsha1_contentsha1 {
             type "sha1_hex sha1_hex"
-            func {{itemVar} {upvar $itemVar item; list $item(urlsha1) $item(contentsha1)}}
+            func {{itemVar} {
+                upvar $itemVar item
+                list $item(urlsha1) $item(contentsha1)
+            }}
         }
         urlsha1 {
             type "sha1_hex"
@@ -82,8 +88,6 @@ namespace eval ::newsdb::news_item_t {
         contentsha1 {
             type "sha1_hex"
         }
-        site {}
-        date {}
         langclass {
             type "langclass"
         }
@@ -91,28 +95,57 @@ namespace eval ::newsdb::news_item_t {
             type "url"
         }
         title {
-            type "varchar"
+            type ""
         }
         body {
-            type "varchar"
+            type ""
+        }
+        is_revision_p {
+            type "boolean"
+        }
+        is_copy_p {
+            type "boolean"
+        }
+        domain {
+            type "domain"
+        }
+        reversedomain {
+            type "reversedomain"
+        }
+        date {
+            type "datetime"
+            null "true"
+            comment "date extracted from article, can be null"
+        }
+        sort_date {
+            type "datetime"
         }
 
-        first_sync {}
-        last_sync {}
-        is_revision_p {}
-        is_copy_p {}
 
-        timestamp {}
-        date {}
-        sort_date {}
-
-        domain {}
-        reversedomain {}
+        first_sync {
+            type ""
+        }
+        last_sync {
+            type ""
+        }
+        timestamp {
+            type "naturalnum"
+        }
+        attachment {
+            type ""
+        }
+        tags {
+            type ""
+        }
+        video {
+            type ""
+        }
 
         ts_vector {
             type "vector<varchar>"
             TODO_func {{text body} {tokenize [list $text $body]}}
             tags "eventual_consistency"
+            null "true"
         }
     }
 
@@ -147,15 +180,12 @@ namespace eval ::newsdb::content_item_t {
     array set att {
         contentsha1 {
             type "sha1_hex"
-            validate "notnull"
         }
         title {
-            type "text"
-            validate "notnull"
+            type ""
         }
         body {
-            type "text"
-            validate "notnull"
+            type ""
         }
     }
 
@@ -208,7 +238,7 @@ namespace eval ::newsdb::error_item_t {
             validate "notnull"
         }
         body {
-            type "text"
+            type ""
             validate "notnull"
         }
         errorcode {
@@ -221,7 +251,7 @@ namespace eval ::newsdb::error_item_t {
             validate "key_value_map"
         }
         title_in_feed {
-            type "text"
+            type ""
         }
         item {
             validate "key_value_map"

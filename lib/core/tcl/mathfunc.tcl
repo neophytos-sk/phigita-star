@@ -4,8 +4,8 @@ proc ::tcl::mathfunc::exists {varname} {
 }
 
 proc ::tcl::mathfunc::vcheck {valueVar pattern_names} {
-    upvar $valueVar _
-    return [pattern check _ $pattern_names]
+    upvar $valueVar value
+    return [pattern matchall $pattern_names value]
 }
 
 proc ::tcl::mathfunc::vcheck_if {valueVar pattern_names} {
