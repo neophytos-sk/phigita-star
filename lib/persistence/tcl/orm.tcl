@@ -276,7 +276,7 @@ proc ::persistence::orm::find_by_axis {argv {predicate ""}} {
     assert { $argc in {5 4 3 2 1} }
 
     log "argc = $argc"
-    
+
     if { $argc >= 3 } {
 
         lassign $argv attname attvalue id dataVar exists_pVar
@@ -378,9 +378,6 @@ proc ::persistence::orm::__choose_axis {argv find_by_axis_argsVar} {
 
     foreach arg $argv {
         lassign $arg attname op attvalue
-        if { $attname eq $pk } { 
-            continue
-        }
         if { $op eq {=} && [info exists idx(by_$attname)] } {
             set find_by_axis_args [list $attname $attvalue]
             return $attname
