@@ -234,17 +234,17 @@ proc ::templating::js::compile_js {prefix js {compilation_level "ADVANCED_OPTIMI
         set JAVA /opt/jdk/bin/java
         set JAVA "java"
         set cmd "${JAVA} -jar /opt/closure/compiler.jar --compilation_level ${compilation_level} --create_source_map ${mapfile} --js ${infile} --js_output_file ${outfile} --process_closure_primitives false --define DEBUG=${ENABLE_DEBUG}"
-        #ns_log notice "::xo::js::compile (CLOSURE) -> cmd=$cmd"
+        #log notice "::xo::js::compile (CLOSURE) -> cmd=$cmd"
         set errmsg [exec -- /bin/sh -c "${cmd} 2>&1 || exit 0" 2> /dev/null]
         if { [file exists $outfile] } {
             set size [file size $outfile]
             if { $size > 0 } {
-                ns_log debug "SUCCESS file $outfile size=[file size $outfile]"
+                log debug "SUCCESS file $outfile size=[file size $outfile]"
             } else {
-                ns_log error "FAILURE errmsg=$errmsg"
+                log error "FAILURE errmsg=$errmsg"
             }
         } else {
-            ns_log error "file $outfile does not exist... something went wrong while compiling"
+            log error "file $outfile does not exist... something went wrong while compiling"
         }
     }
     set result ""

@@ -1,11 +1,38 @@
-namespace eval ::templating::css {;}
+namespace eval ::templating::css {
+
+    variable sBase64Chars
+
+    set i 0
+    foreach char {
+	a b c d e f g h i j k l m n
+	o p q r s t u v w x y z 0 1 
+	2 3 4 5 6 7 8 9 _
+    } {
+	set sBaseChars(${i}) $char
+	incr i
+    }
+
+
+}
+
+proc ::templating::css::obfuscate {id} {
+    variable sBaseChars
+    set result ""
+    append result $sBaseChars([expr {${id} & 0x0f}])
+    set id [expr { ${id} >> 4  }]
+    while { ${id} != 0 } {
+        append result $sBaseChars([expr {${id} & 0x1f}])
+        set id [expr { ${id} >> 5  }]
+    }
+    return ${result}
+}
 
 proc ::templating::css::cssId {name} {
 
     if {[info exists ::__CSS_EL__(${name})]} {
 	return $::__CSS_EL__(${name})
     }
-    return [set ::__CSS_EL__(${name}) [::xo::html::obfuscate [incr ::__CSS_ID__]]]
+    return [set ::__CSS_EL__(${name}) [obfuscate [incr ::__CSS_ID__]]]
 }
 
 proc ::templating::css::keepCss {selectors} {
@@ -80,7 +107,7 @@ proc ::templating::css::compile_css {codearrVar templateDoc template_file rename
     set re {\.[a-z][a-z0-9\-]+[a-z0-9]}
     set all_css_classes [lsort -unique [regexp -nocase -inline -all -- $re $css]]
 
-    #::xo::kit::log all_css_classes=$all_css_classes
+    #log all_css_classes=$all_css_classes
 
     # add alternate directive
     set new_css ""
@@ -151,7 +178,7 @@ proc replace_css_url {codearrVar textVar} {
 
     upvar $textVar text
 
-    # ns_log notice replace_css_url=$text
+    # log notice replace_css_url=$text
 
     # TODO: if http url, fetch the file from the web
 
@@ -179,7 +206,7 @@ proc ::templating::css::rename_doc_classes {templateDoc rename_mapVar seenVar} {
 
     set ::__CSS_ID__ [llength [array names rename_map]]
 
-    #::xo::kit::log rename_map=[array get rename_map]
+    #log rename_map=[array get rename_map]
 
 
     # TODO: in css_valid_selector, create xpath from selector and search templateDoc
@@ -317,7 +344,7 @@ proc css_valid_selector {templateDoc selector seenVar} {
 		    set seen($keyword) 1
 		    continue
 		} else {
-		    #::xo::kit::log not_found_keyword=$keyword
+		    #log not_found_keyword=$keyword
 		    return 0
 		}
 	    } else {
@@ -346,7 +373,7 @@ proc expand_selectors {cssClassesVar selectors} {
     foreach selector $parts {
 	set matches [regexp -inline -indices -all -- $re $selector]
 	if { $matches ne {} } {
-	    #::xo::kit::log matches=$matches
+	    #log matches=$matches
 	    set list_of_lists [list]
 	    foreach {match_range submatch_range} $matches {
 		lassign $match_range match_start match_end
@@ -354,17 +381,17 @@ proc expand_selectors {cssClassesVar selectors} {
 		set op [string index $selector [expr {$match_start + 6}]]
 		set submatch [string range $selector $submatch_start $submatch_end]
 		set pattern "*${submatch}*"
-		#::xo::kit::log op=$op
+		#log op=$op
 		if { $op eq {*} } {
 		    set class_names [lsearch -all -inline -glob $cssClasses $pattern]
 		} elseif { $op eq {^} } {
 		    set class_names [lsearch -all -inline -glob $cssClasses $pattern]
 		} else {
-		    ::xo::kit::log "unknown operator, supported for now is class*= and class^="
+		    log "unknown operator, supported for now is class*= and class^="
 		}
 		lappend list_of_lists $class_names
 	    }
-	    #::xo::kit::log list_of_lists=$list_of_lists
+	    #log list_of_lists=$list_of_lists
 	    # TODO: rewrite selector according to cartesian product of list_of_lists
 	    if { 1 == [llength $list_of_lists] } {
 		foreach class_names $list_of_lists {match_range submatch_range} $matches {
@@ -378,7 +405,7 @@ proc expand_selectors {cssClassesVar selectors} {
 		#lappend new_selectors $selector
 		lappend new_selectors $selector
 	    }
-	    #::xo::kit::log new_selectors=[join $new_selectors {, }]
+	    #log new_selectors=[join $new_selectors {, }]
 	} else {
 	    lappend new_selectors $selector
 	}

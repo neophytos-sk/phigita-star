@@ -1,13 +1,8 @@
-namespace eval ::fs {
-    namespace ensemble create -subcommands {
-        find
-    }
-}
 
 # ::fs::find - search for files in a directory hierarchy 
 # @param basedir {string} the directory to start looking in
 # @param pattern {glob pattern} A pattern, as defined by the glob command, that the files must match
-proc ::fs::find {
+proc ::tcl::file::__find {
     {basedir "."} 
     {pattern "*"}
 } {
@@ -41,4 +36,10 @@ proc ::fs::find {
 
     return $filelist
 }
+
+
+set __config_map [namespace ensemble configure file -map]
+lappend __config_map "__find" "::tcl::file::__find"
+namespace ensemble configure file -map $__config_map
+unset __config_map
 

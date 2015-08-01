@@ -26,14 +26,18 @@ proc tdom_innerHTML {node} {
     return $html
 }
 
+proc ns_quotehtml {str} {
+# TODO
+    return $str
+}
 
 namespace eval ::templating {;}
 
 proc ::templating::compile_and_load_all {dir} {
-    set files [fs find $dir *.tdp]
+    set files [file __find $dir *.tdp]
     foreach filename $files {
         if { [catch {compile_and_load $filename} errMsg] } {
-            ns_log notice "failed to ::templating::compile_and_load $filename errMsg=$errMsg"
+            log notice "failed to ::templating::compile_and_load $filename errMsg=$errMsg"
         }
     }
 }
@@ -105,43 +109,56 @@ proc ::xo::tdp::get_cmd {filename} {
 if { [::xo::kit::production_mode_p] } {
 
     proc ::xo::tdp::returnfile {filename} {
-	# if you reached this point, cmd should exist
-	# otherwise it is ok to try to exec first
-	# and then raise an error if it does not
-	variable __tdp_cmd_name
-	set cmd $__tdp_cmd_name(${filename})
-	${cmd}
+    # if you reached this point, cmd should exist
+    # otherwise it is ok to try to exec first
+    # and then raise an error if it does not
+        variable __tdp_cmd_name
+        set cmd $__tdp_cmd_name(${filename})
+        ${cmd}
     }
 
 } else {
 
     proc ::xo::tdp::return_html {tcl_cmd_name} {
 
-	if { [catch {set html [${tcl_cmd_name}]} errMsg] } {
-	    ::xo::kit::log "Error in C compiled page: errMsg=$errMsg"
-	    rp_returnerror
-	    return
-	}
+        if { [catch {set html [${tcl_cmd_name}]} errMsg] } {
+            log "Error in C compiled page: errMsg=$errMsg"
+            rp_returnerror
+            return
+        }
 
     }
 
     proc ::xo::tdp::returnfile {filename} {
-	::xo::tdp::compile_and_load $filename
-	set ino [::util::ino $filename]
-	set tdp_cmd_name "::www_${ino}"
+        ::xo::tdp::compile_and_load $filename
+        set ino [::util::ino $filename]
+        set tdp_cmd_name "::www_${ino}"
 
-	set start [clock milliseconds]
-	#set html [${cmd}]
-	${tdp_cmd_name}
-	set finish [clock milliseconds]
-	set duration [expr { $finish - $start }]
-	ns_log notice "rendering took $duration milliseconds"
-	
-	#ns_return 200 text/html ${html}
+        set start [clock milliseconds]
+        #set html [${cmd}]
+        ${tdp_cmd_name}
+        set finish [clock milliseconds]
+        set duration [expr { $finish - $start }]
+        log "processing took $duration milliseconds"
+
+        #ns_return 200 text/html ${html}
 
     }
 }
 
+proc ::xo::tdp::process {filename} {
+    ::xo::tdp::compile_and_load $filename
+    set ino [::util::ino $filename]
+    set tdp_cmd_name "::www_${ino}"
+
+    set start [clock milliseconds]
+    set html [${tdp_cmd_name}]
+    set finish [clock milliseconds]
+    set duration [expr { $finish - $start }]
+    log "processing took $duration milliseconds"
+
+    return $html
+}
 
 
 
@@ -179,7 +196,7 @@ proc ::xo::tdp::compareNodes {node1 node2} {
 
 # include takes precedence over master and other tags
 proc ::xo::tdp::initial_rewrite_compare {node1 node2} {
-    ns_log notice "node1=[$node1 attributes] node2=[$node2 attributes]"
+    log notice "node1=[$node1 attributes] node2=[$node2 attributes]"
 
     set type1 [$node1 @type ""]
     set type2 [$node2 @type ""]
@@ -201,7 +218,7 @@ proc ::xo::tdp::initial_rewrite_compare {node1 node2} {
 	global __compile_cache__
 
 	# latest mtime for the files in the templating package
-	set filelist [::util::findFiles [thisdir] *]
+	set filelist [file __find [thisdir] *]
 
 	# add the source file
 	lappend filelist $inputfile
@@ -243,7 +260,7 @@ proc ::xo::tdp::compile_and_load {filename} {
     set latest_mtime [latest_mtime $filename]
     if { [::xo::kit::performance_mode_p] && [file exists $sharedlib] } {
 	if { [::util::newerFileThan $sharedlib $latest_mtime] } {
-	    ns_log notice "--->>> load $sharedlib $ininame"
+	    log notice "--->>> load $sharedlib $ininame"
 	    load $sharedlib $ininame
 	    return 
 	}
@@ -309,7 +326,7 @@ proc ::xo::tdp::compile_and_load {filename} {
     # error message: "cannot be unloaded under a trusted interpreter"
     #
     # if { [list $sharedlib $ininame] in [info loaded ""] } {
-    # ns_log notice "--->>> (already loaded) unload $sharedlib"
+    # log notice "--->>> (already loaded) unload $sharedlib"
     # unload $sharedlib
     # }
 
@@ -337,14 +354,14 @@ proc ::xo::tdp::compile_and_load {filename} {
     set sharedlib [::critcl::ext::get_sharedlib $filename]
     set ininame [::critcl::ext::get_ininame $filename]
 
-    ns_log notice "--- (after compile) --->>> load $sharedlib $ininame"
+    log notice "--- (after compile) --->>> load $sharedlib $ininame"
     load $sharedlib $ininame
 }
 
 proc ::xo::tdp::next_other_id {} {
     variable widget_count
 
-    return [::xo::html::obfuscate [incr widget_count]]
+    return [::templating::css::obfuscate [incr widget_count]]
 }
 
 proc ::xo::tdp::compile_doc {templateDoc filename} {
@@ -385,7 +402,7 @@ proc ::xo::tdp::compile_doc {templateDoc filename} {
         if { [catch {
             ::xo::tdp::compile_helper codearr $widget "initial_rewrite"
         } errmsg options] } {
-            ::xo::kit::log "--->>>" \n\n errmsg=$errmsg widget=[$widget nodeName]
+            log "--->>>" \n\n errmsg=$errmsg widget=[$widget nodeName]
         }
         if { [$widget @__todelete "0"] } {
             $widget delete
@@ -401,7 +418,7 @@ proc ::xo::tdp::compile_doc {templateDoc filename} {
         if { [catch {
             ::xo::tdp::compile_helper codearr $widget "initial_rewrite"
         } errmsg options] } {
-            ::xo::kit::log "--->>>" \n\n errmsg=$errmsg \n\n widget=[$widget nodeName]
+            log "--->>>" \n\n errmsg=$errmsg \n\n widget=[$widget nodeName]
         }
 
         if { [$widget @__todelete "0"] } {
@@ -429,7 +446,7 @@ proc ::xo::tdp::compile_doc {templateDoc filename} {
     # final rewrite
     foreach widget $widgets {
         if { [catch {::xo::tdp::compile_helper codearr $widget "final_rewrite"} errmsg] } {
-            ::xo::kit::log "--->>>" \n\n errmsg=$errmsg \n\n widget=[$widget nodeName]
+            log "--->>>" \n\n errmsg=$errmsg \n\n widget=[$widget nodeName]
         }
 
         if { ![$widget @__todelete "0"] } {
@@ -484,13 +501,13 @@ proc ::xo::tdp::compile_doc {templateDoc filename} {
             set cdn_css_min_file [get_css_dir]/${css_public_file}
             ::util::writefile $cdn_css_min_file $css_min_final
 
-            exec "/bin/gzip -9 -c ${cdn_css_min_file} > ${cdn_css_min_file}.gz"
+            exec -- /bin/sh -c "/bin/gzip -9 -c ${cdn_css_min_file} > ${cdn_css_min_file}.gz"
 
             set css_min_final_url [get_cdn_url "/css/${css_public_file}"]
         }
 
     } else {
-        ::xo::kit::log notice "--->>> DISABLED CSS/JS COMPILATION TO EASE DEVELOPMENT"
+        log notice "--->>> DISABLED CSS/JS COMPILATION TO EASE DEVELOPMENT"
         set css_min ""
         array set js [list private false public false]
     }
@@ -594,7 +611,7 @@ proc ::xo::tdp::compile_doc {templateDoc filename} {
 
     set finish [clock milliseconds]
     set duration [expr { $finish - $start }]
-    ::xo::kit::log "compiled tdp file ($filename) in ${duration}ms"
+    log "compiled tdp file ($filename) in ${duration}ms"
 
     ::xo::tdp::compile_doc_in_c codearr $templateDoc $filename
 }
@@ -631,7 +648,7 @@ proc ::xo::tdp::compile_doc_in_c {codearrVar templateDoc filename} {
     set conf(debug_mode_p) [::xo::kit::debug_mode_p]
 
     set conf(clibraries) "-L/opt/naviserver/lib -lnsd"
-    set conf(includedirs) [list "/opt/naviserver/include"]
+    set conf(includedirs) [list "/opt/naviserver/include" [file join [acs_root_dir] "lib/templating/c"]]
     set conf(cinit) $init_code
     set conf(ccode) $c_code
 
@@ -647,7 +664,7 @@ proc ::xo::tdp::compile_doc_in_c {codearrVar templateDoc filename} {
 		      [glob -directory ${dir} -type f -tails ${tailname}.*] \
 		      [file tail ${tarfile}]]
 
-    exec "/bin/tar --directory ${dir} -cjf ${tarfile} ${filelist}"
+    exec -- /bin/sh -c "/bin/tar --directory ${dir} -cjf ${tarfile} ${filelist}"
 
 }
 
@@ -724,7 +741,7 @@ proc ::xo::tdp::compile_to_c_helper {codearrVar templateDoc} {
 	if { [$widget @skip "0"] } continue
 	set cmdName [$widget @type]
 
-	#ns_log notice "type=$cmdName id=[$widget @id ""]"
+	#log notice "type=$cmdName id=[$widget @id ""]"
 
 	set pn [$widget parentNode]
 	$pn insertBeforeFromScript {
@@ -819,9 +836,9 @@ proc ::xo::tdp::compile_to_c {codearrVar templateDoc c_cmd_name tcl_cmd_name} {
 
     add_global_string codearr OBJECT_NSF_VAR_SET ::nsf::var::set
 
-    set c_global_strings [join [::xo::fun::map x $codearr(global_strings) {::util::cstringquote_escape_newlines $x}] ",\n\t\t"]
+    set c_global_strings [join [map x $codearr(global_strings) {::util::cstringquote_escape_newlines $x}] ",\n\t\t"]
 
-    set c_global_strings_len_arr [join [::xo::fun::map x $codearr(global_strings) {string bytelength $x}] {,}]
+    set c_global_strings_len_arr [join [map x $codearr(global_strings) {string bytelength $x}] {,}]
 
 
 
@@ -831,17 +848,20 @@ proc ::xo::tdp::compile_to_c {codearrVar templateDoc c_cmd_name tcl_cmd_name} {
 
         ${result}
 
-        Ns_Conn *conn = Ns_GetConn();
-        const int status = 200;
-        const char type[] = "${mime_type}";
         int len = Tcl_DStringLength(dsPtr);
         const char *data = Tcl_DStringValue(dsPtr);
         DBG(fprintf(stderr,"page size/length=%d\n",len));
+
+        #ifdef __USE_NS__
+        const int status = 200;
+        const char type[] = "${mime_type}";
+        Ns_Conn *conn = Ns_GetConn();
         int result = Ns_ConnReturnCharData(conn, status,data,len,type);
         return tdp_Result(interp,result);
-
-        // Tcl_DStringResult(interp,dsPtr);
-        // return TCL_OK;
+        #else
+        Tcl_DStringResult(interp,dsPtr);
+        return TCL_OK;
+        #endif
 
 
 
@@ -864,7 +884,7 @@ proc ::xo::tdp::compile_to_c {codearrVar templateDoc c_cmd_name tcl_cmd_name} {
 
         $codearr(macros)
 
-        #include "/web/servers/service-phigita/lib/templating/c/tdp.h"
+        #include "tdp.h"
 
         static const char *const global_strings[] = { 
             $c_global_strings 
@@ -995,7 +1015,7 @@ proc ::xo::tdp::compile_helper {codearrVar node procName} {
 
             set errorinfo $options_arr(-errorinfo)
 
-            ::xo::kit::log error "\n--->>> cmd=$cmd \nnode=[$node nodeName] \nattributes=[$node attributes] \n\n \nerrmsg=$errmsg \n$errorinfo\n\n"
+            log error "\n--->>> cmd=$cmd \nnode=[$node nodeName] \nattributes=[$node attributes] \n\n \nerrmsg=$errmsg \n$errorinfo\n\n"
 
             error "cmd=$cmd node=[$node nodeName] attributes=[$node attributes]" $errorinfo
 

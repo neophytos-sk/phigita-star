@@ -87,8 +87,8 @@ proc require_html_procs {} {
 	    dom createNodeCmd elementNode legend
 	    dom createNodeCmd elementNode li
 	    dom createNodeCmd elementNode link
-	    dom createNodeCmd elementNode map
-	    dom createNodeCmd elementNode menu
+	    #dom createNodeCmd elementNode map
+	    #dom createNodeCmd elementNode menu
 	    dom createNodeCmd elementNode meta 
 	    dom createNodeCmd elementNode noframes
 	    dom createNodeCmd elementNode noscript

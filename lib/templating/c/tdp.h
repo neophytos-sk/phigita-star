@@ -31,6 +31,7 @@
 static void tdp_cleanup(Tcl_Interp *interp);
 
 // static 
+#ifdef __USE_NS__
 inline int tdp_ReturnBlank() {
     Ns_Conn *connPtr = (Ns_Conn *) Ns_GetConn();
     if (connPtr->flags & NS_CONN_CLOSED) {
@@ -40,6 +41,11 @@ inline int tdp_ReturnBlank() {
         return Ns_ConnReturnNotice(connPtr, 204, "No Content", NULL);
     }
 }
+#else
+inline int tdp_ReturnBlank() {
+    return TCL_OK;
+}
+#endif
 
 inline int
 tdp_Result(Tcl_Interp *interp, int result)

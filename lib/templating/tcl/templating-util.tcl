@@ -31,7 +31,7 @@ proc ::util::cstringquote_escape_newlines {str {lengthVar ""}} {
 }
 
 proc ::util::multiline_cstringquote {str} {
-    return [::xo::fun::map x [split $str "\n"] {::util::cstringquote "${x}"}]
+    return [map x [split $str "\n"] {::util::cstringquote "${x}"}]
 }
 
 proc ::util::localtime {{format "%A, %d %B %Y, %H:%M %Z"}} {

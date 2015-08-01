@@ -33,7 +33,7 @@ if { [::templating::config::get_option "data_object_type"] eq {DICT} } {
 
 proc data_from_sql_script {storeId pool sql_script {cache_expr ""}} {
 
-    #::xo::kit::log --->>> (before) storeId=$storeId: sql_script=$sql_script
+    #log --->>> (before) storeId=$storeId: sql_script=$sql_script
 
     # Note:
     # 1. sql at this point contains tcl variables to ::__data__
@@ -58,7 +58,7 @@ proc data_from_sql_script {storeId pool sql_script {cache_expr ""}} {
 	error "you cannot have an empty vector_clock_now when using the cache"
     }
 
-    #::xo::kit::log cache_expr=$cache_expr
+    #log cache_expr=$cache_expr
     if { $cache ne {} } {
 
 	# used to check if data in cache is still valid

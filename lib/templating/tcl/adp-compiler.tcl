@@ -204,7 +204,7 @@ proc ::adp_compiler::compile_template {node} {
     set adp "<%ns_adp_bind_args o0; set out {};%>"
     append adp ${compiled_tpl}
 
-    #::xo::kit::log \n\n --->>> \n\n adp=$adp \n\n
+    #log \n\n --->>> \n\n adp=$adp \n\n
 
     $node setAttribute renderer "adp"
     set doc [$node ownerDocument]

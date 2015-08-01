@@ -239,8 +239,8 @@ proc ::xo::html::obfuscate {id} {
     append result $sBaseChars([expr {${id} & 0x0f}])
     set id [expr { ${id} >> 4  }]
     while { ${id} != 0 } {
-	append result $sBaseChars([expr {${id} & 0x1f}])
-	set id [expr { ${id} >> 5  }]
+        append result $sBaseChars([expr {${id} & 0x1f}])
+        set id [expr { ${id} >> 5  }]
     }
     return ${result}
 }

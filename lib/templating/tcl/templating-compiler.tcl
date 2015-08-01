@@ -177,148 +177,148 @@ proc ::templating::compiler::getter_for_varname {codearrVar block in_text {prefi
     set num_parts [llength $parts]
     if { $num_parts == 1 } {
 
-	if { ${modifier} eq {} } {
+        if { ${modifier} eq {} } {
 
-	    if { $in_text eq {_} } {
-		if { $prefix eq {append_} } {
-		    set result "append_obj(${block}${extraArg});"
-		    #set result "append_obj(${thevar}${extraArg});"
-		} else {
-		    set result ${block}
-		    #set result $thevar
-		}
-	    } else {
+            if { $in_text eq {_} } {
+                if { $prefix eq {append_} } {
+                    set result "append_obj(${block}${extraArg});"
+                    #set result "append_obj(${thevar}${extraArg});"
+                } else {
+                    set result ${block}
+                    #set result $thevar
+                }
+            } else {
 
-		# fetching from current context, blockX_oY, 
-		set varname ${in_text}
+            # fetching from current context, blockX_oY, 
+                set varname ${in_text}
 
-		add_global_string codearr OBJECT_VARNAME_${varname} ${varname}
+                add_global_string codearr OBJECT_VARNAME_${varname} ${varname}
 
-		set store [get_block_store codearr $block]
+                set store [get_block_store codearr $block]
 
-		if { ${store} ne {} && ${varname} ni $codearr(${store},attributes) } {
-		    error "no such property '${varname}' for objects of '${store}'"
-		}
+                if { ${store} ne {} && ${varname} ni $codearr(${store},attributes) } {
+                    error "no such property '${varname}' for objects of '${store}'"
+                }
 
-		set vartype [vartype_for_store $store]
-		set getterCmd ${prefix}${vartype}
+                set vartype [vartype_for_store $store]
+                set getterCmd ${prefix}${vartype}
 
-		set result "${getterCmd}(interp,global_objects,${block},global_objects\[OBJECT_VARNAME_${in_text}\]${extraArg})"
+                set result "${getterCmd}(interp,global_objects,${block},global_objects\[OBJECT_VARNAME_${in_text}\]${extraArg})"
 
-	    }
+            }
 
-	} else {
+        } else {
 
-	    set theobj [getter_for_varname_helper codearr $in_text ${block} ${modifier}]
-	    if { $prefix eq {append_} } {
-		set result "append_obj(${theobj}${extraArg});"
-	    } else {
-		set result $theobj
-	    }
+            set theobj [getter_for_varname_helper codearr $in_text ${block} ${modifier}]
+            if { $prefix eq {append_} } {
+                set result "append_obj(${theobj}${extraArg});"
+            } else {
+                set result $theobj
+            }
 
-	}
+        }
 
     } elseif { $num_parts == 2 } {
 
-	lassign $parts part1 part2
+        lassign $parts part1 part2
 
-	if { $part1 eq {_} && [string is integer -strict $part2] && ${part2} >= 0 } {
+        if { $part1 eq {_} && [string is integer -strict $part2] && ${part2} >= 0 } {
 
-	    # listobjindex from block
-	    if { $prefix eq {append_} } {
-		set result "append_obj_element(interp,${block},${part2}${extraArg})"
-	    } else {
-		set result "${prefix}obj_element(interp,${block},${part2}${extraArg})"
-	    }
+        # listobjindex from block
+            if { $prefix eq {append_} } {
+                set result "append_obj_element(interp,${block},${part2}${extraArg})"
+            } else {
+                set result "${prefix}obj_element(interp,${block},${part2}${extraArg})"
+            }
 
 
-	} elseif { $part1 eq {val} || $part1 eq {param} || $part1 eq {top} } {
+        } elseif { $part1 eq {val} || $part1 eq {param} || $part1 eq {top} } {
 
-	    # fetching value from global context, array "::__data__"
+        # fetching value from global context, array "::__data__"
 
-	    set varname $part2
+            set varname $part2
 
-	    if { ![exists_global_string codearr "OBJECT_VARNAME_${varname}"] } {
-		error "getter_for_varname: no such varname '${varname}' in global context"
-	    }
+            if { ![exists_global_string codearr "OBJECT_VARNAME_${varname}"] } {
+                error "getter_for_varname: no such varname '${varname}' in global context"
+            }
 
-	    set vartype [vartype_for_store ""]
-	    set getterCmd ${prefix}${vartype}
+            set vartype [vartype_for_store ""]
+            set getterCmd ${prefix}${vartype}
 
-	    set result "${getterCmd}(interp,global_objects,global_objects\[OBJECT_DATA\],global_objects\[OBJECT_VARNAME_${varname}\]${extraArg})"
+            set result "${getterCmd}(interp,global_objects,global_objects\[OBJECT_DATA\],global_objects\[OBJECT_VARNAME_${varname}\]${extraArg})"
 
-	} elseif { $part1 eq {parent} } {
+        } elseif { $part1 eq {parent} } {
 
-	    # fetching from parent context, blockX_oY
+        # fetching from parent context, blockX_oY
 
-	    set varname $part2
-	    add_global_string codearr OBJECT_VARNAME_${varname} ${varname}
+            set varname $part2
+            add_global_string codearr OBJECT_VARNAME_${varname} ${varname}
 
-	    # returns an obj pointer in the form blockX_oY
-	    set parent_block [get_parent_block codearr ${block}]
+            # returns an obj pointer in the form blockX_oY
+            set parent_block [get_parent_block codearr ${block}]
 
-	    set store [get_block_store codearr $parent_block]
+            set store [get_block_store codearr $parent_block]
 
-	    if { ${store} ne {} && ${varname} ni $codearr(${store},attributes) } {
-		error "no such property '${varname}' for objects of '${varname}'"
-	    }
+            if { ${store} ne {} && ${varname} ni $codearr(${store},attributes) } {
+                error "no such property '${varname}' for objects of '${varname}'"
+            }
 
-	    set vartype [vartype_for_store $store]
-	    set getterCmd ${prefix}${vartype}
+            set vartype [vartype_for_store $store]
+            set getterCmd ${prefix}${vartype}
 
-	    set result "${getterCmd}(interp,global_objects,${parent_block},global_objects\[OBJECT_VARNAME_${varname}\]${extraArg})"
+            set result "${getterCmd}(interp,global_objects,${parent_block},global_objects\[OBJECT_VARNAME_${varname}\]${extraArg})"
 
-	} elseif { $part1 eq {proc} } {
+        } elseif { $part1 eq {proc} } {
 
-	    # fetching value from the result of a call to a proc
+        # fetching value from the result of a call to a proc
 
-	} else {
+        } else {
 
-	    set varname ${part2}
-	    add_global_string codearr OBJECT_VARNAME_${varname} ${varname}
+            set varname ${part2}
+            add_global_string codearr OBJECT_VARNAME_${varname} ${varname}
 
-	    # object_get.object.property
+            # object_get.object.property
 
-	    if { ![exists_global_string codearr "OBJECT_VARNAME_${part1}"] } {
-		error "getter_for_varname: no such varname/store '${part1}' in global context"
-	    }
+            if { ![exists_global_string codearr "OBJECT_VARNAME_${part1}"] } {
+                error "getter_for_varname: no such varname/store '${part1}' in global context"
+            }
 
-	    if { ${varname} ni $codearr(${part1},attributes) } {
-		error "no such property '${varname}' for objects of '${part1}'"
-	    }
+            if { ${varname} ni $codearr(${part1},attributes) } {
+                error "no such property '${varname}' for objects of '${part1}'"
+            }
 
-	    set vartype [vartype_for_store ${part1}] ;# in this case we fetch from the global data object
-	    set getterCmd ${prefix}${vartype}
+            set vartype [vartype_for_store ${part1}] ;# in this case we fetch from the global data object
+            set getterCmd ${prefix}${vartype}
 
-	    set objvar "Tcl_ObjGetVar2(interp,global_objects\[OBJECT_DATA\],global_objects\[OBJECT_VARNAME_${part1}\],TCL_GLOBAL_ONLY)"
+            set objvar "Tcl_ObjGetVar2(interp,global_objects\[OBJECT_DATA\],global_objects\[OBJECT_VARNAME_${part1}\],TCL_GLOBAL_ONLY)"
 
-	    set result "${getterCmd}(interp,global_objects,${objvar},global_objects\[OBJECT_VARNAME_${varname}\]${extraArg})"
+            set result "${getterCmd}(interp,global_objects,${objvar},global_objects\[OBJECT_VARNAME_${varname}\]${extraArg})"
 
-	    # TODO: array_get.arrayname.element
+            # TODO: array_get.arrayname.element
 
-	}
+        }
     } elseif { $num_parts == 3 } {
-	lassign $parts part1 part2 part3
+        lassign $parts part1 part2 part3
 
-	if { $part1 eq {object_get} } {
-	    set varname ${part3}
-	    add_global_string codearr OBJECT_VARNAME_${varname} ${varname}
+        if { $part1 eq {object_get} } {
+            set varname ${part3}
+            add_global_string codearr OBJECT_VARNAME_${varname} ${varname}
 
 
-	    if { ![exists_global_string codearr "OBJECT_VARNAME_${part2}"] } {
-		error "getter_for_varname: no such varname/store '${part2}' in global context"
-	    }
+            if { ![exists_global_string codearr "OBJECT_VARNAME_${part2}"] } {
+                error "getter_for_varname: no such varname/store '${part2}' in global context"
+            }
 
-	    # TODO: check that the store has a property by that varname
+            # TODO: check that the store has a property by that varname
 
-	    set vartype [vartype_for_store ${part2}] ;# in this case we fetch from the global data object
-	    set getterCmd ${prefix}${vartype}
+            set vartype [vartype_for_store ${part2}] ;# in this case we fetch from the global data object
+            set getterCmd ${prefix}${vartype}
 
-	    set objvar "Tcl_ObjGetVar2(interp,global_objects\[OBJECT_DATA\],global_objects\[OBJECT_VARNAME_${part2}\],TCL_GLOBAL_ONLY)"
+            set objvar "Tcl_ObjGetVar2(interp,global_objects\[OBJECT_DATA\],global_objects\[OBJECT_VARNAME_${part2}\],TCL_GLOBAL_ONLY)"
 
-	    set result "${getterCmd}(interp,global_objects,${objvar},global_objects\[OBJECT_VARNAME_${varname}\]${extraArg})"
-	    
-	}
+            set result "${getterCmd}(interp,global_objects,${objvar},global_objects\[OBJECT_VARNAME_${varname}\]${extraArg})"
+
+        }
 
     } else {
 	# example: parent.parent.parent.title
@@ -341,13 +341,13 @@ proc ::templating::compiler::compile_template_for {codearrVar node inside_code_b
     set varname [$node @for]
     set listvar "block${block_count}_listPtr"
     if { $varname eq {.} || ${varname} eq {} } {
-	set_block_store codearr $block [get_block_store codearr $parent_block]
-	set list_expr ""
-	append list_expr "\n" "Tcl_Obj *${listvar} = ${parent_block};"
+        set_block_store codearr $block [get_block_store codearr $parent_block]
+        set list_expr ""
+        append list_expr "\n" "Tcl_Obj *${listvar} = ${parent_block};"
     } else {
-	set_block_store codearr $block ${varname}
-	add_global_string codearr OBJECT_VARNAME_${varname} ${varname}
-	set list_expr "Tcl_Obj *${listvar} = [getter_for_varname codearr $parent_block $varname "getvar_"];"
+        set_block_store codearr $block ${varname}
+        add_global_string codearr OBJECT_VARNAME_${varname} ${varname}
+        set list_expr "Tcl_Obj *${listvar} = [getter_for_varname codearr $parent_block $varname "getvar_"];"
     }
 
 
@@ -370,11 +370,11 @@ proc ::templating::compiler::compile_template_for {codearrVar node inside_code_b
     set limit [$node @limit ""]
     set extra_condition ""
     if { $limit ne {} } {
-	if { [string is integer $limit] } {
-	    set limit_expr "$limit"
-	}
+        if { [string is integer $limit] } {
+            set limit_expr "$limit"
+        }
 
-	set extra_condition "&& ${indexvar}<${limit_expr}"
+        set extra_condition "&& ${indexvar}<${limit_expr}"
     }
 
     append compiled_tpl "\n" "for (${indexvar}=${offset}; ${indexvar}<${lenvar} ${extra_condition}; ${indexvar}++) \{"
@@ -403,22 +403,22 @@ proc ::templating::compiler::compile_template_with {codearrVar node inside_code_
 
     set varname [$node @with]
     if { ${varname} eq {.} || ${varname} eq {} } {
-	set_block_store codearr $block [get_block_store codearr $parent_block]
-	set obj_expr "Tcl_Obj *${block} = ${parent_block};"
+        set_block_store codearr $block [get_block_store codearr $parent_block]
+        set obj_expr "Tcl_Obj *${block} = ${parent_block};"
     } else {
-	set_block_store codearr $block ${varname}
-	add_global_string codearr OBJECT_VARNAME_${varname} ${varname}
+        set_block_store codearr $block ${varname}
+        add_global_string codearr OBJECT_VARNAME_${varname} ${varname}
 
-	# correct if singleton=true was specified on datastore tag
-	if { ![exists_singleton_datastore codearr ${varname}] } {
-	    ns_log notice "${varname} is not a singleton datastore - <tpl with=\"\"> only with singletons"
-	}
-	set obj_expr "Tcl_Obj *${block} = [getter_for_varname codearr ${parent_block} $varname "getvar_"];"
+        # correct if singleton=true was specified on datastore tag
+        if { ![exists_singleton_datastore codearr ${varname}] } {
+            ns_log notice "${varname} is not a singleton datastore - <tpl with=\"\"> only with singletons"
+        }
+        set obj_expr "Tcl_Obj *${block} = [getter_for_varname codearr ${parent_block} $varname "getvar_"];"
 
-	# works with non-singleton datastore
-	#set list_expr [getter_for_varname codearr ${parent_block} $varname "getvar_"]
-	#set obj_expr "Tcl_Obj *${block}; // template_with"
-	#append obj_expr "\n" "  Tcl_ListObjIndex(interp,${list_expr},0,&${block});"
+        # works with non-singleton datastore
+        #set list_expr [getter_for_varname codearr ${parent_block} $varname "getvar_"]
+        #set obj_expr "Tcl_Obj *${block}; // template_with"
+        #append obj_expr "\n" "  Tcl_ListObjIndex(interp,${list_expr},0,&${block});"
 
     }
 
@@ -682,81 +682,81 @@ proc ::templating::compiler::compile_template_binding {codearrVar bindarrVar att
 	} elseif { ${binding} eq {style} } {
 	} elseif { ${binding} eq {visible} } {
 	} elseif { ${binding} eq {attr} } {
-	} elseif { ${binding} eq {value_if} } {
+    } elseif { ${binding} eq {value_if} } {
 
-	    if { [llength $binding_expr] != 3 } {
-		error "compile_template_binding: must be value_if {binding_if_expr => value}"
-	    }
+        if { [llength $binding_expr] != 3 } {
+            error "compile_template_binding: must be value_if {binding_if_expr => value}"
+        }
 
-	    lassign $binding_expr binding_if_expr arrow binding_value
+        lassign $binding_expr binding_if_expr arrow binding_value
 
-	    if { $arrow ne {=>} } {
-		error "compile_template_binding: must be value_if {binding_if_expr => value}"
-	    }
+        if { $arrow ne {=>} } {
+            error "compile_template_binding: must be value_if {binding_if_expr => value}"
+        }
 
-	    set conditional_expr [compile_template_if_expr \
-				      codearr \
-				      $binding_if_expr \
-				      $inside_code_block]
+        set conditional_expr [compile_template_if_expr \
+            codearr \
+            $binding_if_expr \
+            $inside_code_block]
 
-	    set subst_binding_value [compile_template_subst \
-					 codearr \
-					 $binding_value \
-					 $inside_code_block]
+        set subst_binding_value [compile_template_subst \
+            codearr \
+            $binding_value \
+            $inside_code_block]
 
-	    set tagname [$node tagName]
+        set tagname [$node tagName]
 
-	    if { ${tagname} eq {input} } {
+        if { ${tagname} eq {input} } {
 
-		set code ""
-		append code "\xff" "\n" "if \( /* x-bind ${binding} */ $conditional_expr \) \{ " "\xfe"
-		append code " value=\"${subst_binding_value}\""
-		append code "\xff" "\n" "\} " "\xfe"
+            set code ""
+            append code "\xff" "\n" "if \( /* x-bind ${binding} */ $conditional_expr \) \{ " "\xfe"
+            append code " value=\"${subst_binding_value}\""
+            append code "\xff" "\n" "\} " "\xfe"
 
-		if { [$node hasAttribute value] } {
+            if { [$node hasAttribute value] } {
 
-		    set subst_value [compile_template_subst \
-					 codearr \
-					 [$node @value] \
-					 $inside_code_block]
+                set subst_value [compile_template_subst \
+                    codearr \
+                    [$node @value] \
+                    $inside_code_block]
 
-		    append code "\xff" "\n" "else \{ " "\xfe"
-		    append code " value=\"${subst_value}\""
-		    append code "\xff" "\n" "\} " "\xfe"
+                append code "\xff" "\n" "else \{ " "\xfe"
+                append code " value=\"${subst_value}\""
+                append code "\xff" "\n" "\} " "\xfe"
 
-		    set bindarr(value,code) $code
+                set bindarr(value,code) $code
 
-		} else {
-		    return $code
-		}
+            } else {
+                return $code
+            }
 
-	    } elseif { ${tagname} eq {textarea} } {
+        } elseif { ${tagname} eq {textarea} } {
 
-		set code ""
-		append code "\xff" "\n" "if \( /* x-bind ${binding} */ $conditional_expr \) \{ " "\xfe"
-		append code ${subst_binding_value}
-		append code "\xff" "\n" "\} " "\xfe"
+            set code ""
+            append code "\xff" "\n" "if \( /* x-bind ${binding} */ $conditional_expr \) \{ " "\xfe"
+            append code ${subst_binding_value}
+            append code "\xff" "\n" "\} " "\xfe"
 
-		if { [$node text] ne {} } {
+            if { [$node text] ne {} } {
 
-		    set subst_value [compile_template_subst \
-					 codearr \
-					 [$node text] \
-					 $inside_code_block]
+                set subst_value [compile_template_subst \
+                    codearr \
+                    [$node text] \
+                    $inside_code_block]
 
-		    append code "\xff" "\n" "else \{ " "\xfe"
-		    append code ${subst_value}
-		    append code "\xff" "\n" "\} " "\xfe"
+                append code "\xff" "\n" "else \{ " "\xfe"
+                append code ${subst_value}
+                append code "\xff" "\n" "\} " "\xfe"
 
-		}
+            }
 
-		set bindarr(__nodeValue__,code) $code
+            set bindarr(__nodeValue__,code) $code
 
-	    } else {
-		error "compile_template_binding: value_if unknown element node tag=${tagname}"
-	    }
+        } else {
+            error "compile_template_binding: value_if unknown element node tag=${tagname}"
+        }
 
-	} else {
+    } else {
 	    error "unknown binding '${binding}'"
 	}
     }
@@ -876,20 +876,20 @@ proc ::templating::compiler::compile_template_statement {codearrVar node inside_
     upvar $codearrVar codearr
 
     if { [$node hasAttribute "for"] } {
-	set compiled_tpl [compile_template_for codearr $node true]
+        set compiled_tpl [compile_template_for codearr $node true]
     } elseif { [$node hasAttribute "with"] } {
-	set compiled_tpl [compile_template_with codearr $node true]
+        set compiled_tpl [compile_template_with codearr $node true]
     } elseif { [$node hasAttribute "if"] } {
-	set compiled_tpl [compile_template_if codearr $node true]
+        set compiled_tpl [compile_template_if codearr $node true]
     } elseif { [$node hasAttribute "else"] } {
-	set compiled_tpl [compile_template_else codearr $node true]
+        set compiled_tpl [compile_template_else codearr $node true]
     } elseif { [$node hasAttribute "exec"] } {
-	set compiled_tpl [compile_template_exec codearr $node true]
+        set compiled_tpl [compile_template_exec codearr $node true]
     } elseif { [$node hasAttribute "call"] } {
-	set compiled_tpl [compile_template_call codearr $node true]
+        set compiled_tpl [compile_template_call codearr $node true]
     } else {
-	set compiled_tpl [compile_template_children codearr $node $inside_code_block]
-	#error "unknown template tag"
+        set compiled_tpl [compile_template_children codearr $node $inside_code_block]
+        #error "unknown template tag"
     }
 
     return $compiled_tpl
@@ -1004,22 +1004,22 @@ proc ::templating::compiler::compile_template_helper {codearrVar node {inside_co
 
     } elseif { $nodeType eq {ELEMENT_NODE} } {
 
-	set tag [$node tagName]
-	if { $tag eq {tpl} } {
+        set tag [$node tagName]
+        if { $tag eq {tpl} } {
 
-	    append compiled_tpl [compile_template_statement \
-				     codearr \
-				     $node \
-				     $inside_code_block]
+            append compiled_tpl [compile_template_statement \
+                codearr \
+                $node \
+                $inside_code_block]
 
-	} else {
+        } else {
 
-	    append compiled_tpl [compile_template_element \
-				     codearr \
-				     $node \
-				     $inside_code_block]
+            append compiled_tpl [compile_template_element \
+                codearr \
+                $node \
+                $inside_code_block]
 
-	}
+        }
     }
 
     return $compiled_tpl
@@ -1089,7 +1089,7 @@ proc ::templating::compiler::compile_template {codearrVar node} {
 
     upvar $codearrVar codearr
 
-    #::xo::kit::log templating::compiler [$node tagName]
+    #log templating::compiler [$node tagName]
 
     set doc [$node ownerDocument]
     set root [$doc createElement tpl]
@@ -1125,7 +1125,7 @@ proc ::templating::compiler::compile_template {codearrVar node} {
 	return TDP_OK;
     }]
 
-    #::xo::kit::log \n\n --->>> \n\n c_code=$c_code \n\n
+    #log \n\n --->>> \n\n c_code=$c_code \n\n
 
     $root delete
     $node setAttribute renderer "c"

@@ -4,53 +4,35 @@ namespace eval ::templating::runtime {;}
 
 define_lang ::templating::lang {
 
-    #namespace import ::basesys::lang::forward
-
-    ##node_cmd master
-    ##node_cmd include
-
-    ##node_cmd contract
-
-    foreach tag {param pragma widget tpl item column} {
-        ::dom::createNodeCmd elementNode $tag
+    foreach tagname {widget tpl item column param pragma} {
+        ::dom::createNodeCmd elementNode $tagname
+        interp alias {} ::templating::lang::$tagname {} ::dom::execNodeCmd elementNode $tagname
     }
 
-    dom createNodeCmd textNode t
-    proc nt {text} { t -disableOutputEscaping $text}
-
-    #node_cmd param
-    #node_cmd pragma
-
-    #node_cmd widget  ;# datastore, dataview, grid
-    #node_cmd tpl     ;# if, for, with
-    #node_cmd item
-    #node_cmd column
-
-    foreach tag {val guard js css tcl} {
-        interp alias {} $tag {} ::templating::lang::leaf_node_helper $tag
-    }
-
-    proc leaf_node_helper {cmd_name args} {
-
-        set str ""
-
-        if { [llength $args] % 2 == 1 } {
-            set str [lindex $args end]
-            set args [lrange $args 0 end-1]
-        }
-
-        uplevel [list ::dom::execNodeCmd elementNode widget -type $cmd_name {*}$args [list t $str ]]
-
-    }
-
-    foreach cmd_name {
-        layout layout_row layout_col
-        grid toolbar datastore dataview
-        action
-        master include
-        contract
+    foreach tagname {
+        layout layout_row layout_col 
+        grid toolbar datastore dataview 
+        master contract include
     } {
-        interp alias {} $cmd_name {} ::dom::execNodeCmd elementNode widget -type $cmd_name
+        interp alias {} $tagname {} ::templating::lang::widget -type $tagname
+    }
+
+    proc leafnode_cmd {cmdname} {
+        set nsp [uplevel {namespace current}]
+
+        proc ${nsp}::${cmdname} {args} [subst {
+            if { \[llength \$args\] % 2 == 0 } {
+                widget -type ${cmdname} {*}\${args}
+            } else {
+                widget -type ${cmdname} {*}\[lrange \${args} 0 end-1\] \{ 
+                    t \[lindex \$args end\] 
+                \}
+            }
+        }]
+    }
+
+    foreach tagname {val guard js css tcl} {
+        leafnode_cmd $tagname
     }
 
     if {0} {
@@ -115,7 +97,7 @@ proc ::templating::tag::master::initial_rewrite {codearrVar node {argVar ""}} {
     set src [$node @src $default_src]
     set filename [file normalize [acs_root_dir]/${src}]
 
-    # proc ::templating::lang::slave {} "ns_log notice \"--->slave_$node (src=$src)\"; widget -type slave -id slave_$node"
+    # proc ::templating::lang::slave {} "log notice \"--->slave_$node (src=$src)\"; widget -type slave -id slave_$node"
     proc ::templating::lang::slave {} "widget -type slave -id slave_$node"
 
 
@@ -552,7 +534,7 @@ proc ::templating::tag::datastore::final_rewrite {codearrVar node} {
     set sql_attributes [$dataset get_sql_attributes]
     
     if { $sql_attributes eq {} } {
-	ns_log error "no sql_attributes for datastore with id=${id} and name=${name}"
+	log error "no sql_attributes for datastore with id=${id} and name=${name}"
     }
 
     # add attributes from 'extend'
@@ -578,7 +560,7 @@ proc ::templating::tag::datastore::final_rewrite {codearrVar node} {
 
 proc ::templating::tag::datastore::to_c {codearrVar node} {
 
-    # ns_log notice "--->>> datastore::to_c [$node @id]"
+    # log notice "--->>> datastore::to_c [$node @id]"
 
     upvar $codearrVar codearr
 
@@ -913,11 +895,11 @@ proc ::templating::tag::dataview::to_c {codearrVar node} {
     # check if we have any widgets inside
     set widgets [$node selectNodes {descendant::widget}]
 
-    #ns_log notice "dataview id=[$node @id ""] num_widgets=[llength ${widgets}]"
+    #log notice "dataview id=[$node @id ""] num_widgets=[llength ${widgets}]"
 
     foreach widget $widgets {
 
-    #ns_log notice "(dataview) ::to_c [$widget @type ""] [$widget @id ""]"
+    #log notice "(dataview) ::to_c [$widget @type ""] [$widget @id ""]"
 
         if { $widget eq $node } continue
 
@@ -1075,7 +1057,7 @@ proc ::templating::tag::js::final_rewrite {codearrVar node} {
     # deprecated
     set names_map [$node @names_map ""]
     if { $names_map ne {} } {
-	::xo::kit::log "deprecated names_map is not empty, use xo.getCssName"
+	log "deprecated names_map is not empty, use xo.getCssName"
     }
 
     set externs [$node @externs ""]
@@ -1136,7 +1118,7 @@ if {0} {
 	} elseif { [$node @target ""] ne {} } {
 	    set target [$node @target]
 	    set target_node [tdom_getElementById $node $target]
-	    ::xo::kit::log target=[$node @target] target_node=$target_node
+	    log target=[$node @target] target_node=$target_node
 	    set other_id [$target_node @other_id]
 	    set href "?select=${other_id}&action=[$node @action]"
 	} elseif { [$node @route ""] ne {} } {
