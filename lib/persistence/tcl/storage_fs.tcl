@@ -6,6 +6,7 @@ namespace eval ::persistence::fs {
     namespace export -clear \
         define_ks define_cf \
         exists_data_p set_data get_data \
+        exists_column_data_p get_column_data \
         exists_column_p insert_column __get_column get_column_name \
         insert_link delete_link \
         delete_row delete_column delete_slice delete_supercolumn \
@@ -285,11 +286,15 @@ proc ::persistence::fs::set_data {oid data} {
     return [::util::writefile ${filename} ${data}]
 }
 
+proc ::persistence::fs::set_column_data {oid data} {
+    set filename [get_filename ${oid}]
+    file mkdir [file dirname ${filename}]
+    return [::util::writefile ${filename} ${data}]
+}
+
 proc ::persistence::fs::get_column_data {oid} {
     set filename [get_filename ${oid}]
-    set result [list]
-    lappend result [::util::readfile ${filename}]
-    return $result
+    return [::util::readfile ${filename}]
 }
 
 proc ::persistence::fs::expand_oid {oid} {
@@ -319,7 +324,7 @@ proc ::persistence::fs::is_expanded_p {slicelist} {
 
 }
 
-proc ::persistence::fs::expand_slice {slicelist} {
+proc ::persistence::fs::expand_slice {slicelist fn} {
 
     if { [is_expanded_p $slicelist] } {
         return $slicelist
@@ -327,11 +332,35 @@ proc ::persistence::fs::expand_slice {slicelist} {
 
     set result [list]
     foreach oid $slicelist {
-        foreach leaf_oid [expand_oid $oid] {
+        set leafs [expand_oid $oid]
+        foreach leaf_oid $leafs {
             lappend result $leaf_oid
         }
     }
+
+    if { $fn ne {} } {
+        apply $fn result
+    }
+
     return $result
+}
+
+proc ::persistence::fs::compare_mtime { oid1 oid2 } {
+    set mtime1 [mtime $oid1]
+    set mtime2 [mtime $oid2]
+    if { $mtime1 < $mtime2 } {
+        return -1
+    } elseif { $mtime1 > $mtime2 } {
+        return 1
+    } else {
+        return 0
+    }
+}
+
+
+proc ::persistence::fs::latest_mtime {slicelistVar} {
+    upvar $slicelistVar slicelist
+    return [lindex [lsort -decreasing -command compare_mtime $slicelist] 0]
 }
 
 proc ::persistence::fs::get_supercolumn_data {oid} {
@@ -575,6 +604,7 @@ proc ::persistence::fs::get_files {path {types "f d"}} {
     foreach name $names {
         lappend result ${path}/${name}
     }
+
     return $result
 }
 
@@ -682,7 +712,7 @@ proc ::persistence::fs::__get_column {keyspace column_family row_key column_path
 
     set exists_p [exists_column_data_p ${path}]
     if { ${exists_p} } {
-        set data [lindex [get_column_data ${path}] 0]
+        set data [get_column_data ${path}]
         return ${path}
     } else {
         return
@@ -1214,7 +1244,7 @@ proc ::persistence::sort {slicelist attname sort_direction} {
     foreach oid $slicelist {
         # lindex used, for "oid" can be a supercolumn
         # TODO: improve proc to specify strategy/policy to use in such cases
-        array set item [lindex [::persistence::get_data ${oid}] 0]
+        array set item [::persistence::get_column_data ${oid}]
         lappend sortlist [list $i $item(sort_date) $oid]
         incr i
     }

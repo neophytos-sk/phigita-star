@@ -12,7 +12,9 @@ namespace eval ::persistence::orm {
         find_by_axis \
         find \
         get \
-        mtime
+        mtime \
+        1row \
+        0or1row 
 
     #exists
 
@@ -221,6 +223,9 @@ proc ::persistence::orm::insert {itemVar {optionsVar ""}} {
             if { $datatype ne {} } {
                 assert { [pattern matchall [list $datatype] item($attname)] } {
                     printvars
+
+                    log -----------------------
+                    log [array get item]
                 }
 
             }
@@ -264,27 +269,44 @@ proc ::persistence::orm::get {oid {exists_pVar ""}} {
         upvar $exists_pVar exists_p
     }
 
-    set exists_p [::persistence::exists_data_p $oid]
+    set exists_p [::persistence::exists_column_data_p $oid]
     if { $exists_p } {
-        return [::persistence::get_data $oid]
+        return [::persistence::get_column_data $oid]
     } else {
         error "no such oid (=$oid) in storage system (=mystore)"
     }
 }
 
-# TODO: expand/unfold oid to column oids (in case it is a supercolumn or row oid)
 # 0or1row -
-# * returns a single record for the given oid, if it exists
-proc ::persistence::orm::0or1row {where_clause_argv {exists_pVar ""}} {
-    if { $exists_pVar ne {} } {
-        upvar $exists_pVar exists_p
+# * returns at most one record that satisfies the specified conditions
+# * raises an error if more records are found
+proc ::persistence::orm::0or1row {where_clause_argv {optionsVar ""}} {
+    if { $optionsVar ne {} } {
+        upvar $optionsVar options
+    }
+
+    set slicelist [find $where_clause_argv options]
+    set llen [llength $slicelist]
+    if { $llen > 1 } {
+        error "persistence (ORM): more records in slice than expected (0or1row)"
+    }
+
+    # note that lindex returns "" if no elements in the list
+    return [lindex $slicelist 0]
+
+}
+
+# 1row -
+# * returns a single record that satisfies the specified conditions
+# * raises an error if any other number of records are found
+proc ::persistence::orm::1row {where_clause_argv {optionsVar ""}} {
+    if { $optionsVar ne {} } {
+        upvar $optionsVar options
     }
 
     set slicelist [find $where_clause_argv]
-
     set llen [llength $slicelist]
-
-    if { $llen > 1 } {
+    if { $llen != 1 } {
         error "persistence (ORM): more records in slice than expected (0or1row)"
     }
 
@@ -329,7 +351,7 @@ proc ::persistence::orm::find_by_axis {argv {predicate ""}} {
     set argc [llength $argv]
     assert { $argc in {5 4 3 2 1} }
 
-    log "argc = $argc"
+    #log "argc = $argc"
 
     if { $argc >= 3 } {
 
@@ -390,28 +412,21 @@ proc ::persistence::orm::find {{where_clause_argv ""} {optionsVar ""}} {
             set find_by_axis_args [list]
             set attname [__choose_axis $where_clause_argv find_by_axis_args]
             set predicate [__rewrite_where_clause $attname $where_clause_argv]
-            log "chosen axis (attribute) = $attname"
-            log "chosen axis (args) = $find_by_axis_args"
-            log "rewritten predicate = $predicate"
+            #log "chosen axis (attribute) = $attname"
+            #log "chosen axis (args) = $find_by_axis_args"
+            #log "rewritten predicate = $predicate"
             set slicelist [find_by_axis $find_by_axis_args $predicate]
         }
 
     }
 
-    set option_expand_p [get_value_if options(expand_p) "1"] 
+    set expand_fn [get_value_if option(expand_fn) ""]
+    set slicelist [::persistence::expand_slice $slicelist $expand_fn]
+
     set option_order_by [get_value_if options(order_by) ""]
-
-    if { $option_expand_p } {
-        set slicelist [::persistence::expand_slice $slicelist]
-    }
-
     if { $option_order_by ne {} } {
-        assert { $option_expand_p }
-        
         lassign $option_order_by sort_attname sort_direction
-
         assert { $sort_direction in {increasing decreasing} }
-
         set slicelist [::persistence::sort $slicelist $sort_attname $sort_direction]
     }
 

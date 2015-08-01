@@ -311,7 +311,7 @@ proc ::feed_reader::fetch_feed_p {feed_name timestamp {coeff "0.3"}} {
             return 1
         }
 
-        array set count [lindex [::persistence::get_data ${oid}] 0]
+        array set count [::persistence::get_data ${oid}]
 
         set reference_interval 3600
         set max_times 4
@@ -335,7 +335,7 @@ proc ::feed_reader::fetch_feed_p {feed_name timestamp {coeff "0.3"}} {
         return 1
     }
 
-    array set count [lindex [::persistence::get_data ${oid}] 0]
+    array set count [::persistence::get_data ${oid}]
 
     set last_sync [::persistence::mtime ${oid}]
 

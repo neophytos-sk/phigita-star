@@ -505,7 +505,7 @@ proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar infoVa
     set article_langclass [get_value_if feed(article_langclass) "auto"]
 
     if { ${article_langclass} eq {auto} } {
-        set article_langclass [::ttext::langclass "$article_title $article_body"]
+        set article_langclass [lindex [::ttext::langclass "$article_title $article_body"] 0]
     }
 
     set domain [::util::domain_from_url ${link}]
@@ -864,6 +864,7 @@ proc ::feed_reader::ls {args} {
     set options(order_by) "sort_date decreasing"
     set options(offset) $offset
     set options(limit) $limit
+    set options(expand_fn) "latest_mtime"
 
     set slicelist [::newsdb::news_item_t find $where_clause options]
 
@@ -882,7 +883,7 @@ proc ::feed_reader::ls {args} {
         # log ----
         set data [::newsdb::news_item_t get $oid]
 
-        array set item [lindex $data 0]
+        array set item $data
         if { exists("__arg_long_listing") } {
             print_log_entry item context
         } else {
@@ -1272,7 +1273,7 @@ proc ::feed_reader::cluster {{offset "0"} {limit "10"} {k ""} {num_iter "3"}} {
 
         array set item [list]
 
-        ::newsdb::news_item_t get $oid item
+        array set item [::newsdb::news_item_t get $oid]
 
         set contentfilename \
             [::persistence::get_filename \
@@ -1308,11 +1309,38 @@ proc ::feed_reader::load_item {itemVar urlsha1} {
 
     upvar $itemVar item
 
-    set where_clause [list [list urlsha1 = $urlsha1]]
-    set slicelist [::newsdb::news_item_t find $where_clause]
-    set oid [lindex $slicelist 0]
-    # set oid [lindex [::persistence::expand_slice $slicelist] 0]
-    array set item [lindex [::newsdb::news_item_t get $oid] 0]
+    set where_clause [list]
+    lappend where_clause [list urlsha1 = $urlsha1]
+    #lappend where_clause [list rank($urlsha1,contentsha1) = latest_mtime()]
+
+    array set options [list]
+    #set options(where) $where_clause
+
+    ##
+    # * The primary key for ::newsdb::news_item_t is a composite that
+    #   consists of the values of urlsha1 and the contentsha1 attributes.
+    #
+    # * urlsha1 is associated with many contentsha1 values (one_to_many),
+    #   yet we deal (usually) with the latest revision except when we 
+    #   explicitly ask for the revisions of an item.
+    #
+    # * There are alternative ways to model our data. In fact, we already
+    #   have ::newsdb::content_item_t, though it would complicate keeping
+    #   the data in a single host when the data is distributed. Eventhough,
+    #   it is just a hypothetical for now, still we try to keep some
+    #   flexibility for accomplishing this kind of stuff.
+    #
+    # * In this particular case, we want to group by urlsha1 and select
+    #   the revision with the latest_mtime. The point is we can do this 
+    #   before we even look at the actual data, only by checking the 
+    #   values of the pk attributes (the ones that compose the pk,
+    #   in this case, urlsha1 and contentsha1) in a given OID.
+    #
+
+    set options(expand_fn) {latest_mtime}
+
+    set oid [::newsdb::news_item_t 1row $where_clause options]
+    array set item [::newsdb::news_item_t get $oid]
 
     load_content item $item(contentsha1)
 
@@ -1378,7 +1406,7 @@ proc ::feed_reader::load_content {itemVar contentsha1 {include_labels_p "1"}} {
     upvar $itemVar item
 
     set oid [::newsdb::content_item_t find_by_id $contentsha1]
-    array set item [lindex [::newsdb::content_item_t get $oid] 0]
+    array set item [::newsdb::content_item_t get $oid]
 
     set contentsha1_to_label_filename [get_contentsha1_to_label_dir]/${contentsha1}
     if { [file exists ${contentsha1_to_label_filename}] } {

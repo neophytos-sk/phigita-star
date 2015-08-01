@@ -68,7 +68,7 @@ proc ::web::fetch {contentVar url {optionsVar ""} {infoVar ""}} {
 }
 
 
-proc ::web::cache_fetch {contentVar url {optionsVar ""} {infoVar ""}} {
+proc ::web::cache_fetch {contentVar url {optionsVar ""} {infoVar ""} {cache_pVar ""}} {
 
     upvar $contentVar content
 
@@ -80,6 +80,11 @@ proc ::web::cache_fetch {contentVar url {optionsVar ""} {infoVar ""}} {
         upvar ${infoVar} info
     }
 
+    set cache_p 0
+    if { $cache_pVar ne {} } {
+        upvar ${cache_pVar} cache_p
+    }
+
     # set domain [::util::domain_from_url $url]
     # set reversedomain [reversedomain $domain]
     # set path "webdb/web_page.by_domain/${reversedomain}/${urlsha1}"
@@ -88,13 +93,15 @@ proc ::web::cache_fetch {contentVar url {optionsVar ""} {infoVar ""}} {
     array set item [list]
     set urlsha1 [::sha1::sha1 -hex $url]
     set where_clause [list [list urlsha1 = $urlsha1]]
-    set slicelist [::webdb::web_page_t find $where_clause]
 
-    if { $slicelist ne {} } {
-        set oid [lindex $slicelist 0]
+    array set options [list]
+    set options(expand_fn) "latest_mtime"
 
-        set data [::webdb::web_page_t get $oid]
-        array set item [lindex $data 0]
+    set oid [::webdb::web_page_t 0or1row $where_clause options]
+
+    if { $oid ne {} } {
+
+        array set item [::webdb::web_page_t get $oid]
 
         set mtime [::webdb::web_page_t mtime $oid]
 
@@ -106,6 +113,7 @@ proc ::web::cache_fetch {contentVar url {optionsVar ""} {infoVar ""}} {
             # returns content of web page as upvar with the given name
             log "fetching page from cache: $url"
             set content $item(content)
+            set cache_p 1
             return 0
         }
     }
