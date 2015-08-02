@@ -6,7 +6,6 @@ namespace eval ::persistence::orm {
     namespace export \
         to_path \
         from_path \
-        insert \
         init_type \
         find_by_id \
         find_by_axis \
@@ -14,7 +13,9 @@ namespace eval ::persistence::orm {
         get \
         mtime \
         1row \
-        0or1row 
+        0or1row \
+        insert \
+        delete
 
     #exists
 
@@ -176,6 +177,24 @@ proc ::persistence::orm::from_path {path} {
     return $result
 }
 
+# to_row_key_by -
+# * raises an error if any of the pk attributes
+#   is missing from the given item
+#
+proc ::persistence::orm::to_row_key_by {idxname itemVar} {
+    variable [namespace __this]::__idxinfo
+
+    upvar $itemVar item
+    set atts $__idxinfo(${idxname},atts)
+
+    set row_key [list]
+    foreach attname $atts {
+        lappend row_key $item($attname)
+    }
+    return $row_key
+}
+
+
 proc ::persistence::orm::insert {itemVar {optionsVar ""}} {
     variable [namespace __this]::ks
     variable [namespace __this]::cf
@@ -223,9 +242,6 @@ proc ::persistence::orm::insert {itemVar {optionsVar ""}} {
             if { $datatype ne {} } {
                 assert { [pattern matchall [list $datatype] item($attname)] } {
                     printvars
-
-                    log -----------------------
-                    log [array get item]
                 }
 
             }
@@ -247,29 +263,57 @@ proc ::persistence::orm::insert {itemVar {optionsVar ""}} {
             continue
         }
 
-        set atts $__idxinfo(${idxname},atts)
-
-        set row_key [list]
-        foreach attname $atts {
-            lappend row_key $item($attname)
-        }
-
-        set axis $idxname
-        set src [to_path_by ${axis} ${row_key} $item($pk)]
+        set row_key [to_row_key_by $idxname item]
+        set src [to_path_by $idxname $row_key $item($pk)]
         ::persistence::insert_link $src $target
-
      }
 
 }
 
-# TODO: options or filter tags for get proc
-# get some_oid {{offset ""} {limit ""} {order_by ""}}
+# delete -
+# * deletes the record with the given oid
+#
+proc ::persistence::orm::delete {oid {exists_pVar ""}} {
+    if { $exists_pVar ne {} } {
+        upvar $exists_pVar exists_p
+    }
+
+    set exists_p [::persistence::exists_column_p $oid]
+    if { $exists_p } {
+
+        array set item [get $oid]
+
+        variable [namespace __this]::__indexes
+        variable [namespace __this]::pk
+
+        ::persistence::delete_column $oid
+
+        foreach idxname $__indexes {
+            if { $idxname eq "by_$pk" } {
+                continue
+            }
+            
+            set row_key [to_row_key_by $idxname item]
+            set src [to_path_by $idxname $row_key $item($pk)]
+            ::persistence::delete_link $src
+        }
+
+    } else {
+        error "no such oid (=$oid) in storage system (=mystore)"
+    }
+
+}
+
+# get -
+# * returns the data for a given oid
+# * raises an error if the oid does not exist
+#
 proc ::persistence::orm::get {oid {exists_pVar ""}} {
     if { $exists_pVar ne {} } {
         upvar $exists_pVar exists_p
     }
 
-    set exists_p [::persistence::exists_column_data_p $oid]
+    set exists_p [::persistence::exists_column_p $oid]
     if { $exists_p } {
         return [::persistence::get_column_data $oid]
     } else {
@@ -307,7 +351,7 @@ proc ::persistence::orm::1row {where_clause_argv {optionsVar ""}} {
     set slicelist [find $where_clause_argv]
     set llen [llength $slicelist]
     if { $llen != 1 } {
-        error "persistence (ORM): more records in slice than expected (0or1row)"
+        error "persistence (ORM): $llen records found (must be exactly 1row)"
     }
 
     # note that lindex returns "" if no elements in the list

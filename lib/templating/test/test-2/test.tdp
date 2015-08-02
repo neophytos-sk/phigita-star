@@ -1,0 +1,16 @@
+val -id abc -x-value-attributes "title body" { 
+    set mydict [dict create]
+    dict set mydict 1 [list title "hello world" body "this is a test"]
+    dict set mydict 2 [list title "hello world" body "this is a test"]
+    return $mydict
+}
+
+master -src "/templates/blank-master.inc" {
+    div {
+        tpl -for "abc" {
+            a -href "somewhere" {
+               t @{title}
+            }
+        }
+    }
+}

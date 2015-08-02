@@ -189,7 +189,7 @@ proc ::feed_reader::fetch_feed {resultVar feedVar {stoptitlesVar ""}} {
 
     foreach cleanup_xpath ${xpath_feed_cleanup} {
         foreach cleanup_node [${doc} selectNodes $cleanup_xpath] {
-            $cleanup_node delete
+            catch { $cleanup_node delete }
         }	    
     }
 
@@ -817,6 +817,48 @@ proc ::feed_reader::get_feed_files {news_source} {
 
 }
 
+
+proc ::feed_reader::rm {args} {
+    puts args=$args
+
+    # parse args
+    #
+    getopt::init {
+        {domain ""  {__arg_domain domain}}
+        {lang   ""  {__arg_lang   lang}}
+        {urlsha1 "" {__arg_urlsha1 urlsha1}}
+        {contentsha1 "" {__arg_contentsha1 contentsha1}}
+        {url "" {__arg_url url}}
+    }
+    set args [getopt::getopt $args]
+
+    assert { !(exists("urlsha1") && exists("url")) }
+
+    set where_clause [list]
+
+    if { exists("__arg_lang") } {
+        lappend where_clause [list langclass = $lang ]
+    }
+
+    if { exists("__arg_domain") } {
+        set reversedomain [reversedomain $domain]
+        lappend where_clause [list reversedomain = $reversedomain]
+    }
+
+    if { exists("__arg_urlsha1") } {
+        lappend where_clause [list urlsha1 = $urlsha1]
+    }
+
+    puts where_clause=$where_clause
+
+    set slicelist [::newsdb::news_item_t find $where_clause]
+
+    foreach oid $slicelist {
+        log "rm oid=$oid"
+        ::newsdb::news_item_t delete $oid
+    }
+
+}
 
 proc ::feed_reader::ls {args} {
 
@@ -1511,10 +1553,10 @@ proc ::feed_reader::print_log_entry {itemVar {contextVar ""}} {
     set content ""
     set topic_and_subtopic ""
     set edition ""
-    if { [classifier::is_enabled_p el/topic] && [classifier::is_enabled_p el/edition] } {
+    if { [classifier::is_enabled_p "el.topic"] && [classifier::is_enabled_p "el.edition"] } {
         set content [concat $item(title) $item(body)]
-        set topic_and_subtopic [classifier::classify el/topic content]
-        set edition [classifier::classify el/edition content]
+        set topic_and_subtopic [classifier::classify "el.topic" content]
+        set edition [classifier::classify "el.edition" content]
     }
 
     lassign [split ${topic_and_subtopic} {/}] topic subtopic
@@ -2213,6 +2255,7 @@ proc predicate=custom_composite_in {slicelistVar urlsha1_list} {
     set slicelist ${result}
 }
 
+# DEPRECATED
 proc ::feed_reader::remove_feed_items {domain {urlsha1_list ""}} {
 
     set reversedomain [reversedomain ${domain}]

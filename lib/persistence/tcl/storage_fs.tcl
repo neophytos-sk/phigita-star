@@ -6,8 +6,8 @@ namespace eval ::persistence::fs {
     namespace export -clear \
         define_ks define_cf \
         exists_data_p set_data get_data \
-        exists_column_data_p get_column_data \
-        exists_column_p insert_column __get_column get_column_name \
+        exists_column_data_p get_column_data set_column_data del_column_data \
+        exists_column_p insert_column delete_column __get_column get_column_name \
         insert_link delete_link \
         delete_row delete_column delete_slice delete_supercolumn \
         multiget_slice \
@@ -218,10 +218,8 @@ proc ::persistence::fs::__insert_column {keyspace column_family row_key column_p
 
 }
 
-proc ::persistence::fs::delete_link {src} {
-    variable base_dir
-    set src [file join $base_dir $src]
-    ::persistence::delete_data $src
+proc ::persistence::fs::delete_link {oid} {
+    del_column_data $oid
 }
 
 proc ::persistence::fs::insert_link {src_oid target_oid} {
@@ -296,6 +294,14 @@ proc ::persistence::fs::get_column_data {oid} {
     set filename [get_filename ${oid}]
     return [::util::readfile ${filename}]
 }
+
+proc ::persistence::fs::del_column_data {oid} {
+    # TODO: insert_column tombstone
+    assert_refcount_is_zero ${oid}
+    set filename [get_filename ${oid}]
+    return [file delete ${filename}]
+}
+
 
 proc ::persistence::fs::expand_oid {oid} {
     if { [is_row_oid_p $oid] && [exists_row_data_p $oid] } {
@@ -454,12 +460,6 @@ proc ::persistence::fs::get_name {oid} {
     }
     return [file tail ${filename_or_dir}]
 }
-
-proc ::persistence::fs::delete_data {filename_or_dir} {
-    assert_refcount_is_zero ${filename_or_dir}
-    return [file delete ${filename_or_dir}]
-}
-
 
 # TODO: replace glob with ::util::fs::ls
 proc ::persistence::fs::empty_row_p {row_dir} {
@@ -695,12 +695,12 @@ proc ::persistence::fs::__get_slice_names {args} {
 }
 
 
-proc ::persistence::fs::__get_column {keyspace column_family row_key column_path {dataVar ""} {exists_pVar ""}} {
+proc ::persistence::fs::__get_column {ks cf_axis row_key column_path {dataVar ""} {exists_pVar ""}} {
 
     # row_path includes the "+" delimiter
-    set row_path [get_row ${keyspace} ${column_family} ${row_key}]
+    set row_path [get_row ${ks} ${cf_axis} ${row_key}]
 
-    set path ${row_path}/${column_path}
+    set oid [file join ${row_path} ${column_path}]
 
     if { ${dataVar} ne {} } {
         upvar $dataVar data
@@ -710,10 +710,10 @@ proc ::persistence::fs::__get_column {keyspace column_family row_key column_path
         upvar ${exists_pVar} exists_p
     }
 
-    set exists_p [exists_column_data_p ${path}]
+    set exists_p [exists_column_data_p ${oid}]
     if { ${exists_p} } {
-        set data [get_column_data ${path}]
-        return ${path}
+        set data [get_column_data ${oid}]
+        return ${oid}
     } else {
         return
     }
@@ -733,15 +733,19 @@ proc ::persistence::fs::__get_column_name {args} {
 }
 
 
-proc ::persistence::fs::delete_column {args} {
+proc ::persistence::fs::__delete_column {args} {
+    # assert_refcount_is_zero (or will be zero)
 
-    set filename [__get_column {*}${args}]
+    set oid [__get_column {*}${args}]
+    puts oid=$oid
 
-    delete_data ${filename}
+    del_column_data ${oid}
 
+    # delete rows and/or supercolumns, if the
+    # given column was there only data
 }
 
-proc ::persistence::fs::delete_row {args} {
+proc ::persistence::fs::__delete_row {args} {
     
     set row_dir [get_row {*}${args}]
 
@@ -801,18 +805,6 @@ proc ::persistence::fs::delete_slice {keyspace column_family row_key {slice_pred
     return ${slicelist}
 }
 
-
-proc ::persistence::fs::exists_column_p {keyspace column_family row_key column_path} {
-    if { 0 } {
-        # bloom filter capability
-        # if { ![bloom_filter may_contain $row_bf $column_path] } {
-        #   return 0
-        # }
-    }
-    set row_path [get_row ${keyspace} ${column_family} ${row_key}]
-    set path ${row_path}/${column_path}
-    return [exists_data_p ${path}]
-}
 
 # work in progress
 proc ::persistence::fs::exec_query {ks cf args} {
@@ -1209,8 +1201,8 @@ proc ::persistence::fs::get_column {path {dataVar ""} {exists_pVar ""}} {
     return $filename
 }
 
-proc ::persistence::fs::insert_column {path data} {
-    set column_path [lassign [split $path {/}] ks cf row_key __delimiter__]
+proc ::persistence::fs::insert_column {oid data} {
+    set column_path [lassign [split $oid {/}] ks cf row_key __delimiter__]
     set column_path [join $column_path {/}]
     __insert_column $ks $cf $row_key $column_path $data
 }
@@ -1254,5 +1246,24 @@ proc ::persistence::sort {slicelist attname sort_direction} {
     return $sorted_slicelist 
 }
 
+
+proc ::persistence::fs::exists_column_p {oid} {
+    assert { [is_column_oid_p $oid] }
+
+    # set column_path [lassign [split $oid {/}] ks cf_axis row_key __delim__ column_path]
+    # set row_bf [get_row_bf $ks $cf_axis $row_key]
+    # if { ![bloom_filter may_contain $row_bf $column_path] } {
+    #   return 0
+    # }
+
+    return [exists_column_data_p ${oid}]
+
+}
+
+proc ::persistence::fs::delete_column {oid} {
+    assert { [is_column_oid_p $oid] }
+    set column_path [lassign [split $oid {/}] ks cf_axis row_key __delimiter__]
+    __delete_column $ks $cf_axis $row_key {*}$column_path
+}
 
 

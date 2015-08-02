@@ -24,12 +24,12 @@ proc print_usage_info {} {
 			   "classify-content" "axis contentsha1 ?...?" \
 			   "uses-content" "contentsha1 ?...?" \
 			   "diff-content" "contentsha1_old contentsha1_new" \
-			   "ls" "?--lang langclass? ?--domain domain_name? ?--offset num? ?--limit num? ?-l,--long_listing" \
+			   "ls" "?--lang langclass? ?--domain domain? ?--offset num? ?--limit num? ?-l,--long_listing" \
+			   "rm" "?--lang langclass? ?--domain domain? ?--urlsha1 urlsha1? ?--contentsha1 contentsha1 ?--url url?" \
 			   "revisions" "urlsha1" \
 			   "register-axis" "axis_name" \
 			   "register-label" "axis_name label_name" \
 			   "test" "news_source ?limit? ?fetch_item_p? ?exclude_keys?" \
-			   "remove-feed-items" "domain ?sort_date.urlsha1? ?...?" \
 			   "cluster" "?limit? ?offset?" \
 			   "label-interactive" "axis label keywords ?offset? ?limit? ?callback?" \
 			   "label-batch" "axis label keywords ?offset? ?limit?" \
@@ -183,11 +183,9 @@ if { ${argc} < 1 } {
 
         ::feed_reader::ls {*}[lrange ${argv} 1 end]
 
-    } elseif { ${cmd} eq {remove-feed-items} && ${argc} >= 2 } {
+    } elseif { ${cmd} eq {rm} && ${argc} >= 2 } {
 
-        set news_source [lindex ${argv} 1]
-        set urlsha1_list [lrange ${argv} 2 end]
-        ::feed_reader::remove_feed_items ${news_source} ${urlsha1_list}
+        ::feed_reader::rm {*}[lrange $argv 1 end]
 
     } elseif { ${cmd} eq {cluster} && ${argc} >= 1 } {
 
