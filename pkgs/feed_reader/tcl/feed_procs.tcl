@@ -819,7 +819,6 @@ proc ::feed_reader::get_feed_files {news_source} {
 
 
 proc ::feed_reader::rm {args} {
-    puts args=$args
 
     # parse args
     #
@@ -854,7 +853,7 @@ proc ::feed_reader::rm {args} {
     set slicelist [::newsdb::news_item_t find $where_clause]
 
     foreach oid $slicelist {
-        log "rm oid=$oid"
+        #log "rm oid=$oid"
         ::newsdb::news_item_t delete $oid
     }
 
@@ -1748,6 +1747,9 @@ proc ::feed_reader::write_item {timestamp normalized_link feedVar itemVar resync
 
     # TODO: each image,attachment,video,etc should get its own content file in the future
 
+    # TODO: query for news_item_t with the given contentsha1
+    # as we might have deleted the news_item, in that case,
+    # it is not a copy, which is the purpose behind this query
     set content_item_oid [::newsdb::content_item_t find_by_id $contentsha1]
 
     if { $content_item_oid ne {} } {

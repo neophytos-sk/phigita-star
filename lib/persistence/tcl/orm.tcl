@@ -125,8 +125,6 @@ proc ::persistence::orm::to_path_by {axis args} {
 
     set target "${ks}/${cf}.${axis}/${row_key}/+/${column_path}"
 
-    #puts target=$target
-
     return $target
 }
 
@@ -134,7 +132,6 @@ proc ::persistence::orm::to_path {id} {
     variable [namespace __this]::pk
     set axis "by_$pk"
     return [to_path_by $axis $id {*}$id]
-    #return [to_path_by $axis $id "__data__"]
 }
 
 proc ::persistence::orm::from_path {path} {
@@ -264,7 +261,7 @@ proc ::persistence::orm::insert {itemVar {optionsVar ""}} {
         }
 
         set row_key [to_row_key_by $idxname item]
-        set src [to_path_by $idxname $row_key $item($pk)]
+        set src [to_path_by $idxname $row_key {*}$item($pk)]
         ::persistence::insert_link $src $target
      }
 
@@ -286,17 +283,17 @@ proc ::persistence::orm::delete {oid {exists_pVar ""}} {
         variable [namespace __this]::__indexes
         variable [namespace __this]::pk
 
-        ::persistence::delete_column $oid
-
         foreach idxname $__indexes {
-            if { $idxname eq "by_$pk" } {
-                continue
-            }
-            
             set row_key [to_row_key_by $idxname item]
-            set src [to_path_by $idxname $row_key $item($pk)]
-            ::persistence::delete_link $src
+            set to_delete_oid [to_path_by $idxname $row_key {*}$item($pk)]
+
+            if { $idxname eq "by_$pk" } {
+                ::persistence::delete_column $to_delete_oid
+            } else {
+                ::persistence::delete_link $to_delete_oid
+            }
         }
+
 
     } else {
         error "no such oid (=$oid) in storage system (=mystore)"
@@ -408,7 +405,7 @@ proc ::persistence::orm::find_by_axis {argv {predicate ""}} {
         if { $exists_pVar ne {} } {
             upvar $exists_pVar exists_p
         }
-        set path [to_path_by by_$attname $attvalue $id]
+        set path [to_path_by by_$attname $attvalue {*}$id]
         set oid [::persistence::get_column $path ${varname} exists_p]
         return $oid
 

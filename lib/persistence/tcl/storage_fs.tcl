@@ -318,9 +318,11 @@ proc ::persistence::fs::is_expanded_p {slicelist} {
     if { $llen == 0 } {
         return 1
     }
-    
+
+
     set oid [lindex $slicelist 0]
     if { [is_row_oid_p $oid] && [exists_row_data_p $oid] } {
+        puts is_expanded_p=0
         return 0
     } elseif { [is_supercolumn_oid_p $oid] && [exists_supercolumn_data_p $oid] } {
         return 0
@@ -596,7 +598,7 @@ proc ::persistence::fs::get_leaf_nodes {path} {
 }
 
 # TODO: replace glob with ::util::fs::ls
-proc ::persistence::fs::get_files {path {types "f d"}} {
+proc ::persistence::fs::get_files {path {types "f l d"}} {
     variable base_dir
     set dir [file normalize ${base_dir}/${path}]
     set names [glob -tails -nocomplain -types ${types} -directory ${dir} "*"]
@@ -721,15 +723,10 @@ proc ::persistence::fs::__get_column {ks cf_axis row_key column_path {dataVar ""
 }
 
 proc ::persistence::fs::__get_column_name {args} {
-
     set result [list]
-
     set column [__get_column {*}${args}]
-
     set result [file tail ${column}]
-
     return ${result}
-
 }
 
 
@@ -737,7 +734,8 @@ proc ::persistence::fs::__delete_column {args} {
     # assert_refcount_is_zero (or will be zero)
 
     set oid [__get_column {*}${args}]
-    puts oid=$oid
+
+    assert { [is_column_oid_p $oid] }
 
     del_column_data ${oid}
 
@@ -1250,7 +1248,8 @@ proc ::persistence::sort {slicelist attname sort_direction} {
 proc ::persistence::fs::exists_column_p {oid} {
     assert { [is_column_oid_p $oid] }
 
-    # set column_path [lassign [split $oid {/}] ks cf_axis row_key __delim__ column_path]
+    # set column_path_args [lassign [split $oid {/}] ks cf_axis row_key __delim__]
+    # set column_path [join $column_path_args {/}]
     # set row_bf [get_row_bf $ks $cf_axis $row_key]
     # if { ![bloom_filter may_contain $row_bf $column_path] } {
     #   return 0
@@ -1262,8 +1261,9 @@ proc ::persistence::fs::exists_column_p {oid} {
 
 proc ::persistence::fs::delete_column {oid} {
     assert { [is_column_oid_p $oid] }
-    set column_path [lassign [split $oid {/}] ks cf_axis row_key __delimiter__]
-    __delete_column $ks $cf_axis $row_key {*}$column_path
+    set column_path_args [lassign [split $oid {/}] ks cf_axis row_key __delimiter__]
+    set column_path [join $column_path_args {/}]
+    __delete_column $ks $cf_axis $row_key $column_path
 }
 
 
