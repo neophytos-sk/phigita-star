@@ -229,14 +229,14 @@ proc ::persistence::fs::insert_link {src_oid target_oid} {
         set target [get_filename $target_oid]
         if { [exists_data_p $src_oid] } {
             set old_target [file link $src] 
-            log "file node (link) exists: $src"
-            log "checking to see if link points to the same target: $old_target"
+            #log "file node (link) exists: $src"
+            #log "checking to see if link points to the same target: $old_target"
             if { $old_target ne $target } {
-                log "deleting link $src -> $old_target"
-                log "new target for link: $target"
+                #log "deleting link $src -> $old_target"
+                #log "new target for link: $target"
                 file delete $src
             } else {
-                log "link already exists and points to the same target"
+                #log "link already exists and points to the same target"
                 return
             }
         }
@@ -309,7 +309,7 @@ proc ::persistence::fs::expand_oid {oid} {
     } elseif { [is_supercolumn_oid_p $oid] && [exists_supercolumn_data_p $oid] } {
         return [get_leaf_nodes $oid]
     } else {
-        return $oid
+        return [list $oid]
     }
 }
 
@@ -322,7 +322,6 @@ proc ::persistence::fs::is_expanded_p {slicelist} {
 
     set oid [lindex $slicelist 0]
     if { [is_row_oid_p $oid] && [exists_row_data_p $oid] } {
-        puts is_expanded_p=0
         return 0
     } elseif { [is_supercolumn_oid_p $oid] && [exists_supercolumn_data_p $oid] } {
         return 0
@@ -332,7 +331,9 @@ proc ::persistence::fs::is_expanded_p {slicelist} {
 
 }
 
-proc ::persistence::fs::expand_slice {slicelist fn} {
+proc ::persistence::fs::expand_slice {slicelistVar fn} {
+
+    upvar $slicelistVar slicelist
 
     if { [is_expanded_p $slicelist] } {
         return $slicelist
@@ -341,13 +342,20 @@ proc ::persistence::fs::expand_slice {slicelist fn} {
     set result [list]
     foreach oid $slicelist {
         set leafs [expand_oid $oid]
+
+        if { $fn ne {} } {
+            if { [llength $fn] == 1 } {
+                predicate=$fn leafs
+            } elseif { [llength $fn] == 2 } {
+                apply $fn leafs
+            } else {
+                error "unknown type of expand_fn: must be lambda or procname"
+            }
+        }
+        
         foreach leaf_oid $leafs {
             lappend result $leaf_oid
         }
-    }
-
-    if { $fn ne {} } {
-        apply $fn result
     }
 
     return $result
@@ -366,9 +374,13 @@ proc ::persistence::fs::compare_mtime { oid1 oid2 } {
 }
 
 
-proc ::persistence::fs::latest_mtime {slicelistVar} {
+proc ::persistence::fs::predicate=latest_mtime {slicelistVar} {
     upvar $slicelistVar slicelist
-    return [lindex [lsort -decreasing -command compare_mtime $slicelist] 0]
+    if { [llength $slicelist] <= 1 } {
+        return
+    }
+    set sorted_slicelist [lsort -decreasing -command compare_mtime $slicelist] 
+    set slicelist [lindex $sorted_slicelist 0]
 }
 
 proc ::persistence::fs::get_supercolumn_data {oid} {
@@ -463,6 +475,12 @@ proc ::persistence::fs::get_name {oid} {
     return [file tail ${filename_or_dir}]
 }
 
+proc ::persistence::fs::get_column_path {oid} {
+    assert { [is_column_oid_p] }
+    set column_path [lindex [split $oid {+}] 1]
+    return $column_path
+}
+
 # TODO: replace glob with ::util::fs::ls
 proc ::persistence::fs::empty_row_p {row_dir} {
     return [expr { [glob -nocomplain -directory ${row_dir} *] eq {} }]
@@ -533,8 +551,8 @@ proc ::persistence::fs::predicate=maybe_in_path {slicelistVar parent_path {predi
 
     set result [list]
     foreach oid $slicelist {
-        set name [get_name $oid]
-        set other_oid "${parent_path}${name}"
+        set column_path [get_column_path $oid]
+        set other_oid "${parent_path}${column_path}"
 
         # TODO: get_bf __bf__ $parent_path
         # TODO: set may_contain_p [bloom_filter may_contain __bf__ $name]
@@ -544,7 +562,7 @@ proc ::persistence::fs::predicate=maybe_in_path {slicelistVar parent_path {predi
             lappend result $oid
         }
     }
-    set slicelist $result
+    return $result
 }
 
 proc ::persistence::fs::predicate=in_path {slicelistVar parent_path {predicate ""}} {
@@ -1225,7 +1243,8 @@ proc ::persistence::fs::multiget_slice {xpath {predicate ""}} {
     return $slicelist
 }
 
-proc ::persistence::sort {slicelist attname sort_direction} {
+proc ::persistence::sort {slicelistVar attname sort_direction} {
+    upvar $slicelistVar slicelist
 
     assert { $sort_direction in {decreasing increasing} }
 

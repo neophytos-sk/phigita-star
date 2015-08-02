@@ -15,7 +15,8 @@ namespace eval ::persistence::orm {
         1row \
         0or1row \
         insert \
-        delete
+        delete \
+        update
 
     #exists
 
@@ -50,11 +51,13 @@ proc ::persistence::orm::init_type {} {
         set func [get_value_if attinfo(func) ""]
         set null [get_value_if attinfo(null) "1"]
         set maxlen [get_value_if attinfo(maxlen) ""]
+        set immutable_p [get_value_if attinfo(immutable_p) "0"]
 
         set __attinfo(${attname},type) $type
         set __attinfo(${attname},func) $func
         set __attinfo(${attname},null) $null
         set __attinfo(${attname},maxlen) $maxlen
+        set __attinfo(${attname},immutable) $immutable_p
 
         if { $func ne {} } {
             lappend __derived_attributes $attname
@@ -80,6 +83,10 @@ proc ::persistence::orm::init_type {} {
         array unset idxinfo
     }
 
+    set pk_atts $__idxinfo(by_${pk},atts)
+    foreach attname $pk_atts {
+        set __attinfo(${attname},immutable) "1"
+    }
 
 
     # log "persistence (ORM): initializing [namespace __this] ensemble/type"
@@ -267,6 +274,63 @@ proc ::persistence::orm::insert {itemVar {optionsVar ""}} {
 
 }
 
+proc ::persistence::orm::update {oid new_itemVar {optionsVar ""}} {
+    variable [namespace __this]::pk
+    variable [namespace __this]::__attinfo
+    variable [namespace __this]::__idxinfo
+
+    upvar $new_itemVar new_item
+
+    if { $optionsVar ne {} } {
+        upvar $optionsVar options
+    }
+
+    # attributes to be updated
+    set attnames [array names new_item]
+
+    # check for existance and get the old item
+    if { ![exists_column_data_p $oid] } {
+        error "persistence (ORM): no such oid (=$oid) in the store (=mystore)"
+    }
+    array set item [get $oid]
+
+    # ensures that no immutable attributes are modified
+    foreach attname $attnames {
+        if { $__attinfo(${attname},immutable) && exists("new_item($attname)") } {
+            if { $new_item($attname) ne $old_item($attname) } {
+                error "persistence (ORM): attempted to modify immutable attribute"
+            }
+        }
+    }
+
+    # merges old with new data
+    array set item $new_item
+
+    # updates indexes
+    set target [to_path $item($pk)] 
+    foreach idxname $__indexes {
+        set count 0
+        set idx_atts $__idxinfo(${idxname},atts)
+        foreach idx_attname $idx_atts {
+            if { exists("new_item($idx_attname)") } {
+                incr count
+            }
+        }
+        if { $count == [llength $idx_atts] } {
+            # update index
+            set row_key [to_row_key_by $idxname item]
+            set src [to_path_by $idxname $row_key {*}$item($pk)]
+            ::persistence::delete_link $src
+            ::persistence::insert_link $src $target
+            # ::persistence::update_link $src $new_target
+        }
+    }
+
+    # overwrites data
+    ::persistence::insert_column $target [array get item]
+
+}
+
 # delete -
 # * deletes the record with the given oid
 #
@@ -329,6 +393,7 @@ proc ::persistence::orm::0or1row {where_clause_argv {optionsVar ""}} {
     set slicelist [find $where_clause_argv options]
     set llen [llength $slicelist]
     if { $llen > 1 } {
+        puts [join $slicelist \n]
         error "persistence (ORM): more records in slice than expected (0or1row)"
     }
 
@@ -461,14 +526,14 @@ proc ::persistence::orm::find {{where_clause_argv ""} {optionsVar ""}} {
 
     }
 
-    set expand_fn [get_value_if option(expand_fn) ""]
-    set slicelist [::persistence::expand_slice $slicelist $expand_fn]
+    set expand_fn [get_value_if options(expand_fn) ""]
+    set slicelist [::persistence::expand_slice slicelist $expand_fn]
 
     set option_order_by [get_value_if options(order_by) ""]
     if { $option_order_by ne {} } {
         lassign $option_order_by sort_attname sort_direction
         assert { $sort_direction in {increasing decreasing} }
-        set slicelist [::persistence::sort $slicelist $sort_attname $sort_direction]
+        set slicelist [::persistence::sort slicelist $sort_attname $sort_direction]
     }
 
     if { exists("options(offset)") || exists("options(limit)") } {

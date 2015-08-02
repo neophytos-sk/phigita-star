@@ -1341,7 +1341,9 @@ proc ::feed_reader::cluster {{offset "0"} {limit "10"} {k ""} {num_iter "3"}} {
 
 proc ::feed_reader::exists_item {link} {
     set urlsha1 [get_urlsha1 ${link}]
-    set oid [::newsdb::news_item_t find_by_id $urlsha1]
+    set where_clause [list [list urlsha1 = $urlsha1]]
+    array set options [list expand_fn "latest_mtime"]
+    set oid [::newsdb::news_item_t 0or1row $where_clause options]
     return [expr { $oid ne {} }]
 }
 

@@ -76,12 +76,13 @@ proc ::feed_reader::get_first_sync_timestamp {linkVar} {
     set urlsha1 [get_urlsha1 ${link}]
 
     set where_clause [list [list urlsha1 = $urlsha1]]
-    set paths [::crawldb::sync_info_t find $where_clause]
-    if { $paths eq {} } {
+    set oid [::crawldb::sync_info_t 0or1row $where_clause]
+    if { $oid eq {} } {
         return 0
     }
-    set path [lindex $paths 0]
     set atts [::crawldb::sync_info_t from_path $path] 
+    puts atts=$atts
+    exit
     lassign [split [join [keylget atts "datetime_urlsha1"]] { }] revision_datetime
 
     # puts "get_first_sync_timestamp: urlsha1=$urlsha1 revision_datetime=$revision_datetime link=$link"
