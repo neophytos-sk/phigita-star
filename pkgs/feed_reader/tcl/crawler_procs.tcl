@@ -80,9 +80,7 @@ proc ::feed_reader::get_first_sync_timestamp {linkVar} {
     if { $oid eq {} } {
         return 0
     }
-    set atts [::crawldb::sync_info_t from_path $path] 
-    puts atts=$atts
-    exit
+    set atts [::crawldb::sync_info_t from_path $oid] 
     lassign [split [join [keylget atts "datetime_urlsha1"]] { }] revision_datetime
 
     # puts "get_first_sync_timestamp: urlsha1=$urlsha1 revision_datetime=$revision_datetime link=$link"
