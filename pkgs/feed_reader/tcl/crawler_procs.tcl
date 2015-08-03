@@ -76,10 +76,14 @@ proc ::feed_reader::get_first_sync_timestamp {linkVar} {
     set urlsha1 [get_urlsha1 ${link}]
 
     set where_clause [list [list urlsha1 = $urlsha1]]
-    set oid [::crawldb::sync_info_t 0or1row $where_clause]
+    array set options [list]
+    set options(order_by) "datetime increasing"
+    set options(limit) "1"
+    set oid [::crawldb::sync_info_t 0or1row $where_clause options]
     if { $oid eq {} } {
         return 0
     }
+
     set atts [::crawldb::sync_info_t from_path $oid] 
     lassign [split [join [keylget atts "datetime_urlsha1"]] { }] revision_datetime
 
@@ -101,12 +105,14 @@ proc ::feed_reader::get_last_sync_timestamp {linkVar} {
     set urlsha1 [get_urlsha1 ${link}]
 
     set where_clause [list [list urlsha1 = $urlsha1]]
-    set paths [::crawldb::sync_info_t find $where_clause]
-    if { $paths eq {} } {
+    array set options [list]
+    set options(order_by) "datetime decreasing"
+    set options(limit) "1"
+    set oid [::crawldb::sync_info_t 0or1row $where_clause options]
+    if { $oid eq {} } {
         return 0
     }
-    set path [lindex $paths end]
-    set atts [::crawldb::sync_info_t from_path $path] 
+    set atts [::crawldb::sync_info_t from_path $oid] 
     lassign [split [join [keylget atts "datetime_urlsha1"]] { }] revision_datetime
 
     return [clock scan ${revision_datetime} -format "%Y%m%dT%H%M"]
@@ -121,14 +127,16 @@ proc ::feed_reader::auto_resync_p {feedVar link} {
     set first_sync [get_first_sync_timestamp link]
 
     # do not check for revisions if the item is older than a day (or maxage)
+    # set maxage [get_value_if feed(check_for_revisions_maxage) "86400"]
 
-    set maxage [get_value_if feed(check_for_revisions_maxage) "86400"]
+    # do not check for revisions if the item is older than two hours (or maxage)
+    set maxage [get_value_if feed(check_for_revisions_maxage) "14400"]
 
     if { ${now} - ${first_sync} < ${maxage} } {
 
         set last_sync [get_last_sync_timestamp link]
 
-        # check for revisions every hour (default) or given interval
+        # check for revisions every 2 hours (default) or the given interval
 
         set interval [get_value_if feed(check_for_revisions_interval) "7200"]
 

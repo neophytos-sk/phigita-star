@@ -657,6 +657,7 @@ proc ::feed_reader::fetch_and_write_item {timestamp link title_in_feed feedVar} 
 
     upvar $feedVar feed
 
+    # log link=$link
 
     set normalize_link_re [get_value_if feed(normalize_link_re) ""]
     if { ${normalize_link_re} ne {} } {
@@ -676,6 +677,8 @@ proc ::feed_reader::fetch_and_write_item {timestamp link title_in_feed feedVar} 
         ![exists_item ${normalized_link}] 
         || ( ${can_resync_p} && [set resync_p [auto_resync_p feed ${normalized_link}]] ) 
     } {
+
+        # log resync_p=$resync_p
 
         set errorcode [fetch_item ${link} ${title_in_feed} feed item info]
         if { ${errorcode} } {
@@ -876,7 +879,7 @@ proc ::feed_reader::ls {args} {
     # defaults
     #
     set_if offset 0
-    set_if limit 20
+    set_if limit [expr { $offset + 20 }]
 
     # validation checks
     #

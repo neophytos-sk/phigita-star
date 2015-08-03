@@ -539,7 +539,7 @@ proc ::persistence::orm::find {{where_clause_argv ""} {optionsVar ""}} {
     if { exists("options(offset)") || exists("options(limit)") } {
         set offset [get_value_if options(offset) "0"]
         set limit [get_value_if options(limit) "end"]
-        set slicelist [lrange $slicelist $offset $limit]
+        set slicelist [lrange $slicelist $offset [expr { $limit - 1 }]]
     }
 
     return $slicelist

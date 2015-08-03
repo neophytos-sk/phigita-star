@@ -1254,7 +1254,7 @@ proc ::persistence::sort {slicelistVar attname sort_direction} {
         # lindex used, for "oid" can be a supercolumn
         # TODO: improve proc to specify strategy/policy to use in such cases
         array set item [::persistence::get_column_data ${oid}]
-        lappend sortlist [list $i $item(sort_date) $oid]
+        lappend sortlist [list $i $item($attname) $oid]
         incr i
     }
     set sortlist [lsort -${sort_direction} -index 1 $sortlist] 
