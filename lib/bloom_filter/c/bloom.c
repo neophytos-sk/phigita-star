@@ -1,3 +1,4 @@
+#include "common.h"     // CheckArgs, DBG, etc
 #include "bloom.h"
 
 #define CHAR_BIT sizeof(char)
@@ -8,6 +9,8 @@ void bf_init(
     size_t items_estimate, 
     float false_positive_prob) 
 {
+    DBG(fprintf(stderr,"initializing bloom filter..."));
+    
     double num_hashes;
     num_hashes = -log(false_positive_prob) / log(2);
     size_t num_bits;
@@ -17,6 +20,8 @@ void bf_init(
         // throw error
         exit(0);
     }
+
+    DBG(fprintf(stderr,"num_bits=%zd\n", num_bits));
 
     size_t num_bytes;
     num_bytes = (num_bits / CHAR_BIT) + (num_bits % CHAR_BIT ? 1 : 0);
