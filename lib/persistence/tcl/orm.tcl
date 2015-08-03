@@ -410,7 +410,7 @@ proc ::persistence::orm::1row {where_clause_argv {optionsVar ""}} {
         upvar $optionsVar options
     }
 
-    set slicelist [find $where_clause_argv]
+    set slicelist [find $where_clause_argv options]
     set llen [llength $slicelist]
     if { $llen != 1 } {
         error "persistence (ORM): $llen records found (must be exactly 1row)"

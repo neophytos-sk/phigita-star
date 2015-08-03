@@ -572,7 +572,7 @@ proc ::feed_reader::generate_xpath {feedVar xpathVar matching_pairsVar encoding}
                     ${path}]]
 
 
-        set errorcode [cache_fetch html ${canonical_link}]
+        set errorcode [web cache_fetch html ${canonical_link}]
         if { ${errorcode} } {
             return $errorcode
         }
@@ -626,7 +626,7 @@ proc ::feed_reader::generate_feed {feed_url {anchor_link_pattern ""} {encoding "
             htmltidy_article_p 0]
 
 
-    if { [set errorcode [::http::fetch html $feed_url options info]] } {
+    if { [set errorcode [web cache_fetch html $feed_url options info]] } {
         return $errorcode
     }
 
