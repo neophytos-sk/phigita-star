@@ -43,7 +43,7 @@ proc ::feed_reader::stats {{news_sources ""}} {
             set feed_name [file tail ${feed_file}]
 
 
-	    ::persistence::__get_column          \
+	    ::persistence::fs::__get_column          \
             "crawldb"                      \
             "feed_stats.by_feed_and_const" \
             "${feed_name}"                 \
@@ -306,7 +306,7 @@ proc ::feed_reader::fetch_feed_p {feed_name timestamp {coeff "0.3"}} {
         # set oid [::crawldb::stat_info_t find_by feed_name $feed_name $pretty_timeval]
         
         set oid \
-            [::persistence::__get_column        \
+            [::persistence::fs::__get_column        \
                 "crawldb"                       \
                 "feed_stats.by_feed_and_period" \
                 ${feed_name}                    \
@@ -332,7 +332,7 @@ proc ::feed_reader::fetch_feed_p {feed_name timestamp {coeff "0.3"}} {
         unset count
     }
 
-    set oid [::persistence::__get_column      \
+    set oid [::persistence::fs::__get_column      \
 		      "crawldb"                       \
 		      "feed_stats.by_feed_and_const"  \
 		      "${feed_name}"                  \
@@ -398,6 +398,17 @@ proc ::feed_reader::update_crawler_stats {timestamp feed_name statsVar} {
 
 	set pretty_timeval [clock format ${timestamp} -format ${format}]
 	
+    # Example:
+    # crawldb/feed_stats.by_feed_and_period/__somefeedname__/+/H-07
+    #   FETCH_FEED 1 
+    #   FETCH_AND_WRITE_FEED 1 
+    #   FETCH_AND_WRITE 40 
+    #   NO_FETCH 94 
+    #   ERROR_FETCH_FEED 0 
+    #   NO_WRITE_FEED 0 
+    #   NO_WRITE 0
+    #   ERROR_FETCH 0
+
 	incr_array_in_column                \
 	    "crawldb"                       \
 	    "feed_stats.by_feed_and_period" \
@@ -406,6 +417,17 @@ proc ::feed_reader::update_crawler_stats {timestamp feed_name statsVar} {
 	    "stats"
 
     }
+
+    # Example:
+    # crawldb/feed_stats.by_feed_and_const/philenews/+/_stats
+    #   FETCH_FEED 11 
+    #   FETCH_AND_WRITE_FEED 9 
+    #   FETCH_AND_WRITE 322 
+    #   NO_FETCH 875 
+    #   ERROR_FETCH_FEED 2 
+    #   NO_WRITE_FEED 2 
+    #   NO_WRITE 110 
+    #   ERROR_FETCH 0
 
     incr_array_in_column                \
         "crawldb"                       \
