@@ -77,7 +77,7 @@ proc ::url::query_fmt_ex {url} {
     }]
     #puts $types
     set types [map x $types {list [lindex [lindex $x 0] 0] [lindex $x 1]}]
-    return $types
+    return [lsort -index 0 $types]
 }
 
 
@@ -301,7 +301,7 @@ proc ::url::fmt_sp {fmt intersection_url} {
 
     set query_args [list]
     foreach {k1 v1} $fmt_query_keyl {k2 v2} $url_query_keyl {
-        lappend query_args [coalesce $k2 $k1] [coalesce $v2 $v1]
+        lappend query_args "[coalesce $k2 $k1]=[coalesce $v2 $v1]"
     }
     lappend fmt_keyl query [::join $query_args {&}]
 
