@@ -3,7 +3,7 @@ proc ::feed_reader::log {msg} {
     puts $msg
 }
 
-proc ::feed_reader::generate_include_re {anchor_nodesVar feed_url matching_pairsVar} {
+proc ::feed_reader::generate_url_fmt {anchor_nodesVar feed_url matching_pairsVar} {
     upvar $anchor_nodesVar anchor_nodes
     upvar $matching_pairsVar matching_pairs
 
@@ -17,14 +17,22 @@ proc ::feed_reader::generate_include_re {anchor_nodesVar feed_url matching_pairs
     set max_path {}
 
     array set count_matched [list]
+    array set sample_matched [list]
     array set intersection_url [list]
+
     set first_node [lindex $anchor_nodes 0]
     set href [$first_node @href ""]
-    set fmt [url fmt_ex $href]
+    set title [$first_node @title [$first_node text]]
+
+    set canonical_url [url normalize [url resolve $feed_url $href]]
+    set fmt [url fmt_ex $canonical_url]
     set queue [list]
     lappend queue $fmt
+
+
     set count_matched($fmt) 0
     set intersection_url($fmt) $href
+    set sample_matched($fmt) [list $title $canonical_url]
 
     while { $queue ne {} } {
         set fmt [lindex $queue 0]
@@ -38,25 +46,22 @@ proc ::feed_reader::generate_include_re {anchor_nodesVar feed_url matching_pairs
                 continue
             }
 
-            set canonical_link \
-                [::uri::canonicalize \
-                    [::uri::resolve \
-                        ${feed_url} \
-                        ${href}]]
+            set canonical_url [url normalize [url resolve $feed_url $href]]
 
-            if { ![url match $fmt $canonical_link] } {
-                set new_fmt [url fmt_ex $canonical_link]
+            if { ![url match $fmt $canonical_url] } {
+                set new_fmt [url fmt_ex $canonical_url]
                 if { ![info exists count_matched($new_fmt)] } {
                     lappend queue $new_fmt
                     set count_matched($new_fmt) 0
-                    set intersection_url($new_fmt) $canonical_link
+                    set intersection_url($new_fmt) $canonical_url
+                    set sample_matched($new_fmt) [list $title $canonical_url]
                 }
 
-                #puts "match failed: $canonical_link"
+                #puts "match failed: $canonical_url"
                 #exit
             } else {
                 incr count_matched($fmt)
-                set intersection_url($fmt) [url intersect $intersection_url($fmt) $canonical_link]
+                set intersection_url($fmt) [url intersect $intersection_url($fmt) $canonical_url]
             }
 
         }
@@ -72,120 +77,28 @@ proc ::feed_reader::generate_include_re {anchor_nodesVar feed_url matching_pairs
     puts -----
     puts [join [map {x y} [array get intersection_url] {set y}] "\n"]
     #puts [array get intersection_url]
-    exit
+
+    set sorted [lsort -decreasing -integer -index 1 [map {x y} [array get count_matched] {list $x $y}]] 
+    set chosen_url_fmt [lindex [lindex $sorted 0] 0]
+    set chosen_intersection_url_fmt $intersection_url($chosen_url_fmt)
 
     puts ""
     puts "Top 5 URL shapes"
     puts "================"
-    set top5_url_shapes [lrange [lsort -decreasing -integer -index 1 [map {x y} [array get url_shape] {list $x $y}]] 0 4]
+    set top5_url_shapes [lrange $sorted 0 4]
     foreach shape $top5_url_shapes {
-        lassign $shape pattern count
-        lassign [lindex $url_pairs($pattern) 0] title link
-        puts "$pattern count=$count log=[expr { log($count) }]"
+        lassign $shape fmt count
+        lassign $sample_matched($fmt) title link
+
+        puts "$intersection_url($fmt) count=$count log=[expr { log($count) }]"
         puts $title
         puts $link
         puts ""
     }
     puts ""
 
-    set include_re ""
-    if { ${max} } {
+    return $chosen_intersection_url_fmt
 
-        # if more than ${coeff} of links are recognized by ${max_path}
-        # then turn it into a regular expression
-
-        puts ""
-        puts "Chosen URL shape"
-        puts "================"
-        puts "url_shape=${max_path} count=${max}"
-        if {0} {
-            foreach pair $url_pairs($max_path) {
-                lassign $pair title link
-                puts ""
-                puts $title
-                puts $link
-            }
-        }
-
-        set include_re ${max_path}
-
-        #   {N}     {\d{4,}}
-        #   {D}     {\d{1,3}}
-        foreach {re subSpec} {
-            {N}     {\d+}
-            {D}     {\d+}
-            {y}     {[a-z]+}
-            {Y}     {[A-Z]+}
-            {w}     {[a-z][a-zA-Z]+}
-            {W}     {[A-Z][a-zA-Z]+}
-            {o}     {.*}
-            {P}     {([[:lower:]]+)}
-            {Q}     {([[:upper:]]+)}
-            {R}     {([[:alpha:]]+)}
-            {T}     {([[:alpha:]\-]+)}
-            {(\.\*)+} {.*}
-        } {
-            regsub -all -- ${re} ${include_re} ${subSpec} include_re
-        }
-
-        append include_re {$}
-
-        array set inline_parts [list]
-        set max_count 0
-        set max_inline_match [list]
-        set second_best_inline_match [list]
-        set matching_pairs [list]
-        foreach title_path_pair $url_pairs($max_path) {
-            lassign $title_path_pair title path
-
-            # lrange is there to ensure that we exclude whole match from inline parts
-            set inline_match0 [regexp -inline -- ${include_re} ${path}]
-            set inline_match [lrange ${inline_match0} 1 end]
-
-            if { ${inline_match0} ne {} } {
-
-                lappend matching_pairs $title_path_pair
-
-                set count [incr inline_parts(${inline_match})]
-
-                if { ${count} > ${max_count} } {
-                    if { ${max_inline_match} ne {} && ${inline_match} ne ${max_inline_match} } {
-                        set second_best_inline_match ${max_inline_match}
-                    }
-                    set max_count ${count}
-                    set max_inline_match ${inline_match}
-                }
-
-            }
-
-        }
-
-        if { ${max_count} } {
-
-        #puts "max_inline_match=$max_inline_match"
-        #puts "second_best_inline_match=$second_best_inline_match"
-
-        #set re {\(\[\[:[a-z]+:\]\]\+\)}
-            set re {\([^\)]+\)}
-            foreach inline_part ${max_inline_match} inline_part2 ${second_best_inline_match} {
-                if { ${inline_part2} ne {} && ${inline_part} ne ${inline_part2} } {
-                    set inline_part {[[:alnum:]\-]+}
-                }
-                # finds and substitutes first match
-                regsub -- ${re} ${include_re} ${inline_part} include_re
-            }
-
-        }
-        puts ""
-        puts include_re=${include_re}
-
-    } else {
-
-        puts "sorry, could not generate feed, could not figure out url_shape"
-
-    }
-
-    return ${include_re}
 }
 
 proc ::feed_reader::to_pretty_xpath_cleanup_helper {args} {
@@ -577,12 +490,7 @@ proc ::feed_reader::generate_xpath {feedVar xpathVar matching_pairsVar encoding}
     foreach title_path_pair $matching_pairs {
         lassign $title_path_pair title_from_feed path
 
-        set canonical_link \
-            [::uri::canonicalize \
-                [::uri::resolve \
-                    $feed(url) \
-                    ${path}]]
-
+        set canonical_url [url normalize [url resolve $feed(url) $path]]
 
         set errorcode [web cache_fetch html ${canonical_link}]
         if { ${errorcode} } {
@@ -627,15 +535,35 @@ proc ::feed_reader::generate_xpath {feedVar xpathVar matching_pairsVar encoding}
 }
 
 
-proc ::feed_reader::generate_feed {feed_url {anchor_link_pattern ""} {encoding "utf-8"}} {
+proc ::feed_reader::generate_feed {args} {
+
+    getopt::init {
+        {exclude_inurl "" {__arg_exclude_inurl exclude_strings}}
+        {include_inurl "" {__arg_include_inurl include_strings}}
+        {phase   "" {__arg_phase phase}}
+        {encoding "" {__arg_encoding encoding}}
+        feed_url
+    }
+    getopt::getopt $args
+
+    # defaults
+    set_if exclude_strings ""
+    set_if include_strings ""
+    set_if encoding utf-8
+
 
     array set feed  \
         [list \
             url $feed_url \
             encoding $encoding \
+            url_fmt "" \
+            include_inurl $include_strings \
+            exclude_inurl $exclude_strings \
             include_re "" \
+            exclude_re "" \
             htmltidy_feed_p 0 \
             htmltidy_article_p 0]
+
 
 
     if { [set errorcode [web cache_fetch html $feed_url options info]] } {
@@ -647,42 +575,55 @@ proc ::feed_reader::generate_feed {feed_url {anchor_link_pattern ""} {encoding "
     }
 
     if { [catch { set doc [dom parse -html ${html}] } errmsg] } {
-
         set feed(htmltidy_feed_p) 1
-
         set html [::htmltidy::tidy ${html}]
         set doc [dom parse -html ${html}]
-
     }
 
     set anchor_nodes [${doc} selectNodes {//a[@href]}]
 
     set result [list]
     foreach node $anchor_nodes {
-        set link [$node @href ""]
+        set href [$node @href ""]
 
-        if { $link eq {} } {
+        if { $href eq {} } {
             continue
         }
 
-        if { [string match -nocase "javascript:*" $link] } {
+        if { [string match -nocase "javascript:*" $href] } {
             continue
         }
-        if { $anchor_link_pattern ne {} } {
-            if { ![string match $anchor_link_pattern $link] } {
+
+        if { $exclude_strings ne {} } {
+            set skip_p 0
+            foreach str $exclude_strings {
+                if { -1 != [string first $str $href] } {
+                    set skip_p 1
+                    break
+                }
+            }
+            if { $skip_p } {
                 continue
             }
         }
 
-        set canonical_link \
-            [::uri::canonicalize \
-                [::uri::resolve \
-                    ${feed_url} \
-                    ${link}]]
+        if { $include_strings ne {} } {
+            set skip_p 0
+            foreach str $include_strings {
+                if { -1 == [string first $str $href] } {
+                    set skip_p 1
+                    break
+                }
+            }
+            if { $skip_p } {
+                continue
+            }
+        }
 
+        set canonical_url [url normalize [url resolve $feed_url $href]]
 
         set domain [::util::domain_from_url ${feed_url}]
-        if { ${domain} ne [::util::domain_from_url ${canonical_link}] } {
+        if { ${domain} ne [::util::domain_from_url ${canonical_url}] } {
             continue
         }
 
@@ -707,11 +648,12 @@ proc ::feed_reader::generate_feed {feed_url {anchor_link_pattern ""} {encoding "
         puts ""
     }
 
-    # generate include_re
+    # generate url_fmt
 
     set matching_pairs [list]
-    set feed(include_re) [generate_include_re anchor_nodes ${feed_url} matching_pairs]
-    if { $feed(include_re) eq {} } {
+    set feed(url_fmt) [generate_url_fmt anchor_nodes $feed_url matching_pairs]
+
+    if { $feed(url_fmt) eq {} } {
         puts "sorry, got nothing to show for it"
         return
     }
