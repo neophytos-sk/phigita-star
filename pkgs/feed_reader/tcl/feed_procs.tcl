@@ -916,9 +916,6 @@ proc ::feed_reader::ls {args} {
     }
 
     foreach oid $slicelist {
-        # set data [lindex [::persistence::get_data $oid] 0]
-        # log $data
-        # log ----
         set data [::newsdb::news_item_t get $oid]
 
         array set item $data
@@ -1838,7 +1835,7 @@ proc ::feed_reader::write_item {timestamp normalized_link feedVar itemVar resync
 
 proc ::feed_reader::resync_item {oid} {
 
-    array set item [::persistence::get_data ${oid}]
+    array set item [::persistence::get_column_data ${oid}]
 
     set domain [get_value_if item(domain) ""]
     if { ${domain} eq {} } {
