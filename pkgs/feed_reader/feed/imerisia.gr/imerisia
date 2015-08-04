@@ -1,4 +1,5 @@
 url http://www.imerisia.gr/default.asp
+exclude_inurl {homme}
 include_re {/article\.asp\?catid=[0-9]{4,}&subid=[0-9]{1,3}&pubid=[0-9]{4,}$}
 htmltidy_feed_p 1
 htmltidy_article_p 1

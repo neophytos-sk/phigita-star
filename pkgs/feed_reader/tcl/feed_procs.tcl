@@ -1943,6 +1943,23 @@ proc ::feed_reader::sync_feeds {{news_sources ""} {debug_p "0"}} {
 
         foreach filename ${filelist} {
 
+            array set feed {
+                url ""
+                url_fmt ""
+                include_inurl ""
+                exclude_inurl ""
+                include_re ""
+                exclude_re ""
+                encoding "utf-8"
+                htmltidy_feed_p "0"
+                htmltidy_article_p "0"
+                xpath_article_title ""
+                xpath_article_body ""
+                xpath_article_image ""
+                xpath_article_date ""
+                xpath_article_modified_time ""
+            }
+
             #set feed_name ${news_source}/[file tail ${filename}]
             set feed_name [file tail ${filename}]
 
@@ -2124,15 +2141,18 @@ proc ::feed_reader::url_pass_p {feedVar href} {
         return false
     }
 
-    if { 0 == [string first "javascript:" $href] } {
+    set href_lowercase [string tolower $href]
+
+    if { 0 == [string first "javascript:" $href_lowercase] } {
         return false
     }
 
     # drop hrefs that do not exclude all exclude_inurl strings
     if { $feed(exclude_inurl) ne {} } {
+        # expects exclude strings to be in lowercase
         set skip_p 0
         foreach str $feed(exclude_inurl) {
-            if { -1 != [string first $str $href] } {
+            if { -1 != [string first $str $href_lowercase] } {
                 set skip_p 1
                 break
             }
@@ -2144,9 +2164,10 @@ proc ::feed_reader::url_pass_p {feedVar href} {
 
     # drop hrefs that do not include all include_inurl strings
     if { $feed(include_inurl) ne {} } {
+        # expects include strings to be in lowercase
         set skip_p 0
         foreach str $feed(include_inurl) {
-            if { -1 == [string first $str $href] } {
+            if { -1 == [string first $str $href_lowercase] } {
                 set skip_p 1
                 break
             }
@@ -2162,6 +2183,18 @@ proc ::feed_reader::url_pass_p {feedVar href} {
     # drop urls that do not match the url_fmt
     if { $feed(url_fmt) ne {} } {
         if { ![url match $feed(url_fmt) $canonical_url] } {
+            return false
+        }
+    }
+
+    if { $feed(include_re) ne {} } {
+        if { ![regexp -- $feed(include_re) $canonical_url] } {
+            return false
+        }
+    }
+
+    if { $feed(exclude_re) ne {} } {
+        if { [regexp -- $feed(exclude_re) $canonical_url] } {
             return false
         }
     }
