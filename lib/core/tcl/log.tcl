@@ -1,5 +1,5 @@
 proc log {args} {
-    puts $args
+    puts stderr [::join $args]
 }
 
 proc printvars {args} {

@@ -1,13 +1,7 @@
 
-proc ::feed_reader::log {msg} {
-    puts $msg
-}
+proc ::feed_reader::generate_url_fmt {anchor_nodes feed_url} {
 
-proc ::feed_reader::generate_url_fmt {anchor_nodesVar feed_url matching_pairsVar} {
-    upvar $anchor_nodesVar anchor_nodes
-    upvar $matching_pairsVar matching_pairs
-
-    #puts feed_url=$feed_url
+    #log feed_url=$feed_url
 
     set feed_url [url normalize ${feed_url}]
     set domain [::util::domain_from_url ${feed_url}]
@@ -57,7 +51,7 @@ proc ::feed_reader::generate_url_fmt {anchor_nodesVar feed_url matching_pairsVar
                     set sample_matched($new_fmt) [list $title $canonical_url]
                 }
 
-                #puts "match failed: $canonical_url"
+                #log "match failed: $canonical_url"
                 #exit
             } else {
                 incr count_matched($fmt)
@@ -65,7 +59,7 @@ proc ::feed_reader::generate_url_fmt {anchor_nodesVar feed_url matching_pairsVar
             }
 
         }
-        #puts $queue
+        #log $queue
         
     }
 
@@ -73,29 +67,29 @@ proc ::feed_reader::generate_url_fmt {anchor_nodesVar feed_url matching_pairsVar
         set intersection_url($fmt) [url fmt_sp $fmt $intersection_url($fmt)]
     }
 
-    puts [join [map {x y} [array get count_matched] {list $x $y}] "\n"]
-    puts -----
-    puts [join [map {x y} [array get intersection_url] {set y}] "\n"]
-    #puts [array get intersection_url]
+    log [join [map {x y} [array get count_matched] {list $x $y}] "\n"]
+    log -----
+    log [join [map {x y} [array get intersection_url] {set y}] "\n"]
+    #log [array get intersection_url]
 
     set sorted [lsort -decreasing -integer -index 1 [map {x y} [array get count_matched] {list $x $y}]] 
     set chosen_url_fmt [lindex [lindex $sorted 0] 0]
     set chosen_intersection_url_fmt $intersection_url($chosen_url_fmt)
 
-    puts ""
-    puts "Top 5 URL shapes"
-    puts "================"
+    log ""
+    log "Top 5 URL shapes"
+    log "================"
     set top5_url_shapes [lrange $sorted 0 4]
     foreach shape $top5_url_shapes {
         lassign $shape fmt count
         lassign $sample_matched($fmt) title link
 
-        puts "$intersection_url($fmt) count=$count log=[expr { log($count) }]"
-        puts $title
-        puts $link
-        puts ""
+        log "$intersection_url($fmt) count=$count log=[expr { log($count) }]"
+        log $title
+        log $link
+        log ""
     }
-    puts ""
+    log ""
 
     return $chosen_intersection_url_fmt
 
@@ -379,8 +373,8 @@ proc ::feed_reader::generate_xpath_article_image {doc} {
 	foreach imgnode ${imgnodes} {
 	    set imgsrc2 [${imgnode} @src]
 
-	    #puts imgsrc1=${imgsrc1}
-	    #puts imgsrc2=${imgsrc2}
+	    #log imgsrc1=${imgsrc1}
+	    #log imgsrc2=${imgsrc2}
 
 	    set similarity [stringSimilarity ${imgsrc1} ${imgsrc2}]
 	    if { ${similarity} > 0.85 } {
@@ -442,7 +436,7 @@ proc ::feed_reader::generate_xpath_article_body_using_bte {doc} {
     set maxnode $bte_info(maxnode)
 
     if { ${maxnode} eq {} } {
-	puts "no maxnode"
+	log "no maxnode"
 	return
     }
 
@@ -456,10 +450,10 @@ proc ::feed_reader::generate_xpath_article_body_using_bte {doc} {
 
     if { ${text1} ne ${text2} } {
 
-	puts "-> text1 != text2"
-	#puts $text1
-	#puts ---
-	#puts $text2
+	log "-> text1 != text2"
+	#log $text1
+	#log ---
+	#log $text2
 
 	set candidate_xpath ""
 
@@ -467,38 +461,43 @@ proc ::feed_reader::generate_xpath_article_body_using_bte {doc} {
 
     return returntext(${candidate_xpath})
 
-    # puts "text2=$text2"
+    # log "text2=$text2"
 
 }
 
-proc ::feed_reader::generate_xpath {feedVar xpathVar matching_pairsVar encoding} {
+proc ::feed_reader::generate_xpath {feedVar xpathVar anchor_nodes {limit "5"}} {
+
+    log "generating xpaths..."
 
     upvar $feedVar feed
     upvar $xpathVar xpath
-    upvar $matching_pairsVar matching_pairs
 
     set parts [array names xpath]
-
-    set sample_last 4
-    set matching_pairs [lrange ${matching_pairs} 0 ${sample_last}]
-    array set xpath_count [list]
-
     foreach part ${parts} {
         set max_count(${part}) 0
     }
 
-    foreach title_path_pair $matching_pairs {
-        lassign $title_path_pair title_from_feed path
+    array set xpath_count [list]
 
-        set canonical_url [url normalize [url resolve $feed(url) $path]]
+    foreach node $anchor_nodes {
+        set title_from_feed [$node asText]
+        set href [$node @href ""]
 
-        set errorcode [web cache_fetch html ${canonical_link}]
+        if { ![url_pass_p feed $href] } {
+            continue
+        }
+
+
+        # we have already normalized, but does not make much of difference here
+        set canonical_url [url normalize [url resolve $feed(url) $href]]
+
+        set errorcode [web cache_fetch html ${canonical_url}]
         if { ${errorcode} } {
             return $errorcode
         }
 
-        if { ${encoding} ne {} } {
-            set html [encoding convertfrom ${encoding} ${html}]
+        if { $feed(encoding) ne {} } {
+            set html [encoding convertfrom $feed(encoding) ${html}]
         }
 
         if { [catch { set doc [dom parse -html ${html}] } errmsg] } {
@@ -510,12 +509,12 @@ proc ::feed_reader::generate_xpath {feedVar xpathVar matching_pairsVar encoding}
         # adds a element node of the form <title_from_feed>blah blah</title_from_feed>
         $doc appendFromList [list title_from_feed {} [list [list {#text} $title_from_feed]]]
 
-        puts ""
-        puts canonical_link=${canonical_link}
+        log ""
+        log canonical_url=${canonical_url}
         foreach part ${parts} {
             set candidate_xpath [generate_xpath_${part} ${doc}]
 
-            puts "candidate xpath (${part}) = ${candidate_xpath}"
+            log "candidate xpath (${part}) = ${candidate_xpath}"
 
             set count [incr xpath_count(${part},${candidate_xpath})]
             if { ${count} > $max_count(${part}) } {
@@ -530,6 +529,10 @@ proc ::feed_reader::generate_xpath {feedVar xpathVar matching_pairsVar encoding}
 
         ${doc} delete
 
+        if { [incr limit -1] == 0 } {
+            break
+        }
+
     }
 
 }
@@ -538,10 +541,10 @@ proc ::feed_reader::generate_xpath {feedVar xpathVar matching_pairsVar encoding}
 proc ::feed_reader::generate_feed {args} {
 
     getopt::init {
-        {exclude_inurl "" {__arg_exclude_inurl exclude_strings}}
-        {include_inurl "" {__arg_include_inurl include_strings}}
-        {phase   "" {__arg_phase phase}}
-        {encoding "" {__arg_encoding encoding}}
+        {exclude-inurl  ""  {__arg_exclude_inurl exclude_strings}}
+        {include-inurl  ""  {__arg_include_inurl include_strings}}
+        {gen-xpaths     ""  {__arg_gen_xpaths}}
+        {encoding       ""  {__arg_encoding encoding}}
         feed_url
     }
     getopt::getopt $args
@@ -586,44 +589,7 @@ proc ::feed_reader::generate_feed {args} {
     foreach node $anchor_nodes {
         set href [$node @href ""]
 
-        if { $href eq {} } {
-            continue
-        }
-
-        if { [string match -nocase "javascript:*" $href] } {
-            continue
-        }
-
-        if { $exclude_strings ne {} } {
-            set skip_p 0
-            foreach str $exclude_strings {
-                if { -1 != [string first $str $href] } {
-                    set skip_p 1
-                    break
-                }
-            }
-            if { $skip_p } {
-                continue
-            }
-        }
-
-        if { $include_strings ne {} } {
-            set skip_p 0
-            foreach str $include_strings {
-                if { -1 == [string first $str $href] } {
-                    set skip_p 1
-                    break
-                }
-            }
-            if { $skip_p } {
-                continue
-            }
-        }
-
-        set canonical_url [url normalize [url resolve $feed_url $href]]
-
-        set domain [::util::domain_from_url ${feed_url}]
-        if { ${domain} ne [::util::domain_from_url ${canonical_url}] } {
+        if { ![::feed_reader::url_pass_p feed $href] } {
             continue
         }
 
@@ -634,7 +600,7 @@ proc ::feed_reader::generate_feed {args} {
 
 
     set num_links [llength $anchor_nodes]
-    puts "#links = $num_links"
+    log "#links = $num_links"
 
     if { $num_links == 0 } {
         error "no anchor links found: \
@@ -643,22 +609,19 @@ proc ::feed_reader::generate_feed {args} {
     }
 
     foreach node $anchor_nodes {
-        puts [$node asText]
-        puts [$node @href ""]
-        puts ""
+        log [$node asText]
+        log [$node @href ""]
+        log ""
     }
 
     # generate url_fmt
 
-    set matching_pairs [list]
-    set feed(url_fmt) [generate_url_fmt anchor_nodes $feed_url matching_pairs]
+    set feed(url_fmt) [generate_url_fmt $anchor_nodes $feed_url]
 
     if { $feed(url_fmt) eq {} } {
-        puts "sorry, got nothing to show for it"
+        log "sorry, got nothing to show for it"
         return
     }
-
-    $doc delete
 
     ########### fetch article
 
@@ -671,24 +634,28 @@ proc ::feed_reader::generate_feed {args} {
             article_modified_time ""]
 
 
-    if { $feed(include_re) ne {} } {
-        # note that the feed url is stored in feed(url)
-        generate_xpath feed xpath matching_pairs $encoding
+    if { exists("__arg_gen_xpaths") } {
+        if { $feed(url_fmt) ne {} } {
+            # note that the feed url is stored in feed(url)
+            generate_xpath feed xpath $anchor_nodes
+        }
     }
+
+    $doc delete
 
 
     foreach name [array names xpath] {
         set feed(xpath_${name}) $xpath(${name})
     }
 
-    puts [string repeat - 80]
-    puts ""
+    log [string repeat - 80]
+    log ""
     set ordered_names [get_feed_ordered_names feed]
     foreach name ${ordered_names} {
         puts [list ${name} $feed(${name})]
     }
-    puts ""
-    puts ""
+    log ""
+    log ""
 
 
 }
@@ -697,15 +664,20 @@ proc ::feed_reader::generate_feed {args} {
 proc ::feed_reader::compare_feed_element {name1 name2} {
 
     set ordered_names {
-	url 
-	include_re 
-	htmltidy_feed_p 
-	htmltidy_article_p
-	xpath_article_title 
-	xpath_article_body 
-	xpath_article_image
-	xpath_article_date
-	xpath_article_modified_time
+        url 
+        url_fmt
+        include_inurl
+        exclude_inurl
+        include_re 
+        exclude_re
+        encoding
+        htmltidy_feed_p 
+        htmltidy_article_p
+        xpath_article_title 
+        xpath_article_body 
+        xpath_article_image
+        xpath_article_date
+        xpath_article_modified_time
     }
 
     set i1 [lsearch ${ordered_names} ${name1}]

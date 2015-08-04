@@ -129,8 +129,6 @@ proc ::feed_reader::fetch_feed {resultVar feedVar {stoptitlesVar ""}} {
     array set result [list links "" titles ""]
 
     set url         $feed(url)
-    set include_re  $feed(include_re)
-    set exclude_re  [get_value_if feed(exclude_re) ""]
 
     if { [info exists feed(domain)] } {
         set domain $feed(domain)
@@ -213,25 +211,21 @@ proc ::feed_reader::fetch_feed {resultVar feedVar {stoptitlesVar ""}} {
         # turn relative urls into absolute urls and canonicalize	
         # TODO: consider using urldecode, problem is decoded string might need to be
         # converted from another encoding, i.e. encoding convertfrom url_decoded_string
-        set href [::uri::canonicalize [::uri::resolve ${url} ${href}]]
+        # set href [::uri::canonicalize [::uri::resolve ${url} ${href}]]
+
 
         if { ${link_stoplist} ne {} && ${href} in ${link_stoplist} } {
             continue
         }
 
 
-        # drop urls from other domains
-        if { [::util::domain_from_url ${href}] ne ${domain} } {
+        if { ![url_pass_p feed $href] } {
             continue
         }
 
-        # drop links that do not match regular expression
-        if { ![regexp -- ${include_re} ${href}] || ( ${exclude_re} ne {} && [regexp -- ${exclude_re} ${href}] ) } {
-            continue
-        }
+        set canonical_url [url normalize [url resolve $feed(url) $href]]
 
-        # needed for sorting
-        ${item_node} setAttribute href ${href}
+        ${item_node} setAttribute href ${canonical_url}
 
         if { ${tagname} eq {a} } {
             set title [get_title stoptitles ${item_node}]
@@ -239,11 +233,11 @@ proc ::feed_reader::fetch_feed {resultVar feedVar {stoptitlesVar ""}} {
             set title [${item_node} selectNodes {string(//title/text())}]
         }
 
-        if { ![info exists title_for_href(${href})] } {
+        if { ![info exists title_for_href(${canonical_url})] } {
         # coalesce title candidate values
-            set title_for_href(${href}) ${title}
+            set title_for_href(${canonical_url}) ${title}
         } else {
-            set title_for_href(${href}) [lsearch -inline -not [list ${title} $title_for_href(${href})] {}]
+            set title_for_href(${canonical_url}) [coalesce ${title} $title_for_href(${canonical_url})]
         }
 
 
@@ -2123,177 +2117,61 @@ proc ::feed_reader::test_article {news_source feed_name link} {
     puts "info=[array get info]"
 }
 
+proc ::feed_reader::url_pass_p {feedVar href} {
+    upvar $feedVar feed
 
-proc ::feed_reader::remove_item {oid} {
-
-    puts "remove_item ${oid}"
-
-    array set item [::persistence::get_data ${oid}]
-
-    if { ![info exists item(sort_date)] } {
-        set timestamp [get_value_if item(timestamp) ""]
-        if { ${timestamp} eq {} } {
-            set timestamp [::persistence::mtime ${oid}]
-        }
-        set item(sort_date) [clock format ${timestamp} -format "%Y%m%dT%H%M"]
+    if { $href eq {} } {
+        return false
     }
 
+    if { 0 == [string first "javascript:" $href] } {
+        return false
+    }
 
-    set urlsha1 $item(urlsha1)
-
-    set reversedomain [reversedomain [::util::domain_from_url $item(url)]]
-
-    ::persistence::delete_slice          \
-        "crawldb"                        \
-        "sync_info/by_urlsha1_and_const" \
-        "${urlsha1}"
-
-        # the following we use to determine whether 
-        # an item is already downloaded or not
-    ::persistence::delete_slice          \
-        "newsdb"                         \
-        "news_item.by_urlsha1_and_const" \
-        "${urlsha1}"
-
-
-    set contentslicelist                           \
-        [::persistence::delete_supercolumn         \
-            "newsdb"                               \
-            "news_item.by_urlsha1_and_contentsha1" \
-            "__default_row__" \
-            "${urlsha1}"]
-
-    foreach contentfilename ${contentslicelist} {    
-
-        set contentsha1 \
-            [::persistence::get_name ${contentfilename}]
-
-        set cf_variant "index/contentsha1_to_urlsha1"
-
-        ::persistence::delete_column  \
-            "newsdb"                  \
-            "${cf_variant}"           \
-            "${contentsha1}"          \
-            "${urlsha1}"
-
-        set deleted_row_p                 \
-            [::persistence::delete_row_if \
-                "newsdb"                  \
-                "${cf_variant}"           \
-                "${contentsha1}"]
-
-        if { ${deleted_row_p} } {
-
-            # no more references for this content
-            # delete it so that we won't get any 
-            # is_copy_p set to true because of it
-
-            set cf_variant2 "content_item/by_contentsha1_and_const"
-
-            ::persistence::delete_column  \
-                "newsdb"                  \
-                "${cf_variant2}"          \
-                "${contentsha1}"          \
-                "_data_"
-
-            ::persistence::delete_row \
-                "newsdb"              \
-                "${cf_variant2}"      \
-                "${contentsha1}"
-
-
-            set indexslicelist \
-                [::persistence::delete_slice \
-                "newsdb" \
-                "index/contentsha1_to_label" \
-                "${contentsha1}"]
-
-            foreach indexfilename ${indexslicelist} {
-                set composite_key [::persistence::get_name ${filename}]
-
-                lassign [split ${composite_key} {-}] axis label
-
-                ::persistence::delete_column \
-                    "newsdb" \
-                    "train_item/${axis}" \
-                    "${label}" \
-                    "${contentsha1}"
-
+    # drop hrefs that do not exclude all exclude_inurl strings
+    if { $feed(exclude_inurl) ne {} } {
+        set skip_p 0
+        foreach str $feed(exclude_inurl) {
+            if { -1 != [string first $str $href] } {
+                set skip_p 1
+                break
             }
-
         }
-
-    }
-
-    ::persistence::delete_column      \
-        "newsdb"                      \
-        "news_item.by_const_and_date" \
-        "log"                         \
-        "$item(sort_date).${urlsha1}"
-
-    ::persistence::delete_column       \
-        "newsdb"                       \
-        "news_item.by_domain"   \
-        "${reversedomain}"             \
-        "$item(sort_date).${urlsha1}"
-
-    ::persistence::delete_supercolumn   \
-        "newsdb"                        \
-        "news_item.by_urlsha1_and_contentsha1" \
-        "__default_row__"               \
-        "${urlsha1}"
-
-
-}
-
-proc predicate=custom_composite_in {slicelistVar urlsha1_list} {
-    upvar $slicelistVar slicelist
-
-    set result [list]
-    foreach filename $slicelist {
-        set composite_key [file tail ${filename}]
-        set urlsha1 [lindex [split ${composite_key} {.}] 1]
-        if { ${urlsha1} in ${urlsha1_list} } {
-            lappend result ${filename}
+        if { $skip_p } {
+            return false
         }
-
     }
 
-    set slicelist ${result}
-}
-
-# DEPRECATED
-proc ::feed_reader::remove_feed_items {domain {urlsha1_list ""}} {
-
-    set reversedomain [reversedomain ${domain}]
-
-    set delete_domain_p 1
-
-    set slice_predicate ""
-    if { ${urlsha1_list} ne {} } {
-        set slice_predicate [list "custom_composite_in" [list ${urlsha1_list}]]
+    # drop hrefs that do not include all include_inurl strings
+    if { $feed(include_inurl) ne {} } {
+        set skip_p 0
+        foreach str $feed(include_inurl) {
+            if { -1 == [string first $str $href] } {
+                set skip_p 1
+                break
+            }
+        }
+        if { $skip_p } {
+            return false
+        }
     }
 
-    set where_clause [list [list domain = ${reversedomain}]]
-    set slicelist [::newsdb::news_item_t find $where_clause]
-    predicate=custom_composite_in slicelist $urlsha1_list
+    # normalize and resolve (wrt to feed url) the given href
+    set canonical_url [url normalize [url resolve $feed(url) $href]]
 
-    foreach filename ${slicelist} {
-        remove_item ${filename}
+    # drop urls that do not match the url_fmt
+    if { $feed(url_fmt) ne {} } {
+        if { ![url match $feed(url_fmt) $canonical_url] } {
+            return false
+        }
     }
 
-    if { ${delete_domain_p} } {
-
-        set domain_dir                      \
-            [::persistence::get_row         \
-                "newsdb"                    \
-                "news_item.by_domain"       \
-                "${domain}"]
-
-        ::persistence::delete_data ${domain_dir}
-
+    # drop urls from other domains
+    set domain [::util::domain_from_url $feed(url)]
+    if { ${domain} ne [::util::domain_from_url ${canonical_url}] } {
+        return false
     }
 
-
+    return true
 }
 

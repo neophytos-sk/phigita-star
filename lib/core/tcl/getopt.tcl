@@ -151,6 +151,18 @@ proc getopt::getopt {argv {argVar ""} } {
         set argv [lassign $argv arg($argv_i)]
     }
 
+    if { $argv ne {} } {
+        if { $argv_i eq {args} } {
+            set arg(args) [list $arg($argv_i)]
+            foreach residual_arg $argv {
+                lappend arg(args) $residual_arg
+            }
+        } else {
+            error "residual args: $argv"
+        }
+    }
+
+
     if { $posArgs ne {} } {
         error "not enough arguments for posArgs: $posArgs"
     }
