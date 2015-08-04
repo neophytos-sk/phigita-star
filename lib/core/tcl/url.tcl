@@ -5,8 +5,9 @@ namespace eval ::url {
     namespace ensemble create -subcommands {
         normalize resolve join split
         parse_query
-        fmt_ex match
+        fmt_ex fmt_sp match
         encode decode
+        intersect
     }
 
     # url encode/decode mapping initialization
@@ -42,8 +43,8 @@ proc ::url::normalize {url} {
 proc ::url::resolve {base url} {
     return [::uri::resolve $base $url]
 }
-proc ::url::join {url} {
-    return [::uri::join $url]
+proc ::url::join {url_keyl} {
+    return [::uri::join {*}$url_keyl]
 }
 proc ::url::split {url} {
     return [::uri::split $url]
@@ -66,7 +67,14 @@ proc ::url::query_fmt_ex {url} {
     #puts ""
     #puts "#annotate_query_params"
     set list [url parse_query $urlarr(query)]
-    set types [map {x y} $list {list [list $x $y] [::pattern::typeof $y {alpha naturalnum lc_alnum_dash_title_optional_ext sha1_hex uuid alnum_plus_ext}]}]
+    set types [map {x y} $list {
+        set __to_check_pattern_names {
+            alpha naturalnum lc_alnum_dash_title_optional_ext 
+            sha1_hex uuid alnum_plus_ext
+        }
+        set __types [::pattern::typeof $y $__to_check_pattern_names]
+        list [list $x $y] $__types
+    }]
     #puts $types
     set types [map x $types {list [lindex [lindex $x 0] 0] [lindex $x 1]}]
     return $types
@@ -78,53 +86,17 @@ proc ::url::path_fmt_ex {url} {
     #puts "#annotate_path_parts"
     array set urlarr [::uri::split $url]
     #puts $urlarr(path)
-    set values_and_types [map x [::split $urlarr(path) {/}] {list $x [::pattern::typeof $x {alpha naturalnum lc_alnum_dash_title_optional_ext sha1_hex uuid alnum_plus_ext}]}]
+    set values_and_types [map x [::split $urlarr(path) {/}] {
+        set __to_check_pattern_names {
+            alpha naturalnum lc_alnum_dash_title_optional_ext 
+            sha1_hex uuid alnum_plus_ext
+        }
+        list $x [::pattern::typeof $x $__to_check_pattern_names]
+    }]
     #puts $values_and_types
     set types [map x $values_and_types {lindex $x 1}]
     #puts "=> $types"
     return $types
-}
-
-proc ::url::fmt_ex {url} {
-
-    #puts ""
-    #puts "#annotate_url"
-    #puts $url
-
-    set path_fmt_list [list]
-    foreach pattern_name_list [path_fmt_ex $url] {
-        if { $pattern_name_list eq {} } {
-            # TODO: temporary hack, needs to be fixed
-            continue
-        }
-        set pattern_fmt_list [list]
-        foreach pattern_name $pattern_name_list {
-            lappend pattern_fmt_list [pattern to_fmt $pattern_name]
-        }
-        lappend path_fmt_list [list $pattern_fmt_list]
-    }
-    set path_fmt [::join $path_fmt_list "/"]
-
-    set query_fmt_list [list]
-    foreach item [query_fmt_ex $url] {
-        lassign $item param_name pattern_name_list
-        if { $pattern_name_list eq {} } {
-            # TODO: temporary hack, needs to be fixed
-            continue
-        }
-        set pattern_fmt_list [list]
-        foreach pattern_name $pattern_name_list {
-            lappend pattern_fmt_list [pattern to_fmt $pattern_name]
-        }
-        lappend query_fmt_list ${param_name}=[list $pattern_fmt_list]
-    }
-    set query_fmt [::join $query_fmt_list "&"]
-
-    set fmt $path_fmt
-    if { $query_fmt ne {} } {
-        append fmt "?" $query_fmt
-    }
-    return $fmt
 }
 
 
@@ -134,13 +106,14 @@ proc ::url::fmt_ex {url} {
 #    return [map x $list {::pattern::typeof [lindex $x 1]}]
 #}
 
-proc ::url::match {pattern url} {
+proc ::url::match {pattern url {valuesVar ""}} {
     array set fmt_a [url split $pattern]
     array set url_a [url split $url]
 
     array set fmt_query [url parse_query $fmt_a(query)]
     array set url_query [url parse_query $url_a(query)]
 
+    # match query with fmt
     set count_matched 0
     foreach name [array names url_query] {
         if { ![info exists fmt_query($name)] } {
@@ -180,6 +153,7 @@ proc ::url::match {pattern url} {
         }
     }
 
+
     return true
 }
 
@@ -209,4 +183,128 @@ proc ::url::encode {s} {
     return [string map ${ue_map} ${s}]
 }
 
+proc ::url::intersect {url1 url2} {
+    array set url1_a [url split $url1]
+    array set url2_a [url split $url2]
 
+    array set url1_query_a [url parse_query $url1_a(query)]
+    array set url2_query_a [url parse_query $url2_a(query)]
+
+    set intersection_url_keyl [list]
+
+    # scheme,host,port intersection
+    foreach name {scheme host port fragment user pwd} {
+        if { $url1_a($name) eq $url2_a($name) } {
+            lappend intersection_url_keyl $name $url1_a($name)
+        } else {
+            lappend intersection_url_keyl $name {}
+        }
+    }
+
+    # path intersection
+    set path_args [list]
+    foreach str1 [::split $url1_a(path) {/}] str2 [::split $url2_a(path) {/}] {
+        if { $str1 eq $str2 } {
+            lappend path_args $str1
+        } else {
+            lappend path_args {}
+        }
+    }
+    lappend intersection_url_keyl path [::join $path_args {/}]
+
+    # query intersection
+    set sorted_param_names [lsort [array names url1_query_a]]
+    set query_args [list]
+    foreach name $sorted_param_names {
+        if { $url1_query_a($name) eq [get_value_if url2_query_a($name) ""] } {
+            lappend query_args "${name}=$url1_query_a($name)"
+        } else {
+            lappend query_args "${name}="
+        }
+    }
+    lappend intersection_url_keyl query [::join $query_args {&}]
+
+    return [url join $intersection_url_keyl]
+
+}
+
+
+# TODO: sort query parameter names
+proc ::url::fmt_ex {url} {
+
+    #puts ""
+    #puts "#annotate_url"
+    #puts $url
+
+    set path_fmt_list [list]
+    foreach pattern_name_list [path_fmt_ex $url] {
+        if { $pattern_name_list eq {} } {
+            # TODO: temporary hack, needs to be fixed
+            continue
+        }
+        set pattern_fmt_list [list]
+        foreach pattern_name $pattern_name_list {
+            lappend pattern_fmt_list [pattern to_fmt $pattern_name]
+        }
+        lappend path_fmt_list [list $pattern_fmt_list]
+    }
+    set path_fmt [::join $path_fmt_list "/"]
+
+    set query_fmt_list [list]
+    foreach item [query_fmt_ex $url] {
+        lassign $item param_name pattern_name_list
+        if { $pattern_name_list eq {} } {
+            # TODO: temporary hack, needs to be fixed
+            continue
+        }
+        set pattern_fmt_list [list]
+        foreach pattern_name $pattern_name_list {
+            lappend pattern_fmt_list [pattern to_fmt $pattern_name]
+        }
+        lappend query_fmt_list ${param_name}=[list $pattern_fmt_list]
+    }
+    set query_fmt [::join $query_fmt_list "&"]
+
+    array set url_a [url split $url]
+    set url_keyl [list]
+    foreach name {scheme host port user pwd fragment} {
+        lappend url_keyl $name $url_a($name)
+    }
+
+    lappend url_keyl path $path_fmt
+    lappend url_keyl query $query_fmt
+
+    return [url join $url_keyl]
+}
+
+
+# format specialize wrt to a given intersection_url,
+# which is the output of ::url::intersect
+
+proc ::url::fmt_sp {fmt intersection_url} {
+    array set fmt_a [url split $fmt]
+    array set url_a [url split $intersection_url]
+
+    set fmt_query_keyl [url parse_query $fmt_a(query)]
+    set url_query_keyl [url parse_query $url_a(query)]
+
+    set fmt_keyl [list]
+    foreach name {scheme host port user pwd fragment} {
+        lappend fmt_keyl $name $fmt_a($name)
+    }
+
+    set path_args [list]
+    foreach str1 [::split $fmt_a(path) {/}] str2 [::split $url_a(path) {/}] {
+        lappend path_args [coalesce $str2 $str1]
+    }
+    lappend fmt_keyl path [::join $path_args {/}]
+
+    set query_args [list]
+    foreach {k1 v1} $fmt_query_keyl {k2 v2} $url_query_keyl {
+        lappend query_args [coalesce $k2 $k1] [coalesce $v2 $v1]
+    }
+    lappend fmt_keyl query [::join $query_args {&}]
+
+    return [url join $fmt_keyl]
+
+}

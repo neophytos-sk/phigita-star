@@ -17,21 +17,24 @@ proc ::feed_reader::generate_include_re {anchor_nodesVar feed_url matching_pairs
     set max_path {}
 
     array set count_matched [list]
+    array set intersection_url [list]
     set first_node [lindex $anchor_nodes 0]
-    set fmt [url fmt_ex [$first_node @href ""]]
+    set href [$first_node @href ""]
+    set fmt [url fmt_ex $href]
     set queue [list]
     lappend queue $fmt
     set count_matched($fmt) 0
+    set intersection_url($fmt) $href
 
     while { $queue ne {} } {
         set fmt [lindex $queue 0]
         set queue [lreplace $queue 0 0]
 
         foreach anchor_node $anchor_nodes {
-            set link [$anchor_node @href ""]
+            set href [$anchor_node @href ""]
             set title [$anchor_node @title [$anchor_node text]]
 
-            if { [string match -nocase "javascript:*" $link] } {
+            if { [string match -nocase "javascript:*" $href] } {
                 continue
             }
 
@@ -39,19 +42,21 @@ proc ::feed_reader::generate_include_re {anchor_nodesVar feed_url matching_pairs
                 [::uri::canonicalize \
                     [::uri::resolve \
                         ${feed_url} \
-                        ${link}]]
+                        ${href}]]
 
             if { ![url match $fmt $canonical_link] } {
                 set new_fmt [url fmt_ex $canonical_link]
                 if { ![info exists count_matched($new_fmt)] } {
                     lappend queue $new_fmt
                     set count_matched($new_fmt) 0
+                    set intersection_url($new_fmt) $canonical_link
                 }
 
                 #puts "match failed: $canonical_link"
                 #exit
             } else {
                 incr count_matched($fmt)
+                set intersection_url($fmt) [url intersect $intersection_url($fmt) $canonical_link]
             }
 
         }
@@ -59,7 +64,14 @@ proc ::feed_reader::generate_include_re {anchor_nodesVar feed_url matching_pairs
         
     }
 
+    foreach fmt [array names intersection_url] {
+        set intersection_url($fmt) [url fmt_sp $fmt $intersection_url($fmt)]
+    }
+
     puts [join [map {x y} [array get count_matched] {list $x $y}] "\n"]
+    puts -----
+    puts [join [map {x y} [array get intersection_url] {set y}] "\n"]
+    #puts [array get intersection_url]
     exit
 
     puts ""
@@ -648,6 +660,10 @@ proc ::feed_reader::generate_feed {feed_url {anchor_link_pattern ""} {encoding "
     set result [list]
     foreach node $anchor_nodes {
         set link [$node @href ""]
+
+        if { $link eq {} } {
+            continue
+        }
 
         if { [string match -nocase "javascript:*" $link] } {
             continue
