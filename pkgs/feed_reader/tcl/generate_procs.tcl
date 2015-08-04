@@ -257,10 +257,12 @@ proc ::feed_reader::generate_xpath_article_date {doc} {
         {string(//meta[@name="dc.date.created"]/@content)}
         {string(//meta[@name="date"]/@content)}
         {string(//meta[@name="dc.date"]/@content)}
+        {string(//time[@itemprop])}
         {currentdate()}
     }
 
     set score_fn "subseqSimilarity"
+    #set score_fn "stringSimilarity"
 
     set tokenizer "::util::tokenize_date"
 
