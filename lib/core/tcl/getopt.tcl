@@ -134,8 +134,8 @@ proc getopt::getopt {argv {argVar ""} } {
                             # in the array that maps options
                             # to variable name
 
-                            puts "error: unknown option: -$shortOpt"
-                            exit 2
+                            error "error: unknown option: -$shortOpt"
+                            #exit 2
                         }
                     }
                     #continue
@@ -144,31 +144,34 @@ proc getopt::getopt {argv {argVar ""} } {
         }
     }
 
-    # TODO: deal with args argument
+    # process positional arguments, including the args argument
 
-    while { $argv ne {} && $posArgs ne {} } {
-        set posArgs [lassign $posArgs argv_i]
-        set argv [lassign $argv arg($argv_i)]
-    }
+    if { $i < $argc } {
 
-    if { $argv ne {} } {
-        if { $argv_i eq {args} } {
-            set arg(args) [list $arg($argv_i)]
-            foreach residual_arg $argv {
-                lappend arg(args) $residual_arg
+        while { $argv ne {} && $posArgs ne {} } {
+            set posArgs [lassign $posArgs argv_i]
+            set argv [lassign $argv arg($argv_i)]
+        }
+
+        if { $argv ne {} } {
+            if { $argv_i eq {args} } {
+                set arg(args) [list $arg($argv_i)]
+                foreach residual_arg $argv {
+                    lappend arg(args) $residual_arg
+                }
+            } else {
+                error "residual args: $argv"
             }
-        } else {
-            error "residual args: $argv"
+        }
+
+        if { $posArgs ne {} } {
+            error "not enough arguments for posArgs: $posArgs"
         }
     }
 
 
-    if { $posArgs ne {} } {
-        error "not enough arguments for posArgs: $posArgs"
-    }
-
+    # instantiate variables from array
     if { $argVar eq {} } {
-        # instantiate variables from array
         foreach {varname value} [array get arg] {
             upvar ${varname} _
             set _ ${value}

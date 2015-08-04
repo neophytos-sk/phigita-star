@@ -868,7 +868,7 @@ proc ::feed_reader::ls {args} {
         {since  ""  {__arg_since  since_date}}
         {long   "l" {__arg_long_listing}}
     }
-    set args [getopt::getopt $args]
+    getopt::getopt $args
 
     # defaults
     #
