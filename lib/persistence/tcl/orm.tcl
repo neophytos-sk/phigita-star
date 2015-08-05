@@ -2,7 +2,19 @@
 # procs that are generic (highest-level of abstraction) in the
 # persistence package, i.e. no storage system-specific calls here
 
+set dir [file dirname [info script]]
+source [file join $dir orm_codec.tcl]
+
 namespace eval ::persistence::orm {
+
+    ##
+    # import encode / decode procs
+    #
+    # namespace import ::persistence::orm::codec_txt_1::*
+    # namespace import ::persistence::orm::codec_txt_2::*
+    # namespace import ::persistence::orm::codec_bin_1::*
+     namespace import ::persistence::orm::codec_bin_2::*
+
     namespace export \
         to_path \
         from_path \
@@ -17,7 +29,8 @@ namespace eval ::persistence::orm {
         insert \
         delete \
         update \
-        encode decode
+        encode \
+        decode
 
     #exists
 
@@ -260,7 +273,7 @@ proc ::persistence::orm::insert {itemVar {optionsVar ""}} {
 
     set data [encode item]
 
-    ::persistence::insert_column $target $data
+    ::persistence::insert_column $target $data "" [codec_conf]
     
     foreach idxname $__indexes {
         if { $idxname eq "by_$pk" } {
@@ -328,7 +341,7 @@ proc ::persistence::orm::update {oid new_itemVar {optionsVar ""}} {
 
     # overwrites data
     set data [encode item]
-    ::persistence::insert_column $target $data
+    ::persistence::insert_column $target $data "" [codec_conf]
 
 }
 
@@ -377,7 +390,7 @@ proc ::persistence::orm::get {oid {exists_pVar ""}} {
 
     set exists_p [::persistence::exists_column_p $oid]
     if { $exists_p } {
-        return [decode [::persistence::get_column_data $oid]]
+        return [decode [::persistence::get_column_data $oid [codec_conf]]]
     } else {
         error "no such oid (=$oid) in storage system (=mystore)"
     }
@@ -447,7 +460,7 @@ proc ::persistence::orm::find_by_id {value} {
     }
 
     set querypath [to_path $value]
-    set oid [::persistence::get_column $querypath]
+    set oid [::persistence::get_column $querypath "" "" [codec_conf]]
 
     return $oid
 }
@@ -472,7 +485,7 @@ proc ::persistence::orm::find_by_axis {argv {predicate ""}} {
             upvar $exists_pVar exists_p
         }
         set path [to_path_by by_$attname $attvalue {*}$id]
-        set oid [::persistence::get_column $path ${varname} exists_p]
+        set oid [::persistence::get_column $path ${varname} exists_p [codec_conf]]
         return $oid
 
     } elseif { $argc == 2 } {
@@ -586,199 +599,8 @@ proc ::persistence::orm::__rewrite_where_clause {axis_attname argv} {
     return $predicate
 }
 
-# type => encoding_fmt decoding_fmt decoding_num_bytes
-array set ::__type_to_bin {
-    {} {"" "" ""}
-    "integer"       {i   i      4}
-    "naturalnum"    {iu  iu     4}
-    "boolean"       {c   c      1}
-    "sha1_hex"      {H40 H40    20}
-}
 
 
-proc ::persistence::orm::encode {itemVar} {
-    variable [namespace __this]::__attributes
-    variable [namespace __this]::__attinfo
-
-    upvar $itemVar item
-
-    set bytes ""
-
-    # header (marks null values)
-    foreach attname $__attributes {
-        set v [info exists item($attname)]
-        append bytes [binary format "c" $v]
-    }
-
-    # body / data
-    foreach attname $__attributes {
-        set type [get_value_if __attinfo($attname,type) ""]
-        lassign [get_value_if ::__type_to_bin($type) ""] fmt _ num_bytes
-
-        if { !exists("item($attname)") } continue
-
-        set attvalue [get_value_if item($attname) ""]
-        
-        if { $fmt ne {} } {
-            #log "type=$type fmt=$fmt num_bytes=$num_bytes"
-            append bytes [binary format $fmt $attvalue]
-        } else {
-            set attvalue [encoding convertto utf-8 $attvalue]
-            set num_bytes [string bytelength $attvalue]
-            append bytes [binary format "iu1A${num_bytes}" $num_bytes $attvalue]
-        }
-    }
-    # log [string repeat - 80]
-
-    return $bytes
-}
-
-proc ::persistence::orm::decode {bytes} {
-    variable [namespace __this]::__attributes
-    variable [namespace __this]::__attinfo
-
-    array set item [list]
-    set pos 0
-    set num_bytes 0
-
-    # header (marks null values)
-    foreach attname $__attributes {
-        binary scan $bytes "@${pos}c" exists_p($attname)
-        incr pos 1
-    }
-
-    foreach attname $__attributes {
-        if { !$exists_p($attname) } {
-            #log "attname=$attname does not exist"
-            set item($attname) ""
-            continue
-        }
-
-        set type [get_value_if __attinfo($attname,type) ""]
-
-        lassign [get_value_if ::__type_to_bin($type) ""] _ fmt num_bytes
-
-        # log "attname=$attname fmt=$fmt num_bytes=$num_bytes"
-
-        if { $fmt ne {} } {
-            append bytes [binary scan $bytes "@${pos}${fmt}" item($attname)]
-            incr pos $num_bytes
-        } else {
-            binary scan $bytes "@${pos}iu1" num_bytes
-            incr pos 4
-            # log "attname=$attname num_bytes=$num_bytes"
-            binary scan $bytes "@${pos}A${num_bytes}" item($attname) 
-            set item($attname) [encoding convertfrom utf-8 [get_value_if item($attname) ""]]
-            # log $item($attname)
-            incr pos $num_bytes
-        }
-
-    }
-    return [array get item]
-}
-
-
-
-
-proc ::persistence::orm::encode2 {itemVar {bytesVar ""}} {
-    variable [namespace __this]::__attributes
-    variable [namespace __this]::__attinfo
-
-    upvar $itemVar item
-
-    if { $bytesVar ne {} } {
-        upvar $bytesVar bytes
-    }
-
-    # TODO: deal with null values
-
-    set bytes ""
-    foreach attname $__attributes {
-        set type [get_value_if __attinfo(${attname},type) ""]
-        set attvalue [get_value_if item($attname) ""]
-
-        if { $type eq {naturalnum} } {
-            # unsigned integer
-            set fmt "iu1"
-            if { $attvalue eq {} } {
-                set attvalue "0"
-            }
-        } elseif { $type eq {integer} } {
-            # signed integer
-            set fmt "i1"
-        } elseif { $type eq {timestamp} } {
-            set fmt "i1"
-        } elseif { $type eq {boolean} } {
-            # TODO: pack as many booleans into one character
-            set fmt "cu"
-            set num_bytes "1"
-            set attvalue [string is true -strict $attvalue]
-        } else {
-            set fmt "a*"
-        }
-
-        if { $fmt eq {a*} } {
-            set num_bytes [string bytelength $attvalue]
-            append bytes [binary format "iu1${fmt}" $num_bytes $attvalue]
-        } else {
-            log [list fmt=$fmt attvalue=$attvalue]
-            append bytes [binary format $fmt $attvalue]
-        }
-
-    }
-
-    return $bytes
-}
-
-proc ::persistence::orm::decode2 {bytesVar {itemVar ""}} {
-    variable [namespace __this]::__attributes
-    variable [namespace __this]::__attinfo
-
-    upvar $bytesVar bytes
-
-    if { $itemVar ne {} } {
-        upvar $itemVar item
-    }
-
-    set varnames [list]
-    array set item [list]
-    set pos 0
-    foreach attname $__attributes {
-        set type [get_value_if __attinfo(${attname},type) ""]
-
-        if { $type eq {naturalnum} } {
-            # unsigned integer
-            set fmt "iu1"
-            set num_bytes 4
-        } elseif { $type eq {integer} } {
-            # signed integer
-            set fmt "i1"
-            set num_bytes 4
-        } elseif { $type eq {timestamp} } {
-            set fmt "i1"
-            set num_bytes 4
-        } elseif { $type eq {boolean} } {
-            # pack as many booleans into one character
-            set fmt "c"
-            set num_bytes "1"
-        } else {
-            set fmt "a*"
-            set num_bytes ""
-        }
-
-        if { $fmt eq {a*} } {
-            binary scan $bytes "@${pos}i1" num_bytes
-            incr pos 4
-            binary scan $bytes "@${pos}a${num_bytes}" item($attname)
-            incr pos $num_bytes
-        } else {
-            binary scan $bytes "@${pos}${fmt}" item($attname)
-            incr pos $num_bytes
-        }
-
-    }
-    return [array get item]
-}
 
 
 

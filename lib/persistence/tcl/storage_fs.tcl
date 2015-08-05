@@ -157,9 +157,9 @@ proc ::persistence::fs::create_row_if {keyspace column_family row_key row_pathVa
 # name := keyspace/row_key/column_path
 # column_path := super_column_name/column_name or just column_name
 #
-proc ::persistence::fs::__insert_column {keyspace column_family row_key column_path data {timestamp ""}} {
+proc ::persistence::fs::__insert_column {ks cf_axis row_key column_path data {ts ""} {codec_confVar ""}} {
 
-    create_row_if ${keyspace} ${column_family} ${row_key} row_path
+    create_row_if ${ks} ${cf_axis} ${row_key} row_path
 
     # path to file that will hold the data
     set oid ${row_path}/${column_path}
@@ -172,10 +172,16 @@ proc ::persistence::fs::__insert_column {keyspace column_family row_key column_p
     #    file mkdir ${super_column_dir}
     #}
 
-    set_column_data ${oid} ${data}
+    set varname ""
+    if { $codec_confVar ne {} } {
+        upvar $codec_confVar _
+        set varname {_}
+    }
 
-    if { ${timestamp} ne {} } {
-        file mtime ${filename} ${timestamp}
+    set_column_data ${oid} ${data} ${varname}
+
+    if { ${ts} ne {} } {
+        file mtime [get_filename $oid] ${ts}
     }
 
 }
@@ -246,24 +252,33 @@ proc ::persistence::fs::set_data {oid data} {
     return [::util::writefile ${filename} ${data}]
 }
 
-proc ::persistence::fs::set_column_data {oid data} {
+proc ::persistence::fs::set_column_data {oid data {codec_confVar ""}} {
     set filename [get_filename ${oid}]
     file mkdir [file dirname ${filename}]
 
     set fp [open $filename "w"]
-    fconfigure $fp -translation binary
-    puts $fp $data
+    if { $codec_confVar ne {} } {
+        upvar $codec_confVar codec_conf
+        fconfigure $fp {*}[array get codec_conf]
+        # => fconfigure $fp -translation binary
+    }
+
+    puts -nonewline $fp $data
     close $fp
     return
 
     return [::util::writefile ${filename} ${data}]
 }
 
-proc ::persistence::fs::get_column_data {oid} {
+proc ::persistence::fs::get_column_data {oid {codec_confVar ""}} {
     set filename [get_filename ${oid}]
     set fp [open $filename]
-    fconfigure $fp -translation binary
-    set bytes [read $fp]
+    if { $codec_confVar ne {} } {
+        upvar $codec_confVar codec_conf
+        fconfigure $fp {*}[array get codec_conf]
+        # => fconfigure $fp -translation binary
+    }
+    set bytes [read $fp [file size $filename]]
     close $fp
     return $bytes
 
@@ -529,7 +544,15 @@ proc ::persistence::fs::__get_slice_names {args} {
 }
 
 
-proc ::persistence::fs::__get_column {ks cf_axis row_key column_path {dataVar ""} {exists_pVar ""}} {
+proc ::persistence::fs::__get_column {
+    ks 
+    cf_axis 
+    row_key 
+    column_path 
+    {dataVar ""} 
+    {exists_pVar ""}
+    {codec_confVar ""}
+} {
 
     # row_path includes the "+" delimiter
     set row_path [get_row ${ks} ${cf_axis} ${row_key}]
@@ -544,9 +567,15 @@ proc ::persistence::fs::__get_column {ks cf_axis row_key column_path {dataVar ""
         upvar ${exists_pVar} exists_p
     }
 
+    set varname ""
+    if { $codec_confVar ne {} } {
+        upvar $codec_confVar _
+        set varname {_}
+    }
+
     set exists_p [exists_column_data_p ${oid}]
     if { ${exists_p} } {
-        set data [get_column_data ${oid}]
+        set data [get_column_data ${oid} ${varname}]
         return ${oid}
     } else {
         return
@@ -596,29 +625,44 @@ proc ::persistence::fs::__multiget_slice {keyspace column_family row_keys {slice
 
 ################################################################################3
 
-proc ::persistence::fs::get_column {path {dataVar ""} {exists_pVar ""}} {
+proc ::persistence::fs::get_column {
+    path 
+    {dataVar ""} 
+    {exists_pVar ""}
+    {codec_confVar ""}
+} {
 
-    set varname {}
-
-    set varname ""
+    set varname1 ""
     if { $dataVar ne {} } {
-        upvar $dataVar _
-        set varname {_}
+        upvar $dataVar _1
+        set varname1 {_1}
     }
 
     if { $exists_pVar ne {} } {
         upvar $exists_pVar exists_p
     }
 
+    set varname2 ""
+    if { $codec_confVar ne {} } {
+        upvar $codec_confVar _2
+        set varname2 {_2}
+    }
+
     set column_path [lassign [split $path {/}] ks cf row_key __delimiter__]
-    set filename [__get_column $ks $cf $row_key $column_path ${varname} exists_p]
+    set filename [__get_column $ks $cf $row_key $column_path ${varname1} exists_p ${varname2}]
     return $filename
 }
 
-proc ::persistence::fs::insert_column {oid data} {
+proc ::persistence::fs::insert_column {oid data {timestamp ""} {codec_confVar ""}} {
+    set varname ""
+    if { $codec_confVar ne {} } {
+        upvar $codec_confVar _
+        set varname {_}
+    }
+
     set column_path [lassign [split $oid {/}] ks cf row_key __delimiter__]
     set column_path [join $column_path {/}]
-    __insert_column $ks $cf $row_key $column_path $data
+    __insert_column $ks $cf $row_key $column_path $data $timestamp $varname
 }
 
 proc ::persistence::fs::get_slice {path {predicate ""}} {
