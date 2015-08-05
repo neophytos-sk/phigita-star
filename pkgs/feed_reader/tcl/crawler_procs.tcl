@@ -338,7 +338,7 @@ proc ::feed_reader::fetch_feed_p {feed_name timestamp {coeff "0.3"}} {
 		      "${feed_name}"                  \
 		      "_stats"]
     
-    if { ![::persistence::exists_data_p ${oid}] } {
+    if { ![::persistence::exists_column_data_p ${oid}] } {
         return 1
     }
 

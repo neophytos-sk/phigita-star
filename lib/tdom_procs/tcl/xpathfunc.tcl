@@ -263,17 +263,18 @@ namespace eval ::dom::xpathFunc {
 proc ::dom::xpathFunc::returndate_helper__date_shape {text} {
 
     foreach {re subSpec} {
-	{[[:lower:]]} x
-	{[[:upper:]]} X
-	{[[:digit:]]} n
-	{Xx+x} B
-	{n{4}} Y
-	{[^nBY ,\-/:]}
+        {[[:lower:]]} x
+        {[[:upper:]]} X
+        {[[:digit:]]} n
+        {X[Xx]+[Xx]} B
+        {n{4}} Y
+        {[^nBY ,\-/:]} " "
+        {[ ]{2,}} " "
     } {
-	regsub -all -- ${re} ${text} ${subSpec} text
+        regsub -all -- ${re} ${text} ${subSpec} text
     }
 
-    return ${text}
+    return [string trim ${text}]
 
 }
 

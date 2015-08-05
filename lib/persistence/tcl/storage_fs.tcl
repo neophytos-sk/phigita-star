@@ -172,7 +172,7 @@ proc ::persistence::fs::__insert_column {keyspace column_family row_key column_p
     #    file mkdir ${super_column_dir}
     #}
 
-    set_data ${oid} ${data}
+    set_column_data ${oid} ${data}
 
     if { ${timestamp} ne {} } {
         file mtime ${filename} ${timestamp}
@@ -249,12 +249,25 @@ proc ::persistence::fs::set_data {oid data} {
 proc ::persistence::fs::set_column_data {oid data} {
     set filename [get_filename ${oid}]
     file mkdir [file dirname ${filename}]
+
+    set fp [open $filename "w"]
+    fconfigure $fp -translation binary
+    puts $fp $data
+    close $fp
+    return
+
     return [::util::writefile ${filename} ${data}]
 }
 
 proc ::persistence::fs::get_column_data {oid} {
     set filename [get_filename ${oid}]
-    return [::util::readfile ${filename}]
+    set fp [open $filename]
+    fconfigure $fp -translation binary
+    set bytes [read $fp]
+    close $fp
+    return $bytes
+
+    # return [::util::readfile ${filename}]
 }
 
 proc ::persistence::fs::del_column_data {oid} {

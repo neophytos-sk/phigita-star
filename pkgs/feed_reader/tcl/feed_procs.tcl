@@ -1535,11 +1535,11 @@ proc ::feed_reader::print_log_entry {itemVar {contextVar ""}} {
     set domain [::util::domain_from_url $item(url)]
 
     set is_copy_string ""
-    if { [get_value_if item(is_copy_p) 0] } {
+    if { [coalesce $item(is_copy_p) 0] } {
         set is_copy_string "(*)"
     }
     set is_revision_string ""
-    if { [get_value_if item(is_revision_p) 0] } {
+    if { [coalesce $item(is_revision_p) 0] } {
         set is_revision_string "upd"
     }
 
@@ -1594,11 +1594,11 @@ proc ::feed_reader::print_short_log_entry {itemVar {contextVar ""}} {
     set domain [::util::domain_from_url $item(url)]
 
     set is_copy_string ""
-    if { [get_value_if item(is_copy_p) 0] } {
+    if { [coalesce $item(is_copy_p) 0] } {
         set is_copy_string "(*)"
     }
     set is_revision_string ""
-    if { [get_value_if item(is_revision_p) 0] } {
+    if { [coalesce $item(is_revision_p) 0] } {
         set is_revision_string "upd"
     }
 
