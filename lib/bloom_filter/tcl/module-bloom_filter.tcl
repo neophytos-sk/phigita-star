@@ -8,9 +8,9 @@ set module_dir [file normalize [file join $current_dir ..]]
 
 array set conf [list]
 array set conf {
-    includedirs {../c/ ../../core/c}
-    clibraries {-lm -lmodule-murmur_hash}
-    csources {../c/bloom.c}
+    includedirs {../c/ ../../core/c ../../murmur_hash/c }
+    clibraries {-lm}
+    csources {../c/bloom.c ../../murmur_hash/c/murmur_hash2.c}
     cheaders {}
     cflags ""
     cinit ""
