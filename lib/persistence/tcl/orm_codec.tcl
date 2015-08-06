@@ -136,6 +136,7 @@ namespace eval ::persistence::orm::codec_bin_2 {
 }
 
 
+
 proc ::persistence::orm::codec_bin_2::encode {itemVar} {
     variable [namespace __this]::__attributes
     variable [namespace __this]::__attinfo
@@ -158,7 +159,7 @@ proc ::persistence::orm::codec_bin_2::encode {itemVar} {
         if { !exists("item($attname)") } continue
 
         set attvalue [get_value_if item($attname) ""]
-        
+
         if { $fmt ne {} } {
             #log "type=$type fmt=$fmt num_bytes=$num_bytes"
             append bytes [binary format $fmt $attvalue]
