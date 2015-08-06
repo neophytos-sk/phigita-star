@@ -1,4 +1,4 @@
-# package require murmur_hash2  ;# -lmodule-murmur_hash2
+package require murmur_hash
 
 package require critcl
 
@@ -9,8 +9,8 @@ set module_dir [file normalize [file join $current_dir ..]]
 array set conf [list]
 array set conf {
     includedirs {../c/ ../../core/c}
-    clibraries {-lm}
-    csources {../c/bloom.c ../c/murmur_hash2.c}
+    clibraries {-lm -lmodule-murmur_hash}
+    csources {../c/bloom.c}
     cheaders {}
     cflags ""
     cinit ""
