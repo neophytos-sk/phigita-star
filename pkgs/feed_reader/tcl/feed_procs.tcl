@@ -899,7 +899,8 @@ proc ::feed_reader::ls {args} {
     # lappend predicate [list "lrange" [list $offset $limit]]
 
     array set options [list]
-    set options(order_by) "sort_date decreasing"
+    #set options(order_by) "sort_date decreasing"
+    set options(order_by) "timestamp decreasing integer"
     set options(offset) $offset
     set options(limit) $limit
     set options(expand_fn) "latest_mtime"

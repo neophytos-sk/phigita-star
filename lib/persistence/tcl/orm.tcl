@@ -31,7 +31,8 @@ namespace eval ::persistence::orm {
         delete \
         update \
         encode \
-        decode
+        decode \
+        sort
 
     #exists
 
@@ -546,9 +547,10 @@ proc ::persistence::orm::find {{where_clause_argv ""} {optionsVar ""}} {
 
     set option_order_by [get_value_if options(order_by) ""]
     if { $option_order_by ne {} } {
-        lassign $option_order_by sort_attname sort_direction
-        assert { $sort_direction in {increasing decreasing} }
-        #set slicelist [::persistence::sort slicelist $sort_attname $sort_direction]
+        lassign $option_order_by sort_attname sort_direction sort_comparison
+        # assert { $sort_direction in {increasing decreasing} }
+        # assert { $sort_comparison in {ascii dictionary integer} }
+        set slicelist [sort slicelist $sort_attname $sort_direction]
     }
 
     if { exists("options(offset)") || exists("options(limit)") } {
@@ -601,6 +603,26 @@ proc ::persistence::orm::__rewrite_where_clause {axis_attname argv} {
 }
 
 
+proc ::persistence::orm::sort {slicelistVar attname sort_direction {sort_comparison "dictionary"}} {
+    upvar $slicelistVar slicelist
+
+    assert { $sort_direction in {decreasing increasing} }
+    assert { $sort_comparison in {dictionary ascii integer} }
+
+    set sortlist [list]
+    set i 0
+    foreach oid $slicelist {
+        # lindex used, for "oid" can be a supercolumn
+        # TODO: improve proc to specify strategy/policy to use in such cases
+        array set item [get ${oid}]
+        lappend sortlist [list $i $item($attname) $oid]
+        incr i
+    }
+    set sortlist [lsort -${sort_direction} -${sort_comparison} -index 1 $sortlist] 
+
+    set sorted_slicelist [map x $sortlist {lindex $x 2}]
+    return $sorted_slicelist 
+}
 
 
 

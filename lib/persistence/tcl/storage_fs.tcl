@@ -685,27 +685,6 @@ proc ::persistence::fs::multiget_slice {xpath {predicate ""}} {
     return $slicelist
 }
 
-proc ::persistence::sort {slicelistVar attname sort_direction} {
-    upvar $slicelistVar slicelist
-
-    assert { $sort_direction in {decreasing increasing} }
-
-    set sortlist [list]
-    set i 0
-    foreach oid $slicelist {
-        # lindex used, for "oid" can be a supercolumn
-        # TODO: improve proc to specify strategy/policy to use in such cases
-        array set item [get_column_data ${oid}]
-        lappend sortlist [list $i $item($attname) $oid]
-        incr i
-    }
-    set sortlist [lsort -${sort_direction} -index 1 $sortlist] 
-
-    set sorted_slicelist [map x $sortlist {lindex $x 2}]
-    return $sorted_slicelist 
-}
-
-
 proc ::persistence::fs::exists_column_p {oid} {
     assert { [is_column_oid_p $oid] }
 
