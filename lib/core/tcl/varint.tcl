@@ -32,13 +32,19 @@ proc decode_unsigned_varint {dataVar num_decoded_bytesVar {pos "0"}} {
     set shift_amount 0
 
     while { 1 } {
-        incr i [binary scan $data "@${pos}c" byte]
-        incr pos $i
-        set decoded_value [expr { $decoded_value | ( ( $byte & 0x7f ) << $shift_amount ) }]
+
+        binary scan $data "@${pos}c" byte
+        incr pos
+        incr i
+
+        set decoded_value [expr { $decoded_value | (($byte & 0x7f) << $shift_amount) }]
         incr shift_amount 7
+
+
         if { !($byte & 0x80) } {
             break
         }
+
     }
 
     set num_decoded_bytes $i
