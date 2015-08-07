@@ -8,7 +8,7 @@
 #include <string.h>     // memset
 
 typedef struct {
-    uint8_t *bits;
+    uint8_t *bytes;
     size_t num_bits;
     size_t num_items;
     size_t num_hash_functions;
@@ -22,7 +22,20 @@ void bf_init(
     float false_positive_prob
 );
 
-void bf_insert(bloom_filter_t *bf, const void *key, size_t len);
-int bf_may_contain(bloom_filter_t *bf, const void *key, size_t len);
+void bf_insert(
+    bloom_filter_t *bf,
+    const void *key,
+    size_t len
+);
+
+int bf_may_contain(
+    bloom_filter_t *bf,
+    const void *key,
+    size_t len
+);
+
+uint8_t *bf_bytes(bloom_filter_t *bf, uint8_t *bytes);
+
+void bf_free(bloom_filter_t *bf);
 
 #endif // BLOOM_H

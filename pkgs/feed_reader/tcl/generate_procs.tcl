@@ -545,6 +545,8 @@ proc ::feed_reader::generate_feed {args} {
     getopt::init {
         {exclude-inurl  ""  {__arg_exclude_inurl exclude_strings}}
         {include-inurl  ""  {__arg_include_inurl include_strings}}
+        {include-re     ""  {__arg_include_re    include_re}}
+        {exclude-re     ""  {__arg_exclude_re    exclude_re}}
         {gen-xpaths     ""  {__arg_gen_xpaths}}
         {encoding       ""  {__arg_encoding encoding}}
         feed_url
@@ -554,6 +556,8 @@ proc ::feed_reader::generate_feed {args} {
     # defaults
     set_if exclude_strings ""
     set_if include_strings ""
+    set_if include_re ""
+    set_if exclude_re ""
     set_if encoding utf-8
 
 
@@ -564,8 +568,8 @@ proc ::feed_reader::generate_feed {args} {
             url_fmt "" \
             include_inurl $include_strings \
             exclude_inurl $exclude_strings \
-            include_re "" \
-            exclude_re "" \
+            include_re $include_re \
+            exclude_re $exclude_re \
             htmltidy_feed_p 0 \
             htmltidy_article_p 0]
 

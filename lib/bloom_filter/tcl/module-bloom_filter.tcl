@@ -18,7 +18,14 @@ array set conf {
 }
 
 set conf(cinit) {
+
+    // Tcl_RegisterObjType(&bloom_filter_type);
+
     Tcl_CreateObjCommand(ip, "::bloom_filter::create", bf_CreateCmd, NULL, NULL);
+    Tcl_CreateObjCommand(ip, "::bloom_filter::destroy", bf_DestroyCmd, NULL, NULL);
+    Tcl_CreateObjCommand(ip, "::bloom_filter::insert", bf_InsertCmd, NULL, NULL);
+    Tcl_CreateObjCommand(ip, "::bloom_filter::may_contain", bf_MayContainCmd, NULL, NULL);
+    Tcl_CreateObjCommand(ip, "::bloom_filter::bytes", bf_BytesCmd, NULL, NULL);
 }
 
 set ccode_filename [file normalize [file join $module_dir c/tclmodule.c]]

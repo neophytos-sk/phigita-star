@@ -1,7 +1,7 @@
 #include "common.h"     // CheckArgs, DBG, etc
 #include "bloom.h"
 
-#define CHAR_BIT sizeof(char)
+#define CHAR_BIT 8
 
 void bf_init(
     bloom_filter_t *bf, 
@@ -29,24 +29,32 @@ void bf_init(
     bf->num_items = 0;
     bf->num_hash_functions = num_hashes;
     bf->num_bits = num_bits;
-    bf->bits = malloc(num_bytes);
-    memset(bf->bits, 0, num_bytes);
+    bf->bytes = malloc(num_bytes);
+    memset(bf->bytes, 0, num_bytes);
     bf->hash_fn = hash_fn;
 }
 
-void bf_insert(bloom_filter_t *bf, const void *key, size_t len) {
+void bf_insert(
+    bloom_filter_t *bf, 
+    const void *key, 
+    size_t len
+) {
     uint32_t hash = len;
     
     size_t i;
     for (i = 0; i < bf->num_hash_functions; ++i) {
         hash = bf->hash_fn(key, len, hash) % bf->num_bits;
-        bf->bits[hash / CHAR_BIT] |= (1 << (hash % CHAR_BIT));
+        bf->bytes[hash / CHAR_BIT] |= (1 << (hash % CHAR_BIT));
     }
     bf->num_items++;
 }
 
 int
-bf_may_contain(bloom_filter_t *bf, const void *key, size_t len) {
+bf_may_contain(
+    bloom_filter_t *bf, 
+    const void *key, 
+    size_t len
+) {
     uint32_t hash = len;
     uint8_t byte_mask;
     uint8_t byte;
@@ -54,7 +62,7 @@ bf_may_contain(bloom_filter_t *bf, const void *key, size_t len) {
     size_t i;
     for (i = 0; i < bf->num_hash_functions; ++i) {
         hash = bf->hash_fn(key, len, hash) % bf->num_bits;
-        byte = bf->bits[hash / CHAR_BIT];
+        byte = bf->bytes[hash / CHAR_BIT];
         byte_mask = (1 << (hash % CHAR_BIT));
         
         if ((byte & byte_mask) == 0) {
@@ -64,3 +72,14 @@ bf_may_contain(bloom_filter_t *bf, const void *key, size_t len) {
     return 1;
 }
 
+uint8_t *
+bf_bytes(bloom_filter_t *bf, uint8_t *bytes) {
+    size_t num_bytes;
+    num_bytes = (bf->num_bits / CHAR_BIT) + (bf->num_bits % CHAR_BIT ? 1 : 0);
+    memcpy(bytes,bf->bytes,num_bytes);
+    return bytes;
+}
+
+void bf_free(bloom_filter_t *bf) {
+    free(bf->bytes);
+}
