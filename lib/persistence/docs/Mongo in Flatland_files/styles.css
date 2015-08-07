@@ -1,0 +1,21 @@
+.feedburner-email-subscription input[type="text"] {
+    border: 1px solid #DDDDDD;
+    display: block;
+    padding: 5px;
+	margin-bottom: 6px;
+	width: 95%;
+}
+.feedburner-email-subscription a.feed-link {
+    text-decoration: none;
+    margin-right: 23px;
+}
+.feedburner-email-subscription a.feed-link img {
+    display: inline-block;
+    margin-right: 8px;
+}
+.feedburner-email-subscription a.feed-link:last-child {
+	margin-right: 0;
+}
+.feedburner-email-subscription form {
+	margin-bottom: 10px;
+}

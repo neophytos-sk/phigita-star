@@ -2,6 +2,8 @@
 # procs that are generic (highest-level of abstraction) in the
 # persistence package, i.e. no storage system-specific calls here
 
+package require bloom_filter
+
 set dir [file dirname [info script]]
 source [file join $dir orm_codec.tcl]
 
@@ -95,7 +97,7 @@ proc ::persistence::orm::init_type {} {
         # TODO: assert { $type ne {} }
 
         set __idxinfo(${idxname},atts) $atts
-
+        
         array unset idxinfo
     }
 
@@ -278,6 +280,7 @@ proc ::persistence::orm::insert {itemVar {optionsVar ""}} {
     ::persistence::insert_column $target $data "" [codec_conf]
     
     foreach idxname $__indexes {
+
         if { $idxname eq "by_$pk" } {
             continue
         }
@@ -285,6 +288,7 @@ proc ::persistence::orm::insert {itemVar {optionsVar ""}} {
         set row_key [to_row_key_by $idxname item]
         set src [to_path_by $idxname $row_key {*}$item($pk)]
         ::persistence::insert_link $src $target
+
      }
 
 }
@@ -544,6 +548,8 @@ proc ::persistence::orm::find {{where_clause_argv ""} {optionsVar ""}} {
 
     set expand_fn [get_value_if options(expand_fn) ""]
     set slicelist [::persistence::expand_slice slicelist $expand_fn]
+    
+    # run the predicates here
 
     set option_order_by [get_value_if options(order_by) ""]
     if { $option_order_by ne {} } {

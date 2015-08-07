@@ -80,7 +80,7 @@ bf_CreateCmd (
 ) {
     DBG(fprintf(stderr,"CreateCmd\n"));
 
-    CheckArgs(2,3,1,"items_estimate false_positive_prob ?newObjVar?");
+    CheckArgs(3,3,1,"items_estimate false_positive_prob");
 
     int items_estimate;
     Tcl_GetIntFromObj(interp, objv[1], &items_estimate);
@@ -106,6 +106,7 @@ bf_CreateCmd (
     return TCL_OK;
 
 }
+
 
 static int 
 bf_DestroyCmd (
@@ -182,13 +183,13 @@ bf_InsertCmd (
 #define CHAR_BIT 8
 
 static int
-bf_BytesCmd (
+bf_GetBytesCmd (
     ClientData  clientData, 
     Tcl_Interp *interp, 
     int objc, 
     Tcl_Obj * const objv[] 
 ) {
-    DBG(fprintf(stderr,"BytesCmd\n"));
+    DBG(fprintf(stderr,"GetBytesCmd\n"));
 
     CheckArgs(2,2,1,"bloom_filter_obj");
 
@@ -202,10 +203,47 @@ bf_BytesCmd (
 
     uint8_t *newbytes;
     newbytes = Tcl_Alloc(num_bytes);
-    bf_bytes(bf,newbytes);
+    bf_get_bytes(bf,newbytes);
 
     obj = Tcl_NewByteArrayObj(newbytes, num_bytes);
     Tcl_SetObjResult(interp, obj);
     return TCL_OK;
 }
+
+static int
+bf_SetBytesCmd (
+    ClientData  clientData, 
+    Tcl_Interp *interp, 
+    int objc, 
+    Tcl_Obj * const objv[] 
+) {
+    DBG(fprintf(stderr,"SetBytesCmd\n"));
+
+    CheckArgs(3,3,1,"bloom_filter_obj bytes");
+
+    bloom_filter_t *bf;
+    int num_bytes;
+    Tcl_Obj *obj;
+
+    bf = objv[1]->internalRep.otherValuePtr;
+
+    num_bytes = (bf->num_bits / CHAR_BIT) + (bf->num_bits % CHAR_BIT ? 1 : 0);
+
+    uint8_t *newbytes;
+    int len;
+    newbytes = Tcl_GetByteArrayFromObj(objv[2], &len);
+
+    if (len != num_bytes) {
+        DBG(fprintf(stderr, "len=%d num_bits=%d, num_bytes=%d\n", len, bf->num_bits, num_bytes));
+        Tcl_AddErrorInfo(interp, "number of bytes in bloom filter does not match with given input");
+        return TCL_ERROR;
+    }
+
+    bf_set_bytes(bf, newbytes, len);
+
+    obj = Tcl_NewIntObj(num_bytes);
+    Tcl_SetObjResult(interp, obj);
+    return TCL_OK;
+}
+
 

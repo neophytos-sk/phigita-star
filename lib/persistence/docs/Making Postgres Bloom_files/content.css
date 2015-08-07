@@ -1,0 +1,39 @@
+.hd {
+  overflow-y: auto;
+  color: #fff;
+  background: linear-gradient(90deg, #188784, #023B54);
+  position: relative;
+  padding: 25px 0px; }
+
+.hd__logo {
+  font-size: 1em;
+  margin: auto;
+  padding-left: 6.2963vw; }
+  @media (min-width: 1000px) {
+    .hd__logo {
+      float: left;
+      padding-left: 40px; }
+    .hd__logo .svg {
+      height: 46px;
+      width: 234px; } }
+  @media (max-width: 1000px) {
+    .hd__logo {
+      text-align: center; }
+    .hd__logo .svg {
+      max-height: 46px;
+      height: 8.7037vw;
+      width: 44.81481vw; } }
+
+body main {
+  padding: 50px 0px;
+}
+
+body .nav>li>a:hover {
+  color: #188784;
+  text-decoration:none;
+  background-color:#eee
+}
+
+body h1 {
+  color: #116060;
+}

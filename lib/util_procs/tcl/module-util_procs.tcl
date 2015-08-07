@@ -187,15 +187,21 @@ proc ::util::fs::ls {dir {types "d"}} {
 }
 
 # TODO: move fs commands under ::util::fs
-proc ::util::readfile {filename} {
+proc ::util::readfile {filename args} {
     set fp [open ${filename}]
+    if { $args ne {} } {
+        fconfigure $fp {*}$args
+    }
     set data [read $fp [file size ${filename}]]
     close $fp
     return $data
 }
 
-proc ::util::writefile {filename data} {
+proc ::util::writefile {filename data args} {
     set fp [open $filename w]
+    if { $args ne {} } {
+        fconfigure $fp {*}$args
+    }
     puts -nonewline $fp $data
     close $fp
 }

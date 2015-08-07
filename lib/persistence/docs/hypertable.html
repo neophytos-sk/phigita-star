@@ -1,0 +1,375 @@
+<!doctype html>
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if IE 7]>     <html class="ie ie7 lte9 lte8 lte7"> <![endif]-->
+<!--[if IE 8]>     <html class="ie ie8 lte9 lte8"> <![endif]-->
+<!--[if IE 9]>     <html class="ie ie9 lte9"> <![endif]-->
+<!--[if gt IE 9]>  <html> <![endif]-->
+<!-- Consider adding an manifest.appcache: h5bp.com/d/Offline -->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+
+  <!-- Use the .htaccess and remove these lines to avoid edge case issues.
+       More info: h5bp.com/b/378 -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+ <title>Documentation | Hypertable - Big Data. Big Performance</title>
+<meta name="description" content="Hypertable is an open source project based on published best practices and our own experience in solving large-scale data-intensive tasks. Our goal is nothing less than that Hypertable become the world&#039;s most massively parallel high performance database platform." />
+<meta name="keywords" content="hyper table, hyypertable, hipertable, hyprotable, hypertble" />
+<meta name="robots" content="index,follow,archive" />
+
+<meta name="geo.position" content="," />
+<meta name="geo.placename" content="" />
+<meta name="geo.region" content="" />
+
+
+
+  <!-- Mobile viewport optimized: j.mp/bplateviewport -->
+  <meta name="viewport" content="initial-scale=.3, user-scalable=yes">
+
+  <!-- Place favicon.ico and apple-touch-icon.png in the root directory: mathiasbynens.be/notes/touch-icons -->
+
+  <!-- CSS: implied media=all -->
+  <!-- CSS concatenated and minified via ant build script-->
+	<link rel="stylesheet" type="text/css" media="all" href="http://hypertable.com/?css=_inc/styles.v.1416810157" />
+	<link rel="stylesheet" type="text/css" media="all" href="/global/css/shEE.css" />
+	<link rel="stylesheet" type="text/css" media="all" href="/global/css/shThemeDefault.css" />
+	<link rel="stylesheet" type="text/css" media="all" href="/global/css/shCore.css" />
+	<link rel="stylesheet" type="text/css" media="all" href="/global/css/shCoreEclipse.css" />
+  
+
+	<link rel="image_src" href="/global/img/logo-hypertable.png" />
+  <!-- end CSS-->
+
+  <!-- More ideas for your <head> here: h5bp.com/d/head-Tips -->
+
+  <!-- All JavaScript at the bottom, except for Modernizr / Respond.
+       Modernizr enables HTML5 elements & feature detects; Respond is a polyfill for min/max-width CSS3 Media Queries
+       For optimal performance, use a custom Modernizr build: www.modernizr.com/download/ -->
+  <script src="/global/scripts/libs/modernizr-2.0.6.min.js"></script>	
+
+	<script type="text/javascript" src="http://use.typekit.com/xkz6nhp.js"></script>
+	<script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+	<style type="text/css">
+	  .wf-loading h1, .wf-loading h2, .wf-loading h2, .wf-loading h3, .wf-loading button, .wf-loading .button, .wf-loading nav#main ul {visibility: hidden;}
+	</style>
+  <script type="text/javascript">
+  
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-15179427-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+  </script>
+
+  <script type="text/javascript" language="javascript">llactid=23695</script> 
+  <script type="text/javascript" language="javascript" src="http://t3.trackalyzer.com/trackalyze.js"></script>
+
+</head>
+
+<body  id="documentation"  >
+  <div id="container">
+    <header id="main">
+			<div class="masthead wrapper">
+				<img src="/global/img/logo-backdrop.png" class="logo-cloud" />
+				<a href="http://hypertable.com/" class="logo"><img src="/global/img/logo-hypertable.png" title="Hypertable Logo" /></a>
+				<div class="meta">
+					<ul>
+						<li class="alpha"><a href="/login" Title="Login / Support" class="button alt">Login / Support</a></li>
+						<li class="omega"><a href="http://hypertable.com/download" Title="Login / Support" class="button">Download</a></li>
+						<!--<li class="omega"><input type="text" name="search" class="search input"/></li>-->
+					</ul>
+				</div>
+			</div>
+			<nav id="main">
+				<ul id='nav' class="menu">
+<li><a href="http://hypertable.com/home/"><span>Home</span></a></li>
+<li><a href="http://hypertable.com/products_services/"><span>Products &amp; Services</span></a></li>
+<li><a href="http://hypertable.com/customers/"><span>Customers</span></a></li>
+<li><a href="http://hypertable.com/partners/"><span>Partners</span></a></li>
+<li><a href="http://hypertable.com/why_hypertable/"><span>Why Hypertable?</span></a></li>
+<li class="selected"><a href="http://hypertable.com/documentation/"><span>Documentation</span></a></li>
+<li><a href="http://hypertable.com/community/"><span>Community</span></a></li>
+<li><a href="http://hypertable.com/blog/"><span>Blog</span></a></li>
+<li class="last"><a href="http://hypertable.com/company/"><span>Company</span></a></li>
+</ul>
+				
+			</nav>
+    </header>
+
+
+<div id="main" role="main" class="clearfix">
+	<div id="sidebar">
+		<nav class="sidebar">
+			<h2>Documentation</h2>
+				<ul id="nav_sub" class="menu">
+<li class="selected first overview"><a href="http://hypertable.com/documentation/"><span>Overview</span></a></li>
+<li><a href="http://hypertable.com/documentation/architecture/"><span>Architecture</span></a></li>
+<li><a href="http://hypertable.com/documentation/installation/"><span>Installation</span></a></li>
+<li><a href="http://hypertable.com/documentation/user_guide/"><span>User Guide</span></a></li>
+<li><a href="http://hypertable.com/documentation/developer_guide/"><span>Developer Guide</span></a></li>
+<li><a href="http://hypertable.com/documentation/administrator_guide/"><span>Administrator Guide</span></a></li>
+<li><a href="http://hypertable.com/documentation/performance_guide/"><span>Performance Guide</span></a></li>
+<li><a href="http://hypertable.com/documentation/reference_manual/"><span>Reference Manual</span></a></li>
+<li><a href="http://hypertable.com/documentation/connectors/"><span>Connectors</span></a></li>
+<li><a href="http://hypertable.com/documentation/tools/"><span>Tools</span></a></li>
+<li class="last"><a href="http://hypertable.com/documentation/faq/"><span>FAQ</span></a></li>
+</ul>
+		</nav>
+	</div>
+	<div id="content">
+		<h1>Overview</h1>
+		<div class="r-sidebar">
+<!-- NEED ASSETS TO GO HERE -->			
+		</div>
+		<div class="intro">
+			<p><p>
+	Hypertable is a high performance, open source, massively scalable database modeled after Bigtable, Google&#39;s proprietary, massively scalable database. &nbsp;This page provides a brief overview of Hypertable, comparing it with a relational database, highlighting some of its unique features, and illustrating how it scales.</p>
+</p>		
+							
+						
+			<!--
+			<div class="toc-wrapper">
+			
+				<h2>Contents</h2>
+				
+				<ul id="nav_sub" class="toc">
+<li class="first"><a href="http://hypertable.com/documentation/architecture/">Architecture</a></li>
+<li><a href="http://hypertable.com/documentation/installation/">Installation</a></li>
+<li><a href="http://hypertable.com/documentation/user_guide/">User Guide</a></li>
+<li><a href="http://hypertable.com/documentation/developer_guide/">Developer Guide</a></li>
+<li><a href="http://hypertable.com/documentation/administrator_guide/">Administrator Guide</a></li>
+<li><a href="http://hypertable.com/documentation/performance_guide/">Performance Guide</a></li>
+<li><a href="http://hypertable.com/documentation/reference_manual/">Reference Manual</a></li>
+<li><a href="http://hypertable.com/documentation/connectors/">Connectors</a></li>
+<li><a href="http://hypertable.com/documentation/misc/">misc</a></li>
+<li><a href="http://hypertable.com/documentation/tools/">Tools</a></li>
+<li class="last"><a href="http://hypertable.com/documentation/faq/">FAQ</a></li>
+</ul>
+				
+			</div>
+			-->	
+						
+						
+		</div>
+
+		
+		<section>
+			<h3><a id="Comparison to a Relational Database" name="Comparison to a Relational Database"></a>Comparison to a Relational Database</h3>
+			
+			<p>
+	Hypertable is similar to a relational database in that it represents data as tables of information, with rows and columns, but that's about as far as the analogy goes.  The following is a list of some of the main differences </p>
+<ul>
+	<li>
+		Row keys are UTF-8 strings</li>
+	<li>
+		No support for data types, values are treated as opaque byte sequences</li>
+	<li>
+		No support for joins</li>
+	<li>
+		No support for transactions</li>
+</ul>
+<p>
+	Tables in Hypertable can be thought of as massive tables of data, sorted by a single primary key, the row key.</p>
+
+		</section>
+		
+		<section>
+			<h3><a id="Physical Layout" name="Physical Layout"></a>Physical Layout</h3>
+			
+			<p>
+	A relational database assumes that each column defined in the table schema will have a value for each row that is present in the table.  NULL values are usually represented with a special marker (e.g. \N).  The primary key and column identifier are implicitly associated with each cell based on its physical position within the layout.  The following diagram illustrates how a relational database table might be laid out on disk.</p>
+<p>
+	<img alt="" src="http://hypertable.com/uploads/RelationalPhysicalLayout4.png" style="width: 369px; height: 243px; " /></p>
+<p>
+	Hypertable (and Bigtable) takes its design from the Log Structured Merge Tree<a href="http://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=1&ved=0CCgQFjAA&url=http%3A%2F%2Fciteseerx.ist.psu.edu%2Fviewdoc%2Fdownload%3Fdoi%3D10.1.1.44.2782%26rep%3Drep1%26type%3Dpdf&ei=o30OT-35DOmgiQKY_IS1DQ&usg=AFQjCNGGoN9IFTLShcv2HbL0RVQdElfxow&sig2=eR9O9CAGG8J-505CI5mt7Q"><sup>pdf</sup></a>.  It flattens out the table structure into a sorted list of key/value pairs, each one representing a cell in the table.  The key includes the full row and column identifier, which means each cell is provided complete addressing information.  Cells that are NULL are simply not included in the list which makes this design particularly well-suited for sparse data.  The following diagram illustrates how Hypertable stores table data on-disk.</p>
+<p>
+	<img alt="" src="http://hypertable.com/uploads/HypertablePhysicalLayout1.png" style="width: 291px; height: 254px; " /></p>
+<p>
+	Though there can be a fair amount of redundancy in the row keys and column identifiers, Hypertable employs key-prefix and block data compression which considerably mitigates this problem.</p>
+
+		</section>
+		
+		<section>
+			<h3><a id="Cell Versions" name="Cell Versions"></a>Cell Versions</h3>
+			
+			<p>
+	Hypertable extends the traditional two-dimensional table model by adding a third dimension:  timestamp.  This timestamp dimension can be thought of as representing different versions of each table cell, as illustrated in the following diagram.</p>
+<p>
+	<img alt="" src="http://hypertable.com/uploads/CellVersions.png" style="width: 512px; height: 188px; " /></p>
+<p>
+	When queried, the most recent cell version is returned first.  By default, all cell versions are retained for each column, but the number of versions retained can be capped by specifying the MAX_VERSIONS option to the column specification in the CREATE TABLE statement.  The timestamp can be supplied by the application at insert time, or can be auto-generated (default).</p>
+
+		</section>
+		
+		<section>
+			<h3><a id="Column Qualifiers" name="Column Qualifiers"></a>Column Qualifiers</h3>
+			
+			<p>
+	This feature provides a way for users to introduce sparse column data that can be easily selected with Hypertable Query Language (HQL) or any of the other query interfaces.</p>
+<p>
+	A column specification in the Hypertable CREATE TABLE statement actually defines&nbsp;a set of related columns known as a <em>column family</em>.&nbsp; Users may supply an optional&nbsp;column qualifier and specify the qualified column as family:qualifier.&nbsp; The qualifier&nbsp;is a NUL-terminated string.&nbsp; For example, if a column family <em>tag</em> is specified in a CREATE TABLE statement, as shown below,</p>
+<pre class="brush:sql;">
+CREATE TABLE Info (&#10;  tag&#10;);&#10;</pre>
+<p>
+	then qualified columns such as the following may be created/inserted into the table.</p>
+<pre class="prettyprint">
+<code>tag:bigtable&#10;tag:nosql&#10;tag:bigdata</code></pre>
+<p>
+	<a name="namespaces"></a></p>
+
+		</section>
+		
+		<section>
+			<h3><a id="Namespaces" name="Namespaces"></a>Namespaces</h3>
+			
+			<p>
+	Namespaces provide a way to logically group tables together and are analogous to the directory hierarchy in a modern filesystem.  Namespaces allow you to organize your tables into related groups, keeping table names simple, as table names need only be unique within the namespace in which they are created.  All Hypertable instances have a built-in default root namespace "/".  The following diagram illustrates an example namespace hierarchy.</p>
+<p>
+	<img alt="Namespaces" src="http://hypertable.com/uploads/Namespaces.png" style="width: 153px; height: 370px; " /></p>
+
+		</section>
+		
+		<section>
+			<h3><a id="How Scaling Works" name="How Scaling Works"></a>How Scaling Works</h3>
+			
+			<p>
+	This section illustrates how Hypertable scales.  Let's say the system has been loaded with the following two tables, a session ID table and a crawl database table.</p>
+<p>
+	<img alt="Figure 1" src="http://hypertable.com/uploads/scale-11.png" style="width: 275px; height: 405px; " title="Figure 1" /></p>
+<p>
+	Over time, Hypertable will break these tables into ranges and distribute them to what are known as <em>RangeServer</em> processes.  These processes manage ranges of table data and run on all slave server machines in the cluster.  For example, assuming there are three slave servers, the following diagram shows what the system might look like over time.  As can be seen by the diagram, the three servers are filled to capacity.</p>
+<p>
+	<img alt="" src="http://hypertable.com/uploads/scale-2.png" style="width: 408px; height: 355px; " /></p>
+<p>
+	Adding more capacity is a simple matter of adding new commodity class servers and starting RangeServer processes on the new machines.  Hypertable will detect that there are new servers available with plenty of spare capacity and will automatically migrate ranges from the overloaded machines onto the new ones.</p>
+<p>
+	<img alt="" src="http://hypertable.com/uploads/scale-3.png" style="width: 663px; height: 356px; " /></p>
+<p>
+	This range migration process has the effect of balancing load across the entire cluster and opening up additional capacity.</p>
+
+		</section>
+		
+		
+	</div>
+</div>
+
+
+
+    <footer class="main">
+			<div class="slogan">
+				<p>Big Data. Big Performance<sup>®</sup></p>
+			</div>
+			<section class="nav clearfix">
+				<nav class="footer">
+					<ul id="nav_sub" class="menu">
+<li class="first"><a href="http://hypertable.com/home/"><span>Home</span></a></li>
+<li><a href="http://hypertable.com/products_services/"><span>Products & Services</span></a>
+<ul>
+<li><a href="http://hypertable.com/products_services/support_subscription/"><span>Support Subscription</span></a></li>
+<li><a href="http://hypertable.com/products_services/training_certification/"><span>Training Program</span></a></li>
+<li class="last"><a href="http://hypertable.com/products_services/commercial_license/"><span>Commercial License</span></a></li>
+</ul>
+</li>
+<li><a href="http://hypertable.com/customers/"><span>Customers</span></a>
+<ul>
+<li class="first last"><a href="http://hypertable.com/customers/case_studies/"><span>Case Studies</span></a></li>
+</ul>
+</li>
+<li><a href="http://hypertable.com/partners/"><span>Partners</span></a></li>
+<li><a href="http://hypertable.com/why_hypertable/"><span>Why Hypertable?</span></a>
+<ul>
+<li class="first last"><a href="http://hypertable.com/why_hypertable/hypertable_vs_hbase_2/"><span>Hypertable vs HBase</span></a></li>
+</ul>
+</li>
+<li class="selected"><a href="http://hypertable.com/documentation/"><span>Documentation</span></a>
+<ul>
+<li class="first"><a href="http://hypertable.com/documentation/architecture/"><span>Architecture</span></a></li>
+<li><a href="http://hypertable.com/documentation/installation/"><span>Installation</span></a></li>
+<li><a href="http://hypertable.com/documentation/user_guide/"><span>User Guide</span></a></li>
+<li><a href="http://hypertable.com/documentation/developer_guide/"><span>Developer Guide</span></a></li>
+<li><a href="http://hypertable.com/documentation/administrator_guide/"><span>Administrator Guide</span></a></li>
+<li><a href="http://hypertable.com/documentation/performance_guide/"><span>Performance Guide</span></a></li>
+<li><a href="http://hypertable.com/documentation/reference_manual/"><span>Reference Manual</span></a></li>
+<li><a href="http://hypertable.com/documentation/connectors/"><span>Connectors</span></a></li>
+<li><a href="http://hypertable.com/documentation/misc/"><span>misc</span></a></li>
+<li><a href="http://hypertable.com/documentation/tools/"><span>Tools</span></a></li>
+<li class="last"><a href="http://hypertable.com/documentation/faq/"><span>FAQ</span></a></li>
+</ul>
+</li>
+<li><a href="http://hypertable.com/community/"><span>Community</span></a>
+<ul>
+<li class="first"><a href="http://hypertable.com/community/license/"><span>License</span></a></li>
+<li><a href="http://hypertable.com/community/bug_tracker/"><span>Bug Tracker</span></a></li>
+<li><a href="http://hypertable.com/community/source_code/"><span>Source Code</span></a></li>
+<li><a href="http://hypertable.com/community/mailing_lists/"><span>Mailing Lists</span></a></li>
+<li><a href="http://hypertable.com/community/contributors/"><span>Contributors</span></a></li>
+<li class="last"><a href="http://hypertable.com/community/roadmap/"><span>Roadmap</span></a></li>
+</ul>
+</li>
+<li><a href="http://hypertable.com/blog/"><span>Blog</span></a></li>
+<li><a href="http://hypertable.com/company/"><span>Company</span></a>
+<ul>
+<li class="first"><a href="http://hypertable.com/company/team_advisors/"><span>Team & Advisors</span></a></li>
+<li><a href="http://hypertable.com/company/press_center/"><span>Press Center</span></a></li>
+<li><a href="http://hypertable.com/company/careers/"><span>Careers</span></a></li>
+<li class="last"><a href="http://hypertable.com/company/contact/"><span>Contact</span></a></li>
+</ul>
+</li>
+<li class="last"><a href="http://hypertable.com/download/"><span>Download</span></a></li>
+</ul>
+				</nav>
+				<div class="contact col-third right omega">
+					<p>1799 Old Bayshore Highway, Suite 138<br />Burlingame CA 94010<br />tel  +1 650.401.6038<br />fax +1 650.230.7176</p>
+					<p class="copyright">© 2014 Hypertable Inc.<br />All Rights Reserved.<br />Site by <a href="http://www.bluecoastweb.com" target="_new" title="Blue Coast Web">Blue Coast Web.</p>
+				</div>
+			</section>
+    </footer>
+		<a href="http://twitter.com/#!/hypertable" target="_new" class="twitter-follow"><img src="/global/img/twitter.png" alt="Follow Us on Twitter"></a>
+  </div> <!--! end of #container -->
+
+
+  <!-- JavaScript at the bottom for fast page loading -->
+
+  <!-- Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if offline -->
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+  <script>window.jQuery || document.write('<script src="/global/scripts/libs/jquery-1.6.2.min.js"><\/script>')</script>
+
+	<script src="/global/scripts/mylibs/jquery.tableofcontents.min.js"></script>
+	<!-- TOC -->
+	<script type="text/javascript" charset="utf-8">
+	  $(document).ready(function(){ 
+	    $("#toc").tableOfContents(
+	      $("#content"),      // Scoped to div#wrapper
+	      {
+	        startLevel: 3,    // H2 and up
+	        depth:      2,    // H2 through H4,
+	        topLinks:   true, // Add "Top" Links to Each Header
+	      }
+	    ); 
+	  });
+	</script>
+	<script src="/global/scripts/mylibs/smooth-scroll.js"></script>
+	
+	<!-- Load Nivo Slider -->
+	<script src="/global/scripts/mylibs/jquery.nivo.slider.js"></script>
+	<script type="text/javascript">
+  $(window).load(function() {$('#slider').nivoSlider();});
+  </script>
+
+	
+	
+
+  <!-- Prompt IE 6 users to install Chrome Frame. Remove this if you want to support IE 6.
+       chromium.org/developers/how-tos/chrome-frame-getting-started -->
+  <!--[if lt IE 7 ]>
+    <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
+    <script>window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})</script>
+  <![endif]-->
+</body>
+</html>

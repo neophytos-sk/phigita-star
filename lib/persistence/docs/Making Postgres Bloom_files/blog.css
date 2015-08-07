@@ -1,0 +1,88 @@
+a.post__back, .post__meta {
+  color: #9EABB3;
+}
+
+a:hover.post__back {
+  color: #BEBEBE;
+}
+
+.post__avatar {
+  width: 32px;
+  height: 32px;
+  object-fit: cover;
+  -webkit-border-radius: 50%;
+     -moz-border-radius: 50%;
+          border-radius: 50%;
+}
+
+.post__author_name {
+  color: #188784;
+  margin-left: 3px;
+}
+
+.post__back, .post__meta {
+  font-size: 9px;
+  font-size: 4vw; }
+  @media (min-width: 541px) {
+    .post__back, .post__meta {
+      font-size: 13px; } }
+  @media (min-width: 1000px) {
+    .post__back, .post__meta {
+      font-size: 16px; } }
+
+.post__disqus {
+    padding-top: 60px;
+}
+
+.fadeout {
+  position: relative;
+  bottom: 4em;
+  height: 4em;
+  margin-bottom: -3em;
+  background: -webkit-linear-gradient(
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 1) 100%
+  );
+  background-image: -moz-linear-gradient(
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 1) 100%
+  );
+  background-image: -o-linear-gradient(
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 1) 100%
+  );
+  background-image: linear-gradient(
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 1) 100%
+  );
+  background-image: -ms-linear-gradient(
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 1) 100%
+  );
+}
+
+.post__body .btn {
+  background: #116060;
+  font-size: 14px;
+}
+
+.post__body .btn:focus, .post__body .btn:hover {
+  background: #188784;
+}
+
+body h1, body h1 a {
+  color: #116060;
+}
+
+body h2, body h1 a:hover {
+  color: #188784;
+}
+
+.share {
+  text-align: center;
+}
+
+.twitter-share-button, .hn-button {
+  vertical-align: text-bottom !important;
+  margin-right: 5px;
+}

@@ -185,9 +185,6 @@ namespace eval ::critcl {
 	::critcl::config force [::xo::kit::debug_mode_p]
 	::critcl::config keepsrc 1
 	::critcl::optimize
-	if { [::xo::kit::debug_mode_p] } {
-	    ::critcl::cflags -DDEBUG
-	}
 
 	variable run
 	if { [interp exists $run] } {

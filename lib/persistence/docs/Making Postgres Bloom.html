@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<!-- saved from url=(0052)http://www.pipelinedb.com/blog/making-postgres-bloom -->
+<html class="no-js supports-mix-blend-mode" lang="en"><!--<![endif]--><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Making Postgres Bloom</title>
+    <link rel="icon" href="http://www.pipelinedb.com/static/favicon.ico" type="image/x-icon">
+    <meta name="description" content="PipelineDB is an open-source relational database that runs SQL queries continuously on streams, incrementally storing results in tables.">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+    <script async="" src="./Making Postgres Bloom_files/fbds.js"></script><script id="hs-analytics" src="./Making Postgres Bloom_files/518626.js"></script><script async="" src="./Making Postgres Bloom_files/analytics.js"></script><script id="hn-button.js" src="./Making Postgres Bloom_files/hn-button.js"></script><script id="twitter-wjs" src="./Making Postgres Bloom_files/widgets.js"></script><script id="facebook-jssdk" src="./Making Postgres Bloom_files/sdk.js"></script><script type="text/javascript" async="" src="./Making Postgres Bloom_files/heap-1691687757.js"></script><script src="./Making Postgres Bloom_files/jquery-2.1.4.min.js"></script>
+    <script src="./Making Postgres Bloom_files/bootstrap.min.js"></script>
+    <script src="./Making Postgres Bloom_files/slideout.min.js"></script>
+
+    <script>
+      var html = document.documentElement;
+      var iOS = (navigator.userAgent.match(/(iPad|iPhone|iPod)/g) ? true : false);
+      if (iOS) html.classList.add('ios');
+    </script>
+
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="./Making Postgres Bloom_files/base.css">
+
+    
+
+  
+    
+  <link rel="stylesheet" type="text/css" href="./Making Postgres Bloom_files/content.css">
+
+  <link rel="stylesheet" type="text/css" href="./Making Postgres Bloom_files/blog.css">
+
+
+    <script type="text/javascript">
+      window.heap=window.heap||[],heap.load=function(t,e){window.heap.appid=t,window.heap.config=e;var a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=("https:"===document.location.protocol?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+t+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(t){return function(){heap.push([t].concat(Array.prototype.slice.call(arguments,0)))}},p=["clearEventProperties","identify","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+      heap.load("1691687757");
+    </script>
+  <script type="text/javascript" async="" src="./Making Postgres Bloom_files/embed.js"></script><style type="text/css">.fb_hidden{position:absolute;top:-10000px;z-index:10001}.fb_invisible{display:none}.fb_reset{background:none;border:0;border-spacing:0;color:#000;cursor:auto;direction:ltr;font-family:"lucida grande", tahoma, verdana, arial, sans-serif;font-size:11px;font-style:normal;font-variant:normal;font-weight:normal;letter-spacing:normal;line-height:1;margin:0;overflow:visible;padding:0;text-align:left;text-decoration:none;text-indent:0;text-shadow:none;text-transform:none;visibility:visible;white-space:normal;word-spacing:normal}.fb_reset>div{overflow:hidden}.fb_link img{border:none}
+.fb_dialog{background:rgba(82, 82, 82, .7);position:absolute;top:-10000px;z-index:10001}.fb_reset .fb_dialog_legacy{overflow:visible}.fb_dialog_advanced{padding:10px;-moz-border-radius:8px;-webkit-border-radius:8px;border-radius:8px}.fb_dialog_content{background:#fff;color:#333}.fb_dialog_close_icon{background:url(https://fbstatic-a.akamaihd.net/rsrc.php/v2/yq/r/IE9JII6Z1Ys.png) no-repeat scroll 0 0 transparent;_background-image:url(https://fbstatic-a.akamaihd.net/rsrc.php/v2/yL/r/s816eWC-2sl.gif);cursor:pointer;display:block;height:15px;position:absolute;right:18px;top:17px;width:15px}.fb_dialog_mobile .fb_dialog_close_icon{top:5px;left:5px;right:auto}.fb_dialog_padding{background-color:transparent;position:absolute;width:1px;z-index:-1}.fb_dialog_close_icon:hover{background:url(https://fbstatic-a.akamaihd.net/rsrc.php/v2/yq/r/IE9JII6Z1Ys.png) no-repeat scroll 0 -15px transparent;_background-image:url(https://fbstatic-a.akamaihd.net/rsrc.php/v2/yL/r/s816eWC-2sl.gif)}.fb_dialog_close_icon:active{background:url(https://fbstatic-a.akamaihd.net/rsrc.php/v2/yq/r/IE9JII6Z1Ys.png) no-repeat scroll 0 -30px transparent;_background-image:url(https://fbstatic-a.akamaihd.net/rsrc.php/v2/yL/r/s816eWC-2sl.gif)}.fb_dialog_loader{background-color:#f6f7f8;border:1px solid #606060;font-size:24px;padding:20px}.fb_dialog_top_left,.fb_dialog_top_right,.fb_dialog_bottom_left,.fb_dialog_bottom_right{height:10px;width:10px;overflow:hidden;position:absolute}.fb_dialog_top_left{background:url(https://fbstatic-a.akamaihd.net/rsrc.php/v2/ye/r/8YeTNIlTZjm.png) no-repeat 0 0;left:-10px;top:-10px}.fb_dialog_top_right{background:url(https://fbstatic-a.akamaihd.net/rsrc.php/v2/ye/r/8YeTNIlTZjm.png) no-repeat 0 -10px;right:-10px;top:-10px}.fb_dialog_bottom_left{background:url(https://fbstatic-a.akamaihd.net/rsrc.php/v2/ye/r/8YeTNIlTZjm.png) no-repeat 0 -20px;bottom:-10px;left:-10px}.fb_dialog_bottom_right{background:url(https://fbstatic-a.akamaihd.net/rsrc.php/v2/ye/r/8YeTNIlTZjm.png) no-repeat 0 -30px;right:-10px;bottom:-10px}.fb_dialog_vert_left,.fb_dialog_vert_right,.fb_dialog_horiz_top,.fb_dialog_horiz_bottom{position:absolute;background:#525252;filter:alpha(opacity=70);opacity:.7}.fb_dialog_vert_left,.fb_dialog_vert_right{width:10px;height:100%}.fb_dialog_vert_left{margin-left:-10px}.fb_dialog_vert_right{right:0;margin-right:-10px}.fb_dialog_horiz_top,.fb_dialog_horiz_bottom{width:100%;height:10px}.fb_dialog_horiz_top{margin-top:-10px}.fb_dialog_horiz_bottom{bottom:0;margin-bottom:-10px}.fb_dialog_iframe{line-height:0}.fb_dialog_content .dialog_title{background:#6d84b4;border:1px solid #3a5795;color:#fff;font-size:14px;font-weight:bold;margin:0}.fb_dialog_content .dialog_title>span{background:url(https://fbstatic-a.akamaihd.net/rsrc.php/v2/yd/r/Cou7n-nqK52.gif) no-repeat 5px 50%;float:left;padding:5px 0 7px 26px}body.fb_hidden{-webkit-transform:none;height:100%;margin:0;overflow:visible;position:absolute;top:-10000px;left:0;width:100%}.fb_dialog.fb_dialog_mobile.loading{background:url(https://fbstatic-a.akamaihd.net/rsrc.php/v2/ya/r/3rhSv5V8j3o.gif) white no-repeat 50% 50%;min-height:100%;min-width:100%;overflow:hidden;position:absolute;top:0;z-index:10001}.fb_dialog.fb_dialog_mobile.loading.centered{max-height:590px;min-height:590px;max-width:500px;min-width:500px}#fb-root #fb_dialog_ipad_overlay{background:rgba(0, 0, 0, .45);position:absolute;left:0;top:0;width:100%;min-height:100%;z-index:10000}#fb-root #fb_dialog_ipad_overlay.hidden{display:none}.fb_dialog.fb_dialog_mobile.loading iframe{visibility:hidden}.fb_dialog_content .dialog_header{-webkit-box-shadow:white 0 1px 1px -1px inset;background:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#738ABA), to(#2C4987));border-bottom:1px solid;border-color:#1d4088;color:#fff;font:14px Helvetica, sans-serif;font-weight:bold;text-overflow:ellipsis;text-shadow:rgba(0, 30, 84, .296875) 0 -1px 0;vertical-align:middle;white-space:nowrap}.fb_dialog_content .dialog_header table{-webkit-font-smoothing:subpixel-antialiased;height:43px;width:100%}.fb_dialog_content .dialog_header td.header_left{font-size:12px;padding-left:5px;vertical-align:middle;width:60px}.fb_dialog_content .dialog_header td.header_right{font-size:12px;padding-right:5px;vertical-align:middle;width:60px}.fb_dialog_content .touchable_button{background:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#4966A6), color-stop(.5, #355492), to(#2A4887));border:1px solid #2f477a;-webkit-background-clip:padding-box;-webkit-border-radius:3px;-webkit-box-shadow:rgba(0, 0, 0, .117188) 0 1px 1px inset, rgba(255, 255, 255, .167969) 0 1px 0;display:inline-block;margin-top:3px;max-width:85px;line-height:18px;padding:4px 12px;position:relative}.fb_dialog_content .dialog_header .touchable_button input{border:none;background:none;color:#fff;font:12px Helvetica, sans-serif;font-weight:bold;margin:2px -12px;padding:2px 6px 3px 6px;text-shadow:rgba(0, 30, 84, .296875) 0 -1px 0}.fb_dialog_content .dialog_header .header_center{color:#fff;font-size:16px;font-weight:bold;line-height:18px;text-align:center;vertical-align:middle}.fb_dialog_content .dialog_content{background:url(https://fbstatic-a.akamaihd.net/rsrc.php/v2/y9/r/jKEcVPZFk-2.gif) no-repeat 50% 50%;border:1px solid #555;border-bottom:0;border-top:0;height:150px}.fb_dialog_content .dialog_footer{background:#f6f7f8;border:1px solid #555;border-top-color:#ccc;height:40px}#fb_dialog_loader_close{float:left}.fb_dialog.fb_dialog_mobile .fb_dialog_close_button{text-shadow:rgba(0, 30, 84, .296875) 0 -1px 0}.fb_dialog.fb_dialog_mobile .fb_dialog_close_icon{visibility:hidden}
+.fb_iframe_widget{display:inline-block;position:relative}.fb_iframe_widget span{display:inline-block;position:relative;text-align:justify}.fb_iframe_widget iframe{position:absolute}.fb_iframe_widget_fluid_desktop,.fb_iframe_widget_fluid_desktop span,.fb_iframe_widget_fluid_desktop iframe{max-width:100%}.fb_iframe_widget_fluid_desktop iframe{min-width:220px;position:relative}.fb_iframe_widget_lift{z-index:1}.fb_hide_iframes iframe{position:relative;left:-10000px}.fb_iframe_widget_loader{position:relative;display:inline-block}.fb_iframe_widget_fluid{display:inline}.fb_iframe_widget_fluid span{width:100%}.fb_iframe_widget_loader iframe{min-height:32px;z-index:2;zoom:1}.fb_iframe_widget_loader .FB_Loader{background:url(https://fbstatic-a.akamaihd.net/rsrc.php/v2/y9/r/jKEcVPZFk-2.gif) no-repeat;height:32px;width:32px;margin-left:-16px;position:absolute;left:50%;z-index:4}</style></head>
+  <body>
+    
+  <nav class="slide__menu slideout-menu" id="slide-menu">
+    <ul>
+      <li><a href="http://www.pipelinedb.com/about">About</a></li>
+      <li><a href="http://www.pipelinedb.com/community">Community</a></li>
+      <li><a href="http://www.pipelinedb.com/examples">Examples</a></li>
+      <li><a href="http://docs.pipelinedb.com/">Docs</a></li>
+      <li><a href="http://www.pipelinedb.com/blog">Blog</a></li>
+    </ul>
+  </nav>
+
+  <div id="slide-panel" class=" slideout-panel">
+    <header class="hd">
+      <div class="container">
+        <h1 class="hd__logo">
+          <a href="http://www.pipelinedb.com/"><svg xmlns="http://www.w3.org/2000/svg" width="242" height="47" viewBox="0 0 242 47" class="svg replaced-svg"><g id="Text" fill="#fff"><path d="M72.933 13.176h-7.74v20.648h1.766v-8.576h5.974c3.932 0 6.22-2.784 6.22-6.036s-2.26-6.036-6.22-6.036zm-.185 10.463h-5.79v-8.855h5.79c2.724 0 4.55 1.826 4.55 4.426 0 2.602-1.826 4.43-4.55 4.43zM84.732 13.176h1.764v20.648h-1.764zM101.235 13.176h-7.74v20.648h1.764v-8.576h5.976c3.93 0 6.223-2.784 6.223-6.036-.002-3.252-2.263-6.036-6.225-6.036zm-.188 10.463h-5.79v-8.855h5.79c2.725 0 4.552 1.826 4.552 4.426 0 2.602-1.828 4.43-4.553 4.43zM113.032 33.824h13.096v-1.61h-11.33v-8.172h11.114v-1.61H114.8v-7.646h11.328v-1.61h-13.096zM134.12 13.176h-1.765v20.648h11.765v-1.61h-10zM149.818 13.176h1.766v20.648h-1.766zM173.314 30.667l-12.938-17.49h-1.795v20.647h1.768V16.086l13.002 17.738h1.732V13.176h-1.768zM182.083 33.824h13.094v-1.61h-11.33v-8.172h11.114v-1.61H183.85v-7.646h11.33v-1.61h-13.095zM209.02 13.176h-8.142v20.648h8.143c6.47 0 10.958-4.085 10.958-10.308s-4.487-10.34-10.957-10.34zm0 16.78h-3.745v-12.91h3.746c4.24 0 6.47 2.816 6.47 6.47 0 3.498-2.383 6.44-6.47 6.44zM237.702 23.175c1.95-.403 3.563-2.137 3.563-4.738 0-2.753-2.015-5.262-5.947-5.262h-10.864v20.648h11.21c3.928 0 6.002-2.478 6.002-5.572 0-2.598-1.764-4.734-3.964-5.075zm-8.852-6.223h5.512c1.486 0 2.414.96 2.414 2.26 0 1.3-.928 2.23-2.414 2.23h-5.512v-4.49zm5.666 13.066h-5.666v-4.8h5.666c1.734 0 2.664 1.115 2.664 2.416 0 1.484-.992 2.384-2.664 2.384z"></path></g><g id="Mark" fill="#fff"><path d="M13.75 30.387v-.012h2.7c.588 0 1.06-.26 1.284-.486l3.616-3.614.028-.016.683-.684c.003 0 .004 0 .005-.002l.094-.094c.5-.504 1.074-.94 1.68-1.334h-7.567v.018h-3.835c-4.023 0-7.915-1.538-10.786-4.213l-1.37 2.376c-.375.646-.375 1.703 0 2.35l4.84 8.383c1.972-1.7 4.56-2.673 7.233-2.673h1.395zM13.716 34.085v-.006h2.68c1.473 0 2.886-.57 3.88-1.563l1.7-1.7 2.642-2.645c1.107-1.108 2.598-1.804 4.188-2.026l-.468-.47v-.004l-1.11-1.11c-1.356.404-2.61 1.096-3.62 2.03l-4.62 4.623c-.64.64-1.602 1.02-2.572 1.02H15.03v.005l-2.676-.002c-2.354 0-4.625.898-6.288 2.46l.95 1.645.15-.15c1.334-1.337 3.226-2.105 5.186-2.105h1.364v-.003zM12.444 21.527h3.837v.01h7.926l-.41-.41c-1.422-1.422-3.444-2.238-5.556-2.238h-5.784c-2.808 0-5.517-1.097-7.43-3.014l-.648-.648-1.37 2.375.123.123c2.41 2.41 5.81 3.8 9.314 3.8zM13.72 37.782v-.007h2.678c2.448 0 4.822-.97 6.5-2.656l3.826-3.823.012.008.4-.398c.638-.64 1.6-1.02 2.572-1.02h1.39v-.01h1.71c-.522-.354-1.01-.743-1.45-1.18l-.78-.783h-.72c-1.492 0-2.923.576-3.93 1.582l-2.643 2.64-.01-.008-1.697 1.702c-1.336 1.338-3.228 2.104-5.188 2.104h-4.04c-1.472 0-2.886.57-3.878 1.562l-.5.5.948 1.646.838-.84c.638-.637 1.6-1.02 2.57-1.02h1.39zM35.108 24.955l-3.01-3.01.002-.002-4.556-4.557c-2.407-2.41-5.8-3.792-9.306-3.792H14.4v-.004h-1.98c-1.392 0-2.77-.546-3.684-1.46L7.108 10.5l-1.36 2.353 1.143 1.143c1.422 1.423 3.447 2.237 5.557 2.237h3.837v.008h1.956c2.808 0 5.518 1.1 7.43 3.017l5.556 5.556-.002.002 2.01 2.01c1.38 1.382 3.513 2.238 5.564 2.238h11.865l1.528-2.646H38.798c-1.334 0-2.815-.588-3.69-1.462zM41.965 31.718h-10.86v-.012H29.71c-.59 0-1.06.262-1.285.485l-.4.402.007.01-3.824 3.824c-2.024 2.025-4.87 3.19-7.803 3.19l-2.678-.003v-.01H12.33c-.59 0-1.06.26-1.284.485l-1.184 1.184 2.627 4.55c.374.65 1.29 1.178 2.036 1.178H38.95c.744 0 1.662-.527 2.034-1.176l8.15-14.112h-7.17v.006zM40.984 1.175C40.612.53 39.694 0 38.95 0H14.526c-.746 0-1.662.53-2.037 1.175L8.457 8.16l2.073 2.075c.323.32.998.695 1.84.695h3.87v.018l2-.002c4.203 0 8.278 1.667 11.18 4.568l4.59 4.592.002-.002 3.01 3.008c.336.334 1.138.696 1.846.696h14.574c.057-.522-.013-1.078-.246-1.48L40.984 1.175z"></path></g></svg></a>
+        </h1>
+        <div class="hd__nav">
+          <ul>
+            <li><a href="http://www.pipelinedb.com/about">About<div class="hd__nav__cube" style="background-color: rgb(128, 178, 4);"></div></a></li>
+            <li><a href="http://www.pipelinedb.com/community">Community<div class="hd__nav__cube" style="background-color: rgb(36, 139, 191);"></div></a></li>
+            <li><a href="http://www.pipelinedb.com/examples">Examples<div class="hd__nav__cube" style="background-color: rgb(190, 70, 92);"></div></a></li>
+            <li><a href="http://docs.pipelinedb.com/">Docs<div class="hd__nav__cube" style="background-color: rgb(221, 221, 221);"></div></a></li>
+            <li><a href="http://www.pipelinedb.com/blog">Blog<div class="hd__nav__cube" style="background-color: rgb(4, 178, 136);"></div></a></li>
+          </ul>
+        </div>
+        <span href="#" class="slide__nav__btn" style="margin: 31.5px;">☰</span>
+      </div>
+    </header>
+    
+    <main>
+      <div class="container">
+        
+  <div id="fb-root" class=" fb_reset"><div style="position: absolute; top: -10000px; height: 0px; width: 0px;"><div></div></div><div style="position: absolute; top: -10000px; height: 0px; width: 0px;"><div><iframe name="fb_xdm_frame_http" frameborder="0" allowtransparency="true" allowfullscreen="true" scrolling="no" id="fb_xdm_frame_http" aria-hidden="true" title="Facebook Cross Domain Communication Frame" tabindex="-1" src="./Making Postgres Bloom_files/4B2NplaqNF3.html" style="border: none;"></iframe><iframe name="fb_xdm_frame_https" frameborder="0" allowtransparency="true" allowfullscreen="true" scrolling="no" id="fb_xdm_frame_https" aria-hidden="true" title="Facebook Cross Domain Communication Frame" tabindex="-1" src="./Making Postgres Bloom_files/4B2NplaqNF3(1).html" style="border: none;"></iframe></div></div></div>
+  <script>(function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.4&appId=291034250913286";
+    fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+  </script>
+  <article class="post">
+    <a class="post__back" href="http://www.pipelinedb.com/blog">← Back to all posts</a>
+    <h1 class="post__title">
+    <a href="./Making Postgres Bloom_files/Making Postgres Bloom.html">Making Postgres Bloom</a>
+  </h1>
+  <div class="post__meta">
+    
+    <a class="post__author" href="https://twitter.com/usmanm">
+    
+      <img class="post__avatar" src="./Making Postgres Bloom_files/usmanm.jpg">
+      <span class="post__author_name">Usman Masood</span>
+    
+    </a>
+    
+    <span class="post__timestamp">on July 30, 2015</span>
+  </div>
+  <div class="post__body">
+    <br>
+    <p>Whenever you think about low-latency stream computation, the key thing is figuring out how to summarize raw data, which might be too voluminous to compute on at low latency, while still maintaining the ability to answer relevant queries. For simple additive queries like counts and averages, it's pretty straightforward to condense the raw data down to a few numbers. But for more complex queries like calculating percentiles, heavy hitters, etc., summarizing the raw data becomes a little more tricky. Your fundamental trade-off in such cases is to either become a resource hog (read: lots of money) or lose a bit of precision by using a compact probabilistic summary data structure.</p>
+<p>In this post, I'll show you how probabilistic data structures can be used to approximate answers quickly, how custom data types can be implemented natively in Postgres, and an overview of how PipelineDB adds extremely fast stream computation capabilities to Postgres.</p>
+<p>Let's go.</p>
+<h2>An example: Knowing Who Did What on Your Site</h2>
+<p>Suppose you want to know whether a user has done a certain action on your website or not. The resource hog way would be to record an event every time a user takes that action, say in a <code>user_actions</code> table and then scan through the entire table every time you want to answer that query.</p>
+<pre class="highlight"><code>SELECT &lt;user_id&gt; IN (SELECT DISTINCT user_id FROM user_actions);</code></pre>
+
+
+<p><small><code>&lt;user_id&gt;</code><em> is an ID of some user, for example 'usmanm'.</em></small></p>
+<p>Okay, sure, this might be overkill. You really only need store the user IDs, so you can save a bit of space there. In most real-world cases, the number of actions is going to be much larger than the number of unique users, which means the <code>DISTINCT</code> query can be painfully slow. Maybe you could create a <code>MATERIALIZED VIEW</code> and query that instead, but that comes with its own can of worms. </p>
+<p>Let's not over-engineer though. The problem here is classically described as the set membership problem. We have a set of users that performed some action, and we want to know whether a particular user belongs to that set or not. You cannot get better than space usage linear in the number of distinct users if 100% accuracy is expected, but under a streaming setting that can be prohibitively large.</p>
+<h2>Meet Bloom Filters</h2>
+<p>But what if you only want to be really accurate, rather than getting a precise result? Bloom filters are a space-efficient probabilistic data structure used to answer set membership queries. They have a tunable non-negative false positive probability, but never report a false negative.  In the case of our users example, this means we'll never miss a user that has done the action, but sometimes might get a yes for someone who didn't.</p>
+<p>Here's a quick overview of Bloom filters: you take a bit array of size <code>m</code>, and <code>k</code> hash function which return an integer in the range <code>[0, m)</code>. To add an element to the filter, you hash it one by one using each of the <code>k</code> hash functions to get <code>k</code> locations, and then set the bit at those locations to <code>1</code>. To check whether an item is in the filter or not, you check each of the <code>k</code> locations returned by the hash functions and return true only if all of them were set to <code>1</code>.</p>
+<p>If you want more details, <a href="https://medium.com/the-story/what-are-bloom-filters-1ec2a50c68ff">here's</a> a super layman explanation, and <a href="https://www.cs.upc.edu/~diaz/p422-bloom.pdf">this</a> is the original paper published by Mr. Bloom himself. Pick your poison.</p>
+<h2>CREATE TYPE</h2>
+<p>So yeah, Bloom filters are cool, But weren't we talking about Postgres? Turns out Postgres has a pretty slick type system that lets you define custom types. Time to create a Bloom filter type!</p>
+<p>Thinking about what we need to store in the type, we want the length of the bit array <code>m</code>, the number of hash functions <code>k</code>, and obviously the bit array <code>bits</code> itself.</p>
+<pre class="highlight"><code>CREATE TYPE dumbloom AS (
+  m    integer,
+  k    integer,
+  -- Our bit array is actually an array of integers
+  bits integer[]
+);</code></pre>
+
+
+<p>Next, we need a constructor to create an empty Bloom filter. We'll also give it two optional arguments, <code>p</code> and <code>n</code>. <code>p</code> is the false probability we can tolerate and <code>n</code> is the number of <em>distinct</em> elements we expect to insert into the filter. Yes, you need to know the value of <code>n</code> a priori which kind of sucks, but there are funkier Bloom filters like <a href="http://gsd.di.uminho.pt/members/cbm/ps/dbloom.pdf">Scalable Bloom filters</a> and <a href="http://webdocs.cs.ualberta.ca/~drafiei/papers/DupDet06Sigmod.pdf">Stable Bloom filters</a> which do away with that necessity at a cost (increased space over time or non-zero false negative probability respectively).</p>
+<p><em>You're going to see a lot of <a href="http://www.postgresql.org/docs/8.3/static/plpgsql.html">PL/pgSQL</a> now, but you can use <a href="http://www.postgresql.org/docs/9.1/static/external-pl.html">other</a> languages as well!</em></p>
+<pre class="highlight"><code>CREATE FUNCTION dumbloom_empty (
+  -- 2% false probability
+  p float8 DEFAULT 0.02,
+  -- 100k expected uniques
+  n integer DEFAULT 100000
+) RETURNS dumbloom AS
+$$
+DECLARE
+  m    integer;
+  k    integer;
+  i    integer;
+  bits integer[];   
+BEGIN
+  -- Getting m and k from n and p is some math sorcery
+  -- See: https://en.wikipedia.org/wiki/Bloom_filter#Optimal_number_of_hash_functions
+  m := abs(ceil(n * ln(p) / (ln(2) ^ 2)))::integer;
+  k := round(ln(2) * m / n)::integer;
+  bits := NULL;
+
+  -- Initialize all bits to 0
+  FOR i in 1 .. ceil(m / 32.0) LOOP
+    bits := array_append(bits, 0);
+  END LOOP;
+
+  RETURN (m, k, bits)::dumbloom;
+END;
+$$
+LANGUAGE 'plpgsql' IMMUTABLE;</code></pre>
+
+
+<p>We'll create a utility function to fingerprint each incoming item. For the purpose of this post, our Bloom filter implementation will only accept items of <code>text</code> type (or types that can be coerced into a <code>text</code> type). The fingerprint in our case is an array of length <code>k</code> where each element in the array is the output of a different hash function.</p>
+<pre class="highlight"><code>CREATE FUNCTION dumbloom_fingerprint (
+  b    dumbloom,
+  item text
+) RETURNS integer[] AS 
+$$
+DECLARE
+  h1     bigint;
+  h2     bigint;
+  i      integer;
+  fingerprint integer[];
+BEGIN
+  h1 := abs(hashtext(upper(item)));
+  -- If lower(item) and upper(item) are the same, h1 and h2 will be identical too,
+  -- let's add some random salt
+  h2 := abs(hashtext(lower(item) || 'yo dawg!'));
+  finger := NULL;
+
+  FOR i IN 1 .. b.k LOOP
+    -- This combinatorial approach works just as well as using k independent
+    -- hash functions, but is obviously much faster
+    -- See: http://www.eecs.harvard.edu/~kirsch/pubs/bbbf/esa06.pdf
+    fingerprint := array_append(fingerprint, ((h1 + i * h2) % b.m)::integer);
+  END LOOP;
+
+  RETURN fingerprint;
+END;
+$$
+LANGUAGE 'plpgsql' IMMUTABLE;</code></pre>
+
+
+<p>Writing the add and contains routines is pretty trivial now.</p>
+<pre class="highlight"><code>CREATE FUNCTION dumbloom_add (
+  b    dumbloom,
+  item text,
+) RETURNS dumbloom AS 
+$$
+DECLARE
+  i    integer;
+  idx  integer;
+BEGIN
+  IF b IS NULL THEN
+    b := dumbloom_empty();
+  END IF;
+
+  FOREACH i IN ARRAY dumbloom_fingerprint(b, item) LOOP
+    -- Postgres uses 1-indexing, hence the + 1 here
+    idx := i / 32 + 1;
+    b.bits[idx] := b.bits[idx] | (1 &lt;&lt; (i % 32));
+  END LOOP;
+
+  RETURN b;
+END;
+$$
+LANGUAGE 'plpgsql' IMMUTABLE;
+
+CREATE FUNCTION dumbloom_contains (
+  b    dumbloom,
+  item text
+) RETURNS boolean AS 
+$$
+DECLARE
+  i   integer;
+  idx integer;
+BEGIN
+  IF b IS NULL THEN
+    RETURN FALSE;
+  END IF;
+
+  FOREACH i IN ARRAY dumbloom_fingerprint(b, item) LOOP
+    idx := i / 32 + 1;
+    IF NOT (b.bits[idx] &amp; (1 &lt;&lt; (i % 32)))::boolean THEN
+      RETURN FALSE;
+    END IF;
+  END LOOP;
+
+  RETURN TRUE;
+END;
+$$
+LANGUAGE 'plpgsql' IMMUTABLE;</code></pre>
+
+
+<p>Boom! We're done. A fully functional native implementation of Bloom filters in ~100 lines of code--Postgres, I love you. Let's give this puppy a try now.</p>
+<pre class="highlight"><code>CREATE TABLE t (
+  users dumbloom
+);
+
+INSERT INTO t VALUES (dumbloom_empty());
+
+UPDATE t SET users = dumbloom_add(users, 'usmanm');
+UPDATE t SET users = dumbloom_add(users, 'billyg');
+UPDATE t SET users = dumbloom_add(users, 'pipeline');
+
+-- This first three will return true
+SELECT dumbloom_contains(users, 'usmanm') FROM t;
+SELECT dumbloom_contains(users, 'billyg') FROM t;
+SELECT dumbloom_contains(users, 'pipeline') FROM t;
+-- This will return false because we never added 'unknown' to the Bloom filter
+SELECT dumbloom_contains(users, 'unknown') FROM t;</code></pre>
+
+
+<p>And it works! You should see <code>true</code> for the first three queries but <code>false</code> for the last one because we never added 'unknown' to our Bloom filter.</p>
+<p>Some of you, who have ventured deep into the bowels of databases, will probably point out that doing something like this in a real setup is committing concurrency suicide. All updates to the same row will essentially be executed serially which is no bueno if you're trying to build a performant data pipeline.</p>
+<h2>Enter PipelineDB</h2>
+<p>So how do we avoid this? The core idea is to process a bunch of incoming tuples in batches and commit a batch to disk once, rather than hitting disk for every single incoming tuple. Batches can also be processed in parallel without any lock contention if only a single process is responsible for committing to disk. This is what PipelineDB excels at! Our continuous view abstraction handles this batching transparently for all supported aggregates. </p>
+<p>The key to all of this is having summary states which are "mergeable". For example, for something like <code>count</code>, the merge operation is <code>sum</code>. You process a batch to get the count of tuples in it, and then simply sum it with the value of the on-disk tuple and commit. PipelineDB's continuous query executor has two types of processes: workers and combiners. Workers are responsible for reading tuples that are inserted into a stream and generating summaries for the micro-batches. Once these summaries are generated, they're passed on to a combiner process which merges them with on-disk values and commits the updated summary states to disk.</p>
+<p>There are two key properties that a merge operator must have: commutativity and associativity. You can think of these summary structures as being a poor man's <a href="http://pagesperso-systeme.lip6.fr/Marc.Shapiro/papers/RR-6956.pdf">CRDT</a>, the poorness coming from a lack of idempotency. As long as you can create a summary structure which can be merged using a commutative and associative operator, PipelineDB can handle it.</p>
+<p>So back to Bloom filters. How do we merge them? Well, Bloom filters are essentially representations of sets, so we just need to figure out how to union two Bloom filters. Turns out it's fairly easy: you just take a bit-wise OR of the bit set of two Bloom filters to get a Bloom filter that represents the union of the two sets.</p>
+<pre class="highlight"><code>CREATE FUNCTION dumbloom_union (
+  b1 dumbloom,
+  b2 dumbloom
+) RETURNS dumbloom AS 
+$$
+DECLARE
+  i    integer;
+  bits integer[];
+BEGIN
+  IF b1 IS NULL THEN
+    RETURN b2;
+  END IF;
+
+  IF b2 IS NULL THEN
+    RETURN b1;
+  END IF;
+
+  IF NOT (b1.m = b2.m AND b1.k = b2.k) THEN
+    RAISE EXCEPTION 'bloom filter mismatch!';
+  END IF;
+
+  bits := NULL;
+
+  FOR i IN 1 .. ceil(b1.m / 32.0) LOOP
+    -- Bitwise OR the two bitsets
+    bits := array_append(bits, b1.bits[i] | b2.bits[i]);
+  END LOOP;
+
+  RETURN (b1.m, b1.k, bits)::dumbloom;
+END;
+$$
+LANGUAGE 'plpgsql' IMMUTABLE;</code></pre>
+
+
+<p>Now we're ready to create a <a href="http://docs.pipelinedb.com/aggregates.html#create-aggregate">PipelineDB supported aggregate</a> for Bloom filters. We piggyback on Postgres' <code>CREATE AGGREGATE</code> command, except that we need to pass a <code>combinefunc</code> parameter to the command as well.</p>
+<pre class="highlight"><code>CREATE AGGREGATE dumbloom_agg (text) (
+  -- the transition state type
+  stype = dumbloom,
+  -- function to *advance* the transition state, like adding 1 for count
+  sfunc = dumbloom_add,
+  -- function to merge the transition state, like sum for count
+  combinefunc = dumbloom_union
+);</code></pre>
+
+
+<p>The worker processes will add incoming values using <code>dumbloom_agg</code> to create a single Bloom filter for a micro-batch, and the combiner will continuously merge all the incoming Bloom filters from workers with the on-disk one using <code>dumbloom_union</code>.</p>
+<h2>Real or Vapor?</h2>
+<p>Let's put this to the test. We're going to create a table with a <code>dumbloom</code> field and update it repeatedly by adding some random text. To compare with, we're going to create a continuous view that does a <code>dumbloom_agg</code> over a <code>text</code> field.</p>
+<pre class="highlight"><code>CREATE TABLE test (
+  b dumbloom
+);
+
+CREATE CONTINUOUS VIEW test_cv AS
+  SELECT dumbloom_agg(x::text) FROM stream;</code></pre>
+
+
+<p>We'll test using 100k data points. The <code>table_updates</code> function is just a simple loop that updates the <code>b</code> field of table <code>test</code>.</p>
+<pre class="highlight"><code>CREATE FUNCTION table_updates(
+  n integer
+) RETURNS void AS
+$$
+DECLARE
+  i integer;
+BEGIN
+  FOR i IN 1 .. n LOOP
+    UPDATE t 
+      SET users = dumbloom_add(users, left(md5(random()::text), 3)); 
+  END LOOP;
+END
+$$
+LANGUAGE 'plpgsql';
+
+SELECT table_updates(100000);
+ table_updates 
+---------------
+
+(1 row)
+
+Time: 343721.515 ms
+
+INSERT INTO stream (x)
+  (SELECT left(md5(random()::text), 3) AS x FROM generate_series(0, 100000));
+INSERT 0 100001
+Time: 19691.468 ms</code></pre>
+
+
+<p>6 minutes vs 20 seconds? Clearly, continuous views are significantly faster compared to the naive way of repeatedly updating columns. But 20s for a 100k <code>INSERT</code>s is still pretty slow... Let's see how this compares to our native <code>bloom_agg</code>, which is a Bloom filter implementation in C baked into PipelineDB.</p>
+<pre class="highlight"><code>-- We provide the value for p and n because the defaults for our native implementation are
+-- 0.02 and 16384, so it would be an unfair comparison
+CREATE CONTINUOUS VIEW test_native_cv AS
+  SELECT bloom_agg(x::text, 0.02, 100000) FROM stream_native;
+
+INSERT INTO stream_native (x)
+  (SELECT left(md5(random()::text), 3) AS x FROM generate_series(0, 100000));
+INSERT 0 100001
+Time: 466.216 ms</code></pre>
+
+
+<p>Less than half a second, that's more like it!</p>
+<p><em>I agree that each of these queries can be optimized further. My only goal here is to motivate the performance and resource utilization benefits of continuous views.</em></p>
+<h2>What's the Catch?</h2>
+<p>Okay, so I may have cheated a bit. Continuous views are much faster than table <code>UPDATE</code>s but <code>INSERT</code>s into streams don't support any transaction semantics (at least not for now). There's two insertion modes: synchronous and asynchronous. Setting the <code>synchronous_stream_insert</code> configuration parameter toggles this behavior. Asynchronous mode is much faster, because it inserts the tuple into an in-memory buffer and returns immediately without waiting for it to be consumed. The synchronous mode only returns once the state changes resulting from the inserted tuple have been committed. However, if inserts are happening concurrently then state changes from insertions happening in different <em>transactions</em> could be committed in a single batch.</p>
+<h2>Show Me Moar</h2>
+<p>Enough about Bloom filters, let's talk about what else PipelineDB has to offer. Other than the standard Postgres aggregates which we (<a href="http://docs.pipelinedb.com/aggregates.html#unsupported-aggregates">almost</a>) fully support, we've also implemented a <a href="http://docs.pipelinedb.com/aggregates.html#pipelinedb-specific-aggregates">few</a> probabilistic data structures that are used to answer common queries you might have. </p>
+<ul>
+<li><a href="http://docs.pipelinedb.com/probabilistic.html#hyperloglog">HyperLogLogs</a> can help you answer set cardinality questions, like the number of unique visitors. </li>
+<li><a href="http://docs.pipelinedb.com/probabilistic.html#count-min-sketch">Count-min Sketches</a> let you estimate frequency of elements seen. </li>
+<li><a href="http://docs.pipelinedb.com/probabilistic.html#t-digest">T-Digests</a> can be used to estimate quantiles or the value at a given quantile, like what is the 99th percentile latency. </li>
+<li><a href="http://docs.pipelinedb.com/probabilistic.html#bloom-filter">Bloom Filters</a>... um, I hope you were paying attention.</li>
+</ul>
+<p>We've received a few requests about adding something that lets you estimate top-K frequent elements. Well, we've listened and it's primed for the <a href="https://github.com/pipelinedb/pipelinedb/issues/996">next</a> release. </p>
+<h2>Final Thoughts</h2>
+<p>Stream computation is increasingly becoming a standard part of everyone's data infrastructure stack. While previously you had to glue heavy weight systems together, PipelineDB offers a simple way to get started. The goal is to keep on adding more online algorithms to our repository so you can leverage PipelineDB for much more advanced analytical work than what is possible with vanilla Postgres. If there's something you need in particular, give us a shout out!</p>
+<p><em>If any of this sounds interesting to do for a living, we're <a href="http://www.pipelinedb.com/about#hiring">hiring</a>!</em></p>
+    
+  </div>
+    <div class="share">
+      <iframe src="./Making Postgres Bloom_files/saved_resource.html" name="hn-button-4psoap4" id="hn-button-4psoap4" class="hn-button" data-title="Making Postgres Bloom" data-url="http://www.pipelinedb.com/blog/making-postgres-bloom" data-style="twitter" data-count="horizontal" title="Hacker News Button" height="20" width="69" frameborder="0"></iframe>
+      <iframe id="twitter-widget-0" scrolling="no" frameborder="0" allowtransparency="true" src="./Making Postgres Bloom_files/tweet_button.bd0320cab493e168513c7173184c1d5c.en.html" class="twitter-share-button twitter-tweet-button twitter-share-button twitter-count-horizontal" title="Twitter Tweet Button" data-twttr-rendered="true" style="position: static; visibility: visible; width: 84px; height: 20px;"></iframe>
+      <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+      <div class="fb-share-button fb_iframe_widget" data-href="http://www.pipelinedb.com/blog/making-postgres-bloom" data-layout="button_count" style="height:20px; vertical-align: top;" fb-xfbml-state="rendered" fb-iframe-plugin-query="app_id=291034250913286&amp;container_width=1170&amp;href=http%3A%2F%2Fwww.pipelinedb.com%2Fblog%2Fmaking-postgres-bloom&amp;layout=button_count&amp;locale=en_US&amp;sdk=joey"><span style="vertical-align: bottom; width: 86px; height: 20px;"><iframe name="f299bcda5c" width="1000px" height="1000px" frameborder="0" allowtransparency="true" allowfullscreen="true" scrolling="no" title="fb:share_button Facebook Social Plugin" src="./Making Postgres Bloom_files/share_button.html" style="border: none; visibility: visible; width: 86px; height: 20px;" class=""></iframe></span></div>
+      <script>
+        $(".fb-share-button").attr("data-href", window.location.href);
+        $(".hn-button").attr("data-url", window.location.href);
+      </script>
+      <script type="text/javascript">var HN=[];HN.factory=function(e){return function(){HN.push([e].concat(Array.prototype.slice.call(arguments,0)))};},HN.on=HN.factory("on"),HN.once=HN.factory("once"),HN.off=HN.factory("off"),HN.emit=HN.factory("emit"),HN.load=function(){var e="hn-button.js";if(document.getElementById(e))return;var t=document.createElement("script");t.id=e,t.src="//hn-button.herokuapp.com/hn-button.js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(t,n)},HN.load();</script>
+    </div>
+    <div class="linebreak"></div>
+    <div class="post__disqus">
+      <div id="disqus_thread"><iframe id="dsq-1" data-disqus-uid="1" allowtransparency="true" frameborder="0" scrolling="no" tabindex="0" title="Disqus" width="100%" src="./Making Postgres Bloom_files/saved_resource(1).html" style="width: 100% !important; border: none !important; overflow: hidden !important; height: 321px !important;" horizontalscrolling="no" verticalscrolling="no"></iframe><iframe id="dsq-indicator-north" data-disqus-uid="indicator-north" allowtransparency="true" frameborder="0" scrolling="no" tabindex="0" title="Disqus" style="width: 1170px !important; border: none !important; overflow: hidden !important; top: 0px !important; min-width: 1170px !important; max-width: 1170px !important; position: fixed !important; z-index: 2147483646 !important; height: 29px !important; min-height: 29px !important; max-height: 29px !important; display: none !important;"></iframe><iframe id="dsq-indicator-south" data-disqus-uid="indicator-south" allowtransparency="true" frameborder="0" scrolling="no" tabindex="0" title="Disqus" style="width: 1170px !important; border: none !important; overflow: hidden !important; bottom: 0px !important; min-width: 1170px !important; max-width: 1170px !important; position: fixed !important; z-index: 2147483646 !important; height: 29px !important; min-height: 29px !important; max-height: 29px !important; display: none !important;"></iframe></div>
+      <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES * * */
+        var disqus_shortname = 'pipelinedb';
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+      </script>
+      <noscript>Please enable JavaScript to view the &lt;a href="https://disqus.com/?ref_noscript" rel="nofollow"&gt;comments powered by Disqus.&lt;/a&gt;</noscript>
+    </div>
+  </article>
+
+      </div>
+    </main>
+  </div>
+  <script>
+    var slideout = new Slideout({
+      'panel': document.getElementById('slide-panel'),
+      'menu': document.getElementById('slide-menu'),
+      'padding': 256,
+      'tolerance': 70,
+      'side': 'right'
+    });
+
+    // Toggle button
+    document.querySelector('.slide__nav__btn').addEventListener('click', function() {
+      slideout.toggle();
+    });
+
+    // Dynamically adjust toggle button margins.
+    $(window).resize(function() {
+      $(".slide__nav__btn").css("margin", ($(".hd").outerHeight() - $(".slide__nav__btn").outerHeight()) / 2);
+    });
+
+    $(window).resize();
+  </script>
+
+  
+  
+
+
+    
+    <footer class="ft">
+      <p class="ft__copyright">© 2015 PipelineDB</p>
+
+      <a href="http://www.pipelinedb.com/" class="ft__mark">
+        <svg xmlns="http://www.w3.org/2000/svg" width="54" height="47" viewBox="0 0 54 47" class="svg replaced-svg"><g fill="#fff"><path d="M13.75 30.387v-.012h2.7c.587 0 1.058-.26 1.282-.486l3.616-3.614.028-.016.683-.684s.002 0 .003-.002l.095-.094c.502-.504 1.074-.94 1.68-1.334h-7.566v.018h-3.835c-4.022 0-7.915-1.538-10.786-4.213L.283 22.327c-.375.646-.375 1.703 0 2.35l4.84 8.383c1.972-1.7 4.56-2.673 7.232-2.673h1.395zM13.715 34.085v-.006h2.68c1.474 0 2.887-.57 3.88-1.563l1.7-1.7 2.643-2.646c1.106-1.106 2.598-1.803 4.188-2.024l-.47-.472v-.003l-1.11-1.108c-1.355.403-2.61 1.096-3.62 2.028l-4.62 4.624c-.64.64-1.602 1.02-2.57 1.02h-1.388v.005l-2.676-.003c-2.354 0-4.625.897-6.288 2.46l.95 1.645.15-.15c1.334-1.337 3.226-2.105 5.186-2.105h1.364v-.002zM12.442 21.527h3.838v.01h7.925l-.41-.41c-1.422-1.422-3.444-2.238-5.556-2.238h-5.785c-2.81 0-5.518-1.097-7.43-3.014l-.648-.648-1.37 2.375.123.123c2.408 2.41 5.808 3.8 9.312 3.8zM13.718 37.782v-.007h2.68c2.447 0 4.82-.97 6.5-2.656l3.825-3.823.012.008.4-.397c.64-.64 1.602-1.02 2.572-1.02h1.39v-.01h1.712c-.523-.354-1.012-.743-1.45-1.18l-.782-.783h-.72c-1.49 0-2.923.576-3.93 1.582l-2.643 2.64-.01-.008-1.697 1.7c-1.336 1.34-3.23 2.105-5.188 2.105h-4.04c-1.473 0-2.887.57-3.88 1.562l-.5.5.95 1.646.837-.84c.638-.638 1.6-1.022 2.57-1.022l1.39.002zM35.105 24.955l-3.01-3.01.002-.002-4.556-4.557c-2.406-2.41-5.798-3.792-9.306-3.792h-3.837v-.004h-1.98c-1.393 0-2.77-.546-3.685-1.46L7.106 10.5l-1.358 2.353 1.142 1.143c1.42 1.423 3.446 2.237 5.556 2.237h3.838v.008h1.956c2.808 0 5.518 1.1 7.43 3.017l5.557 5.556-.002.002 2.01 2.01c1.382 1.383 3.514 2.238 5.563 2.238h11.865l1.528-2.646H38.797c-1.334 0-2.816-.588-3.69-1.462zM41.964 31.718h-10.86v-.012h-1.396c-.59 0-1.062.262-1.284.485l-.4.4.01.013-3.825 3.822c-2.025 2.025-4.87 3.19-7.805 3.19l-2.678-.003V39.6H12.33c-.59 0-1.06.263-1.284.486L9.86 41.273l2.627 4.55c.375.65 1.293 1.177 2.037 1.177H38.95c.74 0 1.66-.527 2.032-1.176l8.15-14.112h-7.17l.002.006zM40.982 1.175C40.61.53 39.692 0 38.95 0H14.523c-.746 0-1.662.53-2.037 1.175L8.457 8.16l2.073 2.075c.32.32.996.695 1.838.695h3.87v.018l2-.002c4.203 0 8.278 1.667 11.18 4.568l4.59 4.592.003-.002 3.014 3.008c.334.334 1.137.696 1.845.696h14.57c.06-.522-.012-1.078-.246-1.48L40.982 1.175z"></path></g></svg>
+      </a>
+
+      <ul class="social">
+        <li>
+          <a href="https://www.facebook.com/pipelinedb">
+            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30" class="svg replaced-svg"><path d="M11.434 30V15.924H7.71v-5.072h3.724V6.526C11.434 3.122 13.63 0 18.7 0c2.05 0 3.565.196 3.565.196l-.12 4.734s-1.546-.017-3.233-.017c-1.826 0-2.12.84-2.12 2.24v3.7h5.5l-.24 5.07h-5.26V30h-5.358z"></path></svg>
+          </a>
+        </li>
+        <li>
+          <a href="https://plus.google.com/111830858515286413871" rel="publisher">
+            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30" class="svg replaced-svg"><path d="M11.328 10.625c-.473-3.597-2.816-6.547-5.553-6.63-2.738-.08-4.575 2.672-4.103 6.268.473 3.597 3.076 6.11 5.815 6.192 2.736.08 4.312-2.233 3.84-5.83zM9.57 24.238c-.806-.26-1.694-.415-2.646-.425C3.95 23.783 1.314 25.17.1 27.1.486 28.762 1.972 30 3.75 30h10.383c.008-.135.018-.27.018-.407 0-.373-.045-.742-.13-1.096-.448-1.756-2.236-2.72-4.45-4.26zM0 24.01c1.56-.86 3.455-1.395 5.586-1.395.644 0 1.234-.018 1.843-.018-.808-.786-1.462-1.463-1.462-2.65 0-.704.225-1.376.54-1.98-.32.023-.647.042-.985.042-2.35 0-4.216-.804-5.523-2.115v8.116zM30 7.498V3.75C30 1.678 28.322 0 26.25 0H3.75C1.677 0 0 1.678 0 3.75v1.628c1.744-1.816 4.385-3.036 7.305-3.036h10.16l-2.27 2.382h-2.668c1.882 1.08 2.884 3.3 2.884 5.746 0 2.245-1.245 4.056-3.002 5.432-1.717 1.34-2.042 1.9-2.042 3.04 0 .97 2.05 2.422 2.993 3.13 3.28 2.458 3.943 4.007 3.943 7.085 0 .283-.028.562-.073.842h9.02C28.322 30 30 28.32 30 26.25V9.844h-4.687v4.688H22.97V9.844h-4.688V7.498h4.688V2.81h2.344V7.5H30z"></path></svg>
+          </a>
+        </li>
+        <li>
+          <a href="https://twitter.com/pipelinedb">
+            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30" class="svg replaced-svg"><path d="M30 5.697c-1.103.488-2.29.82-3.534.967 1.27-.76 2.247-1.968 2.706-3.405-1.19.707-2.507 1.218-3.908 1.492C24.14 3.56 22.544 2.81 20.77 2.81c-3.397 0-6.155 2.755-6.155 6.156 0 .48.055.95.16 1.404-5.114-.26-9.65-2.71-12.686-6.434-.53.91-.834 1.966-.834 3.092 0 2.14 1.087 4.02 2.74 5.124-1.01-.032-1.96-.31-2.79-.768v.08c0 2.978 2.123 5.464 4.938 6.033-.517.142-1.06.215-1.623.215-.396 0-.78-.036-1.156-.108.782 2.443 3.056 4.225 5.75 4.273-2.107 1.65-4.76 2.635-7.645 2.635-.5 0-.987-.03-1.47-.088 2.725 1.746 5.96 2.766 9.436 2.766 11.32 0 17.512-9.377 17.512-17.51 0-.27-.007-.535-.02-.8 1.204-.865 2.247-1.95 3.072-3.183z"></path></svg>
+          </a>
+        </li>
+      </ul>
+    </footer>
+    <script>
+      /*
+       * Make the footer sticky--couldn't do that shit in CSS.
+       */
+      $(document).ready(function() {
+        $(window).resize(function() {
+          var footer = $('.ft');
+          footer.removeClass('sticky');
+          var footerBottom = footer.offset().top + footer.height();
+          if ($(window).height() > footerBottom) {
+            footer.addClass('sticky');
+          }
+        });
+
+        $(window).resize();
+      });
+    </script>
+    
+    <script>
+      // Test for background-blend-mode support
+      var mixBlendModeClass = (('mixBlendMode' in document.body.style) ? 'supports-' : 'no-') + 'mix-blend-mode';
+      html.classList.add(mixBlendModeClass);
+    </script>
+    <script>
+      /*
+       * Replace all SVG images with inline SVG elements. This is needed for CSS rules
+       * like `fill` to work.
+       *
+       * http://stackoverflow.com/questions/24933430/img-src-svg-changing-the-fill-color
+       */
+      $('img.svg').each(function() {
+        var $img = $(this);
+        var imgID = $img.attr('id');
+        var imgClass = $img.attr('class');
+        var imgURL = $img.attr('src');
+
+        $.get(imgURL, function(data) {
+          // Get the SVG tag, ignore the rest
+          var $svg = $(data).find('svg');
+
+          // Add replaced image's ID to the new SVG
+          if(typeof imgID !== 'undefined') {
+            $svg = $svg.attr('id', imgID);
+          }
+
+          // Add replaced image's classes to the new SVG
+          if(typeof imgClass !== 'undefined') {
+            $svg = $svg.attr('class', imgClass+' replaced-svg');
+          }
+
+          // Remove any invalid XML tags as per http://validator.w3.org
+          $svg = $svg.removeAttr('xmlns:a');
+
+          // Replace image with new SVG
+          $img.replaceWith($svg);
+        }, 'xml');
+      });
+    </script>
+    <script>
+      /*
+       * Add cube animation to navbar
+       */
+      var colors = ['#80B204', '#248BBF', '#be465c', '#DDDDDD', '#04B288'];
+      var i = 0;
+      $('.hd__nav a').each(function() {
+        var $a = $(this);
+        var cube = document.createElement('div');
+        $(cube).addClass('hd__nav__cube').appendTo($a);
+        $(cube).css({backgroundColor: colors[i++ % colors.length]});
+      });
+    </script>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-60394020-1', 'pipelinedb.com');
+      ga('send', 'pageview');
+    </script>
+    <script type="text/javascript">
+      (function(d,s,i,r) {
+      if (d.getElementById(i)){return;}
+      var n=d.createElement(s),e=d.getElementsByTagName(s)[0];
+      n.id=i;n.src='//js.hs-analytics.net/analytics/'+(Math.ceil(new Date()/r)*r)+'/518626.js';
+      e.parentNode.insertBefore(n, e);
+      })(document,"script","hs-analytics",300000);
+    </script>
+    <script>
+      (function() {
+      var _fbq = window._fbq || (window._fbq = []);
+      if (!_fbq.loaded) {
+      var fbds = document.createElement('script');
+      fbds.async = true;
+      fbds.src = '//connect.facebook.net/en_US/fbds.js';
+      var s = document.getElementsByTagName('script')[0];
+      s.parentNode.insertBefore(fbds, s);
+      _fbq.loaded = true;
+      }
+      _fbq.push(['addPixelId', '1562660537316028']);
+      })();
+      window._fbq = window._fbq || [];
+      window._fbq.push(['track', 'PixelInitialized', {}]);
+    </script>
+    <noscript>&lt;img height="1" width="1" alt="" style="display:none" src="https://www.facebook.com/tr?id=1562660537316028&amp;amp;ev=PixelInitialized" /&gt;</noscript>
+    <script type="text/javascript">
+      /* <![CDATA[ */
+      var google_conversion_id = 951307062;
+      var google_custom_params = window.google_tag_params;
+      var google_remarketing_only = true;
+      /* ]]> */
+    </script>
+    <noscript>
+      &lt;div style="display:inline;"&gt;
+        &lt;img height="1" width="1" style="border-style:none;" alt="" src="//googleads.g.doubleclick.net/pagead/viewthroughconversion/951307062/?value=0&amp;amp;guid=ON&amp;amp;script=0"/&gt;
+      &lt;/div&gt;
+    </noscript>
+    <script src="./Making Postgres Bloom_files/move.js"></script>
+  
+</body></html>

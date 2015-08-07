@@ -73,11 +73,16 @@ bf_may_contain(
 }
 
 uint8_t *
-bf_bytes(bloom_filter_t *bf, uint8_t *bytes) {
+bf_get_bytes(bloom_filter_t *bf, uint8_t *bytes) {
     size_t num_bytes;
     num_bytes = (bf->num_bits / CHAR_BIT) + (bf->num_bits % CHAR_BIT ? 1 : 0);
     memcpy(bytes,bf->bytes,num_bytes);
     return bytes;
+}
+
+void
+bf_set_bytes(bloom_filter_t *bf, uint8_t *bytes, int len) {
+    memcpy(bf->bytes, bytes, len);
 }
 
 void bf_free(bloom_filter_t *bf) {

@@ -34,7 +34,9 @@ int bf_may_contain(
     size_t len
 );
 
-uint8_t *bf_bytes(bloom_filter_t *bf, uint8_t *bytes);
+uint8_t *bf_get_bytes(bloom_filter_t *bf, uint8_t *bytes);
+
+void bf_set_bytes(bloom_filter_t *bf, uint8_t *bytes, int len);
 
 void bf_free(bloom_filter_t *bf);
 

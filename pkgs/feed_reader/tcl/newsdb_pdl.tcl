@@ -10,7 +10,6 @@ namespace eval ::newsdb::news_item_t {
 
     variable ks "newsdb"
     variable cf "news_item"
-    #TODO: variable pk "urlsha1_contentsha1" ;# supercolumns for by_urlsha1, by_contentsha1
     variable pk "urlsha1_contentsha1"
 
     # type ::= indextype

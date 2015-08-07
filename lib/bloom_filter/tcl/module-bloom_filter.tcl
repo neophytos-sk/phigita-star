@@ -25,11 +25,12 @@ set conf(cinit) {
     Tcl_CreateObjCommand(ip, "::bloom_filter::destroy", bf_DestroyCmd, NULL, NULL);
     Tcl_CreateObjCommand(ip, "::bloom_filter::insert", bf_InsertCmd, NULL, NULL);
     Tcl_CreateObjCommand(ip, "::bloom_filter::may_contain", bf_MayContainCmd, NULL, NULL);
-    Tcl_CreateObjCommand(ip, "::bloom_filter::bytes", bf_BytesCmd, NULL, NULL);
+    Tcl_CreateObjCommand(ip, "::bloom_filter::get_bytes", bf_GetBytesCmd, NULL, NULL);
+    Tcl_CreateObjCommand(ip, "::bloom_filter::set_bytes", bf_SetBytesCmd, NULL, NULL);
 }
 
 set ccode_filename [file normalize [file join $module_dir c/tclmodule.c]]
-puts ccode_filename=$ccode_filename
+# log ccode_filename=$ccode_filename
 set conf(ccode) [::util::readfile $ccode_filename]
 
 ::critcl::ext::cbuild_module $module_filename conf

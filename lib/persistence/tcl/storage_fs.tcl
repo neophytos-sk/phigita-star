@@ -18,6 +18,10 @@ namespace eval ::persistence::fs {
         get_name \
         mtime get_filename \
         expand_slice expand_oid
+
+    variable __bf
+    array set __bf [list]
+
 }
 
 proc ::persistence::fs::get_path {args} {
@@ -111,11 +115,32 @@ proc ::persistence::fs::define_ks {keyspace} {
     # set ks(${keyspace}) 1
 }
 
-proc ::persistence::fs::define_cf {keyspace column_family {spec {}}} {
-    variable cf
-    assert_ks ${keyspace}
-    create_cf_if ${keyspace} ${column_family}
+proc ::persistence::fs::define_cf {ks cf_axis {spec {}}} {
+    assert_ks ${ks}
+    create_cf_if ${ks} ${cf_axis}
     # set cf(${keyspace},${column_family}) ${spec}
+
+    #puts define_cf,$ks,$cf_axis
+
+    ##
+    # cf_axis bloom filter
+    #
+
+    variable __bf
+
+    set items_estimate 10000
+    set false_positive_prob 0.01
+
+    set __bf(${ks}/${cf_axis}) \
+        [::bloom_filter::create $items_estimate $false_positive_prob]
+
+    # Bloom Filter File (aka BFF)
+    set bff [get_filename ${ks}/${cf_axis}.bff]
+    if { [file exists $bff] } {
+        binary scan [::util::readfile $bff -translation binary] a* bytes
+        ::bloom_filter::set_bytes $__bf(${ks}/${cf_axis}) $bytes
+    }
+
 }
 
 proc ::persistence::fs::get_row {keyspace column_family row_key} {
@@ -130,18 +155,19 @@ proc ::persistence::fs::get_supercolumn {keyspace column_family row_key supercol
     return ${supercolumn_dir}
 }
 
-proc ::persistence::fs::create_row_if {keyspace column_family row_key row_pathVar} {
+proc ::persistence::fs::create_row_if {ks cf_axis row_key row_pathVar} {
 
     # ensure keyspace exists
-    assert_ks ${keyspace}
-    assert_cf ${keyspace} ${column_family}
+    assert_ks ${ks}
+    assert_cf ${ks} ${cf_axis}
 
     upvar ${row_pathVar} row_path
 
-    set row_path [get_row ${keyspace} ${column_family} ${row_key}]
+    set row_path [get_row ${ks} ${cf_axis} ${row_key}]
 
     set row_dir [get_filename ${row_path}]
     file mkdir $row_dir
+
 
 }
 
@@ -164,14 +190,6 @@ proc ::persistence::fs::__insert_column {ks cf_axis row_key column_path data {ts
     # path to file that will hold the data
     set oid ${row_path}/${column_path}
 
-    #puts "oid = $oid"
-
-    # if it applies, mkdir super_column_dir
-    #if { [set super_column_dir [file dirname ${filename}]] ne ${row_dir} } {
-        # it's a supecolumn
-    #    file mkdir ${super_column_dir}
-    #}
-
     set varname ""
     if { $codec_confVar ne {} } {
         upvar $codec_confVar _
@@ -183,6 +201,18 @@ proc ::persistence::fs::__insert_column {ks cf_axis row_key column_path data {ts
     if { ${ts} ne {} } {
         file mtime [get_filename $oid] ${ts}
     }
+
+    ##
+    # bloom filter
+    #
+
+    variable __bf
+    ::bloom_filter::insert $__bf(${ks}/${cf_axis}) $oid
+
+    set bff [get_filename ${ks}/${cf_axis}.bff]
+    ::util::writefile $bff \
+        [binary format a* [::bloom_filter::get_bytes $__bf(${ks}/${cf_axis})]] \
+        -translation binary
 
 }
 
@@ -214,6 +244,22 @@ proc ::persistence::fs::insert_link {src_oid target_oid} {
         # otherwise, use insert_column to replicate the data
         insert_column $src [get_data $target]
     }
+
+    ##
+    # bloom filter
+    #
+
+    variable __bf
+
+    set column_path_args [lassign [split $src_oid {/}] ks cf_axis row_key __delimiter__]
+
+    ::bloom_filter::insert $__bf(${ks}/${cf_axis}) $src_oid
+
+    set bff [get_filename ${ks}/${cf_axis}.bff]
+    ::util::writefile $bff \
+        [binary format a* [::bloom_filter::get_bytes $__bf(${ks}/${cf_axis})]] \
+        -translation binary
+
 }
 
 proc ::persistence::fs::exists_supercolumn_data_p {oid} {
@@ -259,7 +305,8 @@ proc ::persistence::fs::set_column_data {oid data {codec_confVar ""}} {
     set fp [open $filename "w"]
     if { $codec_confVar ne {} } {
         upvar $codec_confVar codec_conf
-        fconfigure $fp {*}[array get codec_conf]
+        set conf [array get codec_conf]
+        fconfigure $fp {*}$conf
         # => fconfigure $fp -translation binary
     }
 
@@ -267,7 +314,7 @@ proc ::persistence::fs::set_column_data {oid data {codec_confVar ""}} {
     close $fp
     return
 
-    return [::util::writefile ${filename} ${data}]
+    return [::util::writefile ${filename} ${data} {*}$conf]
 }
 
 proc ::persistence::fs::get_column_data {oid {codec_confVar ""}} {
@@ -275,14 +322,15 @@ proc ::persistence::fs::get_column_data {oid {codec_confVar ""}} {
     set fp [open $filename]
     if { $codec_confVar ne {} } {
         upvar $codec_confVar codec_conf
-        fconfigure $fp {*}[array get codec_conf]
+        set conf [array get codec_conf]
+        fconfigure $fp {*}$conf
         # => fconfigure $fp -translation binary
     }
     set bytes [read $fp [file size $filename]]
     close $fp
     return $bytes
 
-    # return [::util::readfile ${filename}]
+    return [::util::readfile ${filename} {*}$conf]
 }
 
 proc ::persistence::fs::del_column_data {oid} {
@@ -425,8 +473,13 @@ proc ::persistence::fs::get_name {oid} {
 
 proc ::persistence::fs::get_column_path {oid} {
     assert { [is_column_oid_p] }
-    set column_path [lindex [split $oid {+}] 1]
-    return $column_path
+    set first [string first {+} $oid]
+    return [string range $oid [expr { 1 + $first }] end]
+}
+
+proc ::persistence::fs::get_row_path {oid} {
+    set first [string first {+} $oid]
+    return [string range $oid 0 $first]
 }
 
 proc ::persistence::fs::get_leaf_nodes {path} {
@@ -521,8 +574,13 @@ proc ::persistence::fs::__get_slice_from_supercolumn {supercolumn_dir {slice_pre
 
 proc ::persistence::fs::__get_slice_from_row {row_path {slice_predicate ""}} {
     set slicelist [get_files ${row_path}]
-    set slicelist [lsort -decreasing ${slicelist}]
+    set slicelist [lsort -integer -command compare_mtime -decreasing ${slicelist}]
     if { ${slice_predicate} ne {} } {
+
+        # for predicates "maybe_in_path" and "in_path" to work right
+        set slicelist [::persistence::expand_slice slicelist "latest_mtime"]
+    
+
         predicate=forall slicelist $slice_predicate
     }
     return ${slicelist}
@@ -771,18 +829,23 @@ proc ::persistence::fs::predicate=forall {slicelistVar predicates} {
 proc ::persistence::fs::predicate=maybe_in_path {slicelistVar parent_path {predicate ""}} {
     upvar $slicelistVar slicelist
 
+    variable __bf
+
     set result [list]
     foreach oid $slicelist {
         set column_path [get_column_path $oid]
         set other_oid "${parent_path}${column_path}"
 
-        # TODO: get_bf __bf__ $parent_path
-        # TODO: set may_contain_p [bloom_filter may_contain __bf__ $name]
-
-        set may_contain_p 1
+        set column_path_args [lassign [split $other_oid {/}] ks cf_axis row_key __delimiter__]
+        set may_contain_p [::bloom_filter::may_contain $__bf(${ks}/${cf_axis}) $other_oid]
         if { $may_contain_p } {
             lappend result $oid
         }
+        # log oid=$oid
+        # log other_oid=$other_oid
+        # log "may_contain_p returned $may_contain_p #times=[incr may_contain_p=$may_contain_p,__$cf_axis]"
+
+
     }
     return $result
 }

@@ -123,6 +123,13 @@ proc ::critcl::ext::cbuild_module {filename confArr} {
     ###
 
     set normalized_filename [file normalize ${filename}]
+    set dir [file dirname $normalized_filename]
+
+    set temp_includedirs [list]
+    foreach includedir $includedirs {
+        lappend temp_includedirs [file normalize [file join $dir $includedir]]
+    }
+    set includedirs $temp_includedirs
 
     ::critcl::reset
 

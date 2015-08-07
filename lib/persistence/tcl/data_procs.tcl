@@ -4,8 +4,8 @@ namespace eval ::persistence {
     variable base_dir 
     variable storage_types "fs ss"
 
-    array set ks [list]
-    array set cf [list]
+    # array set ks [list]
+    # array set cf [list]
 
     proc unknown_handler {args} {
         puts "unknown: args=$args"
