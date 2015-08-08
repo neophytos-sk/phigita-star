@@ -36,7 +36,7 @@ proc ::util::io::write_vartext {channelId line {encoding ""}} {
 }
 
 proc ::util::io::write_string {channelId line} {
-    set len [string bytelength $line]
+    set len [string length $line]
     #set len [string length $line]
     ::util::io::write_int $channelId $len
     puts -nonewline $channelId $line

@@ -790,8 +790,8 @@ proc ::feed_reader::get_contentsha1_to_label_dir {} {
 
 proc ::feed_reader::compare_mtime {file_or_dir1 file_or_dir2} {
 
-    set mtime1 [::persistence::mtime $file_or_dir1]
-    set mtime2 [::persistence::mtime $file_or_dir2]
+    set mtime1 [::persistence::get_mtime $file_or_dir1]
+    set mtime2 [::persistence::get_mtime $file_or_dir2]
 
     if { ${mtime1} < ${mtime2} } {
         return -1
@@ -1687,7 +1687,7 @@ proc ::feed_reader::show_revisions {urlsha1} {
         "${urlsha1}"]
 
     foreach {filename} ${slicelist} {
-        set timestamp [persistence::mtime ${filename}]
+        set timestamp [persistence::get_mtime ${filename}]
         set column_name [file tail ${filename}]
         puts "${timestamp} ${column_name}"
     }
@@ -1871,7 +1871,7 @@ proc ::feed_reader::resync_item {oid} {
         set item(video) [get_value_if new_item(video)]
         set item(feed) [file tail $feedfilename]
         if { [get_value_if item(timestamp) ""] eq {} } {
-            set item(timestamp) [::persistence::mtime ${oid}]
+            set item(timestamp) [::persistence::get_mtime ${oid}]
         }
 
         remove_item $oid

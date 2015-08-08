@@ -14,15 +14,19 @@ proc ::persistence::get_conf_dir {} "return ${package_dir}/conf"
 
 # file join $dir nest-lang.tcl
 
-set filelist [list \
-    [file join $dir storage_fs.tcl] \
-    [file join $dir storage_ss.tcl] \
-    [file join $dir data_procs.tcl] \
-    [file join $dir orm.tcl] \
-    [file join $dir sysdb_pdl.tcl]]
+set filelist {
+    commitlog.tcl
+    memtable.tcl
+    storage_fs.tcl
+    storage_ss.tcl
+    data_procs.tcl
+    orm.tcl
+    orm_codec.tcl
+    sysdb_pdl.tcl
+}
 
 foreach filename $filelist {
-    source $filename
+    source [file normalize [file join $dir $filename]]
 }
 
 

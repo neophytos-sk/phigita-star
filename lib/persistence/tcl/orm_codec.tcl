@@ -7,7 +7,7 @@ namespace eval ::persistence::orm::codec_txt_1 {
     variable codec_conf
     array set codec_conf [list -encoding utf-8 -translation lf]
     proc codec_conf {} {
-        return [namespace current]::codec_conf 
+        return [array get [namespace current]::codec_conf]
     }
 
 }
@@ -33,7 +33,7 @@ namespace eval ::persistence::orm::codec_txt_2 {
     variable codec_conf
     array set codec_conf [list -encoding utf-8 -translation lf]
     proc codec_conf {} {
-        return [namespace current]::codec_conf 
+        return [array get [namespace current]::codec_conf]
     }
 
 }
@@ -70,7 +70,7 @@ namespace eval ::persistence::orm::codec_bin_1 {
     variable codec_conf
     array set codec_conf [list -translation "binary"]
     proc codec_conf {} {
-        return [namespace current]::codec_conf 
+        return [array get [namespace current]::codec_conf]
     }
 }
 
@@ -117,7 +117,7 @@ namespace eval ::persistence::orm::codec_bin_2 {
     variable codec_conf
     array set codec_conf [list -translation "binary"]
     proc codec_conf {} {
-        return [namespace current]::codec_conf 
+        return [array get [namespace current]::codec_conf]
     }
 }
 
@@ -168,7 +168,7 @@ namespace eval ::persistence::orm::codec_bin_3 {
     variable codec_conf
     array set codec_conf [list -translation "binary"]
     proc codec_conf {} {
-        return [namespace current]::codec_conf 
+        return [array get [namespace current]::codec_conf]
     }
                          
 
