@@ -9,7 +9,7 @@ package require persistence
 namespace eval ::db_server {
     variable peer
     array set peer [list]
-    variable ttl 30
+    variable ttl 30000 ;# in milliseconds
 }
 
 proc ::db_server::accept_client_async {sock addr port} {
@@ -70,29 +70,27 @@ proc ::db_server::handle_client {sock args} {
         if { $cmdlen_p && $datalen >= 4 + $cmdlen } {
             set pos 4
             set cmdline_p [binary scan $peer($sock,data) "@${pos}A${cmdlen}" cmdline]
-
-            puts datalen=$datalen
-            puts cmdline=$cmdline 
-
             set peer($sock,datalen) 0
+
+            log datalen=$datalen
+            log cmdline=$cmdline 
+
+            # execute command
+            set cmd "set x \[::persistence::${cmdline}\]"
+            if { [catch $cmd errmsg] } {
+                log "errmsg=$errmsg"
+            }
+
+            log "sending reply..."
+            ::util::io::write_string $sock $x
+            flush $sock
+            log "reply sent..."
 
         }
     }
 
     #set peer($sock,datalen) 0
     #set peer($sock,data) ""
-}
-
-proc Server {startTime channel clientaddr clientport} {
-    ::util::io::read_string $channel cmd
-    puts "server received the following command"
-
-
-    puts "Connection from $clientaddr registered"
-    set now [clock seconds]
-    puts $channel [clock format $now]
-    puts $channel "[expr { $now - $startTime }] since start"
-    close $channel
 }
 
 set myaddr 127.0.0.1

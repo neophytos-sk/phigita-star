@@ -277,19 +277,21 @@ proc ::persistence::orm::insert {itemVar {optionsVar ""}} {
 
     set data [encode item]
 
+    # ::persistence::begin_batch
+
     ::persistence::insert_column $target $data "" [codec_conf]
     
     foreach idxname $__indexes {
-
         if { $idxname eq "by_$pk" } {
             continue
         }
-
         set row_key [to_row_key_by $idxname item]
         set src [to_path_by $idxname $row_key {*}$item($pk)]
         ::persistence::insert_link $src $target
+    }
 
-     }
+    # ::persistence::end_batch
+
 
 }
 
