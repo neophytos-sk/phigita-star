@@ -365,7 +365,12 @@ proc ::feed_reader::incr_array_in_column {ks cf_axis row_key column_path increme
     upvar $incrementVar increment
 
     set oid "${ks}/${cf_axis}/${row_key}/+/${column_path}"
-    ::persistence::get_column $oid column_data exists_p
+
+    set exists_p [::persistence::exists_column_data_p $oid] 
+    if { $exists_p } {
+        set column_data [::persistence::get_column_data $oid]
+    }
+    # ::persistence::get_column $oid column_data exists_p
 
     if { ${exists_p} } {
         array set count ${column_data}

@@ -33,6 +33,7 @@ proc ::persistence::init_db {db storage_type} {
         set exported_procs [namespace eval ${nsp} "namespace export"]
         foreach exported_proc $exported_procs {
             interp alias {} ::persistence::$exported_proc {} ::db_client::exec_cmd ${nsp}::$exported_proc
+            # TODO: interp alias {} ::persistence::$exported_proc {} apply [list {args} "thread::send $id ${nsp}::$exported_proc {*}$args]
         }
     }
 }
