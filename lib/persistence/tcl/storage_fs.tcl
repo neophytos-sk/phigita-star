@@ -16,7 +16,7 @@ namespace eval ::persistence::fs {
         ls list_ks list_cf list_axis list_row list_col list_path \
         num_rows num_cols \
         get_name \
-        mtime get_filename
+        get_mtime get_filename
 
     variable __bf
     array set __bf [list]

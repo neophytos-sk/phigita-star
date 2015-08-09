@@ -458,7 +458,7 @@ proc ::persistence::orm::take {oid {num 1}} {
 }
 
 proc ::persistence::orm::mtime {oid} {
-    return [::persistence::mtime $oid]
+    return [::persistence::get_mtime $oid]
 }
 
 proc ::persistence::orm::find_by_id {value} {

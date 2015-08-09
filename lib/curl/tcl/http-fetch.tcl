@@ -103,7 +103,7 @@ proc ::web::cache_fetch {contentVar url {optionsVar ""} {infoVar ""} {cache_pVar
 
         array set item [::webdb::web_page_t get $oid]
 
-        set mtime [::webdb::web_page_t get_mtime $oid]
+        set mtime [::webdb::web_page_t mtime $oid]
 
         set timeout [expr { 15 * 60 }]
         set now [clock seconds]
