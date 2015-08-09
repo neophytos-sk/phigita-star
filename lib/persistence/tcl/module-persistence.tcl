@@ -17,6 +17,8 @@ proc ::persistence::get_conf_dir {} "return ${package_dir}/conf"
 set filelist {
     commitlog.tcl
     memtable.tcl
+    server.tcl
+    client.tcl
     storage_fs.tcl
     storage_ss.tcl
     data_procs.tcl

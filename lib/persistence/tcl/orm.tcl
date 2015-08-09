@@ -114,17 +114,20 @@ proc ::persistence::orm::init_type {} {
     assert { vcheck("pk","required notnull sysdb_slot_name") }
 
     set nsp [namespace __this]
-    set oid [::sysdb::object_type_t find $nsp]
 
-    if { 0 && $exists_p } {
+    # runtime definitions
+    ::persistence::define_ks $ks
+    foreach {index_name index_item} [array get idx] {
+        set axis $index_name
+        ::persistence::define_cf $ks $cf.$axis
+    }
+
+
+    set where_clause [list [list nsp = $nsp]]
+    set oid [::sysdb::object_type_t 0or1row $where_clause]
+    if { $oid ne {} } {
         # TODO: integrity check
     } else {
-        ::persistence::define_ks $ks
-        foreach {index_name index_item} [array get idx] {
-            set axis $index_name
-            ::persistence::define_cf $ks $cf.$axis
-        }
-
         array set item [list ks $ks cf $cf nsp $nsp]
         ::sysdb::object_type_t insert item
     }
@@ -548,8 +551,8 @@ proc ::persistence::orm::find {{where_clause_argv ""} {optionsVar ""}} {
 
     }
 
-    set expand_fn [get_value_if options(expand_fn) ""]
-    set slicelist [::persistence::expand_slice slicelist $expand_fn]
+    #set expand_fn [get_value_if options(expand_fn) ""]
+    #set slicelist [::persistence::expand_slice slicelist $expand_fn]
     
     # run the predicates here
 

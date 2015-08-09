@@ -16,8 +16,7 @@ namespace eval ::persistence::fs {
         ls list_ks list_cf list_axis list_row list_col list_path \
         num_rows num_cols \
         get_name \
-        mtime get_filename \
-        expand_slice expand_oid
+        mtime get_filename
 
     variable __bf
     array set __bf [list]
@@ -559,12 +558,11 @@ proc ::persistence::fs::__get_slice_from_supercolumn {supercolumn_dir {slice_pre
 proc ::persistence::fs::__get_slice_from_row {row_path {slice_predicate ""}} {
     set slicelist [get_files ${row_path}]
     set slicelist [lsort -integer -command compare_mtime -decreasing ${slicelist}]
+    set slicelist [expand_slice slicelist "latest_mtime"]
+
     if { ${slice_predicate} ne {} } {
 
         # for predicates "maybe_in_path" and "in_path" to work right
-        set slicelist [::persistence::expand_slice slicelist "latest_mtime"]
-    
-
         predicate=forall slicelist $slice_predicate
     }
     return ${slicelist}
