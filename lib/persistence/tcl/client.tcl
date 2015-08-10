@@ -54,17 +54,17 @@ proc ::db_client::bg_read {sock} {
     # log "bg_read $sock"
 
     set bytes [read $sock]
-    append peer($sock,data) $bytes
+    append peer($sock,data) $bytes ;# binary format a* $bytes
     incr peer($sock,datalen) [string length $bytes]
 
-    after $peer($sock,ttl) [list ::db_client::timeout_conn $sock]
+    # after $peer($sock,ttl) [list ::db_client::timeout_conn $sock]
 }
 
 proc ::db_client::timeout_conn {sock} {
     variable peer
     if { [info exists peer($sock,addr)] } {
         catch { close $sock }
-        # log  "closing connection $peer($sock,addr)"
+        log  "closing connection $peer($sock,addr)"
         set peer($sock,done) ""
         unset peer($sock,addr)
     }
@@ -104,8 +104,10 @@ proc ::db_client::exec_cmd {args} {
     }
     #log "sending command... {*}$args"
     ::db_client::send $args
+    #set response [::db_client::recv]
     set response [binary decode base64 [::db_client::recv]]
-    # log response=$response
+    #set response [encoding convertto utf-8 $response]
+    #log response=$response
     return $response
 
 }

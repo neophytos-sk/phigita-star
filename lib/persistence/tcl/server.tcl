@@ -19,7 +19,7 @@ proc ::db_server::accept_client_async {sock addr port} {
     set peer($sock,datapos) 0
     set peer($sock,timer)   [after $ttl [list ${nsp}::timeout_client $sock]]
 
-    fconfigure $sock -blocking 0
+    fconfigure $sock -blocking 0 -translation binary
     trace add variable peer($sock,datalen) write [list ${nsp}::handle_conn $sock]
     fileevent $sock readable [list ${nsp}::bg_read $sock]
 }
@@ -38,7 +38,7 @@ proc ::db_server::bg_read {sock} {
     append peer($sock,data) $bytes
     incr peer($sock,datalen) [string length $bytes]
 
-    after $peer($sock,ttl) [list ::db_server::timeout_client $sock]
+    # after $peer($sock,ttl) [list ::db_server::timeout_client $sock]
 
 }
 
@@ -82,10 +82,11 @@ proc ::db_server::handle_conn {sock args} {
                 log "errmsg=$errmsg"
             }
 
-            log "sending reply..."
+            # log "sending reply..."
             ::util::io::write_string $sock [binary encode base64 $x]
+            #::util::io::write_string $sock $x
             flush $sock
-            log "reply sent..."
+            # log "reply sent..."
 
         }
     }

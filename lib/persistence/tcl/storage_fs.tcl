@@ -287,35 +287,24 @@ proc ::persistence::fs::exists_data_p {oid} {
     }
 }
 
-
-# TODO: consider renaming it to put_data
-proc ::persistence::fs::set_data {oid data} {
-    set filename [get_filename ${oid}]
-    file mkdir [file dirname ${filename}]
-    return [::util::writefile ${filename} ${data}]
-}
-
-proc ::persistence::fs::set_column_data {oid data {codec_conf ""}} {
-
-    ::persistence::commitlog::set_column_data $oid $data $codec_conf
-    ::persistence::mem::set_column_data $oid $data $codec_conf
-
+proc ::persistence::fs::__set_column_data {oid data {codec_conf ""}} {
     set filename [get_filename ${oid}]
     file mkdir [file dirname ${filename}]
     return [::util::writefile ${filename} ${data} {*}$codec_conf]
 }
 
-proc ::persistence::fs::get_column_data {oid {codec_conf ""}} {
-
-    set data [::persistence::mem::get_column_data $oid exists_p $codec_conf]
-    if { $exists_p } { 
-        return $data 
-    }
-
+proc ::persistence::fs::__get_column_data {oid {codec_conf ""}} {
+    #log "retrieving data from file system... codec_conf=$codec_conf"
     set filename [get_filename ${oid}]
     return [::util::readfile ${filename} {*}$codec_conf]
 }
 
+
+
+# TODO: set_row_data
+# TODO: set_supercolumn_data
+
+# set_column_data
 proc ::persistence::fs::del_column_data {oid} {
     # TODO: insert_column tombstone
     assert_refcount_is_zero ${oid}
@@ -1338,20 +1327,6 @@ proc ::persistence::fs::delete_slice {keyspace column_family row_key {slice_pred
     }
 
     return ${slicelist}
-}
-
-# work in progress
-proc ::persistence::fs::exec_query {ks cf args} {
-    getopt::init {
-        {--where-row "" {__arg_where_row row_predicate}}
-        {--where-col "" {__arg_where_col col_predicate}}
-        {--where-sup "" {__arg_where_sup sup_predicate}}
-    }
-    set args [getopt::getopt $args]
-
-    set row_keys [__get_multirow_names $ks $cf $row_predicate] 
-    set slicelist [__multiget_slice $ks $cf $row_keys $col_predicate]
-
 }
 
 

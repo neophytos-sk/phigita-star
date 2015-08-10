@@ -6,15 +6,42 @@ proc ::load_package {package_name dir {version "0.1"}} {
 
     package provide ${package_name} ${version}
 
-    set filelist [lsort [glob -types {f} -directory [file join ${dir} tcl] *.tcl]]
-    foreach {filename} ${filelist} {
-        source ${filename}
+    variable __after_package_load
+
+    set __after_package_load(${package_name}) ""
+
+    set filelist [list]
+    foreach {name pattern} {
+        tcl "*.tcl"
+        pdl "*_pdl.tcl"
+    } {
+
+        # ${package_name},${name},enter
+
+        set subdir [file join ${dir} ${name}] 
+        set filelist [concat \
+            $filelist [lsort [glob -nocomplain -types {f} -directory ${subdir} ${pattern}]]]
+
+        # ${package_name},${name},leave
+
+    }
+
+    foreach filename $filelist {
+        source $filename
     }
     unset filelist
+
+    foreach script $__after_package_load(${package_name}) {
+        uplevel #0 $script
+    }
+
+    # unset __after_package_load(${package_name})
+
 }
 
 proc ::unload_package {package_name} {
     package forget ${package_name}
+    unset __after_package_load(${package_name})
 }
 
 #proc ::cleanup {PN cmd retcode result op} {
@@ -25,3 +52,7 @@ proc ::unload_package {package_name} {
 
 
 
+proc ::after_package_load {package_name script} {
+    variable __after_package_load
+    lappend __after_package_load(${package_name}) $script
+}

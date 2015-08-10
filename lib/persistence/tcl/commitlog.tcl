@@ -1,3 +1,7 @@
+if { ![is_server_p] } {
+    return
+}
+
 package require core
 
 namespace eval ::persistence::commitlog {
@@ -111,6 +115,14 @@ proc ::persistence::commitlog::analyze {} {
 
 }
 
+
+# Write-Ahead Logging (Wal) is a standard method for ensuring data
+# integrity. Briefly, WAL's central concept is that changes to data
+# files (where tables and indexes reside) must be written only after
+# those changes have been logged, that is, after log records
+# describing the changes that have not been applied to the data pages
+# can be redone from the log records. This is roll-forward recovery, 
+# also known as REDO.
 proc ::persistence::commitlog::process {} {
     variable fp
     set savedpos [tell $fp]
@@ -125,16 +137,20 @@ proc ::persistence::commitlog::process {} {
 
     while { $pos1 < $pos2 && [tell $fp] != $pos2 } {
         ::util::io::read_string $fp oid
-        ::util::io::skip_string $fp
+        ::util::io::read_string $fp data
 
         # 1. exec command
+        ::persistence::fs::__set_column_data $oid $data "-translation binary"
+        #set filename [::persistence::get_filename $oid]
+        #file mkdir [file dirname $filename]
+        #::util::writefile $filename $data -translation binary
+
         # 2. increase and write int to pos1
-
-        # lassign $line cmd cmdargs
-
-        #seek $fp 4 start
-        #::util::io:write_int $fp $pos2
-        #seek $fp $pos2
+        set savedpos [tell $fp]
+        seek $fp 0 start
+        ::util::io::write_int $fp $savedpos
+        seek $fp $savedpos start
+        set pos1 $savedpos
 
     }
 
@@ -144,4 +160,4 @@ proc ::persistence::commitlog::process {} {
     
 }
 
-after 100 ::persistence::commitlog::open_if
+after_package_load persistence ::persistence::commitlog::open_if

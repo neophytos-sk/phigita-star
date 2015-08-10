@@ -15,19 +15,37 @@ namespace eval ::persistence {
 
 }
 
-proc is_server_p {} {
-    return [info exists ::__is_server_p]
-}
+
 
 proc ::persistence::init_db {db storage_type} {
     variable storage_types
+
+    # log "initializing db..."
 
     if { ${storage_type} ni ${storage_types} } {
         error "error persistence->init: no such storage_type '${storage_type}'"
     }
 
-    if { 1 || [is_server_p] } {
+    if { [is_server_p] } {
         namespace eval ::persistence "namespace import -force ::persistence::${storage_type}::*"
+
+        # overwrites set_column_data/get_column_data 
+        # to make use of the commitlog and memtable
+        proc ::persistence::fs::set_column_data {oid data {codec_conf ""}} {
+            ::persistence::commitlog::set_column_data $oid $data $codec_conf
+            ::persistence::mem::set_column_data $oid $data $codec_conf
+        }
+
+        proc ::persistence::fs::get_column_data {oid {codec_conf ""}} {
+            set exists_p [::persistence::mem::exists_column_data_p $oid]
+            if { $exists_p } {
+                return [::persistence::mem::get_column_data $oid $codec_conf]
+            }
+            set data [__get_column_data $oid $codec_conf]
+            ::persistence::mem::set_column_data $oid $data $codec_conf
+            return $data
+        }
+        
     } else {
         set nsp "::persistence::${storage_type}"
         set exported_procs [namespace eval ${nsp} "namespace export"]
@@ -38,7 +56,7 @@ proc ::persistence::init_db {db storage_type} {
     }
 }
 
-# after_package_load ::persistence::init_db mystore fs
+#after_package_load persistence,tcl,enter [list ::persistence::init_db mystore fs]
 ::persistence::init_db mystore fs
 
 

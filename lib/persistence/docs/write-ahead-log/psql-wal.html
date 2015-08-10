@@ -1,0 +1,245 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en" dir="ltr">
+<head>
+    <title>PostgreSQL: Documentation: 9.1: Write-Ahead Logging (WAL)</title>
+    <style type="text/css" media="screen" title="Normal Text">@import url("/dyncss/docs.css?37466d75");</style>
+    <script type="text/javascript" src="/media/js/monospacefix.js?37466d75"></script>
+    <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-1345454-1']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+</head>
+<body>
+<div id="docHeader">
+	<div id="docHeaderLogo">
+		<a href="/" title="PostgreSQL"><img src="/media/img/docs/hdr_logo.png" width="206" height="80" alt="PostgreSQL" /></a>
+	</div>
+</div>
+
+<div id="docContainerWrap">
+<div id="docContainer">
+<div id="docNavSearchContainer">
+<div id="docSearch">
+	<form action="/search/" method="get">
+	<div>
+	<input type="hidden" name="u" value="/docs/9.1/" />
+	<label for="q">Search Documentation:&nbsp;</label><input type="text" id="q" name="q" size="20" onfocus="if( this.value==this.defaultValue ) this.value='';" value="Search" /><input id="submit" type="submit" value="Search" />
+	</div>
+	</form>
+</div>
+<div id="docNav">
+<a href="/" title="Home">Home</a> &rarr; <a href="/docs" title="Documentation">Documentation</a> &rarr; <a href="/docs/manuals" title="Manuals">Manuals</a> &rarr; <a href="/docs/9.1/static/index.html">PostgreSQL 9.1</a>
+</div>
+<div id="docVersions">
+This page in other versions:
+
+
+	
+	
+	<a href="/docs/9.0/static/wal-intro.html" title="This page in version 9.0">9.0</a>
+	
+
+	/
+	
+	<b>9.1</b>
+	
+
+	/
+	
+	<a href="/docs/9.2/static/wal-intro.html" title="This page in version 9.2">9.2</a>
+	
+
+	/
+	
+	<a href="/docs/9.3/static/wal-intro.html" title="This page in version 9.3">9.3</a>
+	
+
+	/
+	
+	<a href="/docs/9.4/static/wal-intro.html" title="This page in version 9.4">9.4</a>
+	
+
+
+
+
+&nbsp;|&nbsp; Development versions:
+
+	
+	
+	<a href="/docs/devel/static/wal-intro.html" title="This page in version devel" rel="nofollow">devel</a>
+	
+
+	/
+	
+	<a href="/docs/9.5/static/wal-intro.html" title="This page in version 9.5" rel="nofollow">9.5</a>
+	
+
+
+
+
+&nbsp;|&nbsp; Unsupported versions:
+
+	
+	
+	<a href="/docs/8.1/static/wal-intro.html" title="This page in version 8.1" rel="nofollow">8.1</a>
+	
+
+	/
+	
+	<a href="/docs/8.2/static/wal-intro.html" title="This page in version 8.2" rel="nofollow">8.2</a>
+	
+
+	/
+	
+	<a href="/docs/8.3/static/wal-intro.html" title="This page in version 8.3" rel="nofollow">8.3</a>
+	
+
+	/
+	
+	<a href="/docs/8.4/static/wal-intro.html" title="This page in version 8.4" rel="nofollow">8.4</a>
+	
+
+
+</div>
+</div>
+
+<div id="docContent">
+<div class="NAVHEADER">
+  <table summary="Header navigation table" width="100%" border="0"
+  cellpadding="0" cellspacing="0">
+    <tr>
+      <th colspan="5" align="center" valign="bottom"><a href=
+      "index.html">PostgreSQL 9.1.18 Documentation</a></th>
+    </tr>
+
+    <tr>
+      <td width="10%" align="left" valign="top"><a title=
+      "Reliability" href="wal-reliability.html" accesskey=
+      "P">Prev</a></td>
+
+      <td width="10%" align="left" valign="top"><a href="wal.html"
+      accesskey="U">Up</a></td>
+
+      <td width="60%" align="center" valign="bottom">Chapter 29.
+      Reliability and the Write-Ahead Log</td>
+
+      <td width="20%" align="right" valign="top"><a title=
+      "Asynchronous Commit" href="wal-async-commit.html" accesskey=
+      "N">Next</a></td>
+    </tr>
+  </table>
+  <hr class="c1" width="100%" />
+</div>
+
+<div class="SECT1">
+  <h1 class="SECT1"><a name="WAL-INTRO" id="WAL-INTRO">29.2.
+  Write-Ahead Logging (<acronym class=
+  "ACRONYM">WAL</acronym>)</a></h1>
+
+  <p><i class="FIRSTTERM">Write-Ahead Logging</i> (<acronym class=
+  "ACRONYM">WAL</acronym>) is a standard method for ensuring data
+  integrity. A detailed description can be found in most (if not
+  all) books about transaction processing. Briefly, <acronym class=
+  "ACRONYM">WAL</acronym>'s central concept is that changes to data
+  files (where tables and indexes reside) must be written only
+  after those changes have been logged, that is, after log records
+  describing the changes have been flushed to permanent storage. If
+  we follow this procedure, we do not need to flush data pages to
+  disk on every transaction commit, because we know that in the
+  event of a crash we will be able to recover the database using
+  the log: any changes that have not been applied to the data pages
+  can be redone from the log records. (This is roll-forward
+  recovery, also known as REDO.)</p>
+
+  <div class="TIP">
+    <blockquote class="TIP">
+      <p><b>Tip:</b> Because <acronym class="ACRONYM">WAL</acronym>
+      restores database file contents after a crash, journaled file
+      systems are not necessary for reliable storage of the data
+      files or WAL files. In fact, journaling overhead can reduce
+      performance, especially if journaling causes file system
+      <span class="emphasis EMPHASIS c2">data</span> to be flushed
+      to disk. Fortunately, data flushing during journaling can
+      often be disabled with a file system mount option, e.g.
+      <tt class="LITERAL">data=writeback</tt> on a Linux ext3 file
+      system. Journaled file systems do improve boot speed after a
+      crash.</p>
+    </blockquote>
+  </div>
+
+  <p>Using <acronym class="ACRONYM">WAL</acronym> results in a
+  significantly reduced number of disk writes, because only the log
+  file needs to be flushed to disk to guarantee that a transaction
+  is committed, rather than every data file changed by the
+  transaction. The log file is written sequentially, and so the
+  cost of syncing the log is much less than the cost of flushing
+  the data pages. This is especially true for servers handling many
+  small transactions touching different parts of the data store.
+  Furthermore, when the server is processing many small concurrent
+  transactions, one <code class="FUNCTION">fsync</code> of the log
+  file may suffice to commit many transactions.</p>
+
+  <p><acronym class="ACRONYM">WAL</acronym> also makes it possible
+  to support on-line backup and point-in-time recovery, as
+  described in <a href="continuous-archiving.html">Section
+  24.3</a>. By archiving the WAL data we can support reverting to
+  any time instant covered by the available WAL data: we simply
+  install a prior physical backup of the database, and replay the
+  WAL log just as far as the desired time. What's more, the
+  physical backup doesn't have to be an instantaneous snapshot of
+  the database state — if it is made over some period of time, then
+  replaying the WAL log for that period will fix any internal
+  inconsistencies.</p>
+</div>
+
+<div class="NAVFOOTER">
+  <hr class="c1" width="100%" />
+
+  <table summary="Footer navigation table" width="100%" border="0"
+  cellpadding="0" cellspacing="0">
+    <tr>
+      <td width="33%" align="left" valign="top"><a href=
+      "wal-reliability.html" accesskey="P">Prev</a></td>
+
+      <td width="34%" align="center" valign="top"><a href=
+      "index.html" accesskey="H">Home</a></td>
+
+      <td width="33%" align="right" valign="top"><a href=
+      "wal-async-commit.html" accesskey="N">Next</a></td>
+    </tr>
+
+    <tr>
+      <td width="33%" align="left" valign="top">Reliability</td>
+
+      <td width="34%" align="center" valign="top"><a href=
+      "wal.html" accesskey="U">Up</a></td>
+
+      <td width="33%" align="right" valign="top">Asynchronous
+      Commit</td>
+    </tr>
+  </table>
+</div>
+
+</div>
+
+<div id="docComments">
+
+
+
+</div>
+
+<div id="docFooter">
+    <a href="/about/privacypolicy">Privacy Policy</a> |
+    <a href="/about/">About PostgreSQL</a><br/>
+Copyright &copy; 1996-2015 The PostgreSQL Global Development Group
+</div>
+</div>
+</div>
+</body>
+</html>

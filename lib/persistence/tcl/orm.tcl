@@ -52,6 +52,8 @@ proc ::persistence::orm::init_type {} {
     variable [namespace __this]::__indexes
     variable [namespace __this]::__idxinfo
 
+    # log "init_type [namespace __this]"
+
     ## 
     # helpers and speedups
     #
@@ -290,7 +292,8 @@ proc ::persistence::orm::insert {itemVar {optionsVar ""}} {
         }
         set row_key [to_row_key_by $idxname item]
         set src [to_path_by $idxname $row_key {*}$item($pk)]
-        ::persistence::insert_link $src $target
+        #::persistence::insert_link $src $target
+        ::persistence::insert_column $src $data
     }
 
     # ::persistence::end_batch
@@ -344,8 +347,9 @@ proc ::persistence::orm::update {oid new_itemVar {optionsVar ""}} {
             # update index
             set row_key [to_row_key_by $idxname item]
             set src [to_path_by $idxname $row_key {*}$item($pk)]
-            ::persistence::delete_link $src
-            ::persistence::insert_link $src $target
+            #::persistence::delete_link $src
+            #::persistence::insert_link $src $target
+            ::persistence::insert_column $src $data
             # ::persistence::update_link $src $new_target
         }
     }

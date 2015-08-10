@@ -10,11 +10,15 @@ namespace eval ::persistence::mem {
 
 }
 
-proc ::persistence::mem::get_column_data {oid {exists_pVar ""} {codec_conf ""}} {
+proc ::persistence::mem::exists_column_data_p {oid} {
     variable __mem
-    upvar $exists_pVar exists_p
+    return [info exists __mem(${oid},data)]
+}
 
-    set exists_p [info exists __mem(${oid},data)] 
+proc ::persistence::mem::get_column_data {oid {codec_conf ""}} {
+    variable __mem
+
+    set exists_p [exists_column_data_p $oid]
     if { $exists_p } {
         return $__mem(${oid},data)
     }
@@ -36,7 +40,7 @@ proc ::persistence::mem::set_column_data {oid data {codec_conf ""}} {
     incr __cnt
 }
 
-proc ::persistence::mem::del_column_data {oid {codec_conf ""}} {
+proc ::persistence::mem::del_column_data {oid} {
     variable __mem
     variable __oid
     variable __cnt

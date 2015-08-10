@@ -1,0 +1,424 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en" dir="ltr">
+<head>
+    <title>PostgreSQL: Documentation: 9.1: WAL Configuration</title>
+    <style type="text/css" media="screen" title="Normal Text">@import url("/dyncss/docs.css?37466d75");</style>
+    <script type="text/javascript" src="/media/js/monospacefix.js?37466d75"></script>
+    <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-1345454-1']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+</head>
+<body>
+<div id="docHeader">
+	<div id="docHeaderLogo">
+		<a href="/" title="PostgreSQL"><img src="/media/img/docs/hdr_logo.png" width="206" height="80" alt="PostgreSQL" /></a>
+	</div>
+</div>
+
+<div id="docContainerWrap">
+<div id="docContainer">
+<div id="docNavSearchContainer">
+<div id="docSearch">
+	<form action="/search/" method="get">
+	<div>
+	<input type="hidden" name="u" value="/docs/9.1/" />
+	<label for="q">Search Documentation:&nbsp;</label><input type="text" id="q" name="q" size="20" onfocus="if( this.value==this.defaultValue ) this.value='';" value="Search" /><input id="submit" type="submit" value="Search" />
+	</div>
+	</form>
+</div>
+<div id="docNav">
+<a href="/" title="Home">Home</a> &rarr; <a href="/docs" title="Documentation">Documentation</a> &rarr; <a href="/docs/manuals" title="Manuals">Manuals</a> &rarr; <a href="/docs/9.1/static/index.html">PostgreSQL 9.1</a>
+</div>
+<div id="docVersions">
+This page in other versions:
+
+
+	
+	
+	<a href="/docs/9.0/static/wal-configuration.html" title="This page in version 9.0">9.0</a>
+	
+
+	/
+	
+	<b>9.1</b>
+	
+
+	/
+	
+	<a href="/docs/9.2/static/wal-configuration.html" title="This page in version 9.2">9.2</a>
+	
+
+	/
+	
+	<a href="/docs/9.3/static/wal-configuration.html" title="This page in version 9.3">9.3</a>
+	
+
+	/
+	
+	<a href="/docs/9.4/static/wal-configuration.html" title="This page in version 9.4">9.4</a>
+	
+
+
+
+
+&nbsp;|&nbsp; Development versions:
+
+	
+	
+	<a href="/docs/devel/static/wal-configuration.html" title="This page in version devel" rel="nofollow">devel</a>
+	
+
+	/
+	
+	<a href="/docs/9.5/static/wal-configuration.html" title="This page in version 9.5" rel="nofollow">9.5</a>
+	
+
+
+
+
+&nbsp;|&nbsp; Unsupported versions:
+
+	
+	
+	<a href="/docs/7.1/static/wal-configuration.html" title="This page in version 7.1" rel="nofollow">7.1</a>
+	
+
+	/
+	
+	<a href="/docs/7.2/static/wal-configuration.html" title="This page in version 7.2" rel="nofollow">7.2</a>
+	
+
+	/
+	
+	<a href="/docs/7.3/static/wal-configuration.html" title="This page in version 7.3" rel="nofollow">7.3</a>
+	
+
+	/
+	
+	<a href="/docs/7.4/static/wal-configuration.html" title="This page in version 7.4" rel="nofollow">7.4</a>
+	
+
+	/
+	
+	<a href="/docs/8.0/static/wal-configuration.html" title="This page in version 8.0" rel="nofollow">8.0</a>
+	
+
+	/
+	
+	<a href="/docs/8.1/static/wal-configuration.html" title="This page in version 8.1" rel="nofollow">8.1</a>
+	
+
+	/
+	
+	<a href="/docs/8.2/static/wal-configuration.html" title="This page in version 8.2" rel="nofollow">8.2</a>
+	
+
+	/
+	
+	<a href="/docs/8.3/static/wal-configuration.html" title="This page in version 8.3" rel="nofollow">8.3</a>
+	
+
+	/
+	
+	<a href="/docs/8.4/static/wal-configuration.html" title="This page in version 8.4" rel="nofollow">8.4</a>
+	
+
+
+</div>
+</div>
+
+<div id="docContent">
+<div class="NAVHEADER">
+  <table summary="Header navigation table" width="100%" border="0"
+  cellpadding="0" cellspacing="0">
+    <tr>
+      <th colspan="5" align="center" valign="bottom"><a href=
+      "index.html">PostgreSQL 9.1.18 Documentation</a></th>
+    </tr>
+
+    <tr>
+      <td width="10%" align="left" valign="top"><a title=
+      "Asynchronous Commit" href="wal-async-commit.html" accesskey=
+      "P">Prev</a></td>
+
+      <td width="10%" align="left" valign="top"><a href="wal.html"
+      accesskey="U">Up</a></td>
+
+      <td width="60%" align="center" valign="bottom">Chapter 29.
+      Reliability and the Write-Ahead Log</td>
+
+      <td width="20%" align="right" valign="top"><a title=
+      "WAL Internals" href="wal-internals.html" accesskey=
+      "N">Next</a></td>
+    </tr>
+  </table>
+  <hr class="c1" width="100%" />
+</div>
+
+<div class="SECT1">
+  <h1 class="SECT1"><a name="WAL-CONFIGURATION" id=
+  "WAL-CONFIGURATION">29.4. <acronym class="ACRONYM">WAL</acronym>
+  Configuration</a></h1>
+
+  <p>There are several <acronym class=
+  "ACRONYM">WAL</acronym>-related configuration parameters that
+  affect database performance. This section explains their use.
+  Consult <a href="runtime-config.html">Chapter 18</a> for general
+  information about setting server configuration parameters.</p>
+
+  <p><i class="FIRSTTERM">Checkpoints</i> are points in the
+  sequence of transactions at which it is guaranteed that the heap
+  and index data files have been updated with all information
+  written before the checkpoint. At checkpoint time, all dirty data
+  pages are flushed to disk and a special checkpoint record is
+  written to the log file. (The changes were previously flushed to
+  the <acronym class="ACRONYM">WAL</acronym> files.) In the event
+  of a crash, the crash recovery procedure looks at the latest
+  checkpoint record to determine the point in the log (known as the
+  redo record) from which it should start the REDO operation. Any
+  changes made to data files before that point are guaranteed to be
+  already on disk. Hence, after a checkpoint, log segments
+  preceding the one containing the redo record are no longer needed
+  and can be recycled or removed. (When <acronym class=
+  "ACRONYM">WAL</acronym> archiving is being done, the log segments
+  must be archived before being recycled or removed.)</p>
+
+  <p>The checkpoint requirement of flushing all dirty data pages to
+  disk can cause a significant I/O load. For this reason,
+  checkpoint activity is throttled so I/O begins at checkpoint
+  start and completes before the next checkpoint starts; this
+  minimizes performance degradation during checkpoints.</p>
+
+  <p>The server's background writer process automatically performs
+  a checkpoint every so often. A checkpoint is created every
+  <a href=
+  "runtime-config-wal.html#GUC-CHECKPOINT-SEGMENTS">checkpoint_segments</a>
+  log segments, or every <a href=
+  "runtime-config-wal.html#GUC-CHECKPOINT-TIMEOUT">checkpoint_timeout</a>
+  seconds, whichever comes first. The default settings are 3
+  segments and 300 seconds (5 minutes), respectively. It is also
+  possible to force a checkpoint by using the SQL command
+  <tt class="COMMAND">CHECKPOINT</tt>.</p>
+
+  <p>Reducing <tt class="VARNAME">checkpoint_segments</tt> and/or
+  <tt class="VARNAME">checkpoint_timeout</tt> causes checkpoints to
+  occur more often. This allows faster after-crash recovery (since
+  less work will need to be redone). However, one must balance this
+  against the increased cost of flushing dirty data pages more
+  often. If <a href=
+  "runtime-config-wal.html#GUC-FULL-PAGE-WRITES">full_page_writes</a>
+  is set (as is the default), there is another factor to consider.
+  To ensure data page consistency, the first modification of a data
+  page after each checkpoint results in logging the entire page
+  content. In that case, a smaller checkpoint interval increases
+  the volume of output to the WAL log, partially negating the goal
+  of using a smaller interval, and in any case causing more disk
+  I/O.</p>
+
+  <p>Checkpoints are fairly expensive, first because they require
+  writing out all currently dirty buffers, and second because they
+  result in extra subsequent WAL traffic as discussed above. It is
+  therefore wise to set the checkpointing parameters high enough
+  that checkpoints don't happen too often. As a simple sanity check
+  on your checkpointing parameters, you can set the <a href=
+  "runtime-config-wal.html#GUC-CHECKPOINT-WARNING">checkpoint_warning</a>
+  parameter. If checkpoints happen closer together than <tt class=
+  "VARNAME">checkpoint_warning</tt> seconds, a message will be
+  output to the server log recommending increasing <tt class=
+  "VARNAME">checkpoint_segments</tt>. Occasional appearance of such
+  a message is not cause for alarm, but if it appears often then
+  the checkpoint control parameters should be increased. Bulk
+  operations such as large <tt class="COMMAND">COPY</tt> transfers
+  might cause a number of such warnings to appear if you have not
+  set <tt class="VARNAME">checkpoint_segments</tt> high enough.</p>
+
+  <p>To avoid flooding the I/O system with a burst of page writes,
+  writing dirty buffers during a checkpoint is spread over a period
+  of time. That period is controlled by <a href=
+  "runtime-config-wal.html#GUC-CHECKPOINT-COMPLETION-TARGET">checkpoint_completion_target</a>,
+  which is given as a fraction of the checkpoint interval. The I/O
+  rate is adjusted so that the checkpoint finishes when the given
+  fraction of <tt class="VARNAME">checkpoint_segments</tt> WAL
+  segments have been consumed since checkpoint start, or the given
+  fraction of <tt class="VARNAME">checkpoint_timeout</tt> seconds
+  have elapsed, whichever is sooner. With the default value of 0.5,
+  <span class="PRODUCTNAME">PostgreSQL</span> can be expected to
+  complete each checkpoint in about half the time before the next
+  checkpoint starts. On a system that's very close to maximum I/O
+  throughput during normal operation, you might want to increase
+  <tt class="VARNAME">checkpoint_completion_target</tt> to reduce
+  the I/O load from checkpoints. The disadvantage of this is that
+  prolonging checkpoints affects recovery time, because more WAL
+  segments will need to be kept around for possible use in
+  recovery. Although <tt class=
+  "VARNAME">checkpoint_completion_target</tt> can be set as high as
+  1.0, it is best to keep it less than that (perhaps 0.9 at most)
+  since checkpoints include some other activities besides writing
+  dirty buffers. A setting of 1.0 is quite likely to result in
+  checkpoints not being completed on time, which would result in
+  performance loss due to unexpected variation in the number of WAL
+  segments needed.</p>
+
+  <p>There will always be at least one WAL segment file, and will
+  normally not be more than (2 + <tt class=
+  "VARNAME">checkpoint_completion_target</tt>) * <tt class=
+  "VARNAME">checkpoint_segments</tt> + 1 or <tt class=
+  "VARNAME">checkpoint_segments</tt> + <a href=
+  "runtime-config-replication.html#GUC-WAL-KEEP-SEGMENTS">wal_keep_segments</a>
+  + 1 files. Each segment file is normally 16 MB (though this size
+  can be altered when building the server). You can use this to
+  estimate space requirements for <acronym class=
+  "ACRONYM">WAL</acronym>. Ordinarily, when old log segment files
+  are no longer needed, they are recycled (renamed to become the
+  next segments in the numbered sequence). If, due to a short-term
+  peak of log output rate, there are more than 3 * <tt class=
+  "VARNAME">checkpoint_segments</tt> + 1 segment files, the
+  unneeded segment files will be deleted instead of recycled until
+  the system gets back under this limit.</p>
+
+  <p>In archive recovery or standby mode, the server periodically
+  performs <i class="FIRSTTERM">restartpoints</i> which are similar
+  to checkpoints in normal operation: the server forces all its
+  state to disk, updates the <tt class="FILENAME">pg_control</tt>
+  file to indicate that the already-processed WAL data need not be
+  scanned again, and then recycles any old log segment files in
+  <tt class="FILENAME">pg_xlog</tt> directory. A restartpoint is
+  triggered if at least one checkpoint record has been replayed and
+  <tt class="VARNAME">checkpoint_timeout</tt> seconds have passed
+  since last restartpoint. In standby mode, a restartpoint is also
+  triggered if <tt class="VARNAME">checkpoint_segments</tt> log
+  segments have been replayed since last restartpoint and at least
+  one checkpoint record has been replayed. Restartpoints can't be
+  performed more frequently than checkpoints in the master because
+  restartpoints can only be performed at checkpoint records.</p>
+
+  <p>There are two commonly used internal <acronym class=
+  "ACRONYM">WAL</acronym> functions: <code class=
+  "FUNCTION">LogInsert</code> and <code class=
+  "FUNCTION">LogFlush</code>. <code class=
+  "FUNCTION">LogInsert</code> is used to place a new record into
+  the <acronym class="ACRONYM">WAL</acronym> buffers in shared
+  memory. If there is no space for the new record, <code class=
+  "FUNCTION">LogInsert</code> will have to write (move to kernel
+  cache) a few filled <acronym class="ACRONYM">WAL</acronym>
+  buffers. This is undesirable because <code class=
+  "FUNCTION">LogInsert</code> is used on every database low level
+  modification (for example, row insertion) at a time when an
+  exclusive lock is held on affected data pages, so the operation
+  needs to be as fast as possible. What is worse, writing
+  <acronym class="ACRONYM">WAL</acronym> buffers might also force
+  the creation of a new log segment, which takes even more time.
+  Normally, <acronym class="ACRONYM">WAL</acronym> buffers should
+  be written and flushed by a <code class=
+  "FUNCTION">LogFlush</code> request, which is made, for the most
+  part, at transaction commit time to ensure that transaction
+  records are flushed to permanent storage. On systems with high
+  log output, <code class="FUNCTION">LogFlush</code> requests might
+  not occur often enough to prevent <code class=
+  "FUNCTION">LogInsert</code> from having to do writes. On such
+  systems one should increase the number of <acronym class=
+  "ACRONYM">WAL</acronym> buffers by modifying the configuration
+  parameter <a href=
+  "runtime-config-wal.html#GUC-WAL-BUFFERS">wal_buffers</a>. When
+  <a href=
+  "runtime-config-wal.html#GUC-FULL-PAGE-WRITES">full_page_writes</a>
+  is set and the system is very busy, setting this value higher
+  will help smooth response times during the period immediately
+  following each checkpoint.</p>
+
+  <p>The <a href=
+  "runtime-config-wal.html#GUC-COMMIT-DELAY">commit_delay</a>
+  parameter defines for how many microseconds the server process
+  will sleep after writing a commit record to the log with
+  <code class="FUNCTION">LogInsert</code> but before performing a
+  <code class="FUNCTION">LogFlush</code>. This delay allows other
+  server processes to add their commit records to the log so as to
+  have all of them flushed with a single log sync. No sleep will
+  occur if <a href="runtime-config-wal.html#GUC-FSYNC">fsync</a> is
+  not enabled, or if fewer than <a href=
+  "runtime-config-wal.html#GUC-COMMIT-SIBLINGS">commit_siblings</a>
+  other sessions are currently in active transactions; this avoids
+  sleeping when it's unlikely that any other session will commit
+  soon. Note that on most platforms, the resolution of a sleep
+  request is ten milliseconds, so that any nonzero <tt class=
+  "VARNAME">commit_delay</tt> setting between 1 and 10000
+  microseconds would have the same effect. Good values for these
+  parameters are not yet clear; experimentation is encouraged.</p>
+
+  <p>The <a href=
+  "runtime-config-wal.html#GUC-WAL-SYNC-METHOD">wal_sync_method</a>
+  parameter determines how <span class=
+  "PRODUCTNAME">PostgreSQL</span> will ask the kernel to force
+  <acronym class="ACRONYM">WAL</acronym> updates out to disk. All
+  the options should be the same in terms of reliability, with the
+  exception of <tt class="LITERAL">fsync_writethrough</tt>, which
+  can sometimes force a flush of the disk cache even when other
+  options do not do so. However, it's quite platform-specific which
+  one will be the fastest; you can test option speeds using the
+  <a href="pgtestfsync.html">pg_test_fsync</a> module. Note that
+  this parameter is irrelevant if <tt class="VARNAME">fsync</tt>
+  has been turned off.</p>
+
+  <p>Enabling the <a href=
+  "runtime-config-developer.html#GUC-WAL-DEBUG">wal_debug</a>
+  configuration parameter (provided that <span class=
+  "PRODUCTNAME">PostgreSQL</span> has been compiled with support
+  for it) will result in each <code class=
+  "FUNCTION">LogInsert</code> and <code class=
+  "FUNCTION">LogFlush</code> <acronym class="ACRONYM">WAL</acronym>
+  call being logged to the server log. This option might be
+  replaced by a more general mechanism in the future.</p>
+</div>
+
+<div class="NAVFOOTER">
+  <hr class="c1" width="100%" />
+
+  <table summary="Footer navigation table" width="100%" border="0"
+  cellpadding="0" cellspacing="0">
+    <tr>
+      <td width="33%" align="left" valign="top"><a href=
+      "wal-async-commit.html" accesskey="P">Prev</a></td>
+
+      <td width="34%" align="center" valign="top"><a href=
+      "index.html" accesskey="H">Home</a></td>
+
+      <td width="33%" align="right" valign="top"><a href=
+      "wal-internals.html" accesskey="N">Next</a></td>
+    </tr>
+
+    <tr>
+      <td width="33%" align="left" valign="top">Asynchronous
+      Commit</td>
+
+      <td width="34%" align="center" valign="top"><a href=
+      "wal.html" accesskey="U">Up</a></td>
+
+      <td width="33%" align="right" valign="top">WAL Internals</td>
+    </tr>
+  </table>
+</div>
+
+</div>
+
+<div id="docComments">
+
+
+
+</div>
+
+<div id="docFooter">
+    <a href="/about/privacypolicy">Privacy Policy</a> |
+    <a href="/about/">About PostgreSQL</a><br/>
+Copyright &copy; 1996-2015 The PostgreSQL Global Development Group
+</div>
+</div>
+</div>
+</body>
+</html>
