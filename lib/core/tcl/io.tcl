@@ -2,6 +2,10 @@
 
 namespace eval ::util::io {;}
 
+proc ::util::io::write_char {channelId v} {
+    fconfigure $channelId -translation binary
+    puts -nonewline $channelId [binary format c $v]
+}
 proc ::util::io::write_long {channelId v} {
     fconfigure $channelId -translation binary
     #ns_log notice "write_long channelId=$channelId v=$v"
@@ -48,6 +52,12 @@ proc ::util::io::read_long {channelId} {
     fconfigure $channelId -translation binary
     binary scan [read $channelId 8] w v
     #ns_log notice "read_long v=$v"
+    return $v
+}
+
+proc ::util::io::read_char {channelId} {
+    fconfigure $channelId -translation binary
+    binary scan [read $channelId 1] c v
     return $v
 }
 

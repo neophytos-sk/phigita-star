@@ -219,10 +219,8 @@ proc ::persistence::orm::codec_bin_3::encode {itemVar} {
             append bytes [binary format $fmt $attvalue]
         } else {
             set attvalue [encoding convertto utf-8 $attvalue]
-            set len [string bytelength $attvalue]
+            set len [string length $attvalue]
             set num_encoded_bytes [encode_unsigned_varint bytes $len]
-            #append bytes [binary format "iu1" $len]
-            #log "attname=$attname type=$type encoded_bytes=$num_encoded_bytes len=$len"
             append bytes [binary format "A${len}" $attvalue]
         }
     }
@@ -235,6 +233,8 @@ proc ::persistence::orm::codec_bin_3::decode {bytes} {
     variable __type_to_bin
     variable [namespace __this]::__attributes
     variable [namespace __this]::__attinfo
+
+    # log "decoding item for [namespace __this]"
 
     array set item [list]
     set pos 0
@@ -273,12 +273,11 @@ proc ::persistence::orm::codec_bin_3::decode {bytes} {
             #log $item($attname)
         } else {
             set len [decode_unsigned_varint bytes num_decoded_bytes $pos]
-            #set len [binary scan $bytes "@${pos}iu1" num_decoded_bytes]
             incr pos $num_decoded_bytes
-            #log "attname=$attname len=$len num_decoded_bytes=$num_decoded_bytes"
-            binary scan $bytes "@${pos}A${len}" item($attname) 
-            set item($attname) [encoding convertfrom utf-8 [value_if item($attname) ""]]
-            # log $item($attname)
+            # log "attname=$attname pos=$pos len=$len num_decoded_bytes=$num_decoded_bytes"
+            set scan_p [binary scan $bytes "@${pos}A${len}" item($attname)]
+            # log ">>>> $attname = $item($attname)"
+            set item($attname) [encoding convertfrom utf-8 $item($attname)]
             incr pos $len
         }
 

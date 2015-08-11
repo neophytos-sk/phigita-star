@@ -23,6 +23,8 @@ proc ::db_client::init {addr port} {
     set peer($sock,datalen) 0
     set peer($sock,datapos) 0
     set peer($sock,timer) [after $ttl [list ${nsp}::timeout_conn $sock]]
+    # peer($sock,retcode) is only set after a response is received
+    # peer($sock,done) is only set after a response is received
 
     chan configure $sock -translation binary -blocking 0
     trace add variable peer($sock,datalen) write [list ${nsp}::handle_conn $sock]
@@ -43,7 +45,13 @@ proc ::db_client::recv {} {
 
     vwait ::db_client::peer($sock,done)
 
-    return $peer($sock,done)
+    set retcode $peer($sock,retcode)
+
+    if { [boolval $retcode] } {
+        error $peer($sock,done)
+    } else {
+        return $peer($sock,done)
+    }
 
 }
 
@@ -82,15 +90,25 @@ proc ::db_client::handle_conn {sock args} {
 
     set pos $peer($sock,datapos)
 
-    if { $pos + 4 <= $datalen } {
-        set len_p [binary scan $peer($sock,data) "@${pos}i" len]
-        if { $len_p && $datalen >= 4 + $pos + $len } {
-            set pos [incr peer($sock,datapos) 4]
-            set line_p [binary scan $peer($sock,data) "@${pos}A${len}" line]
-            set pos [incr peer($sock,datapos) $len]
-            set peer($sock,done) $line
-        }
+    set len_p [binary scan $peer($sock,data) "@${pos}i" len]
+    if { $len_p && $datalen >= 5 + $pos + $len } {
+
+        # int length (4 bytes)
+        set pos [incr peer($sock,datapos) 4]
+
+        # bytearray data ($len bytes)
+        set line_p [binary scan $peer($sock,data) "@${pos}A${len}" line]
+        set pos [incr peer($sock,datapos) $len]
+
+        # char retcode (1 byte)
+        set retcode_p [binary scan $peer($sock,data) "@${pos}c" retcode]
+        set peer($sock,retcode) $retcode
+        set pos [incr peer($sock,datapos)]
+
+        set peer($sock,done) $line
+
     }
+
 }
 
 
@@ -102,10 +120,11 @@ proc ::db_client::exec_cmd {args} {
         set myport 9900
         ::db_client::init $myaddr $myport
     }
-    #log "sending command... {*}$args"
+    # log "sending command... {*}$args"
     ::db_client::send $args
-    #set response [::db_client::recv]
-    set response [binary decode base64 [::db_client::recv]]
+    #binary scan [::db_client::recv] a* response
+    set response [::db_client::recv]
+    #set response [binary decode base64 [::db_client::recv]]
     #set response [encoding convertto utf-8 $response]
     #log response=$response
     return $response

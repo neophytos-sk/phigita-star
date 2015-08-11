@@ -1427,7 +1427,7 @@ proc ::feed_reader::uses_content {contentsha1_list} {
     foreach contentsha1 ${contentsha1_list} {
 
         set where_clause [list [list contentsha1 = $contentsha1]]
-        set slicelist [::newsdb::news_item_t find $where_clause]
+        set slicelist [::newsdb::news_item_t 0or1row $where_clause]
 
         foreach filename ${slicelist} {
             set urlsha1 [::persistence::get_name $filename]
@@ -1443,12 +1443,16 @@ proc ::feed_reader::load_content {itemVar contentsha1 {include_labels_p "1"}} {
 
     upvar $itemVar item
 
-    set oid [::newsdb::content_item_t find_by_id $contentsha1]
-    array set item [::newsdb::content_item_t get $oid]
+    set where_clause [list [list contentsha1 = $contentsha1]]
+    set oid [::newsdb::content_item_t 0or1row $where_clause]
+    set data [::newsdb::content_item_t get $oid]
+    array set item $data
 
-    set contentsha1_to_label_filename [get_contentsha1_to_label_dir]/${contentsha1}
-    if { [file exists ${contentsha1_to_label_filename}] } {
-        set item(label) [lsearch -inline -all -not [split [::util::readfile $contentsha1_to_label_filename] "\n"] {}]
+    if {0} {
+        set contentsha1_to_label_filename [get_contentsha1_to_label_dir]/${contentsha1}
+        if { [file exists ${contentsha1_to_label_filename}] } {
+            set item(label) [lsearch -inline -all -not [split [::util::readfile $contentsha1_to_label_filename] "\n"] {}]
+        }
     }
 
 }
@@ -1544,18 +1548,23 @@ proc ::feed_reader::print_log_entry {itemVar {contextVar ""}} {
         set is_revision_string "upd"
     }
 
-    load_content item $item(contentsha1)
-
-    set content ""
-    set topic_and_subtopic ""
+    set topic ""
+    set subtopic ""
     set edition ""
-    if { [classifier::is_enabled_p "el.topic"] && [classifier::is_enabled_p "el.edition"] } {
-        set content [concat $item(title) $item(body)]
-        set topic_and_subtopic [classifier::classify "el.topic" content]
-        set edition [classifier::classify "el.edition" content]
-    }
+    if {0} {
+        load_content item $item(contentsha1)
 
-    lassign [split ${topic_and_subtopic} {/}] topic subtopic
+        set content ""
+        set topic_and_subtopic ""
+        set edition ""
+        if { [classifier::is_enabled_p "el.topic"] && [classifier::is_enabled_p "el.edition"] } {
+            set content [concat $item(title) $item(body)]
+            set topic_and_subtopic [classifier::classify "el.topic" content]
+            set edition [classifier::classify "el.edition" content]
+        }
+
+        lassign [split ${topic_and_subtopic} {/}] topic subtopic
+    }
 
     set domain_prefix "${domain} -- "
     set num_spaces [string length ${domain_prefix}]
@@ -1603,9 +1612,9 @@ proc ::feed_reader::print_short_log_entry {itemVar {contextVar ""}} {
         set is_revision_string "upd"
     }
 
-    load_content item $item(contentsha1)
 
     if {0} {
+        #load_content content_item $item(contentsha1)
         set content ""
         set topic_and_subtopic ""
         set edition ""
@@ -1747,7 +1756,8 @@ proc ::feed_reader::write_item {timestamp normalized_link feedVar itemVar resync
     # TODO: query for news_item_t with the given contentsha1
     # as we might have deleted the news_item, in that case,
     # it is not a copy, which is the purpose behind this query
-    set content_item_oid [::newsdb::content_item_t find_by_id $contentsha1]
+    set where_clause [list [list contentsha1 = $contentsha1]]
+    set content_item_oid [::newsdb::content_item_t 0or1row $where_clause]
 
     if { $content_item_oid ne {} } {
         # we have seen this item before from a different url
@@ -1758,6 +1768,8 @@ proc ::feed_reader::write_item {timestamp normalized_link feedVar itemVar resync
             contentsha1 $contentsha1 \
             title $item(title)       \
             body $item(body)]
+
+        assert { $content_item(title) ne {} } 
 
         ::newsdb::content_item_t insert content_item
     }

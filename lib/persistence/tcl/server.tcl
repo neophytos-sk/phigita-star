@@ -19,7 +19,7 @@ proc ::db_server::accept_client_async {sock addr port} {
     set peer($sock,datapos) 0
     set peer($sock,timer)   [after $ttl [list ${nsp}::timeout_client $sock]]
 
-    fconfigure $sock -blocking 0 -translation binary
+    chan configure $sock -blocking 0 -translation binary
     trace add variable peer($sock,datalen) write [list ${nsp}::handle_conn $sock]
     fileevent $sock readable [list ${nsp}::bg_read $sock]
 }
@@ -28,7 +28,7 @@ proc ::db_server::bg_read {sock} {
     variable peer
     after cancel $peer($sock,timer)
 
-    if { [eof $sock] } {
+    if { 0 && [eof $sock] } {
         close $sock
         set peer($sock,datalen) -1
         return
@@ -54,6 +54,10 @@ proc ::db_server::timeout_client {sock} {
     # cleanup
 }
 
+proc ::ping {args} {
+    return {*}$args
+}
+
 proc ::db_server::handle_conn {sock args} {
     variable peer
 
@@ -72,21 +76,26 @@ proc ::db_server::handle_conn {sock args} {
             set line_p [binary scan $peer($sock,data) "@${pos}A${len}" line]
             set pos [incr peer($sock,datapos) $len]
 
-            log line=$line 
+            # log line=$line 
             # log datalen=$datalen
-            log pos=$pos
+            # log pos=$pos
 
             # execute command
+
+            set ok_retcode 0
+            set error_retcode 1
+
             set cmd "set x \[{*}${line}\]"
             if { [catch $cmd errmsg] } {
                 log "errmsg=$errmsg"
+                ::util::io::write_string $sock $errmsg
+                ::util::io::write_char $sock $error_retcode
+                flush $sock
+            } else {
+                ::util::io::write_string $sock $x
+                ::util::io::write_char $sock $ok_retcode
+                flush $sock
             }
-
-            # log "sending reply..."
-            ::util::io::write_string $sock [binary encode base64 $x]
-            #::util::io::write_string $sock $x
-            flush $sock
-            # log "reply sent..."
 
         }
     }

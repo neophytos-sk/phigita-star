@@ -12,6 +12,7 @@ proc ::util::coalesce {args} {
 }
 
 proc ::util::boolval {value} {
+    assert { $value ne {} } 
     set true_p [string is true -strict $value]
     set false_p [string is false -strict $value]
     assert { !(${true_p} && ${false_p}) }

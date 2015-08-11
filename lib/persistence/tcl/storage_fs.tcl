@@ -143,6 +143,8 @@ proc ::persistence::fs::define_cf {ks cf_axis {spec {}}} {
         binary scan [::util::readfile $bff -translation binary] a* bytes
         ::bloom_filter::set_bytes $__bf(${ks}/${cf_axis}) $bytes
     }
+    
+    return
 
 }
 
