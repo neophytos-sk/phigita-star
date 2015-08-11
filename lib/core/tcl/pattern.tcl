@@ -92,6 +92,18 @@ proc ::pattern::typeof {value {names ""}} {
     return ${result}
 }
 
+proc ::pattern::check=tcl_namespace {valueVar} {
+    upvar $valueVar value
+    set re {^(?:\:\:[a-zA-Z_][a-zA-Z_0-9]*)+$}
+    return [regexp -- $re $value]
+}
+
+proc ::pattern::check=tcl_varname {valueVar} {
+    upvar $valueVar value
+    set re {^[a-zA-Z_][a-zA-Z_0-9]*$}
+    return [regexp -- $re $value]
+}
+
 # TODO: sysdb_namespace and sysdb_slot_name belongs to persistence package
 # TODO: implement "pattern register" and "pattern unregister" 
 proc ::pattern::check=sysdb_namespace {valueVar} {

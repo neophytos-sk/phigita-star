@@ -136,19 +136,19 @@ proc ::feed_reader::fetch_feed {resultVar feedVar {stoptitlesVar ""}} {
         set domain [::util::domain_from_url ${url}]
     }
 
-    set xpath_feed_item [get_value_if \
+    set xpath_feed_item [value_if \
         feed(xpath_feed_item) \
         {//a[@href]}]
 
-    set feed_type [get_value_if \
+    set feed_type [value_if \
         feed(feed_type) \
         {html}]
 
-    set htmltidy_feed_p [get_value_if \
+    set htmltidy_feed_p [value_if \
         feed(htmltidy_feed_p) \
         0]
 
-    set xpath_feed_cleanup [get_value_if \
+    set xpath_feed_cleanup [value_if \
         feed(xpath_feed_cleanup) \
         {}]
 
@@ -191,7 +191,7 @@ proc ::feed_reader::fetch_feed {resultVar feedVar {stoptitlesVar ""}} {
         }	    
     }
 
-    set link_stoplist [get_value_if feed(link_stoplist) ""]
+    set link_stoplist [value_if feed(link_stoplist) ""]
 
     set item_nodes [$doc selectNodes ${xpath_feed_item}]
 
@@ -312,72 +312,72 @@ proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar infoVa
 
     array set item [list]
 
-    set encoding [get_value_if feed(encoding) utf-8]
+    set encoding [value_if feed(encoding) utf-8]
 
-    set htmltidy_article_p [get_value_if \
+    set htmltidy_article_p [value_if \
         feed(htmltidy_article_p) \
         0]
 
-    set keep_title_from_feed_p [get_value_if \
+    set keep_title_from_feed_p [value_if \
         feed(keep_title_from_feed_p) \
         0]
 
         # {//meta[@property="og:title"]}
 
-    set xpath_article_prefix [get_value_if feed(xpath_article_prefix) ""]
+    set xpath_article_prefix [value_if feed(xpath_article_prefix) ""]
 
-    set xpath_article_title [get_value_if \
+    set xpath_article_title [value_if \
         feed(xpath_article_title) \
         {string(//meta[@property="og:title"]/@content)}]
 
-    set xpath_article_body [get_value_if \
+    set xpath_article_body [value_if \
         feed(xpath_article_body) \
         {}]
 
-    set xpath_article_cleanup [get_value_if \
+    set xpath_article_cleanup [value_if \
         feed(xpath_article_cleanup) \
         {}]
 
-    set xpath_article_author [get_value_if \
+    set xpath_article_author [value_if \
         feed(xpath_article_author) \
         {}]
 
-    set xpath_article_image [get_value_if \
+    set xpath_article_image [value_if \
         feed(xpath_article_image) \
         {string(//meta[@property="og:image"]/@content)}]
 
-    set xpath_article_video [get_value_if \
+    set xpath_article_video [value_if \
         feed(xpath_article_video) \
         {values(//iframe[@src]/@src)}]
 
     ::util::prepend ${xpath_article_prefix} xpath_article_video
 
-    set xpath_article_attachment [get_value_if \
+    set xpath_article_attachment [value_if \
         feed(xpath_article_attachment) \
         {}]
 
-    set xpath_article_description [get_value_if \
+    set xpath_article_description [value_if \
         feed(xpath_article_description) \
         {string(//meta[@property="og:description"]/@content)}]
 
 
-    set xpath_article_date [get_value_if \
+    set xpath_article_date [value_if \
         feed(xpath_article_date) \
         {returndate(string(//meta[@property="article:published_time"]/@content),"%Y-%m-%d %H:%M")}]
 
-    set xpath_article_modified_time [get_value_if \
+    set xpath_article_modified_time [value_if \
         feed(xpath_article_modified_time) \
         {returndate(string(//meta[@property="article:modified_time"]/@content),"%Y-%m-%d %H:%M")}]
 
 
-    set xpath_article_tags [get_value_if \
+    set xpath_article_tags [value_if \
         feed(xpath_article_tags) \
         {string(//meta[@property="og:keywords"]/@content)}]
 
 
     set html ""
 
-    array set options [get_value_if feed(http_options) ""]
+    array set options [value_if feed(http_options) ""]
     set errorcode [web cache_fetch html ${link} options info]
     unset options
 
@@ -412,7 +412,7 @@ proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar infoVa
     set article_image [list]
     if { ${xpath_article_image} ne {} } {
 
-        set image_stoplist [get_value_if feed(image_stoplist) ""]
+        set image_stoplist [value_if feed(image_stoplist) ""]
 
         foreach image_xpath ${xpath_article_image} {
             foreach image_url [${doc} selectNodes ${image_xpath}] {
@@ -478,12 +478,12 @@ proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar infoVa
 
     exec_xpath article_body $doc $xpath_article_body
 
-    if { [get_value_if feed(end_of_text_cleanup_p) "0"] } {
+    if { [value_if feed(end_of_text_cleanup_p) "0"] } {
     # if end_of_string is found after the 1/3 of the article body
     # then drop text beyond that point
     #
 
-    set end_of_text_cleanup_coeff [get_value_if feed(end_of_text_cleanup_coeff) "0.3"]
+    set end_of_text_cleanup_coeff [value_if feed(end_of_text_cleanup_coeff) "0.3"]
     set article_body_len [string length ${article_body}]
     set startIndex [expr { int( ${article_body_len} * ${end_of_text_cleanup_coeff} ) } ]
 
@@ -496,7 +496,7 @@ proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar infoVa
     }
     }
 
-    set article_langclass [get_value_if feed(article_langclass) "auto"]
+    set article_langclass [value_if feed(article_langclass) "auto"]
 
     if { ${article_langclass} eq {auto} } {
         set article_langclass [lindex [::ttext::langclass "$article_title $article_body"] 0]
@@ -526,7 +526,7 @@ proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar infoVa
 
     $doc delete
 
-    set allow_empty_body_p [get_value_if feed(allow_empty_body_p) 0]
+    set allow_empty_body_p [value_if feed(allow_empty_body_p) 0]
     if { ${body_length} == 0 && !${allow_empty_body_p} } {
     # puts "--->>> zero-length body"
         return -1 ;# error due to zero-length body
@@ -544,8 +544,8 @@ proc ::feed_reader::get_cookielist_and_try_again {link title_in_feed feedVar ite
     upvar $itemVar item
     upvar $infoVar info
 
-    if { [get_value_if feed(article_redirect_policy) ""] eq {GET_COOKIELIST_AND_TRY_AGAIN} } {
-        set redirect_url [get_value_if info(redirecturl) ""]
+    if { [value_if feed(article_redirect_policy) ""] eq {GET_COOKIELIST_AND_TRY_AGAIN} } {
+        set redirect_url [value_if info(redirecturl) ""]
         if { ${redirect_url} ne {} } {
             if { [catch {
                 set redirect_retcode [web cache_fetch _dummy_ ${redirect_url} "" redirect_info]
@@ -602,7 +602,7 @@ proc ::feed_reader::fetch_item {link title_in_feed feedVar itemVar infoVar {redi
     upvar $itemVar item
     upvar $infoVar info
 
-    if { [get_value_if feed(article_link_urlencode_p) "0"] } {
+    if { [value_if feed(article_link_urlencode_p) "0"] } {
         array set uri [url split ${link}]
         set ue_path [url encode $uri(path)]
         set ue_link "$uri(scheme)://$uri(host)/${ue_path}"
@@ -630,7 +630,7 @@ proc ::feed_reader::fetch_item {link title_in_feed feedVar itemVar infoVar {redi
         return -3 ;# failed with errors
     }
 
-    if { [get_value_if info(responsecode) ""] eq {302} && [get_value_if feed(handle_redirect_item_p) "0"] } {
+    if { [value_if info(responsecode) ""] eq {302} && [value_if feed(handle_redirect_item_p) "0"] } {
 
         return -4 ;# redirect item
         # TODO: move redirect handling to curl/webdb
@@ -643,7 +643,7 @@ proc ::feed_reader::fetch_item {link title_in_feed feedVar itemVar infoVar {redi
 
 proc ::feed_reader::translate_error_code {error_code} {
 
-    return [get_value_if ::curl::errorcode_messages(${error_code}) ""]
+    return [value_if ::curl::errorcode_messages(${error_code}) ""]
 
 }
 
@@ -653,7 +653,7 @@ proc ::feed_reader::fetch_and_write_item {timestamp link title_in_feed feedVar} 
 
     # log link=$link
 
-    set normalize_link_re [get_value_if feed(normalize_link_re) ""]
+    set normalize_link_re [value_if feed(normalize_link_re) ""]
     if { ${normalize_link_re} ne {} } {
         regexp -- ${normalize_link_re} ${link} whole normalized_link
     } else {
@@ -664,7 +664,7 @@ proc ::feed_reader::fetch_and_write_item {timestamp link title_in_feed feedVar} 
     # fetch it and compare it to stored item to ensure sanity
     # of feed/article/page
 
-    set can_resync_p [get_value_if feed(check_for_revisions) "0"]
+    set can_resync_p [value_if feed(check_for_revisions) "0"]
 
     set resync_p 0
     if { 
@@ -1515,8 +1515,8 @@ proc ::feed_reader::print_log_footer {contextVar} {
 
     upvar $contextVar context
 
-    set from_date [get_value_if context(from_date) ""]
-    set to_date [get_value_if context(to_date) ""]
+    set from_date [value_if context(from_date) ""]
+    set to_date [value_if context(to_date) ""]
     if { ${from_date} ne {} } {
 	puts ""
 	puts "- date from ${from_date} to ${to_date}"
@@ -1536,11 +1536,11 @@ proc ::feed_reader::print_log_entry {itemVar {contextVar ""}} {
     set domain [::util::domain_from_url $item(url)]
 
     set is_copy_string ""
-    if { [string is true -strict [get_value_if item(is_copy_p) 0]] } {
+    if { [string is true -strict [value_if item(is_copy_p) 0]] } {
         set is_copy_string "(*)"
     }
     set is_revision_string ""
-    if { [string is true -strict [get_value_if item(is_revision_p) 0]] } {
+    if { [string is true -strict [value_if item(is_revision_p) 0]] } {
         set is_revision_string "upd"
     }
 
@@ -1570,11 +1570,11 @@ proc ::feed_reader::print_log_entry {itemVar {contextVar ""}} {
     }
     set context(from_date) $item(sort_date)
 
-    set lang [lindex [split [get_value_if item(langclass) "el.utf8"] {.}] 0]
+    set lang [lindex [split [value_if item(langclass) "el.utf8"] {.}] 0]
     puts [format "%2s %40s %6s %-14s %30s %10s %3s %3s %-60s %20s" \
         ${lang} \
         $item(urlsha1) \
-        [::util::pretty_length [get_value_if item(body_length) ""]] \
+        [::util::pretty_length [value_if item(body_length) ""]] \
         ${topic} \
         ${subtopic} \
         ${edition} \
@@ -1595,11 +1595,11 @@ proc ::feed_reader::print_short_log_entry {itemVar {contextVar ""}} {
     set domain [::util::domain_from_url $item(url)]
 
     set is_copy_string ""
-    if { [string is true -strict [get_value_if item(is_copy_p) 0]] } {
+    if { [string is true -strict [value_if item(is_copy_p) 0]] } {
         set is_copy_string "(*)"
     }
     set is_revision_string ""
-    if { [string is true -strict [get_value_if item(is_revision_p) 0]] } {
+    if { [string is true -strict [value_if item(is_revision_p) 0]] } {
         set is_revision_string "upd"
     }
 
@@ -1631,7 +1631,7 @@ proc ::feed_reader::print_short_log_entry {itemVar {contextVar ""}} {
     }
     set context(from_date) $item(sort_date)
 
-    set lang [lindex [split [get_value_if item(langclass) "el.utf8"] {.}] 0]
+    set lang [lindex [split [value_if item(langclass) "el.utf8"] {.}] 0]
 
     puts [format "%15s %3s %3s %-60s %20s" \
         $item(sort_date) \
@@ -1777,7 +1777,7 @@ proc ::feed_reader::write_item {timestamp normalized_link feedVar itemVar resync
 
     set item(sort_date) ""
 
-    if { [get_value_if item(date) ""] ne {} } {
+    if { [value_if item(date) ""] ne {} } {
 
         lassign [split $item(date) {T}] date time
 
@@ -1838,7 +1838,7 @@ proc ::feed_reader::resync_item {oid} {
 
     array set item [::persistence::get_column_data ${oid}]
 
-    set domain [get_value_if item(domain) ""]
+    set domain [value_if item(domain) ""]
     if { ${domain} eq {} } {
         set domain [::util::domain_from_url $item(url)]
         set item(domain) ${domain}
@@ -1851,11 +1851,11 @@ proc ::feed_reader::resync_item {oid} {
     set feedfilename [lindex [glob -directory ${feed_dir} *] 0]
     array set feed [::util::readfile ${feedfilename}]
 
-    set title_in_feed [get_value_if item(title) ""]
+    set title_in_feed [value_if item(title) ""]
 
     if { ${title_in_feed} eq {} } {
     #most likely an error item
-        set errorcode [get_value_if item(errorcode) ""]
+        set errorcode [value_if item(errorcode) ""]
         if { ${errorcode} ne {} } {
             return
         } else {
@@ -1868,9 +1868,9 @@ proc ::feed_reader::resync_item {oid} {
     if { !${errorcode} } {
 
         set item(body) $new_item(body)
-        set item(video) [get_value_if new_item(video)]
+        set item(video) [value_if new_item(video)]
         set item(feed) [file tail $feedfilename]
-        if { [get_value_if item(timestamp) ""] eq {} } {
+        if { [value_if item(timestamp) ""] eq {} } {
             set item(timestamp) [::persistence::get_mtime ${oid}]
         }
 
@@ -1880,8 +1880,8 @@ proc ::feed_reader::resync_item {oid} {
         # it is meant for checking for revisions
         #
 
-        set normalized_link [get_value_if item(normalized_link) $item(url)]
-        set resync_p [get_value_if item(is_revision_p) 0]
+        set normalized_link [value_if item(normalized_link) $item(url)]
+        set resync_p [value_if item(is_revision_p) 0]
 
 
         write_item $item(timestamp) ${normalized_link} feed item ${resync_p}
@@ -1986,7 +1986,7 @@ proc ::feed_reader::sync_feeds {{news_sources ""} {debug_p "0"}} {
                      NO_WRITE_FEED 0]
 
 
-            # set feed_type [get_value_if feed(type) ""] 
+            # set feed_type [value_if feed(type) ""] 
             # if { ${feed_type} eq {rss} } {
             # set feed(xpath_feed_item) //item
             # }

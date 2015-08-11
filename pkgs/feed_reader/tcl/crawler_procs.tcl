@@ -127,10 +127,10 @@ proc ::feed_reader::auto_resync_p {feedVar link} {
     set first_sync [get_first_sync_timestamp link]
 
     # do not check for revisions if the item is older than a day (or maxage)
-    # set maxage [get_value_if feed(check_for_revisions_maxage) "86400"]
+    # set maxage [value_if feed(check_for_revisions_maxage) "86400"]
 
     # do not check for revisions if the item is older than two hours (or maxage)
-    set maxage [get_value_if feed(check_for_revisions_maxage) "14400"]
+    set maxage [value_if feed(check_for_revisions_maxage) "14400"]
 
     if { ${now} - ${first_sync} < ${maxage} } {
 
@@ -138,7 +138,7 @@ proc ::feed_reader::auto_resync_p {feedVar link} {
 
         # check for revisions every 2 hours (default) or the given interval
 
-        set interval [get_value_if feed(check_for_revisions_interval) "7200"]
+        set interval [value_if feed(check_for_revisions_interval) "7200"]
 
         if { ${now} - ${last_sync} > ${interval} } {
             return 1

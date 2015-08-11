@@ -3,7 +3,7 @@ package require util_procs
 
 namespace eval ::critcl::ext {;}
 
-proc ::critcl::ext::get_value_if {varname {default ""}} {
+proc ::critcl::ext::value_if {varname {default ""}} {
     upvar $varname var
     if { [info exists var] } {
         return ${var}
@@ -103,17 +103,17 @@ proc ::critcl::ext::cbuild_module {filename confArr} {
 
     upvar $confArr conf
 
-    set includedirs [get_value_if conf(includedirs) ""]
-    set clibraries [get_value_if conf(clibraries) ""]
-    set csources [get_value_if conf(csources) ""]
-    set cheaders [get_value_if conf(cheaders) ""]
-    set cflags [get_value_if conf(cflags) ""]
-    set init_code [get_value_if conf(cinit) ""]
-    set c_code [get_value_if conf(ccode) ""]
-    set debug_mode_p [get_value_if conf(debug_mode_p) 0]
-    set keepsrc [get_value_if conf(keepsrc) 1]
-    set language [get_value_if conf(language) ""]
-    set combine [get_value_if conf(combine) "standalone"]
+    set includedirs [value_if conf(includedirs) ""]
+    set clibraries [value_if conf(clibraries) ""]
+    set csources [value_if conf(csources) ""]
+    set cheaders [value_if conf(cheaders) ""]
+    set cflags [value_if conf(cflags) ""]
+    set init_code [value_if conf(cinit) ""]
+    set c_code [value_if conf(ccode) ""]
+    set debug_mode_p [value_if conf(debug_mode_p) 0]
+    set keepsrc [value_if conf(keepsrc) 1]
+    set language [value_if conf(language) ""]
+    set combine [value_if conf(combine) "standalone"]
 
     set cachedir [get_build_dir]/cache
     set outdir [get_outdir $filename]

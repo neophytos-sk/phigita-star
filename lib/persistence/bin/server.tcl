@@ -2,13 +2,15 @@
 #\
  exec tclsh "$0" "$@"
 
-set ::__is_server_p ""
-
 package require core
+
+config section ::persistence
+config use "server"
+
 package require persistence
 
-set myaddr 127.0.0.1
-set myport 9900
+set myaddr [config get ::persistence "address"]
+set myport [config get ::persistence "port"]
 log "starting server ${myaddr}:${myport}"
 set channel [socket -server ::db_server::accept_client_async -myaddr $myaddr $myport]
 chan configure $channel -blocking 0 -translation binary

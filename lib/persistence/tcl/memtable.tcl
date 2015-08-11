@@ -25,10 +25,40 @@ proc ::persistence::mem::get_column_data {oid {codec_conf ""}} {
     return
 }
 
+# insert or replace 
 proc ::persistence::mem::set_column_data {oid data {codec_conf ""}} {
+    if { [exists_column_data_p $oid] } {
+        del_column_data $oid
+    }
+    ins_column_data $oid $data $codec_conf
+}
+
+# Even though upd_column_data and set_column_data appear equivalent,
+# they are not. upd_column_data replaces the values of an existing
+# record whereas, set_column_data creates a new record if none already
+# exists.
+proc ::persistence::mem::upd_column_data {oid data {codec_conf ""}} {
+    if { ![exists_column_data_p $oid] } {
+        error "memtable (upd): no such oid"
+    }
+
+    # * delete old revisions or not?
+    # * get_column returns oid of the latest revision
+    set revision_oid [get_column $oid]
+
+    del_column_data $revision_oid
+    ins_column_data $oid $data
+
+}
+
+proc ::persistence::mem::ins_column_data {oid data {codec_conf ""}} {
     variable __mem
     variable __oid
     variable __cnt
+
+    if { [exists_column_data_p $oid] } {
+        error "memtable (ins): oid already exists"
+    }
 
     lappend __oid $oid
 
@@ -40,6 +70,7 @@ proc ::persistence::mem::set_column_data {oid data {codec_conf ""}} {
     incr __cnt
 }
 
+# del_column_data
 proc ::persistence::mem::del_column_data {oid} {
     variable __mem
     variable __oid
@@ -54,7 +85,7 @@ proc ::persistence::mem::del_column_data {oid} {
         unset __mem(${oid},size)
         unset __mem(${oid},index)
     } else {
-        error "no such oid in memtable"
+        error "memtable (del): no such oid"
     }
 
 }

@@ -287,14 +287,14 @@ proc ::persistence::fs::exists_data_p {oid} {
     }
 }
 
-proc ::persistence::fs::__set_column_data {oid data {codec_conf ""}} {
+proc ::persistence::fs::set_column_data {oid data {codec_conf ""}} {
     set filename [get_filename ${oid}]
     file mkdir [file dirname ${filename}]
     return [::util::writefile ${filename} ${data} {*}$codec_conf]
 }
 
-proc ::persistence::fs::__get_column_data {oid {codec_conf ""}} {
-    #log "retrieving data from file system... codec_conf=$codec_conf"
+proc ::persistence::fs::get_column_data {oid {codec_conf ""}} {
+    # log "retrieving data from file system... codec_conf=$codec_conf"
     set filename [get_filename ${oid}]
     return [::util::readfile ${filename} {*}$codec_conf]
 }

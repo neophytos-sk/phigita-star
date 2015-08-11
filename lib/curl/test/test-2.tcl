@@ -218,33 +218,33 @@ foreach link $result(links) title_in_feed $result(titles) {
     puts "---"
 
 
-    set encoding [::util::var::get_value_if feed(encoding) utf-8]
+    set encoding [::util::var::value_if feed(encoding) utf-8]
 
-    set htmltidy_article_p [::util::var::get_value_if \
+    set htmltidy_article_p [::util::var::value_if \
 				feed(htmltidy_article_p) \
 				0]
 
-    set keep_title_from_feed_p [::util::var::get_value_if \
+    set keep_title_from_feed_p [::util::var::value_if \
 				    feed(keep_title_from_feed_p) \
 				    0]
 
-    set xpath_article_title [::util::var::get_value_if \
+    set xpath_article_title [::util::var::value_if \
 				 feed(xpath_article_title) \
 				 {//title}]
 
-    set xpath_article_body [::util::var::get_value_if \
+    set xpath_article_body [::util::var::value_if \
 				feed(xpath_article_body) \
 				{}]
 
-    set xpath_article_cleanup [::util::var::get_value_if \
+    set xpath_article_cleanup [::util::var::value_if \
 				   feed(xpath_article_cleanup) \
 				   {}]
 
-    set xpath_article_author [::util::var::get_value_if \
+    set xpath_article_author [::util::var::value_if \
 				  feed(xpath_article_author) \
 				  {}]
 
-    set xpath_article_image [::util::var::get_value_if \
+    set xpath_article_image [::util::var::value_if \
 				 feed(xpath_article_image) \
 				 {}]
 

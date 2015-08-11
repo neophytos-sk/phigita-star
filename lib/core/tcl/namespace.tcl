@@ -22,6 +22,7 @@ proc ::tcl::namespace::__this {} {
     return [::runtime::stack_top __nsp]
 }
 
+# work in progress
 proc ::tcl::namespace::__next {args} {
     set caller [info frame -1]
 

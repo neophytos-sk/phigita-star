@@ -677,7 +677,7 @@ proc exists_indexed_script {codearrVar script {refVar ""}} {
 
 
     set md5_hex [::util::md5_hex ${script}]
-    set ref [get_value_if codearr(script,${md5_hex}) ""]
+    set ref [value_if codearr(script,${md5_hex}) ""]
 
     if { $ref ne {} } {
 	return 1
@@ -766,8 +766,8 @@ proc ::xo::tdp::compile_to_c_helper {codearrVar templateDoc} {
     # if set it skips the doctype declaration and the html tag
     # this is useful for rss pages
 
-    set noroot [get_value_if codearr(pragma.noroot) "0"]
-    set doctype [get_value_if codearr(pragma.doctype) ""]
+    set noroot [value_if codearr(pragma.noroot) "0"]
+    set doctype [value_if codearr(pragma.doctype) ""]
 
     if { ${noroot} } {
 	set root [$htmlDoc documentElement]
@@ -842,7 +842,7 @@ proc ::xo::tdp::compile_to_c {codearrVar templateDoc c_cmd_name tcl_cmd_name} {
 
 
 
-    set mime_type [get_value_if codearr(pragma.mime_type) "text/html"]
+    set mime_type [value_if codearr(pragma.mime_type) "text/html"]
 
     set c_cmd_code [subst -nocommands -nobackslashes {
 
@@ -867,11 +867,11 @@ proc ::xo::tdp::compile_to_c {codearrVar templateDoc c_cmd_name tcl_cmd_name} {
 
     }]
 
-    if { [get_value_if codearr(pragma.debug) "0"] } {
+    if { [value_if codearr(pragma.debug) "0"] } {
 	append codearr(macros) "\n" "#define DEBUG"
     }
 
-    if { [get_value_if codearr(pragma.reuse_dstring) "0"] } {
+    if { [value_if codearr(pragma.reuse_dstring) "0"] } {
 	append codearr(macros) "\n" "#define REUSE_DSTRING"
     }
 

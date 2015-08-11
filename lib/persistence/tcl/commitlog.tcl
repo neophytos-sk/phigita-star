@@ -1,4 +1,5 @@
-if { ![is_server_p] } {
+if { ![setting_p "write_ahead_log"] } {
+    # log "write_ahead_log setting is off"
     return
 }
 
@@ -86,6 +87,24 @@ proc ::persistence::commitlog::set_column_data {
     ::util::io::write_string $fp $oid
     ::util::io::write_string $fp $data
 
+    # set ts [clock microseconds]
+    # set log_item_oid "sysdb/wal_item_t.by_timestamp/__default__/+/$ts"
+    # set log_item_data [list timestamp $ts oid $oid data $data deleted_p "0"]
+    # ::persistence::fs::set_column_data $log_item_oid $log_item_data
+    #
+    ## array set log_item $log_item_data
+    ## ::sysdb::wal_item_t insert log_item
+    #
+    # set log_info_oid "sysdb/wal_info_t.by_attname/__default__/+/pos1"
+    # set log_info_data $ts
+    # ::persistence::fs::set_column_data $log_info_oid $log_info_data
+    #
+    # set log_info_oid "sysdb/wal_info_t.by_attname/__default__/+/"
+    # ::persistence::fs::update_row $log_info_oid [list pos1 $ts]
+    #
+    ## array set wal_info [list pos2 $ts]
+    ## ::sysdb::wal_info_t update wal_info 
+
     set pos [tell $fp]
     seek $fp 4 start
     ::util::io::write_int $fp $pos
@@ -140,10 +159,8 @@ proc ::persistence::commitlog::process {} {
         ::util::io::read_string $fp data
 
         # 1. exec command
-        ::persistence::fs::__set_column_data $oid $data "-translation binary"
-        #set filename [::persistence::get_filename $oid]
-        #file mkdir [file dirname $filename]
-        #::util::writefile $filename $data -translation binary
+        # ::persistence::mem::set_column_data $oid $data
+        call_orig_of ::persistence::fs::set_column_data $oid $data "-translation binary"
 
         # 2. increase and write int to pos1
         set savedpos [tell $fp]

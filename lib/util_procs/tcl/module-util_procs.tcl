@@ -321,27 +321,7 @@ proc ::util::striphtml {html} {
 
 # ------------------------ variables -----------------------------
 
-namespace eval ::util::var {;}
-
-proc ::util::var::get_value_if {varname {default ""}} {
-    upvar $varname var
-    if { [info exists var] } {
-        return ${var}
-    }
-    return ${default}
-}
-
-# Returns 1 if the variable name exists in the caller's environment and is not the empty string.
-proc ::util::var::exists_and_not_null { varname } {
-    upvar 1 ${varname} var
-    return [expr { [info exists var] && (${var} ne {}) }] 
-} 
-
-namespace eval ::util::var {
-    namespace export *
-}
 
 namespace eval :: {
-    namespace import ::util::var::*
     namespace import ::util::reversedomain
 }

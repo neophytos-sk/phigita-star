@@ -44,7 +44,7 @@ proc ::persistence::orm::codec_txt_2::encode {itemVar} {
     upvar $itemVar item
     set data [list]
     foreach attname $__attributes {
-        lappend data [get_value_if item($attname) ""]
+        lappend data [value_if item($attname) ""]
     }
     return $data
 }
@@ -82,7 +82,7 @@ proc ::persistence::orm::codec_bin_1::encode {itemVar} {
 
     set bytes ""
     foreach attname $__attributes {
-        set attvalue [get_value_if item($attname) ""]
+        set attvalue [value_if item($attname) ""]
         set attvalue [encoding convertto utf-8 $attvalue]
         set num_bytes [string bytelength $attvalue]
         append bytes [binary format "iu1A${num_bytes}" $num_bytes $attvalue]
@@ -101,7 +101,7 @@ proc ::persistence::orm::codec_bin_1::decode {bytes} {
         binary scan $bytes "@${pos}iu1" num_bytes
         incr pos 4
         binary scan $bytes "@${pos}A${num_bytes}" item($attname) 
-        set item($attname) [encoding convertfrom utf-8 [get_value_if item($attname) ""]]
+        set item($attname) [encoding convertfrom utf-8 [value_if item($attname) ""]]
         incr pos $num_bytes
     }
     return [array get item]
@@ -129,7 +129,7 @@ proc ::persistence::orm::codec_bin_2::encode {itemVar} {
 
     set bytes ""
     foreach attname $__attributes {
-        set attvalue [get_value_if item($attname) ""]
+        set attvalue [value_if item($attname) ""]
         set attvalue [encoding convertto utf-8 $attvalue]
         set num_bytes [string bytelength $attvalue]
         set num_decoded_bytes [encode_unsigned_varint bytes $num_bytes]
@@ -150,7 +150,7 @@ proc ::persistence::orm::codec_bin_2::decode {bytes} {
         set num_bytes [decode_unsigned_varint bytes num_decoded_bytes $pos]
         incr pos $num_decoded_bytes
         binary scan $bytes "@${pos}A${num_bytes}" item($attname) 
-        set item($attname) [encoding convertfrom utf-8 [get_value_if item($attname) ""]]
+        set item($attname) [encoding convertfrom utf-8 [value_if item($attname) ""]]
         incr pos $num_bytes
     }
     return [array get item]
@@ -198,7 +198,7 @@ proc ::persistence::orm::codec_bin_3::encode {itemVar} {
     # header (marks null values)
     set uvalue "0"
     foreach attname $__attributes {
-        set attvalue [get_value_if item($attname) ""] 
+        set attvalue [value_if item($attname) ""] 
         set v [expr { $attvalue ne {} }]
         set uvalue [expr { ($uvalue << 1) | $v }]
         #log "attname=$attname v=$v uvalue=$uvalue"
@@ -208,10 +208,10 @@ proc ::persistence::orm::codec_bin_3::encode {itemVar} {
 
     # body / data
     foreach attname $__attributes {
-        set type [get_value_if __attinfo($attname,type) ""]
-        lassign [get_value_if __type_to_bin($type) ""] fmt _ num_bytes
+        set type [value_if __attinfo($attname,type) ""]
+        lassign [value_if __type_to_bin($type) ""] fmt _ num_bytes
 
-        set attvalue [get_value_if item($attname) ""]
+        set attvalue [value_if item($attname) ""]
         
         if { $attvalue eq {} } continue
 
@@ -260,9 +260,9 @@ proc ::persistence::orm::codec_bin_3::decode {bytes} {
             continue
         }
 
-        set type [get_value_if __attinfo($attname,type) ""]
+        set type [value_if __attinfo($attname,type) ""]
 
-        lassign [get_value_if __type_to_bin($type) ""] _ fmt num_bytes
+        lassign [value_if __type_to_bin($type) ""] _ fmt num_bytes
 
         # log "attname=$attname fmt=$fmt num_bytes=$num_bytes"
 
@@ -277,7 +277,7 @@ proc ::persistence::orm::codec_bin_3::decode {bytes} {
             incr pos $num_decoded_bytes
             #log "attname=$attname len=$len num_decoded_bytes=$num_decoded_bytes"
             binary scan $bytes "@${pos}A${len}" item($attname) 
-            set item($attname) [encoding convertfrom utf-8 [get_value_if item($attname) ""]]
+            set item($attname) [encoding convertfrom utf-8 [value_if item($attname) ""]]
             # log $item($attname)
             incr pos $len
         }

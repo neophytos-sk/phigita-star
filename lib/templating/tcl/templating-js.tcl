@@ -83,7 +83,7 @@ proc ::templating::js::get_compiled_script {rootname rename_mapVar jsVar} {
     set js(deferred-0) [list]
     set js(deferred-1) [list]
 
-    set groups [lsort -unique [get_value_if __JS__(groups) [list]]]
+    set groups [lsort -unique [value_if __JS__(groups) [list]]]
     foreach group ${groups} {
 
         set js(${group},source) ""

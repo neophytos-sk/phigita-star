@@ -216,7 +216,7 @@ proc ::url::intersect {url1 url2} {
     set sorted_param_names [lsort [array names url1_query_a]]
     set query_args [list]
     foreach name $sorted_param_names {
-        if { $url1_query_a($name) eq [get_value_if url2_query_a($name) ""] } {
+        if { $url1_query_a($name) eq [value_if url2_query_a($name) ""] } {
             lappend query_args "${name}=$url1_query_a($name)"
         } else {
             lappend query_args "${name}="

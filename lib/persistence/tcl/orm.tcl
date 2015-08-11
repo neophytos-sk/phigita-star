@@ -67,11 +67,11 @@ proc ::persistence::orm::init_type {} {
     foreach attname $__attributes {
         array set attinfo $att($attname)
 
-        set type [get_value_if attinfo(type) ""]
-        set func [get_value_if attinfo(func) ""]
-        set null [get_value_if attinfo(null) "1"]
-        set maxlen [get_value_if attinfo(maxlen) ""]
-        set immutable_p [get_value_if attinfo(immutable_p) "0"]
+        set type [value_if attinfo(type) ""]
+        set func [value_if attinfo(func) ""]
+        set null [value_if attinfo(null) "1"]
+        set maxlen [value_if attinfo(maxlen) ""]
+        set immutable_p [value_if attinfo(immutable_p) "0"]
 
         set __attinfo(${attname},type) $type
         set __attinfo(${attname},func) $func
@@ -92,8 +92,8 @@ proc ::persistence::orm::init_type {} {
     foreach idxname $__indexes {
         array set idxinfo $idx($idxname)
 
-        set atts [get_value_if idxinfo(atts) ""]
-        set type [get_value_if idxinfo(type) ""]
+        set atts [value_if idxinfo(atts) ""]
+        set type [value_if idxinfo(type) ""]
 
         assert { $atts ne {} }
         # TODO: assert { $type ne {} }
@@ -250,12 +250,12 @@ proc ::persistence::orm::insert {itemVar {optionsVar ""}} {
 
 
     # validate attribute values
-    set option_validate_p [get_value_if options(validate_p) "1"]
+    set option_validate_p [value_if options(validate_p) "1"]
     if { $option_validate_p } {
         foreach attname $__attributes {
 
             set optional_p $__attinfo(${attname},null)
-            if { $optional_p && [get_value_if item($attname) ""] eq {} } {
+            if { $optional_p && [value_if item($attname) ""] eq {} } {
                 continue
             }
             assert { exists("item($attname)") }
@@ -555,12 +555,12 @@ proc ::persistence::orm::find {{where_clause_argv ""} {optionsVar ""}} {
 
     }
 
-    #set expand_fn [get_value_if options(expand_fn) ""]
+    #set expand_fn [value_if options(expand_fn) ""]
     #set slicelist [::persistence::expand_slice slicelist $expand_fn]
     
     # run the predicates here
 
-    set option_order_by [get_value_if options(order_by) ""]
+    set option_order_by [value_if options(order_by) ""]
     if { $option_order_by ne {} } {
         lassign $option_order_by sort_attname sort_direction sort_comparison
         # assert { $sort_direction in {increasing decreasing} }
@@ -569,8 +569,8 @@ proc ::persistence::orm::find {{where_clause_argv ""} {optionsVar ""}} {
     }
 
     if { exists("options(offset)") || exists("options(limit)") } {
-        set offset [get_value_if options(offset) "0"]
-        set limit [get_value_if options(limit) "end"]
+        set offset [value_if options(offset) "0"]
+        set limit [value_if options(limit) "end"]
         set slicelist [lrange $slicelist $offset [expr { $limit - 1 }]]
     }
 
