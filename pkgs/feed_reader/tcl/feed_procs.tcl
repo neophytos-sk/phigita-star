@@ -907,9 +907,6 @@ proc ::feed_reader::ls {args} {
 
     set slicelist [::newsdb::news_item_t find $where_clause options]
 
-
-
-
     if { exists("__arg_long_listing") } {
         print_log_header
     } else {
