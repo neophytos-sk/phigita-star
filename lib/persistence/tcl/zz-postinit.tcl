@@ -15,9 +15,17 @@ proc ::persistence::init {} {
 
         if { [setting_p "write_ahead_log"] } {
 
+            wrap_proc ::persistence::fs::exists_column_data_p {oid} {
+                set exists_p [call_orig $oid]
+                return [expr {
+                    [::persistence::mem::exists_column_data_p $oid]
+                    || $exists_p
+                }]
+            }
+
             wrap_proc ::persistence::fs::set_column_data {oid data {codec_conf ""}} {
                 ::persistence::commitlog::set_column_data $oid $data $codec_conf
-                ::persistence::mem::cache_column_data $oid $data $codec_conf
+                ::persistence::mem::set_column_data $oid $data $codec_conf
             }
 
             wrap_proc ::persistence::fs::get_column_data {oid {codec_conf ""}} {
@@ -32,6 +40,30 @@ proc ::persistence::init {} {
                 #::persistence::mem::cache_column_data $oid $data $codec_conf
                 return $data
             }
+
+            if {0} {
+
+                wrap_proc ::persistence::fs::get_files {path} {
+                    set files [::persistence::mem::get_files $path]
+                    return [lunion $files [call_orig $path]]
+                }
+
+                wrap_proc ::persistence::fs::get_subdirs {path} {
+                    set subdirs [::persistence::mem::get_subdirs $path]
+                    return [lunion $subdirs [call_orig $path]]
+                }
+
+                wrap_proc ::persistence::fs::get_name {oid} {
+                    return [file tail $oid]
+                }
+
+                # NOT IMPLEMENTED YET
+                wrap_proc ::persistence::fs::set_link_data {oid target_oid {codec_conf ""}} {
+                    ::persistence::commitlog::set_link_data $oid $target_oid $codec_conf
+                    ::persistence::mem::cache_link_data $oid $target_oid $codec_conf
+                }
+            }
+
         }
 
     } else {

@@ -134,6 +134,12 @@ proc ::persistence::commitlog::analyze {} {
 
 }
 
+proc ::persistence::commitlog::checkpoint {pos} {
+    variable fp
+    seek $fp 0 start
+    ::util::io::write_int $fp $pos
+    seek $fp $pos start
+}
 
 # Write-Ahead Logging (Wal) is a standard method for ensuring data
 # integrity. Briefly, WAL's central concept is that changes to data
@@ -154,40 +160,31 @@ proc ::persistence::commitlog::process {} {
 
     log "pos1=$pos1 pos2=$pos2 tell=[tell $fp]"
 
-    set mem_p 1
+    set mem_p 0
 
     seek $fp $pos1 start
-    while { $pos1 < $pos2 && [tell $fp] != $pos2 } {
+    while { $pos1 < $pos2 } {
         ::util::io::read_string $fp oid
         ::util::io::read_string $fp data
+        set pos1 [tell $fp]
 
-        # 1. exec command
         if { $mem_p } {
             ::persistence::mem::set_column_data $oid $data "-translation binary"
         } else {
 
+            # 1. exec command
             call_orig_of ::persistence::fs::set_column_data $oid $data "-translation binary"
 
             # 2. increase and write int to pos1
-            set _savedpos [tell $fp]
-            seek $fp 0 start
-            ::util::io::write_int $fp $_savedpos
-            seek $fp $_savedpos start
-            set pos1 $_savedpos
-
+            checkpoint $pos1
         }
 
     }
 
     if { $mem_p } {
         ::persistence::mem::dump
+        checkpoint $pos2
     }
-
-    seek $fp 0 start
-
-    ::util::io::write_int $fp $pos2  ;# makes pos1 equal to pos2
-
-    seek $fp $savedpos start
 
     after 10000 [list ::persistence::commitlog::process]
     

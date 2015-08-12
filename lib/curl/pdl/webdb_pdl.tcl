@@ -22,6 +22,11 @@ namespace eval ::webdb::web_page_t {
             tags "all"
         }
 
+        by_reversehost {
+            type "index"
+            atts "reversehost"
+        }
+
     }
 
     variable att
@@ -29,8 +34,27 @@ namespace eval ::webdb::web_page_t {
         urlsha1 {
             type "sha1_hex"
         }
+
         url {}
         content {}
+
+        scheme {}
+        host {
+            null "0"
+        }
+        port {}
+        path {}
+        query {}
+        fragment {}
+
+        reversehost {
+            null "0"
+            func {{itemVar} {
+                upvar $itemVar item
+                reversedotted $item(host)
+            }}
+        }
+
     }
 
     variable aggregates
@@ -39,7 +63,3 @@ namespace eval ::webdb::web_page_t {
 }
 
 ::webdb::web_page_t init_type
-
-
-
-

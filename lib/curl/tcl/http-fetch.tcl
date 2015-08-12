@@ -1,7 +1,3 @@
-package require core
-package require util_procs
-package require persistence
-
 namespace eval ::web {
     namespace ensemble create -subcommands {fetch cache_fetch}
 }
@@ -85,11 +81,6 @@ proc ::web::cache_fetch {contentVar url {optionsVar ""} {infoVar ""} {cache_pVar
         upvar ${cache_pVar} cache_p
     }
 
-    # set domain [::util::domain_from_url $url]
-    # set reversedomain [reversedomain $domain]
-    # set path "webdb/web_page.by_domain/${reversedomain}/${urlsha1}"
-    # set oid [::persistence::get_column $path html exists_p]
-
     array set item [list]
     set urlsha1 [::sha1::sha1 -hex $url]
     set where_clause [list [list urlsha1 = $urlsha1]]
@@ -119,6 +110,8 @@ proc ::web::cache_fetch {contentVar url {optionsVar ""} {infoVar ""} {cache_pVar
     }
 
     if { ![set errorcode [::web::fetch content $url options info]] } {
+
+        array set item [url split $url]
 
         array set item [list    \
             urlsha1 $urlsha1    \

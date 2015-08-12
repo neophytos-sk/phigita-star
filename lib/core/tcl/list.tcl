@@ -94,25 +94,25 @@ proc intersect {list1 list2} {
 
 proc lintersect {a b} {
     foreach e $a {
-	set x($e) {}
+        set x($e) {}
     }
     set result {}
     foreach e $b {
-	if {[info exists x($e)]} {
-	    lappend result $e
-	}
+        if {[info exists x($e)]} {
+            lappend result $e
+        }
     }
     return $result
 }
 
 proc lunion {a b} {
     foreach e $a {
-	set x($e) {}
+        set x($e) {}
     }
     foreach e $b {
-	if {![info exists x($e)]} {
-	    lappend a $e
-	}
+        if {![info exists x($e)]} {
+            lappend a $e
+        }
     }
     return $a
 }

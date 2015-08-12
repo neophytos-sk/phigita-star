@@ -8,7 +8,12 @@ namespace eval ::url {
         fmt_ex fmt_sp match
         encode decode
         intersect
+        scheme host port path query fragment
+        domain
     }
+
+    namespace export \
+        domain_from_host
 
     # url encode/decode mapping initialization
     variable ue_map
@@ -307,4 +312,78 @@ proc ::url::fmt_sp {fmt intersection_url} {
 
     return [url join $fmt_keyl]
 
+}
+
+proc ::url::scheme {url} {
+    array set url_a [url split $url]
+    return $url_a(scheme)
+}
+
+proc ::url::host {url} {
+    array set url_a [url split $url]
+    return $url_a(host)
+}
+
+proc ::url::port {url} {
+    array set url_a [url split $url]
+    return $url_a(port)
+}
+
+proc ::url::path {url} {
+    array set url_a [url split $url]
+    return $url_a(path)
+}
+
+proc ::url::query {url} {
+    array set url_a [url split $url]
+    return $url_a(query)
+}
+
+proc ::url::fragment {url} {
+    array set url_a [url split $url]
+    return $url_a(fragment)
+}
+
+
+proc ::url::domain_from_host {host} {
+
+    assert { ${host} ne {} }
+
+    set re {([^\.]+\.)(com\.cy|ac.cy|gov.cy|org.cy|gr|com|net|org|info|coop|int|co\.uk|org\.uk|ac\.uk|uk|co|eu|co.jp|__and so on__)$}
+
+    if { [regexp -- ${re} ${host} whole domain tld] } {
+        return ${domain}${tld}
+    }
+
+    #puts "could not match regexp to host=${host}"
+
+    return ${host}
+}
+
+proc ::url::domain {url} {
+
+    if { ${url} eq {} } {
+        return
+    }
+
+    set index [string first {:} ${url}]
+    if { ${index} == -1 } {
+        return
+    }
+
+    set scheme [string range ${url} 0 ${index}]
+    if { ${scheme} ne {http:} && ${scheme} ne {https:} } {
+        return
+    }
+
+    set host [url host ${url}]
+
+    # note that host can be empty, e.g. if url was "http:///"    
+
+    return [domain_from_host ${host}]
+}
+
+
+namespace eval :: {
+    namespace import ::url::domain_from_host
 }

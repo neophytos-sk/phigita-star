@@ -260,6 +260,12 @@ proc ::persistence::orm::insert {itemVar {optionsVar ""}} {
             }
             assert { exists("item($attname)") }
 
+            if { $attname eq {reversehost} } {
+                if { $item($attname) eq {} } {
+                    error "empty reversehost"
+                }
+            }
+
             set maxlen $__attinfo(${attname},maxlen)
             if { $maxlen ne {} } {
                 assert { [string length $item($attname)] < $maxlen }
@@ -292,8 +298,8 @@ proc ::persistence::orm::insert {itemVar {optionsVar ""}} {
         }
         set row_key [to_row_key_by $idxname item]
         set src [to_path_by $idxname $row_key {*}$item($pk)]
-        #::persistence::insert_link $src $target
-        ::persistence::insert_column $src $data
+        ::persistence::insert_link $src $target
+        #::persistence::insert_column $src $data
     }
 
     # ::persistence::end_batch

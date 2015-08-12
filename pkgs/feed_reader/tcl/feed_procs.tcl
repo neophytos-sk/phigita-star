@@ -133,7 +133,7 @@ proc ::feed_reader::fetch_feed {resultVar feedVar {stoptitlesVar ""}} {
     if { [info exists feed(domain)] } {
         set domain $feed(domain)
     } else {
-        set domain [::util::domain_from_url ${url}]
+        set domain [url domain ${url}]
     }
 
     set xpath_feed_item [value_if \
@@ -502,13 +502,13 @@ proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar infoVa
         set article_langclass [lindex [::ttext::langclass "$article_title $article_body"] 0]
     }
 
-    set domain [::util::domain_from_url ${link}]
+    set domain [url domain ${link}]
 
     set body_length [string length ${article_body}]
 
     array set item [list \
         domain ${domain} \
-        reversedomain [reversedomain $domain] \
+        reversedomain [reversedotted $domain] \
         url $link \
         langclass $article_langclass \
         title $article_title \
@@ -837,7 +837,7 @@ proc ::feed_reader::rm {args} {
     }
 
     if { exists("__arg_domain") } {
-        set reversedomain [reversedomain $domain]
+        set reversedomain [reversedotted $domain]
         lappend where_clause [list reversedomain = $reversedomain]
     }
 
@@ -888,7 +888,7 @@ proc ::feed_reader::ls {args} {
     }
 
     if { exists("__arg_domain") } {
-        set reversedomain [reversedomain $domain]
+        set reversedomain [reversedotted $domain]
         lappend where_clause [list reversedomain = $reversedomain]
     }
 
@@ -1534,7 +1534,7 @@ proc ::feed_reader::print_log_entry {itemVar {contextVar ""}} {
         upvar ${contextVar} context
     }
 
-    set domain [::util::domain_from_url $item(url)]
+    set domain [url domain $item(url)]
 
     set is_copy_string ""
     if { [string is true -strict [value_if item(is_copy_p) 0]] } {
@@ -1598,7 +1598,7 @@ proc ::feed_reader::print_short_log_entry {itemVar {contextVar ""}} {
         upvar ${contextVar} context
     }
 
-    set domain [::util::domain_from_url $item(url)]
+    set domain [url domain $item(url)]
 
     set is_copy_string ""
     if { [string is true -strict [value_if item(is_copy_p) 0]] } {
@@ -1776,7 +1776,7 @@ proc ::feed_reader::write_item {timestamp normalized_link feedVar itemVar resync
     set item(urlsha1) ${urlsha1}
     set item(contentsha1) ${contentsha1}
 
-    set reversedomain [reversedomain [::util::domain_from_url ${normalized_link}]]
+    set reversedomain [reversedotted [url domain ${normalized_link}]]
 
 
     array unset item body
@@ -1849,7 +1849,7 @@ proc ::feed_reader::resync_item {oid} {
 
     set domain [value_if item(domain) ""]
     if { ${domain} eq {} } {
-        set domain [::util::domain_from_url $item(url)]
+        set domain [url domain $item(url)]
         set item(domain) ${domain}
     }
 
@@ -1973,7 +1973,7 @@ proc ::feed_reader::sync_feeds {{news_sources ""} {debug_p "0"}} {
             array set feed [::util::readfile ${filename}]
 
             # TODO: maintain domain in feed spec
-            set domain [::util::domain_from_url $feed(url)]
+            set domain [url domain $feed(url)]
 
             set timestamp [clock seconds]
             if { ${check_fetch_feed_p} && ![fetch_feed_p ${feed_name} ${timestamp}] } {
@@ -2207,8 +2207,8 @@ proc ::feed_reader::url_pass_p {feedVar href} {
     }
 
     # drop urls from other domains
-    set domain [::util::domain_from_url $feed(url)]
-    if { ${domain} ne [::util::domain_from_url ${canonical_url}] } {
+    set domain [url domain $feed(url)]
+    if { ${domain} ne [url domain ${canonical_url}] } {
         return false
     }
 

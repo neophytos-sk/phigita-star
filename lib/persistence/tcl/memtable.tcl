@@ -10,6 +10,38 @@ namespace eval ::persistence::mem {
 
 }
 
+proc ::persistence::mem::get_files {path} {
+    variable __mem
+
+    set types "f l d"
+    set keys [array names __mem ${path}*,type]
+
+    set result [list]
+    foreach key $keys {
+        set type $__mem($key)
+        if { $type in $types } {
+            lappend result [lindex [split $key {,}] 0]
+        }
+    }
+
+    return $result
+
+}
+
+proc ::persistence::mem::get_subdirs {path} {
+    variable __mem
+
+    set files [get_files $path]
+    set result [list]
+    foreach oid $files {
+        if { $__mem(${oid},type) eq {d} } {
+            lappend result $oid
+        }
+    }
+    return $result
+
+}
+
 proc ::persistence::mem::exists_column_data_p {oid} {
     variable __mem
     return [info exists __mem(${oid},data)]
@@ -34,6 +66,12 @@ proc ::persistence::mem::set_column_data {oid data {codec_conf ""}} {
 }
 
 proc ::persistence::mem::cache_column_data {oid data {codec_conf ""}} {
+    variable __mem
+    if { [value_if __mem(${oid},dirty_p) "0"] } {
+        log "cannot overwrite uncommited data"
+        return
+    }
+
     if { [exists_column_data_p $oid] } {
         del_column_data $oid
     }
@@ -77,6 +115,7 @@ proc ::persistence::mem::ins_column_data {oid data {codec_conf ""}} {
     set __mem(${oid},size)      [string bytelength $data]
     set __mem(${oid},index)     $__cnt
     set __mem(${oid},dirty_p)   1
+    set __mem(${oid},type)      "f"
 
     incr __cnt
 }
@@ -96,6 +135,7 @@ proc ::persistence::mem::del_column_data {oid} {
         unset __mem(${oid},size)
         unset __mem(${oid},index)
         unset __mem(${oid},dirty_p)
+        unset __mem(${oid},type)
     } else {
         error "memtable (del): no such oid"
     }
@@ -107,12 +147,17 @@ proc ::persistence::mem::dump {} {
     log "dumping memtable to filesystem"
     variable __mem
     variable __oid
+
+    set count 0
     foreach oid $__oid {
         if { $__mem(${oid},dirty_p) } {
             log "dumping oid=$oid"
             set data $__mem(${oid},data)
             call_orig_of ::persistence::fs::set_column_data $oid $data "-translation binary"
             set __mem(${oid},dirty_p) 0
+            incr count
         }
     }
+
+    log "dumped $count records"
 }

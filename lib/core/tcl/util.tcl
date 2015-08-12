@@ -4,7 +4,8 @@ namespace eval ::util {
         boolval \
         valuelist_if \
         value_if \
-        set_if
+        set_if \
+        reversedotted
 }
 
 proc ::util::coalesce {args} {
@@ -45,6 +46,11 @@ proc ::util::set_if {varname value} {
     }
 }
 
+proc ::util::reversedotted {dotted_str} {
+    return [join [lreverse [split ${dotted_str} {.}]] {.}]
+}
+
+
 
 namespace eval :: {
     namespace import ::util::coalesce
@@ -52,4 +58,5 @@ namespace eval :: {
     namespace import ::util::value_if
     namespace import ::util::valuelist_if
     namespace import ::util::set_if
+    namespace import ::util::reversedotted
 }
