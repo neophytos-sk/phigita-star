@@ -420,7 +420,6 @@ proc ::feed_reader::update_crawler_stats {timestamp feed_name statsVar} {
 	    "${feed_name}"                  \
 	    "${pretty_timeval}"            \
 	    "stats"
-
     }
 
     # Example:

@@ -1,7 +1,7 @@
 namespace eval ::persistence::fs {
 
     variable base_dir
-    set base_dir "/web/data/mystore"
+    set base_dir [config get ::persistence base_dir]
 
     namespace export -clear \
         define_ks define_cf \

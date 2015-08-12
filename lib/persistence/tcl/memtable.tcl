@@ -33,6 +33,16 @@ proc ::persistence::mem::set_column_data {oid data {codec_conf ""}} {
     ins_column_data $oid $data $codec_conf
 }
 
+proc ::persistence::mem::cache_column_data {oid data {codec_conf ""}} {
+    if { [exists_column_data_p $oid] } {
+        del_column_data $oid
+    }
+    ins_column_data $oid $data $codec_conf
+
+    variable __mem
+    set __mem(${oid},dirty_p) 0
+}
+
 # Even though upd_column_data and set_column_data appear equivalent,
 # they are not. upd_column_data replaces the values of an existing
 # record whereas, set_column_data creates a new record if none already
@@ -62,10 +72,11 @@ proc ::persistence::mem::ins_column_data {oid data {codec_conf ""}} {
 
     lappend __oid $oid
 
-    set __mem(${oid},data) $data
-    set __mem(${oid},conf) $codec_conf
-    set __mem(${oid},size) [string bytelength $data]
-    set __mem(${oid},index) $__cnt
+    set __mem(${oid},data)      $data
+    set __mem(${oid},conf)      $codec_conf
+    set __mem(${oid},size)      [string bytelength $data]
+    set __mem(${oid},index)     $__cnt
+    set __mem(${oid},dirty_p)   1
 
     incr __cnt
 }
@@ -78,15 +89,30 @@ proc ::persistence::mem::del_column_data {oid} {
 
     if { [exists_column_data_p $oid] } {
         set index $__mem(${oid},index)
-        set __oid [lreplace __oid $index $index {}]
+        set __oid [lreplace $__oid $index $index]
         incr __cnt -1
         unset __mem(${oid},data)
         unset __mem(${oid},conf)
         unset __mem(${oid},size)
         unset __mem(${oid},index)
+        unset __mem(${oid},dirty_p)
     } else {
         error "memtable (del): no such oid"
     }
 
 }
 
+
+proc ::persistence::mem::dump {} {
+    log "dumping memtable to filesystem"
+    variable __mem
+    variable __oid
+    foreach oid $__oid {
+        if { $__mem(${oid},dirty_p) } {
+            log "dumping oid=$oid"
+            set data $__mem(${oid},data)
+            call_orig_of ::persistence::fs::set_column_data $oid $data "-translation binary"
+            set __mem(${oid},dirty_p) 0
+        }
+    }
+}

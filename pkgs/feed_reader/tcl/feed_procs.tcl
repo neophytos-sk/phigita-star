@@ -1766,7 +1766,7 @@ proc ::feed_reader::write_item {timestamp normalized_link feedVar itemVar resync
             title $item(title)       \
             body $item(body)]
 
-        assert { $content_item(title) ne {} } 
+        #assert { $content_item(title) ne {} } 
 
         ::newsdb::content_item_t insert content_item
     }

@@ -82,7 +82,7 @@ proc ::config::setting_p {param_name} {
         variable __current_nsp
         set nsp $__current_nsp
     } else {
-        error "setting_p: type=$type"
+        error "setting: type=$type"
     }
     return [boolval [config get ${nsp} ${param_name}]]
 }

@@ -182,7 +182,7 @@ namespace eval ::newsdb::content_item_t {
         }
         title {
             type ""
-            null "0"
+            null "1"
         }
         body {
             type ""

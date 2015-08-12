@@ -3,10 +3,13 @@ package require util_procs
 
 config section ::persistence
 config param use_server "off"
+config param use_threads "off"
 config param client_server "on"
 config param write_ahead_log "on"
 config param address "127.0.0.1"
 config param port "9900"
+config param default_storage_type "fs"
+config param base_dir "/web/data/mystore"
 
 assert { ![use_p "server"] || [setting_p "client_server"] }
 
@@ -35,3 +38,4 @@ assert {
     || [use_p "server"] 
     || [can_connect_p $addr $port] 
 }
+

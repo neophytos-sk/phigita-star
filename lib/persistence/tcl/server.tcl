@@ -87,6 +87,7 @@ proc ::db_server::handle_conn {sock args} {
 
             set cmd "set x \[{*}${line}\]"
             if { [catch $cmd errmsg] } {
+                log "cmd=$cmd"
                 log "errmsg=$errmsg"
                 ::util::io::write_string $sock $errmsg
                 ::util::io::write_char $sock $error_retcode

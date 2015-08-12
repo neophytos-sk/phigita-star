@@ -154,22 +154,38 @@ proc ::persistence::commitlog::process {} {
 
     log "pos1=$pos1 pos2=$pos2 tell=[tell $fp]"
 
+    set mem_p 1
+
+    seek $fp $pos1 start
     while { $pos1 < $pos2 && [tell $fp] != $pos2 } {
         ::util::io::read_string $fp oid
         ::util::io::read_string $fp data
 
         # 1. exec command
-        # ::persistence::mem::set_column_data $oid $data
-        call_orig_of ::persistence::fs::set_column_data $oid $data "-translation binary"
+        if { $mem_p } {
+            ::persistence::mem::set_column_data $oid $data "-translation binary"
+        } else {
 
-        # 2. increase and write int to pos1
-        set savedpos [tell $fp]
-        seek $fp 0 start
-        ::util::io::write_int $fp $savedpos
-        seek $fp $savedpos start
-        set pos1 $savedpos
+            call_orig_of ::persistence::fs::set_column_data $oid $data "-translation binary"
+
+            # 2. increase and write int to pos1
+            set _savedpos [tell $fp]
+            seek $fp 0 start
+            ::util::io::write_int $fp $_savedpos
+            seek $fp $_savedpos start
+            set pos1 $_savedpos
+
+        }
 
     }
+
+    if { $mem_p } {
+        ::persistence::mem::dump
+    }
+
+    seek $fp 0 start
+
+    ::util::io::write_int $fp $pos2  ;# makes pos1 equal to pos2
 
     seek $fp $savedpos start
 
