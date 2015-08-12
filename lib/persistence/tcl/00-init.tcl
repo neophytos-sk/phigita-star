@@ -2,8 +2,11 @@ package require core
 package require util_procs
 
 config section ::persistence
+
 config param use_server "off"
 config param use_threads "off"
+config param use_memtable "on"
+
 config param client_server "on"
 config param write_ahead_log "on"
 config param address "127.0.0.1"
@@ -15,7 +18,7 @@ assert { ![use_p "server"] || [setting_p "client_server"] }
 
 # no point having the commitlog code loaded on the client side,
 # the assertion attempts to set the default value to off but if 
-# it the actual value was tampered with, i.e. if it was explicitly
+# the actual value was tampered with, i.e. if it was explicitly
 # set, for example, via config set ::persistence write_ahead_log "on"
 # then this assertion would raise an error as the code inside does
 # not modify the actual value, only the default 

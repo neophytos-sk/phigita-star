@@ -5,6 +5,42 @@
 #
 #######################################################################
 
+proc ::persistence::fs::get_recursive_subdirs {dir resultVar} {
+
+    upvar $resultVar result
+
+    set subdirs [get_subdirs ${dir}]
+    foreach subdir ${subdirs} {
+        lappend result ${subdir}
+        get_recursive_subdirs ${subdir} result
+    }
+
+}
+
+
+
+proc ::persistence::fs::__get_slice_from_supercolumn {supercolumn_dir {slice_predicate ""}} {
+
+    set dirs [list ${supercolumn_dir}]
+
+    get_recursive_subdirs ${supercolumn_dir} dirs
+
+    set slicelist [list]
+    foreach dir ${dirs} {
+        foreach filename [get_files ${dir}] {
+            lappend slicelist ${filename}
+        }
+    }
+
+    set slicelist [lsort -decreasing ${slicelist}]
+    if { ${slice_predicate} ne {} } {
+        lassign ${slice_predicate} cmd args
+        predicate=${cmd} slicelist {*}${args}
+    }
+    return ${slicelist}
+}
+
+
 proc ::persistence::fs::get_paths {dir} {
     set paths [list]
     set files_or_dirs [glob -tails -types {d f} -nocomplain -directory ${dir} *]

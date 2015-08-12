@@ -14,56 +14,70 @@ proc ::persistence::init {} {
             "namespace import -force ::persistence::${storage_type}::*"
 
         if { [setting_p "write_ahead_log"] } {
-
-            wrap_proc ::persistence::fs::exists_column_data_p {oid} {
-                set exists_p [call_orig $oid]
-                return [expr {
-                    [::persistence::mem::exists_column_data_p $oid]
-                    || $exists_p
-                }]
-            }
-
             wrap_proc ::persistence::fs::set_column_data {oid data {codec_conf ""}} {
                 ::persistence::commitlog::set_column_data $oid $data $codec_conf
                 ::persistence::mem::set_column_data $oid $data $codec_conf
             }
 
             wrap_proc ::persistence::fs::get_column_data {oid {codec_conf ""}} {
-
                 set exists_p [::persistence::mem::exists_column_data_p $oid]
                 if { $exists_p } {
                     return [::persistence::mem::get_column_data $oid $codec_conf]
                 }
-
                 set data [call_orig $oid $codec_conf]
-
                 #::persistence::mem::cache_column_data $oid $data $codec_conf
                 return $data
             }
 
-            if {0} {
+        }
 
-                wrap_proc ::persistence::fs::get_files {path} {
-                    set files [::persistence::mem::get_files $path]
-                    return [lunion $files [call_orig $path]]
-                }
+        if { [use_p "memtable"] } {
 
-                wrap_proc ::persistence::fs::get_subdirs {path} {
-                    set subdirs [::persistence::mem::get_subdirs $path]
-                    return [lunion $subdirs [call_orig $path]]
+            wrap_proc ::persistence::fs::get_mtime {oid} {
+                if { [::persistence::mem::exists_column_data_p $oid] } {
+                    return [::persistence::mem::get_mtime $oid]
                 }
-
-                wrap_proc ::persistence::fs::get_name {oid} {
-                    return [file tail $oid]
-                }
-
-                # NOT IMPLEMENTED YET
-                wrap_proc ::persistence::fs::set_link_data {oid target_oid {codec_conf ""}} {
-                    ::persistence::commitlog::set_link_data $oid $target_oid $codec_conf
-                    ::persistence::mem::cache_link_data $oid $target_oid $codec_conf
-                }
+                return [call_orig $oid]
             }
 
+            wrap_proc ::persistence::fs::exists_column_data_p {oid} {
+                set exists_1_p [::persistence::mem::exists_column_data_p $oid]
+                set exists_2_p [call_orig $oid]
+                return [expr { $exists_1_p || $exists_2_p }]
+            }
+            
+            wrap_proc ::persistence::fs::exists_supercolumn_data_p {oid} {
+                set exists_1_p [::persistence::mem::exists_supercolumn_data_p $oid]
+                set exists_2_p [call_orig $oid]
+                return [expr { $exists_1_p || $exists_2_p }]
+            }
+
+            wrap_proc ::persistence::fs::get_files {path} {
+                set filelist1 [::persistence::mem::get_files $path]
+                set filelist2 [call_orig $path]
+                # log mem_get_files=$filelist1
+                # log fs_get_files=$filelist2
+                return [lunion $filelist1 $filelist2]
+            }
+
+            wrap_proc ::persistence::fs::get_subdirs {path} {
+                set subdirs_1 [::persistence::mem::get_subdirs $path]
+                set subdirs_2 [call_orig $path]
+                return [lunion $subdirs_1 $subdirs_2]
+            }
+        }
+
+        if {0} {
+
+            wrap_proc ::persistence::fs::get_name {oid} {
+                return [file tail $oid]
+            }
+
+            # NOT IMPLEMENTED YET
+            wrap_proc ::persistence::fs::set_link_data {oid target_oid {codec_conf ""}} {
+                ::persistence::commitlog::set_link_data $oid $target_oid $codec_conf
+                ::persistence::mem::cache_link_data $oid $target_oid $codec_conf
+            }
         }
 
     } else {

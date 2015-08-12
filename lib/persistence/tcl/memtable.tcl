@@ -1,3 +1,8 @@
+
+if { 0 && ![use_p "memtable"] } {
+    return
+}
+
 namespace eval ::persistence::mem {
 
     variable __mem
@@ -8,20 +13,19 @@ namespace eval ::persistence::mem {
 
     variable __cnt 0
 
+    variable __dir
+    array set __dir [list]
+
 }
 
 proc ::persistence::mem::get_files {path} {
     variable __mem
 
-    set types "f l d"
-    set keys [array names __mem ${path}*,type]
+    set names [array names __mem ${path}/*,data]
 
     set result [list]
-    foreach key $keys {
-        set type $__mem($key)
-        if { $type in $types } {
-            lappend result [lindex [split $key {,}] 0]
-        }
+    foreach name $names {
+        lappend result [lindex [split $name {,}] 0]
     }
 
     return $result
@@ -31,13 +35,19 @@ proc ::persistence::mem::get_files {path} {
 proc ::persistence::mem::get_subdirs {path} {
     variable __mem
 
-    set files [get_files $path]
+    set len [llength [split $path {/}]]
+
+    set files [get_files ${path}]
     set result [list]
     foreach oid $files {
-        if { $__mem(${oid},type) eq {d} } {
-            lappend result $oid
-        }
+        lappend result [join [lrange [split $path {/}] 0 $len] {/}]
     }
+
+    #log names=[join [array names __mem ${path}*,data] \n]
+    #log "files for subdirs processing: $files"
+    #log ""
+    #log "subdirs of $path: [join $result \n]"
+
     return $result
 
 }
@@ -47,12 +57,21 @@ proc ::persistence::mem::exists_column_data_p {oid} {
     return [info exists __mem(${oid},data)]
 }
 
+proc ::persistence::mem::exists_supercolumn_data_p {oid} {
+    variable __mem
+    return [expr { [array names  __mem "${oid}/*,data"] ne {} }]
+}
+
 proc ::persistence::mem::get_column_data {oid {codec_conf ""}} {
     variable __mem
 
     set exists_p [exists_column_data_p $oid]
     if { $exists_p } {
-        return $__mem(${oid},data)
+        if { [file extension $oid] eq {.link} } {
+            return [get_column_data $__mem(${oid},data) $codec_conf]
+        } else {
+            return $__mem(${oid},data)
+        }
     }
     return
 }
@@ -61,6 +80,10 @@ proc ::persistence::mem::get_column_data {oid {codec_conf ""}} {
 proc ::persistence::mem::set_column_data {oid data {codec_conf ""}} {
     if { [exists_column_data_p $oid] } {
         del_column_data $oid
+    }
+
+    if { [string match *by_reversedomain* $oid] } {
+         log "~~~~~~~~~~~~~ oid=$oid"
     }
     ins_column_data $oid $data $codec_conf
 }
@@ -99,13 +122,18 @@ proc ::persistence::mem::upd_column_data {oid data {codec_conf ""}} {
 
 }
 
+proc ::persistence::mem::get_mtime {oid} {
+    variable __mem
+    return $__mem(${oid},mtime)
+}
+
 proc ::persistence::mem::ins_column_data {oid data {codec_conf ""}} {
     variable __mem
     variable __oid
     variable __cnt
 
     if { [exists_column_data_p $oid] } {
-        error "memtable (ins): oid already exists"
+        log "!!! memtable (ins): oid already exists (=$oid)"
     }
 
     lappend __oid $oid
@@ -116,6 +144,9 @@ proc ::persistence::mem::ins_column_data {oid data {codec_conf ""}} {
     set __mem(${oid},index)     $__cnt
     set __mem(${oid},dirty_p)   1
     set __mem(${oid},type)      "f"
+    set __mem(${oid},mtime)     [clock milliseconds]
+
+    # mkdir [file dirname ${oid}]
 
     incr __cnt
 }
@@ -125,6 +156,8 @@ proc ::persistence::mem::del_column_data {oid} {
     variable __mem
     variable __oid
     variable __cnt
+
+    return
 
     if { [exists_column_data_p $oid] } {
         set index $__mem(${oid},index)
@@ -144,14 +177,19 @@ proc ::persistence::mem::del_column_data {oid} {
 
 
 proc ::persistence::mem::dump {} {
-    log "dumping memtable to filesystem"
+    #log "dumping memtable to filesystem"
     variable __mem
     variable __oid
 
+    set fp [open /tmp/memtable.txt w]
+    puts $fp [join [array names __mem *,data] \n]
+    close $fp
+
     set count 0
     foreach oid $__oid {
+        #log ">>> oid=$oid"
         if { $__mem(${oid},dirty_p) } {
-            log "dumping oid=$oid"
+            #log "dumping $oid"
             set data $__mem(${oid},data)
             call_orig_of ::persistence::fs::set_column_data $oid $data "-translation binary"
             set __mem(${oid},dirty_p) 0
@@ -159,5 +197,5 @@ proc ::persistence::mem::dump {} {
         }
     }
 
-    log "dumped $count records"
+    #log "dumped $count records"
 }

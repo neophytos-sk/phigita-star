@@ -170,6 +170,7 @@ proc ::persistence::fs::create_row_if {ks cf_axis row_key row_pathVar} {
 
     set row_path [get_row ${ks} ${cf_axis} ${row_key}]
 
+    # NOTE: messes with get_files results when use_memtable is true
     set row_dir [get_filename ${row_path}]
     file mkdir $row_dir
 
@@ -312,13 +313,16 @@ proc ::persistence::fs::set_link_data {oid target_oid {codec_conf ""}} {
         file link $src $target
     } else {
         # otherwise, use set_column_data to replicate the data
-        set_column_data $oid [get_column_data $target_oid]
+        set_column_data ${oid}.link $target_oid
     }
 
 }
 
 proc ::persistence::fs::get_column_data {oid {codec_conf ""}} {
     # log "retrieving data from file system... codec_conf=$codec_conf"
+    if { [file extension ${oid}] eq {.link} } {
+        set oid [::util::readfile [get_filename $oid] {*}$codec_conf]
+    }
     set filename [get_filename ${oid}]
     return [::util::readfile ${filename} {*}$codec_conf]
 }
@@ -338,11 +342,16 @@ proc ::persistence::fs::del_column_data {oid} {
 
 
 proc ::persistence::fs::expand_oid {oid} {
+    # log "is_row_oid_p=[is_row_oid_p $oid]"
+    # log "is_supercolumn_oid_p=[is_supercolumn_oid_p $oid]"
+
     if { [is_row_oid_p $oid] && [exists_row_data_p $oid] } {
         return [get_leaf_nodes $oid]
     } elseif { [is_supercolumn_oid_p $oid] && [exists_supercolumn_data_p $oid] } {
-        return [get_leaf_nodes $oid]
+        set leafs [get_leaf_nodes $oid]
+        return $leafs
     } else {
+        # log "column oid $oid"
         return [list $oid]
     }
 }
@@ -461,6 +470,15 @@ proc ::persistence::fs::get_data {oid} {
 
 proc ::persistence::fs::get_name {oid} {
     set filename_or_dir [get_filename $oid]
+    if { [file extension $oid] eq {.link} } {
+        set filename_or_dir [::util::readfile $filename_or_dir]
+        #set filename_or_dir [file link ${filename_or_dir}]
+    }
+    return [file tail [file rootname ${filename_or_dir}]]
+}
+
+proc ::persistence::fs::OLD_get_name {oid} {
+    set filename_or_dir [get_filename $oid]
     if { [file type ${filename_or_dir}] eq {link} } {
         set filename_or_dir [file link ${filename_or_dir}]
     }
@@ -468,7 +486,7 @@ proc ::persistence::fs::get_name {oid} {
 }
 
 proc ::persistence::fs::get_column_path {oid} {
-    assert { [is_column_oid_p] }
+    assert { [is_column_oid_p $oid] }
     set first [string first {+} $oid]
     return [string range $oid [expr { 1 + $first }] end]
 }
@@ -479,13 +497,14 @@ proc ::persistence::fs::get_row_path {oid} {
 }
 
 proc ::persistence::fs::get_leaf_nodes {path} {
+    # log "!!! get_leaf_nodes $path"
     set subdirs [get_subdirs $path]
     if { $subdirs eq {} } {
         return [get_files $path]
     } else {
         set result [list]
-        foreach path $subdirs {
-            foreach oid [get_leaf_nodes $path] {
+        foreach subdir_path $subdirs {
+            foreach oid [get_leaf_nodes $subdir_path] {
                 lappend result $oid
             }
         }
@@ -502,6 +521,10 @@ proc ::persistence::fs::get_files {path} {
         lappend result ${path}/${name}
     }
 
+    log [info frame -7]
+    log [info frame -6]
+    log \n\nget_files->path=$path
+    log get_files->result=\n[join $result \n...]\n\n
     return $result
 }
 
@@ -516,48 +539,13 @@ proc ::persistence::fs::get_subdirs {path} {
     return $result
 }
 
-proc ::persistence::fs::get_recursive_subdirs {dir resultVar} {
-
-    upvar $resultVar result
-
-    set subdirs [get_subdirs ${dir}]
-    foreach subdir ${subdirs} {
-        lappend result ${subdir}
-        get_recursive_subdirs ${subdir} result
-    }
-
-}
-
-
-proc ::persistence::fs::__get_slice_from_supercolumn {supercolumn_dir {slice_predicate ""}} {
-
-    set dirs [list ${supercolumn_dir}]
-
-    get_recursive_subdirs ${supercolumn_dir} dirs
-
-    set slicelist [list]
-    foreach dir ${dirs} {
-        foreach filename [get_files ${dir}] {
-            lappend slicelist ${filename}
-        }
-    }
-
-    set slicelist [lsort -decreasing ${slicelist}]
-    if { ${slice_predicate} ne {} } {
-        lassign ${slice_predicate} cmd args
-        predicate=${cmd} slicelist {*}${args}
-    }
-    return ${slicelist}
-}
-
-
 proc ::persistence::fs::__get_slice_from_row {row_path {slice_predicate ""}} {
+    # set slicelist [get_leaf_nodes ${row_path}]
     set slicelist [get_files ${row_path}]
+    set slicelist [expand_slice slicelist ""]  ;# latest_mtime
     set slicelist [lsort -integer -command compare_mtime -decreasing ${slicelist}]
-    set slicelist [expand_slice slicelist "latest_mtime"]
 
     if { ${slice_predicate} ne {} } {
-
         # for predicates "maybe_in_path" and "in_path" to work right
         predicate=forall slicelist $slice_predicate
     }
@@ -648,6 +636,7 @@ proc ::persistence::fs::__multiget_slice {ks cf_axis row_keys {slice_predicate "
         }
     }
 
+    #log result=[join $result \n-----]
     return ${result}
 
 }

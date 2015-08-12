@@ -354,8 +354,8 @@ proc ::persistence::orm::update {oid new_itemVar {optionsVar ""}} {
             set row_key [to_row_key_by $idxname item]
             set src [to_path_by $idxname $row_key {*}$item($pk)]
             #::persistence::delete_link $src
-            #::persistence::insert_link $src $target
-            ::persistence::insert_column $src $data
+            ::persistence::insert_link $src $target
+            #::persistence::insert_column $src $data
             # ::persistence::update_link $src $new_target
         }
     }
@@ -562,9 +562,6 @@ proc ::persistence::orm::find {{where_clause_argv ""} {optionsVar ""}} {
 
     }
 
-    #set expand_fn [value_if options(expand_fn) ""]
-    #set slicelist [::persistence::expand_slice slicelist $expand_fn]
-    
     # run the predicates here
 
     set option_order_by [value_if options(order_by) ""]

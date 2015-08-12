@@ -18,6 +18,8 @@ proc ::persistence::commitlog::open_if {} {
         return
     }
 
+    log "commitlog using memtable: [use_p memtable]"
+
     set filename [::persistence::fs::get_filename "CommitLog"]
     set exists_p [file exists $filename]
 
@@ -105,10 +107,7 @@ proc ::persistence::commitlog::set_column_data {
     ## array set wal_info [list pos2 $ts]
     ## ::sysdb::wal_info_t update wal_info 
 
-    set pos [tell $fp]
-    seek $fp 4 start
-    ::util::io::write_int $fp $pos
-    seek $fp $pos start
+    logpoint [tell $fp]
 
     # log "commitlog: pos=$pos"
 }
@@ -141,6 +140,14 @@ proc ::persistence::commitlog::checkpoint {pos} {
     seek $fp $pos start
 }
 
+proc ::persistence::commitlog::logpoint {pos} {
+    variable fp
+    seek $fp 4 start
+    ::util::io::write_int $fp $pos
+    seek $fp $pos start
+}
+
+
 # Write-Ahead Logging (Wal) is a standard method for ensuring data
 # integrity. Briefly, WAL's central concept is that changes to data
 # files (where tables and indexes reside) must be written only after
@@ -152,15 +159,15 @@ proc ::persistence::commitlog::process {} {
     variable fp
     set savedpos [tell $fp]
 
-    log "processing commitlog..."
+    # log "processing commitlog..."
 
     seek $fp 0 start
     set pos1 [::util::io::read_int $fp]
     set pos2 [::util::io::read_int $fp]
 
-    log "pos1=$pos1 pos2=$pos2 tell=[tell $fp]"
+    log "last_checkpoint (pos1): $pos1 --- last_logpoint (pos2): $pos2"
 
-    set mem_p 0
+    set mem_p [use_p "memtable"]
 
     seek $fp $pos1 start
     while { $pos1 < $pos2 } {
@@ -176,14 +183,14 @@ proc ::persistence::commitlog::process {} {
             call_orig_of ::persistence::fs::set_column_data $oid $data "-translation binary"
 
             # 2. increase and write int to pos1
-            checkpoint $pos1
+            checkpoint [tell $fp]  ;# must be equal to pos1 at this point
         }
 
     }
 
     if { $mem_p } {
         ::persistence::mem::dump
-        checkpoint $pos2
+        checkpoint [tell $fp]  ;# must be equal to pos2 at this point
     }
 
     after 10000 [list ::persistence::commitlog::process]
