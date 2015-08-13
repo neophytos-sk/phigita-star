@@ -43,9 +43,9 @@ proc ::persistence::mem::get_subdirs {path} {
         lappend result [join [lrange [split $oid {/}] 0 $len] {/}]
     }
 
-    foreach respath $result {
-        assert { $respath ne $path }
-    }
+    #foreach respath $result {
+    #    assert { $respath ne $path }
+    #}
 
     #log names=[join [array names __mem ${path}*,data] \n]
     #log "files for subdirs processing: $files"

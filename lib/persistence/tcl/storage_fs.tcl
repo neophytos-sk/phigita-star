@@ -515,7 +515,7 @@ proc ::persistence::fs::get_leaf_nodes {path} {
     if { $subdirs eq {} } {
         return [get_files $path]
     } else {
-        log "subdirs:\n>>>$path\n***[join $subdirs "\n***"]"
+        # log "subdirs:\n>>>$path\n***[join $subdirs "\n***"]"
         set result [list]
         foreach subdir_path $subdirs {
             assert { $subdir_path ne $path }
