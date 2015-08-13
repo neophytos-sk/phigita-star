@@ -65,6 +65,23 @@ proc ::persistence::init {} {
                 set subdirs_2 [call_orig $path]
                 return [lunion $subdirs_1 $subdirs_2]
             }
+
+            wrap_proc ::persistence::fs::create_row_if {ks cf_axis row_key row_pathVar} {
+
+                assert_ks ${ks}
+                assert_cf ${ks} ${cf_axis}
+
+                upvar ${row_pathVar} row_path
+
+                set row_path [get_row ${ks} ${cf_axis} ${row_key}]
+
+                # NOTE: messes with get_files results when use_memtable is true
+                # set row_dir [get_filename ${row_path}]
+                # file mkdir $row_dir
+
+
+            }
+
         }
 
         if {0} {

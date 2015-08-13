@@ -162,7 +162,6 @@ proc ::persistence::fs::get_supercolumn {keyspace column_family row_key supercol
 
 proc ::persistence::fs::create_row_if {ks cf_axis row_key row_pathVar} {
 
-    # ensure keyspace exists
     assert_ks ${ks}
     assert_cf ${ks} ${cf_axis}
 
@@ -293,6 +292,7 @@ proc ::persistence::fs::set_column_data {oid data {codec_conf ""}} {
 proc ::persistence::fs::set_link_data {oid target_oid {codec_conf ""}} {
 
     if { 0 } {
+
         # if data is on a single host, then create a symbolic link
         set src [get_filename ${oid}] 
         set target [get_filename ${target_oid}]
@@ -311,9 +311,20 @@ proc ::persistence::fs::set_link_data {oid target_oid {codec_conf ""}} {
         }
         file mkdir [file dirname $src]
         file link $src $target
+
     } else {
+
         # otherwise, use set_column_data to replicate the data
+        # this would suffice as a generic case, though we prefer
+        # to use features from the underlying storage where
+        # possible, in this case filesystem links would enable us
+        # to actually browse the directories and see the links
+        # themselves as opposed to having to open the .link file
+        # to see its target (and thus requiring knowledge of the
+        # persistence layer internals)
+
         set_column_data ${oid}.link $target_oid
+
     }
 
 }
@@ -342,16 +353,17 @@ proc ::persistence::fs::del_column_data {oid} {
 
 
 proc ::persistence::fs::expand_oid {oid} {
-    # log "is_row_oid_p=[is_row_oid_p $oid]"
-    # log "is_supercolumn_oid_p=[is_supercolumn_oid_p $oid]"
+    #log "is_row_oid_p=[is_row_oid_p $oid]"
+    #log "is_supercolumn_oid_p=[is_supercolumn_oid_p $oid]"
 
     if { [is_row_oid_p $oid] && [exists_row_data_p $oid] } {
         return [get_leaf_nodes $oid]
     } elseif { [is_supercolumn_oid_p $oid] && [exists_supercolumn_data_p $oid] } {
         set leafs [get_leaf_nodes $oid]
+        #log "expand_oid->leafs=$leafs"
         return $leafs
     } else {
-        # log "column oid $oid"
+        #log "expand_oid->column oid $oid"
         return [list $oid]
     }
 }
@@ -378,9 +390,10 @@ proc ::persistence::fs::expand_slice {slicelistVar fn} {
 
     upvar $slicelistVar slicelist
 
-    if { [is_expanded_p $slicelist] } {
-        return $slicelist
-    }
+    #if { [is_expanded_p $slicelist] } {
+        # HERE HERE HERE - FIX
+        # return $slicelist
+    #}
 
     set result [list]
     foreach oid $slicelist {
@@ -502,8 +515,10 @@ proc ::persistence::fs::get_leaf_nodes {path} {
     if { $subdirs eq {} } {
         return [get_files $path]
     } else {
+        log "subdirs:\n>>>$path\n***[join $subdirs "\n***"]"
         set result [list]
         foreach subdir_path $subdirs {
+            assert { $subdir_path ne $path }
             foreach oid [get_leaf_nodes $subdir_path] {
                 lappend result $oid
             }
@@ -521,10 +536,10 @@ proc ::persistence::fs::get_files {path} {
         lappend result ${path}/${name}
     }
 
-    log [info frame -7]
-    log [info frame -6]
-    log \n\nget_files->path=$path
-    log get_files->result=\n[join $result \n...]\n\n
+    # log [info frame -7]
+    # log [info frame -6]
+    # log \n\nget_files->path=$path
+    # log get_files->result=\n[join $result \n...]\n\n
     return $result
 }
 
@@ -543,6 +558,7 @@ proc ::persistence::fs::__get_slice_from_row {row_path {slice_predicate ""}} {
     # set slicelist [get_leaf_nodes ${row_path}]
     set slicelist [get_files ${row_path}]
     set slicelist [expand_slice slicelist ""]  ;# latest_mtime
+    #log expanded_slicelist=\n%%%%%[join $slicelist "\n%%%%%%%%%%"]
     set slicelist [lsort -integer -command compare_mtime -decreasing ${slicelist}]
 
     if { ${slice_predicate} ne {} } {
@@ -636,7 +652,7 @@ proc ::persistence::fs::__multiget_slice {ks cf_axis row_keys {slice_predicate "
         }
     }
 
-    #log result=[join $result \n-----]
+    # log result=[join $result \n-----]
     return ${result}
 
 }
