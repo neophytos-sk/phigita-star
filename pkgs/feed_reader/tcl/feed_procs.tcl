@@ -575,7 +575,7 @@ proc ::feed_reader::handle_redirect_item {link title_in_feed feedVar itemVar inf
         set item(responsecode) $info(responsecode)
         set item(redirect_url) ${redirect_url}
 
-        ::persistence::__insert_column       \
+        ::persistence::__ins_column       \
             "newsdb"                         \
             "news_item.by_urlsha1_and_const" \
             "$item(urlsha1)"                 \
@@ -698,7 +698,7 @@ proc ::feed_reader::fetch_and_write_item {timestamp link title_in_feed feedVar} 
             ::newsdb::error_item_t insert error_item
 
             if {0} {
-                ::persistence::fs::__insert_column \
+                ::persistence::fs::__ins_column \
                     "newsdb" \
                     "error_item.by_urlsha1_and_timestamp" \
                     "${urlsha1}"\
@@ -721,7 +721,7 @@ proc ::feed_reader::fetch_and_write_item {timestamp link title_in_feed feedVar} 
                 puts "--->>> TODO: marking this item as fetched... (${urlsha1})"
 
                 if {0} {
-                    ::persistence::fs::__insert_column \
+                    ::persistence::fs::__ins_column \
                         "newsdb" \
                         "news_item.by_urlsha1_and_const" \
                         "${urlsha1}" \
@@ -1189,7 +1189,7 @@ proc ::feed_reader::search_callback=label_content {contentsha1 axis label {need_
 
     if { !${need_confirm_p} || [confirm] } {
 
-        ::persistence::fs::__insert_column \
+        ::persistence::fs::__ins_column \
             "newsdb" \
             "train_item" \
             "${axis}" \
@@ -2047,7 +2047,7 @@ proc ::feed_reader::sync_feeds {{news_sources ""} {debug_p "0"}} {
 
     }
 
-    ::persistence::fs::__insert_column              \
+    ::persistence::fs::__ins_column              \
         "crawldb"                             \
         "round_stats.by_timestamp_and_const"  \
         "${round}"                            \

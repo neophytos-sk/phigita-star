@@ -13,6 +13,7 @@ config param address "127.0.0.1"
 config param port "9900"
 config param default_storage_type "fs"
 config param base_dir "/web/data/mystore"
+#config param base_dir "/web/data/mystore2"
 
 assert { ![use_p "server"] || [setting_p "client_server"] }
 

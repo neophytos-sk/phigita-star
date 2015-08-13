@@ -1,8 +1,36 @@
-namespace eval ::persistence {;}
+namespace eval ::persistence {
+
+    variable base_dir
+    set base_dir [config get ::persistence base_dir]
+
+}
+
+proc ::persistence::compare_mtime { oid1 oid2 } {
+    set mtime1 [get_mtime $oid1]
+    set mtime2 [get_mtime $oid2]
+    if { $mtime1 < $mtime2 } {
+        return -1
+    } elseif { $mtime1 > $mtime2 } {
+        return 1
+    } else {
+        return 0
+    }
+}
+
+
+proc ::persistence::mkskel {} {
+    variable base_dir
+
+    file mkdir [file join $base_dir HEAD]  ;# for oids
+    file mkdir [file join $base_dir DATA]  ;# for revs
+    file mkdir [file join $base_dir META]  ;# for bffs, etc
+}
 
 proc ::persistence::init {} {
 
     # log "initializing db..."
+
+    mkskel
 
     set storage_type [config get ::persistence "default_storage_type"]
 
@@ -14,18 +42,18 @@ proc ::persistence::init {} {
             "namespace import -force ::persistence::${storage_type}::*"
 
         if { [setting_p "write_ahead_log"] } {
-            wrap_proc ::persistence::fs::set_column_data {oid data {codec_conf ""}} {
-                ::persistence::commitlog::set_column_data $oid $data $codec_conf
-                ::persistence::mem::set_column_data $oid $data $codec_conf
+            wrap_proc ::persistence::fs::set_column {oid data {ts ""} {codec_conf ""}} {
+                set ts [clock seconds]
+                ::persistence::commitlog::set_column $oid $data $ts $codec_conf
+                ::persistence::mem::set_column $oid $data $ts $codec_conf
             }
 
-            wrap_proc ::persistence::fs::get_column_data {oid {codec_conf ""}} {
-                set exists_p [::persistence::mem::exists_column_data_p $oid]
+            wrap_proc ::persistence::fs::get_column {oid {codec_conf ""}} {
+                set exists_p [::persistence::mem::exists_column_p $oid]
                 if { $exists_p } {
-                    return [::persistence::mem::get_column_data $oid $codec_conf]
+                    return [::persistence::mem::get_column $oid $codec_conf]
                 }
                 set data [call_orig $oid $codec_conf]
-                #::persistence::mem::cache_column_data $oid $data $codec_conf
                 return $data
             }
 
@@ -34,20 +62,20 @@ proc ::persistence::init {} {
         if { [use_p "memtable"] } {
 
             wrap_proc ::persistence::fs::get_mtime {oid} {
-                if { [::persistence::mem::exists_column_data_p $oid] } {
+                if { [::persistence::mem::exists_column_p $oid] } {
                     return [::persistence::mem::get_mtime $oid]
                 }
                 return [call_orig $oid]
             }
 
-            wrap_proc ::persistence::fs::exists_column_data_p {oid} {
-                set exists_1_p [::persistence::mem::exists_column_data_p $oid]
+            wrap_proc ::persistence::fs::exists_column_p {oid} {
+                set exists_1_p [::persistence::mem::exists_column_p $oid]
                 set exists_2_p [call_orig $oid]
                 return [expr { $exists_1_p || $exists_2_p }]
             }
             
-            wrap_proc ::persistence::fs::exists_supercolumn_data_p {oid} {
-                set exists_1_p [::persistence::mem::exists_supercolumn_data_p $oid]
+            wrap_proc ::persistence::fs::exists_supercolumn_p {oid} {
+                set exists_1_p [::persistence::mem::exists_supercolumn_p $oid]
                 set exists_2_p [call_orig $oid]
                 return [expr { $exists_1_p || $exists_2_p }]
             }
@@ -66,6 +94,11 @@ proc ::persistence::init {} {
                 return [lunion $subdirs_1 $subdirs_2]
             }
 
+
+        }
+
+        if {0} {
+
             wrap_proc ::persistence::fs::create_row_if {ks cf_axis row_key row_pathVar} {
 
                 assert_ks ${ks}
@@ -81,10 +114,6 @@ proc ::persistence::init {} {
 
 
             }
-
-        }
-
-        if {0} {
 
             wrap_proc ::persistence::fs::get_name {oid} {
                 return [file tail $oid]

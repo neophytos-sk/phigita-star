@@ -151,6 +151,24 @@ proc ::util::writefile {filename data args} {
     close $fp
 }
 
+proc ::util::writelink {src target} {
+    if { [file exists $src] } {
+        set old_target [file link $src]
+        if { $old_target ne $target } { 
+            file delete $src
+        } else {
+            return
+        }
+        set src_dir [file dirname $src]
+        if { ![file isdirectory $src_dir] } {
+            file mkdir $src_dir
+        }
+        file link $src $target
+    } else {
+        file link $src $target
+    }
+}
+
 
 proc ::util::ino {filename} {
     file stat $filename arr

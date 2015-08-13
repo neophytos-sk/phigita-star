@@ -5,6 +5,33 @@
 #
 #######################################################################
 
+proc ::persistence::fs::get_path {args} {
+    variable base_dir
+    set dir [join ${args} {/}]
+    return ${dir}
+}
+
+proc ::persistence::fs::exists_row_p {args} {
+    set row_dir [get_row {*}${args}]
+    return [file isdirectory ${row_dir}]
+}
+
+
+proc ::persistence::fs::assert_row {keyspace column_family row_key} {
+    assert_cf ${keyspace} ${column_family}
+    if { ![exists_row_p ${keyspace} ${column_family} ${row_key}] } {
+        error "assert_row: no such row (${keyspace},${column_family},${row_key})"
+    }
+}
+
+
+proc ::persistence::fs::assert_supercolumn {keyspace column_family row_key supercolumn_path} {
+    assert_row ${keyspace} ${column_family} ${row_key}
+    if { ![exists_supercolumn_p ${keyspace} ${column_family} ${row_key} ${supercolumn_path}] } {
+        error "assert_supercolumn: no such supercolumn (${keyspace},${column_family},${row_key},${supercolumn_path})"
+    }
+}
+
 proc ::persistence::fs::get_recursive_subdirs {dir resultVar} {
 
     upvar $resultVar result

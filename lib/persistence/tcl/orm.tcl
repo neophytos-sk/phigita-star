@@ -290,7 +290,7 @@ proc ::persistence::orm::insert {itemVar {optionsVar ""}} {
 
     # ::persistence::begin_batch
 
-    ::persistence::insert_column $target $data "" [codec_conf]
+    ::persistence::ins_column $target $data [codec_conf]
     
     foreach idxname $__indexes {
         if { $idxname eq "by_$pk" } {
@@ -298,8 +298,7 @@ proc ::persistence::orm::insert {itemVar {optionsVar ""}} {
         }
         set row_key [to_row_key_by $idxname item]
         set src [to_path_by $idxname $row_key {*}$item($pk)]
-        ::persistence::insert_link $src $target
-        #::persistence::insert_column $src $data
+        ::persistence::ins_link $src $target
     }
 
     # ::persistence::end_batch
@@ -322,7 +321,7 @@ proc ::persistence::orm::update {oid new_itemVar {optionsVar ""}} {
     set attnames [array names new_item]
 
     # check for existance and get the old item
-    if { ![exists_column_data_p $oid] } {
+    if { ![exists_column_p $oid] } {
         error "persistence (ORM): no such oid (=$oid) in the store (=mystore)"
     }
     array set item [get $oid]
@@ -353,16 +352,15 @@ proc ::persistence::orm::update {oid new_itemVar {optionsVar ""}} {
             # update index
             set row_key [to_row_key_by $idxname item]
             set src [to_path_by $idxname $row_key {*}$item($pk)]
-            #::persistence::delete_link $src
-            ::persistence::insert_link $src $target
-            #::persistence::insert_column $src $data
-            # ::persistence::update_link $src $new_target
+            #::persistence::del_link $src
+            ::persistence::ins_link $src $target
+            # ::persistence::upd_link $src $new_target
         }
     }
 
     # overwrites data
     set data [encode item]
-    ::persistence::insert_column $target $data "" [codec_conf]
+    ::persistence::ins_column $target $data [codec_conf]
 
 }
 
@@ -411,7 +409,7 @@ proc ::persistence::orm::get {oid {exists_pVar ""}} {
 
     set exists_p [::persistence::exists_column_p $oid]
     if { $exists_p } {
-        set data [decode [::persistence::get_column_data $oid [codec_conf]]]
+        set data [decode [::persistence::get_column $oid [codec_conf]]]
         return $data
     } else {
         error "no such oid (=$oid) in storage system (=mystore)"
@@ -481,8 +479,8 @@ proc ::persistence::orm::find_by_id {value} {
         assert { vcheck("value",$datatype) }
     }
 
-    set querypath [to_path $value]
-    set oid [::persistence::get_column $querypath "" "" [codec_conf]]
+    set nodepath [to_path $value]
+    set oid [::persistence::find_column $nodepath "" "" [codec_conf]]
 
     return $oid
 }
@@ -492,14 +490,14 @@ proc ::persistence::orm::find_by_axis {argv {optionsVar ""}} {
         upvar $optionsVar options
     }
 
-    set predicate [value_if options(__slice_predicate) ""]
+    set slice_predicate [value_if options(__slice_predicate) ""]
 
     variable [namespace __this]::idx
 
     set argc [llength $argv]
     assert { $argc in {5 4 3 2 1} }
 
-    #log "argc = $argc"
+    # log "argc = $argc"
 
     if { $argc >= 3 } {
 
@@ -513,15 +511,53 @@ proc ::persistence::orm::find_by_axis {argv {optionsVar ""}} {
             upvar $exists_pVar exists_p
         }
         set nodepath [to_path_by by_$attname $attvalue {*}$id]
-        set oid [::persistence::get_column $nodepath ${varname} exists_p [codec_conf]]
+        set oid [::persistence::find_column $nodepath ${varname} exists_p [codec_conf]]
         return $oid
 
     } elseif { $argc == 2 } {
 
         lassign $argv attname attvalue
         set nodepath [to_path_by by_$attname $attvalue]
-        set slicelist [::persistence::get_slice $nodepath $predicate]
-        return $slicelist
+
+        set limit [value_if options(limit) "end"]
+        set offset [value_if options(offset) "0"]
+
+        set step 100
+
+        # log "------ offset=$offset limit=$limit"
+        set result [list]
+        while { 1 } {
+            set range_low $offset
+            set range_high [expr { $offset + $step }]
+
+            # log "exec_in_chunks (get_slice) from $range_low to $range_high"
+
+            set predicate $slice_predicate
+            lappend predicate [list "lrange" [list $range_low $range_high]]
+            set slicelist [::persistence::get_slice $nodepath $predicate]
+
+            if { $slicelist eq {} } {
+                break
+            }
+
+            set result [concat $result $slicelist]
+
+            # log "#result = [llength $result]"
+
+            set offset $range_high
+
+            if { $limit ne {end} } {
+                if { $offset >= $limit } {
+                    break
+                }
+                if { [llength $result] >= $limit } {
+                    break
+                }
+            }
+
+        }
+
+        return $result
 
     } elseif { $argc == 1 } {
 
@@ -533,16 +569,19 @@ proc ::persistence::orm::find_by_axis {argv {optionsVar ""}} {
 
         set step 100
 
-        # log "------"
+        # log "------ offset=$offset limit=$limit"
         set result [list]
         while { 1 } {
             set range_low $offset
             set range_high [expr { $offset + $step }]
 
-            # log "get_multirow_names from $range_low to $range_high"
+            # log "exec_in_chunks (get_multirow_names,multiget_slice) from $range_low to $range_high"
 
             set multirow_predicate [list "lrange" [list $range_low $range_high]]
             set row_keys [::persistence::get_multirow_names $nodepath $multirow_predicate] 
+
+            set predicate $slice_predicate
+            lappend predicate [list "lrange" [list $range_low $range_high]]
             set slicelist [::persistence::multiget_slice $nodepath $row_keys $predicate]
 
             if { $slicelist eq {} } {

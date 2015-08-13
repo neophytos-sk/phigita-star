@@ -20,7 +20,7 @@ proc ::persistence::commitlog::open_if {} {
 
     log "commitlog using memtable: [use_p memtable]"
 
-    set filename [::persistence::fs::get_filename "CommitLog"]
+    set filename [::persistence::fs::get_meta_filename "CommitLog"]
     set exists_p [file exists $filename]
 
     if { $exists_p } {
@@ -77,29 +77,34 @@ proc ::persistence::commitlog::close_if {} {
 
 }
 
-proc ::persistence::commitlog::set_column_data {
+proc ::persistence::commitlog::set_column {
     oid 
     data 
-    {codec_conf "-translation binary"}
+    ts
+    codec_conf
 } {
+    assert { $ts ne {} }
+
     variable fp
 
     open_if
 
     ::util::io::write_string $fp $oid
     ::util::io::write_string $fp $data
+    ::util::io::write_string $fp $ts
+    ::util::io::write_string $fp $codec_conf
 
     # set ts [clock microseconds]
     # set log_item_oid "sysdb/wal_item_t.by_timestamp/__default__/+/$ts"
     # set log_item_data [list timestamp $ts oid $oid data $data deleted_p "0"]
-    # ::persistence::fs::set_column_data $log_item_oid $log_item_data
+    # ::persistence::fs::set_column $log_item_oid $log_item_data
     #
     ## array set log_item $log_item_data
     ## ::sysdb::wal_item_t insert log_item
     #
     # set log_info_oid "sysdb/wal_info_t.by_attname/__default__/+/pos1"
     # set log_info_data $ts
-    # ::persistence::fs::set_column_data $log_info_oid $log_info_data
+    # ::persistence::fs::set_column $log_info_oid $log_info_data
     #
     # set log_info_oid "sysdb/wal_info_t.by_attname/__default__/+/"
     # ::persistence::fs::update_row $log_info_oid [list pos1 $ts]
@@ -127,7 +132,9 @@ proc ::persistence::commitlog::analyze {} {
     while { [tell $fp] != $pos2 } {
         ::util::io::read_string $fp oid
         ::util::io::skip_string $fp
-        log "commitlog (analyze): oid=$oid"
+        ::util::io::read_string $fp mtime
+        ::util::io::read_string $fp codec_conf
+        log "commitlog (analyze): rev=${oid}@${mtime}"
         # log "commitlog (analyze): pos=[tell $fp]"
     }
 
@@ -173,14 +180,16 @@ proc ::persistence::commitlog::process {} {
     while { $pos1 < $pos2 } {
         ::util::io::read_string $fp oid
         ::util::io::read_string $fp data
+        ::util::io::read_string $fp mtime
+        ::util::io::read_string $fp codec_conf
         set pos1 [tell $fp]
 
         if { $mem_p } {
-            ::persistence::mem::set_column_data $oid $data "-translation binary"
+            ::persistence::mem::set_column $oid $data $mtime $codec_conf
         } else {
 
             # 1. exec command
-            call_orig_of ::persistence::fs::set_column_data $oid $data "-translation binary"
+            call_orig_of ::persistence::fs::set_column $oid $data $mtime $codec_conf
 
             # 2. increase and write int to pos1
             checkpoint [tell $fp]  ;# must be equal to pos1 at this point

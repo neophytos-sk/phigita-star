@@ -43,7 +43,7 @@ proc ::feed_reader::stats {{news_sources ""}} {
             set feed_name [file tail ${feed_file}]
 
 
-	    ::persistence::fs::__get_column          \
+	    ::persistence::fs::__find_column          \
             "crawldb"                      \
             "feed_stats.by_feed_and_const" \
             "${feed_name}"                 \
@@ -306,7 +306,7 @@ proc ::feed_reader::fetch_feed_p {feed_name timestamp {coeff "0.3"}} {
         # set oid [::crawldb::stat_info_t find_by feed_name $feed_name $pretty_timeval]
         
         set oid \
-            [::persistence::fs::__get_column        \
+            [::persistence::fs::__find_column   \
                 "crawldb"                       \
                 "feed_stats.by_feed_and_period" \
                 ${feed_name}                    \
@@ -318,7 +318,7 @@ proc ::feed_reader::fetch_feed_p {feed_name timestamp {coeff "0.3"}} {
             return 1
         }
 
-        array set count [::persistence::get_column_data ${oid}]
+        array set count [::persistence::get_column ${oid}]
 
         set reference_interval 3600
         set max_times 4
@@ -332,17 +332,17 @@ proc ::feed_reader::fetch_feed_p {feed_name timestamp {coeff "0.3"}} {
         unset count
     }
 
-    set oid [::persistence::fs::__get_column      \
+    set oid [::persistence::fs::__find_column \
 		      "crawldb"                       \
 		      "feed_stats.by_feed_and_const"  \
 		      "${feed_name}"                  \
 		      "_stats"]
     
-    if { ![::persistence::exists_column_data_p ${oid}] } {
+    if { ![::persistence::exists_column_p ${oid}] } {
         return 1
     }
 
-    array set count [::persistence::get_column_data ${oid}]
+    array set count [::persistence::get_column ${oid}]
 
     set last_sync [::persistence::get_mtime ${oid}]
 
@@ -366,9 +366,9 @@ proc ::feed_reader::incr_array_in_column {ks cf_axis row_key column_path increme
 
     set oid "${ks}/${cf_axis}/${row_key}/+/${column_path}"
 
-    set exists_p [::persistence::exists_column_data_p $oid] 
+    set exists_p [::persistence::exists_column_p $oid] 
     if { $exists_p } {
-        set column_data [::persistence::get_column_data $oid]
+        set column_data [::persistence::get_column $oid]
     }
     # ::persistence::get_column $oid column_data exists_p
 
@@ -384,7 +384,7 @@ proc ::feed_reader::incr_array_in_column {ks cf_axis row_key column_path increme
 
     set stats [array get count]
 
-    ::persistence::insert_column $oid $stats
+    ::persistence::ins_column $oid $stats
 
     return ${stats}
 
