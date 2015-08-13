@@ -6,8 +6,8 @@ namespace eval ::persistence {
 }
 
 proc ::persistence::compare_mtime { oid1 oid2 } {
-    set mtime1 [get_mtime $oid1]
-    set mtime2 [get_mtime $oid2]
+    set mtime1 [::persistence::get_mtime $oid1]
+    set mtime2 [::persistence::get_mtime $oid2]
     if { $mtime1 < $mtime2 } {
         return -1
     } elseif { $mtime1 > $mtime2 } {

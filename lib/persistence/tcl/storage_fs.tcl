@@ -542,7 +542,8 @@ proc ::persistence::fs::get_leaf_nodes {path} {
 
 proc ::persistence::fs::get_files {path} {
     variable base_dir
-    set dir [file normalize ${base_dir}/${path}]
+    variable branch
+    set dir [file normalize ${base_dir}/HEAD/${branch}/${path}]
     set names [glob -tails -nocomplain -types "f l d" -directory ${dir} "*"]
     set result [list]
     foreach name $names {
@@ -558,7 +559,8 @@ proc ::persistence::fs::get_files {path} {
 
 proc ::persistence::fs::get_subdirs {path} {
     variable base_dir
-    set dir [file normalize ${base_dir}/${path}]
+    variable branch
+    set dir [file normalize ${base_dir}/HEAD/${branch}/${path}]
     set names [glob -tails -types {d} -nocomplain -directory ${dir} *]
     set result [list]
     foreach name $names {
@@ -645,7 +647,7 @@ proc ::persistence::fs::__multiget_slice {ks cf_axis row_keys {slice_predicate "
     set result [list]
 
     foreach row_key ${row_keys} {
-        set slicelist [__get_slice ${ks} ${cf_axis} ${row_key} ${slice_predicate}]
+        set slicelist [__get_slice ${ks} ${cf_axis} ${row_key} $slice_predicate]
         # row_key can be extracted from the filename from the given slicelist, if needed
         #lappend result ${row_key}
         foreach oid ${slicelist} {
@@ -819,7 +821,7 @@ proc ::persistence::fs::predicate=in_path {slicelistVar parent_path {predicate "
     upvar $slicelistVar slicelist
     set result [list]
     foreach oid $slicelist {
-        set column_path [get_column_path $oid]
+        lassign [split_oid $oid] ks cf_axis row_key column_path
         # log parent_path=$parent_path
         # log column_path=$column_path
         set other_oid "${parent_path}${column_path}"
@@ -871,8 +873,7 @@ proc ::persistence::fs::get_multirow {ks cf_axis {predicate ""}} {
     set multirow [get_subdirs ${ks}/${cf_axis}]
 
     if { ${predicate} ne {} } {
-        lassign ${predicate} cmd args
-        predicate=${cmd} multirow {*}${args}
+        predicate=forall multirow $predicate
     }
 
     return ${multirow}

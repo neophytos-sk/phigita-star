@@ -526,9 +526,10 @@ proc ::persistence::orm::find_by_axis {argv {optionsVar ""}} {
 
         # log "------ offset=$offset limit=$limit"
         set result [list]
+        set range_high $offset
         while { 1 } {
-            set range_low $offset
-            set range_high [expr { $offset + $step }]
+            set range_low $range_high
+            set range_high [expr { $range_low + $step - 1 }]
 
             # log "exec_in_chunks (get_slice) from $range_low to $range_high"
 
@@ -544,10 +545,8 @@ proc ::persistence::orm::find_by_axis {argv {optionsVar ""}} {
 
             # log "#result = [llength $result]"
 
-            set offset $range_high
-
             if { $limit ne {end} } {
-                if { $offset >= $limit } {
+                if { $range_low >= $limit } {
                     break
                 }
                 if { [llength $result] >= $limit } {
@@ -567,44 +566,14 @@ proc ::persistence::orm::find_by_axis {argv {optionsVar ""}} {
         set limit [value_if options(limit) "end"]
         set offset [value_if options(offset) "0"]
 
-        set step 100
-
-        # log "------ offset=$offset limit=$limit"
-        set result [list]
-        while { 1 } {
-            set range_low $offset
-            set range_high [expr { $offset + $step }]
-
-            # log "exec_in_chunks (get_multirow_names,multiget_slice) from $range_low to $range_high"
-
-            set multirow_predicate [list "lrange" [list $range_low $range_high]]
-            set row_keys [::persistence::get_multirow_names $nodepath $multirow_predicate] 
-
-            set predicate $slice_predicate
-            lappend predicate [list "lrange" [list $range_low $range_high]]
-            set slicelist [::persistence::multiget_slice $nodepath $row_keys $predicate]
-
-            if { $slicelist eq {} } {
-                break
-            }
-
-            set result [concat $result $slicelist]
-
-            # log "#result = [llength $result]"
-
-            set offset $range_high
-
-            if { $limit ne {end} } {
-                if { $offset >= $limit } {
-                    break
-                }
-                if { [llength $result] >= $limit } {
-                    break
-                }
-            }
-        }
-
-        return $result
+        # VERY SLOW QUERY - RETHINK
+        # use order_by to choose an axis to speedup the queries
+        set multirow_predicate [list]
+        set row_keys [::persistence::get_multirow_names $nodepath $multirow_predicate] 
+        set predicate $slice_predicate
+        lappend predicate [list "lrange" [list $offset $limit]]
+        set slicelist [::persistence::multiget_slice $nodepath $row_keys $predicate]
+        return $slicelist
 
     }
 
