@@ -153,7 +153,15 @@ proc ::persistence::orm::to_path_by {axis args} {
         set row_key "__default__"
     }
 
-    set target "${ks}/${cf}.${axis}/${row_key}/+/${column_path}"
+    set target "${ks}/${cf}.${axis}/"
+    if { $row_key ne {} } {
+        append target "${row_key}/+/"
+        if { $column_path ne {} } {
+            append target ${column_path}
+        }
+    }
+
+    # log "to_path_by axis (=$axis) => target=$target"
 
     return $target
 }
@@ -566,8 +574,6 @@ proc ::persistence::orm::find_by_axis {argv {optionsVar ""}} {
         set limit [value_if options(limit) "end"]
         set offset [value_if options(offset) "0"]
 
-        # VERY SLOW QUERY - RETHINK
-        # use order_by to choose an axis to speedup the queries
         set multirow_predicate [list]
         set row_keys [::persistence::get_multirow_names $nodepath $multirow_predicate] 
         set predicate $slice_predicate
@@ -593,9 +599,13 @@ proc ::persistence::orm::find {{where_clause_argv ""} {optionsVar ""}} {
         variable [namespace __this]::pk
         variable [namespace __this]::idx
 
-        set axis_attname [value_if options(axis_attname) ${pk}]
-        assert { exists("idx(by_${axis_attname})") }
-        set slicelist [find_by_axis ${axis_attname} options]
+        set attname [__choose_axis $where_clause_argv options find_by_axis_args]
+
+        #log "chosen axis attname=$attname"
+
+        #set attname [value_if options(axis_attname) ${pk}]
+        assert { exists("idx(by_${attname})") }
+        set slicelist [find_by_axis ${attname} options]
 
     } else {
 
@@ -604,7 +614,7 @@ proc ::persistence::orm::find {{where_clause_argv ""} {optionsVar ""}} {
             return [find_by_id [lindex $where_clause_argv 0]]
         } else {
             set find_by_axis_args [list]
-            set attname [__choose_axis $where_clause_argv find_by_axis_args]
+            set attname [__choose_axis $where_clause_argv options find_by_axis_args]
             set predicate [__rewrite_where_clause $attname $where_clause_argv]
             #log "chosen axis (attribute) = $attname"
             #log "chosen axis (args) = $find_by_axis_args"
@@ -635,9 +645,11 @@ proc ::persistence::orm::find {{where_clause_argv ""} {optionsVar ""}} {
     return $slicelist
 }
 
-proc ::persistence::orm::__choose_axis {argv find_by_axis_argsVar} {
+proc ::persistence::orm::__choose_axis {argv optionsVar find_by_axis_argsVar} {
     variable [namespace __this]::pk
     variable [namespace __this]::idx
+
+    upvar $optionsVar options
 
     upvar $find_by_axis_argsVar find_by_axis_args
 
@@ -648,8 +660,17 @@ proc ::persistence::orm::__choose_axis {argv find_by_axis_argsVar} {
             return $attname
         }
     }
-    set find_by_axis_args $pk
-    return $pk
+
+    set option_order_by [value_if options(order_by) ""]
+    lassign $option_order_by sort_attname sort_direction sort_comparison
+    if { [info exists idx(by_$sort_attname)] } {
+        set find_by_axis_args $sort_attname
+        return $sort_attname
+    } else {
+        set find_by_axis_args $pk
+        return $pk
+    }
+
 }
 
 # TODO: reorder/group expressions in argv/predicate

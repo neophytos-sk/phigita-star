@@ -185,7 +185,12 @@ proc ::persistence::commitlog::process {} {
         set pos1 [tell $fp]
 
         if { $mem_p } {
-            ::persistence::mem::set_column $oid $data $mtime $codec_conf
+            set rev "${oid}@${mtime}"
+            if { ![::persistence::mem::exists_column_rev_p $rev] } {
+                # wrap_proc in zz-postinit.tcl submits oid to commitlog and memtable
+                # so, the following, for the roll-forward recovery after server startup
+                ::persistence::mem::set_column $oid $data $mtime $codec_conf
+            }
         } else {
 
             # 1. exec command
