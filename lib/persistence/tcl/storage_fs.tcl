@@ -195,6 +195,12 @@ proc ::persistence::fs::__insert_column {ks cf_axis row_key column_path data {ts
     # path to file that will hold the data
     set oid ${row_path}/${column_path}
 
+    set ms $ts
+    if { $ms eq {} } {
+        set ms [clock milliseconds]
+    }
+
+    #set_column_data ${oid} ${ms} ${data} ${codec_conf}
     set_column_data ${oid} ${data} ${codec_conf}
 
     if { ${ts} ne {} } {
@@ -702,17 +708,13 @@ proc ::persistence::fs::get_slice {path {predicate ""}} {
     return $slicelist
 }
 
-# TODO: xpath expressions for querying
-proc ::persistence::fs::multiget_slice {xpath {predicate ""}} {
-    set residual_path [lassign [split $xpath {/}] ks cf_axis]
+proc ::persistence::fs::multiget_slice {nodepath row_keys {predicate ""}} {
+    #assert { [is_cf_nodepath_p $nodepath] }
 
-    #puts residual_path=$residual_path
-    #assert { $residual_path eq {} }
-
-    set row_predicate ""
-    set row_keys [__get_multirow_names $ks $cf_axis $row_predicate] 
+    set residual_path [lassign [split $nodepath {/}] ks cf_axis]
 
     set slicelist [__multiget_slice $ks $cf_axis $row_keys $predicate]
+
     return $slicelist
 }
 
@@ -888,9 +890,16 @@ proc ::persistence::fs::get_multirow {ks cf_axis {predicate ""}} {
 }
 
 
-proc ::persistence::fs::__get_multirow_names {args} {
+proc ::persistence::fs::get_multirow_names {nodepath {predicate ""}} {
+    #assert { [is_cf_nodepath_p $nodepath] }
 
-    set multirow [get_multirow {*}${args}]
+    set residual_path [lassign [split $nodepath {/}] ks cf_axis]
+    return [__get_multirow_names $ks $cf_axis $predicate]
+}
+
+proc ::persistence::fs::__get_multirow_names {ks cf_axis {predicate ""}} {
+
+    set multirow [get_multirow $ks $cf_axis $predicate]
     set result [list]
     foreach row ${multirow} {
         lappend result [get_name ${row}]

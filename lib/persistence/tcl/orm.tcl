@@ -487,7 +487,13 @@ proc ::persistence::orm::find_by_id {value} {
     return $oid
 }
 
-proc ::persistence::orm::find_by_axis {argv {predicate ""}} {
+proc ::persistence::orm::find_by_axis {argv {optionsVar ""}} {
+    if { $optionsVar ne {} } {
+        upvar $optionsVar options
+    }
+
+    set predicate [value_if options(__slice_predicate) ""]
+
     variable [namespace __this]::idx
 
     set argc [llength $argv]
@@ -506,22 +512,60 @@ proc ::persistence::orm::find_by_axis {argv {predicate ""}} {
         if { $exists_pVar ne {} } {
             upvar $exists_pVar exists_p
         }
-        set path [to_path_by by_$attname $attvalue {*}$id]
-        set oid [::persistence::get_column $path ${varname} exists_p [codec_conf]]
+        set nodepath [to_path_by by_$attname $attvalue {*}$id]
+        set oid [::persistence::get_column $nodepath ${varname} exists_p [codec_conf]]
         return $oid
 
     } elseif { $argc == 2 } {
 
         lassign $argv attname attvalue
-        set path [to_path_by by_$attname $attvalue]
-        set slicelist [::persistence::get_slice $path $predicate]
+        set nodepath [to_path_by by_$attname $attvalue]
+        set slicelist [::persistence::get_slice $nodepath $predicate]
         return $slicelist
 
     } elseif { $argc == 1 } {
 
         lassign $argv attname
-        set path [to_path_by by_$attname]
-        return [::persistence::multiget_slice $path $predicate]
+        set nodepath [to_path_by by_$attname]
+
+        set limit [value_if options(limit) "end"]
+        set offset [value_if options(offset) "0"]
+
+        set step 100
+
+        # log "------"
+        set result [list]
+        while { 1 } {
+            set range_low $offset
+            set range_high [expr { $offset + $step }]
+
+            # log "get_multirow_names from $range_low to $range_high"
+
+            set multirow_predicate [list "lrange" [list $range_low $range_high]]
+            set row_keys [::persistence::get_multirow_names $nodepath $multirow_predicate] 
+            set slicelist [::persistence::multiget_slice $nodepath $row_keys $predicate]
+
+            if { $slicelist eq {} } {
+                break
+            }
+
+            set result [concat $result $slicelist]
+
+            # log "#result = [llength $result]"
+
+            set offset $range_high
+
+            if { $limit ne {end} } {
+                if { $offset >= $limit } {
+                    break
+                }
+                if { [llength $result] >= $limit } {
+                    break
+                }
+            }
+        }
+
+        return $result
 
     }
 
@@ -543,7 +587,7 @@ proc ::persistence::orm::find {{where_clause_argv ""} {optionsVar ""}} {
 
         set axis_attname [value_if options(axis_attname) ${pk}]
         assert { exists("idx(by_${axis_attname})") }
-        set slicelist [find_by_axis ${axis_attname}]
+        set slicelist [find_by_axis ${axis_attname} options]
 
     } else {
 
@@ -557,7 +601,9 @@ proc ::persistence::orm::find {{where_clause_argv ""} {optionsVar ""}} {
             #log "chosen axis (attribute) = $attname"
             #log "chosen axis (args) = $find_by_axis_args"
             #log "rewritten predicate = $predicate"
-            set slicelist [find_by_axis $find_by_axis_args $predicate]
+
+            set options(__slice_predicate) $predicate
+            set slicelist [find_by_axis $find_by_axis_args options]
         }
 
     }
