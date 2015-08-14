@@ -26,13 +26,7 @@ proc ::persistence::mem::get_files {path} {
     variable __latest_idx
 
     set names [array names __latest_idx ${path}/*]
-
-    set result [list]
-    foreach name $names {
-        lappend result [lindex [split $name {,}] 0]
-    }
-
-    return [lsort ${result}]
+    return [lsort -unique ${names}]
 
 }
 
@@ -43,10 +37,11 @@ proc ::persistence::mem::get_subdirs {path} {
     set files [get_files ${path}]
     set result [list]
     foreach oid $files {
-        lappend result [join [lrange [split $oid {/}] 0 $len] {/}]
+        set oid_parts [split $oid {/}] 
+        lappend result [join [lrange $oid_parts 0 $len] {/}]
     }
 
-    return [lsort ${result}]
+    return [lsort -unique ${result}]
 
 }
 
