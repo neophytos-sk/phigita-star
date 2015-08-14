@@ -164,6 +164,7 @@ proc ::persistence::load_type {specVar} {
 proc ::persistence::load_all_types_from_db {} {
     set slicelist [::sysdb::object_type_t find]
     foreach oid $slicelist {
+        #log "loading type $oid"
         array set spec [::sysdb::object_type_t get $oid]
         load_type spec
         array unset spec
@@ -173,6 +174,7 @@ proc ::persistence::load_all_types_from_db {} {
 #after_package_load persistence,tcl,leave [list ::persistence::init]
 ::persistence::init
 
+# TODO: check for new types (on the server side)
 after_package_load persistence ::persistence::load_all_types_from_db
 
 

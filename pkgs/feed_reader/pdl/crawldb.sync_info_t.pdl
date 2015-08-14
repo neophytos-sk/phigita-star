@@ -5,6 +5,7 @@ pk "datetime_urlsha1"
 
 indexes {{
     name "by_datetime_urlsha1"
+    atts "datetime urlsha1"
     type "datetime urlsha1"
 } {
     name "by_urlsha1"
