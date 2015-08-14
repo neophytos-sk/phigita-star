@@ -42,12 +42,15 @@ proc ::persistence::init {} {
             "namespace import -force ::persistence::${storage_type}::*"
 
         if { [setting_p "write_ahead_log"] } {
+
+            # private
             wrap_proc ::persistence::fs::set_column {oid data {ts ""} {codec_conf ""}} {
                 set ts [clock seconds]
                 ::persistence::commitlog::set_column $oid $data $ts $codec_conf
                 ::persistence::mem::set_column $oid $data $ts $codec_conf
             }
 
+            # private
             wrap_proc ::persistence::fs::get_column {oid {codec_conf ""}} {
                 set exists_p [::persistence::mem::exists_column_p $oid]
                 if { $exists_p } {
@@ -57,6 +60,7 @@ proc ::persistence::init {} {
                 return $data
             }
 
+            # private
             wrap_proc ::persistence::fs::get_link {oid {codec_conf ""}} {
                 set exists_p [::persistence::mem::exists_link_p $oid]
                 if { $exists_p } {
@@ -70,25 +74,26 @@ proc ::persistence::init {} {
 
         if { [use_p "memtable"] } {
 
-            wrap_proc ::persistence::fs::get_mtime {oid} {
+            wrap_proc ::persistence::get_mtime {oid} {
                 if { [::persistence::mem::exists_column_p $oid] } {
                     return [::persistence::mem::get_mtime $oid]
                 }
                 return [call_orig $oid]
             }
 
-            wrap_proc ::persistence::fs::exists_p {oid} {
+            wrap_proc ::persistence::exists_p {oid} {
                 set exists_1_p [::persistence::mem::exists_p $oid]
                 set exists_2_p [call_orig $oid]
                 return [expr { $exists_1_p || $exists_2_p }]
             }
             
-            wrap_proc ::persistence::fs::exists_supercolumn_p {oid} {
+            wrap_proc ::persistence::exists_supercolumn_p {oid} {
                 set exists_1_p [::persistence::mem::exists_supercolumn_p $oid]
                 set exists_2_p [call_orig $oid]
                 return [expr { $exists_1_p || $exists_2_p }]
             }
 
+            # private
             wrap_proc ::persistence::fs::get_files {path} {
                 set filelist1 [::persistence::mem::get_files $path]
                 set filelist2 [call_orig $path]
@@ -97,6 +102,7 @@ proc ::persistence::init {} {
                 return [lunion $filelist1 $filelist2]
             }
 
+            # private
             wrap_proc ::persistence::fs::get_subdirs {path} {
                 set subdirs_1 [::persistence::mem::get_subdirs $path]
                 set subdirs_2 [call_orig $path]
