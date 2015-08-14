@@ -57,6 +57,15 @@ proc ::persistence::init {} {
                 return $data
             }
 
+            wrap_proc ::persistence::fs::get_link {oid {codec_conf ""}} {
+                set exists_p [::persistence::mem::exists_link_p $oid]
+                if { $exists_p } {
+                    return [::persistence::mem::get_link $oid $codec_conf]
+                }
+                set data [call_orig $oid $codec_conf]
+                return $data
+            }
+
         }
 
         if { [use_p "memtable"] } {
@@ -68,8 +77,8 @@ proc ::persistence::init {} {
                 return [call_orig $oid]
             }
 
-            wrap_proc ::persistence::fs::exists_column_p {oid} {
-                set exists_1_p [::persistence::mem::exists_column_p $oid]
+            wrap_proc ::persistence::fs::exists_p {oid} {
+                set exists_1_p [::persistence::mem::exists_p $oid]
                 set exists_2_p [call_orig $oid]
                 return [expr { $exists_1_p || $exists_2_p }]
             }
@@ -98,22 +107,6 @@ proc ::persistence::init {} {
         }
 
         if {0} {
-
-            wrap_proc ::persistence::fs::create_row_if {ks cf_axis row_key row_pathVar} {
-
-                assert_ks ${ks}
-                assert_cf ${ks} ${cf_axis}
-
-                upvar ${row_pathVar} row_path
-
-                set row_path [get_row ${ks} ${cf_axis} ${row_key}]
-
-                # NOTE: messes with get_files results when use_memtable is true
-                # set row_dir [get_filename ${row_path}]
-                # file mkdir $row_dir
-
-
-            }
 
             wrap_proc ::persistence::fs::get_name {oid} {
                 return [file tail $oid]

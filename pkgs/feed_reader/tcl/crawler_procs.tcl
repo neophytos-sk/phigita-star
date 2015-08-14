@@ -318,7 +318,7 @@ proc ::feed_reader::fetch_feed_p {feed_name timestamp {coeff "0.3"}} {
             return 1
         }
 
-        array set count [::persistence::get_column ${oid}]
+        array set count [::persistence::get ${oid}]
 
         set reference_interval 3600
         set max_times 4
@@ -342,7 +342,7 @@ proc ::feed_reader::fetch_feed_p {feed_name timestamp {coeff "0.3"}} {
         return 1
     }
 
-    array set count [::persistence::get_column ${oid}]
+    array set count [::persistence::get ${oid}]
 
     set last_sync [::persistence::get_mtime ${oid}]
 
@@ -368,9 +368,8 @@ proc ::feed_reader::incr_array_in_column {ks cf_axis row_key column_path increme
 
     set exists_p [::persistence::exists_column_p $oid] 
     if { $exists_p } {
-        set column_data [::persistence::get_column $oid]
+        set column_data [::persistence::get $oid]
     }
-    # ::persistence::get_column $oid column_data exists_p
 
     if { ${exists_p} } {
         array set count ${column_data}

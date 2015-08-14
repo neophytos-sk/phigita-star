@@ -1850,7 +1850,7 @@ proc ::feed_reader::write_item {timestamp normalized_link feedVar itemVar resync
 
 proc ::feed_reader::resync_item {oid} {
 
-    array set item [::persistence::get_column_data ${oid}]
+    array set item [::persistence::get ${oid}]
 
     set domain [value_if item(domain) ""]
     if { ${domain} eq {} } {

@@ -415,10 +415,9 @@ proc ::persistence::orm::get {oid {exists_pVar ""}} {
         upvar $exists_pVar exists_p
     }
 
-    set exists_p [::persistence::exists_column_p $oid]
+    set exists_p [::persistence::exists_p $oid]
     if { $exists_p } {
-        set data [decode [::persistence::get_column $oid [codec_conf]]]
-        return $data
+        return [decode [::persistence::get $oid [codec_conf]]]
     } else {
         error "no such oid (=$oid) in storage system (=mystore)"
     }

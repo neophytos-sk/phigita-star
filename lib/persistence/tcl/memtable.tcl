@@ -55,6 +55,19 @@ proc ::persistence::mem::exists_column_p {oid} {
     return [info exists __latest_idx(${oid})]
 }
 
+proc ::persistence::mem::exists_link_p {oid} {
+    variable __latest_idx
+    return [info exists __latest_idx(${oid})]
+}
+
+proc ::persistence::mem::exists_p {oid} {
+    if { [::persistence::fs::is_link_oid_p $oid] } {
+        return [exists_link_p $oid]
+    } else {
+        return [exists_column_p $oid]
+    }
+}
+
 proc ::persistence::mem::exists_supercolumn_p {oid} {
     variable __latest_idx
 
@@ -65,16 +78,17 @@ proc ::persistence::mem::get_column {oid {codec_conf ""}} {
     variable __latest_idx
     variable __mem
 
-    set exists_p [exists_column_p $oid]
-    if { $exists_p } {
-        set rev $__latest_idx(${oid})
-        if { [file extension $oid] eq {.link} } {
-            return [get_column $__mem(${rev},data) $codec_conf]
-        } else {
-            return $__mem(${rev},data)
-        }
-    }
-    return
+    set rev $__latest_idx(${oid})
+    return $__mem(${rev},data)
+}
+
+proc ::persistence::mem::get_link {oid {codec_conf ""}} {
+    variable __latest_idx
+    variable __mem
+
+    set rev $__latest_idx(${oid})
+    return [::persistence::get $__mem(${rev},data) $codec_conf]
+
 }
 
 

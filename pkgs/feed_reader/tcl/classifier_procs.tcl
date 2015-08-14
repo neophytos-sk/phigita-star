@@ -265,7 +265,7 @@ proc ::feed_reader::classifier::train {axis {supercolumn_path ""} {remaining_lev
     ::naivebayes::learn_naive_bayes_text ${supercolumns_filelist} ${supercolumns_categories} model
 
     set filename \
-	[::persistence::get_column \
+	[::persistence::__get_column \
 	     "newsdb" \
 	     "classifier/model" \
 	     "${axis}" \
@@ -312,7 +312,7 @@ proc ::feed_reader::classifier::classify {axis contentVar} {
     # category classification
 
     set filename \
-        [::persistence::get_column \
+        [::persistence::__get_column \
         "newsdb" \
         "classifier/model" \
         "${axis}" \
@@ -328,7 +328,7 @@ proc ::feed_reader::classifier::classify {axis contentVar} {
     # sub-category classification
 
     set subcategory_filename \
-        [::persistence::get_column \
+        [::persistence::__get_column \
         "newsdb" \
         "classifier/model" \
         "${axis}" \

@@ -274,9 +274,10 @@ proc ::persistence::orm::codec_bin_3::decode {bytes} {
         } else {
             set len [decode_unsigned_varint bytes num_decoded_bytes $pos]
             incr pos $num_decoded_bytes
-            # log "attname=$attname pos=$pos len=$len num_decoded_bytes=$num_decoded_bytes"
+            #log "attname=$attname pos=$pos len=$len num_decoded_bytes=$num_decoded_bytes"
             set scan_p [binary scan $bytes "@${pos}A${len}" item($attname)]
-            # log ">>>> $attname = $item($attname)"
+            #log "scan_p=$scan_p"
+            #log ">>>> $attname = $item($attname)"
             set item($attname) [encoding convertfrom utf-8 $item($attname)]
             incr pos $len
         }
