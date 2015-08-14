@@ -205,9 +205,8 @@ proc ::persistence::fs::__ins_column {ks cf_axis row_key column_path data {codec
 
     set oid [join_oid $ks $cf_axis $row_key $column_path]
 
-    set ts [clock seconds] ;# TODO: improve timestamps handling
-
-    set_column ${oid} ${data} $ts ${codec_conf}
+    set mtime [clock seconds] ;# TODO: improve timestamps handling
+    set_column ${oid} ${data} $mtime ${codec_conf}
 
     ##
     # bloom filter
@@ -236,7 +235,8 @@ proc ::persistence::fs::__ins_link {
 
     set oid [join_oid $ks $cf_axis $row_key $column_path]
 
-    set_link ${oid} ${target_oid} ${codec_conf}
+    set mtime [clock seconds] ;# TODO: improve timestamps handling
+    set_link ${oid} ${target_oid} $mtime ${codec_conf}
 
     ##
     # bloom filter
@@ -313,28 +313,15 @@ proc ::persistence::fs::set_column {oid data mtime codec_conf} {
     
 }
 
-proc ::persistence::fs::set_link {oid target_oid {codec_conf ""}} {
+proc ::persistence::fs::set_link {oid target_oid mtime codec_conf} {
 
     if { 0 } {
 
         # if data is on a single host, then create a symbolic link
-        set src [get_oid_filename ${oid}] 
+        set src [get_oid_filename ${oid}.link] 
         set target [get_oid_filename ${target_oid}]
-        if { [exists_column_p $oid] } {
-            set old_target [file link $src] 
-            #log "file node (link) exists: $src"
-            #log "checking to see if link points to the same target: $old_target"
-            if { $old_target ne $target } {
-                #log "deleting link $src -> $old_target"
-                #log "new target for link: $target"
-                file delete $src
-            } else {
-                #log "link already exists and points to the same target"
-                return
-            }
-        }
-        file mkdir [file dirname $src]
-        file link $src $target
+        ::util::writelink $oid_filename $rev_filename
+        file mtime $oid_filename $mtime
 
     } else {
 
@@ -347,21 +334,45 @@ proc ::persistence::fs::set_link {oid target_oid {codec_conf ""}} {
         # to see its target (and thus requiring knowledge of the
         # persistence layer internals)
 
-        set_column ${oid}.link $target_oid
+        set_column ${oid}.link $target_oid $mtime
 
     }
+
+}
+
+proc ::persistence::fs::get_link_target {oid} {
+
+    assert { [is_link_oid_p $oid] } 
+
+    if { 0 } {
+
+        variable base_dir
+        set oid_filename [get_oid_filename $oid]
+        set target_oid_filename [file link ${oid_filename}]
+        set index [string length $base_dir]
+        set target_oid [string range $target_filename $index end]
+
+    } else {
+
+        set target_oid [get_column $oid]
+
+    }
+
+    return $target_oid
 
 }
 
 proc ::persistence::fs::get_link {oid {codec_conf ""}} {
     assert { [is_link_oid_p $oid] }
     # log "retrieving link (=$oid) from fs"
-    set target_oid [::util::readfile [get_oid_filename $oid] {*}$codec_conf]
+    set target_oid [get_link_target $oid]
     return [get $target_oid $codec_conf]
 }
 
+# note: default implementation uses column to store the target_oid of a link
+# and thus why we allow for link oids in the assertion statement
 proc ::persistence::fs::get_column {oid {codec_conf ""}} {
-    assert { [is_column_oid_p $oid] }
+    assert { [is_column_oid_p $oid] || [is_link_oid_p $oid] }
     # log "retrieving column (=$oid) from fs"
     set filename [get_oid_filename ${oid}]
     return [::util::readfile ${filename} {*}$codec_conf]
@@ -528,12 +539,11 @@ proc ::persistence::fs::is_row_oid_p {oid} {
 }
 
 proc ::persistence::fs::get_name {oid} {
-    set filename_or_dir [get_oid_filename $oid]
-    if { [file extension $oid] eq {.link} } {
-        set filename_or_dir [::util::readfile $filename_or_dir]
-        #set filename_or_dir [file link ${filename_or_dir}]
+    set oid_filename [get_oid_filename $oid]
+    if { [is_link_oid_p $oid] } {
+        set oid_filename [get_link_target $oid]
     }
-    return [file tail [file rootname ${filename_or_dir}]]
+    return [file tail [file rootname ${oid_filename}]]
 }
 
 proc ::persistence::fs::get_leaf_nodes {path} {
@@ -575,16 +585,6 @@ proc ::persistence::fs::__get_slice {ks cf_axis row_key {options ""}} {
 
 }
 
-proc ::persistence::fs::__get_slice_names {args} {
-    set result [list]
-    set slicelist [__get_slice {*}${args}]
-    foreach filename ${slicelist} {
-        lappend result [::persistence::fs::get_name ${filename}]
-    }
-    return ${result}
-}
-
-
 proc ::persistence::fs::__find_column {
     ks 
     cf_axis 
@@ -608,7 +608,7 @@ proc ::persistence::fs::__find_column {
         upvar ${exists_pVar} exists_p
     }
 
-    set exists_p [exists_column_p ${oid}]
+    set exists_p [exists_p ${oid}]
     if { ${exists_p} } {
         set data [get_column ${oid} ${codec_conf}]
         return ${oid}
@@ -800,7 +800,7 @@ proc ::persistence::fs::exists_data_p {oid} {
     if { [is_row_oid_p $oid] } {
         return [exists_row_data_p $oid]
     } elseif { [is_column_oid_p $oid] || [is_supercolumn_oid_p $oid] } {
-        return [expr { [exists_column_p $oid] || [exists_supercolumn_p $oid] }]
+        return [expr { [exists_p $oid] || [exists_supercolumn_p $oid] }]
     } else {
         error "unknown oid (=$oid) type: must be row, column, or supercolumn"
     }

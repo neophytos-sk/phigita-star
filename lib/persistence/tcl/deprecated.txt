@@ -29,6 +29,17 @@ proc ::persistence::fs::predicate=lindex {slicelistVar index} {
 
 }
 
+proc ::persistence::fs::__get_slice_names {args} {
+    set result [list]
+    set slicelist [__get_slice {*}${args}]
+    foreach filename ${slicelist} {
+        lappend result [::persistence::fs::get_name ${filename}]
+    }
+    return ${result}
+}
+
+
+
 proc ::persistence::fs::create_row_if {ks cf_axis row_key row_pathVar} {
 
     assert_ks ${ks}

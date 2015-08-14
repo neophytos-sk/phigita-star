@@ -103,19 +103,18 @@ proc ::persistence::init {} {
                 return [lunion $subdirs_1 $subdirs_2]
             }
 
-
         }
 
         if {0} {
 
-            wrap_proc ::persistence::fs::get_name {oid} {
-                return [file tail $oid]
+            wrap_proc ::persistence::fs::set_link {oid target_oid mtime codec_conf} {
+                ::persistence::commitlog::set_column ${oid}.link $target_oid $mtime $codec_conf
+                ::persistence::mem::set_column ${oid}.link $target_oid $mtime $codec_conf
             }
 
-            # NOT IMPLEMENTED YET
-            wrap_proc ::persistence::fs::set_link_data {oid target_oid {codec_conf ""}} {
-                ::persistence::commitlog::set_link_data $oid $target_oid $codec_conf
-                ::persistence::mem::cache_link_data $oid $target_oid $codec_conf
+
+            wrap_proc ::persistence::fs::get_name {oid} {
+                return [file tail $oid]
             }
         }
 

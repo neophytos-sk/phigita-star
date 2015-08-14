@@ -338,7 +338,7 @@ proc ::feed_reader::fetch_feed_p {feed_name timestamp {coeff "0.3"}} {
 		      "${feed_name}"                  \
 		      "_stats"]
     
-    if { ![::persistence::exists_column_p ${oid}] } {
+    if { ![::persistence::exists_p ${oid}] } {
         return 1
     }
 
@@ -366,7 +366,7 @@ proc ::feed_reader::incr_array_in_column {ks cf_axis row_key column_path increme
 
     set oid "${ks}/${cf_axis}/${row_key}/+/${column_path}"
 
-    set exists_p [::persistence::exists_column_p $oid] 
+    set exists_p [::persistence::exists_p $oid] 
     if { $exists_p } {
         set column_data [::persistence::get $oid]
     }
