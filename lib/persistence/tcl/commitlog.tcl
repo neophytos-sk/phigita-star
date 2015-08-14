@@ -45,7 +45,7 @@ proc ::persistence::commitlog::open_if {} {
 
         set size [file size $filename]
         if { $size > $pos2 } {
-            # truncate the CommitLog up to the last proper write
+            log "!!! truncating the CommitLog up to the last proper write"
             chan truncate $fp $pos2
         }
 

@@ -138,6 +138,10 @@ proc ::persistence::init {} {
         }
 
     }
+
+
+    # TODO: load_all_types_from_db
+
 }
 
 

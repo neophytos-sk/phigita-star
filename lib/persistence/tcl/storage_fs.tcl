@@ -556,7 +556,7 @@ proc ::persistence::fs::get_files {nodepath} {
     # log [info frame -6]
     # log \n\nget_files->path=$path
     # log get_files->result=\n[join $result \n...]\n\n
-    return $result
+    return [lsort ${result}]
 }
 
 proc ::persistence::fs::get_subdirs {path} {
@@ -568,28 +568,19 @@ proc ::persistence::fs::get_subdirs {path} {
     foreach name $names {
         lappend result ${path}/${name}
     }
-    return $result
+    return [lsort ${result}]
 }
 
-proc ::persistence::fs::__get_slice_from_row {row_path {slice_predicate ""}} {
-    # set slicelist [get_leaf_nodes ${row_path}]
+proc ::persistence::fs::__get_slice_from_row {row_path {options ""}} {
     set slicelist [get_files ${row_path}]
-    set slicelist [expand_slice slicelist ""]  ;# latest_mtime
-    # log expanded_slicelist=\n%%%%%[join $slicelist "\n%%%%%%%%%%"]
-    set slicelist [lsort -integer -command ::persistence::compare_mtime -decreasing ${slicelist}]
-
-    if { ${slice_predicate} ne {} } {
-        # for predicates "maybe_in_path" and "in_path" to work right
-        lassign $slice_predicate cmd cmdargs
-        #predicate=$cmd slicelist {*}$cmdargs
-        predicate=forall slicelist $slice_predicate
-    }
+    set slicelist [expand_slice slicelist ""]  ;# expand_fn used to be latest_mtime
+    __exec_options slicelist $options
     return ${slicelist}
 }
 
-proc ::persistence::fs::__get_slice {keyspace column_family row_key {slice_predicate ""}} {
-    set row_path [get_row ${keyspace} ${column_family} ${row_key}]
-    return [__get_slice_from_row ${row_path} ${slice_predicate}]
+proc ::persistence::fs::__get_slice {ks cf_axis row_key {options ""}} {
+    set row_path [get_row ${ks} ${cf_axis} ${row_key}]
+    return [__get_slice_from_row ${row_path} ${options}]
 
 }
 
@@ -643,19 +634,84 @@ proc ::persistence::fs::__get_column_name {args} {
     return ${result}
 }
 
+proc ::persistence::fs::sort {slicelistVar type_nsp attname sort_direction {sort_comparison "dictionary"}} {
+    upvar $slicelistVar slicelist
 
-proc ::persistence::fs::__multiget_slice {ks cf_axis row_keys {slice_predicate ""}} {
+    assert { $sort_direction in {decreasing increasing} }
+    assert { $sort_comparison in {dictionary ascii integer} }
+
+    set sortlist [list]
+    set i 0
+    foreach oid $slicelist {
+        array set item [$type_nsp get ${oid}]
+        lappend sortlist [list $i $item($attname) $oid]
+        incr i
+    }
+    set sortlist [lsort -${sort_direction} -${sort_comparison} -index 1 $sortlist] 
+
+    set sorted_slicelist [map x $sortlist {lindex $x 2}]
+    return $sorted_slicelist 
+}
+
+
+
+
+
+proc ::persistence::fs::__exec_options {slicelistVar options} {
+    upvar $slicelistVar slicelist
+
+    # hack to load feed_reader types until all types are loaded in zz-postinit
+    namespace eval :: {
+        package require feed_reader
+    }
+
+    array set options_arr $options
+
+    set slice_predicate [value_if options_arr(__slice_predicate) ""]
+    if { $slice_predicate ne {} } {
+        predicate=forall slicelist $slice_predicate
+    }
+
+    set option_order_by [value_if options_arr(order_by) ""]
+    if { $option_order_by ne {} } {
+        lassign $option_order_by sort_attname sort_direction sort_comparison
+        # assert { $sort_direction in {increasing decreasing} }
+        # assert { $sort_comparison in {ascii dictionary integer} }
+        set type_nsp $options_arr(__type_nsp)
+        set slicelist [sort slicelist $type_nsp $sort_attname $sort_direction]
+    }
+
+    if { exists("options_arr(offset)") || exists("options_arr(limit)") } {
+        set offset [value_if options_arr(offset) "0"]
+        set limit [value_if options_arr(limit) ""]
+        set first $offset
+        if { $limit ne {} } {
+            set last [expr { $offset + $limit - 1 }]
+        } else {
+            set last end
+        }
+        if { $first ne {0} || $last ne {end} } {
+            set slicelist [lrange $slicelist $first $last]
+        }
+    }
+
+
+}
+
+proc ::persistence::fs::__multiget_slice {ks cf_axis row_keys {options ""}} {
 
     set result [list]
 
     foreach row_key ${row_keys} {
-        set slicelist [__get_slice ${ks} ${cf_axis} ${row_key} $slice_predicate]
+        set slicelist [__get_slice ${ks} ${cf_axis} ${row_key} $options]
         # row_key can be extracted from the filename from the given slicelist, if needed
         #lappend result ${row_key}
         foreach oid ${slicelist} {
             lappend result $oid
         }
     }
+
+    __exec_options result $options
 
     # log result=[join $result \n-----]
     return ${result}
@@ -700,18 +756,18 @@ proc ::persistence::fs::ins_column {oid data {codec_conf ""}} {
     __ins_column $ks $cf_axis $row_key $column_path $data $codec_conf
 }
 
-proc ::persistence::fs::get_slice {nodepath {predicate ""}} {
+proc ::persistence::fs::get_slice {nodepath {options ""}} {
     assert { [is_row_oid_p $nodepath] }
     lassign [split_oid $nodepath] ks cf_axis row_key
-    return [__get_slice $ks $cf_axis $row_key $predicate]
+    return [__get_slice $ks $cf_axis $row_key $options]
 }
 
-proc ::persistence::fs::multiget_slice {nodepath row_keys {predicate ""}} {
+proc ::persistence::fs::multiget_slice {nodepath row_keys {options ""}} {
     #assert { [is_cf_nodepath_p $nodepath] }
 
     lassign [split_oid $nodepath] ks cf_axis
 
-    set slicelist [__multiget_slice $ks $cf_axis $row_keys $predicate]
+    set slicelist [__multiget_slice $ks $cf_axis $row_keys $options]
 
     return $slicelist
 }
@@ -871,7 +927,6 @@ proc ::persistence::fs::get_multirow {ks cf_axis {predicate ""}} {
 
     assert_cf ${ks} ${cf_axis}
 
-    # set multirow [get_files ${ks}/${cf_axis} {d}]
     set multirow [get_subdirs ${ks}/${cf_axis}]
 
     if { ${predicate} ne {} } {

@@ -32,8 +32,7 @@ proc ::persistence::mem::get_files {path} {
         lappend result [lindex [split $name {,}] 0]
     }
 
-    return $result
-    #return [lsort -command ::persistence::compare_mtime $result]
+    return [lsort ${result}]
 
 }
 
@@ -47,11 +46,7 @@ proc ::persistence::mem::get_subdirs {path} {
         lappend result [join [lrange [split $oid {/}] 0 $len] {/}]
     }
 
-    #foreach respath $result {
-    #    assert { $respath ne $path }
-    #}
-
-    return $result
+    return [lsort ${result}]
 
 }
 

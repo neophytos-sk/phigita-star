@@ -498,8 +498,6 @@ proc ::persistence::orm::find_by_axis {argv {optionsVar ""}} {
         upvar $optionsVar options
     }
 
-    set slice_predicate [value_if options(__slice_predicate) ""]
-
     variable [namespace __this]::idx
 
     set argc [llength $argv]
@@ -526,64 +524,15 @@ proc ::persistence::orm::find_by_axis {argv {optionsVar ""}} {
 
         lassign $argv attname attvalue
         set nodepath [to_path_by by_$attname $attvalue]
-
-        set limit [value_if options(limit) "end"]
-        set offset [value_if options(offset) "0"]
-
-        set step 100
-
-        # log "------ offset=$offset limit=$limit"
-        set result [list]
-        set range_high $offset
-        while { 1 } {
-            set range_low $range_high
-            set range_high [expr { $range_low + $step - 1 }]
-
-            # log "exec_in_chunks (get_slice) from $range_low to $range_high"
-
-            set predicate $slice_predicate
-            lappend predicate [list "lrange" [list $range_low $range_high]]
-            set slicelist [::persistence::get_slice $nodepath $predicate]
-
-            if { $slicelist eq {} } {
-                break
-            }
-
-            set result [concat $result $slicelist]
-
-            # log "#result = [llength $result]"
-
-            if { $limit ne {end} } {
-                if { $range_low >= $limit } {
-                    break
-                }
-                if { [llength $result] >= $limit } {
-                    break
-                }
-            }
-
-        }
-
-        return $result
+        set slicelist [::persistence::get_slice $nodepath [array get options]]
+        return $slicelist
 
     } elseif { $argc == 1 } {
 
         lassign $argv attname
         set nodepath [to_path_by by_$attname]
-
-        set limit [value_if options(limit) "end"]
-        set offset [value_if options(offset) "0"]
-
-        set multirow_predicate [list]
-        set row_keys [::persistence::get_multirow_names $nodepath $multirow_predicate] 
-        set predicate $slice_predicate
-        # lappend predicate [list "sort" [list [subst -nocommands {{oid} { 
-        #   array set item [${nsp}::get [set oid]]
-        #   return [set item($sort_attname)]
-        # }}]]]
-        # lappend predicate [list "lrange" [list 0 $limit]]
-        set predicate ""
-        set slicelist [::persistence::multiget_slice $nodepath $row_keys $predicate]
+        set row_keys [::persistence::get_multirow_names $nodepath ""] 
+        set slicelist [::persistence::multiget_slice $nodepath $row_keys [array get options]]
         return $slicelist
 
     }
@@ -597,6 +546,10 @@ proc ::persistence::orm::find {{where_clause_argv ""} {optionsVar ""}} {
     if { $optionsVar ne {} } {
         upvar $optionsVar options
     }
+
+    set nsp [namespace __this]
+    set options(__type_nsp) ${nsp}
+    
 
     if { $where_clause_argv eq {} } {
 
@@ -625,26 +578,11 @@ proc ::persistence::orm::find {{where_clause_argv ""} {optionsVar ""}} {
             #log "chosen axis (args) = $find_by_axis_args"
             #log "rewritten predicate = $predicate"
 
+            set options(__where_clause_argv) $where_clause_argv
             set options(__slice_predicate) $predicate
             set slicelist [find_by_axis $find_by_axis_args options]
         }
 
-    }
-
-    # run the predicates here
-
-    set option_order_by [value_if options(order_by) ""]
-    if { $option_order_by ne {} } {
-        lassign $option_order_by sort_attname sort_direction sort_comparison
-        # assert { $sort_direction in {increasing decreasing} }
-        # assert { $sort_comparison in {ascii dictionary integer} }
-        set slicelist [sort slicelist $sort_attname $sort_direction]
-    }
-
-    if { exists("options(offset)") || exists("options(limit)") } {
-        set offset [value_if options(offset) "0"]
-        set limit [value_if options(limit) "end"]
-        set slicelist [lrange $slicelist $offset [expr { $limit - 1 }]]
     }
 
     return $slicelist
@@ -700,30 +638,6 @@ proc ::persistence::orm::__rewrite_where_clause {axis_attname argv} {
     }
     return $predicate
 }
-
-
-proc ::persistence::orm::sort {slicelistVar attname sort_direction {sort_comparison "dictionary"}} {
-    upvar $slicelistVar slicelist
-
-    assert { $sort_direction in {decreasing increasing} }
-    assert { $sort_comparison in {dictionary ascii integer} }
-
-    set sortlist [list]
-    set i 0
-    foreach oid $slicelist {
-        # lindex used, for "oid" can be a supercolumn
-        # TODO: improve proc to specify strategy/policy to use in such cases
-        array set item [get ${oid}]
-        lappend sortlist [list $i $item($attname) $oid]
-        incr i
-    }
-    set sortlist [lsort -${sort_direction} -${sort_comparison} -index 1 $sortlist] 
-
-    set sorted_slicelist [map x $sortlist {lindex $x 2}]
-    return $sorted_slicelist 
-}
-
-
 
 
 if {0} {

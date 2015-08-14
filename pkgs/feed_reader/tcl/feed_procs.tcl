@@ -870,10 +870,15 @@ proc ::feed_reader::ls {args} {
     }
     getopt::getopt $args
 
+    set stty [join [map it [split [exec stty -a] {;}] { list [lindex $it 0] [lrange $it 1 end] }]]
+    set rows [keylget stty rows]
+    set cols [keylget stty columns]
+
     # defaults
     #
     set_if offset 0
-    set_if limit [expr { $offset + 20 }]
+    set_if limit [expr { $rows - 5 }]
+    #set_if limit [expr { $offset + 20 }]
 
     # validation checks
     #
