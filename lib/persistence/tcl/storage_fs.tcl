@@ -367,7 +367,8 @@ proc ::persistence::fs::join_oid {ks cf_axis {row_key ""} {column_path ""}} {
 }
 
 
-proc ::persistence::fs::split_oid {oid} {
+proc ::persistence::fs::split_oid {oid_with_ts} {
+    lassign [split ${oid_with_ts} {@}] oid ts
     set column_path_args [lassign [split $oid {/}] ks cf_axis row_key __delimiter__]
     set column_path [join $column_path_args {/}]
     return [list $ks $cf_axis $row_key $column_path]
@@ -514,14 +515,6 @@ proc ::persistence::fs::get_name {oid} {
     return [file tail [file rootname ${filename_or_dir}]]
 }
 
-proc ::persistence::fs::OLD_get_name {oid} {
-    set filename_or_dir [get_oid_filename $oid]
-    if { [file type ${filename_or_dir}] eq {link} } {
-        set filename_or_dir [file link ${filename_or_dir}]
-    }
-    return [file tail ${filename_or_dir}]
-}
-
 proc ::persistence::fs::get_leaf_nodes {path} {
     # log "!!! get_leaf_nodes $path"
     set subdirs [get_subdirs $path]
@@ -540,14 +533,23 @@ proc ::persistence::fs::get_leaf_nodes {path} {
     }
 }
 
-proc ::persistence::fs::get_files {path} {
+proc ::persistence::fs::is_link_oid_p {oid} {
+    lassign [split_oid $oid] ks cf_axis row_key column_path
+    if { [file extension $column_path] eq {.link} } {
+        return 1
+    }
+    return 0
+}
+
+proc ::persistence::fs::get_files {nodepath} {
     variable base_dir
     variable branch
-    set dir [file normalize ${base_dir}/HEAD/${branch}/${path}]
+    set dir [file normalize ${base_dir}/HEAD/${branch}/${nodepath}]
     set names [glob -tails -nocomplain -types "f l d" -directory ${dir} "*"]
     set result [list]
     foreach name $names {
-        lappend result ${path}/${name}
+        set oid ${nodepath}/${name}
+        lappend result ${oid}
     }
 
     # log [info frame -7]

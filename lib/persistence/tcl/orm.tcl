@@ -577,7 +577,12 @@ proc ::persistence::orm::find_by_axis {argv {optionsVar ""}} {
         set multirow_predicate [list]
         set row_keys [::persistence::get_multirow_names $nodepath $multirow_predicate] 
         set predicate $slice_predicate
-        lappend predicate [list "lrange" [list $offset $limit]]
+        # lappend predicate [list "sort" [list [subst -nocommands {{oid} { 
+        #   array set item [${nsp}::get [set oid]]
+        #   return [set item($sort_attname)]
+        # }}]]]
+        # lappend predicate [list "lrange" [list 0 $limit]]
+        set predicate ""
         set slicelist [::persistence::multiget_slice $nodepath $row_keys $predicate]
         return $slicelist
 
