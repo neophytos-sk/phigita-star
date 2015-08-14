@@ -1,0 +1,44 @@
+nsp "::newsdb::error_item_t"
+ks "newsdb"
+cf "error_item"
+pk "urlsha1_timestamp"
+
+indexes {{
+    name "by_urlsha1"
+    atts "urlsha1"
+} {
+    name "by_urlsha1_timestamp"
+    atts "urlsha1 timestamp"
+}}
+
+attributes {{
+    name "urlsha1"
+    type "sha1_hex"
+} {
+    name "timestamp"
+    type "timestamp"
+} {
+    name "urlsha1_timestamp"
+    type "sha1_hex timestamp"
+} {
+    name "body"
+} {
+    name "errorcode"
+    type "integer"
+} {
+    name "url"
+    type "url"
+} {
+    name "http_fetch_info"
+    comment "key_value_map"
+} {
+    name "title_in_feed"
+} {
+    name "item"
+    comment "key_value_map"
+}}
+
+aggregates {}
+
+
+

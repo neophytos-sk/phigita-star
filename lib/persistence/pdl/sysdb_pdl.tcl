@@ -1,35 +1,6 @@
-namespace eval ::sysdb::object_type_t {
+set dir [file dirname [info script]]
 
-    # see core/tcl/namespace.tcl for details about "mixin" namespaces
-    namespace __mixin ::persistence::orm
+::persistence::load_type_from_file [file join $dir sysdb.object_type_t.pdl]
+::persistence::load_type_from_file [file join $dir sysdb.attribute_t.pdl]
+::persistence::load_type_from_file [file join $dir sysdb.index_t.pdl]
 
-    variable ks "sysdb"
-    variable cf "object_type"
-    variable pk "nsp"
-
-    variable idx
-    array set idx {
-
-        by_nsp {
-            type "unique_index"
-            atts "nsp"
-            tags "summary"
-        }
-
-    }
-
-    variable att
-    array set att {
-        nsp {
-            type "sysdb_namespace"
-        }
-        ks {}
-        cf {}
-    }
-
-    variable aggregates
-    array set aggregates [list]
-
-}
-
-::sysdb::object_type_t init_type

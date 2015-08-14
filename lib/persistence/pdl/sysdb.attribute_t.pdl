@@ -1,0 +1,38 @@
+nsp "::sysdb::attribute_t"
+ks "sysdb"
+cf "attribute"
+pk "nsp_name"
+
+indexes {{
+    name "by_nsp_name"
+    atts "nsp name"
+    type "unique_index"
+}}
+
+attributes {{
+    name "nsp_name"
+    type ""
+    func {{itemVar} {
+        upvar $itemVar item
+        join [list $item(nsp) $item(name)] "::"
+    }}
+} {
+    name "nsp"
+    type "sysdb_namespace"
+} {
+    name "name"
+} {
+    name "type"
+} {
+    name "null"
+} {
+    name "func"
+} {
+    name "maxlen"
+} {
+    name "immutable_p"
+} {
+    name "pos"
+}}
+
+aggregates {}

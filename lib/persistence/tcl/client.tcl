@@ -105,6 +105,8 @@ proc ::db_client::handle_conn {sock args} {
         set peer($sock,retcode) $retcode
         set pos [incr peer($sock,datapos)]
 
+        # log line=$line
+
         set peer($sock,done) $line
 
     }
@@ -120,12 +122,9 @@ proc ::db_client::exec_cmd {args} {
         set myport 9900
         ::db_client::init $myaddr $myport
     }
-    # log "sending command... {*}$args"
+    #log "sending command... {*}$args"
     ::db_client::send $args
-    #binary scan [::db_client::recv] a* response
     set response [::db_client::recv]
-    #set response [binary decode base64 [::db_client::recv]]
-    #set response [encoding convertto utf-8 $response]
     #log response=$response
     return $response
 

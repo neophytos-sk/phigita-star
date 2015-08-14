@@ -1,0 +1,42 @@
+nsp "::webdb::web_page_t"
+ks "webdb"
+cf "web_page"
+pk "urlsha1"
+
+indexes {{
+    name "by_urlsha1"
+    atts "urlsha1"
+} {
+    name "by_reversehost"
+    atts "reversehost"
+}}
+
+attributes {{
+    name "urlsha1"
+} {
+    name "url"
+} {
+    name "content"
+} {
+    name "scheme"
+} {
+    name "host"
+    null "0"
+} {
+    name "port"
+} {
+    name "path"
+} {
+    name "query"
+} {
+    name "fragment"
+} {
+    name "reversehost"
+    null "0"
+    func {{itemVar} {
+        upvar $itemVar item
+        reversedotted $item(host)
+    }}
+}}
+
+aggregates {}

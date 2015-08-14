@@ -132,12 +132,41 @@ proc ::persistence::init {} {
     }
 
 
-    # TODO: load_all_types_from_db
-
 }
 
 
+proc ::persistence::load_type_from_file {filename} {
+    array set spec [::util::readfile $filename]
+    load_type spec
+}
+
+proc ::persistence::load_type {specVar} {
+    upvar $specVar spec
+
+    # log spec=[array get spec]
+
+    namespace eval $spec(nsp) {
+        # see core/tcl/namespace.tcl for details about "mixin" namespaces
+        namespace __mixin ::persistence::orm
+    }
+    namespace upvar $spec(nsp) __spec __spec
+    array set __spec [array get spec]
+
+    $spec(nsp) init_type
+}
+
+proc ::persistence::load_all_types_from_db {} {
+    set slicelist [::sysdb::object_type_t find]
+    foreach oid $slicelist {
+        array set spec [::sysdb::object_type_t get $oid]
+        load_type spec
+        array unset spec
+    }
+}
+
 #after_package_load persistence,tcl,leave [list ::persistence::init]
 ::persistence::init
+
+after_package_load persistence ::persistence::load_all_types_from_db
 
 

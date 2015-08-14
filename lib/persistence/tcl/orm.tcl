@@ -41,6 +41,7 @@ namespace eval ::persistence::orm {
 }
 
 proc ::persistence::orm::init_type {} {
+    variable [namespace __this]::__spec
     variable [namespace __this]::ks
     variable [namespace __this]::cf
     variable [namespace __this]::pk
@@ -51,6 +52,33 @@ proc ::persistence::orm::init_type {} {
     variable [namespace __this]::__attinfo
     variable [namespace __this]::__indexes
     variable [namespace __this]::__idxinfo
+
+    # log ------[namespace __this]
+    set indexes ""
+    set attributes ""
+    set aggregates ""
+    foreach varname [array names __spec] {
+        set $varname $__spec($varname)
+        #log varname=$varname
+    }
+
+    if { ![info exists idx] } {
+        set map [list]
+        foreach list $indexes {
+            set name [keylget list name]
+            lappend map $name $list
+        }
+        array set idx $map
+    }
+
+    if { ![info exists att] } {
+        set map [list]
+        foreach list $attributes {
+            set name [keylget list name]
+            lappend map $name $list
+        }
+        array set att $map
+    }
 
     # log "init_type [namespace __this]"
 
@@ -130,8 +158,18 @@ proc ::persistence::orm::init_type {} {
     if { $oid ne {} } {
         # TODO: integrity check
     } else {
-        array set item [list ks $ks cf $cf nsp $nsp]
-        ::sysdb::object_type_t insert item
+
+        array set spec [list \
+            nsp $nsp \
+            ks $ks \
+            cf $cf \
+            pk $pk \
+            indexes $indexes \
+            attributes $attributes \
+            aggregates $aggregates]
+
+        ::sysdb::object_type_t insert spec
+
     }
 
 }
@@ -380,7 +418,7 @@ proc ::persistence::orm::delete {oid {exists_pVar ""}} {
         upvar $exists_pVar exists_p
     }
 
-    set exists_p [::persistence::exists_column_p $oid]
+    set exists_p [::persistence::exists_p $oid]
     if { $exists_p } {
 
         array set item [get $oid]
@@ -411,6 +449,11 @@ proc ::persistence::orm::delete {oid {exists_pVar ""}} {
 # * raises an error if the oid does not exist
 #
 proc ::persistence::orm::get {oid {exists_pVar ""}} {
+
+    assert { [persistence::fs::is_column_oid_p $oid] || [persistence::fs::is_link_oid_p $oid] } {
+        log failed,oid=$oid
+    }
+
     if { $exists_pVar ne {} } {
         upvar $exists_pVar exists_p
     }
@@ -530,9 +573,14 @@ proc ::persistence::orm::find_by_axis {argv {optionsVar ""}} {
 
         lassign $argv attname
         set nodepath [to_path_by by_$attname]
-        set row_keys [::persistence::get_multirow_names $nodepath ""] 
-        set slicelist [::persistence::multiget_slice $nodepath $row_keys [array get options]]
-        return $slicelist
+        set row_keys [::persistence::get_multirow_names $nodepath] 
+        # log ^^^row_keys=$row_keys
+        if { $row_keys ne {} } {
+            set slicelist [::persistence::multiget_slice $nodepath $row_keys [array get options]]
+            # log ^^^slicelist=$slicelist
+            return $slicelist
+        }
+        return
 
     }
 

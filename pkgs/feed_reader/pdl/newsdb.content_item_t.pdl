@@ -1,0 +1,23 @@
+nsp "::newsdb::content_item_t"
+ks "newsdb"
+cf "content_item"
+pk "contentsha1"
+
+indexes {{
+    name "by_contentsha1"
+    atts "contentsha1"
+}}
+
+attributes {{
+    name "contentsha1"
+    type "sha1_hex"
+} {
+    name "title"
+    null "1"
+} {
+    name "body"
+}}
+
+aggregates {}
+
+

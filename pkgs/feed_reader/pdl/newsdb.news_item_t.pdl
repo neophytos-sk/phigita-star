@@ -1,0 +1,87 @@
+nsp "::newsdb::news_item_t"
+ks "newsdb"
+cf "news_item"
+pk "urlsha1_contentsha1"
+
+indexes {{
+    name "by_urlsha1_contentsha1"
+    atts "urlsha1 contentsha1"
+    tags "one_to_one unique"
+} {
+    name "by_urlsha1"
+    atts "urlsha1"
+    tags "one_to_many"
+} {
+    name "by_contentsha1"
+    atts "contentsha1"
+    tags "one_to_many"
+} {
+    name "by_reversedomain"
+    atts "reversedomain"
+    tags "one_to_many"
+} {
+    name "by_langclass"
+    atts "langclass"
+    tags "one_to_many"
+} {
+    name "by_sort_date"
+    atts "sort_date"
+    tags "one_to_many"
+}}
+
+attributes {{
+    name "urlsha1_contentsha1"
+    type "sha1_hex sha1_hex"
+    func {{itemVar} {
+        upvar $itemVar item
+        list $item(urlsha1) $item(contentsha1)
+    }}
+} {
+    name "urlsha1"
+    type "sha1_hex"
+} {
+    name "contentsha1"
+    type "sha1_hex"
+} {
+    name "langclass"
+    type "langclass"
+} {
+    name "url"
+    type "url"
+} {
+    name "title"
+} {
+    name "body"
+} {
+    name "is_revision_p"
+} {
+    name "is_copy_p"
+} {
+    name "domain"
+} {
+    name "reversedomain"
+} {
+    name "date"
+    type "datetime"
+    null "1"
+    comment "date extracted from article, can be null"
+} {
+    name "sort_date"
+    type "datetime"
+} {
+    name "first_sync"
+} {
+    name "last_sync"
+} {
+    name "timestamp"
+    type "naturalnum"
+} {
+    name "attachments"
+} {
+    name "tags"
+} {
+    name "videos"
+}}
+
+aggregates {}
+

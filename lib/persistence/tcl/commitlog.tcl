@@ -58,9 +58,7 @@ proc ::persistence::commitlog::open_if {} {
 
     }
 
-    # after 30 seconds, process commitlog
-    after 30000 [list ::persistence::commitlog::process]
-    # process
+    after 0 [list ::persistence::commitlog::process]
 
 }
 

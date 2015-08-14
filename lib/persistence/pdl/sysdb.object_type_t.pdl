@@ -1,0 +1,31 @@
+nsp "::sysdb::object_type_t"
+ks "sysdb"
+cf "object_type"
+pk "nsp"
+
+indexes {{
+    name "by_nsp"
+    atts "ks cf"
+}}
+
+attributes {{
+    name "nsp"
+    func {{itemVar} {
+        upvar $itemVar item
+        join [list $item(ks) $item(cf)] "::"
+    }}
+} {
+    name "ks"
+} {
+    name "cf"
+} {
+    name "pk"
+} {
+    name "indexes"
+} {
+    name "attributes"
+} {
+    name "aggregates"
+}}
+
+aggregates {}

@@ -15,6 +15,7 @@ namespace eval ::persistence::fs {
         del_link \
         get_slice \
         multiget_slice \
+        get_multirow \
         get_multirow_names \
         exists_supercolumn_p \
         find_column \
@@ -652,9 +653,9 @@ proc ::persistence::fs::__exec_options {slicelistVar options} {
     upvar $slicelistVar slicelist
 
     # hack to load feed_reader types until all types are loaded in zz-postinit
-    namespace eval :: {
-        package require feed_reader
-    }
+    #namespace eval :: {
+    #    package require feed_reader
+    #}
 
     array set options_arr $options
 
@@ -695,11 +696,7 @@ proc ::persistence::fs::__multiget_slice {ks cf_axis row_keys {options ""}} {
 
     foreach row_key ${row_keys} {
         set slicelist [__get_slice ${ks} ${cf_axis} ${row_key} $options]
-        # row_key can be extracted from the filename from the given slicelist, if needed
-        #lappend result ${row_key}
-        foreach oid ${slicelist} {
-            lappend result $oid
-        }
+        set result [concat $result $slicelist]
     }
 
     __exec_options result $options
@@ -755,12 +752,8 @@ proc ::persistence::fs::get_slice {nodepath {options ""}} {
 
 proc ::persistence::fs::multiget_slice {nodepath row_keys {options ""}} {
     #assert { [is_cf_nodepath_p $nodepath] }
-
     lassign [split_oid $nodepath] ks cf_axis
-
-    set slicelist [__multiget_slice $ks $cf_axis $row_keys $options]
-
-    return $slicelist
+    return [__multiget_slice $ks $cf_axis $row_keys $options]
 }
 
 
@@ -858,11 +851,11 @@ proc ::persistence::fs::get_multirow_names {nodepath {predicate ""}} {
 }
 
 proc ::persistence::fs::__get_multirow_names {ks cf_axis {predicate ""}} {
-
     set multirow [get_multirow $ks $cf_axis $predicate]
     set result [list]
     foreach row ${multirow} {
-        lappend result [get_name ${row}]
+        set row_key [get_name ${row}]
+        lappend result $row_key
     }
     return ${result}
 }
