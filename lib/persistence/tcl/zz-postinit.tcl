@@ -111,19 +111,6 @@ proc ::persistence::init {} {
 
         }
 
-        if {0} {
-
-            wrap_proc ::persistence::fs::set_link {oid target_oid mtime codec_conf} {
-                ::persistence::commitlog::set_column ${oid}.link $target_oid $mtime $codec_conf
-                ::persistence::mem::set_column ${oid}.link $target_oid $mtime $codec_conf
-            }
-
-
-            wrap_proc ::persistence::fs::get_name {oid} {
-                return [file tail $oid]
-            }
-        }
-
     } else {
 
         set nsp "::persistence::${storage_type}"
@@ -144,6 +131,7 @@ proc ::persistence::init {} {
 proc ::persistence::load_type_from_file {filename} {
     array set spec [::util::readfile $filename]
     load_type spec
+    # TODO: if client, broadcast to servers to reload types from db
 }
 
 proc ::persistence::load_type {specVar} {
