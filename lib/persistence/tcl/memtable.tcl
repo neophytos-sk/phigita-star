@@ -61,7 +61,7 @@ proc ::persistence::mem::exists_link_p {oid} {
 }
 
 proc ::persistence::mem::exists_p {oid} {
-    if { [::persistence::fs::is_link_oid_p $oid] } {
+    if { [::persistence::is_link_oid_p $oid] } {
         return [exists_link_p $oid]
     } else {
         return [exists_column_p $oid]

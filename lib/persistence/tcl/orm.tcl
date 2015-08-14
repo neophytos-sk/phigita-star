@@ -450,7 +450,7 @@ proc ::persistence::orm::delete {oid {exists_pVar ""}} {
 #
 proc ::persistence::orm::get {oid {exists_pVar ""}} {
 
-    assert { [persistence::fs::is_column_oid_p $oid] || [persistence::fs::is_link_oid_p $oid] } {
+    assert { [persistence::is_column_oid_p $oid] || [persistence::is_link_oid_p $oid] } {
         log failed,oid=$oid
     }
 

@@ -38,8 +38,7 @@ proc ::persistence::init {} {
 
     if { ![setting_p "client_server"] || [use_p "server"] } {
 
-        namespace eval ::persistence \
-            "namespace import -force ::persistence::${storage_type}::*"
+        namespace import -force ::persistence::${storage_type}::*
 
         if { [setting_p "write_ahead_log"] } {
 
@@ -61,7 +60,7 @@ proc ::persistence::init {} {
             }
 
             # private
-            wrap_proc ::persistence::fs::get_link {oid {codec_conf ""}} {
+            wrap_proc ::persistence::common::get_link {oid {codec_conf ""}} {
                 set exists_p [::persistence::mem::exists_link_p $oid]
                 if { $exists_p } {
                     return [::persistence::mem::get_link $oid $codec_conf]
@@ -116,6 +115,7 @@ proc ::persistence::init {} {
         set nsp "::persistence::${storage_type}"
         set exported_procs [namespace eval ${nsp} "namespace export"]
         foreach exported_proc $exported_procs {
+            #rename ::persistence::$exported_proc {}
             interp alias {} ::persistence::$exported_proc {} ::db_client::exec_cmd ${nsp}::$exported_proc
             if { [use_p "threads"] } {
                 # TODO: interp alias {} ::persistence::$exported_proc {} apply [list {args} "thread::send $id ${nsp}::$exported_proc {*}$args]
