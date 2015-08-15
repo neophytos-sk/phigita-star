@@ -233,7 +233,7 @@ proc ::xo::tdp::initial_rewrite_compare {node1 node2} {
 
 	set mtime 0
 	foreach filename $filelist {
-	    if { [::util::newerFileThan $filename $mtime] } {
+	    if { [file __newer_than_mtime $filename $mtime] } {
 		set mtime [file mtime $filename]
 	    }
 	}
@@ -259,7 +259,7 @@ proc ::xo::tdp::compile_and_load {filename} {
 
     set latest_mtime [latest_mtime $filename]
     if { [::xo::kit::performance_mode_p] && [file exists $sharedlib] } {
-	if { [::util::newerFileThan $sharedlib $latest_mtime] } {
+	if { [file __newer_than_mtime $sharedlib $latest_mtime] } {
 	    log notice "--->>> load $sharedlib $ininame"
 	    load $sharedlib $ininame
 	    return 

@@ -1,5 +1,4 @@
-
-if { 0 && ![use_p "memtable"] } {
+if { ![setting_p "memtable"] } {
     return
 }
 
@@ -7,9 +6,6 @@ namespace eval ::persistence::mem {
 
     variable __mem
     array set __mem [list]
-
-    variable __rev_list
-    set __rev_list [list]
 
     variable __cnt 0
 
@@ -19,6 +15,9 @@ namespace eval ::persistence::mem {
     # master branch
     variable __latest_idx
     array set __latest_idx [list]
+
+    variable __dirty_idx
+    array set __dirty_idx [list]
 
 }
 
@@ -108,9 +107,9 @@ proc ::persistence::mem::get_mtime {oid} {
 
 proc ::persistence::mem::set_column {oid data mtime codec_conf} {
     variable __mem
-    variable __rev_list
     variable __cnt
     variable __latest_idx
+    variable __dirty_idx
 
     set rev "${oid}@${mtime}"
 
@@ -122,9 +121,8 @@ proc ::persistence::mem::set_column {oid data mtime codec_conf} {
          log "~~~~~~~~~~~~~ oid=$oid"
     }
 
-    set __latest_idx(${oid}) ${rev}
-
-    lappend __rev_list ${rev}
+    set __latest_idx(${oid})        ${rev}
+    set __dirty_idx(${rev})         ""
 
     set __mem(${rev},oid)           $oid
     set __mem(${rev},data)          $data
@@ -169,28 +167,33 @@ proc ::persistence::mem::del_column {oid} {
 proc ::persistence::mem::dump {} {
     #log "dumping memtable to filesystem"
     variable __mem
-    variable __rev_list
+    variable __dirty_idx
 
     #set fp [open /tmp/memtable.txt w]
     #puts $fp [join [array names __mem *,data] \n]
     #close $fp
 
+    set rev_list [lsort [array names __dirty_idx]]
+
     set count 0
-    foreach rev $__rev_list {
-        #log ">>> rev=$rev"
-        if { $__mem(${rev},dirty_p) } {
-            # log "dumping $rev"
-
-            set oid $__mem(${rev},oid)
-            set data $__mem(${rev},data)
-            set mtime $__mem(${rev},mtime)
-            set codec_conf $__mem(${rev},codec_conf)
-
-            call_orig_of ::persistence::fs::set_column $oid $data $mtime $codec_conf
-
-            set __mem(${rev},dirty_p) 0
-            incr count
+    foreach rev $rev_list {
+        # log "dumping rev: $rev"
+        if { !$__mem(${rev},dirty_p) } {
+            error "mismatch between __dirty_idx and __mem data"
         }
+
+        set oid $__mem(${rev},oid)
+        set data $__mem(${rev},data)
+        set mtime $__mem(${rev},mtime)
+        set codec_conf $__mem(${rev},codec_conf)
+
+        call_orig_of ::persistence::fs::set_column $oid $data $mtime $codec_conf
+
+        set __mem(${rev},dirty_p) 0
+        unset __dirty_idx(${rev})
+
+        incr count
+
     }
 
     #log "dumped $count records"

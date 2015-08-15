@@ -2,8 +2,6 @@
 # procs that are generic (highest-level of abstraction) in the
 # persistence package, i.e. no storage system-specific calls here
 
-package require bloom_filter
-
 set dir [file dirname [info script]]
 source [file join $dir orm_codec.tcl]
 
@@ -150,26 +148,6 @@ proc ::persistence::orm::init_type {} {
     foreach {index_name index_item} [array get idx] {
         set axis $index_name
         ::persistence::define_cf $ks $cf.$axis
-    }
-
-
-    set where_clause [list [list nsp = $nsp]]
-    set oid [::sysdb::object_type_t 0or1row $where_clause]
-    if { $oid ne {} } {
-        # TODO: integrity check
-    } else {
-
-        array set spec [list \
-            nsp $nsp \
-            ks $ks \
-            cf $cf \
-            pk $pk \
-            indexes $indexes \
-            attributes $attributes \
-            aggregates $aggregates]
-
-        ::sysdb::object_type_t insert spec
-
     }
 
 }
@@ -345,6 +323,9 @@ proc ::persistence::orm::insert {itemVar {optionsVar ""}} {
         set row_key [to_row_key_by $idxname item]
         set src [to_path_by $idxname $row_key {*}$item($pk)]
         ::persistence::ins_link $src $target
+
+        #log "idxname=$idxname"
+        #log "ins_link $src $target"
     }
 
     # ::persistence::end_batch
@@ -355,6 +336,7 @@ proc ::persistence::orm::insert {itemVar {optionsVar ""}} {
 proc ::persistence::orm::update {oid new_itemVar {optionsVar ""}} {
     variable [namespace __this]::pk
     variable [namespace __this]::__attinfo
+    variable [namespace __this]::__indexes
     variable [namespace __this]::__idxinfo
 
     upvar $new_itemVar new_item
@@ -367,14 +349,16 @@ proc ::persistence::orm::update {oid new_itemVar {optionsVar ""}} {
     set attnames [array names new_item]
 
     # check for existance and get the old item
-    if { ![exists_column_p $oid] } {
+    if { ![::persistence::exists_p $oid] } {
         error "persistence (ORM): no such oid (=$oid) in the store (=mystore)"
     }
-    array set item [get $oid]
+
+    # old_item
+    array set old_item [get $oid]
 
     # ensures that no immutable attributes are modified
     foreach attname $attnames {
-        if { $__attinfo(${attname},immutable) && exists("new_item($attname)") } {
+        if { $__attinfo(${attname},immutable) && [info exists new_item($attname)] } {
             if { $new_item($attname) ne $old_item($attname) } {
                 error "persistence (ORM): attempted to modify immutable attribute"
             }
@@ -382,25 +366,36 @@ proc ::persistence::orm::update {oid new_itemVar {optionsVar ""}} {
     }
 
     # merges old with new data
-    array set item $new_item
+    array set item [array get old_item]
+    array set item [array get new_item]
 
     # updates indexes
     set target [to_path $item($pk)] 
     foreach idxname $__indexes {
+        if { $idxname eq "by_$pk" } { continue }
         set count 0
+        set changed 0
         set idx_atts $__idxinfo(${idxname},atts)
         foreach idx_attname $idx_atts {
-            if { exists("new_item($idx_attname)") } {
+            if { [info exists new_item($idx_attname)] } {
                 incr count
+                if { [info exists __changed($idx_attname)] } {
+                    incr changed
+                } elseif { $new_item($idx_attname) ne $old_item($idx_attname) } {
+                    set __changed($idx_attname)
+                    incr changed
+                }
             }
         }
-        if { $count == [llength $idx_atts] } {
+        if { $changed } {
             # update index
             set row_key [to_row_key_by $idxname item]
             set src [to_path_by $idxname $row_key {*}$item($pk)]
+
             #::persistence::del_link $src
             ::persistence::ins_link $src $target
             # ::persistence::upd_link $src $new_target
+
         }
     }
 
@@ -442,6 +437,10 @@ proc ::persistence::orm::delete {oid {exists_pVar ""}} {
         error "no such oid (=$oid) in storage system (=mystore)"
     }
 
+}
+
+proc ::persistence::orm::exists {oid} {
+    return [::persistence::exists_p $oid]
 }
 
 # get -
@@ -677,7 +676,6 @@ proc ::persistence::orm::__rewrite_where_clause {axis_attname argv} {
                 continue
             }
             set path [to_path_by by_${attname} ${attvalue}]
-            lappend predicate [list "maybe_in_path" [list $path]]
             lappend predicate [list "in_path" [list $path]]
         } else {
             error "persistence (ORM): op (=$op) not implemented yet"

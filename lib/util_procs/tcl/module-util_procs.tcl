@@ -132,58 +132,6 @@ proc ::util::fs::ls {dir {types "d"}} {
 }
 
 # TODO: move fs commands under ::util::fs
-proc ::util::readfile {filename args} {
-    set fp [open ${filename}]
-    if { $args ne {} } {
-        fconfigure $fp {*}$args
-    }
-    set data [read $fp [file size ${filename}]]
-    close $fp
-    return $data
-}
-
-proc ::util::writefile {filename data args} {
-    set fp [open $filename w]
-    if { $args ne {} } {
-        fconfigure $fp {*}$args
-    }
-    puts -nonewline $fp $data
-    close $fp
-}
-
-proc ::util::writelink {src target} {
-    if { [file exists $src] } {
-        set old_target [file link $src]
-        if { $old_target ne $target } { 
-            file delete $src
-        } else {
-            return
-        }
-        set src_dir [file dirname $src]
-        if { ![file isdirectory $src_dir] } {
-            file mkdir $src_dir
-        }
-        file link $src $target
-    } else {
-        file link $src $target
-    }
-}
-
-
-proc ::util::ino {filename} {
-    file stat $filename arr
-    return $arr(ino)
-}
-
-proc ::util::newerFile {a b} {
-    return [expr {[file mtime $a] > [file mtime $b]}]
-}
-
-proc ::util::newerFileThan {path mtime} {
-    return [expr {[file exists $path] && ([file mtime $path] > $mtime)}]
-}
-
-
 
 # ---------------------------------- strings ------------------------------
 

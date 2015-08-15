@@ -65,7 +65,7 @@ proc ::critcl::ext::latest_mtime {inputfile} {
 
     set mtime 0
     foreach filename $filelist {
-        if { [::util::newerFileThan $filename $mtime] } {
+        if { [file __newer_than_mtime $filename $mtime] } {
             set mtime [file mtime $filename]
         }
     }

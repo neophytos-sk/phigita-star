@@ -40,6 +40,33 @@ proc ::persistence::init {} {
 
         namespace import -force ::persistence::${storage_type}::*
 
+        if { [setting_p "bloom_filters"] } {
+
+            wrap_proc ::persistence::define_cf {ks cf_axis} {
+                call_orig $ks $cf_axis
+                set type_oid [join_oid $ks $cf_axis]
+                ::persistence::bloom_filter::init $type_oid
+            }
+
+            wrap_proc ::persistence::ins_column {oid data {codec_conf ""}} {
+                # log "ins_column oid=$oid"
+                lassign [split_oid $oid] ks cf_axis row_key column_path
+                call_orig $oid $data $codec_conf
+                set type_oid [join_oid $ks $cf_axis]
+                ::persistence::bloom_filter::insert $type_oid $oid
+            }
+
+            wrap_proc ::persistence::ins_link {oid target_oid {codec_conf ""}} {
+                # log "ins_link oid=$oid data=$target_oid"
+                lassign [split_oid $oid] ks cf_axis row_key column_path
+                call_orig $oid $target_oid $codec_conf
+                set type_oid [join_oid $ks $cf_axis]
+                ::persistence::bloom_filter::insert $type_oid $oid
+            }
+
+        }
+
+
         if { [setting_p "write_ahead_log"] } {
 
             # private
@@ -71,7 +98,7 @@ proc ::persistence::init {} {
 
         }
 
-        if { [use_p "memtable"] } {
+        if { [setting_p "memtable"] } {
 
             wrap_proc ::persistence::get_mtime {oid} {
                 if { [::persistence::mem::exists_column_p $oid] } {
@@ -137,8 +164,6 @@ proc ::persistence::load_type_from_file {filename} {
 proc ::persistence::load_type {specVar} {
     upvar $specVar spec
 
-    # log spec=[array get spec]
-
     namespace eval $spec(nsp) {
         # see core/tcl/namespace.tcl for details about "mixin" namespaces
         namespace __mixin ::persistence::orm
@@ -147,6 +172,18 @@ proc ::persistence::load_type {specVar} {
     array set __spec [array get spec]
 
     $spec(nsp) init_type
+
+    set where_clause [list [list nsp = $spec(nsp)]]
+    set oid [::sysdb::object_type_t 0or1row $where_clause]
+
+    if { $oid ne {} } {
+        # TODO: integrity check
+    } else {
+
+        ::sysdb::object_type_t insert spec
+
+    }
+
 }
 
 proc ::persistence::load_all_types_from_db {} {

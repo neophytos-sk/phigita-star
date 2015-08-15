@@ -3,6 +3,7 @@ namespace eval ::persistence::common {
     namespace export -clear \
         join_oid \
         split_oid \
+        typeof_oid \
         ins_column \
         ins_link \
         get_link \
@@ -34,6 +35,17 @@ namespace eval ::persistence::common {
         set_link
     } {
         interp alias {} ::persistence::common::${procname} {} ${nsp}::${procname}
+    }
+}
+
+proc ::persistence::common::typeof_oid {oid} {
+    lassign [split_oid $oid] ks cf_axis row_key column_path
+    if { $column_path ne {} } {
+        return "col"
+    } elseif { $row_key ne {} } {
+        return "row"
+    } else {
+        return "type"
     }
 }
 
@@ -186,6 +198,7 @@ proc ::persistence::common::set_link {oid target_oid mtime codec_conf} {
 }
 
 proc ::persistence::common::ins_link {oid target_oid {codec_conf ""}} {
+    assert { $oid ne $target_oid } 
     # TODO: IncrRefCount
     lassign [split_oid $oid] ks cf_axis row_key column_path ext
     set oid [join_oid $ks $cf_axis $row_key $column_path]
@@ -317,44 +330,25 @@ proc ::persistence::common::exists_data_p {oid} {
     }
 }
 
-
-
-proc ::persistence::common::predicate=maybe_in_path {slicelistVar parent_path {predicate ""}} {
-    upvar $slicelistVar slicelist
-
-    variable __bf
-
-    set result [list]
-    foreach oid $slicelist {
-        lassign [split_oid $oid] ks cf_axis row_key column_path ext
-        set other_oid "${parent_path}${column_path}"
-
-        set column_path_args [lassign [split $other_oid {/}] ks cf_axis row_key __delimiter__]
-        set may_contain_p [::bloom_filter::may_contain $__bf(${ks}.${cf_axis}) $other_oid]
-        if { $may_contain_p } {
-            lappend result $oid
-        }
-        # log oid=$oid
-        # log other_oid=$other_oid
-        # log "may_contain_p returned $may_contain_p #times=[incr may_contain_p=$may_contain_p,__$cf_axis]"
-
-
-    }
-    return $result
-}
-
 proc ::persistence::common::predicate=in_path {slicelistVar parent_path {predicate ""}} {
     upvar $slicelistVar slicelist
     set result [list]
     foreach oid $slicelist {
         lassign [split_oid $oid] ks cf_axis row_key column_path ext
-        # log parent_path=$parent_path
-        # log column_path=$column_path
         set other_oid "${parent_path}${column_path}"
-        # log other_oid=$other_oid
-        set exists_p [exists_data_p $other_oid]
-        if { $exists_p } {
-            lappend result $oid
+
+        # TODO: wrap_proc exists_data_p {} {}
+        set may_contain_p 1
+        if { [setting_p "bloom_filters"] } {
+            # TODO:
+            # set may_contain_p [::persistence::bloom_filter::may_contain $type_oid $other_oid]
+        }
+
+        if { $may_contain_p } {
+            set exists_p [exists_data_p $other_oid]
+            if { $exists_p } {
+                lappend result $oid
+            }
         }
     }
     set slicelist $result

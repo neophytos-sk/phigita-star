@@ -1,0 +1,22 @@
+nsp "::sysdb::bloom_filter_t"
+ks "sysdb"
+cf "bloom_filter"
+pk "name"
+
+indexes {{
+    name "by_name"
+    atts "name"
+}}
+
+attributes {{
+    name "name"
+} {
+    name "items_estimate"
+} {
+    name "false_positive_prob"
+} {
+    name "bytes"
+}}
+
+aggregates {}
+

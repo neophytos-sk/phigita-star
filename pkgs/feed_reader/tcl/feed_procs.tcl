@@ -697,31 +697,16 @@ proc ::feed_reader::fetch_and_write_item {timestamp link title_in_feed feedVar} 
 
             ::newsdb::error_item_t insert error_item
 
-            if {0} {
-                ::persistence::fs::__ins_column \
-                    "newsdb" \
-                    "error_item.by_urlsha1_and_timestamp" \
-                    "${urlsha1}"\
-                    "${timestamp}" \
-                    "${errordata}"
-            }
-
             set where_clause [list [list urlsha1 = $urlsha1]]
             set slicelist [::newsdb::error_item_t find $where_clause]
 
-            if {0} {
-                set slicelist [::persistence::__get_slice \
-                    "newsdb" \
-                    "error_item/by_urlsha1_and_timestamp" \
-                    "[get_urlsha1 ${link}]"]
-            }
 
             if { [llength ${slicelist}] >= 3 } {
 
                 puts "--->>> TODO: marking this item as fetched... (${urlsha1})"
 
                 if {0} {
-                    ::persistence::fs::__ins_column \
+                    ::persistence::ins_column \
                         "newsdb" \
                         "news_item.by_urlsha1_and_const" \
                         "${urlsha1}" \
@@ -1194,12 +1179,14 @@ proc ::feed_reader::search_callback=label_content {contentsha1 axis label {need_
 
     if { !${need_confirm_p} || [confirm] } {
 
-        ::persistence::fs::__ins_column \
-            "newsdb" \
-            "train_item" \
-            "${axis}" \
-            "${label}/${contentsha1}" \
-            ""
+        if {0} { 
+            ::persistence::fs::__ins_column \
+                "newsdb" \
+                "train_item" \
+                "${axis}" \
+                "${label}/${contentsha1}" \
+                ""
+        }
 
     }
 
@@ -2052,12 +2039,12 @@ proc ::feed_reader::sync_feeds {{news_sources ""} {debug_p "0"}} {
 
     }
 
-    ::persistence::fs::__ins_column              \
-        "crawldb"                             \
-        "round_stats.by_timestamp_and_const"  \
-        "${round}"                            \
-        "_data_"                              \
-	"[array get round_stats]"
+    set ks "crawldb"
+    set cf_axis "round_stats.by_timestamp_and_const"
+    set row_key $round
+    set column_path "_data_"
+    set oid [::persistence::join_oid $ks $cf_axis $row_key $column_path]
+    ::persistence::ins_column $oid [array get round_stats]
 
     print_round_stats round_stats
 

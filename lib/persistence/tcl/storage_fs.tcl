@@ -47,14 +47,6 @@ namespace eval ::persistence::fs {
         get
 
 
-    # private
-    # set_column
-    # set_link
-    #
-
-    variable __bf
-    array set __bf [list]
-
 }
 
 # bloom filters and other auxiliary files
@@ -169,31 +161,6 @@ proc ::persistence::fs::define_ks {keyspace} {
 proc ::persistence::fs::define_cf {ks cf_axis {spec {}}} {
     assert_ks ${ks}
     create_cf_if ${ks} ${cf_axis}
-    # set cf(${keyspace},${column_family}) ${spec}
-
-    #puts define_cf,$ks,$cf_axis
-
-    ##
-    # cf_axis bloom filter
-    #
-
-    variable __bf
-
-    set items_estimate 10000
-    set false_positive_prob 0.01
-
-    set __bf(${ks}.${cf_axis}) \
-        [::bloom_filter::create $items_estimate $false_positive_prob]
-
-    # Bloom Filter File (aka BFF)
-    set bff [get_meta_filename ${ks}.${cf_axis}.bff]
-    if { [file exists $bff] } {
-        binary scan [::util::readfile $bff -translation binary] a* bytes
-        ::bloom_filter::set_bytes $__bf(${ks}.${cf_axis}) $bytes
-    }
-    
-    return
-
 }
 
 
@@ -201,72 +168,6 @@ proc ::persistence::fs::get_supercolumn {keyspace column_family row_key supercol
     set row_dir [join_oid ${keyspace} ${column_family} ${row_key}]
     set supercolumn_dir ${row_dir}/${supercolumn_path}
     return ${supercolumn_dir}
-}
-
-
-# example column families and column names:
-#
-# cf=news_item url/3ef3908e7438635a03e2321669b5855dbf4f238f
-# cf=news_item item keywspace:newsdb log/row:3ef3908e7438635a03e2321669b5855dbf4f238f
-# cf=content_item keyspace:newsdb content/row:cdaa22d5ca05c6111d900ce81f5686c376a50881
-#
-# cf=revision     keyspace:newsdb site/row:com.philenews/super:3ef3908e7438635a03e2321669b5855dbf4f238f/column:cdaa22d5ca05c6111d900ce81f5686c376a50881
-# cf=revision     keywspace:newsdb site/row:com.philenews.3ef3908e7438635a03e2321669b5855dbf4f238f/cdaa22d5ca05c6111d900ce81f5686c376a50881
-#
-# name := keyspace/row_key/column_path
-# column_path := super_column_name/column_name or just column_name
-#
-proc ::persistence::fs::__ins_column {ks cf_axis row_key column_path data {codec_conf ""}} {
-
-    # create_row_if ${ks} ${cf_axis} ${row_key} row_path
-
-    set oid [join_oid $ks $cf_axis $row_key $column_path]
-
-    set mtime [clock seconds] ;# TODO: improve timestamps handling
-    set_column ${oid} ${data} $mtime ${codec_conf}
-
-    ##
-    # bloom filter
-    #
-
-    variable __bf
-    ::bloom_filter::insert $__bf(${ks}.${cf_axis}) $oid
-
-    set bff [get_meta_filename ${ks}.${cf_axis}.bff]
-    ::util::writefile $bff \
-        [binary format a* [::bloom_filter::get_bytes $__bf(${ks}.${cf_axis})]] \
-        -translation binary
-
-}
-
-proc ::persistence::fs::__ins_link {
-    ks 
-    cf_axis 
-    row_key 
-    column_path 
-    target_oid 
-    {codec_conf ""}
-} {
-
-    # create_row_if ${ks} ${cf_axis} ${row_key} row_path
-
-    set oid [join_oid $ks $cf_axis $row_key $column_path]
-
-    set mtime [clock seconds] ;# TODO: improve timestamps handling
-    set_link ${oid} ${target_oid} $mtime ${codec_conf}
-
-    ##
-    # bloom filter
-    #
-
-    variable __bf
-    ::bloom_filter::insert $__bf(${ks}.${cf_axis}) $oid
-
-    set bff [get_meta_filename ${ks}.${cf_axis}.bff]
-    ::util::writefile $bff \
-        [binary format a* [::bloom_filter::get_bytes $__bf(${ks}.${cf_axis})]] \
-        -translation binary
-
 }
 
 

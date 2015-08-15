@@ -37,9 +37,21 @@ proc ::tcl::file::__find {
     return $filelist
 }
 
+proc ::tcl::file::__newer_than {a b} {
+    return [expr {[file mtime $a] > [file mtime $b]}]
+}
 
-set __config_map [namespace ensemble configure file -map]
+proc ::tcl::file::__newer_than_mtime {path mtime} {
+    return [expr {[file exists $path] && ([file mtime $path] > $mtime)}]
+}
+
+
+
+set ensemble "file"
+set __config_map [namespace ensemble configure $ensemble -map]
 lappend __config_map "__find" "::tcl::file::__find"
-namespace ensemble configure file -map $__config_map
+lappend __config_map "__newer_than" "::tcl::file::__newer_than"
+lappend __config_map "__newer_than_mtime" "::tcl::file::__newer_than_mtime"
+namespace ensemble configure $ensemble -map $__config_map
 unset __config_map
 

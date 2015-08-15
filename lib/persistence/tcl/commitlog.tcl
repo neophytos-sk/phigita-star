@@ -18,7 +18,7 @@ proc ::persistence::commitlog::open_if {} {
         return
     }
 
-    log "commitlog using memtable: [use_p memtable]"
+    log "commitlog using memtable: [setting_p memtable]"
 
     set filename [::persistence::fs::get_meta_filename "CommitLog"]
     set exists_p [file exists $filename]
@@ -78,36 +78,38 @@ proc ::persistence::commitlog::close_if {} {
 proc ::persistence::commitlog::set_column {
     oid 
     data 
-    ts
+    mtime
     codec_conf
 } {
-    assert { $ts ne {} }
+    assert { $mtime ne {} }
 
     variable fp
 
     open_if
 
+    # log oid=$oid
+
     ::util::io::write_string $fp $oid
     ::util::io::write_string $fp $data
-    ::util::io::write_string $fp $ts
+    ::util::io::write_string $fp $mtime
     ::util::io::write_string $fp $codec_conf
 
-    # set ts [clock microseconds]
-    # set log_item_oid "sysdb/wal_item_t.by_timestamp/__default__/+/$ts"
-    # set log_item_data [list timestamp $ts oid $oid data $data deleted_p "0"]
+    # set mtime [clock microseconds]
+    # set log_item_oid "sysdb/wal_item_t.by_timestamp/__default__/+/$mtime"
+    # set log_item_data [list timestamp $mtime oid $oid data $data deleted_p "0"]
     # ::persistence::fs::set_column $log_item_oid $log_item_data
     #
     ## array set log_item $log_item_data
     ## ::sysdb::wal_item_t insert log_item
     #
     # set log_info_oid "sysdb/wal_info_t.by_attname/__default__/+/pos1"
-    # set log_info_data $ts
+    # set log_info_data $mtime
     # ::persistence::fs::set_column $log_info_oid $log_info_data
     #
     # set log_info_oid "sysdb/wal_info_t.by_attname/__default__/+/"
-    # ::persistence::fs::update_row $log_info_oid [list pos1 $ts]
+    # ::persistence::fs::update_row $log_info_oid [list pos1 $mtime]
     #
-    ## array set wal_info [list pos2 $ts]
+    ## array set wal_info [list pos2 $mtime]
     ## ::sysdb::wal_info_t update wal_info 
 
     logpoint [tell $fp]
@@ -172,7 +174,7 @@ proc ::persistence::commitlog::process {} {
 
     log "last_checkpoint (pos1): $pos1 --- last_logpoint (pos2): $pos2"
 
-    set mem_p [use_p "memtable"]
+    set mem_p [setting_p "memtable"]
 
     seek $fp $pos1 start
     while { $pos1 < $pos2 } {

@@ -1,12 +1,14 @@
 package require core
-package require util_procs
+package require bloom_filter
+
 
 config section ::persistence
 
 config param use_server "off"
 config param use_threads "off"
-config param use_memtable "on"
 
+config param memtable "on"
+config param bloom_filters "on"
 config param client_server "on"
 config param write_ahead_log "on"
 config param address "127.0.0.1"
