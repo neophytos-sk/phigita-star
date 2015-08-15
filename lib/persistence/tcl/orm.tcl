@@ -45,10 +45,10 @@ proc ::persistence::orm::init_type {} {
     variable [namespace __this]::pk
     variable [namespace __this]::idx
     variable [namespace __this]::att
-    variable [namespace __this]::__attributes
+    variable [namespace __this]::__attnames
     variable [namespace __this]::__derived_attributes
     variable [namespace __this]::__attinfo
-    variable [namespace __this]::__indexes
+    variable [namespace __this]::__idxnames
     variable [namespace __this]::__idxinfo
 
     # log ------[namespace __this]
@@ -86,11 +86,11 @@ proc ::persistence::orm::init_type {} {
 
     # attributes
 
-    set __attributes [lsort [array names att]]
+    set __attnames [lsort [array names att]]
     set __derived_attributes [list]
     array set __attinfo [list]
 
-    foreach attname $__attributes {
+    foreach attname $__attnames {
         array set attinfo $att($attname)
 
         set type [value_if attinfo(type) ""]
@@ -113,9 +113,9 @@ proc ::persistence::orm::init_type {} {
     }
 
     # indexes
-    set __indexes [array names idx]
+    set __idxnames [array names idx]
     array set __idxinfo [list]
-    foreach idxname $__indexes {
+    foreach idxname $__idxnames {
         array set idxinfo $idx($idxname)
 
         set atts [value_if idxinfo(atts) ""]
@@ -252,10 +252,10 @@ proc ::persistence::orm::insert {itemVar {optionsVar ""}} {
     variable [namespace __this]::pk
     variable [namespace __this]::idx
     variable [namespace __this]::att
-    variable [namespace __this]::__attributes
+    variable [namespace __this]::__attnames
     variable [namespace __this]::__derived_attributes
     variable [namespace __this]::__attinfo
-    variable [namespace __this]::__indexes
+    variable [namespace __this]::__idxnames
     variable [namespace __this]::__idxinfo
 
     upvar $itemVar item
@@ -276,7 +276,7 @@ proc ::persistence::orm::insert {itemVar {optionsVar ""}} {
     # validate attribute values
     set option_validate_p [value_if options(validate_p) "1"]
     if { $option_validate_p } {
-        foreach attname $__attributes {
+        foreach attname $__attnames {
 
             set optional_p $__attinfo(${attname},null)
             if { $optional_p && [value_if item($attname) ""] eq {} } {
@@ -316,7 +316,7 @@ proc ::persistence::orm::insert {itemVar {optionsVar ""}} {
 
     ::persistence::ins_column $target $data [codec_conf]
     
-    foreach idxname $__indexes {
+    foreach idxname $__idxnames {
         if { $idxname eq "by_$pk" } {
             continue
         }
@@ -336,7 +336,7 @@ proc ::persistence::orm::insert {itemVar {optionsVar ""}} {
 proc ::persistence::orm::update {oid new_itemVar {optionsVar ""}} {
     variable [namespace __this]::pk
     variable [namespace __this]::__attinfo
-    variable [namespace __this]::__indexes
+    variable [namespace __this]::__idxnames
     variable [namespace __this]::__idxinfo
 
     upvar $new_itemVar new_item
@@ -371,7 +371,7 @@ proc ::persistence::orm::update {oid new_itemVar {optionsVar ""}} {
 
     # updates indexes
     set target [to_path $item($pk)] 
-    foreach idxname $__indexes {
+    foreach idxname $__idxnames {
         if { $idxname eq "by_$pk" } { continue }
         set count 0
         set changed 0
@@ -420,10 +420,10 @@ proc ::persistence::orm::delete {oid {exists_pVar ""}} {
 
         array set item [get $oid]
 
-        variable [namespace __this]::__indexes
+        variable [namespace __this]::__idxnames
         variable [namespace __this]::pk
 
-        foreach idxname $__indexes {
+        foreach idxname $__idxnames {
             set row_key [to_row_key_by $idxname item]
             set to_delete_oid [to_path_by $idxname $row_key {*}$item($pk)]
 

@@ -40,19 +40,19 @@ namespace eval ::persistence::orm::codec_txt_2 {
 
 
 proc ::persistence::orm::codec_txt_2::encode {itemVar} {
-    variable [namespace __this]::__attributes
+    variable [namespace __this]::__attnames
     upvar $itemVar item
     set data [list]
-    foreach attname $__attributes {
+    foreach attname $__attnames {
         lappend data [value_if item($attname) ""]
     }
     return $data
 }
 
 proc ::persistence::orm::codec_txt_2::decode {data} {
-    variable [namespace __this]::__attributes
+    variable [namespace __this]::__attnames
     array set item [list]
-    foreach attname $__attributes attvalue $data {
+    foreach attname $__attnames attvalue $data {
         set item($attname) $attvalue
     }
     return [array get item]
@@ -76,12 +76,12 @@ namespace eval ::persistence::orm::codec_bin_1 {
 
 
 proc ::persistence::orm::codec_bin_1::encode {itemVar} {
-    variable [namespace __this]::__attributes
+    variable [namespace __this]::__attnames
 
     upvar $itemVar item
 
     set bytes ""
-    foreach attname $__attributes {
+    foreach attname $__attnames {
         set attvalue [value_if item($attname) ""]
         set attvalue [encoding convertto utf-8 $attvalue]
         set num_bytes [string bytelength $attvalue]
@@ -92,12 +92,12 @@ proc ::persistence::orm::codec_bin_1::encode {itemVar} {
 }
 
 proc ::persistence::orm::codec_bin_1::decode {bytes} {
-    variable [namespace __this]::__attributes
+    variable [namespace __this]::__attnames
 
     array set item [list]
     set pos 0
     set num_bytes 0
-    foreach attname $__attributes {
+    foreach attname $__attnames {
         binary scan $bytes "@${pos}iu1" num_bytes
         incr pos 4
         binary scan $bytes "@${pos}A${num_bytes}" item($attname) 
@@ -123,12 +123,12 @@ namespace eval ::persistence::orm::codec_bin_2 {
 
 
 proc ::persistence::orm::codec_bin_2::encode {itemVar} {
-    variable [namespace __this]::__attributes
+    variable [namespace __this]::__attnames
 
     upvar $itemVar item
 
     set bytes ""
-    foreach attname $__attributes {
+    foreach attname $__attnames {
         set attvalue [value_if item($attname) ""]
         set attvalue [encoding convertto utf-8 $attvalue]
         set num_bytes [string bytelength $attvalue]
@@ -140,12 +140,12 @@ proc ::persistence::orm::codec_bin_2::encode {itemVar} {
 }
 
 proc ::persistence::orm::codec_bin_2::decode {bytes} {
-    variable [namespace __this]::__attributes
+    variable [namespace __this]::__attnames
 
     array set item [list]
     set pos 0
     set num_bytes 0
-    foreach attname $__attributes {
+    foreach attname $__attnames {
         #binary scan $bytes "@${pos}iu1" num_bytes
         set num_bytes [decode_unsigned_varint bytes num_decoded_bytes $pos]
         incr pos $num_decoded_bytes
@@ -188,7 +188,7 @@ namespace eval ::persistence::orm::codec_bin_3 {
 
 proc ::persistence::orm::codec_bin_3::encode {itemVar} {
     variable __type_to_bin
-    variable [namespace __this]::__attributes
+    variable [namespace __this]::__attnames
     variable [namespace __this]::__attinfo
 
     upvar $itemVar item
@@ -197,7 +197,7 @@ proc ::persistence::orm::codec_bin_3::encode {itemVar} {
 
     # header (marks null values)
     set uvalue "0"
-    foreach attname $__attributes {
+    foreach attname $__attnames {
         set attvalue [value_if item($attname) ""] 
         set v [expr { $attvalue ne {} }]
         set uvalue [expr { ($uvalue << 1) | $v }]
@@ -207,7 +207,7 @@ proc ::persistence::orm::codec_bin_3::encode {itemVar} {
     set num_encoded_bytes [encode_unsigned_varint bytes $uvalue]
 
     # body / data
-    foreach attname $__attributes {
+    foreach attname $__attnames {
         set type [value_if __attinfo($attname,type) ""]
         lassign [value_if __type_to_bin($type) ""] fmt _ num_bytes
 
@@ -231,7 +231,7 @@ proc ::persistence::orm::codec_bin_3::encode {itemVar} {
 
 proc ::persistence::orm::codec_bin_3::decode {bytes} {
     variable __type_to_bin
-    variable [namespace __this]::__attributes
+    variable [namespace __this]::__attnames
     variable [namespace __this]::__attinfo
 
     # log "decoding item for [namespace __this]"
@@ -247,13 +247,13 @@ proc ::persistence::orm::codec_bin_3::decode {bytes} {
 
     # log "uvalue=$uvalue num_decoded_bytes=$num_decoded_bytes"
 
-    foreach attname [lreverse $__attributes] {
+    foreach attname [lreverse $__attnames] {
         set exists_p($attname) [expr { $uvalue & 0x1 }]
         set uvalue [expr { $uvalue >> 1 }]
         # log exists_p($attname)=$exists_p($attname)
     }
 
-    foreach attname $__attributes {
+    foreach attname $__attnames {
         if { !$exists_p($attname) } {
             # log "attname=$attname does not exist"
             set item($attname) ""
