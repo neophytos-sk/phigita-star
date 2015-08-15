@@ -19,7 +19,10 @@ namespace eval ::persistence::common {
         is_link_oid_p \
         sort \
         __exec_options \
-        get
+        get \
+        begin_batch \
+        end_batch \
+        predicate=in_idxpath
 
     set storage_type [config get ::persistence "default_storage_type"]
     set nsp "::persistence::${storage_type}"
@@ -334,25 +337,25 @@ proc ::persistence::common::exists_row_data_p {oid} {
 proc ::persistence::common::exists_data_p {oid} {
     if { [is_row_oid_p $oid] } {
         return [exists_row_data_p $oid]
-    } elseif { [::persistence::is_column_oid_p $oid] || [::persistence::is_supercolumn_oid_p $oid] } {
+    } elseif { [is_column_oid_p $oid] || [is_supercolumn_oid_p $oid] } {
         return [expr { [exists_p $oid] || [exists_supercolumn_p $oid] }]
     } else {
         error "unknown oid (=$oid) type: must be row, column, or supercolumn"
     }
 }
 
-proc ::persistence::common::predicate=in_path {slicelistVar parent_path {predicate ""}} {
+proc ::persistence::common::predicate=in_idxpath {slicelistVar parent_oid {predicate ""}} {
     upvar $slicelistVar slicelist
     set result [list]
     foreach oid $slicelist {
         lassign [split_oid $oid] ks cf_axis row_key column_path ext
-        set other_oid "${parent_path}${column_path}"
+        set other_oid "${parent_oid}${column_path}"
 
         # TODO: wrap_proc exists_data_p {} {}
         set may_contain_p 1
         if { [setting_p "bloom_filters"] } {
-            # TODO:
-            # set may_contain_p [::persistence::bloom_filter::may_contain $type_oid $other_oid]
+            # TODO: add bloom filters support for rows
+            # set may_contain_p [::persistence::bloom_filter::may_contain $parent_oid $other_oid]
         }
 
         if { $may_contain_p } {
@@ -365,4 +368,11 @@ proc ::persistence::common::predicate=in_path {slicelistVar parent_path {predica
     set slicelist $result
 
 }
+
+proc ::persistence::common::begin_batch {} {
+}
+
+proc ::persistence::common::end_batch {} {
+}
+
 

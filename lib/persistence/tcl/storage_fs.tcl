@@ -1,6 +1,8 @@
 namespace eval ::persistence::fs {
 
-    namespace __mixin ::persistence::common
+    namespace path ::persistence::common
+
+    #namespace __mixin ::persistence::common
 
     variable base_dir
     set base_dir [config get ::persistence base_dir]
@@ -44,7 +46,9 @@ namespace eval ::persistence::fs {
         is_link_oid_p \
         sort \
         __exec_options \
-        get
+        get \
+        begin_batch \
+        end_batch
 
 
 }
@@ -173,31 +177,32 @@ proc ::persistence::fs::get_supercolumn {keyspace column_family row_key supercol
 
 
 proc ::persistence::fs::exists_supercolumn_p {oid} {
-    assert { [::persistence::is_supercolumn_oid_p $oid] }
+    assert { [is_supercolumn_oid_p $oid] }
     set filename [get_oid_filename $oid]
     return [expr { [file exists $filename] && [file isdirectory $filename] }]
 }
 
 # private
 proc ::persistence::fs::exists_column_rev_p {rev} {
-    assert { [::persistence::is_column_rev_p $rev] }
+    assert { [is_column_rev_p $rev] }
     set filename [get_rev_filename $rev]
     return [file exists $filename]
 }
 
 # public
 proc ::persistence::fs::exists_column_p {oid} {
-    assert { [::persistence::is_column_oid_p $oid] }
+    assert { [is_column_oid_p $oid] }
     set filename [get_oid_filename $oid]
     return [file exists $filename]
 }
 
 proc ::persistence::fs::exists_link_p {oid} {
-    assert { [::persistence::is_link_oid_p $oid] }
+    assert { [is_link_oid_p $oid] }
     set filename [get_oid_filename $oid]
     return [file exists $filename]
 }
 
+# isolation level: read_uncommitted
 proc ::persistence::fs::set_column {oid data mtime codec_conf} {
 
     set rev "${oid}@${mtime}"
@@ -219,6 +224,8 @@ proc ::persistence::fs::set_column {oid data mtime codec_conf} {
         set orig_oid_filename [get_oid_filename $orig_oid]
         file delete $orig_oid_filename
 
+        return [list $orig_oid_filename ""]
+
     } else {
 
         # add link from tip of the current branch to rev file
@@ -229,6 +236,54 @@ proc ::persistence::fs::set_column {oid data mtime codec_conf} {
         ::util::writelink ${oid_filename} ${rev_filename}
         file mtime ${oid_filename} ${mtime}
 
+        return [list $oid_filename $rev_filename]
+
+    }
+    
+}
+
+
+# isolation level: read_committed
+proc ::persistence::fs::get_tmp_filename {filename} {
+    variable base_dir
+    set key [binary encode base64 $filename]
+    set tmp_filename [file join $base_dir tmp $key]
+    return $tmp_filename
+}
+
+proc ::persistence::fs::write_data {ext filename data mtime codec_conf} {
+    set tmp_filename [file join [get_tmp_filename ${filename}] ${ext}]
+    ::util::writefile ${tmp_filename} ${data} {*}${codec_conf}
+    file mtime ${tmp_filename} ${mtime}
+}
+
+proc ::persistence::fs::read_committed__set_column {oid data mtime codec_conf} {
+
+    set rev "${oid}@${mtime}"
+
+    # saves revision
+    set rev_filename [get_rev_filename $rev]
+    write_data ".ins_rev" $rev_filename $data $mtime $codec_conf
+
+    # checks if oid is a tombstone and updates the link
+    # at the tip of the current branch,
+    # i.e. removes the link if oid is a tombstone,
+    # creates link in any other case 
+    set ext [file extension ${oid}]
+    if { $ext eq {.gone} } {
+
+        set orig_oid [file rootname ${oid}]
+        set orig_oid_filename [get_oid_filename $orig_odi]
+        write_data ".del_orig_oid" $orig_oid_filename "" $mtime $codec_conf
+
+    } else {
+
+        # add link from tip of the current branch to rev file
+        # note that, when we delete, we delete this link,
+        # the revision remains intact
+        set oid_filename [get_oid_filename ${oid}]
+        write_data ".lnk_oid_rev" $oid_filename $rev_filename $mtime $codec_conf
+
     }
     
 }
@@ -236,11 +291,10 @@ proc ::persistence::fs::set_column {oid data mtime codec_conf} {
 
 
 
-
 # note: default implementation uses column to store the target_oid of a link
 # and thus why we allow for link oids in the assertion statement
 proc ::persistence::fs::get_column {oid {codec_conf ""}} {
-    assert { [::persistence::is_column_oid_p $oid] || [::persistence::is_link_oid_p $oid] }
+    assert { [is_column_oid_p $oid] || [is_link_oid_p $oid] }
     # log "retrieving column (=$oid) from fs"
     set filename [get_oid_filename ${oid}]
     return [::util::readfile ${filename} {*}$codec_conf]
@@ -280,7 +334,7 @@ proc ::persistence::fs::set_link {oid target_oid mtime codec_conf} {
 
 proc ::persistence::fs::get_link_target {oid} {
 
-    assert { [::persistence::is_link_oid_p $oid] } 
+    assert { [is_link_oid_p $oid] } 
 
     if { 0 } {
 
@@ -303,7 +357,7 @@ proc ::persistence::fs::get_link_target {oid} {
 
 proc ::persistence::fs::get_name {oid} {
     set oid_filename [get_oid_filename $oid]
-    if { [::persistence::is_link_oid_p $oid] } {
+    if { [is_link_oid_p $oid] } {
         set oid_filename [get_link_target $oid]
     }
     return [file tail [file rootname ${oid_filename}]]

@@ -859,6 +859,10 @@ proc ::feed_reader::ls {args} {
     set rows [keylget stty rows]
     set cols [keylget stty columns]
 
+    if { $cols > 200 && !exists("__arg_long_listing") } {
+        set __arg_long_listing ""
+    }
+
     # defaults
     #
     set_if offset 0
@@ -1809,15 +1813,12 @@ proc ::feed_reader::write_item {timestamp normalized_link feedVar itemVar resync
         } else {
 
             # if time eq {0000} and
-            set timestamp_date [lindex [split ${timestamp_datetime} {.}] 0]
+            set timestamp_date [clock format $timestamp -format "%Y%m%d"]
             if { ${date} < ${timestamp_date} } {
-
                 set item(sort_date) $item(date)
-
             } else {
-
                 # use computed date for sorting
-
+                set item(sort_date) $timestamp_datetime
             }
 
         }
@@ -1825,11 +1826,8 @@ proc ::feed_reader::write_item {timestamp normalized_link feedVar itemVar resync
     } else {
 
         # use computed date for sorting
+        set item(sort_date) $timestamp_datetime
 
-    }
-
-    if { $item(sort_date) eq {} } {
-        set item(sort_date) ${timestamp_datetime}
     }
 
     ::newsdb::news_item_t insert item

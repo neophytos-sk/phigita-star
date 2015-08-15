@@ -312,7 +312,7 @@ proc ::persistence::orm::insert {itemVar {optionsVar ""}} {
 
     set data [encode item]
 
-    # ::persistence::begin_batch
+    ::persistence::begin_batch
 
     ::persistence::ins_column $target $data [codec_conf]
     
@@ -328,7 +328,7 @@ proc ::persistence::orm::insert {itemVar {optionsVar ""}} {
         #log "ins_link $src $target"
     }
 
-    # ::persistence::end_batch
+    ::persistence::end_batch
 
 
 }
@@ -450,10 +450,6 @@ proc ::persistence::orm::exists {oid} {
 # * raises an error if the oid does not exist
 #
 proc ::persistence::orm::get {oid {exists_pVar ""}} {
-
-    assert { [persistence::is_column_oid_p $oid] || [persistence::is_link_oid_p $oid] } {
-        log failed,oid=$oid
-    }
 
     if { $exists_pVar ne {} } {
         upvar $exists_pVar exists_p
@@ -678,7 +674,7 @@ proc ::persistence::orm::__rewrite_where_clause {axis_attname argv} {
                 continue
             }
             set path [to_path_by by_${attname} ${attvalue}]
-            lappend predicate [list "in_path" [list $path]]
+            lappend predicate [list "in_idxpath" [list $path]]
         } else {
             error "persistence (ORM): op (=$op) not implemented yet"
         }

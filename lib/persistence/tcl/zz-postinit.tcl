@@ -21,9 +21,10 @@ proc ::persistence::compare_mtime { oid1 oid2 } {
 proc ::persistence::mkskel {} {
     variable base_dir
 
-    file mkdir [file join $base_dir HEAD]  ;# for oids
-    file mkdir [file join $base_dir DATA]  ;# for revs
-    file mkdir [file join $base_dir META]  ;# for bffs, etc
+    file mkdir [file join $base_dir HEAD]  ;# oids, tip of the current branch
+    file mkdir [file join $base_dir DATA]  ;# revs
+    file mkdir [file join $base_dir META]  ;# CommitLog
+    file mkdir [file join $base_dir tmp]   ;# fs::read_committed__set_column
 }
 
 proc ::persistence::init {} {
@@ -36,19 +37,25 @@ proc ::persistence::init {} {
 
     assert { $storage_type in {fs ss} }
 
+    set nsp_path [list]
+    lappend nsp_path "::persistence::${storage_type}"
+    lappend nsp_path "::persistence::common"
+    namespace path $nsp_path
+
     if { ![setting_p "client_server"] || [use_p "server"] } {
 
+        namespace import -force ::persistence::common::*
         namespace import -force ::persistence::${storage_type}::*
 
         if { [setting_p "bloom_filters"] } {
 
-            wrap_proc ::persistence::define_cf {ks cf_axis} {
+            wrap_proc [namespace which define_cf] {ks cf_axis} {
                 call_orig $ks $cf_axis
                 set type_oid [join_oid $ks $cf_axis]
                 ::persistence::bloom_filter::init $type_oid
             }
 
-            wrap_proc ::persistence::ins_column {oid data {codec_conf ""}} {
+            wrap_proc [namespace which ins_column] {oid data {codec_conf ""}} {
                 # log "ins_column oid=$oid"
                 lassign [split_oid $oid] ks cf_axis row_key column_path
                 call_orig $oid $data $codec_conf
@@ -56,7 +63,7 @@ proc ::persistence::init {} {
                 ::persistence::bloom_filter::insert $type_oid $oid
             }
 
-            wrap_proc ::persistence::ins_link {oid target_oid {codec_conf ""}} {
+            wrap_proc [namespace which ins_link] {oid target_oid {codec_conf ""}} {
                 # log "ins_link oid=$oid data=$target_oid"
                 lassign [split_oid $oid] ks cf_axis row_key column_path
                 call_orig $oid $target_oid $codec_conf
@@ -70,14 +77,14 @@ proc ::persistence::init {} {
         if { [setting_p "write_ahead_log"] } {
 
             # private
-            wrap_proc ::persistence::fs::set_column {oid data {ts ""} {codec_conf ""}} {
+            wrap_proc [namespace which set_column] {oid data {ts ""} {codec_conf ""}} {
                 set ts [clock seconds]
                 ::persistence::commitlog::set_column $oid $data $ts $codec_conf
                 ::persistence::mem::set_column $oid $data $ts $codec_conf
             }
 
             # private
-            wrap_proc ::persistence::fs::get_column {oid {codec_conf ""}} {
+            wrap_proc [namespace which get_column] {oid {codec_conf ""}} {
                 set exists_p [::persistence::mem::exists_column_p $oid]
                 if { $exists_p } {
                     return [::persistence::mem::get_column $oid $codec_conf]
@@ -87,7 +94,7 @@ proc ::persistence::init {} {
             }
 
             # private
-            wrap_proc ::persistence::common::get_link {oid {codec_conf ""}} {
+            wrap_proc [namespace which get_link] {oid {codec_conf ""}} {
                 set exists_p [::persistence::mem::exists_link_p $oid]
                 if { $exists_p } {
                     return [::persistence::mem::get_link $oid $codec_conf]
@@ -100,27 +107,27 @@ proc ::persistence::init {} {
 
         if { [setting_p "memtable"] } {
 
-            wrap_proc ::persistence::get_mtime {oid} {
+            wrap_proc [namespace which get_mtime] {oid} {
                 if { [::persistence::mem::exists_column_p $oid] } {
                     return [::persistence::mem::get_mtime $oid]
                 }
                 return [call_orig $oid]
             }
 
-            wrap_proc ::persistence::exists_p {oid} {
+            wrap_proc [namespace which exists_p] {oid} {
                 set exists_1_p [::persistence::mem::exists_p $oid]
                 set exists_2_p [call_orig $oid]
                 return [expr { $exists_1_p || $exists_2_p }]
             }
             
-            wrap_proc ::persistence::exists_supercolumn_p {oid} {
+            wrap_proc [namespace which exists_supercolumn_p] {oid} {
                 set exists_1_p [::persistence::mem::exists_supercolumn_p $oid]
                 set exists_2_p [call_orig $oid]
                 return [expr { $exists_1_p || $exists_2_p }]
             }
 
             # private
-            wrap_proc ::persistence::fs::get_files {path} {
+            wrap_proc [namespace which get_files] {path} {
                 set filelist1 [::persistence::mem::get_files $path]
                 set filelist2 [call_orig $path]
                 # log mem_get_files=$filelist1
@@ -129,7 +136,7 @@ proc ::persistence::init {} {
             }
 
             # private
-            wrap_proc ::persistence::fs::get_subdirs {path} {
+            wrap_proc [namespace which get_subdirs] {path} {
                 set subdirs_1 [::persistence::mem::get_subdirs $path]
                 set subdirs_2 [call_orig $path]
                 return [lunion $subdirs_1 $subdirs_2]
@@ -139,13 +146,57 @@ proc ::persistence::init {} {
 
     } else {
 
-        set nsp "::persistence::${storage_type}"
-        set exported_procs [namespace eval ${nsp} "namespace export"]
-        foreach exported_proc $exported_procs {
-            #rename ::persistence::$exported_proc {}
-            interp alias {} ::persistence::$exported_proc {} ::db_client::exec_cmd ${nsp}::$exported_proc
+        set procnames {
+            define_ks
+            define_cf
+
+            exists_p
+            get
+
+            ins_column
+            del_column
+            set_column
+
+            ins_link
+            del_link
+            set_link
+
+            get_slice
+            multiget_slice
+
+            get_multirow
+            get_multirow_names
+
+            exists_supercolumn_p
+
+            sort
+            get_mtime
+            begin_batch
+            end_batch
+
+            join_oid
+            split_oid
+            typeof_oid
+        }
+
+        foreach procname $procnames {
+
+            set nsp_which_procname [namespace which $procname]
+
+            assert { $nsp_which_procname ne {} } {
+                log procname=$procname
+            }
+
+            interp alias \
+                {} ::persistence::$procname \
+                {} ::db_client::exec_cmd $nsp_which_procname
+
             if { [use_p "threads"] } {
-                # TODO: interp alias {} ::persistence::$exported_proc {} apply [list {args} "thread::send $id ${nsp}::$exported_proc {*}$args]
+                # TODO: 
+                # set cmd "thread::send $id [namespace which $procname] {*}$args"
+                # interp alias \
+                #   {} ::persistence::$procname \
+                #   {} apply [list {args} $cmd]
             }
         }
 
