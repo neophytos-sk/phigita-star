@@ -5,7 +5,9 @@ namespace eval ::persistence::common {
         split_oid \
         typeof_oid \
         ins_column \
+        del_column \
         ins_link \
+        del_link \
         get_link \
         get_slice \
         multiget_slice \
@@ -193,6 +195,11 @@ proc ::persistence::common::ins_column {oid data {codec_conf ""}} {
     set_column ${oid} ${data} $mtime ${codec_conf}
 }
 
+proc ::persistence::common::del_column {oid} {
+    assert { [is_column_oid_p $oid] || [is_link_oid_p $oid] }
+    ins_column ${oid}.gone ""
+}
+
 proc ::persistence::common::set_link {oid target_oid mtime codec_conf} {
     set_column ${oid}.link $target_oid $mtime
 }
@@ -206,6 +213,10 @@ proc ::persistence::common::ins_link {oid target_oid {codec_conf ""}} {
     set_link ${oid} ${target_oid} $mtime ${codec_conf}
 }
 
+proc ::persistence::common::del_link {oid} {
+    # TODO: DecrRefCount
+    del_column ${oid}.link
+}
 
 proc ::persistence::common::get_slice {nodepath {options ""}} {
     assert { [is_row_oid_p $nodepath] }

@@ -389,10 +389,12 @@ proc ::persistence::orm::update {oid new_itemVar {optionsVar ""}} {
         }
         if { $changed } {
             # update index
+            set old_row_key [to_row_key_by $idxname old_item]
+            set old_src [to_path_by $idxname $row_key {*}$old_item($pk)]
+            ::persistence::del_link $old_src
+
             set row_key [to_row_key_by $idxname item]
             set src [to_path_by $idxname $row_key {*}$item($pk)]
-
-            #::persistence::del_link $src
             ::persistence::ins_link $src $target
             # ::persistence::upd_link $src $new_target
 
@@ -426,9 +428,9 @@ proc ::persistence::orm::delete {oid {exists_pVar ""}} {
             set to_delete_oid [to_path_by $idxname $row_key {*}$item($pk)]
 
             if { $idxname eq "by_$pk" } {
-                ::persistence::delete_column $to_delete_oid
+                ::persistence::del_column $to_delete_oid
             } else {
-                ::persistence::delete_link $to_delete_oid
+                ::persistence::del_link $to_delete_oid
             }
         }
 

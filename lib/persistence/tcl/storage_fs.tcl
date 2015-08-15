@@ -171,10 +171,6 @@ proc ::persistence::fs::get_supercolumn {keyspace column_family row_key supercol
 }
 
 
-proc ::persistence::fs::del_link {oid} {
-    # TODO: DecrRefCount
-    del_column_data $oid
-}
 
 proc ::persistence::fs::exists_supercolumn_p {oid} {
     assert { [::persistence::is_supercolumn_oid_p $oid] }
@@ -206,22 +202,54 @@ proc ::persistence::fs::set_column {oid data mtime codec_conf} {
 
     set rev "${oid}@${mtime}"
 
+    # saves revision
     set rev_filename [get_rev_filename ${rev}]
-    set oid_filename [get_oid_filename ${oid}]
-
     file mkdir [file dirname ${rev_filename}]
-    file mkdir [file dirname ${oid_filename}]
-
     ::util::writefile ${rev_filename} ${data} {*}$codec_conf
-    ::util::writelink $oid_filename $rev_filename
+    file mtime ${rev_filename} ${mtime}
 
-    if { ${mtime} ne {} } {
-        file mtime $rev_filename $mtime
-        file mtime $oid_filename $mtime
+    # checks if oid is a tombstone and updates the link
+    # at the tip of the current branch,
+    # i.e. removes the link if oid is a tombstone,
+    # creates link in any other case 
+    set ext [file extension ${oid}]
+    if { $ext eq {.gone} } {
+
+        set orig_oid [file rootname ${oid}]
+        set orig_oid_filename [get_oid_filename $orig_oid]
+        file delete $orig_oid_filename
+
+    } else {
+
+        # add link from tip of the current branch to rev file
+        # note that, when we delete, we delete this link,
+        # the revision remains intact
+        set oid_filename [get_oid_filename ${oid}]
+        file mkdir [file dirname ${oid_filename}]
+        ::util::writelink ${oid_filename} ${rev_filename}
+        file mtime ${oid_filename} ${mtime}
+
     }
-
     
 }
+
+
+
+
+
+# note: default implementation uses column to store the target_oid of a link
+# and thus why we allow for link oids in the assertion statement
+proc ::persistence::fs::get_column {oid {codec_conf ""}} {
+    assert { [::persistence::is_column_oid_p $oid] || [::persistence::is_link_oid_p $oid] }
+    # log "retrieving column (=$oid) from fs"
+    set filename [get_oid_filename ${oid}]
+    return [::util::readfile ${filename} {*}$codec_conf]
+}
+
+
+
+
+
 
 proc ::persistence::fs::set_link {oid target_oid mtime codec_conf} {
 
@@ -270,32 +298,6 @@ proc ::persistence::fs::get_link_target {oid} {
 
     return $target_oid
 
-}
-
-
-# note: default implementation uses column to store the target_oid of a link
-# and thus why we allow for link oids in the assertion statement
-proc ::persistence::fs::get_column {oid {codec_conf ""}} {
-    assert { [::persistence::is_column_oid_p $oid] || [::persistence::is_link_oid_p $oid] }
-    # log "retrieving column (=$oid) from fs"
-    set filename [get_oid_filename ${oid}]
-    return [::util::readfile ${filename} {*}$codec_conf]
-}
-
-
-proc ::persistence::fs::__del_column {ks cf_axis row_key column_path {ts ""}} {
-    assert { [::persistence::is_column_oid_p $oid] }
-
-    # TODO: insert_column tombstone
-    assert_refcount_is_zero ${oid}
-    set filename [get_oid_filename ${oid}]
-    return [file delete ${filename}]
-}
-
-proc ::persistence::fs::del_column {oid} {
-    assert { [::persistence::is_column_oid_p $oid] }
-    lassign [split_oid $oid] ks cf_axis row_key column_path
-    __del_column $ks $cf_axis $row_key $column_path
 }
 
 

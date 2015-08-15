@@ -121,7 +121,8 @@ proc ::persistence::mem::set_column {oid data mtime codec_conf} {
          log "~~~~~~~~~~~~~ oid=$oid"
     }
 
-    set __latest_idx(${oid})        ${rev}
+    incr __cnt
+
     set __dirty_idx(${rev})         ""
 
     set __mem(${rev},oid)           $oid
@@ -133,9 +134,16 @@ proc ::persistence::mem::set_column {oid data mtime codec_conf} {
     set __mem(${rev},dirty_p)       1
     set __mem(${rev},type)          "f"
 
-    # mkdir [file dirname ${oid}]
+    set ext [file extension ${oid}]
+    if { $ext eq {.gone} } {
+        set orig_oid [file rootname ${oid}]
+        if { [info exists __latest_idx(${orig_oid})] } {
+            unset __latest_idx(${orig_oid})
+        }
+    } else {
+        set __latest_idx(${oid}) ${rev}
+    }
 
-    incr __cnt
 }
 
 # del_column_data
