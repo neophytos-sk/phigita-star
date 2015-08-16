@@ -12,8 +12,10 @@ attributes {{
     name "name"
 } {
     name "items_estimate"
+    dval "10000"
 } {
     name "false_positive_prob"
+    dval "0.01"
 } {
     name "bytes"
 }}

@@ -24,13 +24,13 @@ attributes {{
 } {
     name "type"
 } {
-    name "null"
+    name "null_p"
 } {
     name "func"
 } {
-    name "maxlen"
+    name "maxl"
 } {
-    name "immutable_p"
+    name "immu_p"
 } {
     name "pos"
 }}

@@ -1,4 +1,8 @@
+namespace eval ::persistence::fs {;}
+
 namespace eval ::persistence::common {
+
+    namespace path "::persistence ::persistence::fs"
 
     namespace export -clear \
         join_oid \
@@ -27,20 +31,6 @@ namespace eval ::persistence::common {
     set storage_type [config get ::persistence "default_storage_type"]
     set nsp "::persistence::${storage_type}"
 
-    foreach procname {
-        get_files
-        get_subdirs
-        get_leafs
-        exists_supercolumn_p
-        exists_column_rev_p
-        exists_column_p
-        exists_link_p
-        set_column
-        get_column
-        set_link
-    } {
-        interp alias {} ::persistence::common::${procname} {} ${nsp}::${procname}
-    }
 }
 
 proc ::persistence::common::typeof_oid {oid} {
@@ -136,6 +126,14 @@ proc ::persistence::common::sort {
     assert { $sort_direction in {decreasing increasing} }
     assert { $sort_comparison in {dictionary ascii integer} }
 
+    assert { [namespace exists $type_nsp] } {
+        # TODO: broadcast to all server instances
+        # when a new ::sysdb::object_type_t is added
+        #
+        ::persistence::load_all_types_from_db
+        # log "^^^^^ [::sysdb::object_type_t find]"
+    }
+
     set sortlist [list]
     set i 0
     foreach oid $slicelist {
@@ -177,6 +175,10 @@ proc ::persistence::common::__exec_options {slicelistVar options} {
     if { exists("options_arr(offset)") || exists("options_arr(limit)") } {
         set offset [value_if options_arr(offset) "0"]
         set limit [value_if options_arr(limit) ""]
+
+        # set slicelist [lrange $slicelist 0 $limit]
+        # return
+
         set first $offset
         if { $limit ne {} } {
             set last [expr { $offset + $limit - 1 }]
@@ -238,9 +240,11 @@ proc ::persistence::common::multiget_slice {nodepath row_keys {options ""}} {
     set result [list]
     foreach row_key ${row_keys} {
         set row_path [join_oid $ks $cf_axis $row_key]
-        set slicelist [get_slice $row_path $options]
+        set slicelist [get_slice $row_path ""]
         set result [concat $result $slicelist]
     }
+    
+    # offset been taken care of by __exec_options call in each get_slice
     __exec_options result $options
     return ${result}
 }

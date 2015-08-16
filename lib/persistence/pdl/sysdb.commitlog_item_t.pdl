@@ -1,0 +1,32 @@
+nsp "::sysdb::commitlog_item_t"
+ks "sysdb"
+cf "commitlog_item"
+pk "name"
+
+indexes {{
+    name "by_name"
+    atts "name"
+} {
+    name "by_mtime"
+    atts "mtime"
+}}
+
+attributes {{
+    name "name"
+    immu_p "1"
+} {
+    name "oid"
+    immu_p "1"
+} {
+    name "data"
+    immu_p "1"
+} {
+    name "mtime"
+    immu_p "1"
+} {
+    name "codec_conf"
+    immu_p "1"
+}}
+
+aggregates {}
+

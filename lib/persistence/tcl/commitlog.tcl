@@ -6,9 +6,80 @@ if { ![setting_p "write_ahead_log"] } {
 package require core
 
 namespace eval ::persistence::commitlog {
+
+    namespace import ::persistence::common::split_oid
+
     variable fp
     set fp ""
+
+    variable commitlog_oid
+    set commitlog_oid ""
+
+}
+
+proc ::persistence::commitlog::init {} {
+
+    ##
+    # commitlog_oid is empty when open_if invokes ::sysdb::commitlog_t->insert
+    # for the first time, in effect ::sysdb::commitlog_t->insert won't produce
+    # any ::sysdb::commitlog_item_t record
+    #
+
+    variable commitlog_oid
+    set commitlog_oid ""
+
+    array set options [list limit 1]
+    set where_clause [list [list name = "CommitLog"]]
+    set commitlog_oid [::sysdb::commitlog_t find $where_clause options]
+    log open_if,enter,commitlog_oid=$commitlog_oid
+    if { $commitlog_oid eq {} } {
+        array set item [list]
+        set item(name) "CommitLog"
+        set item(last_checkpoint) 0
+        set item(last_logpoint) 0
+        # set commitlog_oid "sysdb/commitlog.by_name/CommitLog/+/CommitLog"
+        set commitlog_oid [::sysdb::commitlog_t insert item]
+    }
+    assert { $commitlog_oid ne {} }
+    log open_if,leave,commitlog_oid=$commitlog_oid
+
+    open_if
+
+}
                                          
+
+proc ::persistence::commitlog::insert {itemVar} {
+    variable fp
+
+    open_if
+
+    upvar $itemVar item
+    assert { $item(oid) ne {} }
+
+    ##
+    # log commitlog_item,insert,oid=$item(oid)
+    #
+    # first log notice produced by "commitlog_t insert":
+    # commitlog,insert,oid=sysdb/commitlog.by_name/CommitLog/+/CommitLog
+
+    lassign [split_oid $item(oid)] ks cf_axis row_key column_path ext
+    lassign [split $cf_axis {.}] cf idxname
+
+    # TODO: fix me, should work with any keyspace
+    if { $ks ne {sysdb} } {
+        # log "commitlog_item_t new $item(oid)"
+        set item(name) [tell $fp]
+        ::sysdb::commitlog_item_t insert item
+    }
+
+    ::persistence::commitlog::set_column \
+        $item(oid) $item(data) $item(mtime) $item(codec_conf)
+
+    ::persistence::mem::set_column \
+        $item(oid) $item(data) $item(mtime) $item(codec_conf)
+
+
+
 }
 
 proc ::persistence::commitlog::open_if {} {
@@ -145,6 +216,13 @@ proc ::persistence::commitlog::checkpoint {pos} {
     seek $fp 0 start
     ::util::io::write_int $fp $pos
     seek $fp $pos start
+
+    if {0} {
+        variable commitlog_oid
+        assert { $commitlog_oid ne {} }
+        array set item [list last_checkpoint $pos]
+        ::sysdb::commitlog_t update $commitlog_oid item
+    }
 }
 
 proc ::persistence::commitlog::logpoint {pos} {
@@ -152,6 +230,13 @@ proc ::persistence::commitlog::logpoint {pos} {
     seek $fp 4 start
     ::util::io::write_int $fp $pos
     seek $fp $pos start
+
+    if {0} {
+        variable commitlog_oid
+        assert { $commitlog_oid ne {} }
+        array set item [list last_logpoint $pos]
+        ::sysdb::commitlog_t update $commitlog_oid item
+    }
 }
 
 
@@ -211,4 +296,4 @@ proc ::persistence::commitlog::process {} {
     
 }
 
-after_package_load persistence ::persistence::commitlog::open_if
+after_package_load persistence ::persistence::commitlog::init

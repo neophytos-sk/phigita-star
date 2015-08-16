@@ -1,0 +1,26 @@
+nsp "::sysdb::commitlog_t"
+ks "sysdb"
+cf "commitlog"
+pk "name"
+
+indexes {{
+    name "by_name"
+    atts "name"
+}}
+
+attributes {{
+    name "name"
+    null_p "0"
+    immu_p "1"
+} {
+    name "last_checkpoint"
+    null_p "0"
+    comment "pos1"
+} {
+    name "last_logpoint"
+    null_p "0"
+    comment "pos2 or endmark"
+}} 
+
+aggregates {}
+

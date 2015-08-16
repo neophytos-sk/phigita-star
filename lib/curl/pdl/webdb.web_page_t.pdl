@@ -21,7 +21,7 @@ attributes {{
     name "scheme"
 } {
     name "host"
-    null "0"
+    null_p "0"
 } {
     name "port"
 } {
@@ -32,7 +32,7 @@ attributes {{
     name "fragment"
 } {
     name "reversehost"
-    null "0"
+    null_p "0"
     func {{itemVar} {
         upvar $itemVar item
         reversedotted $item(host)

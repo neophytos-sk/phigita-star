@@ -63,7 +63,7 @@ attributes {{
 } {
     name "date"
     type "datetime"
-    null "1"
+    null_p "1"
     comment "date extracted from article, can be null"
 } {
     name "sort_date"

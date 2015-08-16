@@ -5,7 +5,7 @@ pk "nsp"
 
 indexes {{
     name "by_nsp"
-    atts "ks cf"
+    atts "nsp"
 }}
 
 attributes {{

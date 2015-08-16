@@ -114,7 +114,7 @@ proc ::persistence::mem::set_column {oid data mtime codec_conf} {
     set rev "${oid}@${mtime}"
 
     if { [exists_column_rev_p $rev] } {
-        log "!!! memtable (set_col): oid revision already exists (=${rev})"
+        # log "!!! memtable (set_col): oid revision already exists (=${rev})"
     }
 
     if { [string match *by_reversedomain* $oid] } {
@@ -195,7 +195,7 @@ proc ::persistence::mem::dump {} {
         set mtime $__mem(${rev},mtime)
         set codec_conf $__mem(${rev},codec_conf)
 
-        call_orig_of ::persistence::fs::set_column $oid $data $mtime $codec_conf
+        call_orig_of ::persistence::set_column $oid $data $mtime $codec_conf
 
         set __mem(${rev},dirty_p) 0
         unset __dirty_idx(${rev})
@@ -206,3 +206,11 @@ proc ::persistence::mem::dump {} {
 
     #log "dumped $count records"
 }
+
+proc ::persistence::mem::printall {} {
+    variable __latest_idx
+    log ========
+    log [join [lsort [array names __latest_idx]] \n]
+    log --------
+}
+

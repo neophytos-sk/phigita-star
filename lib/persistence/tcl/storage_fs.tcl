@@ -2,8 +2,6 @@ namespace eval ::persistence::fs {
 
     namespace path ::persistence::common
 
-    #namespace __mixin ::persistence::common
-
     variable base_dir
     set base_dir [config get ::persistence base_dir]
     variable branch "master"
@@ -11,23 +9,22 @@ namespace eval ::persistence::fs {
     namespace export -clear \
         define_ks \
         define_cf \
+        get_files \
+        get_subdirs \
+        get_leafs \
+        set_column \
         exists_p \
         get \
         ins_column \
         del_column \
         ins_link \
         del_link \
-        get_slice \
-        multiget_slice \
         get_multirow \
         get_multirow_names \
         exists_supercolumn_p \
         find_column \
         get_name \
         get_mtime \
-        get_files \
-        get_subdirs \
-        get_leafs \
         exists_column_p \
         exists_link_p \
         get_column \
@@ -36,8 +33,6 @@ namespace eval ::persistence::fs {
         ins_column \
         ins_link \
         get_link \
-        get_slice \
-        multiget_slice \
         exists_p \
         is_supercolumn_oid_p \
         is_column_oid_p \
@@ -381,20 +376,17 @@ proc ::persistence::fs::get_leafs {path} {
 }
 
 
-proc ::persistence::fs::__find_column {
-    ks 
-    cf_axis 
-    row_key 
-    column_path 
+proc ::persistence::fs::find_column {
+    oid
     {dataVar ""} 
     {exists_pVar ""}
     {codec_conf ""}
 } {
 
+    lassign [split_oid $oid] ks cf_axis row_key column_path ext
+
     # row_path includes the "+" delimiter
     set row_path [join_oid ${ks} ${cf_axis} ${row_key}]
-
-    set oid [file join ${row_path} ${column_path}]
 
     if { ${dataVar} ne {} } {
         upvar $dataVar data
@@ -415,27 +407,6 @@ proc ::persistence::fs::__find_column {
 }
 
 
-proc ::persistence::fs::find_column {
-    oid 
-    {dataVar ""} 
-    {exists_pVar ""}
-    {codec_conf ""}
-} {
-
-    set varname1 ""
-    if { $dataVar ne {} } {
-        upvar $dataVar _1
-        set varname1 {_1}
-    }
-
-    if { $exists_pVar ne {} } {
-        upvar $exists_pVar exists_p
-    }
-
-    lassign [split_oid $oid] ks cf_axis row_key column_path ext
-    set oid [__find_column $ks $cf_axis $row_key $column_path ${varname1} exists_p ${codec_conf}]
-    return $oid
-}
 
 
 ###################################################################################################

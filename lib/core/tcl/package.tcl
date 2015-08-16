@@ -10,26 +10,25 @@ proc ::load_package {package_name dir {version "0.1"}} {
 
     set __after_package_load(${package_name}) ""
 
-    set filelist [list]
-    foreach {name pattern} {
-        tcl "*.tcl"
-        pdl "*_pdl.tcl"
-    } {
+    set files [list]
+
+    foreach {name patt} {"tcl" "*.tcl" "pdl" "*_pdl.tcl"} {
 
         # ${package_name},${name},enter
 
-        set subdir [file join ${dir} ${name}] 
-        set filelist [concat \
-            $filelist [lsort [glob -nocomplain -types {f} -directory ${subdir} ${pattern}]]]
+        set subdir [file join $dir $name]
+        set files [concat $files \
+            [lsort [glob -nocomplain -types "f" -directory $subdir $patt]]]
 
         # ${package_name},${name},leave
 
     }
 
-    foreach filename $filelist {
+    foreach filename $files {
         source $filename
     }
-    unset filelist
+
+    unset files
 
     foreach script $__after_package_load(${package_name}) {
         uplevel #0 $script

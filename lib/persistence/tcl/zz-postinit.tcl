@@ -37,10 +37,7 @@ proc ::persistence::init {} {
 
     assert { $storage_type in {fs ss} }
 
-    set nsp_path [list]
-    lappend nsp_path "::persistence::${storage_type}"
-    lappend nsp_path "::persistence::common"
-    namespace path $nsp_path
+    namespace path "::persistence::$storage_type ::persistence::common"
 
     if { ![setting_p "client_server"] || [use_p "server"] } {
 
@@ -56,6 +53,7 @@ proc ::persistence::init {} {
             }
 
             wrap_proc [namespace which ins_column] {oid data {codec_conf ""}} {
+                # log [info frame 0]
                 # log "ins_column oid=$oid"
                 lassign [split_oid $oid] ks cf_axis row_key column_path
                 call_orig $oid $data $codec_conf
@@ -77,14 +75,22 @@ proc ::persistence::init {} {
         if { [setting_p "write_ahead_log"] } {
 
             # private
-            wrap_proc [namespace which set_column] {oid data {ts ""} {codec_conf ""}} {
-                set ts [clock seconds]
-                ::persistence::commitlog::set_column $oid $data $ts $codec_conf
-                ::persistence::mem::set_column $oid $data $ts $codec_conf
+            # log which,[namespace which set_column]
+            wrap_proc ::persistence::set_column {oid data {mtime ""} {codec_conf ""}} {
+                set mtime [clock seconds]
+
+                array set item [list]
+                set item(oid) $oid
+                set item(data) $data
+                set item(mtime) $mtime
+                set item(codec_conf) $codec_conf
+                
+                ::persistence::commitlog::insert item
             }
 
             # private
-            wrap_proc [namespace which get_column] {oid {codec_conf ""}} {
+            # log which,[namespace which get_column]
+            wrap_proc ::persistence::get_column {oid {codec_conf ""}} {
                 set exists_p [::persistence::mem::exists_column_p $oid]
                 if { $exists_p } {
                     return [::persistence::mem::get_column $oid $codec_conf]
@@ -94,7 +100,7 @@ proc ::persistence::init {} {
             }
 
             # private
-            wrap_proc [namespace which get_link] {oid {codec_conf ""}} {
+            wrap_proc ::persistence::get_link {oid {codec_conf ""}} {
                 set exists_p [::persistence::mem::exists_link_p $oid]
                 if { $exists_p } {
                     return [::persistence::mem::get_link $oid $codec_conf]
@@ -107,27 +113,28 @@ proc ::persistence::init {} {
 
         if { [setting_p "memtable"] } {
 
-            wrap_proc [namespace which get_mtime] {oid} {
+            wrap_proc ::persistence::get_mtime {oid} {
                 if { [::persistence::mem::exists_column_p $oid] } {
                     return [::persistence::mem::get_mtime $oid]
                 }
                 return [call_orig $oid]
             }
 
-            wrap_proc [namespace which exists_p] {oid} {
+            wrap_proc ::persistence::exists_p {oid} {
                 set exists_1_p [::persistence::mem::exists_p $oid]
                 set exists_2_p [call_orig $oid]
                 return [expr { $exists_1_p || $exists_2_p }]
             }
             
-            wrap_proc [namespace which exists_supercolumn_p] {oid} {
+            wrap_proc ::persistence::exists_supercolumn_p {oid} {
                 set exists_1_p [::persistence::mem::exists_supercolumn_p $oid]
                 set exists_2_p [call_orig $oid]
                 return [expr { $exists_1_p || $exists_2_p }]
             }
 
             # private
-            wrap_proc [namespace which get_files] {path} {
+            #log which,get_files=[namespace which get_files] 
+            wrap_proc ::persistence::get_files {path} {
                 set filelist1 [::persistence::mem::get_files $path]
                 set filelist2 [call_orig $path]
                 # log mem_get_files=$filelist1
@@ -136,7 +143,8 @@ proc ::persistence::init {} {
             }
 
             # private
-            wrap_proc [namespace which get_subdirs] {path} {
+            #log which,get_subdirs=[namespace which get_subdirs] 
+            wrap_proc ::persistence::get_subdirs {path} {
                 set subdirs_1 [::persistence::mem::get_subdirs $path]
                 set subdirs_2 [call_orig $path]
                 return [lunion $subdirs_1 $subdirs_2]
@@ -206,10 +214,40 @@ proc ::persistence::init {} {
 }
 
 
-proc ::persistence::load_type_from_file {filename} {
-    array set spec [::util::readfile $filename]
-    load_type spec
+proc ::persistence::load_types_from_files {filelist} {
+
+    # we batch load to ensure ::sysdb::* types work
+    array set data [list]
+    foreach filename $filelist {
+        array set spec \
+            [set data($filename) \
+                [::util::readfile $filename]]
+
+        load_type spec
+        array unset spec
+    }
+
     # TODO: if client, broadcast to servers to reload types from db
+
+    foreach filename $filelist {
+        array set spec $data($filename)
+
+        set where_clause [list [list nsp = $spec(nsp)]]
+        set oid [::sysdb::object_type_t 0or1row $where_clause]
+
+        if { $oid ne {} } {
+            # TODO: integrity check
+        } else {
+            # log "!!! save_type_to_db $spec(nsp)"
+            ::sysdb::object_type_t insert spec
+        }
+
+        assert { [::sysdb::object_type_t exists $where_clause] } {
+            ::persistence::mem::printall
+        }
+
+        array unset spec
+    }
 }
 
 proc ::persistence::load_type {specVar} {
@@ -224,23 +262,14 @@ proc ::persistence::load_type {specVar} {
 
     $spec(nsp) init_type
 
-    set where_clause [list [list nsp = $spec(nsp)]]
-    set oid [::sysdb::object_type_t 0or1row $where_clause]
-
-    if { $oid ne {} } {
-        # TODO: integrity check
-    } else {
-
-        ::sysdb::object_type_t insert spec
-
-    }
+    assert { [namespace exists $spec(nsp)] }
 
 }
 
 proc ::persistence::load_all_types_from_db {} {
     set slicelist [::sysdb::object_type_t find]
     foreach oid $slicelist {
-        #log "loading type $oid"
+        # log "!!! load_type_from_db $oid"
         array set spec [::sysdb::object_type_t get $oid]
         load_type spec
         array unset spec

@@ -30,6 +30,7 @@ namespace eval ::persistence::orm {
         insert \
         delete \
         update \
+        exists \
         encode \
         decode \
         sort
@@ -93,17 +94,19 @@ proc ::persistence::orm::init_type {} {
     foreach attname $__attnames {
         array set attinfo $att($attname)
 
-        set type [value_if attinfo(type) ""]
-        set func [value_if attinfo(func) ""]
-        set null [value_if attinfo(null) "1"]
-        set maxlen [value_if attinfo(maxlen) ""]
-        set immutable_p [value_if attinfo(immutable_p) "0"]
+        set type    [value_if attinfo(type) ""]
+        set func    [value_if attinfo(func) ""]
+        set null_p  [boolval [value_if attinfo(null_p) "1"]]
+        set immu_p  [boolval [value_if attinfo(immu_p) "0"]]
+        set maxl    [value_if attinfo(maxl) ""]
+        set dval    [value_if attinfo(dval) ""]
 
-        set __attinfo(${attname},type) $type
-        set __attinfo(${attname},func) $func
-        set __attinfo(${attname},null) $null
-        set __attinfo(${attname},maxlen) $maxlen
-        set __attinfo(${attname},immutable) $immutable_p
+        set __attinfo(${attname},type)      $type
+        set __attinfo(${attname},func)      $func
+        set __attinfo(${attname},null_p)    $null_p
+        set __attinfo(${attname},maxl)      $maxl
+        set __attinfo(${attname},immu_p)    $immu_p
+        set __attinfo(${attname},dval)      $dval
 
         if { $func ne {} } {
             lappend __derived_attributes $attname
@@ -131,7 +134,7 @@ proc ::persistence::orm::init_type {} {
 
     set pk_atts $__idxinfo(by_${pk},atts)
     foreach attname $pk_atts {
-        set __attinfo(${attname},immutable) "1"
+        set __attinfo(${attname},immu_p) "1"
     }
 
 
@@ -278,26 +281,30 @@ proc ::persistence::orm::insert {itemVar {optionsVar ""}} {
     if { $option_validate_p } {
         foreach attname $__attnames {
 
-            set optional_p $__attinfo(${attname},null)
-            if { $optional_p && [value_if item($attname) ""] eq {} } {
+            set null_p          $__attinfo(${attname},null_p)
+            set dval            $__attinfo(${attname},dval)
+            set maxl            $__attinfo(${attname},maxl)
+            set type            $__attinfo(${attname},type)
+
+            if { $null_p && [value_if item($attname) ""] eq {} } {
                 continue
             }
-            assert { exists("item($attname)") }
 
-            if { $attname eq {reversehost} } {
-                if { $item($attname) eq {} } {
-                    error "empty reversehost"
+            if { $dval eq {} } {
+                assert { [info exists item($attname)] } {
+                    log "attribute (=$attname) does not exist and no default_value"
                 }
             }
 
-            set maxlen $__attinfo(${attname},maxlen)
-            if { $maxlen ne {} } {
-                assert { [string length $item($attname)] < $maxlen }
+            if { $maxl ne {} } {
+                assert { [string length $item($attname)] < $maxl } {
+                    log "attribute (=$attname) exceeds maxlen (=$maxl)"
+                }
             }
 
-            set datatype $__attinfo(${attname},type)
-            if { $datatype ne {} } {
-                assert { [pattern matchall [list $datatype] item($attname)] } {
+            if { $type ne {} } {
+                assert { [pattern matchall [list $type] item($attname)] } {
+                    log "attribute (=$attname) value does not match type (=$type)"
                     printvars
                 }
 
@@ -322,6 +329,7 @@ proc ::persistence::orm::insert {itemVar {optionsVar ""}} {
         }
         set row_key [to_row_key_by $idxname item]
         set src [to_path_by $idxname $row_key {*}$item($pk)]
+
         ::persistence::ins_link $src $target
 
         #log "idxname=$idxname"
@@ -330,6 +338,7 @@ proc ::persistence::orm::insert {itemVar {optionsVar ""}} {
 
     ::persistence::end_batch
 
+    return $target
 
 }
 
@@ -358,7 +367,7 @@ proc ::persistence::orm::update {oid new_itemVar {optionsVar ""}} {
 
     # ensures that no immutable attributes are modified
     foreach attname $attnames {
-        if { $__attinfo(${attname},immutable) && [info exists new_item($attname)] } {
+        if { $__attinfo(${attname},immu_p) && [info exists new_item($attname)] } {
             if { $new_item($attname) ne $old_item($attname) } {
                 error "persistence (ORM): attempted to modify immutable attribute"
             }
@@ -441,8 +450,12 @@ proc ::persistence::orm::delete {oid {exists_pVar ""}} {
 
 }
 
-proc ::persistence::orm::exists {oid} {
-    return [::persistence::exists_p $oid]
+proc ::persistence::orm::exists {where_clause_argv {optionsVar ""}} {
+    upvar $optionsVar options
+    set_if options(limit) 1
+    assert { $options(limit) == 1 }
+    set oid [0or1row $where_clause_argv options]
+    return [expr { $oid ne {} }]
 }
 
 # get -
@@ -502,16 +515,6 @@ proc ::persistence::orm::1row {where_clause_argv {optionsVar ""}} {
 
 }
 
-
-# retrieves a record without any explicit ordering
-proc ::persistence::orm::take {oid {num 1}} {
-    set data [get $oid]
-    set llen [llength $data]
-    if { $llen < $num } {
-        error "not enough items: oid (=$oid), req (=$num), llen (=$llen)"
-    }
-    return [lrange [get $oid] 0 [expr { $num - 1 }]]
-}
 
 proc ::persistence::orm::mtime {oid} {
     return [::persistence::get_mtime $oid]
@@ -613,6 +616,7 @@ proc ::persistence::orm::find {{where_clause_argv ""} {optionsVar ""}} {
 
         set n_clauses [llength $where_clause_argv]
         if { $n_clauses == 1 && [llength [lindex $where_clause_argv 0]] == 1 } {
+            error "peristence (ORM): test find_by_id first before using"
             return [find_by_id [lindex $where_clause_argv 0]]
         } else {
             set find_by_axis_args [list]

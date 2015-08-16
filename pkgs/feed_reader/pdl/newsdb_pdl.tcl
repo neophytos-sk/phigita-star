@@ -1,7 +1,6 @@
 set dir [file dirname [info script]]
-::persistence::load_type_from_file [file join $dir newsdb.news_item_t.pdl]
-::persistence::load_type_from_file [file join $dir newsdb.content_item_t.pdl]
-::persistence::load_type_from_file [file join $dir newsdb.error_item_t.pdl]
+::persistence::load_types_from_files \
+    [lsort [glob -nocomplain -directory $dir *.pdl]]
 
 # index {
 #     contentsha1_to_label

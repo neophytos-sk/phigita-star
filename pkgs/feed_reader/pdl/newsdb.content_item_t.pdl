@@ -13,7 +13,7 @@ attributes {{
     type "sha1_hex"
 } {
     name "title"
-    null "1"
+    null_p "1"
 } {
     name "body"
 }}
