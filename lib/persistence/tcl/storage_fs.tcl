@@ -11,7 +11,6 @@ namespace eval ::persistence::fs {
         define_cf \
         get_files \
         get_subdirs \
-        get_leafs \
         set_column \
         exists_p \
         get \
@@ -365,23 +364,6 @@ proc ::persistence::fs::get_name {oid} {
     return [file tail [file rootname ${oid_filename}]]
 }
 
-proc ::persistence::fs::get_leafs {path} {
-    set subdirs [get_subdirs $path]
-    if { $subdirs eq {} } {
-        return [get_files $path]
-    } else {
-        # log "subdirs:\n>>>$path\n***[join $subdirs "\n***"]"
-        set result [list]
-        foreach subdir_path $subdirs {
-            assert { $subdir_path ne $path }
-            foreach oid [get_leafs $subdir_path] {
-                lappend result $oid
-            }
-        }
-        return $result
-    }
-}
-
 
 proc ::persistence::fs::find_column {
     oid
@@ -433,7 +415,7 @@ proc ::persistence::fs::get_multirow {ks cf_axis {predicate ""}} {
 
     assert_cf ${ks} ${cf_axis}
 
-    set multirow [get_subdirs ${ks}/${cf_axis}]
+    set multirow [::persistence::get_subdirs ${ks}/${cf_axis}]
 
     if { ${predicate} ne {} } {
         predicate=forall multirow $predicate

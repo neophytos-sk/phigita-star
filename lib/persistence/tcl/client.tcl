@@ -75,6 +75,7 @@ proc ::db_client::timeout_conn {sock} {
         log  "closing connection $peer($sock,addr)"
         set peer($sock,done) ""
         unset peer($sock,addr)
+        set ::db_client::sock ""
     }
     # cleanup
 }
@@ -122,10 +123,10 @@ proc ::db_client::exec_cmd {args} {
         set myport 9900
         ::db_client::init $myaddr $myport
     }
-    #log "sending command... {*}$args"
+    # log "sending command... {*}$args"
     ::db_client::send $args
     set response [::db_client::recv]
-    #log response=$response
+    # log response=$response
     return $response
 
 }

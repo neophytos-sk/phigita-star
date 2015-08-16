@@ -7,6 +7,8 @@ source [file join $dir orm_codec.tcl]
 
 namespace eval ::persistence::orm {
 
+    namespace path "::persistence ::persistence::common"
+
     ##
     # import encode / decode procs
     #
@@ -315,7 +317,7 @@ proc ::persistence::orm::insert {itemVar {optionsVar ""}} {
 
     set target [to_path $item($pk)]
 
-    # log target=$target
+    # log orm,insert,target=$target
 
     set data [encode item]
 
@@ -472,6 +474,7 @@ proc ::persistence::orm::get {oid {exists_pVar ""}} {
     if { $exists_p } {
         return [decode [::persistence::get $oid [codec_conf]]]
     } else {
+        #log alias=[interp alias {} ::persistence::exists_p]
         error "no such oid (=$oid) in storage system (=mystore)"
     }
 }
@@ -567,6 +570,7 @@ proc ::persistence::orm::find_by_axis {argv {optionsVar ""}} {
         lassign $argv attname attvalue
         set nodepath [to_path_by by_$attname $attvalue]
         set slicelist [::persistence::get_slice $nodepath [array get options]]
+        #log find_by_axis,argc=2,slicelist=$slicelist
         return $slicelist
 
     } elseif { $argc == 1 } {
@@ -574,10 +578,10 @@ proc ::persistence::orm::find_by_axis {argv {optionsVar ""}} {
         lassign $argv attname
         set nodepath [to_path_by by_$attname]
         set row_keys [::persistence::get_multirow_names $nodepath] 
-        # log ^^^row_keys=$row_keys
+        #log argc=1,^^^row_keys=$row_keys
         if { $row_keys ne {} } {
             set slicelist [::persistence::multiget_slice $nodepath $row_keys [array get options]]
-            # log ^^^slicelist=$slicelist
+            #log argc=1,^^^slicelist=$slicelist
             return $slicelist
         }
         return

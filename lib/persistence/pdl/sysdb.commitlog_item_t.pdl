@@ -7,8 +7,8 @@ indexes {{
     name "by_commitlog_name_name"
     atts "commitlog_name name"
 } {
-    name "by_transaction_id"
-    atts "transaction_id"
+    name "by_trans_id"
+    atts "trans_id"
 }}
 
 attributes {{
@@ -36,7 +36,7 @@ attributes {{
     null_p "0"
     immu_p "1"
 } {
-    name "transaction_id"
+    name "trans_id"
     null_p "0"
     immu_p "1"
 } {

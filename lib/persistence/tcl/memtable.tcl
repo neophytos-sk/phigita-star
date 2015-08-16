@@ -23,12 +23,15 @@ namespace eval ::persistence::mem {
 
     namespace import ::persistence::common::split_trans_id
 
+    namespace path "::persistence ::persistence::common"
+
 }
 
 proc ::persistence::mem::get_leafs {path} {
     variable __latest_idx
 
-    set names [array names __latest_idx ${path}/*]
+    set pattern "${path}*"
+    set names [array names __latest_idx ${pattern}]
     return [lsort -unique ${names}]
 
 }
@@ -37,7 +40,7 @@ proc ::persistence::mem::get_subdirs {path} {
 
     set len [llength [split $path {/}]]
 
-    set files [get_files ${path}]
+    set files [get_leafs "${path}/"]  ;# slash is important
     set result [list]
     foreach oid $files {
         set oid_parts [split $oid {/}] 
@@ -64,7 +67,7 @@ proc ::persistence::mem::exists_link_p {oid} {
 }
 
 proc ::persistence::mem::exists_p {oid} {
-    if { [::persistence::is_link_oid_p $oid] } {
+    if { [is_link_oid_p $oid] } {
         return [exists_link_p $oid]
     } else {
         return [exists_column_p $oid]
@@ -122,8 +125,10 @@ proc ::persistence::mem::set_column {oid data trans_id codec_conf} {
 
     set rev "${oid}@${micros}"
 
+    # log memtable,set_column,rev=$rev
+
     if { [exists_column_rev_p $rev] } {
-        # log "!!! memtable (set_col): oid revision already exists (=${rev})"
+        log "!!! memtable (set_col): oid revision already exists (=${rev})"
     }
 
     if { [string match *by_reversedomain* $oid] } {
@@ -132,8 +137,10 @@ proc ::persistence::mem::set_column {oid data trans_id codec_conf} {
 
     incr __cnt
 
-    lappend __trans_list            $trans_id
-    lappend __dirty_idx(${trans_id})     $rev
+    if { ![info exists __dirty_idx(${trans_id})] } {
+        lappend __trans_list $trans_id
+    }
+    lappend __dirty_idx(${trans_id}) $rev
 
     set __mem(${rev},oid)           $oid
     set __mem(${rev},data)          $data
@@ -157,7 +164,8 @@ proc ::persistence::mem::set_column {oid data trans_id codec_conf} {
 }
 
 proc ::persistence::mem::dump {} {
-    #log "dumping memtable to filesystem"
+    return
+    log "dumping memtable to filesystem"
     variable __mem
     variable __dirty_idx
     variable __trans_list
@@ -171,10 +179,10 @@ proc ::persistence::mem::dump {} {
 
     set count 0
     foreach __trans_id $__trans_list {
-        #log "dumping transaction: $__trans_id"
+        log "dumping transaction: $__trans_id"
         set rev_list [lsort -unique $__dirty_idx($__trans_id)]
         foreach rev $rev_list {
-            #log "dumping rev: $rev"
+            log "dumping rev: $rev"
             if { !$__mem(${rev},dirty_p) } {
                 error "mismatch between __dirty_idx and __mem data"
             }
@@ -209,7 +217,7 @@ proc ::persistence::mem::dump {} {
     }
     set __trans_list ""
 
-    #log "dumped $count records"
+    log "dumped $count records"
 }
 
 proc ::persistence::mem::printall {} {

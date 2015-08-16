@@ -33,7 +33,8 @@ namespace eval ::persistence::common {
         predicate=in_idxpath \
         new_transaction_id \
         cur_transaction_id \
-        split_trans_id
+        split_trans_id \
+        get_leafs
 
     set storage_type [config get ::persistence "default_storage_type"]
     set nsp "::persistence::${storage_type}"
@@ -138,7 +139,7 @@ proc ::persistence::common::sort {
         # when a new ::sysdb::object_type_t is added
         #
         ::persistence::load_all_types_from_db
-        # log "^^^^^ [::sysdb::object_type_t find]"
+        log "^^^^^ object types: [::sysdb::object_type_t find]"
     }
 
     set sortlist [list]
@@ -259,7 +260,8 @@ proc ::persistence::common::get_slice {nodepath {options ""}} {
     assert { [is_row_oid_p $nodepath] }
     lassign [split_oid $nodepath] ks cf_axis row_key
     set row_path [join_oid ${ks} ${cf_axis} ${row_key}]
-    set slicelist [get_leafs ${row_path}]
+    set slicelist [::persistence::get_leafs ${row_path}]
+    #log get_slice,slicelist=$slicelist
     __exec_options slicelist $options
     return ${slicelist}
 }
@@ -280,6 +282,9 @@ proc ::persistence::common::multiget_slice {nodepath row_keys {options ""}} {
 }
 
 proc ::persistence::common::exists_p {oid} {
+    #log common,exists_p,oid=$oid
+    #log exists=[::persistence::exists_column_p $oid]
+    #log which,[namespace which exists_column_p]
     if { [is_link_oid_p $oid] } {
         return [exists_link_p $oid]
     } else {
@@ -373,4 +378,22 @@ proc ::persistence::common::end_batch {} {
     set __trans_id ""
 }
 
+
+proc ::persistence::common::get_leafs {path} {
+    set subdirs [get_subdirs $path]
+    if { $subdirs eq {} } {
+        set files [get_files $path]
+        return $files
+    } else {
+        # log "subdirs:\n>>>$path\n***[join $subdirs "\n***"]"
+        set result [list]
+        foreach subdir_path $subdirs {
+            assert { $subdir_path ne $path }
+            foreach oid [get_leafs $subdir_path] {
+                lappend result $oid
+            }
+        }
+        return $result
+    }
+}
 

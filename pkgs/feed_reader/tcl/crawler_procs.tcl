@@ -44,7 +44,7 @@ proc ::feed_reader::stats {{news_sources ""}} {
 
 
             set nodepath [::persistence::join_oid "crawldb" "feed_stats.by_feed_and_const" ${feed_name} "_stats"]
-            ::persistence::fs::find_column $nodepath column_data
+            ::persistence::find_column $nodepath column_data
 
             array set count ${column_data}
 
@@ -302,9 +302,9 @@ proc ::feed_reader::fetch_feed_p {feed_name timestamp {coeff "0.3"}} {
         # set oid [::crawldb::stat_info_t find_by feed_name $feed_name $pretty_timeval]
         
         set nodepath [::persistence::join_oid "crawldb" "feed_stats.by_feed_and_period" ${feed_name} ${pretty_timeval}]
-        set oid [::persistence::fs::find_column $nodepath "" exists_p]
+        set oid [::persistence::find_column $nodepath "" exists_p]
 
-        if { !$exists_p } {
+        if { $oid eq {} } {
             return 1
         }
 
@@ -323,9 +323,9 @@ proc ::feed_reader::fetch_feed_p {feed_name timestamp {coeff "0.3"}} {
     }
 
     set nodepath [::persistence::join_oid "crawldb" "feed_stats.by_feed_and_const" ${feed_name} "_stats"]
-    set oid [::persistence::fs::find_column $nodepath "" exists_p]
+    set oid [::persistence::find_column $nodepath "" exists_p]
     
-    if { !$exists_p } {
+    if { $oid eq {} } {
         return 1
     }
 

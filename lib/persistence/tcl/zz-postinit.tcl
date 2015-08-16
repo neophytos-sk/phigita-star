@@ -46,22 +46,22 @@ proc ::persistence::init {} {
 
         if { [setting_p "bloom_filters"] } {
 
-            wrap_proc [namespace which define_cf] {ks cf_axis} {
+            wrap_proc ::persistence::define_cf {ks cf_axis} {
                 call_orig $ks $cf_axis
                 set type_oid [join_oid $ks $cf_axis]
                 ::persistence::bloom_filter::init $type_oid
             }
 
-            wrap_proc [namespace which ins_column] {oid data {codec_conf ""}} {
+            wrap_proc ::persistence::ins_column {oid data {codec_conf ""}} {
                 # log [info frame 0]
-                # log "ins_column oid=$oid"
+                log "ins_column oid=$oid"
                 lassign [split_oid $oid] ks cf_axis row_key column_path
                 call_orig $oid $data $codec_conf
                 set type_oid [join_oid $ks $cf_axis]
                 ::persistence::bloom_filter::insert $type_oid $oid
             }
 
-            wrap_proc [namespace which ins_link] {oid target_oid {codec_conf ""}} {
+            wrap_proc ::persistence::ins_link {oid target_oid {codec_conf ""}} {
                 # log "ins_link oid=$oid data=$target_oid"
                 lassign [split_oid $oid] ks cf_axis row_key column_path
                 call_orig $oid $target_oid $codec_conf
@@ -82,7 +82,7 @@ proc ::persistence::init {} {
                 array set item [list]
                 set item(oid) $oid
                 set item(data) $data
-                set item(transaction_id) $trans_id
+                set item(trans_id) $trans_id
                 set item(codec_conf) $codec_conf
                 
                 ::persistence::commitlog::insert item
@@ -100,6 +100,7 @@ proc ::persistence::init {} {
             }
 
             # private
+            # log which,[namespace which get_link]
             wrap_proc ::persistence::get_link {oid {codec_conf ""}} {
                 set exists_p [::persistence::mem::exists_link_p $oid]
                 if { $exists_p } {
@@ -120,6 +121,7 @@ proc ::persistence::init {} {
                 return [call_orig $oid]
             }
 
+            # log which,[namespace which exists_p]
             wrap_proc ::persistence::exists_p {oid} {
                 set exists_1_p [::persistence::mem::exists_p $oid]
                 set exists_2_p [call_orig $oid]
@@ -133,7 +135,7 @@ proc ::persistence::init {} {
             }
 
             # private
-            #log which,get_files=[namespace which get_leafs] 
+            # log which,get_files=[namespace which get_leafs] 
             wrap_proc ::persistence::get_leafs {path} {
                 set filelist1 [::persistence::mem::get_leafs $path]
                 set filelist2 [call_orig $path]
@@ -166,6 +168,7 @@ proc ::persistence::init {} {
             ins_column
             del_column
             set_column
+            find_column
 
             ins_link
             del_link
@@ -197,10 +200,12 @@ proc ::persistence::init {} {
                 log procname=$procname
             }
 
+            #log $nsp_which_procname
+
             interp alias \
                 {} ::persistence::$procname \
-                {} ::db_client::exec_cmd $nsp_which_procname
-
+                {} ::db_client::exec_cmd ::persistence::$procname
+            
             if { [use_p "threads"] } {
                 # TODO: 
                 # set cmd "thread::send $id [namespace which $procname] {*}$args"
@@ -240,7 +245,7 @@ proc ::persistence::load_types_from_files {filelist} {
         if { $oid ne {} } {
             # TODO: integrity check
         } else {
-            # log "!!! save_type_to_db $spec(nsp)"
+             # log "*** save_type_to_db $spec(nsp)"
             ::sysdb::object_type_t insert spec
         }
 
