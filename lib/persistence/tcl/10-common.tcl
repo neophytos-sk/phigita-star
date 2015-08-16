@@ -361,7 +361,13 @@ proc ::persistence::common::predicate=in_idxpath {slicelistVar parent_oid {predi
 
 proc ::persistence::common::begin_batch {} {
     variable ::persistence::__transaction_id
-    lappend __transaction_id [set tid [new_transaction_id]]
+    if { $__transaction_id ne {} } {
+        # no support for nested transactions
+        return
+    }
+
+    #lappend __transaction_id [set tid [new_transaction_id]]
+    set __transaction_id [new_transaction_id]
     log "begin_batch $tid"
 }
 
@@ -370,7 +376,8 @@ proc ::persistence::common::end_batch {} {
     assert { $__transaction_id ne {} }
     set tid [lindex $__transaction_id end]
     log "end_batch $tid"
-    set __transaction_id [lreplace $__transaction_id end end]
+    set __transaction_id ""
+    #set __transaction_id [lreplace $__transaction_id end end]
 }
 
 

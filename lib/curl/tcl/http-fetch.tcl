@@ -86,8 +86,8 @@ proc ::web::cache_fetch {contentVar url {optionsVar ""} {infoVar ""} {cache_pVar
     set where_clause [list [list urlsha1 = $urlsha1]]
 
     array set options [list]
-    set options(expand_fn) "latest_mtime"
-
+    set options(order_by) [list last_update decreasing dictionary]
+    set options(limit) 1
     set oid [::webdb::web_page_t 0or1row $where_clause options]
 
     if { $oid ne {} } {

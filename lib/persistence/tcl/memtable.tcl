@@ -19,6 +19,8 @@ namespace eval ::persistence::mem {
     variable __dirty_idx
     array set __dirty_idx [list]
 
+    variable __trans_list [list]
+
     namespace import ::persistence::common::split_transaction_id
 
 }
@@ -104,18 +106,19 @@ proc ::persistence::mem::get_mtime {oid} {
     variable __mem
 
     set rev $__latest_idx(${oid})
-    set transaction_id $__mem(${rev},transaction_id)
-    lassign [split_transaction_id $transaction_id] micros pid n_mutations mtime
+    set trans_id $__mem(${rev},trans_id)
+    lassign [split_transaction_id $trans_id] micros pid n_mutations mtime
     return $mtime
 }
 
-proc ::persistence::mem::set_column {oid data transaction_id codec_conf} {
+proc ::persistence::mem::set_column {oid data trans_id codec_conf} {
     variable __mem
     variable __cnt
     variable __latest_idx
     variable __dirty_idx
+    variable __trans_list
 
-    lassign [split_transaction_id $transaction_id] micros pid n_mutations mtime
+    lassign [split_transaction_id $trans_id] micros pid n_mutations mtime
 
     set rev "${oid}@${micros}"
 
@@ -129,11 +132,12 @@ proc ::persistence::mem::set_column {oid data transaction_id codec_conf} {
 
     incr __cnt
 
-    set __dirty_idx(${rev})         ""
+    lappend __trans_list            $trans_id
+    lappend __dirty_idx(${trans_id})     $rev
 
     set __mem(${rev},oid)           $oid
     set __mem(${rev},data)          $data
-    set __mem(${rev},transaction_id) $transaction_id
+    set __mem(${rev},trans_id) $trans_id
     set __mem(${rev},codec_conf)    $codec_conf
     set __mem(${rev},size)          [string bytelength $data]
     set __mem(${rev},index)         $__cnt
@@ -152,63 +156,58 @@ proc ::persistence::mem::set_column {oid data transaction_id codec_conf} {
 
 }
 
-# del_column_data
-proc ::persistence::mem::del_column {oid} {
-    variable __mem
-    variable __oid
-    variable __cnt
-
-    return
-
-    if { [exists_column_p $oid] } {
-        set index $__mem(${oid},index)
-        set __oid [lreplace $__oid $index $index]
-        incr __cnt -1
-        unset __mem(${oid},data)
-        unset __mem(${oid},transaction_id)
-        unset __mem(${oid},codec_conf)
-        unset __mem(${oid},size)
-        unset __mem(${oid},index)
-        unset __mem(${oid},dirty_p)
-        unset __mem(${oid},type)
-    } else {
-        error "memtable (del): no such oid"
-    }
-
-}
-
-
 proc ::persistence::mem::dump {} {
     #log "dumping memtable to filesystem"
     variable __mem
     variable __dirty_idx
+    variable __trans_list
 
     #set fp [open /tmp/memtable.txt w]
     #puts $fp [join [array names __mem *,data] \n]
     #close $fp
 
-    set rev_list [lsort [array names __dirty_idx]]
+    #log __trans_list=$__trans_list
+    #log __dirty_idx=[array names __dirty_idx]
 
     set count 0
-    foreach rev $rev_list {
-        # log "dumping rev: $rev"
-        if { !$__mem(${rev},dirty_p) } {
-            error "mismatch between __dirty_idx and __mem data"
+    foreach __trans_id $__trans_list {
+        #log "dumping transaction: $__trans_id"
+        set rev_list [lsort -unique $__dirty_idx($__trans_id)]
+        foreach rev $rev_list {
+            #log "dumping rev: $rev"
+            if { !$__mem(${rev},dirty_p) } {
+                error "mismatch between __dirty_idx and __mem data"
+            }
+
+            set oid $__mem(${rev},oid)
+            set data $__mem(${rev},data)
+            set trans_id $__mem(${rev},trans_id)
+            set codec_conf $__mem(${rev},codec_conf)
+
+            assert { $__trans_id eq $trans_id }
+
+            # part of the statement that writes the revision is fine
+            # problem with the statement is part that publishes to head
+            # (currently it is neither isolated nor atomic)
+            #
+            # for the ::persistence::fs::* case, we need a second head/master, 
+            # say head/master0 and head/master1 (and a link from head/master to
+            # one of them - switching from one to another on each transaction),
+            # i.e. a cheap way to make snapshots
+            #
+            # it is not so much about concurrency control as it is for the principle
+            # that the persistence layer supports read_committed isolation level
+            # just as well as with fancier structures
+
+            call_orig_of ::persistence::set_column $oid $data $trans_id $codec_conf
+
+            set __mem(${rev},dirty_p) 0
+
+            incr count
         }
-
-        set oid $__mem(${rev},oid)
-        set data $__mem(${rev},data)
-        set transaction_id $__mem(${rev},transaction_id)
-        set codec_conf $__mem(${rev},codec_conf)
-
-        call_orig_of ::persistence::set_column $oid $data $transaction_id $codec_conf
-
-        set __mem(${rev},dirty_p) 0
-        unset __dirty_idx(${rev})
-
-        incr count
-
+        unset __dirty_idx(${__trans_id})
     }
+    set __trans_list ""
 
     #log "dumped $count records"
 }

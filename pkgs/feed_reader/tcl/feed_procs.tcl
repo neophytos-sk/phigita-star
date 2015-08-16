@@ -157,7 +157,7 @@ proc ::feed_reader::fetch_feed {resultVar feedVar {stoptitlesVar ""}} {
         set encoding $feed(encoding)
     }
 
-    set errorcode [web cache_fetch html $url]
+    set errorcode [web fetch html $url]
     if { ${errorcode} } {
         puts "error fetching feed: errocode=$errorcode"
         return $errorcode

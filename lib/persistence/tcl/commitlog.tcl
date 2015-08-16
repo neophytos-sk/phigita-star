@@ -56,7 +56,9 @@ proc ::persistence::commitlog::insert {itemVar} {
     upvar $itemVar item
     assert { $item(oid) ne {} }
 
-    log commitlog_item,insert,$item(transaction_id)
+    if { ![string match *bloom_filter* $item(oid)] } {
+        log commitlog_item,insert,$item(transaction_id),$item(oid)
+    }
 
     ##
     # log commitlog_item,insert,oid=$item(oid)
@@ -67,8 +69,9 @@ proc ::persistence::commitlog::insert {itemVar} {
     lassign [split_oid $item(oid)] ks cf_axis row_key column_path ext
     lassign [split $cf_axis {.}] cf idxname
 
-    # TODO: fix me, should work with any keyspace
-    if { $ks ne {sysdb} } {
+    if { 0 && $ks ne {sysdb} } {
+        # NOT SURE IF commitlog_item_t SHOULD BE KEPT IN THIS WAY
+        # TODO: fix me, should work with any keyspace
         # log "commitlog_item_t new $item(oid)"
         set item(commitlog_name) "CommitLog"
         set item(name) [tell $fp]
@@ -277,7 +280,9 @@ proc ::persistence::commitlog::process {} {
             if { ![::persistence::mem::exists_column_rev_p $rev] } {
                 # wrap_proc in zz-postinit.tcl submits oid to commitlog and memtable
                 # so, the following, for the roll-forward recovery after server startup
-                ::persistence::mem::set_column $oid $data $mtime $codec_conf
+                #
+                # we already do this in ::persistence::commitlog::insert
+                # ::persistence::mem::set_column $oid $data $mtime $codec_conf
             }
         } else {
 

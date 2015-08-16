@@ -37,6 +37,12 @@ attributes {{
         upvar $itemVar item
         reversedotted $item(host)
     }}
+} {
+    name "last_update"
+    null_p "0"
+    func {{itemVar} {
+        clock format [clock seconds] -format "%Y%m%dT%H%M"
+    }}
 }}
 
 aggregates {}
