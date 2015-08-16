@@ -137,8 +137,8 @@ proc ::persistence::init {} {
             wrap_proc ::persistence::get_leafs {path} {
                 set filelist1 [::persistence::mem::get_leafs $path]
                 set filelist2 [call_orig $path]
-                log mem_get_files=$filelist1
-                log fs_get_files=$filelist2
+                # log mem_get_files=$filelist1
+                # log fs_get_files=$filelist2
                 return [lsort -unique [concat $filelist1 $filelist2]]
             }
 
@@ -147,8 +147,8 @@ proc ::persistence::init {} {
             wrap_proc ::persistence::get_subdirs {path} {
                 set subdirs_1 [::persistence::mem::get_subdirs $path]
                 set subdirs_2 [call_orig $path]
-                log mem_get_subdirs=$subdirs_1
-                log fs_get_subdirs=$subdirs_2
+                # log mem_get_subdirs=$subdirs_1
+                # log fs_get_subdirs=$subdirs_2
                 return [lsort -unique [concat $subdirs_1 $subdirs_2]]
             }
 
