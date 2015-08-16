@@ -164,7 +164,6 @@ proc ::persistence::mem::set_column {oid data trans_id codec_conf} {
 }
 
 proc ::persistence::mem::dump {} {
-    return
     log "dumping memtable to filesystem"
     variable __mem
     variable __dirty_idx
