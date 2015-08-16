@@ -21,7 +21,7 @@ namespace eval ::persistence::mem {
 
     variable __trans_list [list]
 
-    namespace import ::persistence::common::split_transaction_id
+    namespace import ::persistence::common::split_trans_id
 
 }
 
@@ -107,7 +107,7 @@ proc ::persistence::mem::get_mtime {oid} {
 
     set rev $__latest_idx(${oid})
     set trans_id $__mem(${rev},trans_id)
-    lassign [split_transaction_id $trans_id] micros pid n_mutations mtime
+    lassign [split_trans_id $trans_id] micros pid n_mutations mtime
     return $mtime
 }
 
@@ -118,7 +118,7 @@ proc ::persistence::mem::set_column {oid data trans_id codec_conf} {
     variable __dirty_idx
     variable __trans_list
 
-    lassign [split_transaction_id $trans_id] micros pid n_mutations mtime
+    lassign [split_trans_id $trans_id] micros pid n_mutations mtime
 
     set rev "${oid}@${micros}"
 

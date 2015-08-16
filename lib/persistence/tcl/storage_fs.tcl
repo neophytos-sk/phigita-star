@@ -198,9 +198,9 @@ proc ::persistence::fs::exists_link_p {oid} {
 }
 
 # isolation level: read_uncommitted
-proc ::persistence::fs::set_column {oid data transaction_id codec_conf} {
+proc ::persistence::fs::set_column {oid data trans_id codec_conf} {
 
-    lassign [split_transaction_id $transaction_id] micros pid n_mutations mtime
+    lassign [split_trans_id $trans_id] micros pid n_mutations mtime
 
     set rev "${oid}@${micros}"
 
@@ -248,16 +248,16 @@ proc ::persistence::fs::get_tmp_filename {filename} {
     return $tmp_filename
 }
 
-proc ::persistence::fs::write_data {ext filename data transaction_id codec_conf} {
-    lassign [split_transaction_id $transaction_id] micros pid n_mutations mtime
+proc ::persistence::fs::write_data {ext filename data trans_id codec_conf} {
+    lassign [split_trans_id $trans_id] micros pid n_mutations mtime
     set tmp_filename [file join [get_tmp_filename ${filename}] ${ext}]
     ::util::writefile ${tmp_filename} ${data} {*}${codec_conf}
     file mtime ${tmp_filename} ${mtime}
 }
 
-proc ::persistence::fs::read_committed__set_column {oid data transaction_id codec_conf} {
+proc ::persistence::fs::read_committed__set_column {oid data trans_id codec_conf} {
 
-    lassign [split_transaction_id $transaction_id] micros pid n_mutations mtime
+    lassign [split_trans_id $trans_id] micros pid n_mutations mtime
 
     set rev "${oid}@${mtime}"
 
@@ -305,9 +305,9 @@ proc ::persistence::fs::get_column {oid {codec_conf ""}} {
 
 
 
-proc ::persistence::fs::set_link {oid target_oid transaction_id codec_conf} {
+proc ::persistence::fs::set_link {oid target_oid trans_id codec_conf} {
 
-    lassign [split_transaction_id $transaction_id] micros pid n_mutations mtime
+    lassign [split_trans_id $trans_id] micros pid n_mutations mtime
 
     if { 0 } {
 

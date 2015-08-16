@@ -1,5 +1,5 @@
 namespace eval ::persistence {
-    variable __transaction_id ""
+    variable __trans_id ""
 }
 
 namespace eval ::persistence::fs {;}
@@ -33,7 +33,7 @@ namespace eval ::persistence::common {
         predicate=in_idxpath \
         new_transaction_id \
         cur_transaction_id \
-        split_transaction_id
+        split_trans_id
 
     set storage_type [config get ::persistence "default_storage_type"]
     set nsp "::persistence::${storage_type}"
@@ -201,7 +201,6 @@ proc ::persistence::common::__exec_options {slicelistVar options} {
 }
 
 proc ::persistence::common::new_transaction_id {} {
-    variable ::persistence::__transaction_id
     variable ::persistence::__n_mutations
 
     set micros [clock microseconds]
@@ -211,19 +210,17 @@ proc ::persistence::common::new_transaction_id {} {
 }
 
 proc ::persistence::common::cur_transaction_id {} {
-    variable ::persistence::__transaction_id
-    if { $__transaction_id ne {} } {
-        set retval [lindex $__transaction_id end]
-        return $retval
+    variable ::persistence::__trans_id
+    if { $__trans_id ne {} } {
+        return $__trans_id
     } else {
-        set retval [new_transaction_id]
-        lappend __transaction_id $retval
-        return $retval
+        set __trans_id [new_transaction_id]
+        return $__trans_id
     }
 }
 
-proc ::persistence::common::split_transaction_id {transaction_id} {
-    lassign [split $transaction_id {.}] micros pid n_mutations
+proc ::persistence::common::split_trans_id {trans_id} {
+    lassign [split $trans_id {.}] micros pid n_mutations
     set mtime [expr { int( ${micros} / 1000 ) }]
     return [list $micros $pid $n_mutations $mtime]
 }
@@ -231,8 +228,8 @@ proc ::persistence::common::split_transaction_id {transaction_id} {
 proc ::persistence::common::ins_column {oid data {codec_conf ""}} {
     lassign [split_oid $oid] ks cf_axis row_key column_path ext
     set oid [join_oid $ks $cf_axis $row_key $column_path]
-    set transaction_id [cur_transaction_id]
-    set_column ${oid} ${data} ${transaction_id} ${codec_conf}
+    set trans_id [cur_transaction_id]
+    set_column ${oid} ${data} ${trans_id} ${codec_conf}
 }
 
 proc ::persistence::common::del_column {oid} {
@@ -360,24 +357,20 @@ proc ::persistence::common::predicate=in_idxpath {slicelistVar parent_oid {predi
 }
 
 proc ::persistence::common::begin_batch {} {
-    variable ::persistence::__transaction_id
-    if { $__transaction_id ne {} } {
+    variable ::persistence::__trans_id
+    if { $__trans_id ne {} } {
         # no support for nested transactions
         return
     }
-
-    #lappend __transaction_id [set tid [new_transaction_id]]
-    set __transaction_id [new_transaction_id]
-    log "begin_batch $tid"
+    set __trans_id [new_transaction_id]
+    log "begin_batch $__trans_id"
 }
 
 proc ::persistence::common::end_batch {} {
-    variable ::persistence::__transaction_id
-    assert { $__transaction_id ne {} }
-    set tid [lindex $__transaction_id end]
-    log "end_batch $tid"
-    set __transaction_id ""
-    #set __transaction_id [lreplace $__transaction_id end end]
+    variable ::persistence::__trans_id
+    assert { $__trans_id ne {} }
+    log "end_batch $__trans_id"
+    set __trans_id ""
 }
 
 
