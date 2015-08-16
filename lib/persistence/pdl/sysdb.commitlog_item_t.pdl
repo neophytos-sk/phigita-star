@@ -1,30 +1,47 @@
 nsp "::sysdb::commitlog_item_t"
 ks "sysdb"
 cf "commitlog_item"
-pk "name"
+pk "commitlog_name_name"
 
 indexes {{
-    name "by_name"
-    atts "name"
+    name "by_commitlog_name_name"
+    atts "commitlog_name name"
 } {
-    name "by_mtime"
-    atts "mtime"
+    name "by_transaction_id"
+    atts "transaction_id"
 }}
 
 attributes {{
+    name "commitlog_name_name"
+    null_p "0"
+    immu_p "0"
+    func {{itemVar} {
+        upvar $itemVar item
+        list $item(commitlog_name) $item(name)
+    }}
+} {
+    name "commitlog_name"
+    null_p "0"
+    immu_p "1"
+} {
     name "name"
+    null_p "0"
     immu_p "1"
 } {
     name "oid"
+    null_p "0"
     immu_p "1"
 } {
     name "data"
+    null_p "0"
     immu_p "1"
 } {
-    name "mtime"
+    name "transaction_id"
+    null_p "0"
     immu_p "1"
 } {
     name "codec_conf"
+    null_p "0"
     immu_p "1"
 }}
 

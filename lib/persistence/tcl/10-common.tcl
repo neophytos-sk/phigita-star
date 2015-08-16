@@ -1,3 +1,7 @@
+namespace eval ::persistence {
+    variable __transaction_id ""
+}
+
 namespace eval ::persistence::fs {;}
 
 namespace eval ::persistence::common {
@@ -26,7 +30,10 @@ namespace eval ::persistence::common {
         get \
         begin_batch \
         end_batch \
-        predicate=in_idxpath
+        predicate=in_idxpath \
+        new_transaction_id \
+        cur_transaction_id \
+        split_transaction_id
 
     set storage_type [config get ::persistence "default_storage_type"]
     set nsp "::persistence::${storage_type}"
@@ -193,11 +200,39 @@ proc ::persistence::common::__exec_options {slicelistVar options} {
 
 }
 
+proc ::persistence::common::new_transaction_id {} {
+    variable ::persistence::__transaction_id
+    variable ::persistence::__n_mutations
+
+    set micros [clock microseconds]
+    set pid [pid] ;# process id
+    incr __n_mutations
+    return ${micros}.${pid}.${__n_mutations}
+}
+
+proc ::persistence::common::cur_transaction_id {} {
+    variable ::persistence::__transaction_id
+    if { $__transaction_id ne {} } {
+        set retval [lindex $__transaction_id end]
+        return $retval
+    } else {
+        set retval [new_transaction_id]
+        lappend __transaction_id $retval
+        return $retval
+    }
+}
+
+proc ::persistence::common::split_transaction_id {transaction_id} {
+    lassign [split $transaction_id {.}] micros pid n_mutations
+    set mtime [expr { int( ${micros} / 1000 ) }]
+    return [list $micros $pid $n_mutations $mtime]
+}
+
 proc ::persistence::common::ins_column {oid data {codec_conf ""}} {
     lassign [split_oid $oid] ks cf_axis row_key column_path ext
     set oid [join_oid $ks $cf_axis $row_key $column_path]
-    set mtime [clock seconds] ;# TODO: improve timestamps handling
-    set_column ${oid} ${data} $mtime ${codec_conf}
+    set transaction_id [cur_transaction_id]
+    set_column ${oid} ${data} ${transaction_id} ${codec_conf}
 }
 
 proc ::persistence::common::del_column {oid} {
@@ -205,8 +240,8 @@ proc ::persistence::common::del_column {oid} {
     ins_column ${oid}.gone ""
 }
 
-proc ::persistence::common::set_link {oid target_oid mtime codec_conf} {
-    set_column ${oid}.link $target_oid $mtime
+proc ::persistence::common::set_link {oid target_oid transaction_id codec_conf} {
+    set_column ${oid}.link $target_oid $transaction_id $codec_conf
 }
 
 proc ::persistence::common::ins_link {oid target_oid {codec_conf ""}} {
@@ -214,8 +249,8 @@ proc ::persistence::common::ins_link {oid target_oid {codec_conf ""}} {
     # TODO: IncrRefCount
     lassign [split_oid $oid] ks cf_axis row_key column_path ext
     set oid [join_oid $ks $cf_axis $row_key $column_path]
-    set mtime [clock seconds] ;# TODO: improve timestamps handling
-    set_link ${oid} ${target_oid} $mtime ${codec_conf}
+    set transaction_id [cur_transaction_id]
+    set_link ${oid} ${target_oid} $transaction_id ${codec_conf}
 }
 
 proc ::persistence::common::del_link {oid} {
@@ -243,7 +278,6 @@ proc ::persistence::common::multiget_slice {nodepath row_keys {options ""}} {
         set result [concat $result $slicelist]
     }
     
-    # offset been taken care of by __exec_options call in each get_slice
     __exec_options result $options
     return ${result}
 }
@@ -326,9 +360,17 @@ proc ::persistence::common::predicate=in_idxpath {slicelistVar parent_oid {predi
 }
 
 proc ::persistence::common::begin_batch {} {
+    variable ::persistence::__transaction_id
+    lappend __transaction_id [set tid [new_transaction_id]]
+    log "begin_batch $tid"
 }
 
 proc ::persistence::common::end_batch {} {
+    variable ::persistence::__transaction_id
+    assert { $__transaction_id ne {} }
+    set tid [lindex $__transaction_id end]
+    log "end_batch $tid"
+    set __transaction_id [lreplace $__transaction_id end end]
 }
 
 

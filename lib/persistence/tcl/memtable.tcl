@@ -19,6 +19,8 @@ namespace eval ::persistence::mem {
     variable __dirty_idx
     array set __dirty_idx [list]
 
+    namespace import ::persistence::common::split_transaction_id
+
 }
 
 proc ::persistence::mem::get_leafs {path} {
@@ -102,16 +104,20 @@ proc ::persistence::mem::get_mtime {oid} {
     variable __mem
 
     set rev $__latest_idx(${oid})
-    return $__mem(${rev},mtime)
+    set transaction_id $__mem(${rev},transaction_id)
+    lassign [split_transaction_id $transaction_id] micros pid n_mutations mtime
+    return $mtime
 }
 
-proc ::persistence::mem::set_column {oid data mtime codec_conf} {
+proc ::persistence::mem::set_column {oid data transaction_id codec_conf} {
     variable __mem
     variable __cnt
     variable __latest_idx
     variable __dirty_idx
 
-    set rev "${oid}@${mtime}"
+    lassign [split_transaction_id $transaction_id] micros pid n_mutations mtime
+
+    set rev "${oid}@${micros}"
 
     if { [exists_column_rev_p $rev] } {
         # log "!!! memtable (set_col): oid revision already exists (=${rev})"
@@ -127,7 +133,7 @@ proc ::persistence::mem::set_column {oid data mtime codec_conf} {
 
     set __mem(${rev},oid)           $oid
     set __mem(${rev},data)          $data
-    set __mem(${rev},mtime)         $mtime
+    set __mem(${rev},transaction_id) $transaction_id
     set __mem(${rev},codec_conf)    $codec_conf
     set __mem(${rev},size)          [string bytelength $data]
     set __mem(${rev},index)         $__cnt
@@ -159,7 +165,7 @@ proc ::persistence::mem::del_column {oid} {
         set __oid [lreplace $__oid $index $index]
         incr __cnt -1
         unset __mem(${oid},data)
-        unset __mem(${oid},mtime)
+        unset __mem(${oid},transaction_id)
         unset __mem(${oid},codec_conf)
         unset __mem(${oid},size)
         unset __mem(${oid},index)
@@ -192,10 +198,10 @@ proc ::persistence::mem::dump {} {
 
         set oid $__mem(${rev},oid)
         set data $__mem(${rev},data)
-        set mtime $__mem(${rev},mtime)
+        set transaction_id $__mem(${rev},transaction_id)
         set codec_conf $__mem(${rev},codec_conf)
 
-        call_orig_of ::persistence::set_column $oid $data $mtime $codec_conf
+        call_orig_of ::persistence::set_column $oid $data $transaction_id $codec_conf
 
         set __mem(${rev},dirty_p) 0
         unset __dirty_idx(${rev})

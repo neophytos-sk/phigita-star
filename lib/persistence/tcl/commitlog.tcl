@@ -56,6 +56,8 @@ proc ::persistence::commitlog::insert {itemVar} {
     upvar $itemVar item
     assert { $item(oid) ne {} }
 
+    log commitlog_item,insert,$item(transaction_id)
+
     ##
     # log commitlog_item,insert,oid=$item(oid)
     #
@@ -68,15 +70,16 @@ proc ::persistence::commitlog::insert {itemVar} {
     # TODO: fix me, should work with any keyspace
     if { $ks ne {sysdb} } {
         # log "commitlog_item_t new $item(oid)"
+        set item(commitlog_name) "CommitLog"
         set item(name) [tell $fp]
         ::sysdb::commitlog_item_t insert item
     }
 
     ::persistence::commitlog::set_column \
-        $item(oid) $item(data) $item(mtime) $item(codec_conf)
+        $item(oid) $item(data) $item(transaction_id) $item(codec_conf)
 
     ::persistence::mem::set_column \
-        $item(oid) $item(data) $item(mtime) $item(codec_conf)
+        $item(oid) $item(data) $item(transaction_id) $item(codec_conf)
 
 
 

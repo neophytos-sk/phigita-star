@@ -76,13 +76,13 @@ proc ::persistence::init {} {
 
             # private
             # log which,[namespace which set_column]
-            wrap_proc ::persistence::set_column {oid data {mtime ""} {codec_conf ""}} {
-                set mtime [clock seconds]
+            wrap_proc ::persistence::set_column {oid data transaction_id codec_conf} {
+                lassign [split_transaction_id $transaction_id] micros pid n_mutations mtime
 
                 array set item [list]
                 set item(oid) $oid
                 set item(data) $data
-                set item(mtime) $mtime
+                set item(transaction_id) $transaction_id
                 set item(codec_conf) $codec_conf
                 
                 ::persistence::commitlog::insert item
