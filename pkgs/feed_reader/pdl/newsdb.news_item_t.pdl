@@ -48,18 +48,25 @@ attributes {{
 } {
     name "url"
     type "url"
+    null_p "0"
 } {
     name "title"
 } {
     name "body"
 } {
     name "is_revision_p"
+    null_p "0"
+    dval "0"
 } {
     name "is_copy_p"
+    null_p "0"
+    dval "0"
 } {
     name "domain"
+    null_p "0"
 } {
     name "reversedomain"
+    null_p "0"
 } {
     name "date"
     type "datetime"
@@ -68,6 +75,7 @@ attributes {{
 } {
     name "sort_date"
     type "datetime"
+    null_p "0"
 } {
     name "first_sync"
 } {

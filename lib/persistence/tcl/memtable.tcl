@@ -21,7 +21,7 @@ namespace eval ::persistence::mem {
 
 }
 
-proc ::persistence::mem::get_files {path} {
+proc ::persistence::mem::get_leafs {path} {
     variable __latest_idx
 
     set names [array names __latest_idx ${path}/*]

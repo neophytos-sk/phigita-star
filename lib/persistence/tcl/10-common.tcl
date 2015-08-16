@@ -227,8 +227,7 @@ proc ::persistence::common::get_slice {nodepath {options ""}} {
     assert { [is_row_oid_p $nodepath] }
     lassign [split_oid $nodepath] ks cf_axis row_key
     set row_path [join_oid ${ks} ${cf_axis} ${row_key}]
-    set slicelist [get_files ${row_path}]
-    set slicelist [expand_slice slicelist ""]  ;# expand_fn used to be latest_mtime
+    set slicelist [get_leafs ${row_path}]
     __exec_options slicelist $options
     return ${slicelist}
 }
@@ -254,53 +253,6 @@ proc ::persistence::common::exists_p {oid} {
         return [exists_link_p $oid]
     } else {
         return [exists_column_p $oid]
-    }
-}
-
-proc ::persistence::common::expand_slice {slicelistVar fn} {
-
-    upvar $slicelistVar slicelist
-
-    #if { [is_expanded_p $slicelist] } {
-        # HERE HERE HERE - FIX
-        # return $slicelist
-    #}
-
-    set result [list]
-    foreach oid $slicelist {
-        set leafs [expand_oid $oid]
-
-        if { $fn ne {} } {
-            if { [llength $fn] == 1 } {
-                predicate=$fn leafs
-            } elseif { [llength $fn] == 2 } {
-                apply $fn leafs
-            } else {
-                error "unknown type of expand_fn: must be lambda or procname"
-            }
-        }
-        
-        foreach leaf_oid $leafs {
-            lappend result $leaf_oid
-        }
-    }
-
-    return $result
-}
-
-proc ::persistence::common::expand_oid {oid} {
-    #log "is_row_oid_p=[is_row_oid_p $oid]"
-    #log "is_supercolumn_oid_p=[is_supercolumn_oid_p $oid]"
-
-    if { [is_row_oid_p $oid] && [exists_row_data_p $oid] } {
-        return [get_leafs $oid]
-    } elseif { [is_supercolumn_oid_p $oid] && [exists_supercolumn_p $oid] } {
-        set leafs [get_leafs $oid]
-        #log "expand_oid->leafs=$leafs"
-        return $leafs
-    } else {
-        #log "expand_oid->column oid $oid"
-        return [list $oid]
     }
 }
 

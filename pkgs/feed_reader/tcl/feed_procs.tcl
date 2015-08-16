@@ -1804,10 +1804,13 @@ proc ::feed_reader::write_item {timestamp normalized_link feedVar itemVar resync
                 set item(sort_date) $item(date)
                 # puts "item(date)=$item(date) is older than 15 mins - using that date for sorting..."
 
-            }
+            } else {
 
-            # otherwise, including item(date) in the future,
-            # use computed date for sorting
+                # otherwise, including item(date) in the future,
+                # use computed date for sorting
+
+                set item(sort_date) $timestamp_datetime
+            }
 
 
         } else {

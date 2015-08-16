@@ -31,7 +31,7 @@ proc ::persistence::commitlog::init {} {
     array set options [list limit 1]
     set where_clause [list [list name = "CommitLog"]]
     set commitlog_oid [::sysdb::commitlog_t find $where_clause options]
-    log open_if,enter,commitlog_oid=$commitlog_oid
+    #log open_if,enter,commitlog_oid=$commitlog_oid
     if { $commitlog_oid eq {} } {
         array set item [list]
         set item(name) "CommitLog"
@@ -41,7 +41,7 @@ proc ::persistence::commitlog::init {} {
         set commitlog_oid [::sysdb::commitlog_t insert item]
     }
     assert { $commitlog_oid ne {} }
-    log open_if,leave,commitlog_oid=$commitlog_oid
+    #log open_if,leave,commitlog_oid=$commitlog_oid
 
     open_if
 
