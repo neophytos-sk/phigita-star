@@ -85,25 +85,11 @@ proc ::persistence::bloom_filter::insert {parent_oid oid} {
     }
     ::bloom_filter::insert $__bf_TclObj(${name}) $key
 
-    # find the db record for the given parent_oid
-    set where_clause [list]
-    lappend where_clause [list name = $name]
-    set bf_oid [::sysdb::bloom_filter_t 0or1row $where_clause] 
-
     # update the bytes field of said record
     set bytes [::bloom_filter::get_bytes $__bf_TclObj(${name})]
     array set bf_item [list]
     set bf_item(name) $name 
     set bf_item(bytes) $bytes
-
-    # insert or update
-    if { $bf_oid eq {} } {
-        #log bf_item=[array get bf_item]
-        #set bf_oid [join_oid "sysdb" "bloom_filter" $name "_data_"]
-        ::sysdb::bloom_filter_t insert bf_item
-    } else {
-        ::sysdb::bloom_filter_t update $bf_oid bf_item
-    }
 
     unset __seen(${parent_oid},${oid})
 
@@ -128,4 +114,45 @@ proc ::persistence::bloom_filter::may_contain {parent_oid oid} {
     set may_contain_p [::bloom_filter::may_contain_p $__bf_TclObj(${name}) $key]
 
     return $may_contain_p
+}
+
+proc ::persistence::bloom_filter::dump {{parent_oid ""}} {
+    variable __bf_TclObj
+
+    if { $parent_oid ne {} } {
+
+        # what kind of parent_oid are we dealing with?
+        set type [typeof_oid $parent_oid]
+
+        # bloom filter name
+        set name [binary encode base64 [list $type $parent_oid]]
+
+        # add it to the list
+        set names $name
+
+    } else {
+
+        # get all bloom filter names from the __bf_TclObj structure
+        set names [array names __bf_TclObj]
+
+    }
+
+    foreach name $names {
+
+        # find the db record for the given parent_oid
+        set where_clause [list]
+        lappend where_clause [list name = $name]
+        set bf_oid [::sysdb::bloom_filter_t 0or1row $where_clause] 
+
+        # insert or update
+        if { $bf_oid eq {} } {
+            #log bf_item=[array get bf_item]
+            #set bf_oid [join_oid "sysdb" "bloom_filter" $name "_data_"]
+            ::sysdb::bloom_filter_t insert bf_item
+        } else {
+            ::sysdb::bloom_filter_t update $bf_oid bf_item
+        }
+
+    }
+
 }
