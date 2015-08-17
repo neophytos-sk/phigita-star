@@ -8,6 +8,7 @@ namespace eval ::config {
     }
 
     namespace export \
+        setting \
         setting_p \
         use_p
 
@@ -87,6 +88,21 @@ proc ::config::setting_p {param_name} {
     return [boolval [config get ${nsp} ${param_name}]]
 }
 
+proc ::config::setting {param_name} {
+    set caller [info frame -1]
+    set type [dict get $caller type]
+    if { $type eq {proc} } {
+        set procname [dict get $caller proc]
+        set nsp [namespace qualifier $procname]
+    } elseif { $type in {eval source} } {
+        variable __current_nsp
+        set nsp $__current_nsp
+    } else {
+        error "setting: type=$type"
+    }
+    return [config get ${nsp} ${param_name}]
+}
+
 proc ::config::use_p {flag} {
     set caller [info frame -1]
     set type [dict get $caller type]
@@ -104,6 +120,7 @@ proc ::config::use_p {flag} {
 }
 
 namespace eval :: {
+    namespace import ::config::setting
     namespace import ::config::setting_p
     namespace import ::config::use_p
 }

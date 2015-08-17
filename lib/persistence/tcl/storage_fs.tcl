@@ -374,9 +374,6 @@ proc ::persistence::fs::find_column {
 
     lassign [split_oid $oid] ks cf_axis row_key column_path ext
 
-    # row_path includes the "+" delimiter
-    set row_path [join_oid ${ks} ${cf_axis} ${row_key}]
-
     if { ${dataVar} ne {} } {
         upvar $dataVar data
     }

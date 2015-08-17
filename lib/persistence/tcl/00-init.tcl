@@ -52,8 +52,9 @@ config param write_ahead_log "on"
 #
 config param isolation_level "read_uncommitted" ;# read_committed, repeatable_read, serializable
 
+assert { [setting "isolation_level"] eq {read_uncommitted} || [setting_p "write_ahead_log"] }
 
-
+assert { ![setting_p "bloom_filters"] || [setting_p "write_ahead_log"] }
 
 assert { ![use_p "server"] || [setting_p "client_server"] }
 

@@ -9,6 +9,7 @@ namespace eval ::persistence::bloom_filter {
     namespace import ::persistence::common::join_oid
 
     variable __bf_TclObj
+    variable __bf_dirty
 
     # helps avoid infinite nested evaluations
     variable __seen
@@ -58,13 +59,7 @@ proc ::persistence::bloom_filter::init {parent_oid} {
 
 proc ::persistence::bloom_filter::insert {parent_oid oid} {
     variable __bf_TclObj
-    variable __seen
-
-    if { [info exists __seen(${parent_oid},${oid})] } {
-        return
-    }
-
-    set __seen(${parent_oid},${oid}) ""
+    variable __bf_dirty
 
     # what kind of parent_oid are we dealing with?
     set parent_type [typeof_oid $parent_oid]
@@ -85,13 +80,7 @@ proc ::persistence::bloom_filter::insert {parent_oid oid} {
     }
     ::bloom_filter::insert $__bf_TclObj(${name}) $key
 
-    # update the bytes field of said record
-    set bytes [::bloom_filter::get_bytes $__bf_TclObj(${name})]
-    array set bf_item [list]
-    set bf_item(name) $name 
-    set bf_item(bytes) $bytes
-
-    unset __seen(${parent_oid},${oid})
+    set __bf_dirty($name) ""
 
 }
 
@@ -118,6 +107,7 @@ proc ::persistence::bloom_filter::may_contain {parent_oid oid} {
 
 proc ::persistence::bloom_filter::dump {{parent_oid ""}} {
     variable __bf_TclObj
+    variable __bf_dirty
 
     if { $parent_oid ne {} } {
 
@@ -131,20 +121,25 @@ proc ::persistence::bloom_filter::dump {{parent_oid ""}} {
         set names $name
 
     } else {
-
         # get all bloom filter names from the __bf_TclObj structure
         set names [array names __bf_TclObj]
-
     }
 
     foreach name $names {
+
+        if { ![info exists __bf_dirty($name)] } { continue }
+
+        set bytes [::bloom_filter::get_bytes $__bf_TclObj(${name})]
+
+        array set bf_item [list]
+        set bf_item(name) $name 
+        set bf_item(bytes) $bytes
 
         # find the db record for the given parent_oid
         set where_clause [list]
         lappend where_clause [list name = $name]
         set bf_oid [::sysdb::bloom_filter_t 0or1row $where_clause] 
 
-        # insert or update
         if { $bf_oid eq {} } {
             #log bf_item=[array get bf_item]
             #set bf_oid [join_oid "sysdb" "bloom_filter" $name "_data_"]
@@ -152,6 +147,8 @@ proc ::persistence::bloom_filter::dump {{parent_oid ""}} {
         } else {
             ::sysdb::bloom_filter_t update $bf_oid bf_item
         }
+
+        unset __bf_dirty($name)
 
     }
 

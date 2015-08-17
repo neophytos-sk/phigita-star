@@ -778,8 +778,8 @@ proc ::feed_reader::get_contentsha1_to_label_dir {} {
 
 proc ::feed_reader::compare_mtime {file_or_dir1 file_or_dir2} {
 
-    set mtime1 [::persistence::get_mtime $file_or_dir1]
-    set mtime2 [::persistence::get_mtime $file_or_dir2]
+    set mtime1 [file mtime $file_or_dir1]
+    set mtime2 [file mtime $file_or_dir2]
 
     if { ${mtime1} < ${mtime2} } {
         return -1

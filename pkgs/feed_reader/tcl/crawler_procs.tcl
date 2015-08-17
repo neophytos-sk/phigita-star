@@ -43,10 +43,13 @@ proc ::feed_reader::stats {{news_sources ""}} {
             set feed_name [file tail ${feed_file}]
 
 
-            set nodepath [::persistence::join_oid "crawldb" "feed_stats.by_feed_and_const" ${feed_name} "_stats"]
-            ::persistence::find_column $nodepath column_data
+            set oid [::persistence::join_oid "crawldb" "feed_stats.by_feed_and_const" ${feed_name} "_stats"]
+            set data ""
+            if { [::persistence::exists_p $oid] } {
+                set data [::persistence::get_column $oid]
+            }
 
-            array set count ${column_data}
+            array set count $data
 
             set reference_interval 86400
             set max_times 96

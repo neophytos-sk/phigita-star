@@ -27,6 +27,9 @@ namespace eval ::persistence::mem {
 
 }
 
+proc ::persistence::mem::init {} {}
+proc ::persistence::mem::define_cf {ks cf_axis} {}
+
 proc ::persistence::mem::get_leafs {path} {
     variable __latest_idx
 
@@ -225,4 +228,42 @@ proc ::persistence::mem::printall {} {
     log [join [lsort [array names __latest_idx]] \n]
     log --------
 }
+
+
+
+
+if { [setting_p "bloom_filters"] } {
+
+    wrap_proc ::persistence::mem::define_cf {ks cf_axis} {
+        set type_oid [join_oid $ks $cf_axis]
+        ::persistence::bloom_filter::init $type_oid
+    }
+
+    wrap_proc ::persistence::mem::set_column {oid data trans_id codec_conf} {
+        # log [info frame 0]
+        # log "ins_column oid=$oid"
+        lassign [split_oid $oid] ks cf_axis row_key column_path
+        call_orig $oid $data $trans_id $codec_conf
+        set type_oid [join_oid $ks $cf_axis]
+        ::persistence::bloom_filter::insert $type_oid $oid
+    }
+
+    wrap_proc ::persistence::mem::exists_p {oid} {
+        lassign [split_oid $oid] ks cf_axis row_key column_path
+        set type_oid [join_oid $ks $cf_axis]
+        # set may_contain_p [::persistence::bloom_filter::may_contain_p $type_oid $oid]
+        set may_contain_p 1
+        if { $may_contain_p } {
+            return [call_orig $oid]
+        }
+        return 0
+    }
+
+    wrap_proc ::persistence::mem::dump {} {
+        ::persistence::bloom_filter::dump
+        call_orig
+    }
+
+}
+
 
