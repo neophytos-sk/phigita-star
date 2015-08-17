@@ -204,7 +204,6 @@ proc ::persistence::common::__exec_options {slicelistVar options} {
 proc ::persistence::common::split_trans_id {trans_id} {
     lassign [split $trans_id {.}] micros pid n_mutations
     set mtime [expr { int( ${micros} / (10**6) ) }]
-    log split_trans_id,mtime=$mtime
     return [list $micros $pid $n_mutations $mtime]
 }
 

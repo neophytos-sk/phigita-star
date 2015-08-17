@@ -114,7 +114,6 @@ proc ::persistence::mem::get_mtime {oid} {
     set rev $__latest_idx(${oid})
     set trans_id $__mem(${rev},trans_id)
     lassign [split_trans_id $trans_id] micros pid n_mutations mtime
-    log mtime=$mtime
     return $mtime
 }
 
