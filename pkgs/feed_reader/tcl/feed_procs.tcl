@@ -2012,7 +2012,7 @@ proc ::feed_reader::sync_feeds {{news_sources ""} {debug_p "0"}} {
 
                 set stats(ERROR_FETCH_FEED) 1
 
-                update_crawler_stats ${timestamp} ${feed_name} stats
+                update_stats ${timestamp} ${feed_name} stats
 
                 update_round_stats ${feed_name} stats round_stats
 
@@ -2039,7 +2039,7 @@ proc ::feed_reader::sync_feeds {{news_sources ""} {debug_p "0"}} {
                 print_sync_stats ${feed_name} stats
             }
 
-            update_crawler_stats ${timestamp} ${feed_name} stats
+            update_stats ${timestamp} ${feed_name} stats
 
             update_round_stats ${feed_name} stats round_stats
 

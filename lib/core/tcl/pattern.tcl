@@ -92,6 +92,13 @@ proc ::pattern::typeof {value {names ""}} {
     return ${result}
 }
 
+proc ::pattern::check=varchar {valueVar} {
+    upvar $valueVar value
+    # do nothing, for now
+    return 1
+}
+
+
 proc ::pattern::check=tcl_namespace {valueVar} {
     upvar $valueVar value
     set re {^(?:\:\:[a-zA-Z_][a-zA-Z_0-9]*)+$}

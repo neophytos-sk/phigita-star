@@ -300,22 +300,26 @@ proc ::feed_reader::fetch_feed_p {feed_name timestamp {coeff "0.3"}} {
         {uH-%u%H}
     } {
 
-        set pretty_timeval [clock format ${timestamp} -format ${format}]
+        set timemark [clock format ${timestamp} -format ${format}]
 
-        # set oid [::crawldb::stat_info_t find_by feed_name $feed_name $pretty_timeval]
+        set where_clause [list]
+        lappend where_clause [list feed_name = $feed_name]
+        lappend where_clause [list timemark = $timemark]
+
+        set oid [::crawldb::stat_info_t find $where_clause]
         
-        set oid [::persistence::join_oid "crawldb" "feed_stats.by_feed_and_period" ${feed_name} ${pretty_timeval}]
-        if { ![::persistence::exists_p $oid] } {
+        if { $oid eq {} } {
+            # say yes (fetch_feed_p) to start collecting 
+            # stats for the given feed_name and timemark
             return 1
         }
 
-        array set count [::persistence::get ${oid}]
+        array set stats [::persistence::get ${oid}]
+        set last_sync [::persistence::get_mtime $oid]
 
         set reference_interval 3600
         set max_times 4
-        lassign [get_sync_info count ${reference_interval} ${max_times}] pr num_times interval 
-
-        set last_sync [::persistence::get_mtime $oid]
+        lassign [get_sync_info stats ${reference_interval} ${max_times}] pr num_times interval 
 
         # log pr=$pr,num_times=$num_times,last_sync=$last_sync,interval=$interval,timestamp=$timestamp
 
@@ -323,21 +327,27 @@ proc ::feed_reader::fetch_feed_p {feed_name timestamp {coeff "0.3"}} {
             return 1
         }
 
-        unset count
+        array unset stats
     }
 
-    set oid [::persistence::join_oid "crawldb" "feed_stats.by_feed_and_const" ${feed_name} "_stats"]
-    if { ![::persistence::exists_p $oid] } {
+    set where_clause [list]
+    lappend where_clause [list feed_name = $feed_name]
+    lappend where_clause [list timemark = "ALL"]
+
+    set oid [::crawldb::stat_info_t find $where_clause]
+    
+    if { $oid eq {} } {
+        # say yes (fetch_feed_p) to start collecting 
+        # stats for the given feed_name and timemark
         return 1
     }
     
-    array set count [::persistence::get ${oid}]
-
+    array set stats [::persistence::get ${oid}]
     set last_sync [::persistence::get_mtime ${oid}]
 
     set reference_interval 86400
     set max_times 96
-    lassign [get_sync_info count ${reference_interval} ${max_times}] pr num_times interval 
+    lassign [get_sync_info stats ${reference_interval} ${max_times}] pr num_times interval 
 
     # if last update more than the computed general interval then fetch
     if { ${last_sync} + ${interval} < ${timestamp} } {
@@ -349,37 +359,41 @@ proc ::feed_reader::fetch_feed_p {feed_name timestamp {coeff "0.3"}} {
 }
 
 
-proc ::feed_reader::incr_array_in_column {ks cf_axis row_key column_path incrementVar} {
+proc ::feed_reader::incr_array_in_column {feed_name timemark incrementVar} {
 
     upvar $incrementVar increment
 
-    set oid "${ks}/${cf_axis}/${row_key}/+/${column_path}"
+    set where_clause [list]
+    lappend where_clause [list feed_name = $feed_name]
+    lappend where_clause [list timemark = $timemark]
 
-    set exists_p [::persistence::exists_p $oid] 
-    if { $exists_p } {
-        set column_data [::persistence::get $oid]
+    set oid [::crawldb::stat_info_t find $where_clause] 
+    if { $oid ne {} } {
+        set data [::crawldb::stat_info_t get $oid]
     }
 
-    if { ${exists_p} } {
-        array set count ${column_data}
-    } else {
-        array set count [list]
-    }
+    array set stats_item [list]
 
     foreach name [array names increment] {
-        incr count(${name}) $increment(${name})
+        incr stats_item(${name}) $increment(${name})
     }
 
-    set stats [array get count]
+    if { $oid ne {} } {
+        array set stats_item $data
+        ::crawldb::stat_info_t update $oid stats_item
+    } else {
+        set stats_item(feed_name) $feed_name
+        set stats_item(timemark) $timemark
+        ::crawldb::stat_info_t insert stats_item
+    }
 
-    ::persistence::ins_column $oid $stats
 
-    return ${stats}
+    return [array get stats_item]
 
 }
 
 
-proc ::feed_reader::update_crawler_stats {timestamp feed_name statsVar} {
+proc ::feed_reader::update_stats {timestamp feed_name statsVar} {
 
     upvar $statsVar stats
 
@@ -389,43 +403,34 @@ proc ::feed_reader::update_crawler_stats {timestamp feed_name statsVar} {
         {mdH-%m%d%H}
     } {
 
-	set pretty_timeval [clock format ${timestamp} -format ${format}]
-	
-    # Example:
-    # crawldb/feed_stats.by_feed_and_period/__somefeedname__/+/H-07
-    #   FETCH_FEED 1 
-    #   FETCH_AND_WRITE_FEED 1 
-    #   FETCH_AND_WRITE 40 
-    #   NO_FETCH 94 
-    #   ERROR_FETCH_FEED 0 
-    #   NO_WRITE_FEED 0 
-    #   NO_WRITE 0
-    #   ERROR_FETCH 0
+        set timemark [clock format ${timestamp} -format ${format}]
+        
+        # Example:
+        # crawldb/stat_info_t.by_name/__FEED_NAME__ __TIMEMARK__/+/H-07
+        #   FETCH_FEED 1 
+        #   FETCH_AND_WRITE_FEED 1 
+        #   FETCH_AND_WRITE 40 
+        #   NO_FETCH 94 
+        #   ERROR_FETCH_FEED 0 
+        #   NO_WRITE_FEED 0 
+        #   NO_WRITE 0
+        #   ERROR_FETCH 0
 
-	incr_array_in_column                \
-	    "crawldb"                       \
-	    "feed_stats.by_feed_and_period" \
-	    "${feed_name}"                  \
-	    "${pretty_timeval}"            \
-	    "stats"
+        incr_array_in_column $feed_name $timemark stats
+
+        # Example:
+        # crawldb/feed_stats.by_feed_and_const/philenews/+/_stats
+        #   FETCH_FEED 11 
+        #   FETCH_AND_WRITE_FEED 9 
+        #   FETCH_AND_WRITE 322 
+        #   NO_FETCH 875 
+        #   ERROR_FETCH_FEED 2 
+        #   NO_WRITE_FEED 2 
+        #   NO_WRITE 110 
+        #   ERROR_FETCH 0
+
+        incr_array_in_column $feed_name "ALL" stats
+
     }
-
-    # Example:
-    # crawldb/feed_stats.by_feed_and_const/philenews/+/_stats
-    #   FETCH_FEED 11 
-    #   FETCH_AND_WRITE_FEED 9 
-    #   FETCH_AND_WRITE 322 
-    #   NO_FETCH 875 
-    #   ERROR_FETCH_FEED 2 
-    #   NO_WRITE_FEED 2 
-    #   NO_WRITE 110 
-    #   ERROR_FETCH 0
-
-    incr_array_in_column                \
-        "crawldb"                       \
-        "feed_stats.by_feed_and_const" \
-        "${feed_name}"                  \
-        "_stats"                        \
-        stats
 
 }
