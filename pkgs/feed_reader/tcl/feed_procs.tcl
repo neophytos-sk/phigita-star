@@ -1640,12 +1640,19 @@ proc ::feed_reader::print_short_log_entry {itemVar {contextVar ""}} {
 
     set lang [lindex [split [value_if item(langclass) "el.utf8"] {.}] 0]
 
-    puts [format "%15s %3s %3s %-60s %20s" \
-        $item(sort_date) \
-        ${is_copy_string} \
-        ${is_revision_string} \
-        ${title_first_line} \
-        ${domain}]
+    if {1} {
+        puts [format "%15s %3s %3s %-60s %20s" \
+            $item(sort_date) \
+            ${is_copy_string} \
+            ${is_revision_string} \
+            ${title_first_line} \
+            ${domain}]
+    } else {
+        set timeval [clock scan $item(sort_date) -format "%Y%m%dT%H%M"]
+        set pretty_date [::dt::timestamp_to_age $timeval]
+        puts "$domain ($pretty_date ago) --"
+        puts [string trim [::textalign::adjust $title 80]]
+    }
 
 }
 

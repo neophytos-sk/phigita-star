@@ -80,49 +80,6 @@ namespace eval ::util {
 
 }
 
-# ------------------------ datetime -----------------------------
-
-namespace eval ::util::dt {;}
-
-proc ::util::dt::age_to_timestamp {age timeval} {
-
-    set sign "-"
-    if { [lindex ${timeval} end] eq {ago} } {
-	set age  [lrange ${age} 0 end-1]
-	set sign "-"
-    }
-
-    set secs 0
-    foreach {num precision} ${age} {
-	switch -exact ${precision} {
-	    sec -
-	    secs -
-	    second -
-	    seconds  { incr secs ${num} }
-	    min -
-	    mins -
-	    minute -
-	    minutes  { incr secs [expr { ${num} * 60 }] }
-	    hour -
-	    hours  { incr secs [expr { ${num} * 3600 }] }
-	    day -
-	    days  { incr secs [expr { ${num} * 86400 }] }
-	    week - 
-	    weeks  { incr secs [expr { ${num} * 86400 * 7 }] }
-	    month -
-	    months  { incr secs [expr { ${num} * 86400 * 30 }] }
-	    year -
-	    years  { incr secs [expr { ${num} * 86400 * 365 }] }
-	}
-    }
-
-    incr timeval "${sign}${secs}"
-    set timestamp [clock format ${timeval} -format "%Y%m%dT%H%M"]
-
-    return ${timestamp}
-}
-
-
 # ---------------------------------- files ------------------------------
 
 namespace eval ::util::fs {;}
@@ -133,87 +90,6 @@ proc ::util::fs::ls {dir {types "d"}} {
 
 # TODO: move fs commands under ::util::fs
 
-# ---------------------------------- strings ------------------------------
-
-namespace eval ::util::strings {;}
-
-proc ::util::strings::diff {old new {show_old_p "1"}} {
-    package require struct::list
-
-    set old [split $old " "]
-    set new [split $new " "]
-
-    # tcllib procs to get a list of differences between 2 lists
-    # see: http://tcllib.sourceforge.net/doc/struct_list.html
-    set len1 [llength $old]
-    set len2 [llength $new]
-    set result [::struct::list longestCommonSubsequence $old $new]
-    set result [::struct::list lcsInvert $result $len1 $len2]
-
-    # each chunk is either 'deleted', 'added', or 'changed'
-    set i 0
-    foreach chunk $result {
-	#ns_log notice "\n$chunk\n"
-        set action [lindex $chunk 0]
-        set old_index1 [lindex [lindex $chunk 1] 0]
-        set old_index2 [lindex [lindex $chunk 1] 1]
-        set new_index1 [lindex [lindex $chunk 2] 0]
-        set new_index2 [lindex [lindex $chunk 2] 1]
-        
-        while {$i < $old_index1} {
-            lappend output [lindex $old $i]
-            incr i
-        }
-
-        if { $action eq "changed" } {
-	    if {$show_old_p} {
-		lappend output <d>
-		foreach item [lrange $old $old_index1 $old_index2] {
-		    lappend output [string trim $item]
-		}
-		lappend output </d>
-	    }
-            lappend output <a>
-            foreach item [lrange $new $new_index1 $new_index2] {
-                lappend output [string trim $item]
-            }
-            lappend output </a>
-            incr i [expr {$old_index2 - $old_index1 + 1}]
-        } elseif { $action eq "deleted" } {
-            lappend output <d>
-            foreach item [lrange $old $old_index1 $old_index2] {
-                lappend output [string trim $item]
-            }
-            lappend output </d>
-            incr i [expr {$old_index2 - $old_index1 + 1}]
-        } elseif { $action eq "added" } {
-            while {$i < $old_index2} {
-                lappend output [lindex $old $i]
-                incr i
-            }
-            lappend output <a>
-            foreach item [lrange $new $new_index1 $new_index2] {
-                lappend output [string trim $item]
-            }
-            lappend output </a>
-        }
-    }
-    
-    # add any remaining words at the end.
-    while {$i < $len1} {
-        lappend output [lindex $old $i]
-        incr i
-    }
-
-    set output [join $output { }]
- 
-    # set output [string map {"<d>" {<span class="diff-deleted">}
-    # "</d>" </span>
-    # "<a>" {<span class="diff-added">}
-    # "</a>" </span>} $output]
-
-    return "$output"
-}
 
 # ------------------------ quoting -----------------------------
 

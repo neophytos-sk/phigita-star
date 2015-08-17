@@ -167,7 +167,7 @@ proc ::persistence::mem::set_column {oid data trans_id codec_conf} {
 }
 
 proc ::persistence::mem::dump {} {
-    log "dumping memtable to filesystem"
+    # log "dumping memtable to filesystem"
     variable __mem
     variable __dirty_idx
     variable __trans_list
@@ -181,10 +181,10 @@ proc ::persistence::mem::dump {} {
 
     set count 0
     foreach __trans_id $__trans_list {
-        log "dumping transaction: $__trans_id"
+        # log "dumping transaction: $__trans_id"
         set rev_list [lsort -unique $__dirty_idx($__trans_id)]
         foreach rev $rev_list {
-            log "dumping rev: $rev"
+            # log "dumping rev: $rev"
             if { !$__mem(${rev},dirty_p) } {
                 error "mismatch between __dirty_idx and __mem data"
             }
@@ -219,7 +219,7 @@ proc ::persistence::mem::dump {} {
     }
     set __trans_list ""
 
-    log "dumped $count records"
+    # log "dumped $count records"
 }
 
 proc ::persistence::mem::printall {} {
