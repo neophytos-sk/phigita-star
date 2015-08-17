@@ -51,11 +51,11 @@ proc ::dom::xpathFunc::normalizedate {ctxNode pos nodeListNode nodeList args} {
     } elseif { [lindex ${ts_string} end] eq {ago} } {
 
         # TODO: convert pretty age to a timestamp
-        set ts_string [::util::dt::age_to_timestamp ${ts_string} [clock seconds]]
+        set ts_string [::dt::age_to_timestamp ${ts_string} [clock seconds]]
 
     } elseif { [regexp -- {ago ([0-9]+)'} ${ts_string} _whole_ num_mins] } {
 
-        set ts_string [::util::dt::age_to_timestamp "${num_mins} mins ago" [clock seconds]]
+        set ts_string [::dt::age_to_timestamp "${num_mins} mins ago" [clock seconds]]
 
     } else {
 

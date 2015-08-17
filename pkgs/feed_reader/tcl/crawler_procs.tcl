@@ -30,8 +30,10 @@ proc ::feed_reader::stats {{news_sources ""}} {
         set news_sources [glob -nocomplain -tails -directory ${feeds_dir} *]
     }
 
-    puts [format "%40s %10s %10s %15s %15s" feed_name "Pr\[write\]" "#times/day" "interval" "#write / #fetch"]
-    puts [format "%40s %10s %10s %15s %15s" --------- "---------"   "----------" "--------" "---------------"]
+    puts [format "%30s %7s %10s %8s %15s %7s" \
+        feed_name "Pr\[wr\]" "#times/day" "interval" "last_update" "#items"]
+    puts [format "%30s %7s %10s %8s %15s %7s" \
+        --------- "-------"  "----------" "--------" "-----------" "------"]
 
     set crawler_dir [get_crawler_dir]
     foreach news_source $news_sources {
@@ -58,9 +60,10 @@ proc ::feed_reader::stats {{news_sources ""}} {
             # TODO: pretty interval
             #set interval_in_mins [expr { ${interval} / 60 }]
             set pretty_interval [::util::pretty_interval ${interval}]
-            puts [format "%40s %10.1f %10.1f %15s %15s" \
+            puts [format "%30s %7.1f %10.1f %8s %15s %7s" \
                 ${feed_name} ${pr} ${num_times} ${pretty_interval} \
-                "$stats_item(FETCH_AND_WRITE_FEED) / $stats_item(FETCH_FEED)"]
+                "[dt::timestamp_to_age $stats_item(last_update)] ago" \
+                $stats_item(FETCH_AND_WRITE)]
 
             array unset stats_item
             
@@ -371,6 +374,7 @@ proc ::feed_reader::incr_array_in_column {feed_name timemark incrementVar} {
     }
 
     array set stats_item [list]
+    set stats_item(last_update) [clock seconds]
 
     foreach name [array names increment] {
         incr stats_item(${name}) $increment(${name})

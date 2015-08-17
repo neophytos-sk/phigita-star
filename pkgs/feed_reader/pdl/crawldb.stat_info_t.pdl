@@ -1,0 +1,76 @@
+nsp "::crawldb::stat_info_t"
+ks "crawldb"
+cf "stat_info"
+pk "name"
+
+indexes {{
+    name "by_name"
+    atts "name"
+} {
+    name "by_timemark"
+    atts "timemark"
+}}
+
+attributes {{
+    name "name"
+    atts "feed_name timemark"
+    type "varchar varchar"
+    func {{itemVar} {
+        upvar $itemVar item
+        list $item(feed_name) $item(timemark)
+    }}
+    null_p "0"
+    immu_p "1"
+} {
+    name "feed_name"
+    null_p "0"
+    immu_p "1"
+} {
+    name "timemark"
+    null_p "0"
+    immu_p "1"
+} {
+    name "FETCH_FEED"
+    type "naturalnum"
+    null_p "0"
+} {
+    name "FETCH_AND_WRITE_FEED"
+    type "naturalnum"
+    null_p "0"
+} {
+    name "FETCH_AND_WRITE"
+    type "naturalnum"
+    null_p "0"
+} {
+    name "NO_FETCH"
+    type "naturalnum"
+    null_p "0"
+} {
+    name "ERROR_FETCH_FEED"
+    type "naturalnum"
+    null_p "0"
+} {
+    name "NO_WRITE_FEED"
+    type "naturalnum"
+    null_p "0"
+} {
+    name "NO_WRITE"
+    type "naturalnum"
+    null_p "0"
+} {
+    name "ERROR_FETCH"
+    type "naturalnum"
+    null_p "0"
+} {
+    name "last_update"
+    type "timestamp"
+    func {{itemVar} {clock seconds}}
+    null_p "0"
+}}
+
+aggregates {}
+
+
+
+
+

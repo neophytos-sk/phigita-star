@@ -1859,8 +1859,6 @@ proc ::feed_reader::resync_item {oid} {
     }
 
 
-    puts domain=${domain}
-
     set feed_dir [get_package_dir]/feed/${domain}
     set feedfilename [lindex [glob -directory ${feed_dir} *] 0]
     array set feed [::util::readfile ${feedfilename}]
@@ -1868,7 +1866,7 @@ proc ::feed_reader::resync_item {oid} {
     set title_in_feed [value_if item(title) ""]
 
     if { ${title_in_feed} eq {} } {
-    #most likely an error item
+        #most likely an error item
         set errorcode [value_if item(errorcode) ""]
         if { ${errorcode} ne {} } {
             return
