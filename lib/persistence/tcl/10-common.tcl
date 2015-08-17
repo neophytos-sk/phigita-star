@@ -201,25 +201,6 @@ proc ::persistence::common::__exec_options {slicelistVar options} {
 
 }
 
-proc ::persistence::common::new_transaction_id {} {
-    variable ::persistence::__n_mutations
-
-    set micros [clock microseconds]
-    set pid [pid] ;# process id
-    incr __n_mutations
-    return ${micros}.${pid}.${__n_mutations}
-}
-
-proc ::persistence::common::cur_transaction_id {} {
-    variable ::persistence::__trans_id
-    if { $__trans_id ne {} } {
-        return $__trans_id
-    } else {
-        set __trans_id [new_transaction_id]
-        return $__trans_id
-    }
-}
-
 proc ::persistence::common::split_trans_id {trans_id} {
     lassign [split $trans_id {.}] micros pid n_mutations
     set mtime [expr { int( ${micros} / 1000 ) }]
@@ -359,6 +340,24 @@ proc ::persistence::common::predicate=in_idxpath {slicelistVar parent_oid {predi
     }
     set slicelist $result
 
+}
+
+proc ::persistence::common::new_transaction_id {} {
+    variable ::persistence::__n_mutations
+
+    set micros [clock microseconds]
+    set pid [pid] ;# process id
+    incr __n_mutations
+    return ${micros}.${pid}.${__n_mutations}
+}
+
+proc ::persistence::common::cur_transaction_id {} {
+    variable ::persistence::__trans_id
+    if { $__trans_id ne {} } {
+        return $__trans_id
+    } else {
+        return [new_transaction_id]
+    }
 }
 
 proc ::persistence::common::begin_batch {} {

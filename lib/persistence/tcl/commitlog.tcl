@@ -286,7 +286,7 @@ proc ::persistence::commitlog::process {{bootstrap_p "0"}} {
 
     if { $mem_p } {
         ::persistence::mem::dump
-        #checkpoint [tell $fp]  ;# must be equal to pos2 at this point
+        checkpoint [tell $fp]  ;# must be equal to pos2 at this point
     }
 
     after 10000 [list ::persistence::commitlog::process]
