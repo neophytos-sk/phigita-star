@@ -378,6 +378,7 @@ proc ::feed_reader::fetch_item_helper {link title_in_feed feedVar itemVar infoVa
     set html ""
 
     array set options [value_if feed(http_options) ""]
+    set options(__force_resync_p) [value_if item(__resync_p) "0"]
     set errorcode [web cache_fetch html ${link} options info]
     unset options
 
@@ -673,6 +674,8 @@ proc ::feed_reader::fetch_and_write_item {timestamp link title_in_feed feedVar} 
     } {
 
         # log resync_p=$resync_p
+
+        set item(__resync_p) 1
 
         set errorcode [fetch_item ${link} ${title_in_feed} feed item info]
         if { ${errorcode} } {

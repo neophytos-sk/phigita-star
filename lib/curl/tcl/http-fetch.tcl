@@ -81,45 +81,44 @@ proc ::web::cache_fetch {contentVar url {optionsVar ""} {infoVar ""} {cache_pVar
         upvar ${cache_pVar} cache_p
     }
 
-    array set item [list]
     set urlsha1 [::sha1::sha1 -hex $url]
-    set where_clause [list [list urlsha1 = $urlsha1]]
 
-    array set options [list]
-    set options(order_by) [list last_update decreasing dictionary]
-    set options(limit) 1
-    set oid [::webdb::web_page_t 0or1row $where_clause options]
+    set force_resync_p [value_if options(__force_resync_p) "0"]
+    if { !$force_resync_p } {
+        array set item [list]
+        set where_clause [list [list urlsha1 = $urlsha1]]
 
-    if { $oid ne {} } {
+        array set options [list]
+        set options(order_by) [list last_update decreasing dictionary]
+        set options(limit) 1
+        set oid [::webdb::web_page_t 0or1row $where_clause options]
 
-        array set item [::webdb::web_page_t get $oid]
+        if { $oid ne {} } {
 
-        set mtime [::webdb::web_page_t mtime $oid]
+            array set item [::webdb::web_page_t get $oid]
+            set mtime [::webdb::web_page_t mtime $oid]
+            set timeout [expr { 15 * 60 }]
+            set now [clock seconds]
+            set recent_fetch_p [expr { $mtime + $timeout > $now }]
 
-        set timeout [expr { 15 * 60 }]
-        set now [clock seconds]
-        set recent_fetch_p [expr { $mtime + $timeout > $now }]
-
-        if { $recent_fetch_p } {
-            # returns content of web page as upvar with the given name
-            log "fetching page from cache: $url"
-            set content $item(content)
-            set cache_p 1
-            return 0
+            if { $recent_fetch_p } {
+                # returns content of web page as upvar with the given name
+                log "fetching page from cache: $url"
+                set content $item(content)
+                set cache_p 1
+                return 0
+            }
         }
     }
 
     if { ![set errorcode [::web::fetch content $url options info]] } {
-
         array set item [url split $url]
-
         array set item [list    \
             urlsha1 $urlsha1    \
             url $url            \
             content $content]
 
         ::webdb::web_page_t insert item
-
     }
 
     return $errorcode
