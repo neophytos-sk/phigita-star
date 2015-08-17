@@ -43,25 +43,26 @@ proc ::feed_reader::stats {{news_sources ""}} {
             set feed_name [file tail ${feed_file}]
 
 
-            set oid [::persistence::join_oid "crawldb" "feed_stats.by_feed_and_const" ${feed_name} "_stats"]
-            set data ""
-            if { [::persistence::exists_p $oid] } {
-                set data [::persistence::get_column $oid]
-            }
-
-            array set count $data
+            set where_clause [list]
+            lappend where_clause [list name = [list $feed_name "ALL"]]
+            set oid [::crawldb::stat_info_t 0or1row $where_clause]
+            if { $oid eq {} } { continue }
+            set data [::crawldb::stat_info_t get $oid]
+            array set stats_item $data
 
             set reference_interval 86400
             set max_times 96
-            lassign [get_sync_info count ${reference_interval} ${max_times}] pr num_times interval 
+            lassign [get_sync_info stats_item ${reference_interval} ${max_times}] pr num_times interval 
 
 
             # TODO: pretty interval
             #set interval_in_mins [expr { ${interval} / 60 }]
             set pretty_interval [::util::pretty_interval ${interval}]
-            puts [format "%40s %10.1f %10.1f %15s %15s" ${feed_name} ${pr} ${num_times} ${pretty_interval} "$count(FETCH_AND_WRITE_FEED) / $count(FETCH_FEED)"]
+            puts [format "%40s %10.1f %10.1f %15s %15s" \
+                ${feed_name} ${pr} ${num_times} ${pretty_interval} \
+                "$stats_item(FETCH_AND_WRITE_FEED) / $stats_item(FETCH_FEED)"]
 
-            unset count
+            array unset stats_item
             
         }
 
@@ -303,10 +304,9 @@ proc ::feed_reader::fetch_feed_p {feed_name timestamp {coeff "0.3"}} {
         set timemark [clock format ${timestamp} -format ${format}]
 
         set where_clause [list]
-        lappend where_clause [list feed_name = $feed_name]
-        lappend where_clause [list timemark = $timemark]
+        lappend where_clause [list name = [list $feed_name "ALL"]]
 
-        set oid [::crawldb::stat_info_t find $where_clause]
+        set oid [::crawldb::stat_info_t 0or1row $where_clause]
         
         if { $oid eq {} } {
             # say yes (fetch_feed_p) to start collecting 
@@ -331,10 +331,9 @@ proc ::feed_reader::fetch_feed_p {feed_name timestamp {coeff "0.3"}} {
     }
 
     set where_clause [list]
-    lappend where_clause [list feed_name = $feed_name]
-    lappend where_clause [list timemark = "ALL"]
+    lappend where_clause [list name = [list $feed_name "ALL"]]
 
-    set oid [::crawldb::stat_info_t find $where_clause]
+    set oid [::crawldb::stat_info_t 0or1row $where_clause]
     
     if { $oid eq {} } {
         # say yes (fetch_feed_p) to start collecting 
@@ -364,8 +363,7 @@ proc ::feed_reader::incr_array_in_column {feed_name timemark incrementVar} {
     upvar $incrementVar increment
 
     set where_clause [list]
-    lappend where_clause [list feed_name = $feed_name]
-    lappend where_clause [list timemark = $timemark]
+    lappend where_clause [list name = [list $feed_name "ALL"]]
 
     set oid [::crawldb::stat_info_t find $where_clause] 
     if { $oid ne {} } {

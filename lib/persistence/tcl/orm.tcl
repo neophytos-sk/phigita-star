@@ -548,11 +548,11 @@ proc ::persistence::orm::find_by_axis {argv {optionsVar ""}} {
     set argc [llength $argv]
     assert { $argc in {5 4 3 2 1} }
 
-    # log "argc = $argc"
+    # log "argc = $argc argv=$argv"
 
     if { $argc >= 3 } {
 
-        lassign $argv attname attvalue id dataVar exists_pVar
+        lassign $argv idxname idxvalue id dataVar exists_pVar
         set varname ""
         if { $dataVar ne {} } {
             upvar $dataVar _
@@ -561,22 +561,22 @@ proc ::persistence::orm::find_by_axis {argv {optionsVar ""}} {
         if { $exists_pVar ne {} } {
             upvar $exists_pVar exists_p
         }
-        set nodepath [to_path_by by_$attname $attvalue {*}$id]
+        set nodepath [to_path_by $idxname $idxvalue {*}$id]
         set oid [::persistence::find_column $nodepath ${varname} exists_p [codec_conf]]
         return $oid
 
     } elseif { $argc == 2 } {
 
-        lassign $argv attname attvalue
-        set nodepath [to_path_by by_$attname $attvalue]
+        lassign $argv idxname idxvalue
+        set nodepath [to_path_by $idxname $idxvalue]
         set slicelist [::persistence::get_slice $nodepath [array get options]]
         #log find_by_axis,argc=2,slicelist=$slicelist
         return $slicelist
 
     } elseif { $argc == 1 } {
 
-        lassign $argv attname
-        set nodepath [to_path_by by_$attname]
+        lassign $argv idxname
+        set nodepath [to_path_by $idxname]
         set row_keys [::persistence::get_multirow_names $nodepath] 
         #log argc=1,^^^row_keys=$row_keys
         if { $row_keys ne {} } {
@@ -608,13 +608,15 @@ proc ::persistence::orm::find {{where_clause_argv ""} {optionsVar ""}} {
         variable [namespace __this]::pk
         variable [namespace __this]::idx
 
-        set attname [__choose_axis $where_clause_argv options find_by_axis_args]
+        set idxname [__choose_axis $where_clause_argv options find_by_axis_args]
 
         #log "chosen axis attname=$attname"
 
         #set attname [value_if options(axis_attname) ${pk}]
-        assert { exists("idx(by_${attname})") }
-        set slicelist [find_by_axis ${attname} options]
+
+        assert { [info exists idx($idxname)] }
+
+        set slicelist [find_by_axis $idxname options]
 
     } else {
 
@@ -624,8 +626,8 @@ proc ::persistence::orm::find {{where_clause_argv ""} {optionsVar ""}} {
             return [find_by_id [lindex $where_clause_argv 0]]
         } else {
             set find_by_axis_args [list]
-            set attname [__choose_axis $where_clause_argv options find_by_axis_args]
-            set predicate [__rewrite_where_clause $attname $where_clause_argv]
+            set idxname [__choose_axis $where_clause_argv options find_by_axis_args]
+            set predicate [__rewrite_where_clause $idxname $where_clause_argv]
             #log "chosen axis (attribute) = $attname"
             #log "chosen axis (args) = $find_by_axis_args"
             #log "rewritten predicate = $predicate"
@@ -643,27 +645,51 @@ proc ::persistence::orm::find {{where_clause_argv ""} {optionsVar ""}} {
 proc ::persistence::orm::__choose_axis {argv optionsVar find_by_axis_argsVar} {
     variable [namespace __this]::pk
     variable [namespace __this]::idx
+    variable [namespace __this]::__idxnames
+    variable [namespace __this]::__idxinfo
 
     upvar $optionsVar options
 
     upvar $find_by_axis_argsVar find_by_axis_args
 
+    array set item_eq [list]
     foreach arg $argv {
         lassign $arg attname op attvalue
-        if { $op eq {=} && [info exists idx(by_$attname)] } {
-            set find_by_axis_args [list $attname $attvalue]
-            return $attname
+        if { $op eq {=} } {
+            set item_eq($attname) $attvalue
+        }
+    }
+
+    # check if there exists an index that matches our where_clause
+    set item_eq_names [array names item_eq]
+    foreach idxname $__idxnames {
+        set atts $__idxinfo(${idxname},atts) 
+        lassign [intersect3 $atts $item_eq_names] la1 lai la2
+        if { $la1 eq {} } { 
+            set func [value_if __idxinfo(${idxname},func) ""]
+            if { $func ne {} } {
+                set value [apply $func item_eq]
+            } else {
+                set value [list]
+                foreach attname $lai {
+                    lappend value $item_eq($attname)
+                }
+            }
+            set find_by_axis_args [list $idxname [join $value]]
+            return $idxname
+        } elseif { $lai ne {} } {
+            # set find_by_axis_args [list $idxname [join $value]]
         }
     }
 
     set option_order_by [value_if options(order_by) ""]
     lassign $option_order_by sort_attname sort_direction sort_comparison
     if { [info exists idx(by_$sort_attname)] } {
-        set find_by_axis_args $sort_attname
-        return $sort_attname
+        set find_by_axis_args by_$sort_attname
+        return by_$sort_attname
     } else {
-        set find_by_axis_args $pk
-        return $pk
+        set find_by_axis_args by_$pk
+        return by_$pk
     }
 
 }
@@ -671,18 +697,20 @@ proc ::persistence::orm::__choose_axis {argv optionsVar find_by_axis_argsVar} {
 # TODO: reorder/group expressions in argv/predicate
 # based on the idx/counter we have at our disposal
 # rewrites expressions in terms of persistence::predicate=* procs
-proc ::persistence::orm::__rewrite_where_clause {axis_attname argv} {
+proc ::persistence::orm::__rewrite_where_clause {idxname argv} {
+    variable [namespace __this]::__idxinfo
+
+    set idxatts $__idxinfo($idxname,atts)
+
     set predicate [list]
     while { $argv ne {} } {
         set argv [lassign $argv arg]
         lassign $arg attname op attvalue
 
         if { $op eq {=} } {
-            if { $attname eq $axis_attname } {
-                continue
-            }
-            set path [to_path_by by_${attname} ${attvalue}]
-            lappend predicate [list "in_idxpath" [list $path]]
+            if { $attname in $idxatts } { continue }
+            set idxpath [to_path_by $idxname ${attvalue}]
+            lappend predicate [list "in_idxpath" [list $idxpath]]
         } else {
             error "persistence (ORM): op (=$op) not implemented yet"
         }
