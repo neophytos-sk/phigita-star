@@ -203,7 +203,8 @@ proc ::persistence::common::__exec_options {slicelistVar options} {
 
 proc ::persistence::common::split_trans_id {trans_id} {
     lassign [split $trans_id {.}] micros pid n_mutations
-    set mtime [expr { int( ${micros} / 1000 ) }]
+    set mtime [expr { int( ${micros} / (10**6) ) }]
+    log split_trans_id,mtime=$mtime
     return [list $micros $pid $n_mutations $mtime]
 }
 
@@ -263,7 +264,7 @@ proc ::persistence::common::multiget_slice {nodepath row_keys {options ""}} {
 }
 
 proc ::persistence::common::exists_p {oid} {
-    #log common,exists_p,oid=$oid
+    # log common,exists_p,oid=$oid
     #log exists=[::persistence::exists_column_p $oid]
     #log which,[namespace which exists_column_p]
     if { [is_link_oid_p $oid] } {

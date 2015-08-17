@@ -32,7 +32,6 @@ namespace eval ::persistence::fs {
         ins_column \
         ins_link \
         get_link \
-        exists_p \
         is_supercolumn_oid_p \
         is_column_oid_p \
         is_column_rev_p \

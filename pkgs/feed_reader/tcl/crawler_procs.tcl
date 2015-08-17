@@ -304,10 +304,8 @@ proc ::feed_reader::fetch_feed_p {feed_name timestamp {coeff "0.3"}} {
 
         # set oid [::crawldb::stat_info_t find_by feed_name $feed_name $pretty_timeval]
         
-        set nodepath [::persistence::join_oid "crawldb" "feed_stats.by_feed_and_period" ${feed_name} ${pretty_timeval}]
-        set oid [::persistence::find_column $nodepath "" exists_p]
-
-        if { $oid eq {} } {
+        set oid [::persistence::join_oid "crawldb" "feed_stats.by_feed_and_period" ${feed_name} ${pretty_timeval}]
+        if { ![::persistence::exists_p $oid] } {
             return 1
         }
 
@@ -318,6 +316,9 @@ proc ::feed_reader::fetch_feed_p {feed_name timestamp {coeff "0.3"}} {
         lassign [get_sync_info count ${reference_interval} ${max_times}] pr num_times interval 
 
         set last_sync [::persistence::get_mtime $oid]
+
+        # log pr=$pr,num_times=$num_times,last_sync=$last_sync,interval=$interval,timestamp=$timestamp
+
         if { ${pr} > 0 && ${last_sync} + ${interval} < ${timestamp} } {
             return 1
         }
@@ -325,13 +326,11 @@ proc ::feed_reader::fetch_feed_p {feed_name timestamp {coeff "0.3"}} {
         unset count
     }
 
-    set nodepath [::persistence::join_oid "crawldb" "feed_stats.by_feed_and_const" ${feed_name} "_stats"]
-    set oid [::persistence::find_column $nodepath "" exists_p]
-    
-    if { $oid eq {} } {
+    set oid [::persistence::join_oid "crawldb" "feed_stats.by_feed_and_const" ${feed_name} "_stats"]
+    if { ![::persistence::exists_p $oid] } {
         return 1
     }
-
+    
     array set count [::persistence::get ${oid}]
 
     set last_sync [::persistence::get_mtime ${oid}]

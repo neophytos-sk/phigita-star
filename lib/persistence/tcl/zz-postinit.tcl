@@ -101,6 +101,7 @@ proc ::persistence::init {} {
 
             # log which,[namespace which exists_p]
             wrap_proc ::persistence::exists_p {oid} {
+                # log exists_p,oid=$oid
                 set exists_1_p [::persistence::mem::exists_p $oid]
                 set exists_2_p [call_orig $oid]
                 return [expr { $exists_1_p || $exists_2_p }]
