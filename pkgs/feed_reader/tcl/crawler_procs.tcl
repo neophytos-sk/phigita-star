@@ -314,12 +314,12 @@ proc ::feed_reader::fetch_feed_p {feed_name timestamp {coeff "0.3"}} {
             return 1
         }
 
-        array set stats [::persistence::get ${oid}]
+        array set stats_item [::crawldb::stat_info_t get ${oid}]
         set last_sync [::persistence::get_mtime $oid]
 
         set reference_interval 3600
         set max_times 4
-        lassign [get_sync_info stats ${reference_interval} ${max_times}] pr num_times interval 
+        lassign [get_sync_info stats_item ${reference_interval} ${max_times}] pr num_times interval 
 
         # log pr=$pr,num_times=$num_times,last_sync=$last_sync,interval=$interval,timestamp=$timestamp
 
@@ -341,12 +341,12 @@ proc ::feed_reader::fetch_feed_p {feed_name timestamp {coeff "0.3"}} {
         return 1
     }
     
-    array set stats [::persistence::get ${oid}]
+    array set stats_item [::crawldb::stat_info_t get ${oid}]
     set last_sync [::persistence::get_mtime ${oid}]
 
     set reference_interval 86400
     set max_times 96
-    lassign [get_sync_info stats ${reference_interval} ${max_times}] pr num_times interval 
+    lassign [get_sync_info stats_item ${reference_interval} ${max_times}] pr num_times interval 
 
     # if last update more than the computed general interval then fetch
     if { ${last_sync} + ${interval} < ${timestamp} } {
@@ -365,7 +365,7 @@ proc ::feed_reader::incr_array_in_column {feed_name timemark incrementVar} {
     set where_clause [list]
     lappend where_clause [list name = [list $feed_name "ALL"]]
 
-    set oid [::crawldb::stat_info_t find $where_clause] 
+    set oid [::crawldb::stat_info_t 0or1row $where_clause] 
     if { $oid ne {} } {
         set data [::crawldb::stat_info_t get $oid]
     }
