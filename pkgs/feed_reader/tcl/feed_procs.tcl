@@ -667,6 +667,9 @@ proc ::feed_reader::fetch_and_write_item {timestamp link title_in_feed feedVar} 
 
     set can_resync_p [value_if feed(check_for_revisions) "0"]
 
+    array set item [list]
+    array unset item
+
     set resync_p 0
     if { 
         ![exists_item ${normalized_link}] 
@@ -674,6 +677,7 @@ proc ::feed_reader::fetch_and_write_item {timestamp link title_in_feed feedVar} 
     } {
 
         # log resync_p=$resync_p
+
 
         set item(__resync_p) 1
 
@@ -1690,20 +1694,14 @@ proc ::feed_reader::classify {axis urlsha1_list} {
 proc ::feed_reader::show_revisions {urlsha1} {
 
 
-    #set where_clause [list [list urlsha1 = $urlsha1]]
-    #set slicelist [::newsdb::item_revision_t find $where_clause]
-    #puts $slicelist
+    set where_clause [list [list urlsha1 = $urlsha1]]
+    set slicelist [::newsdb::news_item_t find $where_clause]
 
-    set slicelist [::persistence::get_supercolumn_slice \
-        "newsdb"                                        \
-        "news_item.by_urlsha1_and_contentsha1"          \
-        "__default_row__"                               \
-        "${urlsha1}"]
-
-    foreach {filename} ${slicelist} {
-        set timestamp [persistence::get_mtime ${filename}]
-        set column_name [file tail ${filename}]
-        puts "${timestamp} ${column_name}"
+    foreach oid ${slicelist} {
+        set mtime [::newsdb::news_item_t mtime $oid]
+        array set item [::newsdb::news_item_t get $oid]
+        puts "$mtime $item(contentsha1)"
+        array unset item
     }
 
 }
@@ -1750,6 +1748,7 @@ proc ::feed_reader::write_item {timestamp normalized_link feedVar itemVar resync
         return 0
     }
 
+    set item(is_revision_p) 0
     if { ${resync_p} } {
         set item(is_revision_p) 1
         set item(first_sync) [get_first_sync_timestamp normalized_link]
@@ -1764,6 +1763,7 @@ proc ::feed_reader::write_item {timestamp normalized_link feedVar itemVar resync
     set where_clause [list [list contentsha1 = $contentsha1]]
     set content_item_oid [::newsdb::content_item_t 0or1row $where_clause]
 
+    set item(is_copy_p) 0
     if { $content_item_oid ne {} } {
         # we have seen this item before from a different url
         set item(is_copy_p) 1

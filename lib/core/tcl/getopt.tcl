@@ -29,16 +29,20 @@ namespace eval getopt {
 
         # map option names to long option names
         variable map
+
+        variable varinfo
 }
 
 proc getopt::init {optdata} {
     variable optargs
     variable map
+    variable varinfo
     variable posArgs
 
     set posArgs {}
     array set optargs {}
     array set map {}
+    array set varinfo {}
 
     foreach item $optdata {
         set len [llength $item]
@@ -51,9 +55,14 @@ proc getopt::init {optdata} {
                 set map(-$shortname) $argname
             }
             set map(--$longname) $argname
-            set optargs($argname) $varlist
+
+            set optargs($argname) {}
+            foreach varitem $varlist {
+                lappend optargs($argname) [initoptargs $varitem]
+            }
+
         } else {
-            lappend posArgs $item
+            lappend posArgs [initoptargs $item]
         }
     }
 }
@@ -169,6 +178,32 @@ proc getopt::getopt {argv {argVar ""} } {
         }
     }
 
+    # validate type and set defaults
+    foreach varname [array names varinfo] {
+        lassign $varinfo($varname) required_p type default_value vchecklist
+
+        # if it exists check its value against the given type and move on
+        if { [info exists arg($varname)] } { 
+
+            if { $type ne {} } {
+                assert { [pattern match $type arg($varname)] }
+
+                if { $vchecklist ne {} } {
+                    assert { [pattern matchall $vchecklist arg($varname)] }
+                }
+            }
+
+            continue 
+
+        }
+
+        # otherwise, make sure it is optional
+        assert { !$required_p }
+
+        # set it to the default value
+        set arg($varname) $default_value
+
+    }
 
     # instantiate variables from array
     if { $argVar eq {} } {
@@ -207,3 +242,36 @@ proc getopt::getoptargs {argVar argname argc argv i} {
     }
     return $i
 }
+
+
+proc getopt::initoptargs {varitem} {
+    variable varinfo
+
+    set len [llength $varitem]
+
+    # if the previous arg was optional,
+    # every subsequent one should be so too
+
+    # assert { !$required_p || $len == 2 }
+
+    lassign $varitem varname_and_type default_value
+    lassign [split $varname_and_type {:}] varname comma_separated_vchecklist
+    set vchecklist [lassign [split $comma_separated_vchecklist {,}] type]
+
+    assert { ![info exists var($varname)] }
+
+    set required_p [expr { $len == 1 }]
+
+    if { $type ne {} } {
+        assert { [pattern match $type default_value] }
+
+        if { $vchecklist ne {} } {
+            assert { [pattern matchall $vchecklist default_value] }
+        }
+    }
+
+    set varinfo($varname) [list $required_p $type $default_value $vchecklist]
+
+    return $varname
+}
+
