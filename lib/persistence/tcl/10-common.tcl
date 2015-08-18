@@ -1,5 +1,8 @@
 namespace eval ::persistence {
-    variable __trans_id ""
+
+    # snapshot's current xid (transaction id)
+    variable __xid_stack ""
+
 }
 
 namespace eval ::persistence::fs {;}
@@ -32,7 +35,7 @@ namespace eval ::persistence::common {
         predicate=in_idxpath \
         new_transaction_id \
         cur_transaction_id \
-        split_trans_id \
+        split_xid \
         get_leafs
 
     set storage_type [config get ::persistence "default_storage_type"]
@@ -219,8 +222,8 @@ proc ::persistence::common::__exec_options {slicelistVar options} {
 
 }
 
-proc ::persistence::common::split_trans_id {trans_id} {
-    lassign [split $trans_id {.}] micros pid n_mutations
+proc ::persistence::common::split_xid {xid} {
+    lassign [split $xid {.}] micros pid n_mutations
     set mtime [expr { int( ${micros} / (10**6) ) }]
     return [list $micros $pid $n_mutations $mtime]
 }
@@ -228,8 +231,8 @@ proc ::persistence::common::split_trans_id {trans_id} {
 proc ::persistence::common::ins_column {oid data {codec_conf ""}} {
     lassign [split_oid $oid] ks cf_axis row_key column_path ext
     set oid [join_oid $ks $cf_axis $row_key $column_path]
-    set trans_id [cur_transaction_id]
-    set_column ${oid} ${data} ${trans_id} ${codec_conf}
+    set xid [cur_transaction_id]
+    set_column ${oid} ${data} ${xid} ${codec_conf}
 }
 
 proc ::persistence::common::del_column {rev} {
@@ -243,11 +246,11 @@ proc ::persistence::common::ins_link {oid target_oid {codec_conf ""}} {
     assert { [is_column_oid_p $target_oid] || [is_link_oid_p $target_oid] }
     lassign [split_oid $oid] ks cf_axis row_key column_path ext ts
 
-    set trans_id [cur_transaction_id]
-    lassign [split_trans_id $trans_id] micros pid n_mutations mtime
+    set xid [cur_transaction_id]
+    lassign [split_xid $xid] micros pid n_mutations mtime
 
     set target_rev ${target_oid}@${micros}
-    set_column ${oid}.link ${target_rev} ${trans_id} ${codec_conf}
+    set_column ${oid}.link ${target_rev} ${xid} ${codec_conf}
 }
 
 proc ::persistence::common::del_link {oid} {
@@ -272,7 +275,6 @@ proc ::persistence::common::multiget_slice {nodepath row_keys {options ""}} {
 
     set result [list]
     foreach row_key ${row_keys} {
-        log row_key=$row_key
         set row_path [join_oid $ks $cf_axis $row_key]
         set slicelist [get_slice $row_path ""]
         set result [concat $result $slicelist]
@@ -370,39 +372,34 @@ proc ::persistence::common::new_transaction_id {} {
 }
 
 proc ::persistence::common::cur_transaction_id {} {
-    variable ::persistence::__trans_id
-    if { $__trans_id ne {} } {
-        return $__trans_id
+    variable ::persistence::__xid_stack
+    if { $__xid_stack ne {} } {
+        return [lindex $__xid_stack end]
     } else {
         return [new_transaction_id]
     }
 }
 
 proc ::persistence::common::begin_batch {} {
-    variable ::persistence::__trans_id
-    if { $__trans_id ne {} } {
-        # no support for nested transactions
-        return
-    }
-    set __trans_id [new_transaction_id]
-    log "begin_batch $__trans_id"
+    variable ::persistence::__xid_stack
+    lappend __xid_stack [set xid [new_transaction_id]]
+    log "begin_batch $xid"
+    return $xid
 }
 
 proc ::persistence::common::end_batch {} {
-    variable ::persistence::__trans_id
-    assert { $__trans_id ne {} }
-    log "end_batch $__trans_id"
-    set __trans_id ""
+    variable ::persistence::__xid_stack
+    assert { $__xid_stack ne {} }
+    log "end_batch [lindex $__xid_stack end]"
+    set __xid_stack [lreplace $__xid_stack end end]
 }
 
 
 proc ::persistence::common::get_leafs {path} {
     set subdirs [get_subdirs $path]
     if { $subdirs eq {} } {
-        set files [get_files $path]
-        return $files
+        return [get_files $path]
     } else {
-        # log "subdirs:\n>>>$path\n***[join $subdirs "\n***"]"
         set result [list]
         foreach subdir_path $subdirs {
             assert { $subdir_path ne $path }

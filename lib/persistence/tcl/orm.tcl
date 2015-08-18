@@ -472,7 +472,7 @@ proc ::persistence::orm::get {rev {exists_pVar ""}} {
 
     set exists_p [::persistence::exists_p $rev]
     if { $exists_p } {
-        log orm,get,rev=$rev
+        # log orm,get,rev=$rev
         return [decode [::persistence::get $rev [codec_conf]]]
     } else {
         #log alias=[interp alias {} ::persistence::exists_p]

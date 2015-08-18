@@ -8,7 +8,7 @@ package require core
 namespace eval ::persistence::commitlog {
 
     namespace import ::persistence::common::split_oid
-    namespace import ::persistence::common::split_trans_id
+    namespace import ::persistence::common::split_xid
 
     variable fp
     set fp ""
@@ -60,7 +60,7 @@ proc ::persistence::commitlog::insert {itemVar} {
     assert { $item(oid) ne {} }
 
     if { ![string match *bloom_filter* $item(oid)] } {
-        # log >>>commitlog_item,insert,$item(trans_id),$item(oid)
+        # log >>>commitlog_item,insert,$item(xid),$item(oid)
     }
 
     ##
@@ -82,10 +82,10 @@ proc ::persistence::commitlog::insert {itemVar} {
     }
 
     ::persistence::commitlog::set_column \
-        $item(oid) $item(data) $item(trans_id) $item(codec_conf)
+        $item(oid) $item(data) $item(xid) $item(codec_conf)
 
     ::persistence::mem::set_column \
-        $item(oid) $item(data) $item(trans_id) $item(codec_conf)
+        $item(oid) $item(data) $item(xid) $item(codec_conf)
 
 
     # log object_types=[join [::sysdb::object_type_t find] \n\t\t>>>]
@@ -159,10 +159,10 @@ proc ::persistence::commitlog::close_if {} {
 proc ::persistence::commitlog::set_column {
     oid 
     data 
-    trans_id
+    xid
     codec_conf
 } {
-    assert { $trans_id ne {} }
+    assert { $xid ne {} }
 
     variable fp
 
@@ -172,7 +172,7 @@ proc ::persistence::commitlog::set_column {
 
     ::util::io::write_string $fp $oid
     ::util::io::write_string $fp $data
-    ::util::io::write_string $fp $trans_id
+    ::util::io::write_string $fp $xid
     ::util::io::write_string $fp $codec_conf
 
     logpoint [tell $fp]
@@ -195,9 +195,9 @@ proc ::persistence::commitlog::analyze {} {
     while { [tell $fp] != $pos2 } {
         ::util::io::read_string $fp oid
         ::util::io::skip_string $fp
-        ::util::io::read_string $fp trans_id
+        ::util::io::read_string $fp xid
         ::util::io::read_string $fp codec_conf
-        lassign [split_trans_id $trans_id] micros pid n_mutations mtime
+        lassign [split_xid $xid] micros pid n_mutations mtime
         log "commitlog (analyze): rev=${oid}@${micros}"
         # log "commitlog (analyze): pos=[tell $fp]"
     }
@@ -258,25 +258,25 @@ proc ::persistence::commitlog::process {{bootstrap_p "0"}} {
     while { $pos1 < $pos2 } {
         ::util::io::read_string $fp oid
         ::util::io::read_string $fp data
-        ::util::io::read_string $fp trans_id
+        ::util::io::read_string $fp xid
         ::util::io::read_string $fp codec_conf
         set pos1 [tell $fp]
 
         if { $mem_p } {
-            lassign [split_trans_id $trans_id] micros pid n_mutations mtime
+            lassign [split_xid $xid] micros pid n_mutations mtime
             set rev "${oid}@${micros}"
             if { $bootstrap_p } {
                 if { ![::persistence::mem::exists_column_rev_p $rev] } {
                     # wrap_proc in zz-postinit.tcl submits oid to commitlog and memtable
                     # so, the following, for the roll-forward recovery after server startup
 
-                    ::persistence::mem::set_column $oid $data $trans_id $codec_conf
+                    ::persistence::mem::set_column $oid $data $xid $codec_conf
                 }
             }
         } else {
 
             # 1. exec command
-            call_orig_of ::persistence::fs::set_column $oid $data $trans_id $codec_conf
+            call_orig_of ::persistence::fs::set_column $oid $data $xid $codec_conf
 
             # 2. increase and write int to pos1
             checkpoint [tell $fp]  ;# must be equal to pos1 at this point

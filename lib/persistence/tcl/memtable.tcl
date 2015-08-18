@@ -15,12 +15,12 @@ namespace eval ::persistence::mem {
     variable __idx
     array set __idx [list]
 
-    variable __dirty_idx
-    array set __dirty_idx [list]
+    variable __xid_rev
+    array set __xid_rev [list]
 
-    variable __trans_list [list]
+    variable __xid_list [list]
 
-    namespace import ::persistence::common::split_trans_id
+    namespace import ::persistence::common::split_xid
 
     namespace path "::persistence ::persistence::common"
 
@@ -48,11 +48,11 @@ proc ::persistence::mem::get_files {nodepath} {
 
     set len [string length $nodepath]
 
-    log --------------
-    log patte=$pattern
-    log nodep=$nodepath
-    log __idx=[array names __idx]
-    log rev_names=$rev_names
+    #log --------------
+    #log patte=$pattern
+    #log nodep=$nodepath
+    #log __idx=[array names __idx]
+    #log rev_names=$rev_names
 
     array set latest_rev [list]
     foreach rev_name $rev_names {
@@ -86,13 +86,13 @@ proc ::persistence::mem::get_files {nodepath} {
 
 proc ::persistence::mem::get_subdirs {path} {
 
-    log get_subdirs,path=$path
+    #log get_subdirs,path=$path
 
     set len [llength [split $path {/}]]
 
     set files [get_files "${path}/"]  ;# slash is important
 
-    log get_subdirs,ls=$files
+    #log get_subdirs,ls=$files
 
     set result [list]
     foreach oid $files {
@@ -100,7 +100,7 @@ proc ::persistence::mem::get_subdirs {path} {
         lappend result [join [lrange $oid_parts 0 $len] {/}]
     }
 
-    log get_subdirs,result=$result
+    #log get_subdirs,result=$result
 
     return [lsort -unique ${result}]
 
@@ -153,21 +153,21 @@ proc ::persistence::mem::upd_column {oid data {codec_conf ""}} {}
 
 proc ::persistence::mem::get_mtime {rev} {
     variable __mem
-    set trans_id $__mem(${rev},trans_id)
-    lassign [split_trans_id $trans_id] micros pid n_mutations mtime
+    set xid $__mem(${rev},xid)
+    lassign [split_xid $xid] micros pid n_mutations mtime
     return $mtime
 }
 
-proc ::persistence::mem::set_column {oid data trans_id codec_conf} {
+proc ::persistence::mem::set_column {oid data xid codec_conf} {
     variable __mem
     variable __cnt
-    variable __dirty_idx
-    variable __trans_list
+    variable __xid_rev
+    variable __xid_list
     variable __idx
 
-    log mem,set_column,oid=$oid
+    # log mem,set_column,oid=$oid
 
-    lassign [split_trans_id $trans_id] micros pid n_mutations mtime
+    lassign [split_xid $xid] micros pid n_mutations mtime
 
     set rev "${oid}@${micros}"
 
@@ -183,19 +183,16 @@ proc ::persistence::mem::set_column {oid data trans_id codec_conf} {
 
     incr __cnt
 
-    if { ![info exists __dirty_idx(${trans_id})] } {
-        lappend __trans_list $trans_id
+    if { ![info exists __xid_rev(${xid})] } {
+        lappend __xid_list $xid
     }
-    lappend __dirty_idx(${trans_id}) $rev
+    lappend __xid_rev(${xid}) $rev
 
     set __mem(${rev},oid)           $oid
     set __mem(${rev},data)          $data
-    set __mem(${rev},trans_id)      $trans_id
+    set __mem(${rev},xid)           $xid
     set __mem(${rev},codec_conf)    $codec_conf
-    set __mem(${rev},size)          [string bytelength $data]
-    set __mem(${rev},index)         $__cnt
     set __mem(${rev},dirty_p)       1
-    set __mem(${rev},type)          "f"
 
     set ext [file extension ${oid}]
     if { $ext eq {.gone} } {
@@ -212,32 +209,32 @@ proc ::persistence::mem::set_column {oid data trans_id codec_conf} {
 proc ::persistence::mem::dump {} {
     # log "dumping memtable to filesystem"
     variable __mem
-    variable __dirty_idx
-    variable __trans_list
+    variable __xid_rev
+    variable __xid_list
 
     #set fp [open /tmp/memtable.txt w]
     #puts $fp [join [array names __mem *,data] \n]
     #close $fp
 
-    #log __trans_list=$__trans_list
-    #log __dirty_idx=[array names __dirty_idx]
+    #log __xid_list=$__xid_list
+    #log __xid_rev=[array names __dirty_idx]
 
     set count 0
-    foreach __trans_id $__trans_list {
-        # log "dumping transaction: $__trans_id"
-        set rev_list [lsort -unique $__dirty_idx($__trans_id)]
+    foreach __xid $__xid_list {
+        # log "dumping transaction: $__xid"
+        set rev_list [lsort -unique $__xid_rev($__xid)]
         foreach rev $rev_list {
             # log "dumping rev: $rev"
             if { !$__mem(${rev},dirty_p) } {
-                error "mismatch between __dirty_idx and __mem data"
+                error "mismatch between __xid_rev and __mem data"
             }
 
             set oid $__mem(${rev},oid)
             set data $__mem(${rev},data)
-            set trans_id $__mem(${rev},trans_id)
+            set xid $__mem(${rev},xid)
             set codec_conf $__mem(${rev},codec_conf)
 
-            assert { $__trans_id eq $trans_id }
+            assert { $__xid eq $xid }
 
             # part of the statement that writes the revision is fine
             # problem with the statement is part that publishes to head
@@ -252,15 +249,15 @@ proc ::persistence::mem::dump {} {
             # that the persistence layer supports read_committed isolation level
             # just as well as with fancier structures
 
-            call_orig_of ::persistence::set_column $oid $data $trans_id $codec_conf
+            call_orig_of ::persistence::set_column $oid $data $xid $codec_conf
 
             set __mem(${rev},dirty_p) 0
 
             incr count
         }
-        unset __dirty_idx(${__trans_id})
+        unset __xid_rev(${__xid})
     }
-    set __trans_list ""
+    set __xid_list ""
 
     # log "dumped $count records"
 }
@@ -282,11 +279,11 @@ if { [setting_p "bloom_filters"] } {
         ::persistence::bloom_filter::init $type_oid
     }
 
-    wrap_proc ::persistence::mem::set_column {oid data trans_id codec_conf} {
+    wrap_proc ::persistence::mem::set_column {oid data xid codec_conf} {
         # log [info frame 0]
         # log "ins_column oid=$oid"
         lassign [split_oid $oid] ks cf_axis row_key column_path
-        call_orig $oid $data $trans_id $codec_conf
+        call_orig $oid $data $xid $codec_conf
         set type_oid [join_oid $ks $cf_axis]
         ::persistence::bloom_filter::insert $type_oid $oid
     }

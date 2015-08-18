@@ -47,15 +47,16 @@ proc ::persistence::init {} {
 
         if { [setting_p "write_ahead_log"] } {
 
+
             # private
             # log which,[namespace which set_column]
-            wrap_proc ::persistence::set_column {oid data trans_id codec_conf} {
-                lassign [split_trans_id $trans_id] micros pid n_mutations mtime
+            wrap_proc ::persistence::set_column {oid data xid codec_conf} {
+                lassign [split_xid $xid] micros pid n_mutations mtime
 
                 array set item [list]
                 set item(oid) $oid
                 set item(data) $data
-                set item(trans_id) $trans_id
+                set item(xid) $xid
                 set item(codec_conf) $codec_conf
                 
                 ::persistence::commitlog::insert item
@@ -118,16 +119,16 @@ proc ::persistence::init {} {
             wrap_proc ::persistence::get_files {path} {
                 set filelist1 [::persistence::mem::get_files $path]
                 set filelist2 [call_orig $path]
-                log mem_get_files=$filelist1
-                log fs_get_files=$filelist2
+                #log mem_get_files=$filelist1
+                #log fs_get_files=$filelist2
                 return [lsort -unique [concat $filelist1 $filelist2]]
             }
 
             wrap_proc ::persistence::get_subdirs {path} {
                 set subdirs_1 [::persistence::mem::get_subdirs $path]
                 set subdirs_2 [call_orig $path]
-                log mem_get_subdirs=$subdirs_1
-                log fs_get_subdirs=$subdirs_2
+                #log mem_get_subdirs=$subdirs_1
+                #log fs_get_subdirs=$subdirs_2
                 return [lsort -unique [concat $subdirs_1 $subdirs_2]]
             }
 

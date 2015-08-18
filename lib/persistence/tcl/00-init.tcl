@@ -17,9 +17,8 @@ config param memtable "on"
 config param bloom_filters "off"
 config param client_server "on"
 config param write_ahead_log "on"
-config param mvcc "on"
 
-# read_uncommitted -
+# READ UNCOMMITTED -
 #
 #   dirty read, a transaction reads data written by a concurrent 
 #   uncommitted transaction
@@ -33,15 +32,18 @@ config param mvcc "on"
 #   the set of rows satisfying the condition has changed due to
 #   another recently committed transaction
 #
-# read_committed -
+# READ COMMITTED -
+#
 #   a statement can only see records committed before it began
 #
-# repeatable_read -
+# REPEATABLE READ -
+#
 #   all statements of the current transaction can only see records
 #   committed before the first query or data-modification statement
 #   was executed in this transaction
 #
-# serializable -
+# SERIALIZABLE -
+#
 #   all statements of the current transaction can only see rows
 #   committed before the first query or data-modification 
 #   statement was executed in this transaction, if a pattern of
@@ -51,9 +53,30 @@ config param mvcc "on"
 #   one of them will be rolled back with a serialization_failure
 #   error
 #
-config param isolation_level "read_uncommitted" ;# read_committed, repeatable_read, serializable
+config param isolation_level "READ COMMITTED"
 
-assert { [setting "isolation_level"] eq {read_uncommitted} || [setting_p "write_ahead_log"] }
+# Multiversion Concurrency Control (MVCC) offers behavior where
+# "readers never block writers, and writers never block readers."
+# 
+# MVCC snapshots control which tuples are visible for SQL 
+# statements. A snapshot is recorded at the start of each SQL
+# statement in READ COMMITTED transaction isolation mode, and
+# at transaction start in SERIALIZABLE transaction isolation
+# mode. In fact, it frequency of taking new snapshots that controls
+# the transaction isolation behavior.
+#
+# When a new snapshot is taken, the following information is gathered:
+# * the highest-numbered committed transaction
+# * the transaction numbers currently executing
+# Using this snapshot information, we can determine if a transaction's
+# actions should be visible to an executing statement. 
+# (PostgreSQL, MVCC unmasked, Bruce Momjian)
+#
+config param mvcc "on"
+
+assert { [setting "isolation_level"] eq {READ_UNCOMMITTED} || [setting_p "write_ahead_log"] }
+
+assert { [setting "isolation_level"] eq {READ_UNCOMMITTED} || [setting_p "mvcc"] }
 
 assert { ![setting_p "bloom_filters"] || [setting_p "write_ahead_log"] }
 

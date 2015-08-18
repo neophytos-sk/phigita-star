@@ -201,16 +201,16 @@ proc ::persistence::fs::get_tmp_filename {filename} {
     return $tmp_filename
 }
 
-proc ::persistence::fs::write_data {ext filename data trans_id codec_conf} {
-    lassign [split_trans_id $trans_id] micros pid n_mutations mtime
+proc ::persistence::fs::write_data {ext filename data xid codec_conf} {
+    lassign [split_xid $xid] micros pid n_mutations mtime
     set tmp_filename [file join [get_tmp_filename ${filename}] ${ext}]
     ::util::writefile ${tmp_filename} ${data} {*}${codec_conf}
     file mtime ${tmp_filename} ${mtime}
 }
 
-proc ::persistence::fs::read_committed__set_column {oid data trans_id codec_conf} {
+proc ::persistence::fs::read_committed__set_column {oid data xid codec_conf} {
 
-    lassign [split_trans_id $trans_id] micros pid n_mutations mtime
+    lassign [split_xid $xid] micros pid n_mutations mtime
 
     set rev "${oid}@${mtime}"
 
@@ -346,8 +346,8 @@ proc ::persistence::fs::__get_multirow_names {ks cf_axis {predicate ""}} {
 }
 
 
-proc ::persistence::fs::set_column {oid data trans_id codec_conf} {
-    lassign [split_trans_id $trans_id] micros pid n_mutations mtime
+proc ::persistence::fs::set_column {oid data xid codec_conf} {
+    lassign [split_xid $xid] micros pid n_mutations mtime
 
     set filename [get_oid_filename ${oid}]
     file mkdir [file dirname ${filename}]
@@ -356,12 +356,13 @@ proc ::persistence::fs::set_column {oid data trans_id codec_conf} {
 
 }
 
+
 if { [setting_p "mvcc"] } {
 
     # isolation level: read_uncommitted
-    proc ::persistence::fs::set_column {oid data trans_id codec_conf} {
+    proc ::persistence::fs::set_column {oid data xid codec_conf} {
 
-        lassign [split_trans_id $trans_id] micros pid n_mutations mtime
+        lassign [split_xid $xid] micros pid n_mutations mtime
 
         set rev "${oid}@${micros}"
 
@@ -427,7 +428,7 @@ if { [setting_p "mvcc"] } {
             lappend result ${rev}
         }
 
-        log get_files,result=$result
+        # log get_files,result=$result
 
         return [lsort ${result}]
 
@@ -438,7 +439,7 @@ if { [setting_p "mvcc"] } {
         variable branch
         set dir [file normalize ${base_dir}/DATA/${path}]
 
-        log fs,get_subdirs,dir=$dir
+        # log fs,get_subdirs,dir=$dir
 
         set names [glob -tails -types {d} -nocomplain -directory ${dir} *]
         set result [list]
