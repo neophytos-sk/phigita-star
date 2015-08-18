@@ -22,7 +22,6 @@ namespace eval ::persistence::common {
         exists_p \
         is_supercolumn_oid_p \
         is_column_oid_p \
-        is_column_rev_p \
         is_row_oid_p \
         is_link_oid_p \
         sort \
@@ -41,6 +40,8 @@ namespace eval ::persistence::common {
 
 }
 
+proc ::persistence::common::init {} {}
+
 proc ::persistence::common::typeof_oid {oid} {
     lassign [split_oid $oid] ks cf_axis row_key column_path
     if { $column_path ne {} } {
@@ -52,7 +53,7 @@ proc ::persistence::common::typeof_oid {oid} {
     }
 }
 
-proc ::persistence::common::join_oid {ks cf_axis {row_key ""} {column_path ""}} {
+proc ::persistence::common::join_oid {ks cf_axis {row_key ""} {column_path ""} {ext ""} {ts ""}} {
     assert { $ks ne {} }        ;# is_ks $ks
     assert { $cf_axis ne {} }   ;# is_cf_axis $cf_axis
 
@@ -62,15 +63,20 @@ proc ::persistence::common::join_oid {ks cf_axis {row_key ""} {column_path ""}} 
         append oid "/" $row_key "/+"
         if { $column_path ne {} } {
             append oid "/" $column_path
-            #if { $ts ne {} } {
-            #    append oid "@${ts}"
-            #}
+            if { $ext ne {} } {
+                append oid ${ext}
+            }
+            if { $ts ne {} } {
+                append oid "@${ts}"
+            }
         } else {
-            # assert { $ts eq {} }
+            assert { $ext eq {} }
+            assert { $ts eq {} }
         }
     } else {
         assert { $column_path eq {} }
-        # assert { $ts eq {} }
+        assert { $ext eq {} }
+        assert { $ts eq {} }
     }
 
     return $oid
@@ -83,37 +89,48 @@ proc ::persistence::common::split_oid {oid_with_ts} {
     set column_path_args [lassign [split $oid {/}] ks cf_axis row_key __delimiter__]
     set column_path [join $column_path_args {/}]
     set ext [file extension $column_path] 
-    return [list $ks $cf_axis $row_key $column_path $ext]
+    return [list $ks $cf_axis $row_key $column_path $ext $ts]
 }
 
 
 
 proc ::persistence::common::is_supercolumn_oid_p {oid} {
-    lassign [split_oid $oid] ks cf_axis row_key column_path ext
-    return [expr { $column_path ne {} }]
-    # set first_char [string index $column_path 0]
-    # return [expr { $column_path ne {} && $first_char eq {^} }]
+    lassign [split_oid $oid] ks cf_axis row_key column_path ext ts
+    return [expr { $column_path ne {} && $ts eq {} }]
+    # return [expr { $column_path ne {} && $ext eq {} && $ts eq {} }]
 }
 
 
 proc ::persistence::common::is_column_oid_p {oid} {
-    lassign [split_oid $oid] ks cf_axis row_key column_path ext
-    return [expr { $column_path ne {} && $ext eq {} }]
+    lassign [split_oid $oid] ks cf_axis row_key column_path ext ts
+    return [expr { $column_path ne {} && $ext eq {} && $ts eq {} }]
 }
 
 
 proc ::persistence::common::is_column_rev_p {rev} {
-    lassign [split ${rev} {@}] oid ts
-    lassign [split_oid $oid] ks cf_axis row_key column_path ext
+    # log [info frame -5]
+    # log [info frame -4]
+    # log [info frame -3]
+    # log is_column_rev_p,rev=$rev
+    lassign [split_oid $rev] ks cf_axis row_key column_path ext ts
     return [expr { $column_path ne {} && ${ts} ne {} }]
 }
 
 
 proc ::persistence::common::is_row_oid_p {oid} {
-    lassign [split_oid $oid] ks cf_axis row_key column_path ext
-    return [expr { ${row_key} ne {} && $column_path eq {} }]
+    lassign [split_oid $oid] ks cf_axis row_key column_path ext ts
+    return [expr { ${row_key} ne {} && $column_path eq {} && $ts eq {} }]
 }
 
+proc ::persistence::common::is_link_rev_p {rev} {
+    # log [info frame -1]
+    # log is_link_rev_p,rev=$rev
+    lassign [split_oid $rev] ks cf_axis row_key column_path ext ts
+    if { $ext eq {.link} && $ts ne {} } {
+        return 1
+    }
+    return 0
+}
 proc ::persistence::common::is_link_oid_p {oid} {
     lassign [split_oid $oid] ks cf_axis row_key column_path ext
     if { $ext eq {.link} } {
@@ -139,14 +156,15 @@ proc ::persistence::common::sort {
         # when a new ::sysdb::object_type_t is added
         #
         ::persistence::load_all_types_from_db
-        log "^^^^^ object types: [::sysdb::object_type_t find]"
+        # log "^^^^^ object types: [::sysdb::object_type_t find]"
     }
 
     set sortlist [list]
     set i 0
-    foreach oid $slicelist {
-        array set item [$type_nsp get ${oid}]
-        lappend sortlist [list $i $item($attname) $oid]
+    foreach rev $slicelist {
+        log sort,rev=$rev
+        array set item [$type_nsp get ${rev}]
+        lappend sortlist [list $i $item($attname) $rev]
         incr i
     }
     set sortlist [lsort -${sort_direction} -${sort_comparison} -index 1 $sortlist] 
@@ -214,22 +232,22 @@ proc ::persistence::common::ins_column {oid data {codec_conf ""}} {
     set_column ${oid} ${data} ${trans_id} ${codec_conf}
 }
 
-proc ::persistence::common::del_column {oid} {
-    assert { [is_column_oid_p $oid] || [is_link_oid_p $oid] }
-    ins_column ${oid}.gone ""
-}
-
-proc ::persistence::common::set_link {oid target_oid transaction_id codec_conf} {
-    set_column ${oid}.link $target_oid $transaction_id $codec_conf
+proc ::persistence::common::del_column {rev} {
+    assert { [is_column_rev_p $rev] || [is_link_rev_p $rev] }
+    ins_column ${rev}.gone ""
 }
 
 proc ::persistence::common::ins_link {oid target_oid {codec_conf ""}} {
-    assert { $oid ne $target_oid } 
     # TODO: IncrRefCount
-    lassign [split_oid $oid] ks cf_axis row_key column_path ext
-    set oid [join_oid $ks $cf_axis $row_key $column_path]
-    set transaction_id [cur_transaction_id]
-    set_link ${oid} ${target_oid} $transaction_id ${codec_conf}
+    assert { $oid ne $target_oid } 
+    assert { [is_column_oid_p $target_oid] || [is_link_oid_p $target_oid] }
+    lassign [split_oid $oid] ks cf_axis row_key column_path ext ts
+
+    set trans_id [cur_transaction_id]
+    lassign [split_trans_id $trans_id] micros pid n_mutations mtime
+
+    set target_rev ${target_oid}@${micros}
+    set_column ${oid}.link ${target_rev} ${trans_id} ${codec_conf}
 }
 
 proc ::persistence::common::del_link {oid} {
@@ -242,7 +260,8 @@ proc ::persistence::common::get_slice {nodepath {options ""}} {
     lassign [split_oid $nodepath] ks cf_axis row_key
     set row_path [join_oid ${ks} ${cf_axis} ${row_key}]
     set slicelist [::persistence::get_leafs ${row_path}]
-    #log get_slice,slicelist=$slicelist
+    # log !!!!!!!!!get_slice,nodepath=$nodepath
+    # log !!!!!!!!!get_slice,slicelist=$slicelist
     __exec_options slicelist $options
     return ${slicelist}
 }
@@ -253,6 +272,7 @@ proc ::persistence::common::multiget_slice {nodepath row_keys {options ""}} {
 
     set result [list]
     foreach row_key ${row_keys} {
+        log row_key=$row_key
         set row_path [join_oid $ks $cf_axis $row_key]
         set slicelist [get_slice $row_path ""]
         set result [concat $result $slicelist]
@@ -262,34 +282,32 @@ proc ::persistence::common::multiget_slice {nodepath row_keys {options ""}} {
     return ${result}
 }
 
-proc ::persistence::common::exists_p {oid} {
-    # log common,exists_p,oid=$oid
-    #log exists=[::persistence::exists_column_p $oid]
-    #log which,[namespace which exists_column_p]
-    if { [is_link_oid_p $oid] } {
-        return [exists_link_p $oid]
+proc ::persistence::common::exists_p {rev} {
+    if { [is_link_rev_p $rev] } {
+        return [exists_link_rev_p $rev]
     } else {
-        return [exists_column_p $oid]
+        return [exists_column_rev_p $rev]
     }
 }
 
-proc ::persistence::common::get_link_target {oid} {
-    assert { [is_link_oid_p $oid] } 
-    set target_oid [get_column $oid]
-    return $target_oid
+proc ::persistence::common::get_link_target {rev} {
+    assert { [is_link_rev_p $rev] } 
+    set target_rev [get_column $rev]
+    return $target_rev
 }
 
-proc ::persistence::common::get_link {oid {codec_conf ""}} {
-    assert { [is_link_oid_p $oid] }
-    set target_oid [get_link_target $oid]
-    return [get $target_oid $codec_conf]
+proc ::persistence::common::get_link {rev {codec_conf ""}} {
+    assert { [is_link_rev_p $rev] }
+    set target_rev [get_link_target $rev]
+    return [get $target_rev $codec_conf]
 }
 
-proc ::persistence::common::get {oid {codec_conf ""}} {
-    if { [is_link_oid_p $oid] } {
-        return [get_link $oid $codec_conf]
+proc ::persistence::common::get {rev {codec_conf ""}} {
+    assert { [is_column_rev_p $rev] || [is_link_rev_p $rev] }
+    if { [is_link_rev_p $rev] } {
+        return [get_link $rev $codec_conf]
     } else {
-        return [get_column $oid $codec_conf]
+        return [get_column $rev $codec_conf]
     }
 }
 
@@ -395,4 +413,6 @@ proc ::persistence::common::get_leafs {path} {
         return $result
     }
 }
+
+
 

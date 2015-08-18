@@ -63,23 +63,25 @@ proc ::persistence::init {} {
 
             # private
             # log which,[namespace which get_column]
-            wrap_proc ::persistence::get_column {oid {codec_conf ""}} {
-                set exists_p [::persistence::mem::exists_column_p $oid]
+            wrap_proc ::persistence::get_column {rev {codec_conf ""}} {
+                assert { [is_column_rev_p $rev] || [is_link_rev_p $rev] }
+                set exists_p [::persistence::mem::exists_column_rev_p $rev]
                 if { $exists_p } {
-                    return [::persistence::mem::get_column $oid $codec_conf]
+                    return [::persistence::mem::get_column $rev $codec_conf]
                 }
-                set data [call_orig $oid $codec_conf]
+                set data [call_orig $rev $codec_conf]
                 return $data
             }
 
             # private
             # log which,[namespace which get_link]
-            wrap_proc ::persistence::get_link {oid {codec_conf ""}} {
-                set exists_p [::persistence::mem::exists_link_p $oid]
+            wrap_proc ::persistence::get_link {rev {codec_conf ""}} {
+                assert { [is_link_rev_p $rev] } 
+                set exists_p [::persistence::mem::exists_link_rev_p $oid]
                 if { $exists_p } {
-                    return [::persistence::mem::get_link $oid $codec_conf]
+                    return [::persistence::mem::get_link $rev $codec_conf]
                 }
-                set data [call_orig $oid $codec_conf]
+                set data [call_orig $rev $codec_conf]
                 return $data
             }
 
@@ -92,11 +94,11 @@ proc ::persistence::init {} {
                 ::persistence::mem::define_cf $ks $cf_axis
             }
 
-            wrap_proc ::persistence::get_mtime {oid} {
-                if { [::persistence::mem::exists_column_p $oid] } {
-                    return [::persistence::mem::get_mtime $oid]
+            wrap_proc ::persistence::get_mtime {rev} {
+                if { [::persistence::mem::exists_column_rev_p $rev] } {
+                    return [::persistence::mem::get_mtime $rev]
                 }
-                return [call_orig $oid]
+                return [call_orig $rev]
             }
 
             # log which,[namespace which exists_p]
@@ -113,23 +115,19 @@ proc ::persistence::init {} {
                 return [expr { $exists_1_p || $exists_2_p }]
             }
 
-            # private
-            # log which,get_files=[namespace which get_leafs] 
-            wrap_proc ::persistence::get_leafs {path} {
-                set filelist1 [::persistence::mem::get_leafs $path]
+            wrap_proc ::persistence::get_files {path} {
+                set filelist1 [::persistence::mem::get_files $path]
                 set filelist2 [call_orig $path]
-                # log mem_get_files=$filelist1
-                # log fs_get_files=$filelist2
+                log mem_get_files=$filelist1
+                log fs_get_files=$filelist2
                 return [lsort -unique [concat $filelist1 $filelist2]]
             }
 
-            # private
-            #log which,get_subdirs=[namespace which get_subdirs] 
             wrap_proc ::persistence::get_subdirs {path} {
                 set subdirs_1 [::persistence::mem::get_subdirs $path]
                 set subdirs_2 [call_orig $path]
-                # log mem_get_subdirs=$subdirs_1
-                # log fs_get_subdirs=$subdirs_2
+                log mem_get_subdirs=$subdirs_1
+                log fs_get_subdirs=$subdirs_2
                 return [lsort -unique [concat $subdirs_1 $subdirs_2]]
             }
 
@@ -152,7 +150,6 @@ proc ::persistence::init {} {
 
             ins_link
             del_link
-            set_link
 
             get_slice
             multiget_slice

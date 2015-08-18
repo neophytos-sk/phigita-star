@@ -12,9 +12,8 @@ namespace eval ::persistence::mem {
     variable __dir
     array set __dir [list]
 
-    # master branch
-    variable __latest_idx
-    array set __latest_idx [list]
+    variable __idx
+    array set __idx [list]
 
     variable __dirty_idx
     array set __dirty_idx [list]
@@ -30,72 +29,117 @@ namespace eval ::persistence::mem {
 proc ::persistence::mem::init {} {}
 proc ::persistence::mem::define_cf {ks cf_axis} {}
 
-proc ::persistence::mem::get_leafs {path} {
-    variable __latest_idx
+proc ::persistence::mem::get_files {nodepath} {
 
-    set pattern "${path}*"
-    set names [array names __latest_idx ${pattern}]
-    return [lsort -unique ${names}]
+    # log get_files,path=$nodepath
+
+    variable __idx
+    
+
+    if { [is_column_rev_p $nodepath] || [is_link_rev_p $nodepath] } {
+        set pattern "${nodepath}"
+        set rev_names [array names __idx ${pattern}]
+
+    } else {
+        set pattern "${nodepath}*"
+        set rev_names [array names __idx ${pattern}]
+    }
+
+
+    set len [string length $nodepath]
+
+    log --------------
+    log patte=$pattern
+    log nodep=$nodepath
+    log __idx=[array names __idx]
+    log rev_names=$rev_names
+
+    array set latest_rev [list]
+    foreach rev_name $rev_names {
+        log rev_name=$rev_name
+        # set rev_name [string range $rev_name $len end]
+        lassign [split $rev_name "@"] oid micros
+        if { [value_if latest_rev($oid) "0"] < $micros } {
+            set latest_rev($oid) $micros
+        }
+    }
+
+    set latest_rev_oids [array names latest_rev]
+
+    # log get_files,latest_rev_oids=$latest_rev_oids
+
+    set result [list]
+    foreach oid $latest_rev_oids {
+        if { [file extension $oid] eq {.gone} } { continue }
+        set micros $latest_rev($oid)
+        set rev ${oid}@${micros}
+        lappend result ${rev}
+    }
+
+    set result [lsort -unique ${result}]
+
+    # log get_files,result=$result
+
+    return $result
 
 }
 
 proc ::persistence::mem::get_subdirs {path} {
 
+    log get_subdirs,path=$path
+
     set len [llength [split $path {/}]]
 
-    set files [get_leafs "${path}/"]  ;# slash is important
+    set files [get_files "${path}/"]  ;# slash is important
+
+    log get_subdirs,ls=$files
+
     set result [list]
     foreach oid $files {
         set oid_parts [split $oid {/}] 
         lappend result [join [lrange $oid_parts 0 $len] {/}]
     }
 
+    log get_subdirs,result=$result
+
     return [lsort -unique ${result}]
 
 }
 
 proc ::persistence::mem::exists_column_rev_p {rev} {
-    variable __mem
-    return [info exists __mem(${rev},data)]
+    assert { [is_column_rev_p $rev] }
+    variable __idx
+    return [info exists __idx(${rev})]
 }
 
-proc ::persistence::mem::exists_column_p {oid} {
-    variable __latest_idx
-    return [info exists __latest_idx(${oid})]
+proc ::persistence::mem::exists_link_rev_p {rev} {
+    assert { [is_link_rev_p $rev] }
+    variable __idx
+    return [info exists __idx(${rev})]
 }
 
-proc ::persistence::mem::exists_link_p {oid} {
-    variable __latest_idx
-    return [info exists __latest_idx(${oid})]
-}
-
-proc ::persistence::mem::exists_p {oid} {
-    if { [is_link_oid_p $oid] } {
-        return [exists_link_p $oid]
+proc ::persistence::mem::exists_p {rev} {
+    assert { [is_link_rev_p $rev] || [is_column_rev_p $rev] }
+    if { [is_link_rev_p $rev] } {
+        return [exists_link_rev_p $rev]
     } else {
-        return [exists_column_p $oid]
+        return [exists_column_rev_p $rev]
     }
 }
 
-proc ::persistence::mem::exists_supercolumn_p {oid} {
-    variable __latest_idx
+proc ::persistence::mem::exists_supercolumn_p {nodepath} {
+    variable __idx
 
-    return [expr { [array names  __latest_idx "${oid}/*"] ne {} }]
+    return [expr { [array names  __idx "${nodepath}/*"] ne {} }]
 }
 
-proc ::persistence::mem::get_column {oid {codec_conf ""}} {
-    variable __latest_idx
+proc ::persistence::mem::get_column {rev {codec_conf ""}} {
     variable __mem
-
-    set rev $__latest_idx(${oid})
     return $__mem(${rev},data)
 }
 
-proc ::persistence::mem::get_link {oid {codec_conf ""}} {
-    variable __latest_idx
+proc ::persistence::mem::get_link {rev {codec_conf ""}} {
     variable __mem
-
-    set rev $__latest_idx(${oid})
     return [::persistence::get $__mem(${rev},data) $codec_conf]
 
 }
@@ -107,11 +151,8 @@ proc ::persistence::mem::get_link {oid {codec_conf ""}} {
 # exists.
 proc ::persistence::mem::upd_column {oid data {codec_conf ""}} {}
 
-proc ::persistence::mem::get_mtime {oid} {
-    variable __latest_idx
+proc ::persistence::mem::get_mtime {rev} {
     variable __mem
-
-    set rev $__latest_idx(${oid})
     set trans_id $__mem(${rev},trans_id)
     lassign [split_trans_id $trans_id] micros pid n_mutations mtime
     return $mtime
@@ -120,9 +161,11 @@ proc ::persistence::mem::get_mtime {oid} {
 proc ::persistence::mem::set_column {oid data trans_id codec_conf} {
     variable __mem
     variable __cnt
-    variable __latest_idx
     variable __dirty_idx
     variable __trans_list
+    variable __idx
+
+    log mem,set_column,oid=$oid
 
     lassign [split_trans_id $trans_id] micros pid n_mutations mtime
 
@@ -134,8 +177,8 @@ proc ::persistence::mem::set_column {oid data trans_id codec_conf} {
         log "!!! memtable (set_col): oid revision already exists (=${rev})"
     }
 
-    if { [string match *by_reversedomain* $oid] } {
-         log "~~~~~~~~~~~~~ oid=$oid"
+    if { [string match *by_reversedomain* $rev] } {
+         log "~~~~~~~~~~~~~ rev=$rev"
     }
 
     incr __cnt
@@ -147,7 +190,7 @@ proc ::persistence::mem::set_column {oid data trans_id codec_conf} {
 
     set __mem(${rev},oid)           $oid
     set __mem(${rev},data)          $data
-    set __mem(${rev},trans_id) $trans_id
+    set __mem(${rev},trans_id)      $trans_id
     set __mem(${rev},codec_conf)    $codec_conf
     set __mem(${rev},size)          [string bytelength $data]
     set __mem(${rev},index)         $__cnt
@@ -156,12 +199,12 @@ proc ::persistence::mem::set_column {oid data trans_id codec_conf} {
 
     set ext [file extension ${oid}]
     if { $ext eq {.gone} } {
-        set orig_oid [file rootname ${oid}]
-        if { [info exists __latest_idx(${orig_oid})] } {
-            unset __latest_idx(${orig_oid})
-        }
+        # set orig_oid [file rootname ${oid}]
+        # if { [info exists __idx(${orig_oid})] } {
+        #    unset __idx(${orig_oid})
+        #}
     } else {
-        set __latest_idx(${oid}) ${rev}
+        set __idx(${rev}) ${oid}
     }
 
 }
@@ -223,9 +266,9 @@ proc ::persistence::mem::dump {} {
 }
 
 proc ::persistence::mem::printall {} {
-    variable __latest_idx
+    variable __idx
     log ========
-    log [join [lsort [array names __latest_idx]] \n]
+    log [join [lsort [array names __idx]] \n]
     log --------
 }
 

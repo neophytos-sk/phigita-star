@@ -456,26 +456,27 @@ proc ::persistence::orm::exists {where_clause_argv {optionsVar ""}} {
     upvar $optionsVar options
     set_if options(limit) 1
     assert { $options(limit) == 1 }
-    set oid [0or1row $where_clause_argv options]
-    return [expr { $oid ne {} }]
+    set rev [0or1row $where_clause_argv options]
+    return [expr { $rev ne {} }]
 }
 
 # get -
 # * returns the data for a given oid
 # * raises an error if the oid does not exist
 #
-proc ::persistence::orm::get {oid {exists_pVar ""}} {
+proc ::persistence::orm::get {rev {exists_pVar ""}} {
 
     if { $exists_pVar ne {} } {
         upvar $exists_pVar exists_p
     }
 
-    set exists_p [::persistence::exists_p $oid]
+    set exists_p [::persistence::exists_p $rev]
     if { $exists_p } {
-        return [decode [::persistence::get $oid [codec_conf]]]
+        log orm,get,rev=$rev
+        return [decode [::persistence::get $rev [codec_conf]]]
     } else {
         #log alias=[interp alias {} ::persistence::exists_p]
-        error "no such oid (=$oid) in storage system (=mystore)"
+        error "no such rev (=$rev) in storage system (=mystore)"
     }
 }
 
@@ -570,7 +571,7 @@ proc ::persistence::orm::find_by_axis {argv {optionsVar ""}} {
         lassign $argv idxname idxvalue
         set nodepath [to_path_by $idxname $idxvalue]
         set slicelist [::persistence::get_slice $nodepath [array get options]]
-        #log find_by_axis,argc=2,slicelist=$slicelist
+        # log find_by_axis,argc=2,slicelist=$slicelist
         return $slicelist
 
     } elseif { $argc == 1 } {
@@ -578,10 +579,10 @@ proc ::persistence::orm::find_by_axis {argv {optionsVar ""}} {
         lassign $argv idxname
         set nodepath [to_path_by $idxname]
         set row_keys [::persistence::get_multirow_names $nodepath] 
-        #log argc=1,^^^row_keys=$row_keys
+        # log argc=1,^^^row_keys=$row_keys
         if { $row_keys ne {} } {
             set slicelist [::persistence::multiget_slice $nodepath $row_keys [array get options]]
-            #log argc=1,^^^slicelist=$slicelist
+            # log argc=1,^^^slicelist=$slicelist
             return $slicelist
         }
         return
