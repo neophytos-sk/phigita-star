@@ -330,8 +330,8 @@ proc ::persistence::mem::dump {} {
         # remove them from memtable, which is different than a cache
         # in the sense that it only keeps transactions that are in progress
         foreach rev $rev_list {
-            array unset __mem ${rev},*
             array unset __idx ${rev}
+            array unset __mem ${rev},*
         }
 
     }
