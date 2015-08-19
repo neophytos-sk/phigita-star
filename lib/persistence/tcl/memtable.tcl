@@ -46,11 +46,11 @@ proc ::persistence::mem::get_files {nodepath} {
 
     if { [is_column_rev_p $nodepath] || [is_link_rev_p $nodepath] } {
         set pattern "${nodepath}"
-        set rev_names [array names __idx ${pattern}]
+        set revs [array names __idx ${pattern}]
 
     } else {
         set pattern "${nodepath}*"
-        set rev_names [array names __idx ${pattern}]
+        set revs [array names __idx ${pattern}]
     }
 
 
@@ -62,8 +62,8 @@ proc ::persistence::mem::get_files {nodepath} {
     #log __idx=[array names __idx]
     #log rev_names=$rev_names
 
-    array set latest_rev [list]
-    foreach rev $rev_names {
+    set result [list]
+    foreach rev $revs {
         lassign [split $rev "@"] oid micros
 
         set xid $__mem(${rev},xid)
@@ -76,39 +76,9 @@ proc ::persistence::mem::get_files {nodepath} {
             continue 
         }
 
-        # check timestamp based on the oid
-        # (without the .gone suffix)
-        # we exclude deleted oids below
-        set is_gone_p 0
-        set normalized_oid $oid
-        if { [file extension $oid] eq {.gone} } {
-            set is_gone_p 1
-            set normalized_oid [file rootname $oid]
-        }
+        lappend result $rev
 
-        lassign [value_if latest_rev($normalized_name) ""] is_gone_already_p latest_micros
-
-        if { $latest_micros < $micros } {
-            set latest_rev($normalized_oid) [list $is_gone_p $micros]
-        }
     }
-
-    set latest_rev_oids [array names latest_rev]
-
-    # log get_files,latest_rev_oids=$latest_rev_oids
-
-    set result [list]
-    foreach normalized_oid $latest_rev_oids {
-        lassign $latest_rev($normalized_oid) is_gone_p micros
-        if { $is_gone_p } { continue }
-        set rev ${normalized_oid}@${micros}
-        lappend result ${rev}
-    }
-
-    set result [lsort -unique ${result}]
-
-    # log mem,get_files,result=$result
-
     return $result
 
 }
@@ -159,7 +129,7 @@ proc ::persistence::mem::exists_p {rev} {
 proc ::persistence::mem::exists_supercolumn_p {nodepath} {
     variable __idx
 
-    return [expr { [array names  __idx "${nodepath}/*"] ne {} }]
+    return [expr { [array names __idx "${nodepath}/*"] ne {} }]
 }
 
 proc ::persistence::mem::get_column {rev {codec_conf ""}} {
@@ -223,8 +193,8 @@ proc ::persistence::mem::set_column {oid data xid codec_conf} {
 
     set ext [file extension ${oid}]
     if { $ext eq {.gone} } {
-        # set orig_oid [file rootname ${oid}]
-        # if { [info exists __idx(${orig_oid})] } {
+        #set orig_oid [file rootname ${oid}]
+        #if { [info exists __idx(${orig_oid})] } {
         #    unset __idx(${orig_oid})
         #}
     } else {
@@ -259,8 +229,10 @@ proc ::persistence::mem::begin_batch {xid} {
 
 proc ::persistence::mem::end_batch {xid} {
     variable __xid_committed
+    variable __xid_list
     assert { !$__xid_committed($xid) }
     set __xid_committed($xid) 1
+    lappend __xid_list $xid
 }
 
 proc ::persistence::mem::dump {} {
@@ -269,6 +241,7 @@ proc ::persistence::mem::dump {} {
     variable __xid_rev
     variable __xid_list
     variable __xid_committed
+    variable __idx
 
     #set fp [open /tmp/memtable.txt w]
     #puts $fp [join [array names __mem *,data] \n]
@@ -285,10 +258,10 @@ proc ::persistence::mem::dump {} {
             log "cannot fsync transaction (=$xid) that is still in progress"
             continue
         }
-        # log "dumping transaction: $xid"
+        log "dumping transaction: $xid"
         set rev_list [lsort -unique $__xid_rev($xid)]
         foreach rev $rev_list {
-            # log "dumping rev: $rev"
+            log "dumping rev: $rev"
             if { !$__mem(${rev},dirty_p) } {
                 error "mismatch between __xid_rev and __mem data"
             }

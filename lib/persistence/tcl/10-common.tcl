@@ -406,7 +406,7 @@ proc ::persistence::common::end_batch {} {
 }
 
 
-proc ::persistence::common::get_leafs {path} {
+proc ::persistence::common::__get_leafs {path} {
     set subdirs [get_subdirs $path]
     if { $subdirs eq {} } {
         return [get_files $path]
@@ -414,7 +414,7 @@ proc ::persistence::common::get_leafs {path} {
         set result [list]
         foreach subdir_path $subdirs {
             assert { $subdir_path ne $path }
-            foreach oid [get_leafs $subdir_path] {
+            foreach oid [__get_leafs $subdir_path] {
                 lappend result $oid
             }
         }
@@ -422,5 +422,42 @@ proc ::persistence::common::get_leafs {path} {
     }
 }
 
+proc ::persistence::common::get_leafs {path} {
+
+    set revs [__get_leafs $path]
+
+    array set latest_rev [list]
+    foreach rev $revs {
+        lassign [split $rev "@"] oid micros
+
+        # check timestamp based on the oid
+        # (without the .gone suffix)
+        # we exclude deleted oids below
+        set is_gone_p 0
+        set normalized_oid $oid
+        if { [file extension $oid] eq {.gone} } {
+            set is_gone_p 1
+            set normalized_oid [file rootname $oid]
+        }
+
+        lassign [value_if latest_rev($normalized_oid) ""] is_gone_already_p latest_micros
+
+        if { $latest_micros < $micros } {
+            set latest_rev($normalized_oid) [list $is_gone_p $micros]
+        }
+    }
+
+    set latest_rev_oids [array names latest_rev]
+
+    set result [list]
+    foreach normalized_oid $latest_rev_oids {
+        lassign $latest_rev($normalized_oid) is_gone_p micros
+        if { $is_gone_p } { continue }
+        set rev ${normalized_oid}@${micros}
+        lappend result ${rev}
+    }
+    return [lsort -unique $result]
+
+}
 
 

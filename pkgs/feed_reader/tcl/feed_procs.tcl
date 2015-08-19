@@ -1860,14 +1860,25 @@ proc ::feed_reader::resync {} {
 }
 
 
-proc ::feed_reader::sync_feeds {{news_sources ""} {debug_p "0"}} {
+proc ::feed_reader::sync {args} {
+
+    # parse args
+    #
+    getopt::init {
+        {domain ""  {__arg_domain domain}}
+        {debug  ""  {__arg_debug debug_p}}
+    }
+    getopt::getopt $args
+
+    set_if domain ""
+    set_if debug_p 0
 
     variable stoptitles
 
     set feeds_dir [get_package_dir]/feed
     set check_fetch_feed_p 0
-    if { ${news_sources} eq {} } {
-        set news_sources [glob -nocomplain -tails -directory ${feeds_dir} *]
+    if { ${domain} eq {} } {
+        set domain [glob -nocomplain -tails -directory ${feeds_dir} *]
         set check_fetch_feed_p 1
     }
 
@@ -1875,10 +1886,10 @@ proc ::feed_reader::sync_feeds {{news_sources ""} {debug_p "0"}} {
 
     array set round_stats [list round_timestamp ${round}]
 
-    progress_init [llength ${news_sources}]
+    progress_init [llength ${domain}]
 
     set cur 0
-    foreach news_source ${news_sources} {
+    foreach news_source ${domain} {
 
         set news_source_dir ${feeds_dir}/${news_source}
 

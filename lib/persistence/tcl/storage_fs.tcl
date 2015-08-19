@@ -409,42 +409,12 @@ if { [setting_p "mvcc"] } {
 
         set rev_names [glob -tails -nocomplain -types "f l d" -directory ${dir} "*@*"]
 
-        array set latest_rev [list]
-        foreach rev_name $rev_names {
-            lassign [split $rev_name "@"] name micros
-
-            # check timestamp based on the oid
-            # (without the .gone suffix)
-            # we exclude deleted oids below
-            set is_gone_p 0
-            set normalized_name $name
-            if { [file extension $name] eq {.gone} } {
-                set is_gone_p 1
-                set normalized_name [file rootname $name]
-            }
-
-            lassign [value_if latest_rev($normalized_name) ""] is_gone_already_p latest_micros
-
-            if { $latest_micros < $micros } {
-                set latest_rev($normalized_name) [list $is_gone_p $micros]
-            }
-        }
-
-        set latest_rev_names [array names latest_rev]
-
-        # log get_files,latest_rev_names=$latest_rev_names
-
         set result [list]
-        foreach normalized_name $latest_rev_names {
-            lassign $latest_rev($normalized_name) is_gone_p micros
-            if { $is_gone_p } { continue }
-            set rev [file join ${nodepath} ${normalized_name}]@${micros}
-            lappend result ${rev}
+        foreach rev_name $rev_names {
+            set rev [file join ${nodepath} ${rev_name}]
+            lappend result $rev
         }
-
-        # log fs,get_files,result=$result
-
-        return [lsort ${result}]
+        return $result
 
     }
 
@@ -460,7 +430,7 @@ if { [setting_p "mvcc"] } {
         foreach name $names {
             lappend result ${path}/${name}
         }
-        return [lsort ${result}]
+        return $result
     }
 
 }

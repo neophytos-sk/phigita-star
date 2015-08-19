@@ -65,7 +65,7 @@ if { ${argc} < 1 } {
 
     if { ${cmd} eq {sync} && ${argc} >= 1 } {
 
-        ::feed_reader::sync_feeds [lrange ${argv} 1 end]
+        ::feed_reader::sync {*}[lrange ${argv} 1 end]
 
     } elseif { ${cmd} eq {resync} && ${argc} == 1 } {
 
