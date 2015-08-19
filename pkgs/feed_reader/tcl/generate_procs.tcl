@@ -4,7 +4,7 @@ proc ::feed_reader::generate_url_fmt {anchor_nodes feed_url} {
     #log feed_url=$feed_url
 
     set feed_url [url normalize ${feed_url}]
-    set domain [::util::domain_from_url ${feed_url}]
+    set domain [url domain ${feed_url}]
     
     array set url_shape [list]
     set max 0
@@ -70,7 +70,7 @@ proc ::feed_reader::generate_url_fmt {anchor_nodes feed_url} {
     log [join [map {x y} [array get count_matched] {list $x $y}] "\n"]
     log -----
     log [join [map {x y} [array get intersection_url] {set y}] "\n"]
-    #log [array get intersection_url]
+    log intersection_url=[array get intersection_url]
 
     set sorted [lsort -decreasing -integer -index 1 [map {x y} [array get count_matched] {list $x $y}]] 
     set chosen_url_fmt [lindex [lindex $sorted 0] 0]
