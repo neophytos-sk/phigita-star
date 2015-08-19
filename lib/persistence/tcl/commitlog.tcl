@@ -250,7 +250,7 @@ proc ::persistence::commitlog::process {{bootstrap_p "0"}} {
     set pos1 [::util::io::read_int $fp]
     set pos2 [::util::io::read_int $fp]
 
-    log "last_checkpoint (pos1): $pos1 --- last_logpoint (pos2): $pos2"
+    # log "last_checkpoint (pos1): $pos1 --- last_logpoint (pos2): $pos2"
 
     set mem_p [setting_p "memtable"]
 

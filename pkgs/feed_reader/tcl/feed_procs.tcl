@@ -839,7 +839,7 @@ proc ::feed_reader::rm {args} {
     set slicelist [::newsdb::news_item_t find $where_clause]
 
     foreach rev $slicelist {
-        log "rm rev=$rev"
+        # log "rm rev=$rev"
         ::newsdb::news_item_t delete $rev
     }
 

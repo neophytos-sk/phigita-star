@@ -179,10 +179,6 @@ proc ::persistence::mem::set_column {oid data xid codec_conf} {
         log "!!! memtable (set_col): oid revision already exists (=${rev})"
     }
 
-    if { [string match *by_reversedomain* $rev] } {
-         log "~~~~~~~~~~~~~ rev=$rev"
-    }
-
     incr __cnt
 
     set __mem(${rev},oid)           $oid
@@ -258,10 +254,10 @@ proc ::persistence::mem::dump {} {
             log "cannot fsync transaction (=$xid) that is still in progress"
             continue
         }
-        log "dumping transaction: $xid"
+        # log "dumping transaction: $xid"
         set rev_list [lsort -unique $__xid_rev($xid)]
         foreach rev $rev_list {
-            log "dumping rev: $rev"
+            # log "dumping rev: $rev"
             if { !$__mem(${rev},dirty_p) } {
                 error "mismatch between __xid_rev and __mem data"
             }
