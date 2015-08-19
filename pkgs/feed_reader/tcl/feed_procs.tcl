@@ -677,7 +677,7 @@ proc ::feed_reader::fetch_and_write_item {timestamp link title_in_feed feedVar} 
         || ( ${can_resync_p} && [set resync_p [auto_resync_p feed ${normalized_link}]] ) 
     } {
 
-        set item(__resync_p) $exists_p
+        set item(__resync_p) $resync_p
 
         set errorcode [fetch_item ${link} ${title_in_feed} feed item info]
         if { ${errorcode} } {
@@ -756,26 +756,10 @@ proc ::feed_reader::fetch_and_write_item {timestamp link title_in_feed feedVar} 
 }
 
 
-proc ::feed_reader::get_base_dir {} {
-    return {/web/data/mystore/newsdb}
-}
-
 proc ::feed_reader::get_urlsha1 {link} {
     set urlsha1 [::sha1::sha1 -hex ${link}]
     return ${urlsha1}
 }
-
-proc ::feed_reader::get_crawler_dir {} {
-    return [get_base_dir]/crawler
-}
-
-
-proc ::feed_reader::get_contentsha1_to_label_dir {} {
-    # multiple urls may have the same content
-    return [get_base_dir]/contentsha1_to_label
-}
-
-
 
 
 proc ::feed_reader::compare_mtime {file_or_dir1 file_or_dir2} {
@@ -842,6 +826,8 @@ proc ::feed_reader::rm {args} {
         # log "rm rev=$rev"
         ::newsdb::news_item_t delete $rev
     }
+
+    log "[llength $slicelist] records removed"
 
 }
 
@@ -1729,10 +1715,11 @@ proc ::feed_reader::write_item {timeval normalized_link feedVar itemVar is_revis
     set where_clause [list]
     lappend where_clause [list contentsha1 = $contentsha1]
     lappend where_clause [list urlsha1 = $urlsha1]
-    set news_item_oid [::newsdb::news_item_t 0or1row $where_clause]
+    set exact_match_p [::newsdb::news_item_t exists $where_clause]
 
 
-    if { $news_item_oid ne {} } {
+    if { $exact_match_p } {
+        log exact_match_p,rev=[::newsdb::news_item_t 0or1row $where_clause]
         # revision content is the same as a previous one
         return 0
     }
@@ -1742,7 +1729,6 @@ proc ::feed_reader::write_item {timeval normalized_link feedVar itemVar is_revis
     # checks if we have this content from a different (news item) url
     set where_clause [list [list contentsha1 = $contentsha1]]
     set is_copy_p [::newsdb::news_item_t exists $where_clause]
-
 
     if { !$is_copy_p } {
 

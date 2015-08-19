@@ -35,7 +35,6 @@ proc ::feed_reader::stats {{news_sources ""}} {
     puts [format "%30s %7s %10s %8s %15s %7s" \
         --------- "-------"  "----------" "--------" "-----------" "------"]
 
-    set crawler_dir [get_crawler_dir]
     foreach news_source $news_sources {
 
         set feed_files [get_feed_files ${news_source}]
