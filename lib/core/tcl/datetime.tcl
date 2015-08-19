@@ -1,6 +1,49 @@
-namespace eval ::dt {;}
+namespace eval ::dt {
+    namespace ensemble create -subcommands {resolve}
+}
+proc ::dt::resolve {base_dt other_dt} {
 
-proc ::dt::timestamp_to_age {timeval} {
+    set result_dt ""
+
+    if { $other_dt ne {} } {
+
+        lassign [split $other_dt {T}] other_dt_date other_dt_time
+
+        if { ${other_dt_time} ne {0000} } {
+            # up to 15mins difference in time it is considered to be
+            # fine to take into account servers at different timezones
+            #
+            # abs is to account for news sources that set a time in the
+            # future be it due to timezone difference or deliberately
+            #
+            set base_timeval [clock scan $base_dt -format "%Y%m%dT%H%M"]
+            set other_timeval [clock scan $other_dt -format "%Y%m%dT%H%M"]
+            if { $base_timeval - $other_timeval > 900 } {
+                set result_dt $other_dt
+            } else {
+                # use computed date for sorting
+                set result_dt $base_dt
+            }
+        } else {
+            # if other_dt.time eq {0000}
+            lassign [split $base_dt {T}] base_dt_date base_dt_time
+            if { ${other_dt_date} < ${base_dt_date} } {
+                set result_dt $other_dt
+            } else {
+                # use computed date for sorting
+                set result_dt $base_dt
+            }
+        }
+    } else {
+        # use computed date for sorting
+        set result_dt $base_dt
+    }
+
+    return $result_dt
+
+}
+
+proc ::dt::timestamp_to_age {timeval {short_form_p 1}} {
 
     set now [clock seconds]
     set secs [expr { $now - $timeval }]
@@ -13,26 +56,31 @@ proc ::dt::timestamp_to_age {timeval} {
     set secs_in_minutes "60"
 
     set age ""
-    foreach {secs_in_unit singular_form plural_form} {
-        31536000 year years
-        2592000 month months
-        604800 week weeks
-        86400 day days
-        3600 hour hours
-        60 min mins
+    foreach {secs_in_unit short_form singular_form plural_form} {
+        31536000 y year years
+        2592000 mo month months
+        604800 w week weeks
+        86400 d day days
+        3600 h hour hours
+        60 m min mins
     } {
         if { $secs > $secs_in_unit } {
             if { $age ne {} } {
                 append age " "
             }
             set num [expr { int ($secs / $secs_in_unit) }]
-            append age ${num} " "
-            if { $num == 1 } {
-                append age $singular_form
+            if { $short_form_p } {
+                append age ${num}
+                append age $short_form
             } else {
-                append age $plural_form
+                append age ${num} " "
+                if { $num == 1 } {
+                    append age $singular_form
+                } else {
+                    append age $plural_form
+                }
             }
-            set timeval [expr { $secs / $num }]
+            set secs [expr { $secs - ($num * $secs_in_unit) }]
         }
     }
 

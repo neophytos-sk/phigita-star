@@ -421,33 +421,32 @@ proc ::persistence::orm::update {oid new_itemVar {optionsVar ""}} {
 # delete -
 # * deletes the record with the given oid
 #
-proc ::persistence::orm::delete {oid {exists_pVar ""}} {
-    if { $exists_pVar ne {} } {
-        upvar $exists_pVar exists_p
-    }
+proc ::persistence::orm::delete {rev} {
 
-    set exists_p [::persistence::exists_p $oid]
+    set exists_p [::persistence::exists_p $rev]
     if { $exists_p } {
 
-        array set item [get $oid]
+        array set item [get $rev]
 
         variable [namespace __this]::__idxnames
         variable [namespace __this]::pk
 
+        lassign [split $rev {@}] oid micros
         foreach idxname $__idxnames {
             set row_key [to_row_key_by $idxname item]
             set to_delete_oid [to_path_by $idxname $row_key {*}$item($pk)]
+            set to_delete_rev ${to_delete_oid}@${micros}
 
             if { $idxname eq "by_$pk" } {
-                ::persistence::del_column $to_delete_oid
+                ::persistence::del_column $to_delete_rev
             } else {
-                ::persistence::del_link $to_delete_oid
+                ::persistence::del_link $to_delete_rev
             }
         }
 
 
     } else {
-        error "no such oid (=$oid) in storage system (=mystore)"
+        error "no such rev (=$rev) in storage system (=mystore)"
     }
 
 }

@@ -165,7 +165,6 @@ proc ::persistence::common::sort {
     set sortlist [list]
     set i 0
     foreach rev $slicelist {
-        log sort,rev=$rev
         array set item [$type_nsp get ${rev}]
         lappend sortlist [list $i $item($attname) $rev]
         incr i
@@ -223,9 +222,9 @@ proc ::persistence::common::__exec_options {slicelistVar options} {
 }
 
 proc ::persistence::common::split_xid {xid} {
-    lassign [split $xid {.}] micros pid n_mutations
+    lassign [split $xid {.}] micros pid n_mutations type
     set mtime [expr { int( ${micros} / (10**6) ) }]
-    return [list $micros $pid $n_mutations $mtime]
+    return [list $micros $pid $n_mutations $mtime $type]
 }
 
 proc ::persistence::common::ins_column {oid data {codec_conf ""}} {
@@ -236,9 +235,24 @@ proc ::persistence::common::ins_column {oid data {codec_conf ""}} {
 }
 
 proc ::persistence::common::del_column {rev} {
-    assert { [is_column_rev_p $rev] || [is_link_rev_p $rev] }
-    ins_column ${rev}.gone ""
+    assert { [is_column_rev_p $rev] || [is_link_rev_p $rev] } {
+        log failed,del_column,rev=$rev
+    }
+    lassign [split $rev {@}] oid micros
+    set new_rev "${oid}.gone@${micros}"
+    ins_column ${new_rev} ""
 }
+
+proc ::persistence::common::del_link {rev} {
+    # TODO: DecrRefCount
+    assert { [is_column_rev_p $rev] || [is_link_rev_p $rev] } {
+        log failed,del_column,rev=$rev
+    }
+    lassign [split $rev {@}] oid micros
+    set new_rev "${oid}.link@${micros}"
+    del_column ${new_rev}
+}
+
 
 proc ::persistence::common::ins_link {oid target_oid {codec_conf ""}} {
     # TODO: IncrRefCount
@@ -253,18 +267,13 @@ proc ::persistence::common::ins_link {oid target_oid {codec_conf ""}} {
     set_column ${oid}.link ${target_rev} ${xid} ${codec_conf}
 }
 
-proc ::persistence::common::del_link {oid} {
-    # TODO: DecrRefCount
-    del_column ${oid}.link
-}
-
 proc ::persistence::common::get_slice {nodepath {options ""}} {
     assert { [is_row_oid_p $nodepath] }
     lassign [split_oid $nodepath] ks cf_axis row_key
     set row_path [join_oid ${ks} ${cf_axis} ${row_key}]
     set slicelist [::persistence::get_leafs ${row_path}]
-    # log !!!!!!!!!get_slice,nodepath=$nodepath
-    # log !!!!!!!!!get_slice,slicelist=$slicelist
+    #log !!!!!!!!!get_slice,nodepath=$nodepath
+    #log !!!!!!!!!get_slice,slicelist=$slicelist
     __exec_options slicelist $options
     return ${slicelist}
 }
@@ -362,13 +371,13 @@ proc ::persistence::common::predicate=in_idxpath {slicelistVar parent_oid {predi
 
 }
 
-proc ::persistence::common::new_transaction_id {} {
+proc ::persistence::common::new_transaction_id {type} {
     variable ::persistence::__n_mutations
 
     set micros [clock microseconds]
     set pid [pid] ;# process id
     incr __n_mutations
-    return ${micros}.${pid}.${__n_mutations}
+    return ${micros}.${pid}.${__n_mutations}.${type}
 }
 
 proc ::persistence::common::cur_transaction_id {} {
@@ -376,22 +385,24 @@ proc ::persistence::common::cur_transaction_id {} {
     if { $__xid_stack ne {} } {
         return [lindex $__xid_stack end]
     } else {
-        return [new_transaction_id]
+        return [new_transaction_id "single"]
     }
 }
 
 proc ::persistence::common::begin_batch {} {
     variable ::persistence::__xid_stack
-    lappend __xid_stack [set xid [new_transaction_id]]
-    log "begin_batch $xid"
+    lappend __xid_stack [set xid [new_transaction_id "batch"]]
+    # log "begin_batch $xid"
     return $xid
 }
 
 proc ::persistence::common::end_batch {} {
     variable ::persistence::__xid_stack
     assert { $__xid_stack ne {} }
-    log "end_batch [lindex $__xid_stack end]"
+    set xid [lindex $__xid_stack end]
+    # log "end_batch $xid"
     set __xid_stack [lreplace $__xid_stack end end]
+    return $xid
 }
 
 

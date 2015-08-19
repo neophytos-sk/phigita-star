@@ -90,6 +90,16 @@ proc ::persistence::init {} {
 
         if { [setting_p "memtable"] } {
 
+            wrap_proc ::persistence::begin_batch {} {
+                set xid [call_orig]
+                ::persistence::mem::begin_batch $xid
+            }
+
+            wrap_proc ::persistence::end_batch {} {
+                set xid [call_orig]
+                ::persistence::mem::end_batch $xid
+            }
+
             wrap_proc ::persistence::define_cf {ks cf_axis} {
                 call_orig $ks $cf_axis
                 ::persistence::mem::define_cf $ks $cf_axis

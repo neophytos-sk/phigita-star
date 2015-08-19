@@ -63,8 +63,9 @@ proc ::persistence::fs::get_rev_filename {rev} {
     return [file normalize ${base_dir}/DATA/${rev}]
 }
 
-proc ::persistence::fs::get_mtime {oid} {
-    return [file mtime [get_oid_filename $oid]]
+proc ::persistence::fs::get_mtime {rev} {
+    assert { [is_column_rev_p $rev] || [is_link_rev_p $rev] }
+    return [file mtime [get_rev_filename $rev]]
 }
 
 
@@ -411,8 +412,21 @@ if { [setting_p "mvcc"] } {
         array set latest_rev [list]
         foreach rev_name $rev_names {
             lassign [split $rev_name "@"] name micros
-            if { [value_if latest_rev($name) "0"] < $micros } {
-                set latest_rev($name) $micros
+
+            # check timestamp based on the oid
+            # (without the .gone suffix)
+            # we exclude deleted oids below
+            set is_gone_p 0
+            set normalized_name $name
+            if { [file extension $name] eq {.gone} } {
+                set is_gone_p 1
+                set normalized_name [file rootname $name]
+            }
+
+            lassign [value_if latest_rev($normalized_name) ""] is_gone_already_p latest_micros
+
+            if { $latest_micros < $micros } {
+                set latest_rev($normalized_name) [list $is_gone_p $micros]
             }
         }
 
@@ -421,14 +435,14 @@ if { [setting_p "mvcc"] } {
         # log get_files,latest_rev_names=$latest_rev_names
 
         set result [list]
-        foreach name $latest_rev_names {
-            if { [file extension $name] eq {.gone} } { continue }
-            set micros $latest_rev($name)
-            set rev [file join ${nodepath} ${name}]@${micros}
+        foreach normalized_name $latest_rev_names {
+            lassign $latest_rev($normalized_name) is_gone_p micros
+            if { $is_gone_p } { continue }
+            set rev [file join ${nodepath} ${normalized_name}]@${micros}
             lappend result ${rev}
         }
 
-        # log get_files,result=$result
+        # log fs,get_files,result=$result
 
         return [lsort ${result}]
 

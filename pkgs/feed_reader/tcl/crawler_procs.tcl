@@ -47,9 +47,9 @@ proc ::feed_reader::stats {{news_sources ""}} {
 
             set where_clause [list]
             lappend where_clause [list name = [list $feed_name "ALL"]]
-            set oid [::crawldb::stat_info_t 0or1row $where_clause]
-            if { $oid eq {} } { continue }
-            set data [::crawldb::stat_info_t get $oid]
+            set rev [::crawldb::stat_info_t 0or1row $where_clause]
+            if { $rev eq {} } { continue }
+            set data [::crawldb::stat_info_t get $rev]
             array set stats_item $data
 
             set reference_interval 86400
@@ -62,7 +62,7 @@ proc ::feed_reader::stats {{news_sources ""}} {
             set pretty_interval [::util::pretty_interval ${interval}]
             puts [format "%30s %7.1f %10.1f %8s %15s %7s" \
                 ${feed_name} ${pr} ${num_times} ${pretty_interval} \
-                "[dt::timestamp_to_age $stats_item(last_update)] ago" \
+                [dt::timestamp_to_age $stats_item(last_update)] \
                 $stats_item(FETCH_AND_WRITE)]
 
             array unset stats_item
@@ -309,16 +309,16 @@ proc ::feed_reader::fetch_feed_p {feed_name timestamp {coeff "0.3"}} {
         set where_clause [list]
         lappend where_clause [list name = [list $feed_name "ALL"]]
 
-        set oid [::crawldb::stat_info_t 0or1row $where_clause]
+        set rev [::crawldb::stat_info_t 0or1row $where_clause]
         
-        if { $oid eq {} } {
+        if { $rev eq {} } {
             # say yes (fetch_feed_p) to start collecting 
             # stats for the given feed_name and timemark
             return 1
         }
 
-        array set stats_item [::crawldb::stat_info_t get ${oid}]
-        set last_sync [::persistence::get_mtime $oid]
+        array set stats_item [::crawldb::stat_info_t get ${rev}]
+        set last_sync [::persistence::get_mtime $rev]
 
         set reference_interval 3600
         set max_times 4
@@ -336,16 +336,16 @@ proc ::feed_reader::fetch_feed_p {feed_name timestamp {coeff "0.3"}} {
     set where_clause [list]
     lappend where_clause [list name = [list $feed_name "ALL"]]
 
-    set oid [::crawldb::stat_info_t 0or1row $where_clause]
+    set rev [::crawldb::stat_info_t 0or1row $where_clause]
     
-    if { $oid eq {} } {
+    if { $rev eq {} } {
         # say yes (fetch_feed_p) to start collecting 
         # stats for the given feed_name and timemark
         return 1
     }
     
-    array set stats_item [::crawldb::stat_info_t get ${oid}]
-    set last_sync [::persistence::get_mtime ${oid}]
+    array set stats_item [::crawldb::stat_info_t get ${rev}]
+    set last_sync [::persistence::get_mtime ${rev}]
 
     set reference_interval 86400
     set max_times 96
@@ -368,9 +368,9 @@ proc ::feed_reader::incr_array_in_column {feed_name timemark incrementVar} {
     set where_clause [list]
     lappend where_clause [list name = [list $feed_name "ALL"]]
 
-    set oid [::crawldb::stat_info_t 0or1row $where_clause] 
-    if { $oid ne {} } {
-        set data [::crawldb::stat_info_t get $oid]
+    set rev [::crawldb::stat_info_t 0or1row $where_clause] 
+    if { $rev ne {} } {
+        set data [::crawldb::stat_info_t get $rev]
     }
 
     array set stats_item [list]
@@ -380,9 +380,9 @@ proc ::feed_reader::incr_array_in_column {feed_name timemark incrementVar} {
         incr stats_item(${name}) $increment(${name})
     }
 
-    if { $oid ne {} } {
+    if { $rev ne {} } {
         array set stats_item $data
-        ::crawldb::stat_info_t update $oid stats_item
+        ::crawldb::stat_info_t update $rev stats_item
     } else {
         set stats_item(feed_name) $feed_name
         set stats_item(timemark) $timemark

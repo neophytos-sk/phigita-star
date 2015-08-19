@@ -669,17 +669,15 @@ proc ::feed_reader::fetch_and_write_item {timestamp link title_in_feed feedVar} 
 
     array set item [list]
     array unset item
-
+    
+    set exists_p [exists_item ${normalized_link}] 
     set resync_p 0
     if { 
-        ![exists_item ${normalized_link}] 
+        !$exists_p
         || ( ${can_resync_p} && [set resync_p [auto_resync_p feed ${normalized_link}]] ) 
     } {
 
-        # log resync_p=$resync_p
-
-
-        set item(__resync_p) 1
+        set item(__resync_p) $exists_p
 
         set errorcode [fetch_item ${link} ${title_in_feed} feed item info]
         if { ${errorcode} } {
@@ -837,13 +835,12 @@ proc ::feed_reader::rm {args} {
         lappend where_clause [list urlsha1 = $urlsha1]
     }
 
-    puts where_clause=$where_clause
-
+    # log where_clause=$where_clause
     set slicelist [::newsdb::news_item_t find $where_clause]
 
-    foreach oid $slicelist {
-        #log "rm oid=$oid"
-        ::newsdb::news_item_t delete $oid
+    foreach rev $slicelist {
+        log "rm rev=$rev"
+        ::newsdb::news_item_t delete $rev
     }
 
 }
@@ -904,7 +901,6 @@ proc ::feed_reader::ls {args} {
     #set options(order_by) "timestamp decreasing integer"
     set options(offset) $offset
     set options(limit) $limit
-    set options(expand_fn) "latest_mtime"
 
     set slicelist [::newsdb::news_item_t find $where_clause options]
 
@@ -1713,18 +1709,17 @@ proc ::feed_reader::show_item_from_url {link} {
     print_item item
 }
 
-proc ::feed_reader::write_item {timestamp normalized_link feedVar itemVar resync_p} {
+proc ::feed_reader::write_item {timeval normalized_link feedVar itemVar is_revision_p} {
     upvar $feedVar feed
     upvar $itemVar item
 
-    #set timestamp [clock seconds]
-    set timestamp_datetime [clock format ${timestamp} -format "%Y%m%dT%H%M"]
+    set base_dt [clock format ${timeval} -format "%Y%m%dT%H%M"]
     set urlsha1 [::sha1::sha1 -hex $normalized_link]
 
     array set sync_info_item [list \
         urlsha1 $urlsha1 \
-        datetime $timestamp_datetime \
-        datetime_urlsha1 [list $timestamp_datetime $urlsha1]]
+        datetime $base_dt \
+        datetime_urlsha1 [list $base_dt $urlsha1]]
 
     ::crawldb::sync_info_t insert sync_info_item
 
@@ -1734,118 +1729,56 @@ proc ::feed_reader::write_item {timestamp normalized_link feedVar itemVar resync
     set where_clause [list]
     lappend where_clause [list contentsha1 = $contentsha1]
     lappend where_clause [list urlsha1 = $urlsha1]
-    set news_item_oid [::newsdb::news_item_t find $where_clause]
+    set news_item_oid [::newsdb::news_item_t 0or1row $where_clause]
 
 
     if { $news_item_oid ne {} } {
         # revision content is the same as a previous one
-        # no need to overwrite the revisionfilename,
-        # nor the contentfilename and indexfilename
-        #
-        # note that if were keeping track of metadata changes
-        # then it would make sense to overwrite the logfilename
-        # and the urlfilename
         return 0
-    }
-
-    set item(is_revision_p) 0
-    if { ${resync_p} } {
-        set item(is_revision_p) 1
-        set item(first_sync) [get_first_sync_timestamp normalized_link]
-        set item(last_sync) ${timestamp}
     }
 
     # TODO: each image,attachment,video,etc should get its own content file in the future
 
-    # TODO: query for news_item_t with the given contentsha1
-    # as we might have deleted the news_item, in that case,
-    # it is not a copy, which is the purpose behind this query
+    # checks if we have this content from a different (news item) url
     set where_clause [list [list contentsha1 = $contentsha1]]
-    set content_item_oid [::newsdb::content_item_t 0or1row $where_clause]
-
-    set item(is_copy_p) 0
-    if { $content_item_oid ne {} } {
-        # we have seen this item before from a different url
-        set item(is_copy_p) 1
-    } else {
-
-        array set content_item [list \
-            contentsha1 $contentsha1 \
-            title $item(title)       \
-            body $item(body)]
-
-        #assert { $content_item(title) ne {} } 
-
-        ::newsdb::content_item_t insert content_item
-    }
+    set is_copy_p [::newsdb::news_item_t exists $where_clause]
 
 
-    set item(timestamp) ${timestamp}
-    set item(urlsha1) ${urlsha1}
-    set item(contentsha1) ${contentsha1}
+    if { !$is_copy_p } {
 
-    set reversedomain [reversedotted [url domain ${normalized_link}]]
+        # we might have deleted the news_item record, yet the content record
+        # might still exist, we check which case it is and act accordingly
+        set content_exists_p [::newsdb::content_item_t exists $where_clause]
 
+        if { !$content_exists_p } {
 
-    array unset item body
+            array set content_item [list \
+                contentsha1 $contentsha1 \
+                title $item(title)       \
+                body $item(body)]
 
-
-
-
-    set item(sort_date) ""
-
-    if { [value_if item(date) ""] ne {} } {
-
-        lassign [split $item(date) {T}] date time
-
-        if { ${time} ne {0000} } {
-
-            # up to 15mins difference in time it is considered to be
-            # fine to take into account servers at different timezones
-            #
-            # abs is to account for news sources that set a time in the
-            # future be it due to timezone difference or deliberately
-            #
-
-            set timeval [clock scan $item(date) -format "%Y%m%dT%H%M"]
-
-            if { ${timestamp} - ${timeval} > 900 } {
-
-                set item(sort_date) $item(date)
-                # puts "item(date)=$item(date) is older than 15 mins - using that date for sorting..."
-
-            } else {
-
-                # otherwise, including item(date) in the future,
-                # use computed date for sorting
-
-                set item(sort_date) $timestamp_datetime
-            }
-
-
-        } else {
-
-            # if time eq {0000} and
-            set timestamp_date [clock format $timestamp -format "%Y%m%d"]
-            if { ${date} < ${timestamp_date} } {
-                set item(sort_date) $item(date)
-            } else {
-                # use computed date for sorting
-                set item(sort_date) $timestamp_datetime
-            }
+            ::newsdb::content_item_t insert content_item
 
         }
 
-    } else {
+    }
 
-        # use computed date for sorting
-        set item(sort_date) $timestamp_datetime
+    array unset item body
 
+    set item(timestamp) ${timeval}
+    set item(urlsha1) ${urlsha1}
+    set item(contentsha1) ${contentsha1}
+    set item(sort_date) [dt resolve $base_dt [value_if item(date) ""]]
+    set item(is_copy_p) $is_copy_p
+    set item(is_revision_p) $is_revision_p
+    if { $is_revision_p } {
+        set item(first_sync) [get_first_sync_timestamp normalized_link]
+        set item(last_sync) ${timeval}
     }
 
     ::newsdb::news_item_t insert item
 
-     return 1
+    return 1
 }
 
 proc ::feed_reader::resync_item {oid} {

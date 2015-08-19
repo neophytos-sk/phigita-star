@@ -20,6 +20,9 @@ namespace eval ::persistence::mem {
 
     variable __xid_list [list]
 
+    variable __xid_committed
+    array set __xid_committed [list]
+
     namespace import ::persistence::common::split_xid
 
     namespace path "::persistence ::persistence::common"
@@ -29,11 +32,16 @@ namespace eval ::persistence::mem {
 proc ::persistence::mem::init {} {}
 proc ::persistence::mem::define_cf {ks cf_axis} {}
 
+proc ::persistence::mem::visible_p {xid_micros} {
+    return 1
+}
+
 proc ::persistence::mem::get_files {nodepath} {
 
     # log get_files,path=$nodepath
 
     variable __idx
+    variable __mem
     
 
     if { [is_column_rev_p $nodepath] || [is_link_rev_p $nodepath] } {
@@ -55,12 +63,33 @@ proc ::persistence::mem::get_files {nodepath} {
     #log rev_names=$rev_names
 
     array set latest_rev [list]
-    foreach rev_name $rev_names {
-        log rev_name=$rev_name
-        # set rev_name [string range $rev_name $len end]
-        lassign [split $rev_name "@"] oid micros
-        if { [value_if latest_rev($oid) "0"] < $micros } {
-            set latest_rev($oid) $micros
+    foreach rev $rev_names {
+        lassign [split $rev "@"] oid micros
+
+        set xid $__mem(${rev},xid)
+
+        set committed_p [value_if __xid_committed($xid) "0"]
+        if { !$committed_p } { 
+            # TODO: 
+            #   check for revs that qualify 
+            #   from transactions in progress 
+            continue 
+        }
+
+        # check timestamp based on the oid
+        # (without the .gone suffix)
+        # we exclude deleted oids below
+        set is_gone_p 0
+        set normalized_oid $oid
+        if { [file extension $oid] eq {.gone} } {
+            set is_gone_p 1
+            set normalized_oid [file rootname $oid]
+        }
+
+        lassign [value_if latest_rev($normalized_name) ""] is_gone_already_p latest_micros
+
+        if { $latest_micros < $micros } {
+            set latest_rev($normalized_oid) [list $is_gone_p $micros]
         }
     }
 
@@ -69,16 +98,16 @@ proc ::persistence::mem::get_files {nodepath} {
     # log get_files,latest_rev_oids=$latest_rev_oids
 
     set result [list]
-    foreach oid $latest_rev_oids {
-        if { [file extension $oid] eq {.gone} } { continue }
-        set micros $latest_rev($oid)
-        set rev ${oid}@${micros}
+    foreach normalized_oid $latest_rev_oids {
+        lassign $latest_rev($normalized_oid) is_gone_p micros
+        if { $is_gone_p } { continue }
+        set rev ${normalized_oid}@${micros}
         lappend result ${rev}
     }
 
     set result [lsort -unique ${result}]
 
-    # log get_files,result=$result
+    # log mem,get_files,result=$result
 
     return $result
 
@@ -163,11 +192,14 @@ proc ::persistence::mem::set_column {oid data xid codec_conf} {
     variable __cnt
     variable __xid_rev
     variable __xid_list
+    variable __xid_committed
     variable __idx
 
     # log mem,set_column,oid=$oid
 
-    lassign [split_xid $xid] micros pid n_mutations mtime
+    lassign [split_xid $xid] micros pid n_mutations mtime xid_type
+
+    # log mem,set_column,xid=$xid
 
     set rev "${oid}@${micros}"
 
@@ -182,11 +214,6 @@ proc ::persistence::mem::set_column {oid data xid codec_conf} {
     }
 
     incr __cnt
-
-    if { ![info exists __xid_rev(${xid})] } {
-        lappend __xid_list $xid
-    }
-    lappend __xid_rev(${xid}) $rev
 
     set __mem(${rev},oid)           $oid
     set __mem(${rev},data)          $data
@@ -204,6 +231,36 @@ proc ::persistence::mem::set_column {oid data xid codec_conf} {
         set __idx(${rev}) ${oid}
     }
 
+    # __xid_rev
+    lappend __xid_rev(${xid}) $rev
+
+    # __xid_committed
+    if { $xid_type eq {batch} } {
+        # assert { [info exists __xid_committed($xid)] }
+        set __xid_committed($xid) 0
+    } elseif { $xid_type eq {single} } {
+        set __xid_committed($xid) 1
+    } else {
+        error "unknown transaction type"
+    }
+
+    # __xid_list
+    if { $__xid_committed($xid) } {
+        lappend __xid_list $xid
+    }
+
+}
+
+proc ::persistence::mem::begin_batch {xid} {
+    variable __xid_committed
+    assert { ![info exists __xid_committed($xid)] }
+    set __xid_committed($xid) ""
+}
+
+proc ::persistence::mem::end_batch {xid} {
+    variable __xid_committed
+    assert { !$__xid_committed($xid) }
+    set __xid_committed($xid) 1
 }
 
 proc ::persistence::mem::dump {} {
@@ -211,6 +268,7 @@ proc ::persistence::mem::dump {} {
     variable __mem
     variable __xid_rev
     variable __xid_list
+    variable __xid_committed
 
     #set fp [open /tmp/memtable.txt w]
     #puts $fp [join [array names __mem *,data] \n]
@@ -220,9 +278,15 @@ proc ::persistence::mem::dump {} {
     #log __xid_rev=[array names __dirty_idx]
 
     set count 0
-    foreach __xid $__xid_list {
-        # log "dumping transaction: $__xid"
-        set rev_list [lsort -unique $__xid_rev($__xid)]
+    foreach xid $__xid_list {
+        # log "dumping xid (=$xid)"
+        set committed_p [value_if __xid_committed($xid) "0"]
+        if { !$committed_p } {
+            log "cannot fsync transaction (=$xid) that is still in progress"
+            continue
+        }
+        # log "dumping transaction: $xid"
+        set rev_list [lsort -unique $__xid_rev($xid)]
         foreach rev $rev_list {
             # log "dumping rev: $rev"
             if { !$__mem(${rev},dirty_p) } {
@@ -231,10 +295,10 @@ proc ::persistence::mem::dump {} {
 
             set oid $__mem(${rev},oid)
             set data $__mem(${rev},data)
-            set xid $__mem(${rev},xid)
+            set __xid $__mem(${rev},xid)
             set codec_conf $__mem(${rev},codec_conf)
 
-            assert { $__xid eq $xid }
+            assert { $xid eq $__xid }
 
             # part of the statement that writes the revision is fine
             # problem with the statement is part that publishes to head
@@ -255,7 +319,21 @@ proc ::persistence::mem::dump {} {
 
             incr count
         }
-        unset __xid_rev(${__xid})
+
+        # transaction fsync-ed
+        array unset __xid_committed $__xid
+
+        # clear transaction revisions (tuples)
+        array unset __xid_rev ${__xid}
+
+        # when all revisions in a transaction have been applied
+        # remove them from memtable, which is different than a cache
+        # in the sense that it only keeps transactions that are in progress
+        foreach rev $rev_list {
+            array unset __mem ${rev},*
+            array unset __idx ${rev}
+        }
+
     }
     set __xid_list ""
 
