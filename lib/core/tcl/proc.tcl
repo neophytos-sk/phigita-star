@@ -1,6 +1,15 @@
 proc wrap_proc {procname procargs procbody} {
     set nsp [namespace qualifiers $procname]
     set name [namespace tail $procname]
+
+    # lsort {__a ______a ____a}
+    # => ______a ____a __a
+    set procs [lsort [info procs ${nsp}::__*$name]]
+    foreach p $procs {
+        uplevel \
+            [list rename ${p} [namespace qualifiers $p]::__[namespace tail $p]]
+    }
+
     set shadow ${nsp}::__${name}
     uplevel [list rename $procname $shadow]
     uplevel [list proc $procname $procargs $procbody]

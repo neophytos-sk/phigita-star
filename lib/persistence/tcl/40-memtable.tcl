@@ -4,27 +4,51 @@ if { ![setting_p "memtable"] } {
 
 namespace eval ::persistence::mem {
 
+    # __mem - 
+    #
+    #   where we store the revision info:
+    #
+    #   __mem(${rev},oid)
+    #   __mem(${rev},data)
+    #   __mem(${rev},xid)
+    #   __mem(${rev},codec_conf)
+    #   __mem(${rev},dirty_p)
+
     variable __mem
     array set __mem [list]
 
-    variable __cnt 0
-
-    variable __dir
-    array set __dir [list]
+    # __idx
+    #
+    #   where we keep track of revisions, 
+    #   node (files, subdirs) hierarchy
 
     variable __idx
     array set __idx [list]
 
+    # __xid_rev
+    #
+    #   all revisions pertaining to a given transaction (xid)
+
     variable __xid_rev
     array set __xid_rev [list]
 
+    # __xid_list
+    #
+    #   all committed (but not yet fsync-ed) transactions,
+    #   in the order they were committed
+
     variable __xid_list [list]
+
+    # __xid_committed
+    #
+    #   all committed (but not yet fsync-ed) transactions (xid),
+    #   for checking whether a transaction (xid) is committed or not,
+    #   also an indicator for "open" transactions
 
     variable __xid_committed
     array set __xid_committed [list]
 
     namespace import ::persistence::common::split_xid
-
     namespace path "::persistence ::persistence::common"
 
 }
@@ -159,7 +183,6 @@ proc ::persistence::mem::get_mtime {rev} {
 
 proc ::persistence::mem::set_column {oid data xid codec_conf} {
     variable __mem
-    variable __cnt
     variable __xid_rev
     variable __xid_list
     variable __xid_committed
@@ -179,8 +202,6 @@ proc ::persistence::mem::set_column {oid data xid codec_conf} {
         log "!!! memtable (set_col): oid revision already exists (=${rev})"
     }
 
-    incr __cnt
-
     set __mem(${rev},oid)           $oid
     set __mem(${rev},data)          $data
     set __mem(${rev},xid)           $xid
@@ -194,7 +215,7 @@ proc ::persistence::mem::set_column {oid data xid codec_conf} {
         #    unset __idx(${orig_oid})
         #}
     } else {
-        set __idx(${rev}) ${oid}
+        set __idx(${rev}) ""
     }
 
     # __xid_rev
@@ -317,20 +338,46 @@ proc ::persistence::mem::printall {} {
 }
 
 
+if { [setting_p "tree"] } {
+
+    wrap_proc ::persistence::mem::define_cf {ks cf_axis} {
+        call_orig $ks $cf_axis
+        set type_oid [join_oid $ks $cf_axis]
+        ::persistence::tree::init $type_oid
+    }
+
+    wrap_proc ::persistence::mem::set_column {oid data xid codec_conf} {
+        call_orig $oid $data $xid $codec_conf
+        lassign [split_oid $oid] ks cf_axis row_key column_path
+        set type_oid [join_oid $ks $cf_axis]
+        ::persistence::tree::insert $type_oid $oid $data $xid $codec_conf
+    }
+
+    wrap_proc ::persistence::mem::exists_p {oid} {
+        lassign [split_oid $oid] ks cf_axis row_key column_path
+        set type_oid [join_oid $ks $cf_axis]
+        return [::persistence::tree::exists_p $type_oid $oid]
+    }
+
+    wrap_proc ::persistence::mem::dump {} {
+        call_orig
+        ::persistence::tree::dump
+    }
+
+}
 
 
 if { [setting_p "bloom_filters"] } {
 
     wrap_proc ::persistence::mem::define_cf {ks cf_axis} {
+        call_orig $ks $cf_axis
         set type_oid [join_oid $ks $cf_axis]
         ::persistence::bloom_filter::init $type_oid
     }
 
     wrap_proc ::persistence::mem::set_column {oid data xid codec_conf} {
-        # log [info frame 0]
-        # log "ins_column oid=$oid"
-        lassign [split_oid $oid] ks cf_axis row_key column_path
         call_orig $oid $data $xid $codec_conf
+        lassign [split_oid $oid] ks cf_axis row_key column_path
         set type_oid [join_oid $ks $cf_axis]
         ::persistence::bloom_filter::insert $type_oid $oid
     }
@@ -352,5 +399,3 @@ if { [setting_p "bloom_filters"] } {
     }
 
 }
-
-

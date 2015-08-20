@@ -47,7 +47,6 @@ proc ::persistence::init {} {
 
         if { [setting_p "write_ahead_log"] } {
 
-
             # private
             # log which,[namespace which set_column]
             wrap_proc ::persistence::set_column {oid data xid codec_conf} {

@@ -630,7 +630,7 @@ proc ::persistence::orm::find {{where_clause_argv ""} {optionsVar ""}} {
             set predicate [__rewrite_where_clause $idxname $where_clause_argv]
             #log "chosen axis (attribute) = $attname"
             #log "chosen axis (args) = $find_by_axis_args"
-            #log "rewritten predicate = $predicate"
+            # log "rewritten predicate = $predicate"
 
             set options(__where_clause_argv) $where_clause_argv
             set options(__slice_predicate) $predicate
