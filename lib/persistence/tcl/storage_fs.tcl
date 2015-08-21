@@ -4,7 +4,6 @@ namespace eval ::persistence::fs {
 
     variable base_dir
     set base_dir [config get ::persistence base_dir]
-    variable branch "master"
 
     namespace export -clear \
         define_ks \
@@ -44,35 +43,20 @@ namespace eval ::persistence::fs {
 
 }
 
-# bloom filters and other auxiliary files
-proc ::persistence::fs::get_meta_filename {path} {
-    variable base_dir
-    return [file normalize ${base_dir}/META/${path}]
-}
-
-# the tip of the current branch
 proc ::persistence::fs::get_oid_filename {oid} {
     variable base_dir
-    variable branch
-    return [file normalize ${base_dir}/HEAD/${branch}/${oid}]
-}
-
-# user data & indexes
-proc ::persistence::fs::get_rev_filename {rev} {
-    variable base_dir
-    return [file normalize ${base_dir}/DATA/${rev}]
+    return [file normalize ${base_dir}/HEAD/master/${oid}]
 }
 
 proc ::persistence::fs::get_mtime {rev} {
     assert { [is_column_rev_p $rev] || [is_link_rev_p $rev] }
-    return [file mtime [get_rev_filename $rev]]
+    return [file mtime [get_filename $rev]]
 }
 
 
 proc ::persistence::fs::get_files {nodepath} {
     variable base_dir
-    variable branch
-    set dir [file normalize ${base_dir}/HEAD/${branch}/${nodepath}]
+    set dir [file normalize ${base_dir}/HEAD/master/${nodepath}]
     set names [glob -tails -nocomplain -types "f l d" -directory ${dir} "*"]
     set result [list]
     foreach name $names {
@@ -85,8 +69,7 @@ proc ::persistence::fs::get_files {nodepath} {
 
 proc ::persistence::fs::get_subdirs {path} {
     variable base_dir
-    variable branch
-    set dir [file normalize ${base_dir}/HEAD/${branch}/${path}]
+    set dir [file normalize ${base_dir}/HEAD/master/${path}]
     set names [glob -tails -types {d} -nocomplain -directory ${dir} *]
     set result [list]
     foreach name $names {
@@ -94,11 +77,6 @@ proc ::persistence::fs::get_subdirs {path} {
     }
     return [lsort ${result}]
 }
-
-
-
-
-
 
 proc ::persistence::fs::get_dir {args} {
     variable base_dir
@@ -131,7 +109,6 @@ proc ::persistence::fs::assert_cf {keyspace column_family} {
     }
 }
 
-
 proc ::persistence::fs::create_ks_if {keyspace {replication_factor "3"}} {
     if { ![exists_ks_p ${keyspace}] } {
         file mkdir [get_dir ${keyspace}]
@@ -159,91 +136,23 @@ proc ::persistence::fs::define_cf {ks cf_axis {spec {}}} {
     create_cf_if ${ks} ${cf_axis}
 }
 
-
-proc ::persistence::fs::get_supercolumn {keyspace column_family row_key supercolumn_path} {
-    set row_dir [join_oid ${keyspace} ${column_family} ${row_key}]
-    set supercolumn_dir ${row_dir}/${supercolumn_path}
-    return ${supercolumn_dir}
-}
-
-
-
 proc ::persistence::fs::exists_supercolumn_p {oid} {
     assert { [is_supercolumn_oid_p $oid] }
     set filename [get_oid_filename $oid]
     return [expr { [file exists $filename] && [file isdirectory $filename] }]
 }
 
-# private
 proc ::persistence::fs::exists_column_rev_p {rev} {
     assert { [is_column_rev_p $rev] }
-    set filename [get_rev_filename $rev]
-    return [file exists $filename]
-}
-
-proc ::persistence::fs::exists_column_rev_p {rev} {
-    assert { [is_column_rev_p $rev] }
-    set filename [get_rev_filename $rev]
+    set filename [get_filename $rev]
     return [file exists $filename]
 }
 
 proc ::persistence::fs::exists_link_rev_p {rev} {
     assert { [is_link_rev_p $rev] }
-    set filename [get_rev_filename $rev]
+    set filename [get_filename $rev]
     return [file exists $filename]
 }
-
-
-# isolation level: read_committed
-proc ::persistence::fs::get_tmp_filename {filename} {
-    variable base_dir
-    set key [binary encode base64 $filename]
-    set tmp_filename [file join $base_dir tmp $key]
-    return $tmp_filename
-}
-
-proc ::persistence::fs::write_data {ext filename data xid codec_conf} {
-    lassign [split_xid $xid] micros pid n_mutations mtime
-    set tmp_filename [file join [get_tmp_filename ${filename}] ${ext}]
-    ::util::writefile ${tmp_filename} ${data} {*}${codec_conf}
-    file mtime ${tmp_filename} ${mtime}
-}
-
-proc ::persistence::fs::read_committed__set_column {oid data xid codec_conf} {
-
-    lassign [split_xid $xid] micros pid n_mutations mtime
-
-    set rev "${oid}@${mtime}"
-
-    # saves revision
-    set rev_filename [get_rev_filename $rev]
-    write_data ".ins_rev" $rev_filename $data $mtime $codec_conf
-
-    # checks if oid is a tombstone and updates the link
-    # at the tip of the current branch,
-    # i.e. removes the link if oid is a tombstone,
-    # creates link in any other case 
-    set ext [file extension ${oid}]
-    if { $ext eq {.gone} } {
-
-        set orig_oid [file rootname ${oid}]
-        set orig_oid_filename [get_oid_filename $orig_odi]
-        write_data ".del_orig_oid" $orig_oid_filename "" $mtime $codec_conf
-
-    } else {
-
-        # add link from tip of the current branch to rev file
-        # note that, when we delete, we delete this link,
-        # the revision remains intact
-        set oid_filename [get_oid_filename ${oid}]
-        write_data ".lnk_oid_rev" $oid_filename $rev_filename $mtime $codec_conf
-
-    }
-    
-}
-
-
-
 
 # note: default implementation uses column to store the target_oid of a link
 # and thus why we allow for link oids in the assertion statement
@@ -253,23 +162,17 @@ proc ::persistence::fs::get_column {rev {codec_conf ""}} {
     }
 
     # log "retrieving column (=$oid) from fs"
-    set filename [get_rev_filename ${rev}]
+    set filename [get_filename ${rev}]
     return [::util::readfile ${filename} {*}$codec_conf]
 }
 
-
-
-
-
-
-proc ::persistence::fs::get_name {oid} {
-    set oid_filename [get_oid_filename $oid]
-    if { [is_link_oid_p $oid] } {
-        set oid_filename [get_link_target $oid]
+proc ::persistence::fs::get_name {rev} {
+    set rev_filename [get_filename $rev]
+    if { [is_link_oid_p $rev] } {
+        set rev_filename [get_link_target $rev]
     }
-    return [file tail [file rootname ${oid_filename}]]
+    return [file tail [file rootname ${rev_filename}]]
 }
-
 
 proc ::persistence::fs::find_column {
     oid
@@ -310,42 +213,6 @@ proc ::persistence::fs::find_column {
 #TODO: incr_super_column
 
 
-################ multirow
-
-# TODO: replace glob with ::util::fs::ls
-# TODO: replace ::util::fs::ls with ::persistence::fs::list_rows
-proc ::persistence::fs::get_multirow {ks cf_axis {predicate ""}} {
-
-    assert_cf ${ks} ${cf_axis}
-
-    set multirow [::persistence::get_subdirs ${ks}/${cf_axis}]
-
-    if { ${predicate} ne {} } {
-        predicate=forall multirow $predicate
-    }
-
-    return ${multirow}
-
-}
-
-
-proc ::persistence::fs::get_multirow_names {nodepath {predicate ""}} {
-    #assert { [is_cf_nodepath_p $nodepath] }
-
-    set residual_path [lassign [split $nodepath {/}] ks cf_axis]
-    return [__get_multirow_names $ks $cf_axis $predicate]
-}
-
-proc ::persistence::fs::__get_multirow_names {ks cf_axis {predicate ""}} {
-    set multirow [get_multirow $ks $cf_axis $predicate]
-    set result [list]
-    foreach row ${multirow} {
-        set row_key [get_name ${row}]
-        lappend result $row_key
-    }
-    return ${result}
-}
-
 
 proc ::persistence::fs::set_column {oid data xid codec_conf} {
     lassign [split_xid $xid] micros pid n_mutations mtime
@@ -368,7 +235,7 @@ if { [setting_p "mvcc"] } {
         set rev "${oid}@${micros}"
 
         # saves revision
-        set rev_filename [get_rev_filename ${rev}]
+        set rev_filename [get_filename ${rev}]
         file mkdir [file dirname ${rev_filename}]
         ::util::writefile ${rev_filename} ${data} {*}$codec_conf
         file mtime ${rev_filename} ${mtime}
@@ -391,12 +258,13 @@ if { [setting_p "mvcc"] } {
             # add link from tip of the current branch to rev file
             # note that, when we delete, we delete this link,
             # the revision remains intact
-            set oid_filename [get_oid_filename ${oid}]
-            file mkdir [file dirname ${oid_filename}]
-            ::util::writelink ${oid_filename} ${rev_filename}
-            file mtime ${oid_filename} ${mtime}
-
-            return [list $oid_filename $rev_filename]
+            #
+            # set oid_filename [get_oid_filename ${oid}]
+            # file mkdir [file dirname ${oid_filename}]
+            # ::util::writelink ${oid_filename} ${rev_filename}
+            # file mtime ${oid_filename} ${mtime}
+            #
+            # return [list $oid_filename $rev_filename]
 
         }
         
@@ -405,7 +273,7 @@ if { [setting_p "mvcc"] } {
     proc ::persistence::fs::get_files {nodepath} {
         variable base_dir
         variable branch
-        set dir [file normalize ${base_dir}/DATA/${nodepath}]
+        set dir [file normalize ${base_dir}/${nodepath}]
 
         set rev_names [glob -tails -nocomplain -types "f l d" -directory ${dir} "*@*"]
 
@@ -421,7 +289,7 @@ if { [setting_p "mvcc"] } {
     proc ::persistence::fs::get_subdirs {path} {
         variable base_dir
         variable branch
-        set dir [file normalize ${base_dir}/DATA/${path}]
+        set dir [file normalize ${base_dir}/${path}]
 
         # log fs,get_subdirs,dir=$dir
 

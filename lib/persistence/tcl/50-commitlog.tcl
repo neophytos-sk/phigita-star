@@ -101,7 +101,7 @@ proc ::persistence::commitlog::open_if {} {
 
     log "commitlog using memtable: [setting_p memtable]"
 
-    set filename [::persistence::fs::get_meta_filename "CommitLog"]
+    set filename [::persistence::common::get_filename "CommitLog"]
     set exists_p [file exists $filename]
 
     if { $exists_p } {

@@ -9,6 +9,9 @@ namespace eval ::persistence::fs {;}
 
 namespace eval ::persistence::common {
 
+    variable base_dir
+    set base_dir [config get ::persistence base_dir]
+
     namespace path "::persistence ::persistence::fs"
 
     namespace export -clear \
@@ -36,7 +39,10 @@ namespace eval ::persistence::common {
         new_transaction_id \
         cur_transaction_id \
         split_xid \
-        get_leafs
+        get_leafs \
+        get_multirow \
+        get_multirow_names \
+        get_filename
 
     set storage_type [config get ::persistence "default_storage_type"]
     set nsp "::persistence::${storage_type}"
@@ -330,9 +336,9 @@ proc ::persistence::common::predicate=forall {slicelistVar predicates} {
     }
 }
 
-proc ::persistence::common::exists_row_data_p {oid} {
-    assert { [is_row_oid_p $oid] }
-    set filename [get_oid_filename $oid]
+proc ::persistence::common::exists_row_data_p {row_oid} {
+    assert { [is_row_oid_p $row_oid] }
+    set filename [get_filename $row_oid]
     return [file exists $filename]
 }
 
@@ -405,8 +411,33 @@ proc ::persistence::common::end_batch {} {
     return $xid
 }
 
+proc ::persistence::common::get_multirow {ks cf_axis {predicate ""}} {
+    assert_cf ${ks} ${cf_axis}
+    set multirow [::persistence::get_subdirs ${ks}/${cf_axis}]
+    if { ${predicate} ne {} } {
+        predicate=forall multirow $predicate
+    }
+    return ${multirow}
+}
 
-proc ::persistence::common::__get_leafs {path} {
+proc ::persistence::common::get_multirow_names {nodepath {predicate ""}} {
+    set residual_path [lassign [split $nodepath {/}] ks cf_axis]
+    set multirow [get_multirow $ks $cf_axis $predicate]
+    set result [list]
+    foreach row $multirow {
+        set row_key [get_name $row]
+        lappend result $row_key
+    }
+    return $result
+}
+
+proc ::persistence::common::get_filename {path} {
+    variable base_dir
+    return [file normalize ${base_dir}/${path}]
+}
+
+
+proc ::persistence::common::get_leafs {path} {
     set subdirs [get_subdirs $path]
     if { $subdirs eq {} } {
         return [get_files $path]
@@ -422,42 +453,43 @@ proc ::persistence::common::__get_leafs {path} {
     }
 }
 
-proc ::persistence::common::get_leafs {path} {
+if { [setting "mvcc"] } {
+    wrap_proc ::persistence::common::get_leafs {path} {
 
-    set revs [__get_leafs $path]
+        set revs [call_orig $path]
 
-    array set latest_rev [list]
-    foreach rev $revs {
-        lassign [split $rev "@"] oid micros
+        array set latest_rev [list]
+        foreach rev $revs {
+            lassign [split $rev "@"] oid micros
 
-        # check timestamp based on the oid
-        # (without the .gone suffix)
-        # we exclude deleted oids below
-        set is_gone_p 0
-        set normalized_oid $oid
-        if { [file extension $oid] eq {.gone} } {
-            set is_gone_p 1
-            set normalized_oid [file rootname $oid]
+            # check timestamp based on the oid
+            # (without the .gone suffix)
+            # we exclude deleted oids below
+            set is_gone_p 0
+            set normalized_oid $oid
+            if { [file extension $oid] eq {.gone} } {
+                set is_gone_p 1
+                set normalized_oid [file rootname $oid]
+            }
+
+            lassign [value_if latest_rev($normalized_oid) ""] is_gone_already_p latest_micros
+
+            if { $latest_micros < $micros } {
+                set latest_rev($normalized_oid) [list $is_gone_p $micros]
+            }
         }
 
-        lassign [value_if latest_rev($normalized_oid) ""] is_gone_already_p latest_micros
+        set latest_rev_oids [array names latest_rev]
 
-        if { $latest_micros < $micros } {
-            set latest_rev($normalized_oid) [list $is_gone_p $micros]
+        set result [list]
+        foreach normalized_oid $latest_rev_oids {
+            lassign $latest_rev($normalized_oid) is_gone_p micros
+            if { $is_gone_p } { continue }
+            set rev ${normalized_oid}@${micros}
+            lappend result ${rev}
         }
-    }
+        return [lsort -unique $result]
 
-    set latest_rev_oids [array names latest_rev]
-
-    set result [list]
-    foreach normalized_oid $latest_rev_oids {
-        lassign $latest_rev($normalized_oid) is_gone_p micros
-        if { $is_gone_p } { continue }
-        set rev ${normalized_oid}@${micros}
-        lappend result ${rev}
     }
-    return [lsort -unique $result]
 
 }
-
-

@@ -5,6 +5,15 @@
 #
 #######################################################################
 
+proc ::persistence::fs::get_supercolumn {keyspace column_family row_key supercolumn_path} {
+    set row_dir [join_oid ${keyspace} ${column_family} ${row_key}]
+    set supercolumn_dir ${row_dir}/${supercolumn_path}
+    return ${supercolumn_dir}
+}
+
+
+
+
 proc ::persistence::fs::__get_column_name {args} {
     set result [list]
     set column [__get_column {*}${args}]
