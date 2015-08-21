@@ -21,10 +21,10 @@ proc ::persistence::compare_mtime { oid1 oid2 } {
 proc ::persistence::mkskel {} {
     variable base_dir
 
-    file mkdir [file join $base_dir HEAD]  ;# oids, tip of the current branch
-    file mkdir [file join $base_dir DATA]  ;# revs
-    file mkdir [file join $base_dir META]  ;# CommitLog
-    file mkdir [file join $base_dir tmp]   ;# fs::read_committed__set_column
+    #file mkdir [file join $base_dir HEAD]  ;# oids, tip of the current branch
+    #file mkdir [file join $base_dir DATA]  ;# revs
+    #file mkdir [file join $base_dir META]  ;# CommitLog
+    #file mkdir [file join $base_dir tmp]   ;# fs::read_committed__set_column
 }
 
 proc ::persistence::init {} {
@@ -177,6 +177,9 @@ proc ::persistence::init {} {
             join_oid
             split_oid
             typeof_oid
+
+            ls
+            get_leafs
         }
 
         foreach procname $procnames {

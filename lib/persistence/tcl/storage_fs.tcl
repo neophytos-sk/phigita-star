@@ -38,7 +38,8 @@ namespace eval ::persistence::fs {
         __exec_options \
         get \
         begin_batch \
-        end_batch
+        end_batch \
+        ls
 
 
 }
@@ -80,7 +81,7 @@ proc ::persistence::fs::get_subdirs {path} {
 
 proc ::persistence::fs::get_dir {args} {
     variable base_dir
-    set dir [join [list ${base_dir}/DATA {*}${args}] {/}]
+    set dir [join [list ${base_dir}/ {*}${args}] {/}]
     return ${dir}
 }
 
@@ -303,4 +304,8 @@ if { [setting_p "mvcc"] } {
 
 }
 
+proc ::persistence::fs::ls {args} {
+    variable base_dir
+    return [::util::fs::ls [get_dir {*}$args]]
+}
 

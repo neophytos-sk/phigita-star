@@ -252,7 +252,20 @@ proc ::persistence::mem::end_batch {xid} {
     lappend __xid_list $xid
 }
 
+proc ::persistence::mem::compact {type_oid} {
+    set dir /web/data/mystore/
+    set filelist [lsort -increasing [glob  -directory $dir ${type_oid}-*]]
+    set llen [llength $filelist]
+    if { $llen == 1 } {
+        return
+    }
+    log "compacting... type_oid=$type_oid #files=$llen"
+}
+
 proc ::persistence::mem::dump {} {
+
+    set round [clock format [clock seconds] -format "%Y%m%dT%H%M%S"]
+
     # log "dumping memtable to filesystem"
     variable __mem
     variable __xid_rev
@@ -264,9 +277,6 @@ proc ::persistence::mem::dump {} {
     #puts $fp [join [array names __mem *,data] \n]
     #close $fp
 
-    #log __xid_list=$__xid_list
-    #log __xid_rev=[array names __dirty_idx]
-
     set count 0
     foreach xid $__xid_list {
         # log "dumping xid (=$xid)"
@@ -276,8 +286,13 @@ proc ::persistence::mem::dump {} {
             continue
         }
         # log "dumping transaction: $xid"
+        set fp ""
+        set i ""
+        set j ""
+        set savepos ""
         set rev_list [lsort -unique $__xid_rev($xid)]
         foreach rev $rev_list {
+
             # log "dumping rev: $rev"
             if { !$__mem(${rev},dirty_p) } {
                 error "mismatch between __xid_rev and __mem data"
@@ -290,24 +305,52 @@ proc ::persistence::mem::dump {} {
 
             assert { $xid eq $__xid }
 
-            # part of the statement that writes the revision is fine
-            # problem with the statement is part that publishes to head
-            # (currently it is neither isolated nor atomic)
+            ##
+            # sorted strings table (sstable)
             #
-            # for the ::persistence::fs::* case, we need a second head/master, 
-            # say head/master0 and head/master1 (and a link from head/master to
-            # one of them - switching from one to another on each transaction),
-            # i.e. a cheap way to make snapshots
+
+            lassign [split_oid $rev] ks cf_axis row_key column_path
+
+            if { $i ne "${ks}/${cf_axis}" } {
+                if { $j ne {} } {
+                    ::util::io::write_int $fp $savepos
+                }
+                if { $fp ne {} } {
+                    close $fp
+                    compact $i
+                }
+                set i "${ks}/${cf_axis}"
+                set j ""
+                set filename "/web/data/mystore/${i}-${round}.sstable"
+                file mkdir [file dirname $filename]
+                set fp [open $filename "w"]
+                fconfigure $fp {*}$codec_conf
+            }
+
+            if { $j ne $row_key } {
+                set j $row_key
+                set savepos [tell $fp]
+                ::util::io::write_string $fp $row_key
+            }
+
+            ::util::io::write_string $fp $oid
+            ::util::io::write_string $fp $data
+
             #
-            # it is not so much about concurrency control as it is for the principle
-            # that the persistence layer supports read_committed isolation level
-            # just as well as with fancier structures
+            # end sstable stuff
+            ##
 
             call_orig_of ::persistence::set_column $oid $data $xid $codec_conf
-
             set __mem(${rev},dirty_p) 0
-
             incr count
+        }
+
+        # sstable
+        if { $j ne {} } {
+            ::util::io::write_int $fp $savepos
+        }
+        if { $fp ne {} } {
+            close $fp
         }
 
         # transaction fsync-ed
@@ -328,13 +371,6 @@ proc ::persistence::mem::dump {} {
     set __xid_list ""
 
     # log "dumped $count records"
-}
-
-proc ::persistence::mem::printall {} {
-    variable __idx
-    log ========
-    log [join [lsort [array names __idx]] \n]
-    log --------
 }
 
 

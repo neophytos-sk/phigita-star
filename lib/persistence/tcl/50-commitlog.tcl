@@ -289,7 +289,8 @@ proc ::persistence::commitlog::process {{bootstrap_p "0"}} {
         checkpoint [tell $fp]  ;# must be equal to pos2 at this point
     }
 
-    after 10000 [list ::persistence::commitlog::process]
+    # runs every 60 secs
+    after 60000 [list ::persistence::commitlog::process]
     
 }
 
