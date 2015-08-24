@@ -252,21 +252,119 @@ proc ::persistence::mem::end_batch {xid} {
     lappend __xid_list $xid
 }
 
+proc ::persistence::mem::read_sstable {idxVar fp file_i} {
+    upvar $idxVar idx
+
+    log "reading sstable..."
+
+    seek $fp -4 end
+    # log "tell=[tell $fp]"
+    while { [tell $fp] != 0} {
+        set endpos [tell $fp]
+        log "endpos=$endpos"
+        set startpos [::util::io::read_int $fp]
+        log "startpos=$startpos"
+        seek $fp $startpos start
+        ::util::io::read_string $fp row_key
+
+        log "startpos=$startpos endpos=$endpos row_key=$row_key"
+
+        while { [tell $fp] < $endpos } {
+            ::util::io::read_string $fp rev
+            set pos [tell $fp]
+            #::util::io::skip_string $fp 
+            ::util::io::read_string $fp data
+
+            # log "row_key=$row_key"
+
+            # lappend idx(${row_key}) [list $rev $file_i $pos]
+            lappend idx(${row_key}) [list $rev $file_i $data]
+        }
+        if { $startpos == 0 } {
+            break
+        }
+        seek $fp $startpos start
+        seek $fp -4 current
+    }
+
+    log "done reading sstable"
+
+}
+
 proc ::persistence::mem::compact {type_oid} {
-    set dir /web/data/mystore/
+    set dir "/web/data/mystore/"
     set filelist [lsort -increasing [glob  -directory $dir ${type_oid}-*]]
+    # log "compact: filelist=$filelist"
     set llen [llength $filelist]
+    # log "compact: llen=$llen"
     if { $llen == 1 } {
         return
     }
+
     log "compacting... type_oid=$type_oid #files=$llen"
+
+    set file_i 0
+    array set fp [list]
+    array set idx [list]
+    foreach filename $filelist {
+        log "filename=$filename size=[file size $filename]"
+        if { [file size $filename] == 0 } {
+            log "skip sstable (size=0)... $filename"
+            continue
+        }
+        set fp($file_i) [open $filename]
+        fconfigure $fp($file_i) -translation binary
+        if { [catch {
+            read_sstable idx $fp($file_i) $file_i
+        } errmsg] } {
+            log "errmsg=$errmsg"
+            log "exiting..."
+            exit
+        }
+        incr file_i
+    }
+
+    set round [clock format [clock seconds] -format "%Y%m%dT%H%M%S"]
+    set filename "/web/data/mystore/${type_oid}-${round}.sstable"
+    log "merging sstables..."
+    set ofp [open $filename "w"]
+    set row_keys [lsort [array names idx]]
+    foreach row_key $row_keys {
+        log "row_key=$row_key"
+        set savepos [tell $ofp]
+        ::util::io::write_string $ofp $row_key
+        set idx($row_key) [lsort -index 0 $idx($row_key)]
+        foreach item $idx($row_key) {
+            #lassign $item rev file_i pos
+            lassign $item rev file_i data
+            #log "rev=$rev file_i=$file_i pos=$pos fp=$fp($file_i)"
+            #seek $fp($file_i) $pos start
+            # log "reading data... from tell=[tell $fp($file_i)]"
+            # ::util::io::read_string $fp($file_i) data
+            #log "done reading data"
+            #log "ofp tell=[tell $ofp]"
+            ::util::io::write_string $ofp $rev
+            ::util::io::write_string $ofp $data
+            # log "done writing data ofp.tell=[tell $ofp]"
+        }
+        ::util::io::write_int $ofp $savepos
+    }
+    close $ofp
+    log "merged sstables, new file: $filename"
+
+    for {set file_i 0} { $file_i < [llength $filelist] } {incr file_i} {
+        close $fp($file_i)
+        set filename [lindex $filelist $file_i] 
+        log "deleting sstable... $filename"
+        file delete $filename
+    }
 }
 
 proc ::persistence::mem::dump {} {
 
     set round [clock format [clock seconds] -format "%Y%m%dT%H%M%S"]
 
-    # log "dumping memtable to filesystem"
+    log "dumping memtable to filesystem"
     variable __mem
     variable __xid_rev
     variable __xid_list
@@ -277,6 +375,7 @@ proc ::persistence::mem::dump {} {
     #puts $fp [join [array names __mem *,data] \n]
     #close $fp
 
+    set revs [list]
     set count 0
     foreach xid $__xid_list {
         # log "dumping xid (=$xid)"
@@ -297,61 +396,92 @@ proc ::persistence::mem::dump {} {
             if { !$__mem(${rev},dirty_p) } {
                 error "mismatch between __xid_rev and __mem data"
             }
+            lappend revs $rev
+        }
+    }
 
-            set oid $__mem(${rev},oid)
-            set data $__mem(${rev},data)
-            set __xid $__mem(${rev},xid)
-            set codec_conf $__mem(${rev},codec_conf)
 
-            assert { $xid eq $__xid }
+    # sorts revs in order to process sstables 
+    # by type_oid/row_key once in this round
 
-            ##
-            # sorted strings table (sstable)
-            #
+    set savepos ""
+    set sorted_revs [lsort -unique $revs]
+    foreach rev $sorted_revs {
 
-            lassign [split_oid $rev] ks cf_axis row_key column_path
+        # TODO: this part of the code should be 
+        # moved into (storage_ss.tcl) ::persistence::ss::set_column
 
-            if { $i ne "${ks}/${cf_axis}" } {
-                if { $j ne {} } {
-                    ::util::io::write_int $fp $savepos
-                }
-                if { $fp ne {} } {
-                    close $fp
-                    compact $i
-                }
-                set i "${ks}/${cf_axis}"
-                set j ""
-                set filename "/web/data/mystore/${i}-${round}.sstable"
-                file mkdir [file dirname $filename]
-                set fp [open $filename "w"]
-                fconfigure $fp {*}$codec_conf
+        set oid $__mem(${rev},oid)
+        set data $__mem(${rev},data)
+        set xid $__mem(${rev},xid)
+        set codec_conf $__mem(${rev},codec_conf)
+
+        ##
+        # sorted strings table (sstable)
+        #
+
+        lassign [split_oid $rev] ks cf_axis row_key column_path
+
+        if { $i ne "${ks}/${cf_axis}" } {
+            if { $savepos ne {} } {
+                ::util::io::write_int $fp $savepos
             }
+            if { $fp ne {} } {
+                close $fp
+                # log "sstable ready... ${filename}.part"
 
-            if { $j ne $row_key } {
-                set j $row_key
-                set savepos [tell $fp]
-                ::util::io::write_string $fp $row_key
+                if { [catch {
+                    file rename ${filename}.part ${filename}
+                } errmsg] } {
+                    log errmsg=$errmsg
+                    log "exiting..."
+                    exit
+                }
+
+                # log "sstable renamed"
+                compact $i
             }
-
-            ::util::io::write_string $fp $oid
-            ::util::io::write_string $fp $data
-
-            #
-            # end sstable stuff
-            ##
-
-            call_orig_of ::persistence::set_column $oid $data $xid $codec_conf
-            set __mem(${rev},dirty_p) 0
-            incr count
+            set i "${ks}/${cf_axis}"
+            set j ""
+            set filename "/web/data/mystore/${i}-${round}.sstable"
+            file mkdir [file dirname ${filename}]
+            set fp [open ${filename}.part "w"]
+            fconfigure $fp {*}$codec_conf
         }
 
-        # sstable
+        if { $j ne $row_key } {
+            if { $savepos ne {} } {
+                ::util::io::write_int $fp $savepos
+            }
+            set j $row_key
+            set savepos [tell $fp]
+            ::util::io::write_string $fp $row_key
+        }
+
+        ::util::io::write_string $fp $oid
+        ::util::io::write_string $fp $data
+
+        #
+        # end sstable stuff
+        ##
+
+        call_orig_of ::persistence::set_column $oid $data $xid $codec_conf
+        set __mem(${rev},dirty_p) 0
+        incr count
+
+    }
+
+    # sstable
+    if { [info exists fp] && [info exists j] } {
         if { $j ne {} } {
             ::util::io::write_int $fp $savepos
         }
         if { $fp ne {} } {
             close $fp
         }
+    }
+
+    foreach __xid $__xid_list {
 
         # transaction fsync-ed
         array unset __xid_committed $__xid

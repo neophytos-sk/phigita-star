@@ -16,6 +16,12 @@ namespace eval ::persistence::commitlog {
     variable commitlog_oid
     set commitlog_oid ""
 
+    variable inprogress_p
+    set inprogress_p 0
+
+    variable timer
+    set timer ""
+
 }
 
 proc ::persistence::commitlog::init {} {
@@ -54,7 +60,7 @@ proc ::persistence::commitlog::init {} {
 proc ::persistence::commitlog::insert {itemVar} {
     variable fp
 
-    open_if
+    assert { $fp ne {} }
 
     upvar $itemVar item
     assert { $item(oid) ne {} }
@@ -139,7 +145,8 @@ proc ::persistence::commitlog::open_if {} {
 
     }
 
-    after 0 [list ::persistence::commitlog::process]
+    variable timer
+    set timer [after 0 [list ::persistence::commitlog::process]]
 
 }
 
@@ -166,7 +173,7 @@ proc ::persistence::commitlog::set_column {
 
     variable fp
 
-    open_if
+    assert { $fp ne {} }
 
     # log oid=$oid
 
@@ -183,7 +190,7 @@ proc ::persistence::commitlog::set_column {
 
 proc ::persistence::commitlog::analyze {} {
     variable fp
-    open_if
+    assert { $fp ne {} }
 
     seek $fp 0 start
     set pos1 [::util::io::read_int $fp]
@@ -241,18 +248,35 @@ proc ::persistence::commitlog::logpoint {pos} {
 # can be redone from the log records. This is roll-forward recovery, 
 # also known as REDO.
 proc ::persistence::commitlog::process {{bootstrap_p "0"}} {
+    variable inprogress_p
+    variable timer
     variable fp
-    set savedpos [tell $fp]
 
-    # log "processing commitlog..."
+    if { $timer ne {} } {
+        after cancel $timer
+    }
+
+    if { $inprogress_p } {
+        log [info frame -2]
+        log [info frame -1]
+        log "WAL processing is already in progress, exiting scheduled proc"
+        # runs every 30 secs
+        set timer [after 30000 [list ::persistence::commitlog::process]]
+        return
+    }
+
+    set inprogress_p 1
+    log "processing commitlog... bootstrap_p=$bootstrap_p fp=$fp"
 
     seek $fp 0 start
     set pos1 [::util::io::read_int $fp]
     set pos2 [::util::io::read_int $fp]
 
-    # log "last_checkpoint (pos1): $pos1 --- last_logpoint (pos2): $pos2"
+    log "last_checkpoint (pos1): $pos1 --- last_logpoint (pos2): $pos2"
 
     set mem_p [setting_p "memtable"]
+
+    log "mem_p=$mem_p"
 
     seek $fp $pos1 start
     while { $pos1 < $pos2 } {
@@ -289,9 +313,12 @@ proc ::persistence::commitlog::process {{bootstrap_p "0"}} {
         checkpoint [tell $fp]  ;# must be equal to pos2 at this point
     }
 
-    # runs every 60 secs
-    after 60000 [list ::persistence::commitlog::process]
-    
+    set inprogress_p 0
+    log "done processing commitlog..."
+
+    # runs every 30 secs
+    set timer [after 30000 [list ::persistence::commitlog::process]]
+
 }
 
 after_package_load persistence ::persistence::commitlog::init
