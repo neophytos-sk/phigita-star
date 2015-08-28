@@ -31,7 +31,6 @@ namespace eval ::persistence::common {
         is_row_oid_p \
         is_link_oid_p \
         sort \
-        __exec_options \
         get \
         begin_batch \
         end_batch \
@@ -160,6 +159,9 @@ proc ::persistence::common::sort {
     assert { $sort_direction in {decreasing increasing} }
     assert { $sort_comparison in {dictionary ascii integer} }
 
+    # hack to load object types until all instances 
+    # are notified (and load all) of the new types
+    #
     assert { [namespace exists $type_nsp] } {
         # TODO: broadcast to all server instances
         # when a new ::sysdb::object_type_t is added
@@ -182,33 +184,41 @@ proc ::persistence::common::sort {
 }
 
 
-proc ::persistence::common::__exec_options {slicelistVar options} {
+proc ::persistence::common::__exec_filter_options {slicelistVar options} {
     upvar $slicelistVar slicelist
 
-    # hack to load feed_reader types until all types are loaded in zz-postinit
-    #namespace eval :: {
-    #    package require feed_reader
-    #}
-
     array set options_arr $options
-
     set slice_predicate [value_if options_arr(__slice_predicate) ""]
     if { $slice_predicate ne {} } {
         predicate=forall slicelist $slice_predicate
     }
 
+}
+
+proc ::persistence::common::__exec_sort_options {slicelistVar options} {
+    upvar $slicelistVar slicelist
+
+    array set options_arr $options
     set option_order_by [value_if options_arr(order_by) ""]
     if { $option_order_by ne {} } {
         lassign $option_order_by sort_attname sort_direction sort_comparison
-        # assert { $sort_direction in {increasing decreasing} }
-        # assert { $sort_comparison in {ascii dictionary integer} }
+        set sort_comparison [coalesce $sort_comparison "dictionary"]
+        assert { $sort_direction in {increasing decreasing} }
+        assert { $sort_comparison in {ascii dictionary integer} }
         set type_nsp $options_arr(__type_nsp)
         set slicelist [sort slicelist $type_nsp $sort_attname $sort_direction]
     }
+}
 
-    if { exists("options_arr(offset)") || exists("options_arr(limit)") } {
+proc ::persistence::common::__exec_range_options {slicelistVar options} {
+    upvar $slicelistVar slicelist
+
+    array set options_arr $options
+    if { [info exists options_arr(offset)] || [info exists options_arr(limit)] } {
         set offset [value_if options_arr(offset) "0"]
         set limit [value_if options_arr(limit) ""]
+
+        assert { vcheck("offset","naturalnum") }
 
         # set slicelist [lrange $slicelist 0 $limit]
         # return
@@ -223,8 +233,108 @@ proc ::persistence::common::__exec_options {slicelistVar options} {
             set slicelist [lrange $slicelist $first $last]
         }
     }
+}
 
 
+
+proc ::persistence::common::__exec_options {slicelistVar options} {
+    upvar $slicelistVar slicelist
+
+    __exec_filter_options slicelist $options
+    __exec_sort_options slicelist $options
+    __exec_range_options slicelist $options
+
+}
+
+
+proc ::persistence::common::__exec_multirow_filter_options {multirowVar options} {
+    upvar $multirowVar multirow
+    # TODO: filter criteria w.r.t the row_key (e.g. a date index enables us to
+    # filter row keys to answer "between" queries)
+    #
+    # upside is that any filtering at the multirow (row keys) level speeds up
+    # multiget_slice considerably (e.g. bloom filters for membership/in filtering)
+}
+
+proc ::persistence::common::__exec_multirow_sort_options {multirowVar options} {
+    upvar $multirowVar multirow
+    array set options_arr $options
+    set multirow_orderby [value_if options_arr(multirow_orderby) ""]
+    if { $multirow_orderby ne {} } {
+        lassign $multirow_orderby sort_direction sort_comparison
+        set sort_comparison [coalesce $sort_comparison "dictionary"]
+        # sort in the direction that is given,
+        # e.g. for a query that makes use of a sort axis/index
+        assert { $sort_direction in {decreasing increasing} }
+        assert { $sort_comparison in {dictionary ascii integer} }
+        set multirow [lsort -${sort_comparison} -${sort_direction} $multirow]
+        log "multirow: sorting in $sort_direction order"
+        # note: this is less than optimal as we sort ks/cf_axis,
+        # which is the same in a multirow
+    }
+}
+
+proc ::persistence::common::num_cols {row_oid} {
+    set delim {+}
+    return [llength [::persistence::get_subdirs ${row_oid}/${delim}]]
+}
+
+proc ::persistence::common::__exec_multirow_range_options {multirowVar options} {
+    upvar $multirowVar multirow
+
+    # TODO: uses statistics (e.g. column counts) to pick topn rows
+    # case when there are no filter criteria is simple,
+    # gets more complicated when having to deal with filtering criteria
+    #
+    # returns the number of cols skipped so that the caller/invoker would
+    # subtract their number from the original query offset 
+
+    array set options_arr $options
+
+    set slice_predicate [value_if options_arr(__slice_predicate) ""]
+    set offset [value_if options_arr(offset) "0"]
+    set limit [value_if options_arr(limit) ""]
+
+    set has_filter_options_p [expr { $slice_predicate ne {} }]
+    set has_range_options_p [expr { $offset > 0 || $limit ne {} }]
+
+    # note: for anything but offset == 0, it would require to return
+    # a delta to adjust the offset of the actual query (multiget_slice)
+
+    if { !$has_filter_options_p && $has_range_options_p } {
+        set llen [llength $multirow]
+        set n 0
+        set n_skipped 0
+        set result [list]
+        foreach row $multirow {
+            incr n [num_cols $row]
+            if { $n >= $offset } {
+                lappend result $row
+            }
+            if { $result eq {} } {
+                set n_skipped $n
+            }
+            if { $n >= $offset + $limit } {
+                break
+            }
+        }
+        set multirow $result
+        set new_llen [llength $multirow] 
+        log "multirow: $n_skipped skipped cols, (${new_llen}/${llen})"
+        return [list offset [expr { $offset - $n_skipped }]]
+    }
+}
+
+proc ::persistence::common::__exec_multirow_options {multirowVar options} {
+    upvar $multirowVar multirow
+    __exec_multirow_filter_options multirow $options
+    __exec_multirow_sort_options multirow $options
+
+    # returns a map of values, in particular a modified offset value
+    # adjusted for the number of columns that are skipped while
+    # processing __exec_multirow_range_options
+
+    return [__exec_multirow_range_options multirow $options]
 }
 
 proc ::persistence::common::split_xid {xid} {
@@ -287,14 +397,33 @@ proc ::persistence::common::get_slice {nodepath {options ""}} {
 proc ::persistence::common::multiget_slice {nodepath row_keys {options ""}} {
     #assert { [is_cf_nodepath_p $nodepath] }
     lassign [split_oid $nodepath] ks cf_axis
+    lassign [split $cf_axis {.}] cf idxname
+
+    # depending on the type of query, we would prefer to have the
+    # filtering be done by the get_slice processor, i.e. it would
+    # depend on the type of the index (if each row key corresponds
+    # to many columns, then passing partial/filter options seems to
+    # make sense, otherwise it does not)
+    #
+    if {1} {
+        # disables sort and range options for get_slice queries
+        # and classifies the query in terms of the nature of
+        # the request, whether it requires sorting, range selection,
+        # and so forth
+        array set options_arr $options
+        unset_if options_arr(order_by)
+        unset_if options_arr(offset)
+        unset_if options_arr(limit)
+        set partial_options [array get options_arr]
+        unset options_arr
+    }
 
     set result [list]
     foreach row_key ${row_keys} {
         set row_path [join_oid $ks $cf_axis $row_key]
-        set slicelist [get_slice $row_path ""]
+        set slicelist [get_slice $row_path $partial_options]
         set result [concat $result $slicelist]
     }
-    
     __exec_options result $options
     return ${result}
 }
@@ -411,24 +540,31 @@ proc ::persistence::common::end_batch {} {
     return $xid
 }
 
-proc ::persistence::common::get_multirow {ks cf_axis {predicate ""}} {
+proc ::persistence::common::get_multirow {ks cf_axis {options ""}} {
     assert_cf ${ks} ${cf_axis}
+
     set multirow [::persistence::get_subdirs ${ks}/${cf_axis}]
-    if { ${predicate} ne {} } {
-        predicate=forall multirow $predicate
-    }
-    return ${multirow}
+    set delta_options [__exec_multirow_options multirow $options]
+
+    array set options_arr $options
+    array set options_arr $delta_options
+    set revised_options [array get options_arr]
+
+    return [list $multirow $revised_options]
 }
 
-proc ::persistence::common::get_multirow_names {nodepath {predicate ""}} {
+proc ::persistence::common::get_multirow_names {nodepath {options ""}} {
     set residual_path [lassign [split $nodepath {/}] ks cf_axis]
-    set multirow [get_multirow $ks $cf_axis $predicate]
+
+    lassign [get_multirow $ks $cf_axis $options] multirow revised_options
+
     set result [list]
     foreach row $multirow {
         set row_key [get_name $row]
         lappend result $row_key
     }
-    return $result
+    return [list $result $revised_options]
+
 }
 
 proc ::persistence::common::get_filename {path} {

@@ -5,6 +5,7 @@ namespace eval ::util {
         valuelist_if \
         value_if \
         set_if \
+        unset_if \
         reversedotted
 }
 
@@ -45,6 +46,14 @@ proc ::util::set_if {varname value} {
         set _
     }
 }
+
+proc ::util::unset_if {varname} {
+    upvar $varname _
+    if { [info exists _] } { 
+        unset _
+    }
+}
+
 
 proc ::util::reversedotted {dotted_str} {
     return [join [lreverse [split ${dotted_str} {.}]] {.}]
@@ -100,5 +109,6 @@ namespace eval :: {
     namespace import ::util::value_if
     namespace import ::util::valuelist_if
     namespace import ::util::set_if
+    namespace import ::util::unset_if
     namespace import ::util::reversedotted
 }

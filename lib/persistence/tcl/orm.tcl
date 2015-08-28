@@ -538,9 +538,9 @@ proc ::persistence::orm::find_by_id {value} {
     return $oid
 }
 
-proc ::persistence::orm::find_by_axis {argv {optionsVar ""}} {
-    if { $optionsVar ne {} } {
-        upvar $optionsVar options
+proc ::persistence::orm::find_by_axis {argv {options_arrVar ""}} {
+    if { $options_arrVar ne {} } {
+        upvar $options_arrVar options_arr
     }
 
     variable [namespace __this]::idx
@@ -569,7 +569,8 @@ proc ::persistence::orm::find_by_axis {argv {optionsVar ""}} {
 
         lassign $argv idxname idxvalue
         set nodepath [to_path_by $idxname $idxvalue]
-        set slicelist [::persistence::get_slice $nodepath [array get options]]
+        set options [array get options_arr]
+        set slicelist [::persistence::get_slice $nodepath $options]
         # log find_by_axis,argc=2,slicelist=$slicelist
         return $slicelist
 
@@ -577,10 +578,15 @@ proc ::persistence::orm::find_by_axis {argv {optionsVar ""}} {
 
         lassign $argv idxname
         set nodepath [to_path_by $idxname]
-        set row_keys [::persistence::get_multirow_names $nodepath] 
-        # log argc=1,^^^row_keys=$row_keys
+        set options [array get options_arr]
+        lassign [::persistence::get_multirow_names $nodepath $options] row_keys revised_options
+
+        # TODO: 
+        #   if sort axis (idx), then sort row_keys 
+        #   in the requested direction
+
         if { $row_keys ne {} } {
-            set slicelist [::persistence::multiget_slice $nodepath $row_keys [array get options]]
+            set slicelist [::persistence::multiget_slice $nodepath $row_keys $revised_options]
             # log argc=1,^^^slicelist=$slicelist
             return $slicelist
         }
@@ -685,6 +691,7 @@ proc ::persistence::orm::__choose_axis {argv optionsVar find_by_axis_argsVar} {
     set option_order_by [value_if options(order_by) ""]
     lassign $option_order_by sort_attname sort_direction sort_comparison
     if { [info exists idx(by_$sort_attname)] } {
+        set options(multirow_orderby) [list $sort_direction $sort_comparison]
         set find_by_axis_args by_$sort_attname
         return by_$sort_attname
     } else {
