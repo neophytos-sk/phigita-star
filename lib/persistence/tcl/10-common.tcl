@@ -320,7 +320,8 @@ proc ::persistence::common::__exec_multirow_range_options {multirowVar options} 
         }
         set multirow $result
         set new_llen [llength $multirow] 
-        log "multirow: $n_skipped skipped cols, (${new_llen}/${llen})"
+        log "multirow: $n_skipped skipped cols, \
+            (only ${new_llen} of ${llen} row keys will have to be processed)"
         return [list offset [expr { $offset - $n_skipped }]]
     }
 }

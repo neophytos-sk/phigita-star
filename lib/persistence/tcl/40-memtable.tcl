@@ -255,30 +255,27 @@ proc ::persistence::mem::end_batch {xid} {
 proc ::persistence::mem::read_sstable {idxVar fp file_i} {
     upvar $idxVar idx
 
-    log "reading sstable..."
+    # log "reading sstable..."
 
     seek $fp -4 end
     # log "tell=[tell $fp]"
     while { [tell $fp] != 0} {
         set endpos [tell $fp]
-        log "endpos=$endpos"
+        #log "endpos=$endpos"
         set startpos [::util::io::read_int $fp]
-        log "startpos=$startpos"
+        #log "startpos=$startpos"
         seek $fp $startpos start
         ::util::io::read_string $fp row_key
 
-        log "startpos=$startpos endpos=$endpos row_key=$row_key"
+        #log "startpos=$startpos endpos=$endpos row_key=$row_key"
 
         while { [tell $fp] < $endpos } {
             ::util::io::read_string $fp rev
             set pos [tell $fp]
-            #::util::io::skip_string $fp 
-            ::util::io::read_string $fp data
-
-            # log "row_key=$row_key"
-
-            # lappend idx(${row_key}) [list $rev $file_i $pos]
-            lappend idx(${row_key}) [list $rev $file_i $data]
+            lappend idx(${row_key}) [list $rev $file_i $pos]
+            ::util::io::skip_string $fp 
+            # ::util::io::read_string $fp data
+            # lappend idx(${row_key}) [list $rev $file_i $data]
         }
         if { $startpos == 0 } {
             break
@@ -287,77 +284,73 @@ proc ::persistence::mem::read_sstable {idxVar fp file_i} {
         seek $fp -4 current
     }
 
-    log "done reading sstable"
+    # log "done reading sstable"
 
 }
 
 proc ::persistence::mem::compact {type_oid} {
     set dir "/web/data/mystore/"
-    set filelist [lsort -increasing [glob  -directory $dir ${type_oid}-*]]
-    # log "compact: filelist=$filelist"
+    set filelist [lsort -increasing [glob  -directory $dir ${type_oid}-*.sstable]]
     set llen [llength $filelist]
-    # log "compact: llen=$llen"
     if { $llen == 1 } {
         return
     }
 
-    log "compacting... type_oid=$type_oid #files=$llen"
+    # log "compacting... type_oid=$type_oid #files=$llen"
 
-    set file_i 0
+    set i 0
     array set fp [list]
     array set idx [list]
-    foreach filename $filelist {
-        log "filename=$filename size=[file size $filename]"
-        if { [file size $filename] == 0 } {
-            log "skip sstable (size=0)... $filename"
+    foreach infile $filelist {
+        if { [file size $infile] == 0 } {
+            # log "skip sstable (size=0)... $infile"
             continue
         }
-        set fp($file_i) [open $filename]
-        fconfigure $fp($file_i) -translation binary
+        set fp($i) [open $infile]
+        fconfigure $fp($i) -translation binary
         if { [catch {
-            read_sstable idx $fp($file_i) $file_i
+            read_sstable idx $fp($i) $i
         } errmsg] } {
             log "errmsg=$errmsg"
             log "exiting..."
             exit
         }
-        incr file_i
+        incr i
     }
 
     set round [clock format [clock seconds] -format "%Y%m%dT%H%M%S"]
-    set filename "/web/data/mystore/${type_oid}-${round}.sstable"
-    log "merging sstables..."
-    set ofp [open $filename "w"]
+    set outfile "/web/data/mystore/${type_oid}-${round}.sstable"
+    set clicks [clock clicks]
+    # log "merging sstables..."
+    set ofp [open ${outfile}.${clicks}.part "w"]
+    fconfigure $ofp -translation binary
+
     set row_keys [lsort [array names idx]]
     foreach row_key $row_keys {
-        log "row_key=$row_key"
+        #log "row_key=$row_key"
         set savepos [tell $ofp]
         ::util::io::write_string $ofp $row_key
         set idx($row_key) [lsort -index 0 $idx($row_key)]
         foreach item $idx($row_key) {
-            #lassign $item rev file_i pos
-            lassign $item rev file_i data
-            #log "rev=$rev file_i=$file_i pos=$pos fp=$fp($file_i)"
-            #seek $fp($file_i) $pos start
-            # log "reading data... from tell=[tell $fp($file_i)]"
-            # ::util::io::read_string $fp($file_i) data
-            #log "done reading data"
-            #log "ofp tell=[tell $ofp]"
+            lassign $item rev i pos
+            seek $fp($i) $pos start
+            ::util::io::read_string $fp($i) data
             ::util::io::write_string $ofp $rev
             ::util::io::write_string $ofp $data
-            # log "done writing data ofp.tell=[tell $ofp]"
+            unset data
         }
         ::util::io::write_int $ofp $savepos
     }
+    
     close $ofp
-    log "merged sstables, new file: $filename"
 
-    for {set file_i 0} { $file_i < [llength $filelist] } {incr file_i} {
-        close $fp($file_i)
-        set filename [lindex $filelist $file_i] 
-        log "deleting sstable... $filename"
-        file delete $filename
+    for {set i 0} { $i < [llength $filelist] } {incr i} {
+        close $fp($i)
+        file delete [lindex $filelist $i] 
     }
+
+    file rename ${outfile}.${clicks}.part ${outfile}
+    log "merged sstables, new file: $outfile"
 }
 
 proc ::persistence::mem::dump {} {

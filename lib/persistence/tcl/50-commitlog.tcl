@@ -276,7 +276,7 @@ proc ::persistence::commitlog::process {{bootstrap_p "0"}} {
 
     set mem_p [setting_p "memtable"]
 
-    log "mem_p=$mem_p"
+    # log "mem_p=$mem_p"
 
     seek $fp $pos1 start
     while { $pos1 < $pos2 } {
