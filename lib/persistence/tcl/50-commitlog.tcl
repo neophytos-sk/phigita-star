@@ -265,13 +265,13 @@ proc ::persistence::commitlog::process {{bootstrap_p "0"}} {
     }
 
     set inprogress_p 1
-    log "processing commitlog... bootstrap_p=$bootstrap_p fp=$fp"
+    # log "processing commitlog... bootstrap_p=$bootstrap_p fp=$fp"
 
     seek $fp 0 start
     set pos1 [::util::io::read_int $fp]
     set pos2 [::util::io::read_int $fp]
 
-    log "last_checkpoint (pos1): $pos1 --- last_logpoint (pos2): $pos2"
+    # log "last_checkpoint (pos1): $pos1 --- last_logpoint (pos2): $pos2"
 
     set read_committed_p \
         [expr { [setting "isolation_level"] ne {READ UNCOMMITTED} }]
@@ -308,7 +308,7 @@ proc ::persistence::commitlog::process {{bootstrap_p "0"}} {
     }
 
     set inprogress_p 0
-    log "done processing commitlog..."
+    #log "done processing commitlog..."
 
     # runs every 30 secs
     set timer [after 30000 [list ::persistence::commitlog::process]]

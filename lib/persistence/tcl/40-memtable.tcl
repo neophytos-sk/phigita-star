@@ -445,7 +445,7 @@ proc ::persistence::mem::fs_dump {sorted_revs} {
 # TODO: move to commitlog
 proc ::persistence::mem::dump {} {
 
-    log "dumping memtable to filesystem"
+    # log "dumping memtable to filesystem"
     variable __mem
     variable __xid_rev
     variable __xid_list
