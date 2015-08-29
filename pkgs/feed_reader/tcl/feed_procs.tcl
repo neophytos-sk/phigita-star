@@ -1721,7 +1721,7 @@ proc ::feed_reader::write_item {timeval normalized_link feedVar itemVar is_revis
 
 
     if { $exact_match_p } {
-        log exact_match_p,rev=[::newsdb::news_item_t 0or1row $where_clause]
+        # log exact_match_p,rev=[::newsdb::news_item_t 0or1row $where_clause]
         # revision content is the same as a previous one
         return 0
     }
