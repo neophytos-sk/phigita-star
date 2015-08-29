@@ -634,8 +634,8 @@ proc ::persistence::orm::find {{where_clause_argv ""} {optionsVar ""}} {
             set find_by_axis_args [list]
             set idxname [__choose_axis $where_clause_argv options find_by_axis_args]
             set predicate [__rewrite_where_clause $idxname $where_clause_argv]
-            #log "chosen axis (attribute) = $attname"
-            #log "chosen axis (args) = $find_by_axis_args"
+            # log "chosen axis (idxname) = $idxname"
+            # log "chosen axis (args) = $find_by_axis_args"
             # log "rewritten predicate = $predicate"
 
             set options(__where_clause_argv) $where_clause_argv
@@ -677,8 +677,11 @@ proc ::persistence::orm::__choose_axis {argv optionsVar find_by_axis_argsVar} {
                 set value [apply $func item_eq]
             } else {
                 set value [list]
-                foreach attname $lai {
-                    lappend value $item_eq($attname)
+                foreach attname $atts {
+                    if { $attname in $lai } {
+                        # for composite keys, order matters
+                        lappend value $item_eq($attname)
+                    }
                 }
             }
             set find_by_axis_args [list $idxname [join $value]]
