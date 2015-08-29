@@ -75,9 +75,13 @@ config param isolation_level "READ COMMITTED"
 #
 config param mvcc "on"
 
-assert { [setting "isolation_level"] eq {READ_UNCOMMITTED} || [setting_p "write_ahead_log"] }
-
-assert { [setting "isolation_level"] eq {READ_UNCOMMITTED} || [setting_p "mvcc"] }
+# any isolation level other than "READ UNCOMMITTED"
+# requires both the commitlog and the mvcc features,
+# note, however, that one may use either the commitlog
+# or the mvcc features even if the isolation level
+# is "READ UNCOMMITTED"
+assert { [setting "isolation_level"] eq {READ UNCOMMITTED} || [setting_p "write_ahead_log"] }
+assert { [setting "isolation_level"] eq {READ UNCOMMITTED} || [setting_p "mvcc"] }
 
 assert { ![setting_p "bloom_filters"] || [setting_p "write_ahead_log"] }
 

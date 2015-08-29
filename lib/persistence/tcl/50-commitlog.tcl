@@ -254,11 +254,10 @@ proc ::persistence::commitlog::process {{bootstrap_p "0"}} {
 
     if { $timer ne {} } {
         after cancel $timer
+        set timer ""
     }
 
     if { $inprogress_p } {
-        log [info frame -2]
-        log [info frame -1]
         log "WAL processing is already in progress, exiting scheduled proc"
         # runs every 30 secs
         set timer [after 30000 [list ::persistence::commitlog::process]]
@@ -274,9 +273,8 @@ proc ::persistence::commitlog::process {{bootstrap_p "0"}} {
 
     log "last_checkpoint (pos1): $pos1 --- last_logpoint (pos2): $pos2"
 
-    set mem_p [setting_p "memtable"]
-
-    # log "mem_p=$mem_p"
+    set read_committed_p \
+        [expr { [setting "isolation_level"] ne {READ UNCOMMITTED} }]
 
     seek $fp $pos1 start
     while { $pos1 < $pos2 } {
@@ -286,16 +284,12 @@ proc ::persistence::commitlog::process {{bootstrap_p "0"}} {
         ::util::io::read_string $fp codec_conf
         set pos1 [tell $fp]
 
-        if { $mem_p } {
-            lassign [split_xid $xid] micros pid n_mutations mtime
-            set rev "${oid}@${micros}"
+        if { $read_committed_p } {
             if { $bootstrap_p } {
-                if { ![::persistence::mem::exists_column_rev_p $rev] } {
-                    # wrap_proc in zz-postinit.tcl submits oid to commitlog and memtable
-                    # so, the following, for the roll-forward recovery after server startup
+                # wrap_proc in zz-postinit.tcl submits oid to commitlog and memtable
+                # so, this only for the roll-forward recovery after server startup
 
-                    ::persistence::mem::set_column $oid $data $xid $codec_conf
-                }
+                ::persistence::mem::set_column $oid $data $xid $codec_conf
             }
         } else {
 
@@ -308,7 +302,7 @@ proc ::persistence::commitlog::process {{bootstrap_p "0"}} {
 
     }
 
-    if { $mem_p } {
+    if { $read_committed_p } {
         ::persistence::mem::dump
         checkpoint [tell $fp]  ;# must be equal to pos2 at this point
     }
