@@ -353,65 +353,21 @@ proc ::persistence::mem::compact {type_oid} {
     log "merged sstables, new file: $outfile"
 }
 
-proc ::persistence::mem::dump {} {
+proc ::persistence::mem::sstable_dump {sorted_revs} {
+    variable __mem
 
     set round [clock format [clock seconds] -format "%Y%m%dT%H%M%S"]
 
-    log "dumping memtable to filesystem"
-    variable __mem
-    variable __xid_rev
-    variable __xid_list
-    variable __xid_committed
-    variable __idx
-
-    #set fp [open /tmp/memtable.txt w]
-    #puts $fp [join [array names __mem *,data] \n]
-    #close $fp
-
-    set revs [list]
-    set count 0
-    foreach xid $__xid_list {
-        # log "dumping xid (=$xid)"
-        set committed_p [value_if __xid_committed($xid) "0"]
-        if { !$committed_p } {
-            log "cannot fsync transaction (=$xid) that is still in progress"
-            continue
-        }
-        # log "dumping transaction: $xid"
-        set fp ""
-        set i ""
-        set j ""
-        set savepos ""
-        set rev_list [lsort -unique $__xid_rev($xid)]
-        foreach rev $rev_list {
-
-            # log "dumping rev: $rev"
-            if { !$__mem(${rev},dirty_p) } {
-                error "mismatch between __xid_rev and __mem data"
-            }
-            lappend revs $rev
-        }
-    }
-
-
-    # sorts revs in order to process sstables 
-    # by type_oid/row_key once in this round
-
+    set fp ""
+    set i ""
+    set j ""
     set savepos ""
-    set sorted_revs [lsort -unique $revs]
     foreach rev $sorted_revs {
 
-        # TODO: this part of the code should be 
-        # moved into (storage_ss.tcl) ::persistence::ss::set_column
-
-        set oid $__mem(${rev},oid)
-        set data $__mem(${rev},data)
-        set xid $__mem(${rev},xid)
-        set codec_conf $__mem(${rev},codec_conf)
-
-        ##
-        # sorted strings table (sstable)
-        #
+        # set oid $__mem(${rev},oid)
+        # set data $__mem(${rev},data)
+        # set xid $__mem(${rev},xid)
+        # set codec_conf $__mem(${rev},codec_conf)
 
         lassign [split_oid $rev] ks cf_axis row_key column_path
 
@@ -439,7 +395,7 @@ proc ::persistence::mem::dump {} {
             set filename "/web/data/mystore/${i}-${round}.sstable"
             file mkdir [file dirname ${filename}]
             set fp [open ${filename}.part "w"]
-            fconfigure $fp {*}$codec_conf
+            fconfigure $fp {*}$__mem(${rev},codec_conf)
         }
 
         if { $j ne $row_key } {
@@ -451,20 +407,11 @@ proc ::persistence::mem::dump {} {
             ::util::io::write_string $fp $row_key
         }
 
-        ::util::io::write_string $fp $oid
-        ::util::io::write_string $fp $data
-
-        #
-        # end sstable stuff
-        ##
-
-        call_orig_of ::persistence::set_column $oid $data $xid $codec_conf
-        set __mem(${rev},dirty_p) 0
-        incr count
+        ::util::io::write_string $fp $__mem(${rev},oid)
+        ::util::io::write_string $fp $__mem(${rev},data)
 
     }
 
-    # sstable
     if { [info exists fp] && [info exists j] } {
         if { $j ne {} } {
             ::util::io::write_int $fp $savepos
@@ -474,6 +421,78 @@ proc ::persistence::mem::dump {} {
         }
     }
 
+}
+
+proc ::persistence::mem::fs_dump {sorted_revs} {
+    variable __mem
+
+    # fs_dump $sorted_revs
+    foreach rev $sorted_revs {
+        
+        # calls ::persistence::fs::set_column
+        call_orig_of ::persistence::set_column \
+            $__mem(${rev},oid)  \
+            $__mem(${rev},data) \
+            $__mem(${rev},xid)  \
+            $__mem(${rev},codec_conf)
+
+        set __mem(${rev},dirty_p) 0
+        incr count
+    }
+
+}
+
+# TODO: move to commitlog
+proc ::persistence::mem::dump {} {
+
+    log "dumping memtable to filesystem"
+    variable __mem
+    variable __xid_rev
+    variable __xid_list
+    variable __xid_committed
+    variable __idx
+
+    #set fp [open /tmp/memtable.txt w]
+    #puts $fp [join [array names __mem *,data] \n]
+    #close $fp
+
+    set revs [list]
+    set count 0
+    foreach xid $__xid_list {
+        # log "dumping xid (=$xid)"
+        set committed_p [value_if __xid_committed($xid) "0"]
+        if { !$committed_p } {
+            log "cannot fsync transaction (=$xid) that is still in progress"
+            continue
+        }
+        # log "dumping transaction: $xid"
+        set rev_list [lsort -unique $__xid_rev($xid)]
+        foreach rev $rev_list {
+
+            # log "dumping rev: $rev"
+            if { !$__mem(${rev},dirty_p) } {
+                error "mismatch between __xid_rev and __mem data"
+            }
+            lappend revs $rev
+        }
+    }
+
+
+    # sorts revs in order to process sstables below
+    set sorted_revs [lsort -unique $revs]
+
+    # TODO: 
+    #   override fs_dump with sstable_dump in the case when setting_p "sstable"
+
+    if { [catch {
+        fs_dump $sorted_revs
+        sstable_dump $sorted_revs
+    } errmsg] } {
+        log errmsg=$errmsg
+        exit
+    }
+
+    # finalizes transactions
     foreach __xid $__xid_list {
 
         # transaction fsync-ed
@@ -485,7 +504,7 @@ proc ::persistence::mem::dump {} {
         # when all revisions in a transaction have been applied
         # remove them from memtable, which is different than a cache
         # in the sense that it only keeps transactions that are in progress
-        foreach rev $rev_list {
+        foreach rev $sorted_revs {
             array unset __idx ${rev}
             array unset __mem ${rev},*
         }
