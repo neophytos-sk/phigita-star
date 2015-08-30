@@ -320,18 +320,21 @@ proc ::persistence::mem::compact {type_oid} {
         if { [catch {
             read_sstable idx $fp($i) $i
         } errmsg] } {
-            log "errmsg=$errmsg"
-            log "exiting..."
+            log errmsg=$errmsg
+            log errorInfo=$::errorInfo
+            log exiting...
             exit
         }
         incr i
     }
 
-    set micros [clock microseconds]
-    set outfile [file join $dir "sysdb/sstable.by_name/${name}/+/${name}.sstable@${micros}"]
     set clicks [clock clicks]
+    set micros [clock microseconds]
+    set filename [file join $dir "sysdb/sstable.by_name/${name}/+/${name}.sstable"]
+    set outfile "${filename}@${micros}"
+    set tmpfile "${filename}.${clicks}.part@${micros}"
     # log "merging sstables..."
-    set ofp [open ${outfile}.${clicks}.part "w"]
+    set ofp [open $tmpfile "w"]
     fconfigure $ofp -translation binary
 
     set row_keys [lsort [array names idx]]
@@ -355,10 +358,12 @@ proc ::persistence::mem::compact {type_oid} {
 
     for {set i 0} { $i < [llength $filelist] } {incr i} {
         close $fp($i)
-        file delete [lindex $filelist $i] 
+        set infile_rev [lindex $filelist $i]
+        set infile [file join $dir $infile_rev]
+        file delete $infile
     }
 
-    file rename ${outfile}.${clicks}.part ${outfile}
+    file rename ${tmpfile} ${outfile}
     # log "merged sstables, new file: $outfile"
 }
 
@@ -387,7 +392,8 @@ proc ::persistence::mem::sstable_dump {sorted_revs} {
                     file rename ${filename}.part ${filename}
                 } errmsg] } {
                     log errmsg=$errmsg
-                    log "exiting..."
+                    log errorInfo=$::errorInfo
+                    log exiting...
                     exit
                 }
 
@@ -445,7 +451,6 @@ proc ::persistence::mem::fs_dump {sorted_revs} {
             $__mem(${rev},codec_conf)
 
         set __mem(${rev},dirty_p) 0
-        incr count
     }
 
 }
@@ -453,7 +458,7 @@ proc ::persistence::mem::fs_dump {sorted_revs} {
 # TODO: move to commitlog
 proc ::persistence::mem::dump {} {
 
-    # log "dumping memtable to filesystem"
+    log "dumping memtable to filesystem"
     variable __xid_rev
     variable __xid_list
     variable __xid_committed
@@ -488,7 +493,7 @@ proc ::persistence::mem::dump {} {
     } errmsg] } {
         log errmsg=$errmsg
         log errorInfo=$::errorInfo
-        log "exiting..."
+        log exiting...
         exit
     }
 
@@ -512,7 +517,7 @@ proc ::persistence::mem::dump {} {
     }
     set __xid_list ""
 
-    # log "dumped $count records"
+    log "dumped [llength $sorted_revs] records"
 }
 
 

@@ -40,3 +40,6 @@ proc ::persistence::tree::exists_p {parent_oid oid} {
 
 proc ::persistence::tree::dump {{parent_oid ""}} {}
 
+proc ::persistence::tree:get_files {path} {}
+proc ::persistence::tree:get_subdirs {path} {}
+
