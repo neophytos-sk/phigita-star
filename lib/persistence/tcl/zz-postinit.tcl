@@ -17,6 +17,19 @@ proc ::persistence::compare_mtime { oid1 oid2 } {
     }
 }
 
+proc ::persistence::compare_files { rev1 rev2 } {
+    lassign [split $rev1 {@}] oid1 _ts1
+    lassign [split $rev2 {@}] oid2 _ts2
+
+    set oid_compare_result [string compare $oid1 $oid2]
+
+    if { $oid_compare_result != 0 } {
+        return $oid_compare_result
+    } else {
+        return [compare_mtime $rev1 $rev2]
+    }
+    
+}
 
 proc ::persistence::mkskel {} {
     variable base_dir
@@ -130,7 +143,8 @@ proc ::persistence::init {} {
                 set filelist2 [call_orig $path]
                 #log mem_get_files=$filelist1
                 #log fs_get_files=$filelist2
-                return [lsort -unique [concat $filelist1 $filelist2]]
+                return [lsort -unique -command ::persistence::compare_files \
+                    [concat $filelist1 $filelist2]]
             }
 
             wrap_proc ::persistence::get_subdirs {path} {

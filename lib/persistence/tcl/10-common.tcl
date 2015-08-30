@@ -24,6 +24,7 @@ namespace eval ::persistence::common {
         del_link \
         get_link \
         get_slice \
+        multirow_slice \
         multiget_slice \
         exists_p \
         is_supercolumn_oid_p \
@@ -347,8 +348,18 @@ proc ::persistence::common::split_xid {xid} {
 proc ::persistence::common::ins_column {oid data {codec_conf ""}} {
     lassign [split_oid $oid] ks cf_axis row_key column_path ext
     set oid [join_oid $ks $cf_axis $row_key $column_path]
+
     set xid [cur_transaction_id]
+    set orig_xid $xid
+    if { $orig_xid eq {} } {
+        set xid [begin_batch]
+    }
+
     set_column ${oid} ${data} ${xid} ${codec_conf}
+
+    if { $orig_xid eq {} } {
+        end_batch $xid
+    }
 }
 
 proc ::persistence::common::del_column {rev} {
@@ -377,11 +388,24 @@ proc ::persistence::common::ins_link {oid target_oid {codec_conf ""}} {
     assert { [is_column_oid_p $target_oid] || [is_link_oid_p $target_oid] }
     lassign [split_oid $oid] ks cf_axis row_key column_path ext ts
 
+    # TODO: make use of ins_column provided that we have resolved the
+    # issue that requires us to store the rev (i.e. oid with ts) as 
+    # opposed to the oid (i.e. without ts) as the target of the link
+
     set xid [cur_transaction_id]
+    set orig_xid $xid
+    if { $orig_xid eq {} } {
+        set xid [begin_batch]
+    }
+
     lassign [split_xid $xid] micros pid n_mutations mtime
 
     set target_rev ${target_oid}@${micros}
     set_column ${oid}.link ${target_rev} ${xid} ${codec_conf}
+
+    if { $orig_xid eq {} } {
+        end_batch $xid
+    }
 }
 
 proc ::persistence::common::get_slice {nodepath {options ""}} {
@@ -395,10 +419,20 @@ proc ::persistence::common::get_slice {nodepath {options ""}} {
     return ${slicelist}
 }
 
-proc ::persistence::common::multiget_slice {nodepath row_keys {options ""}} {
+proc ::persistence::common::multirow_slice {nodepath row_keys {options ""}} {
     #assert { [is_cf_nodepath_p $nodepath] }
     lassign [split_oid $nodepath] ks cf_axis
-    lassign [split $cf_axis {.}] cf idxname
+
+    set result [list]
+    foreach row_key ${row_keys} {
+        set row_path [join_oid $ks $cf_axis $row_key]
+        set slicelist [get_slice $row_path $options]
+        lappend result $row_key $slicelist
+    }
+    return $result
+}
+
+proc ::persistence::common::multiget_slice {nodepath row_keys {options ""}} {
 
     # depending on the type of query, we would prefer to have the
     # filtering be done by the get_slice processor, i.e. it would
@@ -419,13 +453,15 @@ proc ::persistence::common::multiget_slice {nodepath row_keys {options ""}} {
         unset options_arr
     }
 
+    set multirow_slicelist [multirow_slice $nodepath $row_keys $partial_options]
+
     set result [list]
-    foreach row_key ${row_keys} {
-        set row_path [join_oid $ks $cf_axis $row_key]
-        set slicelist [get_slice $row_path $partial_options]
+    foreach {row_key slicelist} $multirow_slicelist {
         set result [concat $result $slicelist]
     }
+
     __exec_options result $options
+
     return ${result}
 }
 
@@ -446,6 +482,12 @@ proc ::persistence::common::get_link_target {rev} {
 proc ::persistence::common::get_link {rev {codec_conf ""}} {
     assert { [is_link_rev_p $rev] }
     set target_rev [get_link_target $rev]
+
+    # TODO: 
+    #   set target_oid [get_link_target $rev]
+    #   set target_rev [lindex [get_files $target_oid] 0]
+
+
     return [get $target_rev $codec_conf]
 }
 
@@ -518,11 +560,7 @@ proc ::persistence::common::new_transaction_id {type} {
 
 proc ::persistence::common::cur_transaction_id {} {
     variable ::persistence::__xid_stack
-    if { $__xid_stack ne {} } {
-        return [lindex $__xid_stack end]
-    } else {
-        return [new_transaction_id "single"]
-    }
+    return [lindex $__xid_stack end] ;# if empty, returns ""
 }
 
 proc ::persistence::common::begin_batch {} {
@@ -532,13 +570,14 @@ proc ::persistence::common::begin_batch {} {
     return $xid
 }
 
-proc ::persistence::common::end_batch {} {
+proc ::persistence::common::end_batch {{xid ""}} {
     variable ::persistence::__xid_stack
     assert { $__xid_stack ne {} }
-    set xid [lindex $__xid_stack end]
+    set __xid [lindex $__xid_stack end]
+    assert { $xid eq {}  || $xid eq $__xid }
     # log "end_batch $xid"
     set __xid_stack [lreplace $__xid_stack end end]
-    return $xid
+    return $__xid
 }
 
 proc ::persistence::common::get_multirow {ks cf_axis {options ""}} {
@@ -588,6 +627,63 @@ proc ::persistence::common::get_leafs {path} {
         }
         return $result
     }
+}
+
+proc ::persistence::common::compact {type_oid} {
+    # assert { [is_type_oid_p $type_oid] }
+    lassign [split_oid $type_oid] ks cf_axis
+
+    # 1. get row keys
+    set multirow_options [list]
+    lassign [get_multirow_names $type_oid $multirow_options] \
+        row_keys revised_multirow_options
+
+    # 2. get_leafs/slicelist for each row key
+    set multirow_slicelist [multirow_slice $type_oid $row_keys $options]
+
+    # 3. merge them in one sorted-strings (sstable) file
+    set index [list]
+    set output_data ""
+    foreach {row_key slicelist} $multirow_slicelist {
+        set savepos [string length $output_data]
+        set len [string length $row_key]
+        lappend index $row_key [binary format i $savepos]
+        append output_data [binary format i $len] $row_key
+        foreach rev $slicelist {
+            set len [string length $rev]
+            append output_data [binary format i $len] $rev 
+            set data [get $rev]
+            set len [string length $data]
+            append output_data [binary format i $len] $data
+        }
+        append output_data [binary format i $savepos]
+    }
+
+    ##
+    # 4. write the (sstable) file
+    #
+
+    set xid [begin_batch]
+    lassign [split_xid $xid] micros pid n_mutations mtime
+
+    set name [binary encode base64 $type_oid]
+    array set item [list name $name data $output_data index $index]
+
+    ## ::sysdb::sstable_t insert item
+    set oid [join_oid sysdb sstable.by_name $name ${name}.sstable@${micros}]
+    set encoded_data [::sysdb::sstable_t encode item]
+    set codec_conf "-translation binary"
+    write_column $oid $encoded_data $xid $codec_conf
+    foreach row_key $row_keys {
+      set row_oid [join_oid $ks $cf_axis $row_key]
+      del_row $row_oid
+      # => foreach column_oid [get_slice $row_oid] {
+      #      del_column $column_oid
+      #    }
+      #    rmdir $row_oid
+    }
+    end_batch
+
 }
 
 if { [setting "mvcc"] } {

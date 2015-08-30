@@ -54,7 +54,8 @@ namespace eval ::persistence::mem {
 }
 
 proc ::persistence::mem::init {} {}
-proc ::persistence::mem::define_cf {ks cf_axis} {}
+proc ::persistence::mem::define_cf {ks cf_axis} {
+}
 
 proc ::persistence::mem::visible_p {xid_micros} {
     return 1
@@ -290,7 +291,14 @@ proc ::persistence::mem::read_sstable {idxVar fp file_i} {
 
 proc ::persistence::mem::compact {type_oid} {
     set dir "/web/data/mystore/"
-    set filelist [lsort -increasing [glob  -directory $dir ${type_oid}-*.sstable]]
+
+    set name [binary encode base64 $type_oid]
+    set filelist [glob -tails -directory $dir "sysdb/sstable.by_name/${name}/+/${name}.sstable@*"]
+    set filelist [lsort \
+        -increasing \
+        -command ::persistence::compare_mtime \
+        $filelist]
+
     set llen [llength $filelist]
     if { $llen == 1 } {
         return
@@ -301,7 +309,8 @@ proc ::persistence::mem::compact {type_oid} {
     set i 0
     array set fp [list]
     array set idx [list]
-    foreach infile $filelist {
+    foreach infile_rev $filelist {
+        set infile [file join $dir $infile_rev]
         if { [file size $infile] == 0 } {
             # log "skip sstable (size=0)... $infile"
             continue
@@ -318,8 +327,8 @@ proc ::persistence::mem::compact {type_oid} {
         incr i
     }
 
-    set round [clock format [clock seconds] -format "%Y%m%dT%H%M%S"]
-    set outfile "/web/data/mystore/${type_oid}-${round}.sstable"
+    set micros [clock microseconds]
+    set outfile [file join $dir "sysdb/sstable.by_name/${name}/+/${name}.sstable@${micros}"]
     set clicks [clock clicks]
     # log "merging sstables..."
     set ofp [open ${outfile}.${clicks}.part "w"]
@@ -350,24 +359,19 @@ proc ::persistence::mem::compact {type_oid} {
     }
 
     file rename ${outfile}.${clicks}.part ${outfile}
-    log "merged sstables, new file: $outfile"
+    # log "merged sstables, new file: $outfile"
 }
 
 proc ::persistence::mem::sstable_dump {sorted_revs} {
     variable __mem
 
-    set round [clock format [clock seconds] -format "%Y%m%dT%H%M%S"]
+    set micros [clock microseconds]
 
     set fp ""
     set i ""
     set j ""
     set savepos ""
     foreach rev $sorted_revs {
-
-        # set oid $__mem(${rev},oid)
-        # set data $__mem(${rev},data)
-        # set xid $__mem(${rev},xid)
-        # set codec_conf $__mem(${rev},codec_conf)
 
         lassign [split_oid $rev] ks cf_axis row_key column_path
 
@@ -392,7 +396,9 @@ proc ::persistence::mem::sstable_dump {sorted_revs} {
             }
             set i "${ks}/${cf_axis}"
             set j ""
-            set filename "/web/data/mystore/${i}-${round}.sstable"
+            set name [binary encode base64 $i]
+            set dir "/web/data/mystore/"
+            set filename [file join $dir "sysdb/sstable.by_name/${name}/+/${name}.sstable@${micros}"]
             file mkdir [file dirname ${filename}]
             set fp [open ${filename}.part "w"]
             fconfigure $fp {*}$__mem(${rev},codec_conf)
@@ -428,6 +434,8 @@ proc ::persistence::mem::fs_dump {sorted_revs} {
 
     # fs_dump $sorted_revs
     foreach rev $sorted_revs {
+
+        assert { $__mem(${rev},dirty_p) == 1 }
         
         # calls ::persistence::fs::set_column
         call_orig_of ::persistence::set_column \
@@ -446,15 +454,10 @@ proc ::persistence::mem::fs_dump {sorted_revs} {
 proc ::persistence::mem::dump {} {
 
     # log "dumping memtable to filesystem"
-    variable __mem
     variable __xid_rev
     variable __xid_list
     variable __xid_committed
     variable __idx
-
-    #set fp [open /tmp/memtable.txt w]
-    #puts $fp [join [array names __mem *,data] \n]
-    #close $fp
 
     set revs [list]
     set count 0
@@ -466,13 +469,8 @@ proc ::persistence::mem::dump {} {
             continue
         }
         # log "dumping transaction: $xid"
-        set rev_list [lsort -unique $__xid_rev($xid)]
-        foreach rev $rev_list {
-
-            # log "dumping rev: $rev"
-            if { !$__mem(${rev},dirty_p) } {
-                error "mismatch between __xid_rev and __mem data"
-            }
+        set sorted_xid_revs [lsort -unique $__xid_rev($xid)]
+        foreach rev $sorted_xid_revs {
             lappend revs $rev
         }
     }
@@ -489,6 +487,8 @@ proc ::persistence::mem::dump {} {
         sstable_dump $sorted_revs
     } errmsg] } {
         log errmsg=$errmsg
+        log errorInfo=$::errorInfo
+        log "exiting..."
         exit
     }
 
@@ -515,34 +515,6 @@ proc ::persistence::mem::dump {} {
     # log "dumped $count records"
 }
 
-
-if { [setting_p "tree"] } {
-
-    wrap_proc ::persistence::mem::define_cf {ks cf_axis} {
-        call_orig $ks $cf_axis
-        set type_oid [join_oid $ks $cf_axis]
-        ::persistence::tree::init $type_oid
-    }
-
-    wrap_proc ::persistence::mem::set_column {oid data xid codec_conf} {
-        call_orig $oid $data $xid $codec_conf
-        lassign [split_oid $oid] ks cf_axis row_key column_path
-        set type_oid [join_oid $ks $cf_axis]
-        ::persistence::tree::insert $type_oid $oid $data $xid $codec_conf
-    }
-
-    wrap_proc ::persistence::mem::exists_p {oid} {
-        lassign [split_oid $oid] ks cf_axis row_key column_path
-        set type_oid [join_oid $ks $cf_axis]
-        return [::persistence::tree::exists_p $type_oid $oid]
-    }
-
-    wrap_proc ::persistence::mem::dump {} {
-        call_orig
-        ::persistence::tree::dump
-    }
-
-}
 
 
 if { [setting_p "bloom_filters"] } {
@@ -577,3 +549,45 @@ if { [setting_p "bloom_filters"] } {
     }
 
 }
+
+if { [setting_p "tree"] } {
+
+    wrap_proc ::persistence::mem::define_cf {ks cf_axis} {
+        call_orig $ks $cf_axis
+        set type_oid [join_oid $ks $cf_axis]
+        ::persistence::tree::init $type_oid
+    }
+
+    wrap_proc ::persistence::mem::set_column {oid data xid codec_conf} {
+        call_orig $oid $data $xid $codec_conf
+        lassign [split_oid $oid] ks cf_axis row_key column_path
+        set type_oid [join_oid $ks $cf_axis]
+        ::persistence::tree::insert $type_oid $oid $data $xid $codec_conf
+    }
+
+    wrap_proc ::persistence::mem::exists_p {oid} {
+        lassign [split_oid $oid] ks cf_axis row_key column_path
+        set type_oid [join_oid $ks $cf_axis]
+        return [call_orig $oid]
+    }
+
+    wrap_proc ::persistence::mem::dump {} {
+        ::persistence::tree::dump
+        call_orig
+    }
+
+    wrap_proc ::persistence::mem::get_files {path} {
+        set filelist_1 [call_orig $path]
+        set filelist_2 [::persistence::tree::get_files $path]
+        return [lsort -unique -command ::persistence::compare_files \
+            [concat $filelist1 $filelist2]]
+    }
+
+    wrap_proc ::persistence::mem::get_subdirs {path} {
+        set subdirs_1 [call_orig $path]
+        set subdirs_2 [::persistence::tree::get_subdirs $path]
+        return [lsort -unique [concat $subdirs_1 $subdirs_2]]
+    }
+
+}
+
