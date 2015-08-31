@@ -1,10 +1,10 @@
-if { ![setting_p "tree"] } {
+if { ![setting_p "critbit_tree"] } {
     return
 }
 
-# package require critbit_tree
+package require critbit_tree
 
-namespace eval ::persistence::tree {
+namespace eval ::persistence::critbit_tree {
 
     namespace import ::persistence::common::typeof_oid
     namespace import ::persistence::common::split_oid
@@ -12,34 +12,129 @@ namespace eval ::persistence::tree {
 
 }
 
-proc ::persistence::tree::init {parent_oid} {
-    set varname __tree_${parent_oid}__
-    variable $varname
-    array set $varname [list]
-    # cbt create $::cbt::STRING $varname
+proc ::persistence::critbit_tree::init {parent_oid} {
+    variable __cbt_TclObj
+
+    # create the critbit tree (TclObj) structure
+    set __cbt_TclObj(${name}) [cbt create $::cbt::STRING]
+
+    # what kind of parent_oid are we dealing with?
+    set type [typeof_oid $parent_oid]
+
+    # critbit tree name
+    set name [binary encode base64 [list $type $parent_oid]]
+
+    if { [info procs "::sysdb::critbit_tree_t"] ne {} } {
+        # see if we already have any records on it
+        set where_clause [list]
+        lappend where_clause [list name = $name]
+        set cbt_oid [::sysdb::critbit_tree_t 0or1row $where_clause] 
+
+        # load the bytes info (if any) into the bloom filter (TclObj) structure
+        if { $cbt_oid ne {} } {
+            array set cbt_data [::sysdb::critbit_tree_t get $cbt_oid]
+            binary scan $cbt_data(bytes) a* bytes
+            ::cbt::set_bytes $__cbt_TclObj(${name}) $bytes
+        }
+    }
+
+    return
+
 }
 
-proc ::persistence::tree::insert {parent_oid oid data xid codec_conf} {
-    set varname __tree_${parent_oid}__
-    variable $varname
+proc ::persistence::critbit_tree::insert {parent_oid oid data xid codec_conf} {
+    variable __cbt_TclObj
+    variable __cbt_dirty
 
-    array set $varname [list $oid ""]
+    # what kind of parent_oid are we dealing with?
+    set parent_type [typeof_oid $parent_oid]
 
-    # cbt insert $varname $oid
+    # critbit tree name
+    set name [binary encode base64 [list $parent_type $parent_oid]]
+
+    # ensures a critbit tree (TclObj) structure was initialized
+    # for the given parent_oid
+    assert { [info exists __cbt_TclObj(${name})] }
+
+    # insert given key to critbit tree (TclObj) structure
+    #lassign [split_oid $oid] ks cf_axis row_key column_path ext
+    #if { $parent_type eq {type} } {
+    #    set key $row_key
+    #} elseif { $parent_type eq {row} } {
+    #    set key $column_path
+    #}
+    #::cbt::insert $__cbt_TclObj(${name}) $key
+    ::cbt::insert $__cbt_TclObj(${name}) $oid
+
+    set __cbt_dirty($name) ""
 
 }
 
-proc ::persistence::tree::exists_p {parent_oid oid} {
-    set varname __tree_${parent_oid}__
-    variable $varname
-    return [info exists ${varname}($oid)]
+proc ::persistence::critbit_tree::dump {{parent_oid ""}} {
+    variable __cbt_TclObj
+    variable __cbt_dirty
 
-    # cbt exists $varname $oid
+    if { $parent_oid ne {} } {
+
+        # what kind of parent_oid are we dealing with?
+        set type [typeof_oid $parent_oid]
+
+        # bloom filter name
+        set name [binary encode base64 [list $type $parent_oid]]
+
+        # add it to the list
+        set names $name
+
+    } else {
+        # get all bloom filter names from the __bf_TclObj structure
+        set names [array names __cbt_TclObj]
+    }
+
+    foreach name $names {
+
+        if { ![info exists __cbt_dirty($name)] } { continue }
+
+        set bytes [::cbt::get_bytes $__cbt_TclObj(${name})]
+
+        array set cbt_item [list]
+        set cbt_item(name) $name 
+        set cbt_item(bytes) $bytes
+
+        # find the db record for the given parent_oid
+        set where_clause [list]
+        lappend where_clause [list name = $name]
+        set cbt_oid [::sysdb::critbit_tree_t 0or1row $where_clause] 
+
+        if { $cbt_oid eq {} } {
+            ::sysdb::critbit_tree_t insert cbt_item
+        } else {
+            ::sysdb::critbit_tree_t update $cbt_oid cbt_item
+        }
+
+        unset __cbt_dirty($name)
+
+    }
 
 }
 
-proc ::persistence::tree::dump {{parent_oid ""}} {}
+proc ::persistence::critbit_tree::exists_p {parent_oid oid} {
+    variable __cbt_TclObj
+    variable __cbt_dirty
 
-proc ::persistence::tree:get_files {path} {}
-proc ::persistence::tree:get_subdirs {path} {}
+    # what kind of parent_oid are we dealing with?
+    set parent_type [typeof_oid $parent_oid]
+
+    # critbit tree name
+    set name [binary encode base64 [list $parent_type $parent_oid]]
+
+    # ensures a critbit tree (TclObj) structure was initialized
+    # for the given parent_oid
+    assert { [info exists __cbt_TclObj(${name})] }
+
+    ::cbt::exists $__cbt_TclObj(${name}) $oid
+
+}
+
+proc ::persistence::critbit_tree:get_files {path} {}
+proc ::persistence::critbit_tree:get_subdirs {path} {}
 

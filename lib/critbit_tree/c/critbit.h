@@ -1,6 +1,7 @@
 #ifndef CRITBIT_H_
 #define CRITBIT_H_
 
+#include "common.h"
 
 typedef struct {
   void *root;

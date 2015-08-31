@@ -1,3 +1,7 @@
+#!/bin/sh
+#\
+ exec tclsh "$0" "$@"
+
 package require critbit_tree
 package require tcltest
 
