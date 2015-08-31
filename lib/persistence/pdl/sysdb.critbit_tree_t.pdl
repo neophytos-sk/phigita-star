@@ -1,0 +1,18 @@
+nsp "::sysdb::critbit_tree_t"
+ks "sysdb"
+cf "critbit_tree"
+pk "name"
+
+indexes {{
+    name "by_name"
+    atts "name"
+}}
+
+attributes {{
+    name "name"
+} {
+    name "bytes"
+}}
+
+aggregates {}
+

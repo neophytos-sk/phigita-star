@@ -27,4 +27,14 @@ test simple-1.1 { match } -setup {
     cbt insert $db abd=456
     cbt insert $db acc=888
     cbt prefix_match $db "abc="
+
+    puts get_bytes=[cbt::get_bytes $db]
+
+    cbt::create 0 db2
+    cbt::set_bytes $db2 [cbt::get_bytes $db]
+
+    puts get_bytes2=[cbt::get_bytes $db2]
+
+    cbt::prefix_match $db2 "abc="
+
 } -result {abc=123}

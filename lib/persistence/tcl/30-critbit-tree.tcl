@@ -135,6 +135,27 @@ proc ::persistence::critbit_tree::exists_p {parent_oid oid} {
 
 }
 
-proc ::persistence::critbit_tree:get_files {path} {}
+proc ::persistence::critbit_tree::get_files {path} {
+
+    return
+    
+    lassign [split_oid $path] ks cf_axis
+
+    set parent_oid ${ks}/${cf_axis}
+
+    # what kind of parent_oid are we dealing with?
+    set parent_type [typeof_oid $parent_oid]
+
+    # critbit tree name
+    set name [binary encode base64 [list $parent_type $parent_oid]]
+
+    # ensures a critbit tree (TclObj) structure was initialized
+    # for the given parent_oid
+    assert { [info exists __cbt_TclObj(${name})] }
+
+    return [::cbt::prefix_match $__cbt_TclObj(${name}) ${path}]
+
+}
+
 proc ::persistence::critbit_tree:get_subdirs {path} {}
 

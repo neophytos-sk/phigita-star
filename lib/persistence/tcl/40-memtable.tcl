@@ -555,19 +555,19 @@ if { [setting_p "bloom_filters"] } {
 
 }
 
-if { [setting_p "tree"] } {
+if { [setting_p "critbit_tree"] } {
 
     wrap_proc ::persistence::mem::define_cf {ks cf_axis} {
         call_orig $ks $cf_axis
         set type_oid [join_oid $ks $cf_axis]
-        ::persistence::tree::init $type_oid
+        ::persistence::critbit_tree::init $type_oid
     }
 
     wrap_proc ::persistence::mem::set_column {oid data xid codec_conf} {
         call_orig $oid $data $xid $codec_conf
         lassign [split_oid $oid] ks cf_axis row_key column_path
         set type_oid [join_oid $ks $cf_axis]
-        ::persistence::tree::insert $type_oid $oid $data $xid $codec_conf
+        ::persistence::critbit_tree::insert $type_oid $oid $data $xid $codec_conf
     }
 
     wrap_proc ::persistence::mem::exists_p {oid} {
@@ -581,17 +581,19 @@ if { [setting_p "tree"] } {
         call_orig
     }
 
-    wrap_proc ::persistence::mem::get_files {path} {
-        set filelist_1 [call_orig $path]
-        set filelist_2 [::persistence::tree::get_files $path]
-        return [lsort -unique -command ::persistence::compare_files \
-            [concat $filelist1 $filelist2]]
-    }
+    if {0} {
+        wrap_proc ::persistence::mem::get_files {path} {
+            set filelist_1 [call_orig $path]
+            set filelist_2 [::persistence::critbit_tree::get_files $path]
+            return [lsort -unique -command ::persistence::compare_files \
+                [concat $filelist1 $filelist2]]
+        }
 
-    wrap_proc ::persistence::mem::get_subdirs {path} {
-        set subdirs_1 [call_orig $path]
-        set subdirs_2 [::persistence::tree::get_subdirs $path]
-        return [lsort -unique [concat $subdirs_1 $subdirs_2]]
+        wrap_proc ::persistence::mem::get_subdirs {path} {
+            set subdirs_1 [call_orig $path]
+            set subdirs_2 [::persistence::critbit_tree::get_subdirs $path]
+            return [lsort -unique [concat $subdirs_1 $subdirs_2]]
+        }
     }
 
 }

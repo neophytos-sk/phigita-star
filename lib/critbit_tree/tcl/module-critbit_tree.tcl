@@ -20,9 +20,9 @@ array set conf {
     cinit ""
     ccode ""
 }
-set conf(debug_mode_p) [::xo::kit::debug_mode_p]
+set conf(debug_mode_p) 0 ;# [::xo::kit::debug_mode_p]
 if { [::xo::kit::debug_mode_p] } {
-    set conf(cflags) -DDEBUG
+    #set conf(cflags) -DDEBUG
 }
 
 set conf(cinit) {
@@ -43,7 +43,6 @@ set conf(cinit) {
     Tcl_CreateObjCommand(ip, "::cbt::destroy", cbt_DestroyCmd, NULL, NULL);
     //Tcl_CreateObjCommand(ip, "::cbt::info", cbt_InfoCmd, NULL, NULL);
     Tcl_CreateObjCommand(ip, "::cbt::contains", cbt_ContainsCmd, NULL, NULL);
-    Tcl_CreateObjCommand(ip, "::cbt::to_string", cbt_ToStringCmd, NULL, NULL);
     Tcl_CreateObjCommand(ip, "::cbt::get_bytes", cbt_GetBytesCmd, NULL, NULL);
     Tcl_CreateObjCommand(ip, "::cbt::set_bytes", cbt_SetBytesCmd, NULL, NULL);
     Tcl_CreateObjCommand(ip, "::cbt::write_to_file", cbt_WriteToFileCmd, NULL, NULL);
