@@ -577,7 +577,8 @@ if { [setting_p "critbit_tree"] } {
     }
 
     wrap_proc ::persistence::mem::dump {} {
-        ::persistence::tree::dump
+        log "dumping critbit_trees"
+        ::persistence::critbit_tree::dump
         call_orig
     }
 

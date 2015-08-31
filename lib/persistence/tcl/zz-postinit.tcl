@@ -254,7 +254,7 @@ proc ::persistence::load_types_from_files {filelist} {
         }
 
         assert { [::sysdb::object_type_t exists $where_clause] } {
-            ::persistence::mem::printall
+            ::persistence::commitlog::process
         }
 
         array unset spec

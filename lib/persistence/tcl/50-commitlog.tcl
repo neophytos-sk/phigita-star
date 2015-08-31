@@ -60,7 +60,9 @@ proc ::persistence::commitlog::init {} {
 proc ::persistence::commitlog::insert {itemVar} {
     variable fp
 
-    assert { $fp ne {} }
+    assert { $fp ne {} } {
+        ::persistence::commitlog::init
+    }
 
     upvar $itemVar item
     assert { $item(oid) ne {} }

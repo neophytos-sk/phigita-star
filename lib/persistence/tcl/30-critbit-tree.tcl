@@ -15,14 +15,14 @@ namespace eval ::persistence::critbit_tree {
 proc ::persistence::critbit_tree::init {parent_oid} {
     variable __cbt_TclObj
 
-    # create the critbit tree (TclObj) structure
-    set __cbt_TclObj(${name}) [cbt create $::cbt::STRING]
-
     # what kind of parent_oid are we dealing with?
     set type [typeof_oid $parent_oid]
 
     # critbit tree name
     set name [binary encode base64 [list $type $parent_oid]]
+
+    # create the critbit tree (TclObj) structure
+    set __cbt_TclObj(${name}) [cbt create $::cbt::STRING]
 
     if { [info procs "::sysdb::critbit_tree_t"] ne {} } {
         # see if we already have any records on it
@@ -64,6 +64,7 @@ proc ::persistence::critbit_tree::insert {parent_oid oid data xid codec_conf} {
     #    set key $column_path
     #}
     #::cbt::insert $__cbt_TclObj(${name}) $key
+
     ::cbt::insert $__cbt_TclObj(${name}) $oid
 
     set __cbt_dirty($name) ""
@@ -95,6 +96,8 @@ proc ::persistence::critbit_tree::dump {{parent_oid ""}} {
         if { ![info exists __cbt_dirty($name)] } { continue }
 
         set bytes [::cbt::get_bytes $__cbt_TclObj(${name})]
+
+log "dumping cbt (#items=[llength $bytes]) : [binary decode base64 $name]"
 
         array set cbt_item [list]
         set cbt_item(name) $name 
