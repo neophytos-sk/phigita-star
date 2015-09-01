@@ -409,7 +409,9 @@ proc ::persistence::common::ins_link {oid target_oid {codec_conf ""}} {
 }
 
 proc ::persistence::common::get_slice {nodepath {options ""}} {
-    assert { [is_row_oid_p $nodepath] }
+    assert { [is_row_oid_p $nodepath] } {
+        log failed,is_row_oid_p,nodepath=$nodepath
+    }
     lassign [split_oid $nodepath] ks cf_axis row_key
     set row_path [join_oid ${ks} ${cf_axis} ${row_key}]
     set slicelist [::persistence::get_leafs ${row_path}]
@@ -474,7 +476,9 @@ proc ::persistence::common::exists_p {rev} {
 }
 
 proc ::persistence::common::get_link_target {rev} {
-    assert { [is_link_rev_p $rev] } 
+    assert { [is_link_rev_p $rev] } {
+        log "failed,rev=$rev"
+    }
     set target_rev [get_column $rev]
     return $target_rev
 }

@@ -9,6 +9,7 @@ namespace eval ::persistence::critbit_tree {
     namespace import ::persistence::common::typeof_oid
     namespace import ::persistence::common::split_oid
     namespace import ::persistence::common::join_oid
+    namespace import ::persistence::common::split_xid
 
 }
 
@@ -22,9 +23,11 @@ proc ::persistence::critbit_tree::init {parent_oid} {
     set name [binary encode base64 [list $type $parent_oid]]
 
     # create the critbit tree (TclObj) structure
-    set __cbt_TclObj(${name}) [cbt create $::cbt::STRING]
+    set __cbt_TclObj(${name}) [::cbt::create $::cbt::STRING]
 
-    if { [info procs "::sysdb::critbit_tree_t"] ne {} } {
+    assert { [info exists __cbt_TclObj(${name})] }
+
+    if { [namespace exists "::sysdb::critbit_tree_t"] } {
         # see if we already have any records on it
         set where_clause [list]
         lappend where_clause [list name = $name]
@@ -56,16 +59,11 @@ proc ::persistence::critbit_tree::insert {parent_oid oid data xid codec_conf} {
     # for the given parent_oid
     assert { [info exists __cbt_TclObj(${name})] }
 
-    # insert given key to critbit tree (TclObj) structure
-    #lassign [split_oid $oid] ks cf_axis row_key column_path ext
-    #if { $parent_type eq {type} } {
-    #    set key $row_key
-    #} elseif { $parent_type eq {row} } {
-    #    set key $column_path
-    #}
-    #::cbt::insert $__cbt_TclObj(${name}) $key
+    # ::cbt::insert $__cbt_TclObj(${name}) $oid
 
-    ::cbt::insert $__cbt_TclObj(${name}) $oid
+    lassign [split_xid $xid] micros pid n_mutations mtime
+    set rev "${oid}@${micros}"
+    ::cbt::insert $__cbt_TclObj(${name}) $rev
 
     set __cbt_dirty($name) ""
 
@@ -120,7 +118,7 @@ log "dumping cbt (#items=[llength $bytes]) : [binary decode base64 $name]"
 
 }
 
-proc ::persistence::critbit_tree::exists_p {parent_oid oid} {
+proc ::persistence::critbit_tree::exists_p {parent_oid rev} {
     variable __cbt_TclObj
     variable __cbt_dirty
 
@@ -134,15 +132,19 @@ proc ::persistence::critbit_tree::exists_p {parent_oid oid} {
     # for the given parent_oid
     assert { [info exists __cbt_TclObj(${name})] }
 
-    ::cbt::exists $__cbt_TclObj(${name}) $oid
+    ::cbt::exists $__cbt_TclObj(${name}) $rev
 
 }
 
 proc ::persistence::critbit_tree::get_files {path} {
+    variable __cbt_TclObj
 
-    return
-    
     lassign [split_oid $path] ks cf_axis
+
+    # TODO: fix issue with ::sysdb::* types
+    if { $ks eq {sysdb} } {
+        return
+    }
 
     set parent_oid ${ks}/${cf_axis}
 
@@ -154,11 +156,33 @@ proc ::persistence::critbit_tree::get_files {path} {
 
     # ensures a critbit tree (TclObj) structure was initialized
     # for the given parent_oid
-    assert { [info exists __cbt_TclObj(${name})] }
+    assert { [info exists __cbt_TclObj(${name})] } {
+        log "!!! critbit_tree: name=[binary decode base64 $name]"
+    }
 
     return [::cbt::prefix_match $__cbt_TclObj(${name}) ${path}]
 
 }
 
-proc ::persistence::critbit_tree:get_subdirs {path} {}
+proc ::persistence::critbit_tree::get_subdirs {path} {
+
+    #log get_subdirs,path=$path
+
+    set len [llength [split $path {/}]]
+
+    set files [get_files "${path}/"]  ;# slash is important
+
+    #log get_subdirs,ls=$files
+
+    set result [list]
+    foreach oid $files {
+        set oid_parts [split $oid {/}] 
+        lappend result [join [lrange $oid_parts 0 $len] {/}]
+    }
+
+    #log get_subdirs,result=$result
+
+    return [lsort -unique ${result}]
+
+}
 

@@ -584,14 +584,16 @@ if { [setting_p "critbit_tree"] } {
 
     if {0} {
         wrap_proc ::persistence::mem::get_files {path} {
-            set filelist_1 [call_orig $path]
+            # set filelist_1 [call_orig $path]
+            set filelist_1 [list]
             set filelist_2 [::persistence::critbit_tree::get_files $path]
             return [lsort -unique -command ::persistence::compare_files \
-                [concat $filelist1 $filelist2]]
+                [concat $filelist_1 $filelist_2]]
         }
 
         wrap_proc ::persistence::mem::get_subdirs {path} {
-            set subdirs_1 [call_orig $path]
+            # set subdirs_1 [call_orig $path]
+            set subdirs_1 [list]
             set subdirs_2 [::persistence::critbit_tree::get_subdirs $path]
             return [lsort -unique [concat $subdirs_1 $subdirs_2]]
         }

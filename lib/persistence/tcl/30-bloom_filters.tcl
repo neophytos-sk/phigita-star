@@ -7,6 +7,7 @@ namespace eval ::persistence::bloom_filter {
     namespace import ::persistence::common::typeof_oid
     namespace import ::persistence::common::split_oid
     namespace import ::persistence::common::join_oid
+    namespace import ::persistence::common::split_xid
 
     variable __bf_TclObj
     variable __bf_dirty
@@ -37,7 +38,7 @@ proc ::persistence::bloom_filter::init {parent_oid} {
     set __bf_TclObj(${name}) \
         [::bloom_filter::create $items_estimate $false_positive_prob]
 
-    if { [info procs "::sysdb::bloom_filter_t"] ne {} } {
+    if { [namespace exists "::sysdb::bloom_filter_t"] } {
         # see if we already have any records on it
         set where_clause [list]
         lappend where_clause [list name = $name]

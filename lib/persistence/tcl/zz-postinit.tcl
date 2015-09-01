@@ -138,21 +138,44 @@ proc ::persistence::init {} {
                 return [expr { $exists_1_p || $exists_2_p }]
             }
 
-            wrap_proc ::persistence::get_files {path} {
-                set filelist1 [::persistence::mem::get_files $path]
-                set filelist2 [call_orig $path]
-                #log mem_get_files=$filelist1
-                #log fs_get_files=$filelist2
-                return [lsort -unique -command ::persistence::compare_files \
-                    [concat $filelist1 $filelist2]]
-            }
+            if { [setting_p "critbit_tree"] } {
+                # log "!!! critbit_tree"
+                wrap_proc ::persistence::get_files {path} {
+                    set filelist_1 [::persistence::critbit_tree::get_files $path]
+                    #log cbt_get_files=$filelist_1
+                    if { $filelist_1 ne {} } {
+                        return $filelist_1
+                    }
+                    set filelist_2 [call_orig $path]
+                    #log fs_get_files=$filelist_2
+                    return [lsort -unique -command ::persistence::compare_files \
+                        [concat $filelist_1 $filelist_2]]
+                }
+                wrap_proc ::persistence::get_subdirs {path} {
+                    set subdirs_1 [::persistence::critbit_tree::get_subdirs $path]
+                    if { $subdirs_1 ne {} } {
+                        return $subdirs_1
+                    }
+                    set subdirs_2 [call_orig $path]
+                    return [lsort -unique [concat $subdirs_1 $subdirs_2]]
+                }
+            } else {
+                wrap_proc ::persistence::get_files {path} {
+                    set filelist1 [::persistence::mem::get_files $path]
+                    set filelist2 [call_orig $path]
+                    #log mem_get_files=$filelist1
+                    #log fs_get_files=$filelist2
+                    return [lsort -unique -command ::persistence::compare_files \
+                        [concat $filelist1 $filelist2]]
+                }
 
-            wrap_proc ::persistence::get_subdirs {path} {
-                set subdirs_1 [::persistence::mem::get_subdirs $path]
-                set subdirs_2 [call_orig $path]
-                #log mem_get_subdirs=$subdirs_1
-                #log fs_get_subdirs=$subdirs_2
-                return [lsort -unique [concat $subdirs_1 $subdirs_2]]
+                wrap_proc ::persistence::get_subdirs {path} {
+                    set subdirs_1 [::persistence::mem::get_subdirs $path]
+                    set subdirs_2 [call_orig $path]
+                    #log mem_get_subdirs=$subdirs_1
+                    #log fs_get_subdirs=$subdirs_2
+                    return [lsort -unique [concat $subdirs_1 $subdirs_2]]
+                }
             }
 
         }

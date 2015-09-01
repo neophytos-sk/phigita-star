@@ -15,7 +15,7 @@ config param use_threads "off"
 
 config param memtable "on"
 config param critbit_tree "on"
-config param bloom_filters "on"
+config param bloom_filters "off"
 config param client_server "on"
 config param write_ahead_log "on"
 
@@ -84,6 +84,7 @@ assert { [setting "isolation_level"] eq {READ UNCOMMITTED} || [setting_p "write_
 assert { [setting "isolation_level"] eq {READ UNCOMMITTED} || [setting_p "mvcc"] }
 
 assert { ![setting_p "bloom_filters"] || [setting_p "write_ahead_log"] }
+assert { ![setting_p "critbit_tree"] || [setting_p "write_ahead_log"] }
 
 assert { ![use_p "server"] || [setting_p "client_server"] }
 
