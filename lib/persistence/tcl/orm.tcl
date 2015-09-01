@@ -381,6 +381,9 @@ proc ::persistence::orm::update {oid new_itemVar {optionsVar ""}} {
     array set item [array get new_item]
 
     # updates indexes
+
+    ::persistence::begin_batch
+
     set target [to_path $item($pk)] 
     foreach idxname $__idxnames {
         if { $idxname eq "by_$pk" } { continue }
@@ -415,6 +418,8 @@ proc ::persistence::orm::update {oid new_itemVar {optionsVar ""}} {
     # overwrites data
     set data [encode item]
     ::persistence::ins_column $target $data [codec_conf]
+
+    ::persistence::end_batch
 
 }
 

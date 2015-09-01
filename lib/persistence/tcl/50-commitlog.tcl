@@ -25,6 +25,9 @@ namespace eval ::persistence::commitlog {
 }
 
 proc ::persistence::commitlog::init {} {
+    variable fp
+
+    open_if
 
     ##
     # commitlog_oid is empty when open_if invokes ::sysdb::commitlog_t->insert
@@ -49,8 +52,6 @@ proc ::persistence::commitlog::init {} {
     }
     assert { $commitlog_oid ne {} }
     #log open_if,leave,commitlog_oid=$commitlog_oid
-
-    open_if
 
     process true ;# bootstrap_p=true
 
@@ -253,6 +254,10 @@ proc ::persistence::commitlog::process {{bootstrap_p "0"}} {
     variable inprogress_p
     variable timer
     variable fp
+
+    if { $fp eq {} } {
+        ::persistence::commitlog::init
+    }
 
     if { $timer ne {} } {
         after cancel $timer

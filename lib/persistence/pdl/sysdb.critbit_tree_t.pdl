@@ -12,6 +12,8 @@ attributes {{
     name "name"
 } {
     name "bytes"
+} {
+    name "datetime"
 }}
 
 aggregates {}

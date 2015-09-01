@@ -386,26 +386,12 @@ proc ::persistence::common::ins_link {oid target_oid {codec_conf ""}} {
     # TODO: IncrRefCount
     assert { $oid ne $target_oid } 
     assert { [is_column_oid_p $target_oid] || [is_link_oid_p $target_oid] }
-    lassign [split_oid $oid] ks cf_axis row_key column_path ext ts
 
-    # TODO: make use of ins_column provided that we have resolved the
+    # CHECK: make use of ins_column provided that we have resolved the
     # issue that requires us to store the rev (i.e. oid with ts) as 
     # opposed to the oid (i.e. without ts) as the target of the link
 
-    set xid [cur_transaction_id]
-    set orig_xid $xid
-    if { $orig_xid eq {} } {
-        set xid [begin_batch]
-    }
-
-    lassign [split_xid $xid] micros pid n_mutations mtime
-
-    set target_rev ${target_oid}@${micros}
-    set_column ${oid}.link ${target_rev} ${xid} ${codec_conf}
-
-    if { $orig_xid eq {} } {
-        end_batch $xid
-    }
+    ins_column ${oid}.link ${target_oid} ${codec_conf}
 }
 
 proc ::persistence::common::get_slice {nodepath {options ""}} {
@@ -479,18 +465,21 @@ proc ::persistence::common::get_link_target {rev} {
     assert { [is_link_rev_p $rev] } {
         log "failed,rev=$rev"
     }
-    set target_rev [get_column $rev]
+
+    set target_oid [get_column $rev]
+    set target_rev [lindex [::persistence::get_files $target_oid] 0]
+
+    assert { [is_column_rev_p $target_rev] || [is_link_rev_p $target_rev] } {
+        log failed,get_link_target,target_rev=$target_rev,target_oid=$target_oid
+    }
+
     return $target_rev
 }
 
 proc ::persistence::common::get_link {rev {codec_conf ""}} {
     assert { [is_link_rev_p $rev] }
+
     set target_rev [get_link_target $rev]
-
-    # TODO: 
-    #   set target_oid [get_link_target $rev]
-    #   set target_rev [lindex [get_files $target_oid] 0]
-
 
     return [get $target_rev $codec_conf]
 }

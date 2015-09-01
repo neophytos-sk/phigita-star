@@ -256,27 +256,24 @@ proc ::persistence::mem::end_batch {xid} {
 proc ::persistence::mem::read_sstable {idxVar fp file_i} {
     upvar $idxVar idx
 
-    # log "reading sstable..."
-
     seek $fp -4 end
-    # log "tell=[tell $fp]"
+    set start_of_indexmap [::util::io::read_int $fp]
+
+    assert { $start_of_indexmap > 0 } 
+
+    seek $fp $start_of_indexmap start
+    seek $fp -4 current
     while { [tell $fp] != 0} {
         set endpos [tell $fp]
-        #log "endpos=$endpos"
         set startpos [::util::io::read_int $fp]
-        #log "startpos=$startpos"
         seek $fp $startpos start
         ::util::io::read_string $fp row_key
-
-        #log "startpos=$startpos endpos=$endpos row_key=$row_key"
 
         while { [tell $fp] < $endpos } {
             ::util::io::read_string $fp rev
             set pos [tell $fp]
             lappend idx(${row_key}) [list $rev $file_i $pos]
             ::util::io::skip_string $fp 
-            # ::util::io::read_string $fp data
-            # lappend idx(${row_key}) [list $rev $file_i $data]
         }
         if { $startpos == 0 } {
             break
@@ -284,9 +281,6 @@ proc ::persistence::mem::read_sstable {idxVar fp file_i} {
         seek $fp $startpos start
         seek $fp -4 current
     }
-
-    # log "done reading sstable"
-
 }
 
 proc ::persistence::mem::compact {type_oid} {
@@ -311,6 +305,9 @@ proc ::persistence::mem::compact {type_oid} {
     array set idx [list]
     foreach infile_rev $filelist {
         set infile [file join $dir $infile_rev]
+
+        # log file_size=[file size $infile]
+
         if { [file size $infile] == 0 } {
             # log "skip sstable (size=0)... $infile"
             continue
@@ -318,6 +315,7 @@ proc ::persistence::mem::compact {type_oid} {
         set fp($i) [open $infile]
         fconfigure $fp($i) -translation binary
         if { [catch {
+            # log "i=$i (out of [llength $filelist]) infile=$infile"
             read_sstable idx $fp($i) $i
         } errmsg] } {
             log errmsg=$errmsg
@@ -334,13 +332,19 @@ proc ::persistence::mem::compact {type_oid} {
     set outfile "${filename}@${micros}"
     set tmpfile "${filename}.${clicks}.part@${micros}"
     # log "merging sstables..."
-    set ofp [open $tmpfile "w"]
-    fconfigure $ofp -translation binary
 
     set row_keys [lsort [array names idx]]
+
+    if { $row_keys eq {} } {
+        return
+    }
+
+    set ofp [open $tmpfile "w"]
+    fconfigure $ofp -translation binary
+    set map [list]
     foreach row_key $row_keys {
-        #log "row_key=$row_key"
         set savepos [tell $ofp]
+        lappend map $row_key $savepos
         ::util::io::write_string $ofp $row_key
         set idx($row_key) [lsort -index 0 $idx($row_key)]
         foreach item $idx($row_key) {
@@ -353,7 +357,11 @@ proc ::persistence::mem::compact {type_oid} {
         }
         ::util::io::write_int $ofp $savepos
     }
-    
+
+    set start_of_indexmap [tell $ofp]
+    assert { $start_of_indexmap > 0 }
+    ::util::io::write_string $ofp $map
+    ::util::io::write_int $ofp $start_of_indexmap
     close $ofp
 
     for {set i 0} { $i < [llength $filelist] } {incr i} {
@@ -376,6 +384,7 @@ proc ::persistence::mem::sstable_dump {sorted_revs} {
     set i ""
     set j ""
     set savepos ""
+    set map [list]
     foreach rev $sorted_revs {
 
         lassign [split_oid $rev] ks cf_axis row_key column_path
@@ -385,11 +394,13 @@ proc ::persistence::mem::sstable_dump {sorted_revs} {
                 ::util::io::write_int $fp $savepos
             }
             if { $fp ne {} } {
+                set start_of_indexmap [tell $fp]
+                ::util::io::write_string $fp $map
+                ::util::io::write_int $fp $start_of_indexmap
                 close $fp
-                # log "sstable ready... ${filename}.part"
 
                 if { [catch {
-                    file rename ${filename}.part ${filename}
+                    file rename ${tmpfile} ${outfile}
                 } errmsg] } {
                     log errmsg=$errmsg
                     log errorInfo=$::errorInfo
@@ -404,9 +415,11 @@ proc ::persistence::mem::sstable_dump {sorted_revs} {
             set j ""
             set name [binary encode base64 $i]
             set dir "/web/data/mystore/"
-            set filename [file join $dir "sysdb/sstable.by_name/${name}/+/${name}.sstable@${micros}"]
-            file mkdir [file dirname ${filename}]
-            set fp [open ${filename}.part "w"]
+            set filename [file join $dir "sysdb/sstable.by_name/${name}/+/${name}.sstable"]
+            set outfile "${filename}@${micros}"
+            set tmpfile "${filename}.part@${micros}"
+            file mkdir [file dirname ${tmpfile}]
+            set fp [open ${tmpfile} "w"]
             fconfigure $fp {*}$__mem(${rev},codec_conf)
         }
 
@@ -416,6 +429,7 @@ proc ::persistence::mem::sstable_dump {sorted_revs} {
             }
             set j $row_key
             set savepos [tell $fp]
+            lappend map $row_key $savepos
             ::util::io::write_string $fp $row_key
         }
 
@@ -429,6 +443,9 @@ proc ::persistence::mem::sstable_dump {sorted_revs} {
             ::util::io::write_int $fp $savepos
         }
         if { $fp ne {} } {
+            set start_of_indexmap [tell $fp]
+            ::util::io::write_string $fp $map
+            ::util::io::write_int $fp $start_of_indexmap
             close $fp
         }
     }

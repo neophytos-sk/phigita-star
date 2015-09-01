@@ -31,6 +31,12 @@ proc ::persistence::compare_files { rev1 rev2 } {
     
 }
 
+proc ::persistence::reload_types {} {
+    log "request to reload types"
+    ::persistence::commitlog::process
+    load_types_from_db
+}
+
 proc ::persistence::mkskel {} {
     variable base_dir
 
@@ -217,6 +223,8 @@ proc ::persistence::init {} {
 
             ls
             get_leafs
+
+            reload_types
         }
 
         foreach procname $procnames {
@@ -276,12 +284,18 @@ proc ::persistence::load_types_from_files {filelist} {
             ::sysdb::object_type_t insert spec
         }
 
-        assert { [::sysdb::object_type_t exists $where_clause] } {
-            ::persistence::commitlog::process
-        }
+        # assert { [::sysdb::object_type_t exists $where_clause] } {
+        #    log "failed to find type $spec(nsp)"
+        #    ::persistence::reload_types
+        # }
 
         array unset spec
     }
+
+    # covers case when client introduces a new object type
+    # that the server instances are not yet aware, and so
+    # they are notified to reload types from db
+    ::persistence::reload_types
 }
 
 proc ::persistence::load_type {specVar} {
@@ -300,7 +314,7 @@ proc ::persistence::load_type {specVar} {
 
 }
 
-proc ::persistence::load_all_types_from_db {} {
+proc ::persistence::load_types_from_db {} {
     set slicelist [::sysdb::object_type_t find]
     foreach oid $slicelist {
         # log "!!! load_type_from_db $oid"
@@ -314,6 +328,6 @@ proc ::persistence::load_all_types_from_db {} {
 ::persistence::init
 
 # TODO: check for new types (on the server side)
-after_package_load persistence ::persistence::load_all_types_from_db
+after_package_load persistence ::persistence::load_types_from_db
 
 
