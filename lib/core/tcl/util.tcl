@@ -6,7 +6,9 @@ namespace eval ::util {
         value_if \
         set_if \
         unset_if \
-        reversedotted
+        reversedotted \
+        readfile \
+        writefile 
 }
 
 proc ::util::coalesce {args} {

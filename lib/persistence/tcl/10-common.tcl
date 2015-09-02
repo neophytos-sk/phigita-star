@@ -5,6 +5,7 @@ namespace eval ::persistence {
 
 }
 
+namespace eval ::persistence::ss {;}
 namespace eval ::persistence::fs {;}
 
 namespace eval ::persistence::common {
@@ -12,7 +13,7 @@ namespace eval ::persistence::common {
     variable base_dir
     set base_dir [config get ::persistence base_dir]
 
-    namespace path "::persistence ::persistence::fs"
+    namespace path "::persistence ::persistence::ss ::persistence::fs"
 
     namespace export -clear \
         join_oid \
@@ -20,6 +21,7 @@ namespace eval ::persistence::common {
         typeof_oid \
         ins_column \
         del_column \
+        get_column \
         ins_link \
         del_link \
         get_link \
@@ -42,7 +44,8 @@ namespace eval ::persistence::common {
         get_leafs \
         get_multirow \
         get_multirow_names \
-        get_filename
+        get_filename \
+        get_name
 
     set storage_type [config get ::persistence "default_storage_type"]
     set nsp "::persistence::${storage_type}"
@@ -484,6 +487,17 @@ proc ::persistence::common::get_link {rev {codec_conf ""}} {
     return [get $target_rev $codec_conf]
 }
 
+# note: default implementation uses column to store the target_oid of a link
+# and thus why we allow for link oids in the assertion statement
+proc ::persistence::common::get_column {rev {codec_conf ""}} {
+    assert { [is_column_rev_p $rev] || [is_link_rev_p $rev] } {
+        log failed,rev=$rev
+    }
+
+    # log "retrieving column (=$oid) from fs"
+    return [readfile ${rev} {*}$codec_conf]
+}
+
 proc ::persistence::common::get {rev {codec_conf ""}} {
     assert { [is_column_rev_p $rev] || [is_link_rev_p $rev] }
     if { [is_link_rev_p $rev] } {
@@ -491,6 +505,14 @@ proc ::persistence::common::get {rev {codec_conf ""}} {
     } else {
         return [get_column $rev $codec_conf]
     }
+}
+
+proc ::persistence::common::get_name {rev} {
+    set rev_filename [get_filename $rev]
+    if { [is_link_oid_p $rev] } {
+        set rev_filename [get_link_target $rev]
+    }
+    return [file tail [file rootname ${rev_filename}]]
 }
 
 proc ::persistence::common::predicate=forall {slicelistVar predicates} {

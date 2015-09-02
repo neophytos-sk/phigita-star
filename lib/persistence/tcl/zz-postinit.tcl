@@ -56,7 +56,7 @@ proc ::persistence::init {} {
 
     assert { $storage_type in {fs ss} }
 
-    namespace path "::persistence::$storage_type ::persistence::common"
+    namespace path "::persistence::ss ::persistence::$storage_type ::persistence::common"
 
     if { ![setting_p "client_server"] || [use_p "server"] } {
 
@@ -81,7 +81,7 @@ proc ::persistence::init {} {
             }
 
             # private
-            # log which,[namespace which get_column]
+            #log which,[namespace which get_column]
             wrap_proc ::persistence::get_column {rev {codec_conf ""}} {
                 assert { [is_column_rev_p $rev] || [is_link_rev_p $rev] }
                 set exists_p [::persistence::mem::exists_column_rev_p $rev]

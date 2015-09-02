@@ -5,6 +5,13 @@
 #
 #######################################################################
 
+
+#TODO: get_range_slices
+#TODO: batch_mutate
+#TODO: incr_column
+#TODO: incr_super_column
+
+
 proc ::persistence::fs::get_supercolumn {keyspace column_family row_key supercolumn_path} {
     set row_dir [join_oid ${keyspace} ${column_family} ${row_key}]
     set supercolumn_dir ${row_dir}/${supercolumn_path}

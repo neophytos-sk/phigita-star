@@ -41,7 +41,6 @@ namespace eval ::persistence::fs {
         end_batch \
         ls
 
-
 }
 
 proc ::persistence::fs::get_oid_filename {oid} {
@@ -155,25 +154,6 @@ proc ::persistence::fs::exists_link_rev_p {rev} {
     return [file exists $filename]
 }
 
-# note: default implementation uses column to store the target_oid of a link
-# and thus why we allow for link oids in the assertion statement
-proc ::persistence::fs::get_column {rev {codec_conf ""}} {
-    assert { [is_column_rev_p $rev] || [is_link_rev_p $rev] } {
-        log failed,rev=$rev
-    }
-
-    # log "retrieving column (=$oid) from fs"
-    set filename [get_filename ${rev}]
-    return [::util::readfile ${filename} {*}$codec_conf]
-}
-
-proc ::persistence::fs::get_name {rev} {
-    set rev_filename [get_filename $rev]
-    if { [is_link_oid_p $rev] } {
-        set rev_filename [get_link_target $rev]
-    }
-    return [file tail [file rootname ${rev_filename}]]
-}
 
 proc ::persistence::fs::find_column {
     oid
@@ -208,11 +188,18 @@ proc ::persistence::fs::find_column {
 ###################################################################################################
 
 
-#TODO: get_range_slices
-#TODO: batch_mutate
-#TODO: incr_column
-#TODO: incr_super_column
+proc ::persistence::fs::readfile {rev args} {
+    set filename [get_filename ${rev}]
+    set codec_conf $args
+    return [::util::readfile $filename {*}$codec_conf]
 
+}
+proc ::persistence::fs::writefile {rev data args} {
+    set filename [get_filename ${rev}]
+    set codec_conf $args
+    return [::util::writefile $filename $data {*}$codec_conf]
+
+}
 
 
 proc ::persistence::fs::set_column {oid data xid codec_conf} {
@@ -220,7 +207,7 @@ proc ::persistence::fs::set_column {oid data xid codec_conf} {
 
     set filename [get_oid_filename ${oid}]
     file mkdir [file dirname ${filename}]
-    ::util::writefile ${filename} ${data} {*}$codec_conf
+    writefile ${filename} ${data} {*}$codec_conf
     file mtime ${filename} ${mtime}
 
 }
@@ -238,7 +225,7 @@ if { [setting_p "mvcc"] } {
         # saves revision
         set rev_filename [get_filename ${rev}]
         file mkdir [file dirname ${rev_filename}]
-        ::util::writefile ${rev_filename} ${data} {*}$codec_conf
+        writefile ${rev} ${data} {*}$codec_conf
         file mtime ${rev_filename} ${mtime}
 
         # checks if oid is a tombstone and updates the link

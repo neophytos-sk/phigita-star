@@ -14,6 +14,7 @@ config param use_server "off"
 config param use_threads "off"
 
 config param memtable "on"
+config param sstable "on"
 config param critbit_tree "on"
 config param bloom_filters "off"
 config param client_server "on"
