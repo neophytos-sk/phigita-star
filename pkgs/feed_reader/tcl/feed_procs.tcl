@@ -1508,8 +1508,8 @@ proc ::feed_reader::print_log_footer {contextVar} {
     set from_date [value_if context(from_date) ""]
     set to_date [value_if context(to_date) ""]
     if { ${from_date} ne {} } {
-	puts ""
-	puts "- date from ${from_date} to ${to_date}"
+    #puts ""
+    #puts "- date from ${from_date} to ${to_date}"
     }
 
 

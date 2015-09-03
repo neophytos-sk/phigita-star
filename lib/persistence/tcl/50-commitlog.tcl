@@ -266,8 +266,8 @@ proc ::persistence::commitlog::process {{bootstrap_p "0"}} {
 
     if { $inprogress_p } {
         log "WAL processing is already in progress, exiting scheduled proc"
-        # runs every 30 secs
-        set timer [after 30000 [list ::persistence::commitlog::process]]
+        set millis [setting "process_commitlog_millis"] 
+        set timer [after $millis [list ::persistence::commitlog::process]]
         return
     }
 
@@ -317,8 +317,8 @@ proc ::persistence::commitlog::process {{bootstrap_p "0"}} {
     set inprogress_p 0
     #log "done processing commitlog..."
 
-    # runs every 30 secs
-    set timer [after 30000 [list ::persistence::commitlog::process]]
+    set millis [setting "process_commitlog_millis"] 
+    set timer [after $millis [list ::persistence::commitlog::process]]
 
 }
 
