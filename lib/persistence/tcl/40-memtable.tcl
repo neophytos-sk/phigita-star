@@ -438,4 +438,7 @@ if { [setting_p "sstable"] } {
         ::persistence::ss::init $type_oid
     }
 
+    wrap_proc ::persistence::mem::get_mtime {rev} {
+        return [::persistence::ss::get_mtime $rev]
+    }
 }

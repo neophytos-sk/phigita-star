@@ -124,10 +124,10 @@ proc ::persistence::init {} {
             }
 
             wrap_proc ::persistence::get_mtime {rev} {
-                if { [::persistence::mem::exists_column_rev_p $rev] } {
+                #if { [::persistence::mem::exists_p $rev] } {
                     return [::persistence::mem::get_mtime $rev]
-                }
-                return [call_orig $rev]
+                #}
+                #return [call_orig $rev]
             }
 
             # log which,[namespace which exists_p]

@@ -1,19 +1,24 @@
-		   url http://www.politis.com.cy/
-		   include_re {/cgibin/hweb\?-A=[0-9]+&-V=articles}
-		   encoding cp1253
-		   htmltidy_feed_p 1
-		   htmltidy_article_p 1
-		   xpath_article_title {substring-after(//meta[@property="og:title"]/@content," - ")}
-		   xpath_article_body {returntext(//td[@width="524"]/descendant::*[local-name()="p" or local-name()="div"])}
-		   xpath_article_cleanup {
-		       {//td[@width="524"]/descendant::hr[2]/following-sibling::*}
-		       {//td[@width="524"]/descendant::hr[1]/preceding-sibling::*}
-		       {//td[@width="524"]/descendant::hr[1]/following-sibling::table}
-		       {//td[@width="524"]/descendant::p/i[contains(text(),' - ')]}
-		       {//td[@width="524"]/descendant::p[@class="viewonpdf"]}
-		   }
-		   xpath_article_date {returndate(//td[@width="524"]/descendant::p/i[contains(text(),' - ')],"%d/%m/%Y - %H:%M")}
-		   comment {
-		       cp1253 (windows greek encoding - minor differences with iso8859-7, e.g. tonismeno alpha)
-		   }
+url http://www.politis.com.cy/
+include_re {/cgibin/hweb\?-A=[0-9]+&-V=articles}
+exclude_re ""
+url_fmt ""
+exclude_inurl ""
+include_inurl ""
+encoding cp1253
+htmltidy_feed_p 1
+htmltidy_article_p 1
+xpath_article_title {substring-after(//meta[@property="og:title"]/@content," - ")}
+xpath_article_body {returntext(//td[@width="524"]//td[@align="left" and @valign="top"])}
+xpath_article_cleanup {
+   {//td[@width="524"]/descendant::hr[2]/following-sibling::*}
+   {//td[@width="524"]/descendant::hr[1]/preceding-sibling::*}
+   {//td[@width="524"]/descendant::hr[1]/following-sibling::table}
+   {//td[@width="524"]/descendant::p/i[contains(text(),' - ')]}
+   {//td[@width="524"]/descendant::p[@class="viewonpdf"]}
+   {//div[@id="fb-root"]}
+}
+xpath_article_date {returndate(//td[@width="524"]/descendant::p/i[contains(text(),' - ')],"%d/%m/%Y - %H:%M")}
+comment {
+   cp1253 (windows greek encoding - minor differences with iso8859-7, e.g. tonismeno alpha)
+}
 

@@ -24,6 +24,10 @@ proc ::persistence::ss::init {type_oid} {
         # file delete $filename
         # log "deleted (sstable.part) file: $filename"
     }
+
+    assert { [llength [file __find $dir "*.sstable@*"]] <= 1 } {
+        compact $type_oid
+    }
 }
 
 proc ::persistence::ss::read_sstable {idxVar fp file_i} {
@@ -77,6 +81,11 @@ proc ::persistence::ss::load_sstable_indexmap {type_oid codec_conf} {
 
     # start of temporary hack
     variable base_dir
+
+    # TODO: -tails option for "file __find"
+    # set sstable_revs [file __find $base_dir "sysdb/sstable.by_name/${name}/+/${name}.sstable@*"]
+    #
+
     set sstable_rev [glob \
         -nocomplain \
         -tails \
@@ -360,42 +369,45 @@ proc ::persistence::ss::dump {sorted_revs} {
 
 }
 
-if {1} {
-    proc ::persistence::ss::readfile {rev args} {
-        assert { [is_column_rev_p $rev] || [is_link_rev_p $rev] } {
-            log failed,rev=$rev
-        }
-
-        set codec_conf $args
-
-        lassign [split_oid $rev] ks
-
-        if { $ks eq {sysdb} } {
-            return [::persistence::fs::readfile $rev {*}$codec_conf]
-        } else {
-
-            # log "retrieving column (=$rev) from sstable"
-
-            set data [::persistence::ss::read_sstable_column $rev {*}$codec_conf]
-            
-            #log #length=[string length $data]
-
-            return $data
-
-        }
-
+proc ::persistence::ss::readfile {rev args} {
+    assert { [is_column_rev_p $rev] || [is_link_rev_p $rev] } {
+        log failed,rev=$rev
     }
 
-    proc ::persistence::ss::writefile {rev args} {
-        assert { [is_column_rev_p $rev] || [is_link_rev_p $rev] } {
-            log failed,rev=$rev
-        }
+    set codec_conf $args
 
-        log "writing column (=$rev) to sstable"
-        set filename [get_filename ${rev}]
-        error "not implemented yet"
-        set codec_conf $args
-        return [::util::writefile ${filename} {*}$codec_conf]
+    lassign [split_oid $rev] ks
+
+    if { $ks eq {sysdb} } {
+        return [::persistence::fs::readfile $rev {*}$codec_conf]
+    } else {
+
+        # log "retrieving column (=$rev) from sstable"
+
+        set data [::persistence::ss::read_sstable_column $rev {*}$codec_conf]
+        
+        #log #length=[string length $data]
+
+        return $data
+
     }
 
 }
+
+proc ::persistence::ss::writefile {rev args} {
+    assert { [is_column_rev_p $rev] || [is_link_rev_p $rev] } {
+        log failed,rev=$rev
+    }
+
+    log "writing column (=$rev) to sstable"
+    set filename [get_filename ${rev}]
+    error "not implemented yet"
+    set codec_conf $args
+    return [::util::writefile ${filename} {*}$codec_conf]
+}
+
+proc ::persistence::ss::get_mtime {rev} {
+    lassign [split_oid $rev] ks cf_axis row_key column_path ext ts
+    return $ts
+}
+

@@ -147,7 +147,9 @@ proc ::persistence::critbit_tree::exists_p {parent_oid rev} {
 
     # ensures a critbit tree (TclObj) structure was initialized
     # for the given parent_oid
-    assert { [info exists __cbt_TclObj(${name})] }
+    assert { [info exists __cbt_TclObj(${name})] } {
+        log failed,cbt_exists_p,parent_oid=$parent_oid
+    }
 
     return [::cbt::exists $__cbt_TclObj(${name}) $rev]
 
