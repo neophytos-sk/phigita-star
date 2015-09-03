@@ -10,6 +10,21 @@ namespace eval ::persistence::ss {
     namespace import ::persistence::common::split_oid
 }
 
+proc ::persistence::ss::init {type_oid} {
+    variable base_dir
+
+    set name [binary encode base64 $type_oid]
+    set dir [file join $base_dir "sysdb/sstable.by_name/${name}/+/"]
+    # log "ss->init: type_oid=$type_oid dir=$dir"
+    set filelist [file __find $dir "*.part@*"]
+    foreach filename $filelist {
+        # TODO: the following, not quite right as it is currently triggered upon define_cf
+        #
+        # log "deleting (sstable.part) file: $filename"
+        # file delete $filename
+        # log "deleted (sstable.part) file: $filename"
+    }
+}
 
 proc ::persistence::ss::read_sstable {idxVar fp file_i} {
     upvar $idxVar idx
@@ -69,7 +84,10 @@ proc ::persistence::ss::load_sstable_indexmap {type_oid codec_conf} {
         "sysdb/sstable.by_name/${name}/+/${name}.sstable@*"]
 
     if { $sstable_rev eq {} } {
-        error "no sstable files matched: [binary decode base64 $name]"
+        log "sstable name: $name"
+        log "no sstable files matched: [binary decode base64 $name]"
+        log "exiting..."
+        exit
     }
 
     # log sstable_rev=$sstable_rev
@@ -327,6 +345,16 @@ proc ::persistence::ss::dump {sorted_revs} {
             ::util::io::write_string $fp $map
             ::util::io::write_int $fp $start_of_indexmap
             close $fp
+
+            if { [catch {
+                file rename ${tmpfile} ${outfile}
+            } errmsg] } {
+                log errmsg=$errmsg
+                log errorInfo=$::errorInfo
+                log exiting...
+                exit
+            }
+
         }
     }
 

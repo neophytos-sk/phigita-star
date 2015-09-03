@@ -261,6 +261,12 @@ proc ::persistence::mem::fs_dump {sorted_revs} {
     # fs_dump $sorted_revs
     foreach rev $sorted_revs {
 
+        # just for debugging/test sstable support
+        lassign [split_oid $rev] ks
+        if { [setting_p "sstable"] && $ks ne {sysdb} } {
+            continue
+        }
+
         assert { $__mem(${rev},dirty_p) == 1 }
         
         # calls ::persistence::fs::set_column
@@ -391,9 +397,9 @@ if { [setting_p "critbit_tree"] } {
     #    ::persistence::critbit_tree::insert $type_oid $oid $data $xid $codec_conf
     #}
 
-    wrap_proc ::persistence::mem::exists_p {oid} {
-        set type_oid [type_oid $oid]
-        return [call_orig $oid]
+    wrap_proc ::persistence::mem::exists_p {rev} {
+        set type_oid [type_oid $rev]
+        return [::persistence::critbit_tree::exists_p $type_oid $rev]
     }
 
     wrap_proc ::persistence::mem::dump {} {
@@ -424,3 +430,12 @@ if { [setting_p "critbit_tree"] } {
 
 }
 
+if { [setting_p "sstable"] } {
+
+    wrap_proc ::persistence::mem::define_cf {ks cf_axis} {
+        call_orig $ks $cf_axis
+        set type_oid [join_oid $ks $cf_axis]
+        ::persistence::ss::init $type_oid
+    }
+
+}

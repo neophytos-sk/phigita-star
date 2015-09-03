@@ -149,7 +149,7 @@ proc ::persistence::critbit_tree::exists_p {parent_oid rev} {
     # for the given parent_oid
     assert { [info exists __cbt_TclObj(${name})] }
 
-    ::cbt::exists $__cbt_TclObj(${name}) $rev
+    return [::cbt::exists $__cbt_TclObj(${name}) $rev]
 
 }
 
