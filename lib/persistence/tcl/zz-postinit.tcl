@@ -265,7 +265,7 @@ proc ::persistence::load_types_from_files {filelist} {
             [set data($filename) \
                 [::util::readfile $filename]]
 
-        load_type spec
+        install_type spec
         array unset spec
     }
 
@@ -312,6 +312,17 @@ proc ::persistence::load_type {specVar} {
 
     assert { [namespace exists $spec(nsp)] }
 
+}
+
+proc ::persistence::install_type {specVar} {
+    upvar $specVar spec
+
+    load_type spec
+
+    # init_type, which is called by load_type, 
+    # precedes install_type invocation
+
+    $spec(nsp) install_type
 }
 
 proc ::persistence::load_types_from_db {} {

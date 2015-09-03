@@ -22,6 +22,7 @@ namespace eval ::persistence::orm {
         to_path \
         from_path \
         init_type \
+        install_type \
         find_by_id \
         find_by_axis \
         find \
@@ -42,19 +43,20 @@ namespace eval ::persistence::orm {
 }
 
 proc ::persistence::orm::init_type {} {
-    variable [namespace __this]::__spec
-    variable [namespace __this]::ks
-    variable [namespace __this]::cf
-    variable [namespace __this]::pk
-    variable [namespace __this]::idx
-    variable [namespace __this]::att
-    variable [namespace __this]::__attnames
-    variable [namespace __this]::__derived_attributes
-    variable [namespace __this]::__attinfo
-    variable [namespace __this]::__idxnames
-    variable [namespace __this]::__idxinfo
+    set nsp [namespace __this]
+    variable ${nsp}::__spec
+    variable ${nsp}::ks
+    variable ${nsp}::cf
+    variable ${nsp}::pk
+    variable ${nsp}::idx
+    variable ${nsp}::att
+    variable ${nsp}::__attnames
+    variable ${nsp}::__derived_attributes
+    variable ${nsp}::__attinfo
+    variable ${nsp}::__idxnames
+    variable ${nsp}::__idxinfo
 
-    # log ------[namespace __this]
+    # log ------${nsp}
     set indexes ""
     set attributes ""
     set aggregates ""
@@ -81,7 +83,7 @@ proc ::persistence::orm::init_type {} {
         array set att $map
     }
 
-    # log "init_type [namespace __this]"
+    # log "init_type ${nsp}"
 
     ## 
     # helpers and speedups
@@ -140,18 +142,24 @@ proc ::persistence::orm::init_type {} {
     }
 
 
-    # log "persistence (ORM): initializing [namespace __this] ensemble/type"
+    # log "persistence (ORM): initializing ${nsp} ensemble/type"
 
     assert { vcheck("ks","required notnull sysdb_slot_name") }
     assert { vcheck("cf","required notnull sysdb_slot_name") }
     assert { vcheck("pk","required notnull sysdb_slot_name") }
 
+}
+
+proc ::persistence::orm::install_type {} {
     set nsp [namespace __this]
+    variable ${nsp}::ks
+    variable ${nsp}::cf
+    variable ${nsp}::idx
 
     # runtime definitions
     ::persistence::define_ks $ks
-    foreach {index_name index_item} [array get idx] {
-        set axis $index_name
+    foreach {idxname idxitem} [array get idx] {
+        set axis $idxname
         ::persistence::define_cf $ks $cf.$axis
     }
 

@@ -33,6 +33,7 @@ proc ::persistence::critbit_tree::init {parent_oid} {
         log "!!! cbt already initialized: [llength $bytes] parent_oid=$parent_oid"
         return
     }
+    log "!!! cbt init: $parent_oid"
 
     # create the critbit tree (TclObj) structure
     set __cbt_TclObj(${name}) [::cbt::create $::cbt::STRING]
