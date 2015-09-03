@@ -93,7 +93,7 @@ proc ::persistence::commitlog::insert {itemVar} {
     ::persistence::commitlog::set_column \
         $item(oid) $item(data) $item(xid) $item(codec_conf)
 
-    ::persistence::mem::set_column \
+    ::persistence::mem::insert \
         $item(oid) $item(data) $item(xid) $item(codec_conf)
 
 
@@ -296,7 +296,7 @@ proc ::persistence::commitlog::process {{bootstrap_p "0"}} {
                 # wrap_proc in zz-postinit.tcl submits oid to commitlog and memtable
                 # so, this only for the roll-forward recovery after server startup
 
-                ::persistence::mem::set_column $oid $data $xid $codec_conf
+                ::persistence::mem::insert $oid $data $xid $codec_conf
             }
         } else {
 

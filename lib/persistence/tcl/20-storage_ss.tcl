@@ -52,33 +52,105 @@ proc ::persistence::ss::read_sstable_indexmap {indexmapVar fp} {
     assert { $indexmap ne {} }
 }
 
-proc ::persistence::ss::read_sstable_column {fp row_endpos rev} {
+proc ::persistence::ss::load_sstable_indexmap {type_oid codec_conf} {
 
-    log row_endpos=$row_endpos
+    set name [binary encode base64 $type_oid]
+    set sstable_idxVar "__sstable_idx_${name}"
+    set sstable_filenameVar "__sstable_filename_${name}"
+    namespace upvar ::persistence::ss $sstable_idxVar sstable_idx
+    namespace upvar ::persistence::ss $sstable_filenameVar sstable_filename
+
+    # start of temporary hack
+    variable base_dir
+    set sstable_rev [glob \
+        -nocomplain \
+        -tails \
+        -directory $base_dir \
+        "sysdb/sstable.by_name/${name}/+/${name}.sstable@*"]
+
+    if { $sstable_rev eq {} } {
+        error "no sstable files matched: [binary decode base64 $name]"
+    }
+
+    # log sstable_rev=$sstable_rev
+    lassign [split_oid $sstable_rev] \
+        ks cf_axis row_key column_path ext ts
+
+    # end of temporary hack
+
+
+    set load_p 0
+    if { ![info exists sstable_idx] } {
+        set load_p 1
+    } elseif { $sstable_idx(ts) ne $ts } {
+        array unset sstable_idx
+        set load_p 1
+    }
+
+    if { $load_p } {
+        set sstable_filename [get_filename $sstable_rev]
+        set fp [open $sstable_filename]
+        fconfigure $fp {*}$codec_conf
+        read_sstable_indexmap indexmap $fp
+        array set sstable_idx $indexmap
+        array set sstable_idx [list ts $ts]
+    }
+}
+
+
+proc ::persistence::ss::read_sstable_column {rev args} {
+    set codec_conf $args
+
+    set type_oid [type_oid $rev]
+    load_sstable_indexmap $type_oid $codec_conf
+
+    set name [binary encode base64 $type_oid]
+    set sstable_idxVar "__sstable_idx_${name}"
+    set sstable_filenameVar "__sstable_filename_${name}"
+    namespace upvar ::persistence::ss $sstable_idxVar sstable_idx
+    namespace upvar ::persistence::ss $sstable_filenameVar sstable_filename
+
+    lassign [split_oid $rev] ks cf_axis row_key column_path ext ts
+    set row_endpos $sstable_idx($row_key)
+
+    # log row_endpos=$row_endpos
+
+    set fp [open $sstable_filename]
+    fconfigure $fp {*}$codec_conf
 
     seek $fp $row_endpos start
     set row_startpos [::util::io::read_int $fp]
 
-    log row_startpos=$row_startpos
+    # log row_startpos=$row_startpos
 
     assert { $row_startpos < $row_endpos }
 
     seek $fp $row_startpos start
-    ::util::io::read_string $fp row_key
-    log row_key=$row_key
+    ::util::io::read_string $fp row_key_in_file
+    assert { $row_key eq $row_key_in_file }
+
+    set found_p 0
     while { [tell $fp] < $row_endpos } {
         ::util::io::read_string $fp rev_in_file
-        log rev_in_file=$rev_in_file
         if { $rev eq $rev_in_file } {
             ::util::io::read_string $fp data
-            return $data
+            set found_p 1
+            break
         } else {
             ::util::io::skip_string $fp
         }
     }
 
-    error "not found rev=$rev"
+    close $fp
+
+    if { !$found_p } {
+        error "not found rev=$rev"
+    }
+
+    return $data
+
 }
+
 
 proc ::persistence::ss::compact {type_oid} {
     variable base_dir
@@ -147,7 +219,7 @@ proc ::persistence::ss::compact {type_oid} {
     foreach row_key $row_keys {
         set row_startpos [tell $ofp]
         ::util::io::write_string $ofp $row_key
-        set idx($row_key) [lsort -index 0 $idx($row_key)]
+        set idx($row_key) [lsort -command ::persistence::compare_files -index 0 $idx($row_key)]
         foreach item $idx($row_key) {
             lassign $item rev i pos
             seek $fp($i) $pos start
@@ -262,46 +334,23 @@ proc ::persistence::ss::dump {sorted_revs} {
 
 if {1} {
     proc ::persistence::ss::readfile {rev args} {
-        variable base_dir
-
         assert { [is_column_rev_p $rev] || [is_link_rev_p $rev] } {
             log failed,rev=$rev
         }
 
         set codec_conf $args
 
-        lassign [split_oid $rev] ks cf_axis row_key column_path
-
-        set type_oid $ks/$cf_axis
-        # log type_oid=$type_oid
+        lassign [split_oid $rev] ks
 
         if { $ks eq {sysdb} } {
-            return [::persistence::fs::readfile $rev {*}$args]
+            return [::persistence::fs::readfile $rev {*}$codec_conf]
         } else {
 
-            log "retrieving column (=$rev) from sstable"
+            # log "retrieving column (=$rev) from sstable"
 
-            set name [binary encode base64 $type_oid]
-
-            # temporary hack
-            set sstable_rev [glob \
-                -tails \
-                -directory $base_dir \
-                "sysdb/sstable.by_name/${name}/+/${name}.sstable@*"]
-
-            log sstable_rev=$sstable_rev
-
-            set sstable_filename [get_filename $sstable_rev]
-
-            set fp [open $sstable_filename]
-            fconfigure $fp {*}$codec_conf
-            read_sstable_indexmap indexmap $fp
-            array set idx $indexmap
-
-            set data [read_sstable_column $fp $idx($row_key) $rev]
-            log #length=[string length $data]
-
-            close $fp
+            set data [::persistence::ss::read_sstable_column $rev {*}$codec_conf]
+            
+            #log #length=[string length $data]
 
             return $data
 

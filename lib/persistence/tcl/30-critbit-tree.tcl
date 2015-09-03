@@ -60,7 +60,7 @@ proc ::persistence::critbit_tree::init {parent_oid} {
 
 }
 
-proc ::persistence::critbit_tree::insert {parent_oid oid data xid codec_conf} {
+proc ::persistence::critbit_tree::insert {parent_oid rev} {
     variable __cbt_TclObj
     variable __cbt_dirty
 
@@ -74,8 +74,6 @@ proc ::persistence::critbit_tree::insert {parent_oid oid data xid codec_conf} {
     # for the given parent_oid
     assert { [info exists __cbt_TclObj(${name})] }
 
-    lassign [split_xid $xid] micros pid n_mutations mtime
-    set rev "${oid}@${micros}"
     ::cbt::insert $__cbt_TclObj(${name}) $rev
 
     set __cbt_dirty(${name}) ""
@@ -111,7 +109,7 @@ proc ::persistence::critbit_tree::dump {{parent_oid ""}} {
 
         set bytes [::cbt::get_bytes $__cbt_TclObj(${name})]
 
-log "dumping cbt (#items=[llength $bytes]) : [binary decode base64 $name]"
+# log "dumping cbt (#items=[llength $bytes]) : [binary decode base64 $name]"
 
         array set cbt_item [list]
         set cbt_item(name) $name 

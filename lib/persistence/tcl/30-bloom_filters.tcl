@@ -34,6 +34,13 @@ proc ::persistence::bloom_filter::init {parent_oid} {
     # bloom filter name
     set name [binary encode base64 [list $type $parent_oid]]
 
+    if { [info exists __bf_TclObj(${name})] } {
+        set bytes [::bloom_filter::get_bytes $__bf_TclObj(${name})]
+        log "!!! bf already initialized: [llength $bytes] parent_oid=$parent_oid"
+        return
+    }
+    log "!!! bf init: $parent_oid"
+
     # create the bloom filter (TclObj) structure
     set __bf_TclObj(${name}) \
         [::bloom_filter::create $items_estimate $false_positive_prob]
@@ -58,7 +65,7 @@ proc ::persistence::bloom_filter::init {parent_oid} {
 
 
 
-proc ::persistence::bloom_filter::insert {parent_oid oid} {
+proc ::persistence::bloom_filter::insert {parent_oid rev} {
     variable __bf_TclObj
     variable __bf_dirty
 
@@ -73,7 +80,7 @@ proc ::persistence::bloom_filter::insert {parent_oid oid} {
     assert { [info exists __bf_TclObj(${name})] }
 
     # insert given key to bloom filter (TclObj) structure
-    lassign [split_oid $oid] ks cf_axis row_key column_path ext
+    lassign [split_oid $rev] ks cf_axis row_key column_path ext ts
     if { $parent_type eq {type} } {
         set key $row_key
     } elseif { $parent_type eq {row} } {

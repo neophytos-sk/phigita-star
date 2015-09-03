@@ -182,7 +182,7 @@ proc ::persistence::mem::get_mtime {rev} {
     return $mtime
 }
 
-proc ::persistence::mem::set_column {oid data xid codec_conf} {
+proc ::persistence::mem::insert {oid data xid codec_conf} {
     variable __mem
     variable __xid_rev
     variable __xid_list
@@ -307,6 +307,12 @@ proc ::persistence::mem::dump {} {
     # TODO: 
     #   override fs_dump with sstable_dump in the case when setting_p "sstable"
 
+    foreach rev $sorted_revs {
+        set type_oid [type_oid $rev]
+        # ::persistence::bloom_filter::insert $type_oid $rev
+        ::persistence::critbit_tree::insert $type_oid $rev
+    }
+
     if { [catch {
         fs_dump $sorted_revs
         ::persistence::ss::dump $sorted_revs
@@ -350,16 +356,13 @@ if { [setting_p "bloom_filters"] } {
         ::persistence::bloom_filter::init $type_oid
     }
 
-    wrap_proc ::persistence::mem::set_column {oid data xid codec_conf} {
-        call_orig $oid $data $xid $codec_conf
-        lassign [split_oid $oid] ks cf_axis row_key column_path
-        set type_oid [join_oid $ks $cf_axis]
-        ::persistence::bloom_filter::insert $type_oid $oid
-    }
+    #wrap_proc ::persistence::mem::insert {oid data xid codec_conf} {
+    #    set type_oid [type_oid $oid]
+    #    ::persistence::bloom_filter::insert $type_oid $oid
+    #}
 
     wrap_proc ::persistence::mem::exists_p {oid} {
-        lassign [split_oid $oid] ks cf_axis row_key column_path
-        set type_oid [join_oid $ks $cf_axis]
+        set type_oid [type_oid $oid]
         # set may_contain_p [::persistence::bloom_filter::may_contain_p $type_oid $oid]
         set may_contain_p 1
         if { $may_contain_p } {
@@ -383,21 +386,21 @@ if { [setting_p "critbit_tree"] } {
         ::persistence::critbit_tree::init $type_oid
     }
 
-    wrap_proc ::persistence::mem::set_column {oid data xid codec_conf} {
-        call_orig $oid $data $xid $codec_conf
-        lassign [split_oid $oid] ks cf_axis row_key column_path
-        set type_oid [join_oid $ks $cf_axis]
-        ::persistence::critbit_tree::insert $type_oid $oid $data $xid $codec_conf
-    }
+    #wrap_proc ::persistence::mem::insert {oid data xid codec_conf} {
+    #    set type_oid [type_oid $oid]
+    #    ::persistence::critbit_tree::insert $type_oid $oid $data $xid $codec_conf
+    #}
 
     wrap_proc ::persistence::mem::exists_p {oid} {
-        lassign [split_oid $oid] ks cf_axis row_key column_path
-        set type_oid [join_oid $ks $cf_axis]
+        set type_oid [type_oid $oid]
         return [call_orig $oid]
     }
 
     wrap_proc ::persistence::mem::dump {} {
-        log "dumping critbit_trees"
+        # log "dumping critbit_trees"
+        # set next_cmd "::persistence::critbit_tree::dump"
+        # with_next $next_cmd call_orig
+
         ::persistence::critbit_tree::dump
         call_orig
     }

@@ -18,6 +18,7 @@ namespace eval ::persistence::common {
     namespace export -clear \
         join_oid \
         split_oid \
+        type_oid \
         typeof_oid \
         ins_column \
         del_column \
@@ -95,7 +96,6 @@ proc ::persistence::common::join_oid {ks cf_axis {row_key ""} {column_path ""} {
 
 }
 
-
 proc ::persistence::common::split_oid {oid_with_ts} {
     lassign [split ${oid_with_ts} {@}] oid ts
     set column_path_args [lassign [split $oid {/}] ks cf_axis row_key __delimiter__]
@@ -104,6 +104,11 @@ proc ::persistence::common::split_oid {oid_with_ts} {
     return [list $ks $cf_axis $row_key $column_path $ext $ts]
 }
 
+proc ::persistence::common::type_oid {rev} {
+    lassign [split_oid $rev] ks cf_axis ;# row_key column_path ext ts
+    set type_oid [join_oid $ks $cf_axis]
+    return $type_oid
+}
 
 
 proc ::persistence::common::is_supercolumn_oid_p {oid} {

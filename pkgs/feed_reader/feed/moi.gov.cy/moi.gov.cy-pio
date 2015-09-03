@@ -8,5 +8,5 @@ xpath_article_body {returntext(//tr[@valign="top" and position()=last()]/td[@wid
 xpath_article_image {
     {values(//td[@width="816" and @bgcolor="#FFFFFF" and @colspan="3"]//img/@src)}
 }
-xpath_article_date {returndate(//td[@width="816" and @bgcolor="#FFFFFF" and @colspan="3"]/span[@class="text1"],"%d/%m/%Y")}
+xpath_article_date {returndate(//td[@width="644" and @bgcolor="#FFFFFF" and @colspan="2"]/span[@class="titlesmall"],"%d/%m/%Y")}
 xpath_article_modified_time {}
