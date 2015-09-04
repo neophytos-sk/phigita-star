@@ -191,7 +191,7 @@ proc ::persistence::ss::compact {type_oid} {
 
     set filelist [lsort \
         -increasing \
-        -command ::persistence::compare_mtime \
+        -command ::persistence::compare_files \
         $filelist]
 
     set llen [llength $filelist]
@@ -406,8 +406,8 @@ proc ::persistence::ss::writefile {rev args} {
     return [::util::writefile ${filename} {*}$codec_conf]
 }
 
-proc ::persistence::ss::get_mtime {rev} {
-    lassign [split_oid $rev] ks cf_axis row_key column_path ext ts
-    return $ts
-}
 
+proc ::persistence::ss::get_mtime {rev} {
+    set micros [::persistence::get_timestamp $rev]
+    return [expr { int($micros / (10**6)) }]
+}

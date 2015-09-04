@@ -124,7 +124,7 @@ proc ::persistence::critbit_tree::dump {{parent_oid ""}} {
 
         set bytes [::cbt::get_bytes $__cbt_TclObj(${name})]
 
-# log "dumping cbt (#items=[llength $bytes]) : [set xxx [binary decode base64 $name]]"
+log "dumping cbt (#items=[llength $bytes]) : [set xxx [binary decode base64 $name]]"
 
         array set cbt_item [list]
         set cbt_item(name) $name 
@@ -138,6 +138,12 @@ proc ::persistence::critbit_tree::dump {{parent_oid ""}} {
 
         # log cbt_oid=$cbt_oid
 
+        # the following will be written
+        # in the next round of mem::dump,
+        # that's why we keep seeing dumped 1 record
+        # in mem::dump even if there are no
+        # other records
+        #
         if { $cbt_oid eq {} } {
             ::sysdb::critbit_tree_t insert cbt_item
         } else {

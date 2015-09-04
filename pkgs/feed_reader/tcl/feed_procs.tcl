@@ -648,9 +648,10 @@ proc ::feed_reader::translate_error_code {error_code} {
 
 }
 
-proc ::feed_reader::fetch_and_write_item {timestamp link title_in_feed feedVar} {
+proc ::feed_reader::fetch_and_write_item {timestamp link title_in_feed feedVar errorcodeVar} {
 
     upvar $feedVar feed
+    upvar $errorcodeVar errorcode
 
     # log link=$link
 
@@ -1952,11 +1953,18 @@ proc ::feed_reader::sync {args} {
             }
             set stats(FETCH_FEED) 1
 
+            set num_timeouts 0
             foreach link $result(links) title_in_feed $result(titles) {
 
                 # returns FETCH_AND_WRITE, NO_FETCH, and NO_WRITE
-                set retcode [fetch_and_write_item ${timestamp} ${link} ${title_in_feed} feed]
+                set retcode [fetch_and_write_item ${timestamp} ${link} ${title_in_feed} feed errorcode]
                 incr stats(${retcode})
+                if { $errorcode == 28 } {
+                    # operation timeout
+                    if { [incr num_timeouts] > 5 } {
+                        break
+                    }
+                }
             }
 
             if { $stats(FETCH_AND_WRITE) > 0 } {

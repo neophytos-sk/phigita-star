@@ -5,12 +5,12 @@ namespace eval ::persistence {
 
 }
 
-proc ::persistence::compare_mtime { oid1 oid2 } {
-    set mtime1 [::persistence::get_mtime $oid1]
-    set mtime2 [::persistence::get_mtime $oid2]
-    if { $mtime1 < $mtime2 } {
+proc ::persistence::compare_timestamp { rev1 rev2 } {
+    set ts1 [::persistence::get_timestamp $rev1]
+    set ts2 [::persistence::get_timestamp $rev2]
+    if { $ts1 < $ts2 } {
         return -1
-    } elseif { $mtime1 > $mtime2 } {
+    } elseif { $ts1 > $ts2 } {
         return 1
     } else {
         return 0
@@ -26,9 +26,14 @@ proc ::persistence::compare_files { rev1 rev2 } {
     if { $oid_compare_result != 0 } {
         return $oid_compare_result
     } else {
-        return [compare_mtime $rev1 $rev2]
+        return [compare_timestamp $rev1 $rev2]
     }
     
+}
+
+proc ::persistence::get_timestamp {rev} {
+    lassign [split_oid $rev] ks cf_axis row_key column_path ext ts
+    return $ts
 }
 
 proc ::persistence::reload_types {} {

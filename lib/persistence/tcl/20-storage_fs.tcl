@@ -23,6 +23,7 @@ namespace eval ::persistence::fs {
         find_column \
         get_name \
         get_mtime \
+        get_timestamp \
         get_column \
         join_oid \
         split_oid \
