@@ -20,7 +20,7 @@ config param bloom_filters "off"
 config param client_server "on"
 config param write_ahead_log "on"
 
-config param process_commitlog_millis "30000" ;# "120000" ;# 120 secs
+config param process_commitlog_millis "120000" ;# 120 secs
 
 # READ UNCOMMITTED -
 #

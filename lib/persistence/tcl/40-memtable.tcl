@@ -189,6 +189,8 @@ proc ::persistence::mem::set_column {oid data xid codec_conf} {
     variable __xid_committed
     variable __idx
 
+    assert { [info exists __xid_committed($xid)] }
+
     # log mem,insert,oid=$oid
 
     lassign [split_xid $xid] micros pid n_mutations mtime xid_type
@@ -325,7 +327,12 @@ proc ::persistence::mem::dump {} {
             log "cannot fsync transaction (=$xid) that is still in progress"
             continue
         }
-        # log "dumping transaction: $xid"
+        # log "dumping xact: $xid"
+
+        if { ![info exists __xid_rev($xid)] } {
+            log "mem::dump error: xact without revs i.e. __xid_rev($xid) empty"
+            continue
+        }
 
         set sorted_xid_revs [lsort \
             -unique \
