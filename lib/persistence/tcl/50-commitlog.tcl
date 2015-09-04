@@ -35,50 +35,67 @@ proc ::persistence::commitlog::init {} {
     # any ::sysdb::commitlog_item_t record
     #
 
-    variable commitlog_oid
-    set commitlog_oid ""
+    if {0} {
+        variable commitlog_oid
+        set commitlog_oid ""
 
-    array set options [list limit 1]
-    set where_clause [list [list name = "CommitLog"]]
-    set commitlog_oid [::sysdb::commitlog_t find $where_clause options]
-    #log open_if,enter,commitlog_oid=$commitlog_oid
-    if { $commitlog_oid eq {} } {
-        array set item [list]
-        set item(name) "CommitLog"
-        set item(last_checkpoint) 0
-        set item(last_logpoint) 0
-        # set commitlog_oid "sysdb/commitlog.by_name/CommitLog/+/CommitLog"
-        set commitlog_oid [::sysdb::commitlog_t insert item]
+        array set options [list limit 1]
+        set where_clause [list [list name = "CommitLog"]]
+        set commitlog_oid [::sysdb::commitlog_t 0or1row $where_clause options]
+        #log open_if,enter,commitlog_oid=$commitlog_oid
+        if { $commitlog_oid eq {} } {
+            array set item [list]
+            set item(name) "CommitLog"
+            set item(last_checkpoint) 0
+            set item(last_logpoint) 0
+            # set commitlog_oid "sysdb/commitlog.by_name/CommitLog/+/CommitLog"
+            set commitlog_oid [::sysdb::commitlog_t insert item]
+        }
+        assert { $commitlog_oid ne {} }
+        #log open_if,leave,commitlog_oid=$commitlog_oid
     }
-    assert { $commitlog_oid ne {} }
-    #log open_if,leave,commitlog_oid=$commitlog_oid
 
     process true ;# bootstrap_p=true
 
 }
                                          
+proc ::persistence::commitlog::begin_batch {{xid ""}} {
+    variable fp
 
-proc ::persistence::commitlog::insert {itemVar} {
+    if { $fp eq {} } {
+        ::persistence::commitlog::init
+    }
+
+    set directive "begin_batch"
+    ::persistence::commitlog::write_entry $directive "" "" $xid ""
+    ::persistence::mem::begin_batch $xid
+}
+proc ::persistence::commitlog::end_batch {{xid ""}} {
+    set directive "end_batch"
+    ::persistence::commitlog::write_entry $directive "" "" $xid ""
+    ::persistence::mem::end_batch $xid
+}
+
+proc ::persistence::commitlog::insert {oid data xid codec_conf} {
     variable fp
 
     assert { $fp ne {} } {
         ::persistence::commitlog::init
     }
 
-    upvar $itemVar item
-    assert { $item(oid) ne {} }
+    assert { $oid ne {} }
 
-    if { ![string match *bloom_filter* $item(oid)] } {
-        # log >>>commitlog_item,insert,$item(xid),$item(oid)
+    if { ![string match *bloom_filter* $oid] } {
+        # log >>>commitlog_item,insert,$xid,$oid
     }
 
     ##
-    # log commitlog_item,insert,oid=$item(oid)
+    # log commitlog_item,insert,oid=$oid
     #
     # first log notice produced by "commitlog_t insert":
     # commitlog,insert,oid=sysdb/commitlog.by_name/CommitLog/+/CommitLog
 
-    lassign [split_oid $item(oid)] ks cf_axis row_key column_path ext
+    lassign [split_oid $oid] ks cf_axis row_key column_path ext
     lassign [split $cf_axis {.}] cf idxname
 
     if { 0 && $ks ne {sysdb} } {
@@ -87,15 +104,19 @@ proc ::persistence::commitlog::insert {itemVar} {
         # log "commitlog_item_t new $item(oid)"
         set item(commitlog_name) "CommitLog"
         set item(name) [tell $fp]
+        set item(oid) $oid
+        set item(data) $data
+        set item(xid) $xid
+        set item(codec_conf) $codec_conf
         ::sysdb::commitlog_item_t insert item
     }
 
-    ::persistence::commitlog::set_column \
-        $item(oid) $item(data) $item(xid) $item(codec_conf)
+    set directive ""
+    ::persistence::commitlog::write_entry \
+        $directive $oid $data $xid $codec_conf
 
-    ::persistence::mem::insert \
-        $item(oid) $item(data) $item(xid) $item(codec_conf)
-
+    ::persistence::mem::set_column \
+        $oid $data $xid $codec_conf
 
     # log object_types=[join [::sysdb::object_type_t find] \n\t\t>>>]
 
@@ -166,7 +187,8 @@ proc ::persistence::commitlog::close_if {} {
 
 }
 
-proc ::persistence::commitlog::set_column {
+proc ::persistence::commitlog::write_entry {
+    directive
     oid 
     data 
     xid
@@ -180,6 +202,7 @@ proc ::persistence::commitlog::set_column {
 
     # log oid=$oid
 
+    ::util::io::write_string $fp $directive
     ::util::io::write_string $fp $oid
     ::util::io::write_string $fp $data
     ::util::io::write_string $fp $xid
@@ -203,6 +226,7 @@ proc ::persistence::commitlog::analyze {} {
     log "commitlog (analyze): end of commit log, pos2=$pos2"
     log "tell=[tell $fp]"
     while { [tell $fp] != $pos2 } {
+        ::util::io::read_string $fp directive
         ::util::io::read_string $fp oid
         ::util::io::skip_string $fp
         ::util::io::read_string $fp xid
@@ -285,18 +309,29 @@ proc ::persistence::commitlog::process {{bootstrap_p "0"}} {
 
     seek $fp $pos1 start
     while { $pos1 < $pos2 } {
+        ::util::io::read_string $fp directive
         ::util::io::read_string $fp oid
         ::util::io::read_string $fp data
         ::util::io::read_string $fp xid
         ::util::io::read_string $fp codec_conf
         set pos1 [tell $fp]
 
+        if { $directive ne {} } {
+            if { $read_committed_p } {
+                if { $bootstrap_p } {
+                    assert { $directive in {begin_batch end_batch} }
+                    ::persistence::mem::$directive $xid
+                    continue
+                }
+            }
+        }
+
         if { $read_committed_p } {
             if { $bootstrap_p } {
                 # wrap_proc in zz-postinit.tcl submits oid to commitlog and memtable
                 # so, this only for the roll-forward recovery after server startup
 
-                ::persistence::mem::insert $oid $data $xid $codec_conf
+                ::persistence::mem::set_column $oid $data $xid $codec_conf
             }
         } else {
 

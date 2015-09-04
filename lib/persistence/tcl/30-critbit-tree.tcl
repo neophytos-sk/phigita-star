@@ -64,6 +64,8 @@ proc ::persistence::critbit_tree::insert {parent_oid rev} {
     variable __cbt_TclObj
     variable __cbt_dirty
 
+    # log cbt,insert,$rev
+
     # what kind of parent_oid are we dealing with?
     set parent_type [typeof_oid $parent_oid]
 
@@ -73,6 +75,19 @@ proc ::persistence::critbit_tree::insert {parent_oid rev} {
     # ensures a critbit tree (TclObj) structure was initialized
     # for the given parent_oid
     assert { [info exists __cbt_TclObj(${name})] }
+
+    #if {0} {
+    #lassign [split_oid $rev] ks cf_axis row_key column_path ext ts
+    #if { $ext eq {.gone} } {
+    #    log "cbt,delete,rev=$rev"
+        # set oid [join_oid $ks $cf_axis $row_key $column_path]
+        # log oid=$oid
+        # set todelete_revs [::cbt::prefix_match $__cbt_TclObj(${name}) $oid]
+        # foreach todelete_rev $todelete_revs {
+        #   ::cbt::delete $__cbt_TclObj(${name}) $todelete_rev
+        # }
+    #}
+    #}
 
     ::cbt::insert $__cbt_TclObj(${name}) $rev
 
@@ -109,7 +124,7 @@ proc ::persistence::critbit_tree::dump {{parent_oid ""}} {
 
         set bytes [::cbt::get_bytes $__cbt_TclObj(${name})]
 
-# log "dumping cbt (#items=[llength $bytes]) : [binary decode base64 $name]"
+# log "dumping cbt (#items=[llength $bytes]) : [set xxx [binary decode base64 $name]]"
 
         array set cbt_item [list]
         set cbt_item(name) $name 
@@ -123,7 +138,7 @@ proc ::persistence::critbit_tree::dump {{parent_oid ""}} {
 
         # log cbt_oid=$cbt_oid
 
-        if { 1 || $cbt_oid eq {} } {
+        if { $cbt_oid eq {} } {
             ::sysdb::critbit_tree_t insert cbt_item
         } else {
             ::sysdb::critbit_tree_t update $cbt_oid cbt_item

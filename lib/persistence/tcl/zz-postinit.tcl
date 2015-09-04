@@ -69,15 +69,7 @@ proc ::persistence::init {} {
             # private
             # log which,[namespace which set_column]
             wrap_proc ::persistence::set_column {oid data xid codec_conf} {
-                lassign [split_xid $xid] micros pid n_mutations mtime
-
-                array set item [list]
-                set item(oid) $oid
-                set item(data) $data
-                set item(xid) $xid
-                set item(codec_conf) $codec_conf
-                
-                ::persistence::commitlog::insert item
+                ::persistence::commitlog::insert $oid $data $xid $codec_conf
             }
 
             # private
@@ -108,14 +100,18 @@ proc ::persistence::init {} {
 
         if { [setting_p "memtable"] } {
 
-            wrap_proc ::persistence::begin_batch {} {
+            wrap_proc ::persistence::begin_batch {{xid ""}} {
                 set xid [call_orig]
-                ::persistence::mem::begin_batch $xid
+                # log begin_batch,xid=$xid
+                ::persistence::commitlog::begin_batch $xid
+                return $xid
             }
 
-            wrap_proc ::persistence::end_batch {} {
+            wrap_proc ::persistence::end_batch {{xid ""}} {
                 set xid [call_orig]
-                ::persistence::mem::end_batch $xid
+                # log end_batch,xid=$xid
+                ::persistence::commitlog::end_batch $xid
+                return $xid
             }
 
             wrap_proc ::persistence::define_cf {ks cf_axis} {
@@ -261,9 +257,14 @@ proc ::persistence::load_types_from_files {filelist} {
     # we batch load to ensure ::sysdb::* types work
     array set data [list]
     foreach filename $filelist {
+        # log "loading type from file: $filename"
         array set spec \
             [set data($filename) \
                 [::util::readfile $filename]]
+
+        assert { [info exists spec(nsp)] } {
+            log spec=[array get spec]
+        }
 
         install_type spec
         array unset spec
@@ -300,6 +301,10 @@ proc ::persistence::load_types_from_files {filelist} {
 
 proc ::persistence::load_type {specVar} {
     upvar $specVar spec
+
+    assert { [info exists spec(nsp)] } {
+        log spec=[array get spec]
+    }
 
     namespace eval $spec(nsp) {
         # see core/tcl/namespace.tcl for details about "mixin" namespaces
@@ -341,4 +346,13 @@ proc ::persistence::load_types_from_db {} {
 # TODO: check for new types (on the server side)
 after_package_load persistence ::persistence::load_types_from_db
 
-
+proc ::persistence::import_pdl {package_dir} {
+    set dir [file dirname [info script]]
+    set root_dir [file normalize [file join $dir ../../../]]
+    set dir [file normalize [file join $root_dir $package_dir pdl]]
+    assert { [file isdirectory $dir] }
+    set pattern "*.pdl"
+    set filelist [lsort [glob -nocomplain -directory $dir $pattern]]
+    log filelist=$filelist
+    load_types_from_files $filelist
+}

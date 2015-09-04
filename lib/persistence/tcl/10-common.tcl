@@ -149,34 +149,30 @@ proc ::persistence::common::is_link_rev_p {rev} {
     return 0
 }
 proc ::persistence::common::is_link_oid_p {oid} {
-    lassign [split_oid $oid] ks cf_axis row_key column_path ext
-    if { $ext eq {.link} } {
-        return 1
-    }
-    return 0
+lassign [split_oid $oid] ks cf_axis row_key column_path ext
+if { $ext eq {.link} } {
+    return 1
+}
+return 0
 }
 
 proc ::persistence::common::sort {
-    slicelistVar 
-    type_nsp 
-    attname 
-    sort_direction 
-    {sort_comparison "dictionary"}
+slicelistVar 
+type_nsp 
+attname 
+sort_direction 
+{sort_comparison "dictionary"}
 } {
-    upvar $slicelistVar slicelist
+upvar $slicelistVar slicelist
 
-    assert { $sort_direction in {decreasing increasing} }
-    assert { $sort_comparison in {dictionary ascii integer} }
+assert { $sort_direction in {decreasing increasing} }
+assert { $sort_comparison in {dictionary ascii integer} }
 
-    # hack to load object types until all instances 
-    # are notified (and load all) of the new types
-    #
-    assert { [namespace exists $type_nsp] } {
-        # TODO: broadcast to all server instances
-        # when a new ::sysdb::object_type_t is added
-        #
-        ::persistence::load_all_types_from_db
-        # log "^^^^^ object types: [::sysdb::object_type_t find]"
+# hack to load object types until all instances 
+# are notified (and load all) of the new types
+#
+assert { [namespace exists $type_nsp] } {
+    ::persistence::reload_types
     }
 
     set sortlist [list]
@@ -348,6 +344,7 @@ proc ::persistence::common::__exec_multirow_options {multirowVar options} {
 }
 
 proc ::persistence::common::split_xid {xid} {
+    assert { $xid ne {} }
     lassign [split $xid {.}] micros pid n_mutations type
     set mtime [expr { int( ${micros} / (10**6) ) }]
     return [list $micros $pid $n_mutations $mtime $type]
@@ -360,13 +357,15 @@ proc ::persistence::common::ins_column {oid data {codec_conf ""}} {
     set xid [cur_transaction_id]
     set orig_xid $xid
     if { $orig_xid eq {} } {
-        set xid [begin_batch]
+        # log "calling begin_batch..."
+        set xid [::persistence::begin_batch]
     }
+    #log xid=$xid
 
     set_column ${oid} ${data} ${xid} ${codec_conf}
 
     if { $orig_xid eq {} } {
-        end_batch $xid
+        ::persistence::end_batch $xid
     }
 }
 
@@ -475,7 +474,7 @@ proc ::persistence::common::get_link_target {rev} {
     }
 
     set target_oid [get_column $rev]
-    set target_rev [lindex [::persistence::get_files $target_oid] 0]
+    set target_rev [lindex [::persistence::get_leafs $target_oid] 0]
 
     assert { [is_column_rev_p $target_rev] || [is_link_rev_p $target_rev] } {
         log failed,get_link_target,target_rev=$target_rev,target_oid=$target_oid
@@ -713,6 +712,7 @@ if { [setting "mvcc"] } {
 
         array set latest_rev [list]
         foreach rev $revs {
+            # log rev=$rev
             lassign [split $rev "@"] oid micros
 
             # check timestamp based on the oid

@@ -182,22 +182,22 @@ proc ::persistence::mem::get_mtime {rev} {
     return $mtime
 }
 
-proc ::persistence::mem::insert {oid data xid codec_conf} {
+proc ::persistence::mem::set_column {oid data xid codec_conf} {
     variable __mem
     variable __xid_rev
     variable __xid_list
     variable __xid_committed
     variable __idx
 
-    # log mem,set_column,oid=$oid
+    # log mem,insert,oid=$oid
 
     lassign [split_xid $xid] micros pid n_mutations mtime xid_type
 
-    # log mem,set_column,xid=$xid
+    # log mem,insert,xid=$xid
 
     set rev "${oid}@${micros}"
 
-    # log memtable,set_column,rev=$rev
+    # log memtable,insert,rev=$rev
 
     if { [exists_column_rev_p $rev] } {
         log "!!! memtable (set_col): oid revision already exists (=${rev})"
@@ -215,6 +215,7 @@ proc ::persistence::mem::insert {oid data xid codec_conf} {
         #if { [info exists __idx(${orig_oid})] } {
         #    unset __idx(${orig_oid})
         #}
+        # array unset __idx ${orig_oid}*
     } else {
         set __idx(${rev}) ""
     }
@@ -224,7 +225,7 @@ proc ::persistence::mem::insert {oid data xid codec_conf} {
 
     # __xid_committed
     if { $xid_type eq {batch} } {
-        # assert { [info exists __xid_committed($xid)] }
+        # assert { [info exists __xid_committed($xid)] } { log xid=$xid }
         set __xid_committed($xid) 0
     } elseif { $xid_type eq {single} } {
         set __xid_committed($xid) 1
@@ -240,17 +241,42 @@ proc ::persistence::mem::insert {oid data xid codec_conf} {
 }
 
 proc ::persistence::mem::begin_batch {xid} {
+    # log "mem,begin_batch xid=$xid"
     variable __xid_committed
     assert { ![info exists __xid_committed($xid)] }
-    set __xid_committed($xid) ""
+    set __xid_committed($xid) "0"
+    return $xid
 }
 
-proc ::persistence::mem::end_batch {xid} {
+proc ::persistence::mem::end_batch {{xid ""}} {
+
+    # log "mem,end_batch xid=$xid"
+
     variable __xid_committed
     variable __xid_list
     assert { !$__xid_committed($xid) }
     set __xid_committed($xid) 1
     lappend __xid_list $xid
+
+
+    if {0} {
+        variable __xid_rev
+
+        set sorted_xid_revs \
+            [lsort \
+                -unique \
+                -command ::persistence::compare_files \
+                $__xid_rev($xid)]
+
+        foreach rev $sorted_xid_revs {
+            set type_oid [type_oid $rev]
+            # ::persistence::bloom_filter::insert $type_oid $rev
+            ::persistence::critbit_tree::insert $type_oid $rev
+        }
+    }
+
+    return $xid
+
 }
 
 
@@ -300,7 +326,12 @@ proc ::persistence::mem::dump {} {
             continue
         }
         # log "dumping transaction: $xid"
-        set sorted_xid_revs [lsort -unique $__xid_rev($xid)]
+
+        set sorted_xid_revs [lsort \
+            -unique \
+            -command ::persistence::compare_files \
+            $__xid_rev($xid)]
+
         foreach rev $sorted_xid_revs {
             lappend revs $rev
         }
@@ -308,7 +339,10 @@ proc ::persistence::mem::dump {} {
 
 
     # sorts revs in order to process sstables below
-    set sorted_revs [lsort -unique $revs]
+    set sorted_revs [lsort \
+        -unique \
+        -command ::persistence::compare_files \
+        $revs]
 
     # TODO: 
     #   override fs_dump with sstable_dump in the case when setting_p "sstable"
