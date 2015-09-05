@@ -56,8 +56,11 @@ proc ::persistence::fs::get_mtime {rev} {
 
 
 proc ::persistence::fs::get_files {nodepath} {
+    log "fs::get_files exiting..."
+    exit
+
     variable base_dir
-    set dir [file normalize ${base_dir}/HEAD/master/${nodepath}]
+    set dir [file normalize ${base_dir}/cur/${nodepath}]
     set names [glob -tails -nocomplain -types "f l d" -directory ${dir} "*"]
     set result [list]
     foreach name $names {
@@ -65,12 +68,12 @@ proc ::persistence::fs::get_files {nodepath} {
         lappend result ${oid}
     }
 
-    return [lsort ${result}]
+    return [lsort -unique -command ::persistence::compare_files ${result}]
 }
 
 proc ::persistence::fs::get_subdirs {path} {
     variable base_dir
-    set dir [file normalize ${base_dir}/HEAD/master/${path}]
+    set dir [file normalize ${base_dir}/cur/${path}]
     set names [glob -tails -types {d} -nocomplain -directory ${dir} *]
     set result [list]
     foreach name $names {
@@ -145,13 +148,14 @@ proc ::persistence::fs::exists_supercolumn_p {oid} {
 
 proc ::persistence::fs::exists_column_rev_p {rev} {
     assert { [is_column_rev_p $rev] }
-    set filename [get_filename $rev]
+    #log "fs::exists_column_rev_p $rev"
+    set filename [get_cur_filename $rev]
     return [file exists $filename]
 }
 
 proc ::persistence::fs::exists_link_rev_p {rev} {
     assert { [is_link_rev_p $rev] }
-    set filename [get_filename $rev]
+    set filename [get_cur_filename $rev]
     return [file exists $filename]
 }
 
@@ -190,15 +194,18 @@ proc ::persistence::fs::find_column {
 
 
 proc ::persistence::fs::readfile {rev args} {
-    set filename [get_filename ${rev}]
+    set filename [get_cur_filename ${rev}]
     set codec_conf $args
     return [::util::readfile $filename {*}$codec_conf]
 
 }
-proc ::persistence::fs::writefile {rev data args} {
-    set filename [get_filename ${rev}]
+
+# tmprev = tmp/xid/rev
+proc ::persistence::fs::writefile {xid_rev data args} {
+    set tmpfile [get_tmp_filename ${xid_rev}]
+    file mkdir [file dirname $tmpfile]
     set codec_conf $args
-    return [::util::writefile $filename $data {*}$codec_conf]
+    return [::util::writefile $tmpfile $data {*}$codec_conf]
 
 }
 
@@ -224,10 +231,10 @@ if { [setting_p "mvcc"] } {
         set rev "${oid}@${micros}"
 
         # saves revision
-        set rev_filename [get_filename ${rev}]
-        file mkdir [file dirname ${rev_filename}]
-        writefile ${rev} ${data} {*}$codec_conf
-        file mtime ${rev_filename} ${mtime}
+        # set rev_filename [get_filename ${rev}]
+        # file mkdir [file dirname ${rev_filename}]
+        writefile $xid/${rev} ${data} {*}$codec_conf
+        # file mtime ${rev_filename} ${mtime}
 
         # checks if oid is a tombstone and updates the link
         # at the tip of the current branch,
@@ -261,14 +268,32 @@ if { [setting_p "mvcc"] } {
 
     proc ::persistence::fs::get_files {nodepath} {
         variable base_dir
-        variable branch
-        set dir [file normalize ${base_dir}/${nodepath}]
 
-        set rev_names [glob -tails -nocomplain -types "f l d" -directory ${dir} "*@*"]
+        set last_char [string index $nodepath end]
+        if { $last_char eq {/} } {
+            set dir [file normalize ${base_dir}/cur/${nodepath}]
+            set rootname $nodepath
+            set pattern "*@*"
+        } else {
+            set rootname [file dirname $nodepath]
+            set dir [file normalize [file join ${base_dir} cur $rootname]]
+            set tail [file tail $nodepath]
+            set pattern "${tail}@*"
+        }
+
+        #log [info frame -1]
+        #log last_char=$last_char
+        #log glob_dir=$dir
+        #log glob_pattern=$pattern
+
+        set rev_names [glob -tails -nocomplain -types "f l d" -directory ${dir} $pattern]
+        #log [info frame -1]
+        #log rev_names=$rev_names
 
         set result [list]
         foreach rev_name $rev_names {
-            set rev [file join ${nodepath} ${rev_name}]
+            set rev [file join ${rootname} ${rev_name}]
+            assert { [file exists [file join $base_dir cur $rev]] }
             lappend result $rev
         }
         return $result
@@ -277,8 +302,7 @@ if { [setting_p "mvcc"] } {
 
     proc ::persistence::fs::get_subdirs {path} {
         variable base_dir
-        variable branch
-        set dir [file normalize ${base_dir}/${path}]
+        set dir [file normalize ${base_dir}/cur/${path}]
 
         # log fs,get_subdirs,dir=$dir
 
@@ -295,5 +319,182 @@ if { [setting_p "mvcc"] } {
 proc ::persistence::fs::ls {args} {
     variable base_dir
     return [::util::fs::ls [get_dir {*}$args]]
+}
+
+wrap_proc ::persistence::common::begin_batch {{xid ""}} {
+    set xid [call_orig $xid]
+
+    # fs::begin_batch
+    variable base_dir
+
+    set tmpdir [file join $base_dir tmp $xid]
+    file mkdir $tmpdir
+
+    return $xid
+}
+
+wrap_proc ::persistence::common::end_batch {{xid ""}} {
+
+    if { $xid eq {} } {
+        set xid [::persistence::common::cur_transaction_id]
+    }
+
+    assert { $xid ne {} }
+
+    # fs::end_batch
+    variable base_dir
+    set tmpdir [file join $base_dir tmp $xid]
+    set newdir [file join $base_dir new $xid]
+    set curdir [file join $base_dir cur]
+    file mkdir $newdir
+    set first [llength [split $tmpdir {/}]]
+
+    # del_from_tmp call in fs::init deletes all
+    # uncommitted xids, i.e. xids that
+    # have no files copied to newdir at all
+    #
+    # error "just for debugging del_from_tmp in fs::init"
+
+    # copies xid files from tmpdir to newdir
+    # if copying is interrupted, then 
+    # complete_write_to_new in fs::init will 
+    # make sure that copying is completed in full
+    #
+    # note that any trace of xid in newdir 
+    # implies that write_to_new started copying files
+    # before interrupted and thus it was in the process
+    # of performing the end_batch proc
+    #
+    write_to_new $xid
+
+    # if processing breaks at this point,
+    # then complete_write_to_new in fs::init will
+    # make sure that copying is completed in full
+    #
+    # error "just for debugging complete_write_to_new in fs::init"
+
+    # without_lock - no need for lock
+    if {1} {
+
+        ::persistence::fs::delete_from_tmp $xid
+
+        # commit, common::end_batch $xid
+        # log "fs::end_batch about to call common::end_batch"
+        call_orig $xid
+
+    }
+
+    # error "just for debugging finalize_commit in fs::init"
+
+    # fsync (i.e. copy to curdir) all xids in newdir
+    ::persistence::fs::finalize_commit $xid
+
+    return $xid
+}
+
+proc ::persistence::fs::complete_write_to_new {} {
+    variable base_dir
+
+    set tmpdir [file join $base_dir tmp]
+    set newdir [file join $base_dir new]
+
+    set xids [glob -nocomplain -tails -type d -directory $newdir "*"]
+    foreach xid $xids {
+        set xidtmpdir [file join $tmpdir $xid]
+        if { [file isdirectory $xidtmpdir] } {
+            log "complete_write_to_new xid (=$xid)"
+            ::persistence::fs::write_to_new $xid
+            ::persistence::fs::delete_from_tmp $xid
+        }
+    }
+}
+
+proc ::persistence::fs::write_to_new {xid} {
+    variable base_dir
+
+    # log "write_to_new xid (=$xid)"
+
+    set tmpdir [file join $base_dir tmp]
+    set newdir [file join $base_dir new]
+    set first [llength [split $newdir {/}]]
+
+    set tmpfiles [file __find [file join $tmpdir $xid]]
+    foreach tmpfile $tmpfiles {
+        set rev [join [lrange [split $tmpfile {/}] $first end] {/}]
+        set newfile [file join $newdir $rev]
+        file mkdir [file dirname $newfile]
+        file copy $tmpfile $newfile
+        file delete $tmpfile
+    }
+}
+
+
+proc ::persistence::fs::delete_from_tmp {xids} {
+    # log "delete_from_tmp xids=$xids"
+    variable base_dir
+    set tmpdir [file join $base_dir tmp]
+    foreach xid $xids {
+        # log "delete_from_tmp xid (=$xid)"
+        set xidtmpdir [file join $tmpdir $xid]
+        file delete -force $xidtmpdir
+    }
+}
+
+proc ::persistence::fs::finalize_commit {xids} {
+    variable base_dir
+
+    set newdir [file join $base_dir new]
+    set curdir [file join $base_dir cur]
+    set first [llength [split $newdir {/}]]
+    incr first
+
+    foreach xid $xids {
+        # log "finalizing commit $xid"
+
+        set xidnewdir [file join $newdir $xid]
+        set newfiles [file __find $xidnewdir]
+        foreach newfile $newfiles {
+            set rev [join [lrange [split $newfile {/}] $first end] {/}]
+            set curfile [file join $curdir $rev]
+            file mkdir [file dirname $curfile]
+            file rename $newfile $curfile
+        }
+        file delete -force $newdir
+    }
+
+}
+
+
+
+
+# ROLLBACK upon bootstrap/init
+# 1. complete copying tmpfiles to newdir for xidnewdir that has a corresponding xidtmpdir
+# 2. remove all tmpfiles
+# 3. commit all remaining newfiles
+proc ::persistence::fs::init {} {
+    variable base_dir
+
+    set tmpdir [file join $base_dir tmp]
+    set newdir [file join $base_dir new]
+
+    # complete writing xids to new
+    # i.e. xids both in newdir and tmpdir
+    ::persistence::fs::complete_write_to_new
+
+    # remove all remaining xids in tmpdir
+    set xids [glob -nocomplain -tails -type d -directory $tmpdir "*"]
+    ::persistence::fs::delete_from_tmp $xids
+
+    # fsync (i.e. copy to curdir) all xids in newdir
+    set xids [glob -nocomplain -tails -type d -directory $newdir "*"]
+    ::persistence::fs::finalize_commit $xids
+
+    # log "just for debugging, exiting..."
+    # exit
+}
+
+wrap_proc ::persistence::common::init {} {
+    call_orig
+    ::persistence::fs::init
 }
 

@@ -74,6 +74,7 @@ proc ::persistence::commitlog::end_batch {{xid ""}} {
     set directive "end_batch"
     ::persistence::commitlog::write_entry $directive "" "" $xid ""
     ::persistence::mem::end_batch $xid
+    return $xid
 }
 
 proc ::persistence::commitlog::insert {oid data xid codec_conf} {

@@ -13,12 +13,12 @@ config param base_dir "/web/data/mystore"
 config param use_server "off"
 config param use_threads "off"
 
-config param memtable "on"
-config param sstable "on"
-config param critbit_tree "on"
+config param memtable "off"
+config param sstable "off"
+config param critbit_tree "off"
 config param bloom_filters "off"
 config param client_server "on"
-config param write_ahead_log "on"
+config param write_ahead_log "off"
 
 config param process_commitlog_millis "120000" ;# 120 secs
 
@@ -57,7 +57,7 @@ config param process_commitlog_millis "120000" ;# 120 secs
 #   one of them will be rolled back with a serialization_failure
 #   error
 #
-config param isolation_level "READ COMMITTED"
+config param isolation_level "READ UNCOMMITTED"
 
 # Multiversion Concurrency Control (MVCC) offers behavior where
 # "readers never block writers, and writers never block readers."
@@ -86,6 +86,7 @@ config param mvcc "on"
 assert { [setting "isolation_level"] eq {READ UNCOMMITTED} || [setting_p "write_ahead_log"] }
 assert { [setting "isolation_level"] eq {READ UNCOMMITTED} || [setting_p "mvcc"] }
 
+assert { ![setting_p "write_ahead_log"] || [setting_p "memtable"] }
 assert { ![setting_p "bloom_filters"] || [setting_p "write_ahead_log"] }
 assert { ![setting_p "critbit_tree"] || [setting_p "write_ahead_log"] }
 

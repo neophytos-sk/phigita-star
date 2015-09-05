@@ -98,9 +98,18 @@ proc ::persistence::common::join_oid {ks cf_axis {row_key ""} {column_path ""} {
 
 proc ::persistence::common::split_oid {oid_with_ts} {
     lassign [split ${oid_with_ts} {@}] oid ts
-    set column_path_args [lassign [split $oid {/}] ks cf_axis row_key __delimiter__]
-    set column_path [join $column_path_args {/}]
+    lassign [split $oid {+}] row_oid residual_path
+
+    set row_oid_parts [split $row_oid {/}]
+    lassign $row_oid_parts ks cf_axis row_key __empty__
+
+    assert { $__empty__ eq {} } {
+        log failed,oid_with_ts=$oid_with_ts
+    }
+
+    set column_path [string trimleft $residual_path {/}]
     set ext [file extension $column_path] 
+
     return [list $ks $cf_axis $row_key $column_path $ext $ts]
 }
 
@@ -407,7 +416,7 @@ proc ::persistence::common::get_slice {nodepath {options ""}} {
     }
     lassign [split_oid $nodepath] ks cf_axis row_key
     set row_path [join_oid ${ks} ${cf_axis} ${row_key}]
-    set slicelist [::persistence::get_leafs ${row_path}]
+    set slicelist [::persistence::get_leafs "${row_path}/"]
     #log !!!!!!!!!get_slice,nodepath=$nodepath
     #log !!!!!!!!!get_slice,slicelist=$slicelist
     __exec_options slicelist $options
@@ -474,7 +483,13 @@ proc ::persistence::common::get_link_target {rev} {
     }
 
     set target_oid [get_column $rev]
-    set target_rev [lindex [::persistence::get_leafs $target_oid] 0]
+    set leafs [::persistence::get_leafs $target_oid]
+
+    assert { $leafs ne {} } {
+        log failed,noleafs,target_oid=$target_oid
+    }
+
+    set target_rev [lindex $leafs 0]
 
     assert { [is_column_rev_p $target_rev] || [is_link_rev_p $target_rev] } {
         log failed,get_link_target,target_rev=$target_rev,target_oid=$target_oid
@@ -497,6 +512,8 @@ proc ::persistence::common::get_column {rev {codec_conf ""}} {
     assert { [is_column_rev_p $rev] || [is_link_rev_p $rev] } {
         log failed,rev=$rev
     }
+
+    #log get_column,rev=$rev
 
     # log "retrieving column (=$oid) from fs"
     return [readfile ${rev} {*}$codec_conf]
@@ -582,10 +599,13 @@ proc ::persistence::common::cur_transaction_id {} {
     return [lindex $__xid_stack end] ;# if empty, returns ""
 }
 
-proc ::persistence::common::begin_batch {} {
+proc ::persistence::common::begin_batch {{xid ""}} {
     variable ::persistence::__xid_stack
-    lappend __xid_stack [set xid [new_transaction_id "batch"]]
-    # log "begin_batch $xid"
+    if { $xid eq {} } {
+        set xid [new_transaction_id "batch"]
+    }
+    lappend __xid_stack $xid
+    log "common::begin_batch $xid"
     return $xid
 }
 
@@ -594,7 +614,7 @@ proc ::persistence::common::end_batch {{xid ""}} {
     assert { $__xid_stack ne {} }
     set __xid [lindex $__xid_stack end]
     assert { $xid eq {}  || $xid eq $__xid }
-    # log "end_batch $xid"
+    log "common::end_batch $xid"
     set __xid_stack [lreplace $__xid_stack end end]
     return $__xid
 }
@@ -628,20 +648,34 @@ proc ::persistence::common::get_multirow_names {nodepath {options ""}} {
 
 proc ::persistence::common::get_filename {path} {
     variable base_dir
-    return [file normalize ${base_dir}/${path}]
+    return [file normalize ${base_dir}/cur/${path}]
+}
+proc ::persistence::common::get_cur_filename {path} {
+    variable base_dir
+    return [file normalize ${base_dir}/cur/${path}]
+}
+proc ::persistence::common::get_tmp_filename {path} {
+    variable base_dir
+    return [file normalize ${base_dir}/tmp/${path}]
+}
+proc ::persistence::common::get_new_filename {path} {
+    variable base_dir
+    return [file normalize ${base_dir}/new/${path}]
 }
 
 
 proc ::persistence::common::get_leafs {path} {
-    set subdirs [get_subdirs $path]
+    set subdirs [get_subdirs "${path}/"]
     if { $subdirs eq {} } {
-        return [get_files $path]
+        set files [get_files ${path}]
+        return $files
     } else {
         set result [list]
         foreach subdir_path $subdirs {
             assert { $subdir_path ne $path }
-            foreach oid [__get_leafs $subdir_path] {
-                lappend result $oid
+            # slash is important
+            foreach rev [get_leafs "${subdir_path}/"] {
+                lappend result $rev
             }
         }
         return $result
@@ -705,7 +739,7 @@ proc ::persistence::common::compact {type_oid} {
 
 }
 
-if { [setting "mvcc"] } {
+if { [setting_p "mvcc"] } {
     wrap_proc ::persistence::common::get_leafs {path} {
 
         set revs [call_orig $path]
@@ -741,7 +775,7 @@ if { [setting "mvcc"] } {
             set rev ${normalized_oid}@${micros}
             lappend result ${rev}
         }
-        return [lsort -unique $result]
+        return [lsort -unique -command ::persistence::compare_files $result]
 
     }
 

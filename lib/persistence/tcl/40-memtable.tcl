@@ -354,15 +354,19 @@ proc ::persistence::mem::dump {} {
     # TODO: 
     #   override fs_dump with sstable_dump in the case when setting_p "sstable"
 
-    foreach rev $sorted_revs {
-        set type_oid [type_oid $rev]
-        # ::persistence::bloom_filter::insert $type_oid $rev
-        ::persistence::critbit_tree::insert $type_oid $rev
+    if { [setting_p "critbit_tree"] } {
+        foreach rev $sorted_revs {
+            set type_oid [type_oid $rev]
+            # ::persistence::bloom_filter::insert $type_oid $rev
+            ::persistence::critbit_tree::insert $type_oid $rev
+        }
     }
 
     if { [catch {
         fs_dump $sorted_revs
-        ::persistence::ss::dump $sorted_revs
+        if { [setting_p "sstable"] } {
+            ::persistence::ss::dump $sorted_revs
+        }
     } errmsg] } {
         log errmsg=$errmsg
         log errorInfo=$::errorInfo

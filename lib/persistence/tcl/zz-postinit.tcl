@@ -38,17 +38,18 @@ proc ::persistence::get_timestamp {rev} {
 
 proc ::persistence::reload_types {} {
     log "request to reload types"
-    ::persistence::commitlog::process
+    if { [setting_p "write_ahead_log"] } {
+        ::persistence::commitlog::process
+    }
     load_types_from_db
 }
 
 proc ::persistence::mkskel {} {
     variable base_dir
 
-    #file mkdir [file join $base_dir HEAD]  ;# oids, tip of the current branch
-    #file mkdir [file join $base_dir DATA]  ;# revs
-    #file mkdir [file join $base_dir META]  ;# CommitLog
-    #file mkdir [file join $base_dir tmp]   ;# fs::read_committed__set_column
+    file mkdir [file join $base_dir tmp]
+    file mkdir [file join $base_dir new]
+    file mkdir [file join $base_dir cur]  ;# tip of the current branch
 }
 
 proc ::persistence::init {} {
@@ -56,6 +57,8 @@ proc ::persistence::init {} {
     # log "initializing db..."
 
     mkskel
+
+    ::persistence::fs::init
 
     set storage_type [config get ::persistence "default_storage_type"]
 
@@ -166,7 +169,7 @@ proc ::persistence::init {} {
                     set subdirs_2 [call_orig $path]
                     return [lsort -unique [concat $subdirs_1 $subdirs_2]]
                 }
-            } else {
+            } elseif { [setting_p "memtable"] } {
                 wrap_proc ::persistence::get_files {path} {
                     set filelist1 [::persistence::mem::get_files $path]
                     set filelist2 [call_orig $path]
@@ -346,9 +349,10 @@ proc ::persistence::install_type {specVar} {
 
 proc ::persistence::load_types_from_db {} {
     set slicelist [::sysdb::object_type_t find]
-    foreach oid $slicelist {
-        # log "!!! load_type_from_db $oid"
-        array set spec [::sysdb::object_type_t get $oid]
+    #log "load_types_from_db,slicelist=$slicelist"
+    foreach rev $slicelist {
+        # log "!!! load_type_from_db $rev"
+        array set spec [::sysdb::object_type_t get $rev]
         load_type spec
         array unset spec
     }
