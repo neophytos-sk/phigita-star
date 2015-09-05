@@ -423,7 +423,25 @@ proc ::persistence::fs::write_to_new {xid} {
         set rev [join [lrange [split $tmpfile {/}] $first end] {/}]
         set newfile [file join $newdir $rev]
         file mkdir [file dirname $newfile]
-        file copy $tmpfile $newfile
+
+        # copy and then delete,
+        # in the place of a "file rename"
+        # in order to keep tmpfile until
+        # it has been copied completely
+        #
+        # 1st way:
+        # file rename $tmpfile $newfile
+        #
+        # 2nd way:
+        # file copy $tmpfile $newfile
+        # file delete $tmpfile
+        #
+        # 3rd way: 
+        # uses hard symbolic link
+        # and then deletes tmpfile
+        # 
+
+        file link -hard $newfile $tmpfile
         file delete $tmpfile
     }
 }
@@ -457,8 +475,21 @@ proc ::persistence::fs::finalize_commit {xids} {
             set rev [join [lrange [split $newfile {/}] $first end] {/}]
             set curfile [file join $curdir $rev]
             file mkdir [file dirname $curfile]
-            file rename $newfile $curfile
+
+            # see discussion in write_to_new
+            #
+            # file rename $newfile $curfile
+
+            file link -hard $curfile $newfile
+            file delete $newfile
         }
+
+        # non-empty directories are removed 
+        # only if the -force option is specified,
+        # in this case newdir is empty of files,
+        # but still has subdirs created for storing
+        # those files
+
         file delete -force $newdir
     }
 
