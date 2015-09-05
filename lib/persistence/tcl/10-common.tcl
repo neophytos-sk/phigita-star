@@ -605,7 +605,7 @@ proc ::persistence::common::begin_batch {{xid ""}} {
         set xid [new_transaction_id "batch"]
     }
     lappend __xid_stack $xid
-    log "common::begin_batch $xid"
+    # log "common::begin_batch $xid"
     return $xid
 }
 
@@ -614,7 +614,7 @@ proc ::persistence::common::end_batch {{xid ""}} {
     assert { $__xid_stack ne {} }
     set __xid [lindex $__xid_stack end]
     assert { $xid eq {}  || $xid eq $__xid }
-    log "common::end_batch $xid"
+    # log "common::end_batch $xid"
     set __xid_stack [lreplace $__xid_stack end end]
     return $__xid
 }
