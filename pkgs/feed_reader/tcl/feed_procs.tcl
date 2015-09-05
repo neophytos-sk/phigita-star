@@ -858,7 +858,7 @@ proc ::feed_reader::ls {args} {
     # defaults
     #
     set_if page 1
-    set_if limit [expr { ${rows} - 5 }]
+    set_if limit [expr { ${rows} - 2 }]
     set_if offset [expr { (${page} - 1) * ${limit} }]
     #set_if limit [expr { $offset + 20 }]
 

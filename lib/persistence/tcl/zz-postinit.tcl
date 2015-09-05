@@ -275,8 +275,7 @@ proc ::persistence::load_types_from_files {filelist} {
         array unset spec
     }
 
-    # TODO: if client, broadcast to servers to reload types from db
-
+    set reload_types_p 0
     foreach filename $filelist {
         array set spec $data($filename)
 
@@ -285,6 +284,10 @@ proc ::persistence::load_types_from_files {filelist} {
 
         if { $oid ne {} } {
             # TODO: integrity check
+            set changed_p 0
+            if { !$changed_p } {
+                continue
+            }
         } else {
              # log "*** save_type_to_db $spec(nsp)"
             ::sysdb::object_type_t insert spec
@@ -295,13 +298,19 @@ proc ::persistence::load_types_from_files {filelist} {
         #    ::persistence::reload_types
         # }
 
+        if { !$reload_types_p && $spec(ks) eq {sysdb} } {
+            set reload_types_p 1
+        }
+
         array unset spec
     }
 
     # covers case when client introduces a new object type
     # that the server instances are not yet aware, and so
     # they are notified to reload types from db
-    ::persistence::reload_types
+    if { $reload_types_p } {
+        ::persistence::reload_types
+    }
 }
 
 proc ::persistence::load_type {specVar} {
@@ -360,4 +369,5 @@ proc ::persistence::import_pdl {package_dir} {
     set filelist [lsort [glob -nocomplain -directory $dir $pattern]]
     log filelist=$filelist
     load_types_from_files $filelist
+    reload_types
 }

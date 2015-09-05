@@ -256,7 +256,7 @@ proc ::persistence::mem::end_batch {{xid ""}} {
 
     variable __xid_committed
     variable __xid_list
-    assert { !$__xid_committed($xid) }
+    #assert { !$__xid_committed($xid) }
     set __xid_committed($xid) 1
     lappend __xid_list $xid
 
