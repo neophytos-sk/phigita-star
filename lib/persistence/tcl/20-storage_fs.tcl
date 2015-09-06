@@ -321,8 +321,8 @@ proc ::persistence::fs::ls {args} {
     return [::util::fs::ls [get_dir {*}$args]]
 }
 
-wrap_proc ::persistence::common::begin_batch {{xid ""}} {
-    set xid [call_orig $xid]
+proc ::persistence::fs::begin_batch {{xid ""}} {
+    set xid [::persistence::common::begin_batch $xid]
 
     # fs::begin_batch
     variable base_dir
@@ -333,7 +333,7 @@ wrap_proc ::persistence::common::begin_batch {{xid ""}} {
     return $xid
 }
 
-wrap_proc ::persistence::common::end_batch {{xid ""}} {
+proc ::persistence::fs::end_batch {{xid ""}} {
 
     if { $xid eq {} } {
         set xid [::persistence::common::cur_transaction_id]
@@ -380,7 +380,7 @@ wrap_proc ::persistence::common::end_batch {{xid ""}} {
 
         # commit, common::end_batch $xid
         # log "fs::end_batch about to call common::end_batch"
-        call_orig $xid
+        ::persistence::common::end_batch $xid
 
     }
 
@@ -417,11 +417,22 @@ proc ::persistence::fs::write_to_new {xid} {
     set tmpdir [file join $base_dir tmp]
     set newdir [file join $base_dir new]
     set first [llength [split $newdir {/}]]
+    incr first
 
+    set xidtmpdir [file join $tmpdir $xid]
+    set xidnewdir [file join $newdir $xid]
+
+    # hard link not allowed for directory,
+    # that said, the subsequent lines would
+    # have been equivalent to:
+    #
+    # file link -hard $xidnewdir $xidtmpdir
+    # file delete $xidtmpdir
+    
     set tmpfiles [file __find [file join $tmpdir $xid]]
     foreach tmpfile $tmpfiles {
         set rev [join [lrange [split $tmpfile {/}] $first end] {/}]
-        set newfile [file join $newdir $rev]
+        set newfile [file join $xidnewdir $rev]
         file mkdir [file dirname $newfile]
 
         # copy and then delete,
@@ -490,7 +501,7 @@ proc ::persistence::fs::finalize_commit {xids} {
         # but still has subdirs created for storing
         # those files
 
-        file delete -force $newdir
+        file delete -force $xidnewdir
     }
 
 }
@@ -524,8 +535,4 @@ proc ::persistence::fs::init {} {
     # exit
 }
 
-wrap_proc ::persistence::common::init {} {
-    call_orig
-    ::persistence::fs::init
-}
 
