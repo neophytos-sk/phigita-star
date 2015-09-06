@@ -74,6 +74,9 @@ proc ::persistence::fs::get_files {nodepath} {
 proc ::persistence::fs::get_subdirs {path} {
     variable base_dir
     set dir [file normalize ${base_dir}/cur/${path}]
+
+    # log fs,get_subdirs,dir=$dir
+
     set names [glob -tails -types {d} -nocomplain -directory ${dir} *]
     set result [list]
     foreach name $names {
@@ -140,10 +143,10 @@ proc ::persistence::fs::define_cf {ks cf_axis {spec {}}} {
     create_cf_if ${ks} ${cf_axis}
 }
 
-proc ::persistence::fs::exists_supercolumn_p {oid} {
-    assert { [is_supercolumn_oid_p $oid] }
-    set filename [get_oid_filename $oid]
-    return [expr { [file exists $filename] && [file isdirectory $filename] }]
+proc ::persistence::fs::exists_supercolumn_p {sc_oid} {
+    assert { [is_supercolumn_oid_p $sc_oid] }
+    set dirname [get_cur_filename $sc_oid]
+    return [expr { [file exists $dirname] && [file isdirectory $dirname] }]
 }
 
 proc ::persistence::fs::exists_column_rev_p {rev} {
@@ -211,9 +214,11 @@ proc ::persistence::fs::writefile {xid_rev data args} {
 
 
 proc ::persistence::fs::set_column {oid data xid codec_conf} {
+    error "set_column, mvcc=off"
+
     lassign [split_xid $xid] micros pid n_mutations mtime
 
-    set filename [get_oid_filename ${oid}]
+    set filename [get_cur_filename ${oid}]
     file mkdir [file dirname ${filename}]
     writefile ${filename} ${data} {*}$codec_conf
     file mtime ${filename} ${mtime}
@@ -223,47 +228,10 @@ proc ::persistence::fs::set_column {oid data xid codec_conf} {
 
 if { [setting_p "mvcc"] } {
 
-    # isolation level: read_uncommitted
     proc ::persistence::fs::set_column {oid data xid codec_conf} {
-
         lassign [split_xid $xid] micros pid n_mutations mtime
-
         set rev "${oid}@${micros}"
-
-        # saves revision
-        # set rev_filename [get_filename ${rev}]
-        # file mkdir [file dirname ${rev_filename}]
         writefile $xid/${rev} ${data} {*}$codec_conf
-        # file mtime ${rev_filename} ${mtime}
-
-        # checks if oid is a tombstone and updates the link
-        # at the tip of the current branch,
-        # i.e. removes the link if oid is a tombstone,
-        # creates link in any other case 
-        set ext [file extension ${oid}]
-        if { $ext eq {.gone} } {
-
-            set orig_oid [file rootname ${oid}]
-            set orig_oid_filename [get_oid_filename $orig_oid]
-            file delete $orig_oid_filename
-
-            return [list $orig_oid_filename ""]
-
-        } else {
-
-            # add link from tip of the current branch to rev file
-            # note that, when we delete, we delete this link,
-            # the revision remains intact
-            #
-            # set oid_filename [get_oid_filename ${oid}]
-            # file mkdir [file dirname ${oid_filename}]
-            # ::util::writelink ${oid_filename} ${rev_filename}
-            # file mtime ${oid_filename} ${mtime}
-            #
-            # return [list $oid_filename $rev_filename]
-
-        }
-        
     }
 
     proc ::persistence::fs::get_files {nodepath} {
@@ -281,14 +249,7 @@ if { [setting_p "mvcc"] } {
             set pattern "${tail}@*"
         }
 
-        #log [info frame -1]
-        #log last_char=$last_char
-        #log glob_dir=$dir
-        #log glob_pattern=$pattern
-
         set rev_names [glob -tails -nocomplain -types "f l d" -directory ${dir} $pattern]
-        #log [info frame -1]
-        #log rev_names=$rev_names
 
         set result [list]
         foreach rev_name $rev_names {
@@ -298,20 +259,6 @@ if { [setting_p "mvcc"] } {
         }
         return $result
 
-    }
-
-    proc ::persistence::fs::get_subdirs {path} {
-        variable base_dir
-        set dir [file normalize ${base_dir}/cur/${path}]
-
-        # log fs,get_subdirs,dir=$dir
-
-        set names [glob -tails -types {d} -nocomplain -directory ${dir} *]
-        set result [list]
-        foreach name $names {
-            lappend result ${path}/${name}
-        }
-        return $result
     }
 
 }

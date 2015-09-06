@@ -7,8 +7,8 @@ config section ::persistence
 config param address "127.0.0.1"
 config param port "9900"
 config param default_storage_type "fs"
-# config param base_dir "/web/data/mystore"
-config param base_dir "/web/data/mystore2"
+ config param base_dir "/web/data/mystore"
+#config param base_dir "/web/data/mystore2"
 
 config param use_server "off"
 config param use_threads "off"
