@@ -525,21 +525,26 @@ if { 0 && [setting_p "sstable"] } {
             $type_oid $row_keys $revised_multirow_options]
 
         # 3. merge them in one sorted-strings (sstable) file
-        set index [list]
+        set indexmap [list]
         set output_data ""
+        set pos 0
         foreach {row_key slicelist} $multirow_slicelist {
-            set savepos [string length $output_data]
+            set row_startpos $pos
             set len [string length $row_key]
-            lappend index $row_key [binary format i $savepos]
             append output_data [binary format i $len] $row_key
+            incr pos $len
             foreach rev $slicelist {
                 set len [string length $rev]
                 append output_data [binary format i $len] $rev 
+                incr pos $len
                 set data [get $rev]
                 set len [string length $data]
                 append output_data [binary format i $len] $data
+                incr pos $len
             }
-            append output_data [binary format i $savepos]
+            set row_endpos $pos
+            append output_data [binary format i $row_startpos]
+            lappend indexmap $row_key [binary format i $row_endpos]
         }
 
         #log "length=[string length $output_data]"
@@ -550,10 +555,9 @@ if { 0 && [setting_p "sstable"] } {
         # 4. write the (sstable) file
         #
 
-        ::persistence::fs::begin_batch
-
         set name [binary encode base64 $type_oid]
-        array set item [list name $name data $output_data index $index]
+        set round [clock microseconds]
+        array set item [list name $name data $output_data indexmap $indexmap round $round]
         ::sysdb::sstable_t insert item
 
         # log "here,just for debugging nested transactions, exiting fs::compact..."
@@ -572,8 +576,6 @@ if { 0 && [setting_p "sstable"] } {
         # log "just for debugging nested transactions, exiting fs::compact..."
         # exit
 
-        ::persistence::fs::end_batch
-
     }
 
     proc ::persistence::fs::compact_all {} {
@@ -582,6 +584,10 @@ if { 0 && [setting_p "sstable"] } {
 
         set slicelist [::sysdb::object_type_t find]
         foreach rev $slicelist {
+
+            ::persistence::fs::begin_batch
+
+            set type_oids [list]
             array set object_type [::sysdb::object_type_t get $rev]
             foreach idx_data $object_type(indexes) {
                 array set idx $idx_data
@@ -590,31 +596,43 @@ if { 0 && [setting_p "sstable"] } {
                 if { $type_oid ne {sysdb/sstable.by_name} } {
                     compact $type_oid todelete_dirs
                 }
+                lappend type_oids $type_oid
             }
-            array unset data
+            array unset object_type
+
+            # only delete row dirs once we are done with compacting,
+            # as a row might still be referenced in a link of another cf_axis
+
+            # ATTENTION: do not use with production data just yet
+            foreach todelete_dir $todelete_dirs {
+                # deleting the given row dirs
+                # renders the storage_fs dependable
+                # on an implementation of
+                # get_files and get_subdirs that reads
+                # from the sstable files, without such
+                # an implementation compact_all (at the
+                # very least) won't be able to discover
+                # the object types to compact, SO MAKE
+                # SURE THAT get_files/get_subdirs FOR
+                # READING FROM SSTABLE FILES IS COMPLETED
+                # BEFORE COMMENTING-IN THE FOLLOWING LINES
+                #
+                # NOTE: consider deleting by marking the row as .gone
+                #
+
+                # file delete -force $todelete_dir
+                #log "deleted row_dir (=$todelete_dir)"
+            }
+
+            # see storage_ss.tcl
+            foreach type_oid $type_oids {
+                # ::persistence::ss::compact $type_oid
+            }
+
+            ::persistence::fs::end_batch
+
         }
 
-        # only delete row dirs once we are done with compacting,
-        # as a row might still be referenced in a link of another type
-
-        # ATTENTION: do not use with production data just yet
-        foreach todelete_dir $todelete_dirs {
-            # deleting the given row dirs
-            # renders the storage_fs dependable
-            # on an implementation of
-            # get_files and get_subdirs that reads
-            # from the sstable files, without such
-            # an implementation compact_all (at the
-            # very least) won't be able to discover
-            # the object types to compact, SO MAKE
-            # SURE THAT get_files/get_subdirs FOR
-            # READING FROM SSTABLE FILES IS COMPLETED
-            # BEFORE COMMENTING-IN THE FOLLOWING LINES
-
-            # file delete -force $todelete_dir
-            #log "deleted row_dir (=$todelete_dir)"
-
-        }
         
         # log "exiting..."
         # exit

@@ -328,7 +328,7 @@ proc ::pattern::check=integer {valueVar} {
 
 proc ::pattern::check=naturalnum {valueVar} {
     upvar ${valueVar} value
-    if { [string is integer -strict ${value}] && ${value} >= 0 } {
+    if { [string is entier -strict ${value}] && ${value} >= 0 } {
         return 1
     }
     return 0

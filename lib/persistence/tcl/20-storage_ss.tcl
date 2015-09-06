@@ -14,7 +14,7 @@ proc ::persistence::ss::init {type_oid} {
     variable base_dir
 
     set name [binary encode base64 $type_oid]
-    set dir [file join $base_dir "sysdb/sstable.by_name/${name}/+/"]
+    set dir [file join $base_dir cur "sysdb/sstable.by_name/${name}/+/"]
     # log "ss->init: type_oid=$type_oid dir=$dir"
     set filelist [file __find $dir "*.part@*"]
     foreach filename $filelist {
@@ -86,11 +86,15 @@ proc ::persistence::ss::load_sstable_indexmap {type_oid codec_conf} {
     # set sstable_revs [file __find $base_dir "sysdb/sstable.by_name/${name}/+/${name}.sstable@*"]
     #
 
+    set pattern "sysdb/sstable.by_name/${name}/+/${name}.sstable@*"
+
+    # fs::compact uses the following naming pattern:
+    # set pattern "sysdb/sstable.by_name/${name}/+/${name}@*"
     set sstable_rev [glob \
         -nocomplain \
         -tails \
-        -directory $base_dir \
-        "sysdb/sstable.by_name/${name}/+/${name}.sstable@*"]
+        -directory [file join $base_dir cur] \
+        $pattern]
 
     if { $sstable_rev eq {} } {
         log "sstable name: $name"
@@ -184,10 +188,14 @@ proc ::persistence::ss::compact {type_oid} {
 
     set name [binary encode base64 $type_oid]
 
+    set pattern "sysdb/sstable.by_name/${name}/+/${name}.sstable@*"
+    # fs::compact uses the following naming pattern:
+    # set pattern "sysdb/sstable.by_name/${name}/+/${name}@*"
     set filelist [glob \
+        -nocomplain \
         -tails \
-        -directory $base_dir \
-        "sysdb/sstable.by_name/${name}/+/${name}.sstable@*"]
+        -directory [file join $base_dir cur] \
+        $pattern]
 
     set filelist [lsort \
         -increasing \
@@ -195,7 +203,7 @@ proc ::persistence::ss::compact {type_oid} {
         $filelist]
 
     set llen [llength $filelist]
-    if { $llen == 1 } {
+    if { $llen <= 1 } {
         return
     }
 
@@ -205,7 +213,7 @@ proc ::persistence::ss::compact {type_oid} {
     array set fp [list]
     array set idx [list]
     foreach infile_rev $filelist {
-        set infile [file join $base_dir $infile_rev]
+        set infile [file join $base_dir cur $infile_rev]
 
         # log file_size=[file size $infile]
 
@@ -229,7 +237,7 @@ proc ::persistence::ss::compact {type_oid} {
 
     set clicks [clock clicks]
     set micros [clock microseconds]
-    set filename [file join $base_dir "sysdb/sstable.by_name/${name}/+/${name}.sstable"]
+    set filename [file join $base_dir cur "sysdb/sstable.by_name/${name}/+/${name}.sstable"]
     set outfile "${filename}@${micros}"
     set tmpfile "${filename}.${clicks}.part@${micros}"
     # log "merging sstables..."
@@ -269,7 +277,7 @@ proc ::persistence::ss::compact {type_oid} {
     for {set i 0} { $i < [llength $filelist] } {incr i} {
         close $fp($i)
         set infile_rev [lindex $filelist $i]
-        set infile [file join $base_dir $infile_rev]
+        set infile [file join $base_dir cur $infile_rev]
         file delete $infile
     }
 
@@ -319,7 +327,7 @@ proc ::persistence::ss::dump {sorted_revs} {
             set i "${ks}/${cf_axis}"
             set j ""
             set name [binary encode base64 $i]
-            set filename [file join $base_dir "sysdb/sstable.by_name/${name}/+/${name}.sstable"]
+            set filename [file join $base_dir cur "sysdb/sstable.by_name/${name}/+/${name}.sstable"]
             set outfile "${filename}@${micros}"
             set tmpfile "${filename}.part@${micros}"
             file mkdir [file dirname ${tmpfile}]
