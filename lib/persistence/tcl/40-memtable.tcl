@@ -54,8 +54,7 @@ namespace eval ::persistence::mem {
 }
 
 proc ::persistence::mem::init {} {}
-proc ::persistence::mem::define_cf {ks cf_axis} {
-}
+proc ::persistence::mem::define_cf {ks cf_axis} {}
 
 proc ::persistence::mem::visible_p {xid_micros} {
     return 1
@@ -162,9 +161,47 @@ proc ::persistence::mem::get_column {rev {codec_conf ""}} {
     return $__mem(${rev},data)
 }
 
+# following is a copy of common::get_link_target,
+# we need a way to namespace import the proc
+# that gives precedence to the current namespace
+# when resolving procnames, e.g. get_column
+# should first resolve to mem::get_column
+# and then to common::get_column, in other words:
+#
+# namespace __super ::persistence::common
+#   or
+# namespace __trait ::persistence::common
+#   or
+# namespace __import_copy ::persistence::common::get_link_target
+# namespace path ::persistence::common
+#   or
+# namespace __link_hard ::persistence::common::get_link_target
+# namespace path ::persistence::common
+#
+proc ::persistence::mem::get_link_target {rev} {
+    assert { [is_link_rev_p $rev] } {
+        log "failed,rev=$rev"
+    }
+
+    set target_oid [get_column $rev]
+    set leafs [::persistence::get_leafs $target_oid]
+
+    assert { $leafs ne {} } {
+        log failed,noleafs,target_oid=$target_oid
+    }
+
+    set target_rev [lindex $leafs 0]
+
+    assert { [is_column_rev_p $target_rev] || [is_link_rev_p $target_rev] } {
+        log failed,get_link_target,target_rev=$target_rev,target_oid=$target_oid
+    }
+
+    return $target_rev
+}
+
 proc ::persistence::mem::get_link {rev {codec_conf ""}} {
-    variable __mem
-    return [::persistence::get $__mem(${rev},data) $codec_conf]
+    set target_rev [get_link_target $rev]
+    return [::persistence::get $target_rev $codec_conf]
 
 }
 
