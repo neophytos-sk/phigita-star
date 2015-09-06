@@ -8,6 +8,8 @@ proc ::tcl::namespace::__mixin {imported_nsp} {
             rename ${nsp}::$exported_proc ${nsp}::__$exported_proc
         }
 
+        # log "alias ${nsp}::$exported_proc"
+
         interp alias \
             {} ${nsp}::$exported_proc \
             {} ::runtime::stack_with __nsp ${nsp} ${imported_nsp}::${exported_proc}

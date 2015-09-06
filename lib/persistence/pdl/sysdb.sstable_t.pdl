@@ -1,0 +1,23 @@
+nsp "::sysdb::sstable_t"
+ks "sysdb"
+cf "sstable"
+pk "name"
+
+indexes {{
+    name "by_name"
+    atts "name"
+}}
+
+attributes {{
+    name "name"
+} {
+    name "data"
+} {
+    name "indexmap"
+} {
+    name "round"
+    type "naturalnum"
+}}
+
+aggregates {}
+

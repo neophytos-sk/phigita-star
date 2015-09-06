@@ -364,6 +364,7 @@ proc ::persistence::load_types_from_db {} {
 # TODO: check for new types (on the server side)
 after_package_load persistence ::persistence::load_types_from_db
 
+
 proc ::persistence::import_pdl {package_dir} {
     set dir [file dirname [info script]]
     set root_dir [file normalize [file join $dir ../../../]]

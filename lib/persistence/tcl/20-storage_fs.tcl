@@ -1,6 +1,8 @@
 namespace eval ::persistence::fs {
 
-    namespace path ::persistence::common
+    #namespace path ::persistence::common
+
+    namespace __mixin ::persistence::common
 
     variable base_dir
     set base_dir [config get ::persistence base_dir]
@@ -87,7 +89,7 @@ proc ::persistence::fs::get_subdirs {path} {
 
 proc ::persistence::fs::get_dir {args} {
     variable base_dir
-    set dir [join [list ${base_dir}/ {*}${args}] {/}]
+    set dir [join [list ${base_dir}/cur/ {*}${args}] {/}]
     return ${dir}
 }
 
@@ -268,8 +270,8 @@ proc ::persistence::fs::ls {args} {
     return [::util::fs::ls [get_dir {*}$args]]
 }
 
-proc ::persistence::fs::begin_batch {{xid ""}} {
-    set xid [::persistence::common::begin_batch $xid]
+proc ::persistence::fs::begin_batch {} {
+    set xid [::persistence::common::begin_batch]
 
     # fs::begin_batch
     variable base_dir
@@ -280,11 +282,9 @@ proc ::persistence::fs::begin_batch {{xid ""}} {
     return $xid
 }
 
-proc ::persistence::fs::end_batch {{xid ""}} {
+proc ::persistence::fs::end_batch {} {
 
-    if { $xid eq {} } {
-        set xid [::persistence::common::cur_transaction_id]
-    }
+    set xid [::persistence::common::cur_transaction_id]
 
     assert { $xid ne {} }
 
@@ -339,17 +339,23 @@ proc ::persistence::fs::end_batch {{xid ""}} {
     return $xid
 }
 
-proc ::persistence::fs::complete_write_to_new {} {
-    variable base_dir
+proc ::persistence::fs::complete_write_to_new {{basedir ""}} {
 
-    set tmpdir [file join $base_dir tmp]
-    set newdir [file join $base_dir new]
+    set tmpdir [file join $basedir tmp]
+    set newdir [file join $basedir new]
 
-    set xids [glob -nocomplain -tails -type d -directory $newdir "*"]
+    set xids [glob -nocomplain -tails -type d -directory $newdir "*.batch"]
     foreach xid $xids {
         set xidtmpdir [file join $tmpdir $xid]
+
+        # processes nested transactions
+        complete_write_to_new $xidtmpdir
+
+        # processes files in xidtmpdir,
+        # including files copied into it
+        # from nested transactions
         if { [file isdirectory $xidtmpdir] } {
-            log "complete_write_to_new xid (=$xid)"
+            # log "complete_write_to_new xid (=$xid)"
             ::persistence::fs::write_to_new $xid
             ::persistence::fs::delete_from_tmp $xid
         }
@@ -363,11 +369,15 @@ proc ::persistence::fs::write_to_new {xid} {
 
     set tmpdir [file join $base_dir tmp]
     set newdir [file join $base_dir new]
-    set first [llength [split $newdir {/}]]
-    incr first
 
     set xidtmpdir [file join $tmpdir $xid]
     set xidnewdir [file join $newdir $xid]
+
+    set parent_xid [lrange [split $xid {/}] 0 end-1]
+    if { $parent_xid ne {} } {
+        set xidnewdir [file dirname $xidtmpdir]
+    }
+    set first [llength [split $xidtmpdir {/}]]
 
     # hard link not allowed for directory,
     # that said, the subsequent lines would
@@ -402,6 +412,14 @@ proc ::persistence::fs::write_to_new {xid} {
         file link -hard $newfile $tmpfile
         file delete $tmpfile
     }
+
+
+    if { $parent_xid ne {} } {
+        # log "xid=$xid parent_xid=$parent_xid"
+        # log "just for debugging nested transactions, exiting fs::write_to_new..."
+        # exit
+    }
+
 }
 
 
@@ -468,7 +486,7 @@ proc ::persistence::fs::init {} {
 
     # complete writing xids to new
     # i.e. xids both in newdir and tmpdir
-    ::persistence::fs::complete_write_to_new
+    ::persistence::fs::complete_write_to_new $base_dir
 
     # remove all remaining xids in tmpdir
     set xids [glob -nocomplain -tails -type d -directory $tmpdir "*"]
@@ -483,3 +501,146 @@ proc ::persistence::fs::init {} {
 }
 
 
+if { 0 && [setting_p "sstable"] } {
+
+    proc ::persistence::fs::compact {type_oid todelete_dirsVar} {
+        upvar $todelete_dirsVar todelete_dirs
+
+        # assert { [is_type_oid_p $type_oid] }
+
+        lassign [split_oid $type_oid] ks cf_axis
+        lassign [split $cf_axis {.}] cf idxname
+
+        assert { !( $ks eq {sysdb} && $cf eq {sstable} ) }
+
+        # log "compact type_oid=$type_oid"
+
+        # 1. get row keys
+        set multirow_options [list]
+        lassign [::persistence::fs::get_multirow_names $type_oid $multirow_options] \
+            row_keys revised_multirow_options
+
+        # 2. fget_leafs/slicelist for each row key
+        set multirow_slicelist [::persistence::fs::multirow_slice \
+            $type_oid $row_keys $revised_multirow_options]
+
+        # 3. merge them in one sorted-strings (sstable) file
+        set index [list]
+        set output_data ""
+        foreach {row_key slicelist} $multirow_slicelist {
+            set savepos [string length $output_data]
+            set len [string length $row_key]
+            lappend index $row_key [binary format i $savepos]
+            append output_data [binary format i $len] $row_key
+            foreach rev $slicelist {
+                set len [string length $rev]
+                append output_data [binary format i $len] $rev 
+                set data [get $rev]
+                set len [string length $data]
+                append output_data [binary format i $len] $data
+            }
+            append output_data [binary format i $savepos]
+        }
+
+        #log "length=[string length $output_data]"
+        #log "fs::compact work in progress, exiting..."
+        #exit
+
+        ##
+        # 4. write the (sstable) file
+        #
+
+        ::persistence::fs::begin_batch
+
+        set name [binary encode base64 $type_oid]
+        array set item [list name $name data $output_data index $index]
+        ::sysdb::sstable_t insert item
+
+        # log "here,just for debugging nested transactions, exiting fs::compact..."
+        # exit
+
+        foreach row_key $row_keys {
+          set row_oid [join_oid $ks $cf_axis $row_key]
+          set row_dir [get_cur_filename $row_oid]
+          lappend todelete_dirs $row_dir
+        }
+
+        # log "done compacting $type_oid"
+
+        # note that call to ::sysdb::sstable_t->insert above,
+        # created a nested transaction
+        # log "just for debugging nested transactions, exiting fs::compact..."
+        # exit
+
+        ::persistence::fs::end_batch
+
+    }
+
+    proc ::persistence::fs::compact_all {} {
+
+        set todelete_dirs [list]
+
+        set slicelist [::sysdb::object_type_t find]
+        foreach rev $slicelist {
+            array set object_type [::sysdb::object_type_t get $rev]
+            foreach idx_data $object_type(indexes) {
+                array set idx $idx_data
+                set cf_axis $object_type(cf).$idx(name)
+                set type_oid [join_oid $object_type(ks) $cf_axis]
+                if { $type_oid ne {sysdb/sstable.by_name} } {
+                    compact $type_oid todelete_dirs
+                }
+            }
+            array unset data
+        }
+
+        # only delete row dirs once we are done with compacting,
+        # as a row might still be referenced in a link of another type
+
+        # ATTENTION: do not use with production data just yet
+        foreach todelete_dir $todelete_dirs {
+            file delete -force $todelete_dir
+            log "deleted row_dir (=$todelete_dir)"
+        }
+        
+        # log "exiting..."
+        # exit
+    }
+
+    after_package_load persistence ::persistence::fs::compact_all
+
+    if {0} {
+
+        wrap_proc ::persistence::fs::get_files {nodepath} {
+            set fs_filelist [call_orig $nodepath]
+            set ss_filelist [list]
+            # TODO: 
+            # set ss_filelist [::persistence::ss::get_files $nodepath]
+            #
+            # lassign [split_oid $nodepath] ks cf_axis
+            # set type_oid [join_oid $ks $cf_axis]
+            # set name [list type $type_oid]
+            # set where_clause [list]
+            # lappend where_clause [list name = $name]
+            # set rev [::sysdb::sstable_t 0or1row $where_clause]
+            # if { $rev ne {} } {
+            #   variable sstable_item__${name}
+            #   array set sstable_item__${name} [::sysdb::sstable_t get $rev]
+            #   array set sstable_indexmap [set sstable_item__${name}(indexmap)]
+            #   # ::cbt::set_bytes $__cbt_TclObj(${name}) [array names sstable_indexmap]
+            #   # return [::cbt::prefix_match $__cbt_TclObj(${name}) $nodepath]
+            # }
+
+            set tmptree [::cbt::create]
+            ::cbt::set_bytes $tmptree $ss_filelist
+            ::cbt::set_bytes $tmptree $fs_filelist
+            return [::cbt::get_bytes $tmptree]
+
+        }
+
+        wrap_proc ::persistence::fs::get_subdirs {nodepath} {
+        }
+
+    }
+
+}
