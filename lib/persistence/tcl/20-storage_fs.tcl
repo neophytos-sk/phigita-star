@@ -599,8 +599,21 @@ if { 0 && [setting_p "sstable"] } {
 
         # ATTENTION: do not use with production data just yet
         foreach todelete_dir $todelete_dirs {
-            file delete -force $todelete_dir
-            log "deleted row_dir (=$todelete_dir)"
+            # deleting the given row dirs
+            # renders the storage_fs dependable
+            # on an implementation of
+            # get_files and get_subdirs that reads
+            # from the sstable files, without such
+            # an implementation compact_all (at the
+            # very least) won't be able to discover
+            # the object types to compact, SO MAKE
+            # SURE THAT get_files/get_subdirs FOR
+            # READING FROM SSTABLE FILES IS COMPLETED
+            # BEFORE COMMENTING-IN THE FOLLOWING LINES
+
+            # file delete -force $todelete_dir
+            #log "deleted row_dir (=$todelete_dir)"
+
         }
         
         # log "exiting..."
