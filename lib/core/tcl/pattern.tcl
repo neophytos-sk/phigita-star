@@ -98,6 +98,11 @@ proc ::pattern::check=varchar {valueVar} {
     return 1
 }
 
+proc ::pattern::check=bytearr {valueVar} {
+    upvar $valueVar value
+    # do nothing, for now
+    return 1
+}
 
 proc ::pattern::check=tcl_namespace {valueVar} {
     upvar $valueVar value

@@ -12,6 +12,7 @@ attributes {{
     name "name"
 } {
     name "data"
+    type "bytearr"
 } {
     name "indexmap"
 } {

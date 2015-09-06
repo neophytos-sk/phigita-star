@@ -25,7 +25,7 @@ proc ::util::boolval {value} {
 
 proc ::util::value_if {varname {default ""}} {
     upvar $varname var
-    if { [info exists var] } {
+    if { [info exists var] && ${var} ne {} } {
         return ${var}
     }
     return ${default}

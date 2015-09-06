@@ -208,7 +208,7 @@ proc ::persistence::orm::codec_bin_3::encode {itemVar} {
 
     # body / data
     foreach attname $__attnames {
-        set type [value_if __attinfo($attname,type) ""]
+        set type [value_if __attinfo($attname,type) "varchar"]
         lassign [value_if __type_to_bin($type) ""] fmt _ num_bytes
 
         set attvalue [value_if item($attname) ""]
@@ -218,7 +218,9 @@ proc ::persistence::orm::codec_bin_3::encode {itemVar} {
         if { $fmt ne {} } {
             append bytes [binary format $fmt $attvalue]
         } else {
-            set attvalue [encoding convertto utf-8 $attvalue]
+            if { $type eq {varchar} } {
+                set attvalue [encoding convertto utf-8 $attvalue]
+            }
             set len [string length $attvalue]
             set num_encoded_bytes [encode_unsigned_varint bytes $len]
             append bytes [binary format "A${len}" $attvalue]
@@ -260,7 +262,7 @@ proc ::persistence::orm::codec_bin_3::decode {bytes} {
             continue
         }
 
-        set type [value_if __attinfo($attname,type) ""]
+        set type [value_if __attinfo($attname,type) "varchar"]
 
         lassign [value_if __type_to_bin($type) ""] _ fmt num_bytes
 
@@ -275,10 +277,21 @@ proc ::persistence::orm::codec_bin_3::decode {bytes} {
             set len [decode_unsigned_varint bytes num_decoded_bytes $pos]
             incr pos $num_decoded_bytes
             #log "attname=$attname pos=$pos len=$len num_decoded_bytes=$num_decoded_bytes"
-            set scan_p [binary scan $bytes "@${pos}A${len}" item($attname)]
+            if { $type eq {bytearr} } {
+                # sstable.data attribute length issue
+                # actual=3727, retrieved=3725
+                set scan_p [binary scan $bytes "@${pos}a${len}" item($attname)]
+                assert { $len == [string length $item($attname)] } {
+                    log length=[string length $item($attname)]
+                }
+            } else {
+                set scan_p [binary scan $bytes "@${pos}A${len}" item($attname)]
+            }
             #log "scan_p=$scan_p"
             #log ">>>> $attname = $item($attname)"
-            set item($attname) [encoding convertfrom utf-8 $item($attname)]
+            if { $type eq {varchar} } {
+                set item($attname) [encoding convertfrom utf-8 $item($attname)]
+            }
             incr pos $len
         }
 
