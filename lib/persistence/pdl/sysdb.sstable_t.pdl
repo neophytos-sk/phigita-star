@@ -10,6 +10,7 @@ indexes {{
 
 attributes {{
     name "name"
+    type "varchar"
 } {
     name "data"
     type "bytearr"

@@ -218,12 +218,20 @@ proc ::persistence::orm::codec_bin_3::encode {itemVar} {
         if { $fmt ne {} } {
             append bytes [binary format $fmt $attvalue]
         } else {
+
             if { $type eq {varchar} } {
                 set attvalue [encoding convertto utf-8 $attvalue]
+                set len [string length $attvalue]
+                set attvalue [binary format "A${len}" $attvalue]
+            } elseif { $type eq {bytearr} } {
+                set attvalue [binary encode base64 $attvalue]
+                #set len [string length $attvalue]
+                #set attvalue [binary format "a${len}" $attvalue]
             }
             set len [string length $attvalue]
+            #log attname=$attname,writelen=$len
             set num_encoded_bytes [encode_unsigned_varint bytes $len]
-            append bytes [binary format "A${len}" $attvalue]
+            append bytes $attvalue
         }
     }
     # log [string repeat - 80]
@@ -277,16 +285,12 @@ proc ::persistence::orm::codec_bin_3::decode {bytes} {
             set len [decode_unsigned_varint bytes num_decoded_bytes $pos]
             incr pos $num_decoded_bytes
             #log "attname=$attname pos=$pos len=$len num_decoded_bytes=$num_decoded_bytes"
+
+            set scan_p [binary scan $bytes "@${pos}A${len}" item($attname)]
             if { $type eq {bytearr} } {
-                # sstable.data attribute length issue
-                # actual=3727, retrieved=3725
-                set scan_p [binary scan $bytes "@${pos}a${len}" item($attname)]
-                assert { $len == [string length $item($attname)] } {
-                    log length=[string length $item($attname)]
-                }
-            } else {
-                set scan_p [binary scan $bytes "@${pos}A${len}" item($attname)]
+                set item($attname) [binary decode base64 $item($attname)]
             }
+
             #log "scan_p=$scan_p"
             #log ">>>> $attname = $item($attname)"
             if { $type eq {varchar} } {

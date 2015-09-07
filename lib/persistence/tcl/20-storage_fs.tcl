@@ -501,7 +501,8 @@ proc ::persistence::fs::init {} {
 }
 
 
-if { 0 && [setting_p "sstable"] } {
+# log server=[use_p server]
+if { [use_p "server"] && ( 1 || [setting_p "sstable"] ) } {
 
     proc ::persistence::fs::read_sstable {dataVar row_endpos file_i} {
         upvar $dataVar data
@@ -517,7 +518,7 @@ if { 0 && [setting_p "sstable"] } {
         set scan_p [binary scan $data "@${pos}i" row_startpos]
         incr pos 4
 
-        # log scan_p=$scan_p
+        # log row_startpos,scan_p=$scan_p
 
         assert { $scan_p }
 
@@ -543,15 +544,16 @@ if { 0 && [setting_p "sstable"] } {
             # read_string _fp rev
             binary scan $data @${pos}i len
             incr pos 4
-            binary scan $data @${pos}A${len} rev
+            binary scan $data @${pos}a${len} rev
             incr pos $len
 
-            # log rev=$rev
+            # log pos=$pos,rev=$rev
 
             lappend revs [list $rev $file_i $pos]
 
             # skip_string _fp
             binary scan $data @${pos}i len
+
             incr pos 4
             incr pos $len  ;# skip_string (data)
 
@@ -562,6 +564,12 @@ if { 0 && [setting_p "sstable"] } {
     }
 
     proc ::persistence::fs::merge_sstables_in_mem {type_oid} {
+
+        set errorlist [list sysdb/object_type.by_nsp]
+        if { $type_oid in $errorlist } {
+            log "skipping sstable merge for $type_oid"
+            return
+        }
 
         set name [binary encode base64 $type_oid]
 
@@ -581,20 +589,35 @@ if { 0 && [setting_p "sstable"] } {
         set sstable_revs [lsort -command ::persistence::compare_files $sstable_revs]
 
         if { [llength $sstable_revs] <= 1 } {
-            return
+            # return
         }
-        
+
+        #log llen=[llength $sstable_revs]
+        log \tsstable_revs=[join $sstable_revs \n\t]
+
         set file_i 0
         array set sstable_row_idx [list]
         foreach sstable_rev $sstable_revs {
+
             array set sstable_item__${file_i} [::sysdb::sstable_t get $sstable_rev]
+            log -----
+            log name=[binary decode base64 [set sstable_item__${file_i}(name)]]
+            log sstable_datalen=[set datalen [string length [set sstable_item__${file_i}(data)]]]
+
             foreach {row_key row_endpos} [set sstable_item__${file_i}(indexmap)] {
 
-                # log row_key=$row_key
-                # log row_endpos=$row_endpos
+                log row_key=$row_key
+                log row_endpos=$row_endpos
+
+                # set sstable_data [binary decode hex [set sstable_item__${file_i}(data)]]
+                # binary scan [binary decode hex [set sstable_item__${file_i}(data)]] a* sstable_data
+
+                set sstable_data [set sstable_item__${file_i}(data)]
+                # set sstable_data [binary format a* [set sstable_item__${file_i}(data)]]
+                log sstable_datalen=[string length $sstable_data]
 
                 set revs [::persistence::fs::read_sstable \
-                    sstable_item__${file_i}(data) $row_endpos $file_i]
+                    sstable_data $row_endpos $file_i]
 
                 foreach rev $revs {
                     lappend sstable_row_idx(${row_key}) $rev
@@ -603,14 +626,16 @@ if { 0 && [setting_p "sstable"] } {
                 # log revs=$revs
 
             }
-            incr i
+
+            incr file_i
         }
 
-        # log sstable_row_idx=[array get sstable_row_idx]
+        log \tsstable_row_idx=[join [array get sstable_row_idx] \n\t]
 
         set row_keys [lsort [array names sstable_row_idx]]
 
         if { $row_keys eq {} } {
+            log "!!! nothing to merge"
             return
         }
 
@@ -621,36 +646,54 @@ if { 0 && [setting_p "sstable"] } {
 
             set row_startpos $pos
 
+            # write row_key
             set len [string length $row_key]
             append output_data [binary format i $len] $row_key
             incr pos 4
             incr pos $len
 
-            foreach idx_item $sstable_row_idx(${row_key}) {
-                lassign $idx_item rev file_i file_pos
+            foreach column_idx_item $sstable_row_idx(${row_key}) {
+                lassign $column_idx_item rev file_i file_pos
 
+                # set sstable_data [binary decode hex [set sstable_item__${file_i}(data)]]
+                # binary scan [binary decode hex [set sstable_item__${file_i}(data)]] a* sstable_data
+                # set sstable_data [binary format a* [set sstable_item__${file_i}(data)]]
+                set sstable_data [set sstable_item__${file_i}(data)]
+
+                # write column rev/oid
                 set len [string length $rev]
                 append output_data [binary format i $len] $rev 
                 incr pos 4
                 incr pos $len
 
                 # read data from file $file_i
-                binary scan [set sstable_item__${file_i}(data)] @${file_pos}i len
+                set scan_p [binary scan $sstable_data @${file_pos}i len]
+                assert { $scan_p } {
+                    log file_pos=$file_pos
+                }
+
+                # assert { $len < 1000000 } {
+                #     log failed,file_pos=$file_pos,rev=$rev
+                #     log length=[string length $sstable_data]
+                # }
+
+                # write data for given rev
                 incr file_pos 4
-                set scan_p [binary scan [set sstable_item__${file_i}(data)] @${file_pos}a${len} data]
+                set scan_p [binary scan $sstable_data @${file_pos}a${len} encoded_rev_data]
                 assert { $scan_p } {
                     log file_pos=$file_pos,len=$len
+                    exit
                 }
-                assert { $len == [string length $data] }
 
-                # set len [string length $data]
-                append output_data [binary format i $len] $data
+                append output_data [binary format i $len] $encoded_rev_data
                 incr pos 4
                 incr pos $len
 
             }
 
+            # write row_startpos at end of row
             set row_endpos $pos
+            log "merged file, row_key=$row_key row_endpos=$row_endpos row_startpos=$row_startpos"
             append output_data [binary format i $row_startpos]
             incr pos 4
 
@@ -665,10 +708,11 @@ if { 0 && [setting_p "sstable"] } {
 
         array set item [list]
         set item(name) $name
-        set item(data) $output_data
+        set item(data) $output_data  ;# [binary encode hex $output_data]
         set item(indexmap) $indexmap 
         set item(round) $round
 
+        # log "merged_sstable_rev for $type_oid"
         set merged_sstable_rev [::sysdb::sstable_t insert item]
         log merged_sstable_rev=$merged_sstable_rev
 
@@ -678,16 +722,22 @@ if { 0 && [setting_p "sstable"] } {
         # NOTE: delete old sstable files,
         # but once the new sstable has been
         # committed
+        set file_i 0
         foreach sstable_rev $sstable_revs {
             set sstable_filename [get_cur_filename $sstable_rev]
             file delete $sstable_filename
             # ::sysdb::sstable_t delete $sstable_rev
+
+            array unset sstable_item__${file_i}
+            incr file_i
         }
 
     }
 
     proc ::persistence::fs::compact {type_oid todelete_dirsVar} {
         upvar $todelete_dirsVar todelete_dirs
+
+        log type_oid=$type_oid
 
         # assert { [is_type_oid_p $type_oid] }
 
@@ -713,6 +763,9 @@ if { 0 && [setting_p "sstable"] } {
         set pos 0
         foreach {row_key slicelist} $multirow_slicelist {
 
+            #log -----
+            #log fs::compact,row_key=$row_key
+
             set row_startpos $pos
 
             set len [string length $row_key]
@@ -727,17 +780,28 @@ if { 0 && [setting_p "sstable"] } {
                 incr pos 4
                 incr pos $len
 
-                set data [get $rev]
+                set encoded_rev_data [get $rev]
+                #set encoded_rev_data [binary encode base64 $rev_data]
 
-                set len [string length $data]
-                append output_data [binary format i $len] $data
+                set len [string length $encoded_rev_data]
+                # log "!!! len=$len"
+                append output_data [binary format i $len] $encoded_rev_data
                 incr pos 4
                 incr pos $len
 
             }
 
             set row_endpos $pos
+            log "fs::compact sst,row_key=$row_key row_endpos=$row_endpos row_startpos=$row_startpos"
+            log "\tfs::compact llen=[llength $slicelist]"
             append output_data [binary format i $row_startpos]
+            
+
+            #binary scan $output_data @${pos}i test_row_startpos
+            #assert { $test_row_startpos == $row_startpos }
+            #log test_row_startpos=$test_row_startpos
+
+
             incr pos 4
 
             lappend indexmap $row_key $row_endpos
@@ -761,6 +825,7 @@ if { 0 && [setting_p "sstable"] } {
         set item(round) $round
 
         ::sysdb::sstable_t insert item
+        # log "new sstable for $type_oid"
 
         # log "here,just for debugging nested transactions, exiting fs::compact..."
         # exit
@@ -795,7 +860,8 @@ if { 0 && [setting_p "sstable"] } {
                 array set idx $idx_data
                 set cf_axis $object_type(cf).$idx(name)
                 set type_oid [join_oid $object_type(ks) $cf_axis]
-                if { $type_oid ne {sysdb/sstable.by_name} } {
+                #if { $type_oid ne {sysdb/sstable.by_name} }
+                if { $object_type(ks) ne {sysdb} } {
                     compact $type_oid todelete_dirs
                     lappend type_oids $type_oid
                 }
@@ -823,16 +889,23 @@ if { 0 && [setting_p "sstable"] } {
                 #
 
                 # file delete -force $todelete_dir
-                #log "deleted row_dir (=$todelete_dir)"
-            }
-
-            # see storage_ss.tcl
-            foreach type_oid $type_oids {
-                # log "merging sstables for $type_oid"
-                ::persistence::fs::merge_sstables_in_mem $type_oid
+                # log "deleted row_dir (=$todelete_dir)"
             }
 
             ::persistence::fs::end_batch
+
+            # see storage_ss.tcl
+            foreach type_oid $type_oids {
+                log "merging sstables for $type_oid"
+                if { [catch {
+                    ::persistence::fs::merge_sstables_in_mem $type_oid
+                } errmsg] } {
+                    log errmsg=$errmsg
+                    log errorInfo=$::errorInfo
+                    log exiting
+                    exit
+                }
+            }
 
         }
 
