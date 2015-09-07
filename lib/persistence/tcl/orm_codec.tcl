@@ -219,17 +219,14 @@ proc ::persistence::orm::codec_bin_3::encode {itemVar} {
             append bytes [binary format $fmt $attvalue]
         } else {
 
-            if { $type eq {varchar} } {
+            if { $type ne {bytearr} } {
                 set attvalue [encoding convertto utf-8 $attvalue]
                 set len [string length $attvalue]
                 set attvalue [binary format "A${len}" $attvalue]
             } elseif { $type eq {bytearr} } {
                 set attvalue [binary encode base64 $attvalue]
-                #set len [string length $attvalue]
-                #set attvalue [binary format "a${len}" $attvalue]
             }
             set len [string length $attvalue]
-            #log attname=$attname,writelen=$len
             set num_encoded_bytes [encode_unsigned_varint bytes $len]
             append bytes $attvalue
         }
@@ -284,16 +281,16 @@ proc ::persistence::orm::codec_bin_3::decode {bytes} {
         } else {
             set len [decode_unsigned_varint bytes num_decoded_bytes $pos]
             incr pos $num_decoded_bytes
-            #log "attname=$attname pos=$pos len=$len num_decoded_bytes=$num_decoded_bytes"
+            # log "attname=$attname pos=$pos len=$len num_decoded_bytes=$num_decoded_bytes"
 
             set scan_p [binary scan $bytes "@${pos}A${len}" item($attname)]
             if { $type eq {bytearr} } {
                 set item($attname) [binary decode base64 $item($attname)]
             }
 
-            #log "scan_p=$scan_p"
-            #log ">>>> $attname = $item($attname)"
-            if { $type eq {varchar} } {
+            # log "scan_p=$scan_p len=$len"
+            # log ">>>> $attname = $item($attname)"
+            if { $type ne {bytearr} } {
                 set item($attname) [encoding convertfrom utf-8 $item($attname)]
             }
             incr pos $len

@@ -492,6 +492,10 @@ proc ::persistence::common::get_link_target {rev} {
     }
 
     set target_oid [get_column $rev]
+    assert { $target_oid ne {} }
+
+    # log get_link_target,target_oid=$target_oid
+
     set leafs [::persistence::get_leafs $target_oid]
 
     assert { $leafs ne {} } {
@@ -677,7 +681,9 @@ proc ::persistence::common::get_new_filename {path} {
 
 
 proc ::persistence::common::get_leafs {path} {
-    set subdirs [get_subdirs "${path}/"]
+    assert { $path ne {} }
+
+    set subdirs [get_subdirs ${path}]
     if { $subdirs eq {} } {
         set files [get_files ${path}]
         return $files
@@ -696,6 +702,8 @@ proc ::persistence::common::get_leafs {path} {
 
 if { [setting_p "mvcc"] } {
     wrap_proc ::persistence::common::get_leafs {path} {
+        assert { $path ne {} }
+        # log get_leafs,path=$path
 
         set revs [call_orig $path]
 

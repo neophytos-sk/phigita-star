@@ -102,7 +102,7 @@ proc ::tcl::string::__splitn {str {len 1}} {
     return $result
 }
 
-proc ::tcl::string::diff {old new {show_old_p "1"}} {
+proc ::tcl::string::__diff {old new {show_old_p "1"}} {
     package require struct::list
 
     set old [split $old " "]

@@ -81,7 +81,11 @@ proc ::persistence::fs::get_subdirs {path} {
 
     set names [glob -tails -types {d} -nocomplain -directory ${dir} *]
     set result [list]
+    set path [string trimright $path {/}]
     foreach name $names {
+        # log !!!get_subdirs,path=$path
+        # log !!!get_subdirs,name=$name
+        # log get_subdirs,${path}/${name}
         lappend result ${path}/${name}
     }
     return [lsort ${result}]
@@ -602,19 +606,19 @@ if { [use_p "server"] && ( 1 || [setting_p "sstable"] ) } {
             array set sstable_item__${file_i} [::sysdb::sstable_t get $sstable_rev]
             log -----
             log name=[binary decode base64 [set sstable_item__${file_i}(name)]]
-            log sstable_datalen=[set datalen [string length [set sstable_item__${file_i}(data)]]]
+            # log sstable_datalen=[set datalen [string length [set sstable_item__${file_i}(data)]]]
 
             foreach {row_key row_endpos} [set sstable_item__${file_i}(indexmap)] {
 
-                log row_key=$row_key
-                log row_endpos=$row_endpos
+                # log row_key=$row_key
+                # log row_endpos=$row_endpos
 
                 # set sstable_data [binary decode hex [set sstable_item__${file_i}(data)]]
                 # binary scan [binary decode hex [set sstable_item__${file_i}(data)]] a* sstable_data
 
                 set sstable_data [set sstable_item__${file_i}(data)]
                 # set sstable_data [binary format a* [set sstable_item__${file_i}(data)]]
-                log sstable_datalen=[string length $sstable_data]
+                # log sstable_datalen=[string length $sstable_data]
 
                 set revs [::persistence::fs::read_sstable \
                     sstable_data $row_endpos $file_i]
@@ -734,6 +738,120 @@ if { [use_p "server"] && ( 1 || [setting_p "sstable"] ) } {
 
     }
 
+
+    wrap_proc ::persistence::fs::readfile {rev args} {
+        set codec_conf $args
+
+        # check fs cur files
+        # HERE
+        if { [string match "sysdb/*" $rev] } {
+            set filename [get_cur_filename $rev]
+            if { [file exists $filename] } {
+                return [call_orig $rev {*}$codec_conf]
+            }
+        }
+
+        # check sstable files
+        set type_oid [type_oid $rev]
+        set sstable_name [binary encode base64 $type_oid]
+
+        set where_clause [list [list name = $sstable_name]]
+        set sstable_rev [::sysdb::sstable_t 0or1row $where_clause]
+
+        log sstable_rev=$sstable_rev
+
+        if { $sstable_rev ne {} } {
+
+            lassign [split_oid $rev] ks cf_axis row_key column_path ext ts
+
+            array set sstable_item [::sysdb::sstable_t get $sstable_rev]
+            array set sstable_indexmap $sstable_item(indexmap)
+
+            set row_endpos $sstable_indexmap(${row_key})
+
+            # seek _fp $row_endpos start
+            set pos $row_endpos
+            binary scan $sstable_item(data) @${pos}i row_startpos
+            assert { $row_startpos < $row_endpos }
+
+            # seek _fp $row_startpos start
+            set pos $row_startpos
+            binary scan $sstable_item(data) @${pos}i len
+            incr pos 4
+            binary scan $sstable_item(data) @${pos}a${len} row_key_in_file
+            incr pos $len
+            assert { $row_key eq $row_key_in_file }
+
+            set sstable_data_found_p 0
+            while { $pos < $row_endpos } {
+                binary scan $sstable_item(data) @${pos}i len
+                incr pos 4
+                binary scan $sstable_item(data) @${pos}a${len} rev_in_file
+                incr pos $len
+                if { $rev eq $rev_in_file } {
+                    binary scan $sstable_item(data) @${pos}i len
+                    incr pos 4
+                    binary scan $sstable_item(data) @${pos}a${len} ss_data
+                    incr pos $len
+                    set sstable_data_found_p 1
+                    break
+                } else {
+                    binary scan $sstable_item(data) @${pos}i len
+                    incr pos 4
+                    incr pos $len ;# skip_string data
+                }
+            }
+
+            array unset sstable_indexmap
+            array unset sstable_item
+
+            if { !$sstable_data_found_p } {
+                error "sstable_readfile: rev (=$rev) not found"    
+            }
+
+            set fs_data [call_orig $rev {*}$codec_conf]
+
+
+            # tries all different encoders/decoders until ss_data
+            # holds a string starting with newsdb
+
+            log -----
+            if {0} {
+                set enc_fs_data [binary encode base64 $fs_data]
+
+                foreach lambdaExpr {
+                    {{s} {encoding convertto utf-8 $s}}
+                    {{s} {encoding convertfrom utf-8 $s}}
+                    {{s} {binary format a* $s}}
+                    {{s} {binary scan $s a* x ; set x}}
+                } {
+                    set str [apply $lambdaExpr $ss_data]
+                    set enc_str [binary encode base64 $str]
+                    if { $enc_fs_data eq $enc_str } {
+                        log "lambdaExpr=$lambdaExpr, fs_data eq str"
+                    }
+                }
+            }
+
+            assert { 1 || $ss_data eq $fs_data } {
+                log ""
+                log "!!! ss_data for rev=$rev"
+                log ""
+                log "!!! ss_data=[set enc_ss_data [binary encode base64 $ss_data]]"
+                log ""
+                log "!!! fs_data=[set enc_fs_data [binary encode base64 $fs_data]]"
+                log ""
+                log [string __diff [split $enc_ss_data ""] [split $enc_fs_data ""]]
+            }
+
+            return $ss_data
+
+        }
+
+        return
+
+    }
+
     proc ::persistence::fs::compact {type_oid todelete_dirsVar} {
         upvar $todelete_dirsVar todelete_dirs
 
@@ -780,8 +898,21 @@ if { [use_p "server"] && ( 1 || [setting_p "sstable"] ) } {
                 incr pos 4
                 incr pos $len
 
-                set encoded_rev_data [get $rev]
-                #set encoded_rev_data [binary encode base64 $rev_data]
+                # one may be tempted to read 
+                # the effective rev/oid
+                # in the case of a .link rev,
+                # however, the right thing is
+                # copying the data content of
+                # the given rev asis, 
+                # i.e. the target rev in the
+                # case of a .link rev
+                #
+                # NOT: set encoded_rev_data [get $rev]
+                
+                # set encoded_rev_data [get_column $rev]
+                binary scan [get_column $rev] a* encoded_rev_data
+                set len [string length $encoded_rev_data]
+                set encoded_rev_data [binary format "A${len}" $encoded_rev_data]
 
                 set len [string length $encoded_rev_data]
                 # log "!!! len=$len"
@@ -792,8 +923,8 @@ if { [use_p "server"] && ( 1 || [setting_p "sstable"] ) } {
             }
 
             set row_endpos $pos
-            log "fs::compact sst,row_key=$row_key row_endpos=$row_endpos row_startpos=$row_startpos"
-            log "\tfs::compact llen=[llength $slicelist]"
+            # log "fs::compact sst,row_key=$row_key row_endpos=$row_endpos row_startpos=$row_startpos"
+            # log "\tfs::compact llen=[llength $slicelist]"
             append output_data [binary format i $row_startpos]
             
 
@@ -914,7 +1045,7 @@ if { [use_p "server"] && ( 1 || [setting_p "sstable"] ) } {
         # exit
     }
 
-    after_package_load persistence ::persistence::fs::compact_all
+    # after_package_load persistence ::persistence::fs::compact_all
 
     if {0} {
 
