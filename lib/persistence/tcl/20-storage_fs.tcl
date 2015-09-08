@@ -511,7 +511,7 @@ if { [use_p "server"] && ( 1 || [setting_p "sstable"] ) } {
     proc ::persistence::fs::read_sstable {dataVar row_endpos file_i} {
         upvar $dataVar data
 
-        # log length=[string length $data]
+        log read_sstable,datalen=[string length $data]
 
         # seek _fp $row_endpos start
         # read_int _fp row_startpos
@@ -522,9 +522,10 @@ if { [use_p "server"] && ( 1 || [setting_p "sstable"] ) } {
         set scan_p [binary scan $data "@${pos}i" row_startpos]
         incr pos 4
 
-        # log row_startpos,scan_p=$scan_p
-
-        assert { $scan_p }
+        assert { $scan_p } {
+            log row_endpos=$row_endpos
+            log failed,row_startpos,scan_p=$scan_p
+        }
 
         # log row_startpos=$row_startpos
 
@@ -856,7 +857,7 @@ if { [use_p "server"] && ( 1 || [setting_p "sstable"] ) } {
     proc ::persistence::fs::compact {type_oid todelete_dirsVar} {
         upvar $todelete_dirsVar todelete_dirs
 
-        log type_oid=$type_oid
+        log "compacting type_oid=$type_oid"
 
         # assert { [is_type_oid_p $type_oid] }
 
@@ -882,8 +883,8 @@ if { [use_p "server"] && ( 1 || [setting_p "sstable"] ) } {
         set pos 0
         foreach {row_key slicelist} $multirow_slicelist {
 
-            #log -----
-            #log fs::compact,row_key=$row_key
+            log -----
+            log fs::compact,row_key=$row_key
 
             set row_startpos $pos
 
@@ -914,11 +915,8 @@ if { [use_p "server"] && ( 1 || [setting_p "sstable"] ) } {
                 set scan_p [binary scan $encoded_rev_data a* encoded_rev_data]
                 set len [string length $encoded_rev_data]
 
-                # set encoded_rev_data [binary format "A${len}" $encoded_rev_data]
-                # set len2 [string length $encoded_rev_data]
-                # assert { $len == $len2 }
+                log encoded_rev_data,len=$len
 
-                # log "!!! len=$len"
                 append output_data [binary format i $len] $encoded_rev_data
                 incr pos 4
                 incr pos $len
@@ -926,8 +924,8 @@ if { [use_p "server"] && ( 1 || [setting_p "sstable"] ) } {
             }
 
             set row_endpos $pos
-            # log "fs::compact sst,row_key=$row_key row_endpos=$row_endpos row_startpos=$row_startpos"
-            # log "\tfs::compact llen=[llength $slicelist]"
+            log "fs::compact sst,row_key=$row_key row_endpos=$row_endpos row_startpos=$row_startpos"
+            log "\tfs::compact llen=[llength $slicelist]"
             append output_data [binary format i $row_startpos]
             
 

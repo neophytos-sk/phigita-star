@@ -123,11 +123,12 @@ proc ::persistence::orm::codec_bin_3::encode {itemVar} {
         } else {
 
             if { $type eq {bytearr} } {
-                set attvalue [binary encode base64 $attvalue]
+                # OLD: set attvalue [binary encode base64 $attvalue]
+                set attvalue [binary format "a*" $attvalue]
             } else {
                 set attvalue [encoding convertto utf-8 $attvalue]
                 set len [string length $attvalue]
-                # OLD: set attvalue [binary format "A${len}" $attvalue]
+                # V_OLD: set attvalue [binary format "A${len}" $attvalue]
             }
 
             set len [string length $attvalue]
@@ -189,14 +190,17 @@ proc ::persistence::orm::codec_bin_3::decode {bytes} {
 
             # log "attname=$attname pos=$pos len=$len num_decoded_bytes=$num_decoded_bytes"
 
-            set scan_p [binary scan $bytes "@${pos}A${len}" item($attname)]
+            set scan_p [binary scan $bytes "@${pos}a${len}" item($attname)]
             incr pos $len
 
             # log "scan_p=$scan_p len=$len"
 
             if { $type eq {bytearr} } {
-                set item($attname) [binary decode base64 $item($attname)]
-                # set scan_p [binary scan $item($attname) a* item($attname)]
+                # OLD: set item($attname) [binary decode base64 $item($attname)]
+                set scan_p [binary scan $item($attname) a* item($attname)]
+                assert { $scan_p } {
+                    log failed,decode,bytearr,attname=$attname
+                }
             } else {
                 set item($attname) [encoding convertfrom utf-8 $item($attname)]
             }
