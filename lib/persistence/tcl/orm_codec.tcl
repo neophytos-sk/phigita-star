@@ -126,9 +126,8 @@ proc ::persistence::orm::codec_bin_3::encode {itemVar} {
                 set attvalue [binary encode base64 $attvalue]
             } else {
                 set attvalue [encoding convertto utf-8 $attvalue]
-                # set len [string length $attvalue]
-                # set attvalue [binary format "A${len}" $attvalue]
-                set attvalue [binary encode base64 $attvalue]
+                set len [string length $attvalue]
+                # OLD: set attvalue [binary format "A${len}" $attvalue]
             }
 
             set len [string length $attvalue]
@@ -197,8 +196,8 @@ proc ::persistence::orm::codec_bin_3::decode {bytes} {
 
             if { $type eq {bytearr} } {
                 set item($attname) [binary decode base64 $item($attname)]
+                # set scan_p [binary scan $item($attname) a* item($attname)]
             } else {
-                set item($attname) [binary decode base64 $item($attname)]
                 set item($attname) [encoding convertfrom utf-8 $item($attname)]
             }
 

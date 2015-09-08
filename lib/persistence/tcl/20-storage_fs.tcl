@@ -844,6 +844,7 @@ if { [use_p "server"] && ( 1 || [setting_p "sstable"] ) } {
                 log [string __diff [split $enc_ss_data ""] [split $enc_fs_data ""]]
             }
 
+            log "!!! returning ss_data for rev=$rev"
             return $ss_data
 
         }
@@ -909,12 +910,14 @@ if { [use_p "server"] && ( 1 || [setting_p "sstable"] ) } {
                 #
                 # NOT: set encoded_rev_data [get $rev]
                 
-                # set encoded_rev_data [get_column $rev]
-                binary scan [get_column $rev] a* encoded_rev_data
+                set encoded_rev_data [get_column $rev "-translation binary"]
+                set scan_p [binary scan $encoded_rev_data a* encoded_rev_data]
                 set len [string length $encoded_rev_data]
-                set encoded_rev_data [binary format "A${len}" $encoded_rev_data]
 
-                set len [string length $encoded_rev_data]
+                # set encoded_rev_data [binary format "A${len}" $encoded_rev_data]
+                # set len2 [string length $encoded_rev_data]
+                # assert { $len == $len2 }
+
                 # log "!!! len=$len"
                 append output_data [binary format i $len] $encoded_rev_data
                 incr pos 4
