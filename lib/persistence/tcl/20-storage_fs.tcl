@@ -744,7 +744,7 @@ if { [use_p "server"] && ( 1 || [setting_p "sstable"] ) } {
 
         # check fs cur files
         # HERE
-        if { [string match "sysdb/*" $rev] } {
+        if { 1 || [string match "sysdb/*" $rev] } {
             set filename [get_cur_filename $rev]
             if { [file exists $filename] } {
                 return [call_orig $rev {*}$codec_conf]
@@ -758,7 +758,7 @@ if { [use_p "server"] && ( 1 || [setting_p "sstable"] ) } {
         set where_clause [list [list name = $sstable_name]]
         set sstable_rev [::sysdb::sstable_t 0or1row $where_clause]
 
-        log sstable_rev=$sstable_rev
+        # log check,sstable_rev=$sstable_rev
 
         if { $sstable_rev ne {} } {
 
@@ -833,7 +833,7 @@ if { [use_p "server"] && ( 1 || [setting_p "sstable"] ) } {
                 }
             }
 
-            assert { 1 || $ss_data eq $fs_data } {
+            assert { $ss_data eq $fs_data } {
                 log ""
                 log "!!! ss_data for rev=$rev"
                 log ""

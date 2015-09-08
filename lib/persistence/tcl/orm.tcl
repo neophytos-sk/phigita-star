@@ -14,9 +14,7 @@ namespace eval ::persistence::orm {
     #
     # namespace import ::persistence::orm::codec_txt_1::*
     # namespace import ::persistence::orm::codec_txt_2::*
-    # namespace import ::persistence::orm::codec_bin_1::*
-    # namespace import ::persistence::orm::codec_bin_2::*
-     namespace import ::persistence::orm::codec_bin_3::*
+    namespace import ::persistence::orm::codec_bin_3::*
 
     namespace export \
         to_path \

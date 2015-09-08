@@ -14,8 +14,10 @@ attributes {{
 } {
     name "title"
     null_p "1"
+    type "varchar"
 } {
     name "body"
+    type "varchar"
 }}
 
 aggregates {}

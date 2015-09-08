@@ -60,104 +60,6 @@ proc ::persistence::orm::codec_txt_2::decode {data} {
 
 
 
-
-namespace eval ::persistence::orm::codec_bin_1 {
-    namespace export \
-        encode \
-        decode \
-        codec_conf
-
-    variable codec_conf
-    array set codec_conf [list -translation "binary"]
-    proc codec_conf {} {
-        return [array get [namespace current]::codec_conf]
-    }
-}
-
-
-proc ::persistence::orm::codec_bin_1::encode {itemVar} {
-    variable [namespace __this]::__attnames
-
-    upvar $itemVar item
-
-    set bytes ""
-    foreach attname $__attnames {
-        set attvalue [value_if item($attname) ""]
-        set attvalue [encoding convertto utf-8 $attvalue]
-        set num_bytes [string bytelength $attvalue]
-        append bytes [binary format "iu1A${num_bytes}" $num_bytes $attvalue]
-    }
-
-    return $bytes
-}
-
-proc ::persistence::orm::codec_bin_1::decode {bytes} {
-    variable [namespace __this]::__attnames
-
-    array set item [list]
-    set pos 0
-    set num_bytes 0
-    foreach attname $__attnames {
-        binary scan $bytes "@${pos}iu1" num_bytes
-        incr pos 4
-        binary scan $bytes "@${pos}A${num_bytes}" item($attname) 
-        set item($attname) [encoding convertfrom utf-8 [value_if item($attname) ""]]
-        incr pos $num_bytes
-    }
-    return [array get item]
-}
-
-
-namespace eval ::persistence::orm::codec_bin_2 {
-    namespace export \
-        encode \
-        decode \
-        codec_conf
-
-    variable codec_conf
-    array set codec_conf [list -translation "binary"]
-    proc codec_conf {} {
-        return [array get [namespace current]::codec_conf]
-    }
-}
-
-
-proc ::persistence::orm::codec_bin_2::encode {itemVar} {
-    variable [namespace __this]::__attnames
-
-    upvar $itemVar item
-
-    set bytes ""
-    foreach attname $__attnames {
-        set attvalue [value_if item($attname) ""]
-        set attvalue [encoding convertto utf-8 $attvalue]
-        set num_bytes [string bytelength $attvalue]
-        set num_decoded_bytes [encode_unsigned_varint bytes $num_bytes]
-        append bytes [binary format "A${num_bytes}" $attvalue]
-    }
-
-    return $bytes
-}
-
-proc ::persistence::orm::codec_bin_2::decode {bytes} {
-    variable [namespace __this]::__attnames
-
-    array set item [list]
-    set pos 0
-    set num_bytes 0
-    foreach attname $__attnames {
-        #binary scan $bytes "@${pos}iu1" num_bytes
-        set num_bytes [decode_unsigned_varint bytes num_decoded_bytes $pos]
-        incr pos $num_decoded_bytes
-        binary scan $bytes "@${pos}A${num_bytes}" item($attname) 
-        set item($attname) [encoding convertfrom utf-8 [value_if item($attname) ""]]
-        incr pos $num_bytes
-    }
-    return [array get item]
-}
-
-
-
 namespace eval ::persistence::orm::codec_bin_3 {
 
     namespace export \
@@ -180,6 +82,7 @@ namespace eval ::persistence::orm::codec_bin_3 {
         "naturalnum"    {iu  iu     4}
         "boolean"       {c   c      1}
         "sha1_hex"      {H40 H40    20}
+        "datetime"      {a13 a13    13}
     }
 
 }
@@ -219,16 +122,19 @@ proc ::persistence::orm::codec_bin_3::encode {itemVar} {
             append bytes [binary format $fmt $attvalue]
         } else {
 
-            if { $type ne {bytearr} } {
+            if { $type eq {bytearr} } {
+                set attvalue [binary encode base64 $attvalue]
+            } else {
                 set attvalue [encoding convertto utf-8 $attvalue]
-                set len [string length $attvalue]
-                set attvalue [binary format "A${len}" $attvalue]
-            } elseif { $type eq {bytearr} } {
+                # set len [string length $attvalue]
+                # set attvalue [binary format "A${len}" $attvalue]
                 set attvalue [binary encode base64 $attvalue]
             }
+
             set len [string length $attvalue]
             set num_encoded_bytes [encode_unsigned_varint bytes $len]
             append bytes $attvalue
+
         }
     }
     # log [string repeat - 80]
@@ -281,19 +187,22 @@ proc ::persistence::orm::codec_bin_3::decode {bytes} {
         } else {
             set len [decode_unsigned_varint bytes num_decoded_bytes $pos]
             incr pos $num_decoded_bytes
+
             # log "attname=$attname pos=$pos len=$len num_decoded_bytes=$num_decoded_bytes"
 
             set scan_p [binary scan $bytes "@${pos}A${len}" item($attname)]
-            if { $type eq {bytearr} } {
-                set item($attname) [binary decode base64 $item($attname)]
-            }
+            incr pos $len
 
             # log "scan_p=$scan_p len=$len"
-            # log ">>>> $attname = $item($attname)"
-            if { $type ne {bytearr} } {
+
+            if { $type eq {bytearr} } {
+                set item($attname) [binary decode base64 $item($attname)]
+            } else {
+                set item($attname) [binary decode base64 $item($attname)]
                 set item($attname) [encoding convertfrom utf-8 $item($attname)]
             }
-            incr pos $len
+
+            # log ">>>> $attname = $item($attname)"
         }
 
     }
