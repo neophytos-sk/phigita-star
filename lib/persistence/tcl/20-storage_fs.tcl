@@ -594,7 +594,7 @@ if { [use_p "server"] && ( 1 || [setting_p "sstable"] ) } {
         set sstable_revs [lsort -command ::persistence::compare_files $sstable_revs]
 
         if { [llength $sstable_revs] <= 1 } {
-            # return
+            return
         }
 
         #log llen=[llength $sstable_revs]
@@ -731,6 +731,7 @@ if { [use_p "server"] && ( 1 || [setting_p "sstable"] ) } {
         foreach sstable_rev $sstable_revs {
             set sstable_filename [get_cur_filename $sstable_rev]
             file delete $sstable_filename
+            log "deleted old sstable: $sstable_filename"
             # ::sysdb::sstable_t delete $sstable_rev
 
             array unset sstable_item__${file_i}
@@ -743,9 +744,8 @@ if { [use_p "server"] && ( 1 || [setting_p "sstable"] ) } {
     wrap_proc ::persistence::fs::readfile {rev args} {
         set codec_conf $args
 
-        # check fs cur files
-        # HERE
-        if { [string match "sysdb/*" $rev] } {
+        # checks files in filesystem first i.e. cur directory
+        if { 1 || [string match "sysdb/*" $rev] } {
             set filename [get_cur_filename $rev]
             if { [file exists $filename] } {
                 return [call_orig $rev {*}$codec_conf]
@@ -754,7 +754,7 @@ if { [use_p "server"] && ( 1 || [setting_p "sstable"] ) } {
 
         # check sstable file
         set type_oid [type_oid $rev]
-        log type_oid=$type_oid
+        # log type_oid=$type_oid
         set sstable_name [binary encode base64 $type_oid]
 
         set where_clause [list [list name = $sstable_name]]
@@ -769,10 +769,12 @@ if { [use_p "server"] && ( 1 || [setting_p "sstable"] ) } {
             array set sstable_item [::sysdb::sstable_t get $sstable_rev]
             array set sstable_indexmap $sstable_item(indexmap)
 
-            assert { [info exists sstable_indexmap(${row_key})] } {
-                log "row_key=$row_key"
-                log "sstable_indexmap=\n\t[join [map {x y} [array get sstable_indexmap] {list $x $y}] \n\t], exiting..."
-                exit
+            if {0} {
+                assert { [info exists sstable_indexmap(${row_key})] } {
+                    log "row_key=$row_key"
+                    log "sstable_indexmap=\n\t[join [map {x y} [array get sstable_indexmap] {list $x $y}] \n\t], exiting..."
+                    exit
+                }
             }
 
             set row_endpos $sstable_indexmap(${row_key})
@@ -817,39 +819,19 @@ if { [use_p "server"] && ( 1 || [setting_p "sstable"] ) } {
                 error "sstable_readfile: rev (=$rev) not found"    
             }
 
-            set fs_data [call_orig $rev {*}$codec_conf]
-
-
-            # tries all different encoders/decoders until ss_data
-            # holds a string starting with newsdb
-
-            log -----
             if {0} {
-                set enc_fs_data [binary encode base64 $fs_data]
+                set fs_data [call_orig $rev {*}$codec_conf]
 
-                foreach lambdaExpr {
-                    {{s} {encoding convertto utf-8 $s}}
-                    {{s} {encoding convertfrom utf-8 $s}}
-                    {{s} {binary format a* $s}}
-                    {{s} {binary scan $s a* x ; set x}}
-                } {
-                    set str [apply $lambdaExpr $ss_data]
-                    set enc_str [binary encode base64 $str]
-                    if { $enc_fs_data eq $enc_str } {
-                        log "lambdaExpr=$lambdaExpr, fs_data eq str"
-                    }
+                assert { $ss_data eq $fs_data } {
+                    log ""
+                    log "!!! ss_data for rev=$rev"
+                    log ""
+                    log "!!! ss_data=[set enc_ss_data [binary encode base64 $ss_data]]"
+                    log ""
+                    log "!!! fs_data=[set enc_fs_data [binary encode base64 $fs_data]]"
+                    log ""
+                    log [string __diff [split $enc_ss_data ""] [split $enc_fs_data ""]]
                 }
-            }
-
-            assert { $ss_data eq $fs_data } {
-                log ""
-                log "!!! ss_data for rev=$rev"
-                log ""
-                log "!!! ss_data=[set enc_ss_data [binary encode base64 $ss_data]]"
-                log ""
-                log "!!! fs_data=[set enc_fs_data [binary encode base64 $fs_data]]"
-                log ""
-                log [string __diff [split $enc_ss_data ""] [split $enc_fs_data ""]]
             }
 
             log "!!! returning ss_data for rev=$rev"
