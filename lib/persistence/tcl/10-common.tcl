@@ -542,11 +542,11 @@ proc ::persistence::common::get {rev {codec_conf ""}} {
 }
 
 proc ::persistence::common::get_name {rev} {
-    set rev_filename [get_filename $rev]
     if { [is_link_oid_p $rev] } {
-        set rev_filename [get_link_target $rev]
+        set rev [get_link_target $rev]
     }
-    return [file tail [file rootname ${rev_filename}]]
+    return [file tail ${rev}]
+    # V_OLD: return [file tail [file rootname ${rev_filename}]]
 }
 
 proc ::persistence::common::predicate=forall {slicelistVar predicates} {
@@ -649,13 +649,15 @@ proc ::persistence::common::get_multirow {ks cf_axis {options ""}} {
 }
 
 proc ::persistence::common::get_multirow_names {nodepath {options ""}} {
+    set nsp [namespace __this]
+
     set residual_path [lassign [split $nodepath {/}] ks cf_axis]
 
     lassign [get_multirow $ks $cf_axis $options] multirow revised_options
 
     set result [list]
     foreach row $multirow {
-        set row_key [get_name $row]
+        set row_key [${nsp}::get_name $row]
         lappend result $row_key
     }
     return [list $result $revised_options]

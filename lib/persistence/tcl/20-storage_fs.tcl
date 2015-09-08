@@ -511,7 +511,7 @@ if { [use_p "server"] && ( 1 || [setting_p "sstable"] ) } {
     proc ::persistence::fs::read_sstable {dataVar row_endpos file_i} {
         upvar $dataVar data
 
-        log read_sstable,datalen=[string length $data]
+        # log read_sstable,datalen=[string length $data]
 
         # seek _fp $row_endpos start
         # read_int _fp row_startpos
@@ -745,15 +745,16 @@ if { [use_p "server"] && ( 1 || [setting_p "sstable"] ) } {
 
         # check fs cur files
         # HERE
-        if { 1 || [string match "sysdb/*" $rev] } {
+        if { [string match "sysdb/*" $rev] } {
             set filename [get_cur_filename $rev]
             if { [file exists $filename] } {
                 return [call_orig $rev {*}$codec_conf]
             }
         }
 
-        # check sstable files
+        # check sstable file
         set type_oid [type_oid $rev]
+        log type_oid=$type_oid
         set sstable_name [binary encode base64 $type_oid]
 
         set where_clause [list [list name = $sstable_name]]
@@ -767,6 +768,12 @@ if { [use_p "server"] && ( 1 || [setting_p "sstable"] ) } {
 
             array set sstable_item [::sysdb::sstable_t get $sstable_rev]
             array set sstable_indexmap $sstable_item(indexmap)
+
+            assert { [info exists sstable_indexmap(${row_key})] } {
+                log "row_key=$row_key"
+                log "sstable_indexmap=\n\t[join [map {x y} [array get sstable_indexmap] {list $x $y}] \n\t], exiting..."
+                exit
+            }
 
             set row_endpos $sstable_indexmap(${row_key})
 
@@ -936,6 +943,12 @@ if { [use_p "server"] && ( 1 || [setting_p "sstable"] ) } {
 
             incr pos 4
 
+            log indexmap,row_key=$row_key
+            if { $row_key eq {gr} } {
+                log "fs::compact,wrong_row_key"
+                log x=[map {x y} $multirow_slicelist {set x}]
+                exit
+            }
             lappend indexmap $row_key $row_endpos
 
         }

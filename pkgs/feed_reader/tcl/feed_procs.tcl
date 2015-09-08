@@ -1904,12 +1904,12 @@ proc ::feed_reader::sync {args} {
             }
 
             #set feed_name ${news_source}/[file tail ${filename}]
-            set feed_name [file tail ${filename}]
 
             array set feed [::util::readfile ${filename}]
 
             # TODO: maintain domain in feed spec
             set domain [url domain $feed(url)]
+            set feed_name ${domain}__[file tail ${filename}]
 
             set timestamp [clock seconds]
             if { ${check_fetch_feed_p} && ![fetch_feed_p ${feed_name} ${timestamp}] } {
