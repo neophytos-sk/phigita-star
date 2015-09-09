@@ -344,57 +344,27 @@ proc ::persistence::ss::readfile {rev args} {
         lassign [split_oid $rev] ks cf_axis row_key column_path ext ts
 
         array set sstable_item [::sysdb::sstable_t get $sstable_rev]
-        array set sstable_rows $sstable_item(rows)
+        array set sstable_cols $sstable_item(cols)
 
-        if {0} {
-            assert { [info exists sstable_rows(${row_key})] } {
-                log "row_key=$row_key"
-                log "sstable_rows=\n\t[join [map {x y} [array get sstable_rows] {list $x $y}] \n\t], exiting..."
-                exit
-            }
-        }
+        set rev_startpos $sstable_cols(${rev})
 
-        set row_endpos $sstable_rows(${row_key})
-
-        # seek _fp $row_endpos start
-        set pos $row_endpos
-        binary scan $sstable_item(data) @${pos}i row_startpos
-        assert { $row_startpos < $row_endpos }
-
-        # seek _fp $row_startpos start
-        set pos $row_startpos
+        # seek _fp $rev_startpos start
+        set pos $rev_startpos
+    
         binary scan $sstable_item(data) @${pos}i len
         incr pos 4
-        binary scan $sstable_item(data) @${pos}a${len} row_key_in_file
+        binary scan $sstable_item(data) @${pos}a${len} rev_in_file
         incr pos $len
-        assert { $row_key eq $row_key_in_file }
 
-        set sstable_data_found_p 0
-        while { $pos < $row_endpos } {
-            binary scan $sstable_item(data) @${pos}i len
-            incr pos 4
-            binary scan $sstable_item(data) @${pos}a${len} rev_in_file
-            incr pos $len
-            if { $rev eq $rev_in_file } {
-                binary scan $sstable_item(data) @${pos}i len
-                incr pos 4
-                binary scan $sstable_item(data) @${pos}a${len} ss_data
-                incr pos $len
-                set sstable_data_found_p 1
-                break
-            } else {
-                binary scan $sstable_item(data) @${pos}i len
-                incr pos 4
-                incr pos $len ;# skip_string data
-            }
-        }
+        assert { $rev eq $rev_in_file }
 
-        array unset sstable_rows
+        binary scan $sstable_item(data) @${pos}i len
+        incr pos 4
+        binary scan $sstable_item(data) @${pos}a${len} ss_data
+        incr pos $len
+
+        array unset sstable_cols
         array unset sstable_item
-
-        if { !$sstable_data_found_p } {
-            error "sstable_readfile: rev (=$rev) not found"    
-        }
 
         log "!!! returning ss_data for rev=$rev"
 
@@ -727,40 +697,4 @@ proc ::persistence::fs::compact_all {} {
     # exit
 }
 
-after_package_load persistence ::persistence::fs::compact_all
-
-if {0} {
-
-    wrap_proc ::persistence::fs::get_files {nodepath} {
-        set fs_filelist [call_orig $nodepath]
-        set ss_filelist [list]
-        # TODO: 
-        # set ss_filelist [::persistence::ss::get_files $nodepath]
-        #
-        # lassign [split_oid $nodepath] ks cf_axis
-        # set type_oid [join_oid $ks $cf_axis]
-        # set name [list type $type_oid]
-        # set where_clause [list]
-        # lappend where_clause [list name = $name]
-        # set rev [::sysdb::sstable_t 0or1row $where_clause]
-        # if { $rev ne {} } {
-        #   variable sstable_item__${name}
-        #   array set sstable_item__${name} [::sysdb::sstable_t get $rev]
-        #   array set sstable_rows [set sstable_item__${name}(rows)]
-        #   # ::cbt::set_bytes $__cbt_TclObj(${name}) [array names sstable_rows]
-        #   # return [::cbt::prefix_match $__cbt_TclObj(${name}) $nodepath]
-        # }
-
-        set tmptree [::cbt::create]
-        ::cbt::set_bytes $tmptree $ss_filelist
-        ::cbt::set_bytes $tmptree $fs_filelist
-        return [::cbt::get_bytes $tmptree]
-
-    }
-
-    wrap_proc ::persistence::fs::get_subdirs {nodepath} {
-    }
-
-}
-
-
+# after_package_load persistence ::persistence::fs::compact_all
