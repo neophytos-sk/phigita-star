@@ -326,24 +326,51 @@ proc ::persistence::ss::merge_sstables_in_mem {type_oid} {
 }
 
 
+proc ::persistence::ss::get_sstable_rev {rev} {
+    set type_oid [type_oid $rev]
+    set sstable_name [binary encode base64 $type_oid]
+    set where_clause [list [list name = $sstable_name]]
+    set sstable_rev [::sysdb::sstable_t 0or1row $where_clause]
+    return $sstable_rev
+}
+
+proc ::persistence::ss::load_sstable {type_oid {sstable_itemVar ""}} {
+    set varname "sstable_data__${type_oid}"
+
+    if { $sstable_itemVar ne {} } {
+        upvar $sstable_itemVar sstable_item
+    }
+    
+    variable __cbt_TclObj
+    variable $varname
+
+    if { ![info exists __cbt_TclObj(${type_oid})] } {
+        set sstable_rev [get_sstable_rev $type_oid]
+        if { $sstable_rev eq {} } {
+            return 0
+        }
+
+        #log sstable_rev=$sstable_rev
+
+        array set sstable_item [set $varname [::sysdb::sstable_t get $sstable_rev]]
+
+        set __cbt_TclObj(${type_oid}) [::cbt::create $::cbt::STRING]
+
+        ::cbt::set_bytes $__cbt_TclObj(${type_oid}) \
+            [map {x y} $sstable_item(cols) {set x}]
+
+        return 1
+    } else {
+        array set sstable_item [set $varname]
+    }
+    return 2
+}
+
 proc ::persistence::ss::readfile {rev args} {
     set codec_conf $args
 
-    # check sstable file
-    set type_oid [type_oid $rev]
-    # log type_oid=$type_oid
-    set sstable_name [binary encode base64 $type_oid]
+    if { [load_sstable [type_oid $rev] sstable_item] } {
 
-    set where_clause [list [list name = $sstable_name]]
-    set sstable_rev [::sysdb::sstable_t 0or1row $where_clause]
-
-    # log check,sstable_rev=$sstable_rev
-
-    if { $sstable_rev ne {} } {
-
-        lassign [split_oid $rev] ks cf_axis row_key column_path ext ts
-
-        array set sstable_item [::sysdb::sstable_t get $sstable_rev]
         array set sstable_cols $sstable_item(cols)
 
         set rev_startpos $sstable_cols(${rev})
@@ -376,56 +403,6 @@ proc ::persistence::ss::readfile {rev args} {
 
 }
 
-proc ::persistence::ss::get_sstable_rev {type_oid nameVar} {
-    upvar $nameVar name
-
-    variable base_dir
-    set dir [file join $base_dir cur]
-
-    set name [binary encode base64 $type_oid]
-    set pattern "sysdb/sstable.by_name/${name}/+/${name}@*"
-
-    set sstable_revs [glob \
-        -nocomplain \
-        -tails \
-        -directory $dir \
-        $pattern]
-
-    if { $sstable_revs eq {} } {
-        # error "no sstable_rev for type_oid: $type_oid"
-        return
-    }
-
-    assert { [llength $sstable_revs] == 1 } {
-        log sstable_revs=\n[join $sstable_revs \n]
-        log type_oid=$type_oid
-        log name=$name
-    }
-
-    set sstable_rev [lindex $sstable_revs 0]
-
-    assert { $sstable_rev ne {} }
-
-    return $sstable_rev
-
-}
-
-
-proc ::persistence::ss::load_sstable {type_oid} {
-    variable __cbt_TclObj
-    if { ![info exists __cbt_TclObj(${type_oid})] } {
-        set sstable_rev [get_sstable_rev $type_oid name]
-        if { $sstable_rev eq {} } {
-            return 0
-        }
-
-        array set sstable_item [::sysdb::sstable_t get $sstable_rev]
-        set __cbt_TclObj(${type_oid}) [::cbt::create $::cbt::STRING]
-        ::cbt::set_bytes $__cbt_TclObj(${type_oid}) [map {x y} $sstable_item(cols) {set x}]
-        return 1
-    }
-    return 2
-}
 
 proc ::persistence::ss::exists_p {rev} {
     assert { [is_column_rev_p $rev] || [is_link_rev_p $rev] }
