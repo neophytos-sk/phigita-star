@@ -11,14 +11,29 @@ indexes {{
 attributes {{
     name "name"
     type "varchar"
+    null_p 0
 } {
     name "data"
     type "bytearr"
+    null_p 0
 } {
-    name "indexmap"
+    name "rows"
+    type "bytearr"
+    null_p 0
+} {
+    name "cols"
+    type "bytearr"
+    null_p 0
+} {
+    name "rows_bf"
+    type "bytearr"
+} {
+    name "cols_bf"
+    type "bytearr"
 } {
     name "round"
     type "naturalnum"
+    null_p 0
 }}
 
 aggregates {}

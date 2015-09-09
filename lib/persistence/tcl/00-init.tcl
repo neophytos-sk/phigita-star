@@ -1,5 +1,6 @@
 package require core
 package require bloom_filter
+package require critbit_tree
 
 
 config section ::persistence

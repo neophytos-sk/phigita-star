@@ -7,7 +7,10 @@ namespace eval ::persistence::ss {
     namespace import ::persistence::common::split_oid
     namespace import ::persistence::common::join_oid
     namespace import ::persistence::common::type_oid
+    namespace import ::persistence::common::typeof_oid
     namespace import ::persistence::common::get_cur_filename
+    namespace import ::persistence::common::is_column_rev_p
+    namespace import ::persistence::common::is_link_rev_p
 
     # namespace __mixin ::persistence::common
 
@@ -116,23 +119,39 @@ proc ::persistence::ss::get_files {path} {
 
     assert { $sstable_rev ne {} }
 
-    lassign [split_oid $path] ks cf_axis row_key column_path ext ts
-
     array set sstable_item [::sysdb::sstable_t get $sstable_rev]
-    array set sstable_indexmap $sstable_item(indexmap)
 
-    set row_endpos $sstable_indexmap($row_key)
-    set file_i ""
-    set column_idx_items [::persistence::ss::read_sstable \
-        sstable_item(data) $row_endpos $file_i $lambdaExpr]
-
-    set ss_filelist [list]
-    foreach column_idx_item $column_idx_items {
-        lassign $column_idx_item rev file_i pos
-        lappend ss_filelist $rev
+    if { [typeof_oid $path] eq {type} } {
+        return $sstable_item(cols)
+    } else {
+        set tree [::cbt::create $::cbt::STRING]
+        ::cbt::set_bytes $tree [map {x y} $sstable_item(cols) {set x}]
+        set result [::cbt::prefix_match $tree $path]
+        ::cbt::destroy $tree
+        return $result
     }
 
-    return $ss_filelist
+}
+
+proc ::persistence::ss::get_subdirs {path} {
+
+    #log get_subdirs,path=$path
+
+    set len [llength [split $path {/}]]
+
+    set files [get_files "${path}/"]  ;# slash is important
+
+    #log get_subdirs,ls=$files
+
+    set result [list]
+    foreach oid $files {
+        set oid_parts [split $oid {/}] 
+        lappend result [join [lrange $oid_parts 0 $len] {/}]
+    }
+
+    #log get_subdirs,result=$result
+
+    return [lsort -unique ${result}]
 
 }
 
@@ -175,9 +194,8 @@ proc ::persistence::ss::merge_sstables_in_mem {type_oid} {
         array set sstable_item__${file_i} [::sysdb::sstable_t get $sstable_rev]
         log -----
         log name=[binary decode base64 [set sstable_item__${file_i}(name)]]
-        # log sstable_datalen=[set datalen [string length [set sstable_item__${file_i}(data)]]]
 
-        foreach {row_key row_endpos} [set sstable_item__${file_i}(indexmap)] {
+        foreach {row_key row_endpos} [set sstable_item__${file_i}(rows)] {
 
             # log row_key=$row_key
             # log row_endpos=$row_endpos
@@ -198,7 +216,7 @@ proc ::persistence::ss::merge_sstables_in_mem {type_oid} {
         incr file_i
     }
 
-    log \tsstable_row_idx=[join [array get sstable_row_idx] \n\t]
+    # log \tsstable_row_idx=[join [array get sstable_row_idx] \n\t]
 
     set row_keys [lsort [array names sstable_row_idx]]
 
@@ -207,7 +225,8 @@ proc ::persistence::ss::merge_sstables_in_mem {type_oid} {
         return
     }
 
-    set indexmap [list]
+    set rows [list]
+    set cols [list]
     set output_data ""
     set pos 0
     foreach row_key $row_keys {
@@ -226,6 +245,9 @@ proc ::persistence::ss::merge_sstables_in_mem {type_oid} {
             set sstable_data [set sstable_item__${file_i}(data)]
 
             # write column rev/oid
+
+            set rev_startpos $pos
+
             set len [string length $rev]
             append output_data [binary format i $len] $rev 
             incr pos 4
@@ -254,6 +276,8 @@ proc ::persistence::ss::merge_sstables_in_mem {type_oid} {
             incr pos 4
             incr pos $len
 
+            lappend cols $rev $rev_startpos
+
         }
 
         # write row_startpos at end of row
@@ -262,7 +286,7 @@ proc ::persistence::ss::merge_sstables_in_mem {type_oid} {
         append output_data [binary format i $row_startpos]
         incr pos 4
 
-        lappend indexmap $row_key $row_endpos
+        lappend rows $row_key $row_endpos
 
     }
 
@@ -274,7 +298,8 @@ proc ::persistence::ss::merge_sstables_in_mem {type_oid} {
     array set item [list]
     set item(name) $name
     set item(data) $output_data  ;# [binary encode hex $output_data]
-    set item(indexmap) $indexmap 
+    set item(rows) $rows  ;# row_keys 
+    set item(cols) $cols  ;# col_keys
     set item(round) $round
 
     # log "merged_sstable_rev for $type_oid"
@@ -319,17 +344,17 @@ proc ::persistence::ss::readfile {rev args} {
         lassign [split_oid $rev] ks cf_axis row_key column_path ext ts
 
         array set sstable_item [::sysdb::sstable_t get $sstable_rev]
-        array set sstable_indexmap $sstable_item(indexmap)
+        array set sstable_rows $sstable_item(rows)
 
         if {0} {
-            assert { [info exists sstable_indexmap(${row_key})] } {
+            assert { [info exists sstable_rows(${row_key})] } {
                 log "row_key=$row_key"
-                log "sstable_indexmap=\n\t[join [map {x y} [array get sstable_indexmap] {list $x $y}] \n\t], exiting..."
+                log "sstable_rows=\n\t[join [map {x y} [array get sstable_rows] {list $x $y}] \n\t], exiting..."
                 exit
             }
         }
 
-        set row_endpos $sstable_indexmap(${row_key})
+        set row_endpos $sstable_rows(${row_key})
 
         # seek _fp $row_endpos start
         set pos $row_endpos
@@ -364,7 +389,7 @@ proc ::persistence::ss::readfile {rev args} {
             }
         }
 
-        array unset sstable_indexmap
+        array unset sstable_rows
         array unset sstable_item
 
         if { !$sstable_data_found_p } {
@@ -381,43 +406,86 @@ proc ::persistence::ss::readfile {rev args} {
 
 }
 
+proc ::persistence::ss::get_sstable_rev {type_oid nameVar} {
+    upvar $nameVar name
+
+    variable base_dir
+    set dir [file join $base_dir cur]
+
+    set name [binary encode base64 $type_oid]
+    set pattern "sysdb/sstable.by_name/${name}/+/${name}@*"
+
+    set sstable_revs [glob \
+        -nocomplain \
+        -tails \
+        -directory $dir \
+        $pattern]
+
+    if { $sstable_revs eq {} } {
+        # error "no sstable_rev for type_oid: $type_oid"
+        return
+    }
+
+    assert { [llength $sstable_revs] == 1 } {
+        log sstable_revs=\n[join $sstable_revs \n]
+        log type_oid=$type_oid
+        log name=$name
+    }
+
+    set sstable_rev [lindex $sstable_revs 0]
+
+    assert { $sstable_rev ne {} }
+
+    return $sstable_rev
+
+}
+
+
+proc ::persistence::ss::load_sstable {type_oid} {
+    variable __cbt_TclObj
+    if { ![info exists __cbt_TclObj(${type_oid})] } {
+        set sstable_rev [get_sstable_rev $type_oid name]
+        if { $sstable_rev eq {} } {
+            return 0
+        }
+
+        array set sstable_item [::sysdb::sstable_t get $sstable_rev]
+        set __cbt_TclObj(${type_oid}) [::cbt::create $::cbt::STRING]
+        ::cbt::set_bytes $__cbt_TclObj(${type_oid}) [map {x y} $sstable_item(cols) {set x}]
+        return 1
+    }
+    return 2
+}
+
+proc ::persistence::ss::exists_p {rev} {
+    assert { [is_column_rev_p $rev] || [is_link_rev_p $rev] }
+    set type_oid [type_oid $rev]
+    # log type_oid=$type_oid
+    if { [load_sstable $type_oid] } {
+        variable __cbt_TclObj
+        set exists_p [::cbt::exists $__cbt_TclObj(${type_oid}) $rev]
+        # log exists_p=$exists_p
+        return $exists_p
+    }
+    return 0
+}
+
 wrap_proc ::persistence::fs::readfile {rev args} {
     set codec_conf $args
     
     # log fs,readfile,rev=$rev
 
-    # checks files in filesystem first i.e. cur directory
-    # and, if no file is found for the given rev,
-    # it calls ::persistence::ss:readfile
-
-    set filename [get_cur_filename $rev]
-    if { [file exists $filename] } {
-        set fs_data [call_orig $rev {*}$codec_conf]
-        return $fs_data
+    if { [::persistence::ss::exists_p $rev] } {
+        set ss_data [::persistence::ss::readfile $rev {*}$codec_conf]
+        return $ss_data
+    } else {
+        return [call_orig $rev {*}$codec_conf]
     }
 
-    set ss_data [::persistence::ss::readfile $rev {*}$codec_conf]
-
-    if {1} {
-        set fs_data [call_orig $rev {*}$codec_conf]
-
-        assert { $ss_data eq $fs_data } {
-            log ""
-            log "!!! ss_data for rev=$rev"
-            log ""
-            log "!!! ss_data=[set enc_ss_data [binary encode base64 $ss_data]]"
-            log ""
-            log "!!! fs_data=[set enc_fs_data [binary encode base64 $fs_data]]"
-            log ""
-            log [string __diff [split $enc_ss_data ""] [split $enc_fs_data ""]]
-        }
-    }
-
-
-    return $ss_data
 }
     
 if {1} {
+
     wrap_proc ::persistence::fs::get_files {path} {
         set fs_filelist [call_orig $path]
         if { [string match "sysdb/*" $path] } {
@@ -428,6 +496,26 @@ if {1} {
 
         return [lsort -unique -command ::persistence::compare_files \
             [concat $fs_filelist $ss_filelist]]
+    }
+
+    wrap_proc ::persistence::fs::get_subdirs {path} {
+        set fs_subdirs [call_orig $path]
+        if { [string match "sysdb/*" $path] } {
+            return $fs_subdirs
+        }
+
+        set ss_subdirs [::persistence::ss::get_subdirs $path]
+
+        return [lsort -unique [concat $fs_subdirs $ss_subdirs]]
+    }
+
+}
+
+wrap_proc ::persistence::fs::exists_p {path} {
+    if { [::persistence::ss::exists_p $path] } {
+        return 1
+    } else {
+        return [call_orig $path]
     }
 }
 
@@ -455,9 +543,10 @@ proc ::persistence::fs::compact {type_oid todelete_dirsVar} {
         $type_oid $row_keys $revised_multirow_options]
 
     # 3. merge them in one sorted-strings (sstable) file
-    set indexmap [list]
     set output_data ""
     set pos 0
+    set rows [list]
+    set cols [list]
     foreach {row_key slicelist} $multirow_slicelist {
 
         # log -----
@@ -471,6 +560,8 @@ proc ::persistence::fs::compact {type_oid todelete_dirsVar} {
         incr pos $len
 
         foreach rev $slicelist {
+
+            set rev_startpos $pos
 
             set len [string length $rev]
             append output_data [binary format i $len] $rev 
@@ -498,6 +589,8 @@ proc ::persistence::fs::compact {type_oid todelete_dirsVar} {
             incr pos 4
             incr pos $len
 
+            lappend cols $rev $rev_startpos
+
         }
 
         set row_endpos $pos
@@ -513,13 +606,13 @@ proc ::persistence::fs::compact {type_oid todelete_dirsVar} {
 
         incr pos 4
 
-        # log indexmap,row_key=$row_key
+        # log rows,row_key=$row_key
         if { $row_key eq {gr} } {
             log "fs::compact,wrong_row_key, exiting..."
             log x=[map {x y} $multirow_slicelist {set x}]
             exit
         }
-        lappend indexmap $row_key $row_endpos
+        lappend rows $row_key $row_endpos
 
     }
 
@@ -536,10 +629,12 @@ proc ::persistence::fs::compact {type_oid todelete_dirsVar} {
     array set item [list]
     set item(name) $name
     set item(data) $output_data
-    set item(indexmap) $indexmap 
+    set item(rows) $rows 
+    set item(cols) $cols
     set item(round) $round
 
     ::sysdb::sstable_t insert item
+
     # log "new sstable for $type_oid"
 
     # log "here,just for debugging nested transactions, exiting fs::compact..."
@@ -605,8 +700,9 @@ proc ::persistence::fs::compact_all {} {
             # NOTE: consider deleting by marking the row as .gone
             #
 
-            file delete -force $todelete_dir
-            log "deleted row_dir (=$todelete_dir)"
+            set row_dir [file dirname $todelete_dir]
+            file delete -force $row_dir
+            log "deleted row_dir (=$row_dir)"
         }
 
         ::persistence::fs::end_batch
@@ -650,8 +746,8 @@ if {0} {
         # if { $rev ne {} } {
         #   variable sstable_item__${name}
         #   array set sstable_item__${name} [::sysdb::sstable_t get $rev]
-        #   array set sstable_indexmap [set sstable_item__${name}(indexmap)]
-        #   # ::cbt::set_bytes $__cbt_TclObj(${name}) [array names sstable_indexmap]
+        #   array set sstable_rows [set sstable_item__${name}(rows)]
+        #   # ::cbt::set_bytes $__cbt_TclObj(${name}) [array names sstable_rows]
         #   # return [::cbt::prefix_match $__cbt_TclObj(${name}) $nodepath]
         # }
 
