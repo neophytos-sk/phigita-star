@@ -171,22 +171,22 @@ return 0
 }
 
 proc ::persistence::common::sort {
-slicelistVar 
-type_nsp 
-attname 
-sort_direction 
-{sort_comparison "dictionary"}
+    slicelistVar 
+    type_nsp 
+    attname 
+    sort_direction 
+    {sort_comparison "dictionary"}
 } {
-upvar $slicelistVar slicelist
+    upvar $slicelistVar slicelist
 
-assert { $sort_direction in {decreasing increasing} }
-assert { $sort_comparison in {dictionary ascii integer} }
+    assert { $sort_direction in {decreasing increasing} }
+    assert { $sort_comparison in {dictionary ascii integer} }
 
-# hack to load object types until all instances 
-# are notified (and load all) of the new types
-#
-assert { [namespace exists $type_nsp] } {
-    ::persistence::reload_types
+    # hack to load object types until all instances 
+    # are notified (and load all) of the new types
+    #
+    assert { [namespace exists $type_nsp] } {
+        ::persistence::reload_types
     }
 
     set sortlist [list]
@@ -522,6 +522,8 @@ proc ::persistence::common::get_link {rev {codec_conf ""}} {
 # note: default implementation uses column to store the target_oid of a link
 # and thus why we allow for link oids in the assertion statement
 proc ::persistence::common::get_column {rev {codec_conf ""}} {
+    set nsp [namespace __this]
+
     assert { [is_column_rev_p $rev] || [is_link_rev_p $rev] } {
         log failed,rev=$rev
     }
@@ -529,7 +531,7 @@ proc ::persistence::common::get_column {rev {codec_conf ""}} {
     #log get_column,rev=$rev
 
     # log "retrieving column (=$oid) from fs"
-    return [readfile ${rev} {*}$codec_conf]
+    return [${nsp}::readfile ${rev} {*}$codec_conf]
 }
 
 proc ::persistence::common::get {rev {codec_conf ""}} {
