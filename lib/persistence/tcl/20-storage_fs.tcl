@@ -1,6 +1,7 @@
 namespace eval ::persistence::fs {
 
-    namespace __mixin ::persistence::common
+    # namespace __mixin ::persistence::common
+    namespace __copy ::persistence::common
 
     variable base_dir
     set base_dir [config get ::persistence base_dir]
@@ -502,4 +503,213 @@ proc ::persistence::fs::init {} {
     # exit
 }
 
+proc ::persistence::fs::compact {type_oid todelete_dirsVar} {
+    upvar $todelete_dirsVar todelete_dirs
 
+    log "compacting type_oid=$type_oid"
+
+    # assert { [is_type_oid_p $type_oid] }
+
+    lassign [split_oid $type_oid] ks cf_axis
+    lassign [split $cf_axis {.}] cf idxname
+
+    assert { !( $ks eq {sysdb} && $cf eq {sstable} ) }
+
+    # log "compact type_oid=$type_oid"
+
+    # 1. get row keys
+    set multirow_options [list]
+    lassign [get_multirow_names $type_oid $multirow_options] \
+        row_keys revised_multirow_options
+
+    # 2. fget_leafs/slicelist for each row key
+    set multirow_slicelist [multirow_slice \
+        $type_oid $row_keys $revised_multirow_options]
+
+    # 3. merge them in one sorted-strings (sstable) file
+    set output_data ""
+    set pos 0
+    set rows [list]
+    set cols [list]
+    foreach {row_key slicelist} $multirow_slicelist {
+
+        # log -----
+        # log fs::compact,row_key=$row_key
+
+        set row_startpos $pos
+
+        set len [string length $row_key]
+        append output_data [binary format i $len] $row_key
+        incr pos 4
+        incr pos $len
+
+        foreach rev $slicelist {
+
+            set rev_startpos $pos
+
+            set len [string length $rev]
+            append output_data [binary format i $len] $rev 
+            incr pos 4
+            incr pos $len
+
+            # one may be tempted to read 
+            # the effective rev/oid
+            # in the case of a .link rev,
+            # however, the right thing is
+            # copying the data content of
+            # the given rev asis, 
+            # i.e. the target rev in the
+            # case of a .link rev
+            #
+            # NOT: set encoded_rev_data [get $rev]
+            
+            set encoded_rev_data [get_column $rev "-translation binary"]
+            set scan_p [binary scan $encoded_rev_data a* encoded_rev_data]
+            set len [string length $encoded_rev_data]
+
+            # log encoded_rev_data,len=$len
+
+            append output_data [binary format i $len] $encoded_rev_data
+            incr pos 4
+            incr pos $len
+
+            lappend cols $rev $rev_startpos
+
+        }
+
+        set row_endpos $pos
+        # log "fs::compact sst,row_key=$row_key row_endpos=$row_endpos row_startpos=$row_startpos"
+        # log "\tfs::compact llen=[llength $slicelist]"
+        append output_data [binary format i $row_startpos]
+        
+
+        #binary scan $output_data @${pos}i test_row_startpos
+        #assert { $test_row_startpos == $row_startpos }
+        #log test_row_startpos=$test_row_startpos
+
+
+        incr pos 4
+
+        # log rows,row_key=$row_key
+        if { $row_key eq {gr} } {
+            log "fs::compact,wrong_row_key, exiting..."
+            log x=[map {x y} $multirow_slicelist {set x}]
+            exit
+        }
+        lappend rows $row_key $row_endpos
+
+    }
+
+    #log "fs::compact work in progress, exiting..."
+    #exit
+
+    ##
+    # 4. write the (sstable) file
+    #
+
+    set name [binary encode base64 $type_oid]
+    set round [clock microseconds]
+
+    array set item [list]
+    set item(name) $name
+    set item(data) $output_data
+    set item(rows) $rows 
+    set item(cols) $cols
+    set item(round) $round
+
+    ::sysdb::sstable_t insert item
+
+    # log "new sstable for $type_oid"
+
+    # log "here,just for debugging nested transactions, exiting fs::compact..."
+    # exit
+
+    foreach row_key $row_keys {
+        set row_oid [join_oid $ks $cf_axis $row_key]
+        if { ![string match "sysdb/*" $row_oid] } {
+            set row_dir [get_cur_filename $row_oid]
+            lappend todelete_dirs $row_dir
+        }
+    }
+
+    # log "done compacting $type_oid"
+
+    # note that call to ::sysdb::sstable_t->insert above,
+    # created a nested transaction
+    # log "just for debugging nested transactions, exiting fs::compact..."
+    # exit
+
+}
+
+if { [use_p "server"] && [setting_p "sstable"] } {
+
+    proc ::persistence::fs::compact_all {} {
+
+        set todelete_dirs [list]
+
+        set slicelist [::sysdb::object_type_t find]
+        foreach rev $slicelist {
+
+            begin_batch
+
+            set type_oids [list]
+            array set object_type [::sysdb::object_type_t get $rev]
+            foreach idx_data $object_type(indexes) {
+                array set idx $idx_data
+                set cf_axis $object_type(cf).$idx(name)
+                set type_oid [join_oid $object_type(ks) $cf_axis]
+                #if { $type_oid ne {sysdb/sstable.by_name} }
+                if { $object_type(ks) ne {sysdb} } {
+                    compact $type_oid todelete_dirs
+                    lappend type_oids $type_oid
+                }
+            }
+            array unset object_type
+
+            # only delete row dirs once we are done with compacting,
+            # as a row might still be referenced in a link of another cf_axis
+
+            # ATTENTION: do not use with production data just yet
+            foreach todelete_dir $todelete_dirs {
+                # deleting the given row dirs
+                # renders the storage_fs dependable
+                # on an implementation of
+                # get_files and get_subdirs that reads
+                # from the sstable files, without such
+                # an implementation compact_all (at the
+                # very least) won't be able to discover
+                # the object types to compact, SO MAKE
+                # SURE THAT get_files/get_subdirs FOR
+                # READING FROM SSTABLE FILES IS COMPLETED
+                # BEFORE COMMENTING-IN THE FOLLOWING LINES
+                #
+                # NOTE: consider deleting by marking the row as .gone
+                #
+
+                set row_dir [file dirname $todelete_dir]
+                file delete -force $row_dir
+                log "deleted row_dir (=$row_dir)"
+            }
+
+            end_batch
+
+            # see storage_ss.tcl
+            foreach type_oid $type_oids {
+                log "merging sstables for $type_oid"
+                if { [catch {
+                    ::persistence::ss::compact $type_oid
+                } errmsg] } {
+                    log errmsg=$errmsg
+                    log errorInfo=$::errorInfo
+                    log exiting
+                    exit
+                }
+            }
+
+        }
+
+    }
+
+    after_package_load persistence ::persistence::fs::compact_all
+
+}

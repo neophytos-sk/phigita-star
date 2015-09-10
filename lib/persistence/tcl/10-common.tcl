@@ -13,7 +13,7 @@ namespace eval ::persistence::common {
     variable base_dir
     set base_dir [config get ::persistence base_dir]
 
-    namespace path "::persistence ::persistence::ss ::persistence::fs"
+    # namespace path "::persistence ::persistence::ss ::persistence::fs"
 
     namespace export -clear \
         join_oid \
@@ -139,9 +139,6 @@ proc ::persistence::common::is_column_oid_p {oid} {
 
 
 proc ::persistence::common::is_column_rev_p {rev} {
-    # log [info frame -5]
-    # log [info frame -4]
-    # log [info frame -3]
     # log is_column_rev_p,rev=$rev
     lassign [split_oid $rev] ks cf_axis row_key column_path ext ts
     return [expr { $column_path ne {} && ${ts} ne {} }]
@@ -154,7 +151,6 @@ proc ::persistence::common::is_row_oid_p {oid} {
 }
 
 proc ::persistence::common::is_link_rev_p {rev} {
-    # log [info frame -1]
     # log is_link_rev_p,rev=$rev
     lassign [split_oid $rev] ks cf_axis row_key column_path ext ts
     if { $ext eq {.link} && $ts ne {} } {
@@ -425,7 +421,7 @@ proc ::persistence::common::get_slice {nodepath {options ""}} {
     }
     lassign [split_oid $nodepath] ks cf_axis row_key
     set row_path [join_oid ${ks} ${cf_axis} ${row_key}]
-    set slicelist [::persistence::get_leafs "${row_path}/"]
+    set slicelist [get_leafs "${row_path}/"]
     #log !!!!!!!!!get_slice,nodepath=$nodepath
     #log !!!!!!!!!get_slice,slicelist=$slicelist
     __exec_options slicelist $options
@@ -522,7 +518,6 @@ proc ::persistence::common::get_link {rev {codec_conf ""}} {
 # note: default implementation uses column to store the target_oid of a link
 # and thus why we allow for link oids in the assertion statement
 proc ::persistence::common::get_column {rev {codec_conf ""}} {
-    set nsp [namespace __this]
 
     assert { [is_column_rev_p $rev] || [is_link_rev_p $rev] } {
         log failed,rev=$rev
@@ -531,7 +526,7 @@ proc ::persistence::common::get_column {rev {codec_conf ""}} {
     #log get_column,rev=$rev
 
     # log "retrieving column (=$oid) from fs"
-    return [${nsp}::readfile ${rev} {*}$codec_conf]
+    return [readfile ${rev} {*}$codec_conf]
 }
 
 proc ::persistence::common::get {rev {codec_conf ""}} {
@@ -636,11 +631,10 @@ proc ::persistence::common::end_batch {{xid ""}} {
 }
 
 proc ::persistence::common::get_multirow {ks cf_axis {options ""}} {
-    set nsp [namespace __this]
 
-    assert_cf ${ks} ${cf_axis}
+    # assert_cf ${ks} ${cf_axis}
 
-    set multirow [${nsp}::get_subdirs ${ks}/${cf_axis}]
+    set multirow [get_subdirs ${ks}/${cf_axis}]
     set delta_options [__exec_multirow_options multirow $options]
 
     array set options_arr $options
@@ -651,7 +645,6 @@ proc ::persistence::common::get_multirow {ks cf_axis {options ""}} {
 }
 
 proc ::persistence::common::get_multirow_names {nodepath {options ""}} {
-    set nsp [namespace __this]
 
     set residual_path [lassign [split $nodepath {/}] ks cf_axis]
 
@@ -659,7 +652,7 @@ proc ::persistence::common::get_multirow_names {nodepath {options ""}} {
 
     set result [list]
     foreach row $multirow {
-        set row_key [${nsp}::get_name $row]
+        set row_key [get_name $row]
         lappend result $row_key
     }
     return [list $result $revised_options]

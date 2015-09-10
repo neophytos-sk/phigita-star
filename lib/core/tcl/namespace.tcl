@@ -1,3 +1,23 @@
+proc ::tcl::namespace::__copy {imported_nsp {pattern "*"}} {
+    set nsp [uplevel {namespace current}]
+    set procnames [info procs ${imported_nsp}::${pattern}]
+    foreach procname $procnames {
+        set procargnames [info args $procname]
+
+        set procargs [list]
+        foreach procarg $procargnames {
+            set dval_p [info default $procname $procarg dval]
+            if { $dval_p } {
+                lappend procargs [list $procarg $dval]
+            } else {
+                lappend procargs $procarg
+            }
+        }
+
+        set procbody [info body $procname]
+        proc ${nsp}::[namespace tail $procname] $procargs $procbody
+    }
+}
 
 proc ::tcl::namespace::__mixin {imported_nsp} {
     
@@ -42,6 +62,7 @@ proc ::tcl::namespace::__next {args} {
 
 set ensemble "namespace"
 set __config_map [namespace ensemble configure ${ensemble} -map]
+lappend __config_map "__copy" "::tcl::${ensemble}::__copy"
 lappend __config_map "__mixin" "::tcl::${ensemble}::__mixin"
 lappend __config_map "__this" "::tcl::${ensemble}::__this"
 lappend __config_map "__next" "::tcl::${ensemble}::__next"

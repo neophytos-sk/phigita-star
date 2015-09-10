@@ -61,15 +61,15 @@ proc ::persistence::init {} {
     ::persistence::fs::init
 
     set storage_type [config get ::persistence "default_storage_type"]
+    set storage_type "ss"
 
     assert { $storage_type in {fs ss} }
 
-    namespace path "::persistence::ss ::persistence::$storage_type ::persistence::common"
-
     if { ![setting_p "client_server"] || [use_p "server"] } {
 
-        namespace import -force ::persistence::common::*
-        namespace import -force ::persistence::${storage_type}::*
+        # namespace path "::persistence::ss"
+        # namespace import -force ::persistence::${storage_type}::*
+        namespace __copy ::persistence::ss
 
 
         if { [setting_p "write_ahead_log"] } {
@@ -233,7 +233,8 @@ proc ::persistence::init {} {
 
         foreach procname $procnames {
 
-            set nsp_which_procname [namespace which $procname]
+            # set nsp_which_procname [namespace which $procname]
+            set nsp_which_procname ::persistence::ss::$procname
 
             assert { $nsp_which_procname ne {} } {
                 log procname=$procname
@@ -326,6 +327,7 @@ proc ::persistence::load_type {specVar} {
     namespace eval $spec(nsp) {
         # see core/tcl/namespace.tcl for details about "mixin" namespaces
         namespace __mixin ::persistence::orm
+        namespace path "::persistence::ss"
     }
     namespace upvar $spec(nsp) __spec __spec
     array set __spec [array get spec]

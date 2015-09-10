@@ -1,13 +1,19 @@
 # A mapping strategy for db types, should only contain calls to
 # procs that are generic (highest-level of abstraction) in the
 # persistence package, i.e. no storage system-specific calls here
+#
+# Such calls to procs are hereby prefixed with the ::persistence
+# namespace in order to perform remote method invocation in the
+# case when the package is loaded without the server use flag,
+# i.e. when it is used in client mode. client/server separation
+# is specified in zz-postinit.tcl
 
 set dir [file dirname [info script]]
 source [file join $dir orm_codec.tcl]
 
 namespace eval ::persistence::orm {
 
-    namespace path "::persistence ::persistence::common"
+    namespace path "::persistence::ss"
 
     ##
     # import encode / decode procs
@@ -371,7 +377,7 @@ proc ::persistence::orm::update {oid new_itemVar {optionsVar ""}} {
     }
 
     # old_item
-    array set old_item [get $oid]
+    array set old_item [::persistence::ss::get $oid]
 
     # ensures that no immutable attributes are modified
     foreach attname $attnames {
@@ -416,7 +422,7 @@ proc ::persistence::orm::update {oid new_itemVar {optionsVar ""}} {
             set row_key [to_row_key_by $idxname item]
             set src [to_path_by $idxname $row_key {*}$item($pk)]
             ::persistence::ins_link $src $target
-            # ::persistence::upd_link $src $new_target
+            # upd_link $src $new_target
 
         }
     }
@@ -437,7 +443,7 @@ proc ::persistence::orm::delete {rev} {
     set exists_p [::persistence::exists_p $rev]
     if { $exists_p } {
 
-        array set item [get $rev]
+        array set item [::persistence::get $rev]
 
         variable [namespace __this]::__idxnames
         variable [namespace __this]::pk
@@ -485,7 +491,7 @@ proc ::persistence::orm::get {rev {exists_pVar ""}} {
         # log orm,get,rev=$rev
         return [decode [::persistence::get $rev [codec_conf]]]
     } else {
-        #log alias=[interp alias {} ::persistence::exists_p]
+        #log alias=[interp alias {} exists_p]
         error "no such rev (=$rev) in storage system (=mystore)"
     }
 }
@@ -544,7 +550,7 @@ proc ::persistence::orm::find_by_id {value} {
     }
 
     set nodepath [to_path $value]
-    set oid [::persistence::find_column $nodepath "" "" [codec_conf]]
+    set oid [find_column $nodepath "" "" [codec_conf]]
 
     return $oid
 }
