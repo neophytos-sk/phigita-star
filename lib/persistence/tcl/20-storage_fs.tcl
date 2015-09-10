@@ -243,7 +243,7 @@ if { [setting_p "mvcc"] } {
         variable base_dir
 
         set last_char [string index $nodepath end]
-        if { $last_char eq {/} } {
+        if { $last_char in {+ /} } {
             set dir [file normalize ${base_dir}/cur/${nodepath}]
             set rootname $nodepath
             set pattern "*@*"
@@ -251,10 +251,19 @@ if { [setting_p "mvcc"] } {
             set rootname [file dirname $nodepath]
             set dir [file normalize [file join ${base_dir} cur $rootname]]
             set tail [file tail $nodepath]
-            set pattern "${tail}@*"
+            if { [llength [split $tail {@}]] == 2 } {
+                set pattern "${tail}"
+            } else {
+                set pattern "${tail}@*"
+            }
         }
 
+
         set rev_names [glob -tails -nocomplain -types "f l d" -directory ${dir} $pattern]
+        # log last_char=$last_char
+        # log dir=$dir
+        # log pattern=$pattern
+        # log rev_names=$rev_names
 
         set result [list]
         foreach rev_name $rev_names {
@@ -534,7 +543,8 @@ proc ::persistence::fs::compact {type_oid todelete_dirsVar} {
     foreach {row_key slicelist} $multirow_slicelist {
 
         # log -----
-        # log fs::compact,row_key=$row_key
+        log fs::compact,row_key=$row_key
+        log slicelist=$slicelist
 
         set row_startpos $pos
 
@@ -609,6 +619,9 @@ proc ::persistence::fs::compact {type_oid todelete_dirsVar} {
 
     set name [binary encode base64 $type_oid]
     set round [clock microseconds]
+
+    # assert { $rows ne {} }
+    # assert { $cols ne {} }
 
     array set item [list]
     set item(name) $name
@@ -712,6 +725,5 @@ if { [use_p "server"] && [setting_p "sstable"] } {
 
     }
 
-    after_package_load persistence ::persistence::fs::compact_all
 
 }

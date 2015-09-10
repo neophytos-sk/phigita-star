@@ -88,14 +88,27 @@ proc ::persistence::ss::read_sstable {dataVar row_endpos file_i {lambdaExpr ""}}
 
 
 proc ::persistence::ss::get_files_helper {path} {
+    log ==========================
+    log "ss::get_files path=$path"
 
     set type_oid [type_oid $path]
+    # log type_oid=$type_oid
 
-    # if { [load_sstable $type_oid sstable_item] } {
-    #     variable __cbt_TclObj
-    #    return [::cbt::prefix_match $__cbt_TclObj(${type_oid}) $path]
-    # }
-    # return
+    if { [load_sstable $type_oid sstable_item] } {
+        log "-----------------------------------"
+        log type_oid=$type_oid
+       log sstable=[array names sstable_item]
+       log sstable_rows=$sstable_item(rows)
+       log sstable_cols=$sstable_item(cols)
+       log path=$path
+        variable __cbt_TclObj
+       set result [::cbt::prefix_match $__cbt_TclObj(${type_oid}) $path]
+       log cbt=[::cbt::prefix_match $__cbt_TclObj(${type_oid}) ""]
+       log result=$result
+        log "-----------------------------------"
+       return $result
+    }
+    return
 
     set name [binary encode base64 $type_oid]
     #set where_clause [list [list name = $sstable_name]]
@@ -140,18 +153,25 @@ proc ::persistence::ss::get_files_helper {path} {
 
 proc ::persistence::ss::get_subdirs_helper {path} {
 
-    #log get_subdirs,path=$path
+    # log get_subdirs,path=$path
 
     set len [llength [split $path {/}]]
 
+    # set path [string trimright $path {/}]
+
     set files [get_files "${path}/"]  ;# slash is important
 
-    #log get_subdirs,ls=$files
+    # log get_subdirs,ls=$files
 
     set result [list]
     foreach oid $files {
         set oid_parts [split $oid {/}] 
-        lappend result [join [lrange $oid_parts 0 $len] {/}]
+        set subdir [join [lrange $oid_parts 0 $len] {/}]
+        lappend result $subdir 
+        if { [llength [split $subdir {@}]] == 2 } {
+            return
+        }
+        
     }
 
     #log get_subdirs,result=$result
@@ -161,7 +181,9 @@ proc ::persistence::ss::get_subdirs_helper {path} {
 }
 
 
-proc ::persistence::ss::get_sstable_rev {rev} {
+# TODO:  add blob_file attribute type that writes data to filesystem
+proc ::persistence::ss::ORM_get_sstable_rev {rev} {
+    error "not implemented yet"
     set type_oid [type_oid $rev]
     set sstable_name [binary encode base64 $type_oid]
     set where_clause [list [list name = $sstable_name]]
@@ -169,7 +191,38 @@ proc ::persistence::ss::get_sstable_rev {rev} {
     return $sstable_rev
 }
 
+proc ::persistence::ss::get_sstable_rev {rev} {
+
+    set type_oid [type_oid $rev]
+    set name [binary encode base64 $type_oid]
+
+    # log get_sstable_rev,type_oid=$type_oid,name=$name
+
+    variable base_dir
+    set dir [file join $base_dir cur]
+    set pattern "sysdb/sstable.by_name/${name}/+/${name}@*"
+
+    set sstable_revs [glob \
+        -nocomplain \
+        -tails \
+        -directory $dir \
+        $pattern]
+
+    set sstable_revs [lsort -command ::persistence::compare_files $sstable_revs]
+
+    assert { [llength $sstable_revs] <= 1 }
+
+    return [lindex $sstable_revs 0]
+}
+
 proc ::persistence::ss::load_sstable {type_oid {sstable_itemVar ""}} {
+
+    if { $type_oid eq {sysdb/sstable.by_name} } {
+        return 0
+    }
+
+    log "!!! load_sstable,type_oid=$type_oid"
+
     set varname "sstable_data__${type_oid}"
 
     if { $sstable_itemVar ne {} } {
@@ -179,8 +232,12 @@ proc ::persistence::ss::load_sstable {type_oid {sstable_itemVar ""}} {
     variable __cbt_TclObj
     variable $varname
 
-    if { ![info exists __cbt_TclObj(${type_oid})] } {
+    if { 1 || ![info exists __cbt_TclObj(${type_oid})] } {
         set sstable_rev [get_sstable_rev $type_oid]
+
+        # log sstable_rev=$sstable_rev
+        # log type_oid=$type_oid
+
         if { $sstable_rev eq {} } {
             return 0
         }
@@ -204,37 +261,37 @@ proc ::persistence::ss::load_sstable {type_oid {sstable_itemVar ""}} {
 proc ::persistence::ss::readfile_helper {rev args} {
     set codec_conf $args
 
-    if { [load_sstable [type_oid $rev] sstable_item] } {
+    set type_oid [type_oid $rev]
 
-        array set sstable_cols $sstable_item(cols)
-
-        set rev_startpos $sstable_cols(${rev})
-
-        # seek _fp $rev_startpos start
-        set pos $rev_startpos
-    
-        binary scan $sstable_item(data) @${pos}i len
-        incr pos 4
-        binary scan $sstable_item(data) @${pos}a${len} rev_in_file
-        incr pos $len
-
-        assert { $rev eq $rev_in_file }
-
-        binary scan $sstable_item(data) @${pos}i len
-        incr pos 4
-        binary scan $sstable_item(data) @${pos}a${len} ss_data
-        incr pos $len
-
-        array unset sstable_cols
-        array unset sstable_item
-
-        log "!!! returning ss_data for rev=$rev"
-
-        return $ss_data
-
+    if { ![load_sstable $type_oid sstable_item] } {
+        error "sstable loading error"
     }
 
-    return
+    array set sstable_cols $sstable_item(cols)
+
+    set rev_startpos $sstable_cols(${rev})
+
+    # seek _fp $rev_startpos start
+    set pos $rev_startpos
+
+    binary scan $sstable_item(data) @${pos}i len
+    incr pos 4
+    binary scan $sstable_item(data) @${pos}a${len} rev_in_file
+    incr pos $len
+
+    assert { $rev eq $rev_in_file }
+
+    binary scan $sstable_item(data) @${pos}i len
+    incr pos 4
+    binary scan $sstable_item(data) @${pos}a${len} ss_data
+    incr pos $len
+
+    array unset sstable_cols
+    array unset sstable_item
+
+    log "!!! returning ss_data for rev=$rev"
+
+    return $ss_data
 
 }
 
@@ -275,7 +332,12 @@ proc ::persistence::ss::get_files {path} {
 
     set ss_filelist [::persistence::ss::get_files_helper $path]
 
-    return [lsort -unique [concat $fs_filelist $ss_filelist]]
+    set result [lsort -unique [concat $fs_filelist $ss_filelist]]
+
+    # log path=$path
+    log ss::get_files,#results=[llength $result]
+
+    return $result
 }
 
 proc ::persistence::ss::get_subdirs {path} {
@@ -304,7 +366,7 @@ proc ::persistence::ss::init {} {}
 proc ::persistence::ss::compact {type_oid} {
 
     set errorlist [list sysdb/object_type.by_nsp]
-    if { $type_oid in $errorlist } {
+    if { 0 && $type_oid in $errorlist } {
         log "skipping sstable merge for $type_oid"
         return
     }
@@ -327,19 +389,20 @@ proc ::persistence::ss::compact {type_oid} {
     set sstable_revs [lsort -command ::persistence::compare_files $sstable_revs]
 
     if { [llength $sstable_revs] <= 1 } {
+        # log "already merged $type_oid"
         return
     }
 
     #log llen=[llength $sstable_revs]
-    log \tsstable_revs=[join $sstable_revs \n\t]
+    # log \tsstable_revs=[join $sstable_revs \n\t]
 
     set file_i 0
     array set sstable_row_idx [list]
     foreach sstable_rev $sstable_revs {
 
         array set sstable_item__${file_i} [::sysdb::sstable_t get $sstable_rev]
-        log -----
-        log name=[binary decode base64 [set sstable_item__${file_i}(name)]]
+        #log -----
+        #log name=[binary decode base64 [set sstable_item__${file_i}(name)]]
 
         foreach {row_key row_endpos} [set sstable_item__${file_i}(rows)] {
 
@@ -367,7 +430,7 @@ proc ::persistence::ss::compact {type_oid} {
     set row_keys [lsort [array names sstable_row_idx]]
 
     if { $row_keys eq {} } {
-        log "!!! nothing to merge"
+        #log "!!! nothing to merge"
         return
     }
 
@@ -428,11 +491,12 @@ proc ::persistence::ss::compact {type_oid} {
 
         # write row_startpos at end of row
         set row_endpos $pos
-        log "merged file, row_key=$row_key row_endpos=$row_endpos row_startpos=$row_startpos"
         append output_data [binary format i $row_startpos]
         incr pos 4
 
         lappend rows $row_key $row_endpos
+
+        #log "merged file, row_key=$row_key row_endpos=$row_endpos row_startpos=$row_startpos"
 
     }
 
@@ -474,6 +538,8 @@ proc ::persistence::ss::compact {type_oid} {
 
 proc ::persistence::ss::compact_all {} {
 
+    ::persistence::fs::compact_all
+
     set slicelist [::sysdb::object_type_t find]
 
     foreach rev $slicelist {
@@ -485,16 +551,16 @@ proc ::persistence::ss::compact_all {} {
             array set idx $idx_data
             set cf_axis $object_type(cf).$idx(name)
             set type_oid [join_oid $object_type(ks) $cf_axis]
-            #if { $type_oid ne {sysdb/sstable.by_name} }
-            if { $object_type(ks) ne {sysdb} } {
+            # if { $type_oid ne {sysdb/sstable.by_name} }
+            # if { $object_type(ks) ne {sysdb} } {
                 compact $type_oid
                 lappend type_oids $type_oid
-            }
+            # }
         }
         array unset object_type
 
         foreach type_oid $type_oids {
-            log "merging sstables for $type_oid"
+            # log "merging sstables for $type_oid"
             if { [catch {
                 ::persistence::ss::compact $type_oid
             } errmsg] } {

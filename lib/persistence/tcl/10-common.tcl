@@ -78,6 +78,7 @@ proc ::persistence::common::join_oid {ks cf_axis {row_key ""} {column_path ""} {
     set oid ${ks}/${cf_axis}
 
     if { $row_key ne {} } {
+        # append oid "/" $row_key "/+"
         append oid "/" $row_key "/+"
         if { $column_path ne {} } {
             append oid "/" $column_path
@@ -290,8 +291,7 @@ proc ::persistence::common::__exec_multirow_sort_options {multirowVar options} {
 }
 
 proc ::persistence::common::num_cols {row_oid} {
-    set delim {+}
-    return [llength [get_subdirs ${row_oid}/${delim}]]
+    return [llength [get_leafs ${row_oid}]]
 }
 
 proc ::persistence::common::__exec_multirow_range_options {multirowVar options} {
@@ -343,6 +343,7 @@ proc ::persistence::common::__exec_multirow_range_options {multirowVar options} 
 
 proc ::persistence::common::__exec_multirow_options {multirowVar options} {
     upvar $multirowVar multirow
+
     __exec_multirow_filter_options multirow $options
     __exec_multirow_sort_options multirow $options
 
@@ -421,9 +422,9 @@ proc ::persistence::common::get_slice {nodepath {options ""}} {
     }
     lassign [split_oid $nodepath] ks cf_axis row_key
     set row_path [join_oid ${ks} ${cf_axis} ${row_key}]
-    set slicelist [get_leafs "${row_path}/"]
-    #log !!!!!!!!!get_slice,nodepath=$nodepath
-    #log !!!!!!!!!get_slice,slicelist=$slicelist
+    set slicelist [get_leafs ${row_path}]
+    log !!!!!!!!!get_slice,nodepath=$nodepath
+    log !!!!!!!!!get_slice,slicelist=$slicelist
     __exec_options slicelist $options
     return ${slicelist}
 }
@@ -492,7 +493,7 @@ proc ::persistence::common::get_link_target {rev} {
 
     # log get_link_target,target_oid=$target_oid
 
-    set leafs [::persistence::get_leafs $target_oid]
+    set leafs [get_leafs $target_oid]
 
     assert { $leafs ne {} } {
         log failed,noleafs,target_oid=$target_oid
@@ -635,6 +636,7 @@ proc ::persistence::common::get_multirow {ks cf_axis {options ""}} {
     # assert_cf ${ks} ${cf_axis}
 
     set multirow [get_subdirs ${ks}/${cf_axis}]
+
     set delta_options [__exec_multirow_options multirow $options]
 
     array set options_arr $options
@@ -681,14 +683,15 @@ proc ::persistence::common::get_leafs {path} {
     assert { $path ne {} }
 
     set subdirs [get_subdirs ${path}]
+    log subdirs=$subdirs
     if { $subdirs eq {} } {
         set files [get_files ${path}]
+        log files=$files
         return $files
     } else {
         set result [list]
         foreach subdir_path $subdirs {
             assert { $subdir_path ne $path }
-            # slash is important
             foreach rev [get_leafs "${subdir_path}/"] {
                 lappend result $rev
             }

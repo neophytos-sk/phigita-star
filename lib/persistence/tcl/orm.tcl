@@ -377,7 +377,7 @@ proc ::persistence::orm::update {oid new_itemVar {optionsVar ""}} {
     }
 
     # old_item
-    array set old_item [::persistence::get $oid]
+    array set old_item [get $oid]
 
     # ensures that no immutable attributes are modified
     foreach attname $attnames {
