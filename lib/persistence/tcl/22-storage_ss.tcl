@@ -12,7 +12,7 @@ namespace eval ::persistence::ss {
     #namespace import ::persistence::common::is_column_rev_p
     #namespace import ::persistence::common::is_link_rev_p
 
-    namespace __copy ::persistence::common
+    namespace __copy ::persistence::fs
 
     variable base_dir
     set base_dir [config get ::persistence base_dir]
@@ -88,15 +88,15 @@ proc ::persistence::ss::read_sstable {dataVar row_endpos file_i {lambdaExpr ""}}
 
 
 proc ::persistence::ss::get_files_helper {path} {
-    set len [string length $path]
-    set list_path [list $path]
-    set lambdaExpr [subst -nocommands -nobackslashes \
-        {{dataVar rev} {
-            set prefix [string range [set rev] 0 $len]
-            return [expr { [set prefix] eq "\{${list_path}\}" }]
-        }}]
 
     set type_oid [type_oid $path]
+
+    # if { [load_sstable $type_oid sstable_item] } {
+    #     variable __cbt_TclObj
+    #    return [::cbt::prefix_match $__cbt_TclObj(${type_oid}) $path]
+    # }
+    # return
+
     set name [binary encode base64 $type_oid]
     #set where_clause [list [list name = $sstable_name]]
     #set sstable_rev [::sysdb::sstable_t 0or1row $where_clause]
@@ -127,7 +127,7 @@ proc ::persistence::ss::get_files_helper {path} {
     array set sstable_item [::sysdb::sstable_t get $sstable_rev]
 
     if { [typeof_oid $path] eq {type} } {
-        return $sstable_item(cols)
+        return [map {x y} $sstable_item(cols) {set x}]
     } else {
         set tree [::cbt::create $::cbt::STRING]
         ::cbt::set_bytes $tree [map {x y} $sstable_item(cols) {set x}]
@@ -267,6 +267,7 @@ proc ::persistence::ss::readfile {rev args} {
 }
     
 proc ::persistence::ss::get_files {path} {
+    # log "ss::get_files $path"
     set fs_filelist [::persistence::fs::get_files $path]
     if { [string match "sysdb/*" $path] } {
         return $fs_filelist
@@ -274,8 +275,7 @@ proc ::persistence::ss::get_files {path} {
 
     set ss_filelist [::persistence::ss::get_files_helper $path]
 
-    return [lsort -unique -command ::persistence::compare_files \
-        [concat $fs_filelist $ss_filelist]]
+    return [lsort -unique [concat $fs_filelist $ss_filelist]]
 }
 
 proc ::persistence::ss::get_subdirs {path} {

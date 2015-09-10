@@ -291,7 +291,7 @@ proc ::persistence::common::__exec_multirow_sort_options {multirowVar options} {
 
 proc ::persistence::common::num_cols {row_oid} {
     set delim {+}
-    return [llength [::persistence::get_subdirs ${row_oid}/${delim}]]
+    return [llength [get_subdirs ${row_oid}/${delim}]]
 }
 
 proc ::persistence::common::__exec_multirow_range_options {multirowVar options} {

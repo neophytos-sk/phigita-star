@@ -13,7 +13,7 @@ source [file join $dir orm_codec.tcl]
 
 namespace eval ::persistence::orm {
 
-    namespace path "::persistence::ss"
+    namespace path "::persistence::[setting "storage_type"]"
 
     ##
     # import encode / decode procs
@@ -377,7 +377,7 @@ proc ::persistence::orm::update {oid new_itemVar {optionsVar ""}} {
     }
 
     # old_item
-    array set old_item [::persistence::ss::get $oid]
+    array set old_item [::persistence::get $oid]
 
     # ensures that no immutable attributes are modified
     foreach attname $attnames {

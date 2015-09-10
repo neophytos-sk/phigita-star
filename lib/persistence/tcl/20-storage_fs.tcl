@@ -646,9 +646,11 @@ if { [use_p "server"] && [setting_p "sstable"] } {
     proc ::persistence::fs::compact_all {} {
 
         set todelete_dirs [list]
+        set object_types [::sysdb::object_type_t find]
 
-        set slicelist [::sysdb::object_type_t find]
-        foreach rev $slicelist {
+        assert { $object_types ne {} }
+
+        foreach rev $object_types {
 
             begin_batch
 
