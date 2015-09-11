@@ -648,18 +648,18 @@ proc ::feed_reader::translate_error_code {error_code} {
 
 }
 
-proc ::feed_reader::fetch_and_write_item {timestamp link title_in_feed feedVar errorcodeVar} {
+proc ::feed_reader::fetch_and_write_item {timestamp url title_in_feed feedVar errorcodeVar} {
 
     upvar $feedVar feed
     upvar $errorcodeVar errorcode
 
-    # log link=$link
+    # log url=$url
 
     set normalize_link_re [value_if feed(normalize_link_re) ""]
     if { ${normalize_link_re} ne {} } {
-        regexp -- ${normalize_link_re} ${link} whole normalized_link
+        regexp -- ${normalize_link_re} ${url} whole normalized_link
     } else {
-        set normalized_link ${link}
+        set normalized_link ${url}
     }
 
     # TODO: if it exists and it's the first item in the feed,
@@ -671,7 +671,12 @@ proc ::feed_reader::fetch_and_write_item {timestamp link title_in_feed feedVar e
     array set item [list]
     array unset item
     
-    set exists_p [exists_item ${normalized_link}] 
+    set exists_p [exists_item ${normalized_link} error_item_p] 
+    
+    if { $error_item_p } {
+        return {NO_FETCH}
+    }
+
     set resync_p 0
     if { 
         !$exists_p
@@ -680,20 +685,20 @@ proc ::feed_reader::fetch_and_write_item {timestamp link title_in_feed feedVar e
 
         set item(__resync_p) $resync_p
 
-        set errorcode [fetch_item ${link} ${title_in_feed} feed item info]
+        set errorcode [fetch_item ${url} ${title_in_feed} feed item info]
         if { ${errorcode} } {
 
             set error_message [translate_error_code ${errorcode}]
 
             puts "--->>> errorcode=$errorcode error_message=${error_message}"
-            puts "--->>> error ${link}"
+            puts "--->>> error ${url}"
             puts "--->>> info=[array get info]"
 
-            set urlsha1 [get_urlsha1 ${link}]
+            set urlsha1 [get_urlsha1 ${url}]
 
             array set error_item [list \
                 errorcode       ${errorcode}      \
-                url             ${link}           \
+                url             ${url}           \
                 urlsha1         ${urlsha1}        \
                 urlsha1_timestamp [list $urlsha1 $timestamp] \
                 http_fetch_info [array get info]  \
@@ -703,37 +708,23 @@ proc ::feed_reader::fetch_and_write_item {timestamp link title_in_feed feedVar e
 
             ::newsdb::error_item_t insert error_item
 
-            set where_clause [list [list urlsha1 = $urlsha1]]
-            set slicelist [::newsdb::error_item_t find $where_clause]
-
-
-            if { [llength ${slicelist}] >= 3 } {
-
-                puts "--->>> TODO: marking this item as fetched... (${urlsha1})"
-
-                if {0} {
-                    ::persistence::ins_column \
-                        "newsdb" \
-                        "news_item.by_urlsha1_and_const" \
-                        "${urlsha1}" \
-                        "_data_" \
-                        "${errordata}"
-                }
-
-            }
-
-
+            # set where_clause { urlsha1 = :urlsha1 }
+            # set slicelist {::newsdb::error_item_t find $where_clause}
+            # if { {llength ${slicelist}} >= 3 } {
+            # => item marked as fetched
+            # => see exists_item proc
+            # }
 
             # unset item
             # unset info
             return {ERROR_FETCH}
         }
 
-        if { ${normalized_link} ne ${link} } {
+        if { ${normalized_link} ne ${url} } {
             set item(normalized_link) ${normalized_link}
         }
 
-        if { $item(url) ne ${link} } {
+        if { $item(url) ne ${url} } {
             set item(original_link) ${link}
         }
 
@@ -1319,14 +1310,34 @@ proc ::feed_reader::cluster {{offset "0"} {limit "10"} {k ""} {num_iter "3"}} {
 }
 
 
-proc ::feed_reader::exists_item {link} {
-    set urlsha1 [get_urlsha1 ${link}]
+proc ::feed_reader::exists_item {url {error_item_pVar ""}} {
+    if { $error_item_pVar ne {} } {
+        upvar $error_item_pVar error_item_p
+        set error_item_p 0
+    }
+         
+    set urlsha1 [get_urlsha1 ${url}]
     set where_clause [list [list urlsha1 = $urlsha1]]
     # array set options [list expand_fn "latest_mtime"]
     array set options [list]
     set options(limit) 1
+
+    set errorlist [::newsdb::error_item_t find $where_clause]
+    set errorlistlen [llength $errorlist] 
+
+    if { $errorlistlen >= 3 } {
+        set error_item_p 1
+        return 1
+    }
+
     set oid [::newsdb::news_item_t 0or1row $where_clause options]
-    return [expr { $oid ne {} }]
+
+    if { $oid ne {} } {
+        set error_item_p 0
+        return 1
+    }
+
+    return 0
 }
 
 
