@@ -24,6 +24,11 @@ proc ::persistence::ss::set_column {rev data xid codec_conf} {
     ::persistence::fs::set_column $rev $data $xid $codec_conf
 }
 
+proc ::persistence::ss::get_mtime {rev} {
+    lassign [split_oid $rev] ks cf_axis row_key column_path ext ts
+    return [expr { $ts / (10**6) }]
+}
+
 proc ::persistence::ss::read_sstable {dataVar row_endpos file_i {lambdaExpr ""}} {
     upvar $dataVar data
 
@@ -88,25 +93,27 @@ proc ::persistence::ss::read_sstable {dataVar row_endpos file_i {lambdaExpr ""}}
 
 
 proc ::persistence::ss::get_files_helper {path} {
-    log ==========================
-    log "ss::get_files path=$path"
+    #log ==========================
+    #log "ss::get_files path=$path"
 
     set type_oid [type_oid $path]
     # log type_oid=$type_oid
 
     if { [load_sstable $type_oid sstable_item] } {
-        log "-----------------------------------"
-        log type_oid=$type_oid
-       log sstable=[array names sstable_item]
-       log sstable_rows=$sstable_item(rows)
-       log sstable_cols=$sstable_item(cols)
-       log path=$path
+        #log "-----------------------------------"
+        #log type_oid=$type_oid
+        #log sstable=[array names sstable_item]
+        #log sstable_rows=$sstable_item(rows)
+        #log sstable_cols=$sstable_item(cols)
+        #log path=$path
         variable __cbt_TclObj
-       set result [::cbt::prefix_match $__cbt_TclObj(${type_oid}) $path]
-       log cbt=[::cbt::prefix_match $__cbt_TclObj(${type_oid}) ""]
-       log result=$result
-        log "-----------------------------------"
-       return $result
+        set result [::cbt::prefix_match $__cbt_TclObj(${type_oid}) $path]
+        #if {0} {
+           #log cbt=[::cbt::prefix_match $__cbt_TclObj(${type_oid}) ""]
+           #log result=$result
+        #}
+        #log "-----------------------------------"
+        return $result
     }
     return
 
@@ -221,7 +228,7 @@ proc ::persistence::ss::load_sstable {type_oid {sstable_itemVar ""}} {
         return 0
     }
 
-    log "!!! load_sstable,type_oid=$type_oid"
+    # log "!!! load_sstable,type_oid=$type_oid"
 
     set varname "sstable_data__${type_oid}"
 
@@ -232,7 +239,7 @@ proc ::persistence::ss::load_sstable {type_oid {sstable_itemVar ""}} {
     variable __cbt_TclObj
     variable $varname
 
-    if { 1 || ![info exists __cbt_TclObj(${type_oid})] } {
+    if { ![info exists __cbt_TclObj(${type_oid})] } {
         set sstable_rev [get_sstable_rev $type_oid]
 
         # log sstable_rev=$sstable_rev
@@ -286,10 +293,10 @@ proc ::persistence::ss::readfile_helper {rev args} {
     binary scan $sstable_item(data) @${pos}a${len} ss_data
     incr pos $len
 
-    array unset sstable_cols
-    array unset sstable_item
+    unset sstable_cols
+    unset sstable_item
 
-    log "!!! returning ss_data for rev=$rev"
+    # log "!!! returning ss_data for rev=$rev"
 
     return $ss_data
 
@@ -335,7 +342,7 @@ proc ::persistence::ss::get_files {path} {
     set result [lsort -unique [concat $fs_filelist $ss_filelist]]
 
     # log path=$path
-    log ss::get_files,#results=[llength $result]
+    # log ss::get_files,#results=[llength $result]
 
     return $result
 }

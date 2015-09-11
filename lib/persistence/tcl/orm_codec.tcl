@@ -91,8 +91,10 @@ namespace eval ::persistence::orm::codec_bin_3 {
 
 proc ::persistence::orm::codec_bin_3::encode {itemVar} {
     variable __type_to_bin
-    variable [namespace __this]::__attnames
-    variable [namespace __this]::__attinfo
+
+    set nsp [namespace __this]
+    variable ${nsp}::__attnames
+    variable ${nsp}::__attinfo
 
     upvar $itemVar item
 
@@ -112,6 +114,7 @@ proc ::persistence::orm::codec_bin_3::encode {itemVar} {
     # body / data
     foreach attname $__attnames {
         set type [value_if __attinfo($attname,type) "varchar"]
+
         lassign [value_if __type_to_bin($type) ""] fmt _ num_bytes
 
         set attvalue [value_if item($attname) ""]
@@ -131,9 +134,22 @@ proc ::persistence::orm::codec_bin_3::encode {itemVar} {
                 # V_OLD: set attvalue [binary format "A${len}" $attvalue]
             }
 
-            set len [string length $attvalue]
-            set num_encoded_bytes [encode_unsigned_varint bytes $len]
-            append bytes $attvalue
+            set blob_p [value_if __attinfo($attname,blob_p) "0"]
+            if { $blob_p } {
+
+                # assert { $rev ne {} }
+                # set name [binary encode base64 $rev]
+                # set blob_rev [join_oid sysdb blob.by_name $name $attname]
+                # ::persistence::ins_column $blob_rev $blob_data [codec_conf]
+
+                set len [string length $blob_rev]
+                set num_encoded_bytes [encode_unsigned_varint bytes $len]
+                append bytes $blob_rev
+            } else {
+                set len [string length $attvalue]
+                set num_encoded_bytes [encode_unsigned_varint bytes $len]
+                append bytes $attvalue
+            }
 
         }
     }

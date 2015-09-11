@@ -423,8 +423,8 @@ proc ::persistence::common::get_slice {nodepath {options ""}} {
     lassign [split_oid $nodepath] ks cf_axis row_key
     set row_path [join_oid ${ks} ${cf_axis} ${row_key}]
     set slicelist [get_leafs ${row_path}]
-    log !!!!!!!!!get_slice,nodepath=$nodepath
-    log !!!!!!!!!get_slice,slicelist=$slicelist
+    # log !!!!!!!!!get_slice,nodepath=$nodepath
+    # log !!!!!!!!!get_slice,slicelist=$slicelist
     __exec_options slicelist $options
     return ${slicelist}
 }
@@ -683,10 +683,10 @@ proc ::persistence::common::get_leafs {path} {
     assert { $path ne {} }
 
     set subdirs [get_subdirs ${path}]
-    log subdirs=$subdirs
+    # log subdirs=$subdirs
     if { $subdirs eq {} } {
         set files [get_files ${path}]
-        log files=$files
+        # log files=$files
         return $files
     } else {
         set result [list]
