@@ -703,7 +703,7 @@ if { [use_p "server"] && [setting_p "sstable"] } {
 
                 set row_dir [file dirname $todelete_dir]
                 file delete -force $row_dir
-                log "deleted row_dir (=$row_dir)"
+                # log "deleted row_dir (=$row_dir)"
             }
 
             end_batch
