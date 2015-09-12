@@ -20,9 +20,9 @@ namespace eval ::persistence::ss {
 
 proc ::persistence::ss::define_ks {args} {}
 proc ::persistence::ss::define_cf {args} {}
-proc ::persistence::ss::set_column {rev data xid codec_conf} {
-    ::persistence::fs::set_column $rev $data $xid $codec_conf
-}
+# proc ::persistence::ss::set_column {rev data xid codec_conf} {
+#    ::persistence::fs::set_column $rev $data $xid $codec_conf
+# }
 
 proc ::persistence::ss::get_mtime {rev} {
     lassign [split_oid $rev] ks cf_axis row_key column_path ext ts
@@ -93,72 +93,35 @@ proc ::persistence::ss::read_sstable {dataVar row_endpos file_i {lambdaExpr ""}}
 
 
 proc ::persistence::ss::get_files_helper {path} {
-    #log ==========================
-    #log "ss::get_files path=$path"
-
     set type_oid [type_oid $path]
-    # log type_oid=$type_oid
 
     if { [load_sstable $type_oid sstable_item] } {
-        #log "-----------------------------------"
-        #log type_oid=$type_oid
-        #log sstable=[array names sstable_item]
-        #log sstable_rows=$sstable_item(rows)
-        #log sstable_cols=$sstable_item(cols)
-        #log path=$path
         variable __cbt_TclObj
-        set result [::cbt::prefix_match $__cbt_TclObj(${type_oid}) $path]
-        #if {0} {
-           #log cbt=[::cbt::prefix_match $__cbt_TclObj(${type_oid}) ""]
-           #log result=$result
-        #}
-        #log "-----------------------------------"
+        set result [::cbt::prefix_match $__cbt_TclObj(${type_oid},cols) $path]
         return $result
     }
     return
-
-    set name [binary encode base64 $type_oid]
-    #set where_clause [list [list name = $sstable_name]]
-    #set sstable_rev [::sysdb::sstable_t 0or1row $where_clause]
-
-    variable base_dir
-    set dir [file join $base_dir cur]
-    set pattern "sysdb/sstable.by_name/${name}/+/${name}@*"
-    set sstable_revs [glob \
-        -nocomplain \
-        -tails \
-        -directory $dir \
-        $pattern]
-
-    if { $sstable_revs eq {} } {
-        return
-    }
-
-    assert { [llength $sstable_revs] == 1 } {
-        log sstable_revs=\n[join $sstable_revs \n]
-        log type_oid=$type_oid
-        log name=$name
-    }
-
-    set sstable_rev [lindex $sstable_revs 0]
-
-    assert { $sstable_rev ne {} }
-
-    array set sstable_item [::sysdb::sstable_t get $sstable_rev]
-
-    if { [typeof_oid $path] eq {type} } {
-        return [map {x y} $sstable_item(cols) {set x}]
-    } else {
-        set tree [::cbt::create $::cbt::STRING]
-        ::cbt::set_bytes $tree [map {x y} $sstable_item(cols) {set x}]
-        set result [::cbt::prefix_match $tree $path]
-        ::cbt::destroy $tree
-        return $result
-    }
-
 }
 
 proc ::persistence::ss::get_subdirs_helper {path} {
+
+    set type_oid [type_oid $path]
+    if { [load_sstable $type_oid sstable_item] } {
+        lassign [split_oid $path] ks cf_axis row_key_prefix
+        if { $row_key_prefix ne {} } {
+            # as of 2015-09-12 the only subdir queries
+            # are for all the row keys in a type_oid (ks/cf_axis)
+            return
+        }
+        set row_keys [map {x y} $sstable_item(rows) {set x}]
+        set result [list]
+        foreach row_key $row_keys {
+            lappend result ${type_oid}/${row_key}
+        }
+        return $result
+    }
+
+    error "sstable for type_oid (=$type_oid) not loaded"
 
     # log get_subdirs,path=$path
 
@@ -239,7 +202,7 @@ proc ::persistence::ss::load_sstable {type_oid {sstable_itemVar ""}} {
     variable __cbt_TclObj
     variable $varname
 
-    if { ![info exists __cbt_TclObj(${type_oid})] } {
+    if { ![info exists __cbt_TclObj(${type_oid},cols)] } {
         set sstable_rev [get_sstable_rev $type_oid]
 
         # log sstable_rev=$sstable_rev
@@ -253,10 +216,14 @@ proc ::persistence::ss::load_sstable {type_oid {sstable_itemVar ""}} {
 
         array set sstable_item [set $varname [::sysdb::sstable_t get $sstable_rev]]
 
-        set __cbt_TclObj(${type_oid}) [::cbt::create $::cbt::STRING]
+        set __cbt_TclObj(${type_oid},cols) [::cbt::create $::cbt::STRING]
+        # set __cbt_TclObj(${type_oid},rows) [::cbt::create $::cbt::STRING]
 
-        ::cbt::set_bytes $__cbt_TclObj(${type_oid}) \
+        ::cbt::set_bytes $__cbt_TclObj(${type_oid},cols) \
             [map {x y} $sstable_item(cols) {set x}]
+
+        # ::cbt::set_bytes $__cbt_TclObj(${type_oid},rows) \
+        #    [map {x y} $sstable_item(rows) {set x}]
 
         return 1
     } else {
@@ -309,7 +276,7 @@ proc ::persistence::ss::exists_p_helper {rev} {
     # log type_oid=$type_oid
     if { [load_sstable $type_oid] } {
         variable __cbt_TclObj
-        set exists_p [::cbt::exists $__cbt_TclObj(${type_oid}) $rev]
+        set exists_p [::cbt::exists $__cbt_TclObj(${type_oid},cols) $rev]
         # log exists_p=$exists_p
         return $exists_p
     }

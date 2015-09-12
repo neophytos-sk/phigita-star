@@ -544,7 +544,6 @@ proc ::persistence::common::get_name {rev} {
         set rev [get_link_target $rev]
     }
     return [file tail ${rev}]
-    # V_OLD: return [file tail [file rootname ${rev_filename}]]
 }
 
 proc ::persistence::common::predicate=forall {slicelistVar predicates} {

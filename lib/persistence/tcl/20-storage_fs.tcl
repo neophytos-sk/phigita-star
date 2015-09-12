@@ -515,8 +515,6 @@ proc ::persistence::fs::init {} {
 proc ::persistence::fs::compact {type_oid todelete_dirsVar} {
     upvar $todelete_dirsVar todelete_dirs
 
-    log "compacting type_oid=$type_oid"
-
     # assert { [is_type_oid_p $type_oid] }
 
     lassign [split_oid $type_oid] ks cf_axis
@@ -535,6 +533,13 @@ proc ::persistence::fs::compact {type_oid todelete_dirsVar} {
     set multirow_slicelist [multirow_slice \
         $type_oid $row_keys $revised_multirow_options]
 
+    if { $multirow_slicelist eq {} } {
+        # log "no fs::files to compact: $type_oid"
+        return
+    }
+
+    # log "compacting type_oid=$type_oid"
+
     # 3. merge them in one sorted-strings (sstable) file
     set output_data ""
     set pos 0
@@ -543,8 +548,8 @@ proc ::persistence::fs::compact {type_oid todelete_dirsVar} {
     foreach {row_key slicelist} $multirow_slicelist {
 
         # log -----
-        log fs::compact,row_key=$row_key
-        log slicelist=$slicelist
+        # log fs::compact,row_key=$row_key
+        # log slicelist=$slicelist
 
         set row_startpos $pos
 
@@ -707,19 +712,6 @@ if { [use_p "server"] && [setting_p "sstable"] } {
             }
 
             end_batch
-
-            # see storage_ss.tcl
-            foreach type_oid $type_oids {
-                log "merging sstables for $type_oid"
-                if { [catch {
-                    ::persistence::ss::compact $type_oid
-                } errmsg] } {
-                    log errmsg=$errmsg
-                    log errorInfo=$::errorInfo
-                    log exiting
-                    exit
-                }
-            }
 
         }
 
