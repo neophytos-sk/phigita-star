@@ -91,6 +91,10 @@ proc ::persistence::ss::read_sstable {dataVar row_endpos file_i {lambdaExpr ""}}
 
 }
 
+# proc ::persistence::ss::get_leafs {path {direction "0"} {limit ""}} {
+#     return [resolve_latest_revs [get_files $path]]
+# }
+
 proc ::persistence::ss::get_files_helper {path {direction "0"} {limit ""}} {
     set type_oid [type_oid $path]
 
@@ -117,6 +121,7 @@ proc ::persistence::ss::get_subdirs_helper {path} {
         if { $row_key_prefix ne {} } {
 
             # BUG:
+            #
             # fs::get_leafs will take care of this case
             # when it comes to using the ss::get_files_helper proc,
             # yet this not entirely acceptable and it would have to be fixed,
@@ -124,11 +129,10 @@ proc ::persistence::ss::get_subdirs_helper {path} {
             # get_leafs won't call get_files but it would iterate over the subdir_paths
             # that ss::get_subdirs (fs::get_subdirs + ss::get_subdirs_helper) returned
             # for feed_reader->ls --lang el.utf8
-            #
 
             return
 
-            if { [info exists sstable_item_rows(${row_key_prefix})] } {
+            if { $delim eq {} && [info exists sstable_item_rows(${row_key_prefix})] } {
                 log row_key_prefix=$row_key_prefix
                 return ${type_oid}/${row_key_prefix}/+
             }
@@ -345,6 +349,9 @@ proc ::persistence::ss::get_subdirs {path} {
     }
 
     set ss_subdirs [::persistence::ss::get_subdirs_helper $path]
+
+    # log fs_subdirs=$fs_subdirs
+    # log ss_subdirs=$ss_subdirs
 
     return [lsort -unique [concat $fs_subdirs $ss_subdirs]]
 }

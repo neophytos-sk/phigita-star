@@ -45,6 +45,7 @@ namespace eval ::persistence::common {
         cur_transaction_id \
         split_xid \
         get_leafs \
+        resolve_latest_revs \
         get_multirow \
         get_multirow_names \
         get_filename \
@@ -705,10 +706,13 @@ if { [setting_p "mvcc"] } {
         # log get_leafs,path=$path
 
         set revs [call_orig $path]
+        return [resolve_latest_revs $revs]
+    }
+
+    proc ::persistence::common::resolve_latest_revs {revs} {
 
         array set latest_rev [list]
         foreach rev $revs {
-            # log rev=$rev
             lassign [split $rev "@"] oid micros
 
             # check timestamp based on the oid
