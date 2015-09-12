@@ -91,8 +91,7 @@ proc ::persistence::ss::read_sstable {dataVar row_endpos file_i {lambdaExpr ""}}
 
 }
 
-
-proc ::persistence::ss::get_files_helper {path} {
+proc ::persistence::ss::get_files_helper {path {direction "0"} {limit ""}} {
     set type_oid [type_oid $path]
 
     if { [load_sstable $type_oid] } {
@@ -106,14 +105,37 @@ proc ::persistence::ss::get_files_helper {path} {
 proc ::persistence::ss::get_subdirs_helper {path} {
 
     set type_oid [type_oid $path]
-    if { [load_sstable $type_oid sstable_itemVar] } {
+    if { [load_sstable $type_oid sstable_itemVar sstable_item_colsVar sstable_item_rowsVar] } {
         upvar $sstable_itemVar sstable_item
-        lassign [split_oid $path] ks cf_axis row_key_prefix
+        upvar $sstable_item_rowsVar sstable_item_rows
+
+        lassign [split_oid $path] ks cf_axis row_key_prefix delim
+
+        # row_key_prefix either empty or actual row key 
+        # i.e. not as much a prefix
+
         if { $row_key_prefix ne {} } {
-            # as of 2015-09-12 the only subdir queries
-            # are for all the row keys in a type_oid (ks/cf_axis)
+
+            # BUG:
+            # fs::get_leafs will take care of this case
+            # when it comes to using the ss::get_files_helper proc,
+            # yet this not entirely acceptable and it would have to be fixed,
+            # in particular, when fs::get_subdirs returns a non-empty list, 
+            # get_leafs won't call get_files but it would iterate over the subdir_paths
+            # that ss::get_subdirs (fs::get_subdirs + ss::get_subdirs_helper) returned
+            # for feed_reader->ls --lang el.utf8
+            #
+
             return
+
+            if { [info exists sstable_item_rows(${row_key_prefix})] } {
+                log row_key_prefix=$row_key_prefix
+                return ${type_oid}/${row_key_prefix}/+
+            }
+            return
+
         }
+
         set row_keys [map {x y} $sstable_item(rows) {set x}]
         set result [list]
         foreach row_key $row_keys {
@@ -164,6 +186,7 @@ proc ::persistence::ss::load_sstable {
     type_oid 
     {sstable_itemVarVar ""} 
     {sstable_item_colsVarVar ""}
+    {sstable_item_rowsVarVar ""}
 } {
 
     if { $type_oid eq {sysdb/sstable.by_name} } {
@@ -180,12 +203,18 @@ proc ::persistence::ss::load_sstable {
         upvar $sstable_item_colsVarVar sstable_item_colsVar
     }
 
+    if { $sstable_item_rowsVarVar ne {} } {
+        upvar $sstable_item_rowsVarVar sstable_item_rowsVar
+    }
+
     set nsp [namespace current]
     set sstable_itemVar "${nsp}::sstable_item__${type_oid}"
     set sstable_item_colsVar "${nsp}::sstable_item_cols__${type_oid}"
+    set sstable_item_rowsVar "${nsp}::sstable_item_rows__${type_oid}"
 
     upvar $sstable_itemVar sstable_item
     upvar $sstable_item_colsVar sstable_item_cols
+    upvar $sstable_item_rowsVar sstable_item_rows
     
     variable __cbt_TclObj
 
@@ -206,6 +235,11 @@ proc ::persistence::ss::load_sstable {
         set __cbt_TclObj(${type_oid},cols) [::cbt::create $::cbt::STRING]
 
         array set sstable_item_cols $sstable_item(cols)
+        array set sstable_item_rows $sstable_item(rows)
+
+        # To save some memory, comment in the following lines:
+        # unset sstable_item(cols)
+        # unset sstable_item(rows)
 
         ::cbt::set_bytes $__cbt_TclObj(${type_oid},cols) [array names sstable_item_cols]
 
@@ -286,7 +320,7 @@ proc ::persistence::ss::readfile {rev args} {
     }
 
 }
-    
+
 proc ::persistence::ss::get_files {path} {
     # log "ss::get_files $path"
     set fs_filelist [::persistence::fs::get_files $path]

@@ -538,7 +538,7 @@ proc ::persistence::fs::compact {type_oid todelete_dirsVar} {
         return
     }
 
-    # log "compacting type_oid=$type_oid"
+    log "compacting type_oid=$type_oid"
 
     # 3. merge them in one sorted-strings (sstable) file
     set output_data ""
