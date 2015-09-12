@@ -95,7 +95,7 @@ proc ::persistence::ss::read_sstable {dataVar row_endpos file_i {lambdaExpr ""}}
 proc ::persistence::ss::get_files_helper {path} {
     set type_oid [type_oid $path]
 
-    if { [load_sstable $type_oid sstable_item] } {
+    if { [load_sstable $type_oid] } {
         variable __cbt_TclObj
         set result [::cbt::prefix_match $__cbt_TclObj(${type_oid},cols) $path]
         return $result
@@ -106,7 +106,8 @@ proc ::persistence::ss::get_files_helper {path} {
 proc ::persistence::ss::get_subdirs_helper {path} {
 
     set type_oid [type_oid $path]
-    if { [load_sstable $type_oid sstable_item] } {
+    if { [load_sstable $type_oid sstable_itemVar] } {
+        upvar $sstable_itemVar sstable_item
         lassign [split_oid $path] ks cf_axis row_key_prefix
         if { $row_key_prefix ne {} } {
             # as of 2015-09-12 the only subdir queries
@@ -122,32 +123,6 @@ proc ::persistence::ss::get_subdirs_helper {path} {
     }
 
     error "sstable for type_oid (=$type_oid) not loaded"
-
-    # log get_subdirs,path=$path
-
-    set len [llength [split $path {/}]]
-
-    # set path [string trimright $path {/}]
-
-    set files [get_files "${path}/"]  ;# slash is important
-
-    # log get_subdirs,ls=$files
-
-    set result [list]
-    foreach oid $files {
-        set oid_parts [split $oid {/}] 
-        set subdir [join [lrange $oid_parts 0 $len] {/}]
-        lappend result $subdir 
-        if { [llength [split $subdir {@}]] == 2 } {
-            return
-        }
-        
-    }
-
-    #log get_subdirs,result=$result
-
-    return [lsort -unique ${result}]
-
 }
 
 
@@ -185,7 +160,11 @@ proc ::persistence::ss::get_sstable_rev {rev} {
     return [lindex $sstable_revs 0]
 }
 
-proc ::persistence::ss::load_sstable {type_oid {sstable_itemVar ""}} {
+proc ::persistence::ss::load_sstable {
+    type_oid 
+    {sstable_itemVarVar ""} 
+    {sstable_item_colsVarVar ""}
+} {
 
     if { $type_oid eq {sysdb/sstable.by_name} } {
         return 0
@@ -193,14 +172,22 @@ proc ::persistence::ss::load_sstable {type_oid {sstable_itemVar ""}} {
 
     # log "!!! load_sstable,type_oid=$type_oid"
 
-    set varname "sstable_data__${type_oid}"
-
-    if { $sstable_itemVar ne {} } {
-        upvar $sstable_itemVar sstable_item
+    if { $sstable_itemVarVar ne {} } {
+        upvar $sstable_itemVarVar sstable_itemVar
     }
+
+    if { $sstable_item_colsVarVar ne {} } {
+        upvar $sstable_item_colsVarVar sstable_item_colsVar
+    }
+
+    set nsp [namespace current]
+    set sstable_itemVar "${nsp}::sstable_item__${type_oid}"
+    set sstable_item_colsVar "${nsp}::sstable_item_cols__${type_oid}"
+
+    upvar $sstable_itemVar sstable_item
+    upvar $sstable_item_colsVar sstable_item_cols
     
     variable __cbt_TclObj
-    variable $varname
 
     if { ![info exists __cbt_TclObj(${type_oid},cols)] } {
         set sstable_rev [get_sstable_rev $type_oid]
@@ -214,20 +201,23 @@ proc ::persistence::ss::load_sstable {type_oid {sstable_itemVar ""}} {
 
         #log sstable_rev=$sstable_rev
 
-        array set sstable_item [set $varname [::sysdb::sstable_t get $sstable_rev]]
+        array set sstable_item [::sysdb::sstable_t get $sstable_rev]
 
         set __cbt_TclObj(${type_oid},cols) [::cbt::create $::cbt::STRING]
-        # set __cbt_TclObj(${type_oid},rows) [::cbt::create $::cbt::STRING]
 
-        ::cbt::set_bytes $__cbt_TclObj(${type_oid},cols) \
-            [map {x y} $sstable_item(cols) {set x}]
+        array set sstable_item_cols $sstable_item(cols)
 
-        # ::cbt::set_bytes $__cbt_TclObj(${type_oid},rows) \
-        #    [map {x y} $sstable_item(rows) {set x}]
+        ::cbt::set_bytes $__cbt_TclObj(${type_oid},cols) [array names sstable_item_cols]
+
+        # ::cbt::set_bytes $__cbt_TclObj(${type_oid},cols) \
+        #    [map {x y} [set ${sstable_itemVar}(cols)] {set x}]
+
 
         return 1
+
     } else {
-        array set sstable_item [set $varname]
+        assert { [array size sstable_item] }
+        assert { [array size sstable_item_cols] }
     }
     return 2
 }
@@ -237,13 +227,13 @@ proc ::persistence::ss::readfile_helper {rev args} {
 
     set type_oid [type_oid $rev]
 
-    if { ![load_sstable $type_oid sstable_item] } {
+    if { ![load_sstable $type_oid sstable_itemVar sstable_item_colsVar] } {
         error "sstable loading error"
     }
+    upvar $sstable_itemVar sstable_item
+    upvar $sstable_item_colsVar sstable_item_cols
 
-    array set sstable_cols $sstable_item(cols)
-
-    set rev_startpos $sstable_cols(${rev})
+    set rev_startpos $sstable_item_cols(${rev})
 
     # seek _fp $rev_startpos start
     set pos $rev_startpos
@@ -260,8 +250,8 @@ proc ::persistence::ss::readfile_helper {rev args} {
     binary scan $sstable_item(data) @${pos}a${len} ss_data
     incr pos $len
 
-    unset sstable_cols
-    unset sstable_item
+
+    # unset sstable_cols
 
     # log "!!! returning ss_data for rev=$rev"
 
