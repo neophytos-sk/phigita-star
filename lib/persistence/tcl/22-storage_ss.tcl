@@ -91,13 +91,23 @@ proc ::persistence::ss::read_sstable {dataVar row_endpos file_i {lambdaExpr ""}}
 
 }
 
-# proc ::persistence::ss::get_leafs {path {direction "0"} {limit ""}} {
-#     return [resolve_latest_revs [get_files $path]]
-# }
+proc ::persistence::ss::get_leafs {path {direction "0"} {limit ""}} {
+    set fs_leafs [::persistence::fs::get_leafs $path]
+    if { [string match "sysdb/*" $path] } {
+        return $fs_leafs
+    }
 
-proc ::persistence::ss::get_files_helper {path {direction "0"} {limit ""}} {
+    set ss_leafs [::persistence::ss::get_leafs_helper $path]
+    if { $fs_leafs eq {} } {
+        return [resolve_latest_revs $ss_leafs]
+    }
+
+    set result [lsort -unique [concat $fs_leafs $ss_leafs]]
+    return [resolve_latest_revs $result]
+}
+
+proc ::persistence::ss::get_leafs_helper {path {direction "0"} {limit ""}} {
     set type_oid [type_oid $path]
-
     if { [load_sstable $type_oid] } {
         variable __cbt_TclObj
         set result [::cbt::prefix_match $__cbt_TclObj(${type_oid},cols) $path]
@@ -129,6 +139,10 @@ proc ::persistence::ss::get_subdirs_helper {path} {
             # get_leafs won't call get_files but it would iterate over the subdir_paths
             # that ss::get_subdirs (fs::get_subdirs + ss::get_subdirs_helper) returned
             # for feed_reader->ls --lang el.utf8
+            #
+            # UPDATE: introduced ss::get_leafs that resolves this issue but kept the
+            # comment as a reminder when mem/commitlog is rewritten/refactored
+            #
 
             return
 
@@ -394,7 +408,7 @@ proc ::persistence::ss::compact {type_oid} {
     set sstable_revs [lsort -command ::persistence::compare_files $sstable_revs]
 
     if { [llength $sstable_revs] <= 1 } {
-        # log "already merged $type_oid"
+        log "-> type_oid (=$type_oid) already merged"
         return
     }
 
@@ -558,14 +572,15 @@ proc ::persistence::ss::compact_all {} {
             set type_oid [join_oid $object_type(ks) $cf_axis]
             # if { $type_oid ne {sysdb/sstable.by_name} }
             # if { $object_type(ks) ne {sysdb} } {
-                compact $type_oid
+                # compact $type_oid
                 lappend type_oids $type_oid
             # }
+            array unset idx
         }
         array unset object_type
 
         foreach type_oid $type_oids {
-            # log "merging sstables for $type_oid"
+            log "merging sstables for $type_oid"
             if { [catch {
                 ::persistence::ss::compact $type_oid
             } errmsg] } {
