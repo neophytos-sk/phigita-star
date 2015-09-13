@@ -1373,8 +1373,9 @@ proc ::feed_reader::load_item {itemVar urlsha1} {
     #   in this case, urlsha1 and contentsha1) in a given OID.
     #
 
-    set options(expand_fn) {latest_mtime}
 
+    set options(order_by) [list timestamp decreasing "integer"]
+    set options(limit) 1
     set oid [::newsdb::news_item_t 1row $where_clause options]
     array set item [::newsdb::news_item_t get $oid]
 

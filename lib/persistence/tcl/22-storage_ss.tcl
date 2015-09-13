@@ -91,6 +91,12 @@ proc ::persistence::ss::read_sstable {dataVar row_endpos file_i {lambdaExpr ""}}
 
 }
 
+# Even though ss::get_leafs helps work around the issue
+# discussed in ss::get_subdirs_helper, it lacks
+# when it comes to (generalized) providence for retrieving 
+# the list of subdirs and leafs from distributed nodes
+# compared to the fs::get_leafs.
+
 proc ::persistence::ss::get_leafs {path {direction "0"} {limit ""}} {
     set fs_leafs [::persistence::fs::get_leafs $path]
     if { [string match "sysdb/*" $path] } {
@@ -102,7 +108,7 @@ proc ::persistence::ss::get_leafs {path {direction "0"} {limit ""}} {
         return [resolve_latest_revs $ss_leafs]
     }
 
-    set result [lsort -unique [concat $fs_leafs $ss_leafs]]
+    set result [lsort -unique -command ::persistence::compare_files [concat $fs_leafs $ss_leafs]]
     return [resolve_latest_revs $result]
 }
 
