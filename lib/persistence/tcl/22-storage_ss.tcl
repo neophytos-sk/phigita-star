@@ -20,7 +20,7 @@ namespace eval ::persistence::ss {
 
     namespace __copy ::persistence::common
 
-    namespace path "::persistence::commitlog ::persistence::fs ::persistence::common"
+    namespace path "::persistence::commitlog ::persistence::common"
 
     variable base_dir
     set base_dir [config get ::persistence base_dir]
@@ -31,6 +31,11 @@ proc ::persistence::ss::define_cf {args} {}
 
 proc ::persistence::ss::set_column {args} {
     return [::persistence::commitlog::set_column {*}${args}]
+}
+
+proc ::persistence::ss::readfile {args} {
+    log readfile,called
+    return [::persistence::commitlog::readfile {*}${args}]
 }
 
 proc ::persistence::ss::begin_batch {args} {
@@ -115,21 +120,25 @@ proc ::persistence::ss::read_sstable {dataVar row_endpos file_i {lambdaExpr ""}}
 # compared to the fs::get_leafs.
 
 proc ::persistence::ss::get_leafs {path {direction "0"} {limit ""}} {
-    set fs_leafs [::persistence::fs::get_leafs $path]
-    if { [string match "sysdb/*" $path] } {
-        return $fs_leafs
-    }
+    # set fs_leafs [::persistence::fs::get_leafs $path]
+    # if { [string match "sysdb/*" $path] } {
+    #     return $fs_leafs
+    # }
 
     # set cl_leafs [::persistence::commitlog::get_leafs $path]
     set commitlog_leafs [::persistence::commitlog::get_leafs $path]
-    log commitlog_leafs=$commitlog_leafs
+    # log commitlog_leafs=$commitlog_leafs
 
     set ss_leafs [::persistence::ss::get_leafs_helper $path]
-    if { $fs_leafs eq {} } {
+    if { $commitlog_leafs eq {} } {
         return [resolve_latest_revs $ss_leafs]
     }
 
-    set result [lsort -unique -command ::persistence::compare_files [concat $fs_leafs $ss_leafs]]
+    set result [lsort -unique -command ::persistence::compare_files \
+        [concat $commitlog_leafs $ss_leafs]]
+
+    # log result,resolved=[resolve_latest_revs $result]
+
     return [resolve_latest_revs $result]
 }
 
@@ -189,7 +198,9 @@ proc ::persistence::ss::get_subdirs_helper {path} {
         return $result
     }
 
-    error "sstable for type_oid (=$type_oid) not loaded"
+    log "sstable for type_oid (=$type_oid) not loaded"
+
+    return
 }
 
 
@@ -361,7 +372,7 @@ proc ::persistence::ss::readfile {rev args} {
         set ss_data [::persistence::ss::readfile_helper $rev {*}$codec_conf]
         return $ss_data
     } else {
-        return [::persistence::fs::readfile $rev {*}$codec_conf]
+        return [::persistence::commitlog::readfile $rev {*}$codec_conf]
     }
 
 }
@@ -384,26 +395,25 @@ proc ::persistence::ss::get_files {path} {
 }
 
 proc ::persistence::ss::get_subdirs {path} {
-    set fs_subdirs [::persistence::fs::get_subdirs $path]
-    if { [string match "sysdb/*" $path] } {
-        return $fs_subdirs
-    }
+    # set fs_subdirs [::persistence::fs::get_subdirs $path]
+    # if { [string match "sysdb/*" $path] } {
+    #     return $fs_subdirs
+    # }
+
+    set commitlog_subdirs [::persistence::commitlog::get_subdirs $path]
+    # log commitlog_subdirs=$commitlog_subdirs
 
     set ss_subdirs [::persistence::ss::get_subdirs_helper $path]
 
     # log fs_subdirs=$fs_subdirs
     # log ss_subdirs=$ss_subdirs
 
-    return [lsort -unique [concat $fs_subdirs $ss_subdirs]]
+    return [lsort -unique [concat $commitlog_subdirs $ss_subdirs]]
 }
 
 
 proc ::persistence::ss::exists_p {path} {
-    if { [::persistence::ss::exists_p_helper $path] } {
-        return 1
-    } else {
-        return [::persistence::fs::exists_p $path]
-    }
+    return [expr { [get_leafs $path] ne {} }]
 }
 
 proc ::persistence::ss::init {} {}
@@ -622,5 +632,5 @@ proc ::persistence::ss::compact_all {} {
 
 }
 
-after_package_load persistence ::persistence::ss::compact_all
+# after_package_load persistence ::persistence::ss::compact_all
 

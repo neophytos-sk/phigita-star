@@ -13,7 +13,9 @@ namespace eval ::persistence::commitlog {
     variable __mem_new
     variable __rev_to_mem_id
     variable __fp
+    variable __mem_row_keys
 
+    array set __mem_row_keys [list]
     set __fp ""
     set __mem_id 0
     array set __mem [list]
@@ -32,7 +34,7 @@ namespace eval ::persistence::commitlog {
 
 proc ::persistence::commitlog::init {} {
 
-    log "initializing commitlog..."
+    # log "initializing commitlog..."
 
     open_commitlog
     load_commitlog
@@ -45,27 +47,59 @@ proc ::persistence::commitlog::get_leafs {path {direction "0"} {limit ""}} {
     set result [list]
     set type_oid [type_oid $path]
     if { [info exists __mem_cur(${type_oid})] } {
-        set result [::cbt::prefix_match $__mem_cur(${type_oid}) $path]
         # log "!!! path=$path"
-        # log "!!! leafs=[::cbt::prefix_match $__mem_cur(${type_oid}) ""]"
+        # log "!!! leafs=[join [::cbt::prefix_match $__mem_cur(${type_oid}) ""] \n]"
+        set result [::cbt::prefix_match $__mem_cur(${type_oid}) $path]
     } else {
-        log "no such type_oid (=$type_oid)"
+        # log "no data for type_oid (=$type_oid) yet"
     }
 
-    log [namespace current],get_leafs,result=$result
+    # log [namespace current],get_leafs,result=$result
 
     return $result
 }
+
+proc ::persistence::commitlog::get_subdirs {path} {
+    set type_oid [type_oid $path]
+    lassign [split_oid $path] ks cf_axis row_key_prefix delim
+
+    # row_key_prefix either empty or actual row key 
+    # i.e. not as much a prefix
+
+    if { $row_key_prefix ne {} } {
+        # get_leafs is expected to be called directly in this case
+        return
+    }
+
+    variable __mem_row_keys
+
+    set row_keys [lsort $__mem_row_keys(${type_oid})]
+    set result [list]
+    foreach row_key $row_keys {
+        lappend result ${type_oid}/${row_key}
+    }
+    return $result
+
+}
                                          
-proc ::persistence::commitlog::set_mem {instr rev data xid codec_conf} {
+proc ::persistence::commitlog::set_mem {instr oid data xid codec_conf} {
 
     variable __mem_id
     variable __mem
     variable __mem_tmp
     variable __rev_to_mem_id
+    variable __mem_row_keys
+    variable __mem_num_cols
+
+    set rev ""
+    if { $oid ne {} } {
+        lassign [split_xid $xid] micros pid n_mutations mtime
+        set rev ${oid}@${micros}
+    }
 
     incr __mem_id
     set __mem(${__mem_id},instr)    $instr
+    set __mem(${__mem_id},oid)      $oid
     set __mem(${__mem_id},rev)      $rev
     set __mem(${__mem_id},data)     $data
     set __mem(${__mem_id},xid)      $xid
@@ -73,13 +107,23 @@ proc ::persistence::commitlog::set_mem {instr rev data xid codec_conf} {
 
     lappend __mem_tmp(${xid}) ${__mem_id}
 
-    set __rev_to_mem_id(${rev}) ${__mem_id}
+    if { $oid ne {} } {
+        set __rev_to_mem_id(${rev}) ${__mem_id}
+        lassign [split_oid $rev] ks cf_axis row_key
+        set type_oid [type_oid $rev]
+        if { ![info exists __mem_num_cols(${type_oid},${row_key})] } {
+            lappend __mem_row_keys(${type_oid}) ${row_key}
+        }
+        incr __mem_num_cols(${type_oid},${row_key})
+    }
 
     return ${__mem_id}
 
 }
 
-proc ::persistence::commitlog::readfile {rev} {
+proc ::persistence::commitlog::readfile {rev args} {
+    # set codec_conf $args
+
     variable __mem
     variable __rev_to_mem_id
 
@@ -90,6 +134,7 @@ proc ::persistence::commitlog::readfile {rev} {
 proc ::persistence::commitlog::unset_mem {mem_id} {
     variable __mem
     unset __mem(${mem_id},instr)
+    unset __mem(${mem_id},oid)
     unset __mem(${mem_id},rev)
     unset __mem(${mem_id},data)
     unset __mem(${mem_id},xid)
@@ -101,7 +146,7 @@ proc ::persistence::commitlog::write_to_new {xids {fsync_p "1"}} {
     variable __mem_tmp
     variable __mem_new
 
-    # set savepos [tell $__fp]
+    set savepos [tell $__fp]
 
     foreach xid ${xids} {
         foreach mem_id $__mem_tmp(${xid}) {
@@ -112,7 +157,7 @@ proc ::persistence::commitlog::write_to_new {xids {fsync_p "1"}} {
         }
     }
 
-    # logpoint $savepos
+    logpoint $savepos
 }
 
 proc ::persistence::commitlog::delete_from_tmp {xids} {
@@ -187,9 +232,10 @@ proc ::persistence::commitlog::open_commitlog {} {
         return
     }
 
-    log "opening commitlog..."
+    # log "opening commitlog..."
 
     set filename [::persistence::common::get_filename "CommitLog"]
+    file mkdir [file dirname $filename]
     set exists_p [file exists $filename]
 
     if { $exists_p } {
@@ -243,7 +289,7 @@ proc ::persistence::commitlog::write_to_commitlog {mem_id} {
     variable __mem
 
     ::util::io::write_string $__fp $__mem(${mem_id},instr)
-    ::util::io::write_string $__fp $__mem(${mem_id},rev)
+    ::util::io::write_string $__fp $__mem(${mem_id},oid)
     ::util::io::write_string $__fp $__mem(${mem_id},data)
     ::util::io::write_string $__fp $__mem(${mem_id},xid)
     ::util::io::write_string $__fp $__mem(${mem_id},codec_conf)
@@ -282,7 +328,7 @@ proc ::persistence::commitlog::load_commitlog {} {
 
     assert { ${__fp} ne {} }
 
-    log "loading commitlog..."
+    # log "loading commitlog..."
 
     seek $__fp 0 start
     set pos1 [::util::io::read_int $__fp]
