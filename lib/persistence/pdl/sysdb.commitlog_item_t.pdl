@@ -28,6 +28,10 @@ attributes {{
     null_p "0"
     immu_p "1"
 } {
+    name "instr"
+    null_p "0"
+    immu_p "1"
+} {
     name "oid"
     null_p "0"
     immu_p "1"
@@ -36,7 +40,7 @@ attributes {{
     null_p "0"
     immu_p "1"
 } {
-    name "trans_id"
+    name "xid"
     null_p "0"
     immu_p "1"
 } {

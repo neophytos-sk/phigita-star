@@ -13,7 +13,8 @@ source [file join $dir orm_codec.tcl]
 
 namespace eval ::persistence::orm {
 
-    namespace path "::persistence::[setting "storage_type"]"
+    # namespace path "::persistence::[setting "storage_type"]"
+    namespace path "::persistence::ss"
 
     ##
     # import encode / decode procs

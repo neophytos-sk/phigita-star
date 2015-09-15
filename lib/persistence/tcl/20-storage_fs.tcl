@@ -503,8 +503,8 @@ proc ::persistence::fs::init {} {
     # exit
 }
 
-proc ::persistence::fs::compact {type_oid todelete_dirsVar} {
-    upvar $todelete_dirsVar todelete_dirs
+proc ::persistence::fs::compact {type_oid todelete_rowsVar} {
+    upvar $todelete_rowsVar todelete_rows
 
     # assert { [is_type_oid_p $type_oid] }
 

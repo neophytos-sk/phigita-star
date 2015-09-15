@@ -330,8 +330,11 @@ proc ::persistence::load_type {specVar} {
     namespace eval $spec(nsp) {
         # see core/tcl/namespace.tcl for details about "mixin" namespaces
         namespace __mixin ::persistence::orm
-        set storage_type [config get ::persistence storage_type]
-        namespace path "::persistence::${storage_type}"
+
+        #set storage_type [config get ::persistence storage_type]
+        #namespace path "::persistence::${storage_type}"
+
+        namespace path "::persistence::ss"
     }
     namespace upvar $spec(nsp) __spec __spec
     array set __spec [array get spec]

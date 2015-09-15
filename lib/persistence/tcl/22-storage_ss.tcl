@@ -4,46 +4,33 @@ if { ![use_p "server"] || ![setting_p "sstable"] } {
 }
 
 namespace eval ::persistence::ss {
-    #namespace import ::persistence::common::split_oid
-    #namespace import ::persistence::common::join_oid
-    #namespace import ::persistence::common::type_oid
-    #namespace import ::persistence::common::typeof_oid
-    #namespace import ::persistence::common::get_cur_filename
-    #namespace import ::persistence::common::is_column_rev_p
-    #namespace import ::persistence::common::is_link_rev_p
-
-    # namespace __copy ::persistence::fs
-    # rename get_leafs fs.get_leafs
-
-    # namespace __copy ::persistence::commitlog
-    # rename get_leafs commitlog.get_leafs
 
     namespace __copy ::persistence::common
 
-    namespace path "::persistence::commitlog ::persistence::common"
-
     variable base_dir
     set base_dir [config get ::persistence base_dir]
+
+    variable base_nsp
+    set base_nsp [config get ::persistence base_nsp]
+
 }
 
 proc ::persistence::ss::define_ks {args} {}
 proc ::persistence::ss::define_cf {args} {}
 
 proc ::persistence::ss::set_column {args} {
-    return [::persistence::commitlog::set_column {*}${args}]
-}
-
-proc ::persistence::ss::readfile {args} {
-    log readfile,called
-    return [::persistence::commitlog::readfile {*}${args}]
+    variable base_nsp
+    return [${base_nsp}::set_column {*}${args}]
 }
 
 proc ::persistence::ss::begin_batch {args} {
-    return [::persistence::commitlog::begin_batch {*}${args}]
+    variable base_nsp
+    return [${base_nsp}::begin_batch {*}${args}]
 }
 
 proc ::persistence::ss::end_batch {args} {
-    return [::persistence::commitlog::end_batch {*}${args}]
+    variable base_nsp
+    return [${base_nsp}::end_batch {*}${args}]
 }
 
 proc ::persistence::ss::get_mtime {rev} {
@@ -120,24 +107,23 @@ proc ::persistence::ss::read_sstable {dataVar row_endpos file_i {lambdaExpr ""}}
 # compared to the fs::get_leafs.
 
 proc ::persistence::ss::get_leafs {path {direction "0"} {limit ""}} {
-    # set fs_leafs [::persistence::fs::get_leafs $path]
-    # if { [string match "sysdb/*" $path] } {
-    #     return $fs_leafs
-    # }
+    variable base_nsp
 
-    # set cl_leafs [::persistence::commitlog::get_leafs $path]
-    set commitlog_leafs [::persistence::commitlog::get_leafs $path]
-    # log commitlog_leafs=$commitlog_leafs
+    lassign [split_oid $path] ks
+    if { $ks eq {sysdb} } {
+        return [${base_nsp}::get_leafs $path]
+    }
+
+    set base_leafs [${base_nsp}::get_leafs $path]
 
     set ss_leafs [::persistence::ss::get_leafs_helper $path]
-    if { $commitlog_leafs eq {} } {
+
+    if { $base_leafs eq {} } {
         return [resolve_latest_revs $ss_leafs]
     }
 
     set result [lsort -unique -command ::persistence::compare_files \
-        [concat $commitlog_leafs $ss_leafs]]
-
-    # log result,resolved=[resolve_latest_revs $result]
+        [concat $base_leafs $ss_leafs]]
 
     return [resolve_latest_revs $result]
 }
@@ -198,7 +184,9 @@ proc ::persistence::ss::get_subdirs_helper {path} {
         return $result
     }
 
-    log "sstable for type_oid (=$type_oid) not loaded"
+    # sysdb column families are still using ::persistence::fs,
+    # i.e. no sstable, no entries in the commitlog
+    # log "sstable for type_oid (=$type_oid) not loaded"
 
     return
 }
@@ -372,7 +360,8 @@ proc ::persistence::ss::readfile {rev args} {
         set ss_data [::persistence::ss::readfile_helper $rev {*}$codec_conf]
         return $ss_data
     } else {
-        return [::persistence::commitlog::readfile $rev {*}$codec_conf]
+        variable base_nsp
+        return [${base_nsp}::readfile $rev {*}$codec_conf]
     }
 
 }
@@ -395,20 +384,21 @@ proc ::persistence::ss::get_files {path} {
 }
 
 proc ::persistence::ss::get_subdirs {path} {
-    # set fs_subdirs [::persistence::fs::get_subdirs $path]
-    # if { [string match "sysdb/*" $path] } {
-    #     return $fs_subdirs
-    # }
+    variable base_nsp
 
-    set commitlog_subdirs [::persistence::commitlog::get_subdirs $path]
-    # log commitlog_subdirs=$commitlog_subdirs
+    lassign [split_oid $path] ks
+    if { $ks eq {sysdb} } {
+        return [${base_nsp}::get_subdirs $path]
+    }
+
+    set base_subdirs [${base_nsp}::get_subdirs $path]
 
     set ss_subdirs [::persistence::ss::get_subdirs_helper $path]
 
     # log fs_subdirs=$fs_subdirs
     # log ss_subdirs=$ss_subdirs
 
-    return [lsort -unique [concat $commitlog_subdirs $ss_subdirs]]
+    return [lsort -unique [concat $base_subdirs $ss_subdirs]]
 }
 
 
@@ -416,7 +406,11 @@ proc ::persistence::ss::exists_p {path} {
     return [expr { [get_leafs $path] ne {} }]
 }
 
-proc ::persistence::ss::init {} {}
+proc ::persistence::ss::init {} {
+    variable base_nsp
+    ${base_nsp}::init
+    compact_all
+}
 
 # merge sstables in mem
 proc ::persistence::ss::compact {type_oid} {
@@ -593,8 +587,9 @@ proc ::persistence::ss::compact {type_oid} {
 
 
 proc ::persistence::ss::compact_all {} {
+    variable base_nsp
 
-    ::persistence::fs::compact_all
+    ${base_nsp}::compact_all
 
     set slicelist [::sysdb::object_type_t find]
 
@@ -607,11 +602,7 @@ proc ::persistence::ss::compact_all {} {
             array set idx $idx_data
             set cf_axis $object_type(cf).$idx(name)
             set type_oid [join_oid $object_type(ks) $cf_axis]
-            # if { $type_oid ne {sysdb/sstable.by_name} }
-            # if { $object_type(ks) ne {sysdb} } {
-                # compact $type_oid
-                lappend type_oids $type_oid
-            # }
+            lappend type_oids $type_oid
             array unset idx
         }
         array unset object_type
@@ -632,5 +623,5 @@ proc ::persistence::ss::compact_all {} {
 
 }
 
-# after_package_load persistence ::persistence::ss::compact_all
+after_package_load persistence ::persistence::ss::init
 
