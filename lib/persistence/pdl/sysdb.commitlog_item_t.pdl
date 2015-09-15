@@ -37,6 +37,7 @@ attributes {{
     immu_p "1"
 } {
     name "data"
+    type "bytearr"
     null_p "0"
     immu_p "1"
 } {

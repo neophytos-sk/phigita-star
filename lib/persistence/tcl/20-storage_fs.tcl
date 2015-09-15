@@ -636,8 +636,7 @@ proc ::persistence::fs::compact {type_oid todelete_rowsVar} {
     foreach row_key $row_keys {
         set row_oid [join_oid $ks $cf_axis $row_key]
         if { ![string match "sysdb/*" $row_oid] } {
-            set row_dir [get_cur_filename $row_oid]
-            lappend todelete_dirs $row_dir
+            lappend todelete_rows $row_oid
         }
     }
 
@@ -654,7 +653,7 @@ if { [use_p "server"] && [setting_p "sstable"] } {
 
     proc ::persistence::fs::compact_all {} {
 
-        set todelete_dirs [list]
+        set todelete_rows [list]
         set object_types [::sysdb::object_type_t find]
 
         assert { $object_types ne {} }
@@ -669,9 +668,8 @@ if { [use_p "server"] && [setting_p "sstable"] } {
                 array set idx $idx_data
                 set cf_axis $object_type(cf).$idx(name)
                 set type_oid [join_oid $object_type(ks) $cf_axis]
-                #if { $type_oid ne {sysdb/sstable.by_name} }
                 if { $object_type(ks) ne {sysdb} } {
-                    compact $type_oid todelete_dirs
+                    compact $type_oid todelete_rows
                     lappend type_oids $type_oid
                 }
             }
@@ -681,7 +679,7 @@ if { [use_p "server"] && [setting_p "sstable"] } {
             # as a row might still be referenced in a link of another cf_axis
 
             # ATTENTION: do not use with production data just yet
-            foreach todelete_dir $todelete_dirs {
+            foreach todelete_row $todelete_rows {
                 # deleting the given row dirs
                 # renders the storage_fs dependable
                 # on an implementation of
@@ -697,6 +695,7 @@ if { [use_p "server"] && [setting_p "sstable"] } {
                 # NOTE: consider deleting by marking the row as .gone
                 #
 
+                set todelete_dir [get_cur_filename $todelete_row]
                 set row_dir [file dirname $todelete_dir]
                 file delete -force $row_dir
                 # log "deleted row_dir (=$row_dir)"

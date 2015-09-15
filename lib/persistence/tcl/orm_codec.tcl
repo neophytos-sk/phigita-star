@@ -130,7 +130,6 @@ proc ::persistence::orm::codec_bin_3::encode {itemVar} {
             } else {
                 set attvalue [encoding convertto utf-8 $attvalue]
                 set len [string length $attvalue]
-                # V_OLD: set attvalue [binary format "A${len}" $attvalue]
             }
 
             set blob_p [value_if __attinfo($attname,blob_p) "0"]

@@ -15,6 +15,13 @@ namespace eval ::persistence::ss {
 
 }
 
+proc ::persistence::ss::init {} {
+    variable base_nsp
+    ${base_nsp}::init
+    compact_all
+}
+
+
 proc ::persistence::ss::define_ks {args} {}
 proc ::persistence::ss::define_cf {args} {}
 
@@ -272,8 +279,6 @@ proc ::persistence::ss::load_sstable {
             return 0
         }
 
-        #log sstable_rev=$sstable_rev
-
         array set sstable_item [::sysdb::sstable_t get $sstable_rev]
 
         set __cbt_TclObj(${type_oid},cols) [::cbt::create $::cbt::STRING]
@@ -404,12 +409,6 @@ proc ::persistence::ss::get_subdirs {path} {
 
 proc ::persistence::ss::exists_p {path} {
     return [expr { [get_leafs $path] ne {} }]
-}
-
-proc ::persistence::ss::init {} {
-    variable base_nsp
-    ${base_nsp}::init
-    compact_all
 }
 
 # merge sstables in mem
@@ -549,6 +548,9 @@ proc ::persistence::ss::compact {type_oid} {
         #log "merged file, row_key=$row_key row_endpos=$row_endpos row_startpos=$row_startpos"
 
     }
+
+    # assert { [llength $rows] % 2 == 0 }
+    # assert { [llength $cols] % 2 == 0 }
 
     # write merged sstable file
 

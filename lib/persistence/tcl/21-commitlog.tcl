@@ -114,6 +114,8 @@ proc ::persistence::commitlog::write_to_commitlog {mem_id} {
     variable __fp
     variable __mem
 
+    assert { $__fp ne {} }
+
     array set item [list]
     set item(commitlog_name)    $__mem(${mem_id},commitlog_name)
     set item(name)              $__mem(${mem_id},offset)
@@ -124,12 +126,6 @@ proc ::persistence::commitlog::write_to_commitlog {mem_id} {
     set item(codec_conf)        $__mem(${mem_id},codec_conf)
 
     ::util::io::write_string ${__fp} [::sysdb::commitlog_item_t encode item]
-
-    # ::util::io::write_string $__fp $__mem(${mem_id},instr)
-    # ::util::io::write_string $__fp $__mem(${mem_id},oid)
-    # ::util::io::write_string $__fp $__mem(${mem_id},data)
-    # ::util::io::write_string $__fp $__mem(${mem_id},xid)
-    # ::util::io::write_string $__fp $__mem(${mem_id},codec_conf)
 
     # TODO: if threshold exceeded:
     # 1. create new commitlog
@@ -179,18 +175,17 @@ proc ::persistence::commitlog::load_commitlog {} {
     array set seen [list]
     while { $pos1 < $pos2 } {
 
-        # ::util::io::read_string $__fp instr
-        # ::util::io::read_string $__fp oid
-        # ::util::io::read_string $__fp data
-        # ::util::io::read_string $__fp xid
-        # ::util::io::read_string $__fp codec_conf
-
-        ::util::io::read_string $__fp commitlog_item_data
-        array set item [::sysdb::commitlog_item_t decode $commitlog_item_data]
-
+        ::util::io::read_string ${__fp} commitlog_item_data
         set pos1 [tell $__fp]
 
-        set_mem $item(instr) $item(oid) $item(data) $item(xid) $item(codec_conf)
+        array set item [::sysdb::commitlog_item_t decode $commitlog_item_data]
+
+        set_mem             \
+            $item(instr)    \
+            $item(oid)      \
+            $item(data)     \
+            $item(xid)      \
+            $item(codec_conf)
 
         if { ![info exists seen($item(xid))] } {
             set seen($item(xid)) {}
@@ -198,6 +193,8 @@ proc ::persistence::commitlog::load_commitlog {} {
         }
 
         array unset item
+
+        unset commitlog_item_data
 
     }
 
@@ -270,8 +267,7 @@ proc ::persistence::commitlog::set_mem {instr oid data xid codec_conf} {
     variable __mem_num_cols
     variable __fp
 
-    # set offset [tell $__fp]
-    set offset "00000"
+    set offset [tell $__fp]
     set commitlog_name "CommitLog"
 
     set rev ""
@@ -393,17 +389,28 @@ proc ::persistence::commitlog::finalize_commit {xids} {
 
 proc ::persistence::commitlog::begin_batch {} {
     set xid [::persistence::fs::begin_batch]
-    set_mem "begin_batch" "" "" $xid ""
+
+    # indirect way to check if it is about a sysdb ks or not
+    variable __fp
+    if { $__fp ne {} } { 
+        set_mem "begin_batch" "" "" $xid ""
+    }
+
     return $xid
 }
 
 proc ::persistence::commitlog::end_batch {} {
     set xid [::persistence::fs::end_batch]
-    set_mem "end_batch" "" "" $xid ""
 
-    write_to_new $xid
-    delete_from_tmp $xid
-    finalize_commit $xid
+    # indirect way to check if it is about a sysdb ks or not
+    variable __fp
+    if { $__fp ne {} } {
+        set_mem "end_batch" "" "" $xid ""
+
+        write_to_new $xid
+        delete_from_tmp $xid
+        finalize_commit $xid
+    }
 
     return $xid
 }
@@ -502,13 +509,8 @@ proc ::persistence::commitlog::compact {type_oid todelete_rowsVar} {
         }
 
         set row_endpos $pos
-        # log "fs::compact sst,row_key=$row_key row_endpos=$row_endpos row_startpos=$row_startpos"
-        # log "\tfs::compact llen=[llength $slicelist]"
         append output_data [binary format i $row_startpos]
-
         incr pos 4
-
-        # log rows,row_key=$row_key
 
         lappend rows $row_key $row_endpos
 
@@ -524,8 +526,8 @@ proc ::persistence::commitlog::compact {type_oid todelete_rowsVar} {
     set name [binary encode base64 $type_oid]
     set round [clock microseconds]
 
-    # assert { $rows ne {} }
-    # assert { $cols ne {} }
+    # assert { [llength $rows] % 2 == 0 }
+    # assert { [llength $cols] % 2 == 0 }
 
     array set item [list]
     set item(name) $name
@@ -599,8 +601,10 @@ proc ::persistence::commitlog::compact_all {} {
             #
 
             set todelete_dir [get_cur_filename $todelete_row]
-            set row_dir [file dirname $todelete_dir]
-            file delete -force $row_dir
+            # TODO: delete_row $row_oid
+
+            # set row_dir [file dirname $todelete_dir]
+            # file delete -force $row_dir
             # log "deleted row_dir (=$row_dir)"
         }
 
@@ -613,3 +617,4 @@ proc ::persistence::commitlog::compact_all {} {
 
 }
 
+# ::persistence::commitlog::init

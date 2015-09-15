@@ -18,11 +18,11 @@ attributes {{
     null_p 0
 } {
     name "rows"
-    type "bytearr"
+    type "varchar"
     null_p 0
 } {
     name "cols"
-    type "bytearr"
+    type "varchar"
     null_p 0
 } {
     name "rows_bf"
