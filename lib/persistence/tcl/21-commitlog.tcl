@@ -73,7 +73,7 @@ proc ::persistence::commitlog::get_subdirs {path} {
 
     variable __mem_row_keys
 
-    set row_keys [lsort $__mem_row_keys(${type_oid})]
+    set row_keys [lsort [value_if __mem_row_keys(${type_oid}) ""]]
     set result [list]
     foreach row_key $row_keys {
         lappend result ${type_oid}/${row_key}
