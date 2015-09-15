@@ -18,7 +18,11 @@ namespace eval ::persistence::ss {
 proc ::persistence::ss::init {} {
     variable base_nsp
     ${base_nsp}::init
-    compact_all
+
+    # HERE: comment it back in one enc/dec issue 
+    # with commitlog_item_t is resolved
+    # compact_all
+
 }
 
 
