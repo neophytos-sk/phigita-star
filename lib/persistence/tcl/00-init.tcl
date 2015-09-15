@@ -14,12 +14,14 @@ config param base_dir "/web/data/mystore"
 config param use_server "off"
 config param use_threads "off"
 
-config param memtable "off"
 config param sstable "on"
+config param commitlog "on"
+
+config param memtable "off"
+config param write_ahead_log "off"  ;# DEPRECATED
 config param critbit_tree "off"
 config param bloom_filters "off"
 config param client_server "on"
-config param write_ahead_log "off"
 
 config param process_commitlog_millis "120000" ;# 120 secs
 

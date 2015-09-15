@@ -1,5 +1,25 @@
 proc ::tcl::namespace::__copy {imported_nsp {pattern "*"}} {
     set nsp [uplevel {namespace current}]
+
+    # copy imports
+    set procnames [namespace eval ${imported_nsp} { namespace import }]
+    foreach procname $procnames {
+        set origin [namespace eval ${imported_nsp} "namespace origin $procname"]
+        namespace eval ${nsp} "namespace import -force $origin"
+    }
+
+    # copy vars
+    set varnames [info vars ${imported_nsp}::*]
+    foreach varname $varnames {
+        set name [namespace tail $varname]
+        if { [array exists $varname] } {
+            array set ${nsp}::${name} [array get $varname]
+        } else {
+            set ${nsp}::${name} [set $varname]
+        }
+    }
+
+    # copy procs
     set procnames [info procs ${imported_nsp}::${pattern}]
     foreach procname $procnames {
         set procargnames [info args $procname]

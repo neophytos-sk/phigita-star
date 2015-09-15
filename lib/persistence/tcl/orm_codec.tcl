@@ -126,7 +126,6 @@ proc ::persistence::orm::codec_bin_3::encode {itemVar} {
         } else {
 
             if { $type eq {bytearr} } {
-                # OLD: set attvalue [binary encode base64 $attvalue]
                 set attvalue [binary format "a*" $attvalue]
             } else {
                 set attvalue [encoding convertto utf-8 $attvalue]

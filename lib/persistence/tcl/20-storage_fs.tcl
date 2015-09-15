@@ -300,14 +300,6 @@ proc ::persistence::fs::end_batch {} {
 
     assert { $xid ne {} }
 
-    # fs::end_batch
-    variable base_dir
-    set tmpdir [file join $base_dir tmp $xid]
-    set newdir [file join $base_dir new $xid]
-    set curdir [file join $base_dir cur]
-    file mkdir $newdir
-    set first [llength [split $tmpdir {/}]]
-
     # del_from_tmp call in fs::init deletes all
     # uncommitted xids, i.e. xids that
     # have no files copied to newdir at all
@@ -337,7 +329,6 @@ proc ::persistence::fs::end_batch {} {
 
         ::persistence::fs::delete_from_tmp $xid
 
-        # commit, common::end_batch $xid
         # log "fs::end_batch about to call common::end_batch"
         ::persistence::common::end_batch $xid
 

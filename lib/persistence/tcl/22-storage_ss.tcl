@@ -12,7 +12,15 @@ namespace eval ::persistence::ss {
     #namespace import ::persistence::common::is_column_rev_p
     #namespace import ::persistence::common::is_link_rev_p
 
-    namespace __copy ::persistence::fs
+    # namespace __copy ::persistence::fs
+    # rename get_leafs fs.get_leafs
+
+    # namespace __copy ::persistence::commitlog
+    # rename get_leafs commitlog.get_leafs
+
+    namespace __copy ::persistence::common
+
+    namespace path "::persistence::commitlog ::persistence::fs ::persistence::common"
 
     variable base_dir
     set base_dir [config get ::persistence base_dir]
@@ -20,9 +28,18 @@ namespace eval ::persistence::ss {
 
 proc ::persistence::ss::define_ks {args} {}
 proc ::persistence::ss::define_cf {args} {}
-# proc ::persistence::ss::set_column {rev data xid codec_conf} {
-#    ::persistence::fs::set_column $rev $data $xid $codec_conf
-# }
+
+proc ::persistence::ss::set_column {args} {
+    return [::persistence::commitlog::set_column {*}${args}]
+}
+
+proc ::persistence::ss::begin_batch {args} {
+    return [::persistence::commitlog::begin_batch {*}${args}]
+}
+
+proc ::persistence::ss::end_batch {args} {
+    return [::persistence::commitlog::end_batch {*}${args}]
+}
 
 proc ::persistence::ss::get_mtime {rev} {
     lassign [split_oid $rev] ks cf_axis row_key column_path ext ts
@@ -102,6 +119,10 @@ proc ::persistence::ss::get_leafs {path {direction "0"} {limit ""}} {
     if { [string match "sysdb/*" $path] } {
         return $fs_leafs
     }
+
+    # set cl_leafs [::persistence::commitlog::get_leafs $path]
+    set commitlog_leafs [::persistence::commitlog::get_leafs $path]
+    log commitlog_leafs=$commitlog_leafs
 
     set ss_leafs [::persistence::ss::get_leafs_helper $path]
     if { $fs_leafs eq {} } {
