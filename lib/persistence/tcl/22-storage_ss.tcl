@@ -18,11 +18,7 @@ namespace eval ::persistence::ss {
 proc ::persistence::ss::init {} {
     variable base_nsp
     ${base_nsp}::init
-
-    # HERE: comment it back in one enc/dec issue 
-    # with commitlog_item_t is resolved
-    # compact_all
-
+    compact_all
 }
 
 
@@ -152,9 +148,9 @@ proc ::persistence::ss::get_leafs_helper {path {direction "0"} {limit ""}} {
 proc ::persistence::ss::get_subdirs_helper {path} {
 
     set type_oid [type_oid $path]
-    if { [load_sstable $type_oid sstable_itemVar sstable_item_colsVar sstable_item_rowsVar] } {
-        upvar $sstable_itemVar sstable_item
-        upvar $sstable_item_rowsVar sstable_item_rows
+    if { [load_sstable $type_oid sstableVar sstable_colsVar sstable_rowsVar] } {
+        upvar $sstableVar sstable
+        upvar $sstable_rowsVar sstable_rows
 
         lassign [split_oid $path] ks cf_axis row_key_prefix delim
 
@@ -179,7 +175,7 @@ proc ::persistence::ss::get_subdirs_helper {path} {
 
             return
 
-            if { $delim eq {} && [info exists sstable_item_rows(${row_key_prefix})] } {
+            if { $delim eq {} && [info exists sstable_rows(${row_key_prefix})] } {
                 log row_key_prefix=$row_key_prefix
                 return ${type_oid}/${row_key_prefix}/+
             }
@@ -187,7 +183,7 @@ proc ::persistence::ss::get_subdirs_helper {path} {
 
         }
 
-        set row_keys [map {x y} $sstable_item(rows) {set x}]
+        set row_keys [map {x y} $sstable(rows) {set x}]
         set result [list]
         foreach row_key $row_keys {
             lappend result ${type_oid}/${row_key}
@@ -239,9 +235,9 @@ proc ::persistence::ss::get_sstable_rev {rev} {
 
 proc ::persistence::ss::load_sstable {
     type_oid 
-    {sstable_itemVarVar ""} 
-    {sstable_item_colsVarVar ""}
-    {sstable_item_rowsVarVar ""}
+    {sstableVarVar ""} 
+    {sstable_colsVarVar ""}
+    {sstable_rowsVarVar ""}
 } {
 
     if { $type_oid eq {sysdb/sstable.by_name} } {
@@ -250,26 +246,26 @@ proc ::persistence::ss::load_sstable {
 
     # log "!!! load_sstable,type_oid=$type_oid"
 
-    if { $sstable_itemVarVar ne {} } {
-        upvar $sstable_itemVarVar sstable_itemVar
+    if { $sstableVarVar ne {} } {
+        upvar $sstableVarVar sstableVar
     }
 
-    if { $sstable_item_colsVarVar ne {} } {
-        upvar $sstable_item_colsVarVar sstable_item_colsVar
+    if { $sstable_colsVarVar ne {} } {
+        upvar $sstable_colsVarVar sstable_colsVar
     }
 
-    if { $sstable_item_rowsVarVar ne {} } {
-        upvar $sstable_item_rowsVarVar sstable_item_rowsVar
+    if { $sstable_rowsVarVar ne {} } {
+        upvar $sstable_rowsVarVar sstable_rowsVar
     }
 
     set nsp [namespace current]
-    set sstable_itemVar "${nsp}::sstable_item__${type_oid}"
-    set sstable_item_colsVar "${nsp}::sstable_item_cols__${type_oid}"
-    set sstable_item_rowsVar "${nsp}::sstable_item_rows__${type_oid}"
+    set sstableVar "${nsp}::sstable__${type_oid}"
+    set sstable_colsVar "${nsp}::sstable_cols__${type_oid}"
+    set sstable_rowsVar "${nsp}::sstable_rows__${type_oid}"
 
-    upvar $sstable_itemVar sstable_item
-    upvar $sstable_item_colsVar sstable_item_cols
-    upvar $sstable_item_rowsVar sstable_item_rows
+    upvar $sstableVar sstable
+    upvar $sstable_colsVar sstable_cols
+    upvar $sstable_rowsVar sstable_rows
     
     variable __cbt_TclObj
 
@@ -283,28 +279,28 @@ proc ::persistence::ss::load_sstable {
             return 0
         }
 
-        array set sstable_item [::sysdb::sstable_t get $sstable_rev]
+        array set sstable [::sysdb::sstable_t get $sstable_rev]
 
         set __cbt_TclObj(${type_oid},cols) [::cbt::create $::cbt::STRING]
 
-        array set sstable_item_cols $sstable_item(cols)
-        array set sstable_item_rows $sstable_item(rows)
+        array set sstable_cols $sstable(cols)
+        array set sstable_rows $sstable(rows)
 
         # To save some memory, comment in the following lines:
-        # unset sstable_item(cols)
-        # unset sstable_item(rows)
+        # unset sstable(cols)
+        # unset sstable(rows)
 
-        ::cbt::set_bytes $__cbt_TclObj(${type_oid},cols) [array names sstable_item_cols]
+        ::cbt::set_bytes $__cbt_TclObj(${type_oid},cols) [array names sstable_cols]
 
         # ::cbt::set_bytes $__cbt_TclObj(${type_oid},cols) \
-        #    [map {x y} [set ${sstable_itemVar}(cols)] {set x}]
+        #    [map {x y} [set ${sstableVar}(cols)] {set x}]
 
 
         return 1
 
     } else {
-        assert { [array size sstable_item] }
-        assert { [array size sstable_item_cols] }
+        assert { [array size sstable] }
+        assert { [array size sstable_cols] }
     }
     return 2
 }
@@ -314,35 +310,26 @@ proc ::persistence::ss::readfile_helper {rev args} {
 
     set type_oid [type_oid $rev]
 
-    if { ![load_sstable $type_oid sstable_itemVar sstable_item_colsVar] } {
+    if { ![load_sstable $type_oid sstableVar sstable_colsVar] } {
         error "sstable loading error"
     }
-    upvar $sstable_itemVar sstable_item
-    upvar $sstable_item_colsVar sstable_item_cols
+    upvar $sstableVar sstable
+    upvar $sstable_colsVar sstable_cols
 
-    set rev_startpos $sstable_item_cols(${rev})
+    set rev_startpos $sstable_cols(${rev})
 
     # seek _fp $rev_startpos start
     set pos $rev_startpos
 
-    binary scan $sstable_item(data) @${pos}i len
+
+    # start of code using sstable_item_t
+    binary scan $sstable(data) @${pos}i len
     incr pos 4
-    binary scan $sstable_item(data) @${pos}a${len} rev_in_file
+    binary scan $sstable(data) @${pos}a${len} sstable_item_data
     incr pos $len
-
-    assert { $rev eq $rev_in_file }
-
-    binary scan $sstable_item(data) @${pos}i len
-    incr pos 4
-    binary scan $sstable_item(data) @${pos}a${len} ss_data
-    incr pos $len
-
-
-    # unset sstable_cols
-
-    # log "!!! returning ss_data for rev=$rev"
-
-    return $ss_data
+    array set sstable_item [::sysdb::sstable_item_t decode $sstable_item_data]
+    return $sstable_item(data)
+    # end of code using sstable_item_t
 
 }
 
@@ -360,6 +347,8 @@ proc ::persistence::ss::exists_p_helper {rev} {
     return 0
 }
 
+
+# first read from the latest, i.e. commitlog or fs, then from sstable
 proc ::persistence::ss::readfile {rev args} {
     set codec_conf $args
     
@@ -453,16 +442,16 @@ proc ::persistence::ss::compact {type_oid} {
     array set sstable_row_idx [list]
     foreach sstable_rev $sstable_revs {
 
-        array set sstable_item__${file_i} [::sysdb::sstable_t get $sstable_rev]
+        array set sstable__${file_i} [::sysdb::sstable_t get $sstable_rev]
         #log -----
-        #log name=[binary decode base64 [set sstable_item__${file_i}(name)]]
+        #log name=[binary decode base64 [set sstable__${file_i}(name)]]
 
-        foreach {row_key row_endpos} [set sstable_item__${file_i}(rows)] {
+        foreach {row_key row_endpos} [set sstable__${file_i}(rows)] {
 
             # log row_key=$row_key
             # log row_endpos=$row_endpos
 
-            set sstable_data [set sstable_item__${file_i}(data)]
+            set sstable_data [set sstable__${file_i}(data)]
 
             set column_idx_items [::persistence::ss::read_sstable \
                 sstable_data $row_endpos $file_i]
@@ -504,7 +493,7 @@ proc ::persistence::ss::compact {type_oid} {
         foreach column_idx_item $sstable_row_idx(${row_key}) {
             lassign $column_idx_item rev file_i file_pos
 
-            set sstable_data [set sstable_item__${file_i}(data)]
+            set sstable_data [set sstable__${file_i}(data)]
 
             # write column rev/oid
 
@@ -585,7 +574,7 @@ proc ::persistence::ss::compact {type_oid} {
         log "deleted old sstable: $sstable_filename"
         # ::sysdb::sstable_t delete $sstable_rev
 
-        array unset sstable_item__${file_i}
+        array unset sstable__${file_i}
         incr file_i
     }
 
@@ -596,6 +585,8 @@ proc ::persistence::ss::compact_all {} {
     variable base_nsp
 
     ${base_nsp}::compact_all
+
+    return
 
     set slicelist [::sysdb::object_type_t find]
 

@@ -176,6 +176,9 @@ proc ::persistence::commitlog::load_commitlog {} {
     while { $pos1 < $pos2 } {
 
         ::util::io::read_string ${__fp} commitlog_item_data
+        # set scan_p [binary scan $commitlog_item_data a* commitlog_item_data]
+        # assert { $scan_p }
+
         set pos1 [tell $__fp]
 
         array set item [::sysdb::commitlog_item_t decode $commitlog_item_data]
@@ -314,7 +317,8 @@ proc ::persistence::commitlog::readfile {rev args} {
     variable __rev_to_mem_id
 
     set mem_id $__rev_to_mem_id(${rev})
-    return $__mem(${mem_id},data)
+    set data $__mem(${mem_id},data)
+    return $data
 }
 
 proc ::persistence::commitlog::unset_mem {mem_id} {
@@ -333,6 +337,16 @@ proc ::persistence::commitlog::write_to_new {xids {fsync_p "1"}} {
     variable __mem_new
 
     foreach xid ${xids} {
+
+        set parent_xid [lrange [split $xid {/}] 0 end-1]
+        if { $parent_xid ne {} } {
+
+            # TODO: handle nested transactions/batches
+            # in commitlog::write_to_new proc
+
+            log parent_xid=$parent_xid
+        }
+
         foreach mem_id $__mem_tmp(${xid}) {
             if { ${fsync_p} } {
                 write_to_commitlog ${mem_id}
@@ -424,8 +438,6 @@ proc ::persistence::commitlog::set_column {rev data xid codec_conf} {
     set_mem "set_column" $rev $data $xid $codec_conf
 }
 
-
-
 proc ::persistence::commitlog::compact {type_oid todelete_rowsVar} {
     upvar $todelete_rowsVar todelete_rows
 
@@ -437,8 +449,6 @@ proc ::persistence::commitlog::compact {type_oid todelete_rowsVar} {
     if { $ks eq {sysdb} } {
         return
     }
-
-    # log "compact type_oid=$type_oid"
 
     # 1. get row keys
     set multirow_options [list]
@@ -463,10 +473,6 @@ proc ::persistence::commitlog::compact {type_oid todelete_rowsVar} {
     set cols [list]
     foreach {row_key slicelist} $multirow_slicelist {
 
-        # log -----
-        # log fs::compact,row_key=$row_key
-        # log slicelist=$slicelist
-
         set row_startpos $pos
 
         set len [string length $row_key]
@@ -478,31 +484,19 @@ proc ::persistence::commitlog::compact {type_oid todelete_rowsVar} {
 
             set rev_startpos $pos
 
-            set len [string length $rev]
-            append output_data [binary format i $len] $rev 
-            incr pos 4
-            incr pos $len
-
-            # one may be tempted to read 
-            # the effective rev/oid
-            # in the case of a .link rev,
-            # however, the right thing is
-            # copying the data content of
-            # the given rev asis, 
-            # i.e. the target rev in the
-            # case of a .link rev
-            #
-            # NOT: set encoded_rev_data [get $rev]
-            
-            set encoded_rev_data [get_column $rev "-translation binary"]
-            set scan_p [binary scan $encoded_rev_data a* encoded_rev_data]
+            # start of code using sstable_item_t
+            array set sstable_item [list]
+            set sstable_item(rev) $rev
+            set sstable_item(data) [get_column $rev "-translation binary"]
+            set scan_p [binary scan $sstable_item(data) a* sstable_item(data)]
+            assert { $scan_p }
+            set encoded_rev_data [::sysdb::sstable_item_t encode sstable_item]
             set len [string length $encoded_rev_data]
-
-            # log encoded_rev_data,len=$len
-
             append output_data [binary format i $len] $encoded_rev_data
             incr pos 4
             incr pos $len
+            unset sstable_item
+            # end of code using sstable_item_t
 
             lappend cols $rev $rev_startpos
 
@@ -516,18 +510,12 @@ proc ::persistence::commitlog::compact {type_oid todelete_rowsVar} {
 
     }
 
-    #log "commitlog::compact work in progress, exiting..."
-    #exit
-
     ##
     # 4. write the (sstable) file
     #
 
     set name [binary encode base64 $type_oid]
     set round [clock microseconds]
-
-    # assert { [llength $rows] % 2 == 0 }
-    # assert { [llength $cols] % 2 == 0 }
 
     array set item [list]
     set item(name) $name
@@ -538,10 +526,11 @@ proc ::persistence::commitlog::compact {type_oid todelete_rowsVar} {
 
     ::sysdb::sstable_t insert item
 
-    # log "new sstable for $type_oid"
-
-    # log "here,just for debugging nested transactions, exiting fs::compact..."
-    # exit
+    if {0} {
+        set fp [open "/tmp/sstable-$name" "w"]
+        puts -nonewline $fp [binary encode base64 [::sysdb::sstable_t encode item]]
+        close $fp
+    }
 
     foreach row_key $row_keys {
         set row_oid [join_oid $ks $cf_axis $row_key]
@@ -611,7 +600,7 @@ proc ::persistence::commitlog::compact_all {} {
     }
 
     variable __fp
-    checkpoint [tell ${__fp}]
+    # checkpoint [tell ${__fp}]
 
     # new_commitlog
 

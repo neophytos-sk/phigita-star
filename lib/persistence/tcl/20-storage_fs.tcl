@@ -553,31 +553,19 @@ proc ::persistence::fs::compact {type_oid todelete_rowsVar} {
 
             set rev_startpos $pos
 
-            set len [string length $rev]
-            append output_data [binary format i $len] $rev 
-            incr pos 4
-            incr pos $len
-
-            # one may be tempted to read 
-            # the effective rev/oid
-            # in the case of a .link rev,
-            # however, the right thing is
-            # copying the data content of
-            # the given rev asis, 
-            # i.e. the target rev in the
-            # case of a .link rev
-            #
-            # NOT: set encoded_rev_data [get $rev]
-            
-            set encoded_rev_data [get_column $rev "-translation binary"]
-            set scan_p [binary scan $encoded_rev_data a* encoded_rev_data]
+            # code using sstable_item_t
+            array set sstable_item [list]
+            set sstable_item(rev) $rev
+            set sstable_item(data) [get_column $rev "-translation binary"]
+            set scan_p [binary scan $sstable_item(data) a* sstable_item(data)]
+            assert { $scan_p }
+            set encoded_rev_data [::sysdb::sstable_item_t encode sstable_item]
             set len [string length $encoded_rev_data]
-
-            # log encoded_rev_data,len=$len
-
             append output_data [binary format i $len] $encoded_rev_data
             incr pos 4
             incr pos $len
+            unset sstable_item
+            # end of code using sstable_item_t
 
             lappend cols $rev $rev_startpos
 

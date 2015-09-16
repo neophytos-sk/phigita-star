@@ -1,0 +1,24 @@
+nsp "::sysdb::sstable_item_t"
+ks "sysdb"
+cf "sstable_item"
+pk "rev"
+
+indexes {{
+    name "by_rev"
+    atts "rev"
+}}
+
+attributes {{
+    name "rev"
+    null_p "0"
+    immu_p "1"
+} {
+    name "data"
+    type "bytearr"
+    null_p "0"
+    immu_p "1"
+}}
+
+aggregates {}
+
+

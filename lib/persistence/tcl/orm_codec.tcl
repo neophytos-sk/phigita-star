@@ -111,14 +111,17 @@ proc ::persistence::orm::codec_bin_3::encode {itemVar} {
     #log uvalue=$uvalue
     set num_encoded_bytes [encode_unsigned_varint bytes $uvalue]
 
+    assert { $__attnames ne {} }
+
     # body / data
     foreach attname $__attnames {
+
         set type [value_if __attinfo($attname,type) "varchar"]
 
         lassign [value_if __type_to_bin($type) ""] fmt _ num_bytes
 
         set attvalue [value_if item($attname) ""]
-        
+
         if { $attvalue eq {} } continue
 
         if { $fmt ne {} } {
@@ -151,7 +154,6 @@ proc ::persistence::orm::codec_bin_3::encode {itemVar} {
 
         }
     }
-    # log [string repeat - 80]
 
     return $bytes
 }

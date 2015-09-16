@@ -12,6 +12,7 @@ config param port "9900"
 config param base_dir "/web/data/mystore2"
 
 config param storage_type "ss"
+
 # config param base_nsp "::persistence::fs"
 config param base_nsp "::persistence::commitlog"
 
