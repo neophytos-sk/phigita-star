@@ -612,7 +612,7 @@ proc ::persistence::commitlog::compact_all {} {
     }
 
     variable __fp
-    # checkpoint [tell ${__fp}]
+    checkpoint [tell ${__fp}]
 
     # new_commitlog
 

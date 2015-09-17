@@ -405,9 +405,6 @@ proc ::persistence::ss::exists_p {path} {
 # merge sstables in mem
 proc ::persistence::ss::compact {type_oid} {
 
-    log "TODO: merging sstable does not work properly since the sstable_item_t change, returning..."
-    return
-
     lassign [split_oid $type_oid] ks
     if { $ks eq {sysdb} } {
         log "skipping sstable merge for $type_oid"
