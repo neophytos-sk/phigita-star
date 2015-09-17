@@ -77,7 +77,6 @@ namespace eval ::persistence::orm::codec_bin_3 {
     # type => encoding_fmt decoding_fmt decoding_num_bytes
     variable __type_to_bin
     array set __type_to_bin {
-        {} {"" "" ""}
         "integer"       {i   i      4}
         "naturalnum"    {iu  iu     4}
         "boolean"       {c   c      1}
@@ -98,23 +97,25 @@ proc ::persistence::orm::codec_bin_3::encode {itemVar} {
 
     upvar $itemVar item
 
-    set bytes ""
+    set bytes {}
 
     # header (marks null values)
+    array set exists_p [list]
     set uvalue "0"
     foreach attname $__attnames {
-        set attvalue [value_if item($attname) ""] 
-        set v [expr { $attvalue ne {} }]
+        set v [info exists item(${attname})]
         set uvalue [expr { ($uvalue << 1) | $v }]
-        #log "attname=$attname v=$v uvalue=$uvalue"
+        set exists_p(${attname}) $v
     }
-    #log uvalue=$uvalue
-    set num_encoded_bytes [encode_unsigned_varint bytes $uvalue]
 
-    assert { $__attnames ne {} }
+    set num_encoded_bytes [encode_unsigned_varint bytes $uvalue]
+    # if {0} {
+    # append bytes [binary format i $uvalue] ; set num_encoded_bytes 4
+    # }
 
     # body / data
     foreach attname $__attnames {
+        if { !$exists_p(${attname}) } continue
 
         set type [value_if __attinfo($attname,type) "varchar"]
 
@@ -122,110 +123,108 @@ proc ::persistence::orm::codec_bin_3::encode {itemVar} {
 
         set attvalue [value_if item($attname) ""]
 
-        if { $attvalue eq {} } continue
-
         if { $fmt ne {} } {
             append bytes [binary format $fmt $attvalue]
         } else {
 
             if { $type eq {bytearr} } {
+                # set len [string bytelength $attvalue]
                 set attvalue [binary format "a*" $attvalue]
+                set len [string length $attvalue]
             } else {
                 set attvalue [encoding convertto utf-8 $attvalue]
                 set len [string length $attvalue]
             }
 
-            set blob_p [value_if __attinfo($attname,blob_p) "0"]
-            if { $blob_p } {
-
-                # assert { $rev ne {} }
-                # set name [binary encode base64 $rev]
-                # set blob_rev [join_oid sysdb blob.by_name $name $attname]
-                # ::persistence::ins_column $blob_rev $blob_data [codec_conf]
-
-                set len [string length $blob_rev]
-                set num_encoded_bytes [encode_unsigned_varint bytes $len]
-                append bytes $blob_rev
-            } else {
-                set len [string length $attvalue]
-                set num_encoded_bytes [encode_unsigned_varint bytes $len]
-                append bytes $attvalue
-            }
+            set num_encoded_bytes [encode_unsigned_varint bytes $len]
+            append bytes $attvalue
 
         }
     }
+
+    # set bytes_len [string length $bytes]
+    # incr bytes_len 4
+    # append bytes [binary format "i" $bytes_len]
 
     return $bytes
 }
 
 proc ::persistence::orm::codec_bin_3::decode {bytes} {
+
+    set bytes_len [string length $bytes]
+
     variable __type_to_bin
     variable [namespace __this]::__attnames
     variable [namespace __this]::__attinfo
 
     # log "decoding item for [namespace __this]"
 
-    array set item [list]
     set pos 0
     set num_bytes 0
 
     # header (marks null values)
 
-    set uvalue [decode_unsigned_varint bytes num_decoded_bytes $pos]
-    incr pos $num_decoded_bytes
+    set uvalue [decode_unsigned_varint bytes num_decoded_bytes ${pos}]
+    incr pos ${num_decoded_bytes}
 
-    # log "uvalue=$uvalue num_decoded_bytes=$num_decoded_bytes"
-
-    foreach attname [lreverse $__attnames] {
-        set exists_p($attname) [expr { $uvalue & 0x1 }]
-        set uvalue [expr { $uvalue >> 1 }]
-        # log exists_p($attname)=$exists_p($attname)
+    foreach attname [lreverse ${__attnames}] {
+        set exists_p($attname) [expr { ${uvalue} & 0x1 }]
+        set uvalue [expr { ${uvalue} >> 1 }]
     }
 
-    foreach attname $__attnames {
-        if { !$exists_p($attname) } {
-            # log "attname=$attname does not exist"
-            set item($attname) ""
+    set data [list]
+    set count_empty_fmt 0
+    foreach attname ${__attnames} {
+        if { !$exists_p(${attname}) } {
+            lappend data ${attname} {}
             continue
         }
 
-        set type [value_if __attinfo($attname,type) "varchar"]
+        set type [value_if __attinfo(${attname},type) "varchar"]
 
-        lassign [value_if __type_to_bin($type) ""] _ fmt num_bytes
+        lassign [value_if __type_to_bin(${type}) ""] _ fmt num_bytes
 
         # log "attname=$attname fmt=$fmt num_bytes=$num_bytes"
 
-        if { $fmt ne {} } {
-            # log "pos=$pos num_bytes=$num_bytes"
-            append bytes [binary scan $bytes "@${pos}${fmt}" item($attname)]
-            incr pos $num_bytes
-            #log $item($attname)
+        if { ${fmt} ne {} } {
+            set scan_p [binary scan ${bytes} "@${pos}${fmt}" attvalue]
+            incr pos ${num_bytes}
         } else {
-            set len [decode_unsigned_varint bytes num_decoded_bytes $pos]
-            incr pos $num_decoded_bytes
+
+            incr count_empty_fmt
+
+            set len [decode_unsigned_varint bytes num_decoded_bytes ${pos}]
+            incr pos ${num_decoded_bytes}
 
             # log "attname=$attname pos=$pos len=$len num_decoded_bytes=$num_decoded_bytes"
 
-            set scan_p [binary scan $bytes "@${pos}a${len}" item($attname)]
-            incr pos $len
+            set scan_p [binary scan ${bytes} "@${pos}a${len}" attvalue]
+            incr pos ${len}
 
             # log "scan_p=$scan_p len=$len"
 
-            if { $type eq {bytearr} } {
-                # OLD: set item($attname) [binary decode base64 $item($attname)]
-                set scan_p [binary scan $item($attname) a* item($attname)]
-                assert { $scan_p } {
-                    log failed,decode,bytearr,attname=$attname
-                }
+            if { ${type} eq {bytearr} } {
+                set scan_p [binary scan ${attvalue} a* attvalue]
             } else {
-                set item($attname) [encoding convertfrom utf-8 $item($attname)]
+                set attvalue [encoding convertfrom utf-8 ${attvalue}]
             }
-
-            # log ">>>> $attname = $item($attname)"
         }
+        lappend data ${attname} ${attvalue}
 
     }
-    return [array get item]
+
+    # TODO: add/decode a checksum/hash value
+    # set scan_p [binary scan ${bytes} "@${pos}i" checksum]
+    # incr pos 4
+    # assert { $scan_p }
+    # assert { $checksum == [crc32 ${bytes}] }
+
+    assert { $pos == $bytes_len } {
+        log pos=$pos
+        log bytes_len=$bytes_len
+    }
+
+    return ${data}
 }
 
 

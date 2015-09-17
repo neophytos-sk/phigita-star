@@ -24,15 +24,17 @@ namespace eval ::persistence::commitlog {
     array set __mem_cur [list]
     array set __rev_to_mem_id [list]
 
-    namespace import ::persistence::common::split_oid
-    namespace import ::persistence::common::join_oid
-    namespace import ::persistence::common::type_oid
+    # namespace import ::persistence::common::split_oid
+    # namespace import ::persistence::common::join_oid
+    # namespace import ::persistence::common::type_oid
 
     namespace __copy ::persistence::common
 
 }
 
 proc ::persistence::commitlog::init {} {
+
+    ::persistence::fs::init
 
     # log "initializing commitlog..."
 
@@ -125,7 +127,8 @@ proc ::persistence::commitlog::write_to_commitlog {mem_id} {
     set item(xid)               $__mem(${mem_id},xid)
     set item(codec_conf)        $__mem(${mem_id},codec_conf)
 
-    ::util::io::write_string ${__fp} [::sysdb::commitlog_item_t encode item]
+    set commitlog_item_data [::sysdb::commitlog_item_t encode item]
+    ::util::io::write_string ${__fp} $commitlog_item_data
 
     # TODO: if threshold exceeded:
     # 1. create new commitlog
@@ -176,8 +179,12 @@ proc ::persistence::commitlog::load_commitlog {} {
     while { $pos1 < $pos2 } {
 
         ::util::io::read_string ${__fp} commitlog_item_data
+
+        # if {0} {
+        # set commitlog_item_data [binary decode base64 $commitlog_item_data]
         # set scan_p [binary scan $commitlog_item_data a* commitlog_item_data]
         # assert { $scan_p }
+        # }
 
         set pos1 [tell $__fp]
 
@@ -259,6 +266,15 @@ proc ::persistence::commitlog::get_subdirs {path} {
     return $result
 
 }
+
+# TO BE CHECKED AGAIN
+proc ::persistence::commitlog::exists_p {rev} {
+    lassign [split_oid $rev] ks
+    if { $ks eq {sysdb} } {
+        return [::persistence::fs::exists_p $rev]
+    }
+    return [expr { [get_leafs $rev] ne {} }]
+}
                                          
 proc ::persistence::commitlog::set_mem {instr oid data xid codec_conf} {
 
@@ -310,6 +326,8 @@ proc ::persistence::commitlog::readfile {rev args} {
     if { $ks eq {sysdb} } {
         return [::persistence::fs::readfile $rev]
     }
+
+    # log "!!!!!!!!!!!!!!!!!!!!!! commitlog::readfile"
 
     # set codec_conf $args
 
@@ -525,12 +543,6 @@ proc ::persistence::commitlog::compact {type_oid todelete_rowsVar} {
     set item(round) $round
 
     ::sysdb::sstable_t insert item
-
-    if {0} {
-        set fp [open "/tmp/sstable-$name" "w"]
-        puts -nonewline $fp [binary encode base64 [::sysdb::sstable_t encode item]]
-        close $fp
-    }
 
     foreach row_key $row_keys {
         set row_oid [join_oid $ks $cf_axis $row_key]

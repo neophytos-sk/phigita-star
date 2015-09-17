@@ -51,21 +51,27 @@ attributes {{
     null_p "0"
 } {
     name "title"
+    type "varchar"
 } {
     name "body"
+    type "varchar"
 } {
     name "is_revision_p"
+    type "boolean"
     null_p "0"
     dval "0"
 } {
     name "is_copy_p"
+    type "boolean"
     null_p "0"
     dval "0"
 } {
     name "domain"
+    type "varchar"
     null_p "0"
 } {
     name "reversedomain"
+    type "varchar"
     null_p "0"
 } {
     name "date"
@@ -78,17 +84,22 @@ attributes {{
     null_p "0"
 } {
     name "first_sync"
+    type "naturalnum"
 } {
     name "last_sync"
+    type "naturalnum"
 } {
     name "timestamp"
     type "naturalnum"
 } {
     name "attachments"
+    type "varchar"
 } {
     name "tags"
+    type "varchar"
 } {
     name "videos"
+    type "varchar"
 }}
 
 aggregates {}

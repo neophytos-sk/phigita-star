@@ -58,7 +58,7 @@ proc ::persistence::init {} {
 
     mkskel
 
-    ::persistence::fs::init
+    # OLD: ::persistence::fs::init
 
     set storage_type [setting "storage_type"]
     assert { $storage_type in {fs ss} }

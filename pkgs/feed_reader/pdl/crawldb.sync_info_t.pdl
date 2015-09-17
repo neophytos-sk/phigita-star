@@ -27,6 +27,7 @@ attributes {{
     type "sha1_hex"
 } {
     name "datetime"
+    type "datetime"
 }}
 
 aggregates {}

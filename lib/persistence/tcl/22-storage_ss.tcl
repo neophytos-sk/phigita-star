@@ -18,7 +18,9 @@ namespace eval ::persistence::ss {
 proc ::persistence::ss::init {} {
     variable base_nsp
     ${base_nsp}::init
-    compact_all
+    if { [setting_p "compact_p"] } {
+        compact_all
+    }
 }
 
 
@@ -45,8 +47,8 @@ proc ::persistence::ss::get_mtime {rev} {
     return [expr { $ts / (10**6) }]
 }
 
-proc ::persistence::ss::read_sstable {dataVar row_endpos file_i {lambdaExpr ""}} {
-    upvar $dataVar data
+proc ::persistence::ss::read_sstable {sstable_dataVar row_endpos file_i} {
+    upvar $sstable_dataVar sstable_data
 
     # log read_sstable,datalen=[string length $data]
 
@@ -56,7 +58,7 @@ proc ::persistence::ss::read_sstable {dataVar row_endpos file_i {lambdaExpr ""}}
     assert { $row_endpos ne {} }
 
     set pos $row_endpos
-    set scan_p [binary scan $data "@${pos}i" row_startpos]
+    set scan_p [binary scan $sstable_data "@${pos}i" row_startpos]
     incr pos 4
 
     assert { $scan_p } {
@@ -75,7 +77,7 @@ proc ::persistence::ss::read_sstable {dataVar row_endpos file_i {lambdaExpr ""}}
 
     # seek _fp $startpos start
     # read_string _fp row_key
-    binary scan $data @${pos}i len
+    binary scan $sstable_data @${pos}i len
     incr pos 4
     incr pos $len  ;# skip_string (row_key)
 
@@ -83,23 +85,17 @@ proc ::persistence::ss::read_sstable {dataVar row_endpos file_i {lambdaExpr ""}}
 
     while { $pos < $row_endpos } {
 
-        # read_string _fp rev
-        binary scan $data @${pos}i len
+        binary scan $sstable_data @${pos}i len
         incr pos 4
-        binary scan $data @${pos}a${len} rev
+        binary scan $sstable_data @${pos}a${len} enc_sstable_item_data
         incr pos $len
 
-        # log pos=$pos,rev=$rev
+        array set sstable_item \
+            [::sysdb::sstable_item_t decode $enc_sstable_item_data]
 
-        if { $lambdaExpr eq {} || [apply $lambdaExpr data $rev] } {
-            lappend revs [list $rev $file_i $pos]
-        }
+        lappend revs [list $sstable_item(rev) $file_i $pos]
 
-        # skip_string _fp
-        binary scan $data @${pos}i len
-
-        incr pos 4
-        incr pos $len  ;# skip_string (data)
+        array unset sstable_item
 
     }
 
@@ -240,7 +236,8 @@ proc ::persistence::ss::load_sstable {
     {sstable_rowsVarVar ""}
 } {
 
-    if { $type_oid eq {sysdb/sstable.by_name} } {
+    lassign [split_oid $type_oid] ks
+    if { $ks eq {sysdb} } {
         return 0
     }
 
@@ -323,12 +320,17 @@ proc ::persistence::ss::readfile_helper {rev args} {
 
 
     # start of code using sstable_item_t
+
     binary scan $sstable(data) @${pos}i len
     incr pos 4
-    binary scan $sstable(data) @${pos}a${len} sstable_item_data
+    binary scan $sstable(data) @${pos}a${len} enc_sstable_item_data
     incr pos $len
-    array set sstable_item [::sysdb::sstable_item_t decode $sstable_item_data]
+
+    set sstable_item_data [::sysdb::sstable_item_t decode $enc_sstable_item_data]
+    array set sstable_item $sstable_item_data
+
     return $sstable_item(data)
+
     # end of code using sstable_item_t
 
 }
@@ -337,7 +339,6 @@ proc ::persistence::ss::readfile_helper {rev args} {
 proc ::persistence::ss::exists_p_helper {rev} {
     assert { [is_column_rev_p $rev] || [is_link_rev_p $rev] }
     set type_oid [type_oid $rev]
-    # log type_oid=$type_oid
     if { [load_sstable $type_oid] } {
         variable __cbt_TclObj
         set exists_p [::cbt::exists $__cbt_TclObj(${type_oid},cols) $rev]
@@ -351,33 +352,33 @@ proc ::persistence::ss::exists_p_helper {rev} {
 # first read from the latest, i.e. commitlog or fs, then from sstable
 proc ::persistence::ss::readfile {rev args} {
     set codec_conf $args
-    
-    # log fs,readfile,rev=$rev
 
-    if { [::persistence::ss::exists_p_helper $rev] } {
-        set ss_data [::persistence::ss::readfile_helper $rev {*}$codec_conf]
-        return $ss_data
-    } else {
-        variable base_nsp
+    # log ss,readfile,rev=$rev
+
+    lassign [split_oid $rev] ks
+    if { $ks eq {sysdb} } {
+        return [::persistence::fs::readfile $rev {*}$codec_conf]
+    }
+
+    variable base_nsp
+    if { [${base_nsp}::exists_p $rev] } {
         return [${base_nsp}::readfile $rev {*}$codec_conf]
+    } elseif { [::persistence::ss::exists_p_helper $rev] } {
+        return [::persistence::ss::readfile_helper $rev {*}$codec_conf]
     }
 
 }
 
 proc ::persistence::ss::get_files {path} {
-    # log "ss::get_files $path"
-    set fs_filelist [::persistence::fs::get_files $path]
-    if { [string match "sysdb/*" $path] } {
-        return $fs_filelist
+    lassign [split_oid $path] ks
+    if { $ks eq {sysdb} } {
+        return [::persistence::fs::get_files $path]
     }
 
-    set ss_filelist [::persistence::ss::get_files_helper $path]
+    set base_files [${base_nsp}::get_files $path]
+    set ss_files [::persistence::ss::get_files_helper $path]
 
-    set result [lsort -unique [concat $fs_filelist $ss_filelist]]
-
-    # log path=$path
-    # log ss::get_files,#results=[llength $result]
-
+    set result [lsort -unique [concat $base_files $ss_files]]
     return $result
 }
 
@@ -390,13 +391,10 @@ proc ::persistence::ss::get_subdirs {path} {
     }
 
     set base_subdirs [${base_nsp}::get_subdirs $path]
-
     set ss_subdirs [::persistence::ss::get_subdirs_helper $path]
 
-    # log fs_subdirs=$fs_subdirs
-    # log ss_subdirs=$ss_subdirs
-
-    return [lsort -unique [concat $base_subdirs $ss_subdirs]]
+    set result [lsort -unique [concat $base_subdirs $ss_subdirs]]
+    return $result
 }
 
 
@@ -407,8 +405,11 @@ proc ::persistence::ss::exists_p {path} {
 # merge sstables in mem
 proc ::persistence::ss::compact {type_oid} {
 
-    set errorlist [list sysdb/object_type.by_nsp]
-    if { 0 && $type_oid in $errorlist } {
+    log "TODO: merging sstable does not work properly since the sstable_item_t change, returning..."
+    return
+
+    lassign [split_oid $type_oid] ks
+    if { $ks eq {sysdb} } {
         log "skipping sstable merge for $type_oid"
         return
     }
@@ -499,33 +500,16 @@ proc ::persistence::ss::compact {type_oid} {
 
             set rev_startpos $pos
 
-            set len [string length $rev]
-            append output_data [binary format i $len] $rev 
+            # start of code using sstable_item_t
+
+            binary scan $sstable_data @${pos}i len
             incr pos 4
+            binary scan $sstable_data @${pos}a${len} enc_sstable_item_data
             incr pos $len
 
-            # read data from file $file_i
-            set scan_p [binary scan $sstable_data @${file_pos}i len]
-            assert { $scan_p } {
-                log file_pos=$file_pos
-            }
+            append output_data [binary format i $len] $enc_sstable_item_data
 
-            # assert { $len < 1000000 } {
-            #     log failed,file_pos=$file_pos,rev=$rev
-            #     log length=[string length $sstable_data]
-            # }
-
-            # write data for given rev
-            incr file_pos 4
-            set scan_p [binary scan $sstable_data @${file_pos}a${len} encoded_rev_data]
-            assert { $scan_p } {
-                log file_pos=$file_pos,len=$len
-                exit
-            }
-
-            append output_data [binary format i $len] $encoded_rev_data
-            incr pos 4
-            incr pos $len
+            # end of code using sstable_item_t
 
             lappend cols $rev $rev_startpos
 
@@ -585,8 +569,6 @@ proc ::persistence::ss::compact_all {} {
     variable base_nsp
 
     ${base_nsp}::compact_all
-
-    return
 
     set slicelist [::sysdb::object_type_t find]
 

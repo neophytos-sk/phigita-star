@@ -511,9 +511,9 @@ proc ::persistence::fs::compact {type_oid todelete_rowsVar} {
     lassign [split_oid $type_oid] ks cf_axis
     lassign [split $cf_axis {.}] cf idxname
 
-    assert { !( $ks eq {sysdb} && $cf eq {sstable} ) }
-
-    # log "compact type_oid=$type_oid"
+    if { $ks eq {sysdb} } {
+        return
+    }
 
     # 1. get row keys
     set multirow_options [list]
@@ -538,10 +538,6 @@ proc ::persistence::fs::compact {type_oid todelete_rowsVar} {
     set cols [list]
     foreach {row_key slicelist} $multirow_slicelist {
 
-        # log -----
-        # log fs::compact,row_key=$row_key
-        # log slicelist=$slicelist
-
         set row_startpos $pos
 
         set len [string length $row_key]
@@ -553,7 +549,7 @@ proc ::persistence::fs::compact {type_oid todelete_rowsVar} {
 
             set rev_startpos $pos
 
-            # code using sstable_item_t
+            # start of code using sstable_item_t
             array set sstable_item [list]
             set sstable_item(rev) $rev
             set sstable_item(data) [get_column $rev "-translation binary"]
@@ -572,30 +568,12 @@ proc ::persistence::fs::compact {type_oid todelete_rowsVar} {
         }
 
         set row_endpos $pos
-        # log "fs::compact sst,row_key=$row_key row_endpos=$row_endpos row_startpos=$row_startpos"
-        # log "\tfs::compact llen=[llength $slicelist]"
         append output_data [binary format i $row_startpos]
-        
-
-        #binary scan $output_data @${pos}i test_row_startpos
-        #assert { $test_row_startpos == $row_startpos }
-        #log test_row_startpos=$test_row_startpos
-
-
         incr pos 4
 
-        # log rows,row_key=$row_key
-        if { $row_key eq {gr} } {
-            log "fs::compact,wrong_row_key, exiting..."
-            log x=[map {x y} $multirow_slicelist {set x}]
-            exit
-        }
         lappend rows $row_key $row_endpos
 
     }
-
-    #log "fs::compact work in progress, exiting..."
-    #exit
 
     ##
     # 4. write the (sstable) file
@@ -603,9 +581,6 @@ proc ::persistence::fs::compact {type_oid todelete_rowsVar} {
 
     set name [binary encode base64 $type_oid]
     set round [clock microseconds]
-
-    # assert { $rows ne {} }
-    # assert { $cols ne {} }
 
     array set item [list]
     set item(name) $name
@@ -616,16 +591,9 @@ proc ::persistence::fs::compact {type_oid todelete_rowsVar} {
 
     ::sysdb::sstable_t insert item
 
-    # log "new sstable for $type_oid"
-
-    # log "here,just for debugging nested transactions, exiting fs::compact..."
-    # exit
-
     foreach row_key $row_keys {
         set row_oid [join_oid $ks $cf_axis $row_key]
-        if { ![string match "sysdb/*" $row_oid] } {
-            lappend todelete_rows $row_oid
-        }
+        lappend todelete_rows $row_oid
     }
 
     # log "done compacting $type_oid"
