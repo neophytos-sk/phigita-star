@@ -490,7 +490,8 @@ proc ::persistence::orm::get {rev {exists_pVar ""}} {
     set exists_p [::persistence::exists_p $rev]
     if { $exists_p } {
         # log orm,get,rev=$rev
-        return [decode [::persistence::get $rev [codec_conf]]]
+        set data [::persistence::get $rev [codec_conf]]
+        return [decode data]
     } else {
         #log alias=[interp alias {} exists_p]
         error "no such rev (=$rev) in storage system (=mystore)"

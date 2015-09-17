@@ -128,6 +128,7 @@ proc ::persistence::commitlog::write_to_commitlog {mem_id} {
     set item(codec_conf)        $__mem(${mem_id},codec_conf)
 
     set commitlog_item_data [::sysdb::commitlog_item_t encode item]
+    set commitlog_item_data [binary format a* $commitlog_item_data]
     ::util::io::write_string ${__fp} $commitlog_item_data
 
     # TODO: if threshold exceeded:
@@ -180,15 +181,9 @@ proc ::persistence::commitlog::load_commitlog {} {
 
         ::util::io::read_string ${__fp} commitlog_item_data
 
-        # if {0} {
-        # set commitlog_item_data [binary decode base64 $commitlog_item_data]
-        # set scan_p [binary scan $commitlog_item_data a* commitlog_item_data]
-        # assert { $scan_p }
-        # }
-
         set pos1 [tell $__fp]
 
-        array set item [::sysdb::commitlog_item_t decode $commitlog_item_data]
+        array set item [::sysdb::commitlog_item_t decode commitlog_item_data]
 
         set_mem             \
             $item(instr)    \

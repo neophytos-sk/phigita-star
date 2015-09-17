@@ -73,7 +73,7 @@ proc ::db_server::handle_conn {sock args} {
         set len_p [binary scan $peer($sock,data) "@${pos}i" len]
         if { $len_p && $datalen >= 4 + $pos + $len } {
             set pos [incr peer($sock,datapos) 4]
-            set line_p [binary scan $peer($sock,data) "@${pos}A${len}" line]
+            set line_p [binary scan $peer($sock,data) "@${pos}a${len}" line]
             set pos [incr peer($sock,datapos) $len]
 
             # log line=$line 

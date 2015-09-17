@@ -84,16 +84,16 @@ proc ::persistence::ss::read_sstable {sstable_dataVar row_endpos file_i} {
     set revs [list]
 
     while { $pos < $row_endpos } {
+        set rev_startpos $pos
 
-        binary scan $sstable_data @${pos}i len
+        set scan_p [binary scan $sstable_data "@${pos}i" len]
+        assert { $scan_p }
         incr pos 4
-        binary scan $sstable_data @${pos}a${len} enc_sstable_item_data
+        set scan_p [binary scan $sstable_data "@${pos}a${len}" sstable_item_data]
+        assert { $scan_p }
         incr pos $len
 
-        array set sstable_item \
-            [::sysdb::sstable_item_t decode $enc_sstable_item_data]
-
-        lappend revs [list $sstable_item(rev) $file_i $pos]
+        lappend revs [list $sstable_item_data $file_i $rev_startpos]
 
         array unset sstable_item
 
@@ -318,19 +318,16 @@ proc ::persistence::ss::readfile_helper {rev args} {
     # seek _fp $rev_startpos start
     set pos $rev_startpos
 
-
     # start of code using sstable_item_t
-
     binary scan $sstable(data) @${pos}i len
     incr pos 4
-    binary scan $sstable(data) @${pos}a${len} enc_sstable_item_data
+    binary scan $sstable(data) @${pos}a${len} sstable_item_data
     incr pos $len
 
-    set sstable_item_data [::sysdb::sstable_item_t decode $enc_sstable_item_data]
-    array set sstable_item $sstable_item_data
+    array set sstable_item \
+        [::sysdb::sstable_item_t decode sstable_item_data]
 
     return $sstable_item(data)
-
     # end of code using sstable_item_t
 
 }
@@ -489,27 +486,27 @@ proc ::persistence::ss::compact {type_oid} {
         incr pos $len
 
         foreach column_idx_item $sstable_row_idx(${row_key}) {
-            lassign $column_idx_item rev file_i file_pos
-
-            set sstable_data [set sstable__${file_i}(data)]
-
-            # write column rev/oid
+            lassign $column_idx_item sstable_item_data file_i file_pos
 
             set rev_startpos $pos
 
             # start of code using sstable_item_t
+            array set sstable_item \
+                [::sysdb::sstable_item_t decode sstable_item_data]
 
-            binary scan $sstable_data @${pos}i len
+            set rev $sstable_item(rev)
+
+            set scan_p [binary scan $sstable_item(data) a* sstable_item(data)]
+            assert { $scan_p }
+            set encoded_rev_data [::sysdb::sstable_item_t encode sstable_item]
+            set len [string length $encoded_rev_data]
+            append output_data [binary format i $len] $encoded_rev_data
             incr pos 4
-            binary scan $sstable_data @${pos}a${len} enc_sstable_item_data
             incr pos $len
-
-            append output_data [binary format i $len] $enc_sstable_item_data
-
+            unset sstable_item
             # end of code using sstable_item_t
 
             lappend cols $rev $rev_startpos
-
         }
 
         # write row_startpos at end of row

@@ -62,8 +62,11 @@ proc ::db_client::bg_read {sock} {
     # log "bg_read $sock"
 
     set bytes [read $sock]
-    append peer($sock,data) $bytes ;# binary format a* $bytes
-    incr peer($sock,datalen) [string length $bytes]
+    set scan_p [binary scan ${bytes} a* bytes]
+    assert { $scan_p } 
+    # set bytes [binary format a* ${bytes}]
+    append peer($sock,data) $bytes 
+    incr peer(${sock},datalen) [string length ${bytes}]
 
     # after $peer($sock,ttl) [list ::db_client::timeout_conn $sock]
 }
@@ -98,7 +101,7 @@ proc ::db_client::handle_conn {sock args} {
         set pos [incr peer($sock,datapos) 4]
 
         # bytearray data ($len bytes)
-        set line_p [binary scan $peer($sock,data) "@${pos}A${len}" line]
+        set line_p [binary scan $peer($sock,data) "@${pos}a${len}" line]
         set pos [incr peer($sock,datapos) $len]
 
         # char retcode (1 byte)
