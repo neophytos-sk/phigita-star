@@ -14,14 +14,30 @@ namespace eval ::persistence::commitlog {
     variable __rev_to_mem_id
     variable __mem_row_keys
 
-    variable commitlog_name
-    variable commitlog
-    variable commitlog_threshold
-    variable fp
-    
-    set commitlog_name {}
-    array set commitlog_threshold [list size 9999999 n_entries 999]
+    # __xid_to_commitlog(xid) => commitlog
+    variable __xid_to_commitlog
+    array set __xid_to_commitlog [list]
 
+    # __commitlog_pending(commitlog_name) => number of pending batches/xids
+    variable __commitlog_pending
+    array set __commitlog_pending [list]
+
+    # current commitlog
+    variable commitlog_name
+    set commitlog_name {}
+
+    # commitlog(commitlog_name,{size,entries}) => value
+    variable commitlog
+    array set commitlog [list]
+    
+    # threshold_exceeded_p configuration settings
+    variable commitlog_threshold
+    array set commitlog_threshold [list]
+    set commitlog_threshold(size) 9999999
+    set commitlog_threshold(n_entries) 99999
+
+    # all open commitlog file pointers
+    variable fp
     array set fp [list]
 
     array set __mem_row_keys [list]
@@ -46,16 +62,16 @@ proc ::persistence::commitlog::init {} {
 
     # log "initializing commitlog..."
 
-    open_commitlog
-    load_commitlog
-    # at_shutdown close_commitlog
+    set commitlog_name [open_commitlog]
+    load_commitlog ${commitlog_name}
+    # at_shutdown close_commitlog ${commitlog_name}
 }
 
 proc ::persistence::commitlog::new_commitlog {} {
     variable commitlog_name
 
     set micros [clock microseconds]
-    set commitlog_name "CommitLog@${micros}"
+    set commitlog_name "CommitLog-${micros}"
     init_commitlog ${commitlog_name}
     open_commitlog
 }
@@ -125,10 +141,22 @@ proc ::persistence::commitlog::open_commitlog {} {
 
     }
 
+    return ${commitlog_name}
+
 }
 
-proc ::persistence::commitlog::close_commitlog {} {
-    variable commitlog_name
+proc ::persistence::commitlog::close_commitlog {commitlog_name} {
+    variable __xid_to_commitlog
+    variable __commitlog_pending
+    
+    set timer [list ::persistence::commitlog::close_commitlog ${commitlog_name}]
+    if { [value_if __commitlog_pending(${commitlog_name}) "0"] } {
+        after 0 ${timer}
+        return
+    }
+
+    after cancel ${timer}
+
     variable fp
     if { $fp(${commitlog_name}) ne {} } {
         close $fp(${commitlog_name})
@@ -136,8 +164,7 @@ proc ::persistence::commitlog::close_commitlog {} {
     unset fp(${commitlog_name})
 }
 
-proc ::persistence::commitlog::threshold_exceeded_p {} {
-    variable commitlog_name
+proc ::persistence::commitlog::threshold_exceeded_p {commitlog_name} {
     variable commitlog
     variable commitlog_threshold
 
@@ -150,15 +177,13 @@ proc ::persistence::commitlog::threshold_exceeded_p {} {
         ${size} > $commitlog_threshold(size) 
         || ${n_entries} > $commitlog_threshold(n_entries)
     } {
-        # create new commitlog
-        new_commitlog
+        return 1
     } 
     return 0
 }
 
-proc ::persistence::commitlog::write_to_commitlog {mem_id} {
+proc ::persistence::commitlog::write_to_commitlog {commitlog_name mem_id} {
 
-    variable commitlog_name
     variable fp
 
     variable __mem
@@ -178,29 +203,37 @@ proc ::persistence::commitlog::write_to_commitlog {mem_id} {
     set commitlog_item_data [binary format a* $commitlog_item_data]
     ::util::io::write_string $fp(${commitlog_name}) $commitlog_item_data
 
-    if { [threshold_exceeded_p] } {
+    if { [threshold_exceeded_p ${commitlog_name}] } {
 
         # 1. create new commitlog
         new_commitlog
 
         # 2. wait until all open batches are completed
         # 3. compact old commitlog
+        # 4. close old commitlog
+
+        after 0 [::persistence::commitlog::close_commitlog ${commitlog_name}]
+
     }
 
 }
 
 
-proc ::persistence::commitlog::checkpoint {pos} {
-    variable commitlog_name
+proc ::persistence::commitlog::checkpoint {commitlog_name {pos ""}} {
     variable fp
+    if { ${pos} eq {} } {
+        set pos [tell $fp(${commitlog_name})]
+    }
     seek $fp(${commitlog_name}) 0 start
     ::util::io::write_int $fp(${commitlog_name}) $pos
     seek $fp(${commitlog_name}) $pos start
 }
 
-proc ::persistence::commitlog::logpoint {pos} {
-    variable commitlog_name
+proc ::persistence::commitlog::logpoint {commitlog_name {pos ""}} {
     variable fp  
+    if { ${pos} eq {} } {
+        set pos [tell $fp(${commitlog_name})]
+    }
     seek $fp(${commitlog_name}) 4 start
     ::util::io::write_int $fp(${commitlog_name}) $pos
     seek $fp(${commitlog_name}) $pos start
@@ -214,8 +247,7 @@ proc ::persistence::commitlog::logpoint {pos} {
 # describing the changes that have not been applied to the data pages
 # can be redone from the log records. This is roll-forward recovery, 
 # also known as REDO.
-proc ::persistence::commitlog::load_commitlog {} {
-    variable commitlog_name
+proc ::persistence::commitlog::load_commitlog {commitlog_name} {
     variable fp
 
     assert { $fp(${commitlog_name}) ne {} }
@@ -264,6 +296,12 @@ proc ::persistence::commitlog::load_commitlog {} {
 
 }
 
+
+# NOTE that path may contain a commitlog_name prefix,
+# e.g. CommitLog-12345:newsdb/news_item.by_urlsha1
+#
+# TODO: must support this kind of querying by maintaining a parallel
+# critbit-tree structure for each commitlog.
 
 proc ::persistence::commitlog::get_leafs {path {direction "0"} {limit ""}} {
     variable __mem_cur
@@ -330,14 +368,24 @@ proc ::persistence::commitlog::set_mem {instr oid data xid codec_conf} {
 
     variable __mem_id
     variable __mem
+
     variable __mem_tmp
+    variable __commitlog_pending
+    variable __xid_to_commitlog
+
     variable __rev_to_mem_id
     variable __mem_row_keys
     variable __mem_num_cols
 
-    variable commitlog_name
-    variable fp
+    if { ![info exists __xid_to_commitlog(${xid})] } {
+        variable commitlog_name
+        set __xid_to_commitlog(${xid}) ${commitlog_name}
+        set __commitlog_pending(${commitlog_name}) 1
+    } else {
+        set commitlog_name $__xid_to_commitlog(${xid})
+    }
 
+    variable fp
     set offset [tell $fp(${commitlog_name})]
 
     set rev ""
@@ -367,6 +415,10 @@ proc ::persistence::commitlog::set_mem {instr oid data xid codec_conf} {
         }
         incr __mem_num_cols(${type_oid},${row_key})
     }
+
+    set len [string length ${data}]
+    incr commitlog(${commitlog_name},size) ${len}
+    incr commitlog(${commitlog_name},n_entries)
 
     return ${__mem_id}
 
@@ -401,13 +453,17 @@ proc ::persistence::commitlog::unset_mem {mem_id} {
 }
 
 proc ::persistence::commitlog::write_to_new {xids {fsync_p "1"}} {
-    variable commitlog_name
+    variable __xid_to_commitlog
     variable fp
 
     variable __mem_tmp
     variable __mem_new
 
     foreach xid ${xids} {
+
+        if { ${fsync_p} } {
+            set commitlog_name [value_if __xid_to_commitlog(${xid}) ""]
+        }
 
         set parent_xid [lrange [split $xid {/}] 0 end-1]
         if { $parent_xid ne {} } {
@@ -420,13 +476,12 @@ proc ::persistence::commitlog::write_to_new {xids {fsync_p "1"}} {
 
         foreach mem_id $__mem_tmp(${xid}) {
             if { ${fsync_p} } {
-                write_to_commitlog ${mem_id}
+                write_to_commitlog ${commitlog_name} ${mem_id}
             }
             lappend __mem_new(${xid}) ${mem_id}
         }
     }
 
-    logpoint [tell $fp(${commitlog_name})]
 }
 
 proc ::persistence::commitlog::delete_from_tmp {xids} {
@@ -436,7 +491,18 @@ proc ::persistence::commitlog::delete_from_tmp {xids} {
         # set begin_batch_mem_id [lindex $__mem_tmp(${xid}) 0]
         # set end_batch_mem_id [lindex $__mem_tmp(${xid}) end]
 
-        array unset __mem_tmp ${xid}
+        unset __mem_tmp(${xid})
+
+        # FIXME: issue with nested transactions
+        set commitlog_name [value_if __xid_to_commitlog(${xid}) ""]
+
+        if { ${commitlog_name} ne {} } {
+            unset __xid_to_commitlog(${xid})
+            incr __commitlog_pending(${commitlog_name}) -1
+            if { $__commitlog_pending(${commitlog_name}) == 0 } {
+                unset __commitlog_pending(${commitlog_name})
+            }
+        }
 
         # unset_mem ${begin_batch_mem_id}
         # unset_mem ${end_batch_mem_id}
@@ -488,13 +554,19 @@ proc ::persistence::commitlog::begin_batch {} {
 proc ::persistence::commitlog::end_batch {} {
     set xid [::persistence::fs::end_batch]
 
-    # indirect way to check if it is about a sysdb ks or not
-    variable commitlog_name
+    variable __xid_to_commitlog
+    set commitlog_name [value_if __xid_to_commitlog(${xid}) ""]
+
     variable fp
+
+    # indirect way to check if it is about a sysdb ks or not
     if { $fp(${commitlog_name}) ne {} } {
         set_mem "end_batch" "" "" $xid ""
 
         write_to_new $xid
+
+        logpoint ${commitlog_name}
+        
         delete_from_tmp $xid
         finalize_commit $xid
     }
@@ -667,8 +739,7 @@ proc ::persistence::commitlog::compact_all {} {
     }
 
     variable commitlog_name
-    variable fp
-    checkpoint [tell $fp(${commitlog_name})]
+    checkpoint ${commitlog_name}
 
     # new_commitlog
 
