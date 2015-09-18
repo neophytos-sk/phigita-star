@@ -90,8 +90,6 @@ proc ::persistence::commitlog::init {} {
         set commitlog_names [new_commitlog]
     }
 
-    set commitlog_names "CommitLog"
-
     foreach commitlog_name ${commitlog_names} {
         log "!!! init commitlog ${commitlog_name}"
         init_commitlog ${commitlog_name}
