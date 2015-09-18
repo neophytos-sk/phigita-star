@@ -83,13 +83,16 @@ proc ::persistence::commitlog::init {} {
     variable commitlog_name
     set commitlog_name "CommitLog"
 
-    set commitlog_names [glob -nocomplain -tails -directory $base_dir CommitLog-*]
+    set dir [file join $base_dir cur]
+    variable commitlog_names
+    set commitlog_names [glob -nocomplain -tails -directory $dir CommitLog-*]
     set commitlog_names [lsort -command compare_commitlog_files ${commitlog_names}]
     if { ${commitlog_names} eq {} } {
         set commitlog_names [new_commitlog]
     }
 
     foreach commitlog_name ${commitlog_names} {
+        log "!!! init commitlog ${commitlog_name}"
         init_commitlog ${commitlog_name}
         open_commitlog ${commitlog_name}
         load_commitlog ${commitlog_name}
@@ -352,6 +355,7 @@ proc ::persistence::commitlog::get_leafs {path {direction "0"} {limit ""}} {
     }
 
     variable commitlog_names
+    assert { ${commitlog_names} ne {} }
     set result [list]
     set type_oid [type_oid $path]
     foreach commitlog_name ${commitlog_names} {
@@ -781,10 +785,11 @@ proc ::persistence::commitlog::compact_all {} {
 
     }
 
-    variable commitlog_name
-    checkpoint ${commitlog_name}
-
-    # new_commitlog
+    variable commitlog_names
+    foreach commitlog_name ${commitlog_names} {
+        checkpoint ${commitlog_name}
+        # log delete_commitlog ${commitlog_name}
+    }
 
 }
 
