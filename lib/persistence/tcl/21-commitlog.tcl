@@ -26,6 +26,10 @@ namespace eval ::persistence::commitlog {
     variable commitlog_name
     set commitlog_name {}
 
+    # all open commitlog names
+    variable commitlog_names
+    set commitlog_names {}
+
     # commitlog(commitlog_name,{size,entries}) => value
     variable commitlog
     array set commitlog [list]
@@ -69,9 +73,12 @@ proc ::persistence::commitlog::init {} {
 
 proc ::persistence::commitlog::new_commitlog {} {
     variable commitlog_name
+    variable commitlog_names
 
     set micros [clock microseconds]
     set commitlog_name "CommitLog-${micros}"
+    lappend commitlog_names ${commitlog_name}
+
     init_commitlog ${commitlog_name}
     open_commitlog
 }
@@ -135,9 +142,9 @@ proc ::persistence::commitlog::open_commitlog {} {
     } else {
 
         set pos 8
-        ::util::io::write_int $fp(${commitlog_name}) $pos
-        ::util::io::write_int $fp(${commitlog_name}) $pos
-        seek $fp(${commitlog_name}) $pos
+        ::util::io::write_int $fp(${commitlog_name}) ${pos}
+        ::util::io::write_int $fp(${commitlog_name}) ${pos}
+        seek $fp(${commitlog_name}) ${pos}
 
     }
 
@@ -148,7 +155,8 @@ proc ::persistence::commitlog::open_commitlog {} {
 proc ::persistence::commitlog::close_commitlog {commitlog_name} {
     variable __xid_to_commitlog
     variable __commitlog_pending
-    
+    variable commitlog_names
+
     set timer [list ::persistence::commitlog::close_commitlog ${commitlog_name}]
     if { [value_if __commitlog_pending(${commitlog_name}) "0"] } {
         after 0 ${timer}
@@ -159,6 +167,16 @@ proc ::persistence::commitlog::close_commitlog {commitlog_name} {
 
     variable fp
     if { $fp(${commitlog_name}) ne {} } {
+
+        # remove name from open commitlog_names variable
+        set i [lsearch -exact ${commitlog_names} ${commitlog_name}]
+        assert { ${i} != -1 }
+        set commitlog_names [lreplace ${commitlog_names} ${i} ${i}]
+    
+        # compact_all using the old commitlog file
+        # compact_all
+
+        # close old commitlog file
         close $fp(${commitlog_name})
     }
     unset fp(${commitlog_name})
@@ -208,9 +226,9 @@ proc ::persistence::commitlog::write_to_commitlog {commitlog_name mem_id} {
         # 1. create new commitlog
         new_commitlog
 
-        # 2. wait until all open batches are completed
-        # 3. compact old commitlog
-        # 4. close old commitlog
+        # 2.1. wait until all open batches are completed
+        # 2.2. compact old commitlog
+        # 2.3. close old commitlog
 
         after 0 [::persistence::commitlog::close_commitlog ${commitlog_name}]
 
@@ -308,23 +326,26 @@ proc ::persistence::commitlog::get_leafs {path {direction "0"} {limit ""}} {
 
     set result [list]
 
-    lassign [split_oid $path] ks
-    if { $ks eq {sysdb} } {
-        return [::persistence::fs::get_leafs $path]
+    lassign [split_oid ${path}] ks
+    if { ${ks} eq {sysdb} } {
+        return [::persistence::fs::get_leafs ${path}]
     }
 
+    variable commitlog_names
+    set result [list]
     set type_oid [type_oid $path]
-    if { [info exists __mem_cur(${type_oid})] } {
-        # log "!!! path=$path"
-        # log "!!! leafs=[join [::cbt::prefix_match $__mem_cur(${type_oid}) ""] \n]"
-        set result [::cbt::prefix_match $__mem_cur(${type_oid}) $path]
-    } else {
-        # log "no data for type_oid (=$type_oid) yet"
+    foreach commitlog_name ${commitlog_names} {
+        if { [info exists __mem_cur(${commitlog_name},${type_oid})] } {
+            set result [concat ${result} \
+                [::cbt::prefix_match $__mem_cur(${commitlog_name},${type_oid}) ${path}]]
+        } else {
+            # log "no data for type_oid (=$type_oid) yet"
+        }
     }
 
     # log [namespace current],get_leafs,result=$result
 
-    return $result
+    return [lsort -unique -command ::persistence::compare_files ${result}]
 }
 
 proc ::persistence::commitlog::get_subdirs {path} {
@@ -514,8 +535,12 @@ proc ::persistence::commitlog::finalize_commit {xids} {
     variable __mem
     variable __mem_new
     variable __mem_cur
+    variable __xid_to_commitlog
 
     foreach xid ${xids} {
+
+        set commitlog_name $__xid_to_commitlog(${xid})
+
         foreach mem_id $__mem_new(${xid}) {
             set instr $__mem(${mem_id},instr)
             if { $instr in {begin_batch end_batch} } {
@@ -527,11 +552,9 @@ proc ::persistence::commitlog::finalize_commit {xids} {
 
             set type_oid [type_oid $rev]
             if { ![info exists __mem_cur(${type_oid})] } {
-                set __mem_cur(${type_oid}) [::cbt::create $::cbt::STRING]
-                # log "!!! created type_oid (=$type_oid)"
+                set __mem_cur(${commitlog_name},${type_oid}) [::cbt::create $::cbt::STRING]
             }
-            ::cbt::insert $__mem_cur(${type_oid}) $rev
-            # log leafs=[::cbt::prefix_match $__mem_cur(${type_oid}) ""]
+            ::cbt::insert $__mem_cur(${commitlog_name},${type_oid}) $rev
         }
         array unset __mem_new $xid
     }
