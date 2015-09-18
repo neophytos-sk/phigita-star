@@ -81,15 +81,16 @@ proc ::persistence::commitlog::init {} {
 
     variable base_dir
     variable commitlog_name
-    set commitlog_name "CommitLog"
+    variable commitlog_names
 
     set dir [file join $base_dir cur]
-    variable commitlog_names
     set commitlog_names [glob -nocomplain -tails -directory $dir CommitLog-*]
     set commitlog_names [lsort -command compare_commitlog_files ${commitlog_names}]
     if { ${commitlog_names} eq {} } {
         set commitlog_names [new_commitlog]
     }
+
+    set commitlog_names "CommitLog"
 
     foreach commitlog_name ${commitlog_names} {
         log "!!! init commitlog ${commitlog_name}"
@@ -245,6 +246,8 @@ proc ::persistence::commitlog::write_to_commitlog {commitlog_name mem_id} {
     ::util::io::write_string $fp(${commitlog_name}) $commitlog_item_data
 
     if { [threshold_exceeded_p ${commitlog_name}] } {
+
+        log "!!! threshold exceeded"
 
         # 1. create new commitlog
         new_commitlog
@@ -575,7 +578,7 @@ proc ::persistence::commitlog::finalize_commit {xids} {
             # log [namespace current],rev=$rev
 
             set type_oid [type_oid $rev]
-            if { ![info exists __mem_cur(${type_oid})] } {
+            if { ![info exists __mem_cur(${commitlog_name},${type_oid})] } {
                 set __mem_cur(${commitlog_name},${type_oid}) [::cbt::create $::cbt::STRING]
             }
             ::cbt::insert $__mem_cur(${commitlog_name},${type_oid}) $rev
