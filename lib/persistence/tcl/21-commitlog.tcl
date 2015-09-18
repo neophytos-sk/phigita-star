@@ -60,14 +60,40 @@ namespace eval ::persistence::commitlog {
 
 }
 
+proc ::persistence::commitlog::compare_commitlog_files {f1 f2} {
+    set m1 [lindex [split $f1 {-}] 1]
+    set m2 [lindex [split $f2 {-}] 1]
+
+    if { $m1 < $m2 } {
+        return -1
+    } elseif { $m1 > $m2 } {
+        return 1
+    } else {
+        return 0
+    }
+}
+
 proc ::persistence::commitlog::init {} {
 
     ::persistence::fs::init
 
     # log "initializing commitlog..."
 
-    set commitlog_name [open_commitlog]
-    load_commitlog ${commitlog_name}
+    variable base_dir
+    variable commitlog_name
+    set commitlog_name "CommitLog"
+
+    set commitlog_names [glob -nocomplain -tails -directory $base_dir CommitLog-*]
+    set commitlog_names [lsort -command compare_commitlog_files ${commitlog_names}]
+    if { ${commitlog_names} eq {} } {
+        set commitlog_names [new_commitlog]
+    }
+
+    foreach commitlog_name ${commitlog_names} {
+        init_commitlog ${commitlog_name}
+        open_commitlog ${commitlog_name}
+        load_commitlog ${commitlog_name}
+    }
     # at_shutdown close_commitlog ${commitlog_name}
 }
 
@@ -80,7 +106,9 @@ proc ::persistence::commitlog::new_commitlog {} {
     lappend commitlog_names ${commitlog_name}
 
     init_commitlog ${commitlog_name}
-    open_commitlog
+    open_commitlog ${commitlog_name}
+
+    return ${commitlog_name}
 }
 
 proc ::persistence::commitlog::init_commitlog {commitlog_name} {
@@ -92,16 +120,8 @@ proc ::persistence::commitlog::init_commitlog {commitlog_name} {
     set fp($commitlog_name) {}
 }
 
-proc ::persistence::commitlog::open_commitlog {} {
-    variable commitlog_name
+proc ::persistence::commitlog::open_commitlog {commitlog_name} {
     variable fp
-
-    if { ${commitlog_name} eq {} } {
-        # set options {multirow_orderby {decreasing dictionary}}
-        # set commitlog_name [::sysdb::commitlog_t find $options]
-        set commitlog_name "CommitLog"
-        init_commitlog ${commitlog_name}
-    }
 
     if { $fp(${commitlog_name}) ne {} } {
         return
