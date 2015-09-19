@@ -590,7 +590,8 @@ proc ::persistence::orm::find_by_axis {argv {options_arrVar ""}} {
         set nodepath [to_path_by $idxname $idxvalue]
         set options [array get options_arr]
         set slicelist [::persistence::get_slice $nodepath $options]
-        # log find_by_axis,argc=2,slicelist=$slicelist
+
+        # log find_by_axis,argc=2,options=$options
         return $slicelist
 
     } elseif { $argc == 1 } {
@@ -606,6 +607,7 @@ proc ::persistence::orm::find_by_axis {argv {options_arrVar ""}} {
 
         if { $row_keys ne {} } {
             set slicelist [::persistence::multiget_slice $nodepath $row_keys $revised_options]
+
             # log argc=1,^^^slicelist=$slicelist
             return $slicelist
         }
@@ -626,7 +628,6 @@ proc ::persistence::orm::find {{where_clause_argv ""} {optionsVar ""}} {
     set nsp [namespace __this]
     set options(__type_nsp) ${nsp}
     
-
     if { $where_clause_argv eq {} } {
 
         # __find_all starting from the given axis

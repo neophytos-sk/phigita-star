@@ -345,14 +345,17 @@ proc ::persistence::commitlog::load_commitlog {commitlog_name} {
 # TODO: must support this kind of querying by maintaining a parallel
 # critbit-tree structure for each commitlog.
 
+# limit := -1 (=all)
 proc ::persistence::commitlog::get_leafs {path {direction "0"} {limit ""}} {
     variable __mem_cur
+
+    set limit [coalesce ${limit} "-1"]
 
     set result [list]
 
     lassign [split_oid ${path}] ks
     if { ${ks} eq {sysdb} } {
-        return [::persistence::fs::get_leafs ${path}]
+        return [::persistence::fs::get_leafs ${path} ${direction} ${limit}]
     }
 
     variable commitlog_names
@@ -360,12 +363,20 @@ proc ::persistence::commitlog::get_leafs {path {direction "0"} {limit ""}} {
     set result [list]
     set type_oid [type_oid $path]
     foreach commitlog_name ${commitlog_names} {
+
         if { [info exists __mem_cur(${commitlog_name},${type_oid})] } {
+
             set result [concat ${result} \
-                [::cbt::prefix_match $__mem_cur(${commitlog_name},${type_oid}) ${path}]]
+                [::cbt::prefix_match \
+                    $__mem_cur(${commitlog_name},${type_oid}) \
+                    ${path} \
+                    ${direction} \
+                    ${limit}]]
+
         } else {
             # log "no data for type_oid (=$type_oid) yet"
         }
+
     }
 
     # log [namespace current],get_leafs,result=$result
@@ -373,10 +384,11 @@ proc ::persistence::commitlog::get_leafs {path {direction "0"} {limit ""}} {
     return [lsort -unique -command ::persistence::compare_files ${result}]
 }
 
-proc ::persistence::commitlog::get_subdirs {path} {
+proc ::persistence::commitlog::get_subdirs {path {direction "0"} {limit ""}} {
+
     lassign [split_oid $path] ks
     if { $ks eq {sysdb} } {
-        return [::persistence::fs::get_subdirs $path]
+        return [::persistence::fs::get_subdirs $path $direction $limit]
     }
 
     set type_oid [type_oid $path]
@@ -391,11 +403,41 @@ proc ::persistence::commitlog::get_subdirs {path} {
     }
 
     variable __mem_row_keys
+    variable commitlog_names
 
-    set row_keys [lsort [value_if __mem_row_keys(${type_oid}) ""]]
+    # log commitlog_names=$commitlog_names
+
     set result [list]
-    foreach row_key $row_keys {
-        lappend result ${type_oid}/${row_key}
+    foreach commitlog_name ${commitlog_names} {
+
+        set varname "__mem_row_keys(${commitlog_name},${type_oid})"
+        if { [info exists ${varname}] } {
+
+            set cbt_id [set ${varname}]
+
+            set row_keys [::cbt::prefix_match \
+                $__mem_row_keys(${commitlog_name},${type_oid}) \
+                "" \
+                ${direction} \
+                [coalesce ${limit} "-1"]]
+
+            foreach row_key $row_keys {
+                lappend result ${type_oid}/${row_key}
+            }
+
+        }
+
+    }
+
+    if { ${direction} == 0 } {
+        set sort_direction "decreasing"
+    } else {
+        set sort_direction "increasing"
+    }
+
+    set result [lsort -${sort_direction} ${result}]
+    if { $limit ne {} && [llength ${commitlog_names}] > 1 } {
+        set result [lrange ${result} 0 ${limit}]
     }
     return $result
 
@@ -407,7 +449,7 @@ proc ::persistence::commitlog::exists_p {rev} {
     if { $ks eq {sysdb} } {
         return [::persistence::fs::exists_p $rev]
     }
-    return [expr { [get_leafs $rev] ne {} }]
+    return [expr { [get_leafs $rev 0 1] ne {} }]
 }
                                          
 proc ::persistence::commitlog::set_mem {instr oid data xid codec_conf} {
@@ -456,9 +498,14 @@ proc ::persistence::commitlog::set_mem {instr oid data xid codec_conf} {
         set __rev_to_mem_id(${rev}) ${__mem_id}
         lassign [split_oid $rev] ks cf_axis row_key
         set type_oid [type_oid $rev]
-        if { ![info exists __mem_num_cols(${type_oid},${row_key})] } {
-            lappend __mem_row_keys(${type_oid}) ${row_key}
+        if { 
+            ![info exists __mem_row_keys(${commitlog_name},${type_oid})] 
+        } {
+            set __mem_row_keys(${commitlog_name},${type_oid}) [::cbt::create $::cbt::STRING]
         }
+
+        ::cbt::insert $__mem_row_keys(${commitlog_name},${type_oid}) ${row_key}
+
         incr __mem_num_cols(${type_oid},${row_key})
     }
 
@@ -579,6 +626,9 @@ proc ::persistence::commitlog::finalize_commit {xids} {
             if { ![info exists __mem_cur(${commitlog_name},${type_oid})] } {
                 set __mem_cur(${commitlog_name},${type_oid}) [::cbt::create $::cbt::STRING]
             }
+            if { ![info exists __mem_row_keys(${commitlog_name},${type_oid})] } {
+                set __mem_row_keys(${commitlog_name},${type_oid}) [::cbt::create $::cbt::STRING]
+            }
             ::cbt::insert $__mem_cur(${commitlog_name},${type_oid}) $rev
         }
         array unset __mem_new $xid
@@ -648,7 +698,7 @@ proc ::persistence::commitlog::compact {type_oid todelete_rowsVar} {
     lassign [get_multirow_names $type_oid $multirow_options] \
         row_keys revised_multirow_options
 
-    # 2. fget_leafs/slicelist for each row key
+    # 2. get_leafs/slicelist for each row key
     set multirow_slicelist [multirow_slice \
         $type_oid $row_keys $revised_multirow_options]
 

@@ -72,7 +72,7 @@ proc ::persistence::fs::get_files {nodepath} {
     return [lsort -unique -command ::persistence::compare_files ${result}]
 }
 
-proc ::persistence::fs::get_subdirs {path} {
+proc ::persistence::fs::get_subdirs {path {direction "0"} {limit ""}} {
     variable base_dir
     set dir [file normalize ${base_dir}/cur/${path}]
 
@@ -87,7 +87,19 @@ proc ::persistence::fs::get_subdirs {path} {
         # log get_subdirs,${path}/${name}
         lappend result ${path}/${name}
     }
-    return [lsort ${result}]
+
+    if { ${direction} == 0 } {
+        set sort_direction "decreasing"
+    } else {
+        set sort_direction "increasing"
+    }
+
+    set result [lsort -${sort_direction} ${result}]
+    if { $limit ne {} } {
+        set result [lrange ${result} 0 ${limit}]
+    }
+    return ${result}
+
 }
 
 proc ::persistence::fs::get_dir {args} {

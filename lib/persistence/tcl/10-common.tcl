@@ -194,6 +194,7 @@ proc ::persistence::common::sort {
         lappend sortlist [list $i $item($attname) $rev]
         incr i
     }
+
     set sortlist [lsort -${sort_direction} -${sort_comparison} -index 1 $sortlist] 
 
     set sorted_slicelist [map x $sortlist {lindex $x 2}]
@@ -423,9 +424,23 @@ proc ::persistence::common::get_slice {nodepath {options ""}} {
     }
     lassign [split_oid $nodepath] ks cf_axis row_key
     set row_path [join_oid ${ks} ${cf_axis} ${row_key}]
-    set slicelist [get_leafs ${row_path}]
+
+
+    array set optionsArr ${options}
+    set offset [value_if optionsArr(offset) "0"]
+    set limit [value_if optionsArr(limit) ""]
+    set leafs_limit {}
+    if { $limit ne {} } {
+        set leafs_limit [expr { $offset + $limit }]
+    }
+    set leafs_direction 0
+
+    set slicelist [get_leafs ${row_path} ${leafs_direction} ${leafs_limit}]
+
+
     # log !!!!!!!!!get_slice,nodepath=$nodepath
     # log !!!!!!!!!get_slice,slicelist=$slicelist
+
     __exec_options slicelist $options
     return ${slicelist}
 }
@@ -457,9 +472,33 @@ proc ::persistence::common::multiget_slice {nodepath row_keys {options ""}} {
         # the request, whether it requires sorting, range selection,
         # and so forth
         array set options_arr $options
+
+        if { 
+            ![info exists options_arr(order_by)] 
+            && ![info exists options_arr(__slice_predicate)] 
+        } {
+            # example that the following code does not work:
+            # find_by_axis by_langclass utf-8 order by sort_date desc
+            # => a possible solution would be to use a secondary index
+            # on sort_date and unset options_arr(order_by) upon
+            # rewriting the query (if the underlying storage mechanism
+            # stores revision in a structure that returns them sorted,
+            # e.g. a critbit tree)
+
+            set offset [value_if options_arr(offset) "0"]
+            set limit [value_if options_arr(limit) ""]
+            set multirow_limit {}
+            if { $limit ne {} } {
+                set multirow_limit [expr { $offset + $limit }]
+            }
+        }
+        
         unset_if options_arr(order_by)
         unset_if options_arr(offset)
         unset_if options_arr(limit)
+
+        # set options_arr(limit) ${multirow_limit}
+
         set partial_options [array get options_arr]
         unset options_arr
     }
@@ -494,7 +533,9 @@ proc ::persistence::common::get_link_target {rev} {
 
     # log get_link_target,target_oid=$target_oid
 
-    set leafs [get_leafs $target_oid]
+    set leafs_direction 0
+    set leafs_limit 1
+    set leafs [get_leafs ${target_oid} ${leafs_direction} ${leafs_limit}]
 
     assert { $leafs ne {} } {
         log failed,noleafs,target_oid=$target_oid
@@ -635,7 +676,15 @@ proc ::persistence::common::get_multirow {ks cf_axis {options ""}} {
 
     # assert_cf ${ks} ${cf_axis}
 
-    set multirow [get_subdirs ${ks}/${cf_axis}]
+    set offset [value_if optionsArr(offset) "0"]
+    set limit [value_if optionsArr(limit) ""]
+
+    set subdirs_direction 0
+    set subdirs_limit {}
+    if { ${limit} ne {} } {
+        set subdirs_limit [expr { ${offset} + ${limit} }]
+    }
+    set multirow [get_subdirs ${ks}/${cf_axis} ${subdirs_direction} ${subdirs_limit}]
 
     set delta_options [__exec_multirow_options multirow $options]
 
@@ -679,7 +728,7 @@ proc ::persistence::common::get_new_filename {path} {
 }
 
 
-proc ::persistence::common::get_leafs {path} {
+proc ::persistence::common::get_leafs {path {direction "0"} {limit ""}} {
     assert { $path ne {} }
 
     set subdirs [get_subdirs ${path}]
@@ -701,11 +750,11 @@ proc ::persistence::common::get_leafs {path} {
 }
 
 if { [setting_p "mvcc"] } {
-    wrap_proc ::persistence::common::get_leafs {path} {
+    wrap_proc ::persistence::common::get_leafs {path {direction "0"} {limit ""}} {
         assert { $path ne {} }
         # log get_leafs,path=$path
 
-        set revs [call_orig $path]
+        set revs [call_orig $path ${direction} ${limit}]
         return [resolve_latest_revs $revs]
     }
 

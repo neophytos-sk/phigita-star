@@ -141,7 +141,7 @@ proc ::persistence::ss::get_leafs_helper {path {direction "0"} {limit ""}} {
     return
 }
 
-proc ::persistence::ss::get_subdirs_helper {path} {
+proc ::persistence::ss::get_subdirs_helper {path direction limit} {
 
     set type_oid [type_oid $path]
     if { [load_sstable $type_oid sstableVar sstable_colsVar sstable_rowsVar] } {
@@ -179,11 +179,21 @@ proc ::persistence::ss::get_subdirs_helper {path} {
 
         }
 
-        set row_keys [map {x y} $sstable(rows) {set x}]
+        if {0} {
+            set row_keys [::cbt::prefix_match \
+                $__cbt_Tcl_Obj__rows \
+                "" \
+                ${direction} \
+                [coalesce ${limit} "-1"]]
+        } else {
+            set row_keys [map {x y} $sstable(rows) {set x}]
+        }
+
         set result [list]
         foreach row_key $row_keys {
             lappend result ${type_oid}/${row_key}
         }
+
         return $result
     }
 
@@ -379,16 +389,16 @@ proc ::persistence::ss::get_files {path} {
     return $result
 }
 
-proc ::persistence::ss::get_subdirs {path} {
+proc ::persistence::ss::get_subdirs {path {direction "0"} {limit ""}} {
     variable base_nsp
 
     lassign [split_oid $path] ks
     if { $ks eq {sysdb} } {
-        return [${base_nsp}::get_subdirs $path]
+        return [${base_nsp}::get_subdirs $path ${direction} ${limit}]
     }
 
-    set base_subdirs [${base_nsp}::get_subdirs $path]
-    set ss_subdirs [::persistence::ss::get_subdirs_helper $path]
+    set base_subdirs [${base_nsp}::get_subdirs $path ${direction} ${limit}]
+    set ss_subdirs [::persistence::ss::get_subdirs_helper $path ${direction} ${limit}]
 
     set result [lsort -unique [concat $base_subdirs $ss_subdirs]]
     return $result
