@@ -642,7 +642,7 @@ proc ::persistence::commitlog::begin_batch {} {
     # indirect way to check if it is about a sysdb ks or not
     variable commitlog_name
     variable fp
-    if { $fp(${commitlog_name}) ne {} } { 
+    if { ${commitlog_name} ne {} && $fp(${commitlog_name}) ne {} } {
         set_mem "begin_batch" "" "" $xid ""
     }
 
@@ -658,7 +658,7 @@ proc ::persistence::commitlog::end_batch {} {
     variable fp
 
     # indirect way to check if it is about a sysdb ks or not
-    if { $fp(${commitlog_name}) ne {} } {
+    if { ${commitlog_name} ne {} && $fp(${commitlog_name}) ne {} } {
         set_mem "end_batch" "" "" $xid ""
 
         write_to_new $xid

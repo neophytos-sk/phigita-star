@@ -414,9 +414,10 @@ proc ::persistence::ss::compact {type_oid} {
 
     lassign [split_oid $type_oid] ks
     if { $ks eq {sysdb} } {
-        log "skipping sstable merge for $type_oid"
+        # log "skipping sstable merge for $type_oid"
         return
     }
+    log "merging sstables for $type_oid"
 
     set name [binary encode base64 $type_oid]
 
@@ -591,7 +592,6 @@ proc ::persistence::ss::compact_all {} {
         array unset object_type
 
         foreach type_oid $type_oids {
-            log "merging sstables for $type_oid"
             if { [catch {
                 ::persistence::ss::compact $type_oid
             } errmsg] } {
