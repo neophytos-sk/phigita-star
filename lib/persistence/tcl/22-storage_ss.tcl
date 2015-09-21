@@ -47,61 +47,6 @@ proc ::persistence::ss::get_mtime {rev} {
     return [expr { $ts / (10**6) }]
 }
 
-proc ::persistence::ss::read_sstable {sstable_dataVar row_endpos file_i} {
-    upvar $sstable_dataVar sstable_data
-
-    # log read_sstable,datalen=[string length $data]
-
-    # seek _fp $row_endpos start
-    # read_int _fp row_startpos
-
-    assert { $row_endpos ne {} }
-
-    set pos $row_endpos
-    set scan_p [binary scan $sstable_data "@${pos}i" row_startpos]
-    incr pos 4
-
-    assert { $scan_p } {
-        log row_endpos=$row_endpos
-        log failed,row_startpos,scan_p=$scan_p
-    }
-
-    # log row_startpos=$row_startpos
-
-    assert { $row_startpos < $row_endpos } {
-        log row_startpos=$row_startpos
-        log row_endpos=$row_endpos
-    }
-
-    set pos $row_startpos
-
-    # seek _fp $startpos start
-    # read_string _fp row_key
-    binary scan $sstable_data @${pos}i len
-    incr pos 4
-    incr pos $len  ;# skip_string (row_key)
-
-    set revs [list]
-
-    while { $pos < $row_endpos } {
-        set rev_startpos $pos
-
-        set scan_p [binary scan $sstable_data "@${pos}i" len]
-        assert { $scan_p }
-        incr pos 4
-        set scan_p [binary scan $sstable_data "@${pos}a${len}" sstable_item_data]
-        assert { $scan_p }
-        incr pos $len
-
-        lappend revs [list $sstable_item_data $file_i $rev_startpos]
-
-        array unset sstable_item
-
-    }
-
-    return $revs
-
-}
 
 # Even though ss::get_leafs helps work around the issue
 # discussed in ss::get_subdirs_helper, it lacks
@@ -446,28 +391,19 @@ proc ::persistence::ss::compact {type_oid} {
 
     set file_i 0
     array set sstable_row_idx [list]
+    array set fp [list]
     foreach sstable_rev $sstable_revs {
 
+        # TODO:
+        # set fp(${sstable_rev}) [::sysdb::sstable_t open $sstable_rev]
+        # ::sysdb::sstable_t seek $sstable_rev rows ?offset?
+        # set rows [::sysdb::sstable_t get $sstable_rev rows]
+
         array set sstable__${file_i} [::sysdb::sstable_t get $sstable_rev]
-        #log -----
-        #log name=[binary decode base64 [set sstable__${file_i}(name)]]
 
-        foreach {row_key row_endpos} [set sstable__${file_i}(rows)] {
-
-            # log row_key=$row_key
-            # log row_endpos=$row_endpos
-
-            set sstable_data [set sstable__${file_i}(data)]
-
-            set column_idx_items [::persistence::ss::read_sstable \
-                sstable_data $row_endpos $file_i]
-
-            foreach column_idx_item $column_idx_items {
-                lappend sstable_row_idx(${row_key}) $column_idx_item
-            }
-
-            # log revs=$revs
-
+        foreach {rev rev_start_pos} [set sstable__${file_i}(cols)] {
+            lassign [split_oid $rev] _ks _cf_axis row_key
+            lappend sstable_row_idx(${row_key}) [list $rev $file_i $rev_start_pos]
         }
 
         incr file_i
@@ -497,27 +433,29 @@ proc ::persistence::ss::compact {type_oid} {
         incr pos $len
 
         foreach column_idx_item $sstable_row_idx(${row_key}) {
-            lassign $column_idx_item sstable_item_data file_i file_pos
+            lassign $column_idx_item rev file_i input_rev_start_pos
+            
+            # TODO: load_chunk that includes rev_start_pos
+            # into sstable_data var
+            set sstable_data [set sstable__${file_i}(data)]
 
-            set rev_startpos $pos
-
-            # start of code using sstable_item_t
-            array set sstable_item \
-                [::sysdb::sstable_item_t decode sstable_item_data]
-
-            set rev $sstable_item(rev)
-
-            set scan_p [binary scan $sstable_item(data) a* sstable_item(data)]
+            # reading sstable rev item data
+            set tmp_pos $input_rev_start_pos
+            set scan_p [binary scan $sstable_data "@${tmp_pos}i" len]
             assert { $scan_p }
-            set encoded_rev_data [::sysdb::sstable_item_t encode sstable_item]
-            set len [string length $encoded_rev_data]
-            append output_data [binary format i $len] $encoded_rev_data
+            incr tmp_pos 4
+            set scan_p [binary scan $sstable_data "@${tmp_pos}a${len}" sstable_item_data]
+            assert { $scan_p }
+            incr tmp_pos $len
+
+            # writing sstable rev item data
+            set output_rev_start_pos $pos
+            append output_data [binary format i $len] $sstable_item_data
             incr pos 4
             incr pos $len
-            unset sstable_item
-            # end of code using sstable_item_t
+            unset sstable_item_data
 
-            lappend cols $rev $rev_startpos
+            lappend cols $rev $output_rev_start_pos
         }
 
         # write row_startpos at end of row
@@ -530,9 +468,6 @@ proc ::persistence::ss::compact {type_oid} {
         #log "merged file, row_key=$row_key row_endpos=$row_endpos row_startpos=$row_startpos"
 
     }
-
-    # assert { [llength $rows] % 2 == 0 }
-    # assert { [llength $cols] % 2 == 0 }
 
     # write merged sstable file
 
@@ -564,6 +499,10 @@ proc ::persistence::ss::compact {type_oid} {
         # ::sysdb::sstable_t delete $sstable_rev
 
         array unset sstable__${file_i}
+
+        # TODO:
+        # ::sysdb::sstable_t close $fp(${sstable_rev})
+
         incr file_i
     }
 
