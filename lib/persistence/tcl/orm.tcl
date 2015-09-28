@@ -477,36 +477,12 @@ proc ::persistence::orm::exists {where_clause_argv {optionsVar ""}} {
     return [expr { $rev ne {} }]
 }
 
-proc ::persistence::orm::openFile {rev {access_mode "r"}} {
-    # assert { type_permits_open_op_p }
-
-    set local_p 1
-    if { !${local_p} } {
-        error "orm::open for remote 'file' not implemented yet'"
-    }
-    set filename [get_cur_filename ${rev}]
-
-    set nsp [namespace __this]
-    variable ${nsp}::fp 
-    set fp(${rev}) [open ${filename} ${access_mode}]
-    return $fp(${rev})
-}
-
-proc ::persistence::orm::closeFile {rev} {
-    set nsp [namespace __this]
-    variable ${nsp}::fp
-    close $fp(${rev})
-}
 
 # get -
 # * returns the data for a given oid
 # * raises an error if the oid does not exist
 #
-proc ::persistence::orm::get {rev {exists_pVar ""}} {
-
-    if { $exists_pVar ne {} } {
-        upvar $exists_pVar exists_p
-    }
+proc ::persistence::orm::get {rev} {
 
     set exists_p [::persistence::exists_p $rev]
     if { $exists_p } {
@@ -514,7 +490,6 @@ proc ::persistence::orm::get {rev {exists_pVar ""}} {
         set data [::persistence::get $rev [codec_conf]]
         return [decode data]
     } else {
-        #log alias=[interp alias {} exists_p]
         error "no such rev (=$rev) in storage system (=mystore)"
     }
 }

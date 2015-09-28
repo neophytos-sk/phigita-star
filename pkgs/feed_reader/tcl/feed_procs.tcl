@@ -174,10 +174,16 @@ proc ::feed_reader::fetch_feed {resultVar feedVar {stoptitlesVar ""}} {
         set html [::htmltidy::tidy ${html}]
     }
 
-    if { ${feed_type} eq {html} } {
-        set doc [dom parse -html ${html}]
-    } elseif { ${feed_type} in {rss} } {
-        set doc [dom parse ${html}]
+    if { [catch {
+        if { ${feed_type} eq {html} } {
+            set doc [dom parse -html ${html}]
+        } elseif { ${feed_type} in {rss} } {
+            set doc [dom parse ${html}]
+        }
+    } errmsg] } {
+        log errmsg=$errmsg
+        log errorInfo=$::errorInfo
+        return -12
     }
 
     if { [string length $html] < 10000 } {

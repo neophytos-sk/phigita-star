@@ -757,7 +757,7 @@ proc ::persistence::commitlog::compact {type_oid todelete_rowsVar} {
     # 4. write the (sstable) file
     #
 
-    set name [binary encode base64 $type_oid]
+    set name [encode_sstable_name $type_oid]
     set round [clock microseconds]
 
     array set item [list]

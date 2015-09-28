@@ -2,7 +2,7 @@ package provide htmltidy 0.1
 
 set dir [file dirname [info script]]
 
-::xo::lib::require critcl
+package require critcl
 
 array set conf [list]
 set conf(clibraries) "-L/opt/naviserver/lib -ltidy"

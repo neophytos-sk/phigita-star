@@ -149,12 +149,11 @@ proc ::persistence::ss::get_subdirs_helper {path direction limit} {
     return
 }
 
-
 # TODO:  add blob_file attribute type that writes data to filesystem
 proc ::persistence::ss::ORM_get_sstable_rev {rev} {
     error "not implemented yet"
     set type_oid [type_oid $rev]
-    set sstable_name [binary encode base64 $type_oid]
+    set sstable_name [encode_sstable_name $type_oid]
     set where_clause [list [list name = $sstable_name]]
     set sstable_rev [::sysdb::sstable_t 0or1row $where_clause]
     return $sstable_rev
@@ -163,7 +162,7 @@ proc ::persistence::ss::ORM_get_sstable_rev {rev} {
 proc ::persistence::ss::get_sstable_rev {rev} {
 
     set type_oid [type_oid $rev]
-    set name [binary encode base64 $type_oid]
+    set name [encode_sstable_name $type_oid]
 
     # log get_sstable_rev,type_oid=$type_oid,name=$name
 
@@ -355,7 +354,8 @@ proc ::persistence::ss::exists_p {path} {
 }
 
 # merge sstables in mem
-proc ::persistence::ss::compact {type_oid} {
+proc ::persistence::ss::compact {type_oid todelete_revsVar} {
+    upvar $todelete_revsVar todelete_revs
 
     lassign [split_oid $type_oid] ks
     if { $ks eq {sysdb} } {
@@ -364,7 +364,7 @@ proc ::persistence::ss::compact {type_oid} {
     }
     log "merging sstables for $type_oid"
 
-    set name [binary encode base64 $type_oid]
+    set name [encode_sstable_name $type_oid]
 
     # set where_clause [list]
     # lappend where_clause [list name = $name]
@@ -392,19 +392,29 @@ proc ::persistence::ss::compact {type_oid} {
     set file_i 0
     array set sstable_row_idx [list]
     array set fp [list]
+    array set filename [list]
     foreach sstable_rev $sstable_revs {
 
-        # TODO:
-        # set fp(${sstable_rev}) [::sysdb::sstable_t open $sstable_rev]
-        # ::sysdb::sstable_t seek $sstable_rev rows ?offset?
-        # set rows [::sysdb::sstable_t get $sstable_rev rows]
+        lappend todelete_revs $sstable_rev
+        
+        array set sstable [::sysdb::sstable_t get $sstable_rev]
 
-        array set sstable__${file_i} [::sysdb::sstable_t get $sstable_rev]
+        # set sstable_filename [get_cur_filename $sstable_rev]
+        # log filename=$sstable_filename
+        # log size=[file size $sstable_filename]
 
-        foreach {rev rev_start_pos} [set sstable__${file_i}(cols)] {
+        set filename(${file_i}) "/tmp/file__${file_i}"
+        set fp(${file_i}) [open $filename(${file_i}) "w+"]
+        fconfigure $fp(${file_i}) -translation binary 
+        puts -nonewline $fp(${file_i}) $sstable(data)
+
+
+        foreach {rev rev_start_pos} $sstable(cols) {
             lassign [split_oid $rev] _ks _cf_axis row_key
             lappend sstable_row_idx(${row_key}) [list $rev $file_i $rev_start_pos]
         }
+
+        array unset sstable
 
         incr file_i
     }
@@ -418,8 +428,8 @@ proc ::persistence::ss::compact {type_oid} {
         return
     }
 
-    set rows [list]
-    set cols [list]
+    set output_rows [list]
+    set output_cols [list]
     set output_data ""
     set pos 0
     foreach row_key $row_keys {
@@ -435,27 +445,26 @@ proc ::persistence::ss::compact {type_oid} {
         foreach column_idx_item $sstable_row_idx(${row_key}) {
             lassign $column_idx_item rev file_i input_rev_start_pos
             
-            # TODO: load_chunk that includes rev_start_pos
+            # TODO: load_chunk/_fragment that includes rev_start_pos
             # into sstable_data var
-            set sstable_data [set sstable__${file_i}(data)]
+            # 
 
-            # reading sstable rev item data
-            set tmp_pos $input_rev_start_pos
-            set scan_p [binary scan $sstable_data "@${tmp_pos}i" len]
-            assert { $scan_p }
-            incr tmp_pos 4
-            set scan_p [binary scan $sstable_data "@${tmp_pos}a${len}" sstable_item_data]
-            assert { $scan_p }
-            incr tmp_pos $len
+            seek $fp(${file_i}) $input_rev_start_pos 
+            ::util::io::read_string $fp(${file_i}) sstable_item_data
 
             # writing sstable rev item data
             set output_rev_start_pos $pos
+            # TODO: 
+            # if { fragment_size_exceeds_threshold } {
+            #   sstable_fragment_t insert sstable_fragment_data
+            # }
+            set len [string length $sstable_item_data]
             append output_data [binary format i $len] $sstable_item_data
             incr pos 4
             incr pos $len
             unset sstable_item_data
 
-            lappend cols $rev $output_rev_start_pos
+            lappend output_cols $rev $output_rev_start_pos
         }
 
         # write row_startpos at end of row
@@ -463,7 +472,7 @@ proc ::persistence::ss::compact {type_oid} {
         append output_data [binary format i $row_startpos]
         incr pos 4
 
-        lappend rows $row_key $row_endpos
+        lappend output_rows $row_key $row_endpos
 
         #log "merged file, row_key=$row_key row_endpos=$row_endpos row_startpos=$row_startpos"
 
@@ -471,38 +480,24 @@ proc ::persistence::ss::compact {type_oid} {
 
     # write merged sstable file
 
-    set name [binary encode base64 $type_oid]
+    set name [encode_sstable_name $type_oid]
     set round [clock microseconds]
 
     array set item [list]
     set item(name) $name
     set item(data) $output_data  ;# [binary encode hex $output_data]
-    set item(rows) $rows  ;# row_keys 
-    set item(cols) $cols  ;# col_keys
+    set item(rows) $output_rows  ;# row_keys 
+    set item(cols) $output_cols  ;# col_keys
     set item(round) $round
 
     # log "merged_sstable_rev for $type_oid"
     set merged_sstable_rev [::sysdb::sstable_t insert item]
     log merged_sstable_rev=$merged_sstable_rev
 
-    # log "here,just for debugging nested transactions, exiting fs::compact..."
-    # exit
-
-    # NOTE: delete old sstable files,
-    # but once the new sstable has been
-    # committed
     set file_i 0
     foreach sstable_rev $sstable_revs {
-        set sstable_filename [get_cur_filename $sstable_rev]
-        file delete $sstable_filename
-        log "deleted old sstable: $sstable_filename"
-        # ::sysdb::sstable_t delete $sstable_rev
-
-        array unset sstable__${file_i}
-
-        # TODO:
-        # ::sysdb::sstable_t close $fp(${sstable_rev})
-
+        close $fp(${file_i})
+        file delete $filename(${file_i})
         incr file_i
     }
 
@@ -530,15 +525,27 @@ proc ::persistence::ss::compact_all {} {
         }
         array unset object_type
 
+        set todelete_revs [list]
         foreach type_oid $type_oids {
+            # merges sstables for type_oid
             if { [catch {
-                ::persistence::ss::compact $type_oid
+                ::persistence::ss::compact $type_oid todelete_revs
             } errmsg] } {
                 log errmsg=$errmsg
                 log errorInfo=$::errorInfo
                 log exiting
                 exit
             }
+        }
+
+        # NOTE: delete old sstable files,
+        # but only after the new sstable 
+        # has been committed/fsync-ed.
+
+        foreach todelete_rev $todelete_revs {
+            set sstable_filename [get_cur_filename $todelete_rev]
+            file delete $sstable_filename
+            log "deleted old sstable: $sstable_filename"
         }
 
     }
