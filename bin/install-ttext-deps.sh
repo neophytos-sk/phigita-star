@@ -4,8 +4,8 @@
 
 ###################################################################
 
-WEBHOME=/web
-source ${WEBHOME}/bin/install-env.sh
+DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+source ${DIR}/install-env.sh
 
 ###################################################################
 
