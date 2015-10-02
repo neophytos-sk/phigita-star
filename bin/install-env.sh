@@ -2,15 +2,17 @@
 
 BUILD_DATE=`date -u +%Y-%m-%d`
 
-UNPACK=/web/bin/unpack.sh
 
-export WEBHOME=/web
-FILEDIR=${WEBHOME}/files/
+DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
+UNPACK=${DIR}/bin/unpack.sh
+
+export WEBHOME=$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" && pwd )
+
+FILEDIR=/web/files/
 SRCDIR=${WEBHOME}/code/
 
 SSLDIR=/web/data/ssl
-
 
 
 PREFIX=/opt
@@ -50,9 +52,10 @@ AOLSERVER=aolserver-4.5.1
 #TCL=tcl8.5.11
 #TCL=tcl8.5.12
 #TCL=tcl8.6b2
-TCL=tcl8.5.14
+#TCL=tcl8.5.14
 #TCL=tcl8.6.0
 #TCL=tcl8.6.2
+TCL=tcl8.6.4
 
 # TCL_THREAD_LIB=thread2.6.6
 TCL_THREAD_LIB=thread2.6.7
