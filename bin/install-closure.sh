@@ -8,13 +8,19 @@ source ${DIR}/install-env.sh
 
 ###################################################################
 
-cd /opt/
-rm -rf closure-${CLOSURE_COMPILER}
-mkdir closure-${CLOSURE_COMPILER}
-cd closure-${CLOSURE_COMPILER}
+PREFIX=/opt
+DIR=${PREFIX}/closure-${CLOSURE_COMPILER}
+
+rm -rf ${DIR}
+mkdir -p ${DIR}
+cd ${DIR}
 unzip ${FILEDIR}/closure/${CLOSURE_COMPILER}.zip -d .
-cd /opt/
-rm -f closure
-ln -sf closure-${CLOSURE_COMPILER} closure
+
+rm -f /opt/closure
+ln -sf ${DIR} /opt/closure
+
+groupadd web
+useradd -g web nsadmin
+
 chown -R nsadmin:web /opt/closure
 chmod -R 775 /opt/closure

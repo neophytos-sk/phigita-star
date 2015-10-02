@@ -51,5 +51,5 @@ make
 
 make install
 
-ln -sf ${TCLHOME}/bin/tclsh8.? /usr/bin/tclsh
-ln -sf ${TCLHOME}/ /opt/tcl
+ln -sf `ls ${PREFIX}/bin/tclsh*` /usr/bin/tclsh
+ln -sf ${PREFIX}/ /opt/tcl
