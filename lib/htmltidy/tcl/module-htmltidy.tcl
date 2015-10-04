@@ -4,9 +4,12 @@ set dir [file dirname [info script]]
 
 package require critcl
 
+set prefix "/opt/naviserver"
+set prefix "/opt/tcl"
+
 array set conf [list]
-set conf(clibraries) "-L/opt/naviserver/lib -ltidy"
-set conf(includedirs) [list "/opt/naviserver/include"]
+set conf(clibraries) "-L${prefix}/lib -ltidy5"
+set conf(includedirs) [list "${prefix}/include"]
 
 set conf(cinit) {
     // init_text
@@ -24,8 +27,8 @@ set conf(ccode) {
      *
      */
 
-    #include "tidy/tidy.h"
-    #include "tidy/buffio.h"
+    #include "tidy.h"
+    #include "buffio.h"
 
     #define CheckArgs(min,max,n,msg) \
                      if ((objc < min) || (objc >max)) { \

@@ -6,9 +6,11 @@ source [file join $dir ttext-langclass.tcl]
 
 ::xo::lib::require critcl
 
+set prefix "/opt/tcl"
+
 array set conf [list]
-set conf(clibraries) "-L/opt/tcl8.6.0/lib -lunac -lexttextcat"
-set conf(includedirs) [list /opt/tcl8.6.0/include]
+set conf(clibraries) "-L${prefix}/lib -lunac -lexttextcat"
+set conf(includedirs) [list ${prefix}/include]
 
 
 if { [::xo::kit::debug_mode_p] } {
@@ -23,7 +25,12 @@ set conf(cinit) {
 
 }
 
-set conf(ccode) {
+set conf(ccode) [subst -nocommands -nobackslashes {
+    const char ttext_LangClass_prefix[] = "${prefix}/share/libexttextcat/";
+    const char ttext_LangClass_conf[] = "${prefix}/share/libexttextcat/fpdb.conf";
+}]
+
+append conf(ccode) {
     #include <string.h>
     #include <stdlib.h>
     #include "unac.h"
@@ -102,43 +109,42 @@ set conf(ccode) {
 
     int ttext_LangClassCmd(ClientData clientData,Tcl_Interp *interp,int objc,Tcl_Obj * const objv[]) {
 
-	CheckArgs(2,2,1,"string");
-	
-	void *ttext_LangClass_handle = 
-	    Tcl_GetAssocData(interp,
-			     ASSOC_DATA_KEY_LangClass,
-			     NULL);
+        CheckArgs(2,2,1,"string");
 
-	if (!ttext_LangClass_handle) {
-	    Tcl_AddErrorInfo(interp,"ttext_LangClass_handle is null, exiting...\n");
-	    return TCL_ERROR;
-	}
+        void *ttext_LangClass_handle = 
+        Tcl_GetAssocData(interp,
+        ASSOC_DATA_KEY_LangClass,
+        NULL);
 
-	const char *buf = Tcl_GetString(objv[1]);
-	char *result = textcat_Classify(ttext_LangClass_handle, buf, strlen(buf) + 1);
-	Tcl_AppendResult(interp,result,NULL);
+        if (!ttext_LangClass_handle) {
+            Tcl_AddErrorInfo(interp,"ttext_LangClass_handle is null, exiting...\n");
+            return TCL_ERROR;
+        }
 
-	
-	return TCL_OK;
+        const char *buf = Tcl_GetString(objv[1]);
+        char *result = textcat_Classify(ttext_LangClass_handle, buf, strlen(buf) + 1);
+        Tcl_AppendResult(interp,result,NULL);
+
+
+        return TCL_OK;
     }
 
 
     void ttext_LangClass_init(Tcl_Interp *interp) {
-	// prefix is the directory path where fingerprints are stored
-	const char prefix[] = "/opt/naviserver/share/libexttextcat/";
-	const char conf[] = "/opt/naviserver/share/libexttextcat/fpdb.conf";
-        void *ttext_LangClass_handle = special_textcat_Init(conf, prefix);
+        // prefix is the directory path where fingerprints are stored
+        void *ttext_LangClass_handle = special_textcat_Init(ttext_LangClass_conf, ttext_LangClass_prefix);
 
-	if (!ttext_LangClass_handle) { 
-	    fprintf(stderr,"Unable to init using '%s'.",conf);
-	    // exit
-	    // return TCL_ERROR;
-	} 
+        if (!ttext_LangClass_handle) { 
+            fprintf(stderr,"Unable to init using '%s'.",ttext_LangClass_conf);
+            // exit
+            // return TCL_ERROR;
+        } 
 
-	Tcl_SetAssocData(interp,
-			 ASSOC_DATA_KEY_LangClass,
-			 NULL,
-			 ttext_LangClass_handle);
+        Tcl_SetAssocData(
+            interp,
+            ASSOC_DATA_KEY_LangClass,
+            NULL,
+            ttext_LangClass_handle);
 
     }
 
