@@ -281,8 +281,10 @@ proc ::persistence::ss::readfile_helper {rev args} {
 
     # log fragment_rev=$fragment_rev
 
+    array set options [list]
+    set options(ttl) "10" ;# in secs
     array set sstable_data_fragment \
-        [::sysdb::sstable_data_fragment_t get $fragment_rev]
+        [::sysdb::sstable_data_fragment_t cache_get $fragment_rev options]
 
     # seek _fp $rev_startpos start
     set pos $rev_startpos
@@ -419,6 +421,8 @@ proc ::persistence::ss::compact {type_oid todelete_revsVar} {
         set fragment_i 0
         foreach fragment_rev $fragment_revs($sstable_rev) {
 
+            lappend todelete_revs $fragment_rev
+
             array set fragment [::sysdb::sstable_data_fragment_t get $fragment_rev]
 
             set filename(${file_i},${fragment_i}) "/tmp/file__${file_i}__${fragment_i}"
@@ -546,8 +550,8 @@ proc ::persistence::ss::compact {type_oid todelete_revsVar} {
             unset fp(${file_i},${fragment_i})
             unset filename(${file_i},${fragment_i})
 
-            # deletes old sstable fragment file
-            file delete [get_cur_filename $fragment_rev]
+            # old sstable fragment file deleted via means of todelete_revs upvar
+            # file delete [get_cur_filename $fragment_rev]
 
             incr fragment_i
 
@@ -555,8 +559,8 @@ proc ::persistence::ss::compact {type_oid todelete_revsVar} {
 
         unset fragment_revs($sstable_rev)
 
-        # deletes old sstable file
-        file delete [get_cur_filename $sstable_rev]
+        # old sstable file deleted via means of todelete_revs upvar
+        # file delete [get_cur_filename $sstable_rev]
 
         incr file_i
 
@@ -604,9 +608,9 @@ proc ::persistence::ss::compact_all {} {
         # has been committed/fsync-ed.
 
         foreach todelete_rev $todelete_revs {
-            set sstable_filename [get_cur_filename $todelete_rev]
-            file delete $sstable_filename
-            log "deleted old sstable: $sstable_filename"
+            set filename [get_cur_filename $todelete_rev]
+            file delete $filename
+            log "deleted rev file: $filename"
         }
 
     }

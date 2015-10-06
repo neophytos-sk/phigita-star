@@ -41,9 +41,19 @@ namespace eval ::persistence::orm {
         exists \
         encode \
         decode \
-        sort
+        sort \
+        cache_get
 
     #exists
+
+    variable __cache
+    array set __cache [list]
+
+    variable __cache_timeout
+    array set __cache_timeout [list]
+
+    variable __cache_size
+    set __cache_size 0
 
 }
 
@@ -282,6 +292,8 @@ proc ::persistence::orm::insert {itemVar {optionsVar ""}} {
         upvar $optionsVar options
     }
 
+    # TODO: flush/invalidate cache
+
     # compute derived attributes
     foreach attname $__derived_attributes {
         set func $__attinfo(${attname},func)
@@ -368,6 +380,8 @@ proc ::persistence::orm::update {oid new_itemVar {optionsVar ""}} {
     if { $optionsVar ne {} } {
         upvar $optionsVar options
     }
+
+    # TODO: flush/invalidate cache
 
     # attributes to be updated
     set attnames [array names new_item]
@@ -492,6 +506,37 @@ proc ::persistence::orm::get {rev} {
     } else {
         error "no such rev (=$rev) in storage system (=mystore)"
     }
+}
+
+# TODO: invalidate/flush cache (as of 20151006 only used for sstable_data_fragment_t)
+#
+proc ::persistence::orm::cache_get {rev {optionsVar ""}} {
+    upvar $optionsVar options
+
+    variable __cache
+    variable __cache_timeout
+    variable __cache_size
+
+    set ttl [value_if options(ttl) "0"]
+    set now [clock seconds]
+
+    if { ![info exists __cache(${rev})] || $__cache_timeout(${rev}) < ${now} } {
+        set __cache(${rev}) [get ${rev}]
+        set __cache_timeout(${rev}) [expr { ${now} + ${ttl} }]
+
+        # runtime size of cache
+        incr __cache_size [string length $__cache(${rev})]
+
+        if { 0 } {
+            # cache_size exceeds threshold
+            # flush old cache entries
+        }
+
+    } else {
+        # log "!!! fetching from cache (=${rev})"
+    }
+
+    return $__cache(${rev})
 }
 
 # 0or1row -
