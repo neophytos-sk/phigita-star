@@ -509,8 +509,8 @@ proc ::persistence::ss::compact {type_oid todelete_revsVar} {
         incr i
 
         # writes data fragment, if size threshold exceeded or last row
-        log i=$i
-        log n_rows=$n_rows
+        # log i=$i
+        # log n_rows=$n_rows
 
         if { $pos > $sstable_fragment_size_threshold || $i == $n_rows } {
 
@@ -539,16 +539,25 @@ proc ::persistence::ss::compact {type_oid todelete_revsVar} {
         foreach fragment_rev $fragment_revs($sstable_rev) {
 
             close $fp(${file_i},${fragment_i})
+
+            # deletes tmp data fragment file
             file delete $filename(${file_i},${fragment_i})
 
             unset fp(${file_i},${fragment_i})
             unset filename(${file_i},${fragment_i})
+
+            # deletes old sstable fragment file
+            file delete [get_cur_filename $fragment_rev]
 
             incr fragment_i
 
         }
 
         unset fragment_revs($sstable_rev)
+
+        # deletes old sstable file
+        file delete [get_cur_filename $sstable_rev]
+
         incr file_i
 
     }
