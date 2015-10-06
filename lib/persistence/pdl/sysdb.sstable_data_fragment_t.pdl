@@ -1,0 +1,22 @@
+nsp "::sysdb::sstable_data_fragment_t"
+ks "sysdb"
+cf "sstable_data_fragment"
+pk "name"
+
+indexes {{
+    name "by_name"
+    atts "name"
+}}
+
+attributes {{
+    name "name"
+    type "varchar"
+    null_p 0
+} {
+    name "data"
+    type "bytearr"
+    null_p 0
+}}
+
+aggregates {}
+

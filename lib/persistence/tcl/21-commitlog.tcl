@@ -58,6 +58,10 @@ namespace eval ::persistence::commitlog {
 
     namespace __copy ::persistence::common
 
+    variable sstable_fragment_size_threshold
+    set sstable_fragment_size_threshold \
+        [config get ::persistence sstable_fragment_size_threshold]
+
 }
 
 proc ::persistence::commitlog::compare_commitlog_files {f1 f2} {
@@ -513,6 +517,7 @@ proc ::persistence::commitlog::set_mem {instr oid data xid codec_conf} {
     incr commitlog(${commitlog_name},size) ${len}
     incr commitlog(${commitlog_name},n_entries)
 
+    return ${rev}
     return ${__mem_id}
 
 }
@@ -678,7 +683,8 @@ proc ::persistence::commitlog::set_column {rev data xid codec_conf} {
         return [::persistence::fs::set_column $rev $data $xid $codec_conf]
     }
 
-    set_mem "set_column" $rev $data $xid $codec_conf
+    set rev [set_mem "set_column" $rev $data $xid $codec_conf]
+    return ${rev}
 }
 
 proc ::persistence::commitlog::compact {type_oid todelete_rowsVar} {
@@ -710,16 +716,32 @@ proc ::persistence::commitlog::compact {type_oid todelete_rowsVar} {
     log "commitlog: compacting type_oid=$type_oid"
 
     # 3. merge them in one sorted-strings (sstable) file
-    set output_data ""
+
+    variable sstable_fragment_size_threshold
+
+    # initializes sstable array
+    array set sstable [list]
+    set sstable(name) [encode_sstable_name $type_oid]
+    set sstable(round) [clock microseconds]
+    set sstable(rows) [list]
+    set sstable(cols) [list]
+    set sstable(fragment_revs) [list]
+
+    # initializes sstable fragment array
+    array set fragment [list]
+    set n_fragments 0
+    set fragment(name) [encode_sstable_fragment_name $type_oid $n_fragments]
+    set fragment(data) {}
+
+    set n_rows [expr { int( [llength ${multirow_slicelist}] / 2 ) }]
     set pos 0
-    set rows [list]
-    set cols [list]
-    foreach {row_key slicelist} $multirow_slicelist {
+    set i 0
+    foreach {row_key slicelist} ${multirow_slicelist} {
 
         set row_startpos $pos
 
         set len [string length $row_key]
-        append output_data [binary format i $len] $row_key
+        append fragment(data) [binary format i $len] $row_key
         incr pos 4
         incr pos $len
 
@@ -735,21 +757,37 @@ proc ::persistence::commitlog::compact {type_oid todelete_rowsVar} {
             assert { $scan_p }
             set encoded_rev_data [::sysdb::sstable_item_t encode sstable_item]
             set len [string length $encoded_rev_data]
-            append output_data [binary format i $len] $encoded_rev_data
+            append fragment(data) [binary format i $len] $encoded_rev_data
             incr pos 4
             incr pos $len
             unset sstable_item
             # end of code using sstable_item_t
 
-            lappend cols $rev $rev_startpos
+            lappend sstable(cols) $rev [list $n_fragments $rev_startpos]
 
         }
 
         set row_endpos $pos
-        append output_data [binary format i $row_startpos]
+        append fragment(data) [binary format i $row_startpos]
         incr pos 4
 
-        lappend rows $row_key $row_endpos
+        lappend sstable(rows) $row_key [list $n_fragments $row_endpos]
+        incr i
+
+        # writes data fragment, if size threshold exceeded or last row
+        if { $pos > $sstable_fragment_size_threshold || $i == $n_rows } {
+
+            set fragment_rev [ ::sysdb::sstable_data_fragment_t insert fragment]
+
+            # log fragment_rev=$fragment_rev
+
+            lappend sstable(fragment_revs) $fragment_rev
+
+            incr n_fragments
+            set pos 0
+            set fragment(name) [encode_sstable_fragment_name $type_oid $n_fragments]
+            set fragment(data) {}
+        }
 
     }
 
@@ -760,14 +798,7 @@ proc ::persistence::commitlog::compact {type_oid todelete_rowsVar} {
     set name [encode_sstable_name $type_oid]
     set round [clock microseconds]
 
-    array set item [list]
-    set item(name) $name
-    set item(data) $output_data
-    set item(rows) $rows 
-    set item(cols) $cols
-    set item(round) $round
-
-    ::sysdb::sstable_t insert item
+    ::sysdb::sstable_t insert sstable
 
     foreach row_key $row_keys {
         set row_oid [join_oid $ks $cf_axis $row_key]

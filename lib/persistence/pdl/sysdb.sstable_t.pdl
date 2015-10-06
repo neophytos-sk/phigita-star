@@ -13,8 +13,8 @@ attributes {{
     type "varchar"
     null_p 0
 } {
-    name "data"
-    type "bytearr"
+    name "fragment_revs"
+    type "varchar"
     null_p 0
 } {
     name "rows"

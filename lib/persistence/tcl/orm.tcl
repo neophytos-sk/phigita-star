@@ -328,7 +328,7 @@ proc ::persistence::orm::insert {itemVar {optionsVar ""}} {
         }
     }
 
-    set target [to_path $item($pk)]
+    set target_oid [to_path $item($pk)]
 
     # log orm,insert,target=$target
 
@@ -336,7 +336,7 @@ proc ::persistence::orm::insert {itemVar {optionsVar ""}} {
 
     ::persistence::begin_batch
 
-    ::persistence::ins_column $target $data [codec_conf]
+    set target_rev [::persistence::ins_column $target_oid $data [codec_conf]]
     
     foreach idxname $__idxnames {
         if { $idxname eq "by_$pk" } {
@@ -345,15 +345,15 @@ proc ::persistence::orm::insert {itemVar {optionsVar ""}} {
         set row_key [to_row_key_by $idxname item]
         set src [to_path_by $idxname $row_key {*}$item($pk)]
 
-        ::persistence::ins_link $src $target
+        ::persistence::ins_link $src $target_oid
 
         #log "idxname=$idxname"
-        #log "ins_link $src $target"
+        #log "ins_link $src $target_oid"
     }
 
     ::persistence::end_batch
 
-    return $target
+    return $target_rev
 
 }
 

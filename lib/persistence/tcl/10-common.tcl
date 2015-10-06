@@ -379,11 +379,13 @@ proc ::persistence::common::ins_column {oid data {codec_conf ""}} {
     }
     #log xid=$xid
 
-    set_column ${oid} ${data} ${xid} ${codec_conf}
+    set rev [set_column ${oid} ${data} ${xid} ${codec_conf}]
 
     if { $orig_xid eq {} } {
         ::persistence::end_batch
     }
+
+    return $rev
 }
 
 proc ::persistence::common::del_column {rev} {

@@ -240,6 +240,8 @@ proc ::persistence::fs::set_column {oid data xid codec_conf} {
     writefile ${filename} ${data} {*}$codec_conf
     file mtime ${filename} ${mtime}
 
+    return ${oid}@${mtime}
+
 }
 
 
@@ -249,6 +251,7 @@ if { [setting_p "mvcc"] } {
         lassign [split_xid $xid] micros pid n_mutations mtime
         set rev "${oid}@${micros}"
         writefile $xid/${rev} ${data} {*}$codec_conf
+        return ${rev}
     }
 
     proc ::persistence::fs::get_files {nodepath} {

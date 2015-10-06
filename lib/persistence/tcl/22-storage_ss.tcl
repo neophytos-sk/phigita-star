@@ -13,6 +13,10 @@ namespace eval ::persistence::ss {
     variable base_nsp
     set base_nsp [config get ::persistence base_nsp]
 
+    variable sstable_fragment_size_threshold
+    set sstable_fragment_size_threshold \
+        [config get ::persistence sstable_fragment_size_threshold]
+
 }
 
 proc ::persistence::ss::init {} {
@@ -134,6 +138,8 @@ proc ::persistence::ss::get_subdirs_helper {path direction limit} {
             set row_keys [map {x y} $sstable(rows) {set x}]
         }
 
+        # log row_keys=$row_keys
+
         set result [list]
         foreach row_key $row_keys {
             lappend result ${type_oid}/${row_key}
@@ -237,6 +243,8 @@ proc ::persistence::ss::load_sstable {
         array set sstable_cols $sstable(cols)
         array set sstable_rows $sstable(rows)
 
+        # log sstable_rows=$sstable(rows)
+
         # To save some memory, comment in the following lines:
         # unset sstable(cols)
         # unset sstable(rows)
@@ -267,15 +275,22 @@ proc ::persistence::ss::readfile_helper {rev args} {
     upvar $sstableVar sstable
     upvar $sstable_colsVar sstable_cols
 
-    set rev_startpos $sstable_cols(${rev})
+    lassign $sstable_cols(${rev}) fragment_i rev_startpos
+
+    set fragment_rev [lindex $sstable(fragment_revs) $fragment_i]
+
+    # log fragment_rev=$fragment_rev
+
+    array set sstable_data_fragment \
+        [::sysdb::sstable_data_fragment_t get $fragment_rev]
 
     # seek _fp $rev_startpos start
     set pos $rev_startpos
 
     # start of code using sstable_item_t
-    binary scan $sstable(data) @${pos}i len
+    binary scan $sstable_data_fragment(data) @${pos}i len
     incr pos 4
-    binary scan $sstable(data) @${pos}a${len} sstable_item_data
+    binary scan $sstable_data_fragment(data) @${pos}a${len} sstable_item_data
     incr pos $len
 
     array set sstable_item \
@@ -353,7 +368,7 @@ proc ::persistence::ss::exists_p {path} {
     return [expr { [get_leafs $path] ne {} }]
 }
 
-# merge sstables in mem
+# merges sstables
 proc ::persistence::ss::compact {type_oid todelete_revsVar} {
     upvar $todelete_revsVar todelete_revs
 
@@ -393,30 +408,38 @@ proc ::persistence::ss::compact {type_oid todelete_revsVar} {
     array set sstable_row_idx [list]
     array set fp [list]
     array set filename [list]
+    array set fragment_revs [list]
     foreach sstable_rev $sstable_revs {
 
         lappend todelete_revs $sstable_rev
         
         array set sstable [::sysdb::sstable_t get $sstable_rev]
+        set fragment_revs($sstable_rev) $sstable(fragment_revs)
 
-        # set sstable_filename [get_cur_filename $sstable_rev]
-        # log filename=$sstable_filename
-        # log size=[file size $sstable_filename]
+        set fragment_i 0
+        foreach fragment_rev $fragment_revs($sstable_rev) {
 
-        set filename(${file_i}) "/tmp/file__${file_i}"
-        set fp(${file_i}) [open $filename(${file_i}) "w+"]
-        fconfigure $fp(${file_i}) -translation binary 
-        puts -nonewline $fp(${file_i}) $sstable(data)
+            array set fragment [::sysdb::sstable_data_fragment_t get $fragment_rev]
 
+            set filename(${file_i},${fragment_i}) "/tmp/file__${file_i}__${fragment_i}"
+            set fp(${file_i},${fragment_i}) [open $filename(${file_i},${fragment_i}) "w+"]
+            fconfigure $fp(${file_i},${fragment_i}) -translation binary 
+            puts -nonewline $fp(${file_i},${fragment_i}) $fragment(data)
 
-        foreach {rev rev_start_pos} $sstable(cols) {
-            lassign [split_oid $rev] _ks _cf_axis row_key
-            lappend sstable_row_idx(${row_key}) [list $rev $file_i $rev_start_pos]
+            array unset fragment
+            incr fragment_i
+
+        }
+
+        foreach {rev rev_addr} $sstable(cols) {
+            lassign [split_oid ${rev}] _ks _cf_axis row_key
+            lassign ${rev_addr} fragment_i rev_start_pos
+            lappend sstable_row_idx(${row_key}) [list $rev $file_i $fragment_i $rev_start_pos]
         }
 
         array unset sstable
-
         incr file_i
+
     }
 
     # log \tsstable_row_idx=[join [array get sstable_row_idx] \n\t]
@@ -428,77 +451,106 @@ proc ::persistence::ss::compact {type_oid todelete_revsVar} {
         return
     }
 
-    set output_rows [list]
-    set output_cols [list]
-    set output_data ""
+    variable sstable_fragment_size_threshold
+
+    # initializes sstable array
+    array set sstable [list]
+    set sstable(name) [encode_sstable_name $type_oid]
+    set sstable(round) [clock microseconds]
+    set sstable(rows) [list]
+    set sstable(cols) [list]
+    set sstable(fragment_revs) [list]
+
+    # initializes sstable fragment array
+    array set fragment [list]
+    set n_fragments 0
+    set fragment(name) [encode_sstable_fragment_name $type_oid $n_fragments]
+    set fragment(data) {}
+
+    set n_rows [llength $row_keys]
     set pos 0
+    set i 0
     foreach row_key $row_keys {
 
         set row_startpos $pos
 
-        # write row_key
+        # appends row_key
         set len [string length $row_key]
-        append output_data [binary format i $len] $row_key
+        append fragment(data) [binary format i $len] $row_key
         incr pos 4
         incr pos $len
 
         foreach column_idx_item $sstable_row_idx(${row_key}) {
-            lassign $column_idx_item rev file_i input_rev_start_pos
+            lassign $column_idx_item rev file_i fragment_i input_rev_start_pos
             
-            # TODO: load_chunk/_fragment that includes rev_start_pos
-            # into sstable_data var
-            # 
+            # loads data fragment that includes given rev/rev_start_pos
+            seek $fp(${file_i},${fragment_i}) $input_rev_start_pos 
+            ::util::io::read_string $fp(${file_i},${fragment_i}) sstable_item_data
 
-            seek $fp(${file_i}) $input_rev_start_pos 
-            ::util::io::read_string $fp(${file_i}) sstable_item_data
-
-            # writing sstable rev item data
-            set output_rev_start_pos $pos
-            # TODO: 
-            # if { fragment_size_exceeds_threshold } {
-            #   sstable_fragment_t insert sstable_fragment_data
-            # }
+            # appends sstable rev item data
+            set out_rev_start_pos $pos
             set len [string length $sstable_item_data]
-            append output_data [binary format i $len] $sstable_item_data
+            append fragment(data) [binary format i $len] $sstable_item_data
             incr pos 4
             incr pos $len
             unset sstable_item_data
 
-            lappend output_cols $rev $output_rev_start_pos
+            # TODO: column data fragments to support larger rows
+
+            lappend sstable(cols) $rev [list $n_fragments $out_rev_start_pos]
         }
 
-        # write row_startpos at end of row
+        # appends row_startpos at end of row
         set row_endpos $pos
-        append output_data [binary format i $row_startpos]
+        append fragment(data) [binary format i $row_startpos]
         incr pos 4
 
-        lappend output_rows $row_key $row_endpos
+        lappend sstable(rows) $row_key [list $n_fragments $row_endpos]
+        incr i
 
-        #log "merged file, row_key=$row_key row_endpos=$row_endpos row_startpos=$row_startpos"
+        # writes data fragment, if size threshold exceeded or last row
+        log i=$i
+        log n_rows=$n_rows
+
+        if { $pos > $sstable_fragment_size_threshold || $i == $n_rows } {
+
+            set fragment_rev [ ::sysdb::sstable_data_fragment_t insert fragment]
+
+            # log fragment_rev=$fragment_rev
+
+            lappend sstable(fragment_revs) $fragment_rev
+
+            incr n_fragments
+            set pos 0
+            set fragment(name) [encode_sstable_fragment_name $type_oid $n_fragments]
+            set fragment(data) {}
+        }
 
     }
 
-    # write merged sstable file
-
-    set name [encode_sstable_name $type_oid]
-    set round [clock microseconds]
-
-    array set item [list]
-    set item(name) $name
-    set item(data) $output_data  ;# [binary encode hex $output_data]
-    set item(rows) $output_rows  ;# row_keys 
-    set item(cols) $output_cols  ;# col_keys
-    set item(round) $round
-
-    # log "merged_sstable_rev for $type_oid"
-    set merged_sstable_rev [::sysdb::sstable_t insert item]
-    log merged_sstable_rev=$merged_sstable_rev
+    set merged_sstable_rev [::sysdb::sstable_t insert sstable]
+    log "merged sstables of $type_oid"
+    # log merged_sstable_rev=$merged_sstable_rev
 
     set file_i 0
     foreach sstable_rev $sstable_revs {
-        close $fp(${file_i})
-        file delete $filename(${file_i})
+
+        set fragment_i 0
+        foreach fragment_rev $fragment_revs($sstable_rev) {
+
+            close $fp(${file_i},${fragment_i})
+            file delete $filename(${file_i},${fragment_i})
+
+            unset fp(${file_i},${fragment_i})
+            unset filename(${file_i},${fragment_i})
+
+            incr fragment_i
+
+        }
+
+        unset fragment_revs($sstable_rev)
         incr file_i
+
     }
 
 }
