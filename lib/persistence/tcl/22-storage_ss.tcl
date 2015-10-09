@@ -399,7 +399,7 @@ proc ::persistence::ss::compact {type_oid todelete_revsVar} {
     set sstable_revs [lsort -command ::persistence::compare_files $sstable_revs]
 
     if { [llength $sstable_revs] <= 1 } {
-        log "-> type_oid (=$type_oid) already merged"
+        # log "-> type_oid (=$type_oid) already merged"
         return
     }
 
@@ -610,8 +610,23 @@ proc ::persistence::ss::compact_all {} {
         foreach todelete_rev $todelete_revs {
             set filename [get_cur_filename $todelete_rev]
             file delete $filename
-            log "deleted rev file: $filename"
+            # log "-> deleted rev file: $filename"
         }
+
+        set nsp [namespace current]
+        set sstableVar "${nsp}::sstable__${type_oid}"
+        set sstable_colsVar "${nsp}::sstable_cols__${type_oid}"
+        set sstable_rowsVar "${nsp}::sstable_rows__${type_oid}"
+
+        variable __cbt_TclObj
+        upvar $sstableVar sstable
+        upvar $sstable_colsVar sstable_cols
+        upvar $sstable_rowsVar sstable_rows
+
+        unset_if __cbt_TclObj
+        unset_if sstable
+        unset_if sstable_cols
+        unset_if sstable_rows
 
     }
 

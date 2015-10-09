@@ -30,16 +30,10 @@ namespace eval ::persistence::commitlog {
     variable commitlog_names
     set commitlog_names {}
 
-    # commitlog(commitlog_name,{size,entries}) => value
-    variable commitlog
-    array set commitlog [list]
+    # commitlog_stats(commitlog_name,{size,entries}) => value
+    variable commitlog_stats
+    array set commitlog_stats [list]
     
-    # threshold_exceeded_p configuration settings
-    variable commitlog_threshold
-    array set commitlog_threshold [list]
-    set commitlog_threshold(size) 9999999
-    set commitlog_threshold(n_entries) 99999
-
     # all open commitlog file pointers
     variable fp
     array set fp [list]
@@ -58,6 +52,13 @@ namespace eval ::persistence::commitlog {
 
     namespace __copy ::persistence::common
 
+    # threshold_exceeded_p configuration settings
+    variable commitlog_threshold
+    array set commitlog_threshold [list]
+    set commitlog_threshold(size) [setting "commitlog_size_threshold"] ;# 9999999
+    set commitlog_threshold(n_entries) [setting "commitlog_n_entries_threshold"] ;# 99999
+
+    # fragment size threshold
     variable sstable_fragment_size_threshold
     set sstable_fragment_size_threshold \
         [config get ::persistence sstable_fragment_size_threshold]
@@ -104,6 +105,9 @@ proc ::persistence::commitlog::init {} {
 }
 
 proc ::persistence::commitlog::new_commitlog {} {
+
+    log "!!! new_commitlog"
+
     variable commitlog_name
     variable commitlog_names
 
@@ -119,10 +123,10 @@ proc ::persistence::commitlog::new_commitlog {} {
 
 proc ::persistence::commitlog::init_commitlog {commitlog_name} {
     variable fp
-    variable commitlog
+    variable commitlog_stats
 
-    set commitlog(${commitlog_name},size) 0
-    set commitlog(${commitlog_name},n_entries) 0
+    set commitlog_stats(${commitlog_name},size) 0
+    set commitlog_stats(${commitlog_name},n_entries) 0
     set fp($commitlog_name) {}
 }
 
@@ -183,21 +187,22 @@ proc ::persistence::commitlog::close_commitlog {commitlog_name} {
     variable __commitlog_pending
     variable commitlog_names
 
-    set timer [list ::persistence::commitlog::close_commitlog ${commitlog_name}]
+    # set timer [list ::persistence::commitlog::close_commitlog ${commitlog_name}]
     if { [value_if __commitlog_pending(${commitlog_name}) "0"] } {
-        after 0 ${timer}
-        return
+        # after 0 ${timer}
+        # return
+        error "failed to close commitlog (=${commitlog_name}), pending batches not empty"
     }
 
-    after cancel ${timer}
+    # after cancel ${timer}
 
     variable fp
     if { $fp(${commitlog_name}) ne {} } {
 
         # remove name from open commitlog_names variable
-        set i [lsearch -exact ${commitlog_names} ${commitlog_name}]
-        assert { ${i} != -1 }
-        set commitlog_names [lreplace ${commitlog_names} ${i} ${i}]
+        # set i [lsearch -exact ${commitlog_names} ${commitlog_name}]
+        # assert { ${i} != -1 }
+        # set commitlog_names [lreplace ${commitlog_names} ${i} ${i}]
     
         # compact_all using the old commitlog file
         # compact_all
@@ -206,14 +211,24 @@ proc ::persistence::commitlog::close_commitlog {commitlog_name} {
         close $fp(${commitlog_name})
     }
     unset fp(${commitlog_name})
+
+    log "closed commitlog: $commitlog_name"
+}
+
+proc ::persistence::commitlog::delete_commitlog {commitlog_name} {
+    log "deleted commitlog: $commitlog_name"
+    set filename [get_cur_filename $commitlog_name]
+    file delete $filename
 }
 
 proc ::persistence::commitlog::threshold_exceeded_p {commitlog_name} {
-    variable commitlog
+    variable commitlog_stats
     variable commitlog_threshold
 
-    set size $commitlog(${commitlog_name},size)
-    set n_entries $commitlog(${commitlog_name},n_entries)
+    set size $commitlog_stats(${commitlog_name},size)
+    set n_entries $commitlog_stats(${commitlog_name},n_entries)
+
+    # log "commitlog_name=$commitlog_name size=$size n_entries=$n_entries"
 
     # if size exceeded, or
     # if number of entries exceeded
@@ -246,21 +261,6 @@ proc ::persistence::commitlog::write_to_commitlog {commitlog_name mem_id} {
     set commitlog_item_data [::sysdb::commitlog_item_t encode item]
     set commitlog_item_data [binary format a* $commitlog_item_data]
     ::util::io::write_string $fp(${commitlog_name}) $commitlog_item_data
-
-    if { [threshold_exceeded_p ${commitlog_name}] } {
-
-        log "!!! threshold exceeded"
-
-        # 1. create new commitlog
-        new_commitlog
-
-        # 2.1. wait until all open batches are completed
-        # 2.2. compact old commitlog
-        # 2.3. close old commitlog
-
-        after 0 [::persistence::commitlog::close_commitlog ${commitlog_name}]
-
-    }
 
 }
 
@@ -469,16 +469,21 @@ proc ::persistence::commitlog::set_mem {instr oid data xid codec_conf} {
     variable __mem_row_keys
     variable __mem_num_cols
 
+    variable commitlog_stats
+
     if { ![info exists __xid_to_commitlog(${xid})] } {
         variable commitlog_name
         set __xid_to_commitlog(${xid}) ${commitlog_name}
-        set __commitlog_pending(${commitlog_name}) 1
-    } else {
-        set commitlog_name $__xid_to_commitlog(${xid})
+    }
+    set xid_commitlog_name $__xid_to_commitlog(${xid})
+
+    if { $instr eq {begin_batch} } {
+        # add 1 to pending batches of given commitlog
+        incr __commitlog_pending(${xid_commitlog_name}) 1
     }
 
     variable fp
-    set offset [tell $fp(${commitlog_name})]
+    set offset [tell $fp(${xid_commitlog_name})]
 
     set rev ""
     if { $oid ne {} } {
@@ -487,7 +492,7 @@ proc ::persistence::commitlog::set_mem {instr oid data xid codec_conf} {
     }
 
     incr __mem_id
-    set __mem(${__mem_id},commitlog_name) $commitlog_name
+    set __mem(${__mem_id},commitlog_name) $xid_commitlog_name
     set __mem(${__mem_id},offset)   $offset
     set __mem(${__mem_id},instr)    $instr
     set __mem(${__mem_id},oid)      $oid
@@ -503,19 +508,25 @@ proc ::persistence::commitlog::set_mem {instr oid data xid codec_conf} {
         lassign [split_oid $rev] ks cf_axis row_key
         set type_oid [type_oid $rev]
         if { 
-            ![info exists __mem_row_keys(${commitlog_name},${type_oid})] 
+            ![info exists __mem_row_keys(${xid_commitlog_name},${type_oid})] 
         } {
-            set __mem_row_keys(${commitlog_name},${type_oid}) [::cbt::create $::cbt::STRING]
+            set __mem_row_keys(${xid_commitlog_name},${type_oid}) [::cbt::create $::cbt::STRING]
         }
 
-        ::cbt::insert $__mem_row_keys(${commitlog_name},${type_oid}) ${row_key}
+        ::cbt::insert $__mem_row_keys(${xid_commitlog_name},${type_oid}) ${row_key}
 
         incr __mem_num_cols(${type_oid},${row_key})
     }
 
     set len [string length ${data}]
-    incr commitlog(${commitlog_name},size) ${len}
-    incr commitlog(${commitlog_name},n_entries)
+    incr commitlog_stats(${xid_commitlog_name},size) ${len}
+    incr commitlog_stats(${xid_commitlog_name},n_entries)
+
+    if { $instr eq {end_batch} } {
+        # remove 1 from pending batches of given commitlog
+        incr __commitlog_pending(${xid_commitlog_name}) -1
+    }
+
 
     return ${rev}
     return ${__mem_id}
@@ -591,17 +602,6 @@ proc ::persistence::commitlog::delete_from_tmp {xids} {
 
         unset __mem_tmp(${xid})
 
-        # FIXME: issue with nested transactions
-        set commitlog_name [value_if __xid_to_commitlog(${xid}) ""]
-
-        if { ${commitlog_name} ne {} } {
-            unset __xid_to_commitlog(${xid})
-            incr __commitlog_pending(${commitlog_name}) -1
-            if { $__commitlog_pending(${commitlog_name}) == 0 } {
-                unset __commitlog_pending(${commitlog_name})
-            }
-        }
-
         # unset_mem ${begin_batch_mem_id}
         # unset_mem ${end_batch_mem_id}
     }
@@ -613,10 +613,11 @@ proc ::persistence::commitlog::finalize_commit {xids} {
     variable __mem_new
     variable __mem_cur
     variable __xid_to_commitlog
+    variable commitlog_name
 
     foreach xid ${xids} {
 
-        set commitlog_name $__xid_to_commitlog(${xid})
+        set xid_commitlog_name $__xid_to_commitlog(${xid})
 
         foreach mem_id $__mem_new(${xid}) {
             set instr $__mem(${mem_id},instr)
@@ -628,15 +629,66 @@ proc ::persistence::commitlog::finalize_commit {xids} {
             # log [namespace current],rev=$rev
 
             set type_oid [type_oid $rev]
-            if { ![info exists __mem_cur(${commitlog_name},${type_oid})] } {
-                set __mem_cur(${commitlog_name},${type_oid}) [::cbt::create $::cbt::STRING]
+            if { ![info exists __mem_cur(${xid_commitlog_name},${type_oid})] } {
+                set __mem_cur(${xid_commitlog_name},${type_oid}) [::cbt::create $::cbt::STRING]
             }
-            if { ![info exists __mem_row_keys(${commitlog_name},${type_oid})] } {
-                set __mem_row_keys(${commitlog_name},${type_oid}) [::cbt::create $::cbt::STRING]
+            if { ![info exists __mem_row_keys(${xid_commitlog_name},${type_oid})] } {
+                set __mem_row_keys(${xid_commitlog_name},${type_oid}) [::cbt::create $::cbt::STRING]
             }
-            ::cbt::insert $__mem_cur(${commitlog_name},${type_oid}) $rev
+            ::cbt::insert $__mem_cur(${xid_commitlog_name},${type_oid}) $rev
         }
+
         array unset __mem_new $xid
+
+        # ensures commitlog mem never exceeds given size and number of entries
+        if { [threshold_exceeded_p ${xid_commitlog_name}] } {
+
+            # log "!!! threshold exceeded"
+
+            if { ${commitlog_name} eq ${xid_commitlog_name} } {
+
+                # 1. create new commitlog
+                set commitlog_name [new_commitlog]
+
+            }
+
+            # 2.1. waits until all pending batches are completed/committed
+            variable __commitlog_pending
+            if { $__commitlog_pending(${xid_commitlog_name}) == 0 } {
+
+                log "!!! threshold exceeded: ${xid_commitlog_name}"
+
+                # 2.2. compacts (creates sstable files) old commitlog
+                #      calls ::persistence::ss::compact_all when base_nsp 
+                #      is the commitlog namespace
+                #
+                # ::persistence::commitlog::compact_all ;# ${xid_commitlog_name}
+
+                # commitlog::compact_all
+                compact_all
+
+                # NOTE: in terms of architecture,
+                # this should have been elsewhere.
+                ::persistence::ss::compact_all
+
+                # 2.3. switches to new commitlog
+                variable commitlog_names
+                set commitlog_names ${commitlog_name}
+
+                # TODO: ensure ss::* procs merge new sstable files (or uses them
+                # while querying for data)
+
+                # 2.4. closes old commitlog
+                ::persistence::commitlog::close_commitlog ${xid_commitlog_name}
+
+                # 2.5 deletes old commitlog
+                ::persistence::commitlog::delete_commitlog ${xid_commitlog_name}
+
+            }
+
+        }
+
+
     }
 
 }
@@ -645,9 +697,11 @@ proc ::persistence::commitlog::begin_batch {} {
     set xid [::persistence::fs::begin_batch]
 
     # indirect way to check if it is about a sysdb ks or not
-    variable commitlog_name
     variable fp
-    if { ${commitlog_name} ne {} && $fp(${commitlog_name}) ne {} } {
+    variable commitlog_name
+
+    set xid_commitlog_name $commitlog_name
+    if { ${xid_commitlog_name} ne {} && $fp(${xid_commitlog_name}) ne {} } {
         set_mem "begin_batch" "" "" $xid ""
     }
 
@@ -658,17 +712,17 @@ proc ::persistence::commitlog::end_batch {} {
     set xid [::persistence::fs::end_batch]
 
     variable __xid_to_commitlog
-    set commitlog_name [value_if __xid_to_commitlog(${xid}) ""]
+    set xid_commitlog_name [value_if __xid_to_commitlog(${xid}) ""]
 
     variable fp
 
     # indirect way to check if it is about a sysdb ks or not
-    if { ${commitlog_name} ne {} && $fp(${commitlog_name}) ne {} } {
+    if { ${xid_commitlog_name} ne {} && $fp(${xid_commitlog_name}) ne {} } {
         set_mem "end_batch" "" "" $xid ""
 
         write_to_new $xid
 
-        logpoint ${commitlog_name}
+        logpoint ${xid_commitlog_name}
         
         delete_from_tmp $xid
         finalize_commit $xid
@@ -687,29 +741,12 @@ proc ::persistence::commitlog::set_column {rev data xid codec_conf} {
     return ${rev}
 }
 
-proc ::persistence::commitlog::compact {type_oid todelete_rowsVar} {
+proc ::persistence::commitlog::compact_helper {type_oid multirow_slicelistVar todelete_rowsVar} {
+    upvar $multirow_slicelistVar multirow_slicelist
     upvar $todelete_rowsVar todelete_rows
 
-    # assert { [is_type_oid_p $type_oid] }
-
-    lassign [split_oid $type_oid] ks cf_axis
-    lassign [split $cf_axis {.}] cf idxname
-
-    if { $ks eq {sysdb} } {
-        return
-    }
-
-    # 1. get row keys
-    set multirow_options [list]
-    lassign [get_multirow_names $type_oid $multirow_options] \
-        row_keys revised_multirow_options
-
-    # 2. get_leafs/slicelist for each row key
-    set multirow_slicelist [multirow_slice \
-        $type_oid $row_keys $revised_multirow_options]
-
     if { $multirow_slicelist eq {} } {
-        log "no commitlog::leafs to compact: $type_oid"
+        log "no commitlog data to compact: $type_oid"
         return
     }
 
@@ -736,7 +773,9 @@ proc ::persistence::commitlog::compact {type_oid todelete_rowsVar} {
     set n_rows [expr { int( [llength ${multirow_slicelist}] / 2 ) }]
     set pos 0
     set i 0
+    set row_keys [list]
     foreach {row_key slicelist} ${multirow_slicelist} {
+        lappend row_keys $row_key
 
         set row_startpos $pos
 
@@ -800,17 +839,38 @@ proc ::persistence::commitlog::compact {type_oid todelete_rowsVar} {
 
     ::sysdb::sstable_t insert sstable
 
+    lassign [split_oid $type_oid] ks cf_axis
     foreach row_key $row_keys {
         set row_oid [join_oid $ks $cf_axis $row_key]
         lappend todelete_rows $row_oid
     }
 
-    # log "commitlog: done compacting $type_oid"
+}
 
-    # note that call to ::sysdb::sstable_t->insert above,
-    # created a nested transaction
-    # log "just for debugging nested transactions, exiting fs::compact..."
-    # exit
+proc ::persistence::commitlog::compact {type_oid todelete_rowsVar} {
+    upvar $todelete_rowsVar todelete_rows
+
+    # assert { [is_type_oid_p $type_oid] }
+
+    lassign [split_oid $type_oid] ks cf_axis
+    lassign [split $cf_axis {.}] cf idxname
+
+    if { $ks eq {sysdb} } {
+        return
+    }
+
+    # 1. get row keys
+    set multirow_options [list]
+    lassign [get_multirow_names $type_oid $multirow_options] \
+        row_keys revised_multirow_options
+
+    # 2. get_leafs/slicelist for each row key
+    set multirow_slicelist [multirow_slice \
+        $type_oid $row_keys $revised_multirow_options]
+
+    compact_helper $type_oid multirow_slicelist todelete_rows
+
+    # log "commitlog: done compacting $type_oid"
 
 }
 

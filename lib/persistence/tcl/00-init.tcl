@@ -17,7 +17,10 @@ config param storage_type "ss"
 # config param base_nsp "::persistence::fs"
 config param base_nsp "::persistence::commitlog"
 config param compact_p "1"
+
 config param sstable_fragment_size_threshold 100000000
+config param commitlog_size_threshold 100000000
+config param commitlog_n_entries_threshold 10000
 
 
 config param use_server "off"
