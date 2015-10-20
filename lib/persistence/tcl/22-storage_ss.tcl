@@ -506,6 +506,10 @@ proc ::persistence::ss::compact {type_oid todelete_revsVar} {
             # TODO: column data fragments to support larger rows
 
             lappend sstable(cols) $rev [list $n_fragments $out_rev_start_pos]
+
+            # long-running computation, responds to events
+            ::update
+
         }
 
         # appends row_startpos at end of row
@@ -533,9 +537,6 @@ proc ::persistence::ss::compact {type_oid todelete_revsVar} {
             set fragment(name) [encode_sstable_fragment_name $type_oid $n_fragments]
             set fragment(data) {}
         }
-
-        # long-running computation, responds to events
-        ::update
 
     }
 
