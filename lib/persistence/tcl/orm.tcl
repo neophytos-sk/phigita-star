@@ -769,7 +769,8 @@ proc ::persistence::orm::__choose_axis {argv optionsVar find_by_axis_argsVar} {
 # based on the idx/counter we have at our disposal
 # rewrites expressions in terms of persistence::predicate=* procs
 proc ::persistence::orm::__rewrite_where_clause {idxname argv} {
-    variable [namespace __this]::__idxinfo
+    set nsp [namespace __this]
+    variable ${nsp}::__idxinfo
 
     set idxatts $__idxinfo($idxname,atts)
 
@@ -782,6 +783,13 @@ proc ::persistence::orm::__rewrite_where_clause {idxname argv} {
             if { $attname in $idxatts } { continue }
             set idxpath [to_path_by $idxname ${attvalue}]
             lappend predicate [list "in_idxpath" [list $idxpath]]
+        } elseif { $op eq {in} } {
+            if { 0 && $attname in $idxatts } {
+                # TODO: check using index
+            } else {
+                log here
+                lappend predicate [list "in" [list $nsp $attname $attvalue]]
+            }
         } else {
             error "persistence (ORM): op (=$op) not implemented yet"
         }

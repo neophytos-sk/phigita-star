@@ -746,7 +746,7 @@ proc ::persistence::commitlog::compact_helper {type_oid multirow_slicelistVar to
     upvar $todelete_rowsVar todelete_rows
 
     if { $multirow_slicelist eq {} } {
-        log "no commitlog data to compact: $type_oid"
+        # log "no commitlog data to compact: $type_oid"
         return
     }
 
@@ -827,6 +827,9 @@ proc ::persistence::commitlog::compact_helper {type_oid multirow_slicelistVar to
             set fragment(name) [encode_sstable_fragment_name $type_oid $n_fragments]
             set fragment(data) {}
         }
+
+        # long-running computation, responds to events
+        ::update
 
     }
 

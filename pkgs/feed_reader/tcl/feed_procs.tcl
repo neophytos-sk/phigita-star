@@ -1716,12 +1716,12 @@ proc ::feed_reader::show_item_from_url {link} {
     print_item item
 }
 
-proc ::feed_reader::write_item {timeval normalized_link feedVar itemVar is_revision_p} {
+proc ::feed_reader::write_item {timeval normalized_url feedVar itemVar is_revision_p} {
     upvar $feedVar feed
     upvar $itemVar item
 
     set base_dt [clock format ${timeval} -format "%Y%m%dT%H%M"]
-    set urlsha1 [::sha1::sha1 -hex $normalized_link]
+    set urlsha1 [::sha1::sha1 -hex $normalized_url]
 
     array set sync_info_item [list \
         urlsha1 $urlsha1 \
@@ -1779,11 +1779,29 @@ proc ::feed_reader::write_item {timeval normalized_link feedVar itemVar is_revis
     set item(is_copy_p) $is_copy_p
     set item(is_revision_p) $is_revision_p
     if { $is_revision_p } {
-        set item(first_sync) [get_first_sync_timestamp normalized_link]
+        set item(first_sync) [get_first_sync_timestamp normalized_url]
         set item(last_sync) ${timeval}
     }
 
-    ::newsdb::news_item_t insert item
+    if { [catch { ::newsdb::news_item_t insert item } errmsg] } {
+
+        set errorcode -123
+
+        array set error_item [list \
+            errorcode       ${errorcode}      \
+            url             ${normalized_url} \
+            urlsha1         ${urlsha1}        \
+            urlsha1_timestamp [list $urlsha1 $timestamp] \
+            http_fetch_info [array get info]  \
+            title_in_feed   ${title_in_feed}  \
+            item            [array get item]]
+
+
+        ::newsdb::error_item_t insert error_item
+
+        log errmsg=$errmsg
+
+    }
 
     return 1
 }

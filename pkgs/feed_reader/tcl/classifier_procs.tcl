@@ -363,21 +363,23 @@ namespace eval ::feed_reader::classifier {
 proc ::feed_reader::classifier::wordcount {{contentsha1_list ""}} {
 
 
-    set multislicelist [::persistence::multiget_slice \
-			    "newsdb" \
-			    "content_item/by_contentsha1_and_const" \
-			    "${contentsha1_list}"]
+    set where_clause [list]
+    array set options [list]
+    if { $contentsha1_list eq {} } {
+        set options(limit) 10
+    } else {
+        lappend where_clause [list contentsha1 in $contentsha1_list]
+    }
+    set slicelist [::newsdb::content_item_t find $where_clause options]
 
     array set count [list]
-    foreach {contentsha1 slicelist} ${multislicelist} {
+    foreach rev $slicelist {
 
-	# we know that slicelist is just one element
-        # we are just keeping appearances here
-	set contentfilename [lindex ${slicelist} 0]
+        array set content_item [::newsdb::content_item_t get $rev]
 
-	set content [join [::persistence::get_data $contentfilename]]
+        set content [concat $content_item(title) $content_item(body)]
 
-	::naivebayes::wordcount_helper count content 1 ;# filter_stopwords
+        ::naivebayes::wordcount_helper count content 1 ;# filter_stopwords
 
     }
 

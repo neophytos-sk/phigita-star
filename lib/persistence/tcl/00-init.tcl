@@ -127,9 +127,10 @@ proc can_connect_p {server port} {
 
 set addr [config get ::persistence address]
 set port [config get ::persistence port]
+
 assert { 
     ![setting_p "client_server"] 
     || [use_p "server"] 
-    || [can_connect_p $addr $port] 
+    || [can_connect_p $addr $port]
 }
 

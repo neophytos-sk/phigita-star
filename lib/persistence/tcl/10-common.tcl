@@ -41,6 +41,7 @@ namespace eval ::persistence::common {
         begin_batch \
         end_batch \
         predicate=in_idxpath \
+        predicate=in \
         new_transaction_id \
         cur_transaction_id \
         split_xid \
@@ -207,6 +208,9 @@ proc ::persistence::common::__exec_filter_options {slicelistVar options} {
 
     array set options_arr $options
     set slice_predicate [value_if options_arr(__slice_predicate) ""]
+
+    # log slice_predicate=$slice_predicate
+
     if { $slice_predicate ne {} } {
         predicate=forall slicelist $slice_predicate
     }
@@ -614,7 +618,28 @@ proc ::persistence::common::exists_data_p {oid} {
     }
 }
 
-proc ::persistence::common::predicate=in_idxpath {slicelistVar parent_oid {predicate ""}} {
+proc ::persistence::common::predicate=in {
+    slicelistVar 
+    type_nsp
+    attname
+    valuelist
+} {
+    upvar $slicelistVar slicelist
+    set result [list]
+    foreach rev $slicelist {
+        array set item [$type_nsp get ${rev}]
+        if { $item($attname) in $valuelist }  {
+            lappend result $rev
+        }
+    }
+    set slicelist $result
+}
+
+proc ::persistence::common::predicate=in_idxpath {
+    slicelistVar 
+    parent_oid 
+    {predicate ""}
+} {
     upvar $slicelistVar slicelist
     set result [list]
     foreach oid $slicelist {

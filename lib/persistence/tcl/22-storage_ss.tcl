@@ -379,7 +379,6 @@ proc ::persistence::ss::compact {type_oid todelete_revsVar} {
         # log "skipping sstable merge for $type_oid"
         return
     }
-    log "merging sstables for $type_oid"
 
     set name [encode_sstable_name $type_oid]
 
@@ -402,6 +401,8 @@ proc ::persistence::ss::compact {type_oid todelete_revsVar} {
         # log "-> type_oid (=$type_oid) already merged"
         return
     }
+
+    log "merging sstables for $type_oid"
 
     #log llen=[llength $sstable_revs]
     # log \tsstable_revs=[join $sstable_revs \n\t]
@@ -432,6 +433,9 @@ proc ::persistence::ss::compact {type_oid todelete_revsVar} {
 
             array unset fragment
             incr fragment_i
+
+            # long-running computation, responds to events
+            ::update
 
         }
 
@@ -529,6 +533,9 @@ proc ::persistence::ss::compact {type_oid todelete_revsVar} {
             set fragment(name) [encode_sstable_fragment_name $type_oid $n_fragments]
             set fragment(data) {}
         }
+
+        # long-running computation, responds to events
+        ::update
 
     }
 

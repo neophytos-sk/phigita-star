@@ -16,6 +16,10 @@ proc ::db_client::init {addr port} {
 
     set sock [socket $addr $port]
 
+    if { $sock eq {} } {
+        error "failed to open socket to ${addr}:${port}"
+    }
+
     set peer($sock,addr) [list $addr $port]
     set peer($sock,state) "CONNECTED"
     set peer($sock,ttl) $ttl
@@ -33,6 +37,7 @@ proc ::db_client::init {addr port} {
 
 proc ::db_client::send {argv} {
     variable sock
+    assert { $sock ne {} }
     ::util::io::write_string $sock $argv
     flush $sock
 }
@@ -40,6 +45,8 @@ proc ::db_client::send {argv} {
 proc ::db_client::recv {} {
     variable sock
     variable peer
+
+    assert { $sock ne {} }
 
     # log "recv $sock"
 
