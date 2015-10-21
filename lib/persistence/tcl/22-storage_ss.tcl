@@ -435,7 +435,7 @@ proc ::persistence::ss::compact {type_oid todelete_revsVar} {
             incr fragment_i
 
             # long-running computation, responds to events
-            ::update
+            # ::update
 
         }
 
@@ -508,7 +508,7 @@ proc ::persistence::ss::compact {type_oid todelete_revsVar} {
             lappend sstable(cols) $rev [list $n_fragments $out_rev_start_pos]
 
             # long-running computation, responds to events
-            ::update
+            # ::update
 
         }
 
@@ -536,6 +536,9 @@ proc ::persistence::ss::compact {type_oid todelete_revsVar} {
             set pos 0
             set fragment(name) [encode_sstable_fragment_name $type_oid $n_fragments]
             set fragment(data) {}
+
+            # long-running computation, responds to events
+            # ::update
         }
 
     }

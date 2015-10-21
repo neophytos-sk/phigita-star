@@ -113,14 +113,25 @@ proc ::persistence::commitlog::new_commitlog {} {
 
     set micros [clock microseconds]
     set commitlog_name "CommitLog-${micros}"
-    lappend commitlog_names ${commitlog_name}
 
     init_commitlog ${commitlog_name}
     open_commitlog ${commitlog_name}
 
+    # activates commitlog_name by adding to the
+    # list of available commitlog_names,
+    # after it has been initialized
+    lappend commitlog_names ${commitlog_name}
+
     return ${commitlog_name}
 }
 
+proc ::persistence::commitlog::switch_commitlog {} {
+    variable commitlog_names
+    set latest_commitlog_name [lindex $commitlog_names end]
+    set commitlog_names ${latest_commitlog_name}
+}
+
+# initializes stats for given commitlog_name
 proc ::persistence::commitlog::init_commitlog {commitlog_name} {
     variable fp
     variable commitlog_stats
@@ -363,25 +374,30 @@ proc ::persistence::commitlog::get_leafs {path {direction "0"} {limit ""}} {
     }
 
     variable commitlog_names
-    assert { ${commitlog_names} ne {} }
+    assert { ${commitlog_names} ne {} } {
+        log "error: commitlog_names empty in commitlog::get_leafs"
+    }
+
     set result [list]
     set type_oid [type_oid $path]
-    foreach commitlog_name ${commitlog_names} {
 
-        if { [info exists __mem_cur(${commitlog_name},${type_oid})] } {
+    foreach query_commitlog_name ${commitlog_names} {
+
+        if { [info exists __mem_cur(${query_commitlog_name},${type_oid})] } {
 
             set result [concat ${result} \
                 [::cbt::prefix_match \
-                    $__mem_cur(${commitlog_name},${type_oid}) \
+                    $__mem_cur(${query_commitlog_name},${type_oid}) \
                     ${path} \
                     ${direction} \
                     ${limit}]]
 
         } else {
-            # log "no data for type_oid (=$type_oid) yet"
+            # no leafs in the given commitlog_name
         }
 
     }
+
 
     # log [namespace current],get_leafs,result=$result
 
@@ -477,6 +493,8 @@ proc ::persistence::commitlog::set_mem {instr oid data xid codec_conf} {
     }
     set xid_commitlog_name $__xid_to_commitlog(${xid})
 
+    # log set_mem,xid_commitlog_name=$xid_commitlog_name
+
     if { $instr eq {begin_batch} } {
         # add 1 to pending batches of given commitlog
         incr __commitlog_pending(${xid_commitlog_name}) 1
@@ -529,7 +547,6 @@ proc ::persistence::commitlog::set_mem {instr oid data xid codec_conf} {
 
 
     return ${rev}
-    return ${__mem_id}
 
 }
 
@@ -672,8 +689,7 @@ proc ::persistence::commitlog::finalize_commit {xids} {
                 ::persistence::ss::compact_all
 
                 # 2.3. switches to new commitlog
-                variable commitlog_names
-                set commitlog_names ${commitlog_name}
+                switch_commitlog
 
                 # TODO: ensure ss::* procs merge new sstable files (or uses them
                 # while querying for data)
@@ -701,8 +717,12 @@ proc ::persistence::commitlog::begin_batch {} {
     variable commitlog_name
 
     set xid_commitlog_name $commitlog_name
+    # log xid_commitlog_name=$xid_commitlog_name
     if { ${xid_commitlog_name} ne {} && $fp(${xid_commitlog_name}) ne {} } {
+        # log xid=$xid
         set_mem "begin_batch" "" "" $xid ""
+    } else {
+        # log "only allowed upon bootstrapping"
     }
 
     return $xid
@@ -741,7 +761,11 @@ proc ::persistence::commitlog::set_column {rev data xid codec_conf} {
     return ${rev}
 }
 
-proc ::persistence::commitlog::compact_helper {type_oid multirow_slicelistVar todelete_rowsVar} {
+proc ::persistence::commitlog::compact_helper {
+    type_oid 
+    multirow_slicelistVar 
+    todelete_rowsVar
+} {
     upvar $multirow_slicelistVar multirow_slicelist
     upvar $todelete_rowsVar todelete_rows
 
@@ -826,10 +850,13 @@ proc ::persistence::commitlog::compact_helper {type_oid multirow_slicelistVar to
             set pos 0
             set fragment(name) [encode_sstable_fragment_name $type_oid $n_fragments]
             set fragment(data) {}
-        }
 
-        # long-running computation, responds to events
-        ::update
+            # occassionally calling update to respond to events
+            # log "calling update..."
+            # ::update
+            # log "done calling update..."
+
+        }
 
     }
 
@@ -933,7 +960,7 @@ proc ::persistence::commitlog::compact_all {} {
     variable commitlog_names
     foreach commitlog_name ${commitlog_names} {
         checkpoint ${commitlog_name}
-        # log delete_commitlog ${commitlog_name}
+        # delete_commitlog ${commitlog_name}
     }
 
 }
