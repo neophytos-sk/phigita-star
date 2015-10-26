@@ -82,24 +82,31 @@ proc ::db_server::handle_conn {sock args} {
 
             # execute command
 
-            set ok_retcode 0
-            set error_retcode 1
-
-            set cmd "set x \[{*}${line}\]"
-            if { [catch $cmd errmsg] } {
-                log "cmd=$cmd"
-                log "errmsg=$errmsg"
-                log "errorInfo=$::errorInfo"
-                ::util::io::write_string $sock $errmsg
-                ::util::io::write_char $sock $error_retcode
-                flush $sock
-            } else {
-                ::util::io::write_string $sock $x
-                ::util::io::write_char $sock $ok_retcode
-                flush $sock
-            }
+            exec_cmd_line ${sock} ${line}
 
         }
     }
+}
+
+proc ::db_server::exec_cmd_line {sock line} {
+
+    set ok_retcode 0
+    set error_retcode 1
+
+    set cmd "set x \[{*}${line}\]"
+    set error_p [catch ${cmd} errmsg]
+    if { ${error_p} } {
+        log "cmd=$cmd"
+        log "errmsg=$errmsg"
+        log "errorInfo=$::errorInfo"
+        ::util::io::write_string $sock $errmsg
+        ::util::io::write_char $sock $error_retcode
+        flush $sock
+    } else {
+        ::util::io::write_string $sock $x
+        ::util::io::write_char $sock $ok_retcode
+        flush $sock
+    }
+
 }
 

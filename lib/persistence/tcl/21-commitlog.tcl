@@ -63,6 +63,8 @@ namespace eval ::persistence::commitlog {
     set sstable_fragment_size_threshold \
         [config get ::persistence sstable_fragment_size_threshold]
 
+    variable switch_commitlog_p
+    set switch_commitlog_p 0
 }
 
 proc ::persistence::commitlog::compare_commitlog_files {f1 f2} {
@@ -101,6 +103,9 @@ proc ::persistence::commitlog::init {} {
         open_commitlog ${commitlog_name}
         load_commitlog ${commitlog_name}
     }
+
+    after 1000 ::persistence::commitlog::switch_commitlog_if
+
     # at_shutdown close_commitlog ${commitlog_name}
 }
 
@@ -114,6 +119,7 @@ proc ::persistence::commitlog::new_commitlog {} {
     set micros [clock microseconds]
     set commitlog_name "CommitLog-${micros}"
 
+    # creates new commitlog
     init_commitlog ${commitlog_name}
     open_commitlog ${commitlog_name}
 
@@ -125,10 +131,57 @@ proc ::persistence::commitlog::new_commitlog {} {
     return ${commitlog_name}
 }
 
+proc ::persistence::commitlog::switch_commitlog_if {} {
+    variable switch_commitlog_p
+
+    log switch_commitlog_p=$switch_commitlog_p
+
+    set timer [list ::persistence::commitlog::switch_commitlog_if]
+    after cancel $timer
+
+    if { ${switch_commitlog_p} } {
+        set switch_commitlog_p 0
+        ::persistence::commitlog::switch_commitlog
+    }
+
+    after 1000 $timer
+
+}
+
 proc ::persistence::commitlog::switch_commitlog {} {
+
+    log "switch_commitlog enterstep"
+
+    # 2.2. compacts (creates sstable files) old commitlog
+    #      calls ::persistence::ss::compact_all when base_nsp 
+    #      is the commitlog namespace
+    #
+    # ::persistence::commitlog::compact_all ;# ${xid_commitlog_name}
+
+    # commitlog::compact_all
+    compact_all
+
+    # NOTE: in terms of architecture,
+    # this should have been elsewhere.
+    ::persistence::ss::compact_all
+
+    # 2.3. switches to new commitlog for querying purposes
+    # new_commitlog already switched to new commitlog for
+    # incoming write requests
     variable commitlog_names
+    set xid_commitlog_name [lindex $commitlog_names 0]
     set latest_commitlog_name [lindex $commitlog_names end]
     set commitlog_names ${latest_commitlog_name}
+
+    # TODO: ensure ss::* procs merge new sstable files (or uses them
+    # while querying for data)
+
+    # 2.4. closes old commitlog
+    ::persistence::commitlog::close_commitlog ${xid_commitlog_name}
+
+    # 2.5 deletes old commitlog
+    ::persistence::commitlog::delete_commitlog ${xid_commitlog_name}
+
 }
 
 # initializes stats for given commitlog_name
@@ -657,53 +710,27 @@ proc ::persistence::commitlog::finalize_commit {xids} {
 
         array unset __mem_new $xid
 
-        # ensures commitlog mem never exceeds given size and number of entries
-        if { [threshold_exceeded_p ${xid_commitlog_name}] } {
+        # ensures commitlog stats stay within
+        # configured threshold for size
+        # and number of entries
 
-            # log "!!! threshold exceeded"
+        if { [threshold_exceeded_p $xid_commitlog_name] } {
 
-            if { ${commitlog_name} eq ${xid_commitlog_name} } {
-
-                # 1. create new commitlog
+            if { $commitlog_name eq $xid_commitlog_name } {
                 set commitlog_name [new_commitlog]
-
             }
 
-            # 2.1. waits until all pending batches are completed/committed
+            # waits until all pending batches are completed/committed
+            # to switch to the new commitlog
+
             variable __commitlog_pending
             if { $__commitlog_pending(${xid_commitlog_name}) == 0 } {
-
                 log "!!! threshold exceeded: ${xid_commitlog_name}"
-
-                # 2.2. compacts (creates sstable files) old commitlog
-                #      calls ::persistence::ss::compact_all when base_nsp 
-                #      is the commitlog namespace
-                #
-                # ::persistence::commitlog::compact_all ;# ${xid_commitlog_name}
-
-                # commitlog::compact_all
-                compact_all
-
-                # NOTE: in terms of architecture,
-                # this should have been elsewhere.
-                ::persistence::ss::compact_all
-
-                # 2.3. switches to new commitlog
-                switch_commitlog
-
-                # TODO: ensure ss::* procs merge new sstable files (or uses them
-                # while querying for data)
-
-                # 2.4. closes old commitlog
-                ::persistence::commitlog::close_commitlog ${xid_commitlog_name}
-
-                # 2.5 deletes old commitlog
-                ::persistence::commitlog::delete_commitlog ${xid_commitlog_name}
-
+                variable switch_commitlog_p
+                set switch_commitlog_p 1
             }
 
         }
-
 
     }
 
