@@ -7,6 +7,7 @@ package require core
 config section ::persistence
 config use "server"
 
+# package require Thread
 package require persistence
 
 set myaddr [config get ::persistence "address"]

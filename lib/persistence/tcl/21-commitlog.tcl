@@ -134,7 +134,7 @@ proc ::persistence::commitlog::new_commitlog {} {
 proc ::persistence::commitlog::switch_commitlog_if {} {
     variable switch_commitlog_p
 
-    log switch_commitlog_p=$switch_commitlog_p
+    # log switch_commitlog_p=$switch_commitlog_p
 
     set timer [list ::persistence::commitlog::switch_commitlog_if]
     after cancel $timer

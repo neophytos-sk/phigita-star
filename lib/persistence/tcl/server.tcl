@@ -80,12 +80,25 @@ proc ::db_server::handle_conn {sock args} {
             # log datalen=$datalen
             # log pos=$pos
 
-            # execute command
-
             exec_cmd_line ${sock} ${line}
+            # thread_exec_cmd_line ${sock} ${line}
 
         }
     }
+}
+
+proc ::db_server::thread_exec_cmd_line {sock line} {
+    set script [list exec_cmd_line ${sock} ${line}]
+    set thread_id [thread::create {
+        package require persistence
+        thread::wait  ;# enters the event loop
+    }]
+    log thread_id=$thread_id
+    log script=$script
+    thread::transfer $thread_id $sock
+    thread::send $thread_id $script
+    # log thread_id=$thread_id
+    # thread::release $thread_id
 }
 
 proc ::db_server::exec_cmd_line {sock line} {
@@ -93,10 +106,11 @@ proc ::db_server::exec_cmd_line {sock line} {
     set ok_retcode 0
     set error_retcode 1
 
-    set cmd "set x \[{*}${line}\]"
-    set error_p [catch ${cmd} errmsg]
+    set script "set x \[{*}${line}\]"
+    set error_p [catch ${script} errmsg]
+
     if { ${error_p} } {
-        log "cmd=$cmd"
+        log "script=$script"
         log "errmsg=$errmsg"
         log "errorInfo=$::errorInfo"
         ::util::io::write_string $sock $errmsg

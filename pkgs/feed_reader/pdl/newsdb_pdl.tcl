@@ -8,6 +8,11 @@ set dir [file dirname [info script]]
 #     urlsha1_to_date_sk
 # }
 
+# as of 2016-01-22,
+# define_ks and define_cf may only be called from the server-side
+# use pdl files to specify types
+return 
+
 foreach {ks spec} {
 
     newsdb {

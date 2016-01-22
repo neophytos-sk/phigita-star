@@ -165,6 +165,7 @@ proc ::persistence::orm::init_type {} {
 
 }
 
+# server-side proc
 proc ::persistence::orm::install_type {} {
     set nsp [namespace __this]
     variable ${nsp}::ks

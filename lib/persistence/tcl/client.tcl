@@ -52,6 +52,10 @@ proc ::db_client::recv {} {
 
     vwait ::db_client::peer($sock,done)
 
+    if { $sock eq {} } {
+        error "recv: no sock info after vwait"
+    }
+
     set retcode $peer($sock,retcode)
 
     if { [boolval $retcode] } {

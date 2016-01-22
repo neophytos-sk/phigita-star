@@ -193,8 +193,6 @@ proc ::persistence::init {} {
         # namespace path "::persistence::ss"
 
         set procnames {
-            define_ks
-            define_cf
 
             exists_p
             get
@@ -278,7 +276,15 @@ proc ::persistence::load_types_from_files {filelist} {
             log spec=[array get spec]
         }
 
-        install_type spec
+        # init_type, which is called by load_type, 
+        # should precede install_type invocation
+        load_type spec
+
+        # install_type is a server-side proc,
+        # calls define_ks and define_cf
+        if { [use_p server] } {
+            $spec(nsp) install_type
+        }
         array unset spec
     }
 
@@ -343,17 +349,6 @@ proc ::persistence::load_type {specVar} {
 
     assert { [namespace exists $spec(nsp)] }
 
-}
-
-proc ::persistence::install_type {specVar} {
-    upvar $specVar spec
-
-    load_type spec
-
-    # init_type, which is called by load_type, 
-    # precedes install_type invocation
-
-    $spec(nsp) install_type
 }
 
 proc ::persistence::load_types_from_db {} {
