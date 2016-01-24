@@ -20,6 +20,8 @@ define_lang ::templating::lang {
     proc leafnode_cmd {cmdname} {
         set nsp [uplevel {namespace current}]
 
+        log leafnode_cmd=$cmdname,nsp=$nsp
+
         proc ${nsp}::${cmdname} {args} [subst {
             if { \[llength \$args\] % 2 == 0 } {
                 widget -type ${cmdname} {*}\${args}
@@ -29,11 +31,17 @@ define_lang ::templating::lang {
                 \}
             }
         }]
+
+        namespace export $cmdname
+
     }
 
+    # defines procnames in ::templating::lang namespace
     foreach tagname {val guard js css tcl} {
         leafnode_cmd $tagname
     }
+
+    namespace eval :: { namespace import ::templating::lang::* }
 
     if {0} {
         dtd {
@@ -352,14 +360,14 @@ proc ::templating::tag::contract::initial_rewrite {codearrVar node} {
     set require_secure_conn_p [$node @require_secure_conn "0"] 
     if { ${require_secure_conn_p} } {
         $pn insertBeforeFromScript { 
-            guard -id contract__require_secure_conn {::xo::kit::require_secure_conn}
+            guard -id contract__require_secure_conn {::templating::ctx::require_secure_conn}
         } $node
     }
 
     set require_registration_p [$node @require_registration "0"]
     if { ${require_registration_p} } {
         $pn insertBeforeFromScript { 
-            guard -id contract__require_registration {::xo::kit::require_registration}
+            guard -id contract__require_registration {::templating::ctx::require_registration}
         } $node
     }
 

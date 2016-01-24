@@ -248,7 +248,7 @@ proc ::templating::css::rename_doc_classes {templateDoc rename_mapVar seenVar} {
 		$domNode removeAttribute class
 	    }
 	    
-	    if { 0 && [::xo::kit::debug_mode_p] } {
+	    if { 0 && [::templating::ctx::debug_mode_p] } {
 		$domNode setAttribute oldClass $cssClasses
 	    }
 	}

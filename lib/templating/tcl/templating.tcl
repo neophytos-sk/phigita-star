@@ -52,31 +52,31 @@ proc ::templating::compile_and_load {filename} {
 proc ::templating::get_and_check_param {id name strict_p optional_p default vlist proclist} {
 
     # get param value
-    set exists_p [::xo::kit::getparam ${id} value]
+    set exists_p [::templating::ctx::getparam ${id} value]
 
     # check whether optional and set default value
     if { !${exists_p} } {
 
-	if { !${optional_p} } { 
-	    return 0
-	}
+        if { !${optional_p} } { 
+            return 0
+        }
 
-	set value ${default}
+        set value ${default}
 
     }
 
     # validation checks
     if { ${strict_p} || ${value} ne {} } {
-	foreach vcheck ${vlist} {
-	    if { ![::templating::validation::check=${vcheck} value] } {
-		return 0
-	    }
-	}
+        foreach vcheck ${vlist} {
+            if { ![::templating::validation::check=${vcheck} value] } {
+                return 0
+            }
+        }
     }
 
     # apply transformations
     foreach procname ${proclist} {
-	set value [${procname} ${value}]
+        set value [${procname} ${value}]
     }
 
     # save the value
@@ -106,7 +106,7 @@ proc ::xo::tdp::get_cmd {filename} {
 }
 
 
-if { [::xo::kit::production_mode_p] } {
+if { [::templating::ctx::production_mode_p] } {
 
     proc ::xo::tdp::returnfile {filename} {
     # if you reached this point, cmd should exist
@@ -258,7 +258,7 @@ proc ::xo::tdp::compile_and_load {filename} {
 
 
     set latest_mtime [latest_mtime $filename]
-    if { [::xo::kit::performance_mode_p] && [file exists $sharedlib] } {
+    if { [::templating::ctx::performance_mode_p] && [file exists $sharedlib] } {
 	if { [file __newer_than_mtime $sharedlib $latest_mtime] } {
 	    log notice "--->>> load $sharedlib $ininame"
 	    load $sharedlib $ininame
@@ -402,7 +402,7 @@ proc ::xo::tdp::compile_doc {templateDoc filename} {
         if { [catch {
             ::xo::tdp::compile_helper codearr $widget "initial_rewrite"
         } errmsg options] } {
-            log "--->>>" \n\n errmsg=$errmsg widget=[$widget nodeName]
+            log "--->>> errmsg=" \n\n $errmsg widget->type=[$widget @type ""]
         }
         if { [$widget @__todelete "0"] } {
             $widget delete
@@ -418,7 +418,8 @@ proc ::xo::tdp::compile_doc {templateDoc filename} {
         if { [catch {
             ::xo::tdp::compile_helper codearr $widget "initial_rewrite"
         } errmsg options] } {
-            log "--->>>" \n\n errmsg=$errmsg \n\n widget=[$widget nodeName]
+            log "--->>> log,errmsg=" \n\n $errmsg \n\n widget->type=[$widget @type ""] "\n<<<--- end of log,errmsg\n"
+            error "error during initial_rewrite"
         }
 
         if { [$widget @__todelete "0"] } {
@@ -526,7 +527,7 @@ proc ::xo::tdp::compile_doc {templateDoc filename} {
         $head appendFromScript {
 
             if { $css_min ne {} } {
-                if { [xo::kit::debug_mode_p] || ${css_min_final_len} < 8192 } {
+                if { [templating::ctx::debug_mode_p] || ${css_min_final_len} < 8192 } {
                     style -type text/css { nt ${css_min_final} }
                 } else {
                     link -rel "stylesheet" -type "text/css" -href $css_min_final_url
@@ -537,7 +538,7 @@ proc ::xo::tdp::compile_doc {templateDoc filename} {
 
             if { $js(public) } {
 
-                val -id registered_p -other_id [next_other_id] { ::xo::kit::is_registered_p }
+                val -id registered_p -other_id [next_other_id] { ::templating::ctx::is_registered_p }
                 ::templating::lang::tpl -if "not @{val.registered_p}" {
 
                 ## we have some js code for the public
@@ -574,7 +575,7 @@ proc ::xo::tdp::compile_doc {templateDoc filename} {
 
             ## we have some js code for registered users
 
-                val -id registered_p -other_id [next_other_id] { ::xo::kit::is_registered_p }
+                val -id registered_p -other_id [next_other_id] { ::templating::ctx::is_registered_p }
                 ::templating::lang::tpl -if "@{val.registered_p}" {
 
                     if { $js(internal-1) ne {} } {
@@ -645,7 +646,7 @@ proc ::xo::tdp::compile_doc_in_c {codearrVar templateDoc filename} {
     }]
 
     array set conf [list]
-    set conf(debug_mode_p) [::xo::kit::debug_mode_p]
+    set conf(debug_mode_p) [::templating::ctx::debug_mode_p]
 
     set conf(clibraries) "-L/opt/naviserver/lib -lnsd"
     set conf(includedirs) [list "/opt/naviserver/include" [file join [acs_root_dir] "lib/templating/c"]]
@@ -1015,9 +1016,9 @@ proc ::xo::tdp::compile_helper {codearrVar node procName} {
 
             set errorinfo $options_arr(-errorinfo)
 
-            log error "\n--->>> cmd=$cmd \nnode=[$node nodeName] \nattributes=[$node attributes] \n\n \nerrmsg=$errmsg \n$errorinfo\n\n"
+            # log error "\n--->>> cmd=$cmd \nnode=[$node nodeName] \nattributes=[$node attributes] \n\n \nerrmsg=$errmsg \n$errorinfo\n\n"
 
-            error "cmd=$cmd node=[$node nodeName] attributes=[$node attributes]" $errorinfo
+            error "$errorinfo cmd=$cmd node->type=[$node @type ""] attributes=[$node attributes]"
 
         }
     }

@@ -205,7 +205,7 @@ proc ::templating::js::compile_js {prefix js {compilation_level "ADVANCED_OPTIMI
     set outfile ${prefix}-compiled-${token}.js
     set mapfile ${prefix}-map.js
 
-    if { 1 || [::xo::kit::performance_mode_p] } {
+    if { 1 || [::templating::ctx::performance_mode_p] } {
         set ENABLE_DEBUG "false"
     } else {
         set ENABLE_DEBUG "true"

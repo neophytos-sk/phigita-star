@@ -3,6 +3,7 @@
 # TODO: extract comments from article pages
 
 package require core
+package require command_line_interface
 package require feed_reader
 
 #set dir [file dirname [info script]]
@@ -63,7 +64,7 @@ if { ${argc} < 1 } {
 
     set cmd [lindex $argv 0]
 
-    if {0} {
+    if {1} {
 
         # package require request_processor
         set this_dir [file dirname [info script]]
