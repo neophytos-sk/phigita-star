@@ -64,7 +64,7 @@ if { ${argc} < 1 } {
 
     set cmd [lindex $argv 0]
 
-    if {1} {
+    if {0} {
 
         # package require request_processor
         set this_dir [file dirname [info script]]
