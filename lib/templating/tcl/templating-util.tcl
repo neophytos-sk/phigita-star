@@ -35,7 +35,8 @@ proc ::util::multiline_cstringquote {str} {
 }
 
 proc ::util::localtime {{format "%A, %d %B %Y, %H:%M %Z"}} {
-    return [ClockMgr getLocalTime -format $format]
+    return [clock format [clock seconds] -format ${format}]
+    # return [ClockMgr getLocalTime -format $format]
 }
 
 

@@ -8,8 +8,8 @@ config section ::persistence
 config param address "127.0.0.1"
 config param port "9900"
 
-config param base_dir "/web/data/mystore"
-# config param base_dir "/web/data/mystore2"
+# config param base_dir "/web/data/mystore"
+config param base_dir "/web/data/mystore2"
 
 config param storage_type "ss"
 
@@ -20,7 +20,7 @@ config param compact_p "1"
 
 config param sstable_fragment_size_threshold 100000000
 config param commitlog_size_threshold 100000000
-config param commitlog_n_entries_threshold 500
+config param commitlog_n_entries_threshold 5000
 
 
 config param use_server "off"

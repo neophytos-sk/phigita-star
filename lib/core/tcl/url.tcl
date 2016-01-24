@@ -199,8 +199,8 @@ proc ::url::intersect {url1 url2} {
 
     # scheme,host,port intersection
     foreach name {scheme host port fragment user pwd} {
-        if { $url1_a($name) eq $url2_a($name) } {
-            lappend intersection_url_keyl $name $url1_a($name)
+        if { [value_if url1_a($name)] eq [value_if url2_a($name)] } {
+            lappend intersection_url_keyl $name [value_if url1_a($name)]
         } else {
             lappend intersection_url_keyl $name {}
         }
@@ -273,7 +273,7 @@ proc ::url::fmt_ex {url} {
     array set url_a [url split $url]
     set url_keyl [list]
     foreach name {scheme host port user pwd fragment} {
-        lappend url_keyl $name $url_a($name)
+        lappend url_keyl $name [value_if url_a($name)]
     }
 
     lappend url_keyl path $path_fmt
@@ -295,7 +295,7 @@ proc ::url::fmt_sp {fmt intersection_url} {
 
     set fmt_keyl [list]
     foreach name {scheme host port user pwd fragment} {
-        lappend fmt_keyl $name $fmt_a($name)
+        lappend fmt_keyl $name [value_if fmt_a($name)]
     }
 
     set path_args [list]

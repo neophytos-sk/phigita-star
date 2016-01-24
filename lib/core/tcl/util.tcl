@@ -8,7 +8,8 @@ namespace eval ::util {
         unset_if \
         reversedotted \
         readfile \
-        writefile 
+        writefile \
+		exists_and_not_null
 }
 
 proc ::util::coalesce {args} {
@@ -103,6 +104,16 @@ proc ::util::ino {filename} {
     return $arr(ino)
 }
 
+proc ::util::exists_and_not_null {varname} {
+	upvar ${varname} _
+	return [expr { [info exists {_}] && ${_} ne {} }]
+}
+
+
+proc util_memoize {script {interval "0"}} {
+    return [eval ${script}]
+}
+
 
 
 namespace eval :: {
@@ -113,4 +124,7 @@ namespace eval :: {
     namespace import ::util::set_if
     namespace import ::util::unset_if
     namespace import ::util::reversedotted
+    namespace import ::util::exists_and_not_null
 }
+
+

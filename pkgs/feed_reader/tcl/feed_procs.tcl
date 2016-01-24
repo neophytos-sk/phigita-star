@@ -1892,6 +1892,7 @@ proc ::feed_reader::sync {args} {
     getopt::init {
         {domain ""  {__arg_domain domain}}
         {debug  ""  {__arg_debug debug_p}}
+        {force  ""  {__arg_force}}
     }
     getopt::getopt $args
 
@@ -1948,7 +1949,10 @@ proc ::feed_reader::sync {args} {
             set feed_name ${domain}__[file tail ${filename}]
 
             set timestamp [clock seconds]
-            if { ${check_fetch_feed_p} && ![fetch_feed_p ${feed_name} ${timestamp}] } {
+            if { ${check_fetch_feed_p} 
+                 && !exists("__arg_force") 
+                 && ![fetch_feed_p ${feed_name} ${timestamp}] 
+            } {
                 incr round_stats(SKIP_FEED) 
                 #puts "not fetching $feed_name in this round ${round}\n\n"
                 unset feed

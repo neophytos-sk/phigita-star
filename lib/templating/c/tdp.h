@@ -1,5 +1,8 @@
 #include "tcl.h"
+
+#if 0
 #include "ns.h"
+#endif 
 
 #define TDP_ERROR TCL_ERROR
 #define TDP_OK    TCL_OK

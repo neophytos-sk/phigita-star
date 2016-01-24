@@ -13,7 +13,7 @@ proc print_usage_info {} {
     upvar argv0 argv0
 
     array set cmdinfo [list \
-			   "sync" "?news_source? ?...?" \
+			   "sync" "?--domain domain?" \
 			   "resync" ""\
 			   "search" "keywords offset limit" \
 			   "show" "urlsha1 ?...?" \
@@ -62,6 +62,20 @@ if { ${argc} < 1 } {
 } else {
 
     set cmd [lindex $argv 0]
+
+    if {0} {
+
+        # package require request_processor
+        set this_dir [file dirname [info script]]
+        set dir [file normalize [file join $this_dir .. www]]
+        set filename [glob -nocomplain -directory $dir ${cmd}.tdp]
+
+        package require templating
+        set html [::xo::tdp::process $filename]
+        puts $html
+
+        exit
+    }
 
     if { ${cmd} eq {sync} && ${argc} >= 1 } {
 
