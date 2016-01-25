@@ -49,10 +49,20 @@ proc ::templating::compile_and_load {filename} {
     ::xo::tdp::set_cmd ${filename} ${tcl_cmd_name}
 }
 
-proc ::templating::get_and_check_param {id name strict_p optional_p default vlist proclist} {
+namespace eval ::xo::kit {;}
+
+proc ::xo::kit::add_param {longname shortname args} {
+	global __data__
+	set varlist "__arg_$longname $longname"
+	lappend __data__(optdata) [list $longname $shortname $varlist {*}${args}]
+
+	puts add_param,longname=$longname,args=$args
+}
+
+proc ::xo::kit::get_and_check_param {longname shortname varlist strict_p optional_p default vchecklist proclist} {
 
     # get param value
-    set exists_p [::templating::ctx::getparam ${id} value]
+    set exists_p [::templating::ctx::getparam ${longname} value]
 
     # check whether optional and set default value
     if { !${exists_p} } {
@@ -67,7 +77,7 @@ proc ::templating::get_and_check_param {id name strict_p optional_p default vlis
 
     # validation checks
     if { ${strict_p} || ${value} ne {} } {
-        foreach vcheck ${vlist} {
+        foreach vcheck ${vchecklist} {
             if { ![::templating::validation::check=${vcheck} value] } {
                 return 0
             }
@@ -80,11 +90,24 @@ proc ::templating::get_and_check_param {id name strict_p optional_p default vlis
     }
 
     # save the value
-    set ::__data__(${name}) ${value}
+    set ::__data__(${longname}) ${value}
 
     return 1
 
 }
+
+proc ::xo::kit::init_context {} {
+	global __data__
+    foreach item $__data__(optdata) {
+        set ok_p [::xo::kit::get_and_check_param {*}${item}]
+        if { !${ok_p} } {
+            return 0
+        }
+    }
+    return 1
+
+}
+
 
 
 

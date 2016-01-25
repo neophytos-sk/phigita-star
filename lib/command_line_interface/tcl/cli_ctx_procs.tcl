@@ -1,6 +1,8 @@
 namespace eval ::cli::kit {
     namespace export \
+		add_param \
         getparam \
+		init_context \
         is_registered_p \
         require_registration \
         require_secure_conn \
@@ -55,13 +57,62 @@ proc ::cli::kit::vcheck {param vlist {valueVar ""}} {
     return 1
 }
 
+proc ::cli::kit::add_param {
+	longname shortname varlist 
+	strict_p optional_p default_value 
+	vchecklist proclist
+} {
+	global __data__
+	set varlist "__arg_$longname $longname"
+	lappend __data__(optdata) \
+		[list $longname $shortname $varlist]
+	lappend __data__(optdata,config) \
+		[list $strict_p $optional_p $default_value $vchecklist $proclist]
 
-# returns true when param exists, otherwise false
-proc ::cli::kit::getparam {param valueVar} {
+	puts add_param,longname=$longname
+}
+
+proc ::cli::kit::init_context {} {
+	global __data__
+
+	# extract param values from ::argv
+	if { [catch {
+		getopt::init $__data__(optdata)
+		getopt::getopt [lrange $::argv 1 end] __data__ 
+	} errmsg] } {
+		log "errmsg=$errmsg"
+		return 0
+	}
+
+	# sets default values and checks validation
+	foreach item $__data__(optdata) itemconf $__data__(optdata,config) {
+		lassign $item longname shortname varlist
+		lassign $itemconf strict_p optional_p default_value vchecklist proclist
+
+		# checks validation
+		if { [info exists __data__(${longname})] } {
+			set matchall_p [pattern matchall ${vchecklist} __data__(${longname})]
+			if { !${matchall_p} } {
+				log "param (=$longname) failed validation check: $vchecklist"
+				return 0
+			}
+		} elseif { !$optional_p } {
+			return 0
+		}
+	}
+
+	return 1
+}
+
+
+# returns true when param exists and sets valueVar, 
+# to the corresponding value, otherwise returns false
+proc ::cli::kit::getparam {param_name valueVar} {
     upvar $valueVar value
-    global __form
-    if { [info exists __form(${param})] } {
-        set value $__form(${param})
+    global __data__
+
+    if { [info exists __data__(${param_name})] } {
+        set value $__data__(${param_name})
         return 1
     }
     return 0

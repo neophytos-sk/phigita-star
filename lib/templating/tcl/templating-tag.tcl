@@ -373,12 +373,15 @@ proc ::templating::tag::contract::initial_rewrite {codearrVar node} {
 
     #error "you cannot require_secure_conn and not accept protocol 'https'"
 
+    set script {}
     foreach child [$node childNodes] {
 
         set tagname [$child nodeName]
         if { $tagname eq {param} } {
             set id         [$child @id]
             set name       [$child @name $id]
+            set shortname  [$child @shortname ""]
+            set varlist    [$child @varlist ""]
             set strict_p   [::util::coalesce [$child @strict_p "0"] "1"]
             set optional_p [::util::coalesce [$child @optional "0"] "1"]
             set default    [$child @default ""]
@@ -400,11 +403,11 @@ proc ::templating::tag::contract::initial_rewrite {codearrVar node} {
 
             add_global_string codearr OBJECT_VARNAME_${name} ${name}
 
-            set script [list ::templating::get_and_check_param ${id} ${name} ${strict_p} ${optional_p} ${default} ${vlist} ${proclist}]
+            append script "\n" [list ::templating::ctx::add_param ${name} ${shortname} ${varlist} ${strict_p} ${optional_p} ${default} ${vlist} ${proclist}]
 
-            $pn insertBeforeFromScript { 
-                guard -id check_param_${id} ${script}
-            } $node
+            # $pn insertBeforeFromScript { 
+            #     guard -id check_param_${id} ${script}
+            # } $node
 
             $child delete
 
@@ -416,20 +419,29 @@ proc ::templating::tag::contract::initial_rewrite {codearrVar node} {
             set codearr(pragma.${id}) ${value}
 
         } elseif { $tagname eq {auth} } {
-        # require regisration
-        # group / community membership
+            # require regisration
+            # group / community membership
         } elseif { $tagname eq {perm} } {
-        # check permission
+            # check permission
         } elseif { $tagname eq {conn} } {
-        # accepted protocol
-        # accepted method
-        # require secure conn
+            # accepted protocol
+            # accepted method
+            # require secure conn
         } elseif { $tagname eq {inst} } {
-        # instantiate well known vars, 
-        # e.g. registered_p, user_id, context_username, screen_name
+            # instantiate well known vars, 
+            # e.g. registered_p, user_id, context_username, screen_name
         }
 
     }
+
+    if { $script ne {} } {
+        append script "\n" "::templating::ctx::init_context"
+log script=$script
+        $pn insertBeforeFromScript { 
+            guard -id contract_getopt ${script}
+        } $node
+    }
+
 }
 
 
