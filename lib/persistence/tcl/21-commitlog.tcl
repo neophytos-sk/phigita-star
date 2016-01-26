@@ -104,7 +104,10 @@ proc ::persistence::commitlog::init {} {
         load_commitlog ${commitlog_name}
     }
 
-    after 1000 ::persistence::commitlog::switch_commitlog_if
+    # comment-in for starting new commitlog upon bootstrap,
+    # faster start without switching commitlog on start
+    #
+    # after 1000 ::persistence::commitlog::switch_commitlog_if
 
     # at_shutdown close_commitlog ${commitlog_name}
 }

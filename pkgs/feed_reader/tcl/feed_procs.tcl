@@ -1904,18 +1904,20 @@ proc ::feed_reader::sync {args} {
     set feeds_dir [get_package_dir]/feed
     set check_fetch_feed_p 0
     if { ${domain} eq {} } {
-        set domain [glob -nocomplain -tails -directory ${feeds_dir} *]
+        set news_sources [glob -nocomplain -tails -directory ${feeds_dir} *]
         set check_fetch_feed_p 1
+    } else {
+        set news_sources ${domain}  ;# list of domains, multiple=true
     }
 
     set round [clock seconds]
 
     array set round_stats [list round_timestamp ${round}]
 
-    progress_init [llength ${domain}]
+    progress_init [llength ${news_sources}]
 
     set cur 0
-    foreach news_source ${domain} {
+    foreach news_source ${news_sources} {
 
         set news_source_dir ${feeds_dir}/${news_source}
 
@@ -1946,18 +1948,20 @@ proc ::feed_reader::sync {args} {
 
             # TODO: maintain domain in feed spec
             set domain [url domain $feed(url)]
-            set feed_name ${domain}__[file tail ${filename}]
+            set feed_name ${news_source}__[file tail ${filename}]
 
             set timestamp [clock seconds]
-            if { ${check_fetch_feed_p} 
-                 && !exists("__arg_force") 
+            if { !exists("__arg_force")
+                 && !${check_fetch_feed_p} 
                  && ![fetch_feed_p ${feed_name} ${timestamp}] 
             } {
                 incr round_stats(SKIP_FEED) 
-                #puts "not fetching $feed_name in this round ${round}\n\n"
+                log "not fetching $feed_name in this round ${round}\n\n"
                 unset feed
                 continue
             }
+
+            # log "fetching $feed_name"
 
             array set stats \
                 [list \

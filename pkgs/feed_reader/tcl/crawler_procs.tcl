@@ -45,8 +45,9 @@ proc ::feed_reader::stats {{news_sources ""}} {
 
 
             set where_clause [list]
-            lappend where_clause [list name = [list $feed_name "ALL"]]
+            lappend where_clause [list name = [list ${news_source}__${feed_name} "ALL"]]
             set rev [::crawldb::stat_info_t 0or1row $where_clause]
+
             if { $rev eq {} } { continue }
             set data [::crawldb::stat_info_t get $rev]
             array set stats_item $data
@@ -309,7 +310,7 @@ proc ::feed_reader::fetch_feed_p {feed_name timestamp {coeff "0.3"}} {
         lappend where_clause [list name = [list $feed_name "ALL"]]
 
         set rev [::crawldb::stat_info_t 0or1row $where_clause]
-        
+
         if { $rev eq {} } {
             # say yes (fetch_feed_p) to start collecting 
             # stats for the given feed_name and timemark
@@ -365,7 +366,7 @@ proc ::feed_reader::incr_array_in_column {feed_name timemark incrementVar} {
     upvar $incrementVar increment
 
     set where_clause [list]
-    lappend where_clause [list name = [list $feed_name "ALL"]]
+    lappend where_clause [list name = [list $feed_name $timemark]]
 
     set rev [::crawldb::stat_info_t 0or1row $where_clause] 
     if { $rev ne {} } {
@@ -381,6 +382,7 @@ proc ::feed_reader::incr_array_in_column {feed_name timemark incrementVar} {
 
     if { $rev ne {} } {
         array set stats_item $data
+        # log "update $rev"
         ::crawldb::stat_info_t update $rev stats_item
     } else {
         set stats_item(feed_name) $feed_name
@@ -407,7 +409,7 @@ proc ::feed_reader::update_stats {timestamp feed_name statsVar} {
         set timemark [clock format ${timestamp} -format ${format}]
         
         # Example:
-        # crawldb/stat_info_t.by_name/__FEED_NAME__ __TIMEMARK__/+/H-07
+        # crawldb/stat_info_t.by_name/philenews.com__philenews H-07_/+/philenews.com__philenews/H-07
         #   FETCH_FEED 1 
         #   FETCH_AND_WRITE_FEED 1 
         #   FETCH_AND_WRITE 40 
@@ -418,20 +420,19 @@ proc ::feed_reader::update_stats {timestamp feed_name statsVar} {
         #   ERROR_FETCH 0
 
         incr_array_in_column $feed_name $timemark stats
-
-        # Example:
-        # crawldb/feed_stats.by_feed_and_const/philenews/+/_stats
-        #   FETCH_FEED 11 
-        #   FETCH_AND_WRITE_FEED 9 
-        #   FETCH_AND_WRITE 322 
-        #   NO_FETCH 875 
-        #   ERROR_FETCH_FEED 2 
-        #   NO_WRITE_FEED 2 
-        #   NO_WRITE 110 
-        #   ERROR_FETCH 0
-
-        incr_array_in_column $feed_name "ALL" stats
-
     }
+
+    # Example:
+    # crawldb/stat_info_t.by_name/philenews.com__philenews ALL/+/philenews.com__philenews
+    #   FETCH_FEED 11 
+    #   FETCH_AND_WRITE_FEED 9 
+    #   FETCH_AND_WRITE 322 
+    #   NO_FETCH 875 
+    #   ERROR_FETCH_FEED 2 
+    #   NO_WRITE_FEED 2 
+    #   NO_WRITE 110 
+    #   ERROR_FETCH 0
+
+    incr_array_in_column $feed_name "ALL" stats
 
 }
