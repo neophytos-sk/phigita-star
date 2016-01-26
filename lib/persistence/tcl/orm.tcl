@@ -370,7 +370,7 @@ proc ::persistence::orm::insert {itemVar {optionsVar ""}} {
 
 }
 
-proc ::persistence::orm::update {oid new_itemVar {optionsVar ""}} {
+proc ::persistence::orm::update {rev new_itemVar {optionsVar ""}} {
     variable [namespace __this]::pk
     variable [namespace __this]::__attinfo
     variable [namespace __this]::__idxnames
@@ -388,12 +388,12 @@ proc ::persistence::orm::update {oid new_itemVar {optionsVar ""}} {
     set attnames [array names new_item]
 
     # check for existance and get the old item
-    if { ![::persistence::exists_p $oid] } {
-        error "persistence (ORM): no such oid (=$oid) in the store (=mystore)"
+    if { ![::persistence::exists_p $rev] } {
+        error "persistence (ORM): no such oid (=$rev) in the store (=mystore)"
     }
 
     # old_item
-    array set old_item [get $oid]
+    array set old_item [get $rev]
 
     # ensures that no immutable attributes are modified
     foreach attname $attnames {
@@ -424,7 +424,7 @@ proc ::persistence::orm::update {oid new_itemVar {optionsVar ""}} {
                 if { [info exists __changed($idx_attname)] } {
                     incr changed
                 } elseif { $new_item($idx_attname) ne $old_item($idx_attname) } {
-                    set __changed($idx_attname)
+                    set __changed($idx_attname) ""
                     incr changed
                 }
             }

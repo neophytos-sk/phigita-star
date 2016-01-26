@@ -372,6 +372,7 @@ proc ::feed_reader::incr_array_in_column {feed_name timemark incrementVar} {
     set rev [::crawldb::stat_info_t 0or1row $where_clause] 
     if { $rev ne {} } {
         set data [::crawldb::stat_info_t get $rev]
+        array set stats_item $data
     }
 
     array set stats_item [list]
@@ -382,8 +383,7 @@ proc ::feed_reader::incr_array_in_column {feed_name timemark incrementVar} {
     }
 
     if { $rev ne {} } {
-        array set stats_item $data
-        # log "update $rev"
+        # log "update rev=$rev"
         ::crawldb::stat_info_t update $rev stats_item
     } else {
         set stats_item(feed_name) $feed_name

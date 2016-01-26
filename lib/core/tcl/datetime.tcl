@@ -84,6 +84,10 @@ proc ::dt::timestamp_to_age {timeval {short_form_p 1}} {
         }
     }
 
+    if { $age eq {} } {
+        set age "0m"
+    }
+
     return $age
 }
 
