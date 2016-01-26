@@ -366,6 +366,7 @@ proc ::feed_reader::incr_array_in_column {feed_name timemark incrementVar} {
     upvar $incrementVar increment
 
     set where_clause [list]
+    # lappend where_clause [list timemark = $timemark]
     lappend where_clause [list name = [list $feed_name $timemark]]
 
     set rev [::crawldb::stat_info_t 0or1row $where_clause] 

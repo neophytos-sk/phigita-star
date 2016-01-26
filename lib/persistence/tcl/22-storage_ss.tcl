@@ -22,7 +22,11 @@ namespace eval ::persistence::ss {
 proc ::persistence::ss::init {} {
     variable base_nsp
     ${base_nsp}::init
-    if { [setting_p "compact_p"] } {
+
+    if { [setting_p "compact_p"] && ![setting_p "commitlog"] } {
+        # remove commitlog condition from if-expression
+        # to start a new commitlog upon bootstrap,
+        # faster bootstrap without switching commitlog on start
         compact_all
     }
 }
