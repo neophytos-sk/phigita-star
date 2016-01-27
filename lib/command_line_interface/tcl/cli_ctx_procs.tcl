@@ -69,7 +69,7 @@ proc ::cli::kit::add_param {
 	lappend __data__(optdata,config) \
 		[list $strict_p $optional_p $default_value $vchecklist $proclist]
 
-	puts add_param,longname=$longname
+	# log add_param,longname=$longname
 }
 
 proc ::cli::kit::init_context {} {
@@ -88,6 +88,10 @@ proc ::cli::kit::init_context {} {
 	foreach item $__data__(optdata) itemconf $__data__(optdata,config) {
 		lassign $item longname shortname varlist
 		lassign $itemconf strict_p optional_p default_value vchecklist proclist
+
+        if { $default_value ne {} } {
+            set_if __data__(${longname}) $default_value
+        }
 
 		# checks validation
 		if { [info exists __data__(${longname})] } {

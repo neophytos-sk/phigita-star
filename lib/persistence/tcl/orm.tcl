@@ -42,7 +42,8 @@ namespace eval ::persistence::orm {
         encode \
         decode \
         sort \
-        cache_get
+        cache_get \
+        attnames
 
     #exists
 
@@ -55,6 +56,12 @@ namespace eval ::persistence::orm {
     variable __cache_size
     set __cache_size 0
 
+}
+
+proc ::persistence::orm::attnames {} {
+    set nsp [namespace __this]
+    variable ${nsp}::__attnames
+    return $__attnames
 }
 
 proc ::persistence::orm::init_type {} {

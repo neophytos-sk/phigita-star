@@ -56,7 +56,7 @@ proc ::xo::kit::add_param {longname shortname args} {
 	set varlist "__arg_$longname $longname"
 	lappend __data__(optdata) [list $longname $shortname $varlist {*}${args}]
 
-	puts add_param,longname=$longname,args=$args
+	# log add_param,longname=$longname,args=$args
 }
 
 proc ::xo::kit::get_and_check_param {longname shortname varlist strict_p optional_p default vchecklist proclist} {

@@ -20,7 +20,7 @@ define_lang ::templating::lang {
     proc leafnode_cmd {cmdname} {
         set nsp [uplevel {namespace current}]
 
-        log leafnode_cmd=$cmdname,nsp=$nsp
+        # log leafnode_cmd=$cmdname,nsp=$nsp
 
         proc ${nsp}::${cmdname} {args} [subst {
             if { \[llength \$args\] % 2 == 0 } {
@@ -436,7 +436,6 @@ proc ::templating::tag::contract::initial_rewrite {codearrVar node} {
 
     if { $script ne {} } {
         append script "\n" "::templating::ctx::init_context"
-log script=$script
         $pn insertBeforeFromScript { 
             guard -id contract_getopt ${script}
         } $node
@@ -512,7 +511,7 @@ proc ::templating::tag::datastore::final_rewrite {codearrVar node} {
     set name [$node @name $id]
 
     if { ![$node hasAttribute from_class] } {
-	error "missing 'from_class' from datastore with id=${id} and name=${name}"
+        error "missing 'from_class' from datastore with id=${id} and name=${name}"
     }
 
     set scope [$node @scope ""]
@@ -554,19 +553,19 @@ proc ::templating::tag::datastore::final_rewrite {codearrVar node} {
     set sql_attributes [$dataset get_sql_attributes]
     
     if { $sql_attributes eq {} } {
-	log error "no sql_attributes for datastore with id=${id} and name=${name}"
+        log error "no sql_attributes for datastore with id=${id} and name=${name}"
     }
 
     # add attributes from 'extend'
     set extend [$node @extend ""]
     set extend_attrs [list]
     if { ${extend} ne {} } {
-	# this does not cover vars passed by reference
-	set re {$\s*set\s+([a-zA-Z0-9_]+)\s+}
-	set matches [regexp -line -all -inline -- ${re} ${extend}]
-	foreach {match submatch} $matches {
-	    lappend extend_attrs ${submatch}
-	}
+        # this does not cover vars passed by reference
+        set re {$\s*set\s+([a-zA-Z0-9_]+)\s+}
+        set matches [regexp -line -all -inline -- ${re} ${extend}]
+        foreach {match submatch} $matches {
+            lappend extend_attrs ${submatch}
+        }
     }
 
     set codearr(${name},singleton) ${singleton}
@@ -679,9 +678,9 @@ proc ::templating::tag::datastore::to_c {codearrVar node} {
 
                     Tcl_Obj *dictPtr = Tcl_ObjSetVar2(interp,
                     global_objects[OBJECT_TMPNAME_dictionaryVariable],
-                    NULL,
-                    Tcl_DuplicateObj(objPtr_i),
-                    TCL_LEAVE_ERR_MSG);
+                                    NULL,
+                                    Tcl_DuplicateObj(objPtr_i),
+                                    TCL_LEAVE_ERR_MSG);
 
                     #if ${extend_keyc}
                     ${extend_dict_extra}
@@ -696,12 +695,8 @@ proc ::templating::tag::datastore::to_c {codearrVar node} {
                     }
 
                     #if ${extend_keyc}
-                    Tcl_ListObjReplace(interp,
-                    listPtr,
-                    i,
-                    1,
-                    1,
-                    (Tcl_Obj **) &dictPtr);
+                    Tcl_ListObjReplace(interp, 
+                        listPtr, i, 1, 1, (Tcl_Obj **) &dictPtr);
                     #endif
 
                     // DBG(fprintf(stderr,"extend iteration i=%d dict=%s\n",i,Tcl_GetString(objPtr_i)));

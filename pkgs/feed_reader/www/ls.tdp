@@ -1,0 +1,36 @@
+contract {
+    param -id "page" -shortname "p" -optional 1 -default "1" -check "naturalnum"
+    param -id "offset" -optional 1 -check "naturalnum" -default "0"
+    param -id "limit" -optional 1 -check "naturalnum"
+    param -id "lang" -optional 1 ;# -check "langclass" 
+    param -id "domain" -optional 1
+    param -id "since" -optional 1
+    param -id "long" -varlist "__arg_long_listing" -optional 1
+}
+
+val -id "news_items" -x-value-attributes [::newsdb::news_item_t attnames] {
+
+    set where_clause [list]
+    array set options [list offset @{offset} limit 10 order_by "sort_date decreasing"]
+    set slicelist [::newsdb::news_item_t find $where_clause options]
+    set result [list]
+    foreach rev $slicelist {
+        lappend result [::newsdb::news_item_t get $rev]
+    }
+    return $result
+
+}
+
+master -src "templates/blank-master.inc" -title "aggregated news items" {
+    # t "page @{top.page}"
+
+    table {
+        tpl -for "news_items" {
+            tr {
+                td { t @{date} }
+                td { t @{title} }
+                td { t @{domain} }
+            }
+        }
+    }
+}

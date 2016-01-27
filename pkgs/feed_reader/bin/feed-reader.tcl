@@ -64,6 +64,7 @@ if { ${argc} < 1 } {
 
     set cmd [lindex $argv 0]
 
+    # comment-in to serve request from a tdp (tDOM dynamic page) document
     if {0} {
 
         # package require request_processor
@@ -73,6 +74,7 @@ if { ${argc} < 1 } {
 
         package require templating
         set html [::xo::tdp::process $filename]
+        # exec "html2text <<EOF \[escapestring ${html}\] EOF"
         puts $html
 
         exit
