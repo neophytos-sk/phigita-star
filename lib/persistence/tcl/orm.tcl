@@ -504,13 +504,20 @@ proc ::persistence::orm::exists {where_clause_argv {optionsVar ""}} {
 # * returns the data for a given oid
 # * raises an error if the oid does not exist
 #
-proc ::persistence::orm::get {rev} {
+proc ::persistence::orm::get {rev {attnames ""}} {
+    set nsp [namespace __this]
 
     set exists_p [::persistence::exists_p $rev]
     if { $exists_p } {
+
         # log orm,get,rev=$rev
+        #
+        # if {0} {
+        #    set data [::persistence::get $rev ${nsp} ${attnames}]
+        # }
+
         set data [::persistence::get $rev [codec_conf]]
-        return [decode data]
+        return [decode data ${attnames}]
     } else {
         error "no such rev (=$rev) in storage system (=mystore)"
     }

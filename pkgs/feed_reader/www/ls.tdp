@@ -15,7 +15,7 @@ val -id "news_items" -x-value-attributes [::newsdb::news_item_t attnames] {
     set slicelist [::newsdb::news_item_t find $where_clause options]
     set result [list]
     foreach rev $slicelist {
-        lappend result [::newsdb::news_item_t get $rev]
+        lappend result [::newsdb::news_item_t get $rev {date title domain}]
     }
     return $result
 

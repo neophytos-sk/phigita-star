@@ -64,22 +64,6 @@ if { ${argc} < 1 } {
 
     set cmd [lindex $argv 0]
 
-    # comment-in to serve request from a tdp (tDOM dynamic page) document
-    if {0} {
-
-        # package require request_processor
-        set this_dir [file dirname [info script]]
-        set dir [file normalize [file join $this_dir .. www]]
-        set filename [glob -nocomplain -directory $dir ${cmd}.tdp]
-
-        package require templating
-        set html [::xo::tdp::process $filename]
-        # exec "html2text <<EOF \[escapestring ${html}\] EOF"
-        puts $html
-
-        exit
-    }
-
     if { ${cmd} eq {sync} && ${argc} >= 1 } {
 
         ::feed_reader::sync {*}[lrange ${argv} 1 end]
@@ -197,6 +181,22 @@ if { ${argc} < 1 } {
         ::feed_reader::uses_content ${contentsha1_list}	
 
     } elseif { ${cmd} eq {ls} && ${argc} >= 1 } {
+
+        # comment-in to serve request from a tdp (tDOM dynamic page) document
+        if {0} {
+
+            # package require request_processor
+            set this_dir [file dirname [info script]]
+            set dir [file normalize [file join $this_dir .. www]]
+            set filename [glob -nocomplain -directory $dir ${cmd}.tdp]
+
+            package require templating
+            set html [::xo::tdp::process $filename]
+            # ./feed-reader.tcl 2> /dev/null | html2text
+            puts $html
+
+            exit
+        }
 
         ::feed_reader::ls {*}[lrange ${argv} 1 end]
 

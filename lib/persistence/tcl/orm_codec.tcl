@@ -78,7 +78,15 @@ proc ::persistence::orm::codec_bin_3::encode {itemVar} {
     return $bytes
 }
 
-proc ::persistence::orm::codec_bin_3::decode {bytesVar {pos 0} {select ""}} {
+proc ::persistence::orm::codec_bin_3::decode {bytesVar {attnames ""} {pos 0}} {
+
+    # includes/excludes attributes
+    array set select [list]
+    foreach attname ${attnames} {
+        set select(${attname}) {}
+    }
+    set select_p [array size select]
+
     upvar $bytesVar bytes
 
     # if {0} {
@@ -132,6 +140,14 @@ proc ::persistence::orm::codec_bin_3::decode {bytesVar {pos 0} {select ""}} {
 
             set scan_p [binary scan ${bytes} "@${pos}a${len}" attvalue]
             incr pos ${len}
+        }
+
+        # includes/excludes attributes
+        if { $select_p && ![info exists select(${attname})] } {
+            continue
+        }
+
+        if { $fmt eq {} } {
 
             # log "scan_p=$scan_p len=$len"
 
@@ -141,6 +157,7 @@ proc ::persistence::orm::codec_bin_3::decode {bytesVar {pos 0} {select ""}} {
                 set attvalue [encoding convertfrom utf-8 ${attvalue}]
             }
         }
+
         lappend data ${attname} ${attvalue}
 
     }
