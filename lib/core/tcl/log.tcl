@@ -1,6 +1,14 @@
 proc log {args} {
-    puts stderr [::join $args]
+    set level [info level]
+    set level_info [info level [expr { $level - 1 }]]
+
+    set caller_info [lindex $level_info 0]
+    if { [namespace exists ::tcl::${caller_info}] } {
+        lappend caller_info [lindex ${level_info} 1]
+    }
+    puts stderr "(${caller_info}) [::join ${args}]"
 }
+
 
 proc printvars {args} {
     set vars [list]

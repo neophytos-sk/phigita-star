@@ -59,20 +59,35 @@ proc ::cli::kit::vcheck {param vlist {valueVar ""}} {
 
 proc ::cli::kit::add_param {
 	longname shortname varlist 
-	strict_p optional_p default_value 
-	vchecklist proclist
+	strict_p optional_p default_values 
+	vchecklists
 } {
 	global __data__
-	set varlist "__arg_$longname $longname"
+
+    if { $varlist eq {} } {
+        set varlist "__arg_$longname $longname"
+    }
+
+    if { $default_values ne {} } {
+        assert { [llength $varlist] - 1 == [llength $default_values] }
+        assert { [llength $varlist] - 1 == [llength $vchecklists] }
+    }
+
 	lappend __data__(optdata) \
 		[list $longname $shortname $varlist]
+
 	lappend __data__(optdata,config) \
-		[list $strict_p $optional_p $default_value $vchecklist $proclist]
+		[list $strict_p $optional_p $default_values $vchecklists]
 
 	# log add_param,longname=$longname
 }
 
-proc ::cli::kit::init_context {} {
+proc ::cli::kit::init_context {{complaintsVar ""}} {
+
+    if { $complaintsVar ne {} } {
+        upvar $complaintsVar complaints
+    }
+
 	global __data__
 
 	# extract param values from ::argv
@@ -85,26 +100,41 @@ proc ::cli::kit::init_context {} {
 	}
 
 	# sets default values and checks validation
+    set complaints {}
 	foreach item $__data__(optdata) itemconf $__data__(optdata,config) {
 		lassign $item longname shortname varlist
-		lassign $itemconf strict_p optional_p default_value vchecklist proclist
+		lassign $itemconf strict_p optional_p default_values vchecklists
 
-        if { $default_value ne {} } {
-            set_if __data__(${longname}) $default_value
+        if { $default_values ne {} } {
+
+            # set __data__(__arg_longname) {}
+            set __data__([lindex $varlist 0]) {}
+
+            foreach varname [lrange ${varlist} 1 end] default_value $default_values {
+                set_if __data__(${varname}) $default_value
+            }
+
         }
 
 		# checks validation
-		if { [info exists __data__(${longname})] } {
-			set matchall_p [pattern matchall ${vchecklist} __data__(${longname})]
-			if { !${matchall_p} } {
-				log "param (=$longname) failed validation check: $vchecklist"
-				return 0
-			}
-		} elseif { !$optional_p } {
-			return 0
-		}
+        foreach varname [lrange ${varlist} 1 end] vchecklist $vchecklists {
+            if { [info exists __data__(${varname})] } {
+                set matchall_p [pattern matchall ${vchecklist} __data__(${varname})]
+                if { !${matchall_p} } {
+                    lappend complaints \
+                        "param (=$longname) var (=$varname) failed validation check: $vchecklist"
+                    continue
+                }
+            } elseif { !$optional_p } {
+                return 0
+            }
+        }
 	}
 
+    if { $complaints ne {} } {
+        log "\n\t[join $complaints \n\t]"
+        return 0
+    }
 	return 1
 }
 
@@ -286,7 +316,6 @@ if { [::cli::kit::production_mode_p] } {
         return true
     }
 
-    proc ::cli::kit::log {args} {}
 
 } else {
 
@@ -318,14 +347,6 @@ if { [::cli::kit::production_mode_p] } {
     }
     proc ::cli::kit::require_secure_conn {} {
         return 1
-    }
-
-    proc ::cli::kit::log {args} {
-
-        set level [info level]
-        lassign [info level [expr { $level - 1 }]] proc_name 
-        ns_log notice "(${proc_name})" {*}${args}
-
     }
 
 }

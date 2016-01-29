@@ -386,7 +386,6 @@ proc ::templating::tag::contract::initial_rewrite {codearrVar node} {
             set optional_p [::util::coalesce [$child @optional "0"] "1"]
             set default    [$child @default ""]
             set vlist      [$child @check ""]
-            set proclist   [$child @transform ""]
 
             # TODO: remove this when you implement check with xmlint
             # or incorporate the check there
@@ -396,14 +395,14 @@ proc ::templating::tag::contract::initial_rewrite {codearrVar node} {
                 # complain about it
                     error "vcheck '${vcheck}' must be an alphanumeric+underscore string"
                 }
-                if { [info procs ::templating::validation::check=${vcheck}] eq {} } {
+                if { [info procs ::pattern::check=${vcheck}] eq {} } {
                     error "no matching proc for '${vcheck}' in ::templating::validation::check=*"
                 }
             }
 
             add_global_string codearr OBJECT_VARNAME_${name} ${name}
 
-            append script "\n" [list ::templating::ctx::add_param ${name} ${shortname} ${varlist} ${strict_p} ${optional_p} ${default} ${vlist} ${proclist}]
+            append script "\n" [list ::templating::ctx::add_param ${name} ${shortname} ${varlist} ${strict_p} ${optional_p} ${default} ${vlist}]
 
             # $pn insertBeforeFromScript { 
             #     guard -id check_param_${id} ${script}

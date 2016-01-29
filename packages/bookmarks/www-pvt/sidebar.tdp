@@ -15,7 +15,13 @@ contract {
     param -id referrer -optional 1 -transform "::uri::canonicalize"
 }
 
+val -id u {
+    return [::uri::canonicalize @{u}]
+}
 
+val -id referrer {
+    return [::uri::canonicalize @{referrer}]
+}
 
 
 

@@ -9,7 +9,7 @@
 # }
 #
 
-set debug_p 0
+set debug_p 1
 
 if { $debug_p } {
     proc assert {expression {script ""}} {
@@ -22,7 +22,6 @@ if { $debug_p } {
             }
         }
 
-        
         if { ![uplevel [list {expr} ${expression}]] } {
             set script [list error "failed to assert expression: $expression"]
             uplevel ${script}
