@@ -183,7 +183,7 @@ if { ${argc} < 1 } {
     } elseif { ${cmd} eq {ls} && ${argc} >= 1 } {
 
         # comment-in to serve request from a tdp (tDOM dynamic page) document
-        if {1} {
+        if {0} {
 
             # package require request_processor
             set this_dir [file dirname [info script]]
