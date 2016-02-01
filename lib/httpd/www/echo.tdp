@@ -1,0 +1,7 @@
+contract {
+    param -id msg -default "" -optional_p 1
+}
+
+master -src templates/blank-master.inc {
+    t "hello, msg=@{msg}"
+}

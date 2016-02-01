@@ -12,7 +12,7 @@ if { [namespace exists ::cli] } {
     config param context_import_pattern "::cli::kit::*"
 } else {
     # context based on naviserver API
-    config param context_import_pattern "::xo::kit::*"
+    config param context_import_pattern "::httpd::kit::*"
 }
 
 
