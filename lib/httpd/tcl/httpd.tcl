@@ -261,7 +261,7 @@ proc Httpd_handle_static_page {sock path} {
         fconfigure $in -translation binary -blocking 1
         flush $sock
         #	copychannel $in $sock $Httpd(bufsize)
-        copychannel $in $sock
+        fcopy $in $sock
         HttpdSockDone $sock
     } else {
         HttpdError $sock 404
@@ -363,9 +363,4 @@ proc Httpd_url2file {homedir url} {
 proc bgerror {msg} {
     global errorInfo
     puts stderr "bgerror: $msg\n$errorInfo"
-}
-# catch {rename unsupported0 copychannel}
-
-proc copychannel {in out} {
-    puts $out [read $in]
 }
