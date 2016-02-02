@@ -161,7 +161,7 @@ proc Httpd_SockRead { sock } {
                 lappend data(headers) [string tolower $key] $value
             } else {
                 set data(form_data) {}
-                # fconfigure $sock -translation binary
+                fconfigure $sock -translation binary
             }
         }
 
@@ -178,6 +178,13 @@ proc Httpd_SockRead { sock } {
         if { ![info exists data(form_data_length] } {
             array set headers $data(headers)
             set data(form_data_length) [value_if headers(content-length) "0"]
+
+            set maxinput [expr { 1024*1024 }]
+            if { $data(headers_length) + $data(form_data_length) > $maxinput } {
+                HttpdSockDone $sock
+                return
+            }
+
         }
 
         ###  enctype="application/x-www-form-urlencoded" (default)
@@ -203,6 +210,8 @@ proc Httpd_SockRead { sock } {
         if { [string length data(form_data)] < $data(form_data_length) } {
             append data(form_data) [read $sock]
         }
+
+        log length()=[string length $data(form_data)]
         
         if { [string length $data(form_data)] >= $data(form_data_length) } {
             Httpd_Respond $sock
