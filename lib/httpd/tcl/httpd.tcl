@@ -16,25 +16,18 @@
 #  listen:	the main listening socket id
 #  accepts:	a count of accepted connections so far
 
-# HTTP/1.0 error codes (the ones we use)
 
 global HttpdErrors
-global Httpd
 global HttpdErrorFormat
 
+# HTTP/1.0 error codes (the ones we use)
 array set HttpdErrors {
     204 {No Content}
     400 {Bad Request}
     404 {Not Found}
+    500 {Server Internal Error}
     503 {Service Unavailable}
     504 {Service Temporarily Unavailable}
-}
-
-array set Httpd {
-    bufsize	32768
-    sockblock	0
-    handler,html Httpd_handle_static_page
-    handler,tdp  Httpd_handle_dynamic_page
 }
 
 set HttpdErrorFormat {
@@ -42,7 +35,6 @@ set HttpdErrorFormat {
     Got the error: <b>%2$s</b><br>
     while trying to obtain <b>%3$s</b>
 }
-
 
 # Start the server by listening for connections on the desired port.
 
@@ -114,94 +106,92 @@ proc Httpd_SockAccept {newsock ipaddr port} {
 proc Httpd_SockRead { sock } {
     upvar #0 Httpd$sock data
 
-    set maxinput [expr { 1024*1024 }]
-    set maxline 256
-    set maxheaders 128
+    if { ![info exists data(method)] } {
 
-    set readCount [Httpd_SockGets $sock line]
-    incr data(request_length) $readCount
-    incr data(n_headers)
+        set maxinput [expr { 1024*1024 }]
+        set maxline 256
+        set maxheaders 128
 
-    if { $readCount > $maxline } {
-        HttpdSockDone $sock
-        return
-    }
+        set readCount [Httpd_SockGets $sock line]
+        incr data(request_length) $readCount
+        incr data(n_headers)
 
-    if { $data(n_headers) > $maxheaders } {
-        HttpdSockDone $sock
-        return
-    }
-
-    if { $data(request_length) > $maxinput } {
-        HttpdSockDone $sock
-        return
-    }
-
-    append data(request_string) $line "|"
-
-    # puts linelen=[string length $line]
-    if { $line eq {} } {
-        Httpd_SockHandle $sock
-    }
-}
-
-proc Httpd_SockHandle {sock} {
-    upvar #0 Httpd$sock data
-
-    set index [string first "|" $data(request_string)]
-    set line [string range $data(request_string) 0 [expr { $index - 1 }]]
-    set readCount [string length $line]
-
-    puts line=$line
-
-    if {![info exists data(state)]} {
-        if [regexp {(POST|GET) ([^?]+)\??([^ ]*) HTTP/1[.][0-9]} \
-            $line x data(proto) data(url) data(query)] {
-
-                set data(state) mime
-                Httpd_Log $sock Query $line
-                HttpdRespond $sock
-
-        } else {
-            HttpdError $sock 400
-            Httpd_Log $sock Error "bad first line:$line"
+        if { $readCount > $maxline } {
             HttpdSockDone $sock
+            return
         }
-        return
-    }
 
-    return
-
-    # string compare $readCount 0 maps -1 to -1, 0 to 0, and > 0 to 1
-
-    set state [string compare $readCount 0],$data(state),$data(proto)
-    log state=$state
-    switch -- $state {
-        0,mime,GET	-
-        0,query,POST	{ 
-            HttpdRespond $sock 
-        }
-        0,mime,POST	{ set data(state) query }
-        1,mime,POST	-
-        1,mime,GET	{
-            if [regexp {([^:]+):[ 	]*(.*)}  $line dummy key value] {
-                set data(mime,[string tolower $key]) $value
-            }
-        }
-        1,query,POST	{
-            set data(query) $line
-            HttpdRespond $sock
-        }
-        default {
-            if [eof $sock] {
-                Httpd_Log $sock Error "unexpected eof on <$data(url)> request"
-            } else {
-                Httpd_Log $sock Error "unhandled state <$state> fetching <$data(url)>"
-            }
-            HttpdError $sock 404
+        if { $data(n_headers) > $maxheaders } {
             HttpdSockDone $sock
+            return
         }
+
+        if { $data(request_length) > $maxinput } {
+            HttpdSockDone $sock
+            return
+        }
+
+        append data(request_string) $line "|"
+
+        # puts linelen=[string length $line]
+        if { $line eq {} } {
+
+            set index [string first "|" $data(request_string)]
+            set firstline [string range $data(request_string) 0 [expr {$index - 1}]]
+            set readCount [string length $line]
+
+            puts firstline=$firstline
+
+            if { ![regexp {(POST|GET) ([^?]+\??([^ ]*)) HTTP/1[.][01]} \
+                    $firstline x data(method) data(url) data(query)] } {
+
+                HttpdError $sock 400
+                Httpd_Log $sock Error "bad first line:$line"
+                HttpdSockDone $sock
+            }
+
+        }
+
+    } else {
+
+        # The Content-Length entity-header field indicates the size of the entity-body,
+        # in decimal number of OCTETs, sent to the recipient or, in the case of the HEAD
+        # method, the size of the entity-body that would have been sent had the request
+        # been a GET.
+        #
+        # http://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.4
+
+        ###  enctype="application/x-www-form-urlencoded" (default)
+        #
+        # Content-Type: application/x-www-form-urlencoded
+        #
+        # msg2=test+post-2&msg3=this+is+a+test
+        #
+        ### form enctype="multipart/form-data"
+        #
+        # Content-Type: multipart/form-data; boundary=----WebKitFormBoundarykOy3aw5Lqc5AG4Q3 
+        # ------WebKitFormBoundarykOy3aw5Lqc5AG4Q3
+        # Content-Disposition: form-data; name="msg2"
+        #
+        # test post-3
+        # ------WebKitFormBoundarykOy3aw5Lqc5AG4Q3
+        # Content-Disposition: form-data; name="upload_file"; filename=""
+        # Content-Type: application/octet-stream
+        #
+        #
+        # ------WebKitFormBoundarykOy3aw5Lqc5AG4Q3--
+
+        append data(form_data) [read $sock]
+
+        puts "eof_p = [eof $sock]"
+
+        if { ![info exists data(inprogress)] } {
+            set data(inprogress) {}
+            Httpd_Respond $sock
+        }
+
     }
+
 }
 
 # Close a socket.
@@ -215,9 +205,11 @@ proc HttpdSockDone { sock } {
 
 # Respond to the query.
 
-proc HttpdRespond { sock } {
+proc Httpd_Respond { sock } {
     global Httpd
     upvar #0 Httpd$sock data
+
+    set data(outputheaders) {}
 
     # transforms query to list of getopt arguments
     set ::argv $data(url)
@@ -252,7 +244,7 @@ proc Httpd_handle_static_page {sock path} {
 
     if {![catch {open $path} in]} {
         puts $sock "HTTP/1.0 200 Data follows"
-        puts $sock "Date: [HttpdDate [clock clicks]]"
+        puts $sock "Date: [HttpdDate [clock seconds]]"
         puts $sock "Last-Modified: [HttpdDate [file mtime $path]]"
         puts $sock "Content-Type: [HttpdContentType $path]"
         puts $sock "Content-Length: [file size $path]"
@@ -271,24 +263,37 @@ proc Httpd_handle_static_page {sock path} {
 }
 
 proc Httpd_handle_dynamic_page {sock path} {
-   package require templating
-   set html [::xo::tdp::process $path]
-   puts $sock $html
-   HttpdSockDone $sock
-}
+    global Httpd
+    upvar #0 Httpd$sock data
 
+    package require templating
 
-# convert the file suffix into a mime type
-# add your own types as needed
+    if { [catch { set html [::xo::tdp::process $path] } errmsg] } {
+        HttpdError $sock 500
+        HttpdSockDone $sock
+        return
+    }
 
-array set HttpdMimeType {
-    {}		text/plain
-    .txt	text/plain
-    .htm	text/html
-    .html	text/html
-    .gif	image/gif
-    .jpg	image/jpeg
-    .xbm	image/x-xbitmap
+    # data(method)
+    # data(form_data)
+    #
+
+    puts $sock "HTTP/1.1 200 OK"
+    lappend data(outputheaders) "Cache-Control" "private, max-age=0"
+    lappend data(outputheaders) "Content-Type" "text/html; charset=UTF-8"
+    lappend data(outputheaders) "Date" [HttpdDate [clock seconds]]
+    lappend data(outputheaders) "Expires" "-1"
+    lappend data(outputheaders) "Server" "phigita"
+    lappend data(outputheaders) "Status" "200 OK"
+    lappend data(outputheaders) "Version" "HTTP/1.1"
+    foreach {key value} $data(outputheaders) {
+        puts $sock "${key}: ${value}"
+    }
+    puts $sock ""
+    flush $sock
+
+    puts $sock $html
+    HttpdSockDone $sock
 }
 
 proc HttpdContentType {path} {
@@ -308,7 +313,7 @@ proc HttpdError {sock code} {
     append data(url) ""
     set message [format $HttpdErrorFormat $code $HttpdErrors($code)  $data(url)]
     puts $sock "HTTP/1.0 $code $HttpdErrors($code)"
-    puts $sock "Date: [HttpdDate [clock clicks]]"
+    puts $sock "Date: [HttpdDate [clock seconds]]"
     puts $sock "Content-Length: [string length $message]"
     puts $sock ""
     puts $sock $message
@@ -316,8 +321,8 @@ proc HttpdError {sock code} {
 
 # Generate a date string in HTTP format.
 
-proc HttpdDate {clicks} {
-    return [clock format $clicks -format {%a, %d %b %Y %T %Z}]
+proc HttpdDate {seconds} {
+    return [clock format $seconds -format {%a, %d %b %Y %T %Z}]
 }
 
 # Log an Httpd transaction.
