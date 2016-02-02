@@ -106,14 +106,14 @@ proc Httpd_SockAccept {newsock ipaddr port} {
 proc Httpd_SockRead { sock } {
     upvar #0 Httpd$sock data
 
-    if { ![info exists data(method)] } {
+    if { ![info exists data(form_data)] } {
 
         set maxinput [expr { 1024*1024 }]
         set maxline 256
         set maxheaders 128
 
         set readCount [Httpd_SockGets $sock line]
-        incr data(request_length) $readCount
+        incr data(headers_length) $readCount
         incr data(n_headers)
 
         if { $readCount > $maxline } {
@@ -126,33 +126,47 @@ proc Httpd_SockRead { sock } {
             return
         }
 
-        if { $data(request_length) > $maxinput } {
+        if { $data(headers_length) > $maxinput } {
             HttpdSockDone $sock
             return
         }
 
-        append data(request_string) $line "|"
+        if { ![info exists data(method)] } {
 
-        # puts linelen=[string length $line]
-        if { $line eq {} } {
+            lassign [split $line { }] data(method) data(url) proto_and_version
+            lassign [split $proto_and_version {/}] data(proto) data(version)
 
-            set index [string first "|" $data(request_string)]
-            set firstline [string range $data(request_string) 0 [expr {$index - 1}]]
-            set readCount [string length $line]
+            set data(method) [string tolower $data(method)]
+            set data(proto) [string tolower $data(proto)]
 
-            puts firstline=$firstline
-
-            if { ![regexp {(POST|GET) ([^?]+\??([^ ]*)) HTTP/1[.][01]} \
-                    $firstline x data(method) data(url) data(query)] } {
-
+            if { 
+                $data(method) ni {post get}
+                || $data(proto) ne {http}
+                || $data(version) ni {1.0 1.1}
+            } {
                 HttpdError $sock 400
                 Httpd_Log $sock Error "bad first line:$line"
                 HttpdSockDone $sock
+                return
             }
 
+            set index [string first {?} $data(url)]
+            set data(query) [string range $data(url) [expr { $index + 1 }] end]
+
+        } else {
+            if { $line ne {} } {
+                set index [string first {:} $line]
+                set key [string range $line 0 [expr { $index - 1 }]]
+                set value [string range $line [expr { $index + 1 }] end]
+                lappend data(headers) [string tolower $key] $value
+            } else {
+                set data(form_data) {}
+                # fconfigure $sock -translation binary
+            }
         }
 
     } else {
+
 
         # The Content-Length entity-header field indicates the size of the entity-body,
         # in decimal number of OCTETs, sent to the recipient or, in the case of the HEAD
@@ -160,6 +174,11 @@ proc Httpd_SockRead { sock } {
         # been a GET.
         #
         # http://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.4
+
+        if { ![info exists data(form_data_length] } {
+            array set headers $data(headers)
+            set data(form_data_length) [value_if headers(content-length) "0"]
+        }
 
         ###  enctype="application/x-www-form-urlencoded" (default)
         #
@@ -181,12 +200,11 @@ proc Httpd_SockRead { sock } {
         #
         # ------WebKitFormBoundarykOy3aw5Lqc5AG4Q3--
 
-        append data(form_data) [read $sock]
-
-        puts "eof_p = [eof $sock]"
-
-        if { ![info exists data(inprogress)] } {
-            set data(inprogress) {}
+        if { [string length data(form_data)] < $data(form_data_length) } {
+            append data(form_data) [read $sock]
+        }
+        
+        if { [string length $data(form_data)] >= $data(form_data_length) } {
             Httpd_Respond $sock
         }
 
@@ -219,6 +237,7 @@ proc Httpd_Respond { sock } {
         append ::argv { } --[list [lindex $parts 0]] { } [list [lindex $parts 1]]
     }
     # log argv=$::argv
+    log length(form_data)=[string length $data(form_data)]
 
     set path [Httpd_url2file $Httpd(root) $data(url)]
 
