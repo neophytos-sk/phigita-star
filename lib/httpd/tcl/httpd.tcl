@@ -1,14 +1,4 @@
-# Simple Sample httpd/1.0 server in 250 lines of Tcl
-# Stephen Uhler / Brent Welch (c) 1996 Sun Microsystems
-# See the file "license.terms" for information on usage and redistribution
-# of this file, and for a DISCLAIMER OF ALL WARRANTIES.
-
-# This is a working sample httpd server written entirely in TCL with the
-# CGI and imagemap capability removed.  It has been tested on the Mac, PC
-# and Unix.  It is intended as sample of how to write internet servers in
-# Tcl. This sample server was derived from a full-featured httpd server,
-# also written entirely in Tcl.
-# Comments or questions welcome (stephen.uhler@sun.com)
+# Simple Sample httpd server (based on minihttpd by Brent Welch)
 
 # Httpd is a global array containing the global server state
 #  root:	the root of the document directory
@@ -155,19 +145,13 @@ proc Httpd_SockRead { sock } {
 
         } else {
             if { $line ne {} } {
-                set index [string first {:} $line]
+                set index [string first {: } $line]
                 set key [string range $line 0 [expr { $index - 1 }]]
-                set value [string range $line [expr { $index + 1 }] end]
+                set value [string range $line [expr { $index + 2 }] end]
                 lappend data(headers) [string tolower $key] $value
             } else {
                 set data(form_data) {}
                 fconfigure $sock -translation binary
-                set ch [read $sock 1]
-                if { $ch ne "\n" } {
-                    HttpdError $sock 400
-                    HttpdSockDone $sock
-                    return
-                }
             }
         }
 
@@ -194,6 +178,7 @@ proc Httpd_SockRead { sock } {
         }
 
         if { [string length $data(form_data)] < $data(form_data_length) } {
+            set nl [read $sock 1]
             append data(form_data) [read $sock]
         }
         
@@ -218,47 +203,96 @@ proc Httpd_ParseFormData {sock} {
     global Httpd
     upvar #0 Httpd$sock data
 
-    if { ![info exists data(content_type)] } {
-        array set headers $data(headers)
-        set content_type_hdr [value_if headers(content-type) ""]
-        log content_type_hdr=$content_type_hdr
-        lassign [split $content_type_hdr {;}] content_type boundary_hdr
-        set data(content_type) [string trimleft $content_type]
-        set index [string first {=} $boundary_hdr]
-        set data(boundary) [string range $boundary_hdr $index end]
-    }
+    array set headers $data(headers)
+    set content_type_hdr [value_if headers(content-type) ""]
+    lassign [split $content_type_hdr {;}] content_type boundary_hdr
 
-    ###  enctype="application/x-www-form-urlencoded" (default)
-    #
-    # Content-Type: application/x-www-form-urlencoded
-    #
-    # msg2=test+post-2&msg3=this+is+a+test
+    if { $content_type eq {application/x-www-form-urlencoded} } {
 
-    if { $data(content_type) eq {application/x-www-form-urlencoded} } {
-        if { $data(query) ne {} } {
+        ###  enctype="application/x-www-form-urlencoded" (default)
+        #
+        # Content-Type: application/x-www-form-urlencoded
+        #
+        # msg2=test+post-2&msg3=this+is+a+test
+
+        if { $data(query) ne {} && $data(form_data) ne {} } {
             append data(query) {&}
         }
+
         append data(query) $data(form_data)
-        log data(query)=$data(query)
+
+        # log query=$data(query)
+
+    } elseif { $content_type eq {multipart/form-data} } {
+
+        set index [string first {=} $boundary_hdr]
+        set data(boundary) [string range $boundary_hdr [expr { $index + 1 }] end]
+
+
+        ### form enctype="multipart/form-data"
+        #
+        # Content-Type: multipart/form-data; boundary=----kOy3aw5Lqc5AG4Q3 
+        # ------kOy3aw5Lqc5AG4Q3
+        # Content-Disposition: form-data; name="msg2"
+        #
+        # test post-3
+        # ------kOy3aw5Lqc5AG4Q3
+        # Content-Disposition: form-data; name="upload_file"; filename=""
+        # Content-Type: application/octet-stream
+        #
+        #
+        # ------kOy3aw5Lqc5AG4Q3--
+
+        # log boundary=$data(boundary)
+
+        set boundary_len [string length $data(boundary)]
+        set startIndex [string first "--$data(boundary)\r\n" $data(form_data)]
+        while { $startIndex != -1 } {
+            set startIndex [expr { $startIndex + 4 + $boundary_len }]
+            set endIndex [string first "\r\n--$data(boundary)" $data(form_data) $startIndex]
+
+            if { $endIndex == -1 } {
+                break
+            }
+
+            set part [string range $data(form_data) $startIndex [expr { $endIndex - 1 }]]
+
+            # ParseMimePart
+            set midIndex [string first "\r\n\r\n" $part]
+            set part_hdrs [string range $part 0 [expr { $midIndex - 1 }]]
+            set part_body [string range $part [expr { $midIndex + 4 }] end]
+
+            log [list startIndex=$startIndex midIndex=$midIndex endIndex=$endIndex]
+            # log part=$part
+            # log part_hdrs=$part_hdrs
+            # log part_body=$part_body
+
+            set part_hdrs_lst [list]
+            foreach part_hdr [split $part_hdrs "\n"] {
+                set part_hdr_index [string first {: } $part_hdr]
+                set key [string range $part_hdr 0 [expr { $part_hdr_index - 1 }]]
+                set val [string range $part_hdr [expr { $part_hdr_index + 2 }] end]
+                lappend part_hdrs_lst [string tolower $key] [split $val {;}]
+            }
+            array set part_hdrs_a $part_hdrs_lst
+            set content_disposition $part_hdrs_a(content-disposition)
+            lassign $content_disposition _disposition_type _parm_1 _parm_2
+            lassign [split $_parm_1 {=}] _name_str_ name
+            lassign [split $_parm_2 {=}] _filename_str_ filename
+
+            # assert { $_name_str eq {name} }
+
+            log form_data,content->name=$name
+
+            # TODO: use array structure for parsed form data
+            append data(query) {&} [string trim ${name} "\""]=${part_body}
+
+            set startIndex $endIndex
+            incr startIndex 2 ;# \r\n
+
+        }
+
     }
-
-    ### form enctype="multipart/form-data"
-    #
-    # Content-Type: multipart/form-data; boundary=----WebKitFormBoundarykOy3aw5Lqc5AG4Q3 
-    # ------WebKitFormBoundarykOy3aw5Lqc5AG4Q3
-    # Content-Disposition: form-data; name="msg2"
-    #
-    # test post-3
-    # ------WebKitFormBoundarykOy3aw5Lqc5AG4Q3
-    # Content-Disposition: form-data; name="upload_file"; filename=""
-    # Content-Type: application/octet-stream
-    #
-    #
-    # ------WebKitFormBoundarykOy3aw5Lqc5AG4Q3--
-
-    if { $data(content_type) eq {multipart/form-data} } {
-    }
-
 
     # transforms query to list of getopt arguments
     set ::argv $data(url)
