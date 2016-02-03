@@ -162,6 +162,12 @@ proc Httpd_SockRead { sock } {
             } else {
                 set data(form_data) {}
                 fconfigure $sock -translation binary
+                set ch [read $sock 1]
+                if { $ch ne "\n" } {
+                    HttpdError $sock 400
+                    HttpdSockDone $sock
+                    return
+                }
             }
         }
 
@@ -187,31 +193,9 @@ proc Httpd_SockRead { sock } {
 
         }
 
-        ###  enctype="application/x-www-form-urlencoded" (default)
-        #
-        # Content-Type: application/x-www-form-urlencoded
-        #
-        # msg2=test+post-2&msg3=this+is+a+test
-        #
-        ### form enctype="multipart/form-data"
-        #
-        # Content-Type: multipart/form-data; boundary=----WebKitFormBoundarykOy3aw5Lqc5AG4Q3 
-        # ------WebKitFormBoundarykOy3aw5Lqc5AG4Q3
-        # Content-Disposition: form-data; name="msg2"
-        #
-        # test post-3
-        # ------WebKitFormBoundarykOy3aw5Lqc5AG4Q3
-        # Content-Disposition: form-data; name="upload_file"; filename=""
-        # Content-Type: application/octet-stream
-        #
-        #
-        # ------WebKitFormBoundarykOy3aw5Lqc5AG4Q3--
-
-        if { [string length data(form_data)] < $data(form_data_length) } {
+        if { [string length $data(form_data)] < $data(form_data_length) } {
             append data(form_data) [read $sock]
         }
-
-        log length()=[string length $data(form_data)]
         
         if { [string length $data(form_data)] >= $data(form_data_length) } {
             Httpd_Respond $sock
@@ -230,13 +214,51 @@ proc HttpdSockDone { sock } {
     close $sock
 }
 
-# Respond to the query.
-
-proc Httpd_Respond { sock } {
+proc Httpd_ParseFormData {sock} {
     global Httpd
     upvar #0 Httpd$sock data
 
-    set data(outputheaders) {}
+    if { ![info exists data(content_type)] } {
+        array set headers $data(headers)
+        set content_type_hdr [value_if headers(content-type) ""]
+        log content_type_hdr=$content_type_hdr
+        lassign [split $content_type_hdr {;}] content_type boundary_hdr
+        set data(content_type) [string trimleft $content_type]
+        set index [string first {=} $boundary_hdr]
+        set data(boundary) [string range $boundary_hdr $index end]
+    }
+
+    ###  enctype="application/x-www-form-urlencoded" (default)
+    #
+    # Content-Type: application/x-www-form-urlencoded
+    #
+    # msg2=test+post-2&msg3=this+is+a+test
+
+    if { $data(content_type) eq {application/x-www-form-urlencoded} } {
+        if { $data(query) ne {} } {
+            append data(query) {&}
+        }
+        append data(query) $data(form_data)
+        log data(query)=$data(query)
+    }
+
+    ### form enctype="multipart/form-data"
+    #
+    # Content-Type: multipart/form-data; boundary=----WebKitFormBoundarykOy3aw5Lqc5AG4Q3 
+    # ------WebKitFormBoundarykOy3aw5Lqc5AG4Q3
+    # Content-Disposition: form-data; name="msg2"
+    #
+    # test post-3
+    # ------WebKitFormBoundarykOy3aw5Lqc5AG4Q3
+    # Content-Disposition: form-data; name="upload_file"; filename=""
+    # Content-Type: application/octet-stream
+    #
+    #
+    # ------WebKitFormBoundarykOy3aw5Lqc5AG4Q3--
+
+    if { $data(content_type) eq {multipart/form-data} } {
+    }
+
 
     # transforms query to list of getopt arguments
     set ::argv $data(url)
@@ -247,6 +269,15 @@ proc Httpd_Respond { sock } {
     }
     # log argv=$::argv
     log length(form_data)=[string length $data(form_data)]
+}
+
+# Respond to the query.
+
+proc Httpd_Respond { sock } {
+    global Httpd
+    upvar #0 Httpd$sock data
+    
+    Httpd_ParseFormData $sock
 
     set path [Httpd_url2file $Httpd(root) $data(url)]
 
@@ -259,6 +290,7 @@ proc Httpd_Respond { sock } {
 
     set ext [string trimleft [file extension $path] {.}]
 
+    set data(outputheaders) {}
     if { [info exists Httpd(handler,$ext)] } {
         $Httpd(handler,$ext) $sock $path
     } else {
@@ -271,7 +303,7 @@ proc Httpd_handle_static_page {sock path} {
     upvar #0 Httpd$sock data
 
     if {![catch {open $path} in]} {
-        puts $sock "HTTP/1.0 200 Data follows"
+        puts $sock "HTTP/1.0 200 OK"
         puts $sock "Date: [HttpdDate [clock seconds]]"
         puts $sock "Last-Modified: [HttpdDate [file mtime $path]]"
         puts $sock "Content-Type: [HttpdContentType $path]"

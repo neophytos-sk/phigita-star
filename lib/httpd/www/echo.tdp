@@ -1,6 +1,6 @@
 contract {
     param -id msg -default "" -optional_p 1
-    # param -id msg2 -default "" -optional_p 1
+    param -id msg2 -default "" -optional_p 1
 }
 
 master -src templates/blank-master.inc {
@@ -8,6 +8,6 @@ master -src templates/blank-master.inc {
         li {
             t "hello, msg=@{msg}"
         }
-        # li { t "msg2=@{msg2}" }
+        li { t "msg2=@{msg2}" }
     }
 }
