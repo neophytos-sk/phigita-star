@@ -96,11 +96,14 @@ proc Httpd_SockAccept {newsock ipaddr port} {
 proc Httpd_SockRead { sock } {
     upvar #0 Httpd$sock data
 
-    if { ![info exists data(form_data)] } {
+    set maxinput [expr { 1024*1024 }]
+    set maxline 256
+    set maxheaders 128
 
-        set maxinput [expr { 1024*1024 }]
-        set maxline 256
-        set maxheaders 128
+    # http request consists of two parts, the headers and the form data,
+    # once the headers have been read, data(form_data) is set to {}
+
+    if { ![info exists data(form_data)] } {
 
         set readCount [Httpd_SockGets $sock line]
         incr data(headers_length) $readCount
@@ -120,6 +123,12 @@ proc Httpd_SockRead { sock } {
             HttpdSockDone $sock
             return
         }
+
+        # The request method (get, post, or head) is part of the first 
+        # line of the headers, e.g. GET /somepage.html HTTP/1.0
+        #
+        # The condition is used here to check whether the first line 
+        # has been read, as it is distinguished from the rest of the headers.
 
         if { ![info exists data(method)] } {
 
@@ -144,6 +153,10 @@ proc Httpd_SockRead { sock } {
             set data(query) [string range $data(url) [expr { $index + 1 }] end]
 
         } else {
+
+            # an empty line separates the request headers from the body (form data),
+            # a non-empty line is expected to be part of the headers
+
             if { $line ne {} } {
                 set index [string first {: } $line]
                 set key [string range $line 0 [expr { $index - 1 }]]
@@ -169,7 +182,6 @@ proc Httpd_SockRead { sock } {
             array set headers $data(headers)
             set data(form_data_length) [value_if headers(content-length) "0"]
 
-            set maxinput [expr { 1024*1024 }]
             if { $data(headers_length) + $data(form_data_length) > $maxinput } {
                 HttpdSockDone $sock
                 return
