@@ -2,6 +2,7 @@ namespace eval ::cli::kit {
     namespace export \
 		add_param \
         getparam \
+        reset
 		init_context \
         is_registered_p \
         require_registration \
@@ -80,6 +81,11 @@ proc ::cli::kit::add_param {
 		[list $strict_p $optional_p $default_values $vchecklists]
 
 	# log add_param,longname=$longname
+}
+
+proc ::cli::kit::reset {} {
+    global __data__
+    array unset __data__
 }
 
 proc ::cli::kit::init_context {{complaintsVar ""}} {

@@ -46,7 +46,7 @@ proc Httpd_SockGets {sock strVar} {
 
     if {0} {
         set readCount [gets $sock str]
-        puts str=$str
+        # puts str=$str
         return $readCount
     } else {
 
@@ -66,7 +66,7 @@ proc Httpd_SockGets {sock strVar} {
                 break
             }
         }
-        puts str=$str
+        # puts str=$str
         return $readCount
     }
 
@@ -201,13 +201,15 @@ proc HttpdSockDone { sock } {
 
 proc Httpd_ParseFormData {sock} {
     global Httpd
+    global Httpd_FormData
+    array unset Httpd_FormData
     upvar #0 Httpd$sock data
 
     array set headers $data(headers)
     set content_type_hdr [value_if headers(content-type) ""]
     lassign [split $content_type_hdr {;}] content_type boundary_hdr
 
-    if { $content_type eq {application/x-www-form-urlencoded} } {
+    if { $content_type eq {} || $content_type eq {application/x-www-form-urlencoded} } {
 
         ###  enctype="application/x-www-form-urlencoded" (default)
         #
@@ -221,9 +223,14 @@ proc Httpd_ParseFormData {sock} {
 
         append data(query) $data(form_data)
 
-        # log query=$data(query)
-
     } elseif { $content_type eq {multipart/form-data} } {
+
+        # The content type "application/x-www-form-urlencoded" is inefficient 
+        # for sending large quantities of binary data or text containing non-ASCII 
+        # characters. The content type "multipart/form-data" should be used for
+        # submitting forms that contain files, non-ASCII data, and binary data.
+        #
+        # https://www.w3.org/TR/html401/interact/forms.html#h-17.13.4.2
 
         set index [string first {=} $boundary_hdr]
         set data(boundary) [string range $boundary_hdr [expr { $index + 1 }] end]
@@ -285,24 +292,30 @@ proc Httpd_ParseFormData {sock} {
             log form_data,content->name=$name
 
             # TODO: use array structure for parsed form data
-            append data(query) {&} [string trim ${name} "\""]=${part_body}
+            set key [string trim ${name} "\""]
+            set val ${part_body}
+            set Httpd_FormData(${key}) ${val}
 
             set startIndex $endIndex
             incr startIndex 2 ;# \r\n
 
         }
 
+    } else {
+        HttpdError $sock 400
+        Httpd_Log $sock Error "unknown content type $content_type"
+        HttpdSockDone $sock
+        return
     }
 
-    # transforms query to list of getopt arguments
-    set ::argv $data(url)
+    # process query params along with posted params (if any)
     set xs [split $data(query) {&}]
     foreach x $xs {
-        set parts [split $x {=}]
-        append ::argv { } --[list [lindex $parts 0]] { } [list [lindex $parts 1]]
+        lassign [split $x {=}] key val
+        set Httpd_FormData(${key}) ${val}
     }
-    # log argv=$::argv
-    log length(form_data)=[string length $data(form_data)]
+
+
 }
 
 # Respond to the query.

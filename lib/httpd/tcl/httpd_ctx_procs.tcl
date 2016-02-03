@@ -1,5 +1,6 @@
 namespace eval ::httpd::kit {
     namespace export \
+        reset \
 		add_param \
         getparam \
 		init_context \
@@ -59,8 +60,8 @@ proc ::httpd::kit::vcheck {param vlist {valueVar ""}} {
 
 proc ::httpd::kit::add_param {
 	longname shortname varlist 
-	strict_p optional_p default_values 
-	vchecklists
+	strict_p optional_p default_value
+	vchecklist
 } {
 	global __data__
 
@@ -68,18 +69,17 @@ proc ::httpd::kit::add_param {
         set varlist "__arg_$longname $longname"
     }
 
-    if { $default_values ne {} } {
-        assert { [llength $varlist] - 1 == [llength $default_values] }
-        assert { [llength $varlist] - 1 == [llength $vchecklists] }
-    }
-
 	lappend __data__(optdata) \
 		[list $longname $shortname $varlist]
 
 	lappend __data__(optdata,config) \
-		[list $strict_p $optional_p $default_values $vchecklists]
+		[list $strict_p $optional_p $default_value $vchecklist]
 
-	# log add_param,longname=$longname
+}
+
+proc ::httpd::kit::reset {} {
+    global __data__
+    array unset __data__
 }
 
 proc ::httpd::kit::init_context {{complaintsVar ""}} {
@@ -88,46 +88,32 @@ proc ::httpd::kit::init_context {{complaintsVar ""}} {
         upvar $complaintsVar complaints
     }
 
-	global __data__
+    global Httpd_FormData
+    global __data__
+    array set __data__ [array get Httpd_FormData]
 
-	# extract param values from ::argv
-	if { [catch {
-		getopt::init $__data__(optdata)
-		getopt::getopt [lrange $::argv 1 end] __data__ 
-	} errmsg] } {
-		log "errmsg=$errmsg"
-		return 0
-	}
+    log init_context,[array names __data__]
 
 	# sets default values and checks validation
     set complaints {}
 	foreach item $__data__(optdata) itemconf $__data__(optdata,config) {
 		lassign $item longname shortname varlist
-		lassign $itemconf strict_p optional_p default_values vchecklists
+		lassign $itemconf strict_p optional_p default_value vchecklist
 
-        if { $default_values ne {} } {
-
-            # set __data__(__arg_longname) {}
-            set __data__([lindex $varlist 0]) {}
-
-            foreach varname [lrange ${varlist} 1 end] default_value $default_values {
-                set_if __data__(${varname}) $default_value
-            }
-
+        if { ![info exists __data__($longname)] && $optional_p } {
+            set __data__(${longname}) $default_value
         }
 
 		# checks validation
-        foreach varname [lrange ${varlist} 1 end] vchecklist $vchecklists {
-            if { [info exists __data__(${varname})] } {
-                set matchall_p [pattern matchall ${vchecklist} __data__(${varname})]
-                if { !${matchall_p} } {
-                    lappend complaints \
-                        "param (=$longname) var (=$varname) failed validation check: $vchecklist"
-                    continue
-                }
-            } elseif { !$optional_p } {
-                return 0
+        if { [info exists __data__(${longname})] } {
+            set matchall_p [pattern matchall ${vchecklist} __data__(${longname})]
+            if { !${matchall_p} } {
+                lappend complaints \
+                    "param (=$longname) failed validation check: $vchecklist"
+                continue
             }
+        } elseif { !$optional_p } {
+            return 0
         }
 	}
 
@@ -144,6 +130,8 @@ proc ::httpd::kit::init_context {{complaintsVar ""}} {
 proc ::httpd::kit::getparam {param_name valueVar} {
     upvar $valueVar value
     global __data__
+
+    log param_name=$param_name
 
     if { [info exists __data__(${param_name})] } {
         set value $__data__(${param_name})

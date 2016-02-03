@@ -374,6 +374,7 @@ proc ::templating::tag::contract::initial_rewrite {codearrVar node} {
     #error "you cannot require_secure_conn and not accept protocol 'https'"
 
     set script {}
+    append script "\n" "::templating::ctx::reset"
     foreach child [$node childNodes] {
 
         set tagname [$child nodeName]
