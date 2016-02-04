@@ -273,34 +273,41 @@ proc Httpd_ParseFormData {sock} {
                 break
             }
 
-            set part [string range $data(form_data) $startIndex [expr { $endIndex - 1 }]]
-
             # ParseMimePart
-            set midIndex [string first "\r\n\r\n" $part]
-            set part_hdrs [string range $part 0 [expr { $midIndex - 1 }]]
-            set part_body [string range $part [expr { $midIndex + 4 }] end]
+            set midIndex [string first "\r\n\r\n" $data(form_data) $startIndex]
+            set part_hdrs [string range $data(form_data) $startIndex [expr { $midIndex - 1 }]]
+            set part_body [string range $data(form_data) [expr { $midIndex + 4 }] [expr { $endIndex - 1}]]
 
             set part_hdrs_lst [list]
             foreach part_hdr [split $part_hdrs "\n"] {
                 set part_hdr_index [string first {: } $part_hdr]
                 set key [string range $part_hdr 0 [expr { $part_hdr_index - 1 }]]
                 set val [string range $part_hdr [expr { $part_hdr_index + 2 }] end]
-                lappend part_hdrs_lst [string tolower $key] [split $val {;}]
+                lappend part_hdrs_lst [string tolower $key] $val
             }
+
             array set part_hdrs_a $part_hdrs_lst
             set content_disposition $part_hdrs_a(content-disposition)
-            lassign $content_disposition _disposition_type _parm_1 _parm_2
-            lassign [split $_parm_1 {=}] _name_str_ name
-            lassign [split $_parm_2 {=}] _filename_str_ filename
 
-            # assert { $_name_str eq {name} }
+            # Content-Disposition: form-data; name="msg"
+            # Content-Disposition: form-data; name="upload_file"; filename="abc.pdf"
+            # Content-Disposition: attachment; filename="fname.ext"
 
-            log form_data,content->name=$name
+            lassign [split $content_disposition {;}] _disposition_type _parm_1 _parm_2
+            lassign [split $_parm_1 {=}] _name_str_ part_name
+            lassign [split $_parm_2 {=}] _filename_str_ part_filename
+            set part_name [string trim $part_name "\""]
 
-            # TODO: use array structure for parsed form data
-            set key [string trim ${name} "\""]
-            set val ${part_body}
-            set Httpd_FormData(${key}) ${val}
+            # log form_data,content->part_name=$part_name
+
+            if { $part_filename ne {} } {
+                # if filename string:
+                # offset
+                # length
+                # headers
+                set Httpd_FormData(${part_name}.filename) ${part_filename}
+            }
+            set Httpd_FormData(${part_name}) ${part_body}
 
             set startIndex $endIndex
             incr startIndex 2 ;# \r\n
@@ -323,6 +330,8 @@ proc Httpd_ParseFormData {sock} {
         set Httpd_FormData(${key}) ${val}
     }
 
+    # cleanup
+    unset data(form_data)
 
 }
 
