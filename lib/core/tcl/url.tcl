@@ -15,21 +15,16 @@ namespace eval ::url {
     namespace export \
         domain_from_host
 
-    # url encode/decode mapping initialization
+    # url encode mapping initialization
     variable ue_map
-    variable ud_map
-
-    lappend d + { }
     for {set i 0} {$i < 256} {incr i} {
         set c [format %c $i]
         set x %[format %02x $i]
         if {![string match {[a-zA-Z0-9]} $c]} {
             lappend e $c $x
-            lappend d $x $c
         }
     }
     set ue_map $e
-    set ud_map $d
 
 }
 
@@ -163,7 +158,7 @@ proc ::url::match {pattern url {valuesVar ""}} {
 }
 
 
-proc ::url::urldecode2 {str} {
+proc ::url::decode {str} {
     # rewrite "+" back to space
     # protect \ from quoting another '\'
     set str [string map [list + { } "\\" "\\\\"] $str]
@@ -174,13 +169,6 @@ proc ::url::urldecode2 {str} {
     # process \u unicode mapped chars
     return [subst -novar -nocommand $str]
 }
-
-
-proc ::url::decode {s} {
-    variable ud_map
-    return [string map ${ud_map} ${s}]
-}
-
 
 proc ::url::encode {s} {
     variable ue_map

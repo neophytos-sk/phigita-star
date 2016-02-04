@@ -44,31 +44,28 @@ proc Httpd_Server {root {host localhost} {port 80} {default index.html}} {
 proc Httpd_SockGets {sock strVar} {
     upvar $strVar str
 
-    if {0} {
-        set readCount [gets $sock str]
-        # puts str=$str
-        return $readCount
-    } else {
+    # set readCount [gets $sock str]
+    # puts str=$str
+    # return $readCount
 
-        set str {}
-        set maxHeaderLineLen 1000
-        set readCount 0
-        set ch {}
-        while { 1 } {
-            set ch [chan read $sock 1]
-            if { $ch eq "\n" } {
-                break
-            }
-            append str $ch
-            incr readCount
-
-            if { $readCount >= $maxHeaderLineLen } {
-                break
-            }
+    set str {}
+    set maxHeaderLineLen 1000
+    set readCount 0
+    set ch {}
+    while { 1 } {
+        set ch [chan read $sock 1]
+        if { $ch eq "\n" } {
+            break
         }
-        # puts str=$str
-        return $readCount
+        append str $ch
+        incr readCount
+
+        if { $readCount >= $maxHeaderLineLen } {
+            break
+        }
     }
+    # puts str=$str
+    return $readCount
 
 }
 
@@ -281,11 +278,6 @@ proc Httpd_ParseFormData {sock} {
             set part_hdrs [string range $part 0 [expr { $midIndex - 1 }]]
             set part_body [string range $part [expr { $midIndex + 4 }] end]
 
-            log [list startIndex=$startIndex midIndex=$midIndex endIndex=$endIndex]
-            # log part=$part
-            # log part_hdrs=$part_hdrs
-            # log part_body=$part_body
-
             set part_hdrs_lst [list]
             foreach part_hdr [split $part_hdrs "\n"] {
                 set part_hdr_index [string first {: } $part_hdr]
@@ -323,7 +315,9 @@ proc Httpd_ParseFormData {sock} {
     # process query params along with posted params (if any)
     set xs [split $data(query) {&}]
     foreach x $xs {
-        lassign [split $x {=}] key val
+        set index [string first {=} $x]
+        set key [string range $x 0 [expr { $index - 1 }]]
+        set val [url decode [string range $x [expr { $index + 1 }] end]]
         set Httpd_FormData(${key}) ${val}
     }
 
