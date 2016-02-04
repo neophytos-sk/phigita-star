@@ -61,7 +61,9 @@ proc Httpd_SockGets {sock strVar} {
         incr readCount
 
         if { $readCount >= $maxHeaderLineLen } {
-            break
+            HttpdError $sock 400
+            HttpdSockDone $sock
+            return
         }
     }
     # puts str=$str
