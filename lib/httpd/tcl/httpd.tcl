@@ -44,10 +44,6 @@ proc Httpd_Server {root {host localhost} {port 80} {default index.html}} {
 proc Httpd_SockGets {sock strVar} {
     upvar $strVar str
 
-    # set readCount [gets $sock str]
-    # puts str=$str
-    # return $readCount
-
     set str {}
     set maxHeaderLineLen 1000
     set readCount 0
@@ -56,14 +52,16 @@ proc Httpd_SockGets {sock strVar} {
         set ch [chan read $sock 1]
         if { $ch eq "\n" } {
             break
+        } elseif { $ch eq {} } {
+            log "ch is empty string"
+            return -1
         }
         append str $ch
         incr readCount
 
         if { $readCount >= $maxHeaderLineLen } {
-            HttpdError $sock 400
-            HttpdSockDone $sock
-            return
+            log "readCount (=$readCount) >= maxHeaderLineLen (=$maxHeaderLineLen)"
+            return -1
         }
     }
     # puts str=$str
@@ -84,7 +82,8 @@ proc Httpd_SockAccept {newsock ipaddr port} {
         -buffersize $Httpd(bufsize) \
         -translation {auto crlf}
 
-    Httpd_Log $newsock Connect $ipaddr $port
+    # Httpd_Log $newsock Connect $ipaddr $port
+    log $newsock
 
     set data(ipaddr) $ipaddr
     fileevent $newsock readable [list Httpd_SockRead $newsock]
@@ -105,20 +104,28 @@ proc Httpd_SockRead { sock } {
     if { ![info exists data(form_data)] } {
 
         set readCount [Httpd_SockGets $sock line]
+        if { $readCount == -1 } {
+            HttpdSockDone $sock
+            return
+        }
+
         incr data(headers_length) $readCount
         incr data(n_headers)
 
         if { $readCount > $maxline } {
+            HttpdError $sock 400
             HttpdSockDone $sock
             return
         }
 
         if { $data(n_headers) > $maxheaders } {
+            HttpdError $sock 400
             HttpdSockDone $sock
             return
         }
 
         if { $data(headers_length) > $maxinput } {
+            HttpdError $sock 400
             HttpdSockDone $sock
             return
         }
@@ -131,6 +138,8 @@ proc Httpd_SockRead { sock } {
 
         if { ![info exists data(method)] } {
 
+            # log line=$line
+
             lassign [split $line { }] data(method) data(url) proto_and_version
             lassign [split $proto_and_version {/}] data(proto) data(version)
 
@@ -138,7 +147,7 @@ proc Httpd_SockRead { sock } {
             set data(proto) [string tolower $data(proto)]
 
             if { 
-                $data(method) ni {post get}
+                $data(method) ni {get post head}
                 || $data(proto) ne {http}
                 || $data(version) ni {1.0 1.1}
             } {
@@ -169,11 +178,10 @@ proc Httpd_SockRead { sock } {
 
     } else {
 
-
-        # The Content-Length entity-header field indicates the size of the entity-body,
-        # in decimal number of OCTETs, sent to the recipient or, in the case of the HEAD
-        # method, the size of the entity-body that would have been sent had the request
-        # been a GET.
+        # The Content-Length entity-header field indicates the size of the 
+        # entity-body, in decimal number of OCTETs, sent to the recipient or, 
+        # in the case of the HEAD method, the size of the entity-body that 
+        # would have been sent had the request been a GET.
         #
         # http://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.4
 
@@ -188,12 +196,18 @@ proc Httpd_SockRead { sock } {
 
         }
 
-        if { [string length $data(form_data)] < $data(form_data_length) } {
-            set nl [read $sock 1]
-            append data(form_data) [read $sock]
+        set len [string length $data(form_data)] 
+        if { $len < $data(form_data_length) } {
+            if { $len == 0 } {
+                set nl [chan read $sock 1]
+            }
+            append data(form_data) [chan read $sock]
         }
-        
+
         if { [string length $data(form_data)] >= $data(form_data_length) } {
+            # deletes readable event handler
+            fileevent $sock readable {}
+
             Httpd_Respond $sock
         }
 
@@ -208,6 +222,8 @@ proc HttpdSockDone { sock } {
     upvar #0 Httpd$sock data
     unset data
     close $sock
+
+    log $sock
 }
 
 proc Httpd_ParseFormData {sock} {
@@ -249,17 +265,17 @@ proc Httpd_ParseFormData {sock} {
 
         ### form enctype="multipart/form-data"
         #
-        # Content-Type: multipart/form-data; boundary=----kOy3aw5Lqc5AG4Q3 
-        # ------kOy3aw5Lqc5AG4Q3
+        # Content-Type: multipart/form-data; boundary=kOy3aw5Lqc5AG4Q3 
+        # --kOy3aw5Lqc5AG4Q3
         # Content-Disposition: form-data; name="msg2"
         #
         # test post-3
-        # ------kOy3aw5Lqc5AG4Q3
+        # --kOy3aw5Lqc5AG4Q3
         # Content-Disposition: form-data; name="upload_file"; filename=""
         # Content-Type: application/octet-stream
         #
         #
-        # ------kOy3aw5Lqc5AG4Q3--
+        # --kOy3aw5Lqc5AG4Q3--
 
         # log boundary=$data(boundary)
 
@@ -301,6 +317,14 @@ proc Httpd_ParseFormData {sock} {
             # log form_data,content->part_name=$part_name
 
             if { $part_filename ne {} } {
+                set tmpfile /tmp/test.pdf
+                file delete -force -- $tmpfile
+                if {[catch {set fp [open $tmpfile {RDWR CREAT EXCL}]} errmsg]} {
+                    log errmsg=$errmsg
+                }
+                fconfigure $fp -translation binary
+                puts $fp $part_body
+                close $fp
                 # if filename string:
                 # offset
                 # length
@@ -341,8 +365,6 @@ proc Httpd_Respond { sock } {
     global Httpd
     upvar #0 Httpd$sock data
     
-    Httpd_ParseFormData $sock
-
     set path [Httpd_url2file $Httpd(root) $data(url)]
 
     if { $path eq {} } {
@@ -367,11 +389,23 @@ proc Httpd_handle_static_page {sock path} {
     upvar #0 Httpd$sock data
 
     if {![catch {open $path} in]} {
+        lappend data(outputheaders) "Cache-Control" "private, max-age=0"
+        lappend data(outputheaders) "Content-Type" "text/html; charset=UTF-8"
+        lappend data(outputheaders) "Date" [HttpdDate [clock seconds]]
+        lappend data(outputheaders) "Expires" "-1"
+        lappend data(outputheaders) "Server" "phigita"
+        lappend data(outputheaders) "Status" "200 OK"
+        lappend data(outputheaders) "Version" "HTTP/1.1"
+        lappend data(outputheaders) "Connection" "close"
         puts $sock "HTTP/1.0 200 OK"
-        puts $sock "Date: [HttpdDate [clock seconds]]"
-        puts $sock "Last-Modified: [HttpdDate [file mtime $path]]"
-        puts $sock "Content-Type: [HttpdContentType $path]"
-        puts $sock "Content-Length: [file size $path]"
+        foreach {key value} $data(outputheaders) {
+            puts $sock "${key}: ${value}"
+        }
+        # puts $sock "Date: [HttpdDate [clock seconds]]"
+        # puts $sock "Last-Modified: [HttpdDate [file mtime $path]]"
+        # puts $sock "Content-Type: [HttpdContentType $path]"
+        # puts $sock "Content-Length: [file size $path]"
+        # puts $sock "Connection: close"
         puts $sock ""
         fconfigure $sock -translation binary -blocking $Httpd(sockblock)
         fconfigure $in -translation binary -blocking 1
@@ -390,7 +424,16 @@ proc Httpd_handle_dynamic_page {sock path} {
     global Httpd
     upvar #0 Httpd$sock data
 
-    package require templating
+    Httpd_ParseFormData $sock
+
+    lappend data(outputheaders) "Cache-Control" "private, max-age=0"
+    lappend data(outputheaders) "Content-Type" "text/html; charset=UTF-8"
+    lappend data(outputheaders) "Date" [HttpdDate [clock seconds]]
+    lappend data(outputheaders) "Expires" "-1"
+    lappend data(outputheaders) "Server" "phigita"
+    lappend data(outputheaders) "Status" "200 OK"
+    lappend data(outputheaders) "Version" "HTTP/1.1"
+    lappend data(outputheaders) "Connection" "close"
 
     if { [catch { set html [::xo::tdp::process $path] } errmsg] } {
         HttpdError $sock 500
@@ -403,13 +446,6 @@ proc Httpd_handle_dynamic_page {sock path} {
     #
 
     puts $sock "HTTP/1.1 200 OK"
-    lappend data(outputheaders) "Cache-Control" "private, max-age=0"
-    lappend data(outputheaders) "Content-Type" "text/html; charset=UTF-8"
-    lappend data(outputheaders) "Date" [HttpdDate [clock seconds]]
-    lappend data(outputheaders) "Expires" "-1"
-    lappend data(outputheaders) "Server" "phigita"
-    lappend data(outputheaders) "Status" "200 OK"
-    lappend data(outputheaders) "Version" "HTTP/1.1"
     foreach {key value} $data(outputheaders) {
         puts $sock "${key}: ${value}"
     }

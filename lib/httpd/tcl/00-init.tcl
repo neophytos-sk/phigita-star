@@ -32,4 +32,3 @@ array set HttpdMimeType {
     .pdf    application/pdf
 }
 
-

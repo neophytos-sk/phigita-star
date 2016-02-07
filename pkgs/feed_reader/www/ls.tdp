@@ -20,18 +20,18 @@ contract {
 val -id "news_items" -x-value-attributes [::newsdb::news_item_t attnames] {
 
     assert { @{offset} == (@{page} - 1) * @{limit} } {
-        if { [info exists __data__(__arg_page)] } {
+        if { [info exists ::__data__(__arg_page)] } {
             set __data__(offset) [expr { (@{page} - 1) * @{limit} }]
         }
     }
 
     set where_clause [list]
 
-    if { [info exists __data__(__arg_lang)] } {
+    if { [info exists ::__data__(__arg_lang)] } {
         lappend where_clause [list langclass = @{lang}]
     }
 
-    if { [info exists __data__(__arg_domain)] } {
+    if { [info exists ::__data__(__arg_domain)] } {
         set reversedomain [reversedotted @{domain}]
         lappend where_clause [list reversedomain = $reversedomain]
     }
