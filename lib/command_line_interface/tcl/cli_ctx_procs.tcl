@@ -2,7 +2,7 @@ namespace eval ::cli::kit {
     namespace export \
 		add_param \
         getparam \
-        reset
+        reset \
 		init_context \
         is_registered_p \
         require_registration \

@@ -4,6 +4,8 @@ config param host [info hostname]
 config param port 8080
 config param homedir [file normalize [file join [file dirname [info script]] ../www]]
 config param default_page index.html
+config param performance_mode_p 0
+config param production_mode_p 0
 
 
 

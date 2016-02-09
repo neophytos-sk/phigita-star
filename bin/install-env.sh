@@ -63,7 +63,8 @@ TCL_THREAD_LIB=thread2.6.7
 # - thread2.7.0 segfaults with naviserver 4.99.5
 # - in particular, sv_* crashes whereas tsv::* work
 #
-TCL_THREAD_LIB=thread2.7.0-p20130529
+# TCL_THREAD_LIB=thread2.7.0-p20130529
+TCL_THREAD_LIB=thread2.7.2
 
 
 #TDOM=tDOM-0.8.3

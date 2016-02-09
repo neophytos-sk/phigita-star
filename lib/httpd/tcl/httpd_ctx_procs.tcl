@@ -199,7 +199,7 @@ proc ::httpd::kit::admin_p {{user_id ""} {object_id ""}} {
 
 
 # if { [ns_config ns/server/[ns_info server] production_mode_p 1] } 
-if { 0 } {
+if { [config get ::httpd "production_mode_p"] } {
 
     proc ::httpd::kit::production_mode_p {} {
         return 1
@@ -214,13 +214,13 @@ if { 0 } {
 }
 
 # if { [ns_config ns/server/[ns_info server] performance_mode_p 1] }
-if { 0 } {
+if { [config get ::httpd "performance_mode_p"] } {
     proc ::httpd::kit::performance_mode_p {} {
-	return 1
+        return 1
     }
 } else {
     proc ::httpd::kit::performance_mode_p {} {
-	return 0
+        return 0
     }
 }
 

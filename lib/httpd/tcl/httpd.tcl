@@ -1,11 +1,13 @@
 # Simple Sample httpd server (based on minihttpd by Brent Welch)
 
+package require Thread
+
+
 # Httpd is a global array containing the global server state
 #  root:	the root of the document directory
 #  port:	The port this server is serving
 #  listen:	the main listening socket id
 #  accepts:	a count of accepted connections so far
-
 
 global HttpdErrors
 global HttpdErrorFormat
@@ -31,11 +33,34 @@ set HttpdErrorFormat {
 proc Httpd_Server {root {host localhost} {port 80} {default index.html}} {
     global Httpd
 
+       #
+    # Create thread pool with max 8 worker threads.
+    #
+
+    if { ![info exists ::TCL_TPOOL] } {
+        #
+        # Using the internal C-based thread pool
+        #
+        #set initcmd "source ../phttpd/phttpd.tcl"
+		set initcmd {
+			package require core
+			package require httpd
+		}
+    } else {
+        #
+        # Using the Tcl-level hand-crafted thread pool
+        #
+        # append initcmd "source ../phttpd/phttpd.tcl" \n $::TCL_TPOOL
+		error "here"
+    }
+
+    set Httpd(tpid) [tpool::create -maxworkers 8 -initcmd $initcmd]
+
     array set Httpd [list root $root default $default]
     if {![info exists Httpd(port)]} {
         set Httpd(host) $host
         set Httpd(port) $port
-        set Httpd(listen) [socket -server Httpd_SockAccept -myaddr $host $port]
+        set Httpd(listen) [socket -server Httpd_SockAcceptHelper -myaddr $host $port]
         set Httpd(accepts) 0
     }
     return $Httpd(port)
@@ -69,29 +94,64 @@ proc Httpd_SockGets {sock strVar} {
 
 }
 
+# Helper procedure to solve Tcl shared-channel bug when responding
+# to incoming connection and transfering the channel to other thread(s).
+# (copied from the Thread package, see phttpd.tcl)
+
+proc Httpd_SockAcceptHelper {sock ipaddr port} {
+log sock=$sock
+    after idle [list Httpd_SockAccept $sock $ipaddr $port]
+}
+
 # Accept a new connection from the server and set up a handler
 # to read the request from the client.
 
-proc Httpd_SockAccept {newsock ipaddr port} {
+proc Httpd_SockAccept {sock ipaddr port} {
+log $sock
     global Httpd
-    upvar #0 Httpd$newsock data
 
     incr Httpd(accepts)
+	# upvar #0 Httpd$sock data
+    # set data(ipaddr) $ipaddr
 
-    fconfigure $newsock -blocking $Httpd(sockblock) \
-        -buffersize $Httpd(bufsize) \
-        -translation {auto crlf}
+    fconfigure $sock -blocking 0 -translation {auto crlf}
 
-    # Httpd_Log $newsock Connect $ipaddr $port
-    log $newsock
+	#
+    # Detach the socket from current interpreter/tnread.
+    # One of the worker threads will attach it again.
+    #
 
-    set data(ipaddr) $ipaddr
-    fileevent $newsock readable [list Httpd_SockRead $newsock]
+    thread::detach $sock
+
+    #
+    # Send the work ticket to threadpool.
+    # 
+
+    tpool::post -detached $Httpd(tpid) [list Httpd_SockTicket $sock]
+
+}
+
+# Job ticket to run in the thread pool thread.
+proc Httpd_SockTicket {sock} {
+log $sock
+	thread::attach $sock
+log thread::attach,$sock
+
+    fileevent $sock readable [list Httpd_SockRead $sock]
+log fileevent,$sock
+	#
+    # End of processing is signalized here.
+    # This will release the worker thread.
+    #
+    
+    vwait ::done
+
 }
 
 # read data from a client request
 
 proc Httpd_SockRead { sock } {
+log $sock
     upvar #0 Httpd$sock data
 
     set maxinput [expr { 1024*1024 }]
@@ -101,11 +161,12 @@ proc Httpd_SockRead { sock } {
     # http request consists of two parts, the headers and the form data,
     # once the headers have been read, data(form_data) is set to {}
 
+while {1} {
     if { ![info exists data(form_data)] } {
 
         set readCount [Httpd_SockGets $sock line]
         if { $readCount == -1 } {
-            HttpdSockDone $sock
+            Httpd_SockDone $sock
             return
         }
 
@@ -114,19 +175,19 @@ proc Httpd_SockRead { sock } {
 
         if { $readCount > $maxline } {
             HttpdError $sock 400
-            HttpdSockDone $sock
+            Httpd_SockDone $sock
             return
         }
 
         if { $data(n_headers) > $maxheaders } {
             HttpdError $sock 400
-            HttpdSockDone $sock
+            Httpd_SockDone $sock
             return
         }
 
         if { $data(headers_length) > $maxinput } {
             HttpdError $sock 400
-            HttpdSockDone $sock
+            Httpd_SockDone $sock
             return
         }
 
@@ -153,7 +214,7 @@ proc Httpd_SockRead { sock } {
             } {
                 HttpdError $sock 400
                 Httpd_Log $sock Error "bad first line:$line"
-                HttpdSockDone $sock
+                Httpd_SockDone $sock
                 return
             }
 
@@ -190,7 +251,7 @@ proc Httpd_SockRead { sock } {
             set data(form_data_length) [value_if headers(content-length) "0"]
 
             if { $data(headers_length) + $data(form_data_length) > $maxinput } {
-                HttpdSockDone $sock
+                Httpd_SockDone $sock
                 return
             }
 
@@ -212,18 +273,22 @@ proc Httpd_SockRead { sock } {
         }
 
     }
+}
 
 }
 
 # Close a socket.
 # We'll use this to implement keep-alives some day.
 
-proc HttpdSockDone { sock } {
+proc Httpd_SockDone { sock } {
     upvar #0 Httpd$sock data
     unset data
     close $sock
 
     log $sock
+
+	variable done
+	set done 1  ;# releases the request thread (see SockTicket proc)
 }
 
 proc Httpd_ParseFormData {sock} {
@@ -341,7 +406,7 @@ proc Httpd_ParseFormData {sock} {
     } else {
         HttpdError $sock 400
         Httpd_Log $sock Error "unknown content type $content_type"
-        HttpdSockDone $sock
+        Httpd_SockDone $sock
         return
     }
 
@@ -365,12 +430,14 @@ proc Httpd_Respond { sock } {
     global Httpd
     upvar #0 Httpd$sock data
     
+set Httpd(root) [file normalize [file join [file dirname [info script]] ../www]]
+
     set path [Httpd_url2file $Httpd(root) $data(url)]
 
     if { $path eq {} } {
         HttpdError $sock 400
         Httpd_Log $sock Error "$data(url) invalid path"
-        HttpdSockDone $sock
+        Httpd_SockDone $sock
         return
     }
 
@@ -412,11 +479,11 @@ proc Httpd_handle_static_page {sock path} {
         flush $sock
         #	copychannel $in $sock $Httpd(bufsize)
         fcopy $in $sock
-        HttpdSockDone $sock
+        Httpd_SockDone $sock
     } else {
         HttpdError $sock 404
         Httpd_Log $sock Error "$data(url) $in"
-        HttpdSockDone $sock
+        Httpd_SockDone $sock
     }
 }
 
@@ -437,9 +504,11 @@ proc Httpd_handle_dynamic_page {sock path} {
 
     if { [catch { set html [::xo::tdp::process $path] } errmsg] } {
         HttpdError $sock 500
-        HttpdSockDone $sock
+        Httpd_SockDone $sock
         return
     }
+
+    lappend data(outputheaders) "Content-Length" [string length ${html}]
 
     # data(method)
     # data(form_data)
@@ -453,7 +522,7 @@ proc Httpd_handle_dynamic_page {sock path} {
     flush $sock
 
     puts $sock $html
-    HttpdSockDone $sock
+    Httpd_SockDone $sock
 }
 
 proc HttpdContentType {path} {

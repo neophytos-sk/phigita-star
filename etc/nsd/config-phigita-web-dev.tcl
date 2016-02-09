@@ -401,11 +401,12 @@ ns_param   checkinterval 600
     if {[llength $libthread] == 0} {
 	ns_log notice "No Tcl thread library installed in ${bindir}/../lib/"
     } else {
-	if {[llength $libthread] > 1} {
-	    ns_log notice "Multiple Tcl thread libraries installed: $libthread"
-	}
-	ns_param libthread [lindex $libthread end]
-	ns_log notice "Use Tcl thread library [lindex $libthread end]"
+        if {[llength $libthread] > 1} {
+            ns_log notice "Multiple Tcl thread libraries installed: $libthread"
+        }
+        # package require Thread
+        # ns_param libthread [lindex $libthread end]
+        ns_log notice "Use Tcl thread library [lindex $libthread end]"
     }
 
     #ns_param qcluster        qcluster.so

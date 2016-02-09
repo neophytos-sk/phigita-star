@@ -35,7 +35,7 @@ set password              ${server}-662051
 
 set email                 "webmaster@phigita.net"
 
-set serverroot                "/web/servers/${server}"
+set serverroot            [file normalize [file join [file dirname [info script]] ".."]] ;#    "/web/servers/${server}"
 
 # 
 # AOLserver's home and binary directories. Autoconfigurable. 
@@ -75,6 +75,7 @@ ns_log notice "done reading configuration settings"
 
 
 set modules {nssmtpd nsdns}
+set modules {}
 
 
 set server_web "phigita-web"
