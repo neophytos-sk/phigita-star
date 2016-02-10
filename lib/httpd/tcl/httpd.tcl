@@ -1,4 +1,5 @@
-# Simple Sample httpd server (based on minihttpd by Brent Welch)
+# Simple httpd server 
+# (based on minihttpd by Brent Welch and phttpd by Zoran Vasiljevic)
 
 package require Thread
 
@@ -33,27 +34,13 @@ set HttpdErrorFormat {
 proc Httpd_Server {root {host localhost} {port 80} {default index.html}} {
     global Httpd
 
-       #
-    # Create thread pool with max 8 worker threads.
-    #
-
-    if { ![info exists ::TCL_TPOOL] } {
-        #
-        # Using the internal C-based thread pool
-        #
-        #set initcmd "source ../phttpd/phttpd.tcl"
-		set initcmd {
-			package require core
-			package require httpd
-		}
-    } else {
-        #
-        # Using the Tcl-level hand-crafted thread pool
-        #
-        # append initcmd "source ../phttpd/phttpd.tcl" \n $::TCL_TPOOL
-		error "here"
+    set initcmd {
+        package require core
+        package require httpd
     }
 
+    # Create thread pool with max 8 worker threads.
+    # Using the internal C-based thread pool
     set Httpd(tpid) [tpool::create -maxworkers 8 -initcmd $initcmd]
 
     array set Httpd [list root $root default $default]
@@ -99,7 +86,6 @@ proc Httpd_SockGets {sock strVar} {
 # (copied from the Thread package, see phttpd.tcl)
 
 proc Httpd_SockAcceptHelper {sock ipaddr port} {
-log sock=$sock
     after idle [list Httpd_SockAccept $sock $ipaddr $port]
 }
 
@@ -107,7 +93,7 @@ log sock=$sock
 # to read the request from the client.
 
 proc Httpd_SockAccept {sock ipaddr port} {
-log $sock
+    # log $sock
     global Httpd
 
     incr Httpd(accepts)
@@ -133,147 +119,148 @@ log $sock
 
 # Job ticket to run in the thread pool thread.
 proc Httpd_SockTicket {sock} {
-log $sock
+    # log $sock
 	thread::attach $sock
-log thread::attach,$sock
 
     fileevent $sock readable [list Httpd_SockRead $sock]
-log fileevent,$sock
-	#
+
     # End of processing is signalized here.
     # This will release the worker thread.
-    #
-    
     vwait ::done
-
 }
 
 # read data from a client request
 
 proc Httpd_SockRead { sock } {
-log $sock
     upvar #0 Httpd$sock data
 
+    set data(state) "SockRead"
     set maxinput [expr { 1024*1024 }]
     set maxline 256
     set maxheaders 128
 
-    # http request consists of two parts, the headers and the form data,
-    # once the headers have been read, data(form_data) is set to {}
+    # deletes readable event handler
+    fileevent $sock readable {}
 
-while {1} {
-    if { ![info exists data(form_data)] } {
+    # 1. loops instead of waiting for readable file event
+    # 2. ensures socket still exists
+    while { [info exists data] } {
 
-        set readCount [Httpd_SockGets $sock line]
-        if { $readCount == -1 } {
-            Httpd_SockDone $sock
-            return
-        }
+        # http request consists of two parts, the headers and the form data,
+        # once the headers have been read, data(form_data) is set to {}
 
-        incr data(headers_length) $readCount
-        incr data(n_headers)
+        if { ![info exists data(form_data)] } {
 
-        if { $readCount > $maxline } {
-            HttpdError $sock 400
-            Httpd_SockDone $sock
-            return
-        }
-
-        if { $data(n_headers) > $maxheaders } {
-            HttpdError $sock 400
-            Httpd_SockDone $sock
-            return
-        }
-
-        if { $data(headers_length) > $maxinput } {
-            HttpdError $sock 400
-            Httpd_SockDone $sock
-            return
-        }
-
-        # The request method (get, post, or head) is part of the first 
-        # line of the headers, e.g. GET /somepage.html HTTP/1.0
-        #
-        # The condition is used here to check whether the first line 
-        # has been read, as it is distinguished from the rest of the headers.
-
-        if { ![info exists data(method)] } {
-
-            # log line=$line
-
-            lassign [split $line { }] data(method) data(url) proto_and_version
-            lassign [split $proto_and_version {/}] data(proto) data(version)
-
-            set data(method) [string tolower $data(method)]
-            set data(proto) [string tolower $data(proto)]
-
-            if { 
-                $data(method) ni {get post head}
-                || $data(proto) ne {http}
-                || $data(version) ni {1.0 1.1}
-            } {
-                HttpdError $sock 400
-                Httpd_Log $sock Error "bad first line:$line"
+            set readCount [Httpd_SockGets $sock line]
+            if { $readCount == -1 } {
                 Httpd_SockDone $sock
                 return
             }
 
-            set index [string first {?} $data(url)]
-            set data(query) [string range $data(url) [expr { $index + 1 }] end]
+            incr data(headers_length) $readCount
+            incr data(n_headers)
 
-        } else {
+            if { $readCount > $maxline } {
+                HttpdError $sock 400
+                Httpd_SockDone $sock
+                return
+            }
+
+            if { $data(n_headers) > $maxheaders } {
+                HttpdError $sock 400
+                Httpd_SockDone $sock
+                return
+            }
+
+            if { $data(headers_length) > $maxinput } {
+                HttpdError $sock 400
+                Httpd_SockDone $sock
+                return
+            }
+
+            # The request method (get, post, or head) is part of the first 
+            # line of the headers, e.g. GET /somepage.html HTTP/1.0
+            #
+            # The condition is used here to check whether the first line 
+            # has been read, as it is distinguished from the rest of the headers.
+
+            if { ![info exists data(method)] } {
+
+            # log line=$line
+
+                lassign [split $line { }] data(method) data(url) proto_and_version
+                lassign [split $proto_and_version {/}] data(proto) data(version)
+
+                set data(method) [string tolower $data(method)]
+                set data(proto) [string tolower $data(proto)]
+
+                if { 
+                    $data(method) ni {get post head}
+                    || $data(proto) ne {http}
+                    || $data(version) ni {1.0 1.1}
+                } {
+                    HttpdError $sock 400
+                    Httpd_Log $sock Error "bad first line:$line"
+                    Httpd_SockDone $sock
+                    return
+                }
+
+                set index [string first {?} $data(url)]
+                set data(query) [string range $data(url) [expr { $index + 1 }] end]
+
+            } else {
 
             # an empty line separates the request headers from the body (form data),
             # a non-empty line is expected to be part of the headers
 
-            if { $line ne {} } {
-                set index [string first {: } $line]
-                set key [string range $line 0 [expr { $index - 1 }]]
-                set value [string range $line [expr { $index + 2 }] end]
-                lappend data(headers) [string tolower $key] $value
-            } else {
-                set data(form_data) {}
-                fconfigure $sock -translation binary
-            }
-        }
-
-    } else {
-
-        # The Content-Length entity-header field indicates the size of the 
-        # entity-body, in decimal number of OCTETs, sent to the recipient or, 
-        # in the case of the HEAD method, the size of the entity-body that 
-        # would have been sent had the request been a GET.
-        #
-        # http://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.4
-
-        if { ![info exists data(form_data_length] } {
-            array set headers $data(headers)
-            set data(form_data_length) [value_if headers(content-length) "0"]
-
-            if { $data(headers_length) + $data(form_data_length) > $maxinput } {
-                Httpd_SockDone $sock
-                return
+                if { $line ne {} } {
+                    set index [string first {: } $line]
+                    set key [string range $line 0 [expr { $index - 1 }]]
+                    set value [string range $line [expr { $index + 2 }] end]
+                    lappend data(headers) [string tolower $key] $value
+                } else {
+                    set data(form_data) {}
+                    fconfigure $sock -translation binary
+                }
             }
 
-        }
+        } else {
 
-        set len [string length $data(form_data)] 
-        if { $len < $data(form_data_length) } {
-            if { $len == 0 } {
-                set nl [chan read $sock 1]
+            # The Content-Length entity-header field indicates the size of the 
+            # entity-body, in decimal number of OCTETs, sent to the recipient or, 
+            # in the case of the HEAD method, the size of the entity-body that 
+            # would have been sent had the request been a GET.
+            #
+            # http://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.4
+
+            if { ![info exists data(form_data_length] } {
+                array set headers $data(headers)
+                set data(form_data_length) [value_if headers(content-length) "0"]
+
+                if { $data(headers_length) + $data(form_data_length) > $maxinput } {
+                    Httpd_SockDone $sock
+                    return
+                }
+
             }
-            append data(form_data) [chan read $sock]
+
+            set len [string length $data(form_data)] 
+            if { $len < $data(form_data_length) } {
+                if { $len == 0 } {
+                    set nl [chan read $sock 1]
+                }
+                append data(form_data) [chan read $sock]
+            }
+
+            if { [string length $data(form_data)] >= $data(form_data_length) } {
+                # deletes readable event handler
+                fileevent $sock readable {}
+
+                Httpd_Respond $sock
+            }
+
         }
-
-        if { [string length $data(form_data)] >= $data(form_data_length) } {
-            # deletes readable event handler
-            fileevent $sock readable {}
-
-            Httpd_Respond $sock
-        }
-
     }
-}
 
 }
 
@@ -382,20 +369,24 @@ proc Httpd_ParseFormData {sock} {
             # log form_data,content->part_name=$part_name
 
             if { $part_filename ne {} } {
-                set tmpfile /tmp/test.pdf
-                file delete -force -- $tmpfile
-                if {[catch {set fp [open $tmpfile {RDWR CREAT EXCL}]} errmsg]} {
-                    log errmsg=$errmsg
-                }
-                fconfigure $fp -translation binary
-                puts $fp $part_body
-                close $fp
+
+                # set tmpfile /tmp/test.pdf
+                # file delete -force -- $tmpfile
+                # if {[catch {set fp [open $tmpfile {RDWR CREAT EXCL}]} errmsg]} {
+                #     log errmsg=$errmsg
+                # }
+                # fconfigure $fp -translation binary
+                # puts $fp $part_body
+                # close $fp
+                #
                 # if filename string:
                 # offset
                 # length
                 # headers
+
                 set Httpd_FormData(${part_name}.filename) ${part_filename}
             }
+
             set Httpd_FormData(${part_name}) ${part_body}
 
             set startIndex $endIndex
