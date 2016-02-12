@@ -1,3 +1,8 @@
+if { ![use_p "server"] } {
+    # log "skipped loading of [info script]"
+    return
+}
+
 namespace eval ::persistence::fs {
 
     # namespace __mixin ::persistence::common

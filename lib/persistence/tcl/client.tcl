@@ -26,7 +26,7 @@ proc ::db_client::init {addr port} {
     set peer($sock,data) {}
     set peer($sock,datalen) 0
     set peer($sock,datapos) 0
-    set peer($sock,timer) [after $ttl [list ${nsp}::timeout_conn $sock]]
+    set peer($sock,timer) [after $ttl [list ${nsp}::SockDone $sock]]
     # peer($sock,retcode) is only set after a response is received
     # peer($sock,done) is only set after a response is received
 
@@ -82,7 +82,7 @@ proc ::db_client::bg_read {sock} {
     # after $peer($sock,ttl) [list ::db_client::timeout_conn $sock]
 }
 
-proc ::db_client::timeout_conn {sock} {
+proc ::db_client::SockDone {sock} {
     variable peer
     if { [info exists peer($sock,addr)] } {
         catch { close $sock }
@@ -141,8 +141,14 @@ proc ::db_client::exec_cmd {args} {
     ::db_client::send $args
     set response [::db_client::recv]
     # log response=$response
+    SockDone $sock
     return $response
 
 }
 
+
+proc bgerror {msg} {
+    global errorInfo
+    puts stderr "bgerror: $msg\n$errorInfo"
+}
 

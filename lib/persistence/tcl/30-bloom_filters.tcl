@@ -1,4 +1,5 @@
-if { ![setting_p "bloom_filters"] } {
+if { ![use_p "server"] || ![setting_p "bloom_filters"] } {
+    # log "skipped loading of [info script]"
     return
 }
 

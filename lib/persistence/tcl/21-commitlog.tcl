@@ -1,4 +1,5 @@
 if { ![use_p "server"] || ![setting_p "commitlog"] } {
+    # log "skipped loading of [info script]"
     return
 }
 
@@ -84,7 +85,7 @@ proc ::persistence::commitlog::init {} {
 
     ::persistence::fs::init
 
-    # log "initializing commitlog..."
+    log "initializing commitlog..."
 
     variable base_dir
     variable commitlog_name

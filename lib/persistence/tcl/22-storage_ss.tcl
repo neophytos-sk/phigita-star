@@ -1,5 +1,5 @@
-# log server=[use_p server]
 if { ![use_p "server"] || ![setting_p "sstable"] } {
+    # log "skipped loading of [info script]"
     return
 }
 
@@ -644,5 +644,4 @@ proc ::persistence::ss::compact_all {} {
 
 }
 
-after_package_load persistence ::persistence::ss::init
 

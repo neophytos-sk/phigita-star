@@ -1,6 +1,7 @@
 package require core
-package require bloom_filter
-package require critbit_tree
+
+#package require bloom_filter
+#package require critbit_tree
 
 
 config section ::persistence
@@ -117,6 +118,9 @@ assert { [use_p "server"] || ![setting_p "write_ahead_log"] } {
     config param write_ahead_log "off"
 }
 
+return
+
+puts "loading init.tcl file"
 proc can_connect_p {server port} {
     if { [catch {set sock [socket $server $port]} errmsg] } {
         return 0

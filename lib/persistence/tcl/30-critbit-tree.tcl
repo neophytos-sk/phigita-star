@@ -1,5 +1,6 @@
-if { ![setting_p "critbit_tree"] } {
-    return
+if { ![use_p "server"] || ![setting_p "critbit_tree"] } {
+    # log "skipped loading of [info script]"
+    # return
 }
 
 package require critbit_tree

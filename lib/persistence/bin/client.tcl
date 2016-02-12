@@ -5,4 +5,4 @@
 package require core
 package require persistence
 
-::db_client::exec_cmd $argv
+puts output=[::db_client::exec_cmd $argv]
