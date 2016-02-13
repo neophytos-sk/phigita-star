@@ -68,7 +68,7 @@ proc ::db_client::recv {} {
 
 proc ::db_client::bg_read {sock} {
     variable peer
-    after cancel $peer($sock,timer)
+    after cancel $peer(${sock},timer)
 
     # log "bg_read $sock"
 
@@ -79,7 +79,7 @@ proc ::db_client::bg_read {sock} {
     append peer($sock,data) $bytes 
     incr peer(${sock},datalen) [string length ${bytes}]
 
-    # after $peer($sock,ttl) [list ::db_client::timeout_conn $sock]
+    set peer($sock,timer) [after $peer($sock,ttl) [list ::db_client::SockDone $sock]]
 }
 
 proc ::db_client::SockDone {sock} {
@@ -141,7 +141,7 @@ proc ::db_client::exec_cmd {args} {
     ::db_client::send $args
     set response [::db_client::recv]
     # log response=$response
-    SockDone $sock
+    # SockDone $sock
     return $response
 
 }

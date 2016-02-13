@@ -4,11 +4,10 @@ if { ![use_p "server"] || ![setting_p "commitlog"] } {
 }
 
 package require core
+package require Thread
 
 namespace eval ::persistence::commitlog {
 
-    variable __mem_id
-    variable __mem
     variable __mem_cur
     variable __mem_tmp
     variable __mem_new
@@ -40,8 +39,11 @@ namespace eval ::persistence::commitlog {
     array set fp [list]
 
     array set __mem_row_keys [list]
-    set __mem_id 0
-    array set __mem [list]
+
+    tsv::set __CL__ init_p 0
+    tsv::set __CL__ mem_id 0
+    #tsv::array set __mem%mem_id [list]
+
     array set __mem_tmp [list]
     array set __mem_new [list]
     array set __mem_cur [list]
@@ -98,14 +100,19 @@ proc ::persistence::commitlog::init {} {
         set commitlog_names [new_commitlog]
     }
 
-    foreach commitlog_name ${commitlog_names} {
-        log "!!! init commitlog ${commitlog_name}"
-        init_commitlog ${commitlog_name}
-        open_commitlog ${commitlog_name}
-        load_commitlog ${commitlog_name}
+    tsv::lock __CL__ {
+        if { ![tsv::set __CL__ init_p] } {
+            foreach commitlog_name ${commitlog_names} {
+                log "!!! init commitlog ${commitlog_name}"
+                init_commitlog ${commitlog_name}
+                open_commitlog ${commitlog_name}
+                load_commitlog ${commitlog_name}
+            }
+            after 1000 ::persistence::commitlog::switch_commitlog_if
+        }
+        tsv::set __CL__ init_p 1
     }
 
-    after 1000 ::persistence::commitlog::switch_commitlog_if
 
     # at_shutdown close_commitlog ${commitlog_name}
 }
@@ -314,14 +321,7 @@ proc ::persistence::commitlog::write_to_commitlog {commitlog_name mem_id} {
 
     assert { $fp(${commitlog_name}) ne {} }
 
-    array set item [list]
-    set item(commitlog_name)    $__mem(${mem_id},commitlog_name)
-    set item(name)              $__mem(${mem_id},offset)
-    set item(instr)             $__mem(${mem_id},instr)
-    set item(oid)               $__mem(${mem_id},oid)
-    set item(data)              $__mem(${mem_id},data)
-    set item(xid)               $__mem(${mem_id},xid)
-    set item(codec_conf)        $__mem(${mem_id},codec_conf)
+    array set item [tsv::array get __mem$mem_id]
 
     set commitlog_item_data [::sysdb::commitlog_item_t encode item]
     set commitlog_item_data [binary format a* $commitlog_item_data]
@@ -528,8 +528,8 @@ proc ::persistence::commitlog::exists_p {rev} {
                                          
 proc ::persistence::commitlog::set_mem {instr oid data xid codec_conf} {
 
-    variable __mem_id
-    variable __mem
+    # tsv::variable __CL__ mem_id
+    # tsv::variable __mem
 
     variable __mem_tmp
     variable __commitlog_pending
@@ -563,20 +563,22 @@ proc ::persistence::commitlog::set_mem {instr oid data xid codec_conf} {
         set rev ${oid}@${micros}
     }
 
-    incr __mem_id
-    set __mem(${__mem_id},commitlog_name) $xid_commitlog_name
-    set __mem(${__mem_id},offset)   $offset
-    set __mem(${__mem_id},instr)    $instr
-    set __mem(${__mem_id},oid)      $oid
-    set __mem(${__mem_id},rev)      $rev
-    set __mem(${__mem_id},data)     $data
-    set __mem(${__mem_id},xid)      $xid
-    set __mem(${__mem_id},codec_conf) $codec_conf
+    set mem_id [tsv::incr __CL__ mem_id]
 
-    lappend __mem_tmp(${xid}) ${__mem_id}
+    tsv::array set __mem$mem_id [list \
+        commitlog_name $xid_commitlog_name \
+        offset $offset \
+        inst $instr \
+        oid $oid \
+        rev $rev \
+        data $data \
+        xid $xid \
+        codec_conf $codec_conf]
+
+    lappend __mem_tmp(${xid}) ${mem_id}
 
     if { $oid ne {} } {
-        set __rev_to_mem_id(${rev}) ${__mem_id}
+        set __rev_to_mem_id(${rev}) ${mem_id}
         lassign [split_oid $rev] ks cf_axis row_key
         set type_oid [type_oid $rev]
         if { 
@@ -614,22 +616,14 @@ proc ::persistence::commitlog::readfile {rev args} {
 
     # set codec_conf $args
 
-    variable __mem
     variable __rev_to_mem_id
 
     set mem_id $__rev_to_mem_id(${rev})
-    set data $__mem(${mem_id},data)
-    return $data
+    return [tsv::set __mem$mem_id data]
 }
 
 proc ::persistence::commitlog::unset_mem {mem_id} {
-    variable __mem
-    unset __mem(${mem_id},instr)
-    unset __mem(${mem_id},oid)
-    unset __mem(${mem_id},rev)
-    unset __mem(${mem_id},data)
-    unset __mem(${mem_id},xid)
-    unset __mem(${mem_id},codec_conf)
+    tsv::unset __mem$mem_id
 }
 
 proc ::persistence::commitlog::write_to_new {xids {fsync_p "1"}} {

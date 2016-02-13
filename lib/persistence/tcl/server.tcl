@@ -69,15 +69,27 @@ proc ::db_server::Persistence_SockAccept {sock ipaddr port} {
 
 }
 
+proc ::db_server::Persistence_SockReset {sock} {
+    log $sock
+
+    variable ttl
+	upvar #0 peer$sock peer
+    if { [info exists peer(timer)] } {
+        after cancel $peer(timer)
+    }
+    set peer(data)    {}
+    set peer(datalen) 0
+    set peer(datapos) 0
+    set peer(ttl)     $ttl
+    set peer(timer) [after $ttl ::db_server::Persistence_SockDone $sock]
+}
+
 # Job ticket to run in the thread pool thread.
 proc ::db_server::Persistence_SockTicket {sock} {
     # log $sock
     thread::attach $sock
 
-	upvar #0 peer$sock peer
-    set peer(data)    {}
-    set peer(datalen) 0
-    set peer(datapos) 0
+    Persistence_SockReset $sock
 
 	chan configure $sock -translation binary
     chan event $sock readable [list ::db_server::Persistence_SockRead $sock]
@@ -90,6 +102,8 @@ proc ::db_server::Persistence_SockTicket {sock} {
 proc ::db_server::Persistence_SockRead {sock} {
     upvar #0 peer$sock peer
 
+    after cancel $peer(timer)
+
 	set bytes [read $sock]
 
 	if { $bytes eq {} } {
@@ -101,6 +115,8 @@ proc ::db_server::Persistence_SockRead {sock} {
 	append peer(data) $bytes
 	incr peer(datalen) [string length $bytes]
 	::db_server::Persistence_SockParse $sock
+
+    set peer(timer) [after $peer(ttl) [list ::db_server::Persistence_SockDone $sock]]
 
 }
 
@@ -169,7 +185,8 @@ proc ::db_server::exec_cmd_line {sock line} {
         flush $sock
     }
 
-	Persistence_SockDone $sock
+	# Persistence_SockDone $sock
+    Persistence_SockReset $sock
 
 }
 
