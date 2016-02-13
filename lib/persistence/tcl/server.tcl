@@ -30,7 +30,7 @@ proc ::db_server::Persistence_Server {addr port} {
     set Persistence(tpid) [tpool::create -maxworkers 8 -initcmd $initcmd]
 
 	if { ![info exists Persistence(listen)] } {
-    	set Persistence(listen) [socket -server ::db_server::Persistence_SockAcceptHelper -myaddr $addr $port]
+    	set Persistence(listen) [socket -server ::db_server::SockAcceptHelper -myaddr $addr $port]
         log "started server..."
 	}
 }
@@ -39,14 +39,14 @@ proc ::db_server::Persistence_Server {addr port} {
 # to incoming connection and transfering the channel to other thread(s).
 # (copied from the Thread package, see phttpd.tcl)
 
-proc ::db_server::Persistence_SockAcceptHelper {sock ipaddr port} {
-    after idle [list ::db_server::Persistence_SockAccept $sock $ipaddr $port]
+proc ::db_server::SockAcceptHelper {sock ipaddr port} {
+    after idle [list ::db_server::SockAccept $sock $ipaddr $port]
 }
 
 # Accept a new connection from the server and set up a handler
 # to read the request from the client.
 
-proc ::db_server::Persistence_SockAccept {sock ipaddr port} {
+proc ::db_server::SockAccept {sock ipaddr port} {
     log $sock
     global Persistence
 
@@ -65,62 +65,64 @@ proc ::db_server::Persistence_SockAccept {sock ipaddr port} {
     # Send the work ticket to threadpool.
     # 
 
-    tpool::post -detached $Persistence(tpid) [list ::db_server::Persistence_SockTicket $sock]
+    tpool::post -detached $Persistence(tpid) [list ::db_server::SockTicket $sock]
 
 }
 
-proc ::db_server::Persistence_SockReset {sock} {
+proc ::db_server::SockReset {sock} {
     log $sock
 
     variable ttl
 	upvar #0 peer$sock peer
     if { [info exists peer(timer)] } {
         after cancel $peer(timer)
+        unset peer(timer)
     }
     set peer(data)    {}
     set peer(datalen) 0
     set peer(datapos) 0
     set peer(ttl)     $ttl
-    set peer(timer) [after $ttl ::db_server::Persistence_SockDone $sock]
+    set peer(timer) [after $ttl ::db_server::SockDone $sock]
 }
 
 # Job ticket to run in the thread pool thread.
-proc ::db_server::Persistence_SockTicket {sock} {
+proc ::db_server::SockTicket {sock} {
     # log $sock
     thread::attach $sock
 
-    Persistence_SockReset $sock
+    SockReset $sock
 
 	chan configure $sock -translation binary
-    chan event $sock readable [list ::db_server::Persistence_SockRead $sock]
+    chan event $sock readable [list ::db_server::SockRead $sock]
 
     # End of processing is signalized here.
     # This will release the worker thread.
     vwait ::done
 }
 
-proc ::db_server::Persistence_SockRead {sock} {
+proc ::db_server::SockRead {sock} {
     upvar #0 peer$sock peer
 
     after cancel $peer(timer)
+    unset peer(timer)
 
 	set bytes [read $sock]
 
 	if { $bytes eq {} } {
 		log exiting,$sock,$bytes
-		Persistence_SockDone $sock
+		SockDone $sock
 		return
 	}
 
 	append peer(data) $bytes
 	incr peer(datalen) [string length $bytes]
-	::db_server::Persistence_SockParse $sock
+	::db_server::SockParse $sock
 
-    set peer(timer) [after $peer(ttl) [list ::db_server::Persistence_SockDone $sock]]
+    set peer(timer) [after $peer(ttl) [list ::db_server::SockDone $sock]]
 
 }
 
-proc ::db_server::Persistence_SockDone {sock} {
+proc ::db_server::SockDone {sock} {
     upvar #0 peer$sock peer
     log "closing socket... $sock"
 	close $sock
@@ -132,7 +134,7 @@ proc ::echo {args} {
     return {*}$args
 }
 
-proc ::db_server::Persistence_SockParse {sock} {
+proc ::db_server::SockParse {sock} {
     log $sock
     upvar #0 peer$sock peer
 
@@ -185,8 +187,8 @@ proc ::db_server::exec_cmd_line {sock line} {
         flush $sock
     }
 
-	# Persistence_SockDone $sock
-    Persistence_SockReset $sock
+	# SockDone $sock
+    SockReset $sock
 
 }
 

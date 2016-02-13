@@ -1,8 +1,5 @@
 
 namespace eval ::db_client {
-    variable peer
-    array set peer [list]
-
     variable sock ""
     variable ttl 10000 ;# in milliseconds
 }
@@ -20,19 +17,19 @@ proc ::db_client::init {addr port} {
         error "failed to open socket to ${addr}:${port}"
     }
 
-    set peer($sock,addr) [list $addr $port]
-    set peer($sock,state) "CONNECTED"
-    set peer($sock,ttl) $ttl
-    set peer($sock,data) {}
-    set peer($sock,datalen) 0
-    set peer($sock,datapos) 0
-    set peer($sock,timer) [after $ttl [list ${nsp}::SockDone $sock]]
-    # peer($sock,retcode) is only set after a response is received
-    # peer($sock,done) is only set after a response is received
+    upvar #0 peer$sock peer
+    set peer(addr) [list $addr $port]
+    set peer(state) "CONNECTED"
+    set peer(ttl) $ttl
+    set peer(data) {}
+    set peer(datalen) 0
+    set peer(datapos) 0
+    set peer(timer) [after $ttl [list ${nsp}::SockDone $sock]]
+    # peer(retcode) is only set after a response is received
+    # peer(done) is only set after a response is received
 
     chan configure $sock -translation binary -blocking 0
-    trace add variable peer($sock,datalen) write [list ${nsp}::handle_conn $sock]
-    fileevent $sock readable [list ${nsp}::bg_read $sock]
+    fileevent $sock readable [list ${nsp}::SockRead $sock]
 }
 
 proc ::db_client::send {argv} {
@@ -42,87 +39,111 @@ proc ::db_client::send {argv} {
     flush $sock
 }
 
+proc ::db_client::SockReset {sock} {
+    variable ttl
+    upvar #0 peer$sock peer
+    catch {unset ::done($sock)}
+    set peer(retcode) {}
+    set peer(data) {}
+    set peer(datalen) 0
+    if { [info exists peer(timer)] } {
+        after cancel $peer(timer)
+        unset peer(timer)
+    }
+    set peer(timer) [after $ttl [list ::db_client::SockDone $sock]]
+}
+
 proc ::db_client::recv {} {
     variable sock
-    variable peer
-
     assert { $sock ne {} }
 
     # log "recv $sock"
 
-    vwait ::db_client::peer($sock,done)
+    # SockReset $sock
+    vwait ::done($sock)
 
     if { $sock eq {} } {
         error "recv: no sock info after vwait"
     }
 
-    set retcode $peer($sock,retcode)
+    upvar #0 peer$sock peer
+    set retcode $peer(retcode)
 
     if { [boolval $retcode] } {
-        error $peer($sock,done)
+        error $::done($sock)]
     } else {
-        return $peer($sock,done)
+        return [set ::done($sock)]
     }
 
 }
 
-proc ::db_client::bg_read {sock} {
-    variable peer
-    after cancel $peer(${sock},timer)
+proc ::db_client::SockRead {sock} {
+    upvar peer$sock peer
+
+    after cancel $peer(timer)
+    unset peer(timer)
 
     # log "bg_read $sock"
 
     set bytes [read $sock]
+    if { $bytes eq {} } {
+        # SockDone $sock
+        # return
+    }
+
     set scan_p [binary scan ${bytes} a* bytes]
     assert { $scan_p } 
-    # set bytes [binary format a* ${bytes}]
-    append peer($sock,data) $bytes 
-    incr peer(${sock},datalen) [string length ${bytes}]
+    append peer(data) $bytes 
+    incr peer(datalen) [string length ${bytes}]
 
-    set peer($sock,timer) [after $peer($sock,ttl) [list ::db_client::SockDone $sock]]
+    SockParse $sock
+
+    set peer(timer) [after $peer(ttl) [list ::db_client::SockDone $sock]]
 }
 
 proc ::db_client::SockDone {sock} {
-    variable peer
-    if { [info exists peer($sock,addr)] } {
+    upvar #0 peer$sock peer
+
+    if { [info exists peer(addr)] } {
         catch { close $sock }
-        log  "closing connection $peer($sock,addr)"
-        set peer($sock,done) ""
-        unset peer($sock,addr)
+        log  "closing connection $peer(addr)"
+        set ::done($sock) ""
+        unset peer(addr)
         set ::db_client::sock ""
     }
     # cleanup
 }
 
-proc ::db_client::handle_conn {sock args} {
-    variable peer
+proc ::db_client::SockParse {sock args} {
+    upvar #0 peer$sock peer
 
-    set datalen $peer($sock,datalen)
+    set datalen $peer(datalen)
 
     if { $datalen == -1 } {
         log "error with sock $sock"
     }
 
-    set pos $peer($sock,datapos)
+    set pos $peer(datapos)
 
-    set len_p [binary scan $peer($sock,data) "@${pos}i" len]
+    set len_p [binary scan $peer(data) "@${pos}i" len]
     if { $len_p && $datalen >= 5 + $pos + $len } {
 
         # int length (4 bytes)
-        set pos [incr peer($sock,datapos) 4]
+        set pos [incr peer(datapos) 4]
 
         # bytearray data ($len bytes)
-        set line_p [binary scan $peer($sock,data) "@${pos}a${len}" line]
-        set pos [incr peer($sock,datapos) $len]
+        set line_p [binary scan $peer(data) "@${pos}a${len}" line]
+        set pos [incr peer(datapos) $len]
 
         # char retcode (1 byte)
-        set retcode_p [binary scan $peer($sock,data) "@${pos}c" retcode]
-        set peer($sock,retcode) $retcode
-        set pos [incr peer($sock,datapos)]
+        set retcode_p [binary scan $peer(data) "@${pos}c" retcode]
+        assert { $retcode_p }
+        set peer(retcode) $retcode
+        set pos [incr peer(datapos)]
 
         # log line=$line
 
-        set peer($sock,done) $line
+        set ::done($sock) $line
 
     }
 
@@ -130,7 +151,6 @@ proc ::db_client::handle_conn {sock args} {
 
 
 proc ::db_client::exec_cmd {args} {
-
     variable sock
     if { $sock eq {} } {
         set myaddr localhost
