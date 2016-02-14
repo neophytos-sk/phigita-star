@@ -29,6 +29,9 @@ proc ::db_server::Persistence_Server {addr port} {
     # Using the internal C-based thread pool
     set Persistence(tpid) [tpool::create -maxworkers 8 -initcmd $initcmd]
 
+    # init thread
+    tpool::post -detached $Persistence(tpid) [list set _ {}]
+
 	if { ![info exists Persistence(listen)] } {
     	set Persistence(listen) [socket -server ::db_server::SockAcceptHelper -myaddr $addr $port]
         log "started server..."
@@ -70,7 +73,7 @@ proc ::db_server::SockAccept {sock ipaddr port} {
 }
 
 proc ::db_server::SockReset {sock} {
-    log $sock
+    #log $sock
 
     variable ttl
 	upvar #0 peer$sock peer
@@ -135,7 +138,7 @@ proc ::echo {args} {
 }
 
 proc ::db_server::SockParse {sock} {
-    log $sock
+    # log $sock
     upvar #0 peer$sock peer
 
     set datalen $peer(datalen)

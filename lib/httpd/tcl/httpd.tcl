@@ -43,6 +43,9 @@ proc Httpd_Server {root {host localhost} {port 80} {default index.html}} {
     # Using the internal C-based thread pool
     set Httpd(tpid) [tpool::create -maxworkers 8 -initcmd $initcmd]
 
+    # init thread
+    tpool::post -detached $Httpd(tpid) [list set _ {}]
+
     array set Httpd [list root $root default $default]
     if {![info exists Httpd(port)]} {
         set Httpd(host) $host
