@@ -57,6 +57,8 @@ proc ::persistence::load_types_from_files {filelist} {
         }
         array unset spec
     }
+
+    install_types_from_files $filelist
 }
 
 proc ::persistence::install_types_from_files {filelist} {

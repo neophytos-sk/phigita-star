@@ -157,6 +157,8 @@ proc ::persistence::server::init {} {
     }
 }
 
+
+
 namespace eval ::persistence::client {;}
 proc ::persistence::client::init {} {
 
@@ -217,6 +219,10 @@ proc ::persistence::import_pdl {package_dir} {
     log filelist=$filelist
     install_types_from_files $filelist
     reload_types
+}
+
+if { [use_p "server"] } {
+    ::persistence::server::init
 }
 
 if { ![use_p "server"] } {

@@ -565,10 +565,12 @@ proc ::persistence::commitlog::set_mem {instr oid data xid codec_conf} {
 
     set mem_id [tsv::incr __CL__ mem_id]
 
+    # log mem_id=$mem_id,oid=$oid,rev=$rev
+
     tsv::array set __mem$mem_id [list \
         commitlog_name $xid_commitlog_name \
         offset $offset \
-        inst $instr \
+        instr $instr \
         oid $oid \
         rev $rev \
         data $data \
@@ -674,7 +676,7 @@ proc ::persistence::commitlog::delete_from_tmp {xids} {
 }
 
 proc ::persistence::commitlog::finalize_commit {xids} {
-    variable __mem
+    # variable __mem
     variable __mem_new
     variable __mem_cur
     variable __xid_to_commitlog
@@ -685,13 +687,13 @@ proc ::persistence::commitlog::finalize_commit {xids} {
         set xid_commitlog_name $__xid_to_commitlog(${xid})
 
         foreach mem_id $__mem_new(${xid}) {
-            set instr $__mem(${mem_id},instr)
+            set instr [tsv::set __mem${mem_id} instr]
             if { $instr in {begin_batch end_batch} } {
                 continue
             }
-            set rev $__mem(${mem_id},rev)
+            set rev [tsv::set __mem${mem_id} rev]
 
-            # log [namespace current],rev=$rev
+            log mem_id=$mem_id,instr=$instr,rev=$rev
 
             set type_oid [type_oid $rev]
             if { ![info exists __mem_cur(${xid_commitlog_name},${type_oid})] } {

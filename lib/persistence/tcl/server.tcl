@@ -128,7 +128,7 @@ proc ::db_server::SockRead {sock} {
 proc ::db_server::SockDone {sock} {
     upvar #0 peer$sock peer
     log "closing socket... $sock"
-	close $sock
+	catch { close $sock } ;# may have been closed from the other side
 	unset peer
 	set ::done 1
 }
