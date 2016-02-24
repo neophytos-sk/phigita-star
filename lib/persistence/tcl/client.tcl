@@ -29,7 +29,7 @@ proc ::db_client::init {addr port} {
     # peer(done) is only set after a response is received
 
     chan configure $sock -translation binary -blocking 0
-    fileevent $sock readable [list ${nsp}::SockRead $sock]
+    chan event $sock readable [list ${nsp}::SockRead $sock]
 }
 
 proc ::db_client::send {argv} {
@@ -40,16 +40,23 @@ proc ::db_client::send {argv} {
 }
 
 proc ::db_client::SockReset {sock} {
+    # log $sock
+
     variable ttl
     upvar #0 peer$sock peer
-    catch {unset ::done($sock)}
-    set peer(retcode) {}
-    set peer(data) {}
-    set peer(datalen) 0
+
+    assert { $sock ne {} }
+
+    catch {unset ::done}
+
     if { [info exists peer(timer)] } {
         after cancel $peer(timer)
         unset peer(timer)
     }
+    set peer(retcode) {}
+    set peer(data) {}
+    set peer(datalen) 0
+    set peer(datapos) 0
     set peer(timer) [after $ttl [list ::db_client::SockDone $sock]]
 }
 
@@ -57,22 +64,24 @@ proc ::db_client::recv {} {
     variable sock
     assert { $sock ne {} }
 
-    # log "recv $sock"
-
-    # SockReset $sock
-    vwait ::done($sock)
+    vwait ::done
 
     if { $sock eq {} } {
         error "recv: no sock info after vwait"
     }
 
+    set res $::done
+
     upvar #0 peer$sock peer
     set retcode $peer(retcode)
 
+    # unset peer
+    # unset ::done
+
     if { [boolval $retcode] } {
-        error $::done($sock)]
+        error $res
     } else {
-        return [set ::done($sock)]
+        return $res
     }
 
 }
@@ -106,10 +115,11 @@ proc ::db_client::SockDone {sock} {
 
     if { [info exists peer(addr)] } {
         catch { close $sock }
-        log  "closing connection $peer(addr)"
-        set ::done($sock) ""
-        unset peer(addr)
-        set ::db_client::sock ""
+        log  "closing $sock"
+        # catch { unset ::done }
+        set peer(retcode) 0
+        set ::done {}
+        # set ::db_client::sock ""
     }
     # cleanup
 }
@@ -143,7 +153,7 @@ proc ::db_client::SockParse {sock args} {
 
         # log line=$line
 
-        set ::done($sock) $line
+        set ::done $line
 
     }
 
@@ -162,6 +172,7 @@ proc ::db_client::exec_cmd {args} {
     set response [::db_client::recv]
     # log response=$response
     # SockDone $sock
+    SockReset $sock
     return $response
 
 }

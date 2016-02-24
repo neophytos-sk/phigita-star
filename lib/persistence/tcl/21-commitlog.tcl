@@ -693,7 +693,7 @@ proc ::persistence::commitlog::finalize_commit {xids} {
             }
             set rev [tsv::set __mem${mem_id} rev]
 
-            log mem_id=$mem_id,instr=$instr,rev=$rev
+            # log mem_id=$mem_id,instr=$instr,rev=$rev
 
             set type_oid [type_oid $rev]
             if { ![info exists __mem_cur(${xid_commitlog_name},${type_oid})] } {

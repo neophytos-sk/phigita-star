@@ -4,7 +4,7 @@ global Persistence
 array set Persistence {}
 
 namespace eval ::db_server {
-    variable ttl 30000 ;# in milliseconds
+    variable ttl 10000 ;# in milliseconds
 }
 
 proc ::db_server::Persistence_Server {addr port} {
@@ -72,7 +72,7 @@ proc ::db_server::SockAccept {sock ipaddr port} {
 
 }
 
-proc ::db_server::SockReset {sock} {
+proc ::db_server::SockInit {sock} {
     #log $sock
 
     variable ttl
@@ -93,7 +93,7 @@ proc ::db_server::SockTicket {sock} {
     # log $sock
     thread::attach $sock
 
-    SockReset $sock
+    SockInit $sock
 
 	chan configure $sock -translation binary
     chan event $sock readable [list ::db_server::SockRead $sock]
@@ -105,9 +105,6 @@ proc ::db_server::SockTicket {sock} {
 
 proc ::db_server::SockRead {sock} {
     upvar #0 peer$sock peer
-
-    after cancel $peer(timer)
-    unset peer(timer)
 
 	set bytes [read $sock]
 
@@ -121,16 +118,28 @@ proc ::db_server::SockRead {sock} {
 	incr peer(datalen) [string length $bytes]
 	::db_server::SockParse $sock
 
-    set peer(timer) [after $peer(ttl) [list ::db_server::SockDone $sock]]
-
 }
 
 proc ::db_server::SockDone {sock} {
-    upvar #0 peer$sock peer
     log "closing socket... $sock"
-	catch { close $sock } ;# may have been closed from the other side
-	unset peer
+
+    upvar #0 peer$sock peer
+
+    if { [info exists peer(timer)] } {
+        after cancel $peer(timer)
+    }
+
+	if { ![catch { close $sock }] } {
+        # may have been closed from the other side
+        unset peer
+    }
+
 	set ::done 1
+}
+
+proc ::db_server::SockReset {sock} {
+    # log $sock
+    SockInit $sock
 }
 
 proc ::echo {args} {
@@ -167,6 +176,7 @@ proc ::db_server::SockParse {sock} {
 }
 
 proc ::db_server::exec_cmd_line {sock line} {
+    # log entry,$line
 
     set ok_retcode 0
     set error_retcode 1
@@ -190,8 +200,9 @@ proc ::db_server::exec_cmd_line {sock line} {
         flush $sock
     }
 
-	# SockDone $sock
     SockReset $sock
+
+    # log leave,$line
 
 }
 
@@ -199,25 +210,3 @@ proc bgerror {msg} {
     global errorInfo
     puts stderr "bgerror: $msg\n$errorInfo"
 }
-
-proc ::db_server::accept_client_async {sock addr port} {
-    variable peer
-    variable ttl
-
-    set nsp ::db_server
-
-    set peer($sock,addr)    [list $addr $port]
-    set peer($sock,state)   "CONNECTED"
-    set peer($sock,ttl)     $ttl
-    set peer($sock,data)    {}
-    set peer($sock,datalen) 0
-    set peer($sock,datapos) 0
-    set peer($sock,timer)   [after $ttl [list ${nsp}::timeout_client $sock]]
-
-    chan configure $sock -blocking 0 -translation binary
-    trace add variable peer($sock,datalen) write [list ${nsp}::handle_conn $sock]
-    fileevent $sock readable [list ${nsp}::bg_read $sock]
-}
-
-
-
